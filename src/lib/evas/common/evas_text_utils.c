@@ -548,3 +548,82 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
    return EINA_TRUE;
 }
 
+
+/**
+ * @internal
+ * Returns the numeric value of HEX chars for example for ch = 'A'
+ * the function will return 10.
+ *
+ * @param ch The HEX char.
+ * @return numeric value of HEX.
+ */
+static int
+_hex_string_get(char ch)
+{
+   if ((ch >= '0') && (ch <= '9')) return (ch - '0');
+   else if ((ch >= 'A') && (ch <= 'F')) return (ch - 'A' + 10);
+   else if ((ch >= 'a') && (ch <= 'f')) return (ch - 'a' + 10);
+   return 0;
+}
+
+/**
+ * @internal
+ * Parses a string of one of the formas:
+ * 1. "#RRGGBB"
+ * 2. "#RRGGBBAA"
+ * 3. "#RGB"
+ * 4. "#RGBA"
+ * To the rgba values.
+ *
+ * @param[in] str The string to parse - NOT NULL.
+ * @param[out] r The Red value - NOT NULL.
+ * @param[out] g The Green value - NOT NULL.
+ * @param[out] b The Blue value - NOT NULL.
+ * @param[out] a The Alpha value - NOT NULL.
+ */
+void
+evas_common_format_color_parse(const char *str, int slen,
+                               unsigned char *r, unsigned char *g,
+                               unsigned char *b, unsigned char *a)
+{
+   *r = *g = *b = *a = 0;
+
+   if (slen == 7) /* #RRGGBB */
+     {
+        *r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
+        *g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
+        *b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
+        *a = 0xff;
+     }
+   else if (slen == 9) /* #RRGGBBAA */
+     {
+        *r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
+        *g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
+        *b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
+        *a = (_hex_string_get(str[7]) << 4) | (_hex_string_get(str[8]));
+     }
+   else if (slen == 4) /* #RGB */
+     {
+        *r = _hex_string_get(str[1]);
+        *r = (*r << 4) | *r;
+        *g = _hex_string_get(str[2]);
+        *g = (*g << 4) | *g;
+        *b = _hex_string_get(str[3]);
+        *b = (*b << 4) | *b;
+        *a = 0xff;
+     }
+   else if (slen == 5) /* #RGBA */
+     {
+        *r = _hex_string_get(str[1]);
+        *r = (*r << 4) | *r;
+        *g = _hex_string_get(str[2]);
+        *g = (*g << 4) | *g;
+        *b = _hex_string_get(str[3]);
+        *b = (*b << 4) | *b;
+        *a = _hex_string_get(str[4]);
+        *a = (*a << 4) | *a;
+     }
+   *r = (*r * *a) / 255;
+   *g = (*g * *a) / 255;
+   *b = (*b * *a) / 255;
+}

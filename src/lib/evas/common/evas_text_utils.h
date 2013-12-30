@@ -187,4 +187,7 @@ evas_common_text_props_split(Evas_Text_Props *base, Evas_Text_Props *ext,
 EAPI void
 evas_common_text_props_merge(Evas_Text_Props *item1, const Evas_Text_Props *item2);
 
+/* Common to Textblock and Filters */
+void evas_common_format_color_parse(const char *str, int slen, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
+
 #endif

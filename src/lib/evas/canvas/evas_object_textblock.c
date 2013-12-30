@@ -1001,84 +1001,6 @@ _prepend_text_run(Evas_Textblock_Cursor *cur, const char *s, const char *p)
      }
 }
 
-
-/**
- * @internal
- * Returns the numeric value of HEX chars for example for ch = 'A'
- * the function will return 10.
- *
- * @param ch The HEX char.
- * @return numeric value of HEX.
- */
-static int
-_hex_string_get(char ch)
-{
-   if ((ch >= '0') && (ch <= '9')) return (ch - '0');
-   else if ((ch >= 'A') && (ch <= 'F')) return (ch - 'A' + 10);
-   else if ((ch >= 'a') && (ch <= 'f')) return (ch - 'a' + 10);
-   return 0;
-}
-
-/**
- * @internal
- * Parses a string of one of the formas:
- * 1. "#RRGGBB"
- * 2. "#RRGGBBAA"
- * 3. "#RGB"
- * 4. "#RGBA"
- * To the rgba values.
- *
- * @param[in] str The string to parse - NOT NULL.
- * @param[out] r The Red value - NOT NULL.
- * @param[out] g The Green value - NOT NULL.
- * @param[out] b The Blue value - NOT NULL.
- * @param[out] a The Alpha value - NOT NULL.
- */
-static void
-_format_color_parse(const char *str, int slen, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
-{
-   *r = *g = *b = *a = 0;
-
-   if (slen == 7) /* #RRGGBB */
-     {
-        *r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
-        *g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
-        *b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
-        *a = 0xff;
-     }
-   else if (slen == 9) /* #RRGGBBAA */
-     {
-        *r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
-        *g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
-        *b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
-        *a = (_hex_string_get(str[7]) << 4) | (_hex_string_get(str[8]));
-     }
-   else if (slen == 4) /* #RGB */
-     {
-        *r = _hex_string_get(str[1]);
-        *r = (*r << 4) | *r;
-        *g = _hex_string_get(str[2]);
-        *g = (*g << 4) | *g;
-        *b = _hex_string_get(str[3]);
-        *b = (*b << 4) | *b;
-        *a = 0xff;
-     }
-   else if (slen == 5) /* #RGBA */
-     {
-        *r = _hex_string_get(str[1]);
-        *r = (*r << 4) | *r;
-        *g = _hex_string_get(str[2]);
-        *g = (*g << 4) | *g;
-        *b = _hex_string_get(str[3]);
-        *b = (*b << 4) | *b;
-        *a = _hex_string_get(str[4]);
-        *a = (*a << 4) | *a;
-     }
-   *r = (*r * *a) / 255;
-   *g = (*g * *a) / 255;
-   *b = (*b * *a) / 255;
-}
-
 /* The refcount for the formats. */
 static int format_refcount = 0;
 /* Holders for the stringshares */
@@ -1500,7 +1422,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.normal.r), &(fmt->color.normal.g),
            &(fmt->color.normal.b), &(fmt->color.normal.a));
    else if (cmd == underline_colorstr)
@@ -1518,7 +1440,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * underline_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.underline.r), &(fmt->color.underline.g),
            &(fmt->color.underline.b), &(fmt->color.underline.a));
    else if (cmd == underline2_colorstr)
@@ -1537,7 +1459,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * underline2_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.underline2.r), &(fmt->color.underline2.g),
            &(fmt->color.underline2.b), &(fmt->color.underline2.a));
    else if (cmd == underline_dash_colorstr)
@@ -1555,7 +1477,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * underline_dash_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.underline_dash.r), &(fmt->color.underline_dash.g),
            &(fmt->color.underline_dash.b), &(fmt->color.underline_dash.a));
    else if (cmd == outline_colorstr)
@@ -1574,7 +1496,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * outline_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.outline.r), &(fmt->color.outline.g),
            &(fmt->color.outline.b), &(fmt->color.outline.a));
    else if (cmd == shadow_colorstr)
@@ -1593,7 +1515,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * shadow_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.shadow.r), &(fmt->color.shadow.g),
            &(fmt->color.shadow.b), &(fmt->color.shadow.a));
    else if (cmd == glow_colorstr)
@@ -1612,7 +1534,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * glow_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.glow.r), &(fmt->color.glow.g),
            &(fmt->color.glow.b), &(fmt->color.glow.a));
    else if (cmd == glow2_colorstr)
@@ -1631,7 +1553,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * glow2_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.glow2.r), &(fmt->color.glow2.g),
            &(fmt->color.glow2.b), &(fmt->color.glow2.a));
    else if (cmd == backing_colorstr)
@@ -1650,7 +1572,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * backing_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.backing.r), &(fmt->color.backing.g),
            &(fmt->color.backing.b), &(fmt->color.backing.a));
    else if (cmd == strikethrough_colorstr)
@@ -1669,7 +1591,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * strikethrough_color=<color>
       * @endcode
       */
-     _format_color_parse(param, len,
+     evas_common_format_color_parse(param, len,
            &(fmt->color.strikethrough.r), &(fmt->color.strikethrough.g),
            &(fmt->color.strikethrough.b), &(fmt->color.strikethrough.a));
    else if (cmd == alignstr)
