@@ -108,7 +108,6 @@ LDADD = $(top_builddir)/src/lib/libelementary.la \
 @ELEMENTARY_EWEATHER_LIBS@ \
 @ELEMENTARY_EMAP_LIBS@ \
 @ELEMENTARY_LIBS@ \
-@ELEMENTARY_WEB_LIBS@ \
 @my_libs@
 
 endif
