@@ -436,16 +436,16 @@ _color_parse(const char *word, DATA32 *color)
 {
    unsigned long value;
    Eina_Bool success = EINA_FALSE;
-   char *end;
 
    PARSE_CHECK(word && *word);
 
    errno = 0;
    if (*word == '#')
      {
-        word++;
-        value = strtoul(word, &end, 16);
-        PARSE_CHECK((errno == 0) && (word != end));
+        unsigned char a, r, g, b;
+        int slen = strlen(word);
+        PARSE_CHECK(evas_common_format_color_parse(word, slen, &r, &g, &b, &a));
+        value = ARGB_JOIN(a, r, g, b);
      }
    else
      {
