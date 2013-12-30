@@ -1366,7 +1366,8 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
              if (ee->func.fn_move) ee->func.fn_move(ee);
           }
      }
-   if ((ee->w != e->w) || (ee->h != e->h))
+   if ((ee->w != e->w) || (ee->h != e->h) ||
+       (ee->req.w != e->w) || (ee->req.h != e->h))
      {
         ee->w = e->w;
         ee->h = e->h;
