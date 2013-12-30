@@ -422,7 +422,7 @@ _eo2_do_end(const Eo **eo_id EINA_UNUSED)
 
    fptr = eo2_call_stack.frame_ptr;
 
-   if(fptr->o.obj)
+   if (!_eo_is_a_class(fptr->eo_id) && fptr->o.obj)
      _eo_unref(fptr->o.obj);
 
    fptr->obj_data = EO2_INVALID_DATA;
