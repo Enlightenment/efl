@@ -273,6 +273,19 @@ _item_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
    printf("\ncurrent selected text = %s\n", elm_entry_context_menu_item_label_get(item));
 }
 
+static void
+_entry_rejected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Entry_Filter_Accept_Set *accept_set = data;
+
+   if (!accept_set) return;
+
+   if (accept_set->accepted)
+     printf("REJECTED: This entry only accepts the following character set: [%s]\n", accept_set->accepted);
+   else
+     printf("REJECTED: This entry rejects the following character set: [%s]\n", accept_set->rejected);
+}
+
 void
 test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -375,6 +388,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    digits_filter_data.accepted = "0123456789";
    digits_filter_data.rejected = NULL;
    elm_entry_markup_filter_append(en, elm_entry_filter_accept_set, &digits_filter_data);
+   evas_object_smart_callback_add(en, "rejected", _entry_rejected_cb, &digits_filter_data);
 
    /* No digits entry */
    en = elm_entry_add(win);
@@ -390,6 +404,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    digits_filter_data2.accepted = NULL;
    digits_filter_data2.rejected = "0123456789";
    elm_entry_markup_filter_append(en, elm_entry_filter_accept_set, &digits_filter_data2);
+   evas_object_smart_callback_add(en, "rejected", _entry_rejected_cb, &digits_filter_data2);
 
    /* Size limited entry */
    en = elm_entry_add(win);

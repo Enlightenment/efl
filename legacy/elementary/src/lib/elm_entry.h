@@ -248,6 +248,7 @@
  * @li "text,set,done": Whole text has been set to the entry.
  * @li "theme,changed": Called when the theme is changed.
  * @li "undo,request": Called on undo request.
+ * @li "rejected": Called when some of inputs are rejected by the filter. (since 1.9)
  *
  * Default content parts of the entry items that you can use for are:
  * @li "icon" - An icon in the entry

@@ -52,7 +52,8 @@ EAPI Eo_Op ELM_OBJ_ENTRY_BASE_ID = EO_NOOP;
    cmd(SIG_SELECTION_START, "selection,start", "") \
    cmd(SIG_TEXT_SET_DONE, "text,set,done", "") \
    cmd(SIG_THEME_CHANGED, "theme,changed", "") \
-   cmd(SIG_UNDO_REQUEST, "undo,request", "")
+   cmd(SIG_UNDO_REQUEST, "undo,request", "") \
+   cmd(SIG_REJECTED, "rejected", "")
 
 ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -4700,12 +4701,13 @@ elm_entry_filter_limit_size(void *data,
 
 EAPI void
 elm_entry_filter_accept_set(void *data,
-                            Evas_Object *entry __UNUSED__,
+                            Evas_Object *entry,
                             char **text)
 {
    int read_idx, last_read_idx = 0, read_char;
    Elm_Entry_Filter_Accept_Set *as = data;
    Eina_Bool goes_in;
+   Eina_Bool rejected = EINA_FALSE;
    const char *set;
    char *insert;
 
@@ -4803,6 +4805,10 @@ inserting:
                memcpy(insert, *text + last_read_idx, size);
              insert += size;
           }
+        else
+          {
+             rejected = EINA_TRUE;
+          }
 
         if (read_char)
           {
@@ -4811,6 +4817,8 @@ inserting:
           }
      }
    *insert = 0;
+   if (rejected)
+     evas_object_smart_callback_call(entry, SIG_REJECTED, NULL);
 }
 
 EAPI Eina_Bool
