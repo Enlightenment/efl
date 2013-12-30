@@ -120,7 +120,7 @@ enum
  *
  * @brief Get the current value of a field.
  *
- * @param[out] currtime
+ * @param[in,out] currtime
  * @param[out] ret
  *
  * @see elm_datetime_value_get
@@ -150,7 +150,7 @@ enum
  *
  * @brief Get the lower boundary of a field.
  *
- * @param[out] mintime
+ * @param[in,out] mintime
  * @param[out] ret
  *
  * @see elm_datetime_value_min_get
@@ -180,7 +180,7 @@ enum
  *
  * @brief Get the upper boundary of a field.
  *
- * @param[out] maxtime
+ * @param[in,out] maxtime
  * @param[out] ret
  *
  * @see elm_datetime_value_max_get
