@@ -729,7 +729,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
    if (typestr && !strcasecmp(typestr, "motion"))
      {
-        CRIT("Motion blur not implemented yet!");
+        CRI("Motion blur not implemented yet!");
         /*
         instr->pad.l = (rx < 0) ? (-rx) : 0;
         instr->pad.r = (rx > 0) ? (rx) : 0;
@@ -829,7 +829,7 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
    */
 
    //instr->type = EVAS_FILTER_MODE_CURVE;
-   CRIT("Not implemented yet");
+   CRI("Not implemented yet");
    return EINA_FALSE;
 }
 
@@ -1514,11 +1514,11 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         break;
 #endif
       case EVAS_FILTER_MODE_CURVE:
-        CRIT("Not implemented yet");
+        CRI("Not implemented yet");
         return -1;
       case EVAS_FILTER_MODE_BUFFER:
       default:
-        CRIT("Invalid instruction type: %d", instr->type);
+        CRI("Invalid instruction type: %d", instr->type);
         return -1;
      }
 

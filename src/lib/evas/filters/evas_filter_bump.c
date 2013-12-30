@@ -419,6 +419,6 @@ _bump_map_cpu_rgba_rgba(Evas_Filter_Command *cmd)
 {
    (void) cmd;
 
-   CRIT("Not implemented yet.");
+   CRI("Not implemented yet.");
    return EINA_FALSE;
 }

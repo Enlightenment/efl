@@ -603,7 +603,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         break;
       case EVAS_FILTER_BLUR_MOTION:
       default:
-        CRIT("Not implemented yet!");
+        CRI("Not implemented yet!");
         goto fail;
      }
 
@@ -1021,8 +1021,8 @@ evas_filter_command_bump_map_add(Evas_Filter_Context *ctx,
      }
 
    // FIXME: Must ensure in != out
-   if (in == out) CRIT("Not acceptable");
-   if (bumpmap == out) CRIT("Not acceptable");
+   if (in == out) CRI("Not acceptable");
+   if (bumpmap == out) CRI("Not acceptable");
 
    cmd = _command_new(ctx, EVAS_FILTER_MODE_BUMP, in, bumpmap, out);
    if (!cmd) goto end;
@@ -1207,7 +1207,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
    // FIXME: Must call engine function, not CPU directly.
 
    if (strncmp(cmd->ctx->evas->engine.module->definition->name, "software", 8))
-     CRIT("Only the software engine is supported for now.");
+     CRI("Only the software engine is supported for now.");
 
    switch (cmd->mode)
      {
@@ -1233,7 +1233,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
         func = evas_filter_bump_map_cpu_func_get(cmd);
         break;
       default:
-        CRIT("Invalid filter mode.");
+        CRI("Invalid filter mode.");
         break;
      }
 
@@ -1241,7 +1241,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
 
    if (!func)
      {
-        CRIT("No function to process this filter!");
+        CRI("No function to process this filter!");
         return EINA_FALSE;
      }
 

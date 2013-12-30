@@ -348,7 +348,7 @@ evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd)
 
    if (cmd->input->alpha_only != cmd->output->alpha_only)
      {
-        CRIT("Invalid color formats");
+        CRI("Invalid color formats");
         return NULL;
      }
 

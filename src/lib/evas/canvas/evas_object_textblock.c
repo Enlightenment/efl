@@ -384,6 +384,7 @@ struct _Evas_Object_Textblock_Item
    size_t                               visual_pos;
 #endif
    Evas_Textblock_Item_Type             type;
+
    Evas_Coord                           adv, x, w, h;
    Evas_Coord                           yoff;
    Eina_Bool                            merge : 1; /* Indicates whether this
@@ -6311,6 +6312,7 @@ static void
 _markup_get_text_append(Eina_Strbuf *txt, const Eina_Unicode *text)
 {
    char *base = eina_unicode_unicode_to_utf8(text, NULL);
+
    if (!base) return;
 
    _markup_get_text_utf8_append(txt, base);
@@ -10708,6 +10710,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
    ENFN->context_color_set(output, context, 0, 0, 0, 0);
    ca = cr = cg = cb = 0;
+
 #define ITEM_WALK() \
    EINA_INLIST_FOREACH(start, par) \
      { \
@@ -10907,7 +10910,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
         /* Draw background */
         DRAW_FORMAT(backing, 0, ln->h);
-
      }
    ITEM_WALK_END();
 
@@ -10922,6 +10924,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         int shad_dst, shad_sz, dx, dy, haveshad;
         Evas_Object_Textblock_Text_Item *ti;
         Evas_Coord yoff;
+
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
@@ -11031,6 +11034,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      {
         Evas_Object_Textblock_Text_Item *ti;
         Evas_Coord yoff;
+
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
@@ -11063,6 +11067,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      {
         Evas_Object_Textblock_Text_Item *ti;
         Evas_Coord yoff;
+
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 

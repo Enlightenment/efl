@@ -120,6 +120,6 @@ evas_filter_curve_cpu_func_get(Evas_Filter_Command *cmd)
    if (cmd->input->alpha_only && cmd->output->alpha_only)
      return _filter_curve_cpu_alpha;
 
-   CRIT("Incompatible image formats");
+   CRI("Incompatible image formats");
    return NULL;
 }
