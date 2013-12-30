@@ -16,7 +16,6 @@
 # include <sys/socket.h>
 # include <sys/stat.h>
 # include <sys/ioctl.h>
-/* # include <sys/un.h> */
 
 # include <linux/major.h>
 # include <linux/vt.h>
@@ -36,6 +35,10 @@
 
 # ifndef DRM_MAJOR
 #  define DRM_MAJOR 226
+# endif
+
+# ifndef DRM_CAP_TIMESTAMP_MONOTONIC
+#  define DRM_CAP_TIMESTAMP_MONOTONIC 0x6
 # endif
 
 # ifdef ECORE_DRM_DEFAULT_LOG_COLOR
@@ -102,6 +105,7 @@ struct _Ecore_Drm_Device
    int id, fd;
    const char *devname;
    const char *devpath;
+   clockid_t drm_clock;
 
    struct 
      {
@@ -111,7 +115,7 @@ struct _Ecore_Drm_Device
      } tty;
 };
 
-void _ecore_drm_message_send(int opcode, void *data, size_t bytes);
-Eina_Bool _ecore_drm_message_receive(int opcode, void **data, size_t bytes);
+void _ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes);
+Eina_Bool _ecore_drm_message_receive(int opcode, int *fd, void **data, size_t bytes);
 
 #endif
