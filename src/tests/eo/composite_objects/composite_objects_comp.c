@@ -13,7 +13,7 @@
 static int
 _a_get(Eo *obj, void *class_data EINA_UNUSED)
 {
-   int a;
+   int a = 0;
    eo2_do_super(obj, MY_CLASS, a = simple_a_get());
 
    return a;

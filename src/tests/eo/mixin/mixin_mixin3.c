@@ -16,7 +16,7 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    /* This cast is just a hack for the test. */
    Mixin3_Public_Data *pd = (Mixin3_Public_Data *) class_data;
-   int sum;
+   int sum = 0;
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    eo2_do_super(obj, MY_CLASS, sum = mixin_ab_sum_get());
 
@@ -24,7 +24,7 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
    pd->count += 3;
 
      {
-        int _a, _b;
+        int _a = 0, _b = 0;
         eo2_do(obj, _a = simple_a_get(), _b = simple_b_get());
         fail_if(sum != _a + _b + 2);
      }

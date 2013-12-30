@@ -18,7 +18,7 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    eo2_do(obj, simple_a_print());
    eo2_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 
-   Eina_Bool called;
+   Eina_Bool called = EINA_FALSE;
    eo2_do_super(obj, MY_CLASS, called = simple_a_print());
    fail_if(!called);
 }
@@ -26,7 +26,7 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 static Eina_Bool
 _print(Eo *obj, void *class_data EINA_UNUSED)
 {
-   Eina_Bool called;
+   Eina_Bool called = EINA_FALSE;
    printf("Hey\n");
    eo2_do_super(obj, MY_CLASS, called = inherit2_print());
    fail_if(called);
@@ -45,7 +45,7 @@ _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 static Eina_Bool
 _class_print(Eo_Class *klass, void *data EINA_UNUSED)
 {
-   Eina_Bool called;
+   Eina_Bool called = EINA_FALSE;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    eo2_do_super(klass, MY_CLASS, called = simple_class_print());
    fail_if(!called);

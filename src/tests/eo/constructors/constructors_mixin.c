@@ -11,7 +11,7 @@
 static void
 _add_and_print_set(Eo *obj, void *class_data EINA_UNUSED, int x)
 {
-   int a, b;
+   int a = 0, b = 0;
    eo2_do(obj, a = simple_a_get(), b = simple_b_get());
    printf("%s %d\n", __func__, a + b + x);
 }
