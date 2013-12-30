@@ -8,12 +8,21 @@
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
-#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
+#include <sys/ioctl.h>
+#include <syslog.h>
+
+#include <linux/major.h>
+#include <linux/vt.h>
+#include <linux/kd.h>
+#include <xf86drm.h>
+#include <xf86drmMode.h>
+#include <drm_fourcc.h>
 
 #include <Eina.h>
 #include <Ecore_Drm.h>
@@ -115,6 +124,46 @@ fail:
 }
 
 static int 
+_drop_master(int fd)
+{
+   int ret = ECORE_DRM_OP_SUCCESS;
+
+   fprintf(stderr, "Drop Master: %d\n", fd);
+
+   if (drmDropMaster(fd) != 0) 
+     {
+        ret = ECORE_DRM_OP_FAILURE;
+        fprintf(stderr, "\tFailed to drop master: %m\n");
+     }
+
+   _send_msg(ECORE_DRM_OP_DEVICE_MASTER_DROP, fd, &ret, sizeof(int));
+
+   close(fd);
+
+   return ret;
+}
+
+static int 
+_set_master(int fd)
+{
+   int ret = ECORE_DRM_OP_SUCCESS;
+
+   fprintf(stderr, "Set Master: %d\n", fd);
+
+   if (drmSetMaster(fd) != 0) 
+     {
+        ret = ECORE_DRM_OP_FAILURE;
+        fprintf(stderr, "\tFailed to set master: %m\n");
+     }
+
+   _send_msg(ECORE_DRM_OP_DEVICE_MASTER_SET, fd, &ret, sizeof(int));
+
+   close(fd);
+
+   return ret;
+}
+
+static int 
 _read_fd_get(void)
 {
    char *ev, *end;
@@ -168,12 +217,10 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
    memset(&dmsg, 0, sizeof(dmsg));
 
    IOVSET(iov + 0, &dmsg, sizeof(dmsg));
-   IOVSET(iov + 1, data, bytes);
+   IOVSET(iov + 1, &data, bytes);
 
    dmsg.opcode = opcode;
    dmsg.size = bytes;
-
-   /* memset(&msg, 0, sizeof(struct msghdr)); */
 
    msg.msg_name = NULL;
    msg.msg_namelen = 0;
@@ -192,11 +239,10 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
    msg.msg_controllen = RIGHTS_LEN;
 
    fprintf(stderr, "Launcher Sending FD: %d\n", fd);
-
    *((int *)CMSG_DATA(cmsgptr)) = fd;
 
    errno = 0;
-   size = sendmsg(_write_fd, &msg, MSG_EOR); // read_fd
+   size = sendmsg(_write_fd, &msg, MSG_EOR);
    if (errno != 0)
      {
         fprintf(stderr, "Failed to send message: %s", strerror(errno));
@@ -211,7 +257,7 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
 static int 
 _recv_msg(void)
 {
-   int ret = -1;
+   int ret = -1, fd = -1;
    Ecore_Drm_Message dmsg;
    struct iovec iov[2];
    struct msghdr msg;
@@ -258,6 +304,7 @@ _recv_msg(void)
         switch (cmsg->cmsg_type)
           {
            case SCM_RIGHTS:
+             fd = *((int *)CMSG_DATA(cmsg));
              switch (dmsg.opcode)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:
@@ -267,6 +314,14 @@ _recv_msg(void)
                 case ECORE_DRM_OP_TTY_OPEN:
                   fprintf(stderr, "Open Tty: %s\n", (char *)data);
                   ret = _open_tty((char *)data);
+                  break;
+                case ECORE_DRM_OP_DEVICE_MASTER_DROP:
+                  fprintf(stderr, "Drop Master: %d\n", *((int *)data));
+                  ret = _drop_master(fd);
+                  break;
+                case ECORE_DRM_OP_DEVICE_MASTER_SET:
+                  fprintf(stderr, "Set Master\n");
+                  ret = _set_master(fd);//*((int *)data));
                   break;
                 default:
                   fprintf(stderr, "Unhandled Opcode: %d\n", dmsg.opcode);
@@ -290,6 +345,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    int ret, i, _epoll_fd = -1;
    int size;
 
+   setvbuf(stdout, NULL, _IONBF, 0);
    setvbuf(stderr, NULL, _IONBF, 0);
 
    fprintf(stderr, "Spartacus Is Alive\n");
@@ -300,6 +356,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    _write_fd = _write_fd_get();
    if (_write_fd < 0) return EXIT_FAILURE;
 
+   fprintf(stderr, "Creating Epoll\n");
    _epoll_fd = epoll_create(1);
 
    memset(&ev, 0, sizeof(ev));
@@ -315,10 +372,11 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    while (1)
      {
-        ret = epoll_wait(_epoll_fd, events, sizeof(events) / sizeof(struct epoll_event), 0);
+        ret = epoll_wait(_epoll_fd, events, sizeof(events) / sizeof(struct epoll_event), -1);
         if (ret < 0)
           {
              fprintf(stderr, "Epoll Failed: %m\n");
+             closelog();
              return EXIT_FAILURE;
           }
 
