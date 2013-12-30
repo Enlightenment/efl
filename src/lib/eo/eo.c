@@ -425,7 +425,6 @@ _eo2_do_end(const Eo **eo_id EINA_UNUSED)
    if(fptr->o.obj)
      _eo_unref(fptr->o.obj);
 
-   memset(fptr, 0, sizeof (Eo2_Stack_Frame));
    fptr->obj_data = EO2_INVALID_DATA;
 
    if (fptr == eo2_call_stack.stack)
