@@ -538,13 +538,13 @@ enum
  *
  * Get the array of available profiles of a window.
  *
- * @param[out] ret
  * @param[out] profiles
  * @param[out] count
+ * @param[out] ret
  *
  * @see elm_win_available_profiles_get
  */
-#define elm_obj_win_available_profiles_get(ret, profiles, count) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_GET), EO_TYPECHECK(Eina_Bool *, ret), EO_TYPECHECK(char ***, profiles), EO_TYPECHECK(unsigned int *, count)
+#define elm_obj_win_available_profiles_get(profiles, count, ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_AVAILABLE_PROFILES_GET), EO_TYPECHECK(char ***, profiles), EO_TYPECHECK(unsigned int *, count), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_win_profile_set

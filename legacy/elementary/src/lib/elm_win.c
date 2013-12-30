@@ -4054,16 +4054,16 @@ elm_win_available_profiles_get(Evas_Object   *obj,
 {
    ELM_WIN_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_win_available_profiles_get(&ret, profiles, count));
+   eo_do((Eo *) obj, elm_obj_win_available_profiles_get(profiles, count, &ret));
    return ret;
 }
 
 static void
 _available_profiles_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    char ***profiles = va_arg(*list, char ***);
    unsigned int *count = va_arg(*list, unsigned int *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Win_Smart_Data *sd = _pd;
    Eina_Bool res;
 
@@ -4079,7 +4079,7 @@ _available_profiles_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         if (count) *count = sd->profile.count;
         res = EINA_TRUE;
      }
-   *ret = res;
+   if (ret) *ret = res;
 }
 
 EAPI void
