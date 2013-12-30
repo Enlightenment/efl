@@ -351,7 +351,7 @@ _eo2_call_stack_resize(Eina_Bool grow)
 
 static inline Eina_Bool
 _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
-      Eina_Bool is_super, Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
+                 Eina_Bool is_super, Eo2_Stack_Frame *fptr, Eo2_Stack_Frame *pfptr)
 {
    Eina_Bool is_klass = _eo_is_a_class(eo_id);
 
@@ -383,7 +383,7 @@ _eo2_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
      {
         EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
         if (fptr->cur_klass == cur_klass)
-           fptr->obj_data = EO2_INVALID_DATA;
+          fptr->obj_data = EO2_INVALID_DATA;
         fptr->cur_klass = cur_klass;
      }
    else
@@ -458,7 +458,7 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
         func = _eo2_kls_itr_next(klass, fptr->cur_klass, op);
 
         if (!func)
-           goto end;
+          goto end;
 
         klass = func->src;
      }
@@ -542,13 +542,13 @@ end:
         if (fptr->cur_klass)
           {
              ERR("func '%s' (%d) could not be resolved for class '%s' for super of '%s'",
-                   func_name, op, main_klass->desc->name,
-                   fptr->cur_klass->desc->name);
+                 func_name, op, main_klass->desc->name,
+                 fptr->cur_klass->desc->name);
           }
         else
           {
              ERR("func '%s' (%d) could not be resolved for class '%s'",
-                   func_name, op, main_klass->desc->name);
+                 func_name, op, main_klass->desc->name);
           }
      }
 
@@ -606,15 +606,15 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
 EAPI Eo_Op
 _eo2_api_op_id_get(const void *api_func)
 {
-    const Eo2_Op_Description *desc;
-    const _Eo_Class *klass;
+   const Eo2_Op_Description *desc;
+   const _Eo_Class *klass;
 
    Eina_Bool class_ref = _eo_is_a_class(eo2_call_stack.frame_ptr->eo_id);
 
    if (class_ref)
-      klass = eo2_call_stack.frame_ptr->o.kls;
+     klass = eo2_call_stack.frame_ptr->o.kls;
    else
-      klass = eo2_call_stack.frame_ptr->o.obj->klass;
+     klass = eo2_call_stack.frame_ptr->o.obj->klass;
 
    desc = _eo2_api_desc_get(api_func, klass, klass->extensions);
 
@@ -624,7 +624,7 @@ _eo2_api_op_id_get(const void *api_func)
         return EO_NOOP;
      }
 
-    return desc->op;
+   return desc->op;
 }
 
 static int
@@ -642,7 +642,7 @@ EAPI void
 _eo2_class_funcs_set(_Eo_Class *klass)
 {
    int op_id;
-    const Eo2_Op_Description *api_desc;
+   const Eo2_Op_Description *api_desc;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
 
