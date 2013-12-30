@@ -1391,7 +1391,7 @@ _selected_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    struct tm *selected_time = va_arg(*list, struct tm *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 
    Elm_Calendar_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(selected_time);
@@ -1401,7 +1401,7 @@ _selected_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      return;
    *selected_time = sd->selected_time;
 
-   *ret = EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI void
@@ -1642,6 +1642,7 @@ _displayed_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    struct tm *displayed_time = va_arg(*list, struct tm *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN(displayed_time);
    Elm_Calendar_Smart_Data *sd = _pd;
    *displayed_time = sd->shown_time;
