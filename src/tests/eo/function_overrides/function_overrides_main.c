@@ -17,7 +17,7 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eina_Bool called;
+   Eina_Bool called = EINA_FALSE;
    Eo *obj = eo2_add(INHERIT2_CLASS, NULL);
 
    eo2_do(obj, simple_a_set(1));

@@ -22,7 +22,7 @@ main(int argc, char *argv[])
 
    eo2_do(obj, simple_a_set(1), simple_b_set(2));
 
-   int a, b, sum = 0;
+   int a = 0, b = 0, sum = 0;
    eo2_do(obj, a = simple_a_get(), b = simple_b_get(), sum = mixin_ab_sum_get());
    fail_if(sum != a + b + 2); /* 2 for the two mixins... */
 

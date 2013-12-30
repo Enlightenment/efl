@@ -30,8 +30,10 @@ main(int argc, char *argv[])
 
    eo2_do(obj, simple_a_set(1), simple_b_set(2));
 
-   int a, b;
+   int a = 0, b = 0;
    eo2_do(obj, a = simple_a_get(), b = simple_b_get(), mixin_add_and_print(5));
+   fail_if(a != 1);
+   fail_if(b != 2);
 
    eo_unref(obj);
 

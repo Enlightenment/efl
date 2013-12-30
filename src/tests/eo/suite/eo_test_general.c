@@ -409,7 +409,7 @@ START_TEST(eo_refs)
    obj = eo2_add(SIMPLE_CLASS, NULL);
    obj2 = eo2_add(SIMPLE_CLASS, obj);
 
-   Eo *wref;
+   Eo *wref = NULL;
    eo2_do(obj2, eo2_wref_add(&wref));
    fail_if(!wref);
 
@@ -444,7 +444,7 @@ START_TEST(eo_weak_reference)
 
    Eo *obj = eo2_add(SIMPLE_CLASS, NULL);
    Eo *obj2 = eo2_add(SIMPLE_CLASS, NULL);
-   Eo *wref, *wref2, *wref3;
+   Eo *wref = NULL, *wref2 = NULL, *wref3 = NULL;
    eo2_do(obj, eo2_wref_add(&wref));
    fail_if(!wref);
 
@@ -517,7 +517,7 @@ START_TEST(eo_generic_data)
 {
    eo_init();
    Eo *obj = eo2_add(SIMPLE_CLASS, NULL);
-   void *data;
+   void *data = NULL;
 
    eo2_do(obj, eo2_base_data_set("test1", (void *) 1, NULL));
    eo2_do(obj, data = eo2_base_data_get("test1"));
@@ -615,7 +615,7 @@ START_TEST(eo_magic_checks)
         fail_if(eo_class_get(obj) != SIMPLE_CLASS);
         fail_if(eo_class_get(SIMPLE_CLASS) != EO2_CLASS_CLASS);
         eo_class_funcs_set((Eo_Class *) buf, NULL);
-        eo2_do((Eo_Class *) buf, NULL);
+        eo2_do((Eo_Class *) buf,(void) NULL);
         eo2_do_super((Eo_Class *) buf, SIMPLE_CLASS, simple_a_set(++i));
         eo2_do_super(SIMPLE_CLASS, (Eo_Class *) buf, simple_a_set(++i));
         fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);

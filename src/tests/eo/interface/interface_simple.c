@@ -39,7 +39,7 @@ _GET_SET_FUNC(b)
 static int
 _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
-   int a, b;
+   int a = 0, b = 0;
    eo2_do(obj, a = simple_a_get(), b = simple_b_get());
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a + b;
@@ -48,7 +48,7 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 static int
 _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
 {
-   int a, b;
+   int a = 0, b = 0;
    eo2_do(obj, a = simple_a_get(), b = simple_b_get());
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a + b + 1;

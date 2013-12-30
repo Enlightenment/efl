@@ -33,7 +33,7 @@ main(int argc, char *argv[])
    Eo *obj = eo2_add(COMP_CLASS, NULL);
    eo2_do(obj, eo2_event_callback_add(EV_A_CHANGED, _a_changed_cb, NULL));
 
-   int a;
+   int a = 0;
    eo2_do(obj, simple_a_set(1));
    fail_if(!cb_called);
 
@@ -41,7 +41,7 @@ main(int argc, char *argv[])
    fail_if(a != 1);
 
    /* disable the callback forwarder, and fail if it's still called. */
-   Eo *simple;
+   Eo *simple = NULL;
    eo2_do(obj, simple = eo2_base_data_get("simple-obj"));
    eo_ref(simple);
    eo2_do(simple, eo2_event_callback_forwarder_del(EV_A_CHANGED, obj));
