@@ -22,12 +22,30 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
    if (ev->number == 1)
      {
         DBG("Release VT");
-        /* ecore_drm_device_master_drop(dev); */
+
+        /* drop drm master */
+        if (ecore_drm_device_master_drop(dev))
+          {
+             /* issue ioctl to release vt */
+             if (!ecore_drm_tty_release(dev))
+               ERR("Could not release VT: %m");
+          }
+        else
+          ERR("Could not drop drm master: %m");
      }
    else if (ev->number == 2)
      {
         DBG("Acquire VT");
-        /* ecore_drm_device_master_set(dev); */
+
+        /* issue ioctl to acquire vt */
+        if (ecore_drm_tty_acquire(dev))
+          {
+             /* set drm master */
+             if (!ecore_drm_device_master_set(dev))
+               ERR("Could not set drm master: %m");
+          }
+        else
+          ERR("Could not acquire VT: %m");
      }
 
    return EINA_TRUE;
@@ -36,7 +54,15 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
 static Eina_Bool 
 _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
 {
+   struct stat st;
    int kb_mode;
+   struct vt_mode vtmode = { 0 };
+
+   if (fstat(dev->tty.fd, &st) == -1)
+     {
+        ERR("Failed to get stats for tty: %m");
+        return EINA_FALSE;
+     }
 
    if (ioctl(dev->tty.fd, KDGKBMODE, &kb_mode))
      {
@@ -44,18 +70,41 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
-   if (ioctl(dev->tty.fd, KDSKBMUTE, 1) && 
-       ioctl(dev->tty.fd, KDSKBMODE, K_OFF))
+   /* NB: Don't set this. This Turns OFF keyboard on the VT */
+   /* if (ioctl(dev->tty.fd, KDSKBMUTE, 1) &&  */
+   /*     ioctl(dev->tty.fd, KDSKBMODE, K_OFF)) */
+   /*   { */
+   /*      ERR("Could not set K_OFF keyboard mode: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
+
+   /* if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS)) */
+   /*   { */
+   /*      ERR("Could not set graphics mode: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
+
+   vtmode.mode = VT_PROCESS;
+   vtmode.waitv = 0;
+   vtmode.relsig = SIGUSR1;
+   vtmode.acqsig = SIGUSR2;
+   if (ioctl(dev->tty.fd, VT_SETMODE, &vtmode) < 0)
      {
-        ERR("Could not set K_OFF keyboard mode: %m");
+        ERR("Could not set Terminal Mode: %m");
         return EINA_FALSE;
      }
 
-   if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS))
-     {
-        ERR("Could not set graphics mode: %m");
-        return EINA_FALSE;
-     }
+   /* if (ioctl(dev->tty.fd, VT_ACTIVATE, minor(st.st_rdev)) < 0) */
+   /*   { */
+   /*      ERR("Failed to activate vt: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
+
+   /* if (ioctl(dev->tty.fd, VT_WAITACTIVE, minor(st.st_rdev)) < 0) */
+   /*   { */
+   /*      ERR("Failed to wait active: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
 
    return EINA_TRUE;
 }
@@ -97,7 +146,6 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
           snprintf(tty, sizeof(tty), "%s", env);
         else
           dev->tty.fd = STDIN_FILENO;
-//          snprintf(tty, sizeof(tty), "%s", "/dev/tty0");
      }
    else // FIXME: NB: This should Really check for format of name (/dev/xyz)
      snprintf(tty, sizeof(tty), "%s", name);
@@ -109,18 +157,16 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
         DBG("Trying to Open Tty: %s", tty);
 
         /* try to open the tty */
-        _ecore_drm_message_send(ECORE_DRM_OP_TTY_OPEN, tty, strlen(tty));
+        _ecore_drm_message_send(ECORE_DRM_OP_TTY_OPEN, -1, tty, strlen(tty));
 
         /* get the result of the open operation */
-        ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_OPEN, 
+        ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_OPEN, &dev->tty.fd,
                                          &data, sizeof(data));
         if (!ret)
           {
              DBG("Failed to receive Open Tty Message");
              return EINA_FALSE;
           }
-
-        dev->tty.fd = *((int *)data);
 
         free(data);
      }
@@ -164,19 +210,24 @@ EAPI Eina_Bool
 ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
    Eina_Bool ret = EINA_FALSE;
-   void *data;
+   void *data = malloc(sizeof(int));
 
    /* check for valid device */
    if ((!dev) || (!dev->devname)) return EINA_FALSE;
 
    /* try to close the tty */
-   _ecore_drm_message_send(ECORE_DRM_OP_TTY_CLOSE, &dev->tty.fd, sizeof(int));
+   _ecore_drm_message_send(ECORE_DRM_OP_TTY_CLOSE, dev->tty.fd,
+                           NULL, 0);
+//                           &dev->tty.fd, sizeof(int));
 
    /* get the result of the close operation */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_CLOSE, &data, sizeof(int));
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_CLOSE, NULL,
+                                    &data, sizeof(int));
    if (!ret) return EINA_FALSE;
 
    dev->tty.fd = -1;
+
+   free(data);
 
    /* destroy the event handler */
    if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr);
@@ -187,6 +238,48 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    dev->tty.name = NULL;
 
    unsetenv("ECORE_DRM_TTY");
+
+   return EINA_TRUE;
+}
+
+/**
+ * Release a virtual terminal
+ * 
+ * @param dev The Ecore_Drm_Device which owns this tty.
+ * 
+ * @return    EINA_TRUE on success, EINA_FALSE on failure
+ * 
+ * @ingroup Ecore_Drm_Tty_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_tty_release(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (!dev->devname) || (dev->tty.fd < 0)) return EINA_FALSE;
+
+   /* send ioctl for vt release */
+   if (ioctl(dev->tty.fd, VT_RELDISP, 1) < 0) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+/**
+ * Acquire a virtual terminal
+ * 
+ * @param dev The Ecore_Drm_Device which owns this tty.
+ * 
+ * @return    EINA_TRUE on success, EINA_FALSE on failure
+ * 
+ * @ingroup Ecore_Drm_Tty_Group
+ */
+EAPI Eina_Bool 
+ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (!dev->devname) || (dev->tty.fd < 0)) return EINA_FALSE;
+
+   /* send ioctl for vt acquire */
+   if (ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ) < 0) return EINA_FALSE;
 
    return EINA_TRUE;
 }
