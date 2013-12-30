@@ -269,9 +269,9 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
 EAPI Eo2_Hook_Call eo2_hook_call_pre = NULL;
 EAPI Eo2_Hook_Call eo2_hook_call_post = NULL;
 
-// FIXME: per thread stack, grow/shrink
+// FIXME: Thread Local Storage
 #define EO2_INVALID_DATA (void *) -1
-#define EO2_CALL_STACK_DEPTH 100
+#define EO2_CALL_STACK_DEPTH 30
 
 typedef struct _Eo2_Stack_Frame
 {
@@ -287,9 +287,11 @@ typedef struct _Eo2_Stack_Frame
 typedef struct _Eo2_Call_Stack {
      Eo2_Stack_Frame *stack;
      Eo2_Stack_Frame *frame_ptr;
+     Eo2_Stack_Frame *last_frame;
+     Eo2_Stack_Frame *shrink_frame;
 } Eo2_Call_Stack;
 
-static Eo2_Call_Stack eo2_call_stack = { NULL, NULL };
+static Eo2_Call_Stack eo2_call_stack = { NULL, NULL, NULL, NULL };
 
 static Eina_Bool
 _eo2_call_stack_init()
@@ -299,7 +301,9 @@ _eo2_call_stack_init()
      return EINA_FALSE;
 
    // first frame is never used
-   eo2_call_stack.frame_ptr = &eo2_call_stack.stack[0];
+   eo2_call_stack.frame_ptr = eo2_call_stack.stack;
+   eo2_call_stack.last_frame = &eo2_call_stack.stack[EO2_CALL_STACK_DEPTH - 1];
+   eo2_call_stack.shrink_frame = eo2_call_stack.stack;
 
    return EINA_TRUE;
 }
@@ -309,6 +313,40 @@ _eo2_call_stack_free()
 {
    if (eo2_call_stack.stack)
      free(eo2_call_stack.stack);
+}
+
+
+static inline void
+_eo2_call_stack_resize(Eina_Bool grow)
+{
+   size_t sz, next_sz;
+   int frame_offset;
+
+   frame_offset = eo2_call_stack.frame_ptr - eo2_call_stack.stack;
+   sz = eo2_call_stack.last_frame - eo2_call_stack.stack + 1;
+   if (grow)
+     next_sz = sz << 1;
+   else
+     next_sz = sz >> 1;
+
+   DBG("resize from %lu to %lu", sz, next_sz);
+   eo2_call_stack.stack = realloc(eo2_call_stack.stack, next_sz * sizeof(Eo2_Stack_Frame));
+   if(!eo2_call_stack.stack)
+     {
+        CRI("unable to resize call stack, abort.");
+        abort();
+     }
+
+   eo2_call_stack.frame_ptr = &eo2_call_stack.stack[frame_offset];
+   eo2_call_stack.last_frame = &eo2_call_stack.stack[next_sz - 1];
+
+   if (grow)
+     frame_offset = (sz >> 1);
+   if (next_sz == EO2_CALL_STACK_DEPTH)
+     frame_offset = 0;
+   else
+     frame_offset = (next_sz >> 1);
+   eo2_call_stack.shrink_frame = &eo2_call_stack.stack[frame_offset];
 }
 
 static inline Eina_Bool
@@ -346,18 +384,16 @@ _eo2_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super,
 {
    Eo2_Stack_Frame *fptr, *pfptr;
 
+   if (eo2_call_stack.frame_ptr == eo2_call_stack.last_frame)
+     _eo2_call_stack_resize(EINA_TRUE);
+
    fptr = eo2_call_stack.frame_ptr;
-   if (((fptr - eo2_call_stack.stack) + 1) >= EO2_CALL_STACK_DEPTH)
-     {
-        ERR("eo2 call stack overflow !!!");
-        return EINA_FALSE;
-     }
 
    pfptr = ((eo_id) && (fptr->eo_id == eo_id) ? fptr : NULL);
    fptr++;
 
    if (!_eo2_do_internal(eo_id, cur_klass_id, is_super, fptr, pfptr))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if(_eo_is_a_class(eo_id))
      {
@@ -389,10 +425,16 @@ _eo2_do_end(const Eo **eo_id EINA_UNUSED)
    memset(fptr, 0, sizeof (Eo2_Stack_Frame));
    fptr->obj_data = EO2_INVALID_DATA;
 
-   if (fptr == &eo2_call_stack.stack[0])
-     ERR("eo2 call stack underflow !!!");
-   else
-     eo2_call_stack.frame_ptr--;
+   if (fptr == eo2_call_stack.stack)
+     {
+        CRI("call stack underflow, abort.");
+        abort();
+     }
+
+   eo2_call_stack.frame_ptr--;
+
+   if (fptr == eo2_call_stack.shrink_frame)
+     _eo2_call_stack_resize(EINA_FALSE);
 }
 
 EAPI Eina_Bool
