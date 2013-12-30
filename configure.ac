@@ -4052,7 +4052,7 @@ if test "x${with_x11}" = "xxcb"; then
    echo "faster in a few corner cases on startup of an app, but it comes"
    echo "with many downsides. One of those is more complex code inside"
    echo "ecore_x, which is far less tested in XCB mode than Xlib. Also"
-   echo "the big catch is that OpenGL suppot basically requires Xlib anyway"
+   echo "the big catch is that OpenGL support basically requires Xlib anyway"
    echo "so if you want OpenGL in X11, you need Xlib regardless and so you"
    echo "gain nothing really in terms of speed and no savings in memory"
    echo "because Xlib is still linked, loaded and used, BUT instead you"
@@ -4062,7 +4062,7 @@ if test "x${with_x11}" = "xxcb"; then
    echo "and use OpenGL. XCB is only useful if you wish to shave a few Kb"
    echo "off the memory footprint of a whole system and live with less"
    echo "tested code, and possibly unimplemented features in ecore_x. To"
-   echo "remove the XCB setup, remove the --with-x11=xcb optiomn to"
+   echo "remove the XCB setup, remove the --with-x11=xcb option to"
    echo "configure."
    echo "_____________________________________________________________________"
 fi
