@@ -2576,7 +2576,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  * No description supplied by the EAPI.
  *
- * @param[in] degree
+ * @param[in] rotation
  * @param[out] ret
  *
  */
