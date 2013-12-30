@@ -39,11 +39,11 @@ bin_ecore_drm_ecore_drm_launch_CPPFLAGS = \
   -DMODULE_ARCH=\"$(MODULE_ARCH)\"
 
 bin_ecore_drm_ecore_drm_launch_LDADD = \
-  @ECORE_DRM_INTERNAL_LIBS@ \
+  @ECORE_DRM_LIBS@ \
   @SUID_LDFLAGS@
 
 bin_ecore_drm_ecore_drm_launch_DEPENDENCIES = \
-  @ECORE_DRM_INTERNAL_LIBS@
+  @USE_ECORE_DRM_INTERNAL_LIBS@
 
 setuid_root_mode = a=rx,u+xs
 EFL_INSTALL_EXEC_HOOK += @chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/ecore_drm/bin/$(MODULE_ARCH)/ecore_drm_launch$(EXEEXT) || true;
