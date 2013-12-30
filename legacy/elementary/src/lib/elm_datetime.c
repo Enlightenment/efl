@@ -1070,12 +1070,12 @@ _value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    struct tm *currtime = va_arg(*list, struct tm *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN(currtime);
    Elm_Datetime_Smart_Data *sd = _pd;
 
    *currtime = sd->curr_time;
-   *ret = EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -1130,13 +1130,13 @@ _value_min_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    struct tm *mintime = va_arg(*list, struct tm *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(mintime);
    Elm_Datetime_Smart_Data *sd = _pd;
 
    *mintime = sd->min_limit;
-   *ret = EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -1191,13 +1191,13 @@ _value_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    struct tm *maxtime = va_arg(*list, struct tm *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(maxtime);
    Elm_Datetime_Smart_Data *sd = _pd;
 
    *maxtime = sd->max_limit;
-   *ret = EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI Eina_Bool
