@@ -558,11 +558,12 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
  * @return numeric value of HEX.
  */
 static int
-_hex_string_get(char ch)
+_hex_string_get(char ch, Eina_Bool *ok)
 {
    if ((ch >= '0') && (ch <= '9')) return (ch - '0');
    else if ((ch >= 'A') && (ch <= 'F')) return (ch - 'A' + 10);
    else if ((ch >= 'a') && (ch <= 'f')) return (ch - 'a' + 10);
+   *ok = EINA_FALSE;
    return 0;
 }
 
@@ -581,49 +582,54 @@ _hex_string_get(char ch)
  * @param[out] b The Blue value - NOT NULL.
  * @param[out] a The Alpha value - NOT NULL.
  */
-void
+Eina_Bool
 evas_common_format_color_parse(const char *str, int slen,
                                unsigned char *r, unsigned char *g,
                                unsigned char *b, unsigned char *a)
 {
+   Eina_Bool v = EINA_TRUE;
+
    *r = *g = *b = *a = 0;
 
    if (slen == 7) /* #RRGGBB */
      {
-        *r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
-        *g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
-        *b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
+        *r = (_hex_string_get(str[1], &v) << 4) | (_hex_string_get(str[2], &v));
+        *g = (_hex_string_get(str[3], &v) << 4) | (_hex_string_get(str[4], &v));
+        *b = (_hex_string_get(str[5], &v) << 4) | (_hex_string_get(str[6], &v));
         *a = 0xff;
      }
    else if (slen == 9) /* #RRGGBBAA */
      {
-        *r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
-        *g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
-        *b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
-        *a = (_hex_string_get(str[7]) << 4) | (_hex_string_get(str[8]));
+        *r = (_hex_string_get(str[1], &v) << 4) | (_hex_string_get(str[2], &v));
+        *g = (_hex_string_get(str[3], &v) << 4) | (_hex_string_get(str[4], &v));
+        *b = (_hex_string_get(str[5], &v) << 4) | (_hex_string_get(str[6], &v));
+        *a = (_hex_string_get(str[7], &v) << 4) | (_hex_string_get(str[8], &v));
      }
    else if (slen == 4) /* #RGB */
      {
-        *r = _hex_string_get(str[1]);
+        *r = _hex_string_get(str[1], &v);
         *r = (*r << 4) | *r;
-        *g = _hex_string_get(str[2]);
+        *g = _hex_string_get(str[2], &v);
         *g = (*g << 4) | *g;
-        *b = _hex_string_get(str[3]);
+        *b = _hex_string_get(str[3], &v);
         *b = (*b << 4) | *b;
         *a = 0xff;
      }
    else if (slen == 5) /* #RGBA */
      {
-        *r = _hex_string_get(str[1]);
+        *r = _hex_string_get(str[1], &v);
         *r = (*r << 4) | *r;
-        *g = _hex_string_get(str[2]);
+        *g = _hex_string_get(str[2], &v);
         *g = (*g << 4) | *g;
-        *b = _hex_string_get(str[3]);
+        *b = _hex_string_get(str[3], &v);
         *b = (*b << 4) | *b;
-        *a = _hex_string_get(str[4]);
+        *a = _hex_string_get(str[4], &v);
         *a = (*a << 4) | *a;
      }
+   else v = EINA_FALSE;
+
    *r = (*r * *a) / 255;
    *g = (*g * *a) / 255;
    *b = (*b * *a) / 255;
+   return v;
 }
