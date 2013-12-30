@@ -172,7 +172,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
      }
    if (!was_smart_child) evas_object_release(eo_obj, obj, obj->clean_layer);
    if (obj->clip.clipees)
-     eina_list_free(obj->clip.clipees);
+     obj->clip.clipees = eina_list_free(obj->clip.clipees);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
    evas_object_clip_changes_clean(eo_obj);
    evas_object_event_callback_all_del(eo_obj);
