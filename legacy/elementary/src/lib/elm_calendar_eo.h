@@ -137,7 +137,7 @@ enum
  *
  * Get selected date.
  *
- * @param[out] selected_time
+ * @param[in,out] selected_time
  * @param[out] ret
  *
  * @see elm_calendar_selected_time_get
@@ -309,7 +309,7 @@ enum
  *
  * Get the current time displayed in the widget
  *
- * @param[out] displayed_time
+ * @param[in,out] displayed_time
  * @param[out] ret
  *
  * @see elm_calendar_displayed_time_get
