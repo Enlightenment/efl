@@ -185,9 +185,10 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
-   char devpath[PATH_MAX];
    Eina_Bool ret = EINA_FALSE;
+   char devpath[PATH_MAX];
    void *data = malloc(sizeof(int));
+   uint64_t caps;
 
    /* check for valid device */
    if ((!dev) || (!dev->devname)) return EINA_FALSE;
@@ -197,18 +198,23 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    DBG("Try to open device: %s", devpath);
 
    /* send message for ecore_drm_launch to open this device */
-   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, 
+   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, -1, 
                            devpath, strlen(devpath));
 
    /* receive the reply from our slave */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, 
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &dev->fd,
                                     &data, sizeof(data));
    if (!ret) return EINA_FALSE;
 
-   /* set device fd */
-   dev->fd = *((int *)data);
-
    DBG("Opened Device %s : %d", devpath, dev->fd);
+
+   if (!drmGetCap(dev->fd, DRM_CAP_TIMESTAMP_MONOTONIC, &caps))
+     {
+        if (caps == 1)
+          dev->drm_clock = CLOCK_MONOTONIC;
+        else
+          dev->drm_clock = CLOCK_REALTIME;
+     }
 
    free(data);
 
@@ -230,20 +236,24 @@ EAPI Eina_Bool
 ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
    Eina_Bool ret = EINA_FALSE;
-   void *data;
+   void *data = malloc(sizeof(int));
 
    /* check for valid device */
    if (!dev) return EINA_FALSE;
 
    /* try to close the device */
-   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_CLOSE, &dev->fd, sizeof(int));
+   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_CLOSE, dev->fd, 
+                           NULL, 0);
 
    /* get the result of the close operation */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_CLOSE, &data, sizeof(int));
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_CLOSE, NULL,
+                                    &data, sizeof(int));
    if (!ret) return EINA_FALSE;
 
    /* reset device fd */
    dev->fd = -1;
+
+   free(data);
 
    return EINA_TRUE;
 }
@@ -289,13 +299,29 @@ ecore_drm_device_master_get(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_master_set(Ecore_Drm_Device *dev)
 {
+   Eina_Bool ret = EINA_FALSE;
+   void *data = malloc(sizeof(int));
+   int dfd;
+
    /* check for valid device */
    if ((!dev) || (dev->fd < 0)) return EINA_FALSE;
 
-   /* try to set master */
-   if (drmSetMaster(dev->fd) == 0) return EINA_TRUE;
+   DBG("Set Master On Fd: %d", dev->fd);
 
-   return EINA_FALSE;
+   /* try to close the device */
+   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_MASTER_SET, dev->fd, 
+                           NULL, 0);
+
+   /* get the result of the close operation */
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_MASTER_SET, &dfd,
+                                    &data, sizeof(int));
+   if (!ret) return EINA_FALSE;
+
+   DBG("Received FD %d from Slave", dfd);
+
+   free(data);
+
+   return EINA_TRUE;
 }
 
 /**
@@ -312,11 +338,27 @@ ecore_drm_device_master_set(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
 {
+   Eina_Bool ret = EINA_FALSE;
+   void *data = malloc(sizeof(int));
+   int dfd;
+
    /* check for valid device */
    if ((!dev) || (dev->fd < 0)) return EINA_FALSE;
 
-   /* try to drop being master */
-   if (drmDropMaster(dev->fd) == 0) return EINA_TRUE;
+   DBG("Drop Master On Fd: %d", dev->fd);
 
-   return EINA_FALSE;
+   /* try to close the device */
+   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_MASTER_DROP, dev->fd,
+                           NULL, 0);
+
+   /* get the result of the close operation */
+   ret = _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_MASTER_DROP, &dfd,
+                                    &data, sizeof(int));
+   if (!ret) return EINA_FALSE;
+
+   DBG("Received FD %d from Slave", dfd);
+
+   free(data);
+
+   return EINA_TRUE;
 }
