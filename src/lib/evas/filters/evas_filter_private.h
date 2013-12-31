@@ -139,5 +139,6 @@ Evas_Filter_Apply_Func   evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
 void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, int dh, int *dx, int *dy, int *rows, int *cols);
 Eina_Bool evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h);
 Evas_Filter_Buffer *_filter_buffer_get(Evas_Filter_Context *ctx, int bufid);
+Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
 
 #endif // EVAS_FILTER_PRIVATE_H

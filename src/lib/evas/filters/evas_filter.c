@@ -508,9 +508,9 @@ _command_get(Evas_Filter_Context *ctx, int cmdid)
    return NULL;
 }
 
-static Evas_Filter_Buffer *
-_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
-                             Eina_Bool alpha_only)
+Evas_Filter_Buffer *
+evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
+                                 Eina_Bool alpha_only)
 {
    Evas_Filter_Buffer *buf = NULL;
    Eina_List *l;
@@ -630,7 +630,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    else if (in->alpha_only && !out->alpha_only)
      {
         INF("Adding extra blending step (Alpha --> RGBA)");
-        blur_out = _filter_temporary_buffer_get(ctx, 0, 0, EINA_TRUE);
+        blur_out = evas_filter_temporary_buffer_get(ctx, 0, 0, EINA_TRUE);
         if (!blur_out) goto fail;
         convert = EINA_TRUE;
      }
@@ -639,12 +639,12 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (dx && dy)
      {
-        tmp = _filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
+        tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
         if (!tmp) goto fail;
 
         if (!convert && (ox || oy))
           {
-             copybuf = _filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
+             copybuf = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
              copy_back = EINA_TRUE;
           }
 
@@ -668,7 +668,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         if ((in == blur_out) || ox || oy)
           {
              // IN = OUT and 1-D blur. IN -blur-> TMP -copy-> IN.
-             tmp = _filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
+             tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
              if (!tmp) goto fail;
              copy_back = EINA_TRUE;
              copybuf = tmp;
@@ -685,7 +685,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         if ((in == blur_out) || ox || oy)
           {
              // IN = OUT and 1-D blur. IN -blur-> TMP -copy-> IN.
-             tmp = _filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
+             tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
              if (!tmp) goto fail;
              copy_back = EINA_TRUE;
              copybuf = tmp;
@@ -920,7 +920,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
 
    if (in == out)
      {
-        tmp = _filter_temporary_buffer_get(ctx, in->w, in->h, in->alpha_only);
+        tmp = evas_filter_temporary_buffer_get(ctx, in->w, in->h, in->alpha_only);
         if (!tmp) return -1;
         disp_out = tmp;
      }
