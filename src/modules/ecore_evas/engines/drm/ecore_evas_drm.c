@@ -229,13 +229,27 @@ _ecore_evas_drm_init(void)
 
    /* FIXME: Init egl/software renderer here ?? */
    /* FIXME: create sprites here ?? */
-   /* FIXME: create outputs */
+
+   /* try to create outputs */
+   if (!ecore_drm_outputs_create(dev))
+     {
+        ERR("Could not create outputs: %m");
+        goto output_err;
+     }
+
    /* FIXME: create inputs */
+   if (!ecore_drm_inputs_create(dev))
+     {
+        ERR("Could not create inputs: %m");
+        goto output_err;
+     }
 
    ecore_event_evas_init();
 
    return _ecore_evas_init_count;
 
+output_err:
+   ecore_drm_tty_close(dev);
 tty_open_err:
    ecore_drm_device_close(dev);
 dev_open_err:
@@ -251,6 +265,7 @@ _ecore_evas_drm_shutdown(void)
    if (--_ecore_evas_init_count != 0)
      return _ecore_evas_init_count;
 
+   ecore_drm_inputs_destroy(dev);
    ecore_drm_tty_close(dev);
    ecore_drm_device_close(dev);
    ecore_drm_device_free(dev);
