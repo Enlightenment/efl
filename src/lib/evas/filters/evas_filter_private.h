@@ -40,6 +40,7 @@ struct _Evas_Filter_Context
    Eina_List *buffers; // Evas_Filter_Buffer *
    int last_buffer_id;
    int last_command_id;
+   int w, h; // Change at each run
 
    struct
    {

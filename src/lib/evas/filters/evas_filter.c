@@ -1183,10 +1183,10 @@ _filter_command_run(Evas_Filter_Command *cmd)
         return EINA_TRUE;
      }
 
-   if (!cmd->output->backing)
+   if (!cmd->output->backing && !cmd->output->w && !cmd->output->h)
      {
-        cmd->output->w = cmd->input->w;
-        cmd->output->h = cmd->input->h;
+        cmd->output->w = cmd->ctx->w;
+        cmd->output->h = cmd->ctx->h;
      }
 
    if ((cmd->output->w <= 0) || (cmd->output->h <= 0))
@@ -1254,6 +1254,13 @@ _filter_chain_run(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
    Eina_Bool ok = EINA_TRUE;
+   Evas_Filter_Buffer *in;
+
+   in = _filter_buffer_get(ctx, 1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
+
+   ctx->w = in->w;
+   ctx->h = in->h;
 
    EINA_INLIST_FOREACH(ctx->commands, cmd)
      {
