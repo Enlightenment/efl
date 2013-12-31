@@ -245,6 +245,8 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
    EINA_LOG_DBG("%s", __FUNCTION__);
 
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
+   Ecore_IMF_Preedit_Attr *attr = NULL;
+
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    g_signal_handlers_disconnect_by_func(_bus, G_CALLBACK(_ecore_imf_context_ibus_bus_connected_cb), ctx);
@@ -255,6 +257,13 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
    // release preedit
    if (ibusimcontext->preedit_string)
      free(ibusimcontext->preedit_string);
+
+   if (ibusimcontext->preedit_attrs)
+     {
+        EINA_LIST_FREE(ibusimcontext->preedit_attrs, attr)
+           free(attr);
+     }
+
    if (_focus_im_context == ctx)
      _focus_im_context = NULL;
 }
@@ -437,20 +446,32 @@ ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
 EAPI void
 ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context   *ctx,
                                                           char          **str,
-                                                          Eina_List     **attr EINA_UNUSED,
+                                                          Eina_List     **attrs,
                                                           int            *cursor_pos)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   Eina_List *l;
+   Ecore_IMF_Preedit_Attr *attr1 = NULL, *attr2 = NULL;
 
    ecore_imf_context_ibus_preedit_string_get(ctx, str, cursor_pos);
 
-   if (attr)
+   if (attrs)
      {
         if (ibusimcontext->preedit_attrs)
-          *attr = ibusimcontext->preedit_attrs;
+          {
+             EINA_LIST_FOREACH(ibusimcontext->preedit_attrs, l, attr1)
+               {
+                  attr2 = (Ecore_IMF_Preedit_Attr *)calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
+                  attr2->preedit_type = attr1->preedit_type;
+                  attr2->start_index = attr1->start_index;
+                  attr2->end_index = attr1->end_index;
+
+                  *attrs = eina_list_append(*attrs, (void *)attr2);
+               }
+          }
         else
-          *attr = NULL;
+          *attrs = NULL;
      }
 }
 
@@ -658,7 +679,13 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
    if (ibusimcontext->preedit_string)
      free(ibusimcontext->preedit_string);
 
-   ibusimcontext->preedit_attrs = NULL;
+   if (ibusimcontext->preedit_attrs)
+     {
+        EINA_LIST_FREE(ibusimcontext->preedit_attrs, attr)
+           free(attr);
+
+        ibusimcontext->preedit_attrs = NULL;
+     }
 
    str = text->text;
 

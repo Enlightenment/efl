@@ -21,7 +21,7 @@ EAPI void ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context     *conte
 
 EAPI void ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context     *context,
                                                                     char                  **str,
-                                                                    Eina_List             **attr,
+                                                                    Eina_List             **attrs,
                                                                     int                   *cursor_pos);
 
 EAPI void ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *context,
