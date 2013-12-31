@@ -15,11 +15,13 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <sys/ioctl.h>
-#include <syslog.h>
+/* #include <syslog.h> */
+/* #include <pwd.h> */
 
-#include <linux/major.h>
-#include <linux/vt.h>
-#include <linux/kd.h>
+/* #include <linux/major.h> */
+/* #include <linux/vt.h> */
+/* #include <linux/kd.h> */
+
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 #include <drm_fourcc.h>
@@ -27,25 +29,7 @@
 #include <Eina.h>
 #include <Ecore_Drm.h>
 
-#if defined(SCM_CREDS) // Bsd
-# define CRED_STRUCT cmsgcred
-# define CRED_UID cmcred_uid
-# define CRED_PID cmcred_pid
-# define CRED_EUID cmcred_euid
-# define CRED_GID cmcred_gid
-# define SCM_CREDTYPE SCM_CREDS
-#elif defined(SCM_CREDENTIALS) // Linux (3.2.0 ?)
-# define CRED_STRUCT ucred
-# define CRED_UID uid
-# define CRED_PID pid
-# define CRED_GID gid
-# define CRED_OPT SO_PASSCRED
-# define SCM_CREDTYPE SCM_CREDENTIALS
-#endif
-
 #define RIGHTS_LEN CMSG_LEN(sizeof(int))
-#define CREDS_LEN CMSG_LEN(sizeof(struct CRED_STRUCT))
-#define CONTROL_LEN (RIGHTS_LEN + CREDS_LEN)
 
 #define IOVSET(_iov, _addr, _len) \
    (_iov)->iov_base = (void *)(_addr); \
@@ -73,15 +57,36 @@ _open_device(const char *device)
 
    fprintf(stderr, "Launcher Trying to Open Device: %s\n", device);
 
-   if ((fd = open(device, O_RDWR)) < 0)
+   if ((fd = open(device, O_RDWR | O_NONBLOCK)) < 0)
      {
         fprintf(stderr, "Failed to Open Device: %s: %m\n", device);
         ret = ECORE_DRM_OP_FAILURE;
      }
    else
-     fprintf(stderr, "Launcher Opened Device: %s %d\n", device, fd);
+     {
+        fprintf(stderr, "Launcher Opened Device: %s %d\n", device, fd);
+     }
 
    _send_msg(ECORE_DRM_OP_DEVICE_OPEN, fd, &ret, sizeof(int));
+
+   return ret;
+}
+
+static int 
+_close_device(int fd)
+{
+   int ret = ECORE_DRM_OP_SUCCESS;
+
+   if (!fd)
+     {
+        ret = ECORE_DRM_OP_FAILURE;
+        _send_msg(ECORE_DRM_OP_DEVICE_CLOSE, fd, &ret, sizeof(int));
+        return ret;
+     }
+
+   close(fd);
+
+   _send_msg(ECORE_DRM_OP_DEVICE_CLOSE, fd, &ret, sizeof(int));
 
    return ret;
 }
@@ -257,7 +262,7 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
 static int 
 _recv_msg(void)
 {
-   int ret = -1, fd = -1;
+   int fd = -1;
    Ecore_Drm_Message dmsg;
    struct iovec iov[2];
    struct msghdr msg;
@@ -309,19 +314,22 @@ _recv_msg(void)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:
                   fprintf(stderr, "Open Device: %s\n", (char *)data);
-                  ret = _open_device((char *)data);
+                  _open_device((char *)data);
                   break;
+                case ECORE_DRM_OP_DEVICE_CLOSE:
+                  fprintf(stderr, "Close Device: %d\n", fd);
+                  _close_device(fd);
                 case ECORE_DRM_OP_TTY_OPEN:
                   fprintf(stderr, "Open Tty: %s\n", (char *)data);
-                  ret = _open_tty((char *)data);
+                  _open_tty((char *)data);
                   break;
                 case ECORE_DRM_OP_DEVICE_MASTER_DROP:
-                  fprintf(stderr, "Drop Master: %d\n", *((int *)data));
-                  ret = _drop_master(fd);
+                  fprintf(stderr, "Drop Master: %d\n", fd);
+                  _drop_master(fd);
                   break;
                 case ECORE_DRM_OP_DEVICE_MASTER_SET:
                   fprintf(stderr, "Set Master\n");
-                  ret = _set_master(fd);//*((int *)data));
+                  _set_master(fd);
                   break;
                 default:
                   fprintf(stderr, "Unhandled Opcode: %d\n", dmsg.opcode);
@@ -343,7 +351,6 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    struct epoll_event ev, events[1];
    int ret, i, _epoll_fd = -1;
-   int size;
 
    setvbuf(stdout, NULL, _IONBF, 0);
    setvbuf(stderr, NULL, _IONBF, 0);
@@ -376,7 +383,6 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         if (ret < 0)
           {
              fprintf(stderr, "Epoll Failed: %m\n");
-             closelog();
              return EXIT_FAILURE;
           }
 
@@ -388,7 +394,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
              if (events[i].events & EPOLLIN)
                {
                   fprintf(stderr, "Epoll Data In\n");
-                  size = _recv_msg();
+                  _recv_msg();
                }
              else if (events[i].events & EPOLLERR)
                {
