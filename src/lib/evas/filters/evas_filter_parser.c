@@ -265,8 +265,8 @@ _instruction_param_gets(Evas_Filter_Instruction *instr, const char *name,
 
 #define CHARS_ALPHABET "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ"
 #define CHARS_NUMS "0123456789"
-#define CHARS_DELIMS "=-(),;#."
-//static const char *allowed_chars = DELIMS;
+#define CHARS_DELIMS "=-(),;#.:"
+static const char *allowed_chars = CHARS_ALPHABET CHARS_NUMS "_";
 static const char *allowed_delim = CHARS_DELIMS;
 
 static char *
@@ -666,26 +666,6 @@ _buffer_del(Buffer *buf)
 /* Instruction definitions */
 
 static Eina_Bool
-_buffer_instruction_prepare(Evas_Filter_Instruction *instr)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "buffer"), EINA_FALSE);
-
-   /*
-   * buffer [name=]NAME (alpha=BOOL) (src=OBJECT)
-   * Alpha is not compatible with src, as proxy rendering implies RGBA
-   */
-
-   instr->type = EVAS_FILTER_MODE_BUFFER;
-   _instruction_param_seq_add(instr, "name", VT_STRING, NULL);
-   _instruction_param_name_add(instr, "alpha", VT_BOOL, EINA_FALSE);
-   _instruction_param_name_add(instr, "src", VT_STRING, NULL);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
 _blend_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
@@ -1000,9 +980,7 @@ _instruction_create(const char *name)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(name && *name, EINA_FALSE);
 
-   if (!strcasecmp(name, "buffer"))
-     prepare = _buffer_instruction_prepare;
-   else if (!strcasecmp(name, "blend"))
+   if (!strcasecmp(name, "blend"))
      prepare = _blend_instruction_prepare;
    else if (!strcasecmp(name, "blur"))
      prepare = _blur_instruction_prepare;
@@ -1063,35 +1041,47 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
 }
 
 static Eina_Bool
-_instruction_buffer_parse(Evas_Filter_Program *pgm,
-                          Evas_Filter_Instruction *instr)
+_instruction_buffer_parse(Evas_Filter_Program *pgm, char *command)
 {
-   Instruction_Param *param;
    Eina_Bool success = EINA_FALSE;
-   const char *bufname = NULL, *src = NULL;
-   int found = 0;
-   int alpha = -1;
+   char *bufname = NULL, *src = NULL, *tok, *tok2;
+   Eina_Bool alpha = EINA_FALSE;
+   size_t sz;
 
-   EINA_INLIST_FOREACH(instr->params, param)
+   /** @internal
+    * Parse a buffer instruction. Its syntax is:
+    * buffer:a;
+    * buffer:a(rgba);
+    * buffer:a(alpha);
+    */
+
+   tok = strchr(command, ':');
+   PARSE_CHECK(tok);
+   PARSE_CHECK(!strncasecmp("buffer:", command, tok - command));
+
+   tok++;
+   tok2 = strchr(tok, '(');
+   if (!tok2)
+     bufname = tok;
+   else
      {
-        if (!bufname && !strcasecmp(param->name, "name"))
-          {
-             PARSE_CHECK(eina_value_get(param->value, &bufname));
-             found++;
-          }
-        else if ((alpha == -1) && !strcasecmp(param->name, "alpha"))
-          {
-             PARSE_CHECK(eina_value_get(param->value, &alpha));
-             found++;
-          }
-        else if (param->set && !strcasecmp(param->name, "src"))
-          {
-             PARSE_CHECK(eina_value_get(param->value, &src));
-             found++;
-          }
+        *tok2++ = 0;
+        bufname = tok;
+        tok = strchr(tok2, ')');
+        PARSE_CHECK(tok);
+        *tok = 0;
+        if (!*tok2)
+          alpha = EINA_FALSE;
+        else if (!strcasecmp(tok2, "rgba"))
+          alpha = EINA_FALSE;
+        else if (!strcasecmp(tok2, "alpha"))
+          alpha = EINA_TRUE;
+        else
+          PARSE_CHECK(!"Invalid buffer type");
      }
 
-   PARSE_CHECK(found >= 2);
+   sz = strspn(bufname, allowed_chars);
+   PARSE_CHECK(sz == strlen(bufname));
    PARSE_CHECK(_buffer_add(pgm, bufname, (alpha != 0), src));
    success = EINA_TRUE;
 
@@ -1107,8 +1097,9 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    Evas_Filter_Instruction *instr = NULL;
    Instruction_Param *param;
    Eina_Bool success = EINA_FALSE, ok;
-   char *token, *next, *code, *instrname, *options;
+   char *token, *next, *code, *instrname;
    int count = 0;
+   size_t spn;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
@@ -1117,7 +1108,8 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    code = _whitespace_ignore_strdup(str);
    EINA_SAFETY_ON_NULL_RETURN_VAL(code, EINA_FALSE);
 
-   // FIXME: Comments and strings will be broken by strsep if they contain ';'
+   // NOTE: '' or "" strings will be broken by strsep if they contain ';'.
+   // But we don't support them anyway :)
 
    next = code;
    while ((token = strsep(&next, ";")) != NULL)
@@ -1133,22 +1125,23 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
         // Empty command
         if (next == token + 1) continue;
 
-        // Parse "instrname(options)"
-        options = token;
-        instrname = strsep(&options, "(");
-        PARSE_CHECK(options);
-
-        instr = _instruction_create(instrname);
-        PARSE_CHECK(instr);
-
-        options[-1] = '(';
-        ok = _instruction_parse(instr, token);
-        PARSE_CHECK(ok);
-
-        if (!strcasecmp(instr->name, "buffer"))
-          PARSE_CHECK(_instruction_buffer_parse(pgm, instr));
-        else
+        // Parse "instrname(options)" or "buffer:a(options)"
+        spn = strcspn(token, "(:");
+        PARSE_CHECK(spn);
+        if (token[spn] == ':')
+          PARSE_CHECK(_instruction_buffer_parse(pgm, token));
+        else if (token[spn] == '(')
           {
+             instrname = token;
+             instrname[spn] = 0;
+
+             instr = _instruction_create(instrname);
+             PARSE_CHECK(instr);
+
+             instrname[spn] = '(';
+             ok = _instruction_parse(instr, token);
+             PARSE_CHECK(ok);
+
              // Check buffers validity
              EINA_INLIST_FOREACH(instr->params, param)
                {
@@ -1166,9 +1159,9 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
              // Add to the queue
              pgm->instructions = eina_inlist_append(pgm->instructions, EINA_INLIST_GET(instr));
              instr = NULL;
+             count++;
           }
-
-        count++;
+        else PARSE_CHECK(!"invalid command");
      }
    success = EINA_TRUE;
 
