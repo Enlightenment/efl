@@ -9,19 +9,12 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-# include <fcntl.h>
 # include <errno.h>
-# include <signal.h>
 # include <sys/mman.h>
-# include <sys/socket.h>
-# include <sys/stat.h>
-# include <sys/ioctl.h>
-
-# include <linux/major.h>
-# include <linux/vt.h>
-# include <linux/kd.h>
+# include <fcntl.h>
 
 # include <libudev.h>
+# include <libinput.h>
 
 # include <xf86drm.h>
 # include <xf86drmMode.h>
@@ -100,12 +93,78 @@ extern FILE *lg;
 
 extern struct udev *udev;
 
+struct _Ecore_Drm_Output_Mode
+{
+   unsigned int flags;
+   int width, height;
+   unsigned int refresh;
+   drmModeModeInfo info;
+};
+
+struct _Ecore_Drm_Output
+{
+   unsigned int crtc_id;
+   unsigned int conn_id;
+   drmModeCrtcPtr crtc;
+
+   int x, y;
+
+   const char *make, *model, *name;
+   unsigned int subpixel;
+
+   Ecore_Drm_Output_Mode *current_mode;
+   Eina_List *modes;
+   /* TODO: finish */
+};
+
+struct _Ecore_Drm_Seat
+{
+   struct libinput_seat *seat;
+   const char *name;
+   Ecore_Drm_Input *input;
+   Eina_List *devices;
+};
+
+struct _Ecore_Drm_Input
+{
+   int fd;
+   struct libinput *linput;
+   Ecore_Fd_Handler *input_hdlr;
+   Eina_Bool suspended : 1;
+};
+
+struct _Ecore_Drm_Evdev
+{
+   Ecore_Drm_Seat *seat;
+   struct libinput *linput;
+   struct libinput_device *dev;
+   const char *name;
+   int fd;
+};
+
 struct _Ecore_Drm_Device
 {
-   int id, fd;
-   const char *devname;
-   const char *devpath;
-   clockid_t drm_clock;
+   int id;
+   const char *seat;
+
+   struct 
+     {
+        int fd;
+        const char *name;
+        const char *path;
+        clockid_t clock;
+        Ecore_Fd_Handler *hdlr;
+     } drm;
+
+   unsigned int min_width, min_height;
+   unsigned int max_width, max_height;
+
+   unsigned int crtc_count;
+   unsigned int *crtcs;
+   unsigned int crtc_allocator;
+
+   Eina_List *inputs;
+   Eina_List *outputs;
 
    struct 
      {
@@ -117,5 +176,9 @@ struct _Ecore_Drm_Device
 
 void _ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes);
 Eina_Bool _ecore_drm_message_receive(int opcode, int *fd, void **data, size_t bytes);
+
+Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(struct libinput *linput, struct libinput_device *device);
+void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
+int _ecore_drm_evdev_event_process(struct libinput_event *event);
 
 #endif
