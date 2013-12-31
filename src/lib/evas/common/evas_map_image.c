@@ -58,13 +58,13 @@ _interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
 }
 
 static inline void
-_limit(Span *s, int c1, int c2, int nocol)
+_interpolated_clip_span(Span *s, int c1, int c2, Eina_Bool interp_col)
 {
    if (s->x1 < c1)
      {
         s->u[0] = _interp(s->x1, s->x2, c1, s->u[0], s->u[1]);
         s->v[0] = _interp(s->x1, s->x2, c1, s->v[0], s->v[1]);
-        if (!nocol)
+        if (interp_col)
           s->col[0] = _interp_col(s->x1, s->x2, c1, s->col[0], s->col[1]);
         s->x1 = c1;
         s->o1 = c1 << FP;
@@ -74,7 +74,7 @@ _limit(Span *s, int c1, int c2, int nocol)
      {
         s->u[1] = _interp(s->x1, s->x2, c2, s->u[0], s->u[1]);
         s->v[1] = _interp(s->x1, s->x2, c2, s->v[0], s->v[1]);
-        if (!nocol)
+        if (interp_col)
           s->col[1] = _interp_col(s->x1, s->x2, c2, s->col[0], s->col[1]);
         s->x2 = c2;
         s->o2 = c2 << FP;
@@ -91,25 +91,27 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    int edge[4][4], edge_num, swapped, order[4];
    FPc uv[4][2], u, v, x, h, t, uu, vv;
    DATA32 col[4];
-   
+   Eina_Bool interp_col = EINA_FALSE;
+
 #if 1 // maybe faster on x86?
    for (i = 0; i < 4; i++) py[i] = p[i].y >> FP;
-# define PY(x) (py[x])   
+# define PY(x) (py[x])
 #else
 # define PY(x) (p[x].y >> FP) 
 #endif
-   
+
+   //Horizontal Line?
    if ((PY(0) == PY(1)) && (PY(0) == PY(2)) && (PY(0) == PY(3)))
      {
         int leftp, rightp;
-        int nocol = 1;
-        
+
         leftp = rightp = 0;
+
         for (i = 1; i < 4; i++)
           {
              if (p[i].x < p[leftp].x) leftp = i;
              if (p[i].x > p[rightp].x) rightp = i;
-             if (p[i].col != 0xffffffff) nocol = 0;
+             if (p[i].col != 0xffffffff) interp_col = EINA_TRUE;
           }
         for (y = ystart; y <= yend; y++)
           {
@@ -127,16 +129,19 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   spans[yp].span[i].u[1] = p[rightp].u;
                   spans[yp].span[i].v[1] = p[rightp].v;
                   spans[yp].span[i].col[1] = p[rightp].col;
+                  //Outside of the clipper
                   if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                       (spans[yp].span[i].x2 < cx))
                     spans[yp].span[i].x1 = -1;
                   else
                     {
-                       _limit(&(spans[yp].span[i]), cx, cx + cw, nocol);
+                       _interpolated_clip_span(&(spans[yp].span[i]), cx,
+                                              (cx + cw), interp_col);
                        i++;
                        spans[yp].span[i].x1 = -1;
                     }
                }
+             //Exceptional Case.
              else
                spans[yp].span[0].x1 = -1;
           }
@@ -144,10 +149,10 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
      }
    for (y = ystart; y <= yend; y++)
      {
-        int nocol = 1;
-        
         yp = y - ystart;
         edge_num = 0;
+
+        //Find edges that intersects with current scanline.
         for (i = 0; i < 4; i++)
           {
              if ((PY(i) <= y) && (PY((i + 1) % 4) > y))
@@ -162,15 +167,16 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   edge[edge_num][1] = i;
                   edge_num++;
                }
-             if (p[i].col != 0xffffffff) nocol = 0;
+             if (p[i].col != 0xffffffff) interp_col = EINA_TRUE;
           }
+
         // calculate line x points for each edge
         for (i = 0; i < edge_num; i++)
           {
              int e1 = edge[i][0];
              int e2 = edge[i][1];
              FPc t256;
-             
+
              h = (p[e2].y - p[e1].y) >> FP; // height of edge
              if (h < 1) h = 1;
              t = (((y << FP) + (FP1 / 2) - 1) - p[e1].y) >> FP;
@@ -241,7 +247,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   else
                      u = p[e1].u + (((u * t) - (FP1 / 2)) / h);
                }
-             
+
              v = p[e2].v - p[e1].v;
              vv = v >> FP;
              if (vv < 0) vv = -vv;
@@ -264,7 +270,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              // FIXME: 3d accuracy for color too
              t256 = (t << 8) / h; // maybe * 255?
              col[i] = INTERP_256(t256, p[e2].col, p[e1].col);
-             
+
              // FIXME: store z persp
              uv[i][1] = v;
              uv[i][0] = u;
@@ -297,7 +303,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].u[0] = uv[order[0]][0];
              spans[yp].span[i].v[0] = uv[order[0]][1];
              spans[yp].span[i].col[0] = col[order[0]];
-             
+
              spans[yp].span[i].x2 = edge[order[1]][2];
              spans[yp].span[i].o2 = edge[order[1]][3];
              spans[yp].span[i].u[1] = uv[order[1]][0];
@@ -308,7 +314,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                spans[yp].span[i].x1 = -1;
              else
                {
-                  _limit(&(spans[yp].span[i]), cx, cx + cw, nocol);
+                  _interpolated_clip_span(&(spans[yp].span[i]), cx, (cx + cw),
+                                          interp_col);
                   i++;
                   spans[yp].span[i].x1 = -1;
                }
@@ -320,7 +327,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].u[0] = uv[order[0]][0];
              spans[yp].span[i].v[0] = uv[order[0]][1];
              spans[yp].span[i].col[0] = col[order[0]];
-             
+
              spans[yp].span[i].x2 = edge[order[1]][2];
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
@@ -330,14 +337,15 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                spans[yp].span[i].x1 = -1;
              else
                {
-                  _limit(&(spans[yp].span[i]), cx, cx + cw, nocol);
+                  _interpolated_clip_span(&(spans[yp].span[i]), cx, (cx + cw),
+                                          interp_col);
                   i++;
                }
              spans[yp].span[i].x1 = edge[order[2]][2];
              spans[yp].span[i].u[0] = uv[order[2]][0];
              spans[yp].span[i].v[0] = uv[order[2]][1];
              spans[yp].span[i].col[0] = col[order[2]];
-             
+
              spans[yp].span[i].x2 = edge[order[3]][2];
              spans[yp].span[i].u[1] = uv[order[3]][0];
              spans[yp].span[i].v[1] = uv[order[3]][1];
@@ -348,9 +356,10 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              else
                {
                   int l = cx;
-                  
+
                   if (i > 0) l = spans[yp].span[i - 1].x2;
-                  _limit(&(spans[yp].span[i]), l, cx + cw, nocol);
+                  _interpolated_clip_span(&(spans[yp].span[i]), l, (cx + cw),
+                                          interp_col);
                }
           }
         else
@@ -363,7 +372,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
  */
 static void
 _clip_spans(Line *spans, int ystart, int yend,
-            int cx, int cw, Eina_Bool nocol)
+            int cx, int cw, Eina_Bool interp_col)
 {
    int y, yp;
 
@@ -378,7 +387,8 @@ _clip_spans(Line *spans, int ystart, int yend,
                }
              else
                {
-                  _limit(&(spans[yp].span[0]), cx, cx + cw, nocol);
+                  _interpolated_clip_span(&(spans[yp].span[0]), cx, (cx + cw),
+                                          interp_col);
 
                   if ((spans[yp].span[1].x1 >= (cx + cw)) ||
                       (spans[yp].span[1].x2 < cx))
@@ -387,9 +397,9 @@ _clip_spans(Line *spans, int ystart, int yend,
                     }
                   else
                     {
-                       _limit(&(spans[yp].span[1]),
-                              spans[yp].span[0].x2,
-                              cx + cw, nocol);
+                       _interpolated_clip_span(&(spans[yp].span[1]),
+                                               spans[yp].span[0].x2,
+                                               cx + cw, interp_col);
                     }
                }
           }
@@ -407,7 +417,6 @@ struct _RGBA_Map_Spans
    int yend;
 
    int havecol;
-   Eina_Bool nocol;
    Eina_Bool havea;
    Eina_Bool direct;
 };

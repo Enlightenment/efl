@@ -149,7 +149,7 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    spans = alloca((yend - ystart + 1) * sizeof(Line));
    memcpy(spans, &ms->spans[ystart - ms->ystart],
           (yend - ystart + 1) * sizeof(Line));
-   _clip_spans(spans, ystart, yend, cx, cw, ms->nocol);
+   _clip_spans(spans, ystart, yend, cx, cw, EINA_TRUE);
 
    // if operation is solid, bypass buf and draw func and draw direct to dst
    if (!direct)
