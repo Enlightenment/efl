@@ -3,6 +3,10 @@
 #endif
 
 #include "ecore_drm_private.h"
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <linux/vt.h>
+#include <linux/kd.h>
 
 #ifndef KDSKBMUTE
 # define KDSKBMUTE 0x4B51
@@ -129,11 +133,10 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
 EAPI Eina_Bool 
 ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 {
-   Eina_Bool ret = EINA_FALSE;
    char tty[32] = "<stdin>";
 
    /* check for valid device */
-   if ((!dev) || (!dev->devname)) return EINA_FALSE;
+   if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
 
    /* assign default tty fd of -1 */
    dev->tty.fd = -1;
@@ -152,23 +155,14 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 
    if (dev->tty.fd < 0)
      {
-        void *data = malloc(sizeof(int));
-
         DBG("Trying to Open Tty: %s", tty);
 
-        /* try to open the tty */
-        _ecore_drm_message_send(ECORE_DRM_OP_TTY_OPEN, -1, tty, strlen(tty));
-
-        /* get the result of the open operation */
-        ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_OPEN, &dev->tty.fd,
-                                         &data, sizeof(data));
-        if (!ret)
+        dev->tty.fd = open(tty, O_RDWR | O_NOCTTY);
+        if (dev->tty.fd < 0)
           {
-             DBG("Failed to receive Open Tty Message");
+             DBG("Failed to Open Tty: %m");
              return EINA_FALSE;
           }
-
-        free(data);
      }
 
    if (dev->tty.fd < 0)
@@ -209,25 +203,12 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 EAPI Eina_Bool 
 ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
-   Eina_Bool ret = EINA_FALSE;
-   void *data = malloc(sizeof(int));
-
    /* check for valid device */
-   if ((!dev) || (!dev->devname)) return EINA_FALSE;
+   if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
 
-   /* try to close the tty */
-   _ecore_drm_message_send(ECORE_DRM_OP_TTY_CLOSE, dev->tty.fd,
-                           NULL, 0);
-//                           &dev->tty.fd, sizeof(int));
-
-   /* get the result of the close operation */
-   ret = _ecore_drm_message_receive(ECORE_DRM_OP_TTY_CLOSE, NULL,
-                                    &data, sizeof(int));
-   if (!ret) return EINA_FALSE;
+   close(dev->tty.fd);
 
    dev->tty.fd = -1;
-
-   free(data);
 
    /* destroy the event handler */
    if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr);
@@ -255,7 +236,7 @@ EAPI Eina_Bool
 ecore_drm_tty_release(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (!dev->devname) || (dev->tty.fd < 0)) return EINA_FALSE;
+   if ((!dev) || (!dev->drm.name) || (dev->tty.fd < 0)) return EINA_FALSE;
 
    /* send ioctl for vt release */
    if (ioctl(dev->tty.fd, VT_RELDISP, 1) < 0) return EINA_FALSE;
@@ -276,7 +257,7 @@ EAPI Eina_Bool
 ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (!dev->devname) || (dev->tty.fd < 0)) return EINA_FALSE;
+   if ((!dev) || (!dev->drm.name) || (dev->tty.fd < 0)) return EINA_FALSE;
 
    /* send ioctl for vt acquire */
    if (ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ) < 0) return EINA_FALSE;
