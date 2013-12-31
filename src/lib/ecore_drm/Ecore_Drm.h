@@ -51,6 +51,21 @@ typedef struct _Ecore_Drm_Message
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
+/* opaque structure to represent a drm output mode */
+typedef struct _Ecore_Drm_Output_Mode Ecore_Drm_Output_Mode;
+
+/* opaque structure to represent a drm output */
+typedef struct _Ecore_Drm_Output Ecore_Drm_Output;
+
+/* opaque structure to represent a drm udev input */
+typedef struct _Ecore_Drm_Input Ecore_Drm_Input;
+
+/* opaque structure to represent a drm evdev input */
+typedef struct _Ecore_Drm_Evdev Ecore_Drm_Evdev;
+
+/* opaque structure to represent a drm seat */
+typedef struct _Ecore_Drm_Seat Ecore_Drm_Seat;
+
 /**
  * @file
  * @brief Ecore functions for dealing with drm, virtual terminals
@@ -81,5 +96,13 @@ EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
 EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_tty_release(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_tty_acquire(Ecore_Drm_Device *dev);
+
+EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
+EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
+
+EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
+EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
+EAPI Eina_Bool ecore_drm_inputs_enable(Ecore_Drm_Input *input);
+//EAPI Eina_Bool ecore_drm_inputs_disable(Ecore_Drm_Input *input);
 
 #endif
