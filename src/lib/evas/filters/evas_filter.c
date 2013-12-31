@@ -25,6 +25,7 @@ static void _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd);
 
 #define DRAW_COLOR_SET(r, g, b, a) do { cmd->draw.R = r; cmd->draw.G = g; cmd->draw.B = b; cmd->draw.A = a; } while (0)
 #define DRAW_CLIP_SET(x, y, w, h) do { cmd->draw.clipx = x; cmd->draw.clipy = y; cmd->draw.clipw = w; cmd->draw.cliph = h; } while (0)
+#define DRAW_FILL_SET(fmode) do { cmd->draw.fillmode = fmode; } while (0)
 
 typedef struct _Evas_Filter_Thread_Command Evas_Filter_Thread_Command;
 struct _Evas_Filter_Thread_Command
@@ -729,7 +730,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
      {
         INF("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
-        id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy);
+        id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, R, G, B, A);
         if (id < 0) goto fail;
      }
@@ -737,7 +738,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    if (convert)
      {
         INF("Add convert %d -> %d", blur_out->id, out->id);
-        id = evas_filter_command_blend_add(ctx, drawctx, blur_out->id, out->id, ox, oy);
+        id = evas_filter_command_blend_add(ctx, drawctx, blur_out->id, out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         if (id < 0) goto fail;
      }
 
@@ -752,7 +753,8 @@ fail:
 
 int
 evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
-                              int inbuf, int outbuf, int ox, int oy)
+                              int inbuf, int outbuf, int ox, int oy,
+                              Evas_Filter_Fill_Mode fillmode)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out;
@@ -785,6 +787,7 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
 
    ENFN->context_color_get(ENDT, drawctx, &R, &G, &B, &A);
    DRAW_COLOR_SET(R, G, B, A);
+   DRAW_FILL_SET(fillmode);
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
    cmd->draw.render_op = ENFN->context_render_op_get(ENDT, drawctx);
@@ -889,7 +892,8 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
                                          void *draw_context EINA_UNUSED,
                                          int inbuf, int outbuf, int dispbuf,
                                          Evas_Filter_Displacement_Flags flags,
-                                         int intensity)
+                                         int intensity,
+                                         Evas_Filter_Fill_Mode fillmode)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out, *map, *tmp = NULL, *disp_out;
@@ -925,6 +929,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
    cmd = _command_new(ctx, EVAS_FILTER_MODE_DISPLACE, in, map, disp_out);
    if (!cmd) goto end;
 
+   DRAW_FILL_SET(fillmode);
    cmd->displacement.flags = flags & EVAS_FILTER_DISPLACE_BITMASK;   
    cmd->displacement.intensity = intensity;
    cmdid = cmd->id;
@@ -946,7 +951,8 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
    if (tmp)
      {
         if (evas_filter_command_blend_add(ctx, draw_context, disp_out->id,
-                                          out->id, 0, 0) < 0)
+                                          out->id, 0, 0,
+                                          EVAS_FILTER_FILL_MODE_NONE) < 0)
           {
              _command_del(ctx, _command_get(ctx, cmdid));
              cmdid = -1;
@@ -960,7 +966,8 @@ end:
 
 int
 evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context,
-                             int inbuf, int maskbuf, int outbuf)
+                             int inbuf, int maskbuf, int outbuf,
+                             Evas_Filter_Fill_Mode fillmode)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out, *mask;
@@ -987,6 +994,7 @@ evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context,
 
    cmd->draw.render_op = render_op;
    DRAW_COLOR_SET(R, G, B, A);
+   DRAW_FILL_SET(fillmode);
 
    cmdid = cmd->id;
 
@@ -1002,7 +1010,8 @@ evas_filter_command_bump_map_add(Evas_Filter_Context *ctx,
                                  float xyangle, float zangle, float elevation,
                                  float sf,
                                  DATA32 black, DATA32 color, DATA32 white,
-                                 Evas_Filter_Bump_Flags flags)
+                                 Evas_Filter_Bump_Flags flags,
+                                 Evas_Filter_Fill_Mode fillmode)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out, *bumpmap;
@@ -1027,6 +1036,7 @@ evas_filter_command_bump_map_add(Evas_Filter_Context *ctx,
    cmd = _command_new(ctx, EVAS_FILTER_MODE_BUMP, in, bumpmap, out);
    if (!cmd) goto end;
 
+   DRAW_FILL_SET(fillmode);
    cmd->bump.xyangle = xyangle;
    cmd->bump.zangle = zangle;
    cmd->bump.specular_factor = sf;

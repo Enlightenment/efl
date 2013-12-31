@@ -121,9 +121,10 @@ Eina_Bool                evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_
  * @param outbuf         Destination buffer: ALPHA or RGBA (note: must be RGBA if inbuf is RGBA)
  * @param ox             X offset in the destination buffer
  * @param oy             Y offset in the destination buffer
+ * @param fillmode       Specifies whether to repeat or stretch the input onto its destination, and on which axes
  * @return               Filter command ID or -1 in case of error
  */
-int                      evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int ox, int oy);
+int                      evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int ox, int oy, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a blur effect on a buffer
@@ -172,9 +173,10 @@ int                      evas_filter_command_grow_add(Evas_Filter_Context *ctx, 
  * @param dispbuf        Displacement map. Should be an RGBA buffer, where the Red and Green channels are the displacement maps for X and Y. Can be also ALPHA buffer, in which case only one dimension can be specified (X or Y).
  * @param flags          Alters how the map is interpreted, @see Evas_Filter_Displacement_Flags
  * @param intensity      Maximum offset possible, if the map's value is maximal at this point (ie. 0 or 255)
+ * @param fillmode       Specifies how to repeat and stretch the map to fit the target size
  * @return               Filter command ID or -1 in case of error
  */
-int                      evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int dispbuf, Evas_Filter_Displacement_Flags flags, int intensity);
+int                      evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int dispbuf, Evas_Filter_Displacement_Flags flags, int intensity, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a texture to a buffer
@@ -183,10 +185,11 @@ int                      evas_filter_command_displacement_map_add(Evas_Filter_Co
  * @param inbuf          Input buffer (Alpha or RGBA)
  * @param maskbuf        Texture buffer (Alpha or RGBA)
  * @param outbuf         Output buffer (Alpha or RGBA)
+ * @param fillmode       Specifies how to repeat and stretch the mask to fit the target size
  * @return               Filter command ID or -1 in case of error
  * @note For the moment, inbuf can only be ALPHA, and output must be RGBA if mask is RGBA as well
  */
-int                      evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int maskbuf, int outbuf);
+int                      evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int maskbuf, int outbuf, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a relief effect based on a bump map (Z map)
@@ -203,9 +206,10 @@ int                      evas_filter_command_mask_add(Evas_Filter_Context *ctx, 
  * @param color            Light's normal color
  * @param white            Brightest color, used in the shininess effect
  * @param flags            Optional flags: compensation for darkening
+ * @param fillmode         Specifies how to repeat and stretch the map to fit the target size
  * @return                 Filter command ID or -1 in case of error
  */
-int                      evas_filter_command_bump_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int bumpbuf, int outbuf, float azimuth, float elevation, float depth, float specular_factor, DATA32 black, DATA32 color, DATA32 white, Evas_Filter_Bump_Flags flags);
+int                      evas_filter_command_bump_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int bumpbuf, int outbuf, float azimuth, float elevation, float depth, float specular_factor, DATA32 black, DATA32 color, DATA32 white, Evas_Filter_Bump_Flags flags, Evas_Filter_Fill_Mode fillmode);
 
 #endif
 

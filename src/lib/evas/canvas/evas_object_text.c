@@ -2165,7 +2165,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
 
         // FIXME: This final blend is not necessary. Needs to be removed.
         evas_filter_command_blend_add(filter, context, outbuf, targetbuf,
-                                      X + x, Y + y);
+                                      X + x, Y + y, EVAS_FILTER_FILL_MODE_NONE);
 
         ENFN->context_free(ENDT, filter_ctx);
 

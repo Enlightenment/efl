@@ -102,6 +102,7 @@ struct _Evas_Filter_Command
       int R, G, B, A;
       int ox, oy;
       int clipx, clipy, clipw, cliph;
+      Evas_Filter_Fill_Mode fillmode;
    } draw;
 };
 

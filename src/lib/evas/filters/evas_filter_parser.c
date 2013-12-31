@@ -284,7 +284,7 @@ _instruction_param_gets(Evas_Filter_Instruction *instr, const char *name,
 
 #define CHARS_ALPHABET "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ"
 #define CHARS_NUMS "0123456789"
-#define CHARS_DELIMS "=-(),;#.:"
+#define CHARS_DELIMS "=-(),;#.:_"
 static const char *allowed_chars = CHARS_ALPHABET CHARS_NUMS "_";
 static const char *allowed_delim = CHARS_DELIMS;
 
@@ -372,7 +372,7 @@ _is_valid_string(const char *str)
    if (!isalpha(*str++))
      return EINA_FALSE;
    for (; *str; str++)
-     if (!isalpha(*str) && !isdigit(*str))
+     if (!isalpha(*str) && !isdigit(*str) && (*str != '_'))
        return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -701,7 +701,7 @@ _blend_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "ox", VT_INT, 0);
    _instruction_param_seq_add(instr, "oy", VT_INT, 0);
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
-   _instruction_param_name_add(instr, "fill", VT_STRING, "none");
+   _instruction_param_name_add(instr, "fillmode", VT_STRING, "none");
 
    return EINA_TRUE;
 }
@@ -811,7 +811,7 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_name_add(instr, "black", VT_COLOR, 0xFF000000);
    _instruction_param_name_add(instr, "white", VT_COLOR, 0xFFFFFFFF);
-   _instruction_param_name_add(instr, "fill", VT_STRING, "repeat");
+   _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
 
    return EINA_TRUE;
 }
@@ -893,7 +893,7 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "flags", VT_INT, 0x0); // FIXME
    _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
-   _instruction_param_name_add(instr, "fill", VT_STRING, "repeat");
+   _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
 
    return EINA_TRUE;
 }
@@ -990,7 +990,7 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
-   _instruction_param_name_add(instr, "fill", VT_STRING, "none");
+   _instruction_param_name_add(instr, "fillmode", VT_STRING, "none");
 
    return EINA_TRUE;
 }
@@ -1297,7 +1297,7 @@ _fill_mode_get(Evas_Filter_Instruction *instr)
    unsigned k;
 
    if (!instr) return EVAS_FILTER_FILL_MODE_NONE;
-   fill = _instruction_param_gets(instr, "fill", NULL);
+   fill = _instruction_param_gets(instr, "fillmode", NULL);
 
    for (k = 0; k < sizeof(fill_modes) / sizeof(fill_modes[0]); k++)
      {
@@ -1329,7 +1329,8 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    out = _buffer_get(pgm, dst);
 
    if (isset) SETCOLOR(color);
-   cmdid = evas_filter_command_blend_add(ctx, dc, in->cid, out->cid, ox, oy);
+   cmdid = evas_filter_command_blend_add(ctx, dc, in->cid, out->cid, ox, oy,
+                                         fillmode);
    if (isset) RESETCOLOR();
 
    return cmdid;
@@ -1412,7 +1413,8 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    cmdid = evas_filter_command_bump_map_add(ctx, dc, in->cid, bump->cid, out->cid,
                                             azimuth, elevation, depth, specular,
-                                            black, color, white, flags);
+                                            black, color, white, flags,
+                                            fillmode);
 
    return cmdid;
 }
@@ -1439,7 +1441,8 @@ _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    mask = _buffer_get(pgm, map);
 
    cmdid = evas_filter_command_displacement_map_add(ctx, dc, in->cid, out->cid,
-                                                    mask->cid, flags, intensity);
+                                                    mask->cid, flags, intensity,
+                                                    fillmode);
 
    return cmdid;
 }
@@ -1514,7 +1517,7 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    ENFN->context_color_get(ENDT, dc, &R, &G, &B, &A);
    ENFN->context_color_set(ENDT, dc, R_VAL(&color), G_VAL(&color), B_VAL(&color), A_VAL(&color));
-   cmdid = evas_filter_command_mask_add(ctx, dc, in->cid, mask->cid, out->cid);
+   cmdid = evas_filter_command_mask_add(ctx, dc, in->cid, mask->cid, out->cid, fillmode);
    ENFN->context_color_set(ENDT, dc, R, G, B, A);
 
    return cmdid;
