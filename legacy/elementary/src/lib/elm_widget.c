@@ -3138,16 +3138,16 @@ _elm_widget_signal_callback_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 EAPI void
 elm_widget_focus_set(Evas_Object *obj,
-                     int first)
+                     Eina_Bool focus)
 {
    ELM_WIDGET_CHECK(obj);
-   eo_do(obj, elm_wdg_focus_set(first));
+   eo_do(obj, elm_wdg_focus_set(focus));
 }
 
 static void
 _elm_widget_focus_set(Eo *obj, void *_pd, va_list *list)
 {
-   int first = va_arg(*list, int);
+   Eina_Bool focus = va_arg(*list, int);
 
    Elm_Widget_Smart_Data *sd = _pd;
 
@@ -3159,12 +3159,12 @@ _elm_widget_focus_set(Eo *obj, void *_pd, va_list *list)
         eo_do(obj, elm_wdg_on_focus(NULL));
      }
 
-   if (first)
+   if (focus)
      {
         if ((_is_focusable(sd->resize_obj)) &&
             (!elm_widget_disabled_get(sd->resize_obj)))
           {
-             elm_widget_focus_set(sd->resize_obj, first);
+             elm_widget_focus_set(sd->resize_obj, focus);
           }
         else
           {
@@ -3176,7 +3176,7 @@ _elm_widget_focus_set(Eo *obj, void *_pd, va_list *list)
                   if ((_is_focusable(child)) &&
                       (!elm_widget_disabled_get(child)))
                     {
-                       elm_widget_focus_set(child, first);
+                       elm_widget_focus_set(child, focus);
                        break;
                     }
                }
@@ -3192,7 +3192,7 @@ _elm_widget_focus_set(Eo *obj, void *_pd, va_list *list)
              if ((_is_focusable(child)) &&
                  (!elm_widget_disabled_get(child)))
                {
-                  elm_widget_focus_set(child, first);
+                  elm_widget_focus_set(child, focus);
                   break;
                }
           }

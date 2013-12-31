@@ -278,7 +278,7 @@ _entry_toggle_cb(void *data,
         elm_layout_signal_emit(data, "elm,state,active", "elm");
         _entry_show(sd);
         elm_entry_select_all(sd->ent);
-        elm_widget_focus_set(sd->ent, 1);
+        elm_widget_focus_set(sd->ent, EINA_TRUE);
         sd->entry_visible = EINA_TRUE;
      }
 }

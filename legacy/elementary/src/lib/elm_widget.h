@@ -645,7 +645,7 @@ EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, con
 EAPI Evas_Object     *elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI void             elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
-EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
+EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
@@ -1768,10 +1768,10 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  * No description supplied by the EAPI.
  *
- * @param[in] first
+ * @param[in] focus
  *
  */
-#define elm_wdg_focus_set(first) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_SET), EO_TYPECHECK(int, first)
+#define elm_wdg_focus_set(focus) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_SET), EO_TYPECHECK(Eina_Bool, focus)
 
 /**
  * @def elm_wdg_focused_object_clear
