@@ -1518,7 +1518,7 @@ _is_save_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = !elm_object_disabled_get(sd->name_entry);
+   if (ret) *ret = !elm_object_disabled_get(sd->name_entry);
 }
 
 EAPI void
@@ -1555,7 +1555,7 @@ _folder_only_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = sd->only_folder;
+   if (ret) *ret = sd->only_folder;
 }
 
 EAPI void
@@ -1620,7 +1620,7 @@ _buttons_ok_cancel_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = sd->ok_button ? EINA_TRUE : EINA_FALSE;
+   if (ret) *ret = sd->ok_button ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void
@@ -1656,7 +1656,7 @@ _expandable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = sd->expand;
+   if (ret) *ret = sd->expand;
 }
 
 EAPI void
@@ -1692,7 +1692,7 @@ _path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = sd->path;
+   if (ret) *ret = sd->path;
 }
 
 EAPI void
@@ -1751,7 +1751,7 @@ _mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Fileselector_Mode *ret = va_arg(*list, Elm_Fileselector_Mode *);
    Elm_Fileselector_Smart_Data *sd = _pd;
-   *ret = sd->mode;
+   if (ret) *ret = sd->mode;
 }
 
 EAPI void
@@ -1817,7 +1817,7 @@ _multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
 
-   *ret = sd->multi;
+   if (ret) *ret = sd->multi;
 }
 
 EAPI const char *
@@ -1848,19 +1848,19 @@ _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
 
-   *ret = sd->path;
+   if (ret) *ret = sd->path;
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
         Elm_Object_Item *gl_it = elm_genlist_selected_item_get(sd->files_view);
 
-        if (gl_it) *ret = elm_object_item_data_get(gl_it);
+        if (gl_it && ret) *ret = elm_object_item_data_get(gl_it);
      }
    else
      {
         Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(sd->files_view);
 
-        if (gg_it) *ret = elm_object_item_data_get(gg_it);
+        if (gg_it && ret) *ret = elm_object_item_data_get(gg_it);
      }
 
 }
@@ -2118,7 +2118,7 @@ _hidden_visible_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Fileselector_Smart_Data *sd = _pd;
 
-   *ret = sd->hidden_visible;
+   if (ret) *ret = sd->hidden_visible;
 }
 
 EAPI void
@@ -2244,14 +2244,14 @@ static void
 _elm_fileselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static void
 _elm_fileselector_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static void
