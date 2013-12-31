@@ -238,7 +238,7 @@ _elm_widget_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->mirrored_auto_mode = EINA_TRUE; /* will follow system locale
                                           * settings */
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_mirrored_set(obj, elm_config_mirrored_get());
+   priv->is_mirrored = elm_config_mirrored_get();
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                   _obj_mouse_down, obj);
@@ -1095,7 +1095,7 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
         mirrored = elm_widget_mirrored_get(sobj);
 
         if ((scale != pscale) || (!sdc->on_create && th != pth) ||
-            (pmirrored != mirrored))
+            (!sdc->on_create && (pmirrored != mirrored)))
           elm_widget_theme(sobj);
 
         if (elm_widget_focus_get(sobj)) _parents_focus(obj);
