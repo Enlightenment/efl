@@ -117,6 +117,22 @@ _ecore_imf_modifier_to_ibus_modifier(unsigned int modifier)
    return state;
 }
 
+static unsigned int
+_ecore_imf_locks_to_ibus_modifier(unsigned int locks)
+{
+   unsigned int state = 0;
+
+   /**< "Num lock" is pressed */
+   if (locks & ECORE_IMF_KEYBOARD_LOCK_NUM)
+     state |= IBUS_MOD2_MASK;
+
+   /**< "Caps lock" is pressed */
+   if (locks & ECORE_IMF_KEYBOARD_LOCK_CAPS)
+     state |= IBUS_LOCK_MASK;
+
+   return state;
+}
+
 static void
 _ecore_imf_ibus_key_event_put(int keysym, int state)
 {
@@ -288,7 +304,8 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type
 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
-             state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) | IBUS_RELEASE_MASK;
+             state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) |
+                     _ecore_imf_locks_to_ibus_modifier(ev->locks) | IBUS_RELEASE_MASK;
 
              if (_sync_mode_use)
                {
@@ -318,7 +335,9 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type
 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
-             state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers);
+             state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) |
+                     _ecore_imf_locks_to_ibus_modifier(ev->locks);
+
              if (_sync_mode_use)
                {
                   retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
