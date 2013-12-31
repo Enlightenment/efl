@@ -13,6 +13,7 @@ typedef enum _Evas_Filter_Blur_Type Evas_Filter_Blur_Type;
 typedef enum _Evas_Filter_Channel Evas_Filter_Channel;
 typedef enum _Evas_Filter_Displacement_Flags Evas_Filter_Displacement_Flags;
 typedef enum _Evas_Filter_Bump_Flags Evas_Filter_Bump_Flags;
+typedef enum _Evas_Filter_Fill_Mode Evas_Filter_Fill_Mode;
 
 typedef Eina_Bool (* Evas_Filter_Apply_Func) (Evas_Filter_Command *cmd);
 typedef void (* Evas_Filter_Cb) (Evas_Filter_Context *ctx, void *data);
@@ -72,6 +73,19 @@ enum _Evas_Filter_Bump_Flags
 {
    EVAS_FILTER_BUMP_NORMAL       = 0x0,
    EVAS_FILTER_BUMP_COMPENSATE   = 0x1    /**< Compensate for darkening (diffuse light) or brightening (specular light) of zero gradient surfaces */
+};
+
+enum _Evas_Filter_Fill_Mode
+{
+   EVAS_FILTER_FILL_MODE_NONE               = 0x0,
+   EVAS_FILTER_FILL_MODE_STRETCH_X          = 0x1,
+   EVAS_FILTER_FILL_MODE_STRETCH_Y          = 0x2,
+   EVAS_FILTER_FILL_MODE_REPEAT_X           = 0x4,
+   EVAS_FILTER_FILL_MODE_REPEAT_Y           = 0x8,
+   EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y = EVAS_FILTER_FILL_MODE_REPEAT_X | EVAS_FILTER_FILL_MODE_STRETCH_Y,
+   EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X = EVAS_FILTER_FILL_MODE_REPEAT_Y | EVAS_FILTER_FILL_MODE_STRETCH_X,
+   EVAS_FILTER_FILL_MODE_REPEAT_XY          = EVAS_FILTER_FILL_MODE_REPEAT_X | EVAS_FILTER_FILL_MODE_REPEAT_Y,
+   EVAS_FILTER_FILL_MODE_STRETCH_XY         = EVAS_FILTER_FILL_MODE_STRETCH_X | EVAS_FILTER_FILL_MODE_STRETCH_Y
 };
 
 /* Parser stuff (high level API) */

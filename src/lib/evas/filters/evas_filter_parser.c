@@ -33,6 +33,25 @@ static struct
    { "transparent", 0x00000000 }
 };
 
+static struct
+{
+   const char *name;
+   Evas_Filter_Fill_Mode value;
+} fill_modes[] =
+{
+   { "none", EVAS_FILTER_FILL_MODE_NONE },
+   { "stretch_x", EVAS_FILTER_FILL_MODE_STRETCH_X },
+   { "stretch_y", EVAS_FILTER_FILL_MODE_STRETCH_Y },
+   { "repeat_x", EVAS_FILTER_FILL_MODE_REPEAT_X },
+   { "repeat_y", EVAS_FILTER_FILL_MODE_REPEAT_Y },
+   { "repeat_x_stretch_y", EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y },
+   { "repeat_y_stretch_x", EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X },
+   { "repeat", EVAS_FILTER_FILL_MODE_REPEAT_XY }, // alias
+   { "repeat_xy", EVAS_FILTER_FILL_MODE_REPEAT_XY },
+   { "stretch", EVAS_FILTER_FILL_MODE_STRETCH_XY }, // alias
+   { "stretch_xy", EVAS_FILTER_FILL_MODE_STRETCH_XY }
+};
+
 typedef enum
 {
    VT_NONE,
@@ -682,6 +701,7 @@ _blend_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "ox", VT_INT, 0);
    _instruction_param_seq_add(instr, "oy", VT_INT, 0);
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
+   _instruction_param_name_add(instr, "fill", VT_STRING, "none");
 
    return EINA_TRUE;
 }
@@ -791,6 +811,7 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_name_add(instr, "black", VT_COLOR, 0xFF000000);
    _instruction_param_name_add(instr, "white", VT_COLOR, 0xFFFFFFFF);
+   _instruction_param_name_add(instr, "fill", VT_STRING, "repeat");
 
    return EINA_TRUE;
 }
@@ -872,6 +893,7 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "flags", VT_INT, 0x0); // FIXME
    _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "fill", VT_STRING, "repeat");
 
    return EINA_TRUE;
 }
@@ -968,6 +990,7 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
+   _instruction_param_name_add(instr, "fill", VT_STRING, "none");
 
    return EINA_TRUE;
 }
@@ -1267,6 +1290,24 @@ evas_filter_program_proxy_source_get(Evas_Filter_Program *pgm, const char *name)
 #define RESETCOLOR() do { ENFN->context_color_set(ENDT, dc, R, G, B, A); } while (0)
 int A, R, G, B;
 
+static Evas_Filter_Fill_Mode
+_fill_mode_get(Evas_Filter_Instruction *instr)
+{
+   const char *fill;
+   unsigned k;
+
+   if (!instr) return EVAS_FILTER_FILL_MODE_NONE;
+   fill = _instruction_param_gets(instr, "fill", NULL);
+
+   for (k = 0; k < sizeof(fill_modes) / sizeof(fill_modes[0]); k++)
+     {
+        if (!strcasecmp(fill_modes[k].name, fill))
+          return fill_modes[k].value;
+     }
+
+   return EVAS_FILTER_FILL_MODE_NONE;
+}
+
 static int
 _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                  Evas_Filter_Instruction *instr, void *dc)
@@ -1275,6 +1316,7 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    const char *src, *dst;
    DATA32 color;
    Buffer *in, *out;
+   Evas_Filter_Fill_Mode fillmode;
    int cmdid, ox, oy;
 
    src = _instruction_param_gets(instr, "src", NULL);
@@ -1282,6 +1324,7 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
    color = _instruction_param_getc(instr, "color", &isset);
+   fillmode = _fill_mode_get(instr);
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
 
@@ -1342,6 +1385,7 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Bump_Flags flags = EVAS_FILTER_BUMP_NORMAL;
+   Evas_Filter_Fill_Mode fillmode;
    const char *src, *dst, *map;
    DATA32 color, black, white;
    Buffer *in, *out, *bump;
@@ -1359,6 +1403,7 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    depth = _instruction_param_getd(instr, "depth", NULL);
    specular = _instruction_param_getd(instr, "specular", NULL);
    compensate = _instruction_param_geti(instr, "compensate", NULL);
+   fillmode = _fill_mode_get(instr);
    if (compensate) flags |= EVAS_FILTER_BUMP_COMPENSATE;
 
    in = _buffer_get(pgm, src);
@@ -1377,6 +1422,7 @@ _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                     Evas_Filter_Instruction *instr, void *dc)
 {
    //Evas_Filter_Displacement_Flags flags = EVAS_FILTER_DISPLACE_RG;
+   Evas_Filter_Fill_Mode fillmode;
    const char *src, *dst, *map;
    Buffer *in, *out, *mask;
    int cmdid, intensity, flags;
@@ -1386,6 +1432,7 @@ _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    map = _instruction_param_gets(instr, "map", NULL);
    intensity = _instruction_param_geti(instr, "intensity", NULL);
    flags = _instruction_param_geti(instr, "flags", NULL);
+   fillmode = _fill_mode_get(instr);
 
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
@@ -1448,6 +1495,7 @@ static int
 _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                 Evas_Filter_Instruction *instr, void *dc)
 {
+   Evas_Filter_Fill_Mode fillmode;
    const char *src, *dst, *msk;
    Buffer *in, *out, *mask;
    DATA32 color;
@@ -1458,6 +1506,7 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    dst = _instruction_param_gets(instr, "dst", NULL);
    msk = _instruction_param_gets(instr, "mask", NULL);
    color = _instruction_param_getc(instr, "color", NULL);
+   fillmode = _fill_mode_get(instr);
 
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
