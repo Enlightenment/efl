@@ -2773,7 +2773,7 @@ _elm_entry_smart_text_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    const char *item = va_arg(*list, const char *);
    const char **ret = va_arg(*list, const char **);
    const char *text;
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    Elm_Entry_Smart_Data *sd = _pd;
 
@@ -2781,9 +2781,9 @@ _elm_entry_smart_text_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         if (!strcmp(item, "default")) goto proceed;
         else if (!strcmp(item, "guide"))
-          *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
+          if (ret) *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
         else
-          *ret = edje_object_part_text_get(sd->entry_edje, item);
+          if (ret) *ret = edje_object_part_text_get(sd->entry_edje, item);
         return;
      }
 
@@ -2826,7 +2826,7 @@ proceed:
         eina_stringshare_replace(&sd->text, text);
      }
 
-   *ret = sd->text;
+   if (ret) *ret = sd->text;
 }
 
 static char *
@@ -3534,7 +3534,7 @@ _text_style_user_peek(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char **ret = va_arg(*list, const char **);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text");
+   if (ret) *ret = edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text");
 }
 
 EAPI void
@@ -3586,7 +3586,7 @@ _single_line_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->single_line;
+   if (ret) *ret = sd->single_line;
 }
 
 EAPI void
@@ -3648,7 +3648,7 @@ _password_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->password;
+   if (ret) *ret = sd->password;
 }
 
 EAPI void
@@ -3740,10 +3740,10 @@ _is_empty(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
       will be removed once evas 1.0 is out */
    cur = evas_object_textblock_cursor_new((Evas_Object *)tb);
    evas_textblock_cursor_pos_set(cur, 0);
-   *ret = evas_textblock_cursor_char_next(cur);
+   if (ret) *ret = evas_textblock_cursor_char_next(cur);
    evas_textblock_cursor_free(cur);
 
-   *ret = !*ret;
+   if (ret) *ret = !*ret;
 }
 
 EAPI Evas_Object *
@@ -3761,8 +3761,9 @@ _textblock_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object **ret = va_arg(*list, Evas_Object **);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = (Evas_Object *)edje_object_part_object_get
-            (sd->entry_edje, "elm.text");
+   if (ret)
+     *ret = (Evas_Object *)edje_object_part_object_get
+        (sd->entry_edje, "elm.text");
 }
 
 EAPI void
@@ -3796,10 +3797,10 @@ _selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char **ret = va_arg(*list, const char **);
    Elm_Entry_Smart_Data *sd = _pd;
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    if ((sd->password)) return;
-   *ret = edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
+   if (ret) *ret = edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
 }
 
 EAPI void
@@ -3835,7 +3836,7 @@ _selection_handler_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->sel_handler_disabled;
+   if (ret) *ret = sd->sel_handler_disabled;
 }
 
 EAPI void
@@ -3892,7 +3893,7 @@ _line_wrap_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Wrap_Type *ret = va_arg(*list, Elm_Wrap_Type *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->line_wrap;
+   if (ret) *ret = sd->line_wrap;
 }
 
 EAPI void
@@ -3942,7 +3943,7 @@ _editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->editable;
+   if (ret) *ret = sd->editable;
 }
 
 EAPI void
@@ -4039,8 +4040,8 @@ _cursor_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_next
-            (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
+   if (ret) *ret = edje_object_part_text_cursor_next
+        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
 EAPI Eina_Bool
@@ -4058,7 +4059,7 @@ _cursor_prev(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_prev
+   if (ret) *ret = edje_object_part_text_cursor_prev
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4077,7 +4078,7 @@ _cursor_up(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_up
+   if (ret) *ret = edje_object_part_text_cursor_up
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4096,7 +4097,7 @@ _cursor_down(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_down
+   if (ret) *ret = edje_object_part_text_cursor_down
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4209,7 +4210,7 @@ _cursor_is_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_is_format_get
+   if (ret) *ret = edje_object_part_text_cursor_is_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4228,7 +4229,7 @@ _cursor_is_visible_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_is_visible_format_get
+   if (ret) *ret = edje_object_part_text_cursor_is_visible_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4247,7 +4248,7 @@ _cursor_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    char **ret = va_arg(*list, char **);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_content_get
+   if (ret) *ret = edje_object_part_text_cursor_content_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4285,7 +4286,7 @@ _cursor_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int *ret = va_arg(*list, int *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = edje_object_part_text_cursor_pos_get
+   if (ret) *ret = edje_object_part_text_cursor_pos_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
@@ -4429,7 +4430,7 @@ _context_menu_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = !sd->context_menu;
+   if (ret) *ret = !sd->context_menu;
 }
 
 EAPI const char *
@@ -4919,7 +4920,7 @@ _autosave_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->auto_save;
+   if (ret) *ret = sd->auto_save;
 }
 
 EINA_DEPRECATED EAPI void
@@ -4988,7 +4989,7 @@ _cnp_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Cnp_Mode *ret = va_arg(*list, Elm_Cnp_Mode *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->cnp_mode;
+   if (ret) *ret = sd->cnp_mode;
 }
 
 EAPI void
@@ -5080,7 +5081,7 @@ _scrollable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->scroll;
+   if (ret) *ret = sd->scroll;
 }
 
 EAPI void
@@ -5215,7 +5216,7 @@ _input_panel_layout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Input_Panel_Layout *ret = va_arg(*list, Elm_Input_Panel_Layout *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->input_panel_layout;
+   if (ret) *ret = sd->input_panel_layout;
 }
 
 EAPI void
@@ -5254,7 +5255,7 @@ _input_panel_layout_variation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int *ret = va_arg(*list, int *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->input_panel_layout_variation;
+   if (ret) *ret = sd->input_panel_layout_variation;
 }
 
 EAPI void
@@ -5291,7 +5292,7 @@ _autocapital_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Autocapital_Type *ret = va_arg(*list, Elm_Autocapital_Type *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->autocapital_type;
+   if (ret) *ret = sd->autocapital_type;
 }
 
 EAPI void
@@ -5328,7 +5329,7 @@ _prediction_allow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->prediction_allow;
+   if (ret) *ret = sd->prediction_allow;
 }
 
 EAPI void
@@ -5380,7 +5381,7 @@ _input_panel_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->input_panel_enable;
+   if (ret) *ret = sd->input_panel_enable;
 }
 
 EAPI void
@@ -5447,7 +5448,7 @@ _input_panel_language_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Input_Panel_Lang *ret = va_arg(*list, Elm_Input_Panel_Lang *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->input_panel_lang;
+   if (ret) *ret = sd->input_panel_lang;
 }
 
 EAPI void
@@ -5534,7 +5535,7 @@ _input_panel_return_key_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Input_Panel_Return_Key_Type *ret = va_arg(*list, Elm_Input_Panel_Return_Key_Type *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->input_panel_return_key_type;
+   if (ret) *ret = sd->input_panel_return_key_type;
 }
 
 EAPI void
@@ -5572,7 +5573,7 @@ _input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *li
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->input_panel_return_key_disabled;
+   if (ret) *ret = sd->input_panel_return_key_disabled;
 }
 
 EAPI void
@@ -5606,6 +5607,8 @@ static void
 _imf_context_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    void **ret = va_arg(*list, void **);
+   if (!ret) return;
+
    *ret = NULL;
    Elm_Entry_Smart_Data *sd = _pd;
    if (!sd) return;
@@ -5665,7 +5668,7 @@ _anchor_hover_parent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object **ret = va_arg(*list, Evas_Object **);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->anchor_hover.hover_parent;
+   if (ret) *ret = sd->anchor_hover.hover_parent;
 }
 
 EAPI void
@@ -5700,7 +5703,7 @@ _anchor_hover_style_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char **ret = va_arg(*list, const char **);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   *ret = sd->anchor_hover.hover_style;
+   if (ret) *ret = sd->anchor_hover.hover_style;
 }
 
 EAPI void
@@ -5724,14 +5727,14 @@ static void
 _elm_entry_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static void
 _elm_entry_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 static void
