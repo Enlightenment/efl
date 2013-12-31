@@ -20,7 +20,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    cw = clip_w;
    ch = clip_h;
 
-   // find y yop line and y bottom line
+   // find y top line and y bottom line
    ytop = p[0].y;
    if ((p[0].col >> 24) < 0xff) havea = 1;
    if (p[0].col == 0xffffffff) havecol--;
