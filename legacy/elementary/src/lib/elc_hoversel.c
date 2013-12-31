@@ -310,7 +310,7 @@ static void
 _elm_hoversel_smart_admits_autorepeat_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   if (ret) *ret = EINA_FALSE;
 }
 
 EAPI Evas_Object *
@@ -370,7 +370,7 @@ _hover_parent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Evas_Object **ret = va_arg(*list, Evas_Object **);
    Elm_Hoversel_Smart_Data *sd = _pd;
 
-   *ret = sd->hover_parent;
+   if (ret) *ret = sd->hover_parent;
 }
 
 EAPI void
@@ -407,7 +407,7 @@ _horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Hoversel_Smart_Data *sd = _pd;
 
-   *ret = sd->horizontal;
+   if (ret) *ret = sd->horizontal;
 }
 
 EAPI void
@@ -509,7 +509,7 @@ _items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const Eina_List **ret = va_arg(*list, const Eina_List **);
    Elm_Hoversel_Smart_Data *sd = _pd;
 
-   *ret = sd->items;
+   if (ret) *ret = sd->items;
 }
 
 EAPI Elm_Object_Item *
