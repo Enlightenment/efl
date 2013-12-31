@@ -4,28 +4,10 @@
 
 #include "ecore_drm_private.h"
 #include <sys/wait.h>
-/* #include <fcntl.h> */
-/* #include <sys/ioctl.h> */
-
-#if defined(SCM_CREDS) // Bsd
-# define CRED_STRUCT cmsgcred
-# define CRED_UID cmcred_uid
-# define CRED_PID cmcred_pid
-# define CRED_EUID cmcred_euid
-# define CRED_GID cmcred_gid
-# define SCM_CREDTYPE SCM_CREDS
-#elif defined(SCM_CREDENTIALS) // Linux (3.2.0 ?)
-# define CRED_STRUCT ucred
-# define CRED_UID uid
-# define CRED_PID pid
-# define CRED_GID gid
-# define CRED_OPT SO_PASSCRED
-# define SCM_CREDTYPE SCM_CREDENTIALS
-#endif
+#include <sys/socket.h>
+#include <signal.h>
 
 #define RIGHTS_LEN CMSG_LEN(sizeof(int))
-#define CREDS_LEN CMSG_LEN(sizeof(struct CRED_STRUCT))
-#define CONTROL_LEN (RIGHTS_LEN + CREDS_LEN)
 
 #define IOVSET(_iov, _addr, _len) \
    (_iov)->iov_base = (void *)(_addr); \
@@ -67,8 +49,8 @@ _ecore_drm_sockets_create(void)
    /*      return EINA_FALSE; */
    /*   } */
 
-   DBG("Parent Socket: %d", _ecore_drm_sockets[0]);
-   DBG("Child Socket: %d", _ecore_drm_sockets[1]);
+   /* DBG("Parent Socket: %d", _ecore_drm_sockets[0]); */
+   /* DBG("Child Socket: %d", _ecore_drm_sockets[1]); */
 
    return EINA_TRUE;
 }
@@ -82,17 +64,17 @@ _ecore_drm_launcher_spawn(void)
 
    if (pid == 0)
      {
-        char env[64], buff[PATH_MAX];
+        char renv[64], wenv[64], buff[PATH_MAX];
         char *args[1] = { NULL };
         sigset_t mask;
 
         /* read socket for slave is 1 */
-        snprintf(env, sizeof(env), "%d", _ecore_drm_sockets[1]);
-        setenv("ECORE_DRM_LAUNCHER_SOCKET_READ", env, 1);
+        snprintf(renv, sizeof(renv), "ECORE_DRM_LAUNCHER_SOCKET_READ=%d", 
+                 _ecore_drm_sockets[1]);
 
         /* write socket for slave is 0 */
-        snprintf(env, sizeof(env), "%d", _ecore_drm_sockets[0]);
-        setenv("ECORE_DRM_LAUNCHER_SOCKET_WRITE", env, 1);
+        snprintf(wenv, sizeof(wenv), "ECORE_DRM_LAUNCHER_SOCKET_WRITE=%d", 
+                 _ecore_drm_sockets[0]);
 
         /* assemble exec path */
         snprintf(buff, sizeof(buff), 
@@ -108,14 +90,11 @@ _ecore_drm_launcher_spawn(void)
         sigaddset(&mask, SIGTTOU);
         sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
-        execv(buff, args);
-        _exit(0); // 127
-
         /* NB: We need to use execve here so that capabilities are inherited.
          * Also, this should set Our (ecore_drm) effective uid to be the 
          * owner of the launched process (setuid in this case) */
-        /* char *ev[3] = { strdup(renv), strdup(wenv), NULL }; */
-        /* execve(buff, args, ev); */
+        char *ev[3] = { strdup(renv), strdup(wenv), NULL };
+        execve(buff, args, ev);
      }
    else
      {
@@ -136,8 +115,6 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    Ecore_Drm_Message dmsg;
    struct iovec iov[2];
    struct msghdr msg;
-   /* struct cmsghdr *cmsg = NULL; */
-   /* char buff[CMSG_SPACE(sizeof(int))]; */
    ssize_t size;
 
    /* Simplified version of sending messages. We don't need to send any 
@@ -170,27 +147,10 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    msg.msg_control = cmsgptr;
    msg.msg_controllen = RIGHTS_LEN;
 
-   if ((opcode == ECORE_DRM_OP_DEVICE_MASTER_DROP) || 
-       (opcode == ECORE_DRM_OP_DEVICE_MASTER_SET))
-     DBG("Sending Fd: %d", fd);
-
    if (fd > -1)
      *((int *)CMSG_DATA(cmsgptr)) = fd;
    else
      *((int *)CMSG_DATA(cmsgptr)) = _ecore_drm_sockets[1];
-
-   /* cmsg = CMSG_FIRSTHDR(&msg); */
-   /* cmsg->cmsg_level = SOL_SOCKET; */
-   /* cmsg->cmsg_type = SCM_RIGHTS; */
-   /* cmsg->cmsg_len = CMSG_LEN(sizeof(int)); */
-
-   /* DBG("Dmsg Size: %d", dmsg.size); */
-   /* DBG("Message Size: %li", sizeof(msg)); */
-   /* DBG("Message Len: %d", (int)msg.msg_controllen); */
-   /* DBG("Control Size: %li", sizeof(cmsgptr)); */
-   /* DBG("Control Len: %d", (int)cmsgptr->cmsg_len); */
-   /* DBG("Data Size: %li", sizeof(data)); */
-   /* DBG("Data Len: %li", bytes); */
 
    errno = 0;
    size = sendmsg(_ecore_drm_sockets[1], &msg, MSG_EOR);
@@ -205,9 +165,9 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
 }
 
 static int 
-_ecore_drm_socket_receive(int opcode, int *fd, void **data, size_t bytes)
+_ecore_drm_socket_receive(int opcode EINA_UNUSED, int *fd, void **data, size_t bytes)
 {
-   int rfd, ret = ECORE_DRM_OP_FAILURE;
+   int ret = ECORE_DRM_OP_FAILURE;
    Ecore_Drm_Message dmsg;
    struct cmsghdr *cmsg;
    struct iovec iov[2];
@@ -256,10 +216,11 @@ _ecore_drm_socket_receive(int opcode, int *fd, void **data, size_t bytes)
              switch (dmsg.opcode)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:
+                case ECORE_DRM_OP_DEVICE_CLOSE:
                 case ECORE_DRM_OP_TTY_OPEN:
                 case ECORE_DRM_OP_DEVICE_MASTER_DROP:
                 case ECORE_DRM_OP_DEVICE_MASTER_SET:
-                  if (*fd >= 0) ret = ECORE_DRM_OP_SUCCESS;
+                  if ((fd) && (*fd >= 0)) ret = ECORE_DRM_OP_SUCCESS;
                   if (data) memcpy(*data, buff, bytes);
                   break;
                 default:
@@ -271,11 +232,6 @@ _ecore_drm_socket_receive(int opcode, int *fd, void **data, size_t bytes)
           }
      }
 
-   DBG("Received FD: %d", *fd);
-   DBG("Opcode: %d", opcode);
-   DBG("DMsg Opcode: %d", dmsg.opcode);
-
-   DBG("Returning %d", ret);
    return ret;
 }
 
