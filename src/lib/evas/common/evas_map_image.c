@@ -38,9 +38,10 @@ _interp(int x1, int x2, int p, FPc u1, FPc u2)
    FPc u;
 
    x2 -= x1;
+   if (x2 == 0) x2 = 1;
    p -= x1;
    u = u2 - u1;
-   u = (u * p) / (x2 + 1);
+   u = ((u * p) / x2);
    // FIXME: do z persp
    return u1 + u;
 }
@@ -49,8 +50,9 @@ static inline DATA32
 _interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
 {
    x2 -= x1;
+   if (x2 == 0) x2 = 1;
    p -= x1;
-   p = (p << 8) / (x2 + 1);
+   p = ((p << 8) / x2);
    // FIXME: do z persp
    return INTERP_256(p, col2, col1);
 }
