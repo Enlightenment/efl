@@ -88,10 +88,11 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
 {
    int i, y, yp, yy;
    int py[4];
-   int edge[4][4], edge_num, swapped, order[4];
+   int edge[4][4], edge_num, order[4];
    FPc uv[4][2], u, v, x, h, t, uu, vv;
    DATA32 col[4];
    Eina_Bool interp_col = EINA_FALSE;
+   Eina_Bool swapped;
 
 #if 1 // maybe faster on x86?
    for (i = 0; i < 4; i++) py[i] = p[i].y >> FP;
@@ -279,10 +280,11 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              // also fill in order
              order[i] = i;
           }
+
         // sort edges from left to right - bubble. its a small list!
         do
           {
-             swapped = 0;
+             swapped = EINA_FALSE;
              for (i = 0; i < (edge_num - 1); i++)
                {
                   if (edge[order[i]][2] > edge[order[i + 1]][2])
@@ -290,11 +292,12 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                        t = order[i];
                        order[i] = order[i + 1];
                        order[i + 1] = t;
-                       swapped = 1;
+                       swapped = EINA_TRUE;
                     }
                }
           }
         while (swapped);
+
         if (edge_num == 2)
           {
              i = 0;
@@ -309,6 +312,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
              spans[yp].span[i].col[1] = col[order[1]];
+
+             //Outside of the clipper
              if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                  (spans[yp].span[i].x2 < cx))
                spans[yp].span[i].x1 = -1;
@@ -332,6 +337,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].u[1] = uv[order[1]][0];
              spans[yp].span[i].v[1] = uv[order[1]][1];
              spans[yp].span[i].col[1] = col[order[1]];
+
+             //Outside of the clipper
              if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                  (spans[yp].span[i].x2 < cx))
                spans[yp].span[i].x1 = -1;
@@ -341,6 +348,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                                           interp_col);
                   i++;
                }
+
              spans[yp].span[i].x1 = edge[order[2]][2];
              spans[yp].span[i].u[0] = uv[order[2]][0];
              spans[yp].span[i].v[0] = uv[order[2]][1];
@@ -350,6 +358,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              spans[yp].span[i].u[1] = uv[order[3]][0];
              spans[yp].span[i].v[1] = uv[order[3]][1];
              spans[yp].span[i].col[1] = col[order[3]];
+
+             //Outside of the clipper
              if ((spans[yp].span[i].x1 >= (cx + cw)) ||
                  (spans[yp].span[i].x2 < cx))
                spans[yp].span[i].x1 = -1;
@@ -362,6 +372,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                                           interp_col);
                }
           }
+        //Exceptional Case.
         else
           spans[yp].span[0].x1 = -1;
      }
