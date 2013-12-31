@@ -205,14 +205,34 @@ static const luaL_Reg _elua_libs[] =
 static void *
 _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
+   size_t dif;
    Edje_Lua_Alloc *ela = ud;
    void *ptr2;
 
-   ela->cur += nsize - osize;
+   // in lua 5.2 osize encodes the type of data allocted if ptr is NULL
+   // LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, or LUA_TTHREAD
+   if (ptr == NULL) osize = 0;
+
+   if (nsize > osize)
+     {
+        dif = nsize - osize;
+        ela->cur += dif;
+     }
+   else
+     {
+        dif = osize - nsize;
+        if (ela->cur < dif)
+          {
+             ERR("Lua allloc cur size %i < diff %i\n", (int)ela->cur, (int)dif);
+             dif = ela->cur;
+          }
+        ela->cur -= dif;
+     }
+
    if (ela->cur > ela->max)
      {
-        ERR("Lua memory limit of %zu bytes reached (%zu allocated)",
-            ela->max, ela->cur);
+        ERR("Lua memory limit of %i bytes reached (%i allocated)",
+            (int)ela->max, (int)ela->cur);
         return NULL;
      }
    if (nsize == 0)
@@ -220,11 +240,11 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
         free(ptr);
         return NULL;
      }
-
-   ptr2 = realloc(ptr, nsize);
+   ptr2 = realloc(ptr, nsize + 4);
    if (ptr2) return ptr2;
-   ERR("Lua cannot re-allocate %zu bytes", nsize);
-   return ptr2;
+
+   ERR("Lua cannot re-allocate %i bytes", (int)nsize);
+   return NULL;
 }
 
 static int
