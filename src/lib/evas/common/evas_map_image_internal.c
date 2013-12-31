@@ -36,14 +36,14 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
      {
         if (p[i].y > ybottom) ybottom = p[i].y;
      }
-   
+
    // convert to screen space from fixed point
    ytop = ytop >> FP;
    ybottom = ybottom >> FP;
-   
+
    // if its outside the clip vertical bounds - don't bother
    if ((ytop >= (cy + ch)) || (ybottom < cy)) return;
-   
+
    // limit to the clip vertical bounds
    if (ytop < cy) ystart = cy;
    else ystart = ytop;
@@ -62,21 +62,21 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         if (p[i].u < 0) p[i].u = 0;
         else if (p[i].u > (int)(src->cache_entry.w << FP))
           p[i].u = src->cache_entry.w << FP;
-        
+
         if (p[i].v < 0) p[i].v = 0;
         else if (p[i].v > (int)(src->cache_entry.h << FP))
           p[i].v = src->cache_entry.h << FP;
      }
-   
+
    // allocate some spans to hold out span list
    spans = alloca((yend - ystart + 1) * sizeof(Line));
    memset(spans, 0, (yend - ystart + 1) * sizeof(Line));
 
    // calculate the spans list
    _calc_spans(p, spans, ystart, yend, cx, cy, cw, ch);
-   
+
    // walk through spans and render
-   
+
    // if operation is solid, bypass buf and draw func and draw direct to dst
    direct = 0;
    if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha) &&
@@ -87,7 +87,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    else
      {
         int pa;
-        
+
         buf = alloca(cw * sizeof(DATA32));
         pa = src->cache_entry.flags.alpha;
         if (havea) src->cache_entry.flags.alpha = 1;
@@ -97,10 +97,10 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
           func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, render_op);
         src->cache_entry.flags.alpha = pa;
      }
-    
+
    if (!havecol)
      {
-#undef COLMUL     
+#undef COLMUL
 #include "evas_map_image_core.c"
      }
    else
@@ -165,10 +165,10 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
           func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, dc->render_op);
         src->cache_entry.flags.alpha = pa;
      }
-    
+
    if (!havecol)
      {
-#undef COLMUL     
+#undef COLMUL
 #include "evas_map_image_core.c"
      }
    else
