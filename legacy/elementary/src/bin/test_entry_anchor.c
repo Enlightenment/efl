@@ -123,10 +123,10 @@ test_entry_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
-   evas_object_smart_callback_add(sc, "edge_left", my_entry_anchor_edge_left, NULL);
-   evas_object_smart_callback_add(sc, "edge_right", my_entry_anchor_edge_right, NULL);
-   evas_object_smart_callback_add(sc, "edge_top", my_entry_anchor_edge_top, NULL);
-   evas_object_smart_callback_add(sc, "edge_bottom", my_entry_anchor_edge_bottom, NULL);
+   evas_object_smart_callback_add(sc, "edge,left", my_entry_anchor_edge_left, NULL);
+   evas_object_smart_callback_add(sc, "edge,right", my_entry_anchor_edge_right, NULL);
+   evas_object_smart_callback_add(sc, "edge,top", my_entry_anchor_edge_top, NULL);
+   evas_object_smart_callback_add(sc, "edge,bottom", my_entry_anchor_edge_bottom, NULL);
    evas_object_smart_callback_add(sc, "scroll", my_entry_anchor_scroll, NULL);
 
    bx = elm_box_add(win);
