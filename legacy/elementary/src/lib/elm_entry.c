@@ -2781,9 +2781,15 @@ _elm_entry_smart_text_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         if (!strcmp(item, "default")) goto proceed;
         else if (!strcmp(item, "guide"))
-          if (ret) *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
+          {
+             if (ret)
+               *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
+          }
         else
-          if (ret) *ret = edje_object_part_text_get(sd->entry_edje, item);
+          {
+             if (ret)
+               *ret = edje_object_part_text_get(sd->entry_edje, item);
+          }
         return;
      }
 
