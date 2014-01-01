@@ -1834,8 +1834,11 @@ _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *fp;
    const char **ret = va_arg(*list, const char **);
-   *ret = NULL;
    Elm_Fileselector_Smart_Data *sd = _pd;
+
+   if (!ret) return;
+
+   *ret = NULL;
 
    if (!sd->path) return;
 
@@ -1848,19 +1851,19 @@ _selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         return;
      }
 
-   if (ret) *ret = sd->path;
+   *ret = sd->path;
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
         Elm_Object_Item *gl_it = elm_genlist_selected_item_get(sd->files_view);
 
-        if (gl_it && ret) *ret = elm_object_item_data_get(gl_it);
+        if (gl_it) *ret = elm_object_item_data_get(gl_it);
      }
    else
      {
         Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(sd->files_view);
 
-        if (gg_it && ret) *ret = elm_object_item_data_get(gg_it);
+        if (gg_it) *ret = elm_object_item_data_get(gg_it);
      }
 
 }
