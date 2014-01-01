@@ -386,9 +386,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 EAPI void
 efreet_desktop_environment_set(const char *environment)
 {
-    if (desktop_environment) eina_stringshare_del(desktop_environment);
-    if (environment) desktop_environment = eina_stringshare_add(environment);
-    else desktop_environment = NULL;
+   eina_stringshare_replace(&desktop_environment, environment);
 }
 
 EAPI const char *
