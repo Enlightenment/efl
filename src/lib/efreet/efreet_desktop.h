@@ -218,7 +218,8 @@ EAPI void              efreet_desktop_environment_set(const char *environment);
 
 /**
  * @return environment the environment name
- * @brief sets the global desktop environment name
+ * @brief gets the global desktop environment name
+ * (e.g. "Enlightenment" or "Gnome")
  */
 EAPI const char       *efreet_desktop_environment_get(void);
 
