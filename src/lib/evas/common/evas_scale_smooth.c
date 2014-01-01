@@ -101,7 +101,7 @@ scale_calc_a_points(int *p, int s, int d, int c, int cc)
 # undef SCALE_FUNC
 # undef SCALE_USING_NEON
 # define SCALE_USING_NEON
-# define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_neon
+# define SCALE_FUNC _evas_common_scale_rgba_in_to_out_clip_smooth_neon
 # include "evas_scale_smooth_scaler.c"
 # undef SCALE_USING_NEON
 #endif
@@ -141,6 +141,46 @@ evas_common_scale_rgba_in_to_out_clip_smooth_mmx(RGBA_Image *src, RGBA_Image *ds
    mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
 
    _evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+     (src, dst,
+      clip_x, clip_y, clip_w, clip_h,
+      mul_col, dc->render_op,
+      src_region_x, src_region_y, src_region_w, src_region_h,
+      dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+
+   return EINA_TRUE;
+}
+#endif
+
+#ifdef BUILD_NEON
+Eina_Bool
+evas_common_scale_rgba_in_to_out_clip_smooth_neon(RGBA_Image *src, RGBA_Image *dst,
+                                                 RGBA_Draw_Context *dc,
+                                                 int src_region_x, int src_region_y,
+                                                 int src_region_w, int src_region_h,
+                                                 int dst_region_x, int dst_region_y,
+                                                 int dst_region_w, int dst_region_h)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+	clip_x = dc->clip.x;
+	clip_y = dc->clip.y;
+	clip_w = dc->clip.w;
+	clip_h = dc->clip.h;
+     }
+   else
+     {
+	clip_x = 0;
+	clip_y = 0;
+	clip_w = dst->cache_entry.w;
+	clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_scale_rgba_in_to_out_clip_smooth_neon
      (src, dst,
       clip_x, clip_y, clip_w, clip_h,
       mul_col, dc->render_op,
