@@ -203,8 +203,7 @@ EAPI int               efreet_desktop_save_as(Efreet_Desktop *desktop,
  * @param desktop The desktop file to work with
  * @param files The files to be substituted into the exec line
  * @param data The data pointer to pass
- * @return Returns the Ecore_Exce for @a desktop
- * @brief Parses the @a desktop exec line and returns an Ecore_Exe.
+ * @brief Parses the @a desktop exec line and runs the command.
  */
 EAPI void              efreet_desktop_exec(Efreet_Desktop *desktop,
                                            Eina_List *files, void *data);
