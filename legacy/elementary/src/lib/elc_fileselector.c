@@ -2024,7 +2024,7 @@ _custom_filter_append(Eo *obj, void *_pd, va_list *list)
    ff = _filter_add(sd, filter_name ? filter_name : "custom");
    ff->filter_type = ELM_FILESELECTOR_CUSTOM_FILTER;
 
-   ff->filter.custom = malloc(sizeof(Elm_Fileselector_Filter_Func));
+   ff->filter.custom = malloc(sizeof(Elm_Fileselector_Custom_Filter));
    ff->filter.custom->func = func;
    ff->filter.custom->data = data;
 
