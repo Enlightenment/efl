@@ -189,6 +189,7 @@
         *d = MUL4_SYM(c1, val1); // XXX: do this in neon
 #    endif
 #   else
+/* XXX: this neon is broken! :( FIXME
 #    ifdef SCALE_USING_NEON
         FPU_NEON;
         VMOV_M2R_NEON(d12, val1);
@@ -200,10 +201,13 @@
         MUL4_SYM_NEON(d8, d12, d4); // multiply
         VMOV_R2M_NEON(q4, d8, d); // save result
 #    else
+ */
         cval = INTERP_256((cv >> 16), c2, c1); // col
         *d = MUL4_SYM(cval, val1);
         cv += cd; // col              
+/*
 #    endif
+ */
 #   endif        
 #  else
         *d = *s;
