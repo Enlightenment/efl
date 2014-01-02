@@ -20,11 +20,13 @@
 # include <xf86drmMode.h>
 # include <drm_fourcc.h>
 
-# ifdef BUILD_ECORE_DRM_HW_ACCEL
+# ifdef HAVE_GBM
 #  include <gbm.h>
 # endif
 
 # include <Ecore_Drm.h>
+
+# define NUM_FRAME_BUFFERS 2
 
 # ifndef DRM_MAJOR
 #  define DRM_MAJOR 226
@@ -93,6 +95,18 @@ extern FILE *lg;
 
 extern struct udev *udev;
 
+typedef struct _Ecore_Drm_Fb Ecore_Drm_Fb;
+struct _Ecore_Drm_Fb
+{
+   unsigned int id, hdl;
+   unsigned int stride, size;
+   int fd;
+   void *mmap;
+# ifdef HAVE_GBM
+   struct gbm_bo *bo;
+# endif
+};
+
 struct _Ecore_Drm_Output_Mode
 {
    unsigned int flags;
@@ -114,6 +128,14 @@ struct _Ecore_Drm_Output
 
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
+
+   Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
+
+# ifdef HAVE_GBM
+   struct gbm_surface *surface;
+   struct gbm_bo *cursor[NUM_FRAME_BUFFERS];
+# endif
+
    /* TODO: finish */
 };
 
@@ -172,6 +194,14 @@ struct _Ecore_Drm_Device
         const char *name;
         Ecore_Event_Handler *event_hdlr;
      } tty;
+
+   unsigned int format;
+   Eina_Bool use_hw_accel : 1;
+   Eina_Bool cursors_broken : 1;
+
+#ifdef HAVE_GBM
+   struct gbm_device *gbm;
+#endif
 };
 
 void _ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes);
@@ -180,5 +210,8 @@ Eina_Bool _ecore_drm_message_receive(int opcode, int *fd, void **data, size_t by
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(struct libinput *linput, struct libinput_device *device);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
 int _ecore_drm_evdev_event_process(struct libinput_event *event);
+
+Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
+void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 
 #endif
