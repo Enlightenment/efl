@@ -1461,7 +1461,7 @@ elm_image_editable_set(Evas_Object *obj,
                        Eina_Bool set)
 {
    ELM_IMAGE_CHECK(obj);
-   eo_do(obj, elm_obj_image_editable_set(set, obj));
+   eo_do(obj, elm_obj_image_editable_set(set));
 }
 
 /**
@@ -1473,7 +1473,6 @@ _elm_image_smart_editable_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Image_Smart_Data *sd = _pd;
    Eina_Bool edit = va_arg(*list, int);
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
 
    if (sd->edje)
      {
@@ -1493,14 +1492,14 @@ _elm_image_smart_editable_set(Eo *obj, void *_pd, va_list *list)
            NULL, NULL,
            NULL, NULL,
            NULL, NULL,
-           _elm_image_drag_n_drop_cb, parent);
+           _elm_image_drag_n_drop_cb, obj);
    else
      elm_drop_target_del
        (obj, ELM_SEL_FORMAT_IMAGE,
            NULL, NULL,
            NULL, NULL,
            NULL, NULL,
-           _elm_image_drag_n_drop_cb, parent);
+           _elm_image_drag_n_drop_cb, obj);
 }
 
 EAPI Eina_Bool

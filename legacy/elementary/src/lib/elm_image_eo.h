@@ -289,11 +289,10 @@ enum
  * Make the image 'editable'.
  *
  * @param[in] set
- * @param[in] parent
  *
  * @see elm_image_editable_set
  */
-#define elm_obj_image_editable_set(set, parent) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_EDITABLE_SET), EO_TYPECHECK(Eina_Bool, set), EO_TYPECHECK(Evas_Object *, parent)
+#define elm_obj_image_editable_set(set) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_EDITABLE_SET), EO_TYPECHECK(Eina_Bool, set)
 
 /**
  * @def elm_obj_image_editable_get
