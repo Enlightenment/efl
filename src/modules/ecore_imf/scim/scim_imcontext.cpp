@@ -403,6 +403,44 @@ window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
      *y = sum_y;
 }
 
+static unsigned int
+_ecore_imf_modifier_to_scim_mask(unsigned int modifiers)
+{
+   unsigned int mask = 0;
+
+   /**< "Control" is pressed */
+   if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_CTRL)
+     mask |= SCIM_KEY_ControlMask;
+
+   /**< "Alt" is pressed */
+   if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALT)
+     mask |= SCIM_KEY_AltMask;
+
+   /**< "Shift" is pressed */
+   if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT)
+     mask |= SCIM_KEY_ShiftMask;
+
+   /**< "AltGr" is pressed */
+   if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR)
+     mask |= SCIM_KEY_Mod5Mask;
+
+   return mask;
+}
+
+static unsigned int
+_ecore_imf_lock_to_scim_mask(unsigned int locks)
+{
+   unsigned int mask = 0;
+
+   if (locks & ECORE_IMF_KEYBOARD_LOCK_CAPS)
+     mask |= SCIM_KEY_CapsLockMask;
+
+   if (locks & ECORE_IMF_KEYBOARD_LOCK_NUM)
+     mask |= SCIM_KEY_NumLockMask;
+
+   return mask;
+}
+
 /* Public functions */
 /**
  * isf_imf_context_new
@@ -1253,24 +1291,16 @@ isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
      {
         Ecore_IMF_Event_Key_Down *ev = (Ecore_IMF_Event_Key_Down *)event;
         scim_string_to_key(key, ev->key);
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT) key.mask |=SCIM_KEY_ShiftMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_CTRL) key.mask |=SCIM_KEY_ControlMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALT) key.mask |=SCIM_KEY_AltMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR) key.mask |=SCIM_KEY_Mod5Mask;
-        if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_CAPS) key.mask |=SCIM_KEY_CapsLockMask;
-        if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_NUM) key.mask |=SCIM_KEY_NumLockMask;
+        key.mask |= _ecore_imf_modifier_to_scim_mask(ev->modifiers);
+        key.mask |= _ecore_imf_lock_to_scim_mask(ev->locks);
      }
    else if (type == ECORE_IMF_EVENT_KEY_UP)
      {
         Ecore_IMF_Event_Key_Up *ev = (Ecore_IMF_Event_Key_Up *)event;
         scim_string_to_key(key, ev->key);
         key.mask = SCIM_KEY_ReleaseMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT) key.mask |=SCIM_KEY_ShiftMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_CTRL) key.mask |=SCIM_KEY_ControlMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALT) key.mask |=SCIM_KEY_AltMask;
-        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR) key.mask |=SCIM_KEY_Mod5Mask;
-        if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_CAPS) key.mask |=SCIM_KEY_CapsLockMask;
-        if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_NUM) key.mask |=SCIM_KEY_NumLockMask;
+        key.mask |= _ecore_imf_modifier_to_scim_mask(ev->modifiers);
+        key.mask |= _ecore_imf_lock_to_scim_mask(ev->locks);
      }
    else
      {
