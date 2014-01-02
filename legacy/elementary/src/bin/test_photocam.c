@@ -240,15 +240,6 @@ void
 test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *ph, *tb2, *bt, *box;
-   // these were just testing - use the "select photo" browser to select one
-   const char *img[5] =
-     {
-        "/home/raster/t1.jpg",  //   5 mpixel
-        "/home/raster/t2.jpg",  //  18 mpixel
-        "/home/raster/t3.jpg",  //  39 mpixel
-        "/home/raster/t4.jpg",  // 192 mpixel
-        "/home/raster/t5.jpg"   // 466 mpixel
-     };
 
    win = elm_win_util_standard_add("photocam", "PhotoCam");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -284,8 +275,6 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(ph, "scroll,drag,start", my_ph_drag_start, win);
    evas_object_smart_callback_add(ph, "scroll,drag,stop", my_ph_drag_stop, win);
    evas_object_smart_callback_add(ph, "scroll", my_ph_scroll, win);
-
-   elm_photocam_file_set(ph, img[1]);
 
    evas_object_show(ph);
 
