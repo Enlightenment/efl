@@ -77,6 +77,8 @@ _FUNC_EXPAND(manage_new_length)(_STRBUF_DATA_TYPE *str, size_t length)
 EAPI void
 _FUNC_EXPAND(free)(_STRBUF_STRUCT_NAME *buf)
 {
+   if (!buf) return ;
+
    EINA_MAGIC_CHECK_STRBUF(buf);
    EINA_MAGIC_SET(buf, EINA_MAGIC_NONE);
    eina_strbuf_common_free(buf);
