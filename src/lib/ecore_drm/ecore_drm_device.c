@@ -174,6 +174,9 @@ ecore_drm_device_find(const char *name, const char *seat)
              if (!seat) seat = "seat0";
 
              dev->seat = eina_stringshare_add(seat);
+
+//             dev->format = GBM_FORMAT_XRGB8888;
+             dev->use_hw_accel = EINA_FALSE;
           }
      }
 
@@ -203,6 +206,9 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
    /* free outputs */
    EINA_LIST_FREE(dev->outputs, output)
      ecore_drm_output_free(output);
+
+   /* free crtcs */
+   if (dev->crtcs) free(dev->crtcs);
 
    /* free device name */
    if (dev->drm.name) eina_stringshare_del(dev->drm.name);
@@ -253,6 +259,19 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
         ERR("Could not get device capabilities: %m");
      }
 
+#ifdef HAVE_GBM
+   if (getenv("ECORE_DRM_HW_ACCEL"))
+     {
+        if ((dev->gbm = gbm_create_device(dev->drm.fd)))
+          {
+             dev->use_hw_accel = EINA_TRUE;
+             dev->format = GBM_FORMAT_ARGB8888;
+          }
+        else
+          WRN("Failed to create gbm device: %m");
+     }
+#endif
+
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
@@ -276,6 +295,17 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
    if (!dev) return EINA_FALSE;
+
+#ifdef HAVE_GBM
+   if (dev->use_hw_accel)
+     {
+        if (dev->gbm) gbm_device_destroy(dev->gbm);
+        dev->gbm = NULL;
+     }
+#endif
+
+   if (dev->drm.hdlr) ecore_main_fd_handler_del(dev->drm.hdlr);
+   dev->drm.hdlr = NULL;
 
    close(dev->drm.fd);
 
