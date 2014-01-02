@@ -420,6 +420,10 @@ _ecore_imf_modifier_to_scim_mask(unsigned int modifiers)
    if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT)
      mask |= SCIM_KEY_ShiftMask;
 
+   /**< "Win" (between "Ctrl" and "Alt") is pressed */
+   if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_WIN)
+     mask |= SCIM_KEY_SuperMask;
+
    /**< "AltGr" is pressed */
    if (modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR)
      mask |= SCIM_KEY_Mod5Mask;
