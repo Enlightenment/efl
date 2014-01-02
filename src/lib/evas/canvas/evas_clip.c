@@ -84,7 +84,7 @@ evas_object_child_map_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_Dat
         clear_visited = EINA_TRUE;
      }
    if (eina_hash_find(visited, &eo_obj) == (void *)1) return;
-   else eina_hash_direct_add(visited, &eo_obj, (void *)1);
+   else eina_hash_add(visited, &eo_obj, (void *)1);
    
    if ((obj->map->cur.map_parent != map_obj) || force)
      {
