@@ -99,6 +99,15 @@ _FUNC_EXPAND(append_length)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_DATA_TYPE *s
 }
 
 EAPI Eina_Bool
+_FUNC_EXPAND(append_buffer)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_STRUCT_NAME *data)
+{
+   EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);
+   EINA_MAGIC_CHECK_STRBUF(data, EINA_FALSE);
+
+   return eina_strbuf_common_append_length(_STRBUF_CSIZE, buf, (_STRBUF_DATA_TYPE *) eina_strbuf_common_string_get(data), eina_strbuf_common_length_get(data));
+}
+
+EAPI Eina_Bool
 _FUNC_EXPAND(insert_length)(_STRBUF_STRUCT_NAME *buf, const _STRBUF_DATA_TYPE *str, size_t length, size_t pos)
 {
    EINA_MAGIC_CHECK_STRBUF(buf, EINA_FALSE);

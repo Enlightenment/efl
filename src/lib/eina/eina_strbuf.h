@@ -209,6 +209,24 @@ EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t ma
 EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @brief Append an Eina_Strbuf to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to append to.
+ * @param data The string buffer to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function appends @p data to @p buf. @p data must be allocated and
+ * different from @NULL. It is slightly faster than eina_strbuf_append() as
+ * it does not compute the size of @p str. If @p buf can't append it,
+ * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ *
+ * @see eina_strbuf_append()
+ * @see eina_strbuf_append_n()
+ * @see eina_strbuf_append_length()
+ */
+EAPI Eina_Bool eina_strbuf_append_buffer(Eina_Strbuf *buf, const Eina_Strbuf *data) EINA_ARG_NONNULL(1, 2);
+
+/**
  * @brief Append a character to a string buffer, reallocating as
  * necessary.
  *

@@ -106,6 +106,24 @@ EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @brief Append an Eina_Binbuf to a buffer, reallocating as necessary.
+ *
+ * @param buf The string buffer to append to.
+ * @param data The string buffer to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function appends @p data to @p buf. @p data must be allocated and
+ * different from @NULL. It is slightly faster than eina_binbuf_append() as
+ * it does not compute the size of @p str. If @p buf can't append it,
+ * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ *
+ * @see eina_binbuf_append()
+ * @see eina_binbuf_append_n()
+ * @see eina_binbuf_append_length()
+ */
+EAPI Eina_Bool eina_binbuf_append_buffer(Eina_Binbuf *buf, const Eina_Binbuf *data) EINA_ARG_NONNULL(1, 2);
+
+/**
  * @brief Append a character to a string buffer, reallocating as
  * necessary.
  *
