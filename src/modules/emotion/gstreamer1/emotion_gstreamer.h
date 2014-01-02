@@ -15,6 +15,7 @@
 #include <glib-object.h>
 #include <gst/video/gstvideosink.h>
 #include <gst/video/video.h>
+#include <gst/video/navigation.h>
 #include <gst/audio/audio.h>
 #include <gst/tag/tag.h>
 
