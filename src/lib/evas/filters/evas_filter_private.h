@@ -33,6 +33,9 @@
 #define ENFN ctx->evas->engine.func
 #define ENDT ctx->evas->engine.data.output
 
+#define BUFFERS_LOCK() do { if (cmd->input) cmd->input->locked = 1; if (cmd->output) cmd->output->locked = 1; if (cmd->mask) cmd->mask->locked = 1; } while (0)
+#define BUFFERS_UNLOCK() do { if (cmd->input) cmd->input->locked = 0; if (cmd->output) cmd->output->locked = 0; if (cmd->mask) cmd->mask->locked = 0; } while (0)
+
 struct _Evas_Filter_Context
 {
    Evas_Public_Data *evas;
@@ -140,5 +143,6 @@ void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, i
 Eina_Bool evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h);
 Evas_Filter_Buffer *_filter_buffer_get(Evas_Filter_Context *ctx, int bufid);
 Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
+Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, int w, int h);
 
 #endif // EVAS_FILTER_PRIVATE_H

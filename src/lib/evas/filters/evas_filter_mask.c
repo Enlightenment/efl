@@ -64,8 +64,9 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
    int stepsize, stepcount, step;
 
    /* Mechanism:
-    * 1. Copy source to destination
-    * 2. Render mask into destination using alpha function
+    * 1. Stretch mask as requested in fillmode
+    * 2. Copy source to destination
+    * 3. Render mask into destination using alpha function
     *
     * FIXME: Could probably be optimized into a single op :)
     */
@@ -80,12 +81,32 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
    mh = cmd->mask->h;
    src = in->mask.data;
    dst = out->mask.data;
-   msk = mask->mask.data;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
 
    stepsize  = MIN(mw, w);
    stepcount = w / stepsize;
+
+   // Stretch if necessary.
+   if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
+     {
+        Evas_Filter_Buffer *fb;
+
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+          mw = w;
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+          mh = h;
+
+        BUFFERS_LOCK();
+        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        BUFFERS_UNLOCK();
+
+        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+        fb->locked = EINA_FALSE;
+        mask = fb->backing;
+     }
+
+   msk = mask->mask.data;
 
    // First pass: copy to dest
    if (src != dst)
@@ -121,6 +142,12 @@ _mask_cpu_rgba_alpha_rgba(Evas_Filter_Command *cmd)
    Evas_Filter_Buffer *fb;
    Eina_Bool ok;
 
+   /* Mechanism:
+    * 1. Swap input and mask
+    * 2. Apply mask operation for alpha+rgba+rgba
+    * 3. Swap input and mask
+    */
+
    fb = cmd->input;
    cmd->input = cmd->mask;
    cmd->mask = fb;
@@ -138,12 +165,11 @@ static Eina_Bool
 _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Gfx_Func func1, func2;
-   Evas_Filter_Buffer *tmpbuf = NULL;
-   RGBA_Image *in, *out, *mask, *mask_stretched = NULL;
+   RGBA_Image *in, *out, *mask;
    DATA8 *src;
    DATA32 *dst, *msk, *span;
    int op = cmd->draw.render_op;
-   int w, h, mw, mh, x, y, my, mws, mhs;
+   int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
    DATA32 color2;
 
@@ -165,67 +191,28 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    mh = cmd->mask->h;
    src = in->mask.data;
    dst = out->image.data;
-   msk = mask->image.data;
 
-   // Stretch if necessary. TODO: Move this to common func. Support alpha too.
-   if (mw != w || mh != h)
+   // Stretch if necessary.
+   if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        Eina_Bool stretch = EINA_FALSE;
-        mws = mw;
-        mhs = mh;
+        Evas_Filter_Buffer *fb;
 
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
-          {
-             mws = w;
-             stretch = EINA_TRUE;
-          }
+          mw = w;
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
-          {
-             mhs = h;
-             stretch = EINA_TRUE;
-          }
-        if (stretch)
-          {
-             void *drawctx;
+          mh = h;
 
-             // Alloc
-             cmd->input->locked = EINA_TRUE;
-             cmd->mask->locked = EINA_TRUE;
-             cmd->output->locked = EINA_TRUE;
+        BUFFERS_LOCK();
+        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        BUFFERS_UNLOCK();
 
-             tmpbuf = evas_filter_temporary_buffer_get(cmd->ctx, mws, mhs, cmd->mask->alpha_only);
-             if (evas_filter_buffer_alloc(tmpbuf, mws, mhs))
-               mask_stretched = evas_filter_buffer_backing_get(cmd->ctx, tmpbuf->id);
-
-             cmd->input->locked = EINA_FALSE;
-             cmd->mask->locked = EINA_FALSE;
-             cmd->output->locked = EINA_FALSE;
-
-             if (!mask_stretched)
-               {
-                  ERR("Buffer allocation failed for size %dx%d", mws, mhs);
-                  return EINA_FALSE;
-               }
-
-             // Scale
-             drawctx = cmd->ENFN->context_new(cmd->ENDT);
-             cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 255, 255, 255, 255);
-             cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, EVAS_RENDER_COPY);
-             cmd->ENFN->image_draw(cmd->ENDT, drawctx, mask_stretched, mask,
-                                   0, 0, mw, mh, // src
-                                   0, 0, mws, mhs, // dst
-                                   EINA_TRUE, // smooth
-                                   EINA_FALSE); // Not async
-             cmd->ENFN->context_free(cmd->ENDT, drawctx);
-
-             mask = mask_stretched;
-             msk = mask->image.data;
-             mw = mws;
-             mh = mhs;
-          }
+        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+        fb->locked = EINA_FALSE;
+        mask = fb->backing;
      }
 
    color2 = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+   msk = mask->image.data;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
@@ -239,6 +226,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    func1 = evas_common_gfx_func_composite_pixel_mask_span_get(mask, out, 1, EVAS_RENDER_COPY);
    func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask, color2, out, 1, op);
 
+   // Apply mask using Gfx functions
    for (y = 0, my = 0; y < h; y++, my++, msk += stepsize)
      {
         if (my >= mh)
@@ -266,7 +254,6 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
      }
 
    free(span);
-   if (tmpbuf) tmpbuf->locked = EINA_FALSE; // Don't free right away
    return EINA_TRUE;
 }
 
@@ -301,11 +288,30 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    mh = cmd->mask->h;
    src = in->mask.data;
    dst = out->image.data;
-   msk = mask->mask.data;
    color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
 
+   // Stretch if necessary.
+   if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
+     {
+        Evas_Filter_Buffer *fb;
+
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+          mw = w;
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+          mh = h;
+
+        BUFFERS_LOCK();
+        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        BUFFERS_UNLOCK();
+
+        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+        fb->locked = EINA_FALSE;
+        mask = fb->backing;
+     }
+
+   msk = mask->mask.data;
    stepsize  = MIN(mw, w);
    stepcount = w / stepsize;
    span = malloc(stepsize * sizeof(DATA8));
