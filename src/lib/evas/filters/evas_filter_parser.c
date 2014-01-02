@@ -711,13 +711,14 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
                      int *padl, int *padr, int *padt, int *padb)
 {
    Eina_Bool yset;
-   int rx, ry, l, r, t, b;
+   int rx, ry, ox, oy, l, r, t, b;
    const char *typestr, *inbuf, *outbuf;
    Buffer *in, *out;
 
-   // TODO/FIXME: Add ox, oy support
    rx = _instruction_param_geti(instr, "rx", NULL);
    ry = _instruction_param_geti(instr, "ry", &yset);
+   ox = _instruction_param_geti(instr, "ox", NULL);
+   oy = _instruction_param_geti(instr, "oy", NULL);
    typestr = _instruction_param_gets(instr, "type", NULL);
    inbuf = _instruction_param_gets(instr, "src", NULL);
    outbuf = _instruction_param_gets(instr, "dst", NULL);
@@ -743,20 +744,20 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
         if (rx < 0) rx = 0;
         if (ry < 0) ry = 0;
 
-        l = rx + in->pad.l;
-        r = rx + in->pad.r;
-        t = ry + in->pad.t;
-        b = ry + in->pad.b;
+        l = rx + in->pad.l - ox;
+        r = rx + in->pad.r + ox;
+        t = ry + in->pad.t - oy;
+        b = ry + in->pad.b + oy;
 
         if (out->pad.l < l) out->pad.l = l;
         if (out->pad.r < r) out->pad.r = r;
         if (out->pad.t < t) out->pad.t = t;
         if (out->pad.b < b) out->pad.b = b;
 
-        if (padl) *padl = rx;
-        if (padr) *padr = rx;
-        if (padt) *padt = ry;
-        if (padb) *padb = ry;
+        if (padl) *padl = rx - ox;
+        if (padr) *padr = rx + ox;
+        if (padt) *padt = ry - oy;
+        if (padb) *padb = ry + oy;
      }
 }
 
