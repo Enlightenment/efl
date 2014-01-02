@@ -1,8 +1,7 @@
 #include "evas_filter_private.h"
 #include <stdarg.h>
 
-#define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+1)
-#define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+2)
+#define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
 
 // Map of the most common HTML color names
 static struct
@@ -83,6 +82,7 @@ typedef struct _Instruction_Param
    Eina_Value *value;
    Eina_Bool set : 1;
    Eina_Bool allow_seq : 1;
+   Eina_Bool allow_any_string : 1;
 } Instruction_Param;
 
 struct _Evas_Filter_Instruction
@@ -514,7 +514,7 @@ _value_parse(Instruction_Param *param, const char *value)
         return EINA_TRUE;
       case VT_STRING:
       case VT_BUFFER:
-        PARSE_CHECK(_is_valid_string(value));
+        if (!param->allow_any_string) PARSE_CHECK(_is_valid_string(value));
         eina_value_set(param->value, value);
         return EINA_TRUE;
       case VT_COLOR:
@@ -819,18 +819,37 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
 static Eina_Bool
 _curve_instruction_prepare(Evas_Filter_Instruction *instr)
 {
+   Instruction_Param *param;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "curve"), EINA_FALSE);
 
    /*
-   * curve TODO
-   * This one is a bit trickier: need interpolation functions to describe
-   * the curve.
+   * curve [points=]INTERPSTR [interpolation=]STRING (src=BUFFER) (dst=BUFFER)
+   *
+   * INTERPSTR is a STRING of the following format:
+   * "x1:y1-x2:y2-x3:y3...xn:yn"
+   * Where xk and yk are all numbers in [0-255] and xk are in increasing order
+   *
+   * The interpolation STRING can be one of:
+   * - none:   y = yk in [xk,xk+1] (staircase effect)
+   * - linear: linear interpolation y = ax + b
+   * - cubic:  cubic interpolation y = ax^3 + bx^2 + cx + d
+   * Invalid values default to linear
    */
 
-   //instr->type = EVAS_FILTER_MODE_CURVE;
-   CRI("Not implemented yet");
+   instr->type = EVAS_FILTER_MODE_CURVE;
+
+   _instruction_param_seq_add(instr, "points", VT_STRING, NULL);
+   param = EINA_INLIST_CONTAINER_GET(eina_inlist_last(instr->params), Instruction_Param);
+   param->allow_any_string = EINA_TRUE;
+
+   _instruction_param_seq_add(instr, "interpolation", VT_STRING, "linear");
+   _instruction_param_seq_add(instr, "channel", VT_STRING, "rgb");
+   _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
+   _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+
    return EINA_FALSE;
 }
 
@@ -910,7 +929,7 @@ _fill_instruction_prepare(Evas_Filter_Instruction *instr)
    * Works with both Alpha and RGBA.
    */
 
-   instr->type = EVAS_FILTER_MODE_BUFFER;
+   instr->type = EVAS_FILTER_MODE_FILL;
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, NULL);
    _instruction_param_seq_add(instr, "color", VT_COLOR, 0x0);
 
@@ -1463,10 +1482,9 @@ _instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    buf = _buffer_get(pgm, bufname);
 
-   ENFN->context_color_get(ENDT, dc, &R, &G, &B, &A);
-   ENFN->context_color_set(ENDT, dc, R_VAL(&color), G_VAL(&color), B_VAL(&color), A_VAL(&color));
+   SETCOLOR(color);
    cmdid = evas_filter_command_fill_add(ctx, dc, buf->cid);
-   ENFN->context_color_set(ENDT, dc, R, G, B, A);
+   RESETCOLOR();
 
    return cmdid;
 }
@@ -1515,10 +1533,89 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    out = _buffer_get(pgm, dst);
    mask = _buffer_get(pgm, msk);
 
-   ENFN->context_color_get(ENDT, dc, &R, &G, &B, &A);
-   ENFN->context_color_set(ENDT, dc, R_VAL(&color), G_VAL(&color), B_VAL(&color), A_VAL(&color));
+   SETCOLOR(color);
    cmdid = evas_filter_command_mask_add(ctx, dc, in->cid, mask->cid, out->cid, fillmode);
-   ENFN->context_color_set(ENDT, dc, R, G, B, A);
+   RESETCOLOR();
+
+   return cmdid;
+}
+
+static int
+_instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+                 Evas_Filter_Instruction *instr, void *dc)
+{
+   Evas_Filter_Interpolation_Mode mode = EVAS_FILTER_INTERPOLATION_MODE_LINEAR;
+   Evas_Filter_Channel channel = EVAS_FILTER_CHANNEL_RGB;
+   const char *src, *dst, *points_str, *interpolation, *channel_name;
+   DATA8 values[256] = {0}, points[512];
+   int cmdid, point_count = 0;
+   char *token, *copy, *saveptr;
+   Buffer *in, *out;
+   Eina_Bool parse_ok = EINA_FALSE;
+
+   src = _instruction_param_gets(instr, "src", NULL);
+   dst = _instruction_param_gets(instr, "dst", NULL);
+   points_str = _instruction_param_gets(instr, "points", NULL);
+   interpolation = _instruction_param_gets(instr, "interpolation", NULL);
+   channel_name = _instruction_param_gets(instr, "channel", NULL);
+
+   if (channel_name)
+     {
+        if (tolower(*channel_name) == 'r')
+          {
+             if (!strcasecmp(channel_name, "rgb"))
+               channel = EVAS_FILTER_CHANNEL_RGB;
+             else
+               channel = EVAS_FILTER_CHANNEL_RED;
+          }
+        else if (tolower(*channel_name) == 'g')
+          channel = EVAS_FILTER_CHANNEL_GREEN;
+        else if (tolower(*channel_name) == 'b')
+          channel = EVAS_FILTER_CHANNEL_BLUE;
+        else if (tolower(*channel_name) == 'a')
+          channel = EVAS_FILTER_CHANNEL_ALPHA;
+     }
+
+   if (interpolation)
+     {
+        if (!strcasecmp(interpolation, "none"))
+          mode = EVAS_FILTER_INTERPOLATION_MODE_NONE;
+        else if (!strcasecmp(interpolation, "cubic"))
+          mode = EVAS_FILTER_INTERPOLATION_MODE_CUBIC;
+     }
+
+   if (!points_str) goto interpolated;
+   copy = strdup(points_str);
+   token = strtok_r(copy, "-", &saveptr);
+   if (!token) goto interpolated;
+
+   while (token)
+     {
+        int x, y, r, maxx = 0;
+        r = sscanf(token, "%u:%u", &x, &y);
+        if (r != 2) goto interpolated;
+        if (x < maxx || x >= 256) goto interpolated;
+        points[point_count * 2 + 0] = x;
+        points[point_count * 2 + 1] = y;
+        point_count++;
+        token = strtok_r(NULL, "-", &saveptr);
+     }
+
+   parse_ok = evas_filter_interpolate(values, points, point_count, mode);
+
+interpolated:
+   free(copy);
+   if (!parse_ok)
+     {
+        int x;
+        ERR("Failed to parse the interpolation chain");
+        for (x = 0; x < 256; x++)
+          values[x] = x;
+     }
+
+   in = _buffer_get(pgm, src);
+   out = _buffer_get(pgm, dst);
+   cmdid = evas_filter_command_curve_add(ctx, dc, in->cid, out->cid, values, channel);
 
    return cmdid;
 }
@@ -1553,15 +1650,9 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
       case EVAS_FILTER_MODE_MASK:
         instr2cmd = _instr2cmd_mask;
         break;
-#if 0
       case EVAS_FILTER_MODE_CURVE:
         instr2cmd = _instr2cmd_curve;
         break;
-#endif
-      case EVAS_FILTER_MODE_CURVE:
-        CRI("Not implemented yet");
-        return -1;
-      case EVAS_FILTER_MODE_BUFFER:
       default:
         CRI("Invalid instruction type: %d", instr->type);
         return -1;

@@ -36,6 +36,8 @@
 #define BUFFERS_LOCK() do { if (cmd->input) cmd->input->locked = 1; if (cmd->output) cmd->output->locked = 1; if (cmd->mask) cmd->mask->locked = 1; } while (0)
 #define BUFFERS_UNLOCK() do { if (cmd->input) cmd->input->locked = 0; if (cmd->output) cmd->output->locked = 0; if (cmd->mask) cmd->mask->locked = 0; } while (0)
 
+typedef enum _Evas_Filter_Interpolation_Mode Evas_Filter_Interpolation_Mode;
+
 struct _Evas_Filter_Context
 {
    Evas_Public_Data *evas;
@@ -126,6 +128,13 @@ struct _Evas_Filter_Buffer
    Eina_Bool locked : 1;      // internal flag
 };
 
+enum _Evas_Filter_Interpolation_Mode
+{
+   EVAS_FILTER_INTERPOLATION_MODE_NONE,
+   EVAS_FILTER_INTERPOLATION_MODE_LINEAR,
+   EVAS_FILTER_INTERPOLATION_MODE_CUBIC
+};
+
 void                     evas_filter_context_clear(Evas_Filter_Context *ctx);
 void                     evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid);
 
@@ -144,5 +153,6 @@ Eina_Bool evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h);
 Evas_Filter_Buffer *_filter_buffer_get(Evas_Filter_Context *ctx, int bufid);
 Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
 Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, int w, int h);
+Eina_Bool evas_filter_interpolate(DATA8* output /* 256 values */, DATA8* points /* pairs x + y */, int point_count, Evas_Filter_Interpolation_Mode mode);
 
 #endif // EVAS_FILTER_PRIVATE_H

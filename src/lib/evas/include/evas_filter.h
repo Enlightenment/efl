@@ -150,6 +150,17 @@ int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, 
  * @note The current draw context's render operation is ignored (always uses COPY mode).
  */
 int                      evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context, int buf);
+
+/**
+ * @brief evas_filter_command_curve_add
+ * @param ctx            Current filter chain
+ * @param draw_context   Current Evas draw context. Current color is used when buf is RGBA, and clip is used to specify the fill area.
+ * @param inbuf          Input buffer, ALPHA or RGBA.
+ * @param outbuf         Output buffer, must have same colorspace as inbuf.
+ * @param curve          The data points to use, must contain 256 values.
+ * @param channel        Which channel to apply the curve (red, green, blue, alpha or RGB)
+ * @return               Filter command ID or -1 in case of error
+ */
 int                      evas_filter_command_curve_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, DATA8 *curve /* 256 elements */, Evas_Filter_Channel channel);
 
 /**

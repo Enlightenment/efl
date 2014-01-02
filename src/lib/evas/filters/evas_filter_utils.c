@@ -50,3 +50,70 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
 
    return fb;
 }
+
+static Eina_Bool
+_interpolate_none(DATA8 *output, DATA8 *points, int point_count)
+{
+   int j, k, val, x1, x2;
+   for (j = 0; j < point_count; j++)
+     {
+        x1 = points[j * 2];
+        val = points[j * 2 + 1];
+        if (j < (point_count - 1))
+          x2 = points[(j + 1) * 2];
+        else
+          x2 = 256;
+        if (x2 < x1) return EINA_FALSE;
+        for (k = x1; k < x2; k++)
+          output[k] = val;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_interpolate_linear(DATA8 *output, DATA8 *points, int point_count)
+{
+   int j, k, val1, val2, x1, x2;
+   for (j = 0; j < point_count; j++)
+     {
+        x1 = points[j * 2];
+        val1 = points[j * 2 + 1];
+        if (j < (point_count - 1))
+          {
+             x2 = points[(j + 1) * 2];
+             val2 = points[(j + 1) * 2 + 1];
+          }
+        else
+          {
+             x2 = 256;
+             val2 = val1;
+          }
+        if (x2 < x1) return EINA_FALSE;
+        for (k = x1; k < x2; k++)
+          output[k] = val1 + ((val2 - val1) * (k - x1)) / (x2 - x1);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_interpolate_cubic(DATA8 *output, DATA8 *points, int point_count)
+{
+   CRI("Not implemented yet");
+   return EINA_FALSE;
+}
+
+Eina_Bool
+evas_filter_interpolate(DATA8 *output, DATA8 *points, int point_count,
+                        Evas_Filter_Interpolation_Mode mode)
+{
+   switch (mode)
+     {
+      case EVAS_FILTER_INTERPOLATION_MODE_NONE:
+        return _interpolate_none(output, points, point_count);
+      case EVAS_FILTER_INTERPOLATION_MODE_CUBIC:
+        return _interpolate_cubic(output, points, point_count);
+      case EVAS_FILTER_INTERPOLATION_MODE_LINEAR:
+      default:
+        return _interpolate_linear(output, points, point_count);
+     }
+}
