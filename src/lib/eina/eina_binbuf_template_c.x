@@ -74,6 +74,15 @@ _FUNC_EXPAND(manage_new_length)(_STRBUF_DATA_TYPE *str, size_t length)
    return buf;
 }
 
+EAPI _STRBUF_STRUCT_NAME *
+_FUNC_EXPAND(manage_read_only_new_length)(const _STRBUF_DATA_TYPE *str, size_t length)
+{
+   _STRBUF_STRUCT_NAME *buf =
+     eina_strbuf_common_manage_ro_new(_STRBUF_CSIZE, (void *) str, length);
+   EINA_MAGIC_SET(buf, _STRBUF_MAGIC);
+   return buf;
+}
+
 EAPI void
 _FUNC_EXPAND(free)(_STRBUF_STRUCT_NAME *buf)
 {

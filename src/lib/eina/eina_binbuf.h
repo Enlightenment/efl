@@ -65,6 +65,26 @@ EAPI Eina_Binbuf *eina_binbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Create a new string buffer using the passed string. The passed
+ * string is used directly as the buffer, it's somehow the opposite function of
+ * @ref eina_binbuf_string_steal . The passed string will not be touched.
+ *
+ * @param str the string to start from
+ * @param length the length of the string.
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned. To free the resources, use eina_binbuf_free(). It will
+ * not touch the internal buffer. Any changing operation will
+ * create a fresh new memory, copy old data there and starting modifying
+ * that one.
+ *
+ * @see eina_binbuf_manage_new()
+ * @since 1.9.0
+ */
+EAPI Eina_Binbuf *eina_binbuf_manage_read_only_new_length(const unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Free a string buffer.
  *
  * @param buf The string buffer to free.
@@ -120,6 +140,7 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *
  * @see eina_binbuf_append()
  * @see eina_binbuf_append_n()
  * @see eina_binbuf_append_length()
+ * @since 1.9.0
  */
 EAPI Eina_Bool eina_binbuf_append_buffer(Eina_Binbuf *buf, const Eina_Binbuf *data) EINA_ARG_NONNULL(1, 2);
 

@@ -19,6 +19,8 @@ struct _Eina_Strbuf
    size_t step;
 
    EINA_MAGIC
+
+   Eina_Bool ro : 1;
 };
 
 #define EINA_MAGIC_CHECK_STRBUF(d, ...)                         \
@@ -41,6 +43,11 @@ Eina_Strbuf *
 eina_strbuf_common_manage_new(size_t csize,
                                void *str,
                                size_t len);
+Eina_Strbuf *
+eina_strbuf_common_manage_ro_new(size_t csize,
+                                 const void *str,
+                                 size_t len);
+
 void
 eina_strbuf_common_free(Eina_Strbuf *buf);
 void

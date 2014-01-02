@@ -114,6 +114,23 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new(char *str) EINA_MALLOC EINA_WARN_UNUSED
 EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Create a new string buffer using the passed string. The passed
+ * string is used directly as the buffer, it's somehow the opposite function of
+ * @ref eina_strbuf_string_steal . The passed string must be malloced.
+ *
+ * @param str the string to manage
+ * @param length the length of the string.
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned. To free the resources, use eina_strbuf_free().
+ *
+ * @see eina_strbuf_manage_new()
+ * @since 1.9.0
+ */
+EAPI Eina_Strbuf *eina_strbuf_manage_read_only_new_length(const char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Free a string buffer.
  *
  * @param buf The string buffer to free.
@@ -223,6 +240,7 @@ EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_n()
  * @see eina_strbuf_append_length()
+ * @since 1.9.0
  */
 EAPI Eina_Bool eina_strbuf_append_buffer(Eina_Strbuf *buf, const Eina_Strbuf *data) EINA_ARG_NONNULL(1, 2);
 

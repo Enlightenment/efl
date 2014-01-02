@@ -83,10 +83,11 @@ eina_strbuf_common_shutdown(void)
 static Eina_Bool
 _eina_strbuf_common_init(size_t csize, Eina_Strbuf *buf)
 {
+   buf->ro = EINA_FALSE;
    buf->len = 0;
    buf->size = EINA_STRBUF_INIT_SIZE;
    buf->step = EINA_STRBUF_INIT_STEP;
-   
+
    buf->buf = calloc(csize, buf->size);
    if (EINA_UNLIKELY(!buf->buf)) return EINA_FALSE;
    return EINA_TRUE;
@@ -131,6 +132,7 @@ _eina_strbuf_common_resize(size_t csize, Eina_Strbuf *buf, size_t size)
 {
    size_t new_size, new_step, delta;
    void *buffer;
+   void *copy;
 
    size += 1; // Add extra space for '\0'
 
@@ -150,14 +152,30 @@ _eina_strbuf_common_resize(size_t csize, Eina_Strbuf *buf, size_t size)
 
    new_size = (((size / new_step) + 1) * new_step);
 
+   if (buf->size == new_size * csize) return EINA_TRUE;
+
+   copy = buf->buf;
+   if (EINA_UNLIKELY(buf->ro))
+     buf->buf = NULL;
+
    /* reallocate the buffer to the new size */
    buffer = realloc(buf->buf, new_size * csize);
-   if (EINA_UNLIKELY(!buffer)) return EINA_FALSE;
+   if (EINA_UNLIKELY(!buffer)) goto on_error;
+
+   if (EINA_UNLIKELY(buf->ro))
+     {
+        memcpy(buffer, copy, buf->len);
+        buf->ro = EINA_FALSE;
+     }
 
    buf->buf = buffer;
    buf->size = new_size;
    buf->step = new_step;
    return EINA_TRUE;
+
+ on_error:
+   if (buf->ro) buf->buf = copy;
+   return EINA_FALSE;
 }
 
 /**
@@ -238,7 +256,7 @@ eina_strbuf_common_new(size_t csize)
 {
    Eina_Strbuf *buf;
 
-   buf = malloc(sizeof(Eina_Strbuf));
+   buf = calloc(1, sizeof(Eina_Strbuf));
    if (EINA_UNLIKELY(!buf)) return NULL;
    if (EINA_UNLIKELY(!_eina_strbuf_common_init(csize, buf)))
      {
@@ -272,13 +290,49 @@ eina_strbuf_common_manage_new(size_t csize,
 {
    Eina_Strbuf *buf;
 
-   buf = malloc(sizeof(Eina_Strbuf));
+   buf = calloc(1, sizeof(Eina_Strbuf));
    if (EINA_UNLIKELY(!buf)) return NULL;
    if (EINA_UNLIKELY(!_eina_strbuf_common_manage_init(csize, buf, str, len)))
-    {
+     {
         eina_strbuf_common_free(buf);
         return NULL;
      }
+   return buf;
+}
+
+/**
+ * @internal
+ * @brief Create a new string buffer managing read only str.
+ *
+ * @param csize the character size
+ * @param str the read only string to manage
+ * @param len the length of the string to manage
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned. To free the resources, use eina_strbuf_common_free().
+ *
+ * @see eina_strbuf_common_free()
+ * @see eina_strbuf_common_append()
+ * @see eina_strbuf_common_string_get()
+ * @since 1.1.0
+ */
+Eina_Strbuf *
+eina_strbuf_common_manage_ro_new(size_t csize,
+                                 const void *str,
+                                 size_t len)
+{
+   Eina_Strbuf *buf;
+
+   buf = calloc(1, sizeof(Eina_Strbuf));
+   if (EINA_UNLIKELY(!buf)) return NULL;
+   if (EINA_UNLIKELY(!_eina_strbuf_common_manage_init(csize, buf,
+                                                      (void*) str, len)))
+     {
+        eina_strbuf_common_free(buf);
+        return NULL;
+     }
+   buf->ro = EINA_TRUE;
    return buf;
 }
 
@@ -294,7 +348,7 @@ eina_strbuf_common_manage_new(size_t csize,
 void
 eina_strbuf_common_free(Eina_Strbuf *buf)
 {
-   free(buf->buf);
+   if (!buf->ro) free(buf->buf);
    free(buf);
 }
 
@@ -311,6 +365,14 @@ eina_strbuf_common_free(Eina_Strbuf *buf)
 void
 eina_strbuf_common_reset(size_t csize, Eina_Strbuf *buf)
 {
+   /* This is a read only buffer which need change to be made */
+   if (buf->ro)
+     {
+        _eina_strbuf_common_init(csize, buf);
+        buf->ro = EINA_FALSE;
+        return ;
+     }
+
    buf->len = 0;
    buf->step = EINA_STRBUF_INIT_STEP;
    memset(buf->buf, 0, csize);
@@ -608,6 +670,17 @@ eina_strbuf_common_remove(size_t csize,
    if (end >= buf->len) end = buf->len;
    if (end <= start) return EINA_TRUE;
 
+   /* This is a read only buffer which need change to be made */
+   if (buf->ro)
+     {
+        char *dest;
+
+        dest = malloc(buf->size);
+        if (!dest) return 0;
+        memcpy(dest, buf->buf, buf->len);
+        buf->buf = dest;
+     }
+
    remove_len = end - start;
    if (remove_len == buf->len)
      {
@@ -662,6 +735,19 @@ void *
 eina_strbuf_common_string_steal(size_t csize, Eina_Strbuf *buf)
 {
    void *ret;
+
+   // If the buffer is ro, the caller would have to do additional
+   // test to detect if it is the same string or not. Let's make
+   // life for everyone easy.
+   if (buf->ro)
+     {
+        char *dest;
+
+        dest = malloc(buf->size);
+        if (!dest) return 0;
+        memcpy(dest, buf->buf, buf->len);
+        buf->buf = dest;
+     }
 
    ret = buf->buf;
    // TODO: Check return value and do something clever
@@ -753,6 +839,17 @@ eina_strbuf_replace(Eina_Strbuf *buf,
         if (n) spos++;
      }
 
+   /* This is a read only buffer which need change to be made */
+   if (buf->ro)
+     {
+        char *dest;
+
+        dest = malloc(buf->size);
+        if (!dest) return 0;
+        memcpy(dest, buf->buf, buf->len);
+        buf->buf = dest;
+     }
+
    pos = spos - (const char *)buf->buf;
    len1 = strlen(str);
    len2 = strlen(with);
@@ -789,6 +886,18 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
 
    spos = strstr(buf->buf, str);
    if (!spos || *spos == '\0') return 0;
+
+   /* This is a read only buffer which need change to be made */
+   if (buf->ro)
+     {
+        char *dest;
+
+        dest = malloc(buf->size);
+        if (!dest) return 0;
+        memcpy(dest, buf->buf, buf->len);
+        buf->buf = dest;
+     }
+
    len1 = strlen(str);
    len2 = strlen(with);
    /* if the size of the two string is equal, it is fairly easy to replace them

@@ -125,6 +125,36 @@ START_TEST(binbuf_manage_simple)
 }
 END_TEST
 
+START_TEST(binbuf_manage_read_only_simple)
+{
+   Eina_Binbuf *buf;
+   const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
+   const unsigned char *cbuf = (const unsigned char *) _cbuf;
+   size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
+
+   eina_init();
+
+   buf = eina_binbuf_manage_read_only_new_length(_cbuf, size);
+   fail_if(!buf);
+
+   eina_binbuf_free(buf);
+
+   buf = eina_binbuf_manage_read_only_new_length(_cbuf, size);
+   fail_if(!buf);
+
+   fail_if(eina_binbuf_string_get(buf) != cbuf);
+   fail_if(size != eina_binbuf_length_get(buf));
+   eina_binbuf_append_length(buf, cbuf, size);
+   fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
+   fail_if(memcmp(eina_binbuf_string_get(buf) + size, cbuf, size));
+   fail_if(2 * size != eina_binbuf_length_get(buf));
+
+   eina_binbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(binbuf_insert)
 {
 #if 0
@@ -260,4 +290,5 @@ eina_test_binbuf(TCase *tc)
    tcase_add_test(tc, binbuf_insert);
    tcase_add_test(tc, binbuf_realloc);
    tcase_add_test(tc, binbuf_manage_simple);
+   tcase_add_test(tc, binbuf_manage_read_only_simple);
 }
