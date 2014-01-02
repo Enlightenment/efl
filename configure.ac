@@ -1107,6 +1107,17 @@ AC_ARG_ENABLE([drm],
    ],
    [want_drm="no"])
 
+AC_ARG_ENABLE([drm_hw_accel],
+   [AC_HELP_STRING([--enable-drm-hw-accel],
+       [enable drm hardware acceleration. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_drm_hw_accel="yes"
+    else
+       want_drm_hw_accel="no"
+    fi
+   ],
+   [want_drm_hw_accel="no"])
 
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
@@ -2496,6 +2507,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
 EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libudev >= 148 libdrm >= 2.4 libinput >= 0.0.90])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_DRM], [${want_drm_hw_accel}], [GBM], [gbm])
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
@@ -2512,6 +2524,7 @@ EFL_EVAL_PKGS([ECORE_DRM])
 ### Checks for library functions
 
 EFL_LIB_END_OPTIONAL([Ecore_Drm])
+AM_CONDITIONAL([BUILD_ECORE_DRM_HW_ACCEL], [test "x${want_drm_hw_accel}" = "xyes"])
 #### End of Ecore_Drm
 
 #### Ecore_Audio
