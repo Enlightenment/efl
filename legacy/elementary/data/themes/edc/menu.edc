@@ -2,7 +2,20 @@ group { name: "e/widgets/menu/default/background";
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "shine.png" COMP;
+   images.image: "win_shadow.png" COMP;
    parts {
+      part { name: "shadow"; mouse_events: 0;
+         description { state: "default";
+            image.normal: "win_shadow.png";
+            image.border: 14 14 14 14;
+            image.middle: 0;
+            rel1.to: "top";
+            rel1.offset: -7  -3;
+            rel2.to: "base";
+            rel2.offset: 6 11;
+            fill.smooth: 0;
+         }
+      }
       part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
