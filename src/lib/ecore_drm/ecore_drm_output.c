@@ -14,6 +14,98 @@ static const char *conn_types[] =
 };
 
 /* local functions */
+#ifdef HAVE_GBM
+static Eina_Bool 
+_ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output)
+{
+   unsigned int i = 0;
+   int flags = 0;
+   int w = 0, h = 0;
+
+   if ((!dev) || (!output) || (!dev->use_hw_accel)) return EINA_FALSE;
+
+   if (output->current_mode)
+     {
+        w = output->current_mode->width;
+        h = output->current_mode->height;
+     }
+   else
+     {
+        w = 1024;
+        h = 768;
+     }
+
+   flags = (GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
+
+   if (!(output->surface = 
+         gbm_surface_create(dev->gbm, w, h, dev->format, flags)))
+     {
+        ERR("Could not create output surface: %m");
+        return EINA_FALSE;
+     }
+
+   flags = (GBM_BO_USE_CURSOR_64X64 | GBM_BO_USE_WRITE);
+   for (i = 0; i < NUM_FRAME_BUFFERS; i++)
+     {
+        if (output->cursor[i]) continue;
+        if (!(output->cursor[i] = 
+              gbm_bo_create(dev->gbm, 64, 64, dev->format, flags)))
+          {
+             ERR("Could not create cursor surface: %m");
+             continue;
+          }
+     }
+
+   if ((!output->cursor[0]) || (!output->cursor[1]))
+     {
+        WRN("Hardware Cursor Buffers not available");
+        dev->cursors_broken = EINA_TRUE;
+     }
+
+   return EINA_TRUE;
+}
+#endif
+
+static Eina_Bool 
+_ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output)
+{
+   unsigned int i = 0;
+   int w = 0, h = 0;
+
+   if ((!dev) || (!output)) return EINA_FALSE;
+
+   if (output->current_mode)
+     {
+        w = output->current_mode->width;
+        h = output->current_mode->height;
+     }
+   else
+     {
+        w = 1024;
+        h = 768;
+     }
+
+   for (i = 0; i < NUM_FRAME_BUFFERS; i++)
+     {
+        if (!(output->dumb[i] = _ecore_drm_fb_create(dev, w, h)))
+          {
+             ERR("Could not create dumb framebuffer %d", i);
+             goto err;
+          }
+     }
+
+   return EINA_TRUE;
+
+err:
+   for (i = 0; i < NUM_FRAME_BUFFERS; i++)
+     {
+        if (output->dumb[i]) _ecore_drm_fb_destroy(output->dumb[i]);
+        output->dumb[i] = NULL;
+     }
+
+   return EINA_FALSE;
+}
+
 static int 
 _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnector *conn)
 {
@@ -160,6 +252,29 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    if (!output->current_mode)
      output->current_mode = _ecore_drm_output_mode_add(output, &crtc_mode);
 
+#ifdef HAVE_GBM
+   if (dev->use_hw_accel)
+     {
+        if (!_ecore_drm_output_hardware_setup(dev, output))
+          {
+             ERR("Could not setup output for hardware acceleration");
+             if (!_ecore_drm_output_software_setup(dev, output))
+               goto mode_err;
+             else
+               DBG("Setup Output %d for Software Rendering", output->crtc_id);
+          }
+        else
+          DBG("Setup Output %d for Hardware Acceleration", output->crtc_id);
+     }
+   else
+#endif
+     {
+        if (!_ecore_drm_output_software_setup(dev, output))
+          goto mode_err;
+        else
+          DBG("Setup Output %d for Software Rendering", output->crtc_id);
+     }
+
    /* TODO: output_init_pixman/output_init_egl ?? */
 
    return output;
@@ -254,10 +369,16 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
      }
 
    ret = EINA_TRUE;
-   if (eina_list_count(dev->outputs) < 1) ret = EINA_FALSE;
+   if (eina_list_count(dev->outputs) < 1) 
+     {
+        ret = EINA_FALSE;
+        free(dev->crtcs);
+     }
 
    /* free resources */
    drmModeFreeResources(res);
+
+   /* TODO: add hook for udev drm output updates */
 
    return ret;
 }
