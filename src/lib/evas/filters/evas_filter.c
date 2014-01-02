@@ -24,7 +24,7 @@ static void _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd);
 #define CLAMP(a,b,c) MIN(MAX((b),(a)),(c))
 
 #define DRAW_COLOR_SET(r, g, b, a) do { cmd->draw.R = r; cmd->draw.G = g; cmd->draw.B = b; cmd->draw.A = a; } while (0)
-#define DRAW_CLIP_SET(x, y, w, h) do { cmd->draw.clipx = x; cmd->draw.clipy = y; cmd->draw.clipw = w; cmd->draw.cliph = h; } while (0)
+#define DRAW_CLIP_SET(_x, _y, _w, _h) do { cmd->draw.clip.x = _x; cmd->draw.clip.y = _y; cmd->draw.clip.w = _w; cmd->draw.clip.h = _h; } while (0)
 #define DRAW_FILL_SET(fmode) do { cmd->draw.fillmode = fmode; } while (0)
 
 typedef struct _Evas_Filter_Thread_Command Evas_Filter_Thread_Command;
@@ -791,8 +791,8 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
    cmd->draw.render_op = ENFN->context_render_op_get(ENDT, drawctx);
-   ENFN->context_clip_get(ENDT, drawctx, &cmd->draw.clipx, &cmd->draw.clipy,
-                          &cmd->draw.clipw, &cmd->draw.cliph);
+   ENFN->context_clip_get(ENDT, drawctx, &cmd->draw.clip.x, &cmd->draw.clip.y,
+                          &cmd->draw.clip.w, &cmd->draw.clip.h);
 
    return cmd->id;
 }
@@ -1057,19 +1057,29 @@ _fill_cpu(Evas_Filter_Command *cmd)
 {
    Evas_Filter_Buffer *fb = cmd->output;
    int step = fb->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
-   int x = MAX(0, cmd->draw.clipx);
-   int y = MAX(0, cmd->draw.clipy);
+   int x = MAX(0, cmd->draw.clip.x);
+   int y = MAX(0, cmd->draw.clip.y);
    DATA8 *ptr = ((RGBA_Image *) fb->backing)->mask.data;
    int w, h, k, j;
 
-   if (cmd->draw.clipw)
-     w = MIN(cmd->draw.clipw, fb->w);
+   if (!cmd->draw.clip_mode_lrtb)
+     {
+        if (cmd->draw.clip.w)
+          w = MIN(cmd->draw.clip.w, fb->w - x);
+        else
+          w = fb->w - x;
+        if (cmd->draw.clip.h)
+          h = MIN(cmd->draw.clip.h, fb->h - y);
+        else
+          h = fb->h - y;
+     }
    else
-     w = fb->w - x;
-   if (cmd->draw.cliph)
-     h = MIN(cmd->draw.cliph, fb->h);
-   else
-     h = fb->h - y;
+     {
+        x = MAX(0, cmd->draw.clip.l);
+        y = MAX(0, cmd->draw.clip.t);
+        w = CLAMP(0, fb->w - x - cmd->draw.clip.r, fb->w - x);
+        h = CLAMP(0, fb->h - y - cmd->draw.clip.b, fb->h - y);
+     }
 
    ptr += y * step * fb->w;
    if ((fb->alpha_only)
@@ -1091,7 +1101,7 @@ _fill_cpu(Evas_Filter_Command *cmd)
           {
              for (j = 0; j < w; j++)
                *dst++ = color;
-             dst += fb->w;
+             dst += fb->w - w;
           }
      }
 
@@ -1187,7 +1197,8 @@ _filter_command_run(Evas_Filter_Command *cmd)
        cmd->id, _filter_name_get(cmd->mode),
        cmd->input->id, cmd->mask ? cmd->mask->id : 0, cmd->output->id);
 
-   if (!cmd->input->w && !cmd->input->h)
+   if (!cmd->input->w && !cmd->input->h
+       && (cmd->mode != EVAS_FILTER_MODE_FILL))
      {
         DBG("Skipping processing of empty input buffer (size 0x0)");
         return EINA_TRUE;

@@ -92,8 +92,8 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
    cmd->ENFN->context_color_set(cmd->ENDT, drawctx, cmd->draw.R, cmd->draw.G,
                                 cmd->draw.B, cmd->draw.A);
    cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, cmd->draw.render_op);
-   cmd->ENFN->context_clip_set(cmd->ENDT, drawctx, cmd->draw.clipx,
-                               cmd->draw.clipy, cmd->draw.clipw, cmd->draw.cliph);
+   cmd->ENFN->context_clip_set(cmd->ENDT, drawctx, cmd->draw.clip.x,
+                               cmd->draw.clip.y, cmd->draw.clip.w, cmd->draw.clip.h);
 
    cmd->ENFN->image_draw(cmd->ENDT, drawctx, out, in,
                          0, 0, w, h, // src

@@ -926,13 +926,22 @@ _fill_instruction_prepare(Evas_Filter_Instruction *instr)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "fill"), EINA_FALSE);
 
    /*
-   * fill [dst=]BUFFER [color=COLOR]
+   * fill [dst=BUFFER] [color=COLOR] (l=INT) (r=INT) (t=INT) (b=INT)
+   *
    * Works with both Alpha and RGBA.
+   *
+   * The geometry is defined by l, r, t, b, offsets from the edges of the buffer
+   * These offsets always go INWARDS, which means b > 0 goes UP, while t > 0
+   * goes DOWN.
    */
 
    instr->type = EVAS_FILTER_MODE_FILL;
-   _instruction_param_seq_add(instr, "dst", VT_BUFFER, NULL);
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_seq_add(instr, "color", VT_COLOR, 0x0);
+   _instruction_param_seq_add(instr, "l", VT_INT, 0);
+   _instruction_param_seq_add(instr, "r", VT_INT, 0);
+   _instruction_param_seq_add(instr, "t", VT_INT, 0);
+   _instruction_param_seq_add(instr, "b", VT_INT, 0);
 
    return EINA_TRUE;
 }
@@ -1308,6 +1317,12 @@ evas_filter_program_proxy_source_get(Evas_Filter_Program *pgm, const char *name)
 #define SETCOLOR(c) do { ENFN->context_color_get(ENDT, dc, &R, &G, &B, &A); \
    ENFN->context_color_set(ENDT, dc, CR(c), CG(c), CB(c), CA(c)); } while (0)
 #define RESETCOLOR() do { ENFN->context_color_set(ENDT, dc, R, G, B, A); } while (0)
+
+#define SETCLIP(l, r, t, b) int _l = 0, _r = 0, _t = 0, _b = 0; \
+   do { ENFN->context_clip_get(ENDT, dc, &_l, &_r, &_t, &_b); \
+   ENFN->context_clip_set(ENDT, dc, l, r, t, b); } while (0)
+#define RESETCLIP() do { ENFN->context_clip_set(ENDT, dc, _l, _r, _t, _b); } while (0)
+
 int A, R, G, B;
 
 static Evas_Filter_Fill_Mode
@@ -1473,19 +1488,30 @@ _instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 {
    const char *bufname;
    Buffer *buf;
-   int R, G, B, A;
+   int R, G, B, A, l, r, t, b;
+   Evas_Filter_Command *cmd;
    DATA32 color;
    int cmdid;
 
    bufname = _instruction_param_gets(instr, "dst", NULL);
    color = _instruction_param_getc(instr, "color", NULL);
-   // TODO/FIXME: Add clip info
+   l = _instruction_param_geti(instr, "l", NULL);
+   r = _instruction_param_geti(instr, "r", NULL);
+   t = _instruction_param_geti(instr, "t", NULL);
+   b = _instruction_param_geti(instr, "b", NULL);
 
    buf = _buffer_get(pgm, bufname);
 
    SETCOLOR(color);
    cmdid = evas_filter_command_fill_add(ctx, dc, buf->cid);
    RESETCOLOR();
+
+   cmd = EINA_INLIST_CONTAINER_GET(eina_inlist_last(ctx->commands), Evas_Filter_Command);
+   cmd->draw.clip.l = l;
+   cmd->draw.clip.r = r;
+   cmd->draw.clip.t = t;
+   cmd->draw.clip.b = b;
+   cmd->draw.clip_mode_lrtb = EINA_TRUE;
 
    return cmdid;
 }

@@ -106,8 +106,16 @@ struct _Evas_Filter_Command
       int render_op;
       int R, G, B, A;
       int ox, oy;
-      int clipx, clipy, clipw, cliph;
+      union {
+         struct {
+            int x, y, w, h;
+         };
+         struct {
+            int l, r, t, b;
+         };
+      } clip;
       Evas_Filter_Fill_Mode fillmode;
+      Eina_Bool clip_mode_lrtb : 1;
    } draw;
 };
 
