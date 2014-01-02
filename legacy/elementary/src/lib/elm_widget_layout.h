@@ -86,6 +86,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             needs_size_calc : 1;
    Eina_Bool             restricted_calc_w : 1;
    Eina_Bool             restricted_calc_h : 1;
+   Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
 } Elm_Layout_Smart_Data;
 
 /**

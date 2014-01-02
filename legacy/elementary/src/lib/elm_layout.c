@@ -1266,7 +1266,7 @@ _elm_layout_smart_text_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_layout_sizing_eval());
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
-       wd->can_access && !(sub_d->obj))
+       sd->can_access && !(sub_d->obj))
      sub_d->obj = _elm_access_edje_object_part_object_register
          (obj, elm_layout_edje_get(obj), part);
 
@@ -2168,15 +2168,14 @@ elm_layout_edje_object_can_access_set(Evas_Object *obj,
 }
 
 static void
-_elm_layout_smart_edje_object_can_access_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_layout_smart_edje_object_can_access_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
+   Elm_Layout_Smart_Data *sd = _pd;
    Eina_Bool can_access = va_arg(*list, int);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   wd->can_access = !!can_access;
+   sd->can_access = !!can_access;
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -2190,12 +2189,12 @@ elm_layout_edje_object_can_access_get(Evas_Object *obj)
 }
 
 static void
-_elm_layout_smart_edje_object_can_access_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+_elm_layout_smart_edje_object_can_access_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
+   Elm_Layout_Smart_Data *sd = _pd;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   *ret = wd->can_access;
+   *ret = sd->can_access;
 }
 
 static void
