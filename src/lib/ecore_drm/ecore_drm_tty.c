@@ -25,7 +25,26 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
 
    if (ev->number == 1)
      {
+        Ecore_Drm_Input *input;
+        Ecore_Drm_Output *output;
+        Ecore_Drm_Sprite *sprite;
+        Eina_List *l;
+
         DBG("Release VT");
+
+        /* disable inputs (suspends) */
+        EINA_LIST_FOREACH(dev->inputs, l, input)
+          ecore_drm_inputs_disable(input);
+
+        /* disable hardware cursor */
+        EINA_LIST_FOREACH(dev->outputs, l, output)
+          ecore_drm_output_cursor_size_set(output, 0, 0, 0);
+
+        /* disable sprites */
+        EINA_LIST_FOREACH(dev->sprites, l, sprite)
+          ecore_drm_sprites_fb_set(sprite, 0, 0);
+
+        /* close input fds ?? */
 
         /* drop drm master */
         if (ecore_drm_device_master_drop(dev))
@@ -39,6 +58,10 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
      }
    else if (ev->number == 2)
      {
+        Ecore_Drm_Output *output;
+        Ecore_Drm_Input *input;
+        Eina_List *l;
+
         DBG("Acquire VT");
 
         /* issue ioctl to acquire vt */
@@ -47,6 +70,14 @@ _ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
              /* set drm master */
              if (!ecore_drm_device_master_set(dev))
                ERR("Could not set drm master: %m");
+
+             /* set output mode */
+             EINA_LIST_FOREACH(dev->outputs, l, output)
+               ecore_drm_output_enable(output);
+
+             /* enable inputs */
+             EINA_LIST_FOREACH(dev->inputs, l, input)
+               ecore_drm_inputs_enable(input);
           }
         else
           ERR("Could not acquire VT: %m");
