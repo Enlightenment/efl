@@ -50,7 +50,7 @@ _recalc(void *data)
 
    /* This is a hack to workaround the way min size hints are treated.
     * If the minimum width is smaller than the restricted width, it means
-    * the mininmum doesn't matter. */
+    * the minimum doesn't matter. */
    if ((minw <= resw) && (minw != sd->wrap_w))
      {
         Evas_Coord ominw = -1;
