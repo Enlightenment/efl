@@ -276,22 +276,30 @@ _buffer_new(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only)
 }
 
 static RGBA_Image *
-_rgba_image_alloc(Evas_Filter_Buffer const *fb)
+_rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
 {
    Evas_Colorspace cspace;
    RGBA_Image *image;
    size_t sz;
 
    cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
-   image = fb->ENFN->image_new_from_copied_data
-     (fb->ENDT, fb->w, fb->h, NULL, EINA_TRUE, cspace);
+   if (!data)
+     {
+        image = fb->ENFN->image_new_from_copied_data
+              (fb->ENDT, fb->w, fb->h, NULL, EINA_TRUE, cspace);
+     }
+   else
+     {
+        image = fb->ENFN->image_new_from_data
+              (fb->ENDT, fb->w, fb->h, data, EINA_TRUE, cspace);
+     }
    if (!image) return EINA_FALSE;
 
    if (fb->alpha_only)
      sz = image->cache_entry.w * image->cache_entry.h * sizeof(DATA8);
    else
      sz = image->cache_entry.w * image->cache_entry.h * sizeof(DATA32);
-   memset(image->image.data, 0, sz);
+   if (!data) memset(image->image.data, 0, sz);
 
    return image;
 }
@@ -327,7 +335,7 @@ evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
    fb->w = w;
    fb->h = h;
 
-   fb->backing = _rgba_image_alloc(fb);
+   fb->backing = _rgba_image_alloc(fb, NULL);
    fb->allocated = (fb->backing != NULL);
    return fb->allocated;
 }
@@ -358,15 +366,12 @@ evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
    fb = _filter_buffer_get(ctx, bufid);
    if (!fb) return EINA_FALSE;
 
-   if (!data)
-     {
-        if (fb->allocated)
-          fb->ENFN->image_free(fb->ENDT, fb->backing);
-        fb->allocated = EINA_FALSE;
-        fb->backing = NULL;
-        if (w <= 0 || h <= 0)
-          return EINA_FALSE;
-     }
+   if (fb->allocated)
+     fb->ENFN->image_free(fb->ENDT, fb->backing);
+   fb->allocated = EINA_FALSE;
+   fb->backing = NULL;
+   if (w <= 0 || h <= 0)
+     return EINA_FALSE;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(fb->backing == NULL, EINA_FALSE);
    // TODO: Check input parameters?
@@ -374,8 +379,8 @@ evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
    fb->w = w;
    fb->h = h;
 
-   fb->backing = _rgba_image_alloc(fb);
-   fb->allocated = (fb->backing != NULL);
+   fb->backing = _rgba_image_alloc(fb, data);
+   fb->allocated = (!data && (fb->backing != NULL));
    return fb->allocated;
 }
 
