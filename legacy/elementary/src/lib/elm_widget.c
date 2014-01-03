@@ -4762,8 +4762,11 @@ _elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
    best = NULL;
    if (*newest_focus_order < sd->focus_order)
      {
-        *newest_focus_order = sd->focus_order;
-        best = obj;
+        if (!can_focus_only || elm_widget_can_focus_get(obj))
+          {
+             *newest_focus_order = sd->focus_order;
+             best = obj;
+          }
      }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
@@ -4771,11 +4774,6 @@ _elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
            (child, newest_focus_order, can_focus_only);
         if (!cur) continue;
         best = cur;
-     }
-   if (can_focus_only)
-     {
-        if ((!best) || (!elm_widget_can_focus_get(best)))
-          return;
      }
    *ret = best;
    return;
