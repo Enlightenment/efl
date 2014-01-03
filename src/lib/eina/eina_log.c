@@ -1907,8 +1907,14 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
    char buf[12];
    char *tmp;
    Eina_Thread cur;
+   int r;
 
-   vasprintf(&tmp, fmt, args);
+   r = vasprintf(&tmp, fmt, args);
+   if (r == -1)
+     {
+        fputs("ERR: eina_log_print_cb_journald() vasprintf failed\n");
+        return;
+     }
 
    eina_convert_itoa(line, buf);
 
