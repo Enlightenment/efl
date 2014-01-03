@@ -87,11 +87,11 @@ _ecore_drm_inputs_restricted_open(const char *path, int flags EINA_UNUSED, void 
    char p[PATH_MAX];
    int fd = -1;
 
-   DBG("Open Restricted: %s", path);
-
    strcpy(p, path);
    _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, -1, p, strlen(p));
    _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0);
+
+   DBG("Open Restricted: %s %d", path, fd);
    return fd;
 }
 
@@ -241,6 +241,13 @@ _ecore_drm_inputs_cb_input_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    return EINA_TRUE;
 }
 
+/**
+ * @defgroup Ecore_Drm_Input_Group
+ * 
+ */
+
+/* TODO: DOXY !! */
+
 EAPI Eina_Bool 
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
@@ -301,7 +308,8 @@ ecore_drm_inputs_enable(Ecore_Drm_Input *input)
    if (!input) return EINA_FALSE;
 
    /* try to get the fd */
-   input->fd = libinput_get_fd(input->linput);
+   if (input->fd <= 0)
+     input->fd = libinput_get_fd(input->linput);
    if (input->fd <= 0)
      {
         ERR("Failed to get input fd");
@@ -309,10 +317,14 @@ ecore_drm_inputs_enable(Ecore_Drm_Input *input)
      }
 
    /* setup fd handler for reading events */
-   input->input_hdlr = 
-     ecore_main_fd_handler_add(input->fd, ECORE_FD_READ, 
-                               _ecore_drm_inputs_cb_input_event, input, 
-                               NULL, NULL);
+   if (!input->input_hdlr)
+     {
+        input->input_hdlr = 
+          ecore_main_fd_handler_add(input->fd, ECORE_FD_READ, 
+                                    _ecore_drm_inputs_cb_input_event, input, 
+                                    NULL, NULL);
+     }
+
    if (!input->input_hdlr) 
      {
         ERR("Failed to setup fd handler for input");
@@ -336,4 +348,13 @@ ecore_drm_inputs_enable(Ecore_Drm_Input *input)
    /* TODO: notify keyboard focus ? */
 
    return EINA_TRUE;
+}
+
+EAPI void 
+ecore_drm_inputs_disable(Ecore_Drm_Input *input)
+{
+   if (!input) return;
+
+   libinput_suspend(input->linput);
+   input->suspended = EINA_TRUE;
 }
