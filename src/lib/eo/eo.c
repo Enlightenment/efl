@@ -203,6 +203,32 @@ _eo_op_id_desc_get(Eo_Op op)
    return NULL;
 }
 
+static const Eo2_Op_Description *
+_eo2_op_id_desc_get(Eo_Op op)
+{
+   unsigned int i;
+   const _Eo_Class *klass;
+   const Eo2_Op_Description *op_descs;
+
+   if (op == EO_NOOP)
+      return NULL;
+
+   klass = _eo_op_class_get(op);
+   DBG("klass %p %s", klass, klass->desc->name);
+
+   if (klass)
+     {
+        op_descs = klass->desc->ops.descs2;
+        for (i = 0; i <  klass->desc->ops.count; i++)
+          {
+             if (op_descs[i].op == op)
+               return &op_descs[i];
+          }
+     }
+
+   return NULL;
+}
+
 static const char *
 _eo_op_id_name_get(Eo_Op op)
 {
