@@ -318,23 +318,9 @@ static int _eet_image_words_bigendian = -1;
 
 /*---*/
 
-#define SWAP64(x) (x) =                                        \
-  ((((unsigned long long)(x) & 0x00000000000000ffULL) << 56) | \
-   (((unsigned long long)(x) & 0x000000000000ff00ULL) << 40) | \
-   (((unsigned long long)(x) & 0x0000000000ff0000ULL) << 24) | \
-   (((unsigned long long)(x) & 0x00000000ff000000ULL) << 8) |  \
-   (((unsigned long long)(x) & 0x000000ff00000000ULL) >> 8) |  \
-   (((unsigned long long)(x) & 0x0000ff0000000000ULL) >> 24) | \
-   (((unsigned long long)(x) & 0x00ff000000000000ULL) >> 40) | \
-   (((unsigned long long)(x) & 0xff00000000000000ULL) >> 56))
-#define SWAP32(x) (x) =              \
-  ((((int)(x) & 0x000000ff) << 24) | \
-   (((int)(x) & 0x0000ff00) << 8) |  \
-   (((int)(x) & 0x00ff0000) >> 8) |  \
-   (((int)(x) & 0xff000000) >> 24))
-#define SWAP16(x) (x) =           \
-  ((((short)(x) & 0x00ff) << 8) | \
-   (((short)(x) & 0xff00) >> 8))
+#define SWAP64(x) eina_swap64(x)
+#define SWAP32(x) eina_swap32(x)
+#define SWAP16(x) eina_swap16(x)
 
 #ifdef CONV8
 # undef CONV8
