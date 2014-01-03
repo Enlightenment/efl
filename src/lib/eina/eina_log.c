@@ -1927,30 +1927,31 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
    else
      {
         Eina_Strbuf *bts;
-	char **strings;
+        char **strings;
         void *bt[256];
-	int btlen;
-	int i;
+        int btlen;
+        int i;
 
-	btlen = backtrace((void **)bt, 256);
-	strings = backtrace_symbols((void **)bt, btlen);
+        btlen = backtrace((void **)bt, 256);
+        strings = backtrace_symbols((void **)bt, btlen);
 
-	bts = eina_strbuf_new();
-	for (i = 0; i < btlen; i++)
-	  if (i + 1 == btlen)
-	    eina_strbuf_append_printf(bts, "[%s]", strings[i]);
-	  else
-	    eina_strbuf_append_printf(bts, "[%s], ", strings[i]);
+        bts = eina_strbuf_new();
+        for (i = 0; i < btlen; i++)
+          if (i + 1 == btlen)
+            eina_strbuf_append_printf(bts, "[%s]", strings[i]);
+          else
+            eina_strbuf_append_printf(bts, "[%s], ", strings[i]);
 
-	sd_journal_send_with_location(file, buf, fnc,
-				      "PRIORITY=%i", level,
-				      "MESSAGE=%s", tmp,
-				      "EFL_DOMAIN=%s", d->domain_str,
-				      "THREAD=%lu", cur,
-				      "BACKTRACE=%s", eina_strbuf_string_get(bts),
-				      NULL);
-	eina_strbuf_free(bts);
-	free(strings);
+        sd_journal_send_with_location(file, buf, fnc,
+                                      "PRIORITY=%i", level,
+                                      "MESSAGE=%s", tmp,
+                                      "EFL_DOMAIN=%s", d->domain_str,
+                                      "THREAD=%lu", cur,
+                                      "BACKTRACE=%s",
+                                      eina_strbuf_string_get(bts),
+                                      NULL);
+        eina_strbuf_free(bts);
+        free(strings);
      }
 #endif
 
