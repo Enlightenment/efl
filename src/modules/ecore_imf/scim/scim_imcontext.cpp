@@ -51,7 +51,6 @@ struct _EcoreIMFContextISFImpl
     bool                     shared_si;
     bool                     preedit_started;
     bool                     preedit_updating;
-    bool                     need_commit_preedit;
     bool                     prediction_allow;
 
     EcoreIMFContextISFImpl  *next;
@@ -556,7 +555,6 @@ isf_imf_context_add(Ecore_IMF_Context *ctx)
    context_scim->impl->use_preedit         = _on_the_spot;
    context_scim->impl->preedit_started     = false;
    context_scim->impl->preedit_updating    = false;
-   context_scim->impl->need_commit_preedit = false;
 
    if (!_ic_list)
      context_scim->next = NULL;
@@ -724,17 +722,6 @@ isf_imf_context_reset(Ecore_IMF_Context *ctx)
    _panel_client.prepare(context_scim->id);
    context_scim->impl->si->reset();
    _panel_client.send();
-
-   if (context_scim->impl->need_commit_preedit)
-     {
-        if (wstr.length())
-          {
-             ecore_imf_context_commit_event_add(context_scim->ctx, utf8_wcstombs(wstr).c_str());
-             ecore_imf_context_event_callback_call(context_scim->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(wstr).c_str());
-          }
-        _panel_client.prepare(context_scim->id);
-        _panel_client.send();
-     }
 }
 
 /**
@@ -868,17 +855,6 @@ isf_imf_context_focus_out(Ecore_IMF_Context *ctx)
    if (context_scim == _focused_ic)
      {
         WideString wstr = context_scim->impl->preedit_string;
-
-        if (context_scim->impl->need_commit_preedit)
-          {
-             if (wstr.length())
-               {
-                  ecore_imf_context_commit_event_add(context_scim->ctx, utf8_wcstombs(wstr).c_str());
-                  ecore_imf_context_event_callback_call(context_scim->ctx, ECORE_IMF_CALLBACK_COMMIT, (void *)utf8_wcstombs(wstr).c_str());
-               }
-             _panel_client.prepare(context_scim->id);
-             _panel_client.send();
-          }
 
         _panel_client.prepare(context_scim->id);
         context_scim->impl->si->focus_out();
