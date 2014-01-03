@@ -100,19 +100,21 @@ _dich_func_get(const _Eo_Class *klass, Eo_Op op)
 static inline void
 _dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
+   op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &klass->chain[idx1];
    _dich_chain_alloc(chain1);
-   if (chain1->funcs[DICH_CHAIN_LAST(op)].src == klass)
+   fsrc = &chain1->funcs[DICH_CHAIN_LAST(op)];
+   if (fsrc->src == klass)
      {
         const _Eo_Class *op_kls = _eo_op_class_get(op);
-        const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
-        ERR("Already set function for op 0x%x (%s:%s). Overriding with func %p",
-              op, op_kls->desc->name, op_desc->name, func);
+        const char *op_name = _eo_op_id_name_get(op, op_kls->desc->version);
+        ERR("Already set function for op %d (%s:'%s'). Overriding %p with %p",
+              op, op_kls->desc->name, op_name, fsrc->func, func);
      }
 
-   chain1->funcs[DICH_CHAIN_LAST(op)].func = func;
-   chain1->funcs[DICH_CHAIN_LAST(op)].src = klass;
+   fsrc->func = func;
+   fsrc->src = klass;
 }
 
 static inline void
