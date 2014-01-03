@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_drm_private.h"
+#include <dlfcn.h>
 
 static void 
 _ecore_drm_device_cb_page_flip(int fd, unsigned int frame, unsigned int sec, unsigned int usec, void *data)
@@ -262,6 +263,13 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 #ifdef HAVE_GBM
    if (getenv("ECORE_DRM_HW_ACCEL"))
      {
+        /* Typically, gbm loads the dri driver However some versions of Mesa 
+         * do not have libglapi symbols linked in the driver. Because of this, 
+         * using hardware accel for our drm code Could fail with a 
+         * message that the driver could not load. Let's be proactive and 
+         * work around this for the user by preloading the glapi library */
+        dlopen("libglapi.so.0", (RTLD_LAZY | RTLD_GLOBAL));
+
         if ((dev->gbm = gbm_create_device(dev->drm.fd)))
           {
              dev->use_hw_accel = EINA_TRUE;
