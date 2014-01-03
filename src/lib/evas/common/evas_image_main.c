@@ -113,7 +113,7 @@ static inline size_t
 _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Eina_Bool alpha_only)
 {
 #define PAGE_SIZE (4 * 1024)
-#ifdef HAVE_SYS_MMAN_H
+#if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
 # define ALIGN_TO_PAGE(Siz) (((Siz / PAGE_SIZE) + (Siz % PAGE_SIZE ? 1 : 0)) * PAGE_SIZE)
 #else
 # define ALIGN_TO_PAGE(Siz) Siz
@@ -140,7 +140,7 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool a
 
    siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
 
-#ifdef HAVE_SYS_MMAN_H
+#if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
 #ifndef MAP_HUGETLB
 # define MAP_HUGETLB 0
 #endif
@@ -169,7 +169,7 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool a
 static void
 _evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Eina_Bool alpha_only)
 {
-#ifdef HAVE_SYS_MMAN_H
+#if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    size_t siz;
 
    siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
