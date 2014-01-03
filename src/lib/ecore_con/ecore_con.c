@@ -799,22 +799,24 @@ ecore_con_client_send(Ecore_Con_Client *cl,
    if (cl->host_server && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
      sendto(cl->host_server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
             cl->client_addr_len);
-   else if (!cl->buf)
+   else 
      {
-        cl->buf = eina_binbuf_new();
-        EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
-#ifdef TCP_CORK
-        if ((cl->fd >= 0) && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
+        if (!cl->buf)
           {
-             int state = 1;
-             if (setsockopt(cl->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
-               /* realistically this isn't anything serious so we can just log and continue */
-               ERR("corking failed! %s", strerror(errno));
-          }
+             cl->buf = eina_binbuf_new();
+             EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
+#ifdef TCP_CORK
+             if ((cl->fd >= 0) && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
+               {
+                  int state = 1;
+                  if (setsockopt(cl->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
+                    /* realistically this isn't anything serious so we can just log and continue */
+                    ERR("corking failed! %s", strerror(errno));
+               }
 #endif
+          }
+        eina_binbuf_append_length(cl->buf, data, size);
      }
-   eina_binbuf_append_length(cl->buf, data, size);
-
    return size;
 }
 
