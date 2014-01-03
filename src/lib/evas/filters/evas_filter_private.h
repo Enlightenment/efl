@@ -115,6 +115,7 @@ struct _Evas_Filter_Command
          };
       } clip;
       Evas_Filter_Fill_Mode fillmode;
+      Eina_Bool clip_use : 1;
       Eina_Bool clip_mode_lrtb : 1;
    } draw;
 };

@@ -161,6 +161,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
 
         ctx = e->engine.func->context_new(e->engine.data.output);
 
+        // FIXME: Not implemented for class Evas_Text.
         Eina_Bool source_clip;
         eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
 
@@ -796,8 +797,10 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
    cmd->draw.render_op = ENFN->context_render_op_get(ENDT, drawctx);
-   ENFN->context_clip_get(ENDT, drawctx, &cmd->draw.clip.x, &cmd->draw.clip.y,
-                          &cmd->draw.clip.w, &cmd->draw.clip.h);
+   cmd->draw.clip_use =
+         ENFN->context_clip_get(ENDT, drawctx,
+                                &cmd->draw.clip.x, &cmd->draw.clip.y,
+                                &cmd->draw.clip.w, &cmd->draw.clip.h);
 
    return cmd->id;
 }

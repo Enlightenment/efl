@@ -76,7 +76,8 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
    RGBA_Draw_Context *drawctx;
-   int w, h;
+   int sw, sh, dx, dy, dw, dh, sx, sy;
+   Eina_Bool repeat_x = EINA_FALSE, repeat_y = EINA_FALSE;
 
    if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
      return EINA_FALSE;
@@ -85,21 +86,66 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
    out = cmd->output->backing;
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
-   w = in->cache_entry.w;
-   h = in->cache_entry.h;
+
+   sx = 0;
+   sy = 0;
+   sw = in->cache_entry.w;
+   sh = in->cache_entry.h;
+
+   dx = cmd->draw.ox;
+   dy = cmd->draw.oy;
+   dw = MIN(out->cache_entry.w - dx, out->cache_entry.w);
+   dh = MIN(out->cache_entry.h - dy, out->cache_entry.h);
 
    drawctx = cmd->ENFN->context_new(cmd->ENDT);
    cmd->ENFN->context_color_set(cmd->ENDT, drawctx, cmd->draw.R, cmd->draw.G,
                                 cmd->draw.B, cmd->draw.A);
    cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, cmd->draw.render_op);
-   cmd->ENFN->context_clip_set(cmd->ENDT, drawctx, cmd->draw.clip.x,
-                               cmd->draw.clip.y, cmd->draw.clip.w, cmd->draw.clip.h);
 
-   cmd->ENFN->image_draw(cmd->ENDT, drawctx, out, in,
-                         0, 0, w, h, // src
-                         cmd->draw.ox, cmd->draw.oy, w, h, // dst
-                         EINA_FALSE, // smooth
-                         EINA_FALSE); // Not async
+   if (cmd->draw.clip_use)
+     cmd->ENFN->context_clip_set(cmd->ENDT, drawctx,
+                                 cmd->draw.clip.x, cmd->draw.clip.y,
+                                 cmd->draw.clip.w, cmd->draw.clip.h);
+   else
+     cmd->ENFN->context_clip_set(cmd->ENDT, drawctx, dx, dy, dw, dh);
+
+   if (((dw != sw) || (dh != sh)) && cmd->draw.fillmode)
+     {
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+          dw = out->cache_entry.w - dx;
+        else if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_REPEAT_X)
+          repeat_x = EINA_TRUE;
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+          dh = out->cache_entry.h - dy;
+        else if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_REPEAT_Y)
+          repeat_y = EINA_TRUE;
+     }
+   else if (cmd->draw.fillmode == EVAS_FILTER_FILL_MODE_NONE)
+     {
+        int src_w = dw;
+        int src_h = dh;
+        _clip_to_target(&sx, &sy, sw, sh, dx, dy, out->cache_entry.w, out->cache_entry.h, &dx, &dy, &dh, &dw);
+        if (src_w < sw) sw = src_w;
+        if (src_h < sh) sh = src_h;
+     }
+
+   if (!repeat_x && !repeat_y)
+     {
+        DBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d (from %dx%d to %dx%d +%d,%d)",
+            0, 0, sw, sh, dx, dy, dw, dh,
+            in->cache_entry.w, in->cache_entry.h,
+            out->cache_entry.w, out->cache_entry.h,
+            dx, dy);
+        cmd->ENFN->image_draw(cmd->ENDT, drawctx, out, in,
+                              sx, sy, sw, sh, // src
+                              dx, dy, dw, dh, // dst
+                              EINA_TRUE, // smooth
+                              EINA_FALSE); // Not async
+     }
+   else
+     {
+        CRI("repeat not implemented yet");
+     }
 
    cmd->ENFN->context_free(cmd->ENDT, drawctx);
 
