@@ -122,6 +122,7 @@ struct _Ecore_Drm_Output
    drmModeCrtcPtr crtc;
 
    int x, y;
+   int drm_fd;
 
    const char *make, *model, *name;
    unsigned int subpixel;
@@ -129,6 +130,7 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
 
+   Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
 
 # ifdef HAVE_GBM
@@ -164,6 +166,26 @@ struct _Ecore_Drm_Evdev
    int fd;
 };
 
+struct _Ecore_Drm_Sprite
+{
+   Ecore_Drm_Fb *current_fb, *next_fb;
+   Ecore_Drm_Output *output;
+
+   int drm_fd;
+
+   unsigned int crtcs;
+   unsigned int plane_id;
+
+   struct 
+     {
+        int x, y;
+        unsigned int w, h;
+     } src, dest;
+
+   unsigned int num_formats;
+   unsigned int formats[];
+};
+
 struct _Ecore_Drm_Device
 {
    int id;
@@ -187,6 +209,7 @@ struct _Ecore_Drm_Device
 
    Eina_List *inputs;
    Eina_List *outputs;
+   Eina_List *sprites;
 
    struct 
      {
@@ -213,5 +236,7 @@ int _ecore_drm_evdev_event_process(struct libinput_event *event);
 
 Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
+
+void _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
 
 #endif
