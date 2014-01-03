@@ -440,7 +440,7 @@ _eo2_do_end(const Eo **eo_id EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-_eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
+_eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call, const char *file, int line)
 {
    Eo2_Stack_Frame *fptr;
    const _Eo_Class *klass;
@@ -469,7 +469,8 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
 
    if (EINA_UNLIKELY(func == NULL))
      {
-        ERR("you called func '%s' (%d) which is unknown in class '%s'", func_name, op, klass->desc->name);
+        ERR("in %s:%d: you called func '%s' (%d) which is unknown in class '%s'",
+            file, line, func_name, op, klass->desc->name);
         return EINA_FALSE;
      }
 
@@ -502,7 +503,8 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call)
 
    if (func->src != NULL)
      {
-        ERR("you called a pure virtual func '%s' (%d)", func_name, op);
+        ERR("in %s:%d: you called a pure virtual func '%s' (%d)",
+            file, line, func_name, op);
         return EINA_FALSE;
      }
 
@@ -541,14 +543,14 @@ end:
         /* If it's a do_super call. */
         if (fptr->cur_klass)
           {
-             ERR("func '%s' (%d) could not be resolved for class '%s' for super of '%s'",
-                 func_name, op, main_klass->desc->name,
+             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'",
+                 file, line, func_name, op, main_klass->desc->name,
                  fptr->cur_klass->desc->name);
           }
         else
           {
-             ERR("func '%s' (%d) could not be resolved for class '%s'",
-                 func_name, op, main_klass->desc->name);
+             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'",
+                 file, line, func_name, op, main_klass->desc->name);
           }
      }
 
@@ -604,7 +606,7 @@ _eo2_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class 
 }
 
 EAPI Eo_Op
-_eo2_api_op_id_get(const void *api_func)
+_eo2_api_op_id_get(const void *api_func, const char *file, int line)
 {
    const Eo2_Op_Description *desc;
    const _Eo_Class *klass;
@@ -620,7 +622,8 @@ _eo2_api_op_id_get(const void *api_func)
 
    if (desc == NULL)
      {
-        ERR("unable to resolve %s api func %p", (class_ref ? "class" : "regular"), api_func);
+        ERR("in %s:%d: unable to resolve %s api func %p",
+            file, line, (class_ref ? "class" : "regular"), api_func);
         return EO_NOOP;
      }
 
