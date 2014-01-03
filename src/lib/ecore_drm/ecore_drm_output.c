@@ -288,6 +288,26 @@ mode_err:
    return NULL;
 }
 
+void 
+_ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
+{
+   if ((!output) || (!fb)) return;
+
+   if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
+     _ecore_drm_fb_destroy(fb);
+#ifdef HAVE_GBM
+   else if (fb->bo)
+     gbm_bo_destroy(fb->bo);
+#endif
+}
+
+/**
+ * @defgroup Ecore_Drm_Output_Group
+ * 
+ */
+
+/* TODO: DOXY !! */
+
 /* public functions */
 EAPI Eina_Bool 
 ecore_drm_outputs_create(Ecore_Drm_Device *dev)
@@ -343,6 +363,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
                   continue;
                }
 
+             output->drm_fd = dev->drm.fd;
              dev->outputs = eina_list_append(dev->outputs, output);
 
              if (!(enc = drmModeGetEncoder(dev->drm.fd, conn->encoder_id)))
@@ -401,4 +422,29 @@ ecore_drm_output_free(Ecore_Drm_Output *output)
    if (output->make) eina_stringshare_del(output->make);
 
    free(output);
+}
+
+EAPI void 
+ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h)
+{
+   if (!output) return;
+   drmModeSetCursor(output->drm_fd, output->crtc_id, handle, w, h);
+}
+
+EAPI Eina_Bool 
+ecore_drm_output_enable(Ecore_Drm_Output *output)
+{
+   Ecore_Drm_Output_Mode *mode;
+
+   if ((!output) || (!output->current)) return EINA_FALSE;
+
+   mode = output->current_mode;
+   if (drmModeSetCrtc(output->drm_fd, output->crtc_id, output->current->id, 
+                      0, 0, &output->conn_id, 1, &mode->info) < 0)
+     {
+        ERR("Could not set output crtc: %m");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
