@@ -1094,9 +1094,11 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
         th = elm_widget_theme_get(sobj);
         mirrored = elm_widget_mirrored_get(sobj);
 
-        if ((scale != pscale) || (!sdc->on_create && th != pth) ||
-            (!sdc->on_create && (pmirrored != mirrored)))
-          elm_widget_theme(sobj);
+        if (!sdc->on_create)
+          {
+             if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
+               elm_widget_theme(sobj);
+          }
 
         if (elm_widget_focus_get(sobj)) _parents_focus(obj);
      }
