@@ -594,8 +594,6 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
      (sd->entry_edje, "elm.text", (Edje_Input_Panel_Return_Key_Type)sd->input_panel_return_key_type);
    edje_object_part_text_input_panel_return_key_disabled_set
      (sd->entry_edje, "elm.text", sd->input_panel_return_key_disabled);
-   edje_object_part_text_input_panel_show_on_demand_set
-     (sd->entry_edje, "elm.text", sd->input_panel_show_on_demand);
 
    // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
    // -> smart_objects_calculate will call all smart calculate functions,
@@ -920,7 +918,7 @@ _elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
-        if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand &&
+        if (top && top_is_win && sd->input_panel_enable &&
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
@@ -1578,8 +1576,6 @@ _mouse_up_cb(void *data,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
-   Eina_Bool top_is_win = EINA_FALSE;
-   Evas_Object *top;
 
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1591,19 +1587,6 @@ _mouse_up_cb(void *data,
           {
              _magnifier_hide(data);
              _menu_call(data);
-          }
-        else
-          {
-             top = elm_widget_top_get(data);
-             if (top)
-               {
-                  if (!strcmp(evas_object_type_get(top), "elm_win"))
-                    top_is_win = EINA_TRUE;
-
-                  if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&
-                      !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
-                    elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-               }
           }
      }
    else if ((ev->button == 3) && (!_elm_config->desktop_entry))
@@ -5617,44 +5600,6 @@ _input_panel_return_key_autoenabled_set(Eo *obj, void *_pd, va_list *list)
    _return_key_enabled_check(obj);
 }
 
-EAPI void
-elm_entry_input_panel_show_on_demand_set(Evas_Object *obj,
-                                         Eina_Bool ondemand)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_show_on_demand_set(ondemand));
-}
-
-static void
-_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool ondemand = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   sd->input_panel_show_on_demand = ondemand;
-
-   edje_object_part_text_input_panel_show_on_demand_set
-     (sd->entry_edje, "elm.text", ondemand);
-}
-
-EAPI Eina_Bool
-elm_entry_input_panel_show_on_demand_get(const Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_show_on_demand_get(&ret));
-   return ret;
-}
-
-static void
-_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_show_on_demand;
-}
-
 EAPI void *
 elm_entry_imf_context_get(Evas_Object *obj)
 {
@@ -5923,8 +5868,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END), _anchor_hover_end),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET), _input_panel_layout_variation_set),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET), _input_panel_layout_variation_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_SET), _input_panel_show_on_demand_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_GET), _input_panel_show_on_demand_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -6022,8 +5965,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END, "Ends the hover popup in the entry."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET, "Set the input panel layout variation of the entry."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET, "Get the input panel layout variation of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_SET, "Set the attribute to show the input panel in case of only an user's explicit Mouse Up event."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_GET, "Get the attribute to show the input panel in case of only an user's explicit Mouse Up event."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
