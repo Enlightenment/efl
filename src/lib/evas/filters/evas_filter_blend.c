@@ -76,11 +76,9 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
    RGBA_Draw_Context *drawctx;
-   int sw, sh, dx, dy, dw, dh, sx, sy;
-   Eina_Bool repeat_x = EINA_FALSE, repeat_y = EINA_FALSE;
-
-   if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
-     return EINA_FALSE;
+   int sw, sh, dx, dy, dw, dh, sx, sy, ox, oy;
+   int row, col, rows = 1, cols = 1;
+   int right = 0, bottom = 0, left = 0, top = 0;
 
    in = cmd->input->backing;
    out = cmd->output->backing;
@@ -92,10 +90,16 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
    sw = in->cache_entry.w;
    sh = in->cache_entry.h;
 
-   dx = cmd->draw.ox;
-   dy = cmd->draw.oy;
+   ox = dx = cmd->draw.ox;
+   oy = dy = cmd->draw.oy;
    dw = MIN(out->cache_entry.w - dx, out->cache_entry.w);
    dh = MIN(out->cache_entry.h - dy, out->cache_entry.h);
+
+   if ((dw <= 0) || (dh <= 0) || (sw <= 0) || (sh <= 0))
+     return EINA_TRUE;
+
+   if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
+     return EINA_FALSE;
 
    drawctx = cmd->ENFN->context_new(cmd->ENDT);
    cmd->ENFN->context_color_set(cmd->ENDT, drawctx, cmd->draw.R, cmd->draw.G,
@@ -103,34 +107,28 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
    cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, cmd->draw.render_op);
 
    if (cmd->draw.clip_use)
-     cmd->ENFN->context_clip_set(cmd->ENDT, drawctx,
-                                 cmd->draw.clip.x, cmd->draw.clip.y,
-                                 cmd->draw.clip.w, cmd->draw.clip.h);
-   else
-     cmd->ENFN->context_clip_set(cmd->ENDT, drawctx, dx, dy, dw, dh);
-
-   if (((dw != sw) || (dh != sh)) && cmd->draw.fillmode)
      {
-        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
-          dw = out->cache_entry.w - dx;
-        else if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_REPEAT_X)
-          repeat_x = EINA_TRUE;
-        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
-          dh = out->cache_entry.h - dy;
-        else if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_REPEAT_Y)
-          repeat_y = EINA_TRUE;
+        cmd->ENFN->context_clip_set(cmd->ENDT, drawctx,
+                                    cmd->draw.clip.x, cmd->draw.clip.y,
+                                    cmd->draw.clip.w, cmd->draw.clip.h);
+        cmd->ENFN->context_clip_clip(cmd->ENDT, drawctx,0, 0,
+                                     out->cache_entry.w, out->cache_entry.h);
      }
-   else if (cmd->draw.fillmode == EVAS_FILTER_FILL_MODE_NONE)
+   else
+     {
+        cmd->ENFN->context_clip_set(cmd->ENDT, drawctx, 0, 0,
+                                    out->cache_entry.w, out->cache_entry.h);
+     }
+
+   if (cmd->draw.fillmode == EVAS_FILTER_FILL_MODE_NONE)
      {
         int src_w = dw;
         int src_h = dh;
-        _clip_to_target(&sx, &sy, sw, sh, dx, dy, out->cache_entry.w, out->cache_entry.h, &dx, &dy, &dh, &dw);
+        _clip_to_target(&sx, &sy, sw, sh, dx, dy, out->cache_entry.w,
+                        out->cache_entry.h, &dx, &dy, &dh, &dw);
         if (src_w < sw) sw = src_w;
         if (src_h < sh) sh = src_h;
-     }
 
-   if (!repeat_x && !repeat_y)
-     {
         DBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d (from %dx%d to %dx%d +%d,%d)",
             0, 0, sw, sh, dx, dy, dw, dh,
             in->cache_entry.w, in->cache_entry.h,
@@ -141,10 +139,120 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
                               dx, dy, dw, dh, // dst
                               EINA_TRUE, // smooth
                               EINA_FALSE); // Not async
+        return EINA_TRUE;
+     }
+
+   if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_REPEAT_X)
+     {
+        if (ox > 0) left = ox % sw;
+        else if (ox < 0) left = sw + (ox % sw);
+        cols = (dw  - left) / sw;
+        right = dw - (sw * cols) - left;
+        dx = 0;
+     }
+   else if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+     {
+        cols = 1;
+        dw = out->cache_entry.w;
+        dx = 0;
      }
    else
      {
-        CRI("repeat not implemented yet");
+        cols = 1;
+        dw = out->cache_entry.w - ox;
+        dx = ox;
+     }
+
+   if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_REPEAT_Y)
+     {
+        if (oy > 0) top = oy % sh;
+        else if (oy < 0) top = sh + (oy % sh);
+        rows = (dh - top) / sh;
+        bottom = dh - (sh * rows) - top;
+        dy = 0;
+     }
+   else if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+     {
+        rows = 1;
+        dh = out->cache_entry.h;
+        dy = 0;
+     }
+   else
+     {
+        rows = 1;
+        dh = out->cache_entry.h - oy;
+        dy = oy;
+     }
+
+   if (top > 0) row = -1;
+   else row = 0;
+   for (; row <= rows; row++)
+     {
+        int src_x, src_y, src_w, src_h;
+        int dst_x, dst_y, dst_w, dst_h;
+
+        if (row == -1 && top > 0)
+          {
+             src_h = top;
+             src_y = sh - top;
+             dst_y = dy;
+          }
+        else if (row == rows)
+          {
+             src_h = bottom;
+             src_y = 0;
+             dst_y = top + dy + row * sh;
+          }
+        else
+          {
+             src_h = sh;
+             src_y = 0;
+             dst_y = top + dy + row * sh;
+          }
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+          dst_h = dh;
+        else
+           dst_h = MIN(dh - dst_y, src_h);
+        if (src_h <= 0 || dst_h <= 0) break;
+
+        if (left > 0) col = -1;
+        else col = 0;
+        for (; col <= cols; col++)
+          {
+             if (col == -1 && left > 0)
+               {
+                  src_w = left;
+                  src_x = sw - left;
+                  dst_x = dx;
+               }
+             else if (col == cols)
+               {
+                  src_w = right;
+                  src_x = 0;
+                  dst_x = left + dx + col * sw;
+               }
+             else
+               {
+                  src_w = sw;
+                  src_x = 0;
+                  dst_x = left + dx + col * sw;
+               }
+             if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+               dst_w = dw;
+             else
+                dst_w = MIN(dw - dst_x, src_w);
+             if (src_w <= 0 || dst_w <= 0) break;
+
+             DBG("blend: [%d,%d] %d,%d,%dx%d --> %d,%d,%dx%d "
+                 "(src %dx%d, dst %dx%d, offset %d,%d)",
+                 col, row, src_x, src_y, src_w, src_h,
+                 dst_x, dst_y, dst_w, dst_h,
+                 sw, sh, dw, dh, ox, oy);
+             cmd->ENFN->image_draw(cmd->ENDT, drawctx, out, in,
+                                   src_x, src_y, src_w, src_h,
+                                   dst_x, dst_y, dst_w, dst_h,
+                                   EINA_TRUE, EINA_FALSE);
+          }
      }
 
    cmd->ENFN->context_free(cmd->ENDT, drawctx);
