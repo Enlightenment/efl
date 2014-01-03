@@ -66,6 +66,9 @@ typedef struct _Ecore_Drm_Evdev Ecore_Drm_Evdev;
 /* opaque structure to represent a drm seat */
 typedef struct _Ecore_Drm_Seat Ecore_Drm_Seat;
 
+/* opaque structure to represent a drm sprite */
+typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
+
 /**
  * @file
  * @brief Ecore functions for dealing with drm, virtual terminals
@@ -78,6 +81,9 @@ typedef struct _Ecore_Drm_Seat Ecore_Drm_Seat;
  * @li @ref Ecore_Drm_Init_Group
  * @li @ref Ecore_Drm_Device_Group
  * @li @ref Ecore_Drm_Tty_Group
+ * @li @ref Ecore_Drm_Output_Group
+ * @li @ref Ecore_Drm_Input_Group
+ * @li @ref Ecore_Drm_Sprite_Group
  * 
  */
 
@@ -99,10 +105,16 @@ EAPI Eina_Bool ecore_drm_tty_acquire(Ecore_Drm_Device *dev);
 
 EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
+EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h);
+EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
 
 EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_inputs_enable(Ecore_Drm_Input *input);
-//EAPI Eina_Bool ecore_drm_inputs_disable(Ecore_Drm_Input *input);
+EAPI void ecore_drm_inputs_disable(Ecore_Drm_Input *input);
+
+EAPI Eina_Bool ecore_drm_sprites_create(Ecore_Drm_Device *dev);
+EAPI void ecore_drm_sprites_destroy(Ecore_Drm_Device *dev);
+EAPI void ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags);
 
 #endif
