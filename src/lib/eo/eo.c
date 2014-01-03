@@ -29,6 +29,7 @@ static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Objec
 static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 static const _Eo_Class *_eo_op_class_get(Eo_Op op);
 static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
+static const char * _eo_op_id_name_get(Eo_Op op, int version);
 
 /* Start of Dich */
 
@@ -230,10 +231,18 @@ _eo2_op_id_desc_get(Eo_Op op)
 }
 
 static const char *
-_eo_op_id_name_get(Eo_Op op)
+_eo_op_id_name_get(Eo_Op op, int version)
 {
-   const Eo_Op_Description *desc = _eo_op_id_desc_get(op);
-   return (desc) ? desc->name : NULL;
+   if (version == EO2_VERSION)
+     {
+        const Eo2_Op_Description *desc = _eo2_op_id_desc_get(op);
+        return (desc) ? desc->doc : NULL;
+     }
+   else
+     {
+        const Eo_Op_Description *desc = _eo_op_id_desc_get(op);
+        return (desc) ? desc->name : NULL;
+     }
 }
 
 static inline const op_type_funcs *
@@ -802,7 +811,7 @@ _eo2_add_internal_end(const char *file, int line, const Eo *eo_id)
          const _Eo_Class *op_klass = _eo_op_class_get(op); \
          const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
          ERR("in %s:%d: Can't execute function %s:%s (op 0x%x) for class '%s'. Aborting.", \
-               file, line, _dom_name, _eo_op_id_name_get(op), op, \
+               file, line, _dom_name, _eo_op_id_name_get(op, op_klass->desc->version), op, \
                (klass) ? klass->desc->name : NULL); \
       } \
    while (0)
