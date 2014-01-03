@@ -4,6 +4,13 @@
 
 #include "ecore_drm_private.h"
 
+/**
+ * @defgroup Ecore_Drm_Fb_Group
+ * 
+ */
+
+/* TODO: DOXY !! */
+
 Ecore_Drm_Fb *
 _ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
 {
