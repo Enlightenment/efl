@@ -73,13 +73,13 @@ _on_keydown(void        *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "i") == 0) /* change proxy's source */
+   if (strcmp(ev->key, "i") == 0) /* change proxy's source */
      {
         int stride = evas_object_image_stride_get(d.logo);
         int w, h;
@@ -91,7 +91,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "w") == 0) /* save noise image to disk */
+   if (strcmp(ev->key, "w") == 0) /* save noise image to disk */
      {
         int i;
         char *pixels = evas_object_image_data_get(d.logo, EINA_FALSE);

@@ -157,12 +157,12 @@ _on_keydown(void        *data EINA_UNUSED,
         r_data = &d.b_data;
         name = "bottom";
      }
-   else if (strcmp(ev->keyname, "h") == 0) /* print help */
+   else if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
-   else if (strcmp(ev->keyname, "s") == 0) /* get aspect status of the
+   else if (strcmp(ev->key, "s") == 0) /* get aspect status of the
                                             * rectangles WRT size
                                             * hints */
      {
@@ -177,7 +177,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (!rect) return;
 
-   if (strcmp(ev->keyname, "a") == 0) /* alignment hints */
+   if (strcmp(ev->key, "a") == 0) /* alignment hints */
      {
         (r_data->align_ptr)++;
 
@@ -194,7 +194,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "m") == 0) /* min. size hints */
+   if (strcmp(ev->key, "m") == 0) /* min. size hints */
      {
         (r_data->min_ptr)++;
 
@@ -211,7 +211,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "n") == 0) /* max. size hints */
+   if (strcmp(ev->key, "n") == 0) /* max. size hints */
      {
         (r_data->max_ptr)++;
 
@@ -228,7 +228,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "p") == 0) /* padding size hints */
+   if (strcmp(ev->key, "p") == 0) /* padding size hints */
      {
         (r_data->padding_ptr)++;
 
@@ -251,7 +251,7 @@ _on_keydown(void        *data EINA_UNUSED,
    /* experiment with weights here. keep in mind that, for the box
     * object, only if all the children have non zero weights this hint
     * will have an effect */
-   if (strcmp(ev->keyname, "w") == 0) /* weight hints */
+   if (strcmp(ev->key, "w") == 0) /* weight hints */
      {
         (r_data->weight_ptr)++;
 

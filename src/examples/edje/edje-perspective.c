@@ -98,44 +98,44 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
    struct _App *app = data;
    Evas_Event_Key_Down *ev = event_info;
 
-   if (!strcmp(ev->keyname, "h"))
+   if (!strcmp(ev->key, "h"))
      {
         fprintf(stdout, commands);
         return;
      }
    // just moving the part and text
-   else if (!strcmp(ev->keyname, "Down"))
+   else if (!strcmp(ev->key, "Down"))
      {
 	_part_move(app, 0, 1);
      }
-   else if (!strcmp(ev->keyname, "Up"))
+   else if (!strcmp(ev->key, "Up"))
      {
 	_part_move(app, 0, -1);
      }
-   else if (!strcmp(ev->keyname, "Left"))
+   else if (!strcmp(ev->key, "Left"))
      {
 	_part_move(app, -1, 0);
      }
-   else if (!strcmp(ev->keyname, "Right"))
+   else if (!strcmp(ev->key, "Right"))
      {
 	_part_move(app, 1, 0);
      }
-   else if (!strcmp(ev->keyname, "Prior"))
+   else if (!strcmp(ev->key, "Prior"))
      {
 	_part_move(app, -1, -1);
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if (!strcmp(ev->key, "Next"))
      {
 	_part_move(app, 1, 1);
      }
    // adjusting the perspective focal point distance
-   else if (!strcmp(ev->keyname, "KP_Add"))
+   else if (!strcmp(ev->key, "KP_Add"))
      {
 	app->focal += 5;
 	edje_perspective_set(app->ps, 240, 160, 0, app->focal);
 	edje_object_calc_force(app->edje_obj);
      }
-   else if (!strcmp(ev->keyname, "KP_Subtract"))
+   else if (!strcmp(ev->key, "KP_Subtract"))
      {
 	app->focal -= 5;
 	if (app->focal < 5)
@@ -145,11 +145,11 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
 	edje_object_calc_force(app->edje_obj);
      }
    // exiting
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }

@@ -68,13 +68,13 @@ _on_keydown(void *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "m") == 0) /* impose a minimum size on the window */
+   if (strcmp(ev->key, "m") == 0) /* impose a minimum size on the window */
      {
         min_set = !min_set;
 
@@ -93,7 +93,7 @@ _on_keydown(void *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "x") == 0) /* impose a maximum size on the window */
+   if (strcmp(ev->key, "x") == 0) /* impose a maximum size on the window */
      {
         max_set = !max_set;
 
@@ -112,7 +112,7 @@ _on_keydown(void *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "b") == 0) /* impose a base size on the window */
+   if (strcmp(ev->key, "b") == 0) /* impose a base size on the window */
      {
         base_set = !base_set;
 
@@ -131,7 +131,7 @@ _on_keydown(void *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "s") == 0) /* impose a step size on the window */
+   if (strcmp(ev->key, "s") == 0) /* impose a step size on the window */
      {
         step_set = !step_set;
 
@@ -149,7 +149,7 @@ _on_keydown(void *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "g") == 0) /* get screen geometry */
+   if (strcmp(ev->key, "g") == 0) /* get screen geometry */
      {
         int x, y, w, h;
         ecore_evas_screen_geometry_get(ee, &x, &y, &w, &h);

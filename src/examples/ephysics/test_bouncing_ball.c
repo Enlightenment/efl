@@ -13,13 +13,13 @@ _on_keydown(void *data, Evas_Object *obj __UNUSED__, Evas_Object *src __UNUSED__
    if (type != EVAS_CALLBACK_KEY_UP)
      return EINA_FALSE;
 
-   if (strcmp(ev->keyname, "Up") == 0)
+   if (strcmp(ev->key, "Up") == 0)
      ephysics_body_central_impulse_apply(body, 0, -300, 0);
-   else if (strcmp(ev->keyname, "Down") == 0)
+   else if (strcmp(ev->key, "Down") == 0)
      ephysics_body_central_impulse_apply(body, 0, 300, 0);
-   else if (strcmp(ev->keyname, "Right") == 0)
+   else if (strcmp(ev->key, "Right") == 0)
      ephysics_body_central_impulse_apply(body, 300, 0, 0);
-   else if (strcmp(ev->keyname, "Left") == 0)
+   else if (strcmp(ev->key, "Left") == 0)
      ephysics_body_central_impulse_apply(body, -300, 0, 0);
 
    return EINA_TRUE;

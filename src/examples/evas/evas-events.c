@@ -141,17 +141,17 @@ _on_keydown(void        *data EINA_UNUSED,
    const Evas_Modifier *mods;
    Evas_Event_Key_Down *ev = einfo;
 
-   fprintf(stdout, "We've got key input: %s\n", ev->keyname);
+   fprintf(stdout, "We've got key input: %s\n", ev->key);
    fprintf(stdout, "It actually came from %s\n", d.focus ?
            "focus" : "key grab");
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "a") == 0) /* toggle animation timer */
+   if (strcmp(ev->key, "a") == 0) /* toggle animation timer */
      {
         if (d.resize_timer != NULL)
           {
@@ -167,7 +167,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "c") == 0) /* cycle between focus and key
+   if (strcmp(ev->key, "c") == 0) /* cycle between focus and key
                                        * grabs for key input */
      {
         Eina_Bool ret;
@@ -246,7 +246,7 @@ c_end:
         return;
      }
 
-   if (strcmp(ev->keyname, "d") == 0) /* delete canvas' callbacks */
+   if (strcmp(ev->key, "d") == 0) /* delete canvas' callbacks */
      {
         fprintf(stdout, "Deleting canvas event callbacks\n");
         evas_event_callback_del_full(evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
@@ -257,7 +257,7 @@ c_end:
         return;
      }
 
-   if (strcmp(ev->keyname, "f") == 0) /* freeze input for 3 seconds */
+   if (strcmp(ev->key, "f") == 0) /* freeze input for 3 seconds */
      {
         fprintf(stdout, "Freezing input for 3 seconds\n");
         evas_event_freeze(evas);
@@ -265,7 +265,7 @@ c_end:
         return;
      }
 
-   if (strcmp(ev->keyname, "p") == 0) /* toggle precise point
+   if (strcmp(ev->key, "p") == 0) /* toggle precise point
                                        * collision detection */
      {
         Eina_Bool precise = evas_object_precise_is_inside_get(d.img);
@@ -279,7 +279,7 @@ c_end:
 
    mods = evas_key_modifier_get(evas);
    if (evas_key_modifier_is_set(mods, "Control") &&
-       (strcmp(ev->keyname, "o") == 0)) /* add an obscured
+       (strcmp(ev->key, "o") == 0)) /* add an obscured
                                         * rectangle to the middle
                                         * of the canvas */
      {

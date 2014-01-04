@@ -45,12 +45,12 @@ _on_keydown(void        *data,
    edje_obj = ecore_evas_data_get(ee, "edje_obj");
    edje_file = ecore_evas_data_get(ee, "file");
 
-   if (!strcmp(ev->keyname, "h"))
+   if (!strcmp(ev->key, "h"))
      {
         fprintf(stdout, commands);
         return;
      }
-   else if (!strcmp(ev->keyname, "e"))
+   else if (!strcmp(ev->key, "e"))
      {
       if (!edje_object_file_set(edje_obj, edje_file, "plain/edje/group"))
         {
@@ -64,7 +64,7 @@ _on_keydown(void        *data,
                          " file sigtest.edj with success!\n");
         return;
      }
-   else if (!strcmp(ev->keyname, "l"))
+   else if (!strcmp(ev->key, "l"))
      {
       if (!edje_object_file_set(edje_obj, edje_file, "lua_base"))
         {
@@ -78,7 +78,7 @@ _on_keydown(void        *data,
                          " file sigtest.edj with success!\n");
         return;
      }
-   else if (!strcmp(ev->keyname, "m"))
+   else if (!strcmp(ev->key, "m"))
      {
         Edje_Message_String *msg = malloc(sizeof(*msg));
 
@@ -89,7 +89,7 @@ _on_keydown(void        *data,
 	fprintf(stdout, "C message sent\n");
         return;
      }
-   else if (!strcmp(ev->keyname, "s"))
+   else if (!strcmp(ev->key, "s"))
      {
 	fprintf(stdout, "\n");
         edje_object_signal_emit(edje_obj, "C signal 1", "Csource");
@@ -97,11 +97,11 @@ _on_keydown(void        *data,
 	fprintf(stdout, "C signal sent\n");
         return;
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }

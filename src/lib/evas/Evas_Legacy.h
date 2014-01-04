@@ -2569,7 +2569,7 @@ EAPI void      evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass) EIN
  *
  * Example:
  * @dontinclude evas-stacking.c
- * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @skip if (strcmp(ev->key, "p") == 0)
  * @until }
  *
  * See the full @ref Example_Evas_Stacking "example".
@@ -2597,7 +2597,7 @@ EAPI Eina_Bool evas_object_pass_events_get(const Evas_Object *obj) EINA_WARN_UNU
  *
  * Example:
  * @dontinclude evas-stacking.c
- * @skip if (strcmp(ev->keyname, "r") == 0)
+ * @skip if (strcmp(ev->key, "r") == 0)
  * @until }
  *
  * See the full @ref Example_Evas_Stacking "example".
@@ -3006,7 +3006,7 @@ EAPI void evas_object_size_hint_request_set(Evas_Object *obj, Evas_Coord w, Evas
  *
  * Example:
  * @dontinclude evas-aspect-hints.c
- * @skip if (strcmp(ev->keyname, "c") == 0)
+ * @skip if (strcmp(ev->key, "c") == 0)
  * @until }
  *
  * See the full @ref Example_Evas_Aspect_Hints "example".
@@ -3434,7 +3434,7 @@ EAPI Evas_Render_Op           evas_object_render_op_get(const Evas_Object *obj) 
  *
  * Example code follows.
  * @dontinclude evas-events.c
- * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @skip if (strcmp(ev->key, "p") == 0)
  * @until }
  *
  * See the full example @ref Example_Evas_Events "here".

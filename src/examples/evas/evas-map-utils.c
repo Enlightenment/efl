@@ -170,7 +170,7 @@ _on_keydown(void *data, Evas *e, Evas_Object *o, void *event)
    const Evas_Modifier *mods;
 
    mods = evas_key_modifier_get(ad->canvas);
-   switch (ev->keyname[0])
+   switch (ev->key[0])
      {
       case 'a':
          ad->alpha = !ad->alpha;

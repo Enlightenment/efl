@@ -127,7 +127,7 @@
  * @until ;
  * The 'p' one will change the source of the proxy image to one of the
  * other two, as seem above.
- * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @skip if (strcmp(ev->key, "p") == 0)
  * @until }
  * Note the top right image, the smaller one:
  * @dontinclude evas-images2.c
@@ -158,7 +158,7 @@
  * The 's' command will save one of the images on the disk, in the png
  * format:
  * @dontinclude evas-images2.c
- * @skip if (strcmp(ev->keyname, "a") == 0)
+ * @skip if (strcmp(ev->key, "a") == 0)
  * @until }
  *
  * The full example follows.
@@ -266,13 +266,13 @@
  * processing for the canvas (in the example, just for 3 seconds). Try
  * to issue events for it during that freeze time:
  * @dontinclude evas-events.c
- * @skip if (strcmp(ev->keyname, "f") == 0)
+ * @skip if (strcmp(ev->key, "f") == 0)
  * @until }
  * The 'd' command will unregister those two canvas callbacks for you,
  * so you won't see the messages about the focused object and the
  * rendering process anymore:
  * @dontinclude evas-events.c
- * @skip if (strcmp(ev->keyname, "d") == 0)
+ * @skip if (strcmp(ev->key, "d") == 0)
  * @until }
  * In this example, we start using a focused object to handle the input
  * events -- the background rectangle. We register a callback on an key input
@@ -282,7 +282,7 @@
  * @dontinclude evas-events.c
  * @skip examine the keys pressed
  * @until key grab
- * We do so by examining the @c ev->keyname string (remember the event
+ * We do so by examining the @c ev->key string (remember the event
  * information struct for key down events is the #Evas_Event_Key_Down
  * one).  There's one more trick for grabbing input events on this
  * example -- evas_object_key_grab(). The 'c' command will, when
@@ -314,7 +314,7 @@
  * in the case) as not belonging to it when calculating mouse
  * in/out/up/down events:
  * @dontinclude evas-events.c
- * @skip if (strcmp(ev->keyname, "p") == 0)
+ * @skip if (strcmp(ev->key, "p") == 0)
  * @until }
  * To finish the example, try the command bound to Control + 'o',
  * which exemplifies Evas' <b>obscured regions</b>. When firstly
@@ -479,7 +479,7 @@
  * height of the box equally and, then, place the items in the cells
  * in the diagonal:
  * @dontinclude evas-box.c
- * @skip keyname, "0"
+ * @skip key, "0"
  * @until }
  * @dontinclude evas-box.c
  * @skip custom 'diagonal' layout

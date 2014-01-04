@@ -106,7 +106,7 @@ _on_keydown(void        *data EINA_UNUSED,
    Evas_Event_Key_Down *ev = einfo;
    const Evas_Modifier *mods = evas_key_modifier_get(evas);
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
@@ -119,7 +119,7 @@ _on_keydown(void        *data EINA_UNUSED,
         Evas_Object *obj;
         Eina_List *children;
 
-        pos = atoi(ev->keyname);
+        pos = atoi(ev->key);
         children = evas_object_box_children_get(d.box);
 
         obj = eina_list_nth(children, pos);
@@ -137,14 +137,14 @@ list_free:
      {
         Evas_Object *o;
         int pos;
-        pos = atoi(ev->keyname);
+        pos = atoi(ev->key);
         o = _new_rectangle_add(d.evas);
         if (!evas_object_box_insert_at(d.box, o, pos))
           evas_object_box_append(d.box, o);
         return;
      }
 
-   if (strcmp(ev->keyname, "a") == 0)
+   if (strcmp(ev->key, "a") == 0)
      {
         double h, v;
 
@@ -166,7 +166,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "p") == 0)
+   if (strcmp(ev->key, "p") == 0)
      {
         int h, v;
 
@@ -184,7 +184,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "1") == 0)
+   if (strcmp(ev->key, "1") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_horizontal, NULL, NULL);
@@ -193,7 +193,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "2") == 0)
+   if (strcmp(ev->key, "2") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_vertical, NULL, NULL);
@@ -202,7 +202,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "3") == 0)
+   if (strcmp(ev->key, "3") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_homogeneous_horizontal, NULL,
@@ -213,7 +213,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "4") == 0)
+   if (strcmp(ev->key, "4") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_homogeneous_vertical, NULL, NULL);
@@ -223,7 +223,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "5") == 0)
+   if (strcmp(ev->key, "5") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_homogeneous_max_size_horizontal,
@@ -234,7 +234,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "6") == 0)
+   if (strcmp(ev->key, "6") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_homogeneous_max_size_vertical,
@@ -245,7 +245,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "7") == 0)
+   if (strcmp(ev->key, "7") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_flow_horizontal, NULL, NULL);
@@ -254,7 +254,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "8") == 0)
+   if (strcmp(ev->key, "8") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_flow_vertical, NULL, NULL);
@@ -263,7 +263,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "9") == 0)
+   if (strcmp(ev->key, "9") == 0)
      {
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_stack, NULL, NULL);
@@ -272,7 +272,7 @@ list_free:
         return;
      }
 
-   if (strcmp(ev->keyname, "0") == 0)
+   if (strcmp(ev->key, "0") == 0)
      {
         evas_object_box_layout_set(d.box, _custom_layout, NULL, NULL);
 

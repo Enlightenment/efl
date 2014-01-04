@@ -44,29 +44,29 @@ _on_key_down(void *data,
 
   evas_object_geometry_get(edje_obj, &x, &y, NULL, NULL);
 
-  if(strcmp(ev->keyname,"Escape") == 0)
+  if(strcmp(ev->key,"Escape") == 0)
   {
 	ecore_main_loop_quit();
   }
-  else if(strcmp(ev->keyname, "Down") == 0)
+  else if(strcmp(ev->key, "Down") == 0)
   {
 	y+=WALK;
   }
-  else if(strcmp(ev->keyname, "Up") == 0)
+  else if(strcmp(ev->key, "Up") == 0)
   {
 	y-=WALK;
   }
-  else if(strcmp(ev->keyname, "Right") == 0)
+  else if(strcmp(ev->key, "Right") == 0)
   {
 	x+=WALK;
   }
-  else if(strcmp(ev->keyname, "Left") == 0)
+  else if(strcmp(ev->key, "Left") == 0)
   {
 	x-=WALK;
   }
   else
   {
-     fprintf(stdout, "Key %s not supported.\nCommands:%s", ev->keyname, commands);
+     fprintf(stdout, "Key %s not supported.\nCommands:%s", ev->key, commands);
      return;
   }
 

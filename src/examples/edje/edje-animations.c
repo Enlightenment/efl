@@ -73,7 +73,7 @@ _on_key_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, v
 
    ev = (Evas_Event_Key_Down *)event_info;
 
-   if (!strcmp(ev->keyname, "h"))
+   if (!strcmp(ev->key, "h"))
      {
         fprintf(stdout, commands);
         return;
@@ -137,11 +137,11 @@ _on_key_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, v
         edje_object_animation_set(obj, EINA_FALSE);
         fprintf(stdout, "Stopping the animation in the Edje object\n");
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }

@@ -49,12 +49,12 @@ _on_keydown(void        *data,
    ev = (Evas_Event_Key_Down *)einfo;
    edje_obj = (Evas_Object *)data;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
-   else if (strcmp(ev->keyname, "s") == 0) /* global scaling factor */
+   else if (strcmp(ev->key, "s") == 0) /* global scaling factor */
      {
         double scale = edje_scale_get();
 
@@ -69,7 +69,7 @@ _on_keydown(void        *data,
 
         return;
      }
-   else if (strcmp(ev->keyname, "r") == 0) /* individual scaling factor */
+   else if (strcmp(ev->key, "r") == 0) /* individual scaling factor */
      {
         double scale = edje_object_scale_get(edje_obj);
 
@@ -86,11 +86,11 @@ _on_keydown(void        *data,
 
         return;
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }

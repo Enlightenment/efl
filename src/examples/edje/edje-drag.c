@@ -78,36 +78,36 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
    ev = (Evas_Event_Key_Down *)event_info;
    edje_obj = ecore_evas_data_get(ee, "edje_obj");
 
-   if (!strcmp(ev->keyname, "h"))
+   if (!strcmp(ev->key, "h"))
      {
         fprintf(stdout, commands);
         return;
      }
-   else if (!strcmp(ev->keyname, "Down"))
+   else if (!strcmp(ev->key, "Down"))
      {
 	edje_object_part_drag_step(edje_obj, PARTNAME, 0, 1.0);
      }
-   else if (!strcmp(ev->keyname, "Up"))
+   else if (!strcmp(ev->key, "Up"))
      {
 	edje_object_part_drag_step(edje_obj, PARTNAME, 0, -1.0);
      }
-   else if (!strcmp(ev->keyname, "m"))
+   else if (!strcmp(ev->key, "m"))
      {
 	edje_object_part_drag_value_set(edje_obj, PARTNAME, 0.0, 0.5);
      }
-   else if (!strcmp(ev->keyname, "Prior"))
+   else if (!strcmp(ev->key, "Prior"))
      {
 	edje_object_part_drag_page(edje_obj, PARTNAME, 0.0, -1.0);
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if (!strcmp(ev->key, "Next"))
      {
 	edje_object_part_drag_page(edje_obj, PARTNAME, 0.0, 1.0);
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }
