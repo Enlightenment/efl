@@ -548,7 +548,7 @@ group { name: "elm/check/base/toggle";
             rel2.to: "tog";
             min: 15 15;
             max: 15 99999;
-            color: 255 128 0 128;
+            color: 0 0 0 0;
          }
       }
       part { name: "shadow_but"; mouse_events: 0;
