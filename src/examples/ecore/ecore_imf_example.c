@@ -366,10 +366,6 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
 
-   if ((!strcmp(ev->keyname, "Escape")) ||
-       (!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
-     ecore_imf_context_reset(en->imf_context);
-
    if (!strcmp(ev->key, "BackSpace"))
      {
         if (evas_textblock_cursor_char_prev(en->cursor))
