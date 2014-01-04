@@ -43,23 +43,14 @@ struct _Extn
 
 static Eina_List *extn_ee_list = NULL;
 
-EAPI int ECORE_EVAS_EXTN_CLIENT_ADD = 0;
-EAPI int ECORE_EVAS_EXTN_CLIENT_DEL = 0;
-
-Eina_Bool
-_ecore_evas_extn_init(void)
+static Eina_Bool
+_ecore_evas_extn_module_init(void)
 {
-   if (!ECORE_EVAS_EXTN_CLIENT_ADD)
-     {
-	ECORE_EVAS_EXTN_CLIENT_ADD = ecore_event_type_new();
-	ECORE_EVAS_EXTN_CLIENT_DEL = ecore_event_type_new();
-     }
-
    return EINA_TRUE;
 }
 
-void
-_ecore_evas_extn_shutdown(void)
+static void
+_ecore_evas_extn_module_shutdown(void)
 {
 }
 
@@ -2209,5 +2200,5 @@ _ecore_evas_extn_interface_new(void)
    return iface;
 }
 
-EINA_MODULE_INIT(_ecore_evas_extn_init);
-EINA_MODULE_SHUTDOWN(_ecore_evas_extn_shutdown);
+EINA_MODULE_INIT(_ecore_evas_extn_module_init);
+EINA_MODULE_SHUTDOWN(_ecore_evas_extn_module_shutdown);

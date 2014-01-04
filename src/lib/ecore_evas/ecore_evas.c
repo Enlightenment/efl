@@ -318,6 +318,8 @@ ecore_evas_init(void)
    _ecore_evas_ews_events_init();
 #endif
 
+   _ecore_evas_extn_init();
+
    _ecore_evas_engine_init();
 
    eina_log_timing(_ecore_evas_log_dom,
@@ -351,6 +353,8 @@ ecore_evas_shutdown(void)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
+
+   _ecore_evas_extn_shutdown();
 
 #ifdef BUILD_ECORE_EVAS_EWS
    while (_ecore_evas_ews_shutdown());
