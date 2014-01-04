@@ -329,6 +329,9 @@ void _ecore_evas_ews_events_init(void);
 int _ecore_evas_ews_shutdown(void);
 #endif
 
+void _ecore_evas_extn_init(void);
+void _ecore_evas_extn_shutdown(void);
+
 Eina_Module *_ecore_evas_engine_load(const char *engine);
 const Eina_List *_ecore_evas_available_engines_get(void);
 void _ecore_evas_engine_init(void);

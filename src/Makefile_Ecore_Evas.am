@@ -18,6 +18,7 @@ lib/ecore_evas/ecore_evas_ews.c \
 lib/ecore_evas/ecore_evas_module.c \
 lib/ecore_evas/ecore_evas_private.h \
 lib/ecore_evas/ecore_evas_extn.h \
+lib/ecore_evas/ecore_evas_extn.c \
 lib/ecore_evas/ecore_evas_wayland.h \
 lib/ecore_evas/ecore_evas_win32.h \
 lib/ecore_evas/ecore_evas_x11.h \

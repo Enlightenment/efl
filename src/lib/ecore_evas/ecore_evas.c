@@ -359,6 +359,8 @@ ecore_evas_init(void)
    _ecore_evas_ews_events_init();
 #endif
 
+   _ecore_evas_extn_init();
+
    _ecore_evas_engine_init();
 
    eina_log_timing(_ecore_evas_log_dom,
@@ -398,6 +400,9 @@ ecore_evas_shutdown(void)
    if (ecore_evas_animator) ecore_animator_del(ecore_evas_animator);
    ecore_evas_animator = NULL;
 #endif
+
+   _ecore_evas_extn_shutdown();
+
 #ifdef BUILD_ECORE_EVAS_EWS
    while (_ecore_evas_ews_shutdown());
 #endif
