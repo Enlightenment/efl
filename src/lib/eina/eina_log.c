@@ -1912,7 +1912,7 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
    r = vasprintf(&tmp, fmt, args);
    if (r == -1)
      {
-        fputs("ERR: eina_log_print_cb_journald() vasprintf failed\n");
+        fputs("ERR: eina_log_print_cb_journald() vasprintf failed\n", stderr);
         return;
      }
 
