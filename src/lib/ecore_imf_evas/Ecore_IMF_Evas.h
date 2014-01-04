@@ -112,7 +112,7 @@ EAPI void ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_eve
  * _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
  * {
  *    Evas_Event_Key_Down *ev = event_info;
- *    if (!ev->keyname) return;
+ *    if (!ev->key) return;
  *
  *    if (imf_context)
  *      {
@@ -143,7 +143,7 @@ EAPI void ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event, Ec
  * _key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
  * {
  *    Evas_Event_Key_Up *ev = event_info;
- *    if (!ev->keyname) return;
+ *    if (!ev->key) return;
  *
  *    if (imf_context)
  *      {

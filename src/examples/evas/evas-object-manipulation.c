@@ -55,7 +55,7 @@ _on_keydown(void        *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, "commands are:\n"
                         "\to - change clipper's opacity\n"
@@ -65,7 +65,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "o") == 0) /* change clipper's opacity */
+   if (strcmp(ev->key, "o") == 0) /* change clipper's opacity */
      {
         int alpha, r, g, b;
 
@@ -84,7 +84,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "r") == 0) /* toggle clipper's color
+   if (strcmp(ev->key, "r") == 0) /* toggle clipper's color
                                        * between red and white */
      {
         int alpha, r, g, b;
@@ -110,7 +110,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "c") == 0) /* toggle clipper's clipping function */
+   if (strcmp(ev->key, "c") == 0) /* toggle clipper's clipping function */
      {
         fprintf(stdout, "Toggling clipping ");
 
@@ -127,7 +127,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "v") == 0) /* toggle clipper's visibility */
+   if (strcmp(ev->key, "v") == 0) /* toggle clipper's visibility */
      {
         fprintf(stdout, "Clipper is now ");
 

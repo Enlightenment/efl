@@ -160,13 +160,13 @@ _on_keydown(void        *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "s") == 0) /* print proxy image' stride value */
+   if (strcmp(ev->key, "s") == 0) /* print proxy image' stride value */
      {
         int stride = evas_object_image_stride_get(d.noise_img);
 
@@ -176,7 +176,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "p") == 0) /* change proxy's source */
+   if (strcmp(ev->key, "p") == 0) /* change proxy's source */
      {
         Evas_Object *source = evas_object_image_source_get(d.proxy_img);
 
@@ -190,7 +190,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "a") == 0) /* save noise image to disk */
+   if (strcmp(ev->key, "a") == 0) /* save noise image to disk */
      {
         if (!evas_object_image_save(d.noise_img, file_path, NULL, quality_str))
           fprintf(stderr, "Cannot save image to '%s' (flags '%s')\n",
@@ -202,7 +202,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "v") == 0) /* change source visibility */
+   if (strcmp(ev->key, "v") == 0) /* change source visibility */
      {
         Eina_Bool src_visible =
            evas_object_image_source_visible_get(d.proxy_img);
@@ -210,7 +210,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "e") == 0) /* change source events */
+   if (strcmp(ev->key, "e") == 0) /* change source events */
      {
         Eina_Bool src_events = evas_object_image_source_events_get(d.proxy_img);
         evas_object_image_source_events_set(d.proxy_img, !src_events);

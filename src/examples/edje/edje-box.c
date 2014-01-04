@@ -111,12 +111,12 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
    ev = (Evas_Event_Key_Down *)event_info;
    edje_obj = ecore_evas_data_get(ee, "edje_obj");
 
-   if (!strcmp(ev->keyname, "h"))
+   if (!strcmp(ev->key, "h"))
      {
         fprintf(stdout, commands);
         return;
      }
-   if (!strcmp(ev->keyname, "i"))
+   if (!strcmp(ev->key, "i"))
      {
 	rect = evas_object_rectangle_add(e);
 	evas_object_color_set(rect, 0, 0, 128, 255);
@@ -130,7 +130,7 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
 
 	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
-   else if (!strcmp(ev->keyname, "a"))
+   else if (!strcmp(ev->key, "a"))
      {
 	rect = evas_object_rectangle_add(e);
 	evas_object_color_set(rect, 0, 128, 0, 255);
@@ -144,13 +144,13 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
 
 	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
-   else if (!strcmp(ev->keyname, "c"))
+   else if (!strcmp(ev->key, "c"))
      edje_object_part_box_remove_all(edje_obj, "example/box", EINA_TRUE);
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }

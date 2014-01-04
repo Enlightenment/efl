@@ -154,13 +154,13 @@ _on_keydown(void        *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "t") == 0) /* change text's current style */
+   if (strcmp(ev->key, "t") == 0) /* change text's current style */
      {
         Evas_Text_Style_Type type = evas_object_text_style_get(d.text);
 
@@ -174,7 +174,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "f") == 0) /* change text's font */
+   if (strcmp(ev->key, "f") == 0) /* change text's font */
      {
          int sz;
 
@@ -191,7 +191,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "b") == 0) /* change text's base color */
+   if (strcmp(ev->key, "b") == 0) /* change text's base color */
      {
         (d.t_data.text_ptr)++;
 
@@ -208,7 +208,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "g") == 0) /* change text's glow 2 color */
+   if (strcmp(ev->key, "g") == 0) /* change text's glow 2 color */
      {
         (d.t_data.glow2_ptr)++;
 
@@ -225,7 +225,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "w") == 0) /* change text's glow color */
+   if (strcmp(ev->key, "w") == 0) /* change text's glow color */
      {
         (d.t_data.glow_ptr)++;
 
@@ -242,7 +242,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "o") == 0) /* change text's outline color */
+   if (strcmp(ev->key, "o") == 0) /* change text's outline color */
      {
         (d.t_data.outline_ptr)++;
 
@@ -259,7 +259,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "s") == 0) /* change text's shadow color */
+   if (strcmp(ev->key, "s") == 0) /* change text's shadow color */
      {
         (d.t_data.shadow_ptr)++;
 
@@ -276,7 +276,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "z") == 0) /* change text's font size */
+   if (strcmp(ev->key, "z") == 0) /* change text's font size */
      {
         const char *font;
         int size;

@@ -119,7 +119,7 @@
  * scale). Scaling will be applied to @c "part_one", only, because
  * that's the part flagged to be scaled at EDC level:
  * @dontinclude edje-basic.c
- * @skip strcmp(ev->keyname, "s") == 0
+ * @skip strcmp(ev->key, "s") == 0
  * @until }
  *
  * Note, finally, that the @c 's' command will depend on the 'r' one
@@ -128,7 +128,7 @@
  * scaling factor. Only when the individual one is set to zero, will
  * the global one take effect:
  * @dontinclude edje-basic.c
- * @skip strcmp(ev->keyname, "r") == 0
+ * @skip strcmp(ev->key, "r") == 0
  * @until }
  *
  *
@@ -810,7 +810,7 @@
  * @until }
  * @until }
  * @dontinclude edje-signals-messages.c
- * @skip keyname, "t"
+ * @skip key, "t"
  * @until }
  *
  * The example's window should look like this picture:

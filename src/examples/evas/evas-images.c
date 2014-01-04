@@ -95,13 +95,13 @@ _on_keydown(void        *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "m") == 0) /* toggle border image's smooth scaling */
+   if (strcmp(ev->key, "m") == 0) /* toggle border image's smooth scaling */
      {
         Eina_Bool smooth_scale = evas_object_image_smooth_scale_get(d.border);
 
@@ -113,7 +113,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "t") == 0) /* change border's thickness */
+   if (strcmp(ev->key, "t") == 0) /* change border's thickness */
      {
         int l, r, t, b;
 
@@ -131,7 +131,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "c") == 0) /* change border's scaling factor */
+   if (strcmp(ev->key, "c") == 0) /* change border's scaling factor */
      {
         double scale = evas_object_image_border_scale_get(d.border);
 
@@ -145,7 +145,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "b") == 0) /* change border's center
+   if (strcmp(ev->key, "b") == 0) /* change border's center
                                        * region's aspect */
      {
         Eina_Bool fill = \
@@ -161,7 +161,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "a") == 0) /* toggle alpha channel usage */
+   if (strcmp(ev->key, "a") == 0) /* toggle alpha channel usage */
      {
         Eina_Bool alpha = evas_object_image_alpha_get(d.img1);
 
@@ -173,7 +173,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "f") == 0) /* toggle filled property */
+   if (strcmp(ev->key, "f") == 0) /* toggle filled property */
      {
         Eina_Bool filled = evas_object_image_filled_get(d.img1);
 
@@ -185,7 +185,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "x") == 0) /* change x fill coordinate */
+   if (strcmp(ev->key, "x") == 0) /* change x fill coordinate */
      {
         Evas_Coord x, y, w, h;
 
@@ -198,7 +198,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "y") == 0) /* change y fill coordinate */
+   if (strcmp(ev->key, "y") == 0) /* change y fill coordinate */
      {
         Evas_Coord x, y, w, h;
 
@@ -211,7 +211,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "w") == 0) /* change w fill size */
+   if (strcmp(ev->key, "w") == 0) /* change w fill size */
      {
         Evas_Coord x, y, w, h;
 
@@ -226,7 +226,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "e") == 0) /* change h fill size */
+   if (strcmp(ev->key, "e") == 0) /* change h fill size */
      {
         Evas_Coord x, y, w, h;
 
@@ -241,7 +241,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "s") == 0) /* status */
+   if (strcmp(ev->key, "s") == 0) /* status */
      {
         Evas_Coord x, y, w, h;
 

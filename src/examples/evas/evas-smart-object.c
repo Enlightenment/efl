@@ -443,19 +443,19 @@ _on_keydown(void *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->keyname, "q") == 0) /* print help */
+   if (strcmp(ev->key, "q") == 0) /* print help */
      {
         _on_destroy(NULL);
         return;
      }
 
-   if (strcmp(ev->keyname, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "w") == 0) /* clear out smart object (WRT
+   if (strcmp(ev->key, "w") == 0) /* clear out smart object (WRT
                                        * members) */
      {
         if (d.rects[0])
@@ -476,7 +476,7 @@ _on_keydown(void *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "l") == 0) /* insert random colored
+   if (strcmp(ev->key, "l") == 0) /* insert random colored
                                        * rectangle on the left */
      {
         Evas_Object *rect = evas_object_rectangle_add(d.evas), *prev;
@@ -505,7 +505,7 @@ _on_keydown(void *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "r") == 0) /* insert random colored
+   if (strcmp(ev->key, "r") == 0) /* insert random colored
                                        * rectangle on the right */
      {
         Evas_Object *rect = evas_object_rectangle_add(d.evas), *prev;
@@ -535,14 +535,14 @@ _on_keydown(void *data EINA_UNUSED,
      }
 
    /* move smart object along the canvas */
-   if (strcmp(ev->keyname, "Right") == 0 || strcmp(ev->keyname, "Left") == 0 ||
-       strcmp(ev->keyname, "Up") == 0 || strcmp(ev->keyname, "Down") == 0)
+   if (strcmp(ev->key, "Right") == 0 || strcmp(ev->key, "Left") == 0 ||
+       strcmp(ev->key, "Up") == 0 || strcmp(ev->key, "Down") == 0)
      {
         Evas_Coord x, y;
 
         evas_object_geometry_get(d.smt, &x, &y, NULL, NULL);
 
-        switch (ev->keyname[0])
+        switch (ev->key[0])
           {
            case 'R':
              x += 20;
@@ -568,7 +568,7 @@ _on_keydown(void *data EINA_UNUSED,
      }
 
    /* increase smart object's size */
-   if (strcmp(ev->keyname, "i") == 0)
+   if (strcmp(ev->key, "i") == 0)
      {
         Evas_Coord w, h;
 
@@ -584,7 +584,7 @@ _on_keydown(void *data EINA_UNUSED,
      }
 
    /* decrease smart object's size */
-   if (strcmp(ev->keyname, "d") == 0)
+   if (strcmp(ev->key, "d") == 0)
      {
         Evas_Coord w, h;
 
@@ -600,7 +600,7 @@ _on_keydown(void *data EINA_UNUSED,
      }
 
    /* change smart object's clipper color */
-   if (strcmp(ev->keyname, "c") == 0)
+   if (strcmp(ev->key, "c") == 0)
      {
         cur_color = (cur_color + 1) % 4;
 
@@ -615,21 +615,21 @@ _on_keydown(void *data EINA_UNUSED,
      }
 
    /* rotate object to the right */
-   if (strcmp(ev->keyname, "period") == 0)
+   if (strcmp(ev->key, "period") == 0)
      {
         cur_angle = (cur_angle + 30) % 360;
         _map_update();
         return;
      }
 
-   if (strcmp(ev->keyname, "comma") == 0)
+   if (strcmp(ev->key, "comma") == 0)
      {
         cur_angle = (cur_angle - 30) % 360;
         _map_update();
         return;
      }
 
-   fprintf(stderr, "Invalid key: '%s'\n", ev->keyname);
+   fprintf(stderr, "Invalid key: '%s'\n", ev->key);
 }
 
 static void

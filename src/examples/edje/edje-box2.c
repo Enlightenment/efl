@@ -85,7 +85,7 @@ on_keydown(void *data, Evas *evas, Evas_Object *o EINA_UNUSED, void *einfo)
    edje_obj = (Evas_Object *)data;
 
    mods = evas_key_modifier_get(evas);
-   if (!strcmp(ev->keyname, "h"))
+   if (!strcmp(ev->key, "h"))
      {
         fprintf(stdout, commands);
         return;
@@ -94,7 +94,7 @@ on_keydown(void *data, Evas *evas, Evas_Object *o EINA_UNUSED, void *einfo)
      {
 	int pos;
 	Evas_Object *obj = NULL;
-	pos = atoi(ev->keyname);
+	pos = atoi(ev->key);
 	obj = edje_object_part_box_remove_at(edje_obj, "example/box", pos);
 	if (obj)
 	  evas_object_del(obj);
@@ -104,13 +104,13 @@ on_keydown(void *data, Evas *evas, Evas_Object *o EINA_UNUSED, void *einfo)
      {
 	Evas_Object *obj;
 	int pos;
-	pos = atoi(ev->keyname);
+	pos = atoi(ev->key);
 	obj = new_greenie_block(evas);
 	if (!edje_object_part_box_insert_at(edje_obj, "example/box", obj, pos))
 	  edje_object_part_box_append(edje_obj, "example/box", obj);
 	return;
      }
-   if (!strcmp(ev->keyname, "Escape"))
+   if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
 }
 

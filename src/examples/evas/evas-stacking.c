@@ -91,13 +91,13 @@ _on_keydown(void        *data EINA_UNUSED,
    Evas_Event_Key_Down *ev = einfo;
    const char *name = _name_get(d.rects[d.cur_rect]);
 
-   if (strcmp(ev->keyname, "h") == 0)  /* print help */
+   if (strcmp(ev->key, "h") == 0)  /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
 
-   if (strcmp(ev->keyname, "s") == 0)  /* get status of the
+   if (strcmp(ev->key, "s") == 0)  /* get status of the
                                         * rectangles WRT size
                                         * hints */
      {
@@ -126,7 +126,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "l") == 0)  /* change background rectangle's layer */
+   if (strcmp(ev->key, "l") == 0)  /* change background rectangle's layer */
      {
         d.cur_layer = (d.cur_layer + 1) % 3;
         evas_object_layer_set(d.bg, d.layers[d.cur_layer]);
@@ -136,7 +136,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "c") == 0)  /* change rectangle to operate on */
+   if (strcmp(ev->key, "c") == 0)  /* change rectangle to operate on */
      {
         d.cur_rect = (d.cur_rect + 1) % 3;
 
@@ -145,7 +145,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "t") == 0)  /* bring target to top */
+   if (strcmp(ev->key, "t") == 0)  /* bring target to top */
      {
         Evas_Object *neighbour;
 
@@ -160,7 +160,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "m") == 0)  /* bring target to bottom */
+   if (strcmp(ev->key, "m") == 0)  /* bring target to bottom */
      {
         Evas_Object *neighbour;
 
@@ -176,7 +176,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "p") == 0)  /* toggle pass events */
+   if (strcmp(ev->key, "p") == 0)  /* toggle pass events */
      {
         Eina_Bool pass = evas_object_pass_events_get(d.rects[d.cur_rect]);
 
@@ -188,7 +188,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "r") == 0)  /* toggle repeat events */
+   if (strcmp(ev->key, "r") == 0)  /* toggle repeat events */
      {
         Eina_Bool repeat = evas_object_repeat_events_get(d.rects[d.cur_rect]);
 
@@ -200,7 +200,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "a") == 0)  /* stack target above */
+   if (strcmp(ev->key, "a") == 0)  /* stack target above */
      {
         Evas_Object *neighbour = evas_object_above_get(d.rects[d.cur_rect]);
 
@@ -222,7 +222,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "b") == 0)  /* stack target below */
+   if (strcmp(ev->key, "b") == 0)  /* stack target below */
      {
         Evas_Object *neighbour = evas_object_below_get(d.rects[d.cur_rect]);
 

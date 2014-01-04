@@ -39,19 +39,19 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
    Evas_Event_Key_Down *ev = event_info;
    Evas_Object *em = data;
 
-   if (!strcmp(ev->keyname, "Return"))
+   if (!strcmp(ev->key, "Return"))
      {
 	emotion_object_play_set(em, EINA_TRUE);
      }
-   else if (!strcmp(ev->keyname, "space"))
+   else if (!strcmp(ev->key, "space"))
      {
 	emotion_object_play_set(em, EINA_FALSE);
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      {
 	ecore_main_loop_quit();
      }
-   else if (!strcmp(ev->keyname, "n"))
+   else if (!strcmp(ev->key, "n"))
      {
 	const char *file;
 	if (!curfile)
@@ -62,7 +62,7 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);
      }
-   else if (!strcmp(ev->keyname, "p"))
+   else if (!strcmp(ev->key, "p"))
      {
 	const char *file;
 	if (!curfile)
@@ -73,33 +73,33 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);
      }
-   else if (!strcmp(ev->keyname, "b"))
+   else if (!strcmp(ev->key, "b"))
      {
 	emotion_object_border_set(em, 0, 0, 50, 50);
      }
-   else if (!strcmp(ev->keyname, "0"))
+   else if (!strcmp(ev->key, "0"))
      {
 	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_NONE);
      }
-   else if (!strcmp(ev->keyname, "w"))
+   else if (!strcmp(ev->key, "w"))
      {
 	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_WIDTH);
      }
-   else if (!strcmp(ev->keyname, "h"))
+   else if (!strcmp(ev->key, "h"))
      {
 	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_HEIGHT);
      }
-   else if (!strcmp(ev->keyname, "2"))
+   else if (!strcmp(ev->key, "2"))
      {
 	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_KEEP_BOTH);
      }
-   else if (!strcmp(ev->keyname, "c"))
+   else if (!strcmp(ev->key, "c"))
      {
 	emotion_object_keep_aspect_set(em, EMOTION_ASPECT_CROP);
      }
    else
      {
-	fprintf(stderr, "unhandled key: %s\n", ev->keyname);
+	fprintf(stderr, "unhandled key: %s\n", ev->key);
      }
 }
 

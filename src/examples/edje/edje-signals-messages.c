@@ -51,12 +51,12 @@ _on_keydown(void        *data,
    ev = (Evas_Event_Key_Down *)einfo;
    edje_obj = (Evas_Object *)data;
 
-   if (!strcmp(ev->keyname, "h")) /* print help */
+   if (!strcmp(ev->key, "h")) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
-   else if (!strcmp(ev->keyname, "t")) /* toggle right rectangle's visibility */
+   else if (!strcmp(ev->key, "t")) /* toggle right rectangle's visibility */
      {
         char buf[1024];
 
@@ -70,11 +70,11 @@ _on_keydown(void        *data,
 
         return;
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
-        printf("unhandled key: %s\n", ev->keyname);
+        printf("unhandled key: %s\n", ev->key);
         fprintf(stdout, commands);
      }
 }

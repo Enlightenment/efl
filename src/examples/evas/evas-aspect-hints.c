@@ -89,7 +89,7 @@ _on_keydown(void        *data EINA_UNUSED,
    mods = evas_key_modifier_get(evas_object_evas_get(o));
 
    if (evas_key_modifier_is_set(mods, "Shift") &&
-       strcmp(ev->keyname, "h") == 0) /* print help */
+       strcmp(ev->key, "h") == 0) /* print help */
      {
         fprintf(stdout, "commands are:\n"
                         "\tc - cycle aspect control on object\n"
@@ -100,7 +100,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "s") == 0) /* get aspect status of the obj */
+   if (strcmp(ev->key, "s") == 0) /* get aspect status of the obj */
      {
         Evas_Coord w, h;
         Evas_Aspect_Control aspect;
@@ -114,7 +114,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "c") == 0) /* cycle aspect control on obj */
+   if (strcmp(ev->key, "c") == 0) /* cycle aspect control on obj */
      {
         Evas_Coord w, h;
         Evas_Aspect_Control aspect;
@@ -131,7 +131,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "h") == 0) /* change horizontal aspect component */
+   if (strcmp(ev->key, "h") == 0) /* change horizontal aspect component */
      {
         Evas_Coord w, h;
         Evas_Aspect_Control aspect;
@@ -147,7 +147,7 @@ _on_keydown(void        *data EINA_UNUSED,
         return;
      }
 
-   if (strcmp(ev->keyname, "v") == 0) /* change vertical aspect component */
+   if (strcmp(ev->key, "v") == 0) /* change vertical aspect component */
      {
         Evas_Coord w, h;
         Evas_Aspect_Control aspect;

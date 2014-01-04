@@ -50,25 +50,25 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
    Evas_Event_Key_Down *ev = event_info;
    Evas_Object *em = data;
 
-   if (!strcmp(ev->keyname, "Return"))
+   if (!strcmp(ev->key, "Return"))
      {
 	emotion_object_play_set(em, EINA_TRUE);
      }
-   else if (!strcmp(ev->keyname, "space"))
+   else if (!strcmp(ev->key, "space"))
      {
 	emotion_object_play_set(em, EINA_FALSE);
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      {
 	ecore_main_loop_quit();
      }
-   else if (!strcmp(ev->keyname, "t"))
+   else if (!strcmp(ev->key, "t"))
      {
 	int w, h;
 	emotion_object_size_get(em, &w, &h);
 	fprintf(stderr, "example -> size: %dx%d\n", w, h);
      }
-   else if (!strcmp(ev->keyname, "s"))
+   else if (!strcmp(ev->key, "s"))
      {
         float len, pos;
         len = emotion_object_play_length_get(em);
@@ -76,17 +76,17 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	fprintf(stderr, "skipping to position %0.3f\n", pos);
 	emotion_object_position_set(em, pos);
      }
-   else if (!strcmp(ev->keyname, "1"))
+   else if (!strcmp(ev->key, "1"))
      {
 	fprintf(stderr, "setting speed to 1.0\n");
 	emotion_object_play_speed_set(em, 1.0);
      }
-   else if (!strcmp(ev->keyname, "2"))
+   else if (!strcmp(ev->key, "2"))
      {
 	fprintf(stderr, "setting speed to 2.0\n");
 	emotion_object_play_speed_set(em, 2.0);
      }
-   else if (!strcmp(ev->keyname, "n"))
+   else if (!strcmp(ev->key, "n"))
      {
 	const char *file;
 	if (!curfile)
@@ -97,7 +97,7 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);
      }
-   else if (!strcmp(ev->keyname, "p"))
+   else if (!strcmp(ev->key, "p"))
      {
 	const char *file;
 	if (!curfile)
@@ -108,18 +108,18 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	fprintf(stderr, "playing next file: %s\n", file);
 	emotion_object_file_set(em, file);
      }
-   else if (!strcmp(ev->keyname, "d"))
+   else if (!strcmp(ev->key, "d"))
      {
 	evas_object_del(em);
      }
-   else if (!strcmp(ev->keyname, "l"))
+   else if (!strcmp(ev->key, "l"))
      {
 	// force frame dropping
 	sleep(5);
      }
    else
      {
-	fprintf(stderr, "unhandled key: %s\n", ev->keyname);
+	fprintf(stderr, "unhandled key: %s\n", ev->key);
      }
 }
 
