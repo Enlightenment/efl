@@ -25,9 +25,9 @@ typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       unsigned int h,
                                       unsigned int output_height);
 
-typedef struct _EvasVideoSinkPrivate EvasVideoSinkPrivate;
-typedef struct _EvasVideoSink        EvasVideoSink;
-typedef struct _EvasVideoSinkClass   EvasVideoSinkClass;
+typedef struct _EmotionVideoSinkPrivate EmotionVideoSinkPrivate;
+typedef struct _EmotionVideoSink        EmotionVideoSink;
+typedef struct _EmotionVideoSinkClass   EmotionVideoSinkClass;
 typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
 typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
 typedef struct _Emotion_Gstreamer_Buffer Emotion_Gstreamer_Buffer;
@@ -60,9 +60,6 @@ struct _Emotion_Gstreamer_Video
    /* eos */
    GstBus           *eos_bus;
 
-    /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
-   GstBuffer        *last_buffer;
-
    /* Evas object */
    Evas_Object      *obj;
 
@@ -70,67 +67,55 @@ struct _Emotion_Gstreamer_Video
    double            position;
    double            volume;
 
-   volatile int      seek_to;
-   volatile int      get_poslen;
-
    Emotion_Gstreamer_Metadata *metadata;
 
    const char       *uri;
 
-   Emotion_Gstreamer_Buffer *send;
-
-   EvasVideoSinkPrivate *sink_data;
+   int               in;
+   int               out;
 
    Emotion_Vis       vis;
 
-   int               in;
-   int               out;
+   Eina_Bool         play         : 1;
+   Eina_Bool         video_mute   : 1;
+   Eina_Bool         audio_mute   : 1;
+   Eina_Bool         play_started : 1;
+   Eina_Bool         pipeline_parsed : 1;
+   Eina_Bool         delete_me    : 1;
+};
+
+struct _EmotionVideoSink {
+    /*< private >*/
+    GstVideoSink parent;
+    EmotionVideoSinkPrivate *priv;
+};
+
+struct _EmotionVideoSinkClass {
+    /*< private >*/
+    GstVideoSinkClass parent_class;
+};
+
+struct _EmotionVideoSinkPrivate {
+   Evas_Object *emotion_object;
+   Evas_Object *evas_object;
+
+   GstVideoInfo info;
+   unsigned int eheight;
+   Evas_Colorspace eformat;
+   Evas_Video_Convert_Cb func;
+
+   Eina_Lock m;
+   Eina_Condition c;
+
+   Emotion_Gstreamer_Buffer *send;
+
+    /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
+   GstBuffer        *last_buffer;
 
    int frames;
    int flapse;
    double rtime;
    double rlapse;
-
-   struct
-   {
-      double         width;
-      double         height;
-   } fill;
-
-   Eina_Bool         play         : 1;
-   Eina_Bool         play_started : 1;
-   Eina_Bool         video_mute   : 1;
-   Eina_Bool         audio_mute   : 1;
-   Eina_Bool         pipeline_parsed : 1;
-   Eina_Bool         delete_me    : 1;
-   Eina_Bool         kill_buffer  : 1;
-   Eina_Bool         stream       : 1;
-};
-
-struct _EvasVideoSink {
-    /*< private >*/
-    GstVideoSink parent;
-    EvasVideoSinkPrivate *priv;
-};
-
-struct _EvasVideoSinkClass {
-    /*< private >*/
-    GstVideoSinkClass parent_class;
-};
-
-struct _EvasVideoSinkPrivate {
-   Evas_Object *o;
-
-   Emotion_Gstreamer_Video *ev;
-
-   Evas_Video_Convert_Cb func;
-
-   GstVideoInfo info;
-   unsigned int eheight;
-   Evas_Colorspace eformat;
-
-   Eina_Lock m;
-   Eina_Condition c;
 
    // If this is TRUE all processing should finish ASAP
    // This is necessary because there could be a race between
@@ -145,13 +130,14 @@ struct _EvasVideoSinkPrivate {
 
 struct _Emotion_Gstreamer_Buffer
 {
-   Emotion_Gstreamer_Video *ev;
-   EvasVideoSinkPrivate *sink;
+   EmotionVideoSink *sink;
 
    GstBuffer *frame;
 
-   Eina_Bool preroll : 1;
-   Eina_Bool force : 1;
+   GstVideoInfo info;
+   Evas_Colorspace eformat;
+   int eheight;
+   Evas_Video_Convert_Cb func;
 };
 
 struct _Emotion_Gstreamer_Message
@@ -189,44 +175,41 @@ extern Eina_Bool debug_fps;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_emotion_gstreamer_log_domain, __VA_ARGS__)
 
-#define EVAS_TYPE_VIDEO_SINK evas_video_sink_get_type()
+#define EMOTION_TYPE_VIDEO_SINK emotion_video_sink_get_type()
 
-#define EVAS_VIDEO_SINK(obj) \
+#define EMOTION_VIDEO_SINK(obj) \
     (G_TYPE_CHECK_INSTANCE_CAST((obj), \
-    EVAS_TYPE_VIDEO_SINK, EvasVideoSink))
+    EMOTION_TYPE_VIDEO_SINK, EmotionVideoSink))
 
-#define EVAS_VIDEO_SINK_CLASS(klass) \
+#define EMOTION_VIDEO_SINK_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_CAST((klass), \
-    EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
+    EMOTION_TYPE_VIDEO_SINK, EmotionVideoSinkClass))
 
-#define EVAS_IS_VIDEO_SINK(obj) \
+#define EMOTION_IS_VIDEO_SINK(obj) \
     (G_TYPE_CHECK_INSTANCE_TYPE((obj), \
-    EVAS_TYPE_VIDEO_SINK))
+    EMOTION_TYPE_VIDEO_SINK))
 
-#define EVAS_IS_VIDEO_SINK_CLASS(klass) \
+#define EMOTION_IS_VIDEO_SINK_CLASS(klass) \
     (G_TYPE_CHECK_CLASS_TYPE((klass), \
-    EVAS_TYPE_VIDEO_SINK))
+    EMOTION_TYPE_VIDEO_SINK))
 
-#define EVAS_VIDEO_SINK_GET_CLASS(obj) \
+#define EMOTION_VIDEO_SINK_GET_CLASS(obj) \
     (G_TYPE_INSTANCE_GET_CLASS((obj), \
-    EVAS_TYPE_VIDEO_SINK, EvasVideoSinkClass))
-
-GstElement *gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
-                                     Evas_Object *obj,
-                                     const char *uri);
+    EMOTION_TYPE_VIDEO_SINK, EmotionVideoSinkClass))
 
 gboolean    gstreamer_plugin_init(GstPlugin *plugin);
 
-Emotion_Gstreamer_Buffer *emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
-							 GstBuffer *buffer,
-                                                         Eina_Bool preroll);
+Emotion_Gstreamer_Buffer *emotion_gstreamer_buffer_alloc(EmotionVideoSink *sink,
+                                                         GstBuffer *buffer,
+                                                         GstVideoInfo *info,
+                                                         Evas_Colorspace eformat,
+                                                         int eheight,
+                                                         Evas_Video_Convert_Cb func);
 void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
 
 Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
                                                            GstMessage *msg);
 void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
-Eina_Bool _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
-                                                  Eina_Bool force);
 
 typedef struct _ColorSpace_Format_Convertion ColorSpace_Format_Convertion;
 

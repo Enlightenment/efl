@@ -5,23 +5,26 @@
 #include "emotion_gstreamer.h"
 
 Emotion_Gstreamer_Buffer *
-emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
+emotion_gstreamer_buffer_alloc(EmotionVideoSink *sink,
 			       GstBuffer *buffer,
-			       Eina_Bool preroll)
+                               GstVideoInfo *info,
+                               Evas_Colorspace eformat,
+                               int eheight,
+                               Evas_Video_Convert_Cb func)
 {
    Emotion_Gstreamer_Buffer *send;
 
-   if (!sink->ev) return NULL;
+   if (!sink->priv->emotion_object) return NULL;
 
    send = malloc(sizeof (Emotion_Gstreamer_Buffer));
    if (!send) return NULL;
 
-   send->sink = sink;
+   send->sink = gst_object_ref(sink);
    send->frame = gst_buffer_ref(buffer);
-   send->preroll = preroll;
-   send->force = EINA_FALSE;
-   sink->ev->out++;
-   send->ev = sink->ev;
+   send->info = *info;
+   send->eformat = eformat;
+   send->eheight = eheight;
+   send->func = func;
 
    return send;
 }
@@ -29,14 +32,8 @@ emotion_gstreamer_buffer_alloc(EvasVideoSinkPrivate *sink,
 void
 emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send)
 {
-   send->ev->in++;
-
-   if (send->ev->in == send->ev->out
-       && send->ev->threads == NULL
-       && send->ev->delete_me)
-     send->ev->api->del(send->ev);
-
-   gst_buffer_unref(send->frame);
+   gst_object_unref(send->sink);
+   gst_buffer_replace(&send->frame, NULL);
    free(send);
 }
 
@@ -52,6 +49,7 @@ emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
    if (!send) return NULL;
 
    ev->out++;
+
    send->ev = ev;
    send->msg = gst_message_ref(msg);
 

@@ -13,9 +13,13 @@ static int _emotion_init_count = 0;
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
 
+static GstElement * _create_pipeline (Emotion_Gstreamer_Video *ev, Evas_Object *o, const char *uri);
+
 static GstBusSyncReply _eos_sync_fct(GstBus *bus,
 				     GstMessage *message,
 				     gpointer data);
+
+static Eina_Bool _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev, Eina_Bool force);
 
 /* Module interface */
 
@@ -70,12 +74,6 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
 static void
 em_cleanup(Emotion_Gstreamer_Video *ev)
 {
-   if (ev->send)
-     {
-        emotion_gstreamer_buffer_free(ev->send);
-        ev->send = NULL;
-     }
-
    if (ev->eos_bus)
      {
         gst_object_unref(GST_OBJECT(ev->eos_bus));
@@ -88,25 +86,10 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
         ev->metadata = NULL;
      }
 
-   if (ev->last_buffer)
-     {
-        gst_buffer_unref(ev->last_buffer);
-        ev->last_buffer = NULL;
-     }
-
-   if (!ev->stream)
-     {
-        evas_object_image_video_surface_set(emotion_object_image_get(ev->obj), NULL);
-        ev->stream = EINA_TRUE;
-     }
-
    if (ev->pipeline)
      {
-       gstreamer_video_sink_new(ev, ev->obj, NULL);
-
-       g_object_set(G_OBJECT(ev->esink), "ev", NULL, NULL);
-       g_object_set(G_OBJECT(ev->esink), "evas-object", NULL, NULL);
        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
+       g_object_set(G_OBJECT(ev->esink), "emotion-object", NULL, NULL);
        gst_object_unref(ev->pipeline);
 
        ev->pipeline = NULL;
@@ -178,7 +161,7 @@ em_file_open(void *video,
 
    uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
-   ev->pipeline = gstreamer_video_sink_new(ev, ev->obj, uri);
+   ev->pipeline = _create_pipeline (ev, ev->obj, uri);
    if (sbuf) eina_strbuf_free(sbuf);
 
    if (!ev->pipeline)
@@ -233,7 +216,6 @@ em_play(void   *video,
    if (ev->pipeline_parsed)
      gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
-   ev->play_started = 1;
 }
 
 static void
@@ -1392,12 +1374,6 @@ _eos_main_fct(void *data)
    ev = send->ev;
    msg = send->msg;
 
-   if (ev->play_started && !ev->delete_me)
-     {
-        _emotion_playback_started(ev->obj);
-        ev->play_started = 0;
-     }
-
    switch (GST_MESSAGE_TYPE(msg))
      {
       case GST_MESSAGE_EOS:
@@ -1425,6 +1401,28 @@ _eos_main_fct(void *data)
       case GST_MESSAGE_ASYNC_DONE:
          if (!ev->delete_me) _emotion_seek_done(ev->obj);
          break;
+      case GST_MESSAGE_STATE_CHANGED:
+        {
+           GstState old_state, new_state;
+
+           gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
+           INF("Element %s changed state from %s to %s.",
+               GST_OBJECT_NAME(msg->src),
+               gst_element_state_get_name(old_state),
+               gst_element_state_get_name(new_state));
+
+           if (GST_MESSAGE_SRC(msg) == GST_OBJECT(ev->pipeline) && new_state >= GST_STATE_PAUSED && !ev->play_started && !ev->delete_me)
+             {
+                _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
+                /* FIXME: This is reentrant because of _emotion_open_done() */
+                if (!ev->play_started)
+                  {
+                     _emotion_playback_started(ev->obj);
+                     ev->play_started = 1;
+                  }
+             }
+           break;
+        }
       case GST_MESSAGE_STREAM_STATUS:
          break;
       case GST_MESSAGE_ERROR:
@@ -1454,6 +1452,7 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
       case GST_MESSAGE_TAG:
       case GST_MESSAGE_ASYNC_DONE:
       case GST_MESSAGE_STREAM_STATUS:
+      case GST_MESSAGE_STATE_CHANGED:
          INF("bus say: %s [%i - %s]",
              GST_MESSAGE_SRC_NAME(msg),
              GST_MESSAGE_TYPE(msg),
@@ -1467,18 +1466,6 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
           }
 
          break;
-
-      case GST_MESSAGE_STATE_CHANGED:
-        {
-           GstState old_state, new_state;
-
-           gst_message_parse_state_changed(msg, &old_state, &new_state, NULL);
-           INF("Element %s changed state from %s to %s.",
-               GST_OBJECT_NAME(msg->src),
-               gst_element_state_get_name(old_state),
-               gst_element_state_get_name(new_state));
-           break;
-        }
       case GST_MESSAGE_ERROR:
 	{
            GError *error;
@@ -1524,7 +1511,7 @@ _eos_sync_fct(GstBus *bus EINA_UNUSED, GstMessage *msg, gpointer data)
    return GST_BUS_DROP;
 }
 
-Eina_Bool
+static Eina_Bool
 _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
                                         Eina_Bool force)
 {
@@ -1610,13 +1597,171 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
    em_audio_channel_volume_set(ev, ev->volume);
    em_audio_channel_mute_set(ev, ev->audio_mute);
 
-   if (ev->play_started)
-     {
-        _emotion_playback_started(ev->obj);
-        ev->play_started = 0;
-     }
-
    _emotion_open_done(ev->obj);
 
    return EINA_TRUE;
 }
+
+static void
+_emotion_gstreamer_pause(void *data, Ecore_Thread *thread)
+{
+   Emotion_Gstreamer_Video *ev = data;
+   gboolean res;
+
+   if (ecore_thread_check(thread) || !ev->pipeline) return;
+
+   gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
+   res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+   if (res == GST_STATE_CHANGE_NO_PREROLL)
+     {
+        gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+	gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+     }
+}
+
+static void
+_emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   ev->threads = eina_list_remove(ev->threads, thread);
+
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+
+   if (ev->in == ev->out && ev->delete_me)
+     ev->api->del(ev);
+}
+
+static void
+_emotion_gstreamer_end(void *data, Ecore_Thread *thread)
+{
+   Emotion_Gstreamer_Video *ev = data;
+
+   ev->threads = eina_list_remove(ev->threads, thread);
+
+   if (ev->play)
+     {
+        gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+     }
+
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+
+   if (ev->in == ev->out && ev->delete_me)
+     ev->api->del(ev);
+   else
+     _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
+}
+
+static GstElement *
+_create_pipeline (Emotion_Gstreamer_Video *ev,
+			 Evas_Object *o,
+			 const char *uri)
+{
+   GstElement *playbin;
+   GstElement *bin = NULL;
+   GstElement *esink = NULL;
+   GstElement *queue = NULL;
+   GstPad *pad;
+   int flags;
+   const char *launch;
+
+   if (!uri)
+     return NULL;
+
+   launch = emotion_webcam_custom_get(uri);
+   if (launch)
+     {
+        GError *error = NULL;
+
+        /* FIXME: This code path is broken in many places and won't
+         * work as is */
+        playbin = gst_parse_bin_from_description(launch, 1, &error);
+        if (!playbin)
+          {
+             ERR("Unable to setup command : '%s' got error '%s'.", launch, error->message);
+             g_error_free(error);
+             return NULL;
+          }
+        if (error)
+          {
+             WRN("got recoverable error '%s' for command : '%s'.", error->message, launch);
+             g_error_free(error);
+          }
+     }
+   else
+     {
+        playbin = gst_element_factory_make("playbin", "playbin");
+        if (!playbin)
+          {
+             ERR("Unable to create 'playbin' GstElement.");
+             return NULL;
+          }
+     }
+
+   bin = gst_bin_new(NULL);
+   if (!bin)
+     {
+       ERR("Unable to create GstBin !");
+       goto unref_pipeline;
+     }
+
+   esink = gst_element_factory_make("emotion-sink", "sink");
+   if (!esink)
+     {
+        ERR("Unable to create 'emotion-sink' GstElement.");
+        goto unref_pipeline;
+     }
+
+   g_object_set(G_OBJECT(esink), "emotion-object", o, NULL);
+
+   /* We need queue to force each video sink to be in its own thread */
+   queue = gst_element_factory_make("queue", "equeue");
+   if (!queue)
+     {
+        ERR("Unable to create 'queue' GstElement.");
+        goto unref_pipeline;
+     }
+
+   gst_bin_add_many(GST_BIN(bin), queue, esink, NULL);
+   gst_element_link_many(queue, esink, NULL);
+
+   /* link both sink to GstTee */
+   pad = gst_element_get_static_pad(queue, "sink");
+   gst_element_add_pad(bin, gst_ghost_pad_new("sink", pad));
+   gst_object_unref(pad);
+
+   if (launch)
+     {
+        g_object_set(G_OBJECT(playbin), "sink", bin, NULL);
+     }
+   else
+     {
+        g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
+        g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
+        g_object_set(G_OBJECT(playbin), "video-sink", bin, NULL);
+        g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
+     }
+
+   eina_stringshare_replace(&ev->uri, uri);
+   ev->pipeline = playbin;
+   ev->sink = bin;
+   ev->esink = esink;
+   ev->threads = eina_list_append(ev->threads,
+                                  ecore_thread_run(_emotion_gstreamer_pause,
+                                                   _emotion_gstreamer_end,
+                                                   _emotion_gstreamer_cancel,
+                                                   ev));
+
+   /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
+   /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */
+   if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+
+   return playbin;
+
+ unref_pipeline:
+   gst_object_unref(esink);
+   gst_object_unref(bin);
+   gst_object_unref(playbin);
+   return NULL;
+}
+
