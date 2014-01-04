@@ -508,7 +508,7 @@ text_input_enter(void                 *data,
 
 static void
 text_input_leave(void                 *data,
-                 struct wl_text_input *text_input)
+                 struct wl_text_input *text_input EINA_UNUSED)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)data;
 
