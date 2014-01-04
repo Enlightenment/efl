@@ -19,6 +19,12 @@
 #ifndef EINA_INLINE_LOCK_POSIX_X_
 #define EINA_INLINE_LOCK_POSIX_X_
 
+#ifdef _XOPEN_SOURCE
+# define EINA_XOPEN_SOURCE _XOPEN_SOURCE
+# undef _XOPEN_SOURCE
+#endif
+#define _XOPEN_SOURCE 600
+
 #ifdef EINA_HAVE_POSIX_SPINLOCK
 # include <sched.h>
 #endif
@@ -649,5 +655,11 @@ eina_spinlock_free(Eina_Spinlock *spinlock)
    eina_lock_free(spinlock);
 #endif
 }
+
+#undef _XOPEN_SOURCE
+// This is necessary to let third party still define this macro
+#ifdef EINA_XOPEN_SOURCE
+# define _XOPEN_SOURCE EINA_XOPEN_SOURCE
+#endif
 
 #endif
