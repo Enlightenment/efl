@@ -857,6 +857,9 @@ eina_file_open(const char *path, Eina_Bool shared)
  close_handle:
    CloseHandle(handle);
 
+   ERR("Could not open file [%s].", filename);
+   free(filename);
+
    return NULL;
 }
 
