@@ -326,7 +326,7 @@ edje_file_data_get(const char *file, const char *key)
    f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
-        ERR("File [%s] can not be open.", file);
+        ERR("File [%s] can not be opened.", file);
         return NULL;
      }
 
