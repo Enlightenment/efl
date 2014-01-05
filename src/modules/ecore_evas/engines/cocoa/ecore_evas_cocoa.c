@@ -13,11 +13,12 @@
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
 
+static void  _ecore_evas_resize(Ecore_Evas *ee, int w, int h);
 
 // FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more
 
 static int                      _ecore_evas_init_count = 0;
-static Ecore_Evas               *ecore_evases = NULL;
+static Eina_List                *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
   NULL, NULL, NULL, NULL
 };
@@ -100,7 +101,7 @@ _ecore_evas_cocoa_match(void)
   return eina_list_nth(ecore_evases, 0);
 }
 
-static int
+static Eina_Bool
 _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
   Ecore_Evas                   *ee;
@@ -117,7 +118,7 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
   Ecore_Evas                   *ee;
@@ -134,25 +135,25 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
   return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-  /*Ecore_Cocoa_Event_Video_Resize *e;
-   Ecore_Evas                   *ee;
+    Ecore_Evas                   *ee;
 
-   e = event;
-   ee = _ecore_evas_cocoa_match();
+    ee = _ecore_evas_cocoa_match();
+    if (!ee)
+        return ECORE_CALLBACK_PASS_ON;
+    evas_output_size_set(ee->evas, ee->w, ee->h);
+    evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 
-   if (!ee) return 1; // pass on event
-   evas_output_size_set(ee->evas, e->w, e->h);
+    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
-   return 0;*/
-
-  DBG("Video Resize");
-  return ECORE_CALLBACK_PASS_ON;
+    _ecore_evas_resize(ee, ee->w, ee->h);
+    return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
+static Eina_Bool
 _ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
   Ecore_Evas                   *ee;
@@ -222,27 +223,27 @@ static int
 _ecore_evas_cocoa_shutdown(void)
 {
     Ecore_Evas *ee;
-  DBG("Cocoa SHutodwn");
-  _ecore_evas_init_count--;
-  if (_ecore_evas_init_count == 0)
+    DBG("Cocoa SHutodwn");
+    _ecore_evas_init_count--;
+    if (_ecore_evas_init_count == 0)
     {
-      int i;
+        int i;
 
-      EINA_LIST_FREE(ecore_evases, ee)
-         _ecore_evas_free(ee);
+        EINA_LIST_FREE(ecore_evases, ee)
+                _ecore_evas_free(ee);
 
-      for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
-	ecore_event_handler_del(ecore_evas_event_handlers[i]);
-      ecore_event_evas_shutdown();
-      ecore_idle_enterer_del(ecore_evas_idle_enterer);
-      ecore_evas_idle_enterer = NULL;
-      ecore_poller_del(ecore_evas_event);
-      ecore_evas_event = NULL;
+        for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
+            ecore_event_handler_del(ecore_evas_event_handlers[i]);
+        ecore_event_evas_shutdown();
+        ecore_idle_enterer_del(ecore_evas_idle_enterer);
+        ecore_evas_idle_enterer = NULL;
+        ecore_poller_del(ecore_evas_event);
+        ecore_evas_event = NULL;
 
-      ecore_event_evas_shutdown();
+        ecore_event_evas_shutdown();
     }
-  if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
-  return _ecore_evas_init_count;
+    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
+    return _ecore_evas_init_count;
 }
 
 static void
