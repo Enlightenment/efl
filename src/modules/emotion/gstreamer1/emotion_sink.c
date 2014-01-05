@@ -411,7 +411,7 @@ emotion_video_sink_main_render(void *data)
    eina_lock_release(&priv->m);
 
    if (buffer) gst_buffer_unref(buffer);
-   if (send) emotion_gstreamer_buffer_free(send);
+   emotion_gstreamer_buffer_free(send);
 
    _emotion_pending_ecore_end();
 }
