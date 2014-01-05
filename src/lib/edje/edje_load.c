@@ -324,7 +324,11 @@ edje_file_data_get(const char *file, const char *key)
    if (!key) return NULL;
 
    f = eina_file_open(file, EINA_FALSE);
-   if (!f) return NULL;
+   if (!f)
+     {
+        ERR("File [%s] can not be open.", file);
+        return NULL;
+     }
 
    str = edje_mmap_data_get(f, key);
 
