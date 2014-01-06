@@ -155,6 +155,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
    ee->prop.layer = 4;
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
+   ee->alpha = EINA_FALSE;
 
    /* try to initialize evas */
    ee->evas = evas_new();
@@ -228,7 +229,13 @@ _ecore_evas_drm_init(void)
      }
 
    /* FIXME: Init egl/software renderer here ?? */
-   /* FIXME: create sprites here ?? */
+
+   /* try to create sprites */
+   if (!ecore_drm_sprites_create(dev))
+     {
+        ERR("Could not create sprites: %m");
+        goto sprite_err;
+     }
 
    /* try to create outputs */
    if (!ecore_drm_outputs_create(dev))
@@ -237,7 +244,7 @@ _ecore_evas_drm_init(void)
         goto output_err;
      }
 
-   /* FIXME: create inputs */
+   /* try to create inputs */
    if (!ecore_drm_inputs_create(dev))
      {
         ERR("Could not create inputs: %m");
@@ -249,6 +256,8 @@ _ecore_evas_drm_init(void)
    return _ecore_evas_init_count;
 
 output_err:
+   ecore_drm_sprites_destroy(dev);
+sprite_err:
    ecore_drm_tty_close(dev);
 tty_open_err:
    ecore_drm_device_close(dev);
@@ -265,6 +274,8 @@ _ecore_evas_drm_shutdown(void)
    if (--_ecore_evas_init_count != 0)
      return _ecore_evas_init_count;
 
+   ecore_drm_sprites_destroy(dev);
+   /* NB: No need to free outputs here. Is done in device free */
    ecore_drm_inputs_destroy(dev);
    ecore_drm_tty_close(dev);
    ecore_drm_device_close(dev);
