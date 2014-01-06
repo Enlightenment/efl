@@ -64,6 +64,7 @@ EAPI void              evas_focus_out(Evas *e);
  * Get the focus state known by the given evas
  *
  * @param e The evas to query information.
+ * @return @c EINA_TRUE if it got the focus, @c EINA_FALSE otherwise.
  * @ingroup Evas_Canvas
  */
 EAPI Eina_Bool         evas_focus_state_get(const Evas *e);
@@ -1641,7 +1642,7 @@ EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_
  * @return EINA_TRUE if @p obj clip any object.
  * @since 1.8
  */
-EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *eo_obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Sets or unsets a given object as the currently focused one on its
@@ -1978,7 +1979,7 @@ EAPI void             evas_object_geometry_get(const Evas_Object *obj, Evas_Coor
  * @since 1.8
  * @ingroup Evas_Object_Group_Basic
  */
-EAPI void             evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+EAPI void             evas_object_geometry_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
 
 
 /**
@@ -3982,7 +3983,7 @@ EAPI void                          evas_object_image_file_set(Evas_Object *obj, 
  *
  * @since 1.8
  */
-EAPI void                          evas_object_image_mmap_set(Evas_Object *eo_obj, const Eina_File *f, const char *key);
+EAPI void                          evas_object_image_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key);
 
 /**
  * Retrieve the source file from where an image object is to fetch the
@@ -6033,8 +6034,8 @@ EAPI void evas_object_textgrid_font_get(const Evas_Object *obj, const char **fon
  * @brief Retrieve the size of a cell of the given textgrid object in pixels.
  *
  * @param obj The textgrid object to query for font information.
- * @param width A pointer to the location to store the width in pixels of a cell.
- * @param height A pointer to the location to store the height in
+ * @param w A pointer to the location to store the width in pixels of a cell.
+ * @param h A pointer to the location to store the height in
  * pixels of a cell.
  *
  * This functions retrieves the width and height, in pixels, of a cell
@@ -6112,7 +6113,7 @@ EAPI Evas_Textgrid_Font_Style evas_object_textgrid_supported_font_styles_get(con
  *
  * @param obj The textgrid object to query for font information.
  * @param y The row index of the grid.
- * @param The string as a sequence of #Evas_Textgrid_Cell.
+ * @param row The string as a sequence of #Evas_Textgrid_Cell.
  *
  * This function returns cells to the textgrid taken by
  * evas_object_textgrid_cellrow_get(). The row pointer @p row should be the
