@@ -1334,7 +1334,7 @@ EAPI Ecore_IMF_Input_Panel_Lang    ecore_imf_context_input_panel_language_get(Ec
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx, Eina_Bool enable);
+EAPI void                          ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx, Eina_Bool enabled);
 
 /**
  * Get whether the Input Method Context requests to show the input panel automatically.
