@@ -137,7 +137,9 @@ static void *
 _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool alpha_only)
 {
    size_t siz;
+#if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    void *r = MAP_FAILED;
+#endif
 
    siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
 
