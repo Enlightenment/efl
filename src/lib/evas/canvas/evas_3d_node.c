@@ -965,16 +965,51 @@ evas_3d_node_look_at_set(Evas_3D_Node *node,
    evas_vec3_cross_product(&y, &z, &x);
    evas_vec3_normalize(&y, &y);
 
-   Evas_Real w = sqrt(1.0 + x.x + y.y + z.z);
+   /* Below matrix to quaternion conversion code taken from
+    * http://fabiensanglard.net/doom3_documentation/37726-293748.pdf
+    * When any license issue occurs, use ken shoemake's algorithm instead.
+    */
 
-   node->orientation.w = 0.5 * w;
+   if (x.x + y.y + z.z > 0.0)
+     {
+        Evas_Real t = x.x + y.y + z.z + 1.0;
+        Evas_Real s = evas_reciprocal_sqrt(t) * 0.5;
 
-   w = 0.5 / w;
+        node->orientation.w = s * t;
+        node->orientation.z = (x.y - y.x) * s;
+        node->orientation.y = (z.x - x.z) * s;
+        node->orientation.x = (y.z - z.y) * s;
+     }
+   else if (x.x > y.y && x.x > z.z)
+     {
+        Evas_Real t = x.x - y.y - z.z + 1.0;
+        Evas_Real s = evas_reciprocal_sqrt(t) * 0.5;
 
-   /* Inverse the axis. */
-   node->orientation.x = (y.z - z.y) * w;
-   node->orientation.y = (z.x - x.z) * w;
-   node->orientation.z = (x.y - y.x) * w;
+        node->orientation.x = s * t;
+        node->orientation.y = (x.y + y.x) * s;
+        node->orientation.z = (z.x + x.z) * s;
+        node->orientation.w = (y.z - z.y) * s;
+     }
+   else if (y.y > z.z)
+     {
+        Evas_Real t = -x.x + y.y - z.z + 1.0;
+        Evas_Real s = evas_reciprocal_sqrt(t) * 0.5;
+
+        node->orientation.y = s * t;
+        node->orientation.x = (x.y + y.x) * s;
+        node->orientation.w = (z.x - x.z) * s;
+        node->orientation.z = (y.z + z.y) * s;
+     }
+   else
+     {
+        Evas_Real t = -x.x - y.y + z.z + 1.0;
+        Evas_Real s = evas_reciprocal_sqrt(t) * 0.5;
+
+        node->orientation.z = s * t;
+        node->orientation.w = (x.y - y.x) * s;
+        node->orientation.x = (z.x + x.z) * s;
+        node->orientation.y = (y.z + z.y) * s;
+     }
 
    evas_3d_object_change(&node->base, EVAS_3D_STATE_NODE_TRANSFORM, NULL);
 }
