@@ -5,347 +5,293 @@
 #include "ecore_drm_private.h"
 
 /* local functions */
-static void 
-_ecore_drm_inputs_seat_devices_remove(Ecore_Drm_Seat *seat)
-{
-   Ecore_Drm_Evdev *edev;
-
-   EINA_LIST_FREE(seat->devices, edev)
-     _ecore_drm_evdev_device_destroy(edev);
-}
-
 static Ecore_Drm_Seat *
-_ecore_drm_inputs_seat_add(Ecore_Drm_Input *input EINA_UNUSED, struct libinput_seat *lseat)
+_seat_get(Ecore_Drm_Input *input, const char *seat)
 {
-   Ecore_Drm_Seat *eseat;
-   const char *name;
+   Ecore_Drm_Seat *s;
+   Eina_List *l;
 
-   if (!(eseat = calloc(1, sizeof(Ecore_Drm_Seat))))
+   EINA_LIST_FOREACH(input->dev->seats, l, s)
+     {
+        if (!strcmp(s->name, seat)) return s;
+     }
+
+   if (!(s = calloc(1, sizeof(Ecore_Drm_Seat))))
      return NULL;
 
-   name = libinput_seat_get_name(lseat);
-   eseat->name = eina_stringshare_add(name);
+   s->input = input;
+   s->name = eina_stringshare_add(seat);
 
-   eseat->seat = lseat;
+   input->dev->seats = eina_list_append(input->dev->seats, s);
 
-   libinput_seat_ref(lseat);
-   libinput_seat_set_user_data(lseat, eseat);
-
-   return eseat;
-}
-
-static void 
-_ecore_drm_inputs_seat_del(Ecore_Drm_Seat *seat)
-{
-   _ecore_drm_inputs_seat_devices_remove(seat);
-   libinput_seat_ref(seat->seat);
-   if (seat->name) eina_stringshare_del(seat->name);
-   free(seat);
+   return s;
 }
 
 static Eina_Bool 
-_ecore_drm_inputs_device_add(Ecore_Drm_Input *input, struct libinput_device *ldevice)
+_device_add(Ecore_Drm_Input *input, struct udev_device *device)
 {
-   struct libinput *linput;
-   struct libinput_seat *lseat;
    Ecore_Drm_Evdev *edev;
-   Ecore_Drm_Seat *eseat;
+   Ecore_Drm_Seat *seat;
+   const char *dev_seat, *wl_seat;
+   const char *node;
+   char n[PATH_MAX];
+   int fd = -1;
 
-   linput = input->linput;
+   if (!(dev_seat = udev_device_get_property_value(device, "ID_SEAT")))
+     dev_seat = "seat0";
 
-   if (!(edev = _ecore_drm_evdev_device_create(linput, ldevice)))
+   if (strcmp(dev_seat, input->seat)) return EINA_FALSE;
+
+   if (!(wl_seat = udev_device_get_property_value(device, "WL_SEAT")))
+     wl_seat = "seat0";
+
+   if (!(seat = _seat_get(input, wl_seat)))
      return EINA_FALSE;
 
-   lseat = libinput_device_get_seat(ldevice);
-   eseat = libinput_seat_get_user_data(lseat);
+   node = udev_device_get_devnode(device);
+   strcpy(n, node);
+   fd = open(n, O_RDWR | O_NONBLOCK);
+   /* _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, -1, n, strlen(n)); */
+   /* _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0); */
+   /* DBG("Opened Restricted Input: %s %d", node, fd); */
 
-   eseat->devices = eina_list_append(eseat->devices, edev);
+   if (!(edev = _ecore_drm_evdev_device_create(seat, node, fd)))
+     {
+        close(fd);
+        /* _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_CLOSE, fd, NULL, 0); */
+        /* _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0); */
+        return EINA_FALSE;
+     }
 
-   /* TODO: output and seat repick ?? */
+   seat->devices = eina_list_append(seat->devices, edev);
+
+   /* TODO: finish */
 
    return EINA_TRUE;
 }
 
 static void 
-_ecore_drm_inputs_device_del(Ecore_Drm_Input *input)
+_device_remove(Ecore_Drm_Input *input, const char *device)
 {
-   if (!input) return;
-
-   /* remove fd listener */
-   if (input->input_hdlr) ecore_main_fd_handler_del(input->input_hdlr);
-
-   /* destroy libinput reference */
-   if (input->linput) libinput_destroy(input->linput);
-
-   /* free structure */
-   free(input);
-}
-
-static int 
-_ecore_drm_inputs_restricted_open(const char *path, int flags EINA_UNUSED, void *data EINA_UNUSED)
-{
-   char p[PATH_MAX];
-   int fd = -1;
-
-   strcpy(p, path);
-   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, -1, p, strlen(p));
-   _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0);
-
-   DBG("Open Restricted: %s %d", path, fd);
-   return fd;
-}
-
-static void 
-_ecore_drm_inputs_restricted_close(int fd, void *data EINA_UNUSED)
-{
-   int dfd = -1;
-
-   DBG("Close Restricted: %d", fd);
-   _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_CLOSE, fd, NULL, 0);
-   _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_CLOSE, &dfd, NULL, 0);
-}
-
-static void 
-_ecore_drm_inputs_screen_size_get(struct libinput_device *input_device EINA_UNUSED, int *w EINA_UNUSED, int *h EINA_UNUSED, void *data EINA_UNUSED)
-{
-   /* Ecore_Drm_Input *input; */
-
-   /* input = data; */
-   DBG("FIXME: Screen Size Get");
-}
-
-static const struct libinput_interface _input_interface = 
-{
-   _ecore_drm_inputs_restricted_open,
-   _ecore_drm_inputs_restricted_close,
-   _ecore_drm_inputs_screen_size_get,
-};
-
-static Eina_Bool 
-_ecore_drm_inputs_udev_event_process(struct libinput_event *event)
-{
-   struct libinput *linput;
-   struct libinput_device *ldevice;
-   Ecore_Drm_Input *input;
-   Eina_Bool ret = EINA_FALSE;
-
-   if (!(linput = libinput_event_get_target(event).libinput))
-     return EINA_FALSE;
-   if (!(input = libinput_get_user_data(linput))) return EINA_FALSE;
-
-   switch (libinput_event_get_type(event))
-     {
-      case LIBINPUT_EVENT_ADDED_SEAT:
-          {
-             struct libinput_event_added_seat *ev;
-             struct libinput_seat *lseat;
-             Ecore_Drm_Seat *seat;
-
-             DBG("Seat Added");
-
-             ev = (struct libinput_event_added_seat *)event;
-             lseat = libinput_event_added_seat_get_seat(ev);
-             if ((seat = _ecore_drm_inputs_seat_add(input, lseat)))
-               ret = EINA_TRUE;
-          }
-        break;
-      case LIBINPUT_EVENT_REMOVED_SEAT:
-          {
-             struct libinput_event_removed_seat *ev;
-             struct libinput_seat *lseat;
-             Ecore_Drm_Seat *seat;
-
-             DBG("Seat Removed");
-
-             ev = (struct libinput_event_removed_seat *)event;
-             lseat = libinput_event_removed_seat_get_seat(ev);
-             seat = libinput_seat_get_user_data(lseat);
-             libinput_seat_unref(lseat);
-             _ecore_drm_inputs_seat_del(seat);
-
-             ret = EINA_TRUE;
-          }
-        break;
-      case LIBINPUT_EVENT_ADDED_DEVICE:
-          {
-             struct libinput_event_added_device *ev;
-
-             DBG("Device Added");
-
-             ev = (struct libinput_event_added_device *)event;
-             ldevice = libinput_event_added_device_get_device(ev);
-
-             ret = _ecore_drm_inputs_device_add(input, ldevice);
-          }
-        break;
-      case LIBINPUT_EVENT_REMOVED_DEVICE:
-          {
-             struct libinput_event_removed_device *ev;
-             Ecore_Drm_Evdev *edev;
-
-             DBG("Device Removed");
-
-             ev = (struct libinput_event_removed_device *)event;
-             ldevice = libinput_event_removed_device_get_device(ev);
-
-             edev = libinput_device_get_user_data(ldevice);
-             _ecore_drm_evdev_device_destroy(edev);
-
-             ret = EINA_TRUE;
-          }
-        break;
-      default:
-        DBG("Unhandled Event");
-        ret = EINA_FALSE;
-        break;
-     }
-
-   return ret;
-}
-
-static void 
-_ecore_drm_inputs_event_process(struct libinput_event *event)
-{
-   if (_ecore_drm_inputs_udev_event_process(event))
-     return;
-   if (_ecore_drm_evdev_event_process(event))
-     return;
-}
-
-static void 
-_ecore_drm_inputs_events_process(Ecore_Drm_Input *input)
-{
-   struct libinput_event *event = NULL;
+   Ecore_Drm_Seat *seat;
+   Eina_List *l;
 
    if (!input) return;
 
-   while ((event == libinput_get_event(input->linput)))
+   EINA_LIST_FOREACH(input->dev->seats, l, seat)
      {
-        _ecore_drm_inputs_event_process(event);
-        libinput_event_destroy(event);
+        Ecore_Drm_Evdev *edev;
+        Eina_List *ll;
+
+        EINA_LIST_FOREACH(seat->devices, ll, edev)
+          {
+             if (!strcmp(edev->path, device))
+               {
+                  seat->devices = eina_list_remove(seat->devices, edev);
+                  _ecore_drm_evdev_device_destroy(edev);
+                  break;
+               }
+          }
      }
 }
 
 static Eina_Bool 
-_ecore_drm_inputs_cb_input_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+_cb_input_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    Ecore_Drm_Input *input;
+   struct udev_device *udevice;
+   const char *act;
+
+   DBG("Input Event");
 
    if (!(input = data)) return EINA_FALSE;
 
-   if (libinput_dispatch(input->linput) != 0)
-     ERR("Failed to dispatch input events");
+   if (!(udevice = udev_monitor_receive_device(input->monitor)))
+     return EINA_TRUE;
 
-   _ecore_drm_inputs_events_process(input);
+   if (!(act = udev_device_get_action(udevice))) return EINA_TRUE;
+
+   if (strncmp("event", udev_device_get_sysname(udevice), 5) != 0)
+     goto err;
+
+   if (!strcmp(act, "add"))
+     {
+        DBG("\tDevice Added");
+        _device_add(input, udevice);
+     }
+   else if (!strcmp(act, "remove"))
+     {
+        const char *node;
+
+        node = udev_device_get_devnode(udevice);
+
+        DBG("\tDevice Removed: %s", node);
+        _device_remove(input, node);
+     }
+
+   return EINA_TRUE;
+
+err:
+   if (udevice) udev_device_unref(udevice);
+   return EINA_TRUE;
+}
+
+static Eina_Bool 
+_devices_add(Ecore_Drm_Input *input)
+{
+   struct udev_enumerate *uenum;
+   struct udev_list_entry *uentry;
+   struct udev_device *udevice;
+   const char *path, *name;
+   Eina_Bool found = EINA_FALSE;
+
+   uenum = udev_enumerate_new(udev);
+   udev_enumerate_add_match_subsystem(uenum, "input");
+   udev_enumerate_scan_devices(uenum);
+
+   udev_list_entry_foreach(uentry, udev_enumerate_get_list_entry(uenum))
+     {
+        path = udev_list_entry_get_name(uentry);
+        udevice = udev_device_new_from_syspath(udev, path);
+        name = udev_device_get_sysname(udevice);
+
+        if (strncmp("event", name, 5) != 0)
+          {
+             udev_device_unref(udevice);
+             continue;
+          }
+
+        if (!_device_add(input, udevice))
+          {
+             udev_device_unref(udevice);
+             continue;
+          }
+
+        found = EINA_TRUE;
+
+        udev_device_unref(udevice);
+     }
+
+   udev_enumerate_unref(uenum);
+
+   if (!found)
+     {
+        ERR("No Input Devices Found");
+        return EINA_FALSE;
+     }
 
    return EINA_TRUE;
 }
 
-/**
- * @defgroup Ecore_Drm_Input_Group
- * 
- */
-
-/* TODO: DOXY !! */
-
+/* public functions */
 EAPI Eina_Bool 
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
 
+   /* check for valid device */
    if ((!dev) || (!udev)) return EINA_FALSE;
 
-   /* allocate space for input structure */
+   /* try to allocate space for input structure */
    if (!(input = calloc(1, sizeof(Ecore_Drm_Input))))
-     {
-        ERR("Failed to allocate space for input structure");
-        return EINA_FALSE;
-     }
+     return EINA_FALSE;
 
-   /* create libinput structure */
-   if (!(input->linput = 
-         libinput_create_from_udev(&_input_interface, input, udev, "seat0")))
-     {
-        ERR("Failed to create libinput");
-        free(input);
-        return EINA_FALSE;
-     }
-
-   _ecore_drm_inputs_events_process(input);
+   /* FIXME: Hardcoded seat name */
+   input->seat = eina_stringshare_add("seat0");
+   input->dev = dev;
 
    /* try to enable this input */
    if (!ecore_drm_inputs_enable(input))
      {
-        ERR("Failed to enable input");
-        goto enable_err;
+        ERR("Could not enable input");
+        if (input->seat) eina_stringshare_del(input->seat);
+        free(input);
+        return EINA_FALSE;
      }
 
-   /* add this input device */
+   /* add this input to dev */
    dev->inputs = eina_list_append(dev->inputs, input);
 
    return EINA_TRUE;
-
-enable_err:
-   if (input->linput) libinput_destroy(input->linput);
-   free(input);
-   return EINA_FALSE;
 }
 
 EAPI void 
 ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
 {
-   Ecore_Drm_Input *input;
+   Ecore_Drm_Seat *seat;
+   Eina_List *l;
 
    if (!dev) return;
 
-   EINA_LIST_FREE(dev->inputs, input)
-     _ecore_drm_inputs_device_del(input);
+   EINA_LIST_FOREACH(dev->seats, l, seat)
+     {
+        Ecore_Drm_Evdev *edev;
+
+        EINA_LIST_FREE(seat->devices, edev)
+          _ecore_drm_evdev_device_destroy(edev);
+     }
 }
 
 EAPI Eina_Bool 
 ecore_drm_inputs_enable(Ecore_Drm_Input *input)
 {
+   /* check for valid input */
    if (!input) return EINA_FALSE;
 
-   /* try to get the fd */
-   if (input->fd <= 0)
-     input->fd = libinput_get_fd(input->linput);
-   if (input->fd <= 0)
+   if (!input->monitor)
+     input->monitor = udev_monitor_new_from_netlink(udev, "udev");
+
+   if (!input->monitor)
      {
-        ERR("Failed to get input fd");
+        ERR("Could not create udev monitor: %m");
         return EINA_FALSE;
      }
 
-   /* setup fd handler for reading events */
-   if (!input->input_hdlr)
+   /* setup input filter */
+   udev_monitor_filter_add_match_subsystem_devtype(input->monitor, 
+                                                   "input", NULL);
+
+   /* try to enable receiving udev events */
+   if (udev_monitor_enable_receiving(input->monitor))
      {
-        input->input_hdlr = 
+        ERR("Could not bind udev monitor: %m");
+        udev_monitor_unref(input->monitor);
+        return EINA_FALSE;
+     }
+
+   /* save the fd */
+   if ((input->fd = udev_monitor_get_fd(input->monitor)) < 0)
+     {
+        ERR("Input monitor has no fd: %m");
+        udev_monitor_unref(input->monitor);
+        return EINA_FALSE;
+     }
+
+   /* create fd handler */
+   if (!input->hdlr)
+     {
+        input->hdlr = 
           ecore_main_fd_handler_add(input->fd, ECORE_FD_READ, 
-                                    _ecore_drm_inputs_cb_input_event, input, 
-                                    NULL, NULL);
+                                    _cb_input_event, input, NULL, NULL);
      }
 
-   if (!input->input_hdlr) 
+   if (!input->hdlr)
      {
-        ERR("Failed to setup fd handler for input");
+        ERR("Failed to setup input fd handler: %m");
+        udev_monitor_unref(input->monitor);
         return EINA_FALSE;
      }
 
-   /* handle suspended input */
-   if (input->suspended)
+   /* try to add devices */
+   if (!_devices_add(input))
      {
-        if (libinput_resume(input->linput) != 0)
-          {
-             if (input->input_hdlr)
-               ecore_main_fd_handler_del(input->input_hdlr);
-             input->input_hdlr = NULL;
-             return EINA_FALSE;
-          }
-        input->suspended = EINA_FALSE;
-        _ecore_drm_inputs_events_process(input);
+        ERR("Could not add input devices");
+        udev_monitor_unref(input->monitor);
+        return EINA_FALSE;
      }
 
-   /* TODO: notify keyboard focus ? */
+   input->enabled = EINA_TRUE;
+   input->suspended = EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -354,7 +300,4 @@ EAPI void
 ecore_drm_inputs_disable(Ecore_Drm_Input *input)
 {
    if (!input) return;
-
-   libinput_suspend(input->linput);
-   input->suspended = EINA_TRUE;
 }
