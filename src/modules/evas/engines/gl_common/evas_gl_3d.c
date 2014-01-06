@@ -534,7 +534,7 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
-#if GL_GL_3DES
+#if GL_GLES
    if (depth_format == GL_DEPTH_STENCIL_OES)
      {
         glGenTextures(1, &depth_stencil_buf);
