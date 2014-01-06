@@ -63,9 +63,7 @@ _open_device(const char *device)
         ret = ECORE_DRM_OP_FAILURE;
      }
    else
-     {
-        fprintf(stderr, "Launcher Opened Device: %s %d\n", device, fd);
-     }
+     fprintf(stderr, "Launcher Opened Device: %s %d\n", device, fd);
 
    _send_msg(ECORE_DRM_OP_DEVICE_OPEN, fd, &ret, sizeof(int));
 
