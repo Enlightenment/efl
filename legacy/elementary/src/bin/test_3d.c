@@ -134,7 +134,6 @@ _cube_pos(Cube *c,
            evas_map_point_coord_get(m, j, NULL, NULL, &(tz[j]));
         mz[i] = (tz[0] + tz[1] + tz[2] + tz[3]) / 4;
      }
-   sorted = 0;
    do
      {
         sorted = 1;
