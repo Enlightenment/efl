@@ -14,7 +14,8 @@
 # include <fcntl.h>
 
 # include <libudev.h>
-# include <libinput.h>
+# include <linux/input.h>
+//# include <libinput.h>
 
 # include <xf86drm.h>
 # include <xf86drmMode.h>
@@ -40,6 +41,10 @@
 #  undef ECORE_DRM_DEFAULT_LOG_COLOR
 # endif
 # define ECORE_DRM_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
+# define EVDEV_SEAT_POINTER (1 << 0)
+# define EVDEV_SEAT_KEYBOARD (1 << 1)
+# define EVDEV_SEAT_TOUCH (1 << 2)
 
 # ifdef ERR
 #  undef ERR
@@ -143,7 +148,7 @@ struct _Ecore_Drm_Output
 
 struct _Ecore_Drm_Seat
 {
-   struct libinput_seat *seat;
+//   struct libinput_seat *seat;
    const char *name;
    Ecore_Drm_Input *input;
    Eina_List *devices;
@@ -152,18 +157,37 @@ struct _Ecore_Drm_Seat
 struct _Ecore_Drm_Input
 {
    int fd;
-   struct libinput *linput;
-   Ecore_Fd_Handler *input_hdlr;
+   const char *seat;
+   struct udev_monitor *monitor;
+   Ecore_Fd_Handler *hdlr;
+   Ecore_Drm_Device *dev;
+
+   Eina_Bool enabled : 1;
    Eina_Bool suspended : 1;
 };
 
 struct _Ecore_Drm_Evdev
 {
    Ecore_Drm_Seat *seat;
-   struct libinput *linput;
-   struct libinput_device *dev;
-   const char *name;
+   /* struct libinput *linput; */
+   /* struct libinput_device *dev; */
+   const char *name, *path;
    int fd;
+
+   struct 
+     {
+        int min_x, min_y;
+        int max_x, max_y;
+        int x, y;
+     } abs;
+
+   Ecore_Drm_Evdev_Event_Type pending_event;
+   Ecore_Drm_Evdev_Capabilities caps;
+   Ecore_Drm_Seat_Capabilities seat_caps;
+
+   void (*event_process)(Ecore_Drm_Evdev *dev, struct input_event *event, int count);
+
+   Ecore_Fd_Handler *hdlr;
 };
 
 struct _Ecore_Drm_Sprite
@@ -207,6 +231,7 @@ struct _Ecore_Drm_Device
    unsigned int *crtcs;
    unsigned int crtc_allocator;
 
+   Eina_List *seats;
    Eina_List *inputs;
    Eina_List *outputs;
    Eina_List *sprites;
@@ -230,9 +255,9 @@ struct _Ecore_Drm_Device
 void _ecore_drm_message_send(int opcode, int fd, void *data, size_t bytes);
 Eina_Bool _ecore_drm_message_receive(int opcode, int *fd, void **data, size_t bytes);
 
-Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(struct libinput *linput, struct libinput_device *device);
+Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, const char *path, int fd);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
-int _ecore_drm_evdev_event_process(struct libinput_event *event);
+/* int _ecore_drm_evdev_event_process(struct libinput_event *event); */
 
 Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
