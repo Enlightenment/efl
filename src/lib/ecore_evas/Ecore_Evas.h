@@ -1900,7 +1900,7 @@ EAPI Eina_Bool   ecore_evas_sticky_get(const Ecore_Evas *ee);
 /**
  * Enable/disable manual render
  *
- * @paream ee An @c Ecore_Evas handle
+ * @param ee An @c Ecore_Evas handle
  * @param manual_render Enable/disable manual render. @c EINA_TRUE to enable
  * manual render, @c EINA_FALSE to disable manual render. @c EINA_FALSE by
  * default
@@ -1919,7 +1919,7 @@ EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_r
 /**
  * Get enable/disable status of manual render
  *
- * @paream ee An @c Ecore_Evas handle
+ * @param ee An @c Ecore_Evas handle
  * @return @c EINA_TRUE if manual render is enabled, @c EINA_FALSE if manual
  * render is disabled
  *
