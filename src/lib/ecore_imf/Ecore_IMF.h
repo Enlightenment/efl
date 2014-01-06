@@ -34,6 +34,14 @@ extern "C" {
 #endif
 
 /**
+ * @defgroup Ecore_IMF_Lib_Group Ecore_IMF - Ecore Input Method Library Functions
+ * @ingroup Ecore
+ *
+ * Utility functions that set up and shut down the Ecore Input Method
+ * library.
+ */
+
+/**
  * @defgroup Ecore_IMF_Context_Group Ecore Input Method Context Functions
  * @ingroup Ecore_IMF_Lib_Group
  *
