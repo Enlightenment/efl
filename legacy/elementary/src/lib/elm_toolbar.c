@@ -240,7 +240,7 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
 
    EINA_INLIST_FOREACH(sd->items, it)
      {
-        min = mw = mh = -1;
+        mw = mh = -1;
         if (it->in_box && it->in_box == sd->bx)
           {
              if (!it->separator && !it->object)
