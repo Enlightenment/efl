@@ -16,8 +16,7 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_widget"
 
 #define ELM_WIDGET_DATA_GET(o, wd)                             \
-  Elm_Widget_Smart_Data *wd = NULL;                            \
-  if (eo_isa(o, MY_CLASS)) wd = eo_data_scope_get(o, MY_CLASS)
+  Elm_Widget_Smart_Data *wd = eo_data_scope_get(o, MY_CLASS)
 
 #define API_ENTRY                                    \
   ELM_WIDGET_DATA_GET(obj, sd);                      \
