@@ -258,7 +258,7 @@ ecore_x_randr_version_get(void)
  * @brief This function returns the current config timestamp from 
  * XRRScreenConfiguration.
  * 
- * @params root root window to query screen configuration from
+ * @param root root window to query screen configuration from
  * 
  * @returns The screen configuration timestamp
  * 

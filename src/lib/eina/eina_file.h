@@ -617,7 +617,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
 /**
  * @brief Ask the OS to populate or otherwise pages of memory in file mapping
  * 
- * @param file The file handle from whih the map comes
+ * @param file The file handle from which the map comes
  * @param map Memory that was mapped inside of which the memory range is
  * @param offset The offset in bytes from the start of the map address
  * @param length The length in bytes of the memory region to populate
@@ -626,7 +626,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * to the given @p file. This affects a specific range of memory and may not
  * be honored if the system chooses to ignore the request.
  * 
- * @sine 1.8
+ * @since 1.8
  */
 EAPI void
 eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map,

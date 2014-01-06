@@ -5953,7 +5953,7 @@ EAPI void evas_object_textgrid_size_get(const Evas_Object *obj, int *w, int *h);
  *
  * This function allows the font file @p font_source to be explicitly
  * set for the textgrid object @p obj, overriding system lookup, which
- * will first occur in the given file's contents. If @font_source is
+ * will first occur in the given file's contents. If @p font_source is
  * @c NULL or is an empty string, or the same font_source has already
  * been set, or on error, this function does nothing.
  *
@@ -6096,7 +6096,7 @@ EAPI void evas_object_textgrid_palette_set(Evas_Object *obj, Evas_Textgrid_Palet
  * stored in the buffers @p r, @p g, @p b and @p a. If @p idx is not
  * between 0 and the index of the latest set color, or if @p pal is
  * #EVAS_TEXTGRID_PALETTE_NONE or #EVAS_TEXTGRID_PALETTE_LAST, the
- * values of the components are 0. @p r, @p g, @pb and @p a can be
+ * values of the components are 0. @p r, @p g, @p b and @p a can be
  * @c NULL.
  *
  * @see evas_object_textgrid_palette_set()
