@@ -1,6 +1,8 @@
 #ifndef __EVIL_SYS_MMAN_H__
 #define __EVIL_SYS_MMAN_H__
 
+#include <sys/types.h>
+
 #include <evil_macro.h>
 
 
