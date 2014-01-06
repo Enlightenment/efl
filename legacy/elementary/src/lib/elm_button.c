@@ -193,9 +193,9 @@ _elm_button_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void
 _on_clicked_signal(void *data,
-                   Evas_Object *obj __UNUSED__,
-                   const char *emission __UNUSED__,
-                   const char *source __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   const char *emission EINA_UNUSED,
+                   const char *source EINA_UNUSED)
 {
    _activate(data);
 }
@@ -230,9 +230,9 @@ _autorepeat_initial_send(void *data)
 
 static void
 _on_pressed_signal(void *data,
-                   Evas_Object *obj __UNUSED__,
-                   const char *emission __UNUSED__,
-                   const char *source __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   const char *emission EINA_UNUSED,
+                   const char *source EINA_UNUSED)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN(data, sd);
 
@@ -250,9 +250,9 @@ _on_pressed_signal(void *data,
 
 static void
 _on_unpressed_signal(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN(data, sd);
 
@@ -262,7 +262,7 @@ _on_unpressed_signal(void *data,
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -273,7 +273,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    if (elm_widget_disabled_get(obj))
      return strdup(E_("State: Disabled"));

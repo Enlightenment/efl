@@ -178,9 +178,9 @@ _val_set(Evas_Object *obj)
 
 static void
 _drag_cb(void *data,
-         Evas_Object *_obj __UNUSED__,
-         const char *emission __UNUSED__,
-         const char *source __UNUSED__)
+         Evas_Object *_obj EINA_UNUSED,
+         const char *emission EINA_UNUSED,
+         const char *source EINA_UNUSED)
 {
    double pos = 0.0, delta;
    Evas_Object *obj = data;
@@ -202,9 +202,9 @@ _drag_cb(void *data,
 
 static void
 _drag_start_cb(void *data,
-               Evas_Object *obj __UNUSED__,
-               const char *emission __UNUSED__,
-               const char *source __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               const char *emission EINA_UNUSED,
+               const char *source EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -215,9 +215,9 @@ _drag_start_cb(void *data,
 
 static void
 _drag_stop_cb(void *data,
-              Evas_Object *obj __UNUSED__,
-              const char *emission __UNUSED__,
-              const char *source __UNUSED__)
+              Evas_Object *obj EINA_UNUSED,
+              const char *emission EINA_UNUSED,
+              const char *source EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
@@ -259,9 +259,9 @@ _entry_value_apply(Evas_Object *obj)
 
 static void
 _entry_toggle_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 const char *emission __UNUSED__,
-                 const char *source __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -353,8 +353,8 @@ _val_dec_stop(Evas_Object *obj)
 static void
 _button_inc_start_cb(void *data,
                      Evas_Object *obj,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -369,18 +369,18 @@ _button_inc_start_cb(void *data,
 
 static void
 _button_inc_stop_cb(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    const char *emission __UNUSED__,
-                    const char *source __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    const char *emission EINA_UNUSED,
+                    const char *source EINA_UNUSED)
 {
    _val_inc_stop(data);
 }
 
 static void
 _button_dec_start_cb(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -394,17 +394,17 @@ _button_dec_start_cb(void *data,
 
 static void
 _button_dec_stop_cb(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    const char *emission __UNUSED__,
-                    const char *source __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    const char *emission EINA_UNUSED,
+                    const char *source EINA_UNUSED)
 {
    _val_dec_stop(data);
 }
 
 static void
 _entry_activated_cb(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -555,7 +555,7 @@ _access_info_cb(void *data, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    if (elm_widget_disabled_get(data))
      return strdup(E_("State: Disabled"));
@@ -566,7 +566,7 @@ _access_state_cb(void *data, Evas_Object *obj __UNUSED__)
 static void
 _access_activate_cb(void *data,
                     Evas_Object *part_obj,
-                    Elm_Object_Item *item __UNUSED__)
+                    Elm_Object_Item *item EINA_UNUSED)
 {
    char *text;
    Eina_Strbuf *buf;

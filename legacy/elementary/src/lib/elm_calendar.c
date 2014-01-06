@@ -237,7 +237,7 @@ _set_month_year(Elm_Calendar_Smart_Data *sd)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf;
@@ -667,9 +667,9 @@ _spin_year_value(void *data)
 
 static void
 _button_month_inc_start(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
@@ -683,9 +683,9 @@ _button_month_inc_start(void *data,
 
 static void
 _button_month_dec_start(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
@@ -699,9 +699,9 @@ _button_month_dec_start(void *data,
 
 static void
 _button_month_stop(void *data,
-                   Evas_Object *obj __UNUSED__,
-                   const char *emission __UNUSED__,
-                   const char *source __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   const char *emission EINA_UNUSED,
+                   const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
@@ -711,9 +711,9 @@ _button_month_stop(void *data,
 
 static void
 _button_year_inc_start(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
@@ -727,9 +727,9 @@ _button_year_inc_start(void *data,
 
 static void
 _button_year_dec_start(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
@@ -743,9 +743,9 @@ _button_year_dec_start(void *data,
 
 static void
 _button_year_stop(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
@@ -795,8 +795,8 @@ _update_sel_it(Evas_Object *obj,
 
 static void
 _day_selected(void *data,
-              Evas_Object *obj __UNUSED__,
-              const char *emission __UNUSED__,
+              Evas_Object *obj EINA_UNUSED,
+              const char *emission EINA_UNUSED,
               const char *source)
 {
    int sel_it;
@@ -922,9 +922,9 @@ _elm_calendar_smart_calculate(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 
 static void
 _style_changed(void *data,
-               Evas_Object *obj __UNUSED__,
-               const char *emission __UNUSED__,
-               const char *source __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               const char *emission EINA_UNUSED,
+               const char *source EINA_UNUSED)
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 

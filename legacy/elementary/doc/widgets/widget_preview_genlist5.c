@@ -2,21 +2,21 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #else
-# define __UNUSED__
+# define EINA_UNUSED
 #endif
 
 static char *
-_text_get(void        *data __UNUSED__,
-           Evas_Object *obj __UNUSED__,
+_text_get(void        *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
            const char  *part)
 {
    return strdup(part);
 }
 
 static Evas_Object *
-_content_get(void        *data __UNUSED__,
+_content_get(void        *data EINA_UNUSED,
           Evas_Object *obj,
-          const char  *part __UNUSED__)
+          const char  *part EINA_UNUSED)
 {
     Evas_Object *icon = elm_icon_add(obj);
     elm_icon_standard_set(icon, "home");

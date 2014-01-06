@@ -19,7 +19,7 @@ typedef struct _Elm_Params_Progressbar
 } Elm_Params_Progressbar;
 
 static void
-external_progressbar_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_progressbar_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Progressbar *p;
 
@@ -46,7 +46,7 @@ external_progressbar_state_set(void *data __UNUSED__, Evas_Object *obj, const vo
 }
 
 static Eina_Bool
-external_progressbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_progressbar_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -122,7 +122,7 @@ external_progressbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Ed
 }
 
 static Eina_Bool
-external_progressbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_progressbar_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -193,7 +193,7 @@ external_progressbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Ed
 }
 
 static void *
-external_progressbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_progressbar_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Progressbar *mem;
    Edje_External_Param *param;
@@ -241,8 +241,8 @@ external_progressbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUS
    return mem;
 }
 
-static Evas_Object *external_progressbar_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_progressbar_content_get(void *data EINA_UNUSED,
+		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
 	ERR("No content.");
 	return NULL;

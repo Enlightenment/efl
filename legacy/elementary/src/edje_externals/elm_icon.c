@@ -23,9 +23,9 @@ typedef struct _Elm_Params_Icon
 static Elm_Params_Icon *param_icon;
 
 static void
-external_icon_state_set(void *data __UNUSED__, Evas_Object *obj,
+external_icon_state_set(void *data EINA_UNUSED, Evas_Object *obj,
                         const void *from_params, const void *to_params,
-                        float pos __UNUSED__)
+                        float pos EINA_UNUSED)
 {
    const Elm_Params_Icon *p;
    Evas_Object *edje;
@@ -90,7 +90,7 @@ external_icon_state_set(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static Eina_Bool
-external_icon_param_set(void *data __UNUSED__, Evas_Object *obj,
+external_icon_param_set(void *data EINA_UNUSED, Evas_Object *obj,
                         const Edje_External_Param *param)
 {
    Evas_Object *edje;
@@ -166,8 +166,8 @@ external_icon_param_set(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static Eina_Bool
-external_icon_param_get(void *data __UNUSED__,
-                        const Evas_Object *obj __UNUSED__,
+external_icon_param_get(void *data EINA_UNUSED,
+                        const Evas_Object *obj EINA_UNUSED,
                         Edje_External_Param *param)
 {
    if (!strcmp(param->name, "file")
@@ -225,7 +225,7 @@ external_icon_param_get(void *data __UNUSED__,
 }
 
 static void *
-external_icon_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+external_icon_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                            const Eina_List *params)
 {
    Elm_Params_Icon *mem;
@@ -280,9 +280,9 @@ external_icon_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static Evas_Object *
-external_icon_content_get(void *data __UNUSED__,
-                          const Evas_Object *obj __UNUSED__,
-                          const char *content __UNUSED__)
+external_icon_content_get(void *data EINA_UNUSED,
+                          const Evas_Object *obj EINA_UNUSED,
+                          const char *content EINA_UNUSED)
 {
    ERR("no content");
    return NULL;

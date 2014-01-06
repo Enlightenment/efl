@@ -453,7 +453,7 @@ _colors_set(Evas_Object *obj,
 static void
 _entry_changed_cb(void *data,
                   Evas_Object *obj,
-                  void *event_info __UNUSED__)
+                  void *event_info EINA_UNUSED)
 {
    Elm_Colorselector_Smart_Data *sd = data;
    Evas_Object *parent;
@@ -488,9 +488,9 @@ _entry_changed_cb(void *data,
 }
 
 #ifdef HAVE_ELEMENTARY_X
-static Eina_Bool _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__);
-static Eina_Bool _key_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__);
-static Eina_Bool _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__);
+static Eina_Bool _mouse_grab_pixels(void *data, int type EINA_UNUSED, void *event EINA_UNUSED);
+static Eina_Bool _key_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED);
+static Eina_Bool _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED);
 
 static Ecore_X_Window
 _x11_elm_widget_xwin_get(const Evas_Object *obj)
@@ -514,7 +514,7 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 }
 
 static void
-_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *o = data;
 
@@ -531,7 +531,7 @@ _start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static Eina_Bool
-_key_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
+_key_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Evas_Object *o = data;
 
@@ -549,7 +549,7 @@ _key_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 }
 
 static Eina_Bool
-_mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
+_mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    const unsigned int *pixels;
    Evas_Object *o = data;
@@ -576,7 +576,7 @@ _mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 }
 
 static Eina_Bool
-_mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__)
+_mouse_grab_pixels(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Evas_Object *obj = data;
    Ecore_X_Visual visual;
@@ -637,7 +637,7 @@ _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__)
 #endif
 
 static void
-_mouse_in_canvas(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_mouse_in_canvas(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
@@ -646,7 +646,7 @@ _mouse_in_canvas(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_mouse_out_canvas(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_mouse_out_canvas(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
@@ -755,8 +755,8 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Smart_Data *sd)
 static void
 _arrow_cb(void *data,
           Evas_Object *obj,
-          const char *emission __UNUSED__,
-          const char *source __UNUSED__)
+          const char *emission EINA_UNUSED,
+          const char *source EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y;
@@ -768,7 +768,7 @@ _arrow_cb(void *data,
 static void
 _colorbar_cb(void *data,
              Evas *e,
-             Evas_Object *obj __UNUSED__,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -797,7 +797,7 @@ _colorbar_cb(void *data,
 static void
 _button_clicked_cb(void *data,
                    Evas_Object *obj,
-                   void *event_info __UNUSED__)
+                   void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -841,8 +841,8 @@ _button_clicked_cb(void *data,
 
 static void
 _button_repeat_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -1289,9 +1289,9 @@ _on_color_long_press(void *data)
 
 static void
 _on_color_pressed(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Elm_Color_Item *item = (Elm_Color_Item *)data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1311,9 +1311,9 @@ _on_color_pressed(void *data,
 
 static void
 _on_color_released(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Elm_Color_Item *item = (Elm_Color_Item *)data;
    Eina_List *l;
@@ -1340,7 +1340,7 @@ _on_color_released(void *data,
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    char *ret;
    Eina_Strbuf *buf;
@@ -1372,10 +1372,10 @@ _access_widget_item_register(Elm_Color_Item *it)
 }
 
 static void
-_item_resize(void *data __UNUSED__,
-             Evas *e __UNUSED__,
+_item_resize(void *data EINA_UNUSED,
+             Evas *e EINA_UNUSED,
              Evas_Object *obj,
-             void *event_info __UNUSED__)
+             void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(obj);
 }

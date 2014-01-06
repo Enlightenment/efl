@@ -80,9 +80,9 @@ _elm_layout_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void
 _on_sub_object_size_hint_change(void *data,
-                                Evas *e __UNUSED__,
-                                Evas_Object *obj __UNUSED__,
-                                void *event_info __UNUSED__)
+                                Evas *e EINA_UNUSED,
+                                Evas_Object *obj EINA_UNUSED,
+                                void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    eo_do(data, elm_obj_layout_sizing_eval());
@@ -276,7 +276,7 @@ _parts_cursors_apply(Elm_Layout_Smart_Data *sd)
 
 static void
 _reload_theme(void *data, Evas_Object *obj,
-              const char *emission __UNUSED__, const char *source __UNUSED__)
+              const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *layout = data;
    const char *file;
@@ -564,7 +564,7 @@ _elm_layout_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
 
 static void
 _edje_signal_callback(void *data,
-                      Evas_Object *obj __UNUSED__,
+                      Evas_Object *obj EINA_UNUSED,
                       const char *emission,
                       const char *source)
 {
@@ -640,9 +640,9 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
 
 static void
 _box_reference_del(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Elm_Layout_Sub_Object_Data *sub_d = data;
    sub_d->p.box.reference = NULL;
@@ -714,9 +714,9 @@ _sub_table_remove(Evas_Object *obj,
 
 static void
 _on_size_evaluate_signal(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    eo_do(data, elm_obj_layout_sizing_eval());
 }

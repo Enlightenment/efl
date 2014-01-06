@@ -54,20 +54,20 @@ _external_##type_name##_param_get(void *data, const Evas_Object *obj, Edje_Exter
    return external_##type_name##_param_get(data, obj, param); \
 }                                                       \
 static const char *                                     \
-external_##type_name##_label_get(void *data __UNUSED__) \
+external_##type_name##_label_get(void *data EINA_UNUSED) \
 {                                                       \
     return name;                                        \
 }                                                       \
                                                         \
 static void                                             \
-_external_##type_name##_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__) \
+_external_##type_name##_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED) \
 {                                                       \
    external_common_state_set(data, obj, from_params, to_params, pos); \
    external_##type_name##_state_set(data, obj, from_params, to_params, pos); \
 }                                                       \
                                                         \
 static void *                                           \
-_external_##type_name##_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params) \
+_external_##type_name##_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params) \
 {                                                       \
    void *mem = external_##type_name##_params_parse(data, obj, params); \
    external_common_params_parse(mem, data, obj, params); \
@@ -103,7 +103,7 @@ const Edje_External_Type external_##type_name##_type = {\
 
 #define DEFINE_EXTERNAL_TYPE_SIMPLE(type_name, name)    \
 static Evas_Object *                                \
-external_##type_name##_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name) \
+external_##type_name##_add(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *edje, const Eina_List *params EINA_UNUSED, const char *part_name) \
 {									\
    Evas_Object *parent, *obj;						\
    external_elm_init();                                                 \
@@ -118,7 +118,7 @@ DEFINE_EXTERNAL_TYPE(type_name, name)
 
 #define DEFINE_EXTERNAL_ICON_ADD(type_name, name)                   \
 Evas_Object *                                                       \
-external_##type_name##_icon_add(void *data __UNUSED__, Evas *e) {   \
+external_##type_name##_icon_add(void *data EINA_UNUSED, Evas *e) {   \
    Evas_Object *ic;                                                 \
    int w = 20, h = 10;                                              \
                                                                     \

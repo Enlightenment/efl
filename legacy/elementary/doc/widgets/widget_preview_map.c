@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #else
-# define __UNUSED__
+# define EINA_UNUSED
 #endif
 
 #include <Elementary.h>
@@ -20,7 +20,7 @@ _nasty_hack(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv)
 {
    Evas_Object *win, *bg;
    Evas_Coord w, h;

@@ -74,9 +74,9 @@ static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Eina_Bool quicklaunch_on = 0;
 
 static Eina_Bool
-_elm_signal_exit(void *data  __UNUSED__,
-                 int ev_type __UNUSED__,
-                 void *ev    __UNUSED__)
+_elm_signal_exit(void *data  EINA_UNUSED,
+                 int ev_type EINA_UNUSED,
+                 void *ev    EINA_UNUSED)
 {
    elm_exit();
    return ECORE_CALLBACK_PASS_ON;

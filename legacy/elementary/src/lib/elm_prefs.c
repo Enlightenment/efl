@@ -361,7 +361,7 @@ _elm_prefs_item_list_node_by_name(Elm_Prefs_Smart_Data *sd,
 
 static void
 _prefs_data_item_changed_cb(void *cb_data,
-                            Elm_Prefs_Data_Event_Type type __UNUSED__,
+                            Elm_Prefs_Data_Event_Type type EINA_UNUSED,
                             Elm_Prefs_Data *prefs_data,
                             void *event_info)
 {
@@ -393,8 +393,8 @@ end:
 
 static void
 _prefs_data_autosaved_cb(void *cb_data,
-                         Elm_Prefs_Data_Event_Type type __UNUSED__,
-                         Elm_Prefs_Data *data __UNUSED__,
+                         Elm_Prefs_Data_Event_Type type EINA_UNUSED,
+                         Elm_Prefs_Data *data EINA_UNUSED,
                          void *event_info)
 {
    ELM_PREFS_DATA_GET(cb_data, sd);
@@ -2037,10 +2037,10 @@ elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array)
 
 /* TODO: evaluate if it's sane to handle it better */
 /* static void */
-/* _prefs_page_del_cb(void *data __UNUSED__, */
-/*                    Evas *evas __UNUSED__, */
+/* _prefs_page_del_cb(void *data EINA_UNUSED, */
+/*                    Evas *evas EINA_UNUSED, */
 /*                    Evas_Object *obj, */
-/*                    void *event_info __UNUSED__) */
+/*                    void *event_info EINA_UNUSED) */
 /* { */
 /*    Elm_Prefs_Page_Node *page; */
 
@@ -2065,10 +2065,10 @@ elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array)
 /* } */
 
 static void
-_prefs_item_del_cb(void *data __UNUSED__,
-                   Evas *evas __UNUSED__,
+_prefs_item_del_cb(void *data EINA_UNUSED,
+                   Evas *evas EINA_UNUSED,
                    Evas_Object *obj,
-                   void *event_info __UNUSED__)
+                   void *event_info EINA_UNUSED)
 {
    Elm_Prefs_Item_Node *it;
    Evas_Object *lbl, *icon;
@@ -2095,7 +2095,7 @@ _prefs_item_del_cb(void *data __UNUSED__,
 }
 
 EAPI Eina_Bool
-elm_prefs_item_widget_common_add(Evas_Object *prefs __UNUSED__,
+elm_prefs_item_widget_common_add(Evas_Object *prefs EINA_UNUSED,
                                  Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -2107,7 +2107,7 @@ elm_prefs_item_widget_common_add(Evas_Object *prefs __UNUSED__,
 }
 
 EAPI Eina_Bool
-elm_prefs_page_widget_common_add(Evas_Object *prefs __UNUSED__,
+elm_prefs_page_widget_common_add(Evas_Object *prefs EINA_UNUSED,
                                  Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);

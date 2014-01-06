@@ -30,7 +30,7 @@ _elm_box_list_data_get(const Eina_List *list)
 
 static void
 _child_added_cb_proxy(void *data,
-                      Evas_Object *o __UNUSED__,
+                      Evas_Object *o EINA_UNUSED,
                       void *event_info)
 {
    Evas_Object *box = data;
@@ -40,7 +40,7 @@ _child_added_cb_proxy(void *data,
 
 static void
 _child_removed_cb_proxy(void *data,
-                        Evas_Object *o __UNUSED__,
+                        Evas_Object *o EINA_UNUSED,
                         void *event_info)
 {
    Evas_Object *box = data;
@@ -173,9 +173,9 @@ _sizing_eval(Evas_Object *obj)
 
 static void
 _on_size_hints_changed(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }
@@ -217,7 +217,7 @@ _transition_animation(void *data)
 
 static void
 _transition_layout_child_added(void *data,
-                               Evas_Object *obj __UNUSED__,
+                               Evas_Object *obj EINA_UNUSED,
                                void *event_info)
 {
    Transition_Animation_Data *tad;
@@ -234,7 +234,7 @@ _transition_layout_child_added(void *data,
 
 static void
 _transition_layout_child_removed(void *data,
-                                 Evas_Object *obj __UNUSED__,
+                                 Evas_Object *obj EINA_UNUSED,
                                  void *event_info)
 {
    Eina_List *l;
@@ -255,9 +255,9 @@ _transition_layout_child_removed(void *data,
 
 static void
 _transition_layout_obj_resize_cb(void *data,
-                                 Evas *e __UNUSED__,
-                                 Evas_Object *obj __UNUSED__,
-                                 void *event_info __UNUSED__)
+                                 Evas *e EINA_UNUSED,
+                                 Evas_Object *obj EINA_UNUSED,
+                                 void *event_info EINA_UNUSED)
 {
    Elm_Box_Transition *layout_data = data;
 
@@ -368,7 +368,7 @@ _transition_layout_animation_stop(Elm_Box_Transition *layout_data)
 
 static void
 _transition_layout_animation_exec(Evas_Object *obj,
-                                  Evas_Object_Box_Data *priv __UNUSED__,
+                                  Evas_Object_Box_Data *priv EINA_UNUSED,
                                   Elm_Box_Transition *layout_data,
                                   const double curtime)
 {

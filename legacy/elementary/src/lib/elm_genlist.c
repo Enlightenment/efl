@@ -105,8 +105,8 @@ static void      _calc_job(void *);
 static Eina_Bool _item_block_recalc(Item_Block *, int, Eina_Bool);
 static void      _item_mouse_callbacks_add(Elm_Gen_Item *, Evas_Object *);
 static void      _item_mouse_callbacks_del(Elm_Gen_Item *, Evas_Object *);
-static void      _access_activate_cb(void *data __UNUSED__,
-                                     Evas_Object *part_obj __UNUSED__,
+static void      _access_activate_cb(void *data EINA_UNUSED,
+                                     Evas_Object *part_obj EINA_UNUSED,
                                      Elm_Object_Item *item);
 static void _decorate_item_set(Elm_Gen_Item *);
 
@@ -1202,9 +1202,9 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
 //-- tree expand/contract signal handle routine --//
 static void
 _expand_toggle_signal_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Elm_Gen_Item *it = data;
 
@@ -1216,9 +1216,9 @@ _expand_toggle_signal_cb(void *data,
 
 static void
 _expand_signal_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    Elm_Gen_Item *it = data;
 
@@ -1228,9 +1228,9 @@ _expand_signal_cb(void *data,
 
 static void
 _contract_signal_cb(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    const char *emission __UNUSED__,
-                    const char *source __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    const char *emission EINA_UNUSED,
+                    const char *source EINA_UNUSED)
 {
    Elm_Gen_Item *it = data;
 
@@ -1417,7 +1417,7 @@ _item_content_realize(Elm_Gen_Item *it,
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    char *ret;
    Eina_Strbuf *buf;
@@ -1455,7 +1455,7 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, NULL);
@@ -3170,7 +3170,7 @@ _item_unselect(Elm_Gen_Item *it)
 
 static void
 _item_mouse_move_cb(void *data,
-                    Evas *evas __UNUSED__,
+                    Evas *evas EINA_UNUSED,
                     Evas_Object *obj,
                     void *event_info)
 {
@@ -3473,8 +3473,8 @@ _multi_touch_gesture_eval(Elm_Gen_Item *it)
 
 static void
 _item_multi_down_cb(void *data,
-                    Evas *evas __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
+                    Evas *evas EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
                     void *event_info)
 {
    Elm_Gen_Item *it = data;
@@ -3511,8 +3511,8 @@ _item_multi_down_cb(void *data,
 
 static void
 _item_multi_up_cb(void *data,
-                  Evas *evas __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+                  Evas *evas EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Elm_Gen_Item *it = data;
@@ -3528,8 +3528,8 @@ _item_multi_up_cb(void *data,
 
 static void
 _item_multi_move_cb(void *data,
-                    Evas *evas __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
+                    Evas *evas EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
                     void *event_info)
 {
    Elm_Gen_Item *it = data;
@@ -3543,7 +3543,7 @@ _item_multi_move_cb(void *data,
 
 static void
 _item_mouse_down_cb(void *data,
-                    Evas *evas __UNUSED__,
+                    Evas *evas EINA_UNUSED,
                     Evas_Object *obj,
                     void *event_info)
 {
@@ -4073,8 +4073,8 @@ _item_move_after(Elm_Gen_Item *it,
 }
 
 static void
-_access_activate_cb(void *data __UNUSED__,
-                    Evas_Object *part_obj __UNUSED__,
+_access_activate_cb(void *data EINA_UNUSED,
+                    Evas_Object *part_obj EINA_UNUSED,
                     Elm_Object_Item *item)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
@@ -4147,8 +4147,8 @@ _item_move_before(Elm_Gen_Item *it,
 
 static void
 _item_mouse_up_cb(void *data,
-                  Evas *evas __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+                  Evas *evas EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -4352,8 +4352,8 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
 static void
 _decorate_item_finished_signal_cb(void *data,
                                   Evas_Object *obj,
-                                  const char *emission __UNUSED__,
-                                  const char *source __UNUSED__)
+                                  const char *emission EINA_UNUSED,
+                                  const char *source EINA_UNUSED)
 {
    Elm_Gen_Item *it = data;
    char buf[1024];
@@ -4665,98 +4665,98 @@ _update_job(void *data)
 
 static void
 _scroll_animate_start_cb(Evas_Object *obj,
-                         void *data __UNUSED__)
+                         void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_animate_stop_cb(Evas_Object *obj,
-                        void *data __UNUSED__)
+                        void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
 _edge_left_cb(Evas_Object *obj,
-              void *data __UNUSED__)
+              void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_LEFT, NULL);
 }
 
 static void
 _edge_right_cb(Evas_Object *obj,
-               void *data __UNUSED__)
+               void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_RIGHT, NULL);
 }
 
 static void
 _edge_top_cb(Evas_Object *obj,
-             void *data __UNUSED__)
+             void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_TOP, NULL);
 }
 
 static void
 _edge_bottom_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_BOTTOM, NULL);
 }
 
 static void
 _vbar_drag_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_VBAR_DRAG, NULL);
 }
 
 static void
 _vbar_press_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_VBAR_PRESS, NULL);
 }
 
 static void
 _vbar_unpress_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_VBAR_UNPRESS, NULL);
 }
 
 static void
 _hbar_drag_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_HBAR_DRAG, NULL);
 }
 
 static void
 _hbar_press_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_HBAR_PRESS, NULL);
 }
 
 static void
 _hbar_unpress_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_HBAR_UNPRESS, NULL);
 }
@@ -6597,9 +6597,9 @@ elm_genlist_item_item_class_get(const Elm_Object_Item *item)
 
 static Evas_Object *
 _elm_genlist_item_label_create(void *data,
-                               Evas_Object *obj __UNUSED__,
+                               Evas_Object *obj EINA_UNUSED,
                                Evas_Object *tooltip,
-                               void *it __UNUSED__)
+                               void *it EINA_UNUSED)
 {
    Evas_Object *label = elm_label_add(tooltip);
 
@@ -6614,8 +6614,8 @@ _elm_genlist_item_label_create(void *data,
 
 static void
 _elm_genlist_item_label_del_cb(void *data,
-                               Evas_Object *obj __UNUSED__,
-                               void *event_info __UNUSED__)
+                               Evas_Object *obj EINA_UNUSED,
+                               void *event_info EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }

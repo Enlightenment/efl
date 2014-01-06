@@ -148,18 +148,18 @@ _elm_panes_smart_focus_next(Eo *obj, void *_pd, va_list *list)
 
 static void
 _on_clicked(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            const char *emission EINA_UNUSED,
+            const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
 _double_clicked(void *data,
-                Evas_Object *obj __UNUSED__,
-                const char *emission __UNUSED__,
-                const char *source __UNUSED__)
+                Evas_Object *obj EINA_UNUSED,
+                const char *emission EINA_UNUSED,
+                const char *source EINA_UNUSED)
 {
    ELM_PANES_DATA_GET(data, sd);
 
@@ -168,18 +168,18 @@ _double_clicked(void *data,
 
 static void
 _on_pressed(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            const char *emission EINA_UNUSED,
+            const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_PRESS, NULL);
 }
 
 static void
 _on_unpressed(void *data,
-              Evas_Object *obj __UNUSED__,
-              const char *emission __UNUSED__,
-              const char *source __UNUSED__)
+              Evas_Object *obj EINA_UNUSED,
+              const char *emission EINA_UNUSED,
+              const char *source EINA_UNUSED)
 {
    ELM_PANES_DATA_GET(data, sd);
    evas_object_smart_callback_call(data, SIG_UNPRESS, NULL);

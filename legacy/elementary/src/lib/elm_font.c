@@ -115,7 +115,7 @@ _elm_font_properties_free(Elm_Font_Properties *efp)
 }
 
 static Eina_Bool
-_font_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_font_hash_free_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    Elm_Font_Properties *efp;
 

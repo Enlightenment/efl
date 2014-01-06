@@ -50,7 +50,7 @@ EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 
 static void
 _mouse_down_cb(void *data,
-               Evas *e __UNUSED__,
+               Evas *e EINA_UNUSED,
                Evas_Object *obj,
                void *event_info)
 {
@@ -69,7 +69,7 @@ _mouse_down_cb(void *data,
 
 static void
 _mouse_up_cb(void *data,
-             Evas *e __UNUSED__,
+             Evas *e EINA_UNUSED,
              Evas_Object *obj,
              void *event_info)
 {
@@ -121,9 +121,9 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
 
 static void
 _on_thumb_preloaded(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_THUMB_DATA_GET(data, sd);
    const char *thumb_path;
@@ -312,7 +312,7 @@ err:
 }
 
 static void
-_on_ethumb_thumb_done(Ethumb_Client *client __UNUSED__,
+_on_ethumb_thumb_done(Ethumb_Client *client EINA_UNUSED,
                       const char *thumb_path,
                       const char *thumb_key,
                       void *data)
@@ -332,7 +332,7 @@ _on_ethumb_thumb_done(Ethumb_Client *client __UNUSED__,
 }
 
 static void
-_on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
+_on_ethumb_thumb_error(Ethumb_Client *client EINA_UNUSED,
                        void *data)
 {
    ELM_THUMB_DATA_GET(data, sd);
@@ -405,8 +405,8 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
 
 static Eina_Bool
 _thumbnailing_available_cb(void *data,
-                           int type __UNUSED__,
-                           void *ev __UNUSED__)
+                           int type EINA_UNUSED,
+                           void *ev EINA_UNUSED)
 {
    ELM_THUMB_DATA_GET(data, sd);
    _thumb_start(sd);
@@ -418,7 +418,7 @@ static Eina_Bool _elm_need_ethumb = EINA_FALSE;
 static void _on_die_cb(void *, Ethumb_Client *);
 
 static void
-_connect_cb(void *data __UNUSED__,
+_connect_cb(void *data EINA_UNUSED,
             Ethumb_Client *c,
             Eina_Bool success)
 {
@@ -433,8 +433,8 @@ _connect_cb(void *data __UNUSED__,
 }
 
 static void
-_on_die_cb(void *data __UNUSED__,
-           Ethumb_Client *c __UNUSED__)
+_on_die_cb(void *data EINA_UNUSED,
+           Ethumb_Client *c EINA_UNUSED)
 {
    if (_elm_ethumb_client)
      {
@@ -520,7 +520,7 @@ _elm_unneed_ethumb(void)
 }
 
 static Eina_Bool
-_elm_thumb_dnd_cb(void *data __UNUSED__,
+_elm_thumb_dnd_cb(void *data EINA_UNUSED,
                   Evas_Object *o,
                   Elm_Selection_Data *drop)
 {

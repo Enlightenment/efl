@@ -78,9 +78,9 @@ _elm_photo_smart_theme(Eo *obj, void *_pd, va_list *list)
 
 static void
 _icon_move_resize_cb(void *data,
-                     Evas *e __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
 
@@ -107,7 +107,7 @@ _icon_move_resize_cb(void *data,
 }
 
 static void
-_drag_done_cb(void *unused __UNUSED__,
+_drag_done_cb(void *unused EINA_UNUSED,
               Evas_Object *obj)
 {
    ELM_PHOTO_DATA_GET(obj, sd);
@@ -119,7 +119,7 @@ _drag_done_cb(void *unused __UNUSED__,
 
 static void
 _mouse_move(void *data,
-            Evas *e __UNUSED__,
+            Evas *e EINA_UNUSED,
             Evas_Object *icon,
             void *event)
 {
@@ -185,9 +185,9 @@ _long_press_cb(void *obj)
 
 static void
 _mouse_down(void *data,
-            Evas *e __UNUSED__,
+            Evas *e EINA_UNUSED,
             Evas_Object *icon,
-            void *event_info __UNUSED__)
+            void *event_info EINA_UNUSED)
 {
    Evas_Event_Mouse_Down *ev = event_info;
 
@@ -204,9 +204,9 @@ _mouse_down(void *data,
 
 static void
 _mouse_up(void *data,
-          Evas *e __UNUSED__,
-          Evas_Object *obj __UNUSED__,
-          void *event_info __UNUSED__)
+          Evas *e EINA_UNUSED,
+          Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    ELM_PHOTO_DATA_GET(data, sd);
@@ -247,8 +247,8 @@ _elm_photo_internal_image_follow(Evas_Object *obj)
 
 static void
 _on_thumb_done(void *data,
-               Evas_Object *obj __UNUSED__,
-               void *event __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               void *event EINA_UNUSED)
 {
    _elm_photo_internal_image_follow(data);
 }

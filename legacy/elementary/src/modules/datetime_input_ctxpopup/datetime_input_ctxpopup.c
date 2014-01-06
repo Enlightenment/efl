@@ -27,13 +27,13 @@ struct _DiskItem_Data
 };
 
 static void
-_diskselector_item_free_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_diskselector_item_free_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (data) free(data);
 }
 
 static void
-_ctxpopup_dismissed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__ )
+_ctxpopup_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED )
 {
    Evas_Object *diskselector;
 
@@ -42,8 +42,8 @@ _ctxpopup_dismissed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info
 }
 
 static void
-_datetime_resize_cb(void *data, Evas *e __UNUSED__,Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+_datetime_resize_cb(void *data, Evas *e EINA_UNUSED,Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
 
@@ -54,8 +54,8 @@ _datetime_resize_cb(void *data, Evas *e __UNUSED__,Evas_Object *obj __UNUSED__,
 }
 
 static void
-_datetime_move_cb(void *data, Evas *e __UNUSED__,Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+_datetime_move_cb(void *data, Evas *e EINA_UNUSED,Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
 
@@ -84,7 +84,7 @@ _field_value_get(struct tm *tim, Elm_Datetime_Field_Type  field_type)
 }
 
 static void
-_diskselector_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_diskselector_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    DiskItem_Data *disk_data;
    struct tm curr_time;
@@ -104,7 +104,7 @@ _diskselector_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 static void
-_ampm_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ampm_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
    struct tm curr_time;
@@ -119,7 +119,7 @@ _ampm_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-_field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
    Evas_Object *diskselector;
@@ -369,13 +369,13 @@ obj_hide(Elm_Datetime_Module_Data *module_data)
 
 // module api funcs needed
 EAPI int
-elm_modapi_init(void *m __UNUSED__)
+elm_modapi_init(void *m EINA_UNUSED)
 {
    return 1; // succeed always
 }
 
 EAPI int
-elm_modapi_shutdown(void *m __UNUSED__)
+elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    return 1; // succeed always
 }

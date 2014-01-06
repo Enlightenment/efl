@@ -7,7 +7,7 @@ typedef struct _Elm_Params_Multibuttonentry
 } Elm_Params_Multibuttonentry;
 
 static void
-external_multibuttonentry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_multibuttonentry_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Multibuttonentry *p;
 
@@ -22,7 +22,7 @@ external_multibuttonentry_state_set(void *data __UNUSED__, Evas_Object *obj, con
 }
 
 static Eina_Bool
-external_multibuttonentry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_multibuttonentry_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -48,7 +48,7 @@ external_multibuttonentry_param_set(void *data __UNUSED__, Evas_Object *obj, con
 }
 
 static Eina_Bool
-external_multibuttonentry_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_multibuttonentry_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -74,7 +74,7 @@ external_multibuttonentry_param_get(void *data __UNUSED__, const Evas_Object *ob
 }
 
 static void *
-external_multibuttonentry_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_multibuttonentry_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Multibuttonentry *mem = NULL;
    Edje_External_Param *param;
@@ -95,7 +95,7 @@ external_multibuttonentry_params_parse(void *data __UNUSED__, Evas_Object *obj _
    return mem;
 }
 
-static Evas_Object *external_multibuttonentry_content_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_multibuttonentry_content_get(void *data EINA_UNUSED, const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
    ERR("so content");
    return NULL;

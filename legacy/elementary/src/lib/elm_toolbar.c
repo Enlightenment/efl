@@ -144,9 +144,9 @@ _item_unselect(Elm_Toolbar_Item *item)
 
 static void
 _menu_hide(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    Elm_Toolbar_Item *selected;
    Elm_Toolbar_Item *it = data;
@@ -157,9 +157,9 @@ _menu_hide(void *data,
 
 static void
 _menu_del(void *data,
-          Evas *e __UNUSED__,
+          Evas *e EINA_UNUSED,
           Evas_Object *obj,
-          void *event_info __UNUSED__)
+          void *event_info EINA_UNUSED)
 {
    // avoid hide being emitted during object deletion
    evas_object_event_callback_del_full
@@ -184,8 +184,8 @@ _item_menu_create(Elm_Toolbar_Smart_Data *sd,
 
 static void
 _elm_toolbar_item_menu_cb(void *data,
-                          Evas_Object *obj __UNUSED__,
-                          void *event_info __UNUSED__)
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = data;
 
@@ -206,7 +206,7 @@ _item_show(Elm_Toolbar_Item *it)
 }
 
 static void
-_item_mirrored_set(Evas_Object *obj __UNUSED__,
+_item_mirrored_set(Evas_Object *obj EINA_UNUSED,
                    Elm_Toolbar_Item *it,
                    Eina_Bool mirrored)
 {
@@ -724,9 +724,9 @@ success:
 
 static void
 _resize_cb(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y, h;
 
@@ -792,9 +792,9 @@ _elm_toolbar_icon_size_get(Evas_Object *obj)
 
 static void
 _menu_move_resize_cb(void *data,
-                     Evas *e __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = data;
    Evas_Coord x, y, h;
@@ -1399,9 +1399,9 @@ _elm_toolbar_smart_translate(Eo *obj, void *_pd, va_list *list)
 
 static void
 _item_resize(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
    _resize_cb(data, NULL, NULL, NULL);
@@ -1409,9 +1409,9 @@ _item_resize(void *data,
 
 static void
 _move_cb(void *data,
-         Evas *e __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+         Evas *e EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
+         void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y, h;
 
@@ -1422,9 +1422,9 @@ _move_cb(void *data,
 
 static void
 _select_filter_cb(Elm_Toolbar_Item *it,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj EINA_UNUSED,
                   const char *emission,
-                  const char *source __UNUSED__)
+                  const char *source EINA_UNUSED)
 {
    int button;
    char buf[sizeof("elm,action,click,") + 1];
@@ -1437,9 +1437,9 @@ _select_filter_cb(Elm_Toolbar_Item *it,
 
 static void
 _select_cb(void *data,
-           Evas_Object *obj __UNUSED__,
-           const char *emission __UNUSED__,
-           const char *source __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           const char *emission EINA_UNUSED,
+           const char *source EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = data;
 
@@ -1454,9 +1454,9 @@ _select_cb(void *data,
 
 static void
 _item_move_cb(void *data,
-         Evas *e __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+         Evas *e EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
+         void *event_info EINA_UNUSED)
 {
    Elm_Toolbar_Item *item = data;
 
@@ -1541,7 +1541,7 @@ _items_change(Elm_Toolbar_Item *reorder_from, Elm_Toolbar_Item *reorder_to)
 }
 
 static void
-_transit_del_cb(void *data, Elm_Transit *transit __UNUSED__)
+_transit_del_cb(void *data, Elm_Transit *transit EINA_UNUSED)
 {
    Elm_Toolbar_Item *it, *item = data;
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
@@ -1674,8 +1674,8 @@ _animate_missed_items(Elm_Toolbar_Item *prev, Elm_Toolbar_Item *next)
 
 static void
 _mouse_move_reorder(Elm_Toolbar_Item *item,
-                    Evas *evas __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
+                    Evas *evas EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
                     Evas_Event_Mouse_Move *ev)
 {
    Evas_Coord x, y, w, h;
@@ -1729,9 +1729,9 @@ _mouse_move_reorder(Elm_Toolbar_Item *item,
 
 static void
 _mouse_up_reorder(Elm_Toolbar_Item *it,
-                  Evas *evas __UNUSED__,
+                  Evas *evas EINA_UNUSED,
                   Evas_Object *obj,
-                  Evas_Event_Mouse_Up *ev __UNUSED__)
+                  Evas_Event_Mouse_Up *ev EINA_UNUSED)
 {
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
@@ -1828,8 +1828,8 @@ _long_press_cb(void *data)
 
 static void
 _mouse_move_cb(Elm_Toolbar_Item *it,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                Evas_Event_Mouse_Move *ev)
 {
    Evas_Coord x, y, w, h;
@@ -1846,8 +1846,8 @@ _mouse_move_cb(Elm_Toolbar_Item *it,
 
 static void
 _mouse_down_cb(Elm_Toolbar_Item *it,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                Evas_Event_Mouse_Down *ev)
 {
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
@@ -1869,8 +1869,8 @@ _mouse_down_cb(Elm_Toolbar_Item *it,
 
 static void
 _mouse_up_cb(Elm_Toolbar_Item *it,
-             Evas *evas __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              Evas_Event_Mouse_Up *ev)
 {
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
@@ -1884,9 +1884,9 @@ _mouse_up_cb(Elm_Toolbar_Item *it,
 
 static void
 _mouse_in_cb(void *data,
-             Evas_Object *obj __UNUSED__,
-             const char *emission __UNUSED__,
-             const char *source __UNUSED__)
+             Evas_Object *obj EINA_UNUSED,
+             const char *emission EINA_UNUSED,
+             const char *source EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = data;
 
@@ -1896,9 +1896,9 @@ _mouse_in_cb(void *data,
 
 static void
 _mouse_out_cb(void *data,
-              Evas_Object *obj __UNUSED__,
-              const char *emission __UNUSED__,
-              const char *source __UNUSED__)
+              Evas_Object *obj EINA_UNUSED,
+              const char *emission EINA_UNUSED,
+              const char *source EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = data;
 
@@ -1908,28 +1908,28 @@ _mouse_out_cb(void *data,
 
 static void
 _scroll_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
@@ -1939,7 +1939,7 @@ _scroll_drag_start_cb(Evas_Object *obj,
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_STOP, NULL);
 }
@@ -1957,7 +1957,7 @@ _layout(Evas_Object *o,
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
    const char *txt = ((Elm_Widget_Item *)it)->access_info;
@@ -1969,7 +1969,7 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
 
@@ -2020,8 +2020,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 static void
-_access_activate_cb(void *data __UNUSED__,
-                    Evas_Object *part_obj __UNUSED__,
+_access_activate_cb(void *data EINA_UNUSED,
+                    Evas_Object *part_obj EINA_UNUSED,
                     Elm_Object_Item *item)
 {
    Elm_Toolbar_Item *it;
@@ -2321,8 +2321,8 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
 }
 
 static void
-_elm_toolbar_item_state_cb(void *data __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
+_elm_toolbar_item_state_cb(void *data EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
                            void *event_info)
 {
    Elm_Toolbar_Item *it = event_info;
@@ -2354,9 +2354,9 @@ _item_state_new(const char *label,
 
 static void
 _elm_toolbar_action_left_cb(void *data,
-                            Evas_Object *o __UNUSED__,
-                            const char *sig __UNUSED__,
-                            const char *src __UNUSED__)
+                            Evas_Object *o EINA_UNUSED,
+                            const char *sig EINA_UNUSED,
+                            const char *src EINA_UNUSED)
 {
    Evas_Object *obj = data;
    Elm_Toolbar_Item *it, *it2;
@@ -2403,9 +2403,9 @@ _elm_toolbar_action_left_cb(void *data,
 
 static void
 _elm_toolbar_action_right_cb(void *data,
-                             Evas_Object *o __UNUSED__,
-                             const char *sig __UNUSED__,
-                             const char *src __UNUSED__)
+                             Evas_Object *o EINA_UNUSED,
+                             const char *sig EINA_UNUSED,
+                             const char *src EINA_UNUSED)
 {
    Evas_Object *obj = data;
    Elm_Toolbar_Item *it, *it2;

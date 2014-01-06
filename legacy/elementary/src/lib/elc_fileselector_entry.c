@@ -43,7 +43,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 
 #define SIG_FWD(name)                                                       \
   static void                                                               \
-  _##name##_fwd(void *data, Evas_Object * obj __UNUSED__, void *event_info) \
+  _##name##_fwd(void *data, Evas_Object * obj EINA_UNUSED, void *event_info) \
   {                                                                         \
      evas_object_smart_callback_call(data, SIG_##name, event_info);         \
   }
@@ -62,7 +62,7 @@ SIG_FWD(UNPRESSED)
 
 static void
 _FILE_CHOSEN_fwd(void *data,
-                 Evas_Object *obj __UNUSED__,
+                 Evas_Object *obj EINA_UNUSED,
                  void *event_info)
 {
    const char *file = event_info;
@@ -79,7 +79,7 @@ _FILE_CHOSEN_fwd(void *data,
 
 static void
 _ACTIVATED_fwd(void *data,
-               Evas_Object *obj __UNUSED__,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    const char *file;

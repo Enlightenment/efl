@@ -350,8 +350,8 @@ _land_indicator_connect_cb(void *data)
 
 static void
 _land_indicator_disconnected(void *data,
-                             Evas_Object *obj __UNUSED__,
-                             void *event_info __UNUSED__)
+                             Evas_Object *obj EINA_UNUSED,
+                             void *event_info EINA_UNUSED)
 {
    Evas_Object *conform = data;
 
@@ -362,8 +362,8 @@ _land_indicator_disconnected(void *data,
 
 static void
 _port_indicator_disconnected(void *data,
-                             Evas_Object *obj __UNUSED__,
-                             void *event_info __UNUSED__)
+                             Evas_Object *obj EINA_UNUSED,
+                             void *event_info EINA_UNUSED)
 {
    Evas_Object *conform = data;
 
@@ -510,7 +510,7 @@ _indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode i
 static void
 _on_indicator_mode_changed(void *data,
                            Evas_Object *obj,
-                           void *event_info __UNUSED__)
+                           void *event_info EINA_UNUSED)
 {
    Evas_Object *conformant = data;
    Evas_Object *win = obj;
@@ -531,7 +531,7 @@ _on_indicator_mode_changed(void *data,
 static void
 _on_rotation_changed(void *data,
                      Evas_Object *obj,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    int rot = 0;
    Evas_Object *win = obj;
@@ -644,10 +644,10 @@ _elm_conformant_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
  */
 
 static void
-_move_resize_cb(void *data __UNUSED__,
-                Evas *e __UNUSED__,
+_move_resize_cb(void *data EINA_UNUSED,
+                Evas *e EINA_UNUSED,
                 Evas_Object *obj,
-                void *event_info __UNUSED__)
+                void *event_info EINA_UNUSED)
 {
    Conformant_Part_Type part_type;
 
@@ -686,9 +686,9 @@ _show_region_job(void *data)
 #ifdef HAVE_ELEMENTARY_X
 static void
 _on_content_resize(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    ELM_CONFORMANT_DATA_GET(data, sd);
 
@@ -819,7 +819,7 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
 
 static Eina_Bool
 _on_prop_change(void *data,
-                int type __UNUSED__,
+                int type EINA_UNUSED,
                 void *event)
 {
    Ecore_X_Event_Window_Property *ev = event;

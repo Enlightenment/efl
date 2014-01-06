@@ -48,9 +48,9 @@ _elm_mapbuf_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void
 _changed_size_hints_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }

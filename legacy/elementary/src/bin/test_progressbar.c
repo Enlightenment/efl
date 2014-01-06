@@ -315,7 +315,7 @@ _pg2_stop_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 }
 
 void
-test_progressbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_progressbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *pb, *bx, *bt, *bt_bx;
    Progressbar_Data *pd;

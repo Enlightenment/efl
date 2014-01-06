@@ -521,9 +521,9 @@ _grid_clear(Evas_Object *obj,
 
 static void
 _tile_preloaded_cb(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *o __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *o EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Elm_Photocam_Grid_Item *git = data;
    ELM_PHOTOCAM_DATA_GET(git->obj, sd);
@@ -716,9 +716,9 @@ _scroll_timeout_cb(void *data)
 
 static void
 _main_img_preloaded_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *o __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *o EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
    Elm_Phocam_Grid *g;
@@ -838,8 +838,8 @@ _long_press_cb(void *data)
 
 static void
 _mouse_down_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -861,8 +861,8 @@ _mouse_down_cb(void *data,
 
 static void
 _mouse_up_cb(void *data,
-             Evas *evas __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -921,35 +921,35 @@ _elm_photocam_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void
 _scroll_animate_start_cb(Evas_Object *obj,
-                         void *data __UNUSED__)
+                         void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_animate_stop_cb(Evas_Object *obj,
-                        void *data __UNUSED__)
+                        void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
 _scroll_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    ELM_PHOTOCAM_DATA_GET(obj, sd);
 
@@ -1222,7 +1222,7 @@ _g_layer_zoom_move_cb(void *data,
 
 static Evas_Event_Flags
 _g_layer_zoom_end_cb(void *data,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_PHOTOCAM_DATA_GET(obj, sd);
@@ -2108,7 +2108,7 @@ elm_photocam_image_region_bring_in(Evas_Object *obj,
                                    int x,
                                    int y,
                                    int w,
-                                   int h __UNUSED__)
+                                   int h EINA_UNUSED)
 {
    ELM_PHOTOCAM_CHECK(obj);
    eo_do(obj, elm_scrollable_interface_region_bring_in(x, y, w, h));

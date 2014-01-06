@@ -110,17 +110,17 @@ _elm_frame_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_
 
 static void
 _recalc(void *data,
-        Evas_Object *obj __UNUSED__,
-        void *event_info __UNUSED__)
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
 _on_recalc_done(void *data,
-                Evas_Object *obj __UNUSED__,
-                const char *sig __UNUSED__,
-                const char *src __UNUSED__)
+                Evas_Object *obj EINA_UNUSED,
+                const char *sig EINA_UNUSED,
+                const char *src EINA_UNUSED)
 {
    ELM_FRAME_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
@@ -134,9 +134,9 @@ _on_recalc_done(void *data,
 
 static void
 _on_frame_clicked(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *sig __UNUSED__,
-                  const char *src __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *sig EINA_UNUSED,
+                  const char *src EINA_UNUSED)
 {
    ELM_FRAME_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);

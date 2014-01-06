@@ -128,9 +128,9 @@ _orient_get(const char *orient)
 }
 
 static void
-external_notify_state_set(void *data __UNUSED__,
+external_notify_state_set(void *data EINA_UNUSED,
                           Evas_Object *obj, const void *from_params,
-                          const void *to_params, float pos __UNUSED__)
+                          const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Notify *p;
 
@@ -156,7 +156,7 @@ external_notify_state_set(void *data __UNUSED__,
 }
 
 static Eina_Bool
-external_notify_param_set(void *data __UNUSED__,
+external_notify_param_set(void *data EINA_UNUSED,
                           Evas_Object *obj, const Edje_External_Param *param)
 {
    if ((!strcmp(param->name, "content"))
@@ -197,7 +197,7 @@ external_notify_param_set(void *data __UNUSED__,
 }
 
 static Eina_Bool
-external_notify_param_get(void *data __UNUSED__,
+external_notify_param_get(void *data EINA_UNUSED,
                           const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "content"))
@@ -233,7 +233,7 @@ external_notify_param_get(void *data __UNUSED__,
 }
 
 static void *
-external_notify_params_parse(void *data __UNUSED__, Evas_Object *obj,
+external_notify_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
                              const Eina_List *params) {
    Elm_Params_Notify *mem;
    Edje_External_Param *param;
@@ -265,7 +265,7 @@ external_notify_params_parse(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static Evas_Object *
-external_notify_content_get(void *data __UNUSED__,
+external_notify_content_get(void *data EINA_UNUSED,
                             const Evas_Object *obj, const char *content)
 {
    if (!strcmp(content, "content"))

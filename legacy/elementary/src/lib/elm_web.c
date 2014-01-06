@@ -377,7 +377,7 @@ _view_smart_window_close(Ewk_View_Smart_Data *sd)
 static void
 _bt_close(void *data,
           Evas_Object *obj,
-          void *event_info __UNUSED__)
+          void *event_info EINA_UNUSED)
 {
    Dialog_Data *d = data;
 
@@ -390,7 +390,7 @@ _bt_close(void *data,
 
 static void
 _file_sel_done(void *data,
-               Evas_Object *obj __UNUSED__,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Dialog_Data *d = data;
@@ -461,8 +461,8 @@ _run_dialog(Evas_Object *parent,
             const char *message,
             const char *default_entry_value,
             const char **entry_value,
-            Eina_Bool allows_multiple_files __UNUSED__,
-            Eina_List *accept_types __UNUSED__,
+            Eina_Bool allows_multiple_files EINA_UNUSED,
+            Eina_List *accept_types EINA_UNUSED,
             Eina_List **selected_filenames,
             Eina_Bool *response)
 {
@@ -584,10 +584,10 @@ _run_dialog(Evas_Object *parent,
 }
 
 static void
-_dialog_del_cb(void *data __UNUSED__,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+_dialog_del_cb(void *data EINA_UNUSED,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -605,7 +605,7 @@ _exec_dialog(Evas_Object *dialog)
  */
 static void
 _view_smart_run_javascript_alert(Ewk_View_Smart_Data *esd,
-                                 Evas_Object *frame __UNUSED__,
+                                 Evas_Object *frame EINA_UNUSED,
                                  const char *message)
 {
    View_Smart_Data *vsd = (View_Smart_Data *)esd;
@@ -629,7 +629,7 @@ _view_smart_run_javascript_alert(Ewk_View_Smart_Data *esd,
  */
 static Eina_Bool
 _view_smart_run_javascript_confirm(Ewk_View_Smart_Data *esd,
-                                   Evas_Object *frame __UNUSED__,
+                                   Evas_Object *frame EINA_UNUSED,
                                    const char *message)
 {
    View_Smart_Data *vsd = (View_Smart_Data *)esd;
@@ -654,7 +654,7 @@ _view_smart_run_javascript_confirm(Ewk_View_Smart_Data *esd,
  */
 static Eina_Bool
 _view_smart_run_javascript_prompt(Ewk_View_Smart_Data *esd,
-                                  Evas_Object *frame __UNUSED__,
+                                  Evas_Object *frame EINA_UNUSED,
                                   const char *message,
                                   const char *default_value,
                                   const char **value)
@@ -682,7 +682,7 @@ _view_smart_run_javascript_prompt(Ewk_View_Smart_Data *esd,
 
 static Eina_Bool
 _view_smart_run_open_panel(Ewk_View_Smart_Data *esd,
-                           Evas_Object *frame __UNUSED__,
+                           Evas_Object *frame EINA_UNUSED,
                            Ewk_File_Chooser *request,
                            Eina_List **selected_filenames)
 {
@@ -821,7 +821,7 @@ _view_add(Evas_Object *parent)
 
 static void
 _ewk_view_inputmethod_change_cb(void *data,
-                                Evas_Object *obj __UNUSED__,
+                                Evas_Object *obj EINA_UNUSED,
                                 void *event_info)
 {
    ELM_WEB_DATA_GET(data, sd);
@@ -838,14 +838,14 @@ _ewk_view_inputmethod_change_cb(void *data,
 static void
 _ewk_view_load_started_cb(void *data,
                           Evas_Object *obj,
-                          void *event_info __UNUSED__)
+                          void *event_info EINA_UNUSED)
 {
    _ewk_view_inputmethod_change_cb(data, obj, (void *)(long)EINA_FALSE);
 }
 
 static void
 _ewk_view_load_finished_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
+                           Evas_Object *obj EINA_UNUSED,
                            void *event_info)
 {
    ELM_WEB_DATA_GET(data, sd);
@@ -863,7 +863,7 @@ _ewk_view_load_finished_cb(void *data,
 static void
 _ewk_view_viewport_changed_cb(void *data,
                               Evas_Object *obj,
-                              void *event_info __UNUSED__)
+                              void *event_info EINA_UNUSED)
 {
    ELM_WEB_DATA_GET(data, sd);
 
@@ -902,8 +902,8 @@ _reset_zoom_timer_cb(void *data)
 
 static void
 _ewk_view_resized_cb(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    ELM_WEB_DATA_GET(data, sd);
 
@@ -923,7 +923,7 @@ _popup_del_job(void *data)
 static void
 _popup_will_delete(void *data,
                    Evas_Object *obj,
-                   void *event_info __UNUSED__)
+                   void *event_info EINA_UNUSED)
 {
    ecore_job_add(_popup_del_job, data);
    evas_object_smart_callback_del(obj, "popup,willdelete", _popup_will_delete);
@@ -932,7 +932,7 @@ _popup_will_delete(void *data,
 static void
 _popup_item_selected(void *data,
                      Evas_Object *obj,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
    const Eina_List *itr, *list = elm_list_items_get(obj);
@@ -954,8 +954,8 @@ _popup_item_selected(void *data,
 
 static void
 _popup_dismiss_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    ewk_view_popup_destroy(data);
 }
@@ -1023,16 +1023,16 @@ _ewk_view_popup_create_cb(void *data,
 
 static void
 _view_smart_callback_proxy_free_cb(void *data,
-                                   Evas *e __UNUSED__,
-                                   Evas_Object *obj __UNUSED__,
-                                   void *event_info __UNUSED__)
+                                   Evas *e EINA_UNUSED,
+                                   Evas_Object *obj EINA_UNUSED,
+                                   void *event_info EINA_UNUSED)
 {
    free(data);
 }
 
 static void
 _view_smart_callback_proxy_cb(void *data,
-                              Evas_Object *obj __UNUSED__,
+                              Evas_Object *obj EINA_UNUSED,
                               void *event_info)
 {
    Elm_Web_Callback_Proxy_Context *ctxt = data;

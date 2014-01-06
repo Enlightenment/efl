@@ -24,7 +24,7 @@ map_module_tile_zoom_max_get(void)
 }
 
 EAPI char *
-map_module_tile_url_get(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+map_module_tile_url_get(Evas_Object *obj EINA_UNUSED, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://tile.openstreetmap.org/%d/%d/%d.png",
@@ -39,25 +39,25 @@ map_module_route_source_get(void)
 }
 
 EAPI char *
-map_module_route_url_get(Evas_Object *obj __UNUSED__, const char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
+map_module_route_url_get(Evas_Object *obj EINA_UNUSED, const char *type_name EINA_UNUSED, int method EINA_UNUSED, double flon EINA_UNUSED, double flat EINA_UNUSED, double tlon EINA_UNUSED, double tlat EINA_UNUSED)
 {
    return strdup("");
 }
 
 EAPI char *
-map_module_name_url_get(Evas_Object *obj __UNUSED__, int method __UNUSED__, const char *name __UNUSED__, double lon __UNUSED__, double lat __UNUSED__)
+map_module_name_url_get(Evas_Object *obj EINA_UNUSED, int method EINA_UNUSED, const char *name EINA_UNUSED, double lon EINA_UNUSED, double lat EINA_UNUSED)
 {
    return strdup("");
 }
 
 EAPI Eina_Bool
-map_module_tile_geo_to_coord(const Evas_Object *obj __UNUSED__, int zoom __UNUSED__, double lon __UNUSED__, double lat __UNUSED__, int size __UNUSED__, int *x __UNUSED__, int *y __UNUSED__)
+map_module_tile_geo_to_coord(const Evas_Object *obj EINA_UNUSED, int zoom EINA_UNUSED, double lon EINA_UNUSED, double lat EINA_UNUSED, int size EINA_UNUSED, int *x EINA_UNUSED, int *y EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EAPI Eina_Bool
-map_module_tile_coord_to_geo(const Evas_Object *obj __UNUSED__, int zoom __UNUSED__, int x __UNUSED__, int y __UNUSED__, int size __UNUSED__, double *lon __UNUSED__, double *lat __UNUSED__)
+map_module_tile_coord_to_geo(const Evas_Object *obj EINA_UNUSED, int zoom EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int size EINA_UNUSED, double *lon EINA_UNUSED, double *lat EINA_UNUSED)
 {
    return EINA_FALSE;
 }

@@ -158,9 +158,9 @@ _sizing_eval(Evas_Object *obj)
 
 static void
 _on_size_hints_changed(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }

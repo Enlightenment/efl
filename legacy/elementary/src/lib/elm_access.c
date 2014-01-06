@@ -291,7 +291,7 @@ _access_obj_over_timeout_cb(void *data)
 }
 
 static void
-_access_hover_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
+_access_hover_mouse_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info  EINA_UNUSED)
 {
    Elm_Access_Info *ac;
    if (!mouse_event_enable) return;
@@ -306,7 +306,7 @@ _access_hover_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_access_hover_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_access_hover_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Access_Info *ac;
    if (!mouse_event_enable) return;
@@ -320,14 +320,14 @@ _access_hover_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 }
 
 static void
-_access_read_done(void *data __UNUSED__)
+_access_read_done(void *data EINA_UNUSED)
 {
    DBG("read done");
    // FIXME: produce event here
 }
 
 static void
-_access_2nd_click_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_access_2nd_click_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Timer *t;
 
@@ -351,19 +351,19 @@ _access_2nd_click_timeout_cb(void *data)
 }
 
 static void
-_access_obj_hilight_del_cb(void *data __UNUSED__, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_access_obj_hilight_del_cb(void *data EINA_UNUSED, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _elm_access_object_highlight_disable(e);
 }
 
 static void
-_access_obj_hilight_hide_cb(void *data __UNUSED__, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_access_obj_hilight_hide_cb(void *data EINA_UNUSED, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _elm_access_object_highlight_disable(e);
 }
 
 static void
-_access_obj_hilight_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_access_obj_hilight_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y;
    Evas_Object *o;
@@ -375,7 +375,7 @@ _access_obj_hilight_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Obje
 }
 
 static void
-_access_obj_hilight_resize_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_access_obj_hilight_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    Evas_Object *o;
@@ -416,9 +416,9 @@ _elm_access_shutdown()
 
 static void
 _access_order_del_cb(void *data,
-                     Evas *e __UNUSED__,
+                     Evas *e EINA_UNUSED,
                      Evas_Object *obj,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    Elm_Widget_Item *item = data;
 
@@ -854,8 +854,8 @@ _elm_access_object_unhilight(Evas_Object *obj)
 }
 
 static void
-_content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
-                void *event_info __UNUSED__)
+_content_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+                void *event_info EINA_UNUSED)
 {
    Evas_Object *accessobj;
    Evas_Coord w, h;
@@ -868,8 +868,8 @@ _content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
 }
 
 static void
-_content_move(void *data, Evas *e __UNUSED__, Evas_Object *obj,
-              void *event_info __UNUSED__)
+_content_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+              void *event_info EINA_UNUSED)
 {
    Evas_Object *accessobj;
    Evas_Coord x, y;
@@ -963,7 +963,7 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 
 //FIXME: unused obj should be removed from here and each widget.
 EAPI void
-_elm_access_edje_object_part_object_unregister(Evas_Object* obj __UNUSED__,
+_elm_access_edje_object_part_object_unregister(Evas_Object* obj EINA_UNUSED,
                                                const Evas_Object *eobj,
                                                const char* part)
 {
@@ -999,7 +999,7 @@ _elm_access_object_highlight_disable(Evas *e)
 }
 
 static void
-_access_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_access_obj_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
 
    Ecore_Job *ao_del_job = NULL;
@@ -1037,7 +1037,7 @@ _access_obj_del_job(void *data)
 }
 
 static void
-_access_hover_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_access_hover_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Job *ao_del_job = NULL;
 

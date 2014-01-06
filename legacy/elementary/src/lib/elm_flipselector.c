@@ -489,9 +489,9 @@ _signal_val_up(void *data)
 
 static void
 _signal_val_up_start(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    ELM_FLIPSELECTOR_DATA_GET(data, sd);
 
@@ -522,9 +522,9 @@ _signal_val_down(void *data)
 
 static void
 _signal_val_down_start(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    ELM_FLIPSELECTOR_DATA_GET(data, sd);
 
@@ -538,9 +538,9 @@ _signal_val_down_start(void *data,
 
 static void
 _signal_val_change_stop(void *data,
-                        Evas_Object *obj __UNUSED__,
-                        const char *emission __UNUSED__,
-                        const char *source __UNUSED__)
+                        Evas_Object *obj EINA_UNUSED,
+                        const char *emission EINA_UNUSED,
+                        const char *source EINA_UNUSED)
 {
    ELM_FLIPSELECTOR_DATA_GET(data, sd);
 

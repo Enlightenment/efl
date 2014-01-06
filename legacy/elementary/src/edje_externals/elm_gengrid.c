@@ -32,7 +32,7 @@ typedef struct _Elm_Params_Gengrid
 } Elm_Params_Gengrid;
 
 static void
-external_gengrid_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_gengrid_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Gengrid *p;
 
@@ -108,7 +108,7 @@ external_gengrid_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
 }
 
 static Eina_Bool
-external_gengrid_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_gengrid_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "multi select"))
      {
@@ -231,7 +231,7 @@ external_gengrid_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 }
 
 static Eina_Bool
-external_gengrid_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_gengrid_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "multi select"))
      {
@@ -356,7 +356,7 @@ external_gengrid_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 }
 
 static void *
-external_gengrid_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_gengrid_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Gengrid *mem;
    Edje_External_Param *param;
@@ -434,7 +434,7 @@ external_gengrid_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 static Evas_Object *
-external_gengrid_content_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+external_gengrid_content_get(void *data EINA_UNUSED, const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;

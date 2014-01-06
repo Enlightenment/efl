@@ -263,7 +263,7 @@ elm_prefs_page_common_unpack(Evas_Object *it,
 }
 
 EAPI int
-elm_modapi_init(void *m __UNUSED__)
+elm_modapi_init(void *m EINA_UNUSED)
 {
    _elm_prefs_log_dom = eina_log_domain_register
        ("elm-prefs", EINA_COLOR_YELLOW);
@@ -275,7 +275,7 @@ elm_modapi_init(void *m __UNUSED__)
 }
 
 EAPI int
-elm_modapi_shutdown(void *m __UNUSED__)
+elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    elm_prefs_item_iface_unregister(_elm_prefs_item_widgets);
    elm_prefs_page_iface_unregister(_elm_prefs_page_widgets);

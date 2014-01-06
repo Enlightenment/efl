@@ -96,7 +96,7 @@ mismatch:
 static void
 _item_changed_cb(void *data,
                  Evas_Object *obj,
-                 void *event_info __UNUSED__)
+                 void *event_info EINA_UNUSED)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
@@ -104,10 +104,10 @@ _item_changed_cb(void *data,
 }
 
 static void
-_entry_del_cb(void *data __UNUSED__,
-              Evas *evas __UNUSED__,
+_entry_del_cb(void *data EINA_UNUSED,
+              Evas *evas EINA_UNUSED,
               Evas_Object *obj,
-              void *event_info __UNUSED__)
+              void *event_info EINA_UNUSED)
 {
    regex_t *regex;
    Ecore_Timer *timer;
@@ -125,7 +125,7 @@ _entry_del_cb(void *data __UNUSED__,
 }
 
 static Evas_Object *
-elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface __UNUSED__,
+elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
                     Evas_Object *prefs,
                     const Elm_Prefs_Item_Type type,
                     const Elm_Prefs_Item_Spec spec,
@@ -263,7 +263,7 @@ elm_prefs_entry_editable_get(Evas_Object *obj)
 }
 
 static Eina_Bool
-elm_prefs_entry_expand_want(Evas_Object *obj __UNUSED__)
+elm_prefs_entry_expand_want(Evas_Object *obj EINA_UNUSED)
 {
    return EINA_TRUE;
 }

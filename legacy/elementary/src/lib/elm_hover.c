@@ -62,44 +62,44 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static void
 _parent_move_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
 _parent_resize_cb(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
-_parent_show_cb(void *data __UNUSED__,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+_parent_show_cb(void *data EINA_UNUSED,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
 }
 
 static void
 _parent_hide_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
 }
 
 static void
 _parent_del_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    elm_hover_parent_set(data, NULL);
    elm_layout_sizing_eval(data);
@@ -328,9 +328,9 @@ _elm_hover_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static void
 _on_smt_sub_changed(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    _elm_hover_smt_sub_re_eval(data);
 }
@@ -509,9 +509,9 @@ _elm_hover_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
 static void
 _target_del_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    ELM_HOVER_DATA_GET(data, sd);
 
@@ -520,9 +520,9 @@ _target_del_cb(void *data,
 
 static void
 _target_move_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
    _elm_hover_smt_sub_re_eval(data);
@@ -530,9 +530,9 @@ _target_move_cb(void *data,
 
 static void
 _hov_dismiss_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                const char *emission __UNUSED__,
-                const char *source __UNUSED__)
+                Evas_Object *obj EINA_UNUSED,
+                const char *emission EINA_UNUSED,
+                const char *source EINA_UNUSED)
 {
    evas_object_hide(data);
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);

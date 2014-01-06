@@ -13,7 +13,7 @@ typedef struct _Elm_Params_Clock
 } Elm_Params_Clock;
 
 static void
-external_clock_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_clock_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Clock *p;
 
@@ -44,7 +44,7 @@ external_clock_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
 }
 
 static Eina_Bool
-external_clock_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_clock_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "hours"))
      {
@@ -108,7 +108,7 @@ external_clock_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 }
 
 static Eina_Bool
-external_clock_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_clock_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "hours"))
      {
@@ -173,7 +173,7 @@ external_clock_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 }
 
 static void *
-external_clock_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_clock_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Clock *mem;
    Edje_External_Param *param;
@@ -211,8 +211,8 @@ external_clock_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
    return mem;
 }
 
-static Evas_Object *external_clock_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_clock_content_get(void *data EINA_UNUSED,
+		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
 	ERR("No content.");
 	return NULL;

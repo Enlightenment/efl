@@ -328,9 +328,9 @@ _segment_on(Elm_Segment_Item *it)
 }
 
 static void
-_on_move_resize(void *data, Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+_on_move_resize(void *data, Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    ELM_SEGMENT_CONTROL_DATA_GET(data, sd);
 
@@ -339,8 +339,8 @@ _on_move_resize(void *data, Evas *e __UNUSED__,
 
 static void
 _on_mouse_up(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Elm_Segment_Item *it = data;
@@ -367,9 +367,9 @@ _on_mouse_up(void *data,
 
 static void
 _on_mouse_down(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    Elm_Segment_Item *it = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -513,7 +513,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    const char *txt = NULL;
    Elm_Segment_Item *it = (Elm_Segment_Item *)data;
@@ -526,7 +526,7 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Segment_Item *it = (Elm_Segment_Item *)data;
    ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, NULL);

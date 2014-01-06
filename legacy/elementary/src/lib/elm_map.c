@@ -53,7 +53,7 @@ EAPI Eo_Op ELM_OBJ_MAP_BASE_ID = EO_NOOP;
 #define NOMINATIM_ATTR_ADDRESS "display_name"
 
 static char *
-_mapnik_url_cb(const Evas_Object *obj __UNUSED__,
+_mapnik_url_cb(const Evas_Object *obj EINA_UNUSED,
                int x,
                int y,
                int zoom)
@@ -68,7 +68,7 @@ _mapnik_url_cb(const Evas_Object *obj __UNUSED__,
 }
 
 static char *
-_osmarender_url_cb(const Evas_Object *obj __UNUSED__,
+_osmarender_url_cb(const Evas_Object *obj EINA_UNUSED,
                    int x,
                    int y,
                    int zoom)
@@ -83,7 +83,7 @@ _osmarender_url_cb(const Evas_Object *obj __UNUSED__,
 }
 
 static char *
-_cyclemap_url_cb(const Evas_Object *obj __UNUSED__,
+_cyclemap_url_cb(const Evas_Object *obj EINA_UNUSED,
                  int x,
                  int y,
                  int zoom)
@@ -98,7 +98,7 @@ _cyclemap_url_cb(const Evas_Object *obj __UNUSED__,
 }
 
 static char *
-_mapquest_url_cb(const Evas_Object *obj __UNUSED__,
+_mapquest_url_cb(const Evas_Object *obj EINA_UNUSED,
                  int x,
                  int y,
                  int zoom)
@@ -113,7 +113,7 @@ _mapquest_url_cb(const Evas_Object *obj __UNUSED__,
 }
 
 static char *
-_mapquest_aerial_url_cb(const Evas_Object *obj __UNUSED__,
+_mapquest_aerial_url_cb(const Evas_Object *obj EINA_UNUSED,
                         int x,
                         int y,
                         int zoom)
@@ -127,7 +127,7 @@ _mapquest_aerial_url_cb(const Evas_Object *obj __UNUSED__,
 }
 
 static char *
-_yours_url_cb(const Evas_Object *obj __UNUSED__,
+_yours_url_cb(const Evas_Object *obj EINA_UNUSED,
               const char *type_name,
               int method,
               double flon,
@@ -148,7 +148,7 @@ _yours_url_cb(const Evas_Object *obj __UNUSED__,
 // TODO: fix monav api
 /*
    static char *
-   _monav_url_cb(const Evas_Object *obj __UNUSED__,
+   _monav_url_cb(const Evas_Object *obj EINA_UNUSED,
               char *type_name,
               int method,
               double flon,
@@ -168,7 +168,7 @@ _yours_url_cb(const Evas_Object *obj __UNUSED__,
    //TODO: fix ors api
 
    static char *
-   _ors_url_cb(const Evas_Object *obj __UNUSED__,
+   _ors_url_cb(const Evas_Object *obj EINA_UNUSED,
             char *type_name,
             int method,
             double flon,
@@ -241,8 +241,8 @@ const double _osm_scale_meter[] =
 };
 
 static double
-_scale_cb(const Evas_Object *obj __UNUSED__,
-          double lon __UNUSED__,
+_scale_cb(const Evas_Object *obj EINA_UNUSED,
+          double lon EINA_UNUSED,
           double lat,
           int zoom)
 {
@@ -733,7 +733,7 @@ _grid_item_free(Grid_Item *gi)
 
 static void
 _downloaded_cb(void *data,
-               const char *file __UNUSED__,
+               const char *file EINA_UNUSED,
                int status)
 {
    Grid_Item *gi = data;
@@ -1176,9 +1176,9 @@ _sizing_eval(Evas_Object *obj)
 
 static void
 _changed_size_hints_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }
@@ -1198,7 +1198,7 @@ _scr_timeout_cb(void *data)
 
 static void
 _scroll_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(obj, sd);
 
@@ -1212,7 +1212,7 @@ _scroll_cb(Evas_Object *obj,
 
 static void
 _scroll_animate_start_cb(Evas_Object *obj,
-                         void *data __UNUSED__)
+                         void *data EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(obj, sd);
 
@@ -1222,7 +1222,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
 
 static void
 _scroll_animate_stop_cb(Evas_Object *obj,
-                        void *data __UNUSED__)
+                        void *data EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(obj, sd);
 
@@ -1244,8 +1244,8 @@ _long_press_cb(void *data)
 
 static void
 _mouse_down_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    ELM_MAP_DATA_GET(data, sd);
@@ -1270,8 +1270,8 @@ _mouse_down_cb(void *data,
 
 static void
 _mouse_up_cb(void *data,
-             Evas *evas __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    ELM_MAP_DATA_GET(data, sd);
@@ -1294,8 +1294,8 @@ _mouse_up_cb(void *data,
 
 static void
 _mouse_wheel_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    ELM_MAP_DATA_GET(data, sd);
@@ -1391,9 +1391,9 @@ _icon_dup(Evas_Object *icon,
 
 static void
 _overlay_clicked_cb(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void *ev __UNUSED__)
+                    Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *ev EINA_UNUSED)
 {
    Elm_Map_Overlay *overlay = data;
 
@@ -2661,7 +2661,7 @@ static Eina_Bool
 _xml_route_dump_cb(void *data,
                    Eina_Simple_XML_Type type,
                    const char *value,
-                   unsigned offset __UNUSED__,
+                   unsigned offset EINA_UNUSED,
                    unsigned length)
 {
    Route_Dump *dump = data;
@@ -2718,7 +2718,7 @@ static Eina_Bool
 _xml_name_dump_cb(void *data,
                   Eina_Simple_XML_Type type,
                   const char *value,
-                  unsigned offset __UNUSED__,
+                  unsigned offset EINA_UNUSED,
                   unsigned length)
 {
    Name_Dump *dump = data;
@@ -3203,7 +3203,7 @@ _name_list_request(const Evas_Object *obj,
 
 static Evas_Event_Flags
 _pinch_zoom_start_cb(void *data,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
 
@@ -3259,7 +3259,7 @@ _pinch_rotate_cb(void *data,
 
 static Evas_Event_Flags
 _pinch_rotate_end_cb(void *data,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
 
@@ -5928,15 +5928,15 @@ elm_map_track_remove(Evas_Object *obj,
 
 #else
 EAPI Evas_Object *
-elm_map_track_add(Evas_Object *obj __UNUSED__,
-                  void *emap __UNUSED__)
+elm_map_track_add(Evas_Object *obj EINA_UNUSED,
+                  void *emap EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI void
-elm_map_track_remove(Evas_Object *obj __UNUSED__,
-                     Evas_Object *route __UNUSED__)
+elm_map_track_remove(Evas_Object *obj EINA_UNUSED,
+                     Evas_Object *route EINA_UNUSED)
 {
 }
 #endif

@@ -35,7 +35,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static const char SIG_CLICKED[] = "clicked";
 
-static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__);
+static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static void
 _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it)
@@ -80,9 +80,9 @@ _elm_naviframe_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
 static void
 _item_content_del_cb(void *data,
-                     Evas *e __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -92,9 +92,9 @@ _item_content_del_cb(void *data,
 
 static void
 _item_title_prev_btn_del_cb(void *data,
-                            Evas *e __UNUSED__,
-                            Evas_Object *obj __UNUSED__,
-                            void *event_info __UNUSED__)
+                            Evas *e EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED,
+                            void *event_info EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -104,9 +104,9 @@ _item_title_prev_btn_del_cb(void *data,
 
 static void
 _item_title_next_btn_del_cb(void *data,
-                            Evas *e __UNUSED__,
-                            Evas_Object *obj __UNUSED__,
-                            void *event_info __UNUSED__)
+                            Evas *e EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED,
+                            void *event_info EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -116,9 +116,9 @@ _item_title_next_btn_del_cb(void *data,
 
 static void
 _item_title_icon_del_cb(void *data,
-                        Evas *e __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+                        Evas *e EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -128,9 +128,9 @@ _item_title_icon_del_cb(void *data,
 
 static void
 _title_content_del(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    char buf[1024];
    Elm_Naviframe_Content_Item_Pair *pair = data;
@@ -332,7 +332,7 @@ _elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Naviframe_Item *nit;
    Evas_Object *layout;
@@ -876,7 +876,7 @@ _elm_naviframe_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 static void
 _on_item_back_btn_clicked(void *data,
                           Evas_Object *obj,
-                          void *event_info __UNUSED__)
+                          void *event_info EINA_UNUSED)
 {
    /* Since edje has the event queue, clicked event could be happend
       multiple times on some heavy environment. This callback del will
@@ -1024,9 +1024,9 @@ _elm_naviframe_smart_content_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *list
 
 static void
 _on_item_title_clicked(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -1037,9 +1037,9 @@ _on_item_title_clicked(void *data,
  */
 static void
 _on_item_push_finished(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -1059,9 +1059,9 @@ _on_item_push_finished(void *data,
  */
 static void
 _on_item_pop_finished(void *data,
-                      Evas_Object *obj __UNUSED__,
-                      const char *emission __UNUSED__,
-                      const char *source __UNUSED__)
+                      Evas_Object *obj EINA_UNUSED,
+                      const char *emission EINA_UNUSED,
+                      const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -1079,9 +1079,9 @@ _on_item_pop_finished(void *data,
  */
 static void
 _on_item_show_finished(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
@@ -1101,9 +1101,9 @@ _on_item_show_finished(void *data,
 
 static void
 _on_item_size_hints_changed(void *data,
-                            Evas *e __UNUSED__,
-                            Evas_Object *obj __UNUSED__,
-                            void *event_info __UNUSED__)
+                            Evas *e EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED,
+                            void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
@@ -1125,7 +1125,7 @@ _item_dispmode_set(Elm_Naviframe_Item *it, Evas_Display_Mode dispmode)
 }
 
 static char *
-_access_prev_btn_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+_access_prev_btn_info_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
    return strdup(E_("Back"));
 }
@@ -1218,8 +1218,8 @@ _item_new(Evas_Object *obj,
 }
 
 static void
-_on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__,
-                           Evas_Object *obj, void *event_info __UNUSED__)
+_on_obj_size_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                           Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Naviframe_Item *it;
    Evas_Display_Mode dispmode;

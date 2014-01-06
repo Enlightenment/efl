@@ -46,9 +46,9 @@ _elm_dayselector_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list
 
 static void
 _dayselector_resize(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
@@ -162,9 +162,9 @@ _elm_dayselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 
 static void
 _item_del_cb(void *data,
-             Evas *e __UNUSED__,
+             Evas *e EINA_UNUSED,
              Evas_Object *obj,
-             void *event_info __UNUSED__)
+             void *event_info EINA_UNUSED)
 {
    Eina_List *l;
    char buf[1024];
@@ -193,9 +193,9 @@ _item_del_cb(void *data,
 
 static void
 _item_signal_emit_cb(void *data,
-                     Evas_Object *obj __UNUSED__,
+                     Evas_Object *obj EINA_UNUSED,
                      const char *emission,
-                     const char *source __UNUSED__)
+                     const char *source EINA_UNUSED)
 {
    Elm_Dayselector_Item *it = data;
 
@@ -204,8 +204,8 @@ _item_signal_emit_cb(void *data,
 
 static void
 _item_clicked_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Elm_Dayselector_Item *it = data;
 

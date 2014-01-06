@@ -314,7 +314,7 @@ _item_unselect(Elm_Gen_Item *it)
 
 static void
 _item_mouse_move_cb(void *data,
-                    Evas *evas __UNUSED__,
+                    Evas *evas EINA_UNUSED,
                     Evas_Object *obj,
                     void *event_info)
 {
@@ -484,7 +484,7 @@ _item_highlight(Elm_Gen_Item *it)
 
 static void
 _item_mouse_down_cb(void *data,
-                    Evas *evas __UNUSED__,
+                    Evas *evas EINA_UNUSED,
                     Evas_Object *obj,
                     void *event_info)
 {
@@ -558,8 +558,8 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
 
 static void
 _item_mouse_up_cb(void *data,
-                  Evas *evas __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+                  Evas *evas EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -671,7 +671,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, NULL);
@@ -696,7 +696,7 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, NULL);
@@ -2083,70 +2083,70 @@ _item_del(Elm_Gen_Item *it)
 
 static void
 _scroll_animate_start_cb(Evas_Object *obj,
-                         void *data __UNUSED__)
+                         void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_animate_stop_cb(Evas_Object *obj,
-                        void *data __UNUSED__)
+                        void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
 _edge_left_cb(Evas_Object *obj,
-              void *data __UNUSED__)
+              void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_LEFT, NULL);
 }
 
 static void
 _edge_right_cb(Evas_Object *obj,
-               void *data __UNUSED__)
+               void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_RIGHT, NULL);
 }
 
 static void
 _edge_top_cb(Evas_Object *obj,
-             void *data __UNUSED__)
+             void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_TOP, NULL);
 }
 
 static void
 _edge_bottom_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_BOTTOM, NULL);
 }
 
 static void
 _scroll_page_change_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_PAGE_CHANGE, NULL);
 }
 
 static void
 _scroll_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
 }
@@ -3215,9 +3215,9 @@ _realized_items_update(Eo *obj, void *_pd EINA_UNUSED, va_list *list_unused EINA
 
 static Evas_Object *
 _elm_gengrid_item_label_create(void *data,
-                               Evas_Object *obj __UNUSED__,
+                               Evas_Object *obj EINA_UNUSED,
                                Evas_Object *tooltip,
-                               void *it   __UNUSED__)
+                               void *it   EINA_UNUSED)
 {
    Evas_Object *label = elm_label_add(tooltip);
    if (!label)
@@ -3229,8 +3229,8 @@ _elm_gengrid_item_label_create(void *data,
 
 static void
 _elm_gengrid_item_label_del_cb(void *data,
-                               Evas_Object *obj __UNUSED__,
-                               void *event_info __UNUSED__)
+                               Evas_Object *obj EINA_UNUSED,
+                               void *event_info EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }

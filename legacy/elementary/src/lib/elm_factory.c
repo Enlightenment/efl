@@ -26,10 +26,10 @@ static Eina_Bool _focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction di
 static void _sizing_eval(Evas_Object *obj);
 static void _eval(Evas_Object *obj);
 static void _changed(Evas_Object *obj);
-static void _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void _resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void _child_change(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void _child_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content);
 static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
 static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
@@ -171,7 +171,7 @@ _changed(Evas_Object *obj)
 }
 
 static void
-_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -180,7 +180,7 @@ _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 }
 
 static void
-_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -189,7 +189,7 @@ _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event
 }
 
 static void
-_child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_child_change(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -199,7 +199,7 @@ _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_child_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *fobj = data;
    Widget_Data *wd = elm_widget_data_get(fobj);

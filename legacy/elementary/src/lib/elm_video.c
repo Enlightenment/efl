@@ -116,34 +116,34 @@ _elm_video_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_on_size_hints_changed(void *data __UNUSED__,
-                       Evas *e __UNUSED__,
+_on_size_hints_changed(void *data EINA_UNUSED,
+                       Evas *e EINA_UNUSED,
                        Evas_Object *obj,
-                       void *event_info __UNUSED__)
+                       void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(obj);
 }
 
 static void
 _on_open_done(void *data,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,open", "elm");
 }
 
 static void
 _on_playback_started(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,play", "elm");
 }
 
 static void
 _on_playback_finished(void *data,
-                      Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+                      Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    ELM_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
@@ -152,16 +152,16 @@ _on_playback_finished(void *data,
 
 static void
 _on_aspect_ratio_updated(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
 _on_title_changed(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    const char *title;
 
@@ -174,8 +174,8 @@ _on_title_changed(void *data,
 
 static void
 _on_audio_level_changed(void *data,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    (void)data;
 }

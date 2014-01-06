@@ -129,9 +129,9 @@ _elm_actionslider_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void
 _drag_button_down_cb(void *data,
-                     Evas_Object *o __UNUSED__,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     Evas_Object *o EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    Elm_Actionslider_Smart_Data *sd = eo_data_scope_get(data, MY_CLASS);
 
@@ -140,9 +140,9 @@ _drag_button_down_cb(void *data,
 
 static void
 _drag_button_move_cb(void *data,
-                     Evas_Object *o __UNUSED__,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     Evas_Object *o EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    Evas_Object *obj = data;
    double pos = 0.0;
@@ -249,9 +249,9 @@ _button_animator(void *data)
 
 static void
 _drag_button_up_cb(void *data,
-                   Evas_Object *o __UNUSED__,
-                   const char *emission __UNUSED__,
-                   const char *source __UNUSED__)
+                   Evas_Object *o EINA_UNUSED,
+                   const char *emission EINA_UNUSED,
+                   const char *source EINA_UNUSED)
 {
    Evas_Object *obj = data;
    double position = 0.0;

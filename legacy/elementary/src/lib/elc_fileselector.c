@@ -139,8 +139,8 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 /***  GENLIST/GENGRID "MODEL"  ***/
 static char *
 _itc_text_get(void *data,
-              Evas_Object *obj   __UNUSED__,
-              const char *source __UNUSED__)
+              Evas_Object *obj   EINA_UNUSED,
+              const char *source EINA_UNUSED)
 {
    return elm_entry_utf8_to_markup
             (ecore_file_file_get(data)); /* NOTE this will be free()'d by
@@ -148,7 +148,7 @@ _itc_text_get(void *data,
 }
 
 static Evas_Object *
-_itc_icon_folder_get(void *data __UNUSED__,
+_itc_icon_folder_get(void *data EINA_UNUSED,
                      Evas_Object *obj,
                      const char *source)
 {
@@ -202,7 +202,7 @@ _itc_icon_image_get(void *data,
 }
 
 static Evas_Object *
-_itc_icon_file_get(void *data __UNUSED__,
+_itc_icon_file_get(void *data EINA_UNUSED,
                    Evas_Object *obj,
                    const char *source)
 {
@@ -228,16 +228,16 @@ _itc_icon_file_get(void *data __UNUSED__,
 }
 
 static Eina_Bool
-_itc_state_get(void *data         __UNUSED__,
-               Evas_Object *obj   __UNUSED__,
-               const char *source __UNUSED__)
+_itc_state_get(void *data         EINA_UNUSED,
+               Evas_Object *obj   EINA_UNUSED,
+               const char *source EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static void
 _itc_del(void *data,
-         Evas_Object *obj __UNUSED__)
+         Evas_Object *obj EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }
@@ -323,7 +323,7 @@ _check_mime_type_filter(const Elm_Fileselector_Filter *filter,
 
 static Eina_Bool
 _ls_filter_cb(void *data,
-              Eio_File *handler __UNUSED__,
+              Eio_File *handler EINA_UNUSED,
               const Eina_File_Direct_Info *info)
 {
    Listing_Request *lreq = data;
@@ -560,7 +560,7 @@ _listing_request_cleanup(Listing_Request *lreq)
 }
 
 static void
-_ls_done_cb(void *data, Eio_File *handler __UNUSED__)
+_ls_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    Listing_Request *lreq = data;
 
@@ -573,7 +573,7 @@ _ls_done_cb(void *data, Eio_File *handler __UNUSED__)
 }
 
 static void
-_ls_error_cb(void *data, Eio_File *handler, int error __UNUSED__)
+_ls_error_cb(void *data, Eio_File *handler, int error EINA_UNUSED)
 {
    Listing_Request *lreq = data;
 
@@ -627,7 +627,7 @@ _populate(Evas_Object *obj,
 
 static void
 _on_list_expanded(void *data,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Elm_Object_Item *it = event_info;
@@ -637,8 +637,8 @@ _on_list_expanded(void *data,
 }
 
 static void
-_on_list_contracted(void *data       __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
+_on_list_contracted(void *data       EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
                     void *event_info)
 {
    Elm_Object_Item *it = event_info;
@@ -647,8 +647,8 @@ _on_list_contracted(void *data       __UNUSED__,
 }
 
 static void
-_on_list_expand_req(void *data       __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
+_on_list_expand_req(void *data       EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
                     void *event_info)
 {
    Elm_Object_Item *it = event_info;
@@ -657,8 +657,8 @@ _on_list_expand_req(void *data       __UNUSED__,
 }
 
 static void
-_on_list_contract_req(void *data       __UNUSED__,
-                      Evas_Object *obj __UNUSED__,
+_on_list_contract_req(void *data       EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED,
                       void *event_info)
 {
    Elm_Object_Item *it = event_info;
@@ -686,7 +686,7 @@ _populate_do(void *data)
 
 static void
 _on_item_double_clicked(void *data,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    //This event_info could be a list or gengrid item
@@ -722,7 +722,7 @@ _on_item_double_clicked(void *data,
 
 static void
 _on_item_activated(void *data,
-                   Evas_Object *obj __UNUSED__,
+                   Evas_Object *obj EINA_UNUSED,
                    void *event_info)
 {
    //This event_info could be a list or gengrid item
@@ -769,7 +769,7 @@ _clear_selections(Elm_Fileselector_Smart_Data *sd, Elm_Object_Item *last_selecte
 
 static void
 _on_item_selected(void *data,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    //This event_info could be a list or gengrid item
@@ -874,7 +874,7 @@ _on_item_selected(void *data,
 
 static void
 _on_item_unselected(void *data,
-                    Evas_Object *obj __UNUSED__,
+                    Evas_Object *obj EINA_UNUSED,
                     void *event_info)
 {
    Eina_List *li, *l;
@@ -916,8 +916,8 @@ _on_item_unselected(void *data,
 
 static void
 _on_dir_up(void *data,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    char *parent;
@@ -931,8 +931,8 @@ _on_dir_up(void *data,
 
 static void
 _home(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
@@ -942,7 +942,7 @@ _home(void *data,
 static void
 _current_filter_changed(void *data,
                         Evas_Object *obj,
-                        void *event_info __UNUSED__)
+                        void *event_info EINA_UNUSED)
 {
    Elm_Fileselector_Filter *filter = data;
 
@@ -956,8 +956,8 @@ _current_filter_changed(void *data,
 
 static void
 _ok(void *data,
-    Evas_Object *obj __UNUSED__,
-    void *event_info __UNUSED__)
+    Evas_Object *obj EINA_UNUSED,
+    void *event_info EINA_UNUSED)
 {
    const char *name;
    const char *selection = NULL;
@@ -982,8 +982,8 @@ _ok(void *data,
 
 static void
 _canc(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
@@ -991,9 +991,9 @@ _canc(void *data,
 }
 
 static void
-_on_text_clicked(void *data __UNUSED__,
+_on_text_clicked(void *data EINA_UNUSED,
                  Evas_Object *obj,
-                 void *event_info __UNUSED__)
+                 void *event_info EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
@@ -1012,7 +1012,7 @@ _on_text_clicked(void *data __UNUSED__,
 static void
 _on_text_activated(void *data,
                    Evas_Object *obj,
-                   void *event_info __UNUSED__)
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    const char *p, *path;
@@ -1093,8 +1093,8 @@ end:
 
 static void
 _on_text_unfocused(void *data,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
    _anchors_do(data, sd->path);
@@ -1102,7 +1102,7 @@ _on_text_unfocused(void *data,
 
 static void
 _anchor_clicked(void *data,
-                Evas_Object *obj __UNUSED__,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    Elm_Entry_Anchor_Info *info = event_info;
@@ -1762,7 +1762,7 @@ elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi)
 }
 
 static void
-_multi_select_set(Eo *obj __UNUSED__, void *_pd, va_list *list __UNUSED__)
+_multi_select_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Eina_Bool multi = va_arg(*list, int);
    Elm_Fileselector_Smart_Data *sd = _pd;
@@ -1921,7 +1921,7 @@ elm_fileselector_selected_paths_get(const Evas_Object* obj)
 }
 
 static void
-_selected_paths_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_selected_paths_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const Eina_List **ret = va_arg(*list, const Eina_List**);
    Elm_Fileselector_Smart_Data *sd = _pd;
@@ -2093,7 +2093,7 @@ elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible)
 }
 
 static void
-_hidden_visible_set(Eo *obj __UNUSED__, void *_pd, va_list *list EINA_UNUSED)
+_hidden_visible_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Eina_Bool visible = va_arg(*list, int);
    Elm_Fileselector_Smart_Data *sd = _pd;
@@ -2134,7 +2134,7 @@ elm_fileselector_thumbnail_size_set(Evas_Object *obj,
 }
 
 static void
-_thumbnail_size_set(Eo *obj __UNUSED__, void *_pd, va_list *list EINA_UNUSED)
+_thumbnail_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord w = va_arg(*list, Evas_Coord);
    Evas_Coord h = va_arg(*list, Evas_Coord);
@@ -2182,7 +2182,7 @@ elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort)
 }
 
 static void
-_sort_method_set(Eo *obj __UNUSED__, void *_pd, va_list *list EINA_UNUSED)
+_sort_method_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Fileselector_Sort sort = va_arg(*list, Elm_Fileselector_Sort);
    Elm_Fileselector_Smart_Data *sd = _pd;

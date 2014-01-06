@@ -7,7 +7,7 @@ typedef struct _Elm_Params_Actionslider
 } Elm_Params_Actionslider;
 
 static void
-external_actionslider_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_actionslider_state_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Actionslider *p;
 
@@ -20,7 +20,7 @@ external_actionslider_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED
 }
 
 static Eina_Bool
-external_actionslider_param_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Edje_External_Param *param)
+external_actionslider_param_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Edje_External_Param *param)
 {
    if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
        && (!strcmp(param->name, "label")))
@@ -36,7 +36,7 @@ external_actionslider_param_set(void *data __UNUSED__, Evas_Object *obj __UNUSED
 }
 
 static Eina_Bool
-external_actionslider_param_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, Edje_External_Param *param)
+external_actionslider_param_get(void *data EINA_UNUSED, const Evas_Object *obj EINA_UNUSED, Edje_External_Param *param)
 {
    if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
        && (!strcmp(param->name, "label")))
@@ -52,7 +52,7 @@ external_actionslider_param_get(void *data __UNUSED__, const Evas_Object *obj __
 }
 
 static void *
-external_actionslider_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_actionslider_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Actionslider *mem;
    Edje_External_Param *param;
@@ -74,8 +74,8 @@ external_actionslider_params_parse(void *data __UNUSED__, Evas_Object *obj __UNU
    return mem;
 }
 
-static Evas_Object *external_actionslider_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_actionslider_content_get(void *data EINA_UNUSED,
+		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;

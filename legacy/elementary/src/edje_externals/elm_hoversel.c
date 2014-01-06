@@ -10,7 +10,7 @@ typedef struct _Elm_Params_Hoversel
 } Elm_Params_Hoversel;
 
 static void
-external_hoversel_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_hoversel_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Hoversel *p;
 
@@ -27,7 +27,7 @@ external_hoversel_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
 }
 
 static Eina_Bool
-external_hoversel_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_hoversel_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -63,7 +63,7 @@ external_hoversel_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
 }
 
 static Eina_Bool
-external_hoversel_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_hoversel_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -94,7 +94,7 @@ external_hoversel_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
 }
 
 static void *
-external_hoversel_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_List *params)
+external_hoversel_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Hoversel *mem;
    Edje_External_Param *param;
@@ -120,8 +120,8 @@ external_hoversel_params_parse(void *data __UNUSED__, Evas_Object *obj, const Ei
    return mem;
 }
 
-static Evas_Object *external_hoversel_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_hoversel_content_get(void *data EINA_UNUSED,
+		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
 	ERR("No content.");
 	return NULL;

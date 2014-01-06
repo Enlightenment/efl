@@ -713,7 +713,7 @@ _states_reset(Elm_Gesture_Layer_Smart_Data *sd)
  * @ingroup Elm_Gesture_Layer
  */
 static Eina_Bool
-_pointer_event_make(void *data __UNUSED__,
+_pointer_event_make(void *data EINA_UNUSED,
                     void *event_info,
                     Evas_Callback_Type event_type,
                     Pointer_Event *pe)
@@ -860,8 +860,8 @@ _event_history_add(Evas_Object *obj,
  */
 static void
 _mouse_down_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    if (((Evas_Event_Mouse_Down *)event_info)->button != 1)
@@ -872,8 +872,8 @@ _mouse_down_cb(void *data,
 
 static void
 _mouse_move_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_MOVE);
@@ -881,8 +881,8 @@ _mouse_move_cb(void *data,
 
 static void
 _key_down_cb(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    _event_process(data, obj, event_info, EVAS_CALLBACK_KEY_DOWN);
@@ -890,8 +890,8 @@ _key_down_cb(void *data,
 
 static void
 _key_up_cb(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
            void *event_info)
 {
    _event_process(data, obj, event_info, EVAS_CALLBACK_KEY_UP);
@@ -899,8 +899,8 @@ _key_up_cb(void *data,
 
 static void
 _mouse_up_cb(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    if (((Evas_Event_Mouse_Up *)event_info)->button != 1)
@@ -911,8 +911,8 @@ _mouse_up_cb(void *data,
 
 static void
 _mouse_wheel_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    _event_process(data, obj, event_info, EVAS_CALLBACK_MOUSE_WHEEL);
@@ -920,8 +920,8 @@ _mouse_wheel_cb(void *data,
 
 static void
 _multi_down_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    /* Skip the mouse duplicates. */
@@ -932,8 +932,8 @@ _multi_down_cb(void *data,
 
 static void
 _multi_move_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    /* Skip the mouse duplicates. */
@@ -944,8 +944,8 @@ _multi_move_cb(void *data,
 
 static void
 _multi_up_cb(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    /* Skip the mouse duplicates. */
@@ -956,9 +956,9 @@ _multi_up_cb(void *data,
 
 static void
 _target_del_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    _callbacks_unregister(data);
    ELM_GESTURE_LAYER_DATA_GET(data, sd);
@@ -1338,7 +1338,7 @@ _continues_gestures_restart(void *data,
  */
 static void
 _event_process(void *data,
-               Evas_Object *obj __UNUSED__,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info,
                Evas_Callback_Type event_type)
 {

@@ -103,7 +103,7 @@ _access_index_register(Evas_Object *obj)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    const char *txt = NULL;
 
@@ -687,8 +687,8 @@ _sel_eval(Evas_Object *obj,
 
 static void
 _on_mouse_down(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *o __UNUSED__,
+               Evas *e EINA_UNUSED,
+               Evas_Object *o EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -717,8 +717,8 @@ _on_mouse_down(void *data,
 
 static void
 _on_mouse_up(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *o __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *o EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -747,8 +747,8 @@ _on_mouse_up(void *data,
 
 static void
 _on_mouse_move(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *o __UNUSED__,
+               Evas *e EINA_UNUSED,
+               Evas_Object *o EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
@@ -798,9 +798,9 @@ _on_mouse_move(void *data,
 
 static void
 _on_mouse_in_access(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *o __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas *e EINA_UNUSED,
+                    Evas_Object *o EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_INDEX_DATA_GET(data, sd);
 
@@ -815,8 +815,8 @@ _on_mouse_in_access(void *data,
 
 static void
 _on_mouse_move_access(void *data,
-                      Evas *e __UNUSED__,
-                      Evas_Object *o __UNUSED__,
+                      Evas *e EINA_UNUSED,
+                      Evas_Object *o EINA_UNUSED,
                       void *event_info)
 {
 
@@ -852,9 +852,9 @@ _on_mouse_move_access(void *data,
 
 static void
 _on_mouse_out_access(void *data,
-                      Evas *e __UNUSED__,
-                      Evas_Object *o __UNUSED__,
-                      void *event_info __UNUSED__)
+                      Evas *e EINA_UNUSED,
+                      Evas_Object *o EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    ELM_INDEX_DATA_GET(data, sd);
 
@@ -863,10 +863,10 @@ _on_mouse_out_access(void *data,
 }
 
 static void
-_index_resize_cb(void *data __UNUSED__,
-                 Evas *e __UNUSED__,
+_index_resize_cb(void *data EINA_UNUSED,
+                 Evas *e EINA_UNUSED,
                  Evas_Object *obj,
-                 void *event_info __UNUSED__)
+                 void *event_info EINA_UNUSED)
 {
    ELM_INDEX_DATA_GET_OR_RETURN(obj, sd);
 
@@ -1674,7 +1674,7 @@ elm_index_delay_change_time_set(Evas_Object *obj, double delay_change_time)
 }
 
 static void
-_delay_change_time_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_delay_change_time_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double dtime = va_arg(*list, double);
    Elm_Index_Smart_Data *sd = _pd;
@@ -1691,7 +1691,7 @@ elm_index_delay_change_time_get(const Evas_Object *obj)
 }
 
 static void
-_delay_change_time_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_delay_change_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double *ret = va_arg(*list, double *);
    Elm_Index_Smart_Data *sd = _pd;
@@ -1737,7 +1737,7 @@ elm_index_omit_enabled_get(const Evas_Object *obj)
 }
 
 static void
-_omit_enabled_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_omit_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Index_Smart_Data *sd = _pd;

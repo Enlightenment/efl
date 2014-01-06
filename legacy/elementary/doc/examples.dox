@@ -4521,7 +4521,7 @@
  * and the entry itself doesn't, yet, support all the needed capabilities to
  * make this simpler. We begin by getting the format we are using in our
  * function from the button pressed.
- * @skip  _format_change_cb(void *data, Evas_Object *obj, void *event __UNUSED__)
+ * @skip  _format_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED))
  * @until sizeof(fmt_close)
  *
  * Next we need to find out if we need to insert an opening or a closing tag.

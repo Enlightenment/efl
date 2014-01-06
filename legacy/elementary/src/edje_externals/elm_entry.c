@@ -43,7 +43,7 @@ _entry_line_wrap_choices_setting_get(const char *line_wrap_str)
 }
 
 static void
-external_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_entry_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Entry *p;
    Eina_Bool hbounce, vbounce;
@@ -85,7 +85,7 @@ external_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
 }
 
 static Eina_Bool
-external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_entry_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -185,7 +185,7 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 }
 
 static Eina_Bool
-external_entry_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_entry_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -278,7 +278,7 @@ external_entry_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 }
 
 static void *
-external_entry_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_List *params)
+external_entry_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Entry *mem;
    Edje_External_Param *param;
@@ -337,8 +337,8 @@ external_entry_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_
    return mem;
 }
 
-static Evas_Object *external_entry_content_get(void *data __UNUSED__,
-                                               const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_entry_content_get(void *data EINA_UNUSED,
+                                               const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;

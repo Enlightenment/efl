@@ -70,16 +70,16 @@ _visuals_set(Evas_Object *obj)
 
 static void
 _block_clicked_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_BLOCK_CLICKED, NULL);
 }
 
 static void
 _timeout_cb(void *data,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
    evas_object_smart_callback_call(data, SIG_TIMEOUT, NULL);
@@ -98,10 +98,10 @@ _access_object_get(const Evas_Object *obj, const char* part)
 }
 
 static void
-_on_show(void *data __UNUSED__,
-         Evas *e __UNUSED__,
+_on_show(void *data EINA_UNUSED,
+         Evas *e EINA_UNUSED,
          Evas_Object *obj,
-         void *event_info __UNUSED__)
+         void *event_info EINA_UNUSED)
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
@@ -120,10 +120,10 @@ _on_show(void *data __UNUSED__,
 }
 
 static void
-_on_hide(void *data __UNUSED__,
-            Evas *e __UNUSED__,
+_on_hide(void *data EINA_UNUSED,
+            Evas *e EINA_UNUSED,
             Evas_Object *obj,
-            void *event_info __UNUSED__)
+            void *event_info EINA_UNUSED)
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
@@ -173,9 +173,9 @@ _scroller_size_calc(Evas_Object *obj)
 
 static void
 _size_hints_changed_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
@@ -481,9 +481,9 @@ _elm_popup_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
 static void
 _on_content_del(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    ELM_POPUP_DATA_GET(data, sd);
 
@@ -493,9 +493,9 @@ _on_content_del(void *data,
 
 static void
 _on_text_content_del(void *data,
-                     Evas *e __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    ELM_POPUP_DATA_GET(data, sd);
 
@@ -505,9 +505,9 @@ _on_text_content_del(void *data,
 
 static void
 _on_table_del(void *data,
-              Evas *e __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    ELM_POPUP_DATA_GET(data, sd);
 
@@ -520,9 +520,9 @@ _on_table_del(void *data,
 
 static void
 _on_button_del(void *data,
-               Evas *e __UNUSED__,
+               Evas *e EINA_UNUSED,
                Evas_Object *obj,
-               void *event_info __UNUSED__)
+               void *event_info EINA_UNUSED)
 {
    int i;
 
@@ -597,18 +597,18 @@ _button_remove(Evas_Object *obj,
 
 static void
 _layout_change_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
-_restack_cb(void *data __UNUSED__,
-            Evas *e __UNUSED__,
+_restack_cb(void *data EINA_UNUSED,
+            Evas *e EINA_UNUSED,
             Evas_Object *obj,
-            void *event_info __UNUSED__)
+            void *event_info EINA_UNUSED)
 {
    ELM_POPUP_DATA_GET(obj, sd);
 
@@ -659,9 +659,9 @@ _list_add(Evas_Object *obj)
 
 static void
 _item_select_cb(void *data,
-                Evas_Object *obj __UNUSED__,
-                const char *emission __UNUSED__,
-                const char *source __UNUSED__)
+                Evas_Object *obj EINA_UNUSED,
+                const char *emission EINA_UNUSED,
+                const char *source EINA_UNUSED)
 {
    Elm_Popup_Item *it = data;
 

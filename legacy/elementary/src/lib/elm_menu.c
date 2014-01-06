@@ -325,27 +325,27 @@ _item_content_get_hook(const Elm_Object_Item *it,
 
 static void
 _menu_resize_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }
 
 static void
 _parent_resize_cb(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }
 
 static void
 _parent_del_cb(void *data,
-               Evas *e __UNUSED__,
+               Evas *e EINA_UNUSED,
                Evas_Object *obj,
-               void *event_info __UNUSED__)
+               void *event_info EINA_UNUSED)
 {
    ELM_MENU_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
@@ -357,9 +357,9 @@ _parent_del_cb(void *data,
 
 static void
 _item_move_resize_cb(void *data,
-                     Evas *e __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Elm_Menu_Item *item = data;
 
@@ -368,8 +368,8 @@ _item_move_resize_cb(void *data,
 
 static void
 _menu_hide(void *data,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    Eina_List *l;
    Elm_Menu_Item *item2;
@@ -400,9 +400,9 @@ _hover_dismissed_cb(void *data,
 
 static void
 _submenu_open_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 const char *emission __UNUSED__,
-                 const char *source __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
 {
    Elm_Menu_Item *item = data;
 
@@ -421,9 +421,9 @@ _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item)
 
 static void
 _menu_item_select_cb(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     const char *emission __UNUSED__,
-                     const char *source __UNUSED__)
+                     Evas_Object *obj EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    Elm_Menu_Item *item = data;
 
@@ -439,9 +439,9 @@ _menu_item_select_cb(void *data,
 
 static void
 _menu_item_activate_cb(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    Eina_List *l;
    Elm_Menu_Item *item2;
@@ -469,9 +469,9 @@ _menu_item_activate_cb(void *data,
 
 static void
 _menu_item_inactivate_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Elm_Menu_Item *item = data;
 

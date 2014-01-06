@@ -61,8 +61,8 @@ _elm_bubble_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 
 static void
 _on_mouse_up(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -155,7 +155,7 @@ _elm_bubble_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf;

@@ -249,8 +249,8 @@ _icon_thumb_apply(Elm_Icon_Smart_Data *sd)
 
 static Eina_Bool
 _icon_thumb_apply_cb(void *data,
-                     int type __UNUSED__,
-                     void *ev __UNUSED__)
+                     int type EINA_UNUSED,
+                     void *ev EINA_UNUSED)
 {
    ELM_ICON_DATA_GET(data, sd);
 
@@ -547,9 +547,9 @@ _elm_icon_standard_set(Evas_Object *obj,
 
 static void
 _elm_icon_standard_resize_cb(void *data,
-                             Evas *e __UNUSED__,
+                             Evas *e EINA_UNUSED,
                              Evas_Object *obj,
-                             void *event_info __UNUSED__)
+                             void *event_info EINA_UNUSED)
 {
    ELM_ICON_DATA_GET(data, sd);
    const char *refup = eina_stringshare_ref(sd->stdicon);
@@ -563,9 +563,9 @@ _elm_icon_standard_resize_cb(void *data,
 
 static void
 _elm_icon_thumb_resize_cb(void *data,
-                          Evas *e __UNUSED__,
+                          Evas *e EINA_UNUSED,
                           Evas_Object *obj,
-                          void *event_info __UNUSED__)
+                          void *event_info EINA_UNUSED)
 {
    ELM_ICON_DATA_GET(data, sd);
 
@@ -628,7 +628,7 @@ _elm_icon_signal_emit(Evas_Object *obj,
 
 static void
 _edje_signal_callback(void *data,
-                      Evas_Object *obj __UNUSED__,
+                      Evas_Object *obj EINA_UNUSED,
                       const char *emission,
                       const char *source)
 {

@@ -169,9 +169,9 @@ _calc(Evas_Object *obj)
 
 static void
 _changed_size_hints_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    _calc(data);
 }
@@ -201,18 +201,18 @@ _elm_notify_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
 static void
 _block_area_clicked_cb(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_BLOCK_CLICKED, NULL);
 }
 
 static void
-_restack_cb(void *data __UNUSED__,
-            Evas *e __UNUSED__,
+_restack_cb(void *data EINA_UNUSED,
+            Evas *e EINA_UNUSED,
             Evas_Object *obj,
-            void *event_info __UNUSED__)
+            void *event_info EINA_UNUSED)
 {
    ELM_NOTIFY_DATA_GET(obj, sd);
 
@@ -318,9 +318,9 @@ _elm_notify_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static void
 _parent_del_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    elm_notify_parent_set(data, NULL);
    evas_object_hide(data);
@@ -328,9 +328,9 @@ _parent_del_cb(void *data,
 
 static void
 _parent_hide_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
 }
@@ -460,9 +460,9 @@ _elm_notify_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
 static void
 _hide_finished_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    ELM_NOTIFY_DATA_GET(data, sd);
    sd->had_hidden = EINA_TRUE;

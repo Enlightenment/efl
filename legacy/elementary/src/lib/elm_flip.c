@@ -173,9 +173,9 @@ _elm_flip_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
 
 static void
 _changed_size_hints_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
 }
@@ -262,10 +262,10 @@ _slice_new(Evas_Object *container_obj,
 static void
 _slice_apply(Elm_Flip_Smart_Data *sd,
              Slice *sl,
-             Evas_Coord x __UNUSED__,
-             Evas_Coord y __UNUSED__,
+             Evas_Coord x EINA_UNUSED,
+             Evas_Coord y EINA_UNUSED,
              Evas_Coord w,
-             Evas_Coord h __UNUSED__,
+             Evas_Coord h EINA_UNUSED,
              Evas_Coord ox,
              Evas_Coord oy,
              Evas_Coord ow,
@@ -317,7 +317,7 @@ _slice_apply(Elm_Flip_Smart_Data *sd,
 }
 
 static void
-_slice_3d(Elm_Flip_Smart_Data *sd __UNUSED__,
+_slice_3d(Elm_Flip_Smart_Data *sd EINA_UNUSED,
           Slice *sl,
           Evas_Coord x,
           Evas_Coord y,
@@ -345,7 +345,7 @@ _slice_3d(Elm_Flip_Smart_Data *sd __UNUSED__,
 }
 
 static void
-_slice_light(Elm_Flip_Smart_Data *sd __UNUSED__,
+_slice_light(Elm_Flip_Smart_Data *sd EINA_UNUSED,
              Slice *sl,
              Evas_Coord x,
              Evas_Coord y,
@@ -381,7 +381,7 @@ _slice_light(Elm_Flip_Smart_Data *sd __UNUSED__,
 }
 
 static void
-_slice_xyz(Elm_Flip_Smart_Data *sd __UNUSED__,
+_slice_xyz(Elm_Flip_Smart_Data *sd EINA_UNUSED,
            Slice *sl,
            double xx1,
            double yy1,
@@ -403,7 +403,7 @@ _slice_xyz(Elm_Flip_Smart_Data *sd __UNUSED__,
 }
 
 static void
-_slice_uv(Elm_Flip_Smart_Data *sd __UNUSED__,
+_slice_uv(Elm_Flip_Smart_Data *sd EINA_UNUSED,
           Slice *sl,
           double u1,
           double v1,
@@ -1373,19 +1373,19 @@ _flip(Evas_Object *obj)
  * happens that smarts callbacks on them happen before we have the new
  * values, so using event callbacks instead */
 static void
-_on_move(void *data __UNUSED__,
-         Evas *e __UNUSED__,
+_on_move(void *data EINA_UNUSED,
+         Evas *e EINA_UNUSED,
          Evas_Object *obj,
-         void *event_info __UNUSED__)
+         void *event_info EINA_UNUSED)
 {
    _configure(obj);
 }
 
 static void
-_on_resize(void *data __UNUSED__,
-           Evas *e __UNUSED__,
+_on_resize(void *data EINA_UNUSED,
+           Evas *e EINA_UNUSED,
            Evas_Object *obj,
-           void *event_info __UNUSED__)
+           void *event_info EINA_UNUSED)
 {
    _configure(obj);
 }
@@ -1579,8 +1579,8 @@ _update_job(void *data)
 
 static void
 _down_cb(void *data,
-         Evas *e __UNUSED__,
-         Evas_Object *obj __UNUSED__,
+         Evas *e EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
          void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1605,8 +1605,8 @@ _down_cb(void *data,
 
 static void
 _up_cb(void *data,
-       Evas *e __UNUSED__,
-       Evas_Object *obj __UNUSED__,
+       Evas *e EINA_UNUSED,
+       Evas_Object *obj EINA_UNUSED,
        void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -1664,8 +1664,8 @@ _up_cb(void *data,
 
 static void
 _move_cb(void *data,
-         Evas *e __UNUSED__,
-         Evas_Object *obj __UNUSED__,
+         Evas *e EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
          void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
@@ -1939,9 +1939,9 @@ _front_visible_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
 EAPI void
 elm_flip_perspective_set(Evas_Object *obj,
-                         Evas_Coord foc __UNUSED__,
-                         Evas_Coord x __UNUSED__,
-                         Evas_Coord y __UNUSED__)
+                         Evas_Coord foc EINA_UNUSED,
+                         Evas_Coord x EINA_UNUSED,
+                         Evas_Coord y EINA_UNUSED)
 {
    ELM_FLIP_CHECK(obj);
 }

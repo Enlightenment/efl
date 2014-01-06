@@ -40,7 +40,7 @@ elm_suite()
 }
 
 int
-main(int argc __UNUSED__, char **argv __UNUSED__)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    int failed_count;
    Suite *s;

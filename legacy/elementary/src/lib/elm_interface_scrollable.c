@@ -255,9 +255,9 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
 static void
 _elm_pan_content_del_cb(void *data,
-                        Evas *e __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+                        Evas *e EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    Elm_Pan_Smart_Data *psd;
 
@@ -270,9 +270,9 @@ _elm_pan_content_del_cb(void *data,
 
 static void
 _elm_pan_content_resize_cb(void *data,
-                           Evas *e __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
 {
    Elm_Pan_Smart_Data *psd;
    Evas_Coord w, h;
@@ -1045,9 +1045,9 @@ _elm_scroll_policy_signal_emit(Elm_Scrollable_Smart_Interface_Data *sid)
 
 static void
 _elm_scroll_reload_cb(void *data,
-                      Evas_Object *obj __UNUSED__,
-                      const char *emission __UNUSED__,
-                      const char *source __UNUSED__)
+                      Evas_Object *obj EINA_UNUSED,
+                      const char *emission EINA_UNUSED,
+                      const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    _elm_scroll_policy_signal_emit(sid);
@@ -1055,9 +1055,9 @@ _elm_scroll_reload_cb(void *data,
 
 static void
 _elm_scroll_vbar_drag_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1069,9 +1069,9 @@ _elm_scroll_vbar_drag_cb(void *data,
 
 static void
 _elm_scroll_vbar_press_cb(void *data,
-                          Evas_Object *obj __UNUSED__,
-                          const char *emission __UNUSED__,
-                          const char *source __UNUSED__)
+                          Evas_Object *obj EINA_UNUSED,
+                          const char *emission EINA_UNUSED,
+                          const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1081,9 +1081,9 @@ _elm_scroll_vbar_press_cb(void *data,
 
 static void
 _elm_scroll_vbar_unpress_cb(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1093,9 +1093,9 @@ _elm_scroll_vbar_unpress_cb(void *data,
 
 static void
 _elm_scroll_edje_drag_v_start_cb(void *data,
-                                 Evas_Object *obj __UNUSED__,
-                                 const char *emission __UNUSED__,
-                                 const char *source __UNUSED__)
+                                 Evas_Object *obj EINA_UNUSED,
+                                 const char *emission EINA_UNUSED,
+                                 const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1106,9 +1106,9 @@ _elm_scroll_edje_drag_v_start_cb(void *data,
 
 static void
 _elm_scroll_edje_drag_v_stop_cb(void *data,
-                                Evas_Object *obj __UNUSED__,
-                                const char *emission __UNUSED__,
-                                const char *source __UNUSED__)
+                                Evas_Object *obj EINA_UNUSED,
+                                const char *emission EINA_UNUSED,
+                                const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1119,9 +1119,9 @@ _elm_scroll_edje_drag_v_stop_cb(void *data,
 
 static void
 _elm_scroll_edje_drag_v_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1130,9 +1130,9 @@ _elm_scroll_edje_drag_v_cb(void *data,
 
 static void
 _elm_scroll_hbar_drag_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1144,9 +1144,9 @@ _elm_scroll_hbar_drag_cb(void *data,
 
 static void
 _elm_scroll_hbar_press_cb(void *data,
-                          Evas_Object *obj __UNUSED__,
-                          const char *emission __UNUSED__,
-                          const char *source __UNUSED__)
+                          Evas_Object *obj EINA_UNUSED,
+                          const char *emission EINA_UNUSED,
+                          const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1156,9 +1156,9 @@ _elm_scroll_hbar_press_cb(void *data,
 
 static void
 _elm_scroll_hbar_unpress_cb(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1168,9 +1168,9 @@ _elm_scroll_hbar_unpress_cb(void *data,
 
 static void
 _elm_scroll_edje_drag_h_start_cb(void *data,
-                                 Evas_Object *obj __UNUSED__,
-                                 const char *emission __UNUSED__,
-                                 const char *source __UNUSED__)
+                                 Evas_Object *obj EINA_UNUSED,
+                                 const char *emission EINA_UNUSED,
+                                 const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1181,9 +1181,9 @@ _elm_scroll_edje_drag_h_start_cb(void *data,
 
 static void
 _elm_scroll_edje_drag_h_stop_cb(void *data,
-                                Evas_Object *obj __UNUSED__,
-                                const char *emission __UNUSED__,
-                                const char *source __UNUSED__)
+                                Evas_Object *obj EINA_UNUSED,
+                                const char *emission EINA_UNUSED,
+                                const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1194,9 +1194,9 @@ _elm_scroll_edje_drag_h_stop_cb(void *data,
 
 static void
 _elm_scroll_edje_drag_h_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1916,8 +1916,8 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
 
 static void
 _elm_scroll_wheel_event_cb(void *data,
-                           Evas *e __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
                            void *event_info)
 {
    Elm_Scrollable_Smart_Interface_Data *sid;
@@ -1990,7 +1990,7 @@ _elm_scroll_wheel_event_cb(void *data,
 
 static Eina_Bool
 _elm_scroll_post_event_up(void *data,
-                          Evas *e __UNUSED__)
+                          Evas *e EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -2346,7 +2346,7 @@ _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
 static void
 _elm_scroll_mouse_up_event_cb(void *data,
                               Evas *e,
-                              Evas_Object *obj __UNUSED__,
+                              Evas_Object *obj EINA_UNUSED,
                               void *event_info)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -2637,8 +2637,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
 
 static void
 _elm_scroll_mouse_down_event_cb(void *data,
-                                Evas *e __UNUSED__,
-                                Evas_Object *obj __UNUSED__,
+                                Evas *e EINA_UNUSED,
+                                Evas_Object *obj EINA_UNUSED,
                                 void *event_info)
 {
    Elm_Scrollable_Smart_Interface_Data *sid;
@@ -2782,7 +2782,7 @@ _elm_scroll_can_scroll(Elm_Scrollable_Smart_Interface_Data *sid,
 
 static Eina_Bool
 _elm_scroll_post_event_move(void *data,
-                            Evas *e __UNUSED__)
+                            Evas *e EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Eina_Bool horiz, vert;
@@ -3070,7 +3070,7 @@ _elm_scroll_on_hold_animator(void *data)
 static void
 _elm_scroll_mouse_move_event_cb(void *data,
                                 Evas *e,
-                                Evas_Object *obj __UNUSED__,
+                                Evas_Object *obj EINA_UNUSED,
                                 void *event_info)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -3419,9 +3419,9 @@ _elm_scroll_reconfigure(Elm_Scrollable_Smart_Interface_Data *sid)
 
 static void
 _on_edje_move(void *data,
-              Evas *e __UNUSED__,
+              Evas *e EINA_UNUSED,
               Evas_Object *edje_obj,
-              void *event_info __UNUSED__)
+              void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    int x, y;
@@ -3436,9 +3436,9 @@ _on_edje_move(void *data,
 
 static void
 _on_edje_resize(void *data,
-                Evas *e __UNUSED__,
+                Evas *e EINA_UNUSED,
                 Evas_Object *edje_obj,
-                void *event_info __UNUSED__)
+                void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    int w, h;
@@ -3691,9 +3691,9 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
 
 static void
 _elm_scroll_pan_resized_cb(void *data,
-                          Evas *e __UNUSED__,
-                          Evas_Object *obj __UNUSED__,
-                          void *event_info __UNUSED__)
+                          Evas *e EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -3709,8 +3709,8 @@ _elm_scroll_pan_resized_cb(void *data,
 /* even external pan objects get this */
 static void
 _elm_scroll_pan_changed_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -3733,9 +3733,9 @@ _elm_scroll_pan_changed_cb(void *data,
 
 static void
 _elm_scroll_content_del_cb(void *data,
-                           Evas *e __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -4540,7 +4540,7 @@ _elm_scroll_gravity_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *lis
 }
 
 static void
-_elm_scroll_movement_block_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_elm_scroll_movement_block_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
 
@@ -4551,7 +4551,7 @@ _elm_scroll_movement_block_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
 }
 
 static void
-_elm_scroll_movement_block_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_elm_scroll_movement_block_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = _pd;
    Elm_Scroller_Movement_Block *block = va_arg(*list,

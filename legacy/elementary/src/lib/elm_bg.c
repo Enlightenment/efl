@@ -94,9 +94,9 @@ _elm_bg_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static void
 _on_resize(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
@@ -143,8 +143,8 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
 static void
 _elm_bg_file_reload(void *data, Evas_Object *obj,
-                    const char *emission __UNUSED__,
-                    const char *source __UNUSED__)
+                    const char *emission EINA_UNUSED,
+                    const char *source EINA_UNUSED)
 {
    Evas_Object *bg = data;
    const char *file;

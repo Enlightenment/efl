@@ -665,18 +665,18 @@ _elm_ctxpopup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static void
 _on_parent_del(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    evas_object_del(data);
 }
 
 static void
 _on_parent_move(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
@@ -687,9 +687,9 @@ _on_parent_move(void *data,
 
 static void
 _on_parent_resize(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
@@ -716,9 +716,9 @@ _parent_detach(Evas_Object *obj)
 
 static void
 _on_content_resized(void *data,
-                    Evas *e __UNUSED__,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas *e EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
@@ -951,9 +951,9 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 
 static void
 _bg_clicked_cb(void *data,
-               Evas_Object *obj __UNUSED__,
-               const char *emission __UNUSED__,
-               const char *source __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               const char *emission EINA_UNUSED,
+               const char *source EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
@@ -961,10 +961,10 @@ _bg_clicked_cb(void *data,
 }
 
 static void
-_on_show(void *data __UNUSED__,
-         Evas *e __UNUSED__,
+_on_show(void *data EINA_UNUSED,
+         Evas *e EINA_UNUSED,
          Evas_Object *obj,
-         void *event_info __UNUSED__)
+         void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(obj, sd);
 
@@ -992,10 +992,10 @@ _on_show(void *data __UNUSED__,
 }
 
 static void
-_on_hide(void *data __UNUSED__,
-         Evas *e __UNUSED__,
+_on_hide(void *data EINA_UNUSED,
+         Evas *e EINA_UNUSED,
          Evas_Object *obj,
-         void *event_info __UNUSED__)
+         void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(obj, sd);
 
@@ -1009,10 +1009,10 @@ _on_hide(void *data __UNUSED__,
 }
 
 static void
-_on_move(void *data __UNUSED__,
-         Evas *e __UNUSED__,
+_on_move(void *data EINA_UNUSED,
+         Evas *e EINA_UNUSED,
          Evas_Object *obj,
-         void *event_info __UNUSED__)
+         void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(obj, sd);
 
@@ -1023,9 +1023,9 @@ _on_move(void *data __UNUSED__,
 
 static void
 _hide_finished_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  const char *emission __UNUSED__,
-                  const char *source __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
 {
    evas_object_hide(data);
    evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
@@ -1033,9 +1033,9 @@ _hide_finished_cb(void *data,
 
 static void
 _list_resize_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
@@ -1051,10 +1051,10 @@ _list_resize_cb(void *data,
 }
 
 static void
-_ctxpopup_restack_cb(void *data __UNUSED__,
-                     Evas *e __UNUSED__,
+_ctxpopup_restack_cb(void *data EINA_UNUSED,
+                     Evas *e EINA_UNUSED,
                      Evas_Object *obj,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(obj, sd);
    evas_object_stack_below(sd->bg, obj);
@@ -1356,7 +1356,7 @@ elm_ctxpopup_item_append(Evas_Object *obj,
 }
 
 static void
-_item_wrap_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Ctxpopup_Item *item = data;
    if (!item->wcb.org_func_cb) return;

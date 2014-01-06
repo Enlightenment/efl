@@ -112,9 +112,9 @@ _item_next_get(Elm_Slideshow_Item *item)
 
 static void
 _on_size_hints_changed(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
@@ -230,9 +230,9 @@ _item_realize(Elm_Slideshow_Item *item)
 
 static void
 _on_slideshow_end(void *data,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj EINA_UNUSED,
                   const char *emission,
-                  const char *source __UNUSED__)
+                  const char *source EINA_UNUSED)
 {
    Elm_Slideshow_Item *item;
    ELM_SLIDESHOW_DATA_GET(data, sd);

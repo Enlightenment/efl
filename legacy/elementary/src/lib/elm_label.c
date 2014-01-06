@@ -210,9 +210,9 @@ _elm_label_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 
 static void
 _on_label_resize(void *data,
-                 Evas *e __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    ELM_LABEL_DATA_GET(data, sd);
 
@@ -354,7 +354,7 @@ _elm_label_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -365,8 +365,8 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
-_on_slide_end(void *data, Evas_Object *obj __UNUSED__,
-              const char *emission __UNUSED__, const char *source __UNUSED__)
+_on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
+              const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    ELM_LABEL_DATA_GET(data, sd);
 
@@ -615,7 +615,7 @@ elm_label_slide_mode_set(Evas_Object *obj, Elm_Label_Slide_Mode mode)
 }
 
 static void
-_slide_mode_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_slide_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Label_Slide_Mode mode = va_arg(*list, Elm_Label_Slide_Mode);
    Elm_Label_Smart_Data *sd = _pd;
@@ -632,7 +632,7 @@ elm_label_slide_mode_get(const Evas_Object *obj)
 }
 
 static void
-_slide_mode_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_slide_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Label_Slide_Mode *ret = va_arg(*list, Elm_Label_Slide_Mode *);
    Elm_Label_Smart_Data *sd = _pd;
@@ -666,7 +666,7 @@ elm_label_slide_duration_set(Evas_Object *obj, double duration)
 }
 
 static void
-_slide_duration_set(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_slide_duration_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    double duration = va_arg(*list, double);
    Elm_Label_Smart_Data *sd = _pd;
@@ -690,7 +690,7 @@ elm_label_slide_go(Evas_Object *obj)
 }
 
 static void
-_slide_go(Eo *obj, void *_pd __UNUSED__, va_list *list __UNUSED__)
+_slide_go(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    _label_slide_change(obj);
    elm_layout_sizing_eval(obj);

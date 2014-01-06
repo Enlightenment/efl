@@ -17,7 +17,7 @@ static char *tmpf = NULL;
 static int tmpfd = -1;
 
 static Eina_Bool
-_exe_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev = event;
 
@@ -38,7 +38,7 @@ _exe_del(void *data __UNUSED__, int type __UNUSED__, void *event)
 
 // module api funcs needed
 EAPI int
-elm_modapi_init(void *m __UNUSED__)
+elm_modapi_init(void *m EINA_UNUSED)
 {
    exe_exit_handler =
       ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
@@ -47,7 +47,7 @@ elm_modapi_init(void *m __UNUSED__)
 }
 
 EAPI int
-elm_modapi_shutdown(void *m __UNUSED__)
+elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    if (exe_exit_handler)
      {

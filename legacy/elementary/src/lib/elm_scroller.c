@@ -456,9 +456,9 @@ _show_region_hook(void *data,
 
 static void
 _changed_size_hints_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
@@ -487,149 +487,149 @@ _elm_scroller_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
 static void
 _resize_cb(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }
 
 static void
 _edge_left_cb(Evas_Object *obj,
-              void *data __UNUSED__)
+              void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_LEFT, NULL);
 }
 
 static void
 _edge_right_cb(Evas_Object *obj,
-               void *data __UNUSED__)
+               void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_RIGHT, NULL);
 }
 
 static void
 _edge_top_cb(Evas_Object *obj,
-             void *data __UNUSED__)
+             void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_TOP, NULL);
 }
 
 static void
 _edge_bottom_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_BOTTOM, NULL);
 }
 
 static void
 _scroll_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
 }
 
 static void
 _scroll_left_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_LEFT, NULL);
 }
 
 static void
 _scroll_right_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_RIGHT, NULL);
 }
 
 static void
 _scroll_up_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_UP, NULL);
 }
 
 static void
 _scroll_down_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DOWN, NULL);
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
 _vbar_drag_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_VBAR_DRAG, NULL);
 }
 
 static void
 _vbar_press_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_VBAR_PRESS, NULL);
 }
 
 static void
 _vbar_unpress_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_VBAR_UNPRESS, NULL);
 }
 
 static void
 _hbar_drag_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_HBAR_DRAG, NULL);
 }
 
 static void
 _hbar_press_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_HBAR_PRESS, NULL);
 }
 
 static void
 _hbar_unpress_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_HBAR_UNPRESS, NULL);
 }
 
 static void
 _page_change_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_SCROLL_PAGE_CHANGE, NULL);
 }

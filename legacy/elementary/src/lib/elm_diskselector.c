@@ -287,10 +287,10 @@ end:
 }
 
 static void
-_resize_cb(void *data __UNUSED__,
-           Evas *e __UNUSED__,
+_resize_cb(void *data EINA_UNUSED,
+           Evas *e EINA_UNUSED,
            Evas_Object *obj,
-           void *event_info __UNUSED__)
+           void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h, vw = 0, vh = 0, mw = 0, mh = 0;
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
@@ -579,9 +579,9 @@ _item_content_get_hook(const Elm_Object_Item *it,
 
 static void
 _item_click_cb(void *data,
-               Evas_Object *obj __UNUSED__,
-               const char *emission __UNUSED__,
-               const char *source __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               const char *emission EINA_UNUSED,
+               const char *source EINA_UNUSED)
 {
    Elm_Diskselector_Item *it = data;
 
@@ -599,7 +599,7 @@ _item_click_cb(void *data,
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Diskselector_Item *it = (Elm_Diskselector_Item *)data;
    const char *txt = NULL;
@@ -1024,7 +1024,7 @@ _elm_diskselector_smart_event(Eo *obj, void *_pd, va_list *list)
 
 static void
 _scroll_cb(Evas_Object *obj,
-           void *data __UNUSED__)
+           void *data EINA_UNUSED)
 {
    Evas_Coord x, y, w, h, bw, x_boundary;
    unsigned int adjust_pixels;
@@ -1079,7 +1079,7 @@ _scroll_cb(Evas_Object *obj,
 
 static void
 _scroll_animate_stop_cb(Evas_Object *obj,
-                        void *data __UNUSED__)
+                        void *data EINA_UNUSED)
 {
    Elm_Diskselector_Item *it;
    Evas_Coord x, w, ox, ow;
@@ -1108,7 +1108,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 
 static void
 _scroll_animate_start_cb(Evas_Object *obj,
-                         void *data __UNUSED__)
+                         void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call
      (obj, SIG_SCROLL_ANIM_START, elm_diskselector_selected_item_get(obj));
@@ -1116,7 +1116,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
-                      void *data __UNUSED__)
+                      void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call
      (obj, SIG_SCROLL_DRAG_START, elm_diskselector_selected_item_get(obj));
@@ -1124,7 +1124,7 @@ _scroll_drag_start_cb(Evas_Object *obj,
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data __UNUSED__)
+                     void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call
      (obj, SIG_SCROLL_DRAG_STOP, elm_diskselector_selected_item_get(obj));

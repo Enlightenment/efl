@@ -47,7 +47,7 @@ _elm_panel_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    ELM_PANEL_DATA_GET(data, sd);
 
@@ -212,16 +212,16 @@ end:
 static void
 _box_layout_cb(Evas_Object *o,
                Evas_Object_Box_Data *priv,
-               void *data __UNUSED__)
+               void *data EINA_UNUSED)
 {
    _els_box_layout(o, priv, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 }
 
 static void
-_panel_toggle(void *data __UNUSED__,
+_panel_toggle(void *data EINA_UNUSED,
               Evas_Object *obj,
-              const char *emission __UNUSED__,
-              const char *source __UNUSED__)
+              const char *emission EINA_UNUSED,
+              const char *source EINA_UNUSED)
 {
    ELM_PANEL_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);

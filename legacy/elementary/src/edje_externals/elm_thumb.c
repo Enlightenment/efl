@@ -26,7 +26,7 @@ _anim_setting_get(const char *anim_str)
 }
 
 static void
-external_thumb_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_thumb_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Thumb *p;
 
@@ -43,7 +43,7 @@ external_thumb_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
 }
 
 static Eina_Bool
-external_thumb_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_thumb_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "animate"))
      {
@@ -63,7 +63,7 @@ external_thumb_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 }
 
 static Eina_Bool
-external_thumb_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_thumb_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "animate"))
      {
@@ -86,7 +86,7 @@ external_thumb_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 }
 
 static void *
-external_thumb_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_thumb_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Thumb *mem;
    Edje_External_Param *param;
@@ -105,8 +105,8 @@ external_thumb_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
    return mem;
 }
 
-static Evas_Object *external_thumb_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_thumb_content_get(void *data EINA_UNUSED,
+		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
 	ERR("No content.");
 	return NULL;
@@ -132,7 +132,7 @@ static Edje_External_Param_Info external_thumb_params[] =
 DEFINE_EXTERNAL_ICON_ADD(thumb, "thumb")
 
 static Evas_Object *
-external_thumb_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name)
+external_thumb_add(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *edje, const Eina_List *params EINA_UNUSED, const char *part_name)
 {
    Evas_Object *parent, *obj;
    external_elm_init();

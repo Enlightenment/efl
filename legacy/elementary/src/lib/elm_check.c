@@ -202,7 +202,7 @@ _elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -249,9 +249,9 @@ _access_state_cb(void *data, Evas_Object *obj)
 
 static void
 _on_check_off(void *data,
-              Evas_Object *o __UNUSED__,
-              const char *emission __UNUSED__,
-              const char *source __UNUSED__)
+              Evas_Object *o EINA_UNUSED,
+              const char *emission EINA_UNUSED,
+              const char *source EINA_UNUSED)
 {
    Evas_Object *obj = data;
 
@@ -266,9 +266,9 @@ _on_check_off(void *data,
 
 static void
 _on_check_on(void *data,
-             Evas_Object *o __UNUSED__,
-             const char *emission __UNUSED__,
-             const char *source __UNUSED__)
+             Evas_Object *o EINA_UNUSED,
+             const char *emission EINA_UNUSED,
+             const char *source EINA_UNUSED)
 {
    Evas_Object *obj = data;
 
@@ -282,9 +282,9 @@ _on_check_on(void *data,
 
 static void
 _on_check_toggle(void *data,
-                 Evas_Object *o __UNUSED__,
-                 const char *emission __UNUSED__,
-                 const char *source __UNUSED__)
+                 Evas_Object *o EINA_UNUSED,
+                 const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
 {
    _activate(data);
 }

@@ -226,7 +226,7 @@ _elm_progressbar_smart_theme(Eo *obj, void *_pd, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -237,7 +237,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf;

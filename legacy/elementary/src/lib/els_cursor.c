@@ -157,7 +157,7 @@ struct _Elm_Cursor
 };
 
 static void
-_elm_cursor_obj_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_cursor_obj_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Cursor *cur = data;
 
@@ -210,7 +210,7 @@ _elm_cursor_set_hot_spots(Elm_Cursor *cur)
 }
 
 static void
-_elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_cursor_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Cursor *cur = data;
 
@@ -240,7 +240,7 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static void
-_elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_cursor_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *sobj_parent;
    Elm_Cursor *pcur = NULL;
@@ -284,7 +284,7 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_elm_cursor_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_elm_cursor_del(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_object_cursor_unset(obj);
 }

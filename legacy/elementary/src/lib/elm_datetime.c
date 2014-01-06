@@ -775,7 +775,7 @@ _field_list_init(Evas_Object *obj)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    char *ret;
    Eina_Strbuf *buf;

@@ -800,9 +800,9 @@ _items_fix(Evas_Object *obj)
 
 static void
 _size_hints_changed_cb(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    ELM_LIST_DATA_GET(data, sd);
    if (sd->delete_me) return;
@@ -1097,28 +1097,28 @@ _swipe_cancel(void *data)
 
 static void
 _edge_left_cb(Evas_Object *obj,
-              void *data __UNUSED__)
+              void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_LEFT, NULL);
 }
 
 static void
 _edge_right_cb(Evas_Object *obj,
-               void *data __UNUSED__)
+               void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_RIGHT, NULL);
 }
 
 static void
 _edge_top_cb(Evas_Object *obj,
-             void *data __UNUSED__)
+             void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_TOP, NULL);
 }
 
 static void
 _edge_bottom_cb(Evas_Object *obj,
-                void *data __UNUSED__)
+                void *data EINA_UNUSED)
 {
    evas_object_smart_callback_call(obj, SIG_EDGE_BOTTOM, NULL);
 }
@@ -1166,8 +1166,8 @@ _swipe_do(Elm_List_Item *it)
 
 static void
 _mouse_move_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *o __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *o EINA_UNUSED,
                void *event_info)
 {
    Evas_Object *obj;
@@ -1211,8 +1211,8 @@ _mouse_move_cb(void *data,
 
 static void
 _mouse_down_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *o __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *o EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1256,8 +1256,8 @@ _mouse_down_cb(void *data,
 
 static void
 _mouse_up_cb(void *data,
-             Evas *evas __UNUSED__,
-             Evas_Object *o __UNUSED__,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *o EINA_UNUSED,
              void *event_info)
 {
    Evas_Object *obj;
@@ -1525,7 +1525,7 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_List_Item *it = (Elm_List_Item *)data;
    const char *txt = NULL;
@@ -1538,7 +1538,7 @@ _access_info_cb(void *data, Evas_Object *obj __UNUSED__)
 }
 
 static char *
-_access_state_cb(void *data, Evas_Object *obj __UNUSED__)
+_access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_List_Item *it = (Elm_List_Item *)data;
    if (!it) return NULL;
@@ -1559,8 +1559,8 @@ _access_on_highlight_cb(void *data)
 }
 
 static void
-_access_activate_cb(void *data __UNUSED__,
-                    Evas_Object *part_obj __UNUSED__,
+_access_activate_cb(void *data EINA_UNUSED,
+                    Evas_Object *part_obj EINA_UNUSED,
                     Elm_Object_Item *item)
 {
    Elm_List_Item *it;
@@ -1706,9 +1706,9 @@ _item_new(Evas_Object *obj,
 
 static void
 _resize_cb(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 }

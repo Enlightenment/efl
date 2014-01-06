@@ -1,7 +1,7 @@
 #include "private.h"
 
 static Evas_Object *
-elm_prefs_horizontal_box_add(const Elm_Prefs_Page_Iface *iface __UNUSED__,
+elm_prefs_horizontal_box_add(const Elm_Prefs_Page_Iface *iface EINA_UNUSED,
                              Evas_Object *prefs)
 {
    Evas_Object *obj = elm_box_add(prefs);

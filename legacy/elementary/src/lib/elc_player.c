@@ -203,8 +203,8 @@ _elm_player_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 
 static void
 _update_slider(void *data,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    double pos, length;
    Eina_Bool seekable;
@@ -236,8 +236,8 @@ _update_frame(void *data,
 
 static void
 _update_position(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    double pos;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -249,8 +249,8 @@ _update_position(void *data,
 
 static void
 _drag_start(void *data,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_TRUE;
@@ -258,8 +258,8 @@ _drag_start(void *data,
 
 static void
 _drag_stop(void *data,
-            Evas_Object *obj __UNUSED__,
-            void *event_info __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
    sd->dragging = EINA_FALSE;
@@ -267,8 +267,8 @@ _drag_stop(void *data,
 
 static void
 _update_volume(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    double vol;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -280,8 +280,8 @@ _update_volume(void *data,
 
 static void
 _forward(void *data,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+         Evas_Object *obj EINA_UNUSED,
+         void *event_info EINA_UNUSED)
 {
    double pos, length;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -298,8 +298,8 @@ _forward(void *data,
 
 static void
 _info(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,info", "elm");
    evas_object_smart_callback_call(data, SIG_INFO_CLICKED, NULL);
@@ -307,8 +307,8 @@ _info(void *data,
 
 static void
 _next(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,next", "elm");
    evas_object_smart_callback_call(data, SIG_NEXT_CLICKED, NULL);
@@ -316,8 +316,8 @@ _next(void *data,
 
 static void
 _pause(void *data,
-       Evas_Object *obj __UNUSED__,
-       void *event_info __UNUSED__)
+       Evas_Object *obj EINA_UNUSED,
+       void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -328,8 +328,8 @@ _pause(void *data,
 
 static void
 _play(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -340,8 +340,8 @@ _play(void *data,
 
 static void
 _prev(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_PREV_CLICKED, NULL);
    elm_layout_signal_emit(data, "elm,button,prev", "elm");
@@ -349,8 +349,8 @@ _prev(void *data,
 
 static void
 _rewind(void *data,
-        Evas_Object *obj __UNUSED__,
-        void *event_info __UNUSED__)
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
 {
    double pos;
    ELM_PLAYER_DATA_GET(data, sd);
@@ -366,8 +366,8 @@ _rewind(void *data,
 
 static void
 _stop(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
    evas_object_smart_callback_call(data, SIG_STOP_CLICKED, NULL);
@@ -375,8 +375,8 @@ _stop(void *data,
 
 static void
 _eject(void *data,
-       Evas_Object *obj __UNUSED__,
-       void *event_info __UNUSED__)
+       Evas_Object *obj EINA_UNUSED,
+       void *event_info EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(data, sd);
 
@@ -404,8 +404,8 @@ _mute_toggle(Evas_Object *obj)
 
 static void
 _volume(void *data,
-        Evas_Object *obj __UNUSED__,
-        void *event_info __UNUSED__)
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,volume", "elm");
    _mute_toggle(data);
@@ -414,8 +414,8 @@ _volume(void *data,
 
 static void
 _mute(void *data,
-      Evas_Object *obj __UNUSED__,
-      void *event_info __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,mute", "elm");
    _mute_toggle(data);
@@ -424,16 +424,16 @@ _mute(void *data,
 
 static void
 _play_started(void *data,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,player,play", "elm");
 }
 
 static void
 _play_finished(void *data,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,player,pause", "elm");
 }
@@ -461,9 +461,9 @@ _on_video_del(Elm_Player_Smart_Data *sd)
 
 static void
 _video_del(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    _on_video_del(data);
 }

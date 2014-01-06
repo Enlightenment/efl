@@ -202,35 +202,35 @@ _elm_ews_wm_border_theme_set(Ecore_Evas *ee, Evas_Object *o, Elm_Theme *th)
 }
 
 static void
-_elm_ews_border_sig_focus(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_focus(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_focus_set(ee, EINA_TRUE);
 }
 
 static void
-_elm_ews_border_sig_iconify(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_iconify(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_iconified_set(ee, EINA_TRUE);
 }
 
 static void
-_elm_ews_border_sig_maximize(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_maximize(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_maximized_set(ee, EINA_TRUE);
 }
 
 static void
-_elm_ews_border_sig_fullscreen(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_fullscreen(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_fullscreen_set(ee, EINA_TRUE);
 }
 
 static void
-_elm_ews_border_sig_restore(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_restore(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_iconified_set(ee, EINA_FALSE);
@@ -239,14 +239,14 @@ _elm_ews_border_sig_restore(void *data, Evas_Object *o __UNUSED__, const char *s
 }
 
 static void
-_elm_ews_border_sig_close(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_close(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    ecore_evas_ews_delete_request(ee);
 }
 
 static void
-_elm_ews_border_sig_menu(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_menu(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    // TODO: show some menu?
    ERR("EWS does not implement menu yet");
@@ -270,7 +270,7 @@ _elm_ews_border_mover(void *data)
 }
 
 static void
-_elm_ews_border_sig_move_start(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_move_start(void *data, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Object *bs_o = ecore_evas_ews_backing_store_get(ee);
@@ -287,7 +287,7 @@ _elm_ews_border_sig_move_start(void *data, Evas_Object *o __UNUSED__, const char
 }
 
 static void
-_elm_ews_border_sig_move_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_ews_border_sig_move_stop(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, const char *sig EINA_UNUSED, const char *source EINA_UNUSED)
 {
    if (!_ews_border_mover) return;
    ELM_SAFE_FREE(_ews_border_mover, ecore_animator_del);
@@ -295,7 +295,7 @@ _elm_ews_border_sig_move_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__, 
 }
 
 static Eina_Bool
-_elm_ews_wm_add_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_add_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = edje_object_add(ecore_evas_ews_evas_get());
@@ -334,7 +334,7 @@ _elm_ews_wm_add_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 }
 
 static Eina_Bool
-_elm_ews_wm_del_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    eina_hash_del(_ews_borders, &ee, NULL);
@@ -343,7 +343,7 @@ _elm_ews_wm_del_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 }
 
 static Eina_Bool
-_elm_ews_wm_geo_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_geo_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -352,7 +352,7 @@ _elm_ews_wm_geo_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 }
 
 static Eina_Bool
-_elm_ews_wm_show_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -361,7 +361,7 @@ _elm_ews_wm_show_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info
 }
 
 static Eina_Bool
-_elm_ews_wm_hide_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_hide_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -370,7 +370,7 @@ _elm_ews_wm_hide_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info
 }
 
 static Eina_Bool
-_elm_ews_wm_focus_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_focus_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -379,7 +379,7 @@ _elm_ews_wm_focus_cb(void *data __UNUSED__, int type __UNUSED__, void *event_inf
 }
 
 static Eina_Bool
-_elm_ews_wm_stack_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_stack_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -388,7 +388,7 @@ _elm_ews_wm_stack_cb(void *data __UNUSED__, int type __UNUSED__, void *event_inf
 }
 
 static Eina_Bool
-_elm_ews_wm_iconified_change_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_iconified_change_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -397,7 +397,7 @@ _elm_ews_wm_iconified_change_cb(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_elm_ews_wm_maximized_change_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_maximized_change_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -406,7 +406,7 @@ _elm_ews_wm_maximized_change_cb(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static Eina_Bool
-_elm_ews_wm_layer_change_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_layer_change_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -415,7 +415,7 @@ _elm_ews_wm_layer_change_cb(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_elm_ews_wm_fullscreen_change_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_fullscreen_change_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);
@@ -424,7 +424,7 @@ _elm_ews_wm_fullscreen_change_cb(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
-_elm_ews_wm_config_change_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_elm_ews_wm_config_change_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    Evas_Object *o = _elm_ews_wm_border_find(ee);

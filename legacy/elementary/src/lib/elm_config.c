@@ -97,8 +97,8 @@ static const char *_atom_names[ATOM_COUNT] =
 
 static Eina_Bool _prop_config_get(void);
 static void      _prop_config_set(void);
-static Eina_Bool _prop_change(void *data  __UNUSED__,
-                              int ev_type __UNUSED__,
+static Eina_Bool _prop_change(void *data  EINA_UNUSED,
+                              int ev_type EINA_UNUSED,
                               void       *ev);
 
 static void
@@ -203,7 +203,7 @@ _prop_config_set(void)
 }
 
 static Eina_Bool
-_prop_change_delay_cb(void *data __UNUSED__)
+_prop_change_delay_cb(void *data EINA_UNUSED)
 {
    char *s;
 
@@ -223,8 +223,8 @@ _prop_change_delay_cb(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_prop_change(void *data  __UNUSED__,
-             int ev_type __UNUSED__,
+_prop_change(void *data  EINA_UNUSED,
+             int ev_type EINA_UNUSED,
              void       *ev)
 {
    Ecore_X_Event_Window_Property *event = ev;
@@ -967,7 +967,7 @@ _config_sub_apply(void)
 }
 
 static Eina_Bool
-_elm_cache_flush_cb(void *data __UNUSED__)
+_elm_cache_flush_cb(void *data EINA_UNUSED)
 {
    elm_cache_all_flush();
    return ECORE_CALLBACK_RENEW;

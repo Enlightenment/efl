@@ -1,7 +1,7 @@
 #include "private.h"
 
 static Evas_Object *
-elm_prefs_vertical_frame_add(const Elm_Prefs_Page_Iface *iface __UNUSED__,
+elm_prefs_vertical_frame_add(const Elm_Prefs_Page_Iface *iface EINA_UNUSED,
                              Evas_Object *prefs)
 {
    Evas_Object *bx, *obj = elm_frame_add(prefs);

@@ -32,7 +32,7 @@ external_elm_shutdown(void)
 }
 
 static void
-_external_obj_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_external_obj_del(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                                   _external_obj_del);
@@ -40,7 +40,7 @@ _external_obj_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj
 }
 
 void
-external_signal(void *data __UNUSED__, Evas_Object *obj, const char *sig, const char *source)
+external_signal(void *data EINA_UNUSED, Evas_Object *obj, const char *sig, const char *source)
 {
    char *_signal = strdup(sig);
    char *p = _signal;
@@ -76,7 +76,7 @@ external_signal(void *data __UNUSED__, Evas_Object *obj, const char *sig, const 
 }
 
 const char *
-external_translate(void *data __UNUSED__, const char *orig)
+external_translate(void *data EINA_UNUSED, const char *orig)
 {
    // in future, mark all params as translatable and use dgettext()
    // with "elementary" text domain here.
@@ -90,14 +90,14 @@ typedef struct {
 } Elm_External_Signals_Proxy_Context;
 
 static void
-_external_signal_proxy_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_external_signal_proxy_free_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_External_Signals_Proxy_Context *ctxt = data;
    free(ctxt);
 }
 
 static void
-_external_signal_proxy_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_external_signal_proxy_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_External_Signals_Proxy_Context *ctxt = data;
    // TODO: Is it worth to check Evas_Smart_Cb_Description and do something
@@ -106,7 +106,7 @@ _external_signal_proxy_cb(void *data, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 Eina_Bool
-external_common_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_common_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "style"))
      {
@@ -128,7 +128,7 @@ external_common_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
 }
 
 Eina_Bool
-external_common_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_common_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "style"))
      {
@@ -190,7 +190,7 @@ external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_nam
 }
 
 void
-external_common_params_parse(void *mem, void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_common_params_parse(void *mem, void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params *p;
    const Eina_List *l;
@@ -210,7 +210,7 @@ external_common_params_parse(void *mem, void *data __UNUSED__, Evas_Object *obj 
 }
 
 void
-external_common_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_common_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params *p;
    if (to_params) p = to_params;

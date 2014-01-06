@@ -246,7 +246,7 @@ _elm_win_first_frame_do(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
 }
 
 static void
-_elm_win_state_eval(void *data __UNUSED__)
+_elm_win_state_eval(void *data EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *obj;
@@ -449,13 +449,13 @@ _shot_repeat_count_get(Elm_Win_Smart_Data *sd)
 }
 
 static char *
-_shot_key_get(Elm_Win_Smart_Data *sd __UNUSED__)
+_shot_key_get(Elm_Win_Smart_Data *sd EINA_UNUSED)
 {
    return NULL;
 }
 
 static char *
-_shot_flags_get(Elm_Win_Smart_Data *sd __UNUSED__)
+_shot_flags_get(Elm_Win_Smart_Data *sd EINA_UNUSED)
 {
    return NULL;
 }
@@ -546,33 +546,33 @@ _elm_win_associate_get(const Ecore_Evas *ee)
 
 /* Interceptors Callbacks */
 static void
-_elm_win_obj_intercept_raise(void *data, Evas_Object *obj __UNUSED__)
+_elm_win_obj_intercept_raise(void *data, Evas_Object *obj EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, raise);
 }
 
 static void
-_elm_win_obj_intercept_lower(void *data, Evas_Object *obj __UNUSED__)
+_elm_win_obj_intercept_lower(void *data, Evas_Object *obj EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, lower);
 }
 
 static void
-_elm_win_obj_intercept_stack_above(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *above __UNUSED__)
+_elm_win_obj_intercept_stack_above(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *above EINA_UNUSED)
 {
    INF("TODO: %s", __FUNCTION__);
 }
 
 static void
-_elm_win_obj_intercept_stack_below(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *below __UNUSED__)
+_elm_win_obj_intercept_stack_below(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *below EINA_UNUSED)
 {
    INF("TODO: %s", __FUNCTION__);
 }
 
 static void
-_elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj __UNUSED__, int l)
+_elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, int l)
 {
    ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, layer_set, l);
@@ -581,7 +581,7 @@ _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj __UNUSED__, int l)
 /* Event Callbacks */
 
 static void
-_elm_win_obj_callback_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_elm_win_obj_callback_changed_size_hints(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
    Evas_Coord w, h;
@@ -1261,9 +1261,9 @@ _elm_win_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static void
 _elm_win_on_parent_del(void *data,
-                       Evas *e __UNUSED__,
+                       Evas *e EINA_UNUSED,
                        Evas_Object *obj,
-                       void *event_info __UNUSED__)
+                       void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -1272,9 +1272,9 @@ _elm_win_on_parent_del(void *data,
 
 static void
 _elm_win_focus_target_move(void *data,
-                           Evas *e __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
+                           Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -1284,9 +1284,9 @@ _elm_win_focus_target_move(void *data,
 
 static void
 _elm_win_focus_target_resize(void *data,
-                             Evas *e __UNUSED__,
-                             Evas_Object *obj __UNUSED__,
-                             void *event_info __UNUSED__)
+                             Evas *e EINA_UNUSED,
+                             Evas_Object *obj EINA_UNUSED,
+                             void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -1296,9 +1296,9 @@ _elm_win_focus_target_resize(void *data,
 
 static void
 _elm_win_focus_target_del(void *data,
-                          Evas *e __UNUSED__,
-                          Evas_Object *obj __UNUSED__,
-                          void *event_info __UNUSED__)
+                          Evas *e EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -1363,7 +1363,7 @@ _elm_win_focus_target_callbacks_del(Elm_Win_Smart_Data *sd)
 
 static void
 _elm_win_object_focus_in(void *data,
-                         Evas *e __UNUSED__,
+                         Evas *e EINA_UNUSED,
                          void *event_info)
 {
    Evas_Object *obj = event_info, *target;
@@ -1384,8 +1384,8 @@ _elm_win_object_focus_in(void *data,
 
 static void
 _elm_win_object_focus_out(void *data,
-                          Evas *e __UNUSED__,
-                          void *event_info __UNUSED__)
+                          Evas *e EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -1424,9 +1424,9 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Smart_Data *sd)
 
 static void
 _elm_win_on_img_obj_del(void *data,
-                        Evas *e __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+                        Evas *e EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
    sd->img_obj = NULL;
@@ -1908,9 +1908,9 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
 
 static void
 _elm_win_on_resize_obj_changed_size_hints(void *data,
-                                          Evas *e __UNUSED__,
-                                          Evas_Object *obj __UNUSED__,
-                                          void *event_info __UNUSED__)
+                                          Evas *e EINA_UNUSED,
+                                          Evas_Object *obj EINA_UNUSED,
+                                          void *event_info EINA_UNUSED)
 {
    _elm_win_resize_objects_eval(data);
 }
@@ -1995,7 +1995,7 @@ _elm_win_translate(void)
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
 _elm_win_client_message(void *data,
-                        int type __UNUSED__,
+                        int type EINA_UNUSED,
                         void *event)
 {
    ELM_WIN_DATA_GET(data, sd);
@@ -2096,7 +2096,7 @@ _elm_win_client_message(void *data,
 
 static Eina_Bool
 _elm_win_property_change(void *data,
-                         int type __UNUSED__,
+                         int type EINA_UNUSED,
                          void *event)
 {
    ELM_WIN_DATA_GET(data, sd);
@@ -2115,10 +2115,10 @@ _elm_win_property_change(void *data,
 #endif
 
 static void
-_elm_win_focus_highlight_hide(void *data __UNUSED__,
+_elm_win_focus_highlight_hide(void *data EINA_UNUSED,
                               Evas_Object *obj,
-                              const char *emission __UNUSED__,
-                              const char *source __UNUSED__)
+                              const char *emission EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    evas_object_hide(obj);
 }
@@ -2126,8 +2126,8 @@ _elm_win_focus_highlight_hide(void *data __UNUSED__,
 static void
 _elm_win_focus_highlight_anim_end(void *data,
                                   Evas_Object *obj,
-                                  const char *emission __UNUSED__,
-                                  const char *source __UNUSED__)
+                                  const char *emission EINA_UNUSED,
+                                  const char *source EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -2158,8 +2158,8 @@ _elm_win_focus_highlight_init(Elm_Win_Smart_Data *sd)
 
 static void
 _elm_win_frame_cb_move_start(void *data,
-                             Evas_Object *obj __UNUSED__,
-                             const char *sig __UNUSED__,
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *sig EINA_UNUSED,
                              const char *source)
 {
    ELM_WIN_DATA_GET(data, sd);
@@ -2188,9 +2188,9 @@ _elm_win_frame_cb_move_start(void *data,
 
 static void
 _elm_win_frame_cb_move_stop(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *sig __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *sig EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -2252,9 +2252,9 @@ _elm_win_frame_obj_update(Elm_Win_Smart_Data *sd)
 
 static void
 _elm_win_frame_obj_move(void *data,
-                        Evas *e __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+                        Evas *e EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    Elm_Win_Smart_Data *sd;
 
@@ -2266,9 +2266,9 @@ _elm_win_frame_obj_move(void *data,
 
 static void
 _elm_win_frame_obj_resize(void *data,
-                          Evas *e __UNUSED__,
-                          Evas_Object *obj __UNUSED__,
-                          void *event_info __UNUSED__)
+                          Evas *e EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    Elm_Win_Smart_Data *sd;
 
@@ -2280,8 +2280,8 @@ _elm_win_frame_obj_resize(void *data,
 
 static void
 _elm_win_frame_cb_resize_show(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *sig __UNUSED__,
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *sig EINA_UNUSED,
                               const char *source)
 {
    ELM_WIN_DATA_GET(data, sd);
@@ -2325,9 +2325,9 @@ _elm_win_frame_cb_resize_show(void *data,
 
 static void
 _elm_win_frame_cb_resize_hide(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *sig __UNUSED__,
-                              const char *source __UNUSED__)
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *sig EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -2341,8 +2341,8 @@ _elm_win_frame_cb_resize_hide(void *data,
 
 static void
 _elm_win_frame_cb_resize_start(void *data,
-                               Evas_Object *obj __UNUSED__,
-                               const char *sig __UNUSED__,
+                               Evas_Object *obj EINA_UNUSED,
+                               const char *sig EINA_UNUSED,
                                const char *source)
 {
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -2383,9 +2383,9 @@ _elm_win_frame_cb_resize_start(void *data,
 
 static void
 _elm_win_frame_cb_minimize(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *sig __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *sig EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -2413,9 +2413,9 @@ _elm_win_frame_maximized_state_update(Elm_Win_Smart_Data *sd, Eina_Bool maximize
 
 static void
 _elm_win_frame_cb_maximize(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *sig __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *sig EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Eina_Bool value;
    ELM_WIN_DATA_GET(data, sd);
@@ -2431,9 +2431,9 @@ _elm_win_frame_cb_maximize(void *data,
 
 static void
 _elm_win_frame_cb_close(void *data,
-                        Evas_Object *obj __UNUSED__,
-                        const char *sig __UNUSED__,
-                        const char *source __UNUSED__)
+                        Evas_Object *obj EINA_UNUSED,
+                        const char *sig EINA_UNUSED,
+                        const char *source EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
    Evas_Object *win;
@@ -2599,8 +2599,8 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
 
 #ifdef ELM_DEBUG
 static void
-_debug_key_down(void *data __UNUSED__,
-                Evas *e __UNUSED__,
+_debug_key_down(void *data EINA_UNUSED,
+                Evas *e EINA_UNUSED,
                 Evas_Object *obj,
                 void *event_info)
 {
@@ -2621,17 +2621,17 @@ _debug_key_down(void *data __UNUSED__,
 
 static void
 _win_img_hide(void *data,
-              Evas *e __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    elm_widget_focus_hide_handle(data);
 }
 
 static void
 _win_img_mouse_up(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -2641,18 +2641,18 @@ _win_img_mouse_up(void *data,
 
 static void
 _win_img_focus_in(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    elm_widget_focus_steal(data);
 }
 
 static void
 _win_img_focus_out(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    elm_widget_focused_object_clear(data);
 }
@@ -2677,9 +2677,9 @@ _win_inlined_image_set(Elm_Win_Smart_Data *sd)
 
 static void
 _elm_win_on_icon_del(void *data,
-                     Evas *e __UNUSED__,
+                     Evas *e EINA_UNUSED,
                      Evas_Object *obj,
-                     void *event_info __UNUSED__)
+                     void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
 
@@ -2698,7 +2698,7 @@ _elm_win_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
 #ifdef HAVE_ELEMENTARY_X
 static void
-_elm_x_io_err(void *data __UNUSED__)
+_elm_x_io_err(void *data EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *obj;
@@ -2720,19 +2720,19 @@ elm_win_add(Evas_Object *parent,
 }
 
 static void
-_elm_win_cb_hide(void *data __UNUSED__,
-                 Evas *e __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_elm_win_cb_hide(void *data EINA_UNUSED,
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    _elm_win_state_eval_queue();
 }
 
 static void
-_elm_win_cb_show(void *data __UNUSED__,
-                 Evas *e __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+_elm_win_cb_show(void *data EINA_UNUSED,
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    _elm_win_state_eval_queue();
 }

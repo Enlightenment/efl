@@ -472,8 +472,8 @@ _button_select(Evas_Object *obj,
 static void
 _button_clicked_cb(void *data,
                    Evas_Object *obj,
-                   const char *emission __UNUSED__,
-                   const char *source __UNUSED__)
+                   const char *emission EINA_UNUSED,
+                   const char *source EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item *item = NULL;
 
@@ -496,8 +496,8 @@ _button_clicked_cb(void *data,
 static void
 _button_deleted_cb(void *data,
                    Evas_Object *obj,
-                   const char *emission __UNUSED__,
-                   const char *source __UNUSED__)
+                   const char *emission EINA_UNUSED,
+                   const char *source EINA_UNUSED)
 {
    Eina_List *l;
    Elm_Multibuttonentry_Item *item = NULL;
@@ -886,8 +886,8 @@ _elm_multibuttonentry_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_U
 static void
 _mouse_clicked_signal_cb(void *data,
                          Evas_Object *obj,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Elm_Multibuttonentry_Smart_Data *sd = data;
 
@@ -904,9 +904,9 @@ _mouse_clicked_signal_cb(void *data,
 
 static void
 _box_resize_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event __UNUSED__)
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Coord w, h;
@@ -926,9 +926,9 @@ _box_resize_cb(void *data,
 
 static void
 _entry_resize_cb(void *data,
-                 Evas *e __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    Evas_Coord en_x, en_y, en_w, en_h;
@@ -941,8 +941,8 @@ _entry_resize_cb(void *data,
 
 static void
 _entry_changed_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
@@ -953,8 +953,8 @@ _entry_changed_cb(void *data,
 
 static void
 _entry_focus_in_cb(void *data,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item *item = NULL;
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
@@ -969,8 +969,8 @@ _entry_focus_in_cb(void *data,
 
 static void
 _entry_focus_out_cb(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
    const char *str;
@@ -982,8 +982,8 @@ _entry_focus_out_cb(void *data,
 
 static void
 _entry_clicked_cb(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
@@ -993,8 +993,8 @@ _entry_clicked_cb(void *data,
 
 static void
 _layout_key_up_cb(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Elm_Multibuttonentry_Item *item = NULL;
@@ -1031,8 +1031,8 @@ _layout_key_up_cb(void *data,
 
 static void
 _entry_key_down_cb(void *data,
-                   Evas *e __UNUSED__,
-                   Evas_Object *obj __UNUSED__,
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
                    void *event_info)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
@@ -1045,8 +1045,8 @@ _entry_key_down_cb(void *data,
 
 static void
 _entry_key_up_cb(void *data,
-                 Evas *e __UNUSED__,
-                 Evas_Object *obj __UNUSED__,
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj EINA_UNUSED,
                  void *event_info)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
@@ -1267,7 +1267,7 @@ _item_max_height_calculate(Evas_Object *box,
 static void
 _box_layout_cb(Evas_Object *o,
                Evas_Object_Box_Data *priv,
-               void *data __UNUSED__)
+               void *data EINA_UNUSED)
 {
    Evas_Coord cw = 0, ch = 0, cmaxh = 0, obj_index = 0;
    Evas_Coord x, y, w, h, xx, yy;
@@ -1446,7 +1446,7 @@ _elm_multibuttonentry_smart_text_get(Eo *obj, void *_pd, va_list *list)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf;

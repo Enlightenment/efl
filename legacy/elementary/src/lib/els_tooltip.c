@@ -73,14 +73,14 @@ static void _elm_tooltip_hide(Elm_Tooltip *tt);
 static void _elm_tooltip_data_clean(Elm_Tooltip *tt);
 
 static void
-_elm_tooltip_content_changed_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_tooltip_content_changed_hints_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _elm_tooltip_reconfigure_job_start(data);
    TTDBG("HINTS CHANGED\n");
 }
 
 static void
-_elm_tooltip_content_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_tooltip_content_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Tooltip *tt = data;
    tt->content = NULL;
@@ -89,7 +89,7 @@ _elm_tooltip_content_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_elm_tooltip_obj_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
+_elm_tooltip_obj_move_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info  EINA_UNUSED)
 {
    Elm_Tooltip *tt = data;
    _elm_tooltip_reconfigure_job_start(tt);
@@ -97,7 +97,7 @@ _elm_tooltip_obj_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNU
 }
 
 static void
-_elm_tooltip_obj_resize_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
+_elm_tooltip_obj_resize_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info  EINA_UNUSED)
 {
    Elm_Tooltip *tt = data;
    _elm_tooltip_reconfigure_job_start(tt);
@@ -105,7 +105,7 @@ _elm_tooltip_obj_resize_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_elm_tooltip_obj_mouse_move_cb(Elm_Tooltip *tt, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Event_Mouse_Move *ev)
+_elm_tooltip_obj_mouse_move_cb(Elm_Tooltip *tt, Evas *e  EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Move *ev)
 {
    if (tt->mouse_x || tt->mouse_y)
      {
@@ -606,7 +606,7 @@ _elm_tooltip_timer_show_cb(void *data)
 }
 
 static void
-_elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
+_elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info  EINA_UNUSED)
 {
    Elm_Tooltip *tt = data;
 
@@ -619,7 +619,7 @@ _elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj _
 }
 
 static void
-_elm_tooltip_obj_mouse_out_cb(Elm_Tooltip *tt, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Event_Mouse_Out *event __UNUSED__)
+_elm_tooltip_obj_mouse_out_cb(Elm_Tooltip *tt, Evas *e  EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Event_Mouse_Out *event EINA_UNUSED)
 {
    if (tt->visible_lock) return;
 
@@ -632,7 +632,7 @@ _elm_tooltip_obj_mouse_out_cb(Elm_Tooltip *tt, Evas *e  __UNUSED__, Evas_Object 
    TTDBG("MOUSE OUT\n");
 }
 
-static void _elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__);
+static void _elm_tooltip_obj_free_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj, void *event_info  EINA_UNUSED);
 
 static void
 _elm_tooltip_unset(Elm_Tooltip *tt)
@@ -666,7 +666,7 @@ _elm_tooltip_unset(Elm_Tooltip *tt)
 }
 
 static void
-_elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__)
+_elm_tooltip_obj_free_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj, void *event_info  EINA_UNUSED)
 {
    Elm_Tooltip *tt = data;
    if (tt->eventarea == obj) tt->eventarea = NULL;
@@ -675,7 +675,7 @@ _elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void
 }
 
 static Evas_Object *
-_elm_tooltip_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Object *tooltip)
+_elm_tooltip_label_create(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
 {
    Evas_Object *label = elm_label_add(tooltip);
    if (!label)
@@ -686,7 +686,7 @@ _elm_tooltip_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Object *
 }
 
 static Evas_Object *
-_elm_tooltip_trans_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Object *tooltip)
+_elm_tooltip_trans_label_create(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
 {
    Evas_Object *label = elm_label_add(tooltip);
    const char **text = data;
@@ -698,13 +698,13 @@ _elm_tooltip_trans_label_create(void *data, Evas_Object *obj __UNUSED__, Evas_Ob
 }
 
 static void
-_elm_tooltip_label_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_tooltip_label_del_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }
 
 static void
-_elm_tooltip_trans_label_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_tooltip_trans_label_del_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const char **text = data;
    eina_stringshare_del(text[0]);

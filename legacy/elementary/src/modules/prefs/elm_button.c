@@ -11,7 +11,7 @@ static Elm_Prefs_Item_Type supported_types[] =
 static void
 _item_changed_cb(void *data,
                  Evas_Object *obj,
-                 void *event_info __UNUSED__)
+                 void *event_info EINA_UNUSED)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
@@ -19,10 +19,10 @@ _item_changed_cb(void *data,
 }
 
 static Evas_Object *
-elm_prefs_button_add(const Elm_Prefs_Item_Iface *iface __UNUSED__,
+elm_prefs_button_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
                      Evas_Object *prefs,
-                     const Elm_Prefs_Item_Type type __UNUSED__,
-                     const Elm_Prefs_Item_Spec spec __UNUSED__,
+                     const Elm_Prefs_Item_Type type EINA_UNUSED,
+                     const Elm_Prefs_Item_Spec spec EINA_UNUSED,
                      Elm_Prefs_Item_Changed_Cb cb)
 {
    Evas_Object *obj = elm_button_add(prefs);

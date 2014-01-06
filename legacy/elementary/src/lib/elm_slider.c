@@ -215,18 +215,18 @@ _slider_update(Evas_Object *obj, Eina_Bool user_event)
 
 static void
 _drag(void *data,
-      Evas_Object *obj __UNUSED__,
-      const char *emission __UNUSED__,
-      const char *source __UNUSED__)
+      Evas_Object *obj EINA_UNUSED,
+      const char *emission EINA_UNUSED,
+      const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
 }
 
 static void
 _drag_start(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            const char *emission EINA_UNUSED,
+            const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
    evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
@@ -235,9 +235,9 @@ _drag_start(void *data,
 
 static void
 _drag_stop(void *data,
-           Evas_Object *obj __UNUSED__,
-           const char *emission __UNUSED__,
-           const char *source __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           const char *emission EINA_UNUSED,
+           const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
    evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
@@ -246,18 +246,18 @@ _drag_stop(void *data,
 
 static void
 _drag_step(void *data,
-           Evas_Object *obj __UNUSED__,
-           const char *emission __UNUSED__,
-           const char *source __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           const char *emission EINA_UNUSED,
+           const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
 }
 
 static void
 _drag_up(void *data,
-         Evas_Object *obj __UNUSED__,
-         const char *emission __UNUSED__,
-         const char *source __UNUSED__)
+         Evas_Object *obj EINA_UNUSED,
+         const char *emission EINA_UNUSED,
+         const char *source EINA_UNUSED)
 {
    double step;
 
@@ -273,9 +273,9 @@ _drag_up(void *data,
 
 static void
 _drag_down(void *data,
-           Evas_Object *obj __UNUSED__,
-           const char *emission __UNUSED__,
-           const char *source __UNUSED__)
+           Evas_Object *obj EINA_UNUSED,
+           const char *emission EINA_UNUSED,
+           const char *source EINA_UNUSED)
 {
    double step;
 
@@ -291,9 +291,9 @@ _drag_down(void *data,
 
 static void
 _popup_show(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            const char *emission EINA_UNUSED,
+            const char *source EINA_UNUSED)
 {
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
@@ -308,9 +308,9 @@ _popup_show(void *data,
 
 static void
 _popup_hide(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+            Evas_Object *obj EINA_UNUSED,
+            const char *emission EINA_UNUSED,
+            const char *source EINA_UNUSED)
 {
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
@@ -329,9 +329,9 @@ _popup_hide(void *data,
 
 static void
 _popup_hide_done(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 const char *emission __UNUSED__,
-                 const char *source __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
 {
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
@@ -349,7 +349,7 @@ _popup_hide_done(void *data,
 
 static void
 _popup_emit(void *data,
-            Evas_Object *obj __UNUSED__,
+            Evas_Object *obj EINA_UNUSED,
             const char *emission,
             const char *source)
 {
@@ -576,8 +576,8 @@ _elm_slider_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
 
 static void
 _spacer_down_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    ELM_SLIDER_DATA_GET(data, sd);
@@ -615,8 +615,8 @@ _spacer_down_cb(void *data,
 
 static void
 _spacer_move_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    ELM_SLIDER_DATA_GET(data, sd);
@@ -679,9 +679,9 @@ _spacer_move_cb(void *data,
 
 static void
 _spacer_up_cb(void *data,
-              Evas *e __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
@@ -701,9 +701,9 @@ _spacer_up_cb(void *data,
 
 static void
 _track_move_cb(void *data,
-               Evas *e __UNUSED__,
+               Evas *e EINA_UNUSED,
                Evas_Object *obj,
-               void *event_info __UNUSED__)
+               void *event_info EINA_UNUSED)
 {
    Evas_Coord x, y;
 
@@ -714,9 +714,9 @@ _track_move_cb(void *data,
 
 static void
 _track_resize_cb(void *data,
-                 Evas *e __UNUSED__,
+                 Evas *e EINA_UNUSED,
                  Evas_Object *obj,
-                 void *event_info __UNUSED__)
+                 void *event_info EINA_UNUSED)
 {
    Evas_Coord w, h;
 
@@ -784,7 +784,7 @@ _elm_slider_smart_calculate(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -795,7 +795,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    char *ret;
    Eina_Strbuf *buf = eina_strbuf_new();

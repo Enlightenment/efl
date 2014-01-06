@@ -7,11 +7,11 @@ static Elm_Prefs_Item_Type supported_types[] =
 };
 
 static Evas_Object *
-elm_prefs_separator_add(const Elm_Prefs_Item_Iface *iface __UNUSED__,
+elm_prefs_separator_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
                         Evas_Object *prefs,
-                        const Elm_Prefs_Item_Type type __UNUSED__,
-                        const Elm_Prefs_Item_Spec spec __UNUSED__,
-                        Elm_Prefs_Item_Changed_Cb cb __UNUSED__)
+                        const Elm_Prefs_Item_Type type EINA_UNUSED,
+                        const Elm_Prefs_Item_Spec spec EINA_UNUSED,
+                        Elm_Prefs_Item_Changed_Cb cb EINA_UNUSED)
 {
    Evas_Object *obj = elm_separator_add(prefs);
 

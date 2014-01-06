@@ -114,7 +114,7 @@ _store_cache_trim(Elm_Store *st)
 }
 
 static void
-_store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_store_genlist_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Store *st = data;
    st->genlist = NULL;
@@ -146,7 +146,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 //     ************************************************************************
 /* TODO: refactor lock part into core? this does not depend on filesystm part */
 static void
-_store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
+_store_filesystem_fetch_do(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Elm_Store_Item *sti = data;
    eina_lock_take(&sti->lock);
@@ -224,7 +224,7 @@ _store_item_eval(void *data)
 }
 
 static void
-_store_genlist_item_realized(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_store_genlist_item_realized(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event_info;
@@ -237,7 +237,7 @@ _store_genlist_item_realized(void *data, Evas_Object *obj __UNUSED__, void *even
 }
 
 static void
-_store_genlist_item_unrealized(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_store_genlist_item_unrealized(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event_info;
@@ -263,7 +263,7 @@ _store_item_mapping_find(Elm_Store_Item *sti, const char *part)
 }
 
 static char *
-_store_item_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+_store_item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    Elm_Store_Item *sti = data;
    const char *s = "";
@@ -350,7 +350,7 @@ _store_item_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-_store_item_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+_store_item_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
 }
 
@@ -366,7 +366,7 @@ _store_filesystem_sort_cb(void *d1, void *d2)
 }
 
 static void
-_store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
+_store_filesystem_list_do(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    Elm_Store_Filesystem *st = data;
    Eina_Iterator *it;
@@ -434,7 +434,7 @@ _store_filesystem_list_cancel(void *data, Ecore_Thread *th)
 }
 
 static void
-_store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg)
+_store_filesystem_list_update(void *data, Ecore_Thread *th EINA_UNUSED, void *msg)
 {
    Elm_Store *st = data;
    Elm_Store_Item_Filesystem *sti;

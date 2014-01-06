@@ -241,7 +241,7 @@ _elm_theme_data_find(Elm_Theme *th, const char *key)
    return NULL;
 }
 
-static void _elm_theme_idler_clean(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _elm_theme_idler_clean(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static Eina_Bool
 _elm_theme_reload_idler(void *data)
@@ -255,7 +255,7 @@ _elm_theme_reload_idler(void *data)
 }
 
 static void
-_elm_theme_idler_clean(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_elm_theme_idler_clean(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Idler *idler;
 
@@ -265,8 +265,8 @@ _elm_theme_idler_clean(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
 }
 
 static void
-_elm_theme_reload(void *data __UNUSED__, Evas_Object *obj,
-                  const char *emission __UNUSED__, const char *source __UNUSED__)
+_elm_theme_reload(void *data EINA_UNUSED, Evas_Object *obj,
+                  const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *elm;
 

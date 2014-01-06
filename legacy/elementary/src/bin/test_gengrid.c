@@ -1004,21 +1004,21 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_rd1_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_rd1_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Show_Data *sd = data;
    sd->winmode = elm_radio_state_value_get(obj);
 }
 
 static void
-_rd2_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_rd2_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Show_Data *sd = data;
    sd->scrollto = elm_radio_state_value_get(obj);
 }
 
 static void
-_bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bring_in_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data ti[5000];
@@ -1077,7 +1077,7 @@ _bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 static void
-_show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_show_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *grid;
    static Item_Data ti[10000];

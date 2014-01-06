@@ -239,15 +239,15 @@ _elm_radio_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 
 static void
 _radio_on_cb(void *data,
-             Evas_Object *obj __UNUSED__,
-             const char *emission __UNUSED__,
-             const char *source __UNUSED__)
+             Evas_Object *obj EINA_UNUSED,
+             const char *emission EINA_UNUSED,
+             const char *source EINA_UNUSED)
 {
    _activate(data);
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt = elm_widget_access_info_get(obj);
 
@@ -258,7 +258,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    ELM_RADIO_DATA_GET(obj, sd);
 

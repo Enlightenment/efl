@@ -45,7 +45,7 @@ _list_mode_setting_get(const char *mode_str)
 }
 
 static void
-external_list_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_list_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_List *p;
    Elm_Scroller_Policy policy_h, policy_v;
@@ -97,7 +97,7 @@ external_list_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fro
 }
 
 static Eina_Bool
-external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_list_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "list mode"))
      {
@@ -168,7 +168,7 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
 }
 
 static Eina_Bool
-external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_list_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "horizontal mode"))
      {
@@ -241,7 +241,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
 }
 
 static void *
-external_list_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_list_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_List *mem;
    Edje_External_Param *param;
@@ -278,7 +278,7 @@ external_list_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, c
    return mem;
 }
 
-static Evas_Object *external_list_content_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_list_content_get(void *data EINA_UNUSED, const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;

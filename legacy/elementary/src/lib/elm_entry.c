@@ -80,7 +80,7 @@ struct _Mod_Api
 };
 
 static Mod_Api *
-_module_find(Evas_Object *obj __UNUSED__)
+_module_find(Evas_Object *obj EINA_UNUSED)
 {
    static Elm_Module *m = NULL;
 
@@ -1055,8 +1055,8 @@ _hover_del_job(void *data)
 
 static void
 _hover_dismissed_cb(void *data,
-                    Evas_Object *obj __UNUSED__,
-                    void *event_info __UNUSED__)
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1078,8 +1078,8 @@ _hover_dismissed_cb(void *data,
 
 static void
 _hover_selected_cb(void *data,
-                   Evas_Object *obj __UNUSED__,
-                   void *event_info __UNUSED__)
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1172,8 +1172,8 @@ _elm_entry_entry_paste(Evas_Object *obj,
 
 static void
 _paste_cb(void *data,
-          Evas_Object *obj __UNUSED__,
-          void *event_info __UNUSED__)
+          Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
 {
    Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
 
@@ -1211,8 +1211,8 @@ _selection_store(Elm_Sel_Type seltype,
 
 static void
 _cut_cb(void *data,
-        Evas_Object *obj __UNUSED__,
-        void *event_info __UNUSED__)
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1234,8 +1234,8 @@ _cut_cb(void *data,
 
 static void
 _copy_cb(void *data,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+         Evas_Object *obj EINA_UNUSED,
+         void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1253,8 +1253,8 @@ _copy_cb(void *data,
 
 static void
 _hover_cancel_cb(void *data,
-                 Evas_Object *obj __UNUSED__,
-                 void *event_info __UNUSED__)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1270,8 +1270,8 @@ _hover_cancel_cb(void *data,
 
 static void
 _hover_item_clicked_cb(void *data,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    Elm_Entry_Context_Menu_Item *it = data;
    if (!it) return;
@@ -1529,8 +1529,8 @@ _long_press_cb(void *data)
 
 static void
 _key_down_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
@@ -1541,8 +1541,8 @@ _key_down_cb(void *data,
 
 static void
 _mouse_down_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1571,8 +1571,8 @@ _mouse_down_cb(void *data,
 
 static void
 _mouse_up_cb(void *data,
-             Evas *evas __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
@@ -1598,8 +1598,8 @@ _mouse_up_cb(void *data,
 
 static void
 _mouse_move_cb(void *data,
-               Evas *evas __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
@@ -1710,18 +1710,18 @@ _entry_changed_handle(void *data,
 
 static void
 _entry_changed_signal_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    _entry_changed_handle(data, SIG_CHANGED);
 }
 
 static void
 _entry_changed_user_signal_cb(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *emission __UNUSED__,
-                              const char *source __UNUSED__)
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *emission EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    Elm_Entry_Change_Info info;
    Edje_Entry_Change_Info *edje_info = (Edje_Entry_Change_Info *)
@@ -1740,36 +1740,36 @@ _entry_changed_user_signal_cb(void *data,
 
 static void
 _entry_preedit_changed_signal_cb(void *data,
-                                 Evas_Object *obj __UNUSED__,
-                                 const char *emission __UNUSED__,
-                                 const char *source __UNUSED__)
+                                 Evas_Object *obj EINA_UNUSED,
+                                 const char *emission EINA_UNUSED,
+                                 const char *source EINA_UNUSED)
 {
    _entry_changed_handle(data, SIG_PREEDIT_CHANGED);
 }
 
 static void
 _entry_undo_request_signal_cb(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *emission __UNUSED__,
-                              const char *source __UNUSED__)
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *emission EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_UNDO_REQUEST, NULL);
 }
 
 static void
 _entry_redo_request_signal_cb(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *emission __UNUSED__,
-                              const char *source __UNUSED__)
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *emission EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_REDO_REQUEST, NULL);
 }
 
 static void
 _entry_selection_start_signal_cb(void *data,
-                                 Evas_Object *obj __UNUSED__,
-                                 const char *emission __UNUSED__,
-                                 const char *source __UNUSED__)
+                                 Evas_Object *obj EINA_UNUSED,
+                                 const char *emission EINA_UNUSED,
+                                 const char *source EINA_UNUSED)
 {
    const Eina_List *l;
    Evas_Object *entry;
@@ -1791,27 +1791,27 @@ _entry_selection_start_signal_cb(void *data,
 
 static void
 _entry_selection_all_signal_cb(void *data,
-                               Evas_Object *obj __UNUSED__,
-                               const char *emission __UNUSED__,
-                               const char *source __UNUSED__)
+                               Evas_Object *obj EINA_UNUSED,
+                               const char *emission EINA_UNUSED,
+                               const char *source EINA_UNUSED)
 {
    elm_entry_select_all(data);
 }
 
 static void
 _entry_selection_none_signal_cb(void *data,
-                                Evas_Object *obj __UNUSED__,
-                                const char *emission __UNUSED__,
-                                const char *source __UNUSED__)
+                                Evas_Object *obj EINA_UNUSED,
+                                const char *emission EINA_UNUSED,
+                                const char *source EINA_UNUSED)
 {
    elm_entry_select_none(data);
 }
 
 static void
 _entry_selection_changed_signal_cb(void *data,
-                                   Evas_Object *obj __UNUSED__,
-                                   const char *emission __UNUSED__,
-                                   const char *source __UNUSED__)
+                                   Evas_Object *obj EINA_UNUSED,
+                                   const char *emission EINA_UNUSED,
+                                   const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1823,9 +1823,9 @@ _entry_selection_changed_signal_cb(void *data,
 
 static void
 _entry_selection_cleared_signal_cb(void *data,
-                                   Evas_Object *obj __UNUSED__,
-                                   const char *emission __UNUSED__,
-                                   const char *source __UNUSED__)
+                                   Evas_Object *obj EINA_UNUSED,
+                                   const char *emission EINA_UNUSED,
+                                   const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -1862,9 +1862,9 @@ _entry_selection_cleared_signal_cb(void *data,
 
 static void
 _entry_paste_request_signal_cb(void *data,
-                               Evas_Object *obj __UNUSED__,
+                               Evas_Object *obj EINA_UNUSED,
                                const char *emission,
-                               const char *source __UNUSED__)
+                               const char *source EINA_UNUSED)
 {
    Evas_Object *top;
 
@@ -1894,27 +1894,27 @@ _entry_paste_request_signal_cb(void *data,
 
 static void
 _entry_copy_notify_signal_cb(void *data,
-                             Evas_Object *obj __UNUSED__,
-                             const char *emission __UNUSED__,
-                             const char *source __UNUSED__)
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *emission EINA_UNUSED,
+                             const char *source EINA_UNUSED)
 {
    _copy_cb(data, NULL, NULL);
 }
 
 static void
 _entry_cut_notify_signal_cb(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    _cut_cb(data, NULL, NULL);
 }
 
 static void
 _entry_cursor_changed_signal_cb(void *data,
-                                Evas_Object *obj __UNUSED__,
-                                const char *emission __UNUSED__,
-                                const char *source __UNUSED__)
+                                Evas_Object *obj EINA_UNUSED,
+                                const char *emission EINA_UNUSED,
+                                const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
@@ -1927,9 +1927,9 @@ _entry_cursor_changed_signal_cb(void *data,
 
 static void
 _entry_cursor_changed_manual_signal_cb(void *data,
-                                       Evas_Object *obj __UNUSED__,
-                                       const char *emission __UNUSED__,
-                                       const char *source __UNUSED__)
+                                       Evas_Object *obj EINA_UNUSED,
+                                       const char *emission EINA_UNUSED,
+                                       const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED_MANUAL, NULL);
 }
@@ -1967,9 +1967,9 @@ _signal_anchor_geoms_do_things_with_lol(Elm_Entry_Smart_Data *sd,
 
 static void
 _entry_anchor_down_signal_cb(void *data,
-                             Evas_Object *obj __UNUSED__,
-                             const char *emission __UNUSED__,
-                             const char *source __UNUSED__)
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *emission EINA_UNUSED,
+                             const char *source EINA_UNUSED)
 {
    Elm_Entry_Anchor_Info ei;
    const char *p;
@@ -1990,9 +1990,9 @@ _entry_anchor_down_signal_cb(void *data,
 
 static void
 _entry_anchor_up_signal_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Elm_Entry_Anchor_Info ei;
    const char *p;
@@ -2013,9 +2013,9 @@ _entry_anchor_up_signal_cb(void *data,
 
 static void
 _anchor_hover_del_cb(void *data,
-                     Evas *e __UNUSED__,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -2026,8 +2026,8 @@ _anchor_hover_del_cb(void *data,
 
 static void
 _anchor_hover_clicked_cb(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
 {
    elm_entry_anchor_hover_end(data);
 }
@@ -2112,9 +2112,9 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
 static void
 _entry_anchor_clicked_signal_cb(void *data,
-                                Evas_Object *obj __UNUSED__,
+                                Evas_Object *obj EINA_UNUSED,
                                 const char *emission,
-                                const char *source __UNUSED__)
+                                const char *source EINA_UNUSED)
 {
    Elm_Entry_Anchor_Info ei;
    const char *p;
@@ -2137,18 +2137,18 @@ _entry_anchor_clicked_signal_cb(void *data,
 }
 
 static void
-_entry_anchor_move_signal_cb(void *data __UNUSED__,
-                             Evas_Object *obj __UNUSED__,
-                             const char *emission __UNUSED__,
-                             const char *source __UNUSED__)
+_entry_anchor_move_signal_cb(void *data EINA_UNUSED,
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *emission EINA_UNUSED,
+                             const char *source EINA_UNUSED)
 {
 }
 
 static void
 _entry_anchor_in_signal_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Elm_Entry_Anchor_Info ei;
 
@@ -2166,9 +2166,9 @@ _entry_anchor_in_signal_cb(void *data,
 
 static void
 _entry_anchor_out_signal_cb(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    Elm_Entry_Anchor_Info ei;
 
@@ -2186,54 +2186,54 @@ _entry_anchor_out_signal_cb(void *data,
 
 static void
 _entry_key_enter_signal_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
-                           const char *emission __UNUSED__,
-                           const char *source __UNUSED__)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_ACTIVATED, NULL);
 }
 
 static void
 _entry_key_escape_signal_cb(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_ABORTED, NULL);
 }
 
 static void
 _entry_mouse_down_signal_cb(void *data,
-                            Evas_Object *obj __UNUSED__,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_PRESS, NULL);
 }
 
 static void
 _entry_mouse_clicked_signal_cb(void *data,
-                               Evas_Object *obj __UNUSED__,
-                               const char *emission __UNUSED__,
-                               const char *source __UNUSED__)
+                               Evas_Object *obj EINA_UNUSED,
+                               const char *emission EINA_UNUSED,
+                               const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
 _entry_mouse_double_signal_cb(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *emission __UNUSED__,
-                              const char *source __UNUSED__)
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *emission EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
 }
 
 static void
 _entry_mouse_triple_signal_cb(void *data,
-                              Evas_Object *obj __UNUSED__,
-                              const char *emission __UNUSED__,
-                              const char *source __UNUSED__)
+                              Evas_Object *obj EINA_UNUSED,
+                              const char *emission EINA_UNUSED,
+                              const char *source EINA_UNUSED)
 {
    evas_object_smart_callback_call(data, SIG_CLICKED_TRIPLE, NULL);
 }
@@ -2241,7 +2241,7 @@ _entry_mouse_triple_signal_cb(void *data,
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool
 _event_selection_notify(void *data,
-                        int type __UNUSED__,
+                        int type EINA_UNUSED,
                         void *event)
 {
    Ecore_X_Event_Selection_Notify *ev = event;
@@ -2300,9 +2300,9 @@ _event_selection_notify(void *data,
 }
 
 static Eina_Bool
-_event_selection_clear(void *data __UNUSED__,
-                       int type __UNUSED__,
-                       void *event __UNUSED__)
+_event_selection_clear(void *data EINA_UNUSED,
+                       int type EINA_UNUSED,
+                       void *event EINA_UNUSED)
 {
    Ecore_X_Event_Selection_Clear *ev = event;
 
@@ -2320,7 +2320,7 @@ _event_selection_clear(void *data __UNUSED__,
 #endif
 
 static Eina_Bool
-_drag_drop_cb(void *data __UNUSED__,
+_drag_drop_cb(void *data EINA_UNUSED,
               Evas_Object *obj,
               Elm_Selection_Data *drop)
 {
@@ -2344,8 +2344,8 @@ _drag_drop_cb(void *data __UNUSED__,
 
 static Evas_Object *
 _item_get(void *data,
-          Evas_Object *edje __UNUSED__,
-          const char *part __UNUSED__,
+          Evas_Object *edje EINA_UNUSED,
+          const char *part EINA_UNUSED,
           const char *item)
 {
    Eina_List *l;
@@ -2390,8 +2390,8 @@ _item_get(void *data,
 
 static void
 _markup_filter_cb(void *data,
-                  Evas_Object *edje __UNUSED__,
-                  const char *part __UNUSED__,
+                  Evas_Object *edje EINA_UNUSED,
+                  const char *part EINA_UNUSED,
                   char **text)
 {
    Eina_List *l;
@@ -2836,7 +2836,7 @@ proceed:
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    const char *txt;
 
@@ -2853,7 +2853,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    Eina_Strbuf *buf;
    char *ret;
@@ -2953,9 +2953,9 @@ _entry_selection_callbacks_register(Evas_Object *obj)
 
 static void
 _resize_cb(void *data,
-           Evas *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void *event_info __UNUSED__)
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -5625,9 +5625,9 @@ _imf_context_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 /* START - ANCHOR HOVER */
 static void
 _anchor_parent_del_cb(void *data,
-                      Evas *e __UNUSED__,
-                      Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+                      Evas *e EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 

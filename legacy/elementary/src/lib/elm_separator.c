@@ -48,7 +48,7 @@ _elm_separator_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list E
 }
 
 static void
-_elm_separator_smart_add(Eo *obj, void *_pd __UNUSED__,
+_elm_separator_smart_add(Eo *obj, void *_pd EINA_UNUSED,
                          va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());

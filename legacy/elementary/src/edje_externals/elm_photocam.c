@@ -31,7 +31,7 @@ _zoom_mode_setting_get(const char *zoom_mode_str)
 }
 
 static void
-external_photocam_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_photocam_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
 {
    const Elm_Params_Photocam *p;
 
@@ -54,7 +54,7 @@ external_photocam_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
 }
 
 static Eina_Bool
-external_photocam_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_photocam_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "file"))
      {
@@ -98,7 +98,7 @@ external_photocam_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
 }
 
 static Eina_Bool
-external_photocam_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_photocam_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "file"))
      {
@@ -145,7 +145,7 @@ external_photocam_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
 }
 
 static void *
-external_photocam_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_photocam_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
 {
    Elm_Params_Photocam *mem;
    Edje_External_Param *param;
@@ -176,8 +176,8 @@ external_photocam_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED_
    return mem;
 }
 
-static Evas_Object *external_photocam_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_photocam_content_get(void *data EINA_UNUSED,
+		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
 {
 	ERR("No content.");
 	return NULL;

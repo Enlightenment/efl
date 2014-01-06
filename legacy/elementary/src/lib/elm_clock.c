@@ -138,8 +138,8 @@ clock_val_down_cancel:
 static void
 _on_clock_val_up_start(void *data,
                        Evas_Object *obj,
-                       const char *emission __UNUSED__,
-                       const char *source __UNUSED__)
+                       const char *emission EINA_UNUSED,
+                       const char *source EINA_UNUSED)
 {
    ELM_CLOCK_DATA_GET(data, sd);
 
@@ -154,8 +154,8 @@ _on_clock_val_up_start(void *data,
 static void
 _on_clock_val_down_start(void *data,
                          Evas_Object *obj,
-                         const char *emission __UNUSED__,
-                         const char *source __UNUSED__)
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    ELM_CLOCK_DATA_GET(data, sd);
 
@@ -169,9 +169,9 @@ _on_clock_val_down_start(void *data,
 
 static void
 _on_clock_val_change_stop(void *data,
-                          Evas_Object *obj __UNUSED__,
-                          const char *emission __UNUSED__,
-                          const char *source __UNUSED__)
+                          Evas_Object *obj EINA_UNUSED,
+                          const char *emission EINA_UNUSED,
+                          const char *source EINA_UNUSED)
 {
    ELM_CLOCK_DATA_GET(data, sd);
 
@@ -182,7 +182,7 @@ _on_clock_val_change_stop(void *data,
 static void
 _access_activate_cb(void *data,
                     Evas_Object *part_obj,
-                    Elm_Object_Item *item __UNUSED__)
+                    Elm_Object_Item *item EINA_UNUSED)
 {
    Evas_Object *digit, *inc_btn;
    ELM_CLOCK_DATA_GET(data, sd);
@@ -617,7 +617,7 @@ _ticker(void *data)
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    int hrs;
    char *ret;
@@ -652,7 +652,7 @@ _access_info_cb(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj)
+_access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    ELM_CLOCK_DATA_GET(obj, sd);
    if (sd->edit)

@@ -137,19 +137,19 @@ _parents_unfocus(Evas_Object *obj)
 }
 
 static void
-_on_sub_obj_hide(void *data __UNUSED__,
-              Evas *e __UNUSED__,
+_on_sub_obj_hide(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
               Evas_Object *obj,
-              void *event_info __UNUSED__)
+              void *event_info EINA_UNUSED)
 {
    elm_widget_focus_hide_handle(obj);
 }
 
 static void
 _on_sub_obj_del(void *data,
-             Evas *e __UNUSED__,
+             Evas *e EINA_UNUSED,
              Evas_Object *obj,
-             void *event_info __UNUSED__)
+             void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
 
@@ -183,8 +183,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 
 static void
 _obj_mouse_down(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
    ELM_WIDGET_DATA_GET(data, sd);
@@ -195,7 +195,7 @@ _obj_mouse_down(void *data,
 
 static void
 _obj_mouse_move(void *data,
-                Evas *e __UNUSED__,
+                Evas *e EINA_UNUSED,
                 Evas_Object *obj,
                 void *event_info)
 {
@@ -218,9 +218,9 @@ _obj_mouse_move(void *data,
 
 static void
 _obj_mouse_up(void *data,
-              Evas *e __UNUSED__,
+              Evas *e EINA_UNUSED,
               Evas_Object *obj,
-              void *event_info __UNUSED__)
+              void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
    if (sd->still_in)
@@ -556,7 +556,7 @@ _propagate_y_drag_lock(Evas_Object *obj,
 
 static void
 _propagate_event(void *data,
-                 Evas *e __UNUSED__,
+                 Evas *e EINA_UNUSED,
                  Evas_Object *obj,
                  void *event_info)
 {
@@ -680,9 +680,9 @@ _parent_focus(Evas_Object *obj)
 
 static void
 _elm_object_focus_chain_del_cb(void *data,
-                               Evas *e __UNUSED__,
+                               Evas *e EINA_UNUSED,
                                Evas_Object *obj,
-                               void *event_info __UNUSED__)
+                               void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
 
@@ -4880,7 +4880,7 @@ elm_widget_orientation_mode_disabled_get(const Evas_Object *obj)
 }
 
 static void
-_elm_widget_orientation_mode_disabled_get(Eo *obj __UNUSED__, void *_pd, va_list *list)
+_elm_widget_orientation_mode_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Widget_Smart_Data *sd = _pd;
@@ -4980,7 +4980,7 @@ _track_obj_del(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_elm_widget_item_signal_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission,
+_elm_widget_item_signal_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission,
                            const char *source)
 {
    Elm_Widget_Item_Signal_Data *wisd = data;
@@ -5481,9 +5481,9 @@ struct _Elm_Widget_Item_Tooltip
 
 static Evas_Object *
 _elm_widget_item_tooltip_label_create(void *data,
-                                      Evas_Object *obj __UNUSED__,
+                                      Evas_Object *obj EINA_UNUSED,
                                       Evas_Object *tooltip,
-                                      void *item __UNUSED__)
+                                      void *item EINA_UNUSED)
 {
    Evas_Object *label = elm_label_add(tooltip);
    if (!label)
@@ -5495,9 +5495,9 @@ _elm_widget_item_tooltip_label_create(void *data,
 
 static Evas_Object *
 _elm_widget_item_tooltip_trans_label_create(void *data,
-                                            Evas_Object *obj __UNUSED__,
+                                            Evas_Object *obj EINA_UNUSED,
                                             Evas_Object *tooltip,
-                                            void *item __UNUSED__)
+                                            void *item EINA_UNUSED)
 {
    Evas_Object *label = elm_label_add(tooltip);
    if (!label)
@@ -5509,8 +5509,8 @@ _elm_widget_item_tooltip_trans_label_create(void *data,
 
 static void
 _elm_widget_item_tooltip_label_del_cb(void *data,
-                                      Evas_Object *obj __UNUSED__,
-                                      void *event_info __UNUSED__)
+                                      Evas_Object *obj EINA_UNUSED,
+                                      void *event_info EINA_UNUSED)
 {
    eina_stringshare_del(data);
 }
@@ -5566,7 +5566,7 @@ _elm_widget_item_tooltip_create(void *data,
 static void
 _elm_widget_item_tooltip_del_cb(void *data,
                                 Evas_Object *obj,
-                                void *event_info __UNUSED__)
+                                void *event_info EINA_UNUSED)
 {
    Elm_Widget_Item_Tooltip *wit = data;
    if (wit->del_cb) wit->del_cb((void *)wit->data, obj, wit->item);

@@ -39,9 +39,9 @@ _activate(Evas_Object *obj)
 
 static void
 _on_image_preloaded(void *data,
-                    Evas *e __UNUSED__,
+                    Evas *e EINA_UNUSED,
                     Evas_Object *obj,
-                    void *event __UNUSED__)
+                    void *event EINA_UNUSED)
 {
    Elm_Image_Smart_Data *sd = data;
    sd->preloading = EINA_FALSE;
@@ -51,8 +51,8 @@ _on_image_preloaded(void *data,
 
 static void
 _on_mouse_up(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;

@@ -98,7 +98,7 @@ _view_add(Evas_Object *parent)
 
 static void
 _view_smart_url_changed_cb(void *data,
-                           Evas_Object *obj __UNUSED__,
+                           Evas_Object *obj EINA_UNUSED,
                            void *event_info)
 {
    evas_object_smart_callback_call(data, SIG_URI_CHANGED, event_info);
@@ -1179,8 +1179,8 @@ EAPI void
 elm_web_region_show(Evas_Object *obj,
                     int x,
                     int y,
-                    int w __UNUSED__,
-                    int h __UNUSED__)
+                    int w EINA_UNUSED,
+                    int h EINA_UNUSED)
 {
    ELM_WEB_CHECK(obj);
    eo_do(obj, elm_obj_web_region_show(x, y, w, h));
@@ -1213,8 +1213,8 @@ EAPI void
 elm_web_region_bring_in(Evas_Object *obj,
                         int x,
                         int y,
-                        int w __UNUSED__,
-                        int h __UNUSED__)
+                        int w EINA_UNUSED,
+                        int h EINA_UNUSED)
 {
    ELM_WEB_CHECK(obj);
    eo_do(obj, elm_obj_web_region_bring_in(x, y, w, h));

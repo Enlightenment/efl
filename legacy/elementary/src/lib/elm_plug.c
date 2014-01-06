@@ -27,7 +27,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
-_sizing_eval(Evas_Object *obj __UNUSED__)
+_sizing_eval(Evas_Object *obj EINA_UNUSED)
 {
    //Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
@@ -100,8 +100,8 @@ _elm_plug_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
 static void
 _on_mouse_up(void *data,
-             Evas *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+             Evas *e EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;

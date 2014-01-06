@@ -32,9 +32,9 @@ _calendar_select_mode_get(const char *select_mode)
 }
 
 static void
-external_calendar_state_set(void *data __UNUSED__, Evas_Object *obj,
+external_calendar_state_set(void *data EINA_UNUSED, Evas_Object *obj,
                             const void *from_params, const void *to_params,
-                            float pos __UNUSED__)
+                            float pos EINA_UNUSED)
 {
    const Elm_Params_Calendar *p;
    Elm_Calendar_Select_Mode select_mode;
@@ -62,7 +62,7 @@ external_calendar_state_set(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static Eina_Bool
-external_calendar_param_set(void *data __UNUSED__, Evas_Object *obj,
+external_calendar_param_set(void *data EINA_UNUSED, Evas_Object *obj,
                             const Edje_External_Param *param)
 {
    int min,max;
@@ -103,7 +103,7 @@ external_calendar_param_set(void *data __UNUSED__, Evas_Object *obj,
 }
 
 static Eina_Bool
-external_calendar_param_get(void *data __UNUSED__, const Evas_Object *obj,
+external_calendar_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
                             Edje_External_Param *param)
 {
    int min, max;
@@ -143,8 +143,8 @@ external_calendar_param_get(void *data __UNUSED__, const Evas_Object *obj,
 }
 
 static void *
-external_calendar_params_parse(void *data __UNUSED__,
-                               Evas_Object *obj __UNUSED__,
+external_calendar_params_parse(void *data EINA_UNUSED,
+                               Evas_Object *obj EINA_UNUSED,
                                const Eina_List *params)
 {
    Elm_Params_Calendar *mem;
@@ -171,9 +171,9 @@ external_calendar_params_parse(void *data __UNUSED__,
 }
 
 static Evas_Object *
-external_calendar_content_get(void *data __UNUSED__,
-                              const Evas_Object *obj __UNUSED__,
-                              const char *content __UNUSED__)
+external_calendar_content_get(void *data EINA_UNUSED,
+                              const Evas_Object *obj EINA_UNUSED,
+                              const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;

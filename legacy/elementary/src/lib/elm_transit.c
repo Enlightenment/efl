@@ -97,7 +97,7 @@ typedef struct _Elm_Transit_Obj_State Elm_Transit_Obj_State;
 static void _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data);
-static void _transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
 static void _transit_remove_dead_effects(Elm_Transit *transit);
@@ -166,7 +166,7 @@ _remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
 }
 
 static void
-_transit_obj_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *transit = data;
    Elm_Transit_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
@@ -854,7 +854,7 @@ struct _Elm_Transit_Effect_Resizing
 };
 
 static void
-_transit_effect_resizing_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_resizing_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    Elm_Transit_Effect_Resizing *resizing = effect;
    free(resizing);
@@ -931,7 +931,7 @@ struct _Elm_Transit_Effect_Translation
 };
 
 static void
-_translation_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_translation_object_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit_Effect_Translation *translation = data;
    Eina_List *elist;
@@ -974,7 +974,7 @@ _translation_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Translation *t
 }
 
 void
-_transit_effect_translation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_translation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    Elm_Transit_Effect_Translation *translation = effect;
@@ -993,7 +993,7 @@ _transit_effect_translation_context_free(Elm_Transit_Effect *effect, Elm_Transit
 }
 
 void
-_transit_effect_translation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress __UNUSED__)
+_transit_effect_translation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
@@ -1059,7 +1059,7 @@ struct _Elm_Transit_Effect_Zoom
 };
 
 void
-_transit_effect_zoom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_zoom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    Elm_Transit_Effect_Zoom *zoom = effect;
    free(zoom);
@@ -1304,7 +1304,7 @@ struct _Elm_Transit_Effect_Resizable_Flip
 };
 
 static void
-_resizable_flip_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_resizable_flip_object_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit_Effect_ResizableFlip *resizable_flip = data;
    Eina_List *elist;
@@ -1426,7 +1426,7 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Transit_Effect_ResizableFlip_Node *fl
 }
 
 void
-_transit_effect_resizable_flip_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_resizable_flip_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
 
@@ -1453,7 +1453,7 @@ _transit_effect_resizable_flip_context_free(Elm_Transit_Effect *effect, Elm_Tran
 }
 
 void
-_transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__, double progress)
+_transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED, double progress)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    Evas_Map *map;
@@ -1828,7 +1828,7 @@ struct _Elm_Transit_Effect_Color
 };
 
 static void
-_transit_effect_color_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_color_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    Elm_Transit_Effect_Color *color = effect;
    free(color);
@@ -1912,7 +1912,7 @@ struct _Elm_Transit_Effect_Fade
 };
 
 static void
-_fade_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_fade_object_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit_Effect_Fade *fade = data;
    Eina_List *elist;
@@ -1975,7 +1975,7 @@ _fade_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Fade *fade_data)
 }
 
 static void
-_transit_effect_fade_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_fade_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    Elm_Transit_Effect_Fade *fade = effect;
@@ -2005,7 +2005,7 @@ _transit_effect_fade_context_free(Elm_Transit_Effect *effect, Elm_Transit *trans
 }
 
 static void
-_transit_effect_fade_op(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__, double progress)
+_transit_effect_fade_op(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED, double progress)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    Elm_Transit_Effect_Fade *fade = effect;
@@ -2103,7 +2103,7 @@ struct _Elm_Transit_Effect_Blend
 };
 
 static void
-_blend_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_blend_object_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit_Effect_Blend *blend = data;
    Eina_List *elist;
@@ -2261,7 +2261,7 @@ struct _Elm_Transit_Effect_Rotation
 };
 
 static void
-_transit_effect_rotation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_rotation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    Elm_Transit_Effect_Rotation *rotation = effect;
    free(rotation);
@@ -2344,7 +2344,7 @@ struct _Elm_Transit_Effect_Image_Animation
 };
 
 static void
-_transit_effect_image_animation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
+_transit_effect_image_animation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
    Elm_Transit_Effect_Image_Animation *image_animation = effect;
