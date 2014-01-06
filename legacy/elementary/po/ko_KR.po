@@ -3,12 +3,11 @@
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 # Seong-ho Cho <darkcircle.0426@gmail.com>, 2013.
 #
-#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-08 18:12+0900\n"
+"POT-Creation-Date: 2014-01-06 23:44+0900\n"
 "PO-Revision-Date: 2013-11-27 11:32+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: General\n"
@@ -20,32 +19,32 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: src/lib/elc_fileselector.c:1238
+#: src/lib/elc_fileselector.c:1341
 msgid "Up"
 msgstr "위로"
 
-#: src/lib/elc_fileselector.c:1253
+#: src/lib/elc_fileselector.c:1356
 msgid "Home"
 msgstr "홈"
 
-#: src/lib/elc_fileselector.c:1470 src/lib/elm_entry.c:1340
-#: src/lib/elm_entry.c:1365
+#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
+#: src/lib/elm_entry.c:1371
 msgid "Cancel"
 msgstr "취소"
 
-#: src/lib/elc_fileselector.c:1479
+#: src/lib/elc_fileselector.c:1592
 msgid "OK"
 msgstr "확인"
 
-#: src/lib/elc_multibuttonentry.c:575
+#: src/lib/elc_multibuttonentry.c:614
 msgid "multi button entry label"
 msgstr "다중 버튼 엔트리 레이블"
 
-#: src/lib/elc_multibuttonentry.c:597
+#: src/lib/elc_multibuttonentry.c:635
 msgid "multi button entry item"
 msgstr "다중 버튼 엔트리 항목"
 
-#: src/lib/elc_multibuttonentry.c:1471
+#: src/lib/elc_multibuttonentry.c:1512
 msgid "multi button entry"
 msgstr "다중 버튼 엔트리"
 
@@ -80,7 +79,7 @@ msgstr "클릭함"
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
 #: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
 #: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
-#: src/lib/elm_toolbar.c:1980
+#: src/lib/elm_toolbar.c:1979
 msgid "State: Disabled"
 msgstr "상태 : 비활성화"
 
@@ -161,11 +160,11 @@ msgstr "상태: 편집 가능"
 msgid "Clock"
 msgstr "시계"
 
-#: src/lib/elm_colorselector.c:1349
+#: src/lib/elm_colorselector.c:1370
 msgid "color selector palette item"
 msgstr "색상 선택기 팔레트 항목"
 
-#: src/lib/elm_config.c:2431
+#: src/lib/elm_config.c:2441
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -181,19 +180,19 @@ msgstr "디스크셀렉터 항목"
 msgid "Copy"
 msgstr "복사"
 
-#: src/lib/elm_entry.c:1337
+#: src/lib/elm_entry.c:1338
 msgid "Cut"
 msgstr "잘라내기"
 
-#: src/lib/elm_entry.c:1352
-msgid "Select"
-msgstr "선택"
-
-#: src/lib/elm_entry.c:1359
+#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: src/lib/elm_entry.c:3301
+#: src/lib/elm_entry.c:1358
+msgid "Select"
+msgstr "선택"
+
+#: src/lib/elm_entry.c:3312
 msgid "Entry"
 msgstr "엔트리"
 
@@ -233,7 +232,7 @@ msgstr "프로그레스바"
 msgid "Radio"
 msgstr "라디오 버튼"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1981
 msgid "State: Selected"
 msgstr "상태: 선택함"
 
@@ -261,22 +260,22 @@ msgstr "스피너 감소 버튼"
 msgid "spinner"
 msgstr "스피너"
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
+#: src/lib/elm_toolbar.c:1450 src/lib/elm_toolbar.c:2040
 msgid "Selected"
 msgstr "선택"
 
-#: src/lib/elm_toolbar.c:1978
+#: src/lib/elm_toolbar.c:1977
 msgid "Separator"
 msgstr "구분선"
 
-#: src/lib/elm_toolbar.c:1984
+#: src/lib/elm_toolbar.c:1983
 msgid "Has menu"
 msgstr "메뉴 있음"
 
-#: src/lib/elm_toolbar.c:2036
+#: src/lib/elm_toolbar.c:2035
 msgid "Unselected"
 msgstr "선택 해제"
 
-#: src/lib/elm_toolbar.c:2053
+#: src/lib/elm_toolbar.c:2052
 msgid "Toolbar Item"
 msgstr "툴바 항목"

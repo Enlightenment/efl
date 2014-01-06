@@ -4,12 +4,11 @@
 # Alex-P. Natsios <drakevr@linuxteam.teilar.gr> 2012.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2012.
 #
-#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-08 18:12+0900\n"
+"POT-Creation-Date: 2014-01-06 23:44+0900\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -20,32 +19,32 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: src/lib/elc_fileselector.c:1238
+#: src/lib/elc_fileselector.c:1341
 msgid "Up"
 msgstr "Πάνω"
 
-#: src/lib/elc_fileselector.c:1253
+#: src/lib/elc_fileselector.c:1356
 msgid "Home"
 msgstr "Αρχική"
 
-#: src/lib/elc_fileselector.c:1470 src/lib/elm_entry.c:1340
-#: src/lib/elm_entry.c:1365
+#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
+#: src/lib/elm_entry.c:1371
 msgid "Cancel"
 msgstr "Άκυρο"
 
-#: src/lib/elc_fileselector.c:1479
+#: src/lib/elc_fileselector.c:1592
 msgid "OK"
 msgstr "Εντάξει"
 
-#: src/lib/elc_multibuttonentry.c:575
+#: src/lib/elc_multibuttonentry.c:614
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:597
+#: src/lib/elc_multibuttonentry.c:635
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1471
+#: src/lib/elc_multibuttonentry.c:1512
 msgid "multi button entry"
 msgstr ""
 
@@ -81,7 +80,7 @@ msgstr "Επιλεγμένο"
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
 #: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
 #: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
-#: src/lib/elm_toolbar.c:1980
+#: src/lib/elm_toolbar.c:1979
 msgid "State: Disabled"
 msgstr "Κατάσταση: Απενεργοποιημένο"
 
@@ -169,11 +168,11 @@ msgstr "Κατάσταση: Επεξεργάσιμο"
 msgid "Clock"
 msgstr "Ρολοι"
 
-#: src/lib/elm_colorselector.c:1349
+#: src/lib/elm_colorselector.c:1370
 msgid "color selector palette item"
 msgstr "παλέτα επιλογής χρώματος"
 
-#: src/lib/elm_config.c:2431
+#: src/lib/elm_config.c:2441
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -190,19 +189,19 @@ msgstr "επιλογή δίσκου"
 msgid "Copy"
 msgstr "Αντιγραφή"
 
-#: src/lib/elm_entry.c:1337
+#: src/lib/elm_entry.c:1338
 msgid "Cut"
 msgstr "Αποκοπή"
 
-#: src/lib/elm_entry.c:1352
-msgid "Select"
-msgstr "Επιλογή"
-
-#: src/lib/elm_entry.c:1359
+#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: src/lib/elm_entry.c:3301
+#: src/lib/elm_entry.c:1358
+msgid "Select"
+msgstr "Επιλογή"
+
+#: src/lib/elm_entry.c:3312
 msgid "Entry"
 msgstr "Καταχώριση"
 
@@ -242,7 +241,7 @@ msgstr "Μπάρα Προόδου"
 msgid "Radio"
 msgstr "Επιλογή"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1981
 msgid "State: Selected"
 msgstr "Κατάσταση: Επιλεγμένο"
 
@@ -274,23 +273,23 @@ msgstr "κουμπί spinner προηγούμενο"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
+#: src/lib/elm_toolbar.c:1450 src/lib/elm_toolbar.c:2040
 msgid "Selected"
 msgstr "Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:1978
+#: src/lib/elm_toolbar.c:1977
 msgid "Separator"
 msgstr "Διαχωριστικό"
 
-#: src/lib/elm_toolbar.c:1984
+#: src/lib/elm_toolbar.c:1983
 msgid "Has menu"
 msgstr "Έχει μενού"
 
-#: src/lib/elm_toolbar.c:2036
+#: src/lib/elm_toolbar.c:2035
 msgid "Unselected"
 msgstr "Μη Επιλεγμένο"
 
-#: src/lib/elm_toolbar.c:2053
+#: src/lib/elm_toolbar.c:2052
 msgid "Toolbar Item"
 msgstr "Αντικείμενο μπάρας εργαλείων"
 

@@ -3,12 +3,11 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:2415
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-08 18:12+0900\n"
+"POT-Creation-Date: 2014-01-06 23:44+0900\n"
 "PO-Revision-Date: 2013-06-20 07:08+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -22,32 +21,32 @@ msgstr ""
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: src/lib/elc_fileselector.c:1238
+#: src/lib/elc_fileselector.c:1341
 msgid "Up"
 msgstr "Monter"
 
-#: src/lib/elc_fileselector.c:1253
+#: src/lib/elc_fileselector.c:1356
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1470 src/lib/elm_entry.c:1340
-#: src/lib/elm_entry.c:1365
+#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
+#: src/lib/elm_entry.c:1371
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/lib/elc_fileselector.c:1479
+#: src/lib/elc_fileselector.c:1592
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:575
+#: src/lib/elc_multibuttonentry.c:614
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:597
+#: src/lib/elc_multibuttonentry.c:635
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1471
+#: src/lib/elc_multibuttonentry.c:1512
 msgid "multi button entry"
 msgstr ""
 
@@ -82,7 +81,7 @@ msgstr "Cliqué"
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
 #: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
 #: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
-#: src/lib/elm_toolbar.c:1980
+#: src/lib/elm_toolbar.c:1979
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -163,11 +162,11 @@ msgstr ""
 msgid "Clock"
 msgstr "Horloge"
 
-#: src/lib/elm_colorselector.c:1349
+#: src/lib/elm_colorselector.c:1370
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2431
+#: src/lib/elm_config.c:2441
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -184,19 +183,19 @@ msgstr ""
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1337
+#: src/lib/elm_entry.c:1338
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1352
-msgid "Select"
-msgstr "Sélectionner"
-
-#: src/lib/elm_entry.c:1359
+#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:3301
+#: src/lib/elm_entry.c:1358
+msgid "Select"
+msgstr "Sélectionner"
+
+#: src/lib/elm_entry.c:3312
 msgid "Entry"
 msgstr ""
 
@@ -236,7 +235,7 @@ msgstr "barre de progression"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1982
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1981
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
@@ -265,22 +264,22 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
+#: src/lib/elm_toolbar.c:1450 src/lib/elm_toolbar.c:2040
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1978
+#: src/lib/elm_toolbar.c:1977
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:1984
+#: src/lib/elm_toolbar.c:1983
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:2036
+#: src/lib/elm_toolbar.c:2035
 msgid "Unselected"
 msgstr "Désélectionné"
 
-#: src/lib/elm_toolbar.c:2053
+#: src/lib/elm_toolbar.c:2052
 msgid "Toolbar Item"
 msgstr "Élément de barre d'outils"
