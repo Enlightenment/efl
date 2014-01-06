@@ -1606,7 +1606,7 @@ _elm_multibuttonentry_smart_focus_next(Eo *obj, void *_pd, va_list *list)
         items = eina_list_append(items, sd->box);
      }
 
-   if (int_ret)
+   if (int_ret && ret)
      *ret = elm_widget_focus_list_next_get
               (obj, items, eina_list_data_get, dir, next);
 }

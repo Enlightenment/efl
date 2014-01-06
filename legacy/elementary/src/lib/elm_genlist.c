@@ -5947,7 +5947,7 @@ _realized_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
              done = EINA_TRUE;
              EINA_LIST_FOREACH(itb->items, l, it)
                {
-                  if (it->realized) *ret = eina_list_append(*ret, it);
+                  if (it->realized && ret) *ret = eina_list_append(*ret, it);
                }
           }
         else

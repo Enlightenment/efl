@@ -2951,7 +2951,7 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    _sizing_eval(obj);
    sd->item_count++;
 
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *

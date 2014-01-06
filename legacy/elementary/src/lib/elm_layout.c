@@ -1192,7 +1192,7 @@ _elm_layout_smart_content_swallow_list_get(Eo *obj EINA_UNUSED, void *_pd, va_li
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
-        if (sub_d->type == SWALLOW)
+        if ((sub_d->type == SWALLOW) && ret)
           *ret = eina_list_append(*ret, sub_d->obj);
      }
 }
