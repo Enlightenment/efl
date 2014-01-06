@@ -1227,7 +1227,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              RD("      }\n");
              return clean_them;
           }
-        evas_object_map_update(eo_obj, off_x, off_y, sw, sh, sw, sh);
+
+        changed = evas_object_map_update(eo_obj, off_x, off_y, sw, sh, sw, sh);
 
         if (obj->map->surface)
           {

@@ -1217,7 +1217,11 @@ evas_map_util_clockwise_get(Evas_Map *m)
    return EINA_FALSE;
 }
 
-void
+
+/****************************************************************************/
+/* If the return value is true, the map surface should be redrawn.          */
+/****************************************************************************/
+Eina_Bool
 evas_object_map_update(Evas_Object *eo_obj,
                        int x, int y,
                        int imagew, int imageh,
@@ -1227,7 +1231,7 @@ evas_object_map_update(Evas_Object *eo_obj,
    const Evas_Map_Point *p, *p_end;
    RGBA_Map_Point *pts, *pt;
 
-   if (!obj) return;
+   if (!obj) return EINA_FALSE;
    if (obj->map->spans)
      {
         if (obj->map->spans->x != x || obj->map->spans->y != y ||
@@ -1240,7 +1244,7 @@ evas_object_map_update(Evas_Object *eo_obj,
         obj->changed_map = EINA_TRUE;
      }
 
-   if (!obj->changed_map) return;
+   if (!obj->changed_map) return EINA_FALSE;
 
    if (obj->map->cur.map && obj->map->spans && obj->map->cur.map->count != obj->map->spans->count)
      {
@@ -1264,7 +1268,7 @@ evas_object_map_update(Evas_Object *eo_obj,
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
 
-   if (!obj->map->spans) return;
+   if (!obj->map->spans) return EINA_FALSE;
 
    EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
      {
@@ -1319,4 +1323,6 @@ evas_object_map_update(Evas_Object *eo_obj,
    // Request engine to update it's point
 
    obj->changed_map = EINA_FALSE;
+
+   return obj->changed_pchange;
 }
