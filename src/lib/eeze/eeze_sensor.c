@@ -107,6 +107,9 @@ eeze_sensor_modules_load(void)
         ERR("No modules found!");
         return;
      }
+   // XXX: MODFIX: do not list ALL modules and load them ALL! this is
+   // this will, for example, load both udev AND fake modules - run
+   // their init funcs etc. etc. why? no!
    eina_module_list_load(g_handle->modules_array);
 }
 

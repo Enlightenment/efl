@@ -183,6 +183,11 @@ ecore_system_modules_load(void)
             eina_prefix_lib_get(_ecore_pfx));
    module_list = eina_module_arch_list_get(module_list, buf, MODULE_ARCH);
 
+   // XXX: MODFIX: do not list ALL modules and load them ALL! this is
+   // just polluting memory pages and I/O with modules and code that
+   // is then never used. detetc the module we need to use them use
+   // that. if anything load each module, have it do a detect and if
+   // it fails UNLOAD and try the next one.
    eina_module_list_load(module_list);
 }
 

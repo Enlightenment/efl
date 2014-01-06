@@ -200,6 +200,9 @@ eina_mempool_init(void)
         goto mempool_init_error;
      }
 
+   // XXX: MODFIX: do not list ALL modules and load them ALL! this is
+   // wrong. load the module we need WHEN we need it (by name etc. etc.
+   // from api).
    eina_module_list_load(_modules);
 
    /* builtin backends */

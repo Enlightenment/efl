@@ -202,6 +202,11 @@ _ethumb_plugins_load(void)
    _plugins = eina_module_arch_list_get(_plugins, buf, MODULE_ARCH);
 
  load:
+   // XXX: MODFIX: do not list ALL modules and load them ALL! this is
+   // wasteful. admittedly this is low priority as we have only 1
+   // module - and that is emotion and ethumbd slaves die off quickly
+   // but we still pay a module load, init func etc. price even if
+   // the code is never needed!
    if (_plugins)
      eina_module_list_load(_plugins);
 
