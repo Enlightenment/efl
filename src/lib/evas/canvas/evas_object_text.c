@@ -2138,7 +2138,29 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
 
         if (o->cur.filter.output)
           {
-             if (o->cur.filter.changed)
+             Eina_Bool redraw = o->cur.filter.changed;
+
+             // Scan proxies to find if any changed
+             if (!redraw && o->cur.filter.sources)
+               {
+                  Evas_Object_Protected_Data *source;
+                  Evas_Object *eo_source;
+                  Eina_Iterator *it;
+
+                  it = eina_hash_iterator_data_new(o->cur.filter.sources);
+                  EINA_ITERATOR_FOREACH(it, eo_source)
+                    {
+                       source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
+                       if (source->changed)
+                         {
+                            redraw = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  eina_iterator_free(it);
+               }
+
+             if (redraw)
                {
                   ENFN->image_free(ENDT, o->cur.filter.output);
                   o->cur.filter.output = NULL;
