@@ -41,6 +41,34 @@ typedef enum _Ecore_Drm_Op_Result
    ECORE_DRM_OP_FAILURE
 } Ecore_Drm_Op_Result;
 
+typedef enum _Ecore_Drm_Evdev_Capabilities
+{
+   EVDEV_KEYBOARD = (1 << 0),
+   EVDEV_BUTTON = (1 << 1),
+   EVDEV_MOTION_ABS = (1 << 2),
+   EVDEV_MOTION_REL = (1 << 3),
+   EVDEV_TOUCH = (1 << 4),
+} Ecore_Drm_Evdev_Capabilities;
+
+typedef enum _Ecore_Drm_Evdev_Event_Type
+{
+   EVDEV_NONE,
+   EVDEV_ABSOLUTE_TOUCH_DOWN,
+   EVDEV_ABSOLUTE_MOTION,
+   EVDEV_ABSOLUTE_TOUCH_UP,
+   EVDEV_ABSOLUTE_MT_DOWN,
+   EVDEV_ABSOLUTE_MT_MOTION,
+   EVDEV_ABSOLUTE_MT_UP,
+   EVDEV_RELATIVE_MOTION,
+} Ecore_Drm_Evdev_Event_Type;
+
+typedef enum _Ecore_Drm_Seat_Capabilities
+{
+   EVDEV_SEAT_POINTER = (1 << 0),
+   EVDEV_SEAT_KEYBOARD = (1 << 1),
+   EVDEV_SEAT_TOUCH = (1 << 2),
+} Ecore_Drm_Seat_Capabilities;
+
 /* structure for message passing */
 typedef struct _Ecore_Drm_Message 
 {
