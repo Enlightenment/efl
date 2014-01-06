@@ -540,7 +540,7 @@ _state_update(Evas_Object *obj)
    Evas_Coord xx1, yy1, xx2, yy2, mx, my;
    Evas_Coord x, y, w, h, ox, oy, ow, oh;
    int gx, gy, gszw, gszh, gw, gh, col, row, nw, nh;
-   double rho, A, theta, perc, percm, n, rhol, Al, thetal;
+   double rho, A, theta, perc, n, rhol, Al, thetal;
 
    sd->backflip = EINA_TRUE;
    if (sd->state)
@@ -627,13 +627,9 @@ _state_update(Evas_Object *obj)
      }
 
    perc = (double)xx2 / (double)xx1;
-   percm = (double)mx / (double)xx1;
    if (perc < 0.0) perc = 0.0;
    else if (perc > 1.0)
      perc = 1.0;
-   if (percm < 0.0) percm = 0.0;
-   else if (percm > 1.0)
-     percm = 1.0;
 
    minva = atan(minv) / (M_PI / 2);
    if (minva < 0.0) minva = -minva;

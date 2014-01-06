@@ -989,9 +989,6 @@ _item_place(Elm_Gen_Item *it,
    cvw = vw + 2 * PRELOAD * wsd->item_width;
    cvh = vh + 2 * PRELOAD * wsd->item_height;
 
-   alignh = 0;
-   alignw = 0;
-
    items_count = wsd->item_count -
      eina_list_count(wsd->group_items) + wsd->items_lost;
    if (wsd->horizontal)
