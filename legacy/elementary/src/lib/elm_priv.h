@@ -160,7 +160,7 @@ extern const char *_elm_engines[];
 #undef MAX
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 
-#define ELM_SAFE_FREE(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
+#define ELM_SAFE_FREE(_h, _fn) do { _fn((void*)_h); _h = NULL; } while (0)
 
 #define ELM_PRIV_STATIC_VARIABLE_DECLARE(name, signal, type) \
    static const char name[] = signal;
