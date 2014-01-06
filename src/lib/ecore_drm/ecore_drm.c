@@ -159,7 +159,7 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
         DBG("Error Sending Message: %m");
      }
 
-   DBG("Sent %li bytes to Socket %d", size, _ecore_drm_sockets[1]);
+   /* DBG("Sent %li bytes to Socket %d", size, _ecore_drm_sockets[1]); */
 
    return size;
 }
@@ -172,8 +172,8 @@ _ecore_drm_socket_receive(int opcode EINA_UNUSED, int *fd, void **data, size_t b
    struct cmsghdr *cmsg;
    struct iovec iov[2];
    struct msghdr msg;
-   char buff[BUFSIZ];
-   ssize_t size;
+   char buff[CMSG_SPACE(sizeof(fd))];
+   /* ssize_t size; */
 
    memset(&dmsg, 0, sizeof(dmsg));
    memset(&buff, 0, sizeof(buff));
@@ -194,14 +194,14 @@ _ecore_drm_socket_receive(int opcode EINA_UNUSED, int *fd, void **data, size_t b
    msg.msg_controllen = RIGHTS_LEN;
 
    errno = 0;
-   size = recvmsg(_ecore_drm_sockets[0], &msg, 0);
+   recvmsg(_ecore_drm_sockets[0], &msg, 0);
    if (errno != 0)
      {
         ERR("Failed to receive message: %m");
         return -1;
      }
 
-   DBG("Received %li bytes from %d", size, _ecore_drm_sockets[0]);
+   /* DBG("Received %li bytes from %d", size, _ecore_drm_sockets[0]); */
 
    for (cmsg = CMSG_FIRSTHDR(&msg); cmsg != NULL; 
         cmsg = CMSG_NXTHDR(&msg, cmsg))
