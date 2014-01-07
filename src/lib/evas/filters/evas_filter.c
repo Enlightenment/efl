@@ -940,6 +940,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
    DRAW_FILL_SET(fillmode);
    cmd->displacement.flags = flags & EVAS_FILTER_DISPLACE_BITMASK;
    cmd->displacement.intensity = intensity;
+   cmd->draw.render_op = ENFN->context_render_op_get(ENDT, draw_context);
    cmdid = cmd->id;
 
    if (tmp)

@@ -1,12 +1,11 @@
 #include "evas_filter.h"
 #include "evas_filter_private.h"
 
-#warning TODO: Add alpha support
-
 static void
 _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
-                              DATA8 *dst, DATA8 *src, DATA8 *map_start,
-                              Eina_Bool stretch, Eina_Bool smooth)
+                              DATA8 *src, DATA8 *dst, DATA8 *map_start,
+                              Eina_Bool stretch, Eina_Bool smooth,
+                              Eina_Bool blend)
 {
    int x, y, map_x, map_y;
    const int map_stride = map_w * sizeof(DATA32);
@@ -24,6 +23,7 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
              int offx = 0, offy = 0, offx_dec = 0, offy_dec = 0, val = 0;
              Eina_Bool out = 0;
 
+             // wrap around (x)
              if (map_x >= map_w)
                {
                   map_x = 0;
@@ -31,41 +31,55 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
                }
              else map += sizeof(DATA32);
 
+             // x
              val = ((int) map[dx] - 128) * intensity;
              offx = val >> 7;
              offx_dec = val & 0x7f;
              if ((x + offx) < 0) { offx = -x; out = 1; }
              if ((x + offx + 1) >= w) { offx = w - x - 2; out = 1; }
 
+             // y
              val = ((int) map[dy] - 128) * intensity;
              offy = val >> 7;
              offy_dec = val & 0x7f;
              if ((y + offy) < 0) { offy = -y; out = 1; }
              if ((y + offy + 1) >= h) { offy = h - y - 2; out = 1; }
 
+             // get value
              if (out && !stretch)
-               *dst = 0;
+               val = 0;
              else
                {
                   if (!smooth)
-                    *dst = src[offx + offy * w];
+                    val = src[offx + offy * w];
                   else
                     {
                        val  = src[offx + offy * w] * (128 - offx_dec) * (128 - offy_dec);
                        val += src[offx + 1 + offy * w] * offx_dec * (128 - offy_dec);
                        val += src[offx + (offy + 1) * w] * (128 - offx_dec) * offy_dec;
                        val += src[offx + 1 + (offy + 1) * w] * offx_dec * offy_dec;
-                       *dst = val >> 14; // <=> *dst = val / (128 * 128)
+                       val = val >> 14; // <=> *dst = val / (128 * 128)
                     }
                }
+
+             // apply alpha
+             if (map[ALPHA] != 255)
+               val = (val * map[ALPHA]) / 255;
+
+             // write to dest
+             if (blend)
+               *dst = (*dst * (255 - val)) / 255 + val;
+             else
+               *dst = val;
           }
      }
 }
 
 static void
 _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
-                             DATA8 *map_start, DATA32 *src, DATA32 *dst,
-                             Eina_Bool stretch, Eina_Bool smooth)
+                             DATA32 *src, DATA32 *dst, DATA8 *map_start,
+                             Eina_Bool stretch, Eina_Bool smooth,
+                             Eina_Bool blend)
 {
    int x, y, map_x, map_y;
    const int map_stride = sizeof(DATA32) * map_w;
@@ -83,6 +97,7 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
              int offx = 0, offy = 0, offx_dec = 0, offy_dec = 0, val = 0;
              Eina_Bool out = 0;
 
+             // wrap (x)
              if (map_x >= map_w)
                {
                   map_x = 0;
@@ -90,22 +105,25 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
                }
              else map += sizeof(DATA32);
 
+             // x
              val = ((int) map[dx] - 128) * intensity;
              offx = val >> 7;
              offx_dec = val & 0x7f;
              if ((x + offx) < 0) { offx = -x; out = 1; }
              if ((x + offx + 1) >= w) { offx = w - x - 2; out = 1; }
 
+             // y
              val = ((int) map[dy] - 128) * intensity;
              offy = val >> 7;
              offy_dec = val & 0x7f;
              if ((y + offy) < 0) { offy = -y; out = 1; }
              if ((y + offy + 1) >= h) { offy = h - y - 2; out = 1; }
 
+             // get value
              if (out && !stretch)
-               *dst = A_VAL(src + offx + offy * w) << (ALPHA * 8);
+               val = A_VAL(src + offx + offy * w) << (ALPHA * 8);
              else if (!smooth)
-               *dst = src[offx + offy * w];
+               val = src[offx + offy * w];
              else
                {
                   int R, G, B, A;
@@ -138,8 +156,14 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
                   G >>= 14;
                   B >>= 14;
 
-                  *dst = ARGB_JOIN(A, R, G, B);
+                  val = ARGB_JOIN(A, R, G, B);
                }
+
+             // apply alpha
+             if (blend && map[ALPHA] != 0xFF)
+               *dst = INTERP_256(map[ALPHA], val, *dst);
+             else
+               *dst = val;
           }
      }
 }
@@ -148,15 +172,14 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
  * Apply distortion map on alpha image
  * input:  alpha
  * output: alpha
- * map:    alpha or rgba
- * direction: X, Y or XY
+ * map:    rg+a (rgba)
  */
 static Eina_Bool
 _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
 {
    int w, h, map_w, map_h, intensity;
    DATA8 *dst, *src, *map_start;
-   Eina_Bool stretch, smooth;
+   Eina_Bool stretch, smooth, blend;
 
    w = cmd->input->w;
    h = cmd->input->h;
@@ -178,9 +201,10 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
    map_w = cmd->mask->w;
    map_h = cmd->mask->h;
    intensity = cmd->displacement.intensity;
+   blend = (cmd->draw.render_op == EVAS_RENDER_BLEND);
 
    _filter_displace_cpu_alpha_do(w, h, map_w, map_h, intensity,
-                                 dst, src, map_start, stretch, smooth);
+                                 src, dst, map_start, stretch, smooth, blend);
 
    return EINA_TRUE;
 }
@@ -189,8 +213,7 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
  * Apply distortion map on rgba image
  * input:  rgba
  * output: rgba
- * map:    alpha or rgba
- * direction: X, Y or XY
+ * map:    rg+a (rgba)
  */
 static Eina_Bool
 _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
@@ -198,7 +221,7 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
    int w, h, map_w, map_h, intensity;
    DATA32 *dst, *src;
    DATA8 *map_start;
-   Eina_Bool stretch, smooth;
+   Eina_Bool stretch, smooth, blend;
 
    w = cmd->input->w;
    h = cmd->input->h;
@@ -220,9 +243,10 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
    map_w = cmd->mask->w;
    map_h = cmd->mask->h;
    intensity = cmd->displacement.intensity;
+   blend = (cmd->draw.render_op == EVAS_RENDER_BLEND);
 
-   _filter_displace_cpu_rgba_do(w, h, map_w, map_h, intensity, map_start,
-                                src, dst, stretch, smooth);
+   _filter_displace_cpu_rgba_do(w, h, map_w, map_h, intensity,
+                                src, dst, map_start, stretch, smooth, blend);
 
    return EINA_TRUE;
 }
