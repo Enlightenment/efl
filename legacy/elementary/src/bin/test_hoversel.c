@@ -225,7 +225,7 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 2", "close", ELM_ICON_STANDARD, NULL,
                          NULL);
-   elm_object_disabled_set(hoversel, 1);
+   elm_object_disabled_set(hoversel, EINA_TRUE);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 

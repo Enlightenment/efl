@@ -19,7 +19,7 @@ test_datetime(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    struct tm time1;
 
    win = elm_win_util_standard_add("datetime", "DateTime");
-   elm_win_autodel_set(win, 1);
+   elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

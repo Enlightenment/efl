@@ -739,7 +739,7 @@ test_list3(void        *data EINA_UNUSED,
    ic2 = elm_button_add(win);
    elm_object_text_set(ic2, "Click me");
    evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
-   evas_object_propagate_events_set(ic2, 0);
+   evas_object_propagate_events_set(ic2, EINA_FALSE);
    elm_list_item_append(li, "Hello", ic, ic2, _it_clicked, NULL);
 
    ic = elm_icon_add(win);
@@ -990,7 +990,7 @@ test_list5_swipe(void        *data EINA_UNUSED,
 
    button = elm_button_add(info->win);
    elm_object_text_set(button, "delete");
-   evas_object_propagate_events_set(button, 0);
+   evas_object_propagate_events_set(button, EINA_FALSE);
    evas_object_smart_callback_add(button, "clicked", test_list5_item_del,
                                   event_info);
    elm_object_item_part_content_set(event_info, "end", button);

@@ -304,7 +304,7 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    over = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(over, 0, 0, 0, 0);
    evas_object_event_callback_add(over, EVAS_CALLBACK_MOUSE_MOVE, _move, gl);
-   evas_object_repeat_events_set(over, 1);
+   evas_object_repeat_events_set(over, EINA_TRUE);
    evas_object_show(over);
    evas_object_size_hint_weight_set(over, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, over);
@@ -945,7 +945,7 @@ test_genlist4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    gl = elm_genlist_add(win);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
-   elm_genlist_multi_select_set(gl, 1);
+   elm_genlist_multi_select_set(gl, EINA_TRUE);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
@@ -3188,7 +3188,7 @@ test_genlist19(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    over = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(over, 0, 0, 0, 0);
    evas_object_event_callback_add(over, EVAS_CALLBACK_MOUSE_MOVE, _move, gl);
-   evas_object_repeat_events_set(over, 1);
+   evas_object_repeat_events_set(over, EINA_TRUE);
    evas_object_show(over);
    evas_object_size_hint_weight_set(over, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, over);

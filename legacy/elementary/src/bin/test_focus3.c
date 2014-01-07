@@ -76,7 +76,7 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(en);
 
    bt = elm_button_add(win);
-   elm_object_focus_allow_set(bt, 0);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
    elm_object_text_set(bt, "Add");
    evas_object_smart_callback_add(bt, "clicked", _add, bx);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -85,7 +85,7 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_focus_allow_set(bt, 0);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
    elm_object_text_set(bt, "Del");
    evas_object_smart_callback_add(bt, "clicked", _del, NULL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -94,7 +94,7 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_focus_allow_set(bt, 0);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
    elm_object_text_set(bt, "Hide");
    evas_object_smart_callback_add(bt, "clicked", _hide, NULL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);

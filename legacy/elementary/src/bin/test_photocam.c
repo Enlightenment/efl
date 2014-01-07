@@ -251,7 +251,7 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
-   evas_object_repeat_events_set(rect,1);
+   evas_object_repeat_events_set(rect, EINA_TRUE);
    evas_object_show(rect);
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _photocam_mouse_wheel_cb, ph);
    evas_object_raise(rect);

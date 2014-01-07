@@ -134,7 +134,7 @@ test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-   elm_image_no_scale_set(ic, 1);
+   elm_image_no_scale_set(ic, EINA_TRUE);
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(ic, 0.5, 0.5);
    elm_win_resize_object_add(win, ic);

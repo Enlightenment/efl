@@ -69,8 +69,8 @@ _slice_new(State *st EINA_UNUSED, Evas_Object *obj)
    sl = calloc(1, sizeof(Slice));
    if (!sl) return NULL;
    sl->obj = evas_object_image_add(evas_object_evas_get(obj));
-   evas_object_image_smooth_scale_set(sl->obj, 0);
-   evas_object_pass_events_set(sl->obj, 1);
+   evas_object_image_smooth_scale_set(sl->obj, EINA_FALSE);
+   evas_object_pass_events_set(sl->obj, EINA_TRUE);
    evas_object_image_source_set(sl->obj, obj);
    return sl;
 }
@@ -92,7 +92,7 @@ _slice_apply(State *st, Slice *sl,
 
    m = evas_map_new(4);
    if (!m) return;
-   evas_map_smooth_set(m, 0);
+   evas_map_smooth_set(m, EINA_FALSE);
    for (i = 0; i < 4; i++)
      {
         evas_map_point_color_set(m, i, 255, 255, 255, 255);

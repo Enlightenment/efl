@@ -145,7 +145,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    pb = elm_progressbar_add(win);
    elm_object_text_set(pb, "Label");
    elm_object_part_content_set(pb, "icon", ic1);
-   elm_progressbar_inverted_set(pb, 1);
+   elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, "%1.1f units");
    elm_progressbar_span_size_set(pb, elm_config_scale_get() * 200);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
