@@ -7,6 +7,9 @@
 #define  WIDTH          1024
 #define  HEIGHT         1024
 
+#define  IMG_WIDTH       256
+#define  IMG_HEIGHT      256
+
 typedef struct _Scene_Data
 {
    Evas_3D_Scene    *scene;
@@ -26,7 +29,7 @@ Ecore_Evas       *ecore_evas  = NULL;
 Evas             *evas        = NULL;
 Evas_Object      *background  = NULL;
 Evas_Object      *image       = NULL;
-Evas_Object      *bg_image    = NULL;
+Evas_Object      *source    = NULL;
 
 static const float cube_vertices[] =
 {
@@ -111,6 +114,8 @@ _animate_scene(void *data)
 {
    static float angle = 0.0f;
    Scene_Data *scene = (Scene_Data *)data;
+   unsigned int *pixels;
+   int i, j, stride;
 
    angle += 0.5;
 
@@ -119,6 +124,22 @@ _animate_scene(void *data)
    /* Rotate */
    if (angle > 360.0)
      angle -= 360.0f;
+
+   pixels = (unsigned int *)evas_object_image_data_get(source, EINA_TRUE);
+   stride = evas_object_image_stride_get(source);
+
+   for (i = 0; i < IMG_HEIGHT; i++)
+     {
+        unsigned int *row = (unsigned int *)((char *)pixels + stride * i);
+
+        for (j = 0; j < IMG_WIDTH; j++)
+          {
+             *row++ = rand() | 0xff000000;
+          }
+     }
+
+   evas_object_image_data_set(source, pixels);
+   evas_object_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
 
    return EINA_TRUE;
 }
@@ -160,7 +181,8 @@ _mesh_setup(Scene_Data *data)
    data->material = evas_3d_material_add(evas);
    data->texture = evas_3d_texture_add(evas);
 
-   evas_3d_texture_source_set(data->texture, bg_image);
+   evas_3d_texture_source_set(data->texture, source);
+   evas_3d_texture_source_visible_set(data->texture, EINA_TRUE);
 
    evas_3d_material_enable_set(data->material, EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE);
    evas_3d_material_enable_set(data->material, EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE);
@@ -244,11 +266,11 @@ main(void)
    evas_object_show(background);
 
    /* Add a background imageg. */
-   bg_image = evas_object_image_filled_add(evas);
-   evas_object_image_file_set(bg_image, "cube1.png", NULL);
-   evas_object_move(bg_image, 0, 0);
-   evas_object_resize(bg_image, WIDTH, HEIGHT);
-   evas_object_show(bg_image);
+   source = evas_object_image_filled_add(evas);
+   evas_object_image_size_set(source, IMG_WIDTH, IMG_HEIGHT);
+   evas_object_move(source, 0, 0);
+   evas_object_resize(source, IMG_WIDTH, IMG_HEIGHT);
+   evas_object_show(source);
 
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
