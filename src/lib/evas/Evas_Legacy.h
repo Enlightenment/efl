@@ -966,7 +966,7 @@ EAPI void  evas_post_event_callback_remove_full(Evas *e, Evas_Object_Event_Post_
 EAPI void             evas_event_default_flags_set(Evas *e, Evas_Event_Flags flags) EINA_ARG_NONNULL(1);
 
 /**
- * Get the defaulty set of flags an event begins with
+ * Get the default set of flags an event begins with
  *
  * @param e The canvas to get the default event flags from
  * @return The default event flags for that canvas
@@ -1345,7 +1345,7 @@ EAPI int       evas_image_cache_get(const Evas *e) EINA_WARN_UNUSED_RESULT EINA_
  * Get the maximum image size evas can possibly handle
  *
  * @param e The given evas pointer.
- * @param maxw Pointer to hold the return value in pixels of the maxumum width
+ * @param maxw Pointer to hold the return value in pixels of the maximum width
  * @param maxh Pointer to hold the return value in pixels of the maximum height
  *
  * This function returns the larges image or surface size that evas can handle
@@ -2818,7 +2818,7 @@ EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
  * @param w Pointer to an integer in which to store the minimum width.
  * @param h Pointer to an integer in which to store the minimum height.
  *
- * These are hints on the minimim sizes @p obj should have. This is
+ * These are hints on the minimum sizes @p obj should have. This is
  * not a size enforcement in any way, it's just a hint that should be
  * used whenever appropriate.
  *
@@ -5321,7 +5321,7 @@ EAPI Evas_Coord           evas_object_text_inset_get(const Evas_Object *obj) EIN
 /**
  * Retrieve position and dimension information of a character within a text @c Evas_Object.
  *
- * This function is used to obtain the X, Y, width and height of a the character
+ * This function is used to obtain the X, Y, width and height of the character
  * located at @p pos within the @c Evas_Object @p obj. @p obj must be a text object
  * as created with evas_object_text_add(). Any of the @c Evas_Coord parameters (@p cx,
  * @p cy, @p cw, @p ch) may be @c NULL in which case no value will be assigned to that
@@ -5341,7 +5341,7 @@ EAPI int                  evas_object_text_char_coords_get(const Evas_Object *ob
 
 /**
  * Returns the logical position of the last char in the text
- * up to the pos given. this is NOT the position of the last char
+ * up to the pos given. This is NOT the position of the last char
  * because of the possibility of RTL in the text.
  */
 EAPI int                  evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
@@ -6057,7 +6057,7 @@ EAPI void evas_object_textgrid_cell_size_get(const Evas_Object *obj, Evas_Coord 
  *
  * @param obj The textgrid object to query for font information.
  * @param pal The type of the palette to set the color.
- * @param idx The index of the paletter to wich the color is stored.
+ * @param idx The index of the paletter to which the color is stored.
  * @param r The red component of the color.
  * @param g The green component of the color.
  * @param b The blue component of the color.
@@ -6085,7 +6085,7 @@ EAPI void evas_object_textgrid_palette_set(Evas_Object *obj, Evas_Textgrid_Palet
  *
  * @param obj The textgrid object to query for font information.
  * @param pal The type of the palette to set the color.
- * @param idx The index of the paletter to wich the color is stored.
+ * @param idx The index of the palette to which the color is stored.
  * @param r A pointer to the red component of the color.
  * @param g A pointer to the green component of the color.
  * @param b A pointer to the blue component of the color.
@@ -6966,7 +6966,7 @@ EAPI Evas_Object               *evas_object_box_add_to(Evas_Object *parent) EINA
  * widths as to fit the remaining space. The @c weight_x property,
  * besides telling the element is resizable, gives a @b weight for the
  * resizing process.  The parent box will try to distribute (or take
- * off) widths accordingly to the @b normalized list of weigths: most
+ * off) widths accordingly to the @b normalized list of weights: most
  * weighted children remain/get larger in this process than the least
  * ones. @c weight_y does not influence the layout.
  *
@@ -7016,7 +7016,7 @@ EAPI void                       evas_object_box_layout_homogeneous_vertical(Evas
  * \par Box's properties:
  * @c align_h has no influence on the box for this layout.
  * @c padding_h tells the box to draw empty spaces of that size, in
- * pixels, between the (equal) child objects's cells. The @c align_v
+ * pixels, between the (equal) child objects' cells. The @c align_v
  * and @c padding_v properties of the box don't contribute to its
  * behaviour when this layout is chosen.
  *
@@ -7057,7 +7057,7 @@ EAPI void                       evas_object_box_layout_homogeneous_horizontal(Ev
  *
  * \par Box's properties:
  * @c padding_h tells the box to draw empty spaces of that size, in
- * pixels, between the child objects's cells. @c align_h controls the
+ * pixels, between the child objects' cells. @c align_h controls the
  * horizontal alignment of the child objects, relative to the
  * containing box. When set to @c 0.0, children are aligned to the
  * left. A value of @c 1.0 lets them aligned to the right
@@ -7116,7 +7116,7 @@ EAPI void                       evas_object_box_layout_homogeneous_max_size_vert
  *
  * \par Box's properties:
  * @c padding_h tells the box to draw empty spaces of that size, in
- * pixels, between the child objects's cells. @c align_h dictates the
+ * pixels, between the child objects' cells. @c align_h dictates the
  * horizontal alignment of the rows (@c 0.0 to left align them, @c 1.0
  * to right align). A value of @c -1.0 to @c align_h lets the rows
  * @b justified horizontally. @c align_v controls the vertical alignment

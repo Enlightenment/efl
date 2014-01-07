@@ -513,7 +513,7 @@ typedef struct _EPhysics_Shape EPhysics_Shape;
  * The returned shape initially doesn't has points set, so it's required
  * to set vertices with @ref ephysics_shape_point_add().
  *
- * After the shape is completelly defined, all the points were added,
+ * After the shape is completely defined, all the points were added,
  * it's possible to create one or more bodies with
  * @ref ephysics_body_shape_add().
  *
@@ -1048,7 +1048,7 @@ EAPI void ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_C
  *
  * Save the dynamics world to a binary dump, a .bullet file.
  *
- * @note Should be used only for debugging purporses.
+ * @note Should be used only for debugging purposes.
  *
  * @param world the world to be serialized.
  * @param path where the serialized world should be written to.
@@ -1079,7 +1079,7 @@ EAPI void ephysics_world_del(EPhysics_World *world);
  *
  * A world can be played / paused. When running, it will simulate the
  * physics step by step. When paused, it will stop simulation. Consequently
- * all the registered callbacks won't be called since no event will ocurr
+ * all the registered callbacks won't be called since no event will occur
  * (no collisions, no object updates).
  *
  * When a world is created it starts running.
@@ -1705,7 +1705,7 @@ EAPI Eina_Bool ephysics_world_bodies_outside_back_autodel_get(const EPhysics_Wor
  * Also, keep in mind
  * that if you're using CPU intense calculations maybe this framerate won't
  * be achieved, so the time step will be bigger. You need to define
- * what range of frames per secons you need to support and configure
+ * what range of frames per seconds you need to support and configure
  * @p max_sub_steps and @p fixed_time_step according to this.
  *
  * By decreasing the size of @p fixed_time_step, you are increasing the
@@ -1981,7 +1981,7 @@ EAPI Eina_Bool ephysics_world_stack_enable_get(const EPhysics_World *world);
  * @li or @ref ephysics_body_shape_add().
  *
  * Also they can be soft bodies, that won't act as rigid bodies. They will
- * deform its shape under certain circunstances, like under collisions.
+ * deform its shape under certain circumstances, like under collisions.
  * Soft bodies can be created with:
  * @li @ref ephysics_body_soft_cylinder_add();
  * @li @ref ephysics_body_soft_box_add();
@@ -2011,7 +2011,7 @@ EAPI Eina_Bool ephysics_world_stack_enable_get(const EPhysics_World *world);
  * be affected by gravity.
  *
  * Forces will be acting while they're set, changing bodies velocity over time.
- * Impulses are applied only once, modifying bodies velocity imediatelly to the
+ * Impulses are applied only once, modifying bodies velocity immediately to the
  * new value.
  *
  * Forces can be managed with:
@@ -2194,7 +2194,7 @@ typedef enum _EPhysics_Body_Cloth_Anchor_Side
  * @enum _EPhysics_Body_Face
  * @typedef EPhysics_Body_Face
  *
- * Define in wich body's face the evas object should be set.
+ * Define in which body's face the evas object should be set.
  *
  * @see ephysics_body_face_evas_object_set()
  * @see ephysics_body_face_evas_object_unset()
