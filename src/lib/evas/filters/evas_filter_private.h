@@ -103,6 +103,11 @@ struct _Evas_Filter_Command
          Eina_Bool compensate : 1; // Compensate for darkening
          //Eina_Bool specular : 1; // Use specular light as well (needs specular_factor > 0)
       } bump;
+
+      struct
+      {
+         Evas_Filter_Transform_Flags flags;
+      } transform;
    };
 
    struct {
@@ -158,6 +163,7 @@ Evas_Filter_Apply_Func   evas_filter_curve_cpu_func_get(Evas_Filter_Command *cmd
 Evas_Filter_Apply_Func   evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd);
+Evas_Filter_Apply_Func   evas_filter_transform_cpu_func_get(Evas_Filter_Command *cmd);
 
 /* Utility functions */
 void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, int dh, int *dx, int *dy, int *rows, int *cols);

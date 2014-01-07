@@ -14,6 +14,7 @@ typedef enum _Evas_Filter_Channel Evas_Filter_Channel;
 typedef enum _Evas_Filter_Displacement_Flags Evas_Filter_Displacement_Flags;
 typedef enum _Evas_Filter_Bump_Flags Evas_Filter_Bump_Flags;
 typedef enum _Evas_Filter_Fill_Mode Evas_Filter_Fill_Mode;
+typedef enum _Evas_Filter_Transform_Flags Evas_Filter_Transform_Flags;
 
 typedef Eina_Bool (* Evas_Filter_Apply_Func) (Evas_Filter_Command *cmd);
 typedef void (* Evas_Filter_Cb) (Evas_Filter_Context *ctx, void *data);
@@ -30,6 +31,7 @@ enum _Evas_Filter_Mode
    EVAS_FILTER_MODE_FILL,         /**< Fill a buffer with a solid color */
    EVAS_FILTER_MODE_MASK,         /**< Apply Alpha or RGBA texture on image */
    EVAS_FILTER_MODE_BUMP,         /**< Apply bump mapping (light effect) */
+   EVAS_FILTER_MODE_TRANSFORM,    /**< Apply a simple geometrical transformation */
    EVAS_FILTER_MODE_LAST
 };
 
@@ -77,6 +79,11 @@ enum _Evas_Filter_Fill_Mode
    EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X = EVAS_FILTER_FILL_MODE_REPEAT_Y | EVAS_FILTER_FILL_MODE_STRETCH_X,
    EVAS_FILTER_FILL_MODE_REPEAT_XY          = EVAS_FILTER_FILL_MODE_REPEAT_X | EVAS_FILTER_FILL_MODE_REPEAT_Y,
    EVAS_FILTER_FILL_MODE_STRETCH_XY         = EVAS_FILTER_FILL_MODE_STRETCH_X | EVAS_FILTER_FILL_MODE_STRETCH_Y
+};
+
+enum _Evas_Filter_Transform_Flags
+{
+   EVAS_FILTER_TRANSFORM_VFLIP = 1
 };
 
 /* Parser stuff (high level API) */
@@ -212,6 +219,17 @@ int                      evas_filter_command_mask_add(Evas_Filter_Context *ctx, 
  * @return                 Filter command ID or -1 in case of error
  */
 int                      evas_filter_command_bump_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int bumpbuf, int outbuf, float azimuth, float elevation, float depth, float specular_factor, DATA32 black, DATA32 color, DATA32 white, Evas_Filter_Bump_Flags flags, Evas_Filter_Fill_Mode fillmode);
+
+/**
+ * @brief Apply a geometrical transformation to the buffer
+ * @param ctx            Current filter chain
+ * @param draw_context   Current Evas draw context (ignored)
+ * @param inbuf          Input buffer (Alpha or RGBA)
+ * @param outbuf         Output buffer (Alpha or RGBA), same size as inbuf
+ * @param flags          Specifies the operation to apply (eg. vflip)
+ * @return               Filter command ID or -1 in case of error
+ */
+int                      evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags);
 
 #endif
 

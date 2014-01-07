@@ -374,6 +374,7 @@ lib/evas/filters/evas_filter_curve.c \
 lib/evas/filters/evas_filter_displace.c \
 lib/evas/filters/evas_filter_mask.c \
 lib/evas/filters/evas_filter_parser.c \
+lib/evas/filters/evas_filter_transform.c \
 lib/evas/filters/evas_filter_utils.c
 
 

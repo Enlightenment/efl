@@ -1047,6 +1047,39 @@ end:
    return cmdid;
 }
 
+int
+evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context,
+                                  int inbuf, int outbuf,
+                                  Evas_Filter_Transform_Flags flags)
+{
+   Evas_Filter_Command *cmd;
+   Evas_Filter_Buffer *in, *out;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+
+   in = _filter_buffer_get(ctx, inbuf);
+   out = _filter_buffer_get(ctx, outbuf);
+   if (!in || !out)
+     {
+        ERR("Invalid buffer id: input %d [%p], output %d [%p]",
+            inbuf, in, outbuf, out);
+        return -1;
+     }
+
+   if (in->alpha_only != out->alpha_only)
+     {
+        CRI("Incompatible buffer formats");
+        return -1;
+     }
+
+   cmd = _command_new(ctx, EVAS_FILTER_MODE_TRANSFORM, in, NULL, out);
+   if (!cmd) return -1;
+
+   cmd->transform.flags = flags;
+
+   return cmd->id;
+}
+
 static Eina_Bool
 _fill_cpu(Evas_Filter_Command *cmd)
 {
@@ -1247,6 +1280,9 @@ _filter_command_run(Evas_Filter_Command *cmd)
         break;
       case EVAS_FILTER_MODE_BUMP:
         func = evas_filter_bump_map_cpu_func_get(cmd);
+        break;
+      case EVAS_FILTER_MODE_TRANSFORM:
+        func = evas_filter_transform_cpu_func_get(cmd);
         break;
       default:
         CRI("Invalid filter mode.");
