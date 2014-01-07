@@ -201,7 +201,11 @@ _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
   const char *tmp;
 
   /* destroy old state */
-  if (monitor->exist) eio_file_cancel(monitor->exist);
+  if (monitor->exist)
+    {
+       eio_file_cancel(monitor->exist);
+       monitor->exist = NULL;
+    }
 
   if (monitor->backend)
     {
@@ -218,11 +222,15 @@ _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
   eina_stringshare_del(tmp);
 
   /* That means death (cmp pointer and not content) */
+  /* this - i think, is wrong. if the paths are the same, we should just
+   * re-stat anyway. imagine the file was renamed and then replaced?
+   * disable this as this was part of a possible crash due to eio.
   if (tmp == monitor->path)
     {
       _eio_monitor_error(monitor, -1);
       return;
     }
+   */
 
   EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
 
