@@ -418,7 +418,11 @@ _server_send(void *buf, int size, Op_Callback cb, void *data)
 
 on_error:
    if (!_request_answer_required(type, NULL))
-     return EINA_FALSE;
+     {
+        free(buf);
+        return EINA_FALSE;
+     }
+
    ERR("Socket error: %d %m", errno);
    switch (errno)
      {
@@ -701,7 +705,6 @@ _image_opened_cb(void *data, const void *msg_received, int size)
           }
         else
           ERR("Invalid message type received: %d (%s)", answer->type, __FUNCTION__);
-        fentry = ie->data1;
         EINA_REFCOUNT_UNREF(fentry)
           eina_hash_del(_file_entries, fentry->hkey, fentry);
         return EINA_TRUE;
@@ -1717,7 +1720,7 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
         // Reopen mempool
         if (EINA_REFCOUNT_GET(&map->mempool) > 0)
           {
-             oldbuf = calloc(1, sizeof(Glyph_Map));
+             oldbuf = calloc(1, sizeof(*oldbuf));
              oldbuf->f = map->mempool.f;
              oldbuf->data = map->mempool.data;
              oldbuf->size = map->mempool.size;
@@ -1779,7 +1782,7 @@ _glyph_map_remap_check(Glyph_Map *map, const char *idxpath, const char *datapath
 
         if (EINA_REFCOUNT_GET(&map->mempool) > 0)
           {
-             oldbuf = calloc(1, sizeof(Glyph_Map));
+             oldbuf = calloc(1, sizeof(*oldbuf));
              oldbuf->f = eina_file_dup(map->mempool.f);
              oldbuf->data = map->mempool.data;
              oldbuf->size = map->mempool.size;
@@ -2642,6 +2645,9 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
      return NULL;
 
    if (!_index.files.header || !_index.files.entries.filedata)
+     return NULL;
+
+   if (!ie->data1)
      return NULL;
 
    // Direct access
