@@ -227,9 +227,11 @@ int                      evas_filter_command_bump_map_add(Evas_Filter_Context *c
  * @param inbuf          Input buffer (Alpha or RGBA)
  * @param outbuf         Output buffer (Alpha or RGBA), same size as inbuf
  * @param flags          Specifies the operation to apply (eg. vflip)
+ * @param ox             X offset
+ * @param oy             Y offset
  * @return               Filter command ID or -1 in case of error
  */
-int                      evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags);
+int                      evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags, int ox, int oy);
 
 #endif
 

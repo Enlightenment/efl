@@ -1048,9 +1048,11 @@ end:
 }
 
 int
-evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context,
+evas_filter_command_transform_add(Evas_Filter_Context *ctx,
+                                  void *draw_context EINA_UNUSED,
                                   int inbuf, int outbuf,
-                                  Evas_Filter_Transform_Flags flags)
+                                  Evas_Filter_Transform_Flags flags,
+                                  int ox, int oy)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out;
@@ -1076,6 +1078,8 @@ evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context,
    if (!cmd) return -1;
 
    cmd->transform.flags = flags;
+   cmd->draw.ox = ox;
+   cmd->draw.oy = oy;
 
    return cmd->id;
 }

@@ -684,6 +684,38 @@ _buffer_del(Buffer *buf)
 
 /* Instruction definitions */
 
+static void
+_blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
+                      int *padl, int *padr, int *padt, int *padb)
+{
+   const char *outbuf;
+   Buffer *out;
+   int ox, oy, l = 0, r = 0, t = 0, b = 0;
+
+   ox = _instruction_param_geti(instr, "ox", NULL);
+   oy = _instruction_param_geti(instr, "oy", NULL);
+
+   outbuf = _instruction_param_gets(instr, "dst", NULL);
+   out = _buffer_get(pgm, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN(out);
+
+   if (ox < 0) l = (-ox);
+   else r = ox;
+
+   if (oy < 0) t = (-oy);
+   else b = oy;
+
+   if (out->pad.l < l) out->pad.l = l;
+   if (out->pad.r < r) out->pad.r = r;
+   if (out->pad.t < t) out->pad.t = t;
+   if (out->pad.b < b) out->pad.b = b;
+
+   if (padl) *padl = l;
+   if (padr) *padr = r;
+   if (padt) *padt = t;
+   if (padb) *padb = b;
+}
+
 static Eina_Bool
 _blend_instruction_prepare(Evas_Filter_Instruction *instr)
 {
@@ -696,6 +728,7 @@ _blend_instruction_prepare(Evas_Filter_Instruction *instr)
    */
 
    instr->type = EVAS_FILTER_MODE_BLEND;
+   instr->pad.update = _blend_padding_update;
    _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_seq_add(instr, "ox", VT_INT, 0);
@@ -1024,6 +1057,62 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+static void
+_transform_padding_update(Evas_Filter_Program *pgm,
+                          Evas_Filter_Instruction *instr,
+                          int *padl, int *padr, int *padt, int *padb)
+{
+   const char *outbuf;
+   Buffer *out;
+   int ox, oy, l = 0, r = 0, t = 0, b = 0;
+
+   //ox = _instruction_param_geti(instr, "ox", NULL);
+   ox = 0;
+   oy = _instruction_param_geti(instr, "oy", NULL);
+
+   outbuf = _instruction_param_gets(instr, "dst", NULL);
+   out = _buffer_get(pgm, outbuf);
+   EINA_SAFETY_ON_NULL_RETURN(out);
+
+   if (ox < 0) l = (-ox) * 2;
+   else r = ox * 2;
+
+   if (oy < 0) t = (-oy) * 2;
+   else b = oy * 2;
+
+   if (out->pad.l < l) out->pad.l = l;
+   if (out->pad.r < r) out->pad.r = r;
+   if (out->pad.t < t) out->pad.t = t;
+   if (out->pad.b < b) out->pad.b = b;
+
+   if (padl) *padl = l;
+   if (padr) *padr = r;
+   if (padt) *padt = t;
+   if (padb) *padb = b;
+}
+
+static Eina_Bool
+_transform_instruction_prepare(Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "transform"), EINA_FALSE);
+
+   /*
+    * mask [op=]STRING [input=BUFFER] [output=BUFFER] (oy=INT)
+    */
+
+   instr->type = EVAS_FILTER_MODE_TRANSFORM;
+   instr->pad.update = _transform_padding_update;
+   _instruction_param_seq_add(instr, "op", VT_STRING, "vflip");
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
+   //_instruction_param_name_add(instr, "ox", VT_INT, 0);
+   _instruction_param_name_add(instr, "oy", VT_INT, 0);
+
+   return EINA_TRUE;
+}
+
 static Evas_Filter_Instruction *
 _instruction_create(const char *name)
 {
@@ -1048,6 +1137,8 @@ _instruction_create(const char *name)
      prepare = _grow_instruction_prepare;
    else if (!strcasecmp(name, "mask"))
      prepare = _mask_instruction_prepare;
+   else if (!strcasecmp(name, "transform"))
+     prepare = _transform_instruction_prepare;
 
    if (!prepare)
      {
@@ -1648,6 +1739,34 @@ interpolated:
 }
 
 static int
+_instr2cmd_transform(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+                     Evas_Filter_Instruction *instr, void *dc)
+{
+   Evas_Filter_Transform_Flags flags;
+   const char *src, *dst, *op;
+   Buffer *in, *out;
+   int ox = 0, oy;
+
+   op = _instruction_param_gets(instr, "op", NULL);
+   src = _instruction_param_gets(instr, "src", NULL);
+   dst = _instruction_param_gets(instr, "dst", NULL);
+   // ox = _instruction_param_geti(instr, "ox", NULL);
+   oy = _instruction_param_geti(instr, "oy", NULL);
+
+   if (!strcasecmp(op, "vflip"))
+     flags = EVAS_FILTER_TRANSFORM_VFLIP;
+   else
+     {
+        ERR("Invalid transform '%s'", op);
+        return -1;
+     }
+
+   in = _buffer_get(pgm, src);
+   out = _buffer_get(pgm, dst);
+   return evas_filter_command_transform_add(ctx, dc, in->cid, out->cid, flags, ox, oy);
+}
+
+static int
 _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                           Evas_Filter_Instruction *instr, void *dc)
 {
@@ -1679,6 +1798,9 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         break;
       case EVAS_FILTER_MODE_CURVE:
         instr2cmd = _instr2cmd_curve;
+        break;
+      case EVAS_FILTER_MODE_TRANSFORM:
+        instr2cmd = _instr2cmd_transform;
         break;
       default:
         CRI("Invalid instruction type: %d", instr->type);
