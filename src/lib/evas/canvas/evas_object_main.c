@@ -677,6 +677,10 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
         else if (eo_isa(proxy, EVAS_OBJ_TEXT_CLASS))
           eo_do(proxy, evas_obj_text_filter_source_set(NULL, eo_obj));
      }
+
+   while (obj->proxy->proxy_textures)
+     evas_3d_texture_source_set(obj->proxy->proxy_textures->data, NULL);
+
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);

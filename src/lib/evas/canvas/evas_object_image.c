@@ -3875,7 +3875,20 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
       (o->cur->source ?
        eo_data_scope_get(o->cur->source, EVAS_OBJ_CLASS):
        NULL);
+#ifdef EVAS_3D
+   if (o->cur->scene)
+     {
+        _3d_render(obj->layer->evas->evas, eo_obj, obj, o, o->cur->scene);
+        pixels = obj->data_3d->surface;
+        imagew = obj->data_3d->w;
+        imageh = obj->data_3d->h;
+        uvw = imagew;
+        uvh = imageh;
+     }
+   else if (!o->cur->source)
+#else
    if (!o->cur->source)
+#endif
      {
         pixels = o->engine_data;
         imagew = o->cur->image.w;

@@ -117,8 +117,8 @@ typedef enum _Evas_3D_Pick_Type
 } Evas_3D_Pick_Type;
 
 /* Image object render target */
-EAPI void               evas_object_image_3d_scene_set(Evas_Object *obj, Evas_3D_Scene *scene) EINA_ARG_NONNULL(1);
-EAPI Evas_3D_Scene     *evas_object_image_3d_scene_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI void               evas_object_image_t3d_scene_set(Evas_Object *obj, Evas_3D_Scene *scene) EINA_ARG_NONNULL(1);
+EAPI Evas_3D_Scene     *evas_object_image_t3d_scene_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /* Scene */
 EAPI Evas_3D_Scene     *evas_3d_scene_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -259,6 +259,8 @@ EAPI Evas              *evas_3d_texture_evas_get(const Evas_3D_Texture *texture)
 EAPI void               evas_3d_texture_data_set(Evas_3D_Texture *texture, Evas_3D_Color_Format color_format, Evas_3D_Pixel_Format pixel_format, int w, int h, const void *data);
 EAPI void               evas_3d_texture_file_set(Evas_3D_Texture *texture, const char *file, const char *key) EINA_ARG_NONNULL(1);
 EAPI void               evas_3d_texture_source_set(Evas_3D_Texture *texture, Evas_Object *source) EINA_ARG_NONNULL(1);
+EAPI void               evas_3d_texture_source_visible_set(Evas_3D_Texture *texture, Eina_Bool visible) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          evas_3d_texture_source_visible_get(const Evas_3D_Texture *texture) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI Evas_3D_Color_Format evas_3d_texture_color_format_get(const Evas_3D_Texture *texture) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 EAPI void               evas_3d_texture_size_get(const Evas_3D_Texture *texture, int *w, int *h) EINA_ARG_NONNULL(1);
 EAPI void               evas_3d_texture_wrap_set(Evas_3D_Texture *texture, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t) EINA_ARG_NONNULL(1);

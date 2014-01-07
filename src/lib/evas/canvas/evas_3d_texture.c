@@ -28,15 +28,14 @@ _texture_proxy_unset(Evas_3D_Texture *texture)
      {
         proxy_src->proxy_textures = eina_list_remove(proxy_src->proxy_textures, texture);
 
-        if (eina_list_count(proxy_src->proxy_textures) == 0)
+        if (eina_list_count(proxy_src->proxy_textures) == 0 &&
+            eina_list_count(proxy_src->proxies) == 0 &&
+            proxy_src->surface != NULL)
           {
-             if (eina_list_count(proxy_src->proxies) == 0)
-               {
-                  Evas_Public_Data *e = src->layer->evas;
-                  e->engine.func->image_map_surface_free(e->engine.data.output,
-                                                         proxy_src->surface);
-                  proxy_src->surface = NULL;
-               }
+             Evas_Public_Data *e = src->layer->evas;
+             e->engine.func->image_map_surface_free(e->engine.data.output,
+                                                    proxy_src->surface);
+             proxy_src->surface = NULL;
           }
 
         if (proxy_src->src_invisible)
@@ -134,11 +133,18 @@ _texture_proxy_subrender(Evas_3D_Texture *texture)
           }
         else
           {
+             Evas_Proxy_Render_Data proxy_render_data = {
+                  .eo_proxy = NULL,
+                  .proxy_obj = NULL,
+                  .eo_src = texture->source,
+                  .source_clip = EINA_FALSE
+             };
+
              evas_render_mapped(e, texture->source, source, ctx, proxy_write->surface,
                                 -source->cur->geometry.x,
                                 -source->cur->geometry.y,
                                 1, 0, 0, e->output.w, e->output.h,
-                                NULL
+                                &proxy_render_data
 #ifdef REND_DBG
                                 , 1
 #endif
@@ -386,6 +392,40 @@ evas_3d_texture_source_set(Evas_3D_Texture *texture, Evas_Object *source)
 
    _texture_proxy_set(texture, source, src);
    evas_3d_object_change(&texture->base, EVAS_3D_STATE_TEXTURE_DATA, NULL);
+}
+
+EAPI void
+evas_3d_texture_source_visible_set(Evas_3D_Texture *texture, Eina_Bool visible)
+{
+   Evas_Object_Protected_Data *src_obj;
+
+   if (texture->source == NULL)
+     return;
+
+   src_obj = eo_data_scope_get(texture->source, EVAS_OBJ_CLASS);
+
+   if (src_obj->proxy->src_invisible == !visible)
+     return;
+
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src_obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->src_invisible = !visible;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, src_obj->proxy, proxy_write);
+
+   src_obj->changed_src_visible = EINA_TRUE;
+   evas_object_smart_member_cache_invalidate(texture->source, EINA_FALSE, EINA_FALSE, EINA_TRUE);
+   evas_object_change(texture->source, src_obj);
+}
+
+EAPI Eina_Bool
+evas_3d_texture_source_visible_get(const Evas_3D_Texture *texture)
+{
+   Evas_Object_Protected_Data *src_obj;
+
+   if (texture->source == NULL)
+     return EINA_FALSE;
+
+   src_obj = eo_data_scope_get(texture->source, EVAS_OBJ_CLASS);
+   return !src_obj->proxy->src_invisible;
 }
 
 EAPI Evas_3D_Color_Format

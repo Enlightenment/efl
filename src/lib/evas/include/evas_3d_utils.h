@@ -1528,13 +1528,12 @@ evas_box3_ray3_intersect(const Evas_Box3 *box EINA_UNUSED, const Evas_Ray3 *ray 
 static inline Evas_Real
 evas_reciprocal_sqrt(Evas_Real x)
 {
-   long  i;
-   float y, r;
+   union {
+        float f;
+        long  i;
+   } u;
 
-   y = x * 0.5f;
-   i = *(long *)(&x);
-   i = 0x5f3759df - (i >> 1);
-   r = *(float *)(&i);
-   r = r * (1.5f - r * r * y);
-   return r;
+   u.f = x;
+   u.i = 0x5f3759df - (u.i >> 1);
+   return u.f * (1.5f - u.f * u.f * x * 0.5f);
 }
