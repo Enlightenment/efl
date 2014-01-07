@@ -1182,7 +1182,7 @@ _icon_duplicate(Evas_Object *icon)
    elm_image_file_get(icon, &file, &group);
    ic = elm_icon_add(icon);
    elm_image_file_set(ic, file, group);
-   elm_image_resizable_set(ic, 1, 1);
+   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
 
    return ic;
 }

@@ -513,7 +513,7 @@ l3_mode_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSE
         if (elm_mapbuf_enabled_get(mb))
           elm_mapbuf_enabled_set(mb, EINA_FALSE);
         else
-          elm_mapbuf_enabled_set(mb, 1);
+          elm_mapbuf_enabled_set(mb, EINA_TRUE);
      }
 }
 
@@ -872,7 +872,7 @@ test_launcher3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "A");
-   elm_check_state_set(ck, 1);
+   elm_check_state_set(ck, EINA_TRUE);
    evas_object_smart_callback_add(ck, "changed", l3_alpha_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ck, 0.20, 0.99);
@@ -881,7 +881,7 @@ test_launcher3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Smo");
-   elm_check_state_set(ck, 1);
+   elm_check_state_set(ck, EINA_TRUE);
    evas_object_smart_callback_add(ck, "changed", l3_smooth_cb, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ck, 0.40, 0.99);

@@ -122,7 +122,7 @@ _cube_pos(Cube *c,
         evas_map_util_3d_perspective(m, cx, cy, foc, z0);
         if (evas_map_util_clockwise_get(m))
           {
-             evas_object_map_enable_set(c->side[i].o, 1);
+             evas_object_map_enable_set(c->side[i].o, EINA_TRUE);
              evas_object_map_set(c->side[i].o, m);
              evas_object_show(c->side[i].o);
           }

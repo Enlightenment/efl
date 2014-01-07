@@ -545,7 +545,7 @@ _run_dialog(Evas_Object *parent,
         if (type == DIALOG_PROMPT || type == DIALOG_CONFIRM)
           {
              Evas_Object *bx_h = elm_box_add(dialog_data->box);
-             elm_box_horizontal_set(bx_h, 1);
+             elm_box_horizontal_set(bx_h, EINA_TRUE);
              elm_box_pack_end(dialog_data->box, bx_h);
              evas_object_size_hint_weight_set
                (bx_h, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

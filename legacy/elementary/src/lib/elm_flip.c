@@ -1166,7 +1166,7 @@ _flip_do(Evas_Object *obj,
         evas_map_util_3d_lighting(mf, lx, ly, lz, lr, lg, lb, lar, lag, lab);
         evas_map_util_3d_perspective(mf, px, py, 0, foc);
         evas_object_map_set(sd->front.content, mf);
-        evas_object_map_enable_set(sd->front.content, 1);
+        evas_object_map_enable_set(sd->front.content, EINA_TRUE);
         if (evas_map_util_clockwise_get(mf)) evas_object_show(sd->front.clip);
         else evas_object_hide(sd->front.clip);
      }
@@ -1176,7 +1176,7 @@ _flip_do(Evas_Object *obj,
         evas_map_util_3d_lighting(mb, lx, ly, lz, lr, lg, lb, lar, lag, lab);
         evas_map_util_3d_perspective(mb, px, py, 0, foc);
         evas_object_map_set(sd->back.content, mb);
-        evas_object_map_enable_set(sd->back.content, 1);
+        evas_object_map_enable_set(sd->back.content, EINA_TRUE);
         if (evas_map_util_clockwise_get(mb)) evas_object_show(sd->back.clip);
         else evas_object_hide(sd->back.clip);
      }
@@ -1345,8 +1345,8 @@ _flip(Evas_Object *obj)
 #endif
         sd->pageflip = EINA_FALSE;
         _state_end(sd);
-        evas_object_map_enable_set(sd->front.content, 0);
-        evas_object_map_enable_set(sd->back.content, 0);
+        evas_object_map_enable_set(sd->front.content, EINA_FALSE);
+        evas_object_map_enable_set(sd->back.content, EINA_FALSE);
         // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow
         evas_object_resize(sd->front.content, 0, 0);
         evas_object_resize(sd->back.content, 0, 0);
@@ -1525,8 +1525,8 @@ _event_anim(void *data,
 
    sd->pageflip = EINA_FALSE;
    _state_end(sd);
-   evas_object_map_enable_set(sd->front.content, 0);
-   evas_object_map_enable_set(sd->back.content, 0);
+   evas_object_map_enable_set(sd->front.content, EINA_FALSE);
+   evas_object_map_enable_set(sd->back.content, EINA_FALSE);
    // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow
    evas_object_resize(sd->front.content, 0, 0);
    evas_object_resize(sd->back.content, 0, 0);
@@ -1967,8 +1967,8 @@ _elm_flip_go_to(Evas_Object *obj,
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _flip(obj);
    // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow)
-   evas_object_map_enable_set(sd->front.content, 0);
-   evas_object_map_enable_set(sd->back.content, 0);
+   evas_object_map_enable_set(sd->front.content, EINA_FALSE);
+   evas_object_map_enable_set(sd->back.content, EINA_FALSE);
    evas_object_resize(sd->front.content, 0, 0);
    evas_object_resize(sd->back.content, 0, 0);
    evas_smart_objects_calculate(evas_object_evas_get(obj));

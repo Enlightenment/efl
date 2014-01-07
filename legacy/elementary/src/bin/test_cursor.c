@@ -193,7 +193,7 @@ test_cursor2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(bx);
 
    o = elm_toolbar_add(win);
-   elm_toolbar_homogeneous_set(o, 0);
+   elm_toolbar_homogeneous_set(o, EINA_FALSE);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    tb_it = elm_toolbar_item_append(o, NULL, "Bogosity", NULL, NULL);

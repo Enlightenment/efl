@@ -705,7 +705,7 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Smart_Data *sd)
    evas_object_image_smooth_scale_set(im, EINA_FALSE);
    evas_object_image_colorspace_set(im, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_size_set(im, 17, 17);
-   evas_object_image_alpha_set(im, 1);
+   evas_object_image_alpha_set(im, EINA_TRUE);
    evas_object_image_filled_set(im, EINA_TRUE);
    edje_object_part_swallow(ed, "elm.picker", im);
    elm_widget_sub_object_add(obj, im);

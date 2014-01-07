@@ -145,7 +145,7 @@ test_toolbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-   //elm_table_homogeneous_set(tb, 1);
+   //elm_table_homogeneous_set(tb, EINA_TRUE);
    evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -249,7 +249,7 @@ test_toolbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-   //elm_table_homogeneous_set(tb, 1);
+   //elm_table_homogeneous_set(tb, EINA_TRUE);
    evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -774,7 +774,7 @@ test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-   //elm_table_homogeneous_set(tb, 1);
+   //elm_table_homogeneous_set(tb, EINA_TRUE);
    evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
