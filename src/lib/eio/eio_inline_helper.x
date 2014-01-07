@@ -29,11 +29,11 @@
  */
 
 /**
- * @brief Return last acces time to a file
- * @param stat The stat buffer as given by eio_file_stat callback.
+ * @brief Return last access time to a file
+ * @param st The stat buffer as given by eio_file_stat callback.
  * @return last access time.
  *
- * This function return the st_atime field, last acces time, as double like all EFL time call.
+ * This function return the st_atime field, last access time, as double like all EFL time call.
  */
 static inline double
 eio_file_atime(const Eina_Stat *st)
@@ -44,7 +44,7 @@ eio_file_atime(const Eina_Stat *st)
 
 /**
  * @brief Return last modification time of a file
- * @param stat The stat buffer as given by eio_file_stat callback.
+ * @param st The stat buffer as given by eio_file_stat callback.
  * @return last modification time.
  *
  * This function return the st_mtime field, last modification time, as double like all EFL time call.
@@ -58,7 +58,7 @@ eio_file_mtime(const Eina_Stat *st)
 
 /**
  * @brief Return file length.
- * @param stat The stat buffer as given by eio_file_stat callback.
+ * @param st The stat buffer as given by eio_file_stat callback.
  * @return the length of a file.
  *
  * This function is just an accessor to st_size and return the file length.
@@ -72,7 +72,7 @@ eio_file_size(const Eina_Stat *st)
 
 /**
  * @brief Return if path is a directory.
- * @param stat The stat buffer as given by eio_file_stat callback.
+ * @param st The stat buffer as given by eio_file_stat callback.
  * @return EINA_TRUE if the path is a directory.
  *
  * This function tell you if the stated path is a directory or not.
@@ -86,7 +86,7 @@ eio_file_is_dir(const Eina_Stat *st)
 
 /**
  * @brief Return if path is a length.
- * @param stat The stat buffer as given by eio_file_stat callback.
+ * @param st The stat buffer as given by eio_file_stat callback.
  * @return EINA_TRUE if the path is a length.
  *
  * This function tell you if the stated path is a length or not.

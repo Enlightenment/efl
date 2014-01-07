@@ -3587,7 +3587,6 @@ EAPI char                                    *evas_textblock_cursor_content_get(
  * @param[out] cy2 the y of the lower cursor
  * @param[out] cw2 the width of the lower cursor
  * @param[out] ch2 the height of the lower cursor
- * @param[in] dir the direction of the cursor, can be NULL.
  * @param[in] ctype the type of the cursor.
  * @return @c EINA_TRUE for split cursor, @c EINA_FALSE otherwise
  * @since 1.8

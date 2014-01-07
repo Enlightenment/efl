@@ -950,7 +950,7 @@ extern EAPI const char *_eina_log_state_shutdown;
 /**
  * @brief Start or stop the timing of a phase.
  *
- * @param d The domain.
+ * @param domain The domain.
  * @param state State indicating if we are starting or stopping a phase.
  * @param phase The name of the phase to be used in the log.
  *

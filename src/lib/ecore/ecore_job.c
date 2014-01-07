@@ -114,7 +114,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
 /**
  * Delete a queued job that has not yet been executed.
- * @param   job  Handle of the job to delete.
+ * @param   obj  Handle of the job to delete.
  * @return  The data pointer that was to be passed to the job.
  */
 EAPI void *

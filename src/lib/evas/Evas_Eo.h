@@ -3089,7 +3089,7 @@ enum
  * Retrieves an iterator of the member objects of a given Evas smart
  * object
  *
- * @param[out] iterator out
+ * @param[out] it out
  *
  * @see evas_object_smart_iterator_new
  * @see evas_object_smart_members_get
@@ -5251,7 +5251,7 @@ enum
  * @since 1.8
  * Return a list of objects currently clipped by @p obj.
  *
- * @param[out] clipees out
+ * @param[out] clipees_has out
  *
  * @see evas_object_clipees_has
  */
@@ -5663,7 +5663,7 @@ enum
  * Set the source mmaped file from where an image object must fetch the real
  * image data (it may be any Eina_File).
  *
- * @param[in] file in
+ * @param[in] f in
  * @param[in] key in
  *
  * @see evas_obj_image_file_set
@@ -5769,7 +5769,7 @@ enum
  *
  * Apply the source object's clip to the proxy
  *
- * @param[in] clip in
+ * @param[in] source_clip in
  *
  * @see evas_object_image_source_clip_set
  */
@@ -5781,7 +5781,7 @@ enum
  *
  * Get the state of the source clip
  *
- * @param[out] source clip out
+ * @param[out] source_clip out
  *
  * @see evas_object_image_source_clip_get
  */

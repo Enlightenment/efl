@@ -165,7 +165,7 @@ enum Ecore_Audio_Obj_In_Sub_Ids
  *
  * @see ecore_audio_obj_in_looped_set
  *
- * @param[out] looped EINA_TRUE if the input is looped, EINA_FALSE otherwise
+ * @param[out] ret EINA_TRUE if the input is looped, EINA_FALSE otherwise
  */
 #define ecore_audio_obj_in_looped_get(ret) ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_LOOPED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 

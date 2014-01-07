@@ -1288,7 +1288,7 @@ EAPI void evas_event_refeed_event(Evas *e, void *event_copy, Evas_Callback_Type 
  * Call eina_list_free on the returned list after usage.
  *
  */
-EAPI Eina_List *evas_tree_objects_at_xy_get(Evas *eo_e, Evas_Object *stop, int x, int y) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Eina_List *evas_tree_objects_at_xy_get(Evas *e, Evas_Object *stop, int x, int y) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @}
