@@ -938,23 +938,9 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
    if (!cmd) goto end;
 
    DRAW_FILL_SET(fillmode);
-   cmd->displacement.flags = flags & EVAS_FILTER_DISPLACE_BITMASK;   
+   cmd->displacement.flags = flags & EVAS_FILTER_DISPLACE_BITMASK;
    cmd->displacement.intensity = intensity;
    cmdid = cmd->id;
-
-   if (!cmd->displacement.flags)
-     {
-        INF("No flags specified for displacement. Assuming XY.");
-        if (map->alpha_only)
-          cmd->displacement.flags = EVAS_FILTER_DISPLACE_XY_ALPHA;
-        else
-          cmd->displacement.flags = EVAS_FILTER_DISPLACE_XY_RG;
-     }
-   if (map->alpha_only && (cmd->displacement.flags & EVAS_FILTER_DISPLACE_RG))
-     {
-        WRN("Incompatible displacement flags specified (RG map but provided Alpha image)");
-        cmd->displacement.flags &= ~EVAS_FILTER_DISPLACE_RG;
-     }
 
    if (tmp)
      {

@@ -83,7 +83,7 @@ struct _Evas_Filter_Command
 
       struct
       {
-         // mask is an Alpha or RG(BA) texture, see flags. Must be of the same size as the input & output buffers (for now, FIXME)
+         // mask contains the map data
          Evas_Filter_Displacement_Flags flags;
          int intensity; // Max displacement in pixels
       } displacement;

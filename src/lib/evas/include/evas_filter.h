@@ -53,20 +53,11 @@ enum _Evas_Filter_Channel
 
 enum _Evas_Filter_Displacement_Flags
 {
-   EVAS_FILTER_DISPLACE_ALPHA    = 0x0,   /**< Displace based on Alpha values */
-   EVAS_FILTER_DISPLACE_X        = 0x1,   /**< X displacement */
-   EVAS_FILTER_DISPLACE_X_ALPHA  = 0x1,   /**< X displacement */
-   EVAS_FILTER_DISPLACE_Y        = 0x2,   /**< Y displacement */
-   EVAS_FILTER_DISPLACE_Y_ALPHA  = 0x2,   /**< Y displacement */
-   EVAS_FILTER_DISPLACE_RG       = 0x4,   /**< Displace based on R(G) values */
-   EVAS_FILTER_DISPLACE_XY_ALPHA = 0x3,   /**< XY displacement based on alpha */
-   EVAS_FILTER_DISPLACE_XY_RG    = 0x7,   /**< Full 2-D displacement based on RG values */
    EVAS_FILTER_DISPLACE_NEAREST  = 0x0,   /**< Interpolate between pixels (linear interpolation) */
-   EVAS_FILTER_DISPLACE_LINEAR   = 0x8,   /**< Interpolate between pixels (linear interpolation) */
+   EVAS_FILTER_DISPLACE_LINEAR   = 0x1,   /**< Interpolate between pixels (linear interpolation) */
    EVAS_FILTER_DISPLACE_BLACK    = 0x0,   /**< Use black (or transparent) when going out of bounds) */
-   EVAS_FILTER_DISPLACE_STRETCH  = 0x8,   /**< Stretch border pixels when going out of bounds */
-   //EVAS_FILTER_DISPLACE_WRAP     = 0x10,  /**< Wrap around input when displacement goes out of bounds */
-   EVAS_FILTER_DISPLACE_BITMASK  = 0xf
+   EVAS_FILTER_DISPLACE_STRETCH  = 0x2,   /**< Stretch border pixels when going out of bounds */
+   EVAS_FILTER_DISPLACE_BITMASK  = 0x3
 };
 
 enum _Evas_Filter_Bump_Flags

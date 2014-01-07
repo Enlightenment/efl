@@ -1,15 +1,17 @@
 #include "evas_filter.h"
 #include "evas_filter_private.h"
 
+#warning TODO: Add alpha support
+
 static void
-_filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int map_step,
-                              int dx, int dy, int intensity,
+_filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
                               DATA8 *dst, DATA8 *src, DATA8 *map_start,
-                              Eina_Bool displace_x, Eina_Bool displace_y,
                               Eina_Bool stretch, Eina_Bool smooth)
 {
    int x, y, map_x, map_y;
-   const int map_stride = map_w * map_step;
+   const int map_stride = map_w * sizeof(DATA32);
+   const int dx = RED;
+   const int dy = GREEN;
    DATA8 *map;
 
    for (y = 0, map_y = 0; y < h; y++, map_y++)
@@ -27,24 +29,19 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int map_step,
                   map_x = 0;
                   map = map_start + (map_y * map_stride);
                }
-             else map += map_step;
+             else map += sizeof(DATA32);
 
-             if (displace_x)
-               {
-                  val = ((int) map[dx] - 128) * intensity;
-                  offx = val >> 7;
-                  offx_dec = val & 0x7f;
-                  if ((x + offx) < 0) { offx = -x; out = 1; }
-                  if ((x + offx + 1) >= w) { offx = w - x - 2; out = 1; }
-               }
-             if (displace_y)
-               {
-                  val = ((int) map[dy] - 128) * intensity;
-                  offy = val >> 7;
-                  offy_dec = val & 0x7f;
-                  if ((y + offy) < 0) { offy = -y; out = 1; }
-                  if ((y + offy + 1) >= h) { offy = h - y - 2; out = 1; }
-               }
+             val = ((int) map[dx] - 128) * intensity;
+             offx = val >> 7;
+             offx_dec = val & 0x7f;
+             if ((x + offx) < 0) { offx = -x; out = 1; }
+             if ((x + offx + 1) >= w) { offx = w - x - 2; out = 1; }
+
+             val = ((int) map[dy] - 128) * intensity;
+             offy = val >> 7;
+             offy_dec = val & 0x7f;
+             if ((y + offy) < 0) { offy = -y; out = 1; }
+             if ((y + offy + 1) >= h) { offy = h - y - 2; out = 1; }
 
              if (out && !stretch)
                *dst = 0;
@@ -52,7 +49,7 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int map_step,
                {
                   if (!smooth)
                     *dst = src[offx + offy * w];
-                  else if (displace_x && displace_y)
+                  else
                     {
                        val  = src[offx + offy * w] * (128 - offx_dec) * (128 - offy_dec);
                        val += src[offx + 1 + offy * w] * offx_dec * (128 - offy_dec);
@@ -60,34 +57,20 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int map_step,
                        val += src[offx + 1 + (offy + 1) * w] * offx_dec * offy_dec;
                        *dst = val >> 14; // <=> *dst = val / (128 * 128)
                     }
-                  else
-                    {
-                       if (displace_x)
-                         {
-                            val  = (int) src[offx + offy * w] * (128 - offx_dec);
-                            val += (int) src[offx + 1 + offy * w] * offx_dec;
-                         }
-                       else
-                         {
-                            val  = (int) src[offx + offy * w] * (128 - offy_dec);
-                            val += (int) src[offx + (offy + 1) * w] * offy_dec;
-                         }
-                       *dst = val >> 7; // <=> *dst = val / 128
-                    }
                }
           }
      }
 }
 
 static void
-_filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int map_step,
-                             int dx, int dy, int intensity,
+_filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
                              DATA8 *map_start, DATA32 *src, DATA32 *dst,
-                             Eina_Bool displace_x, Eina_Bool displace_y,
                              Eina_Bool stretch, Eina_Bool smooth)
 {
    int x, y, map_x, map_y;
-   const int map_stride = map_step * map_w;
+   const int map_stride = sizeof(DATA32) * map_w;
+   const int dx = RED;
+   const int dy = GREEN;
    DATA8 *map;
 
    for (y = 0, map_y = 0; y < h; y++, map_y++)
@@ -105,30 +88,25 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int map_step,
                   map_x = 0;
                   map = map_start + (map_y * map_stride);
                }
-             else map += map_step;
+             else map += sizeof(DATA32);
 
-             if (displace_x)
-               {
-                  val = ((int) map[dx] - 128) * intensity;
-                  offx = val >> 7;
-                  offx_dec = val & 0x7f;
-                  if ((x + offx) < 0) { offx = -x; out = 1; }
-                  if ((x + offx + 1) >= w) { offx = w - x - 2; out = 1; }
-               }
-             if (displace_y)
-               {
-                  val = ((int) map[dy] - 128) * intensity;
-                  offy = val >> 7;
-                  offy_dec = val & 0x7f;
-                  if ((y + offy) < 0) { offy = -y; out = 1; }
-                  if ((y + offy + 1) >= h) { offy = h - y - 2; out = 1; }
-               }
+             val = ((int) map[dx] - 128) * intensity;
+             offx = val >> 7;
+             offx_dec = val & 0x7f;
+             if ((x + offx) < 0) { offx = -x; out = 1; }
+             if ((x + offx + 1) >= w) { offx = w - x - 2; out = 1; }
+
+             val = ((int) map[dy] - 128) * intensity;
+             offy = val >> 7;
+             offy_dec = val & 0x7f;
+             if ((y + offy) < 0) { offy = -y; out = 1; }
+             if ((y + offy + 1) >= h) { offy = h - y - 2; out = 1; }
 
              if (out && !stretch)
                *dst = A_VAL(src + offx + offy * w) << (ALPHA * 8);
              else if (!smooth)
                *dst = src[offx + offy * w];
-             else if (displace_x && displace_y)
+             else
                {
                   int R, G, B, A;
                   DATA32 s00, s01, s10, s11; // indexes represent x,y
@@ -162,54 +140,6 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int map_step,
 
                   *dst = ARGB_JOIN(A, R, G, B);
                }
-             else if (displace_x)
-               {
-                  int R, G, B, A;
-                  DATA32 s00, s10;
-                  int mul00, mul10;
-
-                  mul00 = (128 - offx_dec);
-                  mul10 = offx_dec;
-
-                  s00 = src[offx + offy * w];
-                  s10 = src[offx + 1 + offy * w];
-
-                  A = (ALPHA_OF(s00) * mul00) + (ALPHA_OF(s10) * mul10);
-                  R = (RED_OF(s00) * mul00)   + (RED_OF(s10) * mul10);
-                  G = (GREEN_OF(s00) * mul00) + (GREEN_OF(s10) * mul10);
-                  B = (BLUE_OF(s00) * mul00)  + (BLUE_OF(s10) * mul10);
-
-                  A >>= 7;
-                  R >>= 7;
-                  G >>= 7;
-                  B >>= 7;
-
-                  *dst = ARGB_JOIN(A, R, G, B);
-               }
-             else
-               {
-                  int R, G, B, A;
-                  DATA32 s00, s01;
-                  int mul00, mul01;
-
-                  mul00 = (128 * offy_dec);
-                  mul01 = offy_dec;
-
-                  s00 = src[offx + offy * w];
-                  s01 = src[offx + (offy + 1)* w];
-
-                  A = (ALPHA_OF(s00) * mul00) + (ALPHA_OF(s01) * mul01);
-                  R = (RED_OF(s00) * mul00)   + (RED_OF(s01) * mul01);
-                  G = (GREEN_OF(s00) * mul00) + (GREEN_OF(s01) * mul01);
-                  B = (BLUE_OF(s00) * mul00)  + (BLUE_OF(s01) * mul01);
-
-                  A >>= 7;
-                  R >>= 7;
-                  G >>= 7;
-                  B >>= 7;
-
-                  *dst = ARGB_JOIN(A, R, G, B);
-               }
           }
      }
 }
@@ -224,9 +154,9 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int map_step,
 static Eina_Bool
 _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
 {
-   int w, h, map_w, map_h, intensity, map_step, dx = 0, dy = 0;
+   int w, h, map_w, map_h, intensity;
    DATA8 *dst, *src, *map_start;
-   Eina_Bool displace_x, displace_y, stretch, smooth;
+   Eina_Bool stretch, smooth;
 
    w = cmd->input->w;
    h = cmd->input->h;
@@ -243,30 +173,14 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(map_start, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
 
-   displace_x = cmd->displacement.flags & EVAS_FILTER_DISPLACE_X;
-   displace_y = cmd->displacement.flags & EVAS_FILTER_DISPLACE_Y;
    stretch = cmd->displacement.flags & EVAS_FILTER_DISPLACE_STRETCH;
    smooth = cmd->displacement.flags & EVAS_FILTER_DISPLACE_LINEAR;
    map_w = cmd->mask->w;
    map_h = cmd->mask->h;
    intensity = cmd->displacement.intensity;
 
-   if (cmd->mask->alpha_only)
-     map_step = sizeof(DATA8);
-   else
-     {
-        map_step = sizeof(DATA32);
-        if (cmd->displacement.flags & EVAS_FILTER_DISPLACE_RG)
-          {
-             dx = RED;
-             dy = GREEN;
-          }
-        else dx = dy = ALPHA;
-     }
-
-   _filter_displace_cpu_alpha_do(w, h, map_w, map_h, map_step, dx, dy,
-                                 intensity, dst, src, map_start,
-                                 displace_x, displace_y, stretch, smooth);
+   _filter_displace_cpu_alpha_do(w, h, map_w, map_h, intensity,
+                                 dst, src, map_start, stretch, smooth);
 
    return EINA_TRUE;
 }
@@ -281,10 +195,10 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
 static Eina_Bool
 _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
 {
-   int w, h, map_w, map_h, intensity, map_step, dx, dy;
+   int w, h, map_w, map_h, intensity;
    DATA32 *dst, *src;
    DATA8 *map_start;
-   Eina_Bool displace_x, displace_y, stretch, smooth;
+   Eina_Bool stretch, smooth;
 
    w = cmd->input->w;
    h = cmd->input->h;
@@ -301,39 +215,14 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(map_start, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
 
-   displace_x = cmd->displacement.flags & EVAS_FILTER_DISPLACE_X;
-   displace_y = cmd->displacement.flags & EVAS_FILTER_DISPLACE_Y;
    stretch = cmd->displacement.flags & EVAS_FILTER_DISPLACE_STRETCH;
    smooth = cmd->displacement.flags & EVAS_FILTER_DISPLACE_LINEAR;
    map_w = cmd->mask->w;
    map_h = cmd->mask->h;
    intensity = cmd->displacement.intensity;
 
-   if (!displace_x && !displace_y)
-     {
-        WRN("Invalid displacement flags! Defaulting to XY displacement.");
-        displace_x = displace_y = EINA_TRUE;
-     }
-
-   if (cmd->mask->alpha_only)
-     {
-        map_step = sizeof(DATA8);
-        dx = dy = 0;
-     }
-   else
-     {
-        map_step = sizeof(DATA32);
-        if (cmd->displacement.flags & EVAS_FILTER_DISPLACE_RG)
-          {
-             dx = RED;
-             dy = GREEN;
-          }
-        else dx = dy = ALPHA;
-     }
-
-   _filter_displace_cpu_rgba_do(w, h, map_w, map_h, map_step, dx, dy,
-                                intensity, map_start, src, dst,
-                                displace_x, displace_y, stretch, smooth);
+   _filter_displace_cpu_rgba_do(w, h, map_w, map_h, intensity, map_start,
+                                src, dst, stretch, smooth);
 
    return EINA_TRUE;
 }
@@ -345,6 +234,7 @@ evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!cmd->mask->alpha_only, NULL);
 
    if (cmd->input->alpha_only != cmd->output->alpha_only)
      {
@@ -353,29 +243,7 @@ evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd)
      }
 
    if (cmd->input->alpha_only)
-     {
-        if ((cmd->displacement.flags & EVAS_FILTER_DISPLACE_RG)
-            && cmd->mask->alpha_only)
-          {
-             goto invalid_flags;
-          }
-        return _filter_displace_cpu_alpha;
-     }
+     return _filter_displace_cpu_alpha;
    else
-     {
-        if ((cmd->displacement.flags & EVAS_FILTER_DISPLACE_RG)
-            && cmd->mask->alpha_only)
-          {
-             goto invalid_flags;
-          }
-        return _filter_displace_cpu_rgba;
-     }
-
-invalid_flags:
-   ERR("Incompatible flags (0x%02x) and data (input %s, output %s, map %s)",
-       (cmd->displacement.flags & EVAS_FILTER_DISPLACE_BITMASK),
-       cmd->input->alpha_only ? "alpha" : "rgba",
-       cmd->output->alpha_only ? "alpha" : "rgba",
-       cmd->mask->alpha_only ? "alpha" : "rgba");
-   return NULL;
+     return _filter_displace_cpu_rgba;
 }
