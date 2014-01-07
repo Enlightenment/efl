@@ -120,7 +120,7 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
 
 /**
  * Get data from the file level data block of an edje mapped file
- * @param file The mapped edje file
+ * @param f The mapped edje file
  * @param key The data key
  * @return The string value of the data or NULL if no key is found.
  * Must be freed by the user when no longer needed.
@@ -1577,7 +1577,7 @@ typedef enum _Edje_Load_Error
 
 /**
  * Get a list of groups in an edje mapped file
- * @param file The mapped file
+ * @param f The mapped file
  *
  * @return The Eina_List of group names (char *)
  *
@@ -1596,7 +1596,7 @@ EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
 
 /**
  * Determine whether a group matching glob exists in an edje mapped file.
- * @param file The mapped file
+ * @param f The mapped file
  * @param glob A glob to match on
  *
  * @return 1 if a match is found, 0 otherwise

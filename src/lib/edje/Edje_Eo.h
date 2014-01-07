@@ -307,7 +307,6 @@ enum
  *
  * @param[in] part
  * @param[in] variation
- * @param[out] ret
  *
  * @see edje_object_part_text_input_panel_variation_get
  */
@@ -662,7 +661,6 @@ enum
  *
  * @param[in] file in
  * @param[in] group in
- * @param[in] nested in
  * @param[out] ret out
  *
  * @see edje_object_file_set
@@ -675,7 +673,6 @@ enum
  *
  * @param[in] file in
  * @param[in] group in
- * @param[in] nested in
  * @param[out] ret out
  *
  * @see edje_object_file_set

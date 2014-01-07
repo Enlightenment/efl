@@ -323,7 +323,7 @@ eina_rectangle_height_cut(Eina_Rectangle *thiz, Eina_Rectangle *slice, Eina_Rect
  * @brief Subtract two rectangles.
  *
  * @param thiz The minuend rectangle
- * @param src The subtrahend rectangle
+ * @param other The subtrahend rectangle
  *
  * This function subtract two rectangles. The difference is stored on @p out
  * There will be at most four differences, use eina_rectangle_is_valid to
