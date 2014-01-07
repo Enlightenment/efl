@@ -5,6 +5,55 @@ EFL 1.8.4
 Changes since 1.8.3:
 --------------------
 
+    * eio - protect against posible segv on rename with eio
+    * evas - gl-x11 engine - put in guessed blacklist of yinvert extn for intel
+      mesa
+    * efl - build - add warning about gnutls to configure and dropping privs
+    * configure - add warning when enabling xcb
+    * fix typos in EFL documents
+    * fix warning related to argument in generating doxygen
+    * doc/images.mk: Fix order of included files.
+    * doc build - finally fix images.mk to stop changing order every make
+    * fix 'found unknown command' warning in generating doxygen
+    * evas: fix build on windows.
+    * ecore_imf: fix doxygen warning in ecore_imf_context_input_panel_enabled_set ()
+    * evas: fix doxygen warning
+    * ecore_imf: Add description about Ecore_IMF_Lib_Group
+    * Updating serbian translation
+    * evas: let's use HUGETLB when it makes sense
+    * eina: Eina_File - don't leak memory when file is not found.
+    * ecore_imf_example: remove wrong implementation code.
+    * Use key instead of keyname for considering setxkbmap
+    * eina: fix support for system requiring _XOPEN_SOURCE to use spinlock and
+      barrier.
+    * ecore_evas: extn - restore missing symbol that resulted in a temporary ABI
+      break.
+    * evas: disable use of mmap on windows for allocating pixels buffer.
+    * scimimmodule: support super key (between ctrl and alt key)
+    * scimimmodule: code refinement related to key modifier and lock
+    * ximmodule: fix issue the cursor of preedit shows the in front of preedit string
+    * ibusimmodule: support CAPS LOCK and NUM LOCK
+    * fix map-across-mark patch from sergey in december 2013
+    * evas - sw render - map render neon broken for expedite 45/46 disable
+    * evas - fix neon scale code
+    * edje - fix edje lua usage for lua 5.2 to not go crazy on memory allocs
+    * evas - set clipees list to NULL on free to avoid access
+    * ecore-evas - x11 - call resize callback if wm denies resize request
+    * Evas textblock: Fixed range_text_get bug with multiple text nodes.
+    * Evas test textblock: Added a test for a broken range_text_get case.
+    * evas - gl engine - glerr should be off by default for performance
+    * eina: struct _Eina_Rbtree contains an enum bitfield, which is a GNU extension
+      not specified by C99.
+    * ecore: allow out-of-source build of ecore_xcb_keysym_table.h.
+    * evas: fix a segfault in _draw_thread_font_draw, caused by the missing
+      initialisation of a struct field
+    * ecore: fix tests to avoid failure on successful initialization.
+    * ecore_audio: update test to not look at ecore_init return to much due to system
+      module.
+    * eldbus: fix tests to properly take into account the presence of ecore system
+      module.
+    * eldbus: don't do a double initialization due to ecore module using eldbus
+      now.
     * ecore_con: fix crash on timeout when using dns.c resolver
 
 =========
