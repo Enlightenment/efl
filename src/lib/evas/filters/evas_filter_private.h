@@ -45,7 +45,10 @@ struct _Evas_Filter_Context
    Eina_List *buffers; // Evas_Filter_Buffer *
    int last_buffer_id;
    int last_command_id;
-   int w, h; // Change at each run
+
+   // Variables changing at each run
+   int w, h; // Dimensions of the input/output buffers
+   int padl, padt, padr, padb; // Padding in the current input/output buffers
 
    struct
    {

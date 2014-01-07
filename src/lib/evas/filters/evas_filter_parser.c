@@ -1716,6 +1716,9 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj,
           }
      }
 
+   // Compute and save padding info
+   evas_filter_program_padding_get(pgm, &ctx->padl, &ctx->padr, &ctx->padt, &ctx->padb);
+
    dc = ENFN->context_new(ENDT);
    ENFN->context_color_set(ENDT, dc, 255, 255, 255, 255);
 
