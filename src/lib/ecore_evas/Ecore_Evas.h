@@ -87,7 +87,7 @@ extern "C" {
  */
 
 /* these are dummy and just tell u what API levels ecore_evas supports - not if
- * the actual support is compiled in. you need to query for that separately.
+ * the actual support is compiled in. You need to query for that separately.
  */
 #define HAVE_ECORE_EVAS_X 1
 #define HAVE_ECORE_EVAS_FB 1

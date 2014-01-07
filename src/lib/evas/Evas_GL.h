@@ -15,7 +15,7 @@ extern "C" {
  * to use OpenGL to render to specially set up image objects (which act as
  * render target surfaces).
  *
- * Below is an illlustrative example of how to use OpenGL to render to an
+ * Below is an illustrative example of how to use OpenGL to render to an
  * object in Evas.
  *
  * @code
@@ -91,14 +91,14 @@ main(int argc, char **argv)
 
    // set up the image object. a filled one by default
    r1 = evas_object_image_filled_add(canvas);
-   // attach important data we need to the object using key names. this just
-   // avoids some global variables and means we can do nice cleanup. you can
+   // attach important data we need to the object using key names. This just
+   // avoids some global variables and means we can do nice cleanup. You can
    // avoid this if you are lazy
    evas_object_data_set(r1, "..gld", gld);
    // when the object is deleted - call the on_del callback. like the above,
    // this is just being clean
    evas_object_event_callback_add(r1, EVAS_CALLBACK_DEL, on_del, NULL);
-   // set up an actual pixel size fot the buffer data. it may be different
+   // set up an actual pixel size fot the buffer data. It may be different
    // to the output size. any windowing system has something like this, just
    // evas has 2 sizes, a pixel size and the output object size
    evas_object_image_size_set(r1, w, h);
@@ -462,7 +462,7 @@ struct _Evas_GL_Config
  * Creates a new Evas_GL object and returns a handle for gl rendering on efl.
  *
  * @param e The given evas canvas OpenGL is to be used on.
- * @return The created evas_gl object, or NULl on fasilure.
+ * @return The created evas_gl object, or NULL on failure.
  */
 EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 

@@ -163,7 +163,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED
     ptr = d;
 /* footer for the hell of it */
 #define ECORE_IPC_DEC_STRUCT_FOOT() return 1
-/* header for encoder - gives native strct type and size of flattened packet */
+/* header for encoder - gives native struct type and size of flattened packet */
 #define ECORE_IPC_ENC_STRUCT_HEAD(typ, sz) \
     typ *p; \
     unsigned char *d, *ptr; \
@@ -319,7 +319,7 @@ EAPI void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
 
 EAPI int               ecore_ipc_ssl_available_get(void);
 /* FIXME: need to add a callback to "ok" large ipc messages greater than */
-/*        a certain size (seurity/DOS attack safety) */
+/*        a certain size (security/DOS attack safety) */
    
 #ifdef __cplusplus
 }

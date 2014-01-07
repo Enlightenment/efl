@@ -150,7 +150,7 @@ typedef enum _Evas_Button_Flags
 typedef enum _Evas_Event_Flags
 {
    EVAS_EVENT_FLAG_NONE = 0, /**< No fancy flags set */
-   EVAS_EVENT_FLAG_ON_HOLD = (1 << 0), /**< This event is being delivered but should be put "on hold" until the on hold flag is unset. the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
+   EVAS_EVENT_FLAG_ON_HOLD = (1 << 0), /**< This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
    EVAS_EVENT_FLAG_ON_SCROLL = (1 << 1) /**< This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
 } Evas_Event_Flags; /**< Flags for Events */
 
@@ -378,7 +378,7 @@ typedef enum _Evas_Aspect_Control
 typedef enum _Evas_Display_Mode
 {
    EVAS_DISPLAY_MODE_NONE = 0, /**<Default mode */
-   EVAS_DISPLAY_MODE_COMPRESS = 1, /**< Use this mode when you want to give comppress display mode hint to an object */
+   EVAS_DISPLAY_MODE_COMPRESS = 1, /**< Use this mode when you want to give compress display mode hint to an object */
    EVAS_DISPLAY_MODE_EXPAND = 2, /**< Use this mode when you want to give expand display mode hint to an object */
    EVAS_DISPLAY_MODE_DONT_CHANGE = 3 /**< Use this mode when an object should not change its display mode */
 } Evas_Display_Mode; /**< object's display mode type related with compress/expand or etc mode */
@@ -3710,7 +3710,7 @@ EAPI Eina_Bool                                evas_textblock_cursor_eol_get(cons
 /**
  * @typedef Evas_Textgrid_Palette
  *
- * The palette to use for the forgraound and background colors.
+ * The palette to use for the foreground and background colors.
  *
  * @since 1.7
  */
