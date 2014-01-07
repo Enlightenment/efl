@@ -3429,7 +3429,7 @@ _source_mod_cb(Eina_Module *m,
      {
         INF("Map ROUTE module is loaded \"%s\"",  file);
         Source_Route *s;
-        s = ELM_NEW(Source_Tile);
+        s = ELM_NEW(Source_Route);
         s->name = name_cb();
         s->url_cb = route_url_cb;
         sd->src_routes = eina_list_append(sd->src_routes, s);
@@ -3441,7 +3441,7 @@ _source_mod_cb(Eina_Module *m,
      {
         INF("Map NAME module is loaded \"%s\"",  file);
         Source_Name *s;
-        s = ELM_NEW(Source_Tile);
+        s = ELM_NEW(Source_Name);
         s->name = name_cb();
         s->url_cb = name_url_cb;
         sd->src_names = eina_list_append(sd->src_names, s);
