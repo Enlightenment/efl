@@ -71,7 +71,9 @@ struct _Render_Engine
 static int initted = 0;
 static int gl_wins = 0;
 static int extn_have_buffer_age = 1;
-static int extn_have_y_inverted = 0;
+#ifdef GL_GLES
+static int extn_have_y_inverted = 1;
+#endif
 
 typedef void            (*_eng_fn) (void);
 typedef _eng_fn         (*glsym_func_eng_fn) ();
@@ -715,9 +717,28 @@ gl_extn_veto(Render_Engine *re)
           {
              extn_have_buffer_age = 0;
           }
-        if (strstr(str, "EGL_NOK_texture_from_pixmap"))
+        if (!strstr(str, "EGL_NOK_texture_from_pixmap"))
           {
-             extn_have_y_inverted = 1;
+             extn_have_y_inverted = 0;
+          }
+        else
+          {
+             const GLubyte *vendor, *renderer;
+
+             vendor = glGetString(GL_VENDOR);
+             renderer = glGetString(GL_RENDERER);
+             // XXX: workaround mesa bug!
+             // looking for mesa and intel build which is known to
+             // advertise the EGL_NOK_texture_from_pixmap extension
+             // but not set it correctly. guessing vendor/renderer
+             // strings will be like the following:
+             // OpenGL vendor string: Intel Open Source Technology Center
+             // OpenGL renderer string: Mesa DRI Intel(R) Sandybridge Desktop
+             if (((vendor) && (strstr(vendor, "Intel"))) &&
+                 ((renderer) && (strstr(renderer, "Mesa"))) &&
+                 ((renderer) && (strstr(renderer, "Intel")))
+                )
+               extn_have_y_inverted = 0;
           }
      }
    else
