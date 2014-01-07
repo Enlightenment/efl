@@ -4065,4 +4065,20 @@ if test "x${with_x11}" = "xxcb"; then
    echo "remove the XCB setup, remove the --with-x11=xcb option to"
    echo "configure."
    echo "_____________________________________________________________________"
+   sleep 10
+fi
+
+if test "x${build_crypto}" = "xgnutls"; then
+   echo "_____________________________________________________________________"
+   echo "!!-- WARNING --!!"
+   echo "_____________________________________________________________________"
+   echo "You have chosen gnutls as the crypto back-end. This will have some"
+   echo "side-effects that can break set-uid root binaries that happen to"
+   echo "link to and/or use EFL. These do actually exist. Gnutls will drop"
+   echo "root privs if it detects being setuid, thus breaking these tools"
+   echo "and their functionality. Only enable gnutls if you REALLY know"
+   echo "what you are doing and are willing to live with broken "
+   echo "functionality."
+   echo "_____________________________________________________________________"
+   sleep 10
 fi
