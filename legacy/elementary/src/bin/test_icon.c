@@ -40,7 +40,6 @@ bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
             elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
 
-   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    elm_image_aspect_fixed_set(ic, EINA_FALSE);
    elm_image_preload_disabled_set(ic, EINA_TRUE);
    elm_image_prescale_set(ic, EINA_TRUE);
@@ -67,7 +66,6 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    ic = elm_icon_add(box);
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, ic);

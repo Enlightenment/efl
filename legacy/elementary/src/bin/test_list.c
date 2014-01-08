@@ -319,7 +319,6 @@ test_list(void        *data EINA_UNUSED,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -462,7 +461,6 @@ test_list_horizontal(void        *data EINA_UNUSED,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -938,7 +936,6 @@ test_list4(void        *data EINA_UNUSED,
                            "perform at stadium-sized venues.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_17.png", elm_app_data_dir_get());
-   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Uriah Heep", ic, NULL, NULL, &uh_data);
 
@@ -1401,7 +1398,6 @@ test_list_separator(void        *data EINA_UNUSED,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
 
    list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
