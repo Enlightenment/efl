@@ -484,6 +484,8 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call,
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
+   if (op == EO_NOOP) return EINA_FALSE;
+
    fptr = eo2_call_stack.frame_ptr;
    is_obj = !_eo_is_a_class(fptr->eo_id);
 
@@ -586,6 +588,7 @@ end:
           }
         else
           {
+             /* we should not be able to take this branch */
              ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
                  file, line, func_name, op, main_klass->desc->name);
           }
