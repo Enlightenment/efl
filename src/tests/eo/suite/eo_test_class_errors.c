@@ -273,9 +273,150 @@ START_TEST(eo_bad_interface)
 }
 END_TEST
 
+static void _null_fct(Eo *eo_obj EINA_UNUSED, void *d EINA_UNUSED) { }
+void null_fct (void) {}
+
+START_TEST(eo_null_api)
+{
+   eo_init();
+   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+
+   const Eo_Class *klass;
+
+   static Eo2_Op_Description op_descs[] = {
+        EO2_OP_FUNC(NULL, _null_fct, "NULL API function"),
+        EO2_OP_SENTINEL
+   };
+   static Eo_Class_Description class_desc = {
+        EO2_VERSION,
+        "Simple",
+        EO_CLASS_TYPE_REGULAR,
+        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   TEST_EO_ERROR("_eo2_class_funcs_set", "Ignore %d NULL->%p '%s'. Can't set implementation for NULL API.");
+   klass = eo_class_new(&class_desc, NULL, NULL);
+   fail_if(!klass);
+   fail_unless(ctx.did);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   eo_shutdown();
+}
+END_TEST
+
+START_TEST(eo_wrong_override)
+{
+   eo_init();
+   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+
+   const Eo_Class *klass;
+
+   static Eo2_Op_Description op_descs[] = {
+        EO2_OP_FUNC_OVERRIDE(null_fct, _null_fct),
+        EO2_OP_SENTINEL
+   };
+   static Eo_Class_Description class_desc = {
+        EO2_VERSION,
+        "Simple",
+        EO_CLASS_TYPE_REGULAR,
+        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   TEST_EO_ERROR("_eo2_class_funcs_set", "Ignore override %p->%p. Can't find api func description in class hierarchy.");
+   klass = eo_class_new(&class_desc, NULL, NULL);
+   fail_if(!klass);
+   fail_unless(ctx.did);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   eo_shutdown();
+}
+END_TEST
+
+START_TEST(eo_api_redefined)
+{
+   eo_init();
+   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+
+   const Eo_Class *klass;
+
+   static Eo2_Op_Description op_descs[] = {
+        EO2_OP_FUNC(null_fct, _null_fct, "API function"),
+        EO2_OP_FUNC(null_fct, NULL, "Redefining API function"),
+        EO2_OP_SENTINEL
+   };
+   static Eo_Class_Description class_desc = {
+        EO2_VERSION,
+        "Simple",
+        EO_CLASS_TYPE_REGULAR,
+        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   TEST_EO_ERROR("_eo2_class_funcs_set", "API already defined %d %p->%p '%s'. Expect undefined behaviour.");
+   klass = eo_class_new(&class_desc, NULL, NULL);
+   fail_if(!klass);
+   fail_unless(ctx.did);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   eo_shutdown();
+}
+END_TEST
+
+START_TEST(eo_dich_func_override)
+{
+   eo_init();
+   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+
+   const Eo_Class *klass;
+
+   static Eo2_Op_Description op_descs[] = {
+        EO2_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
+        EO2_OP_FUNC_OVERRIDE(simple_a_set, NULL),
+        EO2_OP_SENTINEL
+   };
+   static Eo_Class_Description class_desc = {
+        EO2_VERSION,
+        "Simple",
+        EO_CLASS_TYPE_REGULAR,
+        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   TEST_EO_ERROR("_dich_func_set", "Already set function for op %d (%s:'%s'). Overriding %p with %p.");
+   klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   fail_if(!klass);
+   fail_unless(ctx.did);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_class_errors(TCase *tc)
 {
    tcase_add_test(tc, eo_inherit_errors);
    tcase_add_test(tc, eo_inconsistent_mro);
    tcase_add_test(tc, eo_bad_interface);
+   tcase_add_test(tc, eo_null_api);
+   tcase_add_test(tc, eo_wrong_override);
+   tcase_add_test(tc, eo_api_redefined);
+   tcase_add_test(tc, eo_dich_func_override);
 }
