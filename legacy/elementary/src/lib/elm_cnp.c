@@ -3508,13 +3508,13 @@ _tempfile_new(int size)
 {
 #ifdef HAVE_MMAN_H
    Tmp_Info *info;
-   const char *tmppath;
+   const char *tmppath = NULL;
    mode_t cur_umask;
    int len;
 
    info = calloc(1, sizeof(Tmp_Info));
    if (!info) return NULL;
-   tmppath = getenv("TMP");
+   if (getuid() == getuid()) tmppath = getenv("TMP");
    if (!tmppath) tmppath = P_tmpdir;
    len = snprintf(NULL, 0, "%s/%sXXXXXX", tmppath, "elmcnpitem-");
    if (len < 0) goto on_error;

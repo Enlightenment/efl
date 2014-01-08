@@ -8,6 +8,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include <pwd.h>
 
 EAPI int ELM_EVENT_CONFIG_ALL_CHANGED = 0;
 
@@ -508,7 +509,7 @@ _elm_config_user_dir_snprintf(char       *dst,
                               ...)
 {
    const char *home = NULL;
-   size_t user_dir_len, off;
+   size_t user_dir_len = 0, off = 0;
    va_list ap;
 
 #ifdef _WIN32
@@ -517,28 +518,47 @@ _elm_config_user_dir_snprintf(char       *dst,
      (dst, size, '/', home, strlen(home),
          ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #else
-#ifdef DOXDG
-   home = getenv("XDG_CONFIG_HOME");
-   if (home)
+   if (getuid() == getuid())
      {
-        user_dir_len = eina_str_join_len
-          (dst, size, '/', home, strlen(home),
-              "elementary", sizeof("elementary") - 1);
+#ifdef DOXDG
+        home = getenv("XDG_CONFIG_HOME");
+        if (home)
+          {
+             user_dir_len = eina_str_join_len
+             (dst, size, '/', home, strlen(home),
+                 "elementary", sizeof("elementary") - 1);
+          }
+        else
+#endif
+          {
+             home = getenv("HOME");
+             if (!home) home = "/";
+#ifdef DOXDG
+             user_dir_len = eina_str_join_len
+             (dst, size, '/', home, strlen(home),
+                 ".config", sizeof(".config") - 1,
+                 "elementary", sizeof("elementary") - 1);
+#else
+             user_dir_len = eina_str_join_len
+             (dst, size, '/', home, strlen(home),
+                 ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
+#endif
+          }
      }
    else
-#endif
      {
-        home = getenv("HOME");
-        if (!home) home = "/";
+        struct passwd *pw = getpwent();
+
+        if ((!pw) || (!pw->pw_dir)) goto end;
 #ifdef DOXDG
         user_dir_len = eina_str_join_len
-          (dst, size, '/', home, strlen(home),
-              ".config", sizeof(".config") - 1,
-              "elementary", sizeof("elementary") - 1);
+          (dst, size, '/', pw->pw_dir, strlen(pw->pw_dir),
+           ".config", sizeof(".config") - 1,
+           "elementary", sizeof("elementary") - 1);
 #else
         user_dir_len = eina_str_join_len
-          (dst, size, '/', home, strlen(home),
-              ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
+          (dst, size, '/', pw->pw_dir, strlen(pw->pw_dir),
+           ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #endif
      }
 #endif
@@ -872,6 +892,11 @@ _profile_fetch_from_conf(void)
    if (s)
      {
         _elm_profile = strdup(s);
+        if (_elm_profile)
+          {
+             p = strchr(_elm_profile, '/');
+             if (p) *p = 0;
+          }
         return;
      }
 
@@ -884,10 +909,16 @@ _profile_fetch_from_conf(void)
         if (p)
           {
              _elm_profile = malloc(len + 1);
-             memcpy(_elm_profile, p, len);
-             _elm_profile[len] = 0;
-             free(p);
+             if (_elm_profile)
+               {
+                  memcpy(_elm_profile, p, len);
+                  _elm_profile[len] = 0;
+                  free(p);
+               }
+             else free(p);
              eet_close(ef);
+             p = strchr(_elm_profile, '/');
+             if (p) *p = 0;
              return;
           }
         eet_close(ef);
@@ -902,10 +933,16 @@ _profile_fetch_from_conf(void)
         if (p)
           {
              _elm_profile = malloc(len + 1);
-             memcpy(_elm_profile, p, len);
-             _elm_profile[len] = 0;
-             free(p);
+             if (_elm_profile)
+               {
+                  memcpy(_elm_profile, p, len);
+                  _elm_profile[len] = 0;
+                  free(p);
+               }
+             else free(p);
              eet_close(ef);
+             p = strchr(_elm_profile, '/');
+             if (p) *p = 0;
              return;
           }
         eet_close(ef);
@@ -2538,6 +2575,8 @@ _elm_config_sub_init(void)
                          }
                        _elm_profile = s;
                        if (changed) _prop_config_get();
+                       s = strchr(_elm_profile, '/');
+                       if (s) *s = 0;
                     }
                }
           }

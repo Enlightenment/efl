@@ -309,6 +309,11 @@ _port_indicator_connect_cb(void *data)
         sd->port_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
+   if (strchr(indicator_serv_name, '/'))
+     {
+        sd->port_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
    if (elm_plug_connect(sd->portrait_indicator, indicator_serv_name, 0, EINA_FALSE))
      {
         DBG("Conformant connect to server[%s]\n", indicator_serv_name);
@@ -337,6 +342,11 @@ _land_indicator_connect_cb(void *data)
      {
         DBG("Conformant cannot find indicator service name: Rotation=%d\n",rot);
         sd->land_indi_timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   if (strchr(indicator_serv_name, '/'))
+     {
+        sd->port_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
    if (elm_plug_connect(sd->landscape_indicator, indicator_serv_name, 0, EINA_FALSE))
@@ -386,6 +396,10 @@ _create_portrait_indicator(Evas_Object *obj)
         DBG("Conformant cannot get portrait indicator service name\n");
         return NULL;
      }
+   if (strchr(port_indicator_serv_name, '/'))
+     {
+        return NULL;
+     }
 
    port_indicator = elm_plug_add(obj);
    if (!port_indicator)
@@ -421,6 +435,10 @@ _create_landscape_indicator(Evas_Object *obj)
    if (!land_indicator_serv_name)
      {
         DBG("Conformant cannot get portrait indicator service name\n");
+        return NULL;
+     }
+   if (strchr(land_indicator_serv_name, '/'))
+     {
         return NULL;
      }
 

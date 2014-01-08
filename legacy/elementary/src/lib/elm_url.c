@@ -98,9 +98,12 @@ elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel cancel_cb
    target = ecore_con_url_new(url);
    if (!target) goto on_error;
 
-   if (getenv("http_proxy")) ecore_con_url_proxy_set(target, getenv("http_proxy"));
-   if (getenv("https_proxy")) ecore_con_url_proxy_set(target, getenv("https_proxy"));
-   if (getenv("ftp_proxy")) ecore_con_url_proxy_set(target, getenv("ftp_proxy"));
+   if (getuid() == getuid())
+     {
+        if (getenv("http_proxy")) ecore_con_url_proxy_set(target, getenv("http_proxy"));
+        if (getenv("https_proxy")) ecore_con_url_proxy_set(target, getenv("https_proxy"));
+        if (getenv("ftp_proxy")) ecore_con_url_proxy_set(target, getenv("ftp_proxy"));
+     }
 
    r = malloc(sizeof (Elm_Url));
    if (!r) goto on_error;
