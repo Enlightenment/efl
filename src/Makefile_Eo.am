@@ -93,6 +93,8 @@ tests/eo/suite/eo_test_class_simple.c \
 tests/eo/suite/eo_test_class_simple.h \
 tests/eo/suite/eo_suite.c \
 tests/eo/suite/eo_suite.h \
+tests/eo/suite/eo_error_msgs.h \
+tests/eo/suite/eo_error_msgs.c \
 tests/eo/suite/eo_test_class_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_value.c \

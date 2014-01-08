@@ -6,82 +6,15 @@
 
 #include "Eo.h"
 #include "eo_suite.h"
+#include "eo_error_msgs.h"
 #include "eo_test_class_simple.h"
 
-/* The Max level to consider when working with the print cb. */
-#define _EINA_LOG_MAX 2
-
-struct log_ctx {
-   const char *msg;
-   const char *fnc;
-   Eina_Bool did;
-   int expected_level;
-};
-
 static struct log_ctx ctx;
-
-static void
-_eo_test_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
-{
-   struct log_ctx *myctx = data;
-
-   if (level > _EINA_LOG_MAX)
-      return;
-
-   ck_assert_int_eq(level, myctx->expected_level);
-   if (myctx->msg)
-      ck_assert_str_eq(myctx->msg, fmt);
-   ck_assert_str_eq(myctx->fnc, fnc);
-   myctx->did = EINA_TRUE;
-
-#ifdef SHOW_LOG
-   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
-#else
-   (void)d;
-   (void)file;
-   (void)line;
-#endif
-}
-
-static void
-_eo_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
-{
-   struct log_ctx *myctx = data;
-   va_list cp_args;
-   const char *str;
-
-   if (level > _EINA_LOG_MAX)
-      return;
-
-   va_copy(cp_args, args);
-   str = va_arg(cp_args, const char *);
-   va_end(cp_args);
-
-   ck_assert_int_eq(level, myctx->expected_level);
-   ck_assert_str_eq(fmt, "%s");
-   ck_assert_str_eq(myctx->msg, str);
-   ck_assert_str_eq(myctx->fnc, fnc);
-   myctx->did = EINA_TRUE;
-
-#ifdef SHOW_LOG
-   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
-#else
-   (void)d;
-   (void)file;
-   (void)line;
-#endif
-}
-
-#define TEST_EO_ERROR(fn, _msg)                  \
-  ctx.msg = _msg;                                \
-  ctx.fnc = fn;                                  \
-  ctx.did = EINA_FALSE;                          \
-  ctx.expected_level = EINA_LOG_LEVEL_ERR
 
 START_TEST(eo_inherit_errors)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Eo_Class *klass;
    const Eo_Class *klass_mixin;
@@ -148,7 +81,7 @@ END_TEST
 START_TEST(eo_inconsistent_mro)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Eo_Class *klass;
    const Eo_Class *klass_mixin;
@@ -230,7 +163,7 @@ static void _stub_class_constructor(Eo_Class *klass EINA_UNUSED) {}
 START_TEST(eo_bad_interface)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_safety_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_safety_print_cb, &ctx);
 
    const Eo_Class *klass;
 
@@ -279,7 +212,7 @@ void null_fct (void) {}
 START_TEST(eo_null_api)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Eo_Class *klass;
 
@@ -312,7 +245,7 @@ END_TEST
 START_TEST(eo_wrong_override)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Eo_Class *klass;
 
@@ -345,7 +278,7 @@ END_TEST
 START_TEST(eo_api_redefined)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Eo_Class *klass;
 
@@ -379,7 +312,7 @@ END_TEST
 START_TEST(eo_dich_func_override)
 {
    eo_init();
-   eina_log_print_cb_set(_eo_test_print_cb, &ctx);
+   eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Eo_Class *klass;
 
