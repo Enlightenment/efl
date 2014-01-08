@@ -3433,7 +3433,7 @@ loop_advance:
         if ((it->x + it->adv) > c->ln->w) c->ln->w = it->x + it->adv;
      }
 
-   c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
+   c->ln->y = c->y - c->par->y;
    c->ln->h = c->ascent + c->descent;
 
    /* Handle max ascent and descent if at the edges */
@@ -3448,6 +3448,8 @@ loop_advance:
              ascdiff = c->maxascent - c->ascent;
              c->ln->y += ascdiff;
              c->y += ascdiff;
+             c->ln->y += c->o->style_pad.t;
+             c->y += c->o->style_pad.t;
           }
      }
 
