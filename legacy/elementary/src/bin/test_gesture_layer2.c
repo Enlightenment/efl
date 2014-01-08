@@ -529,7 +529,7 @@ Evas_Object *create_gesture_box(Evas_Object *win, icon_properties *icons,
    snprintf(buf, sizeof(buf), "%s/images/g_layer/%s_1.png",
          elm_app_data_dir_get(), icons[idx].name);
    elm_image_file_set(icons[idx].icon, buf, NULL);
-   elm_image_resizable_set(icons[idx].icon, 0, 0);
+   elm_image_resizable_set(icons[idx].icon, EINA_FALSE, EINA_FALSE);
    evas_object_size_hint_align_set(icons[idx].icon, 0.5, 0.5);
    _icon_color_set(&icons[idx], INI_R, INI_G, INI_B, INI_A);
    elm_box_pack_end(bx, icons[idx].icon);

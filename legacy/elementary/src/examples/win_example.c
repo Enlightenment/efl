@@ -206,7 +206,7 @@ elm_main(int argc, char *argv[])
    o = elm_icon_add(win2);
    sprintf(buf, "%s/images/logo.png", elm_app_data_dir_get());
    elm_image_file_set(o, buf, NULL);
-   elm_image_resizable_set(o, 0, 0);
+   elm_image_resizable_set(o, EINA_FALSE, EINA_FALSE);
    elm_image_no_scale_set(o, EINA_TRUE);
    elm_win_resize_object_add(win2, o);
    evas_object_show(o);
