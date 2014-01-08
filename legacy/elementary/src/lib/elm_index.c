@@ -198,6 +198,7 @@ _index_box_auto_fill(Evas_Object *obj,
    Evas_Coord mw, mh, ih;
    Evas_Object *o;
    Elm_Index_Omit *om;
+   const char *style = elm_widget_style_get(obj);
 
    ELM_INDEX_DATA_GET(obj, sd);
 
@@ -222,8 +223,7 @@ _index_box_auto_fill(Evas_Object *obj,
      {
         o = edje_object_add(evas_object_evas_get(obj));
         elm_widget_theme_object_set
-           (obj, o, "index", "item/vertical",
-            elm_widget_style_get(obj));
+           (obj, o, "index", "item/vertical", style);
 
         edje_object_size_min_restricted_calc(o, NULL, &mh, 0, 0);
 
@@ -274,23 +274,19 @@ _index_box_auto_fill(Evas_Object *obj,
           {
              if (i & 0x1)
                elm_widget_theme_object_set
-                 (obj, o, "index", "item_odd/horizontal",
-                 elm_widget_style_get(obj));
+                 (obj, o, "index", "item_odd/horizontal", style);
              else
                elm_widget_theme_object_set
-                 (obj, o, "index", "item/horizontal",
-                 elm_widget_style_get(obj));
+                 (obj, o, "index", "item/horizontal", style);
           }
         else
           {
              if (i & 0x1)
                elm_widget_theme_object_set
-                 (obj, o, "index", "item_odd/vertical",
-                 elm_widget_style_get(obj));
+                 (obj, o, "index", "item_odd/vertical", style);
              else
                elm_widget_theme_object_set
-                 (obj, o, "index", "item/vertical",
-                 elm_widget_style_get(obj));
+                 (obj, o, "index", "item/vertical", style);
           }
 
         if (skip > 0)

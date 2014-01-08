@@ -640,7 +640,6 @@ _item_new(Evas_Object *obj,
           const void *data)
 {
    Elm_Diskselector_Item *it;
-   const char *style = elm_widget_style_get(obj);
 
    it = elm_widget_item_new(obj, Elm_Diskselector_Item);
    if (!it) return NULL;
@@ -655,7 +654,8 @@ _item_new(Evas_Object *obj,
    it->func = func;
    it->base.data = data;
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item", style);
+   elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
+                               elm_widget_style_get(obj));
 
    evas_object_size_hint_weight_set
      (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -801,6 +801,7 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    Evas *evas;
+   const char *style = elm_widget_style_get(obj);
 
    Elm_Diskselector_Smart_Data *sd = _pd;
 
@@ -814,8 +815,8 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         EINA_LIST_FOREACH(sd->r_items, l, it)
           {
-             elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
-                                         elm_widget_style_get(obj));
+             elm_widget_theme_object_set(obj, VIEW(it),
+                                         "diskselector", "item", style);
              edje_object_part_text_escaped_set
                (VIEW(it), "elm.text", it->label);
           }
@@ -824,8 +825,8 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      {
         EINA_LIST_FOREACH(sd->items, l, it)
           {
-             elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
-                                         elm_widget_style_get(obj));
+             elm_widget_theme_object_set(obj, VIEW(it),
+                                         "diskselector","item", style);
              edje_object_part_text_escaped_set
                (VIEW(it), "elm.text", it->label);
           }
@@ -833,15 +834,15 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         /* left blank */
         EINA_LIST_FOREACH (sd->left_blanks, l, blank)
           {
-             elm_widget_theme_object_set(obj, blank, "diskselector", "item",
-                                         elm_widget_style_get(obj));
+             elm_widget_theme_object_set(obj, blank,
+                                         "diskselector", "item", style);
           }
 
         /* right blank */
         EINA_LIST_FOREACH (sd->right_blanks, l, blank)
           {
-             elm_widget_theme_object_set(obj, blank, "diskselector", "item",
-                                         elm_widget_style_get(obj));
+             elm_widget_theme_object_set(obj, blank,
+                                         "diskselector", "item", style);
           }
      }
 

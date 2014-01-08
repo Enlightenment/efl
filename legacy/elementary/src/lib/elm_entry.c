@@ -541,6 +541,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    const char *str;
    const char *t;
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   const char *style = elm_widget_style_get(obj);
    if (ret) *ret = EINA_FALSE;
 
    Elm_Entry_Smart_Data *sd = _pd;
@@ -564,8 +565,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    t = eina_stringshare_add(elm_object_text_get(obj));
 
    elm_widget_theme_object_set
-     (obj, sd->entry_edje, "entry", _elm_entry_theme_group_get(obj),
-     elm_widget_style_get(obj));
+     (obj, sd->entry_edje, "entry", _elm_entry_theme_group_get(obj), style);
 
    if (_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
@@ -616,10 +616,10 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
         if (sd->single_line)
           ok = elm_widget_theme_object_set
-          (obj, sd->scr_edje, "scroller", "entry_single", elm_widget_style_get(obj));
+          (obj, sd->scr_edje, "scroller", "entry_single", style);
         if (!ok)
           elm_widget_theme_object_set
-          (obj, sd->scr_edje, "scroller", "entry", elm_widget_style_get(obj));
+          (obj, sd->scr_edje, "scroller", "entry", style);
 
         str = edje_object_data_get(sd->scr_edje, "focus_highlight");
      }
@@ -633,10 +633,10 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    else
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
-   elm_widget_theme_object_set(obj, sd->start_handler, "entry",
-                               "handler/start", elm_widget_style_get(obj));
-   elm_widget_theme_object_set(obj, sd->end_handler, "entry",
-                               "handler/end", elm_widget_style_get(obj));
+   elm_widget_theme_object_set(obj, sd->start_handler,
+                               "entry", "handler/start", style);
+   elm_widget_theme_object_set(obj, sd->end_handler,
+                               "entry", "handler/end", style);
 
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
@@ -2351,6 +2351,7 @@ _item_get(void *data,
    Eina_List *l;
    Evas_Object *o;
    Elm_Entry_Item_Provider *ip;
+   const char *style = elm_widget_style_get(data);
 
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -2374,17 +2375,16 @@ _item_get(void *data,
              evas_object_del(o);
              o = edje_object_add(evas_object_evas_get(data));
              elm_widget_theme_object_set
-               (data, o, "entry/emoticon", "wtf",
-               elm_widget_style_get(data));
+               (data, o, "entry/emoticon", "wtf", style);
           }
         return o;
      }
 
    o = edje_object_add(evas_object_evas_get(data));
    if (!elm_widget_theme_object_set
-         (data, o, "entry", item, elm_widget_style_get(data)))
+         (data, o, "entry", item, style))
      elm_widget_theme_object_set
-       (data, o, "entry/emoticon", "wtf", elm_widget_style_get(data));
+       (data, o, "entry/emoticon", "wtf", style);
    return o;
 }
 
