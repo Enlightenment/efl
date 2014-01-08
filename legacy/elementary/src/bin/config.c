@@ -951,27 +951,11 @@ _cf_caches(void            *data,
 }
 
 static void
-_cf_access(void            *data,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
+_cf_etc(void *data,
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
 {
-   _flip_to(data, "access");
-}
-
-static void
-_cf_selection(void            *data,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "selection");
-}
-
-static void
-_cf_debug(void            *data,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
-{
-   _flip_to(data, "debug");
+   _flip_to(data,"etc");
 }
 
 const char *
@@ -1480,8 +1464,8 @@ _status_config_sizing(Evas_Object *win,
 }
 
 static void
-_status_config_access(Evas_Object *win,
-                      Evas_Object *naviframe)
+_status_config_etc(Evas_Object *win,
+                   Evas_Object *naviframe)
 {
    Evas_Object *bx, *ck;
 
@@ -1489,10 +1473,10 @@ _status_config_access(Evas_Object *win,
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
 
+   // access
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set access mode");
    elm_object_text_set(ck, "Enable Access Mode");
-   evas_object_data_set(win, "access_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_state_set(ck, elm_config_access_get());
@@ -1501,25 +1485,10 @@ _status_config_access(Evas_Object *win,
 
    evas_object_smart_callback_add(ck, "changed", ac_change, NULL);
 
-   evas_object_data_set(win, "access", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
-}
-
-static void
-_status_config_selection(Evas_Object *win,
-                      Evas_Object *naviframe)
-{
-   Evas_Object *bx, *ck;
-
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
-
+   // selection
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set selection mode");
    elm_object_text_set(ck, "Enable clear selection when unfocus");
-   evas_object_data_set(win, "selection_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_state_set(ck, elm_config_selection_unfocused_clear_get());
@@ -1528,25 +1497,10 @@ _status_config_selection(Evas_Object *win,
 
    evas_object_smart_callback_add(ck, "changed", sel_change, NULL);
 
-   evas_object_data_set(win, "selection", bx);
-
-   elm_naviframe_item_simple_push(naviframe, bx);
-}
-
-static void
-_status_config_debug(Evas_Object *win,
-                      Evas_Object *naviframe)
-{
-   Evas_Object *bx, *ck;
-
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
-
+   // clouseau
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set clouseau mode");
    elm_object_text_set(ck, "Enable clouseau");
-   evas_object_data_set(win, "clouseau_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_state_set(ck, elm_config_clouseau_enabled_get());
@@ -1555,7 +1509,7 @@ _status_config_debug(Evas_Object *win,
 
    evas_object_smart_callback_add(ck, "changed", dbg_change, NULL);
 
-   evas_object_data_set(win, "debug", bx);
+   evas_object_data_set(win, "etc", bx);
 
    elm_naviframe_item_simple_push(naviframe, bx);
 }
@@ -3533,9 +3487,7 @@ _status_config_full(Evas_Object *win,
    elm_toolbar_item_append(tb, "video-display", "Rendering",
                            _cf_rendering, win);
    elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
-   elm_toolbar_item_append(tb, "stock_spellcheck", "Access", _cf_access, win);
-   elm_toolbar_item_append(tb, "clear-selection-check", "Selection", _cf_selection, win);
-   elm_toolbar_item_append(tb, "preferences-other", "Debug", _cf_debug, win);
+   elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
 
    elm_box_pack_end(bx0, tb);
    evas_object_show(tb);
@@ -3551,9 +3503,7 @@ _status_config_full(Evas_Object *win,
    _status_config_rendering(win, naviframe);
    _status_config_scrolling(win, naviframe);
    _status_config_caches(win, naviframe);
-   _status_config_access(win, naviframe);
-   _status_config_selection(win, naviframe);
-   _status_config_debug(win, naviframe);
+   _status_config_etc(win, naviframe);
    _status_config_sizing(win, naviframe); // Note: call this at the end.
 
    // FIXME uncomment after flip style fix, please
