@@ -608,7 +608,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         if (dy < 0) dy = 0;
         if (!dx && !dy) goto fail;
         break;
-      case EVAS_FILTER_BLUR_MOTION:
       default:
         CRI("Not implemented yet!");
         goto fail;

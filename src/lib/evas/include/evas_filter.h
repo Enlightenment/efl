@@ -38,8 +38,7 @@ enum _Evas_Filter_Mode
 enum _Evas_Filter_Blur_Type
 {
    EVAS_FILTER_BLUR_GAUSSIAN = 0x0, // Gaussian or sine curve. O(nm)
-   EVAS_FILTER_BLUR_BOX      = 0x1, // Optimizable. But, UGLY. O(n)
-   EVAS_FILTER_BLUR_MOTION   = 0x2, // Not implemented
+   EVAS_FILTER_BLUR_BOX      = 0x1, // Optimizable on CPU. But, UGLY. O(n)
    EVAS_FILTER_BLUR_LAST,
    EVAS_FILTER_BLUR_DEFAULT  = EVAS_FILTER_BLUR_GAUSSIAN
 };

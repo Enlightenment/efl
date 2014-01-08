@@ -1490,8 +1490,6 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
           type = EVAS_FILTER_BLUR_GAUSSIAN;
         else if (!strcasecmp(typestr, "box"))
           type = EVAS_FILTER_BLUR_BOX;
-        else if (!strcasecmp(typestr, "motion"))
-          type = EVAS_FILTER_BLUR_MOTION;
         else if (!strcasecmp(typestr, "default"))
           type = EVAS_FILTER_BLUR_DEFAULT;
         else
