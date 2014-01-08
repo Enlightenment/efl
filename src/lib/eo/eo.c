@@ -682,25 +682,37 @@ EAPI void
 _eo2_class_funcs_set(_Eo_Class *klass)
 {
    int op_id;
+   const void *last_api_func;
    const Eo2_Op_Description *api_desc;
    Eo2_Op_Description *op_desc;
    Eo2_Op_Description *op_descs;
 
+   op_id = klass->base_id;
    op_descs = klass->desc->ops.descs2;
 
    qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
-   op_id = klass->base_id;
-   DBG("Set functions for class '%s' %p", klass->desc->name, klass);
+   DBG("Set functions for class '%s':%p", klass->desc->name, klass);
+
    if (!op_descs) return;
+
+   last_api_func = NULL;
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
         if(op_desc->api_func == NULL)
-          ERR("Setting implementation for NULL API. Class '%s', Func index: %lu",
-              klass->desc->name, (unsigned long) (op_desc - op_descs));
+          {
+             ERR("Ignore %d NULL->%p '%s'. Can't set implementation for NULL API.",
+                 op_desc->op, op_desc->func, op_desc->doc);
+             continue;
+          }
 
         if (op_desc->op == EO_NOOP)
           {
+             if (op_desc->api_func == last_api_func)
+               {
+                  ERR("API already defined %d %p->%p '%s'. Expect undefined behaviour.",
+                      op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+               }
              op_desc->op = op_id;
              op_id++;
           }
@@ -709,20 +721,20 @@ _eo2_class_funcs_set(_Eo_Class *klass)
              api_desc = _eo2_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
 
              if (api_desc == NULL)
-               ERR("Can't find api func %p description in class hierarchy. Class '%s', Func index: %lu",
-                   op_desc->api_func, klass->desc->name, (unsigned long) (op_desc - op_descs));
+               {
+                  ERR("Ignore override %p->%p. Can't find api func description in class hierarchy.",
+                      op_desc->api_func, op_desc->func);
+                  continue;
+               }
 
              op_desc->op = api_desc->op;
              op_desc->doc = api_desc->doc;
-
-             if (op_desc->op == EO_NOOP)
-               ERR("API func %p, not found in direct parent '%s'. Class '%s', Func index: %lu",
-                   op_desc->api_func, klass->parent->desc->name,
-                   klass->desc->name, (unsigned long) (op_desc - op_descs));
           }
 
-        DBG(" %4d %p %p %s", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+        DBG(" %4d %p->%p '%s'", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+
         _dich_func_set(klass, op_desc->op, op_desc->func);
+        last_api_func = op_desc->api_func;
      }
 }
 
