@@ -3300,18 +3300,15 @@ _ecore_evas_x_flush_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_U
 
    if (ee->no_comp_sync) return;
    if (!_ecore_evas_app_comp_sync) return;
-   if (edata->sync_counter)
+   if (!edata->sync_counter) return;
+   if (!edata->sync_began) return;
+
+   edata->sync_val++;
+   if (!edata->sync_cancel)
      {
-        if (edata->sync_began)
-          {
-             edata->sync_val++;
-             if (!edata->sync_cancel)
-               {
-                  if (!ee->semi_sync)
-                     ecore_x_sync_counter_val_wait(edata->sync_counter,
-                                                   edata->sync_val);
-               }
-          }
+        if (!ee->semi_sync)
+          ecore_x_sync_counter_val_wait(edata->sync_counter,
+                                        edata->sync_val);
      }
 }
 
