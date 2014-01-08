@@ -291,6 +291,9 @@ struct _Evas_Object_Textblock_Node_Format
    const char                         *orig_format;
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
+   struct {
+      unsigned char l, r, t, b;
+   } pad;
    unsigned char                       anchor : 2;
    Eina_Bool                           opener : 1;
    Eina_Bool                           own_closer : 1;
@@ -4932,11 +4935,10 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
 {
    Evas_Object *eo_obj = c->obj;
    Evas_Object_Textblock *o = c->o;
+
    /* Mark text nodes as dirty if format have changed. */
-   if (c->o->format_changed)
-     {
-        _format_changes_invalidate_text_nodes(c);
-     }
+   if (o->format_changed)
+     _format_changes_invalidate_text_nodes(c);
 
    if (o->content_changed)
      {
@@ -4994,9 +4996,19 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                          {
                             /* Only do this if this actually changes format */
                             if (fnode->format_change)
-                               _layout_do_format(eo_obj, c, &c->fmt, fnode,
-                                     style_pad_l, style_pad_r,
-                                     style_pad_t, style_pad_b, EINA_FALSE);
+                              {
+                                 int pl = 0, pr = 0, pt = 0, pb = 0;
+                                 _layout_do_format(eo_obj, c, &c->fmt, fnode,
+                                                   &pl, &pr, &pt, &pb, EINA_FALSE);
+                                 fnode->pad.l = pl;
+                                 fnode->pad.r = pr;
+                                 fnode->pad.t = pt;
+                                 fnode->pad.b = pb;
+                              }
+                            if (fnode->pad.l > *style_pad_l) *style_pad_l = fnode->pad.l;
+                            if (fnode->pad.r > *style_pad_r) *style_pad_r = fnode->pad.r;
+                            if (fnode->pad.t > *style_pad_t) *style_pad_t = fnode->pad.t;
+                            if (fnode->pad.b > *style_pad_b) *style_pad_b = fnode->pad.b;
                             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                          }
                        continue;
@@ -5078,7 +5090,13 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
         o->paragraphs = c->paragraphs;
         c->par = NULL;
      }
-
+   else
+     {
+        if (o->style_pad.l > *style_pad_l) *style_pad_l = o->style_pad.l;
+        if (o->style_pad.r > *style_pad_r) *style_pad_r = o->style_pad.r;
+        if (o->style_pad.t > *style_pad_t) *style_pad_t = o->style_pad.t;
+        if (o->style_pad.b > *style_pad_b) *style_pad_b = o->style_pad.b;
+     }
 }
 
 /**
