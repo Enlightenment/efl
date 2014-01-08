@@ -108,7 +108,7 @@ _ecore_fb_size_get(int *w, int *h)
    struct fb_var_screeninfo fb_var;
    int fb;
 
-   if (getenv("EVAS_FB_DEV"))
+   if ((getuid() == getuid()) && (getenv("EVAS_FB_DEV")))
      fb = open(getenv("EVAS_FB_DEV"), O_RDWR);
    else
      {

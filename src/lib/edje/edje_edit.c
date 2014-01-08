@@ -6808,15 +6808,18 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 #else
 # define BIN_EXT
 #endif
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        snprintf(embryo_cc_path, sizeof(embryo_cc_path),
-                 "%s/src/bin/embryo/embryo_cc" BIN_EXT,
-                 PACKAGE_BUILD_DIR);
-        snprintf(inc_path, sizeof(inc_path),
-                 "%s/data/edje/include", PACKAGE_BUILD_DIR);
-        if (!ecore_file_exists(embryo_cc_path))
-          embryo_cc_path[0] = '\0';
+        if (getenv("EFL_RUN_IN_TREE"))
+          {
+             snprintf(embryo_cc_path, sizeof(embryo_cc_path),
+                      "%s/src/bin/embryo/embryo_cc" BIN_EXT,
+                      PACKAGE_BUILD_DIR);
+             snprintf(inc_path, sizeof(inc_path),
+                      "%s/data/edje/include", PACKAGE_BUILD_DIR);
+             if (!ecore_file_exists(embryo_cc_path))
+               embryo_cc_path[0] = '\0';
+          }
      }
 
    if (embryo_cc_path[0] == '\0')

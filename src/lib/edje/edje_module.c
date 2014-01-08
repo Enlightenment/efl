@@ -37,13 +37,16 @@ _edje_module_handle_load(const char *module)
      {
         char tmp[PATH_MAX] = "";
 
-        if (run_in_tree)
+        if (getuid() == getuid())
           {
-             struct stat st;
-             snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
-                      path, module, EDJE_MODULE_NAME);
-             if (stat(tmp, &st) != 0)
-               tmp[0] = '\0';
+             if (run_in_tree)
+               {
+                  struct stat st;
+                  snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
+                           path, module, EDJE_MODULE_NAME);
+                  if (stat(tmp, &st) != 0)
+                  tmp[0] = '\0';
+               }
           }
 
         if (tmp[0] == '\0')
@@ -68,32 +71,31 @@ _edje_module_handle_load(const char *module)
 void
 _edje_module_init(void)
 {
-   char *paths[4] = { NULL, NULL, NULL, NULL };
+   char *paths[2] = { NULL, NULL };
    unsigned int i;
    unsigned int j;
 
    _registered_modules = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
 
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        const char mp[] = PACKAGE_BUILD_DIR"/src/modules/edje";
-        if (stat(mp, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             _modules_paths = eina_list_append(_modules_paths, strdup(mp));
-             return;
+             struct stat st;
+             const char mp[] = PACKAGE_BUILD_DIR"/src/modules/edje";
+             if (stat(mp, &st) == 0)
+               {
+                  _modules_paths = eina_list_append(_modules_paths, strdup(mp));
+                  return;
+               }
           }
      }
 
-   /* 1. ~/.edje/modules/ */
-   paths[0] = eina_module_environment_path_get("HOME", "/.edje/modules");
-   /* 2. $(EDJE_MODULE_DIR)/edje/modules/ */
-   paths[1] = eina_module_environment_path_get("EDJE_MODULES_DIR", "/edje/modules");
-   /* 3. libedje.so/../edje/modules/ */
-   paths[2] = eina_module_symbol_path_get(_edje_module_init, "/edje/modules");
-   /* 4. PREFIX/edje/modules/ */
+   /* 1. libedje.so/../edje/modules/ */
+   paths[0] = eina_module_symbol_path_get(_edje_module_init, "/edje/modules");
+   /* 2. PREFIX/edje/modules/ */
 #ifndef _MSC_VER
-   paths[3] = strdup(PACKAGE_LIB_DIR "/edje/modules");
+   paths[1] = strdup(PACKAGE_LIB_DIR "/edje/modules");
 #endif
 
    for (j = 0; j < ((sizeof (paths) / sizeof (char*)) - 1); ++j)

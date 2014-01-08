@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <libgen.h>
+#include <unistd.h>
 
 #ifdef HAVE_DLOPEN
 # include <dlfcn.h>
@@ -430,6 +431,7 @@ EAPI char *eina_module_environment_path_get(const char *env,
    const char *env_dir;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(env, NULL);
+   if (getuid() != getuid()) return NULL; // if setuid dont use dangerous env
 
    env_dir = getenv(env);
    if (env_dir)

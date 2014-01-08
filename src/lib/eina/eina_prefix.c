@@ -335,6 +335,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
      }
 
    /* 3. argv0 no path - look in PATH */
+   if (getuid() != getuid()) return 0;
    path = getenv("PATH");
    if (!path)
      {
@@ -383,6 +384,7 @@ _get_env_var(char **var, const char *envprefix, const char *envsuffix, const cha
    char env[1024];
    const char *s;
 
+   if (getuid() != getuid()) return 0;
    snprintf(env, sizeof(env), "%s_%s_DIR", envprefix, envsuffix);
    s = getenv(env);
    if (s)
@@ -418,13 +420,16 @@ _get_env_vars(Eina_Prefix *pfx,
    const char *prefix;
    int ret = 0;
 
-   snprintf(env, sizeof(env), "%s_PREFIX", envprefix);
-   if ((prefix = getenv(env))) STRDUP_REP(pfx->prefix_path, prefix);
+   if (getuid() == getuid())
+     {
+        snprintf(env, sizeof(env), "%s_PREFIX", envprefix);
+        if ((prefix = getenv(env))) STRDUP_REP(pfx->prefix_path, prefix);
 
-   ret += _get_env_var(&pfx->prefix_path_bin, envprefix, "BIN", prefix, bindir);
-   ret += _get_env_var(&pfx->prefix_path_lib, envprefix, "LIB", prefix, libdir);
-   ret += _get_env_var(&pfx->prefix_path_data, envprefix, "DATA", prefix, datadir);
-   ret += _get_env_var(&pfx->prefix_path_locale, envprefix, "LOCALE", prefix, localedir);
+        ret += _get_env_var(&pfx->prefix_path_bin, envprefix, "BIN", prefix, bindir);
+        ret += _get_env_var(&pfx->prefix_path_lib, envprefix, "LIB", prefix, libdir);
+        ret += _get_env_var(&pfx->prefix_path_data, envprefix, "DATA", prefix, datadir);
+        ret += _get_env_var(&pfx->prefix_path_locale, envprefix, "LOCALE", prefix, localedir);
+     }
    return ret;
 }
 

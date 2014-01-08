@@ -48,6 +48,7 @@ evas_gl_common_file_cache_mkpath(const char *path)
    char ss[PATH_MAX];
    unsigned int i;
 
+   if (getuid() != getuid()) return EINA_FALSE;
    if (evas_gl_common_file_cache_is_dir(path)) return EINA_TRUE;
 
    for (i = 0; path[i]; ss[i] = path[i], i++)
@@ -70,6 +71,7 @@ evas_gl_common_file_cache_dir_check(char *cache_dir, int num)
    char *home = NULL;
    char *subdir = ".cache/evas_gl_common_caches";
 
+   if (getuid() != getuid()) return 0;
    home = getenv("HOME");
    if ((!home) || (!home[0])) return 0;
 

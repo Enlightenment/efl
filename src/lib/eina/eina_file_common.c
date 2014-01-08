@@ -897,12 +897,12 @@ EAPI int
 eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   const char *tmpdir;
+   const char *tmpdir = NULL;
    int fd;
    mode_t old_umask;
 
 #ifndef HAVE_EVIL
-   tmpdir = getenv("TMPDIR");
+   if (getuid() == getuid()) tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 #else
    tmpdir = (char *)evil_tmpdir_get();
@@ -929,11 +929,11 @@ EAPI Eina_Bool
 eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   const char *tmpdir;
+   const char *tmpdir = NULL;
    char *tmpdirname;
 
 #ifndef HAVE_EVIL
-   tmpdir = getenv("TMPDIR");
+   if (getuid() == getuid()) tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 #else
    tmpdir = (char *)evil_tmpdir_get();

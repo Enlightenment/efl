@@ -43,6 +43,7 @@
 #include <dirent.h>
 #include <dlfcn.h>
 #include <ctype.h>
+#include <pwd.h>
 
 #ifdef HAVE_XATTR
 # include <sys/xattr.h>
@@ -154,48 +155,35 @@ static void
 _ethumb_plugins_load(void)
 {
    char buf[PATH_MAX];
-   char *path;
 
    if (_plugins_loaded) return;
    _plugins_loaded = EINA_TRUE;
 
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        snprintf(buf, sizeof(buf), "%s/src/modules/ethumb",
-                 PACKAGE_BUILD_DIR);
-        if (stat(buf, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             const char *built_modules[] = {
-               "emotion",
-               NULL
-             };
-             const char **itr;
-             for (itr = built_modules; *itr != NULL; itr++)
+             struct stat st;
+             snprintf(buf, sizeof(buf), "%s/src/modules/ethumb",
+                      PACKAGE_BUILD_DIR);
+             if (stat(buf, &st) == 0)
                {
-                  snprintf(buf, sizeof(buf),
-                           "%s/src/modules/ethumb/%s/.libs",
-                           PACKAGE_BUILD_DIR, *itr);
-                  _plugins = eina_module_list_get(_plugins, buf,
-                                                          EINA_FALSE, NULL, NULL);
+                  const char *built_modules[] = {
+                     "emotion",
+                     NULL
+                  };
+                  const char **itr;
+                  for (itr = built_modules; *itr != NULL; itr++)
+                    {
+                       snprintf(buf, sizeof(buf),
+                                "%s/src/modules/ethumb/%s/.libs",
+                                PACKAGE_BUILD_DIR, *itr);
+                       _plugins = eina_module_list_get(_plugins, buf,
+                                                       EINA_FALSE, NULL, NULL);
+                    }
+                  goto load;
                }
-             goto load;
           }
-     }
-
-   path = eina_module_environment_path_get("ETHUMB_MODULES_DIR",
-                                           "/ethumb/modules");
-   if (path)
-     {
-        _plugins = eina_module_arch_list_get(_plugins, path, MODULE_ARCH);
-        free(path);
-     }
-
-   path = eina_module_environment_path_get("HOME", "/.ethumb");
-   if (path)
-     {
-        _plugins = eina_module_arch_list_get(_plugins, path, MODULE_ARCH);
-        free(path);
      }
 
    snprintf(buf, sizeof(buf), "%s/ethumb/modules", eina_prefix_lib_get(_pfx));
@@ -269,8 +257,18 @@ ethumb_init(void)
    ecore_evas_init();
    edje_init();
 
-   home = getenv("HOME");
-   snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
+   if (getuid() == getuid())
+     {
+        home = getenv("HOME");
+        snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
+     }
+   else
+     {
+        struct passwd *pw = getpwent();
+
+        if ((!pw) || (!pw->pw_dir)) goto error_plugins_ext;
+        snprintf(buf, sizeof(buf), "%s/.thumbnails", pw->pw_dir);
+     }
 
    _home_thumb_dir = eina_stringshare_add(buf);
    _thumb_category_normal = eina_stringshare_add("normal");
@@ -709,11 +707,21 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
      }
    else if (path[0] == '~')
      {
-        const char *home = getenv("HOME");
-        if (!home)
-          return NULL;
-        strncpy(p, home, PATH_MAX - 1);
-        p[PATH_MAX - 1] = 0;
+        if (getuid() == getuid())
+          {
+             const char *home = getenv("HOME");
+             if (!home) return NULL;
+             strncpy(p, home, PATH_MAX - 1);
+             p[PATH_MAX - 1] = 0;
+          }
+        else
+          {
+             struct passwd *pw = getpwent();
+
+             if ((!pw) || (!pw->pw_dir)) return NULL;
+             strncpy(p, pw->pw_dir, PATH_MAX - 1);
+             p[PATH_MAX - 1] = 0;
+          }
         len = strlen(p);
         p += len;
         p[0] = '/';

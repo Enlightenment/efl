@@ -3,6 +3,7 @@
 #endif
 
 #include "emotion_private.h"
+#include <unistd.h>
 
 #ifdef EMOTION_STATIC_BUILD_XINE
 Eina_Bool xine_module_init(void);
@@ -53,53 +54,40 @@ static void
 _emotion_modules_load(void)
 {
    char buf[PATH_MAX];
-   char *path;
 
    if (_emotion_modules_loaded) return;
    _emotion_modules_loaded = EINA_TRUE;
 
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        snprintf(buf, sizeof(buf), "%s/src/modules/emotion",
-                 PACKAGE_BUILD_DIR);
-        if (stat(buf, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             const char *built_modules[] = {
+             struct stat st;
+             snprintf(buf, sizeof(buf), "%s/src/modules/emotion",
+                      PACKAGE_BUILD_DIR);
+             if (stat(buf, &st) == 0)
+               {
+                  const char *built_modules[] = {
 #ifdef EMOTION_BUILD_GSTREAMER
-               "gstreamer",
+                     "gstreamer",
 #endif
 #ifdef EMOTION_BUILD_XINE
-               "xine",
+                     "xine",
 #endif
-               NULL
-             };
-             const char **itr;
-             for (itr = built_modules; *itr != NULL; itr++)
-               {
-                  snprintf(buf, sizeof(buf),
-                           "%s/src/modules/emotion/%s/.libs",
-                           PACKAGE_BUILD_DIR, *itr);
-                  _emotion_modules = eina_module_list_get(_emotion_modules, buf,
-                                                          EINA_FALSE, NULL, NULL);
+                     NULL
+                  };
+                  const char **itr;
+                  for (itr = built_modules; *itr != NULL; itr++)
+                    {
+                       snprintf(buf, sizeof(buf),
+                                "%s/src/modules/emotion/%s/.libs",
+                                PACKAGE_BUILD_DIR, *itr);
+                       _emotion_modules = eina_module_list_get(_emotion_modules, buf,
+                                                               EINA_FALSE, NULL, NULL);
+                    }
+                  return;
                }
-             return;
           }
-     }
-
-   path = eina_module_environment_path_get("EMOTION_MODULES_DIR",
-                                           "/emotion/modules");
-   if (path)
-     {
-        _emotion_modules = eina_module_arch_list_get(_emotion_modules, path, MODULE_ARCH);
-        free(path);
-     }
-
-   path = eina_module_environment_path_get("HOME", "/.emotion");
-   if (path)
-     {
-        _emotion_modules = eina_module_arch_list_get(_emotion_modules, path, MODULE_ARCH);
-        free(path);
      }
 
    snprintf(buf, sizeof(buf), "%s/emotion/modules", eina_prefix_lib_get(_emotion_pfx));

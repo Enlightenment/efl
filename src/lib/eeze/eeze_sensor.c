@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eeze_Sensor.h>
@@ -81,7 +82,7 @@ eeze_sensor_modules_load(void)
     * is one of these items. We do load the modules from the builddir if the
     * environment is set. Normal case is to use installed modules from system
     */
-   if (getenv("EFL_RUN_IN_TREE"))
+   if ((getuid() == getuid()) && (getenv("EFL_RUN_IN_TREE")))
      {
         const char **itr;
 

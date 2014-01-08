@@ -1609,7 +1609,7 @@ _ecore_exe_exec_it(const char     *exe_cmd,
    {
       if (!shell) /* Find users preferred shell. */
       {
-         shell = getenv("SHELL");
+         if (getuid() == getuid()) shell = getenv("SHELL");
          if (!shell)
            shell = "/bin/sh";
       }

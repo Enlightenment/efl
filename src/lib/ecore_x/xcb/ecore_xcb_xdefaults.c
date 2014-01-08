@@ -1,5 +1,7 @@
 #include "ecore_xcb_private.h"
 #include <fnmatch.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 /* local function prototypes */
 static Eina_Bool _ecore_xcb_xdefaults_glob_match(const char *str,
@@ -16,7 +18,19 @@ _ecore_xcb_xdefaults_init(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   snprintf(buff, sizeof(buff), "%s/.Xdefaults", getenv("HOME"));
+   if (getuid() == getuid())
+     {
+        if (getenv("HOME"))
+          snprintf(buff, sizeof(buff), "%s/.Xdefaults", getenv("HOME"));
+        else return;
+     }
+   else
+     {
+        struct passwd *pw = getpwent();
+
+        if ((!pw) || (!pw->pw_dir)) return;
+        snprintf(buff, sizeof(buff), "%s/.Xdefaults", pw->pw_dir);
+     }
    if ((_ecore_xcb_xdefaults_file = eina_file_open(buff, EINA_FALSE)))
      {
         eina_mmap_safety_enabled_set(EINA_TRUE);

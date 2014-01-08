@@ -176,17 +176,6 @@ eina_mempool_init(void)
                                         PACKAGE_LIB_DIR "/eina/modules/mp",
                                         MODULE_ARCH);
 
-   path = eina_module_environment_path_get("HOME", "/.eina/mp/modules/mp");
-   _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
-   if (path)
-      free(path);
-
-   path = eina_module_environment_path_get("EINA_MODULES_MEMPOOL_DIR",
-                                           "/eina/modules/mp");
-   _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);
-   if (path)
-      free(path);
-
    path = eina_module_symbol_path_get((const void *)eina_init,
                                       "/eina/modules/mp");
    _modules = eina_module_arch_list_get(_modules, path, MODULE_ARCH);

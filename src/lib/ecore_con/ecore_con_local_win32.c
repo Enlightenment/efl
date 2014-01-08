@@ -414,7 +414,7 @@ ecore_con_local_listen(Ecore_Con_Server *svr)
      {
         const char *computername;
 
-        computername = getenv("CoMPUTERNAME");
+        computername = getenv("COMPUTERNAME");
         snprintf(buf, sizeof(buf), "\\\\%s\\pipe\\%s", computername, svr->name);
      }
 

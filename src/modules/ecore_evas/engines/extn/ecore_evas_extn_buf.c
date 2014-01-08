@@ -40,10 +40,13 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    
    if (b->am_owner)
      {
-        const char *s;
+        const char *s = NULL;
         
-        s = getenv("XDG_RUNTIME_DIR");
-        if (!s) s = getenv("TMPDIR");
+        if (getuid() == getuid())
+          {
+             s = getenv("XDG_RUNTIME_DIR");
+             if (!s) s = getenv("TMPDIR");
+          }
         if (!s) s = "/tmp";
         snprintf(file, sizeof(file), "%s/ee-lock-XXXXXX", s);
         b->lockfd = mkstemp(file);

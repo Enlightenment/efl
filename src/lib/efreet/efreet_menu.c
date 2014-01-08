@@ -399,8 +399,9 @@ efreet_menu_init(void)
         return 0;
     }
 
-    efreet_menu_prefix = getenv("XDG_MENU_PREFIX");
-    if (!efreet_menu_prefix) efreet_menu_prefix = "";
+   if (getuid() == getuid())
+     efreet_menu_prefix = getenv("XDG_MENU_PREFIX");
+   if (!efreet_menu_prefix) efreet_menu_prefix = "";
 
     efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
     efreet_menu_filter_cbs = eina_hash_string_superfast_new(NULL);

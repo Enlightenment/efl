@@ -1527,7 +1527,8 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    // Save contents of the framebuffer to a file
    if (swap_buffer_debug_mode == -1)
      {
-        if ((dname = getenv("EVAS_GL_SWAP_BUFFER_DEBUG_DIR")))
+        if ((getuid() == getuid()) &&
+            ((dname = getenv("EVAS_GL_SWAP_BUFFER_DEBUG_DIR"))))
           {
              int stat;
              // Create a directory with 0775 permission

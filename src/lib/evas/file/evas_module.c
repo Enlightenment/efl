@@ -56,29 +56,21 @@ evas_module_paths_init(void)
 {
    char *libdir, *path;
 
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        const char mp[] = PACKAGE_BUILD_DIR"/src/modules/evas";
-        if (stat(mp, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             evas_module_paths = _evas_module_append(evas_module_paths, strdup(mp));
-             return;
+             struct stat st;
+             const char mp[] = PACKAGE_BUILD_DIR"/src/modules/evas";
+             if (stat(mp, &st) == 0)
+               {
+                  evas_module_paths = _evas_module_append(evas_module_paths, strdup(mp));
+                  return;
+               }
           }
      }
 
-   /* 1. ~/.evas/modules/ */
-   path = eina_module_environment_path_get("HOME", "/.evas/modules");
-   evas_module_paths = _evas_module_append(evas_module_paths, path);
-
-   /* 2. $(EVAS_MODULE_DIR)/evas/modules/ */
-   path = eina_module_environment_path_get("EVAS_MODULES_DIR", "/evas/modules");
-   if (eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
-     free(path);
-   else
-     evas_module_paths = _evas_module_append(evas_module_paths, path);
-
-   /* 3. libevas.so/../evas/modules/ */
+   /* 1. libevas.so/../evas/modules/ */
    libdir = (char *)_evas_module_libdir_get();
    if (!libdir)
      path = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
@@ -96,7 +88,7 @@ evas_module_paths_init(void)
    else
      evas_module_paths = _evas_module_append(evas_module_paths, path);
 
-   /* 4. PREFIX/lib/evas/modules/ */
+   /* 2. PREFIX/lib/evas/modules/ */
 #ifndef _MSC_VER
    path = PACKAGE_LIB_DIR "/evas/modules";
    if (!eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
@@ -334,12 +326,15 @@ evas_module_engine_list(void)
                   const char *fname = fi->path + fi->name_start;
 
                   buf[0] = '\0';
-                  if (run_in_tree)
+                  if (getuid() == getuid())
                     {
-                       snprintf(buf, sizeof(buf), "%s/engines/%s/.libs",
-                                s, fname);
-                       if (!evas_file_path_exists(buf))
-                         buf[0] = '\0';
+                       if (run_in_tree)
+                         {
+                            snprintf(buf, sizeof(buf), "%s/engines/%s/.libs",
+                                     s, fname);
+                            if (!evas_file_path_exists(buf))
+                            buf[0] = '\0';
+                         }
                     }
 
                   if (buf[0] == '\0')
@@ -430,12 +425,15 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
           }
 
         buffer[0] = '\0';
-        if (run_in_tree)
+        if (getuid() == getuid())
           {
-             snprintf(buffer, sizeof(buffer), "%s/%s/%s/.libs/%s",
-                      path, type_str, name, EVAS_MODULE_NAME);
-             if (!evas_file_path_exists(buffer))
-               buffer[0] = '\0';
+             if (run_in_tree)
+               {
+                  snprintf(buffer, sizeof(buffer), "%s/%s/%s/.libs/%s",
+                           path, type_str, name, EVAS_MODULE_NAME);
+                  if (!evas_file_path_exists(buffer))
+                  buffer[0] = '\0';
+               }
           }
 
         if (buffer[0] == '\0')

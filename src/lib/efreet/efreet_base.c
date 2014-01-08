@@ -4,6 +4,8 @@
 
 #include <unistd.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #ifdef _WIN32
 # include <winsock2.h>
@@ -276,10 +278,20 @@ efreet_dirs_init(void)
     struct stat st;
 
     /* efreet_home_dir */
-    efreet_home_dir = getenv("HOME");
+   if (getuid() == getuid())
+     efreet_home_dir = getenv("HOME");
+   else
+     {
+        struct passwd *pw = getpwent();
+
+        if ((pw) && (pw->pw_dir)) efreet_home_dir = pw->pw_dir;
+     }
 #ifdef _WIN32
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
-        efreet_home_dir = getenv("USERPROFILE");
+      {
+         if (getuid() == getuid())
+           efreet_home_dir = getenv("USERPROFILE");
+      }
 #endif
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
         efreet_home_dir = "/tmp";
@@ -303,7 +315,7 @@ efreet_dirs_init(void)
     xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", "/etc/xdg");
 
     /* xdg_runtime_dir */
-    xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+    if (getuid() == getuid()) xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
     if (!xdg_runtime_dir)
     {
         snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
@@ -375,10 +387,10 @@ efreet_dirs_init(void)
 static const char *
 efreet_dir_get(const char *key, const char *fallback)
 {
-    char *dir;
+    char *dir = NULL;
     const char *t;
 
-    dir = getenv(key);
+    if (getuid() == getuid()) dir = getenv(key);
     if (!dir || dir[0] == '\0')
     {
         int len;
@@ -409,11 +421,11 @@ static Eina_List *
 efreet_dirs_get(const char *key, const char *fallback)
 {
     Eina_List *dirs = NULL;
-    const char *path;
+    const char *path = NULL;
     char *s, *p;
     size_t len;
 
-    path = getenv(key);
+    if (getuid() == getuid()) path = getenv(key);
     if (!path || (path[0] == '\0')) path = fallback;
 
     if (!path) return dirs;
@@ -484,8 +496,11 @@ efreet_env_expand(const char *in)
             {
                 memcpy(env, e1, len);
                 env[len] = 0;
-                val = getenv(env);
-                if (val) eina_strbuf_append(sb, val);
+                if (getuid() == getuid())
+                {
+                    val = getenv(env);
+                    if (val) eina_strbuf_append(sb, val);
+                }
             }
             e1 = NULL;
             eina_strbuf_append_char(sb, *p);

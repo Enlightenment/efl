@@ -7,6 +7,7 @@
 
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
+#include <unistd.h>
 
 static Eina_Hash *_registered_engines = NULL;
 static Eina_List *_engines_paths = NULL;
@@ -38,13 +39,16 @@ _ecore_evas_engine_load(const char *engine)
      {
         char tmp[PATH_MAX] = "";
 
-        if (run_in_tree)
+        if (getuid() == getuid())
           {
-             struct stat st;
-             snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
-                      path, engine, ECORE_EVAS_ENGINE_NAME);
-             if (stat(tmp, &st) != 0)
-               tmp[0] = '\0';
+             if (run_in_tree)
+               {
+                  struct stat st;
+                  snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
+                           path, engine, ECORE_EVAS_ENGINE_NAME);
+                  if (stat(tmp, &st) != 0)
+                  tmp[0] = '\0';
+               }
           }
 
         if (tmp[0] == '\0')
@@ -69,7 +73,7 @@ _ecore_evas_engine_load(const char *engine)
 void
 _ecore_evas_engine_init(void)
 {
-   char *paths[4] = { NULL, NULL, NULL, NULL };
+   char *paths[2] = { NULL, NULL };
    unsigned int i;
    unsigned int j;
 
@@ -77,26 +81,25 @@ _ecore_evas_engine_init(void)
 //   _registered_engines = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
    _registered_engines = eina_hash_string_small_new(NULL);
 
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        const char mp[] = PACKAGE_BUILD_DIR"/src/modules/ecore_evas/engines/";
-        if (stat(mp, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             _engines_paths = eina_list_append(_engines_paths, strdup(mp));
-             return;
+             struct stat st;
+             const char mp[] = PACKAGE_BUILD_DIR"/src/modules/ecore_evas/engines/";
+             if (stat(mp, &st) == 0)
+               {
+                  _engines_paths = eina_list_append(_engines_paths, strdup(mp));
+                  return;
+               }
           }
      }
 
-   /* 1. ~/.ecore_evas/modules/ */
-   paths[0] = eina_module_environment_path_get("HOME", "/.ecore_evas/engines");
-   /* 2. $(ECORE_ENGINE_DIR)/ecore_evas/modules/ */
-   paths[1] = eina_module_environment_path_get("ECORE_EVAS_ENGINES_DIR", "/ecore_evas/engines");
-   /* 3. libecore_evas.so/../ecore_evas/engines/ */
-   paths[2] = eina_module_symbol_path_get(_ecore_evas_engine_init, "/ecore_evas/engines");
-   /* 4. PREFIX/ecore_evas/engines/ */
+   /* 1. libecore_evas.so/../ecore_evas/engines/ */
+   paths[0] = eina_module_symbol_path_get(_ecore_evas_engine_init, "/ecore_evas/engines");
+   /* 2. PREFIX/ecore_evas/engines/ */
 #ifndef _MSC_VER
-   paths[3] = strdup(PACKAGE_LIB_DIR "/ecore_evas/engines");
+   paths[1] = strdup(PACKAGE_LIB_DIR "/ecore_evas/engines");
 #endif
 
    for (j = 0; j < ((sizeof (paths) / sizeof (char*)) - 1); ++j)

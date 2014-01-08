@@ -130,53 +130,40 @@ static void
 ecore_system_modules_load(void)
 {
    char buf[PATH_MAX] = "";
-   char *path;
 
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        snprintf(buf, sizeof(buf), "%s/src/modules/ecore/system",
-                 PACKAGE_BUILD_DIR);
-        if (stat(buf, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             const char *built_modules[] = {
+             struct stat st;
+             snprintf(buf, sizeof(buf), "%s/src/modules/ecore/system",
+                      PACKAGE_BUILD_DIR);
+             if (stat(buf, &st) == 0)
+               {
+                  const char *built_modules[] = {
 #ifdef HAVE_SYSTEMD
-               "systemd",
+                     "systemd",
 #endif
 #ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
-               "tizen",
+                     "tizen",
 #endif
-               NULL
-             };
-             const char **itr;
-             for (itr = built_modules; *itr != NULL; itr++)
-               {
-                  snprintf(buf, sizeof(buf),
-                           "%s/src/modules/ecore/system/%s/.libs",
-                           PACKAGE_BUILD_DIR, *itr);
-                  module_list = eina_module_list_get(module_list, buf,
-                                                     EINA_FALSE, NULL, NULL);
+                     NULL
+                  };
+                  const char **itr;
+                  for (itr = built_modules; *itr != NULL; itr++)
+                    {
+                       snprintf(buf, sizeof(buf),
+                                "%s/src/modules/ecore/system/%s/.libs",
+                                PACKAGE_BUILD_DIR, *itr);
+                       module_list = eina_module_list_get(module_list, buf,
+                                                          EINA_FALSE, NULL, NULL);
+                    }
+
+                  if (module_list)
+                    eina_module_list_load(module_list);
+                  return;
                }
-
-             if (module_list)
-               eina_module_list_load(module_list);
-             return;
           }
-     }
-
-   path = eina_module_environment_path_get("ECORE_MODULES_DIR",
-                                           "/ecore/system");
-   if (path)
-     {
-        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
-        free(path);
-     }
-
-   path = eina_module_environment_path_get("HOME", "/.ecore/system");
-   if (path)
-     {
-        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
-        free(path);
      }
 
    snprintf(buf, sizeof(buf), "%s/ecore/system",

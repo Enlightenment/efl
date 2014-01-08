@@ -1817,15 +1817,6 @@ static void
 _players_load(void)
 {
    char buf[PATH_MAX];
-   const char *homedir = getenv("HOME");
-
-   if (homedir)
-     {
-        eina_str_join(buf, sizeof(buf), '/',
-                      homedir,
-                      ".emotion/generic_players/" MODULE_ARCH);
-        _players_all_from(buf);
-     }
 
    eina_str_join(buf, sizeof(buf), '/',
                  eina_prefix_lib_get(pfx),

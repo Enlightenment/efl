@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <pwd.h>
 
 #ifdef HAVE_SYSTEMD
 # include <systemd/sd-daemon.h>
@@ -72,19 +73,33 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-        homedir = getenv("XDG_RUNTIME_DIR");
-        if (!homedir)
+        if (getuid() == getuid())
           {
-             homedir = getenv("HOME");
+             homedir = getenv("XDG_RUNTIME_DIR");
              if (!homedir)
                {
-                  homedir = getenv("TMP");
-                  if (!homedir) homedir = "/tmp";
+                  homedir = getenv("HOME");
+                  if (!homedir)
+                    {
+                       homedir = getenv("TMP");
+                       if (!homedir) homedir = "/tmp";
+                    }
                }
+             snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
+                      svr->port);
+          }
+        else
+          {
+             struct passwd *pw = getpwent();
+
+             if ((!pw) || (!pw->pw_dir))
+               snprintf(buf, sizeof(buf), "/tmp/%s/%i", svr->name,
+                        svr->port);
+             else
+               snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", pw->pw_dir, svr->name,
+                        svr->port);
           }
 
-        snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
-                 svr->port);
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
@@ -203,15 +218,25 @@ ecore_con_local_listen(
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-        homedir = getenv("XDG_RUNTIME_DIR");
-        if (!homedir)
+        if (getuid() == getuid())
           {
-             homedir = getenv("HOME");
+             homedir = getenv("XDG_RUNTIME_DIR");
              if (!homedir)
                {
-                  homedir = getenv("TMP");
-                  if (!homedir) homedir = "/tmp";
+                  homedir = getenv("HOME");
+                  if (!homedir)
+                    {
+                       homedir = getenv("TMP");
+                       if (!homedir) homedir = "/tmp";
+                    }
                }
+          }
+        else
+          {
+             struct passwd *pw = getpwent();
+
+             if ((!pw) || (!pw->pw_dir)) homedir = "/tmp";
+             else homedir = pw->pw_dir;
           }
 
         mask = S_IRUSR | S_IWUSR | S_IXUSR;

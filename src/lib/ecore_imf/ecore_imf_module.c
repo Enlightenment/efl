@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include <Ecore.h>
 #include <ecore_private.h>
@@ -30,64 +31,50 @@ void
 ecore_imf_module_init(void)
 {
    char buf[PATH_MAX] = "";
-   char *path;
 
    pfx = eina_prefix_new(NULL, ecore_imf_init,
                          "ECORE_IMF", "ecore_imf", "checkme",
                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (getuid() == getuid())
      {
-        struct stat st;
-        snprintf(buf, sizeof(buf), "%s/src/modules/ecore_imf",
-                 PACKAGE_BUILD_DIR);
-        if (stat(buf, &st) == 0)
+        if (getenv("EFL_RUN_IN_TREE"))
           {
-             const char *built_modules[] = {
+             struct stat st;
+             snprintf(buf, sizeof(buf), "%s/src/modules/ecore_imf",
+                      PACKAGE_BUILD_DIR);
+             if (stat(buf, &st) == 0)
+               {
+                  const char *built_modules[] = {
 #ifdef ENABLE_XIM
-               "xim",
+                     "xim",
 #endif
 #ifdef BUILD_ECORE_IMF_IBUS
-               "ibus",
+                     "ibus",
 #endif
 #ifdef BUILD_ECORE_IMF_SCIM
-               "scim",
+                     "scim",
 #endif
 #ifdef BUILD_ECORE_IMF_WAYLAND
-                "wayland",
+                     "wayland",
 #endif
-               NULL
-             };
-             const char **itr;
-             for (itr = built_modules; *itr != NULL; itr++)
-               {
-                  snprintf(buf, sizeof(buf),
-                           "%s/src/modules/ecore_imf/%s/.libs",
-                           PACKAGE_BUILD_DIR, *itr);
-                  module_list = eina_module_list_get(module_list, buf,
-                                                     EINA_FALSE, NULL, NULL);
+                     NULL
+                  };
+                  const char **itr;
+                  for (itr = built_modules; *itr != NULL; itr++)
+                    {
+                       snprintf(buf, sizeof(buf),
+                                "%s/src/modules/ecore_imf/%s/.libs",
+                                PACKAGE_BUILD_DIR, *itr);
+                       module_list = eina_module_list_get(module_list, buf,
+                                                          EINA_FALSE, NULL, NULL);
+                    }
+
+                  if (module_list)
+                    eina_module_list_load(module_list);
+                  return;
                }
-
-             if (module_list)
-               eina_module_list_load(module_list);
-             return;
           }
-     }
-
-   path = eina_module_environment_path_get("ECORE_IMF_MODULES_DIR",
-                                           "/ecore_imf/modules");
-   if (path)
-     {
-        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
-        free(path);
-     }
-
-   path = eina_module_environment_path_get("HOME", "/.ecore_imf");
-   if (path)
-     {
-        module_list = eina_module_arch_list_get(module_list, path, MODULE_ARCH);
-        free(path);
      }
 
    snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));

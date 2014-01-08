@@ -128,32 +128,38 @@ _socket_path_set(char *path)
    char *env;
    char buf[UNIX_PATH_MAX];
 
-   env = getenv("EVAS_CSERVE2_SOCKET");
-   if (env && env[0])
+   if (getuid() == getuid())
      {
-        eina_strlcpy(path, env, UNIX_PATH_MAX);
-        return;
+        env = getenv("EVAS_CSERVE2_SOCKET");
+        if (env && env[0])
+          {
+             eina_strlcpy(path, env, UNIX_PATH_MAX);
+             return;
+          }
      }
 
    snprintf(buf, sizeof(buf), "/tmp/.evas-cserve2-%x.socket", (int)getuid());
    /* FIXME: check we can actually create this socket */
    strcpy(path, buf);
 #if 0   
-   env = getenv("XDG_RUNTIME_DIR");
-   if (!env || !env[0])
+   if (getuid() == getuid())
      {
-        env = getenv("HOME");
+        env = getenv("XDG_RUNTIME_DIR");
         if (!env || !env[0])
           {
-             env = getenv("TMPDIR");
+             env = getenv("HOME");
              if (!env || !env[0])
-               env = "/tmp";
+               {
+                  env = getenv("TMPDIR");
+                  if (!env || !env[0])
+                  env = "/tmp";
+               }
           }
-     }
 
-   snprintf(buf, sizeof(buf), "%s/evas-cserve2-%x.socket", env, getuid());
-   /* FIXME: check we can actually create this socket */
-   strcpy(path, buf);
+        snprintf(buf, sizeof(buf), "%s/evas-cserve2-%x.socket", env, getuid());
+        /* FIXME: check we can actually create this socket */
+        strcpy(path, buf);
+     }
 #endif   
 }
 
