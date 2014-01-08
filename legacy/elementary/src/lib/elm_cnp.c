@@ -3514,7 +3514,10 @@ _tempfile_new(int size)
 
    info = calloc(1, sizeof(Tmp_Info));
    if (!info) return NULL;
-   if (getuid() == getuid()) tmppath = getenv("TMP");
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+     tmppath = getenv("TMP");
    if (!tmppath) tmppath = P_tmpdir;
    len = snprintf(NULL, 0, "%s/%sXXXXXX", tmppath, "elmcnpitem-");
    if (len < 0) goto on_error;

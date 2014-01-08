@@ -518,7 +518,9 @@ _elm_config_user_dir_snprintf(char       *dst,
      (dst, size, '/', home, strlen(home),
          ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #else
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
 #ifdef DOXDG
         home = getenv("XDG_CONFIG_HOME");
@@ -545,6 +547,7 @@ _elm_config_user_dir_snprintf(char       *dst,
 #endif
           }
      }
+#if !defined(HAVE_GETUID) || !defined(HAVE_GETEUID)
    else
      {
         struct passwd *pw = getpwent();
@@ -561,6 +564,7 @@ _elm_config_user_dir_snprintf(char       *dst,
            ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #endif
      }
+#endif   
 #endif
 
    off = user_dir_len + 1;

@@ -226,6 +226,11 @@ if test "x$want_quicklaunch" != "xno"; then
 fi
 AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes" && test "x$have_dlopen" = "xyes"])
 
+AC_CHECK_FUNCS([\
+geteuid \
+getuid \
+])
+
 AC_SUBST(dlopen_libs)
 AC_SUBST(lt_enable_auto_import)
 AC_SUBST(ELM_UNIX_DEF)
