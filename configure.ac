@@ -545,6 +545,7 @@ realpath \
 strlcpy \
 geteuid \
 getuid \
+pause \
 ])
 
 AC_FUNC_ALLOCA
