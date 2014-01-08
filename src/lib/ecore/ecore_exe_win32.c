@@ -1007,6 +1007,7 @@ _ecore_exe_pipe_read_cb(void        *data,
                      NULL);
 }
 
+/*
 static int
 _ecore_exe_pipe_write_cb(void                *data,
                          Ecore_Win32_Handler *wh EINA_UNUSED)
@@ -1021,7 +1022,7 @@ _ecore_exe_pipe_write_cb(void                *data,
    res = WriteFile(exe->pipe_write.child_pipe_x, buf, READBUFSIZ, &num_exe, NULL);
    if (!res || num_exe == 0)
      {
-        /* FIXME: what to do here ?? */
+        // FIXME: what to do here ??
      }
 
    if (exe->close_stdin == 1)
@@ -1038,6 +1039,7 @@ _ecore_exe_pipe_write_cb(void                *data,
 
    return 1;
 }
+*/
 
 static void
 _ecore_exe_pipe_error_cb(void        *data,
