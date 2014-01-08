@@ -96,6 +96,7 @@ tests/eo/suite/eo_suite.h \
 tests/eo/suite/eo_error_msgs.h \
 tests/eo/suite/eo_error_msgs.c \
 tests/eo/suite/eo_test_class_errors.c \
+tests/eo/suite/eo_test_call_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_value.c \
 tests/eo/suite/eo_test_init.c

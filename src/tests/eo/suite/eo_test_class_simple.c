@@ -73,6 +73,8 @@ EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
 EO2_FUNC_BODY(simple_a_get, int, 0);
 EO2_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
 EO2_FUNC_BODY(simple_class_hi_print, Eina_Bool, EINA_FALSE);
+EO2_VOID_FUNC_BODY(simple_pure_virtual);
+EO2_VOID_FUNC_BODY(simple_no_implementation);
 
 static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC_OVERRIDE(eo2_dbg_info_get, _dbg_info_get),
@@ -81,6 +83,7 @@ static Eo2_Op_Description op_descs[] = {
      EO2_OP_FUNC(simple_a_print, _a_print, "Print property a"),
      EO2_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print, "Print property a"),
      EO2_OP_FUNC(simple_recursive, _recursive, "Recursive function"),
+     EO2_OP_FUNC(simple_pure_virtual, NULL, "Pure Virtual function"),
      EO2_OP_SENTINEL
 };
 
