@@ -109,7 +109,7 @@ _dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
      {
         const _Eo_Class *op_kls = _eo_op_class_get(op);
         const char *op_name = _eo_op_id_name_get(op, op_kls->desc->version);
-        ERR("Already set function for op %d (%s:'%s'). Overriding %p with %p",
+        ERR("Already set function for op %d (%s:'%s'). Overriding %p with %p.",
               op, op_kls->desc->name, op_name, fsrc->func, func);
      }
 
@@ -506,7 +506,7 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call,
 
    if (EINA_UNLIKELY(func == NULL))
      {
-        ERR("in %s:%d: you called func '%s' (%d) which is unknown in class '%s'",
+        ERR("in %s:%d: you called func '%s' (%d) which is unknown in class '%s'.",
             file, line, func_name, op, klass->desc->name);
         return EINA_FALSE;
      }
@@ -540,7 +540,7 @@ _eo2_call_resolve(const char *func_name, const Eo_Op op, Eo2_Op_Call_Data *call,
 
    if (func->src != NULL)
      {
-        ERR("in %s:%d: you called a pure virtual func '%s' (%d)",
+        ERR("in %s:%d: you called a pure virtual func '%s' (%d).",
             file, line, func_name, op);
         return EINA_FALSE;
      }
@@ -580,13 +580,13 @@ end:
         /* If it's a do_super call. */
         if (fptr->cur_klass)
           {
-             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'",
+             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
                  file, line, func_name, op, main_klass->desc->name,
                  fptr->cur_klass->desc->name);
           }
         else
           {
-             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'",
+             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
                  file, line, func_name, op, main_klass->desc->name);
           }
      }
@@ -659,7 +659,7 @@ _eo2_api_op_id_get(const void *api_func, const char *file, int line)
 
    if (desc == NULL)
      {
-        ERR("in %s:%d: unable to resolve %s api func %p",
+        ERR("in %s:%d: unable to resolve %s api func %p.",
             file, line, (class_ref ? "class" : "regular"), api_func);
         return EO_NOOP;
      }
@@ -1799,7 +1799,7 @@ eo_error_set_internal(const Eo *obj_id, const char *file, int line)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
-   ERR("Error with obj '%p' at %s:%d", obj, file, line);
+   ERR("Error with obj '%p' at %s:%d.", obj, file, line);
 
    obj->do_error = EINA_TRUE;
 }
@@ -1939,7 +1939,7 @@ eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 #ifdef EO_DEBUG
    if (!ret && (klass->desc->data_size == 0))
      {
-        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+        ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
      }
 #endif
 
@@ -1972,7 +1972,7 @@ eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo_Cla
 #ifdef EO_DEBUG
    if (klass && !ret && (klass->desc->data_size == 0))
      {
-        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+        ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
      }
 #endif
 
@@ -2005,7 +2005,7 @@ eo_init(void)
    _eo_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eo_log_dom < 0)
      {
-        EINA_LOG_ERR("Could not register log domain: %s", log_dom);
+        EINA_LOG_ERR("Could not register log domain: %s.", log_dom);
         return EINA_FALSE;
      }
 
