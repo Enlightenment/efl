@@ -3382,7 +3382,7 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
      }
 
    if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
-       (!ee->gl_sync_draw_done))
+       (ee->gl_sync_draw_done != 1))
      {
         if (edata->sync_counter)
           {
