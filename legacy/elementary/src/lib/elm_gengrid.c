@@ -757,8 +757,15 @@ _item_realize(Elm_Gen_Item *it)
    elm_widget_sub_object_add(WIDGET(it), VIEW(it));
    snprintf(style, sizeof(style), "item/%s",
             it->itc->item_style ? it->itc->item_style : "default");
-   elm_widget_theme_object_set(WIDGET(it), VIEW(it), "gengrid", style,
-                               elm_widget_style_get(WIDGET(it)));
+   if (!elm_widget_theme_object_set(WIDGET(it), VIEW(it), "gengrid", style,
+                                    elm_widget_style_get(WIDGET(it))))
+     {
+        ERR("%s is not a valid gengrid item style. "
+            "Automatically falls back into default style.",
+            it->itc->item_style);
+        elm_widget_theme_object_set
+           (WIDGET(it), VIEW(it), "gengrid", "item/default", "default");
+     }
    evas_object_stack_below(VIEW(it), sd->stack);
 
    if (edje_object_part_exists(VIEW(it), "elm.swallow.pad"))

@@ -1555,9 +1555,17 @@ _item_realize(Elm_Gen_Item *it,
                    sd->mode == ELM_LIST_COMPRESS ? "_compress" :
                    "", it->itc->item_style ? : "default");
 
-        elm_widget_theme_object_set
-          (WIDGET(it), VIEW(it), "genlist", buf,
-          elm_widget_style_get(WIDGET(it)));
+        if (!elm_widget_theme_object_set(WIDGET(it), VIEW(it),
+                                         "genlist", buf,
+                                         elm_widget_style_get(WIDGET(it))))
+          {
+             ERR("%s is not a valid genlist item style. "
+                 "Automatically falls back into default style.",
+                 it->itc->item_style);
+             elm_widget_theme_object_set
+                (WIDGET(it), VIEW(it), "genlist", "item/default", "default");
+          }
+
 
         stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
         if (!stacking_even) stacking_even = "above";
@@ -4789,11 +4797,20 @@ _decorate_item_realize(Elm_Gen_Item *it)
    strncat(buf, "/", sizeof(buf) - strlen(buf) - 1);
    strncat(buf, it->itc->decorate_item_style, sizeof(buf) - strlen(buf) - 1);
 
-   elm_widget_theme_object_set
-     (WIDGET(it), it->item->deco_it_view, "genlist", buf,
-     elm_widget_style_get(WIDGET(it)));
+   if (!elm_widget_theme_object_set
+       (WIDGET(it), it->item->deco_it_view, "genlist", buf,
+        elm_widget_style_get(WIDGET(it))))
+     {
+
+        ERR("%s is not a valid genlist item style. "
+            "Automatically falls back into default style.",
+            it->itc->decorate_item_style);
+        elm_widget_theme_object_set
+           (WIDGET(it), it->item->deco_it_view,
+            "genlist", "item/default", "default");
+     }
    edje_object_mirrored_set
-     (it->item->deco_it_view, elm_widget_mirrored_get(WIDGET(it)));
+      (it->item->deco_it_view, elm_widget_mirrored_get(WIDGET(it)));
 
    /* signal callback add */
    evas_object_event_callback_add
