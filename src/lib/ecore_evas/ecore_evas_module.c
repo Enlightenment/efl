@@ -83,7 +83,9 @@ _ecore_evas_engine_init(void)
 //   _registered_engines = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
    _registered_engines = eina_hash_string_small_new(NULL);
 
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {
