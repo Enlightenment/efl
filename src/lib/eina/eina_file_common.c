@@ -902,7 +902,10 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
    mode_t old_umask;
 
 #ifndef HAVE_EVIL
-   if (getuid() == getuid()) tmpdir = getenv("TMPDIR");
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+     tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 #else
    tmpdir = (char *)evil_tmpdir_get();
@@ -933,7 +936,10 @@ eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
    char *tmpdirname;
 
 #ifndef HAVE_EVIL
-   if (getuid() == getuid()) tmpdir = getenv("TMPDIR");
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+     tmpdir = getenv("TMPDIR");
    if (!tmpdir) tmpdir = "/tmp";
 #else
    tmpdir = (char *)evil_tmpdir_get();

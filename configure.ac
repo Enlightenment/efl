@@ -544,6 +544,7 @@ mtrace \
 realpath \
 strlcpy \
 geteuid \
+getuid \
 ])
 
 AC_FUNC_ALLOCA

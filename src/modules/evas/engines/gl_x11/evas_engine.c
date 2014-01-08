@@ -1527,7 +1527,10 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    // Save contents of the framebuffer to a file
    if (swap_buffer_debug_mode == -1)
      {
-        if ((getuid() == getuid()) &&
+        if (
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+            (getuid() == geteuid()) &&
+#endif
             ((dname = getenv("EVAS_GL_SWAP_BUFFER_DEBUG_DIR"))))
           {
              int stat;

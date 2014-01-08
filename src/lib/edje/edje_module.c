@@ -37,7 +37,9 @@ _edje_module_handle_load(const char *module)
      {
         char tmp[PATH_MAX] = "";
 
-        if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
              if (run_in_tree)
                {
@@ -77,7 +79,9 @@ _edje_module_init(void)
 
    _registered_modules = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {

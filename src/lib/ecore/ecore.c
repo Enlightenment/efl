@@ -131,7 +131,9 @@ ecore_system_modules_load(void)
 {
    char buf[PATH_MAX] = "";
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {

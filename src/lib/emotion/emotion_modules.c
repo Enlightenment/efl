@@ -58,7 +58,9 @@ _emotion_modules_load(void)
    if (_emotion_modules_loaded) return;
    _emotion_modules_loaded = EINA_TRUE;
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {

@@ -278,18 +278,24 @@ efreet_dirs_init(void)
     struct stat st;
 
     /* efreet_home_dir */
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      efreet_home_dir = getenv("HOME");
+#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
    else
      {
         struct passwd *pw = getpwent();
 
         if ((pw) && (pw->pw_dir)) efreet_home_dir = pw->pw_dir;
      }
+#endif
 #ifdef _WIN32
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
       {
-         if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+         if (getuid() == geteuid())
+#endif
            efreet_home_dir = getenv("USERPROFILE");
       }
 #endif
@@ -315,7 +321,10 @@ efreet_dirs_init(void)
     xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", "/etc/xdg");
 
     /* xdg_runtime_dir */
-    if (getuid() == getuid()) xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+     xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
     if (!xdg_runtime_dir)
     {
         snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
@@ -390,7 +399,10 @@ efreet_dir_get(const char *key, const char *fallback)
     char *dir = NULL;
     const char *t;
 
-    if (getuid() == getuid()) dir = getenv(key);
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+      dir = getenv(key);
     if (!dir || dir[0] == '\0')
     {
         int len;
@@ -425,7 +437,10 @@ efreet_dirs_get(const char *key, const char *fallback)
     char *s, *p;
     size_t len;
 
-    if (getuid() == getuid()) path = getenv(key);
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+    if (getuid() == geteuid())
+#endif
+      path = getenv(key);
     if (!path || (path[0] == '\0')) path = fallback;
 
     if (!path) return dirs;
@@ -496,7 +511,9 @@ efreet_env_expand(const char *in)
             {
                 memcpy(env, e1, len);
                 env[len] = 0;
-                if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+               if (getuid() == geteuid())
+#endif
                 {
                     val = getenv(env);
                     if (val) eina_strbuf_append(sb, val);

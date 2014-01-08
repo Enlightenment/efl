@@ -128,7 +128,9 @@ _socket_path_set(char *path)
    char *env;
    char buf[UNIX_PATH_MAX];
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         env = getenv("EVAS_CSERVE2_SOCKET");
         if (env && env[0])
@@ -142,7 +144,9 @@ _socket_path_set(char *path)
    /* FIXME: check we can actually create this socket */
    strcpy(path, buf);
 #if 0   
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         env = getenv("XDG_RUNTIME_DIR");
         if (!env || !env[0])

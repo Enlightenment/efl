@@ -159,7 +159,9 @@ _ethumb_plugins_load(void)
    if (_plugins_loaded) return;
    _plugins_loaded = EINA_TRUE;
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {
@@ -257,11 +259,14 @@ ethumb_init(void)
    ecore_evas_init();
    edje_init();
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         home = getenv("HOME");
         snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
      }
+#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
    else
      {
         struct passwd *pw = getpwent();
@@ -269,6 +274,7 @@ ethumb_init(void)
         if ((!pw) || (!pw->pw_dir)) goto error_plugins_ext;
         snprintf(buf, sizeof(buf), "%s/.thumbnails", pw->pw_dir);
      }
+#endif
 
    _home_thumb_dir = eina_stringshare_add(buf);
    _thumb_category_normal = eina_stringshare_add("normal");
@@ -707,13 +713,16 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
      }
    else if (path[0] == '~')
      {
-        if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
              const char *home = getenv("HOME");
              if (!home) return NULL;
              strncpy(p, home, PATH_MAX - 1);
              p[PATH_MAX - 1] = 0;
           }
+#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
         else
           {
              struct passwd *pw = getpwent();
@@ -722,6 +731,7 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
              strncpy(p, pw->pw_dir, PATH_MAX - 1);
              p[PATH_MAX - 1] = 0;
           }
+#endif
         len = strlen(p);
         p += len;
         p[0] = '/';

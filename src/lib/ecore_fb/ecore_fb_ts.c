@@ -81,7 +81,11 @@ ecore_fb_ts_init(void)
 {
 #ifdef HAVE_TSLIB
    char *tslib_tsdevice = NULL;
-   if ((getuid() == getuid()) && ((tslib_tsdevice = getenv("TSLIB_TSDEVICE"))))
+   if (
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+       (getuid() == geteuid()) &&
+#endif
+       ((tslib_tsdevice = getenv("TSLIB_TSDEVICE"))))
      {
         printf( "ECORE_FB: TSLIB_TSDEVICE = '%s'\n", tslib_tsdevice );
         _ecore_fb_tslib_tsdev = ts_open( tslib_tsdevice, 1 ); /* 1 = nonblocking, 0 = blocking */

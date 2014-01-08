@@ -56,7 +56,9 @@ evas_module_paths_init(void)
 {
    char *libdir, *path;
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {
@@ -326,7 +328,9 @@ evas_module_engine_list(void)
                   const char *fname = fi->path + fi->name_start;
 
                   buf[0] = '\0';
-                  if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+                  if (getuid() == geteuid())
+#endif
                     {
                        if (run_in_tree)
                          {
@@ -425,7 +429,9 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
           }
 
         buffer[0] = '\0';
-        if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
              if (run_in_tree)
                {

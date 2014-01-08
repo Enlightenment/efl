@@ -82,7 +82,11 @@ eeze_sensor_modules_load(void)
     * is one of these items. We do load the modules from the builddir if the
     * environment is set. Normal case is to use installed modules from system
     */
-   if ((getuid() == getuid()) && (getenv("EFL_RUN_IN_TREE")))
+   if (
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+       (getuid() == geteuid()) &&
+#endif
+       (getenv("EFL_RUN_IN_TREE")))
      {
         const char **itr;
 

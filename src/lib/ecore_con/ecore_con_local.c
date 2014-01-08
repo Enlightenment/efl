@@ -73,7 +73,9 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-        if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
              homedir = getenv("XDG_RUNTIME_DIR");
              if (!homedir)
@@ -88,6 +90,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
              snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
                       svr->port);
           }
+#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
         else
           {
              struct passwd *pw = getpwent();
@@ -99,7 +102,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
                snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", pw->pw_dir, svr->name,
                         svr->port);
           }
-
+#endif
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
@@ -218,7 +221,9 @@ ecore_con_local_listen(
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
      {
-        if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
              homedir = getenv("XDG_RUNTIME_DIR");
              if (!homedir)
@@ -231,6 +236,7 @@ ecore_con_local_listen(
                     }
                }
           }
+#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
         else
           {
              struct passwd *pw = getpwent();
@@ -238,7 +244,7 @@ ecore_con_local_listen(
              if ((!pw) || (!pw->pw_dir)) homedir = "/tmp";
              else homedir = pw->pw_dir;
           }
-
+#endif
         mask = S_IRUSR | S_IWUSR | S_IXUSR;
         snprintf(buf, sizeof(buf), "%s/.ecore", homedir);
         if (stat(buf, &st) < 0)

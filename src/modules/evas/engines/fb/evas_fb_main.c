@@ -456,7 +456,11 @@ fb_init(int vt EINA_UNUSED, int device)
    if (vt != 0) fb_setvt(vt);
 #endif
 
-   if ((getuid() == getuid()) && (getenv("EVAS_FB_DEV")))
+   if (
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+       (getuid() == geteuid()) &&
+#endif
+       (getenv("EVAS_FB_DEV")))
      fb = open(getenv("EVAS_FB_DEV"), O_RDWR);
    else
      {

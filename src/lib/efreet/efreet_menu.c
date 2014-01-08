@@ -14,6 +14,7 @@ static int _efreet_menu_log_dom = -1;
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"
+#include <unistd.h>
 
 typedef struct Efreet_Menu_Move Efreet_Menu_Move;
 
@@ -399,7 +400,9 @@ efreet_menu_init(void)
         return 0;
     }
 
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      efreet_menu_prefix = getenv("XDG_MENU_PREFIX");
    if (!efreet_menu_prefix) efreet_menu_prefix = "";
 

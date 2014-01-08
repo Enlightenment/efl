@@ -42,7 +42,9 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
      {
         const char *s = NULL;
         
-        if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
              s = getenv("XDG_RUNTIME_DIR");
              if (!s) s = getenv("TMPDIR");

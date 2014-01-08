@@ -6808,7 +6808,9 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 #else
 # define BIN_EXT
 #endif
-   if (getuid() == getuid())
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {
