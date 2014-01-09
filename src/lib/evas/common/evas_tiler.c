@@ -72,7 +72,7 @@ rect_list_node_pool_get(void)
         list_node_pool.len--;
         return node;
      }
-   else return (list_node_t *)malloc(sizeof(rect_node_t));
+   else return (list_node_t *)malloc(sizeof(list_node_t));
 }
 
 static inline void
