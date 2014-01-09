@@ -91,7 +91,12 @@ _feedback_job(void *data, Ecore_Thread *th)
    time_t t;
    int i, count;
    Feedback_Thread_Data *ftd = NULL;
+#ifdef _WIN32
+   HANDLE h;
+   WIN32_FIND_DATA fd;
+#else
    DIR *dir;
+#endif
    App_Msg *msg;
 
    count = (int)ecore_thread_global_data_find("count");
@@ -110,15 +115,27 @@ _feedback_job(void *data, Ecore_Thread *th)
    if (!ftd)
      return;
 
+#ifdef _WIN32
+   h = FindFirstFile(ftd->base, &fd);
+   if (h == INVALID_HANDLE_VALUE)
+     goto the_end;
+#else
    dir = opendir(ftd->base);
    if (!dir)
      goto the_end;
+#endif
 
    msg = calloc(1, sizeof(App_Msg));
 
    t = time(NULL);
    while (time(NULL) < t + 2)
      {
+#ifdef _WIN32
+        if (strlen(fd.cFileName) >= 10)
+          msg->list = eina_list_append(msg->list,
+                                       strdup(fd.cFileName));
+        FindNextFile(h, &fd);
+#else
         struct dirent entry, *result;
 
         if (readdir_r(dir, &entry, &result))
@@ -129,9 +146,14 @@ _feedback_job(void *data, Ecore_Thread *th)
         if (strlen(result->d_name) >= 10)
           msg->list = eina_list_append(msg->list,
                                        strdup(result->d_name));
+#endif
      }
 
+#ifdef _WIN32
+   FindClose(h);
+#else
    closedir(dir);
+#endif
    ecore_thread_feedback(th, msg);
 
 the_end:
