@@ -57,7 +57,6 @@ _anim_cb(void *data)
 {
    App_Data *ad = data;
    Evas_Map *m;
-   const Evas_Map *old_map;
    Evas_Object *o;
    int r, g, b, a;
    int win_w, win_h, img_w, img_h;
@@ -323,7 +322,6 @@ main(void)
 error:
    fprintf(stderr, "you got to have at least one evas engine built and linked"
                    " up to ecore-evas for this example to run properly.\n");
-panic:
    ecore_evas_shutdown();
    return -1;
 }

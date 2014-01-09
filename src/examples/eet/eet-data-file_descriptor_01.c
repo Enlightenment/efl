@@ -259,7 +259,6 @@ _my_cache_account_free_cb(const Eina_Hash *hash EINA_UNUSED,
 static void
 _my_cache_free(My_Cache *my_cache)
 {
-   My_Account *acc;
    eina_hash_foreach(my_cache->accounts, _my_cache_account_free_cb, NULL);
    eina_hash_free(my_cache->accounts);
    free(my_cache);
@@ -367,7 +366,6 @@ main(int   argc,
      char *argv[])
 {
    My_Cache *my_cache;
-   const Eina_List *l_acc;
    Eina_Iterator *it;
    My_Account *acc;
    int ret = 0;
@@ -469,8 +467,6 @@ main(int   argc,
    it = eina_hash_iterator_data_new(my_cache->accounts);
    EINA_ITERATOR_FOREACH(it, acc)
      {
-        const My_Post *post;
-
         printf("\t  > %-#8x '%.20s' stats: m=%u, p=%u\n",
                acc->id, acc->name ? acc->name : "",
                eina_list_count(acc->messages),
