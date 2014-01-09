@@ -1288,7 +1288,7 @@ test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event
 void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
    Evas_Object *win, *li, *bx, *bxx, *chk;
-   unsigned lhand, rhand, idx;
+   unsigned int lhand, rhand, idx;
    char buf[256];
 
    win = elm_win_util_standard_add(name, title);
@@ -1340,6 +1340,8 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
         lhand = _list_focus_combo[idx] / 10;
         rhand = _list_focus_combo[idx] % 10;
 
+        if (lhand > 4) lhand = 4;
+        if (rhand > 4) rhand = 4;
         snprintf(buf, sizeof(buf), " %s / %s ",
             _list_focus_names[lhand],
             _list_focus_names[rhand]);
