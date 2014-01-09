@@ -90,7 +90,7 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
              snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
                       svr->port);
           }
-#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         else
           {
              struct passwd *pw = getpwent();
@@ -236,7 +236,7 @@ ecore_con_local_listen(
                     }
                }
           }
-#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         else
           {
              struct passwd *pw = getpwent();
