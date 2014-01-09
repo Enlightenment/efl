@@ -18,7 +18,7 @@ struct context   // helper struct to give some context to the callbacks
 static int _event_type = 0; // a new type of event will be defined and stored here
 
 static Eina_Bool
-_enterer_cb(void *data) // the idle enterer callback
+_enterer_cb(void *data EINA_UNUSED) // the idle enterer callback
 {
    printf("IDLE ENTERER: Ecore entering in idle state.\n");
 
@@ -26,7 +26,7 @@ _enterer_cb(void *data) // the idle enterer callback
 }
 
 static Eina_Bool
-_exiter_cb(void *data) // the idle exiter callback
+_exiter_cb(void *data EINA_UNUSED) // the idle exiter callback
 {
    printf("IDLE EXITER: Ecore exiting idle state.\n");
 
@@ -50,7 +50,7 @@ _idler_cb(void *data) // the idler callback - ran while the mainloop is idle
 }
 
 static Eina_Bool
-_event_handler_cb(void *data, int type, void *event) // event callback
+_event_handler_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED) // event callback
 {
    struct context *ctxt = data;
 
@@ -92,7 +92,7 @@ _timer_cb(void *data)
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
    struct context ctxt = {0};
 

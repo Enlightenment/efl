@@ -158,7 +158,7 @@ add_output_rect(const Eina_Rectangle *r)
 }
 
 static Eina_Bool
-process_input(void *data)
+process_input(void *data EINA_UNUSED)
 {
    Eina_Iterator *itr;
    Eina_Rectangle r, *r1;

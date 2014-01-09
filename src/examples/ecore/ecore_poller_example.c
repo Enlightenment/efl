@@ -18,7 +18,7 @@ _poller_print_cb(void *data)
 }
 
 static Eina_Bool
-_poller_quit_cb(void *data)
+_poller_quit_cb(void *data EINA_UNUSED)
 {
 
    ecore_main_loop_quit();
@@ -26,7 +26,7 @@ _poller_quit_cb(void *data)
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
    double interval = 0.3; // tick each 0.3 seconds
    Ecore_Poller *poller1, *poller2, *poller3;

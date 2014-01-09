@@ -24,7 +24,7 @@ tls_log_func(int level, const char *str)
 #endif
 
 Eina_Bool
-_add(void *data, int type, Ecore_Con_Event_Client_Add *ev)
+_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Add *ev)
 {
    printf("Client with ip %s connected!\n", ecore_con_client_ip_get(ev->client));
    ecore_con_client_send(ev->client, "hello!", 6);
@@ -35,7 +35,7 @@ _add(void *data, int type, Ecore_Con_Event_Client_Add *ev)
 }
 
 Eina_Bool
-_del(void *data, int type, Ecore_Con_Event_Client_Del *ev)
+_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del *ev)
 {
    printf("Lost client with ip %s!\n", ecore_con_client_ip_get(ev->client));
    ecore_main_loop_quit();
@@ -43,7 +43,7 @@ _del(void *data, int type, Ecore_Con_Event_Client_Del *ev)
 }
 
 Eina_Bool
-_data(void *data, int type, Ecore_Con_Event_Client_Data *ev)
+_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Data *ev)
 {
    char fmt[128];
 

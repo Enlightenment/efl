@@ -101,7 +101,7 @@ struct _Evas_Smart_Example_Interface
 static Evas_Smart_Example_Interface iface1;
 
 static Eina_Bool
-_iface1_add(Evas_Object *obj)
+_iface1_add(Evas_Object *obj EINA_UNUSED)
 {
    printf("iface1's add()!\n");
 
@@ -117,7 +117,7 @@ _iface1_del(Evas_Object *obj)
 }
 
 static void
-_iface1_custom_fn(Evas_Object *obj)
+_iface1_custom_fn(Evas_Object *obj EINA_UNUSED)
 {
    printf("iface1's custom_fn()!\n");
 }

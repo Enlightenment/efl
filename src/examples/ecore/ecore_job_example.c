@@ -13,13 +13,13 @@ _job_print_cb(void *data)
 }
 
 static void
-_job_quit_cb(void *data)
+_job_quit_cb(void *data EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
    Ecore_Job *job1, *job2, *job3, *job_quit;
    char *str1 = "Job 1 started.";
@@ -49,5 +49,7 @@ main(int argc, char **argv)
 
    ecore_main_loop_begin();
    ecore_shutdown();
+
+   return 0;
 }
 

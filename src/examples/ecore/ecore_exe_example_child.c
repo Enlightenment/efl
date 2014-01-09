@@ -9,8 +9,7 @@
 #define BUFFER_SIZE 1024
 
 static Eina_Bool
-_fd_handler_cb(void *data, Ecore_Fd_Handler
-               *fd_handler)
+_fd_handler_cb(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    static int numberOfMessages = 0;
    char message[BUFFER_SIZE];
@@ -36,7 +35,7 @@ _fd_handler_cb(void *data, Ecore_Fd_Handler
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
    if (!ecore_init())
      goto error;

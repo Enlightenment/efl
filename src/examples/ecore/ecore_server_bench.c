@@ -14,7 +14,7 @@ static int add;
 static int del;
 
 Eina_Bool
-_add(void *data, int type, Ecore_Con_Event_Client_Add *ev)
+_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Add *ev EINA_UNUSED)
 {
    ++add;
 //   printf ("%s ", ecore_con_client_ip_get(ev->client));
@@ -23,7 +23,7 @@ _add(void *data, int type, Ecore_Con_Event_Client_Add *ev)
 }
 
 Eina_Bool
-_del(void *data, int type, Ecore_Con_Event_Client_Del *ev)
+_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del *ev EINA_UNUSED)
 {
    ++del;
    printf("Disconnected #%i!\n", del);

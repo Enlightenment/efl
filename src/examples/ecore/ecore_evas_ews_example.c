@@ -16,7 +16,7 @@
 #include <ctype.h>
 
 static Eina_Bool
-_wm_win_add(void *data, int type, void *event_info)
+_wm_win_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    printf("WM: new window=%p\n", ee);
@@ -24,7 +24,7 @@ _wm_win_add(void *data, int type, void *event_info)
 }
 
 static Eina_Bool
-_wm_win_move(void *data, int type, void *event_info)
+_wm_win_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    int x, y;
@@ -34,7 +34,7 @@ _wm_win_move(void *data, int type, void *event_info)
 }
 
 static Eina_Bool
-_wm_win_resize(void *data, int type, void *event_info)
+_wm_win_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    int w, h;
@@ -44,7 +44,7 @@ _wm_win_resize(void *data, int type, void *event_info)
 }
 
 static Eina_Bool
-_wm_win_show(void *data, int type, void *event_info)
+_wm_win_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = event_info;
    printf("WM: show window=%p\n", ee);
@@ -78,7 +78,7 @@ optional_ews_setup(void)
 }
 
 static Eina_Bool
-_stdin_cb(void *data, Ecore_Fd_Handler *handler)
+_stdin_cb(void *data EINA_UNUSED, Ecore_Fd_Handler *handler EINA_UNUSED)
 {
    const Eina_List *l;
    Ecore_Evas *ee;

@@ -51,7 +51,7 @@ _local_data_free(void *data)
 }
 
 static void
-_short_job(void *data, Ecore_Thread *th)
+_short_job(void *data EINA_UNUSED, Ecore_Thread *th)
 {
    Thread_Data *td;
    int i;
@@ -86,7 +86,7 @@ _short_job(void *data, Ecore_Thread *th)
 }
 
 static void
-_feedback_job(void *data, Ecore_Thread *th)
+_feedback_job(void *data EINA_UNUSED, Ecore_Thread *th)
 {
    time_t t;
    int i, count;
@@ -279,7 +279,7 @@ _cancel_timer_cb(void *data)
 }
 
 static Eina_Bool
-_status_timer_cb(void *data)
+_status_timer_cb(void *data EINA_UNUSED)
 {
    _print_status();
 
@@ -416,4 +416,3 @@ main(int argc, char *argv[])
 
    return 0;
 }
-

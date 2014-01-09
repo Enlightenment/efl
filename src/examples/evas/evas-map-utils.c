@@ -163,7 +163,7 @@ _anim_cb(void *data)
 }
 
 static void
-_on_keydown(void *data, Evas *e, Evas_Object *o, void *event)
+_on_keydown(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event)
 {
    App_Data *ad = data;
    Evas_Event_Key_Down *ev = event;

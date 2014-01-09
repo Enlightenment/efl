@@ -16,7 +16,7 @@ static int add = 0;
 static int del = 0;
 
 Eina_Bool
-_add(void *data, int type, Ecore_Con_Event_Server_Add *ev)
+_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Add *ev EINA_UNUSED)
 {
    ++add;
    printf("Connection #%i!\n", add);
@@ -27,7 +27,7 @@ _add(void *data, int type, Ecore_Con_Event_Server_Add *ev)
 }
 
 Eina_Bool
-_del(void *data, int type, Ecore_Con_Event_Server_Add *ev)
+_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Add *ev EINA_UNUSED)
 {
    ++del;
    printf("Connection lost! #%i!\n", del);
@@ -36,7 +36,7 @@ _del(void *data, int type, Ecore_Con_Event_Server_Add *ev)
 }
 
 static void
-_spawn(void *data)
+_spawn(void *data EINA_UNUSED)
 {
    int x;
 

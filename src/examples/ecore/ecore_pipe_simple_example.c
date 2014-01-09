@@ -22,7 +22,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
 }
 
 static void
-handler(void *data, void *buf, unsigned int len)
+handler(void *data EINA_UNUSED, void *buf, unsigned int len)
 {
    char *str = malloc(sizeof(char) * len + 1);
    memcpy(str, buf, len);
@@ -38,7 +38,7 @@ handler(void *data, void *buf, unsigned int len)
 }
 
 int
-main(int argc, char *argv[])
+main(void)
 {
    Ecore_Pipe *pipe;
    pid_t child_pid;

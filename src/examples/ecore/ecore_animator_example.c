@@ -12,7 +12,7 @@ static Eina_Bool _freeze_third_anim(void *data);
 static Eina_Bool _thaw_third_anim(void *data);
 
 int
-main(int argc, char *argv[])
+main(void)
 {
    Evas_Object *rect, *bg, *rect2;
    Ecore_Evas *ee;

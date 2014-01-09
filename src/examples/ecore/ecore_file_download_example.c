@@ -20,16 +20,16 @@
 #define DST_MIME "[x-gzip]linux-1.0.tar.gz"
 
 void
-completion_cb(void *data, const char *file, int status)
+completion_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED, int status)
 {
    printf("Done (status: %d)\n", status);
    ecore_main_loop_quit();
 }
 
 int
-progress_cb(void *data, const char *file,
+progress_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED,
             long int dltotal, long int dlnow,
-            long int ultotal, long int ulnow)
+            long int ultotal EINA_UNUSED, long int ulnow EINA_UNUSED)
 {
    printf("Progress: %ld/%ld\n", dlnow, dltotal);
    return ECORE_FILE_PROGRESS_CONTINUE; //  continue the download

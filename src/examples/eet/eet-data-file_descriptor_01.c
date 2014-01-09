@@ -247,10 +247,10 @@ _my_cache_new(void)
 } /* _my_cache_new */
 
 static Eina_Bool
-_my_cache_account_free_cb(const Eina_Hash *hash,
-                          const void      *key,
+_my_cache_account_free_cb(const Eina_Hash *hash EINA_UNUSED,
+                          const void      *key EINA_UNUSED,
                           void            *data,
-                          void            *fdata)
+                          void            *fdata EINA_UNUSED)
 {
    _my_account_free(data);
    return EINA_TRUE;

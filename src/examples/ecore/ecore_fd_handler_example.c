@@ -12,7 +12,7 @@ struct context
 };
 
 static void
-_fd_prepare_cb(void *data, Ecore_Fd_Handler *handler)
+_fd_prepare_cb(void *data EINA_UNUSED, Ecore_Fd_Handler *handler EINA_UNUSED)
 {
    printf("prepare_cb called.\n");
 }
@@ -50,7 +50,7 @@ _fd_handler_cb(void *data, Ecore_Fd_Handler *handler)
 }
 
 static Eina_Bool
-_timer_cb(void *data)
+_timer_cb(void *data EINA_UNUSED)
 {
    printf("Timer expired after 5 seconds...\n");
 
@@ -58,7 +58,7 @@ _timer_cb(void *data)
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
    struct context ctxt = {0};
 
