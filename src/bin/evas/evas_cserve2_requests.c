@@ -432,11 +432,13 @@ _slave_dead_cb(Slave *s EINA_UNUSED, void *data)
    Slave_Worker *sw = data;
    Slave_Request *req = sw->data;
    Eina_List **working = &_workers[sw->type].working;
+   Eina_List **idle = &_workers[sw->type].idle;
 
    if (req)
      _cserve2_request_failed(req, CSERVE2_LOADER_DIED);
 
    *working = eina_list_remove(*working, sw);
+   *idle = eina_list_remove(*idle, sw);
    free(sw);
 }
 
