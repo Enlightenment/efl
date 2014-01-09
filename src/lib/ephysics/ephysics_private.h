@@ -6,8 +6,7 @@
 #endif
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic ignored "-Wshadow"
+#pragma GCC system_header
 
 #include <BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h>
 #include <BulletSoftBody/btDefaultSoftBodySolver.h>
