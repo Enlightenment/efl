@@ -22,6 +22,7 @@ EAPI Eo_Op ELM_OBJ_WEB_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_web"
 
 #ifdef HAVE_ELEMENTARY_WEB
+#include <EWebKit.h>
 
 /* Similar to iPhone */
 // TODO: switch between iPhone, iPad or Chrome/Safari based on some

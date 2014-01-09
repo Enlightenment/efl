@@ -93,14 +93,6 @@
 #include <EMap.h>
 #endif
 
-#ifdef ELM_WEB
-#include <EWebKit.h>
-#endif
-
-#ifdef ELM_WEB2
-#include <EWebKit2.h>
-#endif
-
 #ifdef EAPI
 # undef EAPI
 #endif
