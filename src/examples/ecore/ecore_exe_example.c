@@ -78,7 +78,7 @@ main(void)
    if (childPid == -1)
      fprintf(stderr, "Could not retrive the PID!\n");
    else
-     fprintf(stdout, "The child process has PID:%d\n", childPid);
+     fprintf(stdout, "The child process has PID:%u\n", (unsigned int)childPid);
 
    ecore_event_handler_add(ECORE_EXE_EVENT_DATA, _msg_from_child_handler, NULL);
    ecore_timer_add(1, _sendMessage, childHandle);

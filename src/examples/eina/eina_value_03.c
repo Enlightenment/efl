@@ -20,7 +20,7 @@ _tz_flush(const Eina_Value_Type *type, void *mem)
 static Eina_Bool
 _tz_copy(const Eina_Value_Type *type, const void *src, void * dst)
 {
-   struct timezone *tzsrc = src;
+   struct timezone *tzsrc = (struct timezone *)src;
    struct timezone *tzdst = dst;
    *tzdst = *tzsrc;
    return EINA_TRUE;

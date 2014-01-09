@@ -20,7 +20,7 @@ main(int argc, char **argv)
    iarr = eina_inarray_new(sizeof(char *), 0);
 
    for (i = 0; i < 20; i++){
-      str = &strings[i];
+     str = (char **)(&strings[i]);
       eina_inarray_push(iarr, str);
    }
 

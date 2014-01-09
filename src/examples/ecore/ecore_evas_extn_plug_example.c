@@ -98,7 +98,7 @@ _ecore_evas_msg_handle(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, i
              printf("data len= (%d).\n", len);
 
              text = ecore_evas_data_get(ee, "text");
-             if (text && (size == strlen(txt)))
+             if (text && (size == (int)strlen(txt)))
                {
                   printf("Receive msg is text (%s).\n", txt);
                   evas_object_text_text_set(text, txt);
