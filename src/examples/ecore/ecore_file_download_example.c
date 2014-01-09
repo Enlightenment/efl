@@ -39,7 +39,7 @@ int
 main(void)
 {
    double start;
-   Eina_Hash *headers;
+   Eina_Hash *headers = NULL;
 
    eina_init();
    ecore_init();
