@@ -42,6 +42,7 @@ _client_msg_free(Client *client)
 {
    client->msg.reading = EINA_FALSE;
    free(client->msg.buf);
+   client->msg.buf = NULL;
 }
 
 static void
