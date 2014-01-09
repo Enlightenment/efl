@@ -3236,10 +3236,15 @@ static char *
 gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
-   char op = (uintptr_t)data % 100;
+   unsigned char op = (uintptr_t)data % 100;
+   unsigned char v1, v2;
+
+   v1 = op / 10;
+   if (v1 > 4) v1 = 4;
+   v2 = op % 10;
+   if (v2 > 4) v2 = 4;
    snprintf(buf, sizeof(buf), " %s / %s ",
-            _gl20_object_names[op / 10],
-            _gl20_object_names[op % 10]);
+            _gl20_object_names[v1], _gl20_object_names[v2]);
    return strdup(buf);
 }
 
