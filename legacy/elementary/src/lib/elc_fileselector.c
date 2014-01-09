@@ -685,9 +685,9 @@ _populate_do(void *data)
 }
 
 static void
-_on_item_double_clicked(void *data,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info)
+_on_item_activated(void *data,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info)
 {
    //This event_info could be a list or gengrid item
    Elm_Object_Item *it = event_info;
@@ -698,13 +698,17 @@ _on_item_double_clicked(void *data,
 
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   if (!sd->double_tap_navigation) return;
-
    path = elm_object_item_data_get(it);
    if (!path) return;
 
    is_dir = ecore_file_is_dir(path);
-   if (!is_dir) return;
+   if (!is_dir)
+     {
+        evas_object_smart_callback_call(data, SIG_ACTIVATED, (void *)path);
+        return;
+     }
+
+   if (!sd->double_tap_navigation) return;
 
    sdata = malloc(sizeof(*sdata));
    if (!sdata) return;
@@ -718,25 +722,6 @@ _on_item_double_clicked(void *data,
         free(old_sdata);
      }
    sd->populate_idler = ecore_idler_add(_populate_do, sdata);
-}
-
-static void
-_on_item_activated(void *data,
-                   Evas_Object *obj EINA_UNUSED,
-                   void *event_info)
-{
-   //This event_info could be a list or gengrid item
-   Elm_Object_Item *it = event_info;
-   const char *path;
-   Eina_Bool is_dir;
-
-   path = elm_object_item_data_get(it);
-   if (!path) return;
-
-   is_dir = ecore_file_is_dir(path);
-   if (is_dir) return;
-
-   evas_object_smart_callback_call(data, SIG_ACTIVATED, (void *)path);
 }
 
 static void
@@ -1132,7 +1117,6 @@ _files_list_add(Evas_Object *obj)
 
    evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
    evas_object_smart_callback_add(li, "unselected", _on_item_unselected, obj);
-   evas_object_smart_callback_add(li, "clicked,double", _on_item_double_clicked, obj);
    evas_object_smart_callback_add(li, "activated", _on_item_activated, obj);
    evas_object_smart_callback_add
      (li, "expand,request", _on_list_expand_req, obj);
@@ -1165,7 +1149,6 @@ _files_grid_add(Evas_Object *obj)
 
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
    evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
-   evas_object_smart_callback_add(grid, "clicked,double", _on_item_double_clicked, obj);
    evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
 
    elm_widget_sub_object_add(obj, grid);
