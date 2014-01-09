@@ -167,7 +167,7 @@ rect_list_node_pool_get(void)
         return node;
      }
    else
-      return malloc(sizeof(list_node_t));
+      return malloc(sizeof(rect_node_t));
 }
 
 
