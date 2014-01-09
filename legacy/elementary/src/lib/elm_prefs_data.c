@@ -300,6 +300,7 @@ _eet_data_load(Elm_Prefs_Data *prefs_data,
              ERR("bad item (type = %d) fetched from data file %s, skipping it",
                  it->type, prefs_data->data_file);
              free(item);
+             item = NULL;
              skip = EINA_TRUE;
              break;
           }
@@ -310,6 +311,8 @@ _eet_data_load(Elm_Prefs_Data *prefs_data,
              skip = EINA_TRUE;
 
              if (set_err) eina_value_flush(&(item->value));
+             free(item);
+             item = NULL;
           }
 
         if (!skip) eina_hash_set(map, it->name, item);
