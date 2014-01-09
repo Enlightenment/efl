@@ -1,6 +1,6 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_define(v_maj], [1])
+m4_define([v_maj], [1])
 m4_define([v_min], [8])
 m4_define([v_mic], [99])
 dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
