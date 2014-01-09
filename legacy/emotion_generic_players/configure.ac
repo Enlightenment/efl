@@ -1,6 +1,6 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_define([v_maj], [1])
+m4_define(v_maj], [1])
 m4_define([v_min], [8])
 m4_define([v_mic], [99])
 dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
@@ -110,7 +110,7 @@ AC_SUBST(EMOTION_GENERIC_PLAYERS_DIR)
 AC_SUBST(MODULE_ARCH)
 
 #### Players
-EMOTION_GENERIC_PLAYER([VLC], [yes], [libvlc >= 0.9 eina >= 1.1.99 ecore >= 1.7.99])
+EMOTION_GENERIC_PLAYER([VLC], [yes], [libvlc >= 2.0 eina >= 1.1.99 ecore >= 1.7.99])
 
 
 AC_CONFIG_FILES([
