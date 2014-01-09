@@ -681,7 +681,7 @@ eo2_api_funcs_cmp(const void *p1, const void *p2)
    else return 0;
 }
 
-EAPI void
+EAPI Eina_Bool
 _eo2_class_funcs_set(_Eo_Class *klass)
 {
    int op_id;
@@ -697,7 +697,7 @@ _eo2_class_funcs_set(_Eo_Class *klass)
 
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
 
-   if (!op_descs) return;
+   if (!op_descs) return EINA_TRUE;
 
    last_api_func = NULL;
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
@@ -739,6 +739,8 @@ _eo2_class_funcs_set(_Eo_Class *klass)
         _dich_func_set(klass, op_desc->op, op_desc->func);
         last_api_func = op_desc->api_func;
      }
+
+   return EINA_TRUE;
 }
 
 EAPI Eo *
@@ -1206,9 +1208,6 @@ _eo_class_constructor(_Eo_Class *klass)
 
    klass->constructed = EINA_TRUE;
 
-   if (klass->desc->version == EO2_VERSION)
-     _eo2_class_funcs_set(klass);
-
    if (klass->desc->class_constructor)
      klass->desc->class_constructor(_eo_class_id_get(klass));
 }
@@ -1340,13 +1339,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
 
-   if (desc->version == EO2_VERSION)
-     {
-        // FIXME: eo2
-        /* if (!_eo2_class_check_op_descs(desc)) */
-        /*   return NULL; */
-     }
-   else
+   if (desc->version != EO2_VERSION)
      {
         if (!_eo_class_check_op_descs(desc))
           return NULL;
@@ -1552,6 +1545,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    _eo_class_base_op_init(klass);
+
    /* Flatten the function array */
      {
         const _Eo_Class **mro_itr = klass->mro;
@@ -1585,6 +1579,18 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              _dich_func_set(klass,
                    klass->parent->base_id + klass->parent->desc->ops.count,
                    _eo_class_isa_func);
+          }
+     }
+
+   if (desc->version == EO2_VERSION)
+     {
+        if (!_eo2_class_funcs_set(klass))
+          {
+             eina_spinlock_free(&klass->objects.trash_lock);
+             eina_spinlock_free(&klass->iterators.trash_lock);
+             _dich_func_clean_all(klass);
+             free(klass);
+             return NULL;
           }
      }
 
