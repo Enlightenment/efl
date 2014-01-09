@@ -231,9 +231,9 @@ START_TEST(eo_null_api)
         NULL
    };
 
-   TEST_EO_ERROR("_eo2_class_funcs_set", "Ignore %d NULL->%p '%s'. Can't set implementation for NULL API.");
+   TEST_EO_ERROR("_eo2_class_funcs_set", "Class '%s': NULL API not allowed (%d NULL->%p '%s').");
    klass = eo_class_new(&class_desc, NULL, NULL);
-   fail_if(!klass);
+   fail_if(klass);
    fail_unless(ctx.did);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
@@ -264,9 +264,9 @@ START_TEST(eo_wrong_override)
         NULL
    };
 
-   TEST_EO_ERROR("_eo2_class_funcs_set", "Ignore override %p->%p. Can't find api func description in class hierarchy.");
+   TEST_EO_ERROR("_eo2_class_funcs_set", "Class '%s': Can't find api func description in class hierarchy (%p->%p).");
    klass = eo_class_new(&class_desc, NULL, NULL);
-   fail_if(!klass);
+   fail_if(klass);
    fail_unless(ctx.did);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
@@ -298,9 +298,9 @@ START_TEST(eo_api_redefined)
         NULL
    };
 
-   TEST_EO_ERROR("_eo2_class_funcs_set", "API already defined %d %p->%p '%s'. Expect undefined behaviour.");
+   TEST_EO_ERROR("_eo2_class_funcs_set", "Class '%s': API previously defined (%d %p->%p '%s').");
    klass = eo_class_new(&class_desc, NULL, NULL);
-   fail_if(!klass);
+   fail_if(klass);
    fail_unless(ctx.did);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
@@ -332,9 +332,9 @@ START_TEST(eo_dich_func_override)
         NULL
    };
 
-   TEST_EO_ERROR("_dich_func_set", "Already set function for op %d (%s:'%s'). Overriding %p with %p.");
+   TEST_EO_ERROR("_dich_func_set", "Class '%s': Overriding func %p for op %d (%s:'%s') with %p.");
    klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
-   fail_if(!klass);
+   fail_if(klass);
    fail_unless(ctx.did);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
