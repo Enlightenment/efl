@@ -929,6 +929,60 @@ _evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
            && (lo->scale_load.scale_hint == 0)); // Skip smooth
 }
 
+// Valgrind complains about uninitialized memory, because the load_opts
+// can be allocated on the stack, and each field is set independently,
+// leaving empty spaces in the struct non initialized. So, compare fields
+// one by one, don't take shortcuts like memcmp.
+
+static Eina_Bool
+_evas_image_load_opts_equal(const Evas_Image_Load_Opts *lo1,
+                            const Evas_Image_Load_Opts *lo2)
+{
+   return ((lo1->scale_down_by == lo2->scale_down_by)
+       && (lo1->dpi == lo2->dpi)
+       && (lo1->w == lo2->w)
+       && (lo1->h == lo2->h)
+       && (lo1->region.x == lo2->region.x)
+       && (lo1->region.y == lo2->region.y)
+       && (lo1->region.w == lo2->region.w)
+       && (lo1->region.h == lo2->region.h)
+       && (lo1->scale_load.src_x == lo2->scale_load.src_x)
+       && (lo1->scale_load.src_y == lo2->scale_load.src_y)
+       && (lo1->scale_load.src_w == lo2->scale_load.src_w)
+       && (lo1->scale_load.src_h == lo2->scale_load.src_h)
+       && (lo1->scale_load.dst_w == lo2->scale_load.dst_w)
+       && (lo1->scale_load.dst_h == lo2->scale_load.dst_h)
+       && (lo1->scale_load.smooth == lo2->scale_load.smooth)
+       && (lo1->scale_load.scale_hint == lo2->scale_load.scale_hint)
+       && (lo1->orientation == lo2->orientation)
+       && (lo1->degree == lo2->degree));
+}
+
+static void
+_evas_image_load_opts_set(Evas_Image_Load_Opts *lo1,
+                          const Evas_Image_Load_Opts *lo2)
+{
+   memset(lo1, 0, sizeof(Evas_Image_Load_Opts));
+   lo1->scale_down_by = lo2->scale_down_by;
+   lo1->dpi = lo2->dpi;
+   lo1->w = lo2->w;
+   lo1->h = lo2->h;
+   lo1->region.x = lo2->region.x;
+   lo1->region.y = lo2->region.y;
+   lo1->region.w = lo2->region.w;
+   lo1->region.h = lo2->region.h;
+   lo1->scale_load.src_x = lo2->scale_load.src_x;
+   lo1->scale_load.src_y = lo2->scale_load.src_y;
+   lo1->scale_load.src_w = lo2->scale_load.src_w;
+   lo1->scale_load.src_h = lo2->scale_load.src_h;
+   lo1->scale_load.dst_w = lo2->scale_load.dst_w;
+   lo1->scale_load.dst_h = lo2->scale_load.dst_h;
+   lo1->scale_load.smooth = lo2->scale_load.smooth;
+   lo1->scale_load.scale_hint = lo2->scale_load.scale_hint;
+   lo1->orientation = lo2->orientation;
+   lo1->degree = lo2->degree;
+}
+
 static void
 _file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
                Evas_Image_Load_Opts *lo)
@@ -968,7 +1022,8 @@ _image_open_server_send(Image_Entry *ie)
    File_Entry *fentry;
    Data_Entry *dentry;
    const char *file, *key;
-   Evas_Image_Load_Opts *opts = NULL;
+   Evas_Image_Load_Opts opts;
+   Eina_Bool has_load_opts = EINA_FALSE;
 
    if (cserve2_init == 0)
      {
@@ -977,7 +1032,10 @@ _image_open_server_send(Image_Entry *ie)
      }
 
    if (!_evas_image_load_opts_empty(&ie->load_opts))
-     opts = &ie->load_opts;
+     {
+        _evas_image_load_opts_set(&opts, &ie->load_opts);
+        has_load_opts = EINA_TRUE;
+     }
 
    ie->data1 = NULL;
    ie->data2 = NULL;
@@ -998,7 +1056,7 @@ _image_open_server_send(Image_Entry *ie)
 
    hkey_len = flen + klen + 1024;
    hkey = alloca(hkey_len);
-   _file_hkey_get(hkey, hkey_len, filebuf, key, opts);
+   _file_hkey_get(hkey, hkey_len, filebuf, key, (has_load_opts ? &opts : NULL));
    fentry = eina_hash_find(_file_entries, hkey);
    if (!fentry)
      {
@@ -1023,18 +1081,17 @@ _image_open_server_send(Image_Entry *ie)
      }
 
    memset(&msg_open, 0, sizeof(msg_open));
-
    msg_open.base.rid = _next_rid();
    msg_open.base.type = CSERVE2_OPEN;
    msg_open.file_id = fentry->file_id;
    msg_open.path_offset = 0;
    msg_open.key_offset = flen;
-   msg_open.has_load_opts = (opts != NULL);
+   msg_open.has_load_opts = has_load_opts;
    msg_open.image_id = ++_data_id;
 
    size = sizeof(msg_open) + flen + klen;
-   if (opts)
-     size += sizeof(*opts);
+   if (has_load_opts)
+     size += sizeof(opts);
    buf = malloc(size);
    if (!buf)
      {
@@ -1046,8 +1103,8 @@ _image_open_server_send(Image_Entry *ie)
    memcpy(buf, &msg_open, sizeof(msg_open));
    memcpy(buf + sizeof(msg_open), filebuf, flen);
    memcpy(buf + sizeof(msg_open) + flen, key, klen);
-   if (opts)
-     memcpy(buf + sizeof(msg_open) + flen + klen, opts, sizeof(*opts));
+   if (has_load_opts)
+     memcpy(buf + sizeof(msg_open) + flen + klen, &opts, sizeof(opts));
 
    if (!_server_send(buf, size, _image_opened_cb, ie))
      {
@@ -2782,9 +2839,12 @@ _shared_file_data_get_by_id(unsigned int id)
 static inline Eina_Bool
 _shared_image_entry_image_data_match(Image_Entry *ie, const Image_Data *id)
 {
-   int cmp;
-   cmp = memcmp(&ie->load_opts, &id->opts, sizeof(ie->load_opts));
-   if (!cmp)
+   const Evas_Image_Load_Opts *lo1, *lo2;
+
+   lo1 = &ie->load_opts;
+   lo2 = &id->opts;
+
+   if (_evas_image_load_opts_equal(lo1, lo2))
      {
         DBG("Found loaded image entry at %d", id->id);
         return EINA_TRUE;
