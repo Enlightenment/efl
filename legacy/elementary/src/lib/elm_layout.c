@@ -325,34 +325,18 @@ _elm_layout_smart_disable(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_TRUE;
 }
 
-static void
-_elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
+static Eina_Bool
+_elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-
    const char *fh;
+   Eina_Bool ret = EINA_FALSE;
 
-   Elm_Layout_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
-   if (!int_ret) return;
-   /* The following lines are here to support entry design; the _theme function
-    * of entry needs to call directly the widget _theme function */
-   Eina_Bool enable = EINA_TRUE;
-   eo_do(obj, elm_obj_layout_theme_enable(&enable));
-   if (EINA_TRUE != enable)
-     {
-        if (ret) *ret = EINA_TRUE;
-        return;
-     }
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    /* function already prints error messages, if any */
    if (!elm_widget_theme_object_set(obj, wd->resize_obj, sd->klass, sd->group,
                                     elm_widget_style_get(obj)))
-     return;
+     return EINA_FALSE;
 
    edje_object_mirrored_set
      (wd->resize_obj, elm_widget_mirrored_get(obj));
@@ -372,7 +356,33 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    _visuals_refresh(obj, sd);
 
-   eo_do(obj, elm_wdg_disable(&int_ret));
+   eo_do(obj, elm_wdg_disable(&ret));
+
+   return ret;
+}
+
+static void
+_elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   Elm_Layout_Smart_Data *sd = _pd;
+
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   if (!int_ret) return;
+   /* The following lines are here to support entry design; the _theme function
+    * of entry needs to call directly the widget _theme function */
+   Eina_Bool enable = EINA_TRUE;
+   eo_do(obj, elm_obj_layout_theme_enable(&enable));
+   if (EINA_TRUE != enable)
+     {
+        if (ret) *ret = EINA_TRUE;
+        return;
+     }
+
+   int_ret = _elm_layout_theme_internal(obj, sd);
 
    if (ret) *ret = int_ret;
 }
@@ -890,12 +900,7 @@ _elm_layout_smart_theme_set(Eo *obj, void *_pd, va_list *list)
    eina_stringshare_replace(&(sd->group), group);
    eina_stringshare_replace(&(wd->style), style);
 
-   /* not issuing smart theme directly here, because one may want to
-      use this function inside a smart theme routine of its own */
-   int_ret = elm_widget_theme_object_set
-       (obj, wd->resize_obj, sd->klass, sd->group,
-       elm_widget_style_get(obj));
-   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
+   int_ret = _elm_layout_theme_internal(obj, sd);
 
    if (ret) *ret = int_ret;
 }
