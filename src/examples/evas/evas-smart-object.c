@@ -165,7 +165,7 @@ _on_child_del(void *data,
 
    EVAS_SMART_EXAMPLE_DATA_GET(example_smart, priv);
 
-   idx = (long)evas_object_data_get(o, "index");
+   idx = (long)(uintptr_t)evas_object_data_get(o, "index");
    idx--;
 
    priv->children[idx] = NULL;
@@ -187,7 +187,7 @@ _evas_smart_example_child_callbacks_register(Evas_Object *o,
                                              long idx)
 {
    evas_object_event_callback_add(child, EVAS_CALLBACK_FREE, _on_child_del, o);
-   evas_object_data_set(child, "index", (void *)(++idx));
+   evas_object_data_set(child, "index", (void *)(uintptr_t)(++idx));
 }
 
 /* create and setup a new example smart object's internals */
@@ -318,13 +318,13 @@ evas_smart_example_remove(Evas_Object *o,
         return NULL;
      }
 
-   idx = (long)evas_object_data_get(child, "index");
+   idx = (long)(uintptr_t)evas_object_data_get(child, "index");
    idx--;
 
    _evas_smart_example_remove_do(priv, child, idx);
 
    evas_object_smart_callback_call(
-     o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
+     o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(uintptr_t)priv->child_count);
    evas_object_smart_changed(o);
 
    return child;
@@ -368,7 +368,7 @@ evas_smart_example_set_left(Evas_Object *o,
    if (!ret)
      {
         evas_object_smart_callback_call(
-          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
+          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(uintptr_t)priv->child_count);
      }
 
    return ret;
@@ -412,7 +412,7 @@ evas_smart_example_set_right(Evas_Object *o,
    if (!ret)
      {
         evas_object_smart_callback_call(
-          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
+          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(uintptr_t)priv->child_count);
      }
 
    return ret;
@@ -639,7 +639,7 @@ _on_example_smart_object_child_num_change(void *data EINA_UNUSED,
                                           void *event_info)
 {
    fprintf(stdout, "Number of child members on our example smart"
-                   " object changed to %lu\n", (long)event_info);
+                   " object changed to %llu\n", (unsigned long long)event_info);
 }
 
 int

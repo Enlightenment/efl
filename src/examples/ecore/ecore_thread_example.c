@@ -99,7 +99,7 @@ _feedback_job(void *data EINA_UNUSED, Ecore_Thread *th)
 #endif
    App_Msg *msg;
 
-   count = (int)ecore_thread_global_data_find("count");
+   count = (int)(uintptr_t)ecore_thread_global_data_find("count");
    for (i = 0; i < count; i++)
      {
         char buf[32];
@@ -369,7 +369,7 @@ main(int argc, char *argv[])
         Feedback_Thread_Data *ftd;
         char *str;
         ecore_thread_global_data_add("count",
-                                     (void *)eina_list_count(path_list), NULL,
+                                     (void *)(uintptr_t)eina_list_count(path_list), NULL,
                                      EINA_FALSE);
         i = 0;
         EINA_LIST_FREE(path_list, str)
