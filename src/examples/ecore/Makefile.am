@@ -33,6 +33,7 @@ EXTRA_PROGRAMS = \
 ecore_animator_example \
 ecore_client_bench \
 ecore_con_client_example \
+ecore_con_client_simple_example \
 ecore_con_lookup_example \
 ecore_con_server_example \
 ecore_con_server_http_example \
@@ -58,17 +59,12 @@ ecore_file_download_example \
 ecore_idler_example \
 ecore_imf_example \
 ecore_job_example \
-ecore_pipe_simple_example \
 ecore_poller_example \
 ecore_server_bench \
 ecore_thread_example \
 ecore_time_functions_example \
 ecore_timer_example \
 ecore_getopt_example
-
-if ! HAVE_WINDOWS
-EXTRA_PROGRAMS += ecore_con_client_simple_example
-endif
 
 ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -209,8 +205,11 @@ ecore_pipe_gstreamer_example_LDADD = $(ECORE_COMMON_LDADD) @GSTREAMER_LIBS@
 ecore_pipe_gstreamer_example_CFLAGS = @GSTREAMER_CFLAGS@
 endif
 
+if ! HAVE_WINDOWS
+EXTRA_PROGRAMS += ecore_pipe_simple_example
 ecore_pipe_simple_example_SOURCES = ecore_pipe_simple_example.c
 ecore_pipe_simple_example_LDADD = $(ECORE_COMMON_LDADD)
+endif
 
 ecore_poller_example_SOURCES = ecore_poller_example.c
 ecore_poller_example_LDADD = $(ECORE_COMMON_LDADD)
