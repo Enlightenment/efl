@@ -282,7 +282,7 @@ efreet_dirs_init(void)
    if (getuid() == geteuid())
 #endif
      efreet_home_dir = getenv("HOME");
-#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    else
      {
         struct passwd *pw = getpwent();
