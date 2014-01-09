@@ -266,7 +266,7 @@ ethumb_init(void)
         home = getenv("HOME");
         snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
      }
-#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    else
      {
         struct passwd *pw = getpwent();
@@ -722,7 +722,7 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
              strncpy(p, home, PATH_MAX - 1);
              p[PATH_MAX - 1] = 0;
           }
-#if !defined(HAVE_GETUID) || defined(HAVE_GETEUID)
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         else
           {
              struct passwd *pw = getpwent();
