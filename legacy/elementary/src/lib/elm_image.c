@@ -1368,9 +1368,9 @@ _elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
     * 270 degree */
    data = evas_object_image_data_get(sd->img, EINA_FALSE);
    if (!data) return;
-   data2 = malloc(sizeof(unsigned char) * (iw * ih * 4));
+   data2 = malloc(sizeof(unsigned int) * (iw * ih));
    if (!data2) return;
-   memcpy(data2, data, sizeof (unsigned char) * (iw * ih * 4));
+   memcpy(data2, data, sizeof(unsigned int) * (iw * ih));
 
    w = ih;
    ih = iw;
