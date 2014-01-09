@@ -1,40 +1,43 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
-pkgname=elementary-git
-_pkgname=${pkgname%-*}
-true && pkgname=('elementary-git' 'elementary_test-git' 'elementary_doc-git')
+pkgname=('elementary' 'elementary_test' 'elementary_doc')
+[[ -d ../.git ]] && pkgname=('elementary-git' 'elementary_test-git' 'elementary_doc-git')
 pkgver=1.8.99.8967.a1cfce6
 pkgrel=1
 pkgdesc="Enlightenment GUI toolkit - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('LGPL2.1' 'CCPL:cc-by-sa')
-makedepends=('doxygen' 'imagemagick' 'git')
-depends=('efl-git')
-  [[ ! $(pacman -T ewebkit-svn) ]] && depends+=('ewebkit-svn')         # webkit-efl support is detected at build time
+makedepends=('doxygen' 'imagemagick')
+[[ -d ../.git ]] && makedepends+=('git')
+depends=('efl')
+  [[ ! $(pacman -T ewebkit) ]] && depends+=('ewebkit')                 # webkit-efl support is detected at build time
   [[ ! $(pacman -T elocation-git) ]] && depends+=('elocation-git')     # elocation support is detected at build time
   [[ ! $(pacman -T libeweather-git) ]] && depends+=('libeweather-git') # eweather support is detected at build time
 optdepends=('emotion_generic_players' 'evas_generic_loaders')
-options=('!libtool' 'debug')
-provides=('elementary')
+options=('debug')
 
 pkgver() {
   cd "../.."
 
-  for _i in v_maj v_min v_mic; do
-    local v_ver=$v_ver.$(grep -m 1 $_i configure.ac | sed 's/m4//' | grep -o "[[:digit:]]*")
-  done
+  if [[ -d .git ]]; then
+    for _i in v_maj v_min v_mic; do
+      local v_ver=$v_ver.$(grep -m1 $_i configure.ac | sed 's/m4//' | grep -o "[[:digit:]]*")
+    done
 
-  v_ver=$(awk -F , -v v_ver=${v_ver#.} '/^AC_INIT/ {gsub(/v_ver/, v_ver); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
+    v_ver=$(awk -F , -v v_ver=${v_ver#.} '/^AC_INIT/ {gsub(/v_ver/, v_ver); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
 
-  printf "$v_ver.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+    printf "$v_ver.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+  else
+    ./configure --version | awk '/^elementary/ {gsub("-", ""); print $NF}'
+  fi
 }
 
 build() {
   cd "../.."
   export CFLAGS="$CFLAGS -fvisibility=hidden -fomit-frame-pointer"
   [[ -e Makefile ]] && make clean distclean
-  ./configure --prefix=/usr \
-  --disable-static
+  [[ -e autogen.sh ]] && _configure=autogen.sh || _configure=configure
+  ./$_configure --prefix=/usr --disable-static
   make
   make doc
 }
@@ -44,27 +47,34 @@ build() {
 #  make -k check
 #}
 
-package_elementary-git() {
+package_elementary() {
   cd "../.."
   make -j1 DESTDIR="$pkgdir/" install
-  install -Dm644 README "$pkgdir/usr/share/$pkgname/README"
-  install -Dm644 NEWS "$pkgdir/usr/share/$pkgname/NEWS"
-  install -Dm644 ChangeLog "$pkgdir/usr/share/$pkgname/ChangeLog"
-  install -Dm644 AUTHORS "$pkgdir/usr/share/$pkgname/AUTHORS"
-  install -Dm644 COMPLIANCE "$pkgdir/usr/share/$pkgname/COMPLIANCE"
+  install -Dm644 README "$pkgdir/usr/share/doc/${pkgname%-git}/README"
+  install -Dm644 NEWS "$pkgdir/usr/share/doc/${pkgname%-git}/NEWS"
+  install -Dm644 ChangeLog "$pkgdir/usr/share/doc/${pkgname%-git}/ChangeLog"
+  install -Dm644 AUTHORS "$pkgdir/usr/share/doc/${pkgname%-git}/AUTHORS"
+  install -Dm644 COMPLIANCE "$pkgdir/usr/share/doc/${pkgname%-git}/COMPLIANCE"
   install -Dm644 COPYING.images "$pkgdir/usr/share/licenses/$pkgname/COPYING.images"
   sed -n '1,/details./p' COPYING > "$pkgdir/usr/share/licenses/$pkgname/COPYING"
-  ln -s "../licenses/$pkgname/COPYING" "$pkgdir/usr/share/$pkgname/COPYING"
-  ln -s "../licenses/$pkgname/COPYING.images" "$pkgdir/usr/share/$pkgname/COPYING.images"
+  ln -s "../licenses/$pkgname/COPYING" "$pkgdir/usr/share/doc/${pkgname%-git}/COPYING"
+  ln -s "../licenses/$pkgname/COPYING.images" "$pkgdir/usr/share/doc/${pkgname%-git}/COPYING.images"
   rm -rf "$pkgdir/usr/bin/"elementary_test
   rm -rf "$pkgdir/usr/lib/elementary/modules/"{test_entry,test_map}
   rm -rf "$pkgdir/usr/share/applications/elementary_test.desktop"
   rm -rf "$pkgdir/usr/share/elementary/"{examples,images,objects}
 }
 
-package_elementary_test-git() {
+package_elementary-git() {
+  provides=("elementary=$pkgver")
+  conflicts=('elementary')
+  package_elementary
+}
+
+package_elementary_test() {
   pkgdesc="Test application for Elementary"
-  depends=('elementary')
+  depends=(${pkgname/_test/})
+  unset optdepends
 
   cd "../.."
   make -j1 DESTDIR="$pkgdir/" install
@@ -77,13 +87,25 @@ package_elementary_test-git() {
   rm -rf "$pkgdir/usr/share/"{icons,locale}
 }
 
-package_elementary_doc-git() {
+package_elementary_test-git() {
+  provides=("elementary_test=$pkgver")
+  conflicts=('elementary_test')
+  package_elementary_test
+}
+
+package_elementary_doc() {
   pkgdesc="Documentation for Elementary"
   arch=('any')
   unset depends optdepends
 
   cd "../.."
-  mkdir -p "$pkgdir/usr/share/doc/$pkgname"
-  cp -a doc/html "$pkgdir/usr/share/doc/$pkgname/html"
-  cp -a doc/latex "$pkgdir/usr/share/doc/$pkgname/latex"
+  mkdir -p "$pkgdir/usr/share/doc/${pkgname%-git}"
+  cp -a doc/html "$pkgdir/usr/share/doc/${pkgname%-git}/html"
+  cp -a doc/latex "$pkgdir/usr/share/doc/${pkgname%-git}/latex"
+}
+
+package_elementary_doc-git() {
+  package_elementary_doc
+  provides=("elementary_doc=$pkgver")
+  conflicts=('elementary_doc')
 }
