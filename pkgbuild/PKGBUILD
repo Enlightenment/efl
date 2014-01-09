@@ -1,13 +1,12 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
-pkgname=('efl-git' 'efl_doc-git')
-_pkgname=${pkgname%-*}
-pkgver=1.8.99.24060.a30d82c
+pkgname=('efl' 'efl_doc')
+[[ -d ../.git ]] && pkgname=('efl-git' 'efl_doc-git')
+pkgver=1.8.99.24136.8c094d1
 pkgrel=1
-pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot (Ecore, Eldbus, Edje, Eet, Eeze, Efreet, Eina, Eio, Embryo, Emotion, Eo, Ephysics, Ethumb, & Evas)"
+pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('BSD' 'LGPL2.1' 'GPL2' 'custom')
-makedepends=('doxygen' 'check')
 depends=('bullet' 'libpng' 'libjpeg-turbo'
          'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base'
          'gst-plugins-good' 'gst-plugins-bad'
@@ -17,29 +16,24 @@ depends=('bullet' 'libpng' 'libjpeg-turbo'
          'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
          'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
          'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz'
-	 'wayland' 'avahi' 'scim')
+         'wayland' 'avahi' 'scim')
 [[ ! $(pacman -T "openjpeg") ]] && depends+=('openjpeg') #jpeg2k loader is autodetected at build time
-makedepends=('git')
-provides=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
-          "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
-          "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
-          "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver" "$_pkgname=$pkgver")
-conflicts=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo' 'emotion'
-           'ethumb' 'evas' "$_pkgname")
-options=('!libtool' 'debug')
+makedepends=('doxygen' 'check')
+[[ -d ../.git ]] && makedepends+=('git')
+options=('debug')
 install=efl.install
 
 pkgver() {
   cd "../.."
 
-  local efl_version=$(grep -m 1 EFL_VERSION configure.ac | grep -o "[[:digit:]]*" | tr '\n' '.')
-  efl_version=$(awk -F , -v efl_version=${efl_version%.} '/^AC_INIT/ {gsub(/efl_version/, efl_version); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
+  if [[ -d .git ]]; then
+    local efl_version=$(grep -m 1 EFL_VERSION configure.ac | grep -o "[[:digit:]]*" | tr '\n' '.')
+    efl_version=$(awk -F , -v efl_version=${efl_version%.} '/^AC_INIT/ {gsub(/efl_version/, efl_version); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
 
-  printf "$efl_version.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
-}
-
-prepare() {
-  sed -i 's/env python$/&2/' "../../src/scripts/eina/eina-bench-cmp"
+    printf "$efl_version.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+  else
+    ./configure --version | awk '/^efl/ {gsub("-", ""); print $NF}'
+  fi
 }
 
 build() {
@@ -47,7 +41,8 @@ build() {
   export CFLAGS="$CFLAGS -fvisibility=hidden -fomit-frame-pointer"
   export CXXFLAGS="$CXXFLAGS -fvisibility=hidden -fomit-frame-pointer"
   [[ -e Makefile ]] && make clean distclean
-  ./configure --prefix=/usr \
+  [[ -e autogen.sh ]] && _configure=autogen.sh || _configure=configure
+  ./$_configure --prefix=/usr \
   --disable-static --disable-tslib --enable-fb \
   --enable-xinput22 --enable-multisense --enable-systemd \
   --enable-image-loader-webp --enable-harfbuzz \
@@ -62,31 +57,48 @@ build() {
 #  make -k check
 #}
 
-package_efl-git() {
+package_efl() {
+  provides+=("ecore=$pkgver" "eldbus=$pkgver" "edje=$pkgver"
+             "eet=$pkgver" "eeze=$pkgver" "efreet=$pkgver"
+             "eina=$pkgver" "eio=$pkgver" "embryo=$pkgver" "emotion=$pkgver"
+             "ephysics=$pkgver" "ethumb=$pkgver" "evas=$pkgver")
+  conflicts+=('ecore' 'edje' 'eet' 'eeze' 'efreet' 'eina' 'eio' 'embryo' 'emotion'
+              'ethumb' 'evas')
   cd "../.."
   make -j1 DESTDIR="$pkgdir/" install
-  install -Dm644 README "$pkgdir/usr/share/$pkgname/README"
-  install -Dm644 NEWS "$pkgdir/usr/share/$pkgname/NEWS"
-  install -Dm644 ChangeLog "$pkgdir/usr/share/$pkgname/ChangeLog"
-  install -Dm644 AUTHORS "$pkgdir/usr/share/$pkgname/AUTHORS"
-  install -Dm644 COMPLIANCE "$pkgdir/usr/share/$pkgname/COMPLIANCE"
+  install -Dm644 README "$pkgdir/usr/share/doc/${pkgname%-git}/README"
+  install -Dm644 NEWS "$pkgdir/usr/share/doc/${pkgname%-git}/NEWS"
+  install -Dm644 ChangeLog "$pkgdir/usr/share/doc/${pkgname%-git}/ChangeLog"
+  install -Dm644 AUTHORS "$pkgdir/usr/share/doc/${pkgname%-git}/AUTHORS"
+  install -Dm644 COMPLIANCE "$pkgdir/usr/share/doc/${pkgname%-git}/COMPLIANCE"
   install -Dm644 licenses/COPYING.BSD "$pkgdir/usr/share/licenses/$pkgname/COPYING.BSD"
   install -Dm644 licenses/COPYING.GPL "$pkgdir/usr/share/licenses/$pkgname/COPYING.GPL"
   install -Dm644 licenses/COPYING.LGPL "$pkgdir/usr/share/licenses/$pkgname/COPYING.LGPL"
   install -Dm644 licenses/COPYING.SMALL "$pkgdir/usr/share/licenses/$pkgname/COPYING.SMALL"
-  ln -s "../licenses/$pkgname/COPYING.BSD" "$pkgdir/usr/share/$pkgname/COPYING.BSD"
-  ln -s "../licenses/$pkgname/COPYING.GPL" "$pkgdir/usr/share/$pkgname/COPYING.GPL"
-  ln -s "../licenses/$pkgname/COPYING.LGPL" "$pkgdir/usr/share/$pkgname/COPYING.LGPL"
-  ln -s "../licenses/$pkgname/COPYING.SMALL" "$pkgdir/usr/share/$pkgname/COPYING.SMALL"
+  ln -s "../licenses/$pkgname/COPYING.BSD" "$pkgdir/usr/share/doc/${pkgname%-git}/COPYING.BSD"
+  ln -s "../licenses/$pkgname/COPYING.GPL" "$pkgdir/usr/share/doc/${pkgname%-git}/COPYING.GPL"
+  ln -s "../licenses/$pkgname/COPYING.LGPL" "$pkgdir/usr/share/doc/${pkgname%-git}/COPYING.LGPL"
+  ln -s "../licenses/$pkgname/COPYING.SMALL" "$pkgdir/usr/share/doc/${pkgname%-git}/COPYING.SMALL"
+}
+
+package_efl-git() {
+  provides=("efl=$pkgver")
+  conflicts=('efl')
+  package_efl
+}
+
+package_efl_doc() {
+  pkgdesc="Documentation for the Enlightenment Foundation Libraries"
+  arch=('any')
+  unset license depends install
+  cd "../.."
+  mkdir -p "$pkgdir/usr/share/doc/${pkgname%-git}"
+  cp -a doc/html "$pkgdir/usr/share/doc/${pkgname%-git}/html"
+  cp -a doc/latex "$pkgdir/usr/share/doc/${pkgname%-git}/latex"
 }
 
 package_efl_doc-git() {
-  pkgdesc="Documentation for the Enlightenment Foundation Libraries"
-  arch=('any')
-  unset license depends provides conflicts install
-  cd "../.."
-  mkdir -p "$pkgdir/usr/share/doc/$pkgname"
-  cp -a doc/html "$pkgdir/usr/share/doc/$pkgname/html"
-  cp -a doc/latex "$pkgdir/usr/share/doc/$pkgname/latex"
+  provides=("efl_doc=$pkgver")
+  conflicts=('efl_doc')
+  package_efl_doc
 }
-
