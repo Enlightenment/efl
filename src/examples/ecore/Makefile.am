@@ -33,7 +33,6 @@ EXTRA_PROGRAMS = \
 ecore_animator_example \
 ecore_client_bench \
 ecore_con_client_example \
-ecore_con_client_simple_example \
 ecore_con_lookup_example \
 ecore_con_server_example \
 ecore_con_server_http_example \
@@ -66,6 +65,10 @@ ecore_thread_example \
 ecore_time_functions_example \
 ecore_timer_example \
 ecore_getopt_example
+
+if ! HAVE_WINDOWS
+EXTRA_PROGRAMS += ecore_con_client_simple_example
+endif
 
 ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
