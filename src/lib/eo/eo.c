@@ -97,7 +97,7 @@ _dich_func_get(const _Eo_Class *klass, Eo_Op op)
    return &chain1->funcs[DICH_CHAIN_LAST(op)];
 }
 
-static inline void
+static inline Eina_Bool
 _dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
    op_type_funcs *fsrc;
@@ -109,12 +109,15 @@ _dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
      {
         const _Eo_Class *op_kls = _eo_op_class_get(op);
         const char *op_name = _eo_op_id_name_get(op, op_kls->desc->version);
-        ERR("Already set function for op %d (%s:'%s'). Overriding %p with %p.",
-              op, op_kls->desc->name, op_name, fsrc->func, func);
+        ERR("Class '%s': Overriding func %p for op %d (%s:'%s') with %p.",
+              klass->desc->name, fsrc->func, op, op_kls->desc->name, op_name, func);
+        return EINA_FALSE;
      }
 
    fsrc->func = func;
    fsrc->src = klass;
+
+   return EINA_TRUE;
 }
 
 static inline void
@@ -693,28 +696,29 @@ _eo2_class_funcs_set(_Eo_Class *klass)
    op_id = klass->base_id;
    op_descs = klass->desc->ops.descs2;
 
-   qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
-
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
 
    if (!op_descs) return EINA_TRUE;
+
+   qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo2_Op_Description), eo2_api_funcs_cmp);
 
    last_api_func = NULL;
    for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
      {
         if(op_desc->api_func == NULL)
           {
-             ERR("Ignore %d NULL->%p '%s'. Can't set implementation for NULL API.",
-                 op_desc->op, op_desc->func, op_desc->doc);
-             continue;
+             ERR("Class '%s': NULL API not allowed (%d NULL->%p '%s').",
+                 klass->desc->name, op_desc->op, op_desc->func, op_desc->doc);
+             return EINA_FALSE;
           }
 
         if (op_desc->op == EO_NOOP)
           {
              if (op_desc->api_func == last_api_func)
                {
-                  ERR("API already defined %d %p->%p '%s'. Expect undefined behaviour.",
-                      op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+                  ERR("Class '%s': API previously defined (%d %p->%p '%s').",
+                      klass->desc->name, op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+                  return EINA_FALSE;
                }
              op_desc->op = op_id;
              op_id++;
@@ -725,9 +729,9 @@ _eo2_class_funcs_set(_Eo_Class *klass)
 
              if (api_desc == NULL)
                {
-                  ERR("Ignore override %p->%p. Can't find api func description in class hierarchy.",
-                      op_desc->api_func, op_desc->func);
-                  continue;
+                  ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p).",
+                      klass->desc->name, op_desc->api_func, op_desc->func);
+                  return EINA_FALSE;
                }
 
              op_desc->op = api_desc->op;
@@ -736,7 +740,9 @@ _eo2_class_funcs_set(_Eo_Class *klass)
 
         DBG(" %4d %p->%p '%s'", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
 
-        _dich_func_set(klass, op_desc->op, op_desc->func);
+        if (!_dich_func_set(klass, op_desc->op, op_desc->func))
+          return EINA_FALSE;
+
         last_api_func = op_desc->api_func;
      }
 
