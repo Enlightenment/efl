@@ -33,7 +33,7 @@
 #define POINTER_CYCLE(_ptr, _array)                             \
   do                                                            \
     {                                                           \
-       if ((unsigned)(((void *)(_ptr)) - ((void *)(_array))) >= \
+       if ((unsigned int)(((unsigned char *)(_ptr)) - ((unsigned char *)(_array))) >= \
            sizeof(_array))                                      \
          _ptr = _array;                                         \
     }                                                           \

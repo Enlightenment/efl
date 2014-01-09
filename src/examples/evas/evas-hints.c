@@ -181,8 +181,8 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         (r_data->align_ptr)++;
 
-        if ((unsigned)
-            (((void *)(r_data->align_ptr)) - ((void *)(r_data->align))) >=
+        if ((unsigned int)
+            (((unsigned char *)(r_data->align_ptr)) - ((unsigned char *)(r_data->align))) >=
             sizeof(r_data->align))
           r_data->align_ptr = r_data->align;
 
@@ -198,8 +198,8 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         (r_data->min_ptr)++;
 
-        if ((unsigned)
-            (((void *)(r_data->min_ptr)) - ((void *)(r_data->min))) >=
+        if ((unsigned int)
+            (((unsigned char *)(r_data->min_ptr)) - ((unsigned char *)(r_data->min))) >=
             sizeof(r_data->min))
           r_data->min_ptr = r_data->min;
 
@@ -215,8 +215,8 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         (r_data->max_ptr)++;
 
-        if ((unsigned)
-            (((void *)(r_data->max_ptr)) - ((void *)(r_data->max))) >=
+        if ((unsigned int)
+            (((unsigned char *)(r_data->max_ptr)) - ((unsigned char *)(r_data->max))) >=
             sizeof(r_data->max))
           r_data->max_ptr = r_data->max;
 
@@ -232,8 +232,8 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         (r_data->padding_ptr)++;
 
-        if ((unsigned)
-            (((void *)(r_data->padding_ptr)) - ((void *)(r_data->padding))) >=
+        if ((unsigned int)
+            (((unsigned char *)(r_data->padding_ptr)) - ((unsigned char *)(r_data->padding))) >=
             sizeof(r_data->padding))
           r_data->padding_ptr = r_data->padding;
 
@@ -255,8 +255,8 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         (r_data->weight_ptr)++;
 
-        if ((unsigned)
-            (((void *)(r_data->weight_ptr)) - ((void *)(r_data->weight))) >=
+        if ((unsigned int)
+            (((unsigned char *)(r_data->weight_ptr)) - ((unsigned char *)(r_data->weight))) >=
             sizeof(r_data->weight))
           r_data->weight_ptr = r_data->weight;
 
