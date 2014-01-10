@@ -2581,6 +2581,37 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
    fail_if((l != 1) || (r != 4) || (t != 1) || (b != 4));
 
+   /* Multi-line padding */
+   {
+      Evas_Coord x[5] = {0}, y[5] = {0}, w[5] = {0}, h[5] = {0};
+
+      // w, h should not change between test 1 and 2
+      // insets and x, y should increase by 2
+      // line 1 in test 2 should have same geometry as in test 1 (despite style)
+
+      evas_object_textblock_text_markup_set(tb, "Test<br/>Test");
+      evas_object_textblock_line_number_geometry_get(tb, 0, &x[0], &y[0], &w[0], &h[0]);
+      evas_object_textblock_line_number_geometry_get(tb, 1, &x[1], &y[1], &w[1], &h[1]);
+
+      // check line 1 geometry relatively to line 0
+      fail_if((x[0] != x[1]) || ((y[0] + h[0]) != y[1]) || (w[0] != w[1]) || (h[0] != h[1]));
+
+      evas_object_textblock_text_markup_set(tb, "Test<br/><style=glow>Test</><br/>Test");
+      evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
+      evas_object_textblock_line_number_geometry_get(tb, 0, &x[2], &y[2], &w[2], &h[2]);
+      evas_object_textblock_line_number_geometry_get(tb, 1, &x[3], &y[3], &w[3], &h[3]);
+      evas_object_textblock_line_number_geometry_get(tb, 2, &x[4], &y[4], &w[4], &h[4]);
+
+      // check line 1 geometry relatively to line 0
+      fail_if((x[2] != x[3]) || ((y[2] + h[2]) != y[3]) || (w[2] != w[3]) || (h[2] != h[3]));
+
+      // check padding is correct
+      fail_if((x[2] != (x[0] + l)) || (y[2] != (y[0] + t)));
+
+      // line 2 should not suffer from padding in line 1, as it is globally applied
+      fail_if((x[4] != x[2]) || ((y[2] + h[2] + h[3]) != y[4]));
+   }
+
    /* No font */
    evas_textblock_style_set(newst, "DEFAULT=''");
    evas_object_textblock_text_markup_set(tb, "Test");
