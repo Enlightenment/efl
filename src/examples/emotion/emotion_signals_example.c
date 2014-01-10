@@ -31,28 +31,28 @@ _display_info(Evas_Object *o)
 }
 
 static void
-_playback_started_cb(void *data, Evas_Object *o, void *event_info)
+_playback_started_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object started playback.\n");
    _display_info(o);
 }
 
 static void
-_playback_finished_cb(void *data, Evas_Object *o, void *event_info)
+_playback_finished_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object finished playback.\n");
    _display_info(o);
 }
 
 static void
-_open_done_cb(void *data, Evas_Object *o, void *event_info)
+_open_done_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object open done.\n");
    _display_info(o);
 }
 
 static void
-_position_update_cb(void *data, Evas_Object *o, void *event_info)
+_position_update_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object first position update.\n");
    evas_object_smart_callback_del(o, "position_update", _position_update_cb);
@@ -60,7 +60,7 @@ _position_update_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_frame_decode_cb(void *data, Evas_Object *o, void *event_info)
+_frame_decode_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object first frame decode.\n");
    evas_object_smart_callback_del(o, "frame_decode", _frame_decode_cb);
@@ -68,14 +68,14 @@ _frame_decode_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_decode_stop_cb(void *data, Evas_Object *o, void *event_info)
+_decode_stop_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object decode stop.\n");
    _display_info(o);
 }
 
 static void
-_frame_resize_cb(void *data, Evas_Object *o, void *event_info)
+_frame_resize_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object frame resize.\n");
    _display_info(o);

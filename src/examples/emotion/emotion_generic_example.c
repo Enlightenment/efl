@@ -16,13 +16,13 @@ static Eina_List *filenames = NULL;
 static Eina_List *curfile = NULL;
 
 static void
-_playback_started_cb(void *data, Evas_Object *o, void *event_info)
+_playback_started_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
 }
 
 static void
-_playback_stopped_cb(void *data, Evas_Object *o, void *event_info)
+_playback_stopped_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    printf("Emotion playback stopped.\n");
    emotion_object_play_set(o, EINA_FALSE);
@@ -45,7 +45,7 @@ _create_emotion_object(Evas *e)
 }
 
 static void
-_on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
+_on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    Evas_Object *em = data;
@@ -124,25 +124,25 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void
-_frame_decode_cb(void *data, Evas_Object *o, void *event_info)
+_frame_decode_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    // fprintf(stderr, "smartcb: frame_decode\n");
 }
 
 static void
-_length_change_cb(void *data, Evas_Object *o, void *event_info)
+_length_change_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(o));
 }
 
 static void
-_position_update_cb(void *data, Evas_Object *o, void *event_info)
+_position_update_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(o));
 }
 
 static void
-_progress_change_cb(void *data, Evas_Object *o, void *event_info)
+_progress_change_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "smartcb: progress_change: %0.3f, %s\n",
 	   emotion_object_progress_status_get(o),
@@ -150,7 +150,7 @@ _progress_change_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_frame_resize_cb(void *data, Evas_Object *o, void *event_info)
+_frame_resize_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
    int w, h;
    emotion_object_size_get(o, &w, &h);

@@ -11,13 +11,13 @@
 #define HEIGHT (240)
 
 static void
-_playback_started_cb(void *data, Evas_Object *o, void *event_info)
+_playback_started_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
 }
 
 static void
-_on_delete(Ecore_Evas *ee)
+_on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
   ecore_main_loop_quit();
 }
