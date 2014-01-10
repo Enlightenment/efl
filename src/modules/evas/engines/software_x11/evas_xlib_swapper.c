@@ -598,6 +598,7 @@ _drm_shutdown(void)
    // though, as once shut down, we have to re-init and this could be
    // expensive especially if u have a single canvas that is changing config
    // and being shut down and re-initted a few times.
+/*   
    if (bufmgr)
      {
         sym_drm_slp_bufmgr_destroy(bufmgr);
@@ -612,6 +613,7 @@ _drm_shutdown(void)
    dlclose(xfixes_lib);
    xfixes_lib = NULL;
    tried = EINA_FALSE;
+ */
 }
 
 static Eina_Bool
