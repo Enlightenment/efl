@@ -2937,7 +2937,7 @@ _name_list_parse(Elm_Map_Name_List *nl)
    f = fopen(nl->fname, "rb");
    if (f)
      {
-        long sz;
+        unsigned long sz;
 
         fseek(f, 0, SEEK_END);
         sz = ftell(f);
@@ -2948,7 +2948,7 @@ _name_list_parse(Elm_Map_Name_List *nl)
                {
                   memset(buf, 0, sz + 1);
                   rewind(f);
-                  if (fread(buf, 1, sz, f))
+                  if (fread(buf, 1, sz, f) == sz)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_name_dump_list_cb, nl);
