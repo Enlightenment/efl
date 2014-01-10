@@ -2680,7 +2680,7 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
                     ev.cur.canvas.xsub = ev.cur.canvas.x; // fixme - lost precision
                   if (y != ev.cur.canvas.y)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
-                    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
+                  evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MULTI_MOVE, &ev, event_id);
                   if ((obj->proxy->is_proxy) || (obj->proxy->src_events))
                     _evas_event_source_multi_move_events(eo_obj, eo_e, &ev,
                                                          event_id);
