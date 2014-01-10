@@ -958,8 +958,10 @@ static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Sele
    Evas_Object *win = data;
    Evas_Object *ic = elm_icon_add(win);
    char *p = strchr(ev->data, '#');
+   if (!p) return EINA_FALSE;
    p++;
    char *p2 = strchr(p, '#');
+   if (!p2) return EINA_FALSE;
    *p2 = '\0';
    elm_image_file_set(ic, p, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -980,8 +982,10 @@ static Eina_Bool _drop_but_cb_remove_cb(void *data EINA_UNUSED, Evas_Object *obj
 static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
 {
    char *p = strchr(ev->data, '#');
+   if (!p) return EINA_FALSE;
    p++;
    char *p2 = strchr(p, '#');
+   if (!p2) return EINA_FALSE;
    *p2 = '\0';
    elm_bg_file_set(obj, p, NULL);
    return EINA_TRUE;
