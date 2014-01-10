@@ -490,6 +490,8 @@ _on_direct(void *data,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
+   if (!data) return;
+
    elm_glview_mode_set(data, 0
                        | ELM_GLVIEW_ALPHA
                        | ELM_GLVIEW_DEPTH
@@ -502,6 +504,8 @@ _on_indirect(void *data,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
+   if (!data) return;
+
    elm_glview_mode_set(data, 0
                        | ELM_GLVIEW_ALPHA
                        | ELM_GLVIEW_DEPTH
@@ -588,7 +592,7 @@ _mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
 void
 test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx0, *bx, *bt, *gl;
+   Evas_Object *win, *bx0, *bx, *bt, *gl, *lb;
    Ecore_Animator *ani;
    GLData *gld = NULL;
 
@@ -633,34 +637,50 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    // Add a GLView
    gl = elm_glview_add(win);
-   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_glview_mode_set(gl, 0
-                       | ELM_GLVIEW_ALPHA
-                       | ELM_GLVIEW_DEPTH
-                      );
-   elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
-   elm_glview_render_policy_set(gl, ELM_GLVIEW_RENDER_POLICY_ALWAYS);
-   elm_glview_init_func_set(gl, _init_gl);
-   elm_glview_del_func_set(gl, _del_gl);
-   elm_glview_resize_func_set(gl, _resize_gl);
-   elm_glview_render_func_set(gl, (Elm_GLView_Func_Cb)_draw_gl);
-   elm_box_pack_end(bx, gl);
-   evas_object_show(gl);
+   if (gl)
+     {
+        evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_glview_mode_set(gl, 0
+                            | ELM_GLVIEW_ALPHA
+                            | ELM_GLVIEW_DEPTH
+                           );
+        elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+        elm_glview_render_policy_set(gl, ELM_GLVIEW_RENDER_POLICY_ALWAYS);
+        elm_glview_init_func_set(gl, _init_gl);
+        elm_glview_del_func_set(gl, _del_gl);
+        elm_glview_resize_func_set(gl, _resize_gl);
+        elm_glview_render_func_set(gl, (Elm_GLView_Func_Cb)_draw_gl);
+        elm_box_pack_end(bx, gl);
+        evas_object_show(gl);
 
-   // Add Mouse/Key Event Callbacks
-   elm_object_focus_set(gl, EINA_TRUE);
-   evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _key_down, gl);
-   evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, gl);
-   evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_UP, _mouse_up, gl);
-   evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, gl);
+        // Add Mouse/Key Event Callbacks
+        elm_object_focus_set(gl, EINA_TRUE);
+        evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _key_down, gl);
+        evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, gl);
+        evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_UP, _mouse_up, gl);
+        evas_object_event_callback_add(gl, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move, gl);
 
-   // Animator and other vars
-   ani = ecore_animator_add(_anim, gl);
-   gld->glapi = elm_glview_gl_api_get(gl);
-   evas_object_data_set(gl, "ani", ani);
-   evas_object_data_set(gl, "gld", gld);
-   evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
+        // Animator and other vars
+        ani = ecore_animator_add(_anim, gl);
+        gld->glapi = elm_glview_gl_api_get(gl);
+        evas_object_data_set(gl, "ani", ani);
+        evas_object_data_set(gl, "gld", gld);
+        evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
+     }
+   else
+     {
+        lb = elm_label_add(bx);
+        elm_object_text_set(lb, "<align=left> GL backend engine is not supported.<br/>"
+                            " 1. Check your back-end engine or<br/>"
+                            " 2. Run elementary_test with engine option or<br/>"
+                            "    ex) $ <b>ELM_ENGINE=gl</b> elementary_test<br/>"
+                            " 3. Change your back-end engine from elementary_config.<br/></align>");
+        evas_object_size_hint_weight_set(lb, 0.0, 0.0);
+        evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(bx, lb);
+        evas_object_show(lb);
+     }
 
    /* add an ok button */
    bt = elm_button_add(win);
