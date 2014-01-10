@@ -591,9 +591,17 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DRM],
 [
 
 requirement=""
+requirement_egl=""
 have_dep="no"
+have_egl="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
+
+if test "x${with_opengl}" = "xes" ; then
+    gl_library="glesv2"
+else
+    gl_library="no"
+fi
 
 PKG_CHECK_EXISTS([libdrm],
    [
@@ -602,12 +610,22 @@ PKG_CHECK_EXISTS([libdrm],
    ],
    [have_dep="no"])
 
+if test "x${gl_library}" = "xglesv2" ; then
+  PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
+     [
+      have_egl="yes"
+      requirement_egl="egl >= 7.10 ${gl_library}"
+     ],
+     [have_egl="no"])
+fi
+
+
 if test "x${have_dep}" = "xyes" ; then
    if test "x$3" = "xstatic" ; then
-      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
-      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
+      requirements_pc_evas="${requirement} ${requirement_egl} ${requirements_pc_evas}"
+      requirements_pc_deps_evas="${requirement} ${requirement_egl} ${requirements_pc_deps_evas}"
    else
-      PKG_CHECK_MODULES([DRM], [${requirement}])
+      PKG_CHECK_MODULES([DRM], [${requirement} ${requirement_egl}])
       evas_engine_[]$1[]_cflags="${DRM_CFLAGS}"
       evas_engine_[]$1[]_libs="${DRM_LIBS}"
    fi
