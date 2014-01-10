@@ -393,3 +393,22 @@ ecore_drm_shutdown(void)
    /* return init count */
    return _ecore_drm_init_count;
 }
+
+EAPI void *
+ecore_drm_gbm_get(Ecore_Drm_Device *dev)
+{
+   if (!dev) return NULL;
+
+#ifdef HAVE_GBM
+   return dev->gbm;
+#endif
+
+   return NULL;
+}
+
+EAPI unsigned int 
+ecore_drm_gbm_format_get(Ecore_Drm_Device *dev)
+{
+   if (!dev) return 0;
+   return dev->format;
+}
