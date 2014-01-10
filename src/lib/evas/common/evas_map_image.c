@@ -784,7 +784,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
      }
 
    evas_common_image_colorspace_normalize(src);
-   if (!src->image.data) return;
+   if ((!src->image.data) || (!dst->image.data)) return;
 
    if ((!dc->cutout.rects) && (!dc->clip.use))
      {
@@ -832,7 +832,7 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
 
    evas_common_image_colorspace_normalize(src);
 
-   if (!src->image.data) return EINA_FALSE;
+   if ((!src->image.data) || (!dst->image.data)) return EINA_FALSE;
 
    if ((!dc->cutout.rects) && (!dc->clip.use))
      {

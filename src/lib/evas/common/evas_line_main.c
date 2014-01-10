@@ -30,6 +30,7 @@ _evas_draw_point(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y)
 {
    RGBA_Gfx_Pt_Func pfunc;
 
+   if (!dst->image.data) return;
    if (!IN_RANGE(x, y, dst->cache_entry.w, dst->cache_entry.h))
 	return;
    if ((dc->clip.use) && (!IN_RECT(x, y, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h)))
@@ -60,6 +61,7 @@ evas_common_line_point_draw(RGBA_Image *dst, int clip_x, int clip_y, int clip_w,
    Eina_Bool no_cuse;
    RGBA_Gfx_Pt_Func pfunc;
 
+   if (!dst->image.data) return;
    no_cuse = ((clip_x == 0) && (clip_y == 0) &&
               ((clip_w == (int)dst->cache_entry.w) &&
                (clip_h == (int)dst->cache_entry.h)));

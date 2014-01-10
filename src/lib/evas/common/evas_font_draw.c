@@ -39,6 +39,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    DATA32 *im;
    Evas_Glyph *glyph;
 
+   if (!dst->image.data) return EINA_FALSE;
    if (!glyphs) return EINA_FALSE;
    if (!glyphs->array) return EINA_FALSE;
 

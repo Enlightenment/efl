@@ -401,7 +401,8 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
 # ifdef PIXMAN_IMAGE   
    RGBA_Image *im = (RGBA_Image *)ie;
    int w, h;
-   
+
+   if (!im->image.data) return;
    if (im->pixman.im) pixman_image_unref(im->pixman.im);
    w = ie->allocated.w;
    h = ie->allocated.h;

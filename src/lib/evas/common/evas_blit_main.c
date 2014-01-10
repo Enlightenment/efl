@@ -35,6 +35,7 @@ evas_common_blit_rectangle(const RGBA_Image *src, RGBA_Image *dst, int src_x, in
    Gfx_Func_Copy func;
    DATA32 *src_ptr, *dst_ptr;
 
+   if ((!src->image.data) || (!dst->image.data)) return;
    /* clip clip clip */
    if (w <= 0) return;
    if (src_x + w > (int)src->cache_entry.w) w = src->cache_entry.w - src_x;

@@ -111,6 +111,7 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
    int yy;
    DATA32 *ptr;
 
+   if (!dst->image.data) return;
    RECTS_CLIP_TO_RECT(x, y, w, h, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
    if ((w <= 0) || (h <= 0)) return;
 

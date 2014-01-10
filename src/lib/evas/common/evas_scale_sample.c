@@ -70,6 +70,7 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func;
 
+   if ((!src->image.data) || (!dst->image.data)) return;
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h,
                          0, 0, dst->cache_entry.w, dst->cache_entry.h))) return;
    if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h,

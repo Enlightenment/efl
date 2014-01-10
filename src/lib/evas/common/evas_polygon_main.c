@@ -137,6 +137,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    int                ext_x, ext_y, ext_w, ext_h;
    int               *sorted_index;
 
+   if (!dst->image.data) return;
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_POLY
    pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
@@ -325,6 +326,7 @@ evas_common_polygon_rgba_draw(RGBA_Image *dst, int ext_x, int ext_y, int ext_w, 
    int                yy0, yy1, yi;
    int               *sorted_index;
 
+   if (!dst->image.data) return;
    if ((ext_w <= 0) || (ext_h <= 0)) return;
 
    evas_common_cpu_end_opt();
