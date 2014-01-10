@@ -811,13 +811,15 @@ evas_common_font_all_clear(void)
 }
 
 void
-evas_common_font_int_promote(RGBA_Font_Int *fi)
+evas_common_font_int_promote(RGBA_Font_Int *fi EINA_UNUSED)
 {
   return;
+/* unused - keep for reference  
   if (fonts_use_lru == (Eina_Inlist *)fi) return;
   if (!fi->inuse) return;
   fonts_use_lru = eina_inlist_remove(fonts_use_lru, EINA_INLIST_GET(fi));
   fonts_use_lru = eina_inlist_prepend(fonts_use_lru, EINA_INLIST_GET(fi));
+ */
 }
 
 void
@@ -829,9 +831,10 @@ evas_common_font_int_use_increase(int size)
 void
 evas_common_font_int_use_trim(void)
 {
+  return;
+/* unused - keep for reference  
   Eina_Inlist *l;
 
-  return;
   if (fonts_use_usage <= (font_cache << 1)) return;
   if (!fonts_use_lru) return;
   l = fonts_use_lru->last;
@@ -845,17 +848,20 @@ evas_common_font_int_use_trim(void)
       evas_common_font_int_promote(fi);
       l = l->prev;
     }
+ */
 }
 
 void
-evas_common_font_int_unload(RGBA_Font_Int *fi)
+evas_common_font_int_unload(RGBA_Font_Int *fi EINA_UNUSED)
 {
   return;
+/* unused - keep for reference  
   if (!fi->src->ft.face) return;
   _evas_common_font_int_clear(fi);
   FT_Done_Size(fi->ft.size);
   fi->ft.size = NULL;
   evas_common_font_source_unload(fi->src);
+ */
 }
 
 void
@@ -864,8 +870,10 @@ evas_common_font_int_reload(RGBA_Font_Int *fi)
   if (fi->src->ft.face) return;
   evas_common_font_source_load_complete(fi->src);
   return;
+/* unused - keep for reference  
   evas_common_font_source_reload(fi->src);
   evas_common_font_int_load_complete(fi);
+ */
 }
 
 /* when the fi->references == 0 we increase this instead of really deleting
