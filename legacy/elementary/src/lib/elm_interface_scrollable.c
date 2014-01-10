@@ -1757,23 +1757,24 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
    if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
        (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
      {
+        ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
+        ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
+        if (sid->down.bounce_x_animator)
+          {
+             ELM_SAFE_FREE(sid->down.bounce_x_animator, ecore_animator_del);
+             sid->bouncemex = EINA_FALSE;
+             if (sid->content_info.resized)
+               _elm_scroll_wanted_region_set(sid->obj);
+          }
+        if (sid->down.bounce_y_animator)
+          {
+             ELM_SAFE_FREE(sid->down.bounce_y_animator, ecore_animator_del);
+             sid->bouncemey = EINA_FALSE;
+             if (sid->content_info.resized)
+               _elm_scroll_wanted_region_set(sid->obj);
+          }
+
         _elm_scroll_anim_stop(sid);
-     }
-   ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
-   ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
-   if (sid->down.bounce_x_animator)
-     {
-        ELM_SAFE_FREE(sid->down.bounce_x_animator, ecore_animator_del);
-        sid->bouncemex = EINA_FALSE;
-        if (sid->content_info.resized)
-          _elm_scroll_wanted_region_set(sid->obj);
-     }
-   if (sid->down.bounce_y_animator)
-     {
-        ELM_SAFE_FREE(sid->down.bounce_y_animator, ecore_animator_del);
-        sid->bouncemey = EINA_FALSE;
-        if (sid->content_info.resized)
-          _elm_scroll_wanted_region_set(sid->obj);
      }
    if (sid->down.hold_animator)
      {
