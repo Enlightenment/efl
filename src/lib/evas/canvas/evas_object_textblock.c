@@ -10339,8 +10339,11 @@ _textblock_line_number_geometry_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *
    Evas_Coord *cw = va_arg(*list, Evas_Coord *);
    Evas_Coord *ch = va_arg(*list, Evas_Coord *);
    Eina_Bool *result = va_arg(*list, Eina_Bool *);
+   const Evas_Object_Textblock *o = _pd;
 
    Evas_Object_Textblock_Line *ln;
+
+   _relayout_if_needed(eo_obj, o);
 
    ln = _find_layout_line_num(eo_obj, line);
    if (!ln)
