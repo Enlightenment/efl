@@ -278,6 +278,11 @@ void                _ecore_xcb_damage_finalize(void);
 void                _ecore_xcb_composite_init(void);
 void                _ecore_xcb_composite_finalize(void);
 
+void                _ecore_xcb_present_init(void);
+void                _ecore_xcb_present_finalize(void);
+void                _ecore_xcb_event_handle_present_event(xcb_ge_event_t *ev);
+extern int _ecore_xcb_event_xpresent;
+
 void                _ecore_xcb_dpms_init(void);
 void                _ecore_xcb_dpms_finalize(void);
 

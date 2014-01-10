@@ -94,6 +94,7 @@ typedef void           Ecore_X_Connection;
 typedef void           Ecore_X_Screen;
 typedef Ecore_X_ID     Ecore_X_Sync_Counter;
 typedef Ecore_X_ID     Ecore_X_Sync_Alarm;
+typedef Ecore_X_ID     Ecore_X_Sync_Fence; /**< @since 1.9 */
 typedef void           Ecore_X_XRegion;
 
 typedef Ecore_X_ID     Ecore_X_Randr_Output;
@@ -489,11 +490,17 @@ typedef struct _Ecore_X_Event_Startup_Sequence             Ecore_X_Event_Startup
 
 typedef struct _Ecore_X_Event_Generic                      Ecore_X_Event_Generic;
 
+
+typedef struct Ecore_X_Event_Present_Configure             Ecore_X_Event_Present_Configure; /**< @since 1.9 */
+typedef struct Ecore_X_Event_Present_Complete              Ecore_X_Event_Present_Complete; /**< @since 1.9 */
+typedef struct Ecore_X_Event_Present_Idle                  Ecore_X_Event_Present_Idle; /**< @since 1.9 */
+
 typedef struct _Ecore_X_Randr_Screen_Size                  Ecore_X_Randr_Screen_Size;
 typedef struct _Ecore_X_Randr_Screen_Size_MM               Ecore_X_Randr_Screen_Size_MM;
 typedef struct _Ecore_X_Randr_Crtc_Info                    Ecore_X_Randr_Crtc_Info; /**< @since 1.8 */
 
 typedef struct _Ecore_X_Xdnd_Position                      Ecore_X_Xdnd_Position;
+
 
 struct _Ecore_X_Event_Mouse_In
 {
@@ -1053,6 +1060,59 @@ struct _Ecore_X_Event_Generic
    void        *data;
 };
 
+typedef enum Ecore_X_Present_Event_Mask
+{
+    ECORE_X_PRESENT_EVENT_MASK_NO_EVENT = 0,
+    ECORE_X_PRESENT_EVENT_MASK_CONFIGURE_NOTIFY = 1,
+    ECORE_X_PRESENT_EVENT_MASK_COMPLETE_NOTIFY = 2,
+    ECORE_X_PRESENT_EVENT_MASK_IDLE_NOTIFY = 4,
+} Ecore_X_Present_Event_Mask; /**< @since 1.9 */
+
+typedef struct Ecore_X_Present
+{
+   Ecore_X_Window win;
+   unsigned int serial;
+} Ecore_X_Present; /**< @since 1.9 */
+
+struct Ecore_X_Event_Present_Configure
+{
+   Ecore_X_Window win;
+
+   int x, y;
+   unsigned int width, height;
+   int off_x, off_y;
+   int pixmap_width, pixmap_height;
+   long pixmap_flags;
+}; /**< @since 1.9 */
+
+typedef enum
+{
+   ECORE_X_PRESENT_COMPLETE_MODE_COPY,
+   ECORE_X_PRESENT_COMPLETE_MODE_FLIP,
+   ECORE_X_PRESENT_COMPLETE_MODE_SKIP,
+} Ecore_X_Present_Complete_Mode;
+
+struct Ecore_X_Event_Present_Complete
+{
+   Ecore_X_Window win;
+
+   unsigned int serial; // value provided when generating request
+   unsigned long long ust; // system time of presentation
+   unsigned long long msc; // frame count at time of presentation
+   Eina_Bool kind : 1; /* 0 for PresentCompleteKindPixmap (PresentPixmap completion),
+                          1 for PresentCompleteKindNotifyMsc (PresentNotifyMSC completion) */
+   Ecore_X_Present_Complete_Mode mode;
+}; /**< @since 1.9 */
+
+struct Ecore_X_Event_Present_Idle
+{
+   Ecore_X_Window win;
+
+   unsigned int serial;
+   Ecore_X_Pixmap pixmap;
+   Ecore_X_Sync_Fence idle_fence;
+}; /**< @since 1.9 */
+
 EAPI extern int ECORE_X_EVENT_ANY; /**< low level event dependent on
                                         backend in use, if Xlib will be XEvent, if XCB will be xcb_generic_event_t.
                                         @warning avoid using it.
@@ -1117,6 +1177,10 @@ EAPI extern int ECORE_X_EVENT_XKB_STATE_NOTIFY; /** @since 1.7 */
 EAPI extern int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY; /** @since 1.7 */
 
 EAPI extern int ECORE_X_EVENT_GENERIC;
+
+EAPI extern int ECORE_X_EVENT_PRESENT_CONFIGURE; /**< @since 1.9 */
+EAPI extern int ECORE_X_EVENT_PRESENT_COMPLETE; /**< @since 1.9 */
+EAPI extern int ECORE_X_EVENT_PRESENT_IDLE; /**< @since 1.9 */
 
 EAPI extern int ECORE_X_EVENT_XDND_ENTER;
 EAPI extern int ECORE_X_EVENT_XDND_POSITION;
@@ -2355,6 +2419,20 @@ EAPI void               ecore_x_composite_window_events_disable(Ecore_X_Window w
 EAPI void               ecore_x_composite_window_events_enable(Ecore_X_Window win);
 EAPI Ecore_X_Window     ecore_x_composite_render_window_enable(Ecore_X_Window root);
 EAPI void               ecore_x_composite_render_window_disable(Ecore_X_Window root);
+
+/* XPresent Extension Support */
+/** @since 1.9 */
+EAPI void ecore_x_present_select_events(Ecore_X_Window win, unsigned int events);
+/** @since 1.9 */
+EAPI void ecore_x_present_notify_msc(Ecore_X_Window win, unsigned int serial, unsigned long long target_msc, unsigned long long divisor, unsigned long long remainder);
+/** @since 1.9 */
+EAPI void ecore_x_present_pixmap(Ecore_X_Window win, Ecore_X_Pixmap pixmap, unsigned int serial, Ecore_X_Region valid,
+                                 Ecore_X_Region update, int x_off, int y_off, Ecore_X_Randr_Crtc target_crtc,
+                                 Ecore_X_Sync_Fence wait_fence, Ecore_X_Sync_Fence idle_fence, unsigned int options,
+                                 unsigned long long target_msc, unsigned long long divisor, unsigned long long remainder,
+                                 Ecore_X_Present *notifies, int num_notifies);
+/** @since 1.9 */
+EAPI Eina_Bool ecore_x_present_exists(void);
 
 /* XDamage Extension Support */
 typedef Ecore_X_ID Ecore_X_Damage;

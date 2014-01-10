@@ -40,6 +40,9 @@
 #ifdef ECORE_XCOMPOSITE
 #include <X11/extensions/Xcomposite.h>
 #endif /* ifdef ECORE_XCOMPOSITE */
+#ifdef ECORE_XPRESENT
+#include <X11/extensions/Xpresent.h>
+#endif /* ifdef ECORE_XPRESENT */
 #ifdef ECORE_XDAMAGE
 #include <X11/extensions/Xdamage.h>
 #endif /* ifdef ECORE_XDAMAGE */
@@ -264,6 +267,10 @@ void   _ecore_x_event_handle_xkb(XEvent *xevent);
 #endif  /* ifdef ECORE_XKB */
 void      _ecore_x_event_handle_generic_event(XEvent *xevent);
 
+#ifdef ECORE_XPRESENT
+void      _ecore_x_present_handler(XGenericEvent *ge);
+#endif
+
 void      _ecore_x_selection_data_init(void);
 void      _ecore_x_selection_shutdown(void);
 Ecore_X_Atom _ecore_x_selection_target_atom_get(const char *target);
@@ -308,12 +315,14 @@ int                  _ecore_x_netwm_startup_info(Ecore_X_Window win,
 void _ecore_x_fixes_init(void);
 void _ecore_x_damage_init(void);
 void _ecore_x_composite_init(void);
+void _ecore_x_present_init(void);
 void _ecore_x_dpms_init(void);
 void _ecore_x_randr_init(void);
 void _ecore_x_gesture_init(void);
 
 void _ecore_x_atoms_init(void);
 
+extern int _ecore_x_present_major;
 extern int _ecore_x_xi2_opcode;
 
 void _ecore_x_events_init(void);

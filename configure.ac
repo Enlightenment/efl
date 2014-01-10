@@ -2697,6 +2697,17 @@ AC_ARG_ENABLE([gesture],
    ],
    [want_gesture="no"])
 
+AC_ARG_ENABLE([xpresent],
+   [AC_HELP_STRING([--enable-xpresent], [enable X11 XPresent extension support])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_xpresent="yes"
+    else
+       want_xpresent="no"
+    fi
+   ],
+   [want_xpresent="no"])
+
 AC_ARG_ENABLE([xinput2],
    [AC_HELP_STRING([--disable-xinput2], [disable X11 XInput v2.x support])],
    [
@@ -2861,6 +2872,11 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
    ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
 
+   if test "${want_xpresent}" = "yes"; then
+      ECORE_CHECK_X_EXTENSION([Xpresent], [Xpresent.h], [Xpresent], [XPresentQueryExtension])
+   fi
+   EFL_ADD_FEATURE([ECORE_X], [xpresent])
+
    if test "${want_gesture}" = "yes"; then
       ECORE_CHECK_X_EXTENSION([Xgesture], [gesture.h], [Xgesture], [XGestureQueryExtension])
    fi
@@ -2888,7 +2904,7 @@ fi
 if test "${want_x11_xcb}" = "yes"; then
 dnl note: added pixman-1 as ecore_xcb_region uses that
    EFL_DEPEND_PKG([ECORE_X], [ECORE_X_XCB],
-      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xprint xcb-xtest xcb-renderutil pixman-1])
+      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-present xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xprint xcb-xtest xcb-renderutil pixman-1])
 
 dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_COMPOSITE], [1], [Build support for XCB composite])
@@ -2904,6 +2920,12 @@ dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_XPRINT], [1], [Build support for XCB xprint])
    AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
    AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
+
+   EFL_OPTIONAL_DEPEND_PKG([ECORE_X], [${want_xpresent}], [ECORE_XCB_XPRESENT],
+      [xcb-present])
+   AC_DEFINE_IF([ECORE_XCB_XPRESENT], [test "${want_xpresent}" = "yes"],
+      [1], [Build support for XCB Present])
+   EFL_ADD_FEATURE([ECORE_X], [xpresent])
 
    EFL_OPTIONAL_DEPEND_PKG([ECORE_X], [${want_gesture}], [ECORE_XCB_GESTURE],
       [xcb-gesture])

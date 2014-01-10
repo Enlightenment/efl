@@ -2270,7 +2270,6 @@ static void
 _ecore_x_event_free_generic_event(void *data,
                                   void *ev)
 {
-#ifdef ECORE_XI2
    Ecore_X_Event_Generic *e = (Ecore_X_Event_Generic *)ev;
 
    if (data)
@@ -2280,22 +2279,25 @@ _ecore_x_event_free_generic_event(void *data,
         free(data);
      }
    free(e);
-#else
-   return;
-   data = NULL; ev = NULL;
-#endif /* ifdef ECORE_XI2 */
 }
 
 void
 _ecore_x_event_handle_generic_event(XEvent *event)
 {
-#ifdef ECORE_XI2
    XGenericEvent *generic_event;
    Ecore_X_Event_Generic *e;
    XGenericEventCookie *data;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    generic_event = (XGenericEvent *)event;
+
+#ifdef ECORE_XPRESENT
+   if (generic_event->extension == _ecore_x_present_major)
+     {
+        _ecore_x_present_handler(generic_event);
+        return;
+     }
+#endif
 
    e = calloc(1, sizeof(Ecore_X_Event_Generic));
    if (!e)
@@ -2314,20 +2316,16 @@ _ecore_x_event_handle_generic_event(XEvent *event)
 
    e->extension = generic_event->extension;
    e->evtype = generic_event->evtype;
-
+#ifdef ECORE_XI2
    if (e->extension == _ecore_x_xi2_opcode)
      _ecore_x_input_handler(event);
-
+#endif /* ifdef ECORE_XI2 */
    data = malloc(sizeof(XGenericEventCookie));
    if (data) memcpy(data, &(event->xcookie), sizeof(XGenericEventCookie));
    ecore_event_add(ECORE_X_EVENT_GENERIC,
                    e,
                    _ecore_x_event_free_generic_event,
                    data);
-#else
-   return;
-   event = NULL;
-#endif /* ifdef ECORE_XI2 */
 }
 
 #ifdef ECORE_XGESTURE

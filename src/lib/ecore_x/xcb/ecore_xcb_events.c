@@ -18,6 +18,9 @@
 # ifdef ECORE_XCB_XFIXES
 #  include <xcb/xfixes.h>
 # endif
+# ifdef ECORE_XCB_XPRESENT
+#  include <xcb/present.h>
+# endif
 # ifdef ECORE_XCB_XGESTURE
 #  include <xcb/gesture.h>
 # endif
@@ -184,6 +187,10 @@ EAPI int ECORE_X_EVENT_XKB_STATE_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_GENERIC = 0;
 
+EAPI int ECORE_X_EVENT_PRESENT_CONFIGURE = 0;
+EAPI int ECORE_X_EVENT_PRESENT_COMPLETE = 0;
+EAPI int ECORE_X_EVENT_PRESENT_IDLE = 0;
+
 EAPI int ECORE_X_RAW_BUTTON_PRESS = 0;
 EAPI int ECORE_X_RAW_BUTTON_RELEASE = 0;
 EAPI int ECORE_X_RAW_MOTION = 0;
@@ -252,6 +259,10 @@ _ecore_xcb_events_init(void)
         ECORE_X_EVENT_XKB_STATE_NOTIFY = ecore_event_type_new();
         ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
         ECORE_X_EVENT_GENERIC = ecore_event_type_new();
+
+        ECORE_X_EVENT_PRESENT_CONFIGURE = ecore_event_type_new();
+        ECORE_X_EVENT_PRESENT_COMPLETE = ecore_event_type_new();
+        ECORE_X_EVENT_PRESENT_IDLE = ecore_event_type_new();
 
 	ECORE_X_RAW_BUTTON_PRESS = ecore_event_type_new();
 	ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
@@ -2302,6 +2313,11 @@ _ecore_xcb_event_handle_generic_event(xcb_generic_event_t *event)
         _ecore_xcb_event_handle_input_event(event);
 // FIXME: should we generate generic events as WELL as input events?
 //        return;
+     }
+   else if (ev->pad0 == _ecore_xcb_event_xpresent)
+     {
+        _ecore_xcb_event_handle_present_event((xcb_ge_event_t*)event);
+        return;
      }
 
    if (!(e = calloc(1, sizeof(Ecore_X_Event_Generic))))

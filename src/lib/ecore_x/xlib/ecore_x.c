@@ -148,6 +148,10 @@ EAPI int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
 
 EAPI int ECORE_X_EVENT_GENERIC = 0;
 
+EAPI int ECORE_X_EVENT_PRESENT_CONFIGURE = 0;
+EAPI int ECORE_X_EVENT_PRESENT_COMPLETE = 0;
+EAPI int ECORE_X_EVENT_PRESENT_IDLE = 0;
+
 EAPI int ECORE_X_MODIFIER_SHIFT = 0;
 EAPI int ECORE_X_MODIFIER_CTRL = 0;
 EAPI int ECORE_X_MODIFIER_ALT = 0;
@@ -665,6 +669,7 @@ ecore_x_init(const char *name)
    _ecore_x_fixes_init();
    _ecore_x_damage_init();
    _ecore_x_composite_init();
+   _ecore_x_present_init();
    _ecore_x_dpms_init();
    _ecore_x_randr_init();
    _ecore_x_gesture_init();

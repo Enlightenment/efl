@@ -38,6 +38,7 @@ lib/ecore_x/xcb/ecore_xcb_input.c \
 lib/ecore_x/xcb/ecore_xcb_gesture.c \
 lib/ecore_x/xcb/ecore_xcb_mwm.c \
 lib/ecore_x/xcb/ecore_xcb_pixmap.c \
+lib/ecore_x/xcb/ecore_xcb_present.c \
 lib/ecore_x/xcb/ecore_xcb_region.c \
 lib/ecore_x/xcb/ecore_xcb_selection.c \
 lib/ecore_x/xcb/ecore_xcb_textlist.c \
@@ -75,6 +76,7 @@ lib/ecore_x/xlib/ecore_x_window.c \
 lib/ecore_x/xlib/ecore_x_window_prop.c \
 lib/ecore_x/xlib/ecore_x_window_shape.c \
 lib/ecore_x/xlib/ecore_x_pixmap.c \
+lib/ecore_x/xlib/ecore_x_present.c \
 lib/ecore_x/xlib/ecore_x_gc.c \
 lib/ecore_x/xlib/ecore_x_xinerama.c \
 lib/ecore_x/xlib/ecore_x_screensaver.c \
