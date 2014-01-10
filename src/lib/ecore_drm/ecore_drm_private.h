@@ -23,6 +23,10 @@
 
 # ifdef HAVE_GBM
 #  include <gbm.h>
+#  include <EGL/egl.h>
+#  include <EGL/eglext.h>
+#  include <GLES2/gl2.h>
+#  include <GLES2/gl2ext.h>
 # endif
 
 # include <Ecore_Drm.h>
@@ -100,18 +104,6 @@ extern FILE *lg;
 
 extern struct udev *udev;
 
-typedef struct _Ecore_Drm_Fb Ecore_Drm_Fb;
-struct _Ecore_Drm_Fb
-{
-   unsigned int id, hdl;
-   unsigned int stride, size;
-   int fd;
-   void *mmap;
-# ifdef HAVE_GBM
-   struct gbm_bo *bo;
-# endif
-};
-
 struct _Ecore_Drm_Output_Mode
 {
    unsigned int flags;
@@ -122,12 +114,19 @@ struct _Ecore_Drm_Output_Mode
 
 struct _Ecore_Drm_Output
 {
+   Ecore_Drm_Device *dev;
    unsigned int crtc_id;
    unsigned int conn_id;
    drmModeCrtcPtr crtc;
 
    int x, y;
    int drm_fd;
+
+   Eina_Bool need_repaint : 1;
+   Eina_Bool repaint_scheduled : 1;
+
+   Eina_Bool pending_flip : 1;
+   Eina_Bool pending_vblank : 1;
 
    const char *make, *model, *name;
    unsigned int subpixel;
@@ -141,6 +140,10 @@ struct _Ecore_Drm_Output
 # ifdef HAVE_GBM
    struct gbm_surface *surface;
    struct gbm_bo *cursor[NUM_FRAME_BUFFERS];
+   struct 
+     {
+        EGLSurface surface;
+     } egl;
 # endif
 
    /* TODO: finish */
@@ -222,6 +225,7 @@ struct _Ecore_Drm_Device
         const char *path;
         clockid_t clock;
         Ecore_Fd_Handler *hdlr;
+        Ecore_Idle_Enterer *idler;
      } drm;
 
    unsigned int min_width, min_height;
@@ -249,6 +253,12 @@ struct _Ecore_Drm_Device
 
 #ifdef HAVE_GBM
    struct gbm_device *gbm;
+   struct
+     {
+        EGLDisplay disp;
+        EGLContext ctxt;
+        EGLConfig cfg;
+     } egl;
 #endif
 };
 
@@ -263,5 +273,7 @@ Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
 void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 
 void _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
+void _ecore_drm_output_repaint_start(Ecore_Drm_Output *output);
+void _ecore_drm_output_frame_finish(Ecore_Drm_Output *output);
 
 #endif
