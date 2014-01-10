@@ -197,7 +197,8 @@ _dbus_state_set_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendin
    void *user_data = eldbus_pending_data_del(pending, "user_data");
    const char *error = NULL, *error_message = NULL;
 
-   eldbus_message_error_get(msg, &error, &error_message);
+   if (!eldbus_message_error_get(msg, &error, &error_message))
+     error_message = NULL;
 
    cb(user_data, eo, error, error_message);
 }
