@@ -516,6 +516,11 @@ _point_color_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Mapbuf_Smart_Data *sd = _pd;
 
+   if ((idx < 0) || (idx >= 4))
+     {
+        ERR("idx value should be 0 ~ 4");
+        return;
+     }
    *r = sd->colors[idx].r;
    *g = sd->colors[idx].g;
    *b = sd->colors[idx].b;
@@ -527,14 +532,6 @@ elm_mapbuf_point_color_get(Evas_Object *obj, int idx,
                            int *r, int *g, int *b, int *a)
 {
    ELM_MAPBUF_CHECK(obj);
-   ELM_MAPBUF_DATA_GET(obj, sd);
-
-   if ((idx < 0) || (idx >= (int)(sizeof(sd->colors)/sizeof(sd->colors[0]))))
-     {
-        ERR("idx value should be 0 ~ %zd, mapbuf(%p)",
-            ((sizeof(sd->colors)/sizeof(sd->colors[0])) - 1), obj);
-        return;
-     }
 
    eo_do(obj, elm_obj_mapbuf_point_color_get(idx, r, g, b, a));
 }
@@ -550,6 +547,11 @@ _point_color_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    Elm_Mapbuf_Smart_Data *sd = _pd;
 
+   if ((idx < 0) || (idx >= 4))
+     {
+        ERR("idx value should be 0 ~ 4");
+        return;
+     }
    sd->colors[idx].r = r;
    sd->colors[idx].g = g;
    sd->colors[idx].b = b;
@@ -563,14 +565,6 @@ elm_mapbuf_point_color_set(Evas_Object *obj, int idx,
                            int r, int g, int b, int a)
 {
    ELM_MAPBUF_CHECK(obj);
-   ELM_MAPBUF_DATA_GET(obj, sd);
-
-   if ((idx < 0) || (idx >= (int)(sizeof(sd->colors)/sizeof(sd->colors[0]))))
-     {
-        ERR("idx value should be 0 ~ %zd, mapbuf(%p)",
-            ((sizeof(sd->colors)/sizeof(sd->colors[0])) - 1), obj);
-        return;
-     }
 
    eo_do(obj, elm_obj_mapbuf_point_color_set(idx, r, g, b, a));
 }
