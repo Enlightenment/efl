@@ -1008,13 +1008,11 @@ _funci(char *s, int *val)
      {
         s += 5;
         s = _deltai(s, val);
-        *val = *val;
      }
    else if (!strncmp(s, "ceil(", 5))
      {
         s += 4;
         s = _deltai(s, val);
-        *val = *val;
      }
    else
      {
