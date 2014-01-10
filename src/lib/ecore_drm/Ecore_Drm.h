@@ -76,6 +76,19 @@ typedef struct _Ecore_Drm_Message
    void *data;
 } Ecore_Drm_Message;
 
+/* structure for fb objects */
+typedef struct _Ecore_Drm_Fb
+{
+   Eina_Bool from_client : 1;
+   unsigned int id, hdl;
+   unsigned int stride, size;
+   int fd;
+   void *mmap;
+#ifdef HAVE_GBM
+   struct gbm_bo *bo;
+#endif
+} Ecore_Drm_Fb;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -118,6 +131,9 @@ typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
 EAPI int ecore_drm_init(void);
 EAPI int ecore_drm_shutdown(void);
 
+EAPI void *ecore_drm_gbm_get(Ecore_Drm_Device *dev);
+EAPI unsigned int ecore_drm_gbm_format_get(Ecore_Drm_Device *dev);
+
 EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat);
 EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
@@ -135,6 +151,8 @@ EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h);
 EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
+EAPI void ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
+EAPI void ecore_drm_output_repaint(Ecore_Drm_Output *output);
 
 EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
@@ -144,5 +162,8 @@ EAPI void ecore_drm_inputs_disable(Ecore_Drm_Input *input);
 EAPI Eina_Bool ecore_drm_sprites_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_sprites_destroy(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags);
+
+EAPI Ecore_Drm_Fb *ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
+EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 
 #endif
