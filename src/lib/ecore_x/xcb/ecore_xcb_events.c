@@ -1248,6 +1248,8 @@ _ecore_xcb_event_handle_selection_clear(xcb_generic_event_t *event)
      e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
      e->selection = ECORE_X_SELECTION_SECONDARY;
+   else if (sel == ECORE_X_ATOM_SELECTION_XDND)
+     e->selection = ECORE_X_SELECTION_XDND;
    else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
@@ -2267,6 +2269,8 @@ _ecore_xcb_event_handle_xfixes_selection_notify(xcb_generic_event_t *event)
      e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
      e->selection = ECORE_X_SELECTION_SECONDARY;
+   else if (sel == ECORE_X_ATOM_SELECTION_XDND)
+     e->selection = ECORE_X_SELECTION_XDND;
    else if (sel == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
