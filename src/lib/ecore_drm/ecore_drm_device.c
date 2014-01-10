@@ -5,16 +5,87 @@
 #include "ecore_drm_private.h"
 #include <dlfcn.h>
 
-static void 
-_ecore_drm_device_cb_page_flip(int fd, unsigned int frame, unsigned int sec, unsigned int usec, void *data)
+#ifdef HAVE_GBM
+static Eina_Bool 
+_ecore_drm_device_egl_config_get(Ecore_Drm_Device *dev, const EGLint *attribs, const EGLint *visual)
 {
+   EGLint c = 0, m = 0;
+   EGLConfig *cfgs;
+   int i = 0;
+
+   if (!eglGetConfigs(dev->egl.disp, NULL, 0, &c) || (c < 1))
+     return EINA_FALSE;
+
+   if (!(cfgs = calloc(c, sizeof(*cfgs)))) return EINA_FALSE;
+
+   if (!eglChooseConfig(dev->egl.disp, attribs, cfgs, c, &m))
+     {
+        free(cfgs);
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < m; i++)
+     {
+        EGLint id;
+
+        if (visual)
+          {
+             if (!eglGetConfigAttrib(dev->egl.disp, cfgs[i], 
+                                     EGL_NATIVE_VISUAL_ID, &id))
+               continue;
+
+             if ((id != 0) && (id != *visual))
+               continue;
+          }
+
+        dev->egl.cfg = cfgs[i];
+        free(cfgs);
+        return EINA_TRUE;
+     }
+
+   free(cfgs);
+   return EINA_FALSE;
+}
+#endif
+
+static void 
+_ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+{
+   Ecore_Drm_Output *output;
+
    DBG("Drm Page Flip Event");
+
+   if (!(output = data)) return;
+
+   if (output->pending_flip)
+     {
+        ecore_drm_output_fb_release(output, output->current);
+        output->current = output->next;
+        output->next = NULL;
+     }
+
+   output->pending_flip = EINA_FALSE;
+   if (!output->pending_vblank) ecore_drm_output_repaint(output);
 }
 
 static void 
-_ecore_drm_device_cb_vblank(int fd, unsigned int frame, unsigned int sec, unsigned int usec, void *data)
+_ecore_drm_device_cb_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
+   Ecore_Drm_Sprite *sprite;
+   Ecore_Drm_Output *output;
+
    DBG("Drm VBlank Event");
+
+   if (!(sprite = data)) return;
+
+   output = sprite->output;
+   output->pending_vblank = EINA_FALSE;
+
+   ecore_drm_output_fb_release(output, sprite->current_fb);
+   sprite->current_fb = sprite->next_fb;
+   sprite->next_fb = NULL;
+
+   if (!output->pending_flip) _ecore_drm_output_frame_finish(output);
 }
 
 static Eina_Bool 
@@ -25,6 +96,8 @@ _ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 
    if (!(dev = data)) return ECORE_CALLBACK_RENEW;
 
+   DBG("Drm Device Event");
+
    memset(&ctx, 0, sizeof(ctx));
 
    ctx.version = DRM_EVENT_CONTEXT_VERSION;
@@ -32,6 +105,25 @@ _ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    ctx.vblank_handler = _ecore_drm_device_cb_vblank;
 
    drmHandleEvent(dev->drm.fd, &ctx);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_ecore_drm_device_cb_idle(void *data)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+
+   if (!(dev = data)) return ECORE_CALLBACK_CANCEL;
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     {
+        output->need_repaint = EINA_TRUE;
+        if (output->repaint_scheduled) continue;
+        _ecore_drm_output_repaint_start(output);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -176,7 +268,7 @@ ecore_drm_device_find(const char *name, const char *seat)
 
              dev->seat = eina_stringshare_add(seat);
 
-//             dev->format = GBM_FORMAT_XRGB8888;
+             dev->format = GBM_FORMAT_XRGB8888;
              dev->use_hw_accel = EINA_FALSE;
           }
      }
@@ -272,17 +364,72 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 
         if ((dev->gbm = gbm_create_device(dev->drm.fd)))
           {
+             EGLint major, minor, visual;
+             const EGLint attribs[] = 
+               {
+                  EGL_SURFACE_TYPE, EGL_WINDOW_BIT, 
+                  EGL_RED_SIZE, 1, EGL_GREEN_SIZE, 1, 
+                  EGL_BLUE_SIZE, 1, EGL_ALPHA_SIZE, 0, 
+                  EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_NONE
+               };
+
              dev->use_hw_accel = EINA_TRUE;
-             dev->format = GBM_FORMAT_ARGB8888;
+             /* TODO: gbm_device_is_format_supported to check that 
+              * argb can be used for scanout | rendering */
+             dev->format = GBM_FORMAT_XRGB8888;
+
+             dev->egl.disp = eglGetDisplay(dev->gbm);
+             if (dev->egl.disp == EGL_NO_DISPLAY)
+               {
+                  ERR("Could not get egl display");
+                  goto init_software;
+               }
+
+             if (!eglInitialize(dev->egl.disp, &major, &minor))
+               {
+                  ERR("Could not initialize egl");
+                  goto init_software;
+               }
+
+             visual = dev->format;
+             if (!_ecore_drm_device_egl_config_get(dev, attribs, &visual))
+               {
+                  ERR("Could not get egl config");
+                  goto init_software;
+               }
           }
         else
-          WRN("Failed to create gbm device: %m");
+          {
+             WRN("Failed to create gbm device");
+             goto init_software;
+          }
      }
+   else
 #endif
+     {
+        /* TODO: init software */
+init_software:
+        DBG("Init Software Engine");
+#ifdef HAVE_GBM
+        if (dev->egl.disp) 
+          {
+             eglMakeCurrent(dev->egl.disp, EGL_NO_SURFACE, EGL_NO_SURFACE, 
+                            EGL_NO_CONTEXT);
+             eglTerminate(dev->egl.disp);
+             eglReleaseThread();
+          }
+
+        if (dev->gbm) gbm_device_destroy(dev->gbm);
+        dev->gbm = NULL;
+#endif
+     }
 
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
+
+   dev->drm.idler = 
+     ecore_idle_enterer_add(_ecore_drm_device_cb_idle, dev);
 
    return EINA_TRUE;
 }
@@ -307,6 +454,14 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 #ifdef HAVE_GBM
    if (dev->use_hw_accel)
      {
+        if (dev->egl.disp) 
+          {
+             eglMakeCurrent(dev->egl.disp, EGL_NO_SURFACE, EGL_NO_SURFACE, 
+                            EGL_NO_CONTEXT);
+             eglTerminate(dev->egl.disp);
+             eglReleaseThread();
+          }
+
         if (dev->gbm) gbm_device_destroy(dev->gbm);
         dev->gbm = NULL;
      }
