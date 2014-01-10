@@ -16,13 +16,50 @@ static const char *conn_types[] =
 /* local functions */
 #ifdef HAVE_GBM
 static Eina_Bool 
+_ecore_drm_output_context_create(Ecore_Drm_Device *dev, EGLSurface surface)
+{
+   EGLBoolean r;
+   static const EGLint attribs[] = 
+     {
+        EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE
+     };
+
+   if ((!dev->egl.disp) || (!dev->egl.cfg)) return EINA_FALSE;
+
+   if (!eglBindAPI(EGL_OPENGL_ES_API))
+     {
+        ERR("Could not bind egl api");
+        return EINA_FALSE;
+     }
+
+   dev->egl.ctxt = 
+     eglCreateContext(dev->egl.disp, dev->egl.cfg, EGL_NO_CONTEXT, attribs);
+   if (!dev->egl.ctxt)
+     {
+        ERR("Could not create Egl Context");
+        return EINA_FALSE;
+     }
+
+   r = eglMakeCurrent(dev->egl.disp, surface, surface, dev->egl.ctxt);
+   if (r == EGL_FALSE)
+     {
+        ERR("Could not make surface current");
+        return EINA_FALSE;
+     }
+
+   /* TODO: bind display, handle extensions, compile shaders, etc */
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool 
 _ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output)
 {
    unsigned int i = 0;
    int flags = 0;
    int w = 0, h = 0;
 
-   if ((!dev) || (!output) || (!dev->use_hw_accel)) return EINA_FALSE;
+   if ((!dev) || (!output)) return EINA_FALSE;
 
    if (output->current_mode)
      {
@@ -38,10 +75,31 @@ _ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
    flags = (GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
 
    if (!(output->surface = 
-         gbm_surface_create(dev->gbm, w, h, dev->format, flags)))
+         gbm_surface_create(dev->gbm, w, h, GBM_FORMAT_ARGB8888, flags)))
      {
-        ERR("Could not create output surface: %m");
+        ERR("Could not create output surface");
         return EINA_FALSE;
+     }
+
+   /* TODO: create egl window surface */
+
+   if (!(output->egl.surface = 
+         eglCreateWindowSurface(dev->egl.disp, dev->egl.cfg, 
+                                output->surface, NULL)))
+     {
+        ERR("Could not create output egl surface");
+        gbm_surface_destroy(output->surface);
+        return EINA_FALSE;
+     }
+
+   if (!dev->egl.ctxt)
+     {
+        if (!_ecore_drm_output_context_create(dev, output->egl.surface))
+          {
+             ERR("Could not create context");
+             gbm_surface_destroy(output->surface);
+             return EINA_FALSE;
+          }
      }
 
    flags = (GBM_BO_USE_CURSOR_64X64 | GBM_BO_USE_WRITE);
@@ -51,7 +109,6 @@ _ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
         if (!(output->cursor[i] = 
               gbm_bo_create(dev->gbm, 64, 64, dev->format, flags)))
           {
-             ERR("Could not create cursor surface: %m");
              continue;
           }
      }
@@ -63,6 +120,37 @@ _ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
      }
 
    return EINA_TRUE;
+}
+
+static void 
+_ecore_drm_output_hardware_render(Ecore_Drm_Output *output)
+{
+   struct gbm_bo *bo;
+
+   if (!output) return;
+   if (!output->current_mode) return;
+
+   glViewport(output->x, output->y, 
+              output->current_mode->width, output->current_mode->height);
+
+   eglMakeCurrent(output->dev->egl.disp, output->egl.surface, 
+                  output->egl.surface, output->dev->egl.ctxt);
+
+   /* TODO: calculate damage */
+
+   /* TODO: repaint surfaces */
+
+   /* TODO: call egl functions to repaint */
+
+   eglSwapBuffers(output->dev->egl.disp, output->egl.surface);
+
+   if (!(bo = gbm_surface_lock_front_buffer(output->surface)))
+     {
+        ERR("Failed to lock front buffer");
+        return;
+     }
+
+   /* output->next = _get_from_bo(); */
 }
 #endif
 
@@ -87,7 +175,7 @@ _ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
 
    for (i = 0; i < NUM_FRAME_BUFFERS; i++)
      {
-        if (!(output->dumb[i] = _ecore_drm_fb_create(dev, w, h)))
+        if (!(output->dumb[i] = ecore_drm_fb_create(dev, w, h)))
           {
              ERR("Could not create dumb framebuffer %d", i);
              goto err;
@@ -99,11 +187,18 @@ _ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
 err:
    for (i = 0; i < NUM_FRAME_BUFFERS; i++)
      {
-        if (output->dumb[i]) _ecore_drm_fb_destroy(output->dumb[i]);
+        if (output->dumb[i]) ecore_drm_fb_destroy(output->dumb[i]);
         output->dumb[i] = NULL;
      }
 
    return EINA_FALSE;
+}
+
+static void 
+_ecore_drm_output_software_render(Ecore_Drm_Output *output)
+{
+   if (!output) return;
+   if (!output->current_mode) return;
 }
 
 static int 
@@ -201,6 +296,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
         return NULL;
      }
 
+   output->dev = dev;
    output->x = x;
    output->y = y;
 
@@ -253,11 +349,12 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
      output->current_mode = _ecore_drm_output_mode_add(output, &crtc_mode);
 
 #ifdef HAVE_GBM
-   if (dev->use_hw_accel)
+   if ((dev->use_hw_accel) && (dev->gbm))
      {
         if (!_ecore_drm_output_hardware_setup(dev, output))
           {
              ERR("Could not setup output for hardware acceleration");
+             dev->use_hw_accel = EINA_FALSE;
              if (!_ecore_drm_output_software_setup(dev, output))
                goto mode_err;
              else
@@ -269,6 +366,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    else
 #endif
      {
+        dev->use_hw_accel = EINA_FALSE;
         if (!_ecore_drm_output_software_setup(dev, output))
           goto mode_err;
         else
@@ -289,16 +387,56 @@ mode_err:
 }
 
 void 
+_ecore_drm_output_frame_finish(Ecore_Drm_Output *output)
+{
+   if (!output) return;
+
+   if (output->need_repaint) ecore_drm_output_repaint(output);
+
+   output->repaint_scheduled = EINA_FALSE;
+}
+
+void 
 _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {
    if ((!output) || (!fb)) return;
 
    if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
-     _ecore_drm_fb_destroy(fb);
-#ifdef HAVE_GBM
-   else if (fb->bo)
-     gbm_bo_destroy(fb->bo);
-#endif
+     ecore_drm_fb_destroy(fb);
+/* #ifdef HAVE_GBM */
+/*    else if (fb->bo) */
+/*      gbm_bo_destroy(fb->bo); */
+/* #endif */
+}
+
+void 
+_ecore_drm_output_repaint_start(Ecore_Drm_Output *output)
+{
+   unsigned int fb;
+
+   DBG("Output Repaint Start");
+
+   if (!output) return;
+
+   if (!output->current)
+     {
+        DBG("\tNo Current FB");
+        goto finish;
+     }
+
+   fb = output->current->id;
+
+   if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, fb, 
+                       DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
+     {
+        ERR("Could not schedule output page flip event");
+        goto finish;
+     }
+
+   return;
+
+finish:
+   _ecore_drm_output_frame_finish(output);
 }
 
 /**
@@ -447,4 +585,92 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
      }
 
    return EINA_TRUE;
+}
+
+EAPI void 
+ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
+{
+   if ((!output) || (!fb)) return;
+
+   if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
+     ecore_drm_fb_destroy(fb);
+#ifdef HAVE_GBM
+   else if (fb->bo)
+     {
+        if (fb->from_client)
+          gbm_bo_destroy(fb->bo);
+        else
+          gbm_surface_release_buffer(output->surface, output->current->bo);
+     }
+#endif
+}
+
+EAPI void 
+ecore_drm_output_repaint(Ecore_Drm_Output *output)
+{
+   int ret = 0;
+
+   if (!output) return;
+
+   DBG("Output Repaint");
+
+   /* TODO: assign planes ? */
+
+   if (!output->next)
+     {
+#ifdef HAVE_GBM
+        if (output->dev->use_hw_accel)
+          {
+             _ecore_drm_output_hardware_render(output);
+          }
+        else
+#endif
+          {
+             _ecore_drm_output_software_render(output);
+          }
+     }
+
+   output->need_repaint = EINA_FALSE;
+
+   if (!output->next)
+     {
+        DBG("\tNo Next Fb");
+        return;
+     }
+
+   if (!output->current)
+     {
+        Ecore_Drm_Output_Mode *mode;
+
+        mode = output->current_mode;
+
+        ret = drmModeSetCrtc(output->dev->drm.fd, output->crtc_id, 
+                             output->next->id, 0, 0, &output->conn_id, 1, 
+                             &mode->info);
+        if (ret)
+          {
+             ERR("Setting output mode failed");
+             goto err;
+          }
+     }
+
+   if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, output->next->id,
+                       DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
+     {
+        ERR("Scheduling pageflip failed");
+        goto err;
+     }
+
+   output->pending_flip = EINA_TRUE;
+
+   /* TODO: finish */
+
+   return;
+
+err:
+   if (output->next)
+     {
+        ecore_drm_output_fb_release(output, output->next);
+        output->next = NULL;
+     }
 }
