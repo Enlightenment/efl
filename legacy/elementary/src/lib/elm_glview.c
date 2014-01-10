@@ -138,6 +138,8 @@ _render_cb(void *obj)
         sd->resized = EINA_FALSE;
      }
 
+   if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS)
+     evas_sync(evas_object_evas_get(obj));
    // Call the render function
    if (sd->render_func) sd->render_func(obj);
 
