@@ -122,7 +122,7 @@ _gl_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Se
 
    char *p = ev->data;
    p = strchr(p, '#');
-   while(p)
+   while (p)
      {
         p++;
         char *p2 = strchr(p, '#');
@@ -175,7 +175,7 @@ _grid_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_
 
    char *p = ev->data;
    p = strchr(p, '#');
-   while(p)
+   while (p)
      {
         p++;
         char *p2 = strchr(p, '#');
@@ -925,7 +925,7 @@ static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selec
 {
    Evas_Object *win = data;
    char *p = strchr(ev->data, '#');
-   while(p)
+   while (p)
      {
         p++;
         char *p2 = strchr(p, '#');
