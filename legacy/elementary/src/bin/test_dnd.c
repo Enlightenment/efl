@@ -956,13 +956,15 @@ void _enter_but_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
 {
    Evas_Object *win = data;
-   Evas_Object *ic = elm_icon_add(win);
+   Evas_Object *ic;
+
    char *p = strchr(ev->data, '#');
    if (!p) return EINA_FALSE;
    p++;
    char *p2 = strchr(p, '#');
    if (!p2) return EINA_FALSE;
    *p2 = '\0';
+   ic = elm_icon_add(win);
    elm_image_file_set(ic, p, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    evas_object_del(elm_object_part_content_get(obj, "icon"));
