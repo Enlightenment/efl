@@ -376,7 +376,7 @@ _elm_layout_smart_theme(Eo *obj, void *_pd, va_list *list)
     * of entry needs to call directly the widget _theme function */
    Eina_Bool enable = EINA_TRUE;
    eo_do(obj, elm_obj_layout_theme_enable(&enable));
-   if (EINA_TRUE != enable)
+   if (!enable)
      {
         if (ret) *ret = EINA_TRUE;
         return;
