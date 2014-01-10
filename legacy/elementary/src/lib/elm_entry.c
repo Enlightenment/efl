@@ -2952,28 +2952,34 @@ _entry_selection_callbacks_register(Evas_Object *obj)
 }
 
 static void
-_resize_cb(void *data,
-           Evas *e EINA_UNUSED,
-           Evas_Object *obj EINA_UNUSED,
-           void *event_info EINA_UNUSED)
+_elm_entry_resize_internal(Evas_Object *obj)
 {
-   ELM_ENTRY_DATA_GET(data, sd);
+   ELM_ENTRY_DATA_GET(obj, sd);
 
    if (sd->line_wrap)
      {
-        elm_layout_sizing_eval(data);
+        elm_layout_sizing_eval(obj);
      }
    else if (sd->scroll)
      {
         Evas_Coord vw = 0, vh = 0;
 
-        eo_do(data, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+        eo_do(obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
         if (vw < sd->ent_mw) vw = sd->ent_mw;
         if (vh < sd->ent_mh) vh = sd->ent_mh;
         evas_object_resize(sd->entry_edje, vw, vh);
      }
 
-   if (sd->hoversel) _hoversel_position(data);
+   if (sd->hoversel) _hoversel_position(obj);
+}
+
+static void
+_resize_cb(void *data,
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
+{
+   _elm_entry_resize_internal(data);
 }
 
 Evas_Coord ox, oy;
@@ -3354,6 +3360,9 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
         if (sd->auto_save) _save_do(obj);
      }
+
+   if (sd->scroll)
+     eo_do(obj, elm_scrollable_interface_content_viewport_resize_cb_set(NULL));
 
    elm_entry_anchor_hover_end(obj);
    elm_entry_anchor_hover_parent_set(obj, NULL);
@@ -4998,6 +5007,13 @@ _cnp_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (ret) *ret = sd->cnp_mode;
 }
 
+static void
+_elm_entry_content_viewport_resize_cb(Evas_Object *obj,
+                                      Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
+{
+   _elm_entry_resize_internal(obj);
+}
+
 EAPI void
 elm_entry_scrollable_set(Evas_Object *obj,
                          Eina_Bool scroll)
@@ -5050,6 +5066,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
         else
            eo_do(obj, elm_scrollable_interface_policy_set(sd->policy_h, sd->policy_v));
         eo_do(obj, elm_scrollable_interface_content_set(sd->entry_edje));
+        eo_do(obj, elm_scrollable_interface_content_viewport_resize_cb_set(_elm_entry_content_viewport_resize_cb));
         elm_widget_on_show_region_hook_set(obj, _show_region_hook, NULL);
      }
    else

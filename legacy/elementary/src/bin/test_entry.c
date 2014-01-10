@@ -286,10 +286,24 @@ _entry_rejected_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
      printf("REJECTED: This entry rejects the following character set: [%s]\n", accept_set->rejected);
 }
 
+static void
+_end_show_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_end_visible_set(en, EINA_TRUE);
+}
+
+static void
+_end_hide_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_end_visible_set(en, EINA_FALSE);
+}
+
 void
 test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *en, *en_p, *sp;
+   Evas_Object *win, *bx, *bx2, *bx3, *bt, *en, *en_p, *sp, *entry;
    static Elm_Entry_Filter_Accept_Set digits_filter_data, digits_filter_data2;
    static Elm_Entry_Filter_Limit_Size limit_filter_data, limit_filter_data2;
 
@@ -449,27 +463,27 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(bx, en_p);
 
    /* entry with icon/end widgets*/
-   en = elm_entry_add(win);
-   elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_scroller_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, EINA_TRUE);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   entry = elm_entry_add(win);
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_single_line_set(entry, EINA_TRUE);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    bt = elm_icon_add(win);
    elm_icon_standard_set(bt, "home");
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_color_set(bt, 128, 0, 0, 128);
    evas_object_show(bt);
-   elm_object_part_content_set(en, "icon", bt);
+   elm_object_part_content_set(entry, "icon", bt);
    bt = elm_icon_add(win);
    elm_icon_standard_set(bt, "delete");
    evas_object_color_set(bt, 128, 0, 0, 128);
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_show(bt);
-   elm_object_part_content_set(en, "end", bt);
-   elm_object_text_set(en, "entry with icon and end objects");
-   evas_object_show(en);
-   elm_box_pack_end(bx, en);
+   elm_object_part_content_set(entry, "end", bt);
+   elm_object_text_set(entry, "entry with icon and end objects. For the test of show/hide end, text should be long long...");
+   evas_object_show(entry);
+   elm_box_pack_end(bx, entry);
 
    /* markup entry */
    en = elm_entry_add(win);
@@ -550,6 +564,34 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
+
+   bx3 = elm_box_add(win);
+   elm_box_horizontal_set(bx3, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "End Show");
+   evas_object_smart_callback_add(bt, "clicked", _end_show_cb, entry);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx3, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "End Hide");
+   evas_object_smart_callback_add(bt, "clicked", _end_hide_cb, entry);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx3, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx3);
+   evas_object_show(bx3);
 
    elm_object_focus_set(win, EINA_TRUE);
    evas_object_resize(win, 320, 300);
