@@ -2507,7 +2507,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
 EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libudev >= 148 libdrm >= 2.4])
-EFL_OPTIONAL_DEPEND_PKG([ECORE_DRM], [${want_drm_hw_accel}], [GBM], [gbm])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_DRM], [${want_drm_hw_accel}], [GBM], [gbm egl >= 7.10 glesv2])
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
