@@ -1105,25 +1105,12 @@ static void
 data_thread_group(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Group_Write *gw = data;
-   int bytes;
    char buf[PATH_MAX];
-   char buf2[PATH_MAX];
 
    snprintf(buf, sizeof(buf), "edje/collections/%i", gw->pc->id);
-   bytes = eet_data_write(gw->ef, edd_edje_part_collection, buf, gw->pc,
-                          compress_mode);
+   eet_data_write(gw->ef, edd_edje_part_collection, buf, gw->pc,
+                  compress_mode);
    return;
-   if (bytes <= 0)
-     {
-        snprintf(buf2, sizeof(buf2),
-                 "Unable to write \"%s\" part entry to %s",
-                 buf, file_out);
-        gw->errstr = strdup(buf2);
-        return;
-     }
-
-   INF("Wrote %9i bytes (%4iKb) for \"%s\" aka \"%s\" collection entry",
-       bytes, (bytes + 512) / 1024, buf, gw->pc->part);
 }
 
 static void
