@@ -11,6 +11,9 @@ struct _Evas_Engine_Info_Drm
 
    struct 
      {
+        void *gbm;
+        unsigned int format;
+
         unsigned int rotation, depth;
         Eina_Bool destination_alpha : 1;
      } info;
