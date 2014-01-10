@@ -617,7 +617,7 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
         }
    } while (t != 0);
 
-   return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+   return EINA_LOCK_SUCCEED;
 #else
    return eina_lock_take(spinlock);
 #endif
