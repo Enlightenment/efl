@@ -11,8 +11,8 @@
 
 /* TODO: DOXY !! */
 
-Ecore_Drm_Fb *
-_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
+EAPI Ecore_Drm_Fb *
+ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
 {
    Ecore_Drm_Fb *fb;
    struct drm_mode_create_dumb carg;
@@ -61,6 +61,8 @@ _ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
         goto map_err;
      }
 
+   memset(fb->mmap, 0, fb->size);
+
    return fb;
 
 map_err:
@@ -74,8 +76,8 @@ create_err:
    return NULL;
 }
 
-void 
-_ecore_drm_fb_destroy(Ecore_Drm_Fb *fb)
+EAPI void 
+ecore_drm_fb_destroy(Ecore_Drm_Fb *fb)
 {
    struct drm_mode_destroy_dumb darg;
 
