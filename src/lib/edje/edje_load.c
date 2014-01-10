@@ -1374,13 +1374,13 @@ _edje_file_del(Edje *ed)
                        switch (rp->part->type)
                          {
                           case EDJE_PART_TYPE_EXTERNAL:
-                             _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param1.external_params);
-                             if (rp->param2)
-                               _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param2->external_params);
+                            _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param1.external_params);
+                            if (rp->param2)
+                              _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param2->external_params);
                           case EDJE_PART_TYPE_GROUP:
-                             evas_object_del(rp->typedata.swallow->swallowed_object);
+                            evas_object_del(rp->typedata.swallow->swallowed_object);
                           default:
-                             break;
+                            break;
                          }
                        _edje_real_part_swallow_clear(ed, rp);
                        rp->typedata.swallow->swallowed_object = NULL;
