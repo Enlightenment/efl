@@ -39,6 +39,10 @@ static int _ecore_evas_drm_init(void);
 static int _ecore_evas_drm_shutdown(void);
 static Ecore_Evas_Interface_Drm *_ecore_evas_drm_interface_new(void);
 
+static void _ecore_evas_show(Ecore_Evas *ee);
+static void _ecore_evas_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
+static int _ecore_evas_render(Ecore_Evas *ee);
+
 /* local variables */
 static int _ecore_evas_init_count = 0;
 static Ecore_Drm_Device *dev = NULL;
@@ -66,7 +70,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_move_resize) (Ecore_Evas *ee, int x, int y, int w, int h);
    NULL, //void (*fn_rotation_set) (Ecore_Evas *ee, int rot, int resize);
    NULL, //void (*fn_shaped_set) (Ecore_Evas *ee, int shaped);
-   NULL, //void (*fn_show) (Ecore_Evas *ee);
+   _ecore_evas_show,
    NULL, //void (*fn_hide) (Ecore_Evas *ee);
    NULL, //void (*fn_raise) (Ecore_Evas *ee);
    NULL, //void (*fn_lower) (Ecore_Evas *ee);
@@ -93,7 +97,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
    NULL, //void (*fn_profiles_set) (Ecore_Evas *ee, const char **profiles, int count);
    NULL, //void (*fn_profile_set) (Ecore_Evas *ee, const char *profile);
-   
+
    NULL, //void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
    NULL, //void (*fn_aspect_set) (Ecore_Evas *ee, double aspect);
    NULL, //void (*fn_urgent_set) (Ecore_Evas *ee, Eina_Bool on);
@@ -101,7 +105,8 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_demands_attention_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_focus_skip_set) (Ecore_Evas *ee, Eina_Bool on);
    
-   NULL, //int (*fn_render) (Ecore_Evas *ee);
+   _ecore_evas_render,
+
    NULL, //void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
    NULL, //void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
    NULL, //void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
@@ -113,6 +118,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 {
    Ecore_Evas *ee;
    Evas_Engine_Info_Drm *einfo;
+   Ecore_Evas_Interface_Drm *iface;
    int method;
 
    /* try to find the evas drm engine */
@@ -138,6 +144,9 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
 
+   iface = _ecore_evas_drm_interface_new();
+   ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
+
    /* set some engine properties */
    ee->driver = "drm";
    if (device) ee->name = strdup(device);
@@ -157,6 +166,10 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
    ee->prop.sticky = 0;
    ee->alpha = EINA_FALSE;
 
+   ee->can_async_render = 1;
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+
    /* try to initialize evas */
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
@@ -166,9 +179,16 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
+   if (ee->can_async_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, 
+                             _ecore_evas_render_updates, ee);
+
    if ((einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas)))
      {
-        /* einfo->info. = ; */
+        einfo->info.depth = 32; // FIXME
+        einfo->info.destination_alpha = ee->alpha;
+        einfo->info.rotation = ee->rotation;
+
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -303,4 +323,102 @@ _ecore_evas_drm_interface_new(void)
    /* iface->pixmap_depth_get; */
 
    return iface;
+}
+
+static void 
+_ecore_evas_show(Ecore_Evas *ee)
+{
+   if ((!ee) || (ee->visible)) return;
+   DBG("Show Ecore_Evas\n");
+   /* TODO: fixme */
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   ee->visible = 1;
+   if (ee->func.fn_show) ee->func.fn_show(ee);
+}
+
+static int 
+_ecore_evas_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
+{
+   int rend = 0;
+
+   if ((ee->visible) && (updates))
+     {
+        Eina_List *l;
+        Eina_Rectangle *r;
+
+        EINA_LIST_FOREACH(updates, l, r)
+          {
+             /* TODO: damage window */
+          }
+     }
+   else
+     evas_norender(ee->evas);
+
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+
+   return rend;
+}
+
+static void 
+_ecore_evas_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Evas_Event_Render_Post *ev;
+
+   if (!(ev = event)) return;
+   if (!(ee = data)) return;
+
+   ee->in_async_render = EINA_FALSE;
+
+   _ecore_evas_render_updates_process(ee, ev->updated_area);
+
+   /* TODO: handle delayed setting */
+}
+
+static int 
+_ecore_evas_render(Ecore_Evas *ee)
+{
+   int rend = 0;
+   Eina_List *l;
+   Ecore_Evas *ee2;
+
+   if (!ee) return 0;
+
+   if (ee->in_async_render) return 0;
+
+   if (!ee->visible)
+     {
+        evas_norender(ee->evas);
+        return 0;
+     }
+
+   DBG("Render Ecore_Evas\n");
+
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, l, ee2)
+     {
+        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+        if (ee2->engine.func->fn_render)
+          rend |= ee2->engine.func->fn_render(ee2);
+        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+     }
+
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+
+   if (!ee->can_async_render)
+     {
+        Eina_List *updates;
+
+        if ((updates = evas_render_updates(ee->evas)))
+          {
+             rend = _ecore_evas_render_updates_process(ee, updates);
+             evas_render_updates_free(updates);
+          }
+     }
+   else if (evas_render_async(ee->evas))
+     {
+        ee->in_async_render = EINA_TRUE;
+        rend = 1;
+     }
+
+   return rend;
 }
