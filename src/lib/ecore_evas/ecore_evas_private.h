@@ -155,7 +155,7 @@ struct _Ecore_Evas
    struct {
       int      x, y, w, h;
    } req;
-   
+
    struct {
       int      x, y;
    } mouse;
@@ -174,17 +174,14 @@ struct _Ecore_Evas
          int          count;
       } profile;
       struct {
-	 int          w, h;
-      } min,
-	max,
-	base,
-	step;
+         int          w, h;
+      } min, max, base, step;
       struct {
-	 Evas_Object *object;
-	 int          layer;
-	 struct {
-	    int       x, y;
-	 } hot;
+         Evas_Object *object;
+         int          layer;
+         struct {
+            int       x, y;
+         } hot;
       } cursor;
       int             layer;
       Ecore_Window    window;
@@ -227,7 +224,7 @@ struct _Ecore_Evas
       void          (*fn_pre_free) (Ecore_Evas *ee);
       void          (*fn_state_change) (Ecore_Evas *ee);
       void          (*fn_msg_parent_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
-      void          (*fn_msg_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);			
+      void          (*fn_msg_handle) (Ecore_Evas *ee, int maj, int min, void *data, int size);
       void          (*fn_pointer_xy_get) (const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
       Eina_Bool     (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
    } func;
