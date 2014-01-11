@@ -70,8 +70,8 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
    NULL, //void (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
    NULL, //void (*fn_layer_set) (Ecore_Evas *ee, int layer);
-   NULL, //void (*fn_focus_set) (Ecore_Evas *ee, int on);
-   NULL, //void (*fn_iconified_set) (Ecore_Evas *ee, int on);
+   NULL, //void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_borderless_set) (Ecore_Evas *ee, int on);
    NULL, //void (*fn_override_set) (Ecore_Evas *ee, int on);
    NULL, //void (*fn_maximized_set) (Ecore_Evas *ee, int on);

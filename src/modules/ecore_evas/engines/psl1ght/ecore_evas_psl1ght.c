@@ -45,7 +45,7 @@ _ecore_evas_psl1ght_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED
 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 
@@ -62,7 +62,7 @@ _ecore_evas_psl1ght_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
    evas_focus_out(ee->evas);
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
 
    return ECORE_CALLBACK_PASS_ON;
@@ -290,7 +290,7 @@ static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
    if (ee->prop.focused) return;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 }
@@ -438,7 +438,7 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 1;

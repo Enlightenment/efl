@@ -110,7 +110,7 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
   ee = _ecore_evas_cocoa_match();
 
   if (!ee) return ECORE_CALLBACK_PASS_ON;
-  ee->prop.focused = 1;
+  ee->prop.focused = EINA_TRUE;
   evas_focus_in(ee->evas);
   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    
@@ -128,7 +128,7 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
 
   if (!ee) return ECORE_CALLBACK_PASS_ON;
   evas_focus_out(ee->evas);
-  ee->prop.focused = 0;
+  ee->prop.focused = EINA_FALSE;
   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
 
   return ECORE_CALLBACK_PASS_ON;

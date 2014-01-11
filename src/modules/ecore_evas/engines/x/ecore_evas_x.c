@@ -89,7 +89,7 @@ struct _Ecore_Evas_Engine_Data_X11 {
      unsigned char done : 1; // need to send change done event to the WM
    } profile;
    Ecore_X_Window win_shaped_input;
-   struct 
+   struct
      {
         unsigned int front, back; // front and back pixmaps (double-buffer)
         Evas_Coord w, h; // store pixmap size (saves X roundtrips)
@@ -121,8 +121,8 @@ _ecore_evas_x_hints_update(Ecore_Evas *ee)
    ecore_x_icccm_hints_set
      (ee->prop.window,
          !ee->prop.focus_skip /* accepts_focus */,
-         ee->prop.iconified ? ECORE_X_WINDOW_STATE_HINT_ICONIC : 
-         ee->prop.withdrawn ? ECORE_X_WINDOW_STATE_HINT_WITHDRAWN : 
+         ee->prop.iconified ? ECORE_X_WINDOW_STATE_HINT_ICONIC :
+         ee->prop.withdrawn ? ECORE_X_WINDOW_STATE_HINT_WITHDRAWN :
          ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
          0 /* icon_pixmap */,
          0 /* icon_mask */,
@@ -341,7 +341,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                            (evas_version->micro >= 99))
                        einfo->swap_mode = opt[op];
                     }
-#endif                  
+#endif
                }
           }
 
@@ -880,14 +880,14 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
                {
                   state_change = 1;
                   ee->prop.withdrawn = 1;
-                  ee->prop.iconified = 0;
+                  ee->prop.iconified = EINA_FALSE;
                }
              break;
            case ECORE_X_WINDOW_STATE_HINT_ICONIC:
              if ((!ee->prop.iconified) || (ee->prop.withdrawn))
                {
                   state_change = 1;
-                  ee->prop.iconified = 1;
+                  ee->prop.iconified = EINA_TRUE;
                   ee->prop.withdrawn = 0;
                }
              break;
@@ -895,7 +895,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
              if ((ee->prop.iconified) || (ee->prop.withdrawn))
                {
                   state_change = 1;
-                  ee->prop.iconified = 0;
+                  ee->prop.iconified = EINA_FALSE;
                   ee->prop.withdrawn = 0;
                }
              break;
@@ -948,7 +948,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-	edata = ee->engine.data;
+        edata = ee->engine.data;
         if (e->data.l[0] != (long)ee->prop.window)
           return ECORE_CALLBACK_PASS_ON;
         if (!edata->sync_began)
@@ -963,7 +963,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-	edata = ee->engine.data;
+        edata = ee->engine.data;
         if (e->data.l[0] != (long)ee->prop.window)
           return ECORE_CALLBACK_PASS_ON;
         edata->sync_began = 0;
@@ -973,7 +973,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         ee = ecore_event_window_match(e->data.l[0]);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-	edata = ee->engine.data;
+        edata = ee->engine.data;
         if (e->data.l[0] != (long)ee->prop.window)
           return ECORE_CALLBACK_PASS_ON;
         edata->sync_began = 0;
@@ -984,7 +984,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         ee = ecore_event_window_match(e->win);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-	edata = ee->engine.data;
+        edata = ee->engine.data;
         edata->netwm_sync_val_lo = (unsigned int)e->data.l[2];
         edata->netwm_sync_val_hi = (int)e->data.l[3];
         edata->netwm_sync_set = 1;
@@ -993,7 +993,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         ee = ecore_event_window_match(e->win);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-	edata = ee->engine.data;
+        edata = ee->engine.data;
         if (ee->profile_supported)
           {
              char *p = ecore_x_atom_name_get(e->data.l[1]);
@@ -1014,10 +1014,10 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
           }
      }
    else if (e->message_type == ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL)
-   	{
-   	   ///TODO after access structure determined
- 	   // if (ee->func.fn_msg_handle)
-	   // ee->func.fn_msg_handle(ee, msg_domain, msg_id, data, size);
+     {
+        ///TODO after access structure determined
+        // if (ee->func.fn_msg_handle)
+        // ee->func.fn_msg_handle(ee, msg_domain, msg_id, data, size);
      }
    else if (e->message_type == ECORE_X_ATOM_E_DEICONIFY_APPROVE)
      {
@@ -1033,7 +1033,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
                                       ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                       e->win, 1,
                                       0, 0, 0);
-   	}
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1232,7 +1232,7 @@ _ecore_evas_x_event_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 //xx// filtering with these doesnt help   
 //xx//   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return ECORE_CALLBACK_PASS_ON;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return ECORE_CALLBACK_PASS_ON;
@@ -1254,7 +1254,7 @@ _ecore_evas_x_event_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSE
 //   if (ee->prop.fullscreen)
 //     ecore_x_window_focus(ee->prop.window);
    evas_focus_out(ee->evas);
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -2800,13 +2800,13 @@ _ecore_evas_x_layer_set(Ecore_Evas *ee, int layer)
 }
 
 static void
-_ecore_evas_x_focus_set(Ecore_Evas *ee, int on EINA_UNUSED)
+_ecore_evas_x_focus_set(Ecore_Evas *ee, Eina_Bool on EINA_UNUSED)
 {
    ecore_x_window_focus(ee->prop.window);
 }
 
 static void
-_ecore_evas_x_iconified_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 

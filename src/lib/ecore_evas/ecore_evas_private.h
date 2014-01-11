@@ -81,8 +81,8 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
    void (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
    void (*fn_layer_set) (Ecore_Evas *ee, int layer);
-   void (*fn_focus_set) (Ecore_Evas *ee, int on);
-   void (*fn_iconified_set) (Ecore_Evas *ee, int on);
+   void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);
    void (*fn_borderless_set) (Ecore_Evas *ee, int on);
    void (*fn_override_set) (Ecore_Evas *ee, int on);
    void (*fn_maximized_set) (Ecore_Evas *ee, int on);
@@ -189,8 +189,9 @@ struct _Ecore_Evas
       Ecore_Evas     *group_ee;
       Ecore_Window    group_ee_win;
       double          aspect;
-      char            focused      : 1;
-      char            iconified    : 1;
+      Eina_Bool       focused      : 1;
+      Eina_Bool       iconified    : 1;
+//FIXME: keep going change to Eina_Bool
       char            borderless   : 1;
       char            override     : 1;
       char            maximized    : 1;

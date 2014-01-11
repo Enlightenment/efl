@@ -155,7 +155,7 @@ _ecore_evas_wl_common_cb_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, 
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return ECORE_CALLBACK_PASS_ON;
@@ -175,7 +175,7 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (!ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
    evas_focus_out(ee->evas);
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1229,13 +1229,13 @@ _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
 }
 
 void
-_ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, int iconify)
+_ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (ee->prop.iconified == iconify) return;
-   ee->prop.iconified = iconify;
+   if (ee->prop.iconified == on) return;
+   ee->prop.iconified = on;
    /* FIXME: Implement this in Wayland someshow */
 }
 

@@ -389,7 +389,7 @@ static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
    if (ee->prop.focused) return;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 }
@@ -399,7 +399,7 @@ _ecore_evas_hide(Ecore_Evas *ee)
 {
    if (ee->prop.focused)
      {
-        ee->prop.focused = 0;
+        ee->prop.focused = EINA_FALSE;
         evas_focus_out(ee->evas);
         if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
      }
@@ -612,7 +612,7 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 1;

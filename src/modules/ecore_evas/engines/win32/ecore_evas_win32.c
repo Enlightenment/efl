@@ -212,7 +212,7 @@ _ecore_evas_win32_event_window_focus_in(void *data EINA_UNUSED, int type EINA_UN
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return ECORE_CALLBACK_PASS_ON;
@@ -230,7 +230,7 @@ _ecore_evas_win32_event_window_focus_out(void *data EINA_UNUSED, int type EINA_U
    if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    evas_focus_out(ee->evas);
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -845,13 +845,13 @@ _ecore_evas_win32_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
 }
 
 static void
-_ecore_evas_win32_focus_set(Ecore_Evas *ee, int on EINA_UNUSED)
+_ecore_evas_win32_focus_set(Ecore_Evas *ee, Eina_Bool on EINA_UNUSED)
 {
    ecore_win32_window_focus((struct _Ecore_Win32_Window *)ee->prop.window);
 }
 
 static void
-_ecore_evas_win32_iconified_set(Ecore_Evas *ee, int on)
+_ecore_evas_win32_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
 /*    if (((ee->prop.borderless) && (on)) || */
 /*        ((!ee->prop.borderless) && (!on))) return; */

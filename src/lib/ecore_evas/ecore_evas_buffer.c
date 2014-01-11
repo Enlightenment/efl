@@ -105,7 +105,7 @@ _ecore_evas_show(Ecore_Evas *ee)
 
    if (bdata->image) return;
    if (ee->prop.focused) return;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 }
@@ -407,7 +407,7 @@ _ecore_evas_buffer_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    Ecore_Evas *ee;
 
    ee = data;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
 }
@@ -418,7 +418,7 @@ _ecore_evas_buffer_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
    Ecore_Evas *ee;
 
    ee = data;
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    evas_focus_out(ee->evas);
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
 }
@@ -646,7 +646,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 1;
@@ -774,7 +774,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 0;

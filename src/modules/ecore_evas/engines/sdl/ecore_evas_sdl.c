@@ -60,7 +60,7 @@ _ecore_evas_sdl_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return ECORE_CALLBACK_PASS_ON;
@@ -75,7 +75,7 @@ _ecore_evas_sdl_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, v
 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    evas_focus_out(ee->evas);
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return ECORE_CALLBACK_PASS_ON;
@@ -340,7 +340,7 @@ static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
    if (ee->prop.focused) return;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 }
 
@@ -479,7 +479,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 1;

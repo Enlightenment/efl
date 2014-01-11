@@ -456,11 +456,11 @@ _ecore_evas_ews_layer_set(Ecore_Evas *ee, int layer)
 }
 
 static void
-_ecore_evas_ews_focus_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_focus_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   evas_object_focus_set(ee->engine.ews.image, val);
-   ee->prop.focused = val;
-   if (val)
+   evas_object_focus_set(ee->engine.ews.image, on);
+   ee->prop.focused = on;
+   if (on)
      {
         evas_focus_in(ee->evas);
         if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
@@ -475,10 +475,10 @@ _ecore_evas_ews_focus_set(Ecore_Evas *ee, int val)
 }
 
 static void
-_ecore_evas_ews_iconified_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.iconified == val) return;
-   ee->prop.iconified = val;
+   if (ee->prop.iconified == on) return;
+   ee->prop.iconified = on;
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_ICONIFIED_CHANGE);
 }
 

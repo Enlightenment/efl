@@ -726,7 +726,7 @@ _ecore_evas_extn_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Extn *extn;
 
-   ee->prop.focused = 1;
+   ee->prop.focused = EINA_TRUE;
    extn = bdata->data;
    if (!extn) return;
    if (!extn->ipc.server) return;
@@ -740,7 +740,7 @@ _ecore_evas_extn_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Extn *extn;
 
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    extn = bdata->data;
    if (!extn) return;
    if (!extn->ipc.server) return;
@@ -1157,7 +1157,7 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 0;
@@ -1601,7 +1601,7 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
       case OP_FOCUS:
          if (!ee->prop.focused)
            {
-              ee->prop.focused = 1;
+              ee->prop.focused = EINA_TRUE;
               evas_focus_in(ee->evas);
               if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
            }
@@ -1609,7 +1609,7 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
       case OP_UNFOCUS:
          if (ee->prop.focused)
            {
-              ee->prop.focused = 0;
+              ee->prop.focused = EINA_FALSE;
               evas_focus_out(ee->evas);
               if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
            }
@@ -2041,7 +2041,7 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 0;
+   ee->prop.focused = EINA_FALSE;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 0;
