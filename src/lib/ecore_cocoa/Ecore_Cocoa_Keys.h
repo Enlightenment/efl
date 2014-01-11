@@ -14,7 +14,8 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { 0,                         "0x00",         "" },
 { 0,                         "First",        "" },
 { 3,                         "Return",       "\015" },
-{ 8,                         "BackSpace",    "\010" },
+// OS-X's backspace and Delete are reversed!
+{ 8,                         "Delete",    "\010" },
 { 9,                         "Tab",          "\011" },
 { 12,                        "Clear",        "" },
 { 13,                        "Return",       "\015" },
@@ -90,10 +91,11 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { 123,                       "braceleft",    "" },
 { 124,                       "pipe",         "" },
 { 125,                       "braceright",   "" },
-{ 127,                       "Delete",       "\177" },
+// OS-X's backspace and Delete are reversed!
+{ 127,                       "BackSpace",       "\177" },
 { 126,                       "asciitilde",   "~" },
 
-{ 160,                       "w0",           "" }, 
+{ 160,                       "w0",           "" },
 { 161,                       "w1",           "" },
 { 162,                       "w2",           "" },
 { 163,                       "w3",           "" },
