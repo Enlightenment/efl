@@ -2806,7 +2806,7 @@ _kml_parse(Elm_Map_Route *r)
    f = fopen(r->fname, "rb");
    if (f)
      {
-        unsigned long sz;
+        long sz;
 
         fseek(f, 0, SEEK_END);
         sz = ftell(f);
@@ -2896,7 +2896,7 @@ _name_parse(Elm_Map_Name *n)
    f = fopen(n->fname, "rb");
    if (f)
      {
-        unsigned long sz;
+        long sz;
 
         fseek(f, 0, SEEK_END);
         sz = ftell(f);
@@ -2937,7 +2937,7 @@ _name_list_parse(Elm_Map_Name_List *nl)
    f = fopen(nl->fname, "rb");
    if (f)
      {
-        unsigned long sz;
+        long sz;
 
         fseek(f, 0, SEEK_END);
         sz = ftell(f);
