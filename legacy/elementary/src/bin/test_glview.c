@@ -682,6 +682,7 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
         evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(bx, lb);
         evas_object_show(lb);
+        free(gld);
      }
 
    /* add an ok button */
