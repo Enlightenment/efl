@@ -202,7 +202,7 @@ on_pixels(void *data, Evas_Object *obj)
    gl->glViewport(0, 0, w, h);
 
    // Clear the buffer
-   gl->glClearColor(1.0, 0.0, 0.0, 1);
+   gl->glClearColor(0.0, 0.0, 1.0, 1);
    gl->glClear(GL_COLOR_BUFFER_BIT);
 
    // Draw a Triangle
