@@ -2817,7 +2817,7 @@ _kml_parse(Elm_Map_Route *r)
                {
                   memset(buf, 0, sz + 1);
                   rewind(f);
-                  if (fread(buf, 1, sz, f) == sz)
+                  if (fread(buf, 1, sz, f) == (size_t)sz)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_route_dump_cb, &dump);
@@ -2907,7 +2907,7 @@ _name_parse(Elm_Map_Name *n)
                {
                   memset(buf, 0, sz + 1);
                   rewind(f);
-                  if (fread(buf, 1, sz, f) == sz)
+                  if (fread(buf, 1, sz, f) == (size_t)sz)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_name_dump_cb, &dump);
@@ -2948,7 +2948,7 @@ _name_list_parse(Elm_Map_Name_List *nl)
                {
                   memset(buf, 0, sz + 1);
                   rewind(f);
-                  if (fread(buf, 1, sz, f) == sz)
+                  if (fread(buf, 1, sz, f) == (size_t)sz)
                     {
                        eina_simple_xml_parse
                          (buf, sz, EINA_TRUE, _xml_name_dump_list_cb, nl);
