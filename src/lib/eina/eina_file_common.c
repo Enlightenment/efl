@@ -192,7 +192,7 @@ eina_file_virtual_map_new(Eina_File *file,
         map->refcount = 0;
 
         eina_hash_add(file->map, &key, map);
-        eina_hash_direct_add(file->rmap, map->map, map);
+        eina_hash_direct_add(file->rmap, &map->map, map);
      }
 
    map->refcount++;
