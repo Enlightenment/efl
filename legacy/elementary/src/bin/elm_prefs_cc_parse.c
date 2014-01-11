@@ -695,6 +695,12 @@ compile(void)
    DBG("Opening \"%s\" for input", file_in);
 
    size = lseek(fd, 0, SEEK_END);
+   if (size <= 0)
+     {
+        ERR("lseek failed");
+        close(fd);
+        return;
+     }
    lseek(fd, 0, SEEK_SET);
    data = malloc(size);
    if (data && (read(fd, data, size) == size))
