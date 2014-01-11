@@ -3209,7 +3209,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glDisableVertexAttribArray(SHAD_TEXUV3);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
-             if (dbgflushnum)
+             if (dbgflushnum == 1)
                {
                   const char *types[6] =
                     {"----", "RECT", "IMAG", "FONT", "YUV-", "MAP"};
@@ -3289,7 +3289,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].region.type = 0;
      }
    gc->state.top_pipe = 0;
-   if (dbgflushnum)
+   if (dbgflushnum == 1)
      {
         if (done > 0) printf("DONE (pipes): %i\n", done);
      }
