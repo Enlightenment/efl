@@ -435,6 +435,55 @@ START_TEST(eina_test_shuffle)
 }
 END_TEST
 
+#define DATA_SIZE 100
+START_TEST(eina_test_clone)
+{
+   unsigned int i;
+   unsigned int *d, *rd;
+   unsigned int n[DATA_SIZE];
+   Eina_List *list = NULL;
+   Eina_List *clist = NULL;
+   Eina_List *rclist = NULL;
+
+   eina_init();
+
+   for(i = 0; i < DATA_SIZE; i++)
+     {
+        n[i] = i;
+        list = eina_list_append(list, &n[i]);
+     }
+
+   clist = eina_list_clone(list);
+   fail_if(clist == NULL);
+
+   for(i = 0; i < DATA_SIZE; i++)
+     {
+        fail_if(eina_list_nth(list, i) != eina_list_nth(clist, i));
+     }
+
+   rclist = eina_list_reverse_clone(list);
+   fail_if(rclist == NULL);
+
+   for(i = 0; i < DATA_SIZE; i++)
+     {
+        d = eina_list_nth(list, i);
+        rd = eina_list_nth(rclist, (DATA_SIZE - 1 - i));
+        fail_if(d != rd);
+     }
+
+   list = eina_list_free(list);
+   fail_if(list != NULL);
+
+   clist = eina_list_free(clist);
+   fail_if(clist != NULL);
+
+   rclist = eina_list_free(rclist);
+   fail_if(rclist != NULL);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
@@ -443,4 +492,5 @@ eina_test_list(TCase *tc)
    tcase_add_test(tc, eina_test_sorted_insert);
    tcase_add_test(tc, eina_test_list_split);
    tcase_add_test(tc, eina_test_shuffle);
+   tcase_add_test(tc, eina_test_clone);
 }
