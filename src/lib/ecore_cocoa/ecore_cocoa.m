@@ -23,6 +23,54 @@ static int _ecore_cocoa_init_count = 0;
 
 static int old_flags;
 
+static  unsigned int
+_ecore_cocoa_event_modifiers(int mod)
+{
+   unsigned int modifiers = 0;
+
+   if(mod & NSShiftKeyMask) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if(mod & NSControlKeyMask) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if(mod & NSAlternateKeyMask) modifiers |= ECORE_EVENT_MODIFIER_ALT;
+   if(mod & NSAlphaShiftKeyMask) modifiers |= ECORE_EVENT_LOCK_CAPS;
+
+   return modifiers;
+}
+
+static Ecore_Event_Key*
+_ecore_cocoa_event_key(NSEvent *nsevent, double timestamp)
+{
+   Ecore_Event_Key *ev;
+   unsigned int i;
+   int flags = [nsevent modifierFlags];
+
+   ev = malloc(sizeof(Ecore_Event_Key));
+   if (!ev) return NULL;
+
+   ev->timestamp = timestamp;
+   ev->window = 0;
+   ev->event_window = 0;
+   ev->modifiers = _ecore_cocoa_event_modifiers(flags);
+   ev->key = NULL;
+   ev->compose = NULL;
+
+   printf("key code : %d\n", [[nsevent charactersIgnoringModifiers] characterAtIndex:0]);
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(keystable); ++i)
+     if (keystable[i].code == [[nsevent charactersIgnoringModifiers] characterAtIndex:0])
+       {
+          printf("keycode : %d key pressed : %s\n", keystable[i].code, keystable[i].name);
+          ev->keyname = keystable[i].name;
+          ev->key = ev->keyname;
+          ev->string = keystable[i].compose;
+
+          return ev;
+       }
+   free(ev);
+   return NULL;
+}
+
+
+
 EAPI int
 ecore_cocoa_init(void)
 {
@@ -115,7 +163,17 @@ ecore_cocoa_feed_events(void)
          ev->root.x = ev->x;
          ev->root.y = ev->y;
          ev->timestamp = time;
-         ev->buttons = [event buttonNumber] + 1; // Apple indexes buttons from 0
+
+         if ([event buttonNumber] == 0)
+           ev->buttons = 1;
+         else if ([event buttonNumber] == 2)
+           ev->buttons = 2;
+         else
+           ev->buttons = 3;
+
+         printf("ev buttons : %d - %d\n", ev->buttons, [event buttonNumber]);
+         ev->window = window.ecore_window_data;
+         ev->event_window = ev->window;
 
          if ([event clickCount] == 2)
             ev->double_click = 1;
@@ -148,7 +206,16 @@ ecore_cocoa_feed_events(void)
          ev->root.x = ev->x;
          ev->root.y = ev->y;
          ev->timestamp = time;
-         ev->buttons = [event buttonNumber] + 1; // Apple indexes buttons from 0
+
+         if ([event buttonNumber] == 0)
+           ev->buttons = 1;
+         else if ([event buttonNumber] == 2)
+           ev->buttons = 2;
+         else
+           ev->buttons = 3;
+
+         ev->window = window.ecore_window_data;
+         ev->event_window = ev->window;
 
          if ([event clickCount] == 2)
             ev->double_click = 1;
@@ -168,115 +235,60 @@ ecore_cocoa_feed_events(void)
       case NSKeyDown:
       {
          Ecore_Event_Key *ev;
-         unsigned int     i;
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
 
-         ev = calloc(1, sizeof (Ecore_Event_Key));
+         ev = _ecore_cocoa_event_key(event, time);
          if (!ev) return;
-         ev->timestamp = time;
 
-         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
-         {
-            if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
-            {
-               printf("Key pressed : %s\n", keystable[i].name);
-               ev->keyname = keystable[i].name;
-               ev->key = keystable[i].name;
-               ev->string = keystable[i].compose;
-               ev->window = window.ecore_window_data;
-               ev->event_window = ev->window;
-               ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
-               return;
-            }
-         }
+         ev->window = window.ecore_window_data;
+         ev->event_window = ev->window;
+         ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
          break;
       }
       case NSKeyUp:
       {
          Ecore_Event_Key *ev;
-         unsigned int     i;
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
 
-         printf("Key Up\n");
-
-         ev = calloc(1, sizeof (Ecore_Event_Key));
+         ev = _ecore_cocoa_event_key(event, time);
          if (!ev) return;
-         ev->timestamp = time;
 
-         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
-         {
-            if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
-            {
-               ev->keyname = keystable[i].name;
-               ev->key = keystable[i].name;
-               ev->string = keystable[i].compose;
-               ev->window = window.ecore_window_data;
-               ev->event_window = ev->window;
-               ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
-               return;
-            }
-         }
+         ev->window = window.ecore_window_data;
+         ev->event_window = ev->window;
+         ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
 
          break;
       }
       case NSFlagsChanged:
       {
+
          int flags = [event modifierFlags];
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         Ecore_Event_Key *ev;
 
-         Ecore_Event_Key *evDown = NULL;
-         Ecore_Event_Key *evUp = NULL;
+         ev = calloc(1, sizeof(Ecore_Event_Key));
+         if (!ev) return;
 
-         evDown = calloc(1, sizeof (Ecore_Event_Key));
-         if (!evDown) return;
-
-         evUp = calloc(1, sizeof (Ecore_Event_Key));
-         if (!evUp)
-           {
-              free(evDown);
-              return;
-           }
-
-         // Turn special key flags on
          if (flags & NSShiftKeyMask)
-            evDown->keyname = "Shift_L";
+            ev->keyname = "Shift_L";
          else if (flags & NSControlKeyMask)
-            evDown->keyname = "Control_L";
+            ev->keyname = "Control_L";
          else if (flags & NSAlternateKeyMask)
-            evDown->keyname = "Alt_L";
+            ev->keyname = "Alt_L";
          else if (flags & NSCommandKeyMask)
-            evDown->keyname = "Super_L";
+            ev->keyname = "Super_L";
          else if (flags & NSAlphaShiftKeyMask)
-            evDown->keyname = "Caps_Lock";
+            ev->keyname = "Caps_Lock";
 
-         if (evDown->keyname)
+         if (ev->keyname)
          {
-            evDown->timestamp = time;
-            evDown->string = "";
-            ecore_event_add(ECORE_EVENT_KEY_DOWN, evDown, NULL, NULL);
-            old_flags = flags;
-            break;
-         }
-
-         int changed_flags = flags ^ old_flags;
-
-         // Turn special key flags off
-         if (changed_flags & NSShiftKeyMask)
-            evUp->keyname = "Shift_L";
-         else if (changed_flags & NSControlKeyMask)
-            evUp->keyname = "Control_L";
-         else if (changed_flags & NSAlternateKeyMask)
-            evUp->keyname = "Alt_L";
-         else if (changed_flags & NSCommandKeyMask)
-            evUp->keyname = "Super_L";
-         else if (changed_flags & NSAlphaShiftKeyMask)
-            evUp->keyname = "Caps_Lock";
-
-         if (evUp->keyname)
-         {
-            evUp->timestamp = time;
-            evUp->string = "";
-            ecore_event_add(ECORE_EVENT_KEY_UP, evUp, NULL, NULL);
+            ev->key = ev->keyname;
+            ev->timestamp = time;
+            ev->string = "";
+            ev->modifiers = _ecore_cocoa_event_modifiers(flags);
+            printf("Flags changed keyup\n");
+            ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
             old_flags = flags;
             break;
          }
