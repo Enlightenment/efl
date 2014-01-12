@@ -2,28 +2,29 @@
 
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-//#ifdef GL_GLES
-//static const GLenum rgb_fmt    = GL_RGBA;
-//static const GLenum rgb_ifmt   = GL_RGBA;
-//#else
 static const GLenum rgb_fmt    = GL_RGBA;
 static const GLenum rgb_ifmt   = GL_RGB;
-//#endif
-#ifdef GL_BGRA
-# ifdef GL_GLES
+
+#ifdef GL_GLES
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_BGRA;
 static const GLenum bgr_fmt    = GL_BGRA;
 static const GLenum bgr_ifmt   = GL_BGRA;
-# else
+#else
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_RGBA;
 static const GLenum bgr_fmt    = GL_BGRA;
 static const GLenum bgr_ifmt   = GL_RGB;
-# endif
 #endif
+
+#ifdef GL_GLES
 static const GLenum alpha_fmt      = GL_ALPHA;
 static const GLenum alpha_ifmt     = GL_ALPHA;
+#else
+static const GLenum alpha_fmt      = GL_ALPHA;
+static const GLenum alpha_ifmt     = GL_ALPHA4;
+#endif
+
 static const GLenum lum_fmt        = GL_LUMINANCE;
 static const GLenum lum_ifmt       = GL_LUMINANCE;
 static const GLenum lum_alpha_fmt  = GL_LUMINANCE_ALPHA;
@@ -159,18 +160,33 @@ _tex_format_index(GLuint format)
 {
    switch (format)
      {
-     case GL_RGBA:
-#ifdef GL_BGRA
-     case GL_BGRA:
-#endif
+      case GL_RGBA:
+      case GL_RGBA4:
+      case GL_RGBA8:
+      case GL_RGBA12:
+      case GL_RGBA16:
+      case GL_BGRA:
         return 0;
-     case GL_RGB:
+      case GL_RGB:
+      case GL_RGB4:
+      case GL_RGB8:
+      case GL_RGB12:
+      case GL_RGB16:
         return 1;
-     case GL_ALPHA:
+      case GL_ALPHA:
+      case GL_ALPHA4:
+      case GL_ALPHA8:
+      case GL_ALPHA12:
+      case GL_ALPHA16:
         return 2;
-     case GL_LUMINANCE: // never used in atlas
+      case GL_LUMINANCE: // never used in atlas
+      case GL_LUMINANCE4:
+      case GL_LUMINANCE8:
+      case GL_LUMINANCE12:
+      case GL_LUMINANCE16:
         return 3;
-     default:
+        // XXX: luminance_alpha not supported at all
+      default:
         return 0;
      }
    return 0;
