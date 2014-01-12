@@ -28,7 +28,7 @@ typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
 typedef struct _EmotionVideoSinkPrivate EmotionVideoSinkPrivate;
 typedef struct _EmotionVideoSink        EmotionVideoSink;
 typedef struct _EmotionVideoSinkClass   EmotionVideoSinkClass;
-typedef struct _Emotion_Gstreamer_Video Emotion_Gstreamer_Video;
+typedef struct _Emotion_Gstreamer Emotion_Gstreamer;
 typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
 typedef struct _Emotion_Gstreamer_Buffer Emotion_Gstreamer_Buffer;
 typedef struct _Emotion_Gstreamer_Message Emotion_Gstreamer_Message;
@@ -45,20 +45,15 @@ struct _Emotion_Gstreamer_Metadata
    char *disc_id;
 };
 
-struct _Emotion_Gstreamer_Video
+struct _Emotion_Gstreamer
 {
    const Emotion_Engine *api;
 
    /* Gstreamer elements */
    GstElement       *pipeline;
-   GstElement       *sink;
-   GstElement       *esink;
-   GstElement       *convert;
+   GstElement       *vsink;
 
    Eina_List        *threads;
-
-   /* eos */
-   GstBus           *eos_bus;
 
    /* Evas object */
    Evas_Object      *obj;
@@ -68,8 +63,6 @@ struct _Emotion_Gstreamer_Video
    double            volume;
 
    Emotion_Gstreamer_Metadata *metadata;
-
-   const char       *uri;
 
    int               in;
    int               out;
@@ -81,7 +74,7 @@ struct _Emotion_Gstreamer_Video
    Eina_Bool         audio_mute   : 1;
    Eina_Bool         play_started : 1;
    Eina_Bool         pipeline_parsed : 1;
-   Eina_Bool         delete_me    : 1;
+   Eina_Bool         shutdown    : 1;
 };
 
 struct _EmotionVideoSink {
@@ -142,7 +135,7 @@ struct _Emotion_Gstreamer_Buffer
 
 struct _Emotion_Gstreamer_Message
 {
-   Emotion_Gstreamer_Video *ev;
+   Emotion_Gstreamer *ev;
 
    GstMessage *msg;
 };
@@ -207,7 +200,7 @@ Emotion_Gstreamer_Buffer *emotion_gstreamer_buffer_alloc(EmotionVideoSink *sink,
                                                          Evas_Video_Convert_Cb func);
 void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
 
-Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
+Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer *ev,
                                                            GstMessage *msg);
 void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
 

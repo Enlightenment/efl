@@ -38,7 +38,7 @@ emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send)
 }
 
 Emotion_Gstreamer_Message *
-emotion_gstreamer_message_alloc(Emotion_Gstreamer_Video *ev,
+emotion_gstreamer_message_alloc(Emotion_Gstreamer *ev,
 				GstMessage *msg)
 {
    Emotion_Gstreamer_Message *send;
@@ -63,7 +63,7 @@ emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send)
 
    if (send->ev->in == send->ev->out
        && send->ev->threads == NULL
-       && send->ev->delete_me)
+       && send->ev->shutdown)
      send->ev->api->del(send->ev);
 
    gst_message_unref(send->msg);
