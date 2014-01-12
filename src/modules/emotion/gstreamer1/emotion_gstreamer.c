@@ -458,10 +458,29 @@ em_audio_handled(void *video)
 }
 
 static int
-em_seekable(void *video EINA_UNUSED)
+em_seekable(void *video)
 {
-   /* FIXME: Implement with SEEKING query and duration */
-   return 1;
+   Emotion_Gstreamer *ev = video;
+   GstQuery *query;
+   int ret = 0;
+   gboolean seekable;
+
+   if (!ev->ready) return ret;
+
+   query = gst_query_new_seeking(GST_FORMAT_TIME);
+   if (!gst_element_query(ev->pipeline, query))
+     goto on_error;
+
+   gst_query_parse_seeking(query, NULL, &seekable, NULL, NULL);
+   if (!seekable)
+     goto on_error;
+
+   ret = 1;
+
+on_error:
+   gst_query_unref(query);
+
+   return ret;
 }
 
 static void
