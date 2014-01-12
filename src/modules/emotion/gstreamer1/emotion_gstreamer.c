@@ -123,40 +123,20 @@ em_file_open(void *video,
              const char   *file)
 {
    Emotion_Gstreamer *ev = video;
-   Eina_Strbuf *sbuf = NULL;
-   const char *uri;
+   char *uri;
 
    if (!file) return EINA_FALSE;
-   if (strstr(file, "://") == NULL)
-     {
-        sbuf = eina_strbuf_new();
-        eina_strbuf_append(sbuf, "file://");
-        if (strncmp(file, "./", 2) == 0)
-          file += 2;
-	if (strstr(file, ":/") != NULL)
-	  { /* We absolutely need file:///C:/ under Windows, so adding it here */
-             eina_strbuf_append(sbuf, "/");
-	  }
-	else if (*file != '/')
-          {
-             char tmp[PATH_MAX];
 
-             if (getcwd(tmp, PATH_MAX))
-               {
-                  eina_strbuf_append(sbuf, tmp);
-                  eina_strbuf_append(sbuf, "/");
-               }
-          }
-        eina_strbuf_append(sbuf, file);
-     }
+   if (gst_uri_is_valid(file)) uri = strdup(file);
+   else uri = gst_filename_to_uri(file, NULL);
+   if (!uri) return EINA_FALSE;
 
    ev->play_started = 0;
    ev->pipeline_parsed = 0;
 
-   uri = sbuf ? eina_strbuf_string_get(sbuf) : file;
    DBG("setting file to '%s'", uri);
-   ev->pipeline = _create_pipeline (ev, ev->obj, uri);
-   if (sbuf) eina_strbuf_free(sbuf);
+   ev->pipeline = _create_pipeline(ev, ev->obj, uri);
+   g_free(uri);
 
    if (!ev->pipeline)
      return EINA_FALSE;
