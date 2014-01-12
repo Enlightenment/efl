@@ -3318,11 +3318,10 @@ test_genlist_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Evas_Object *win, *gl, *bx, *bxx, *chk;
    unsigned lhand, rhand;
 
-   elm_config_focus_highlight_enabled_set(EINA_TRUE);
-   elm_config_focus_highlight_animate_set(EINA_TRUE);
-
    win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
    elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
 
    bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
