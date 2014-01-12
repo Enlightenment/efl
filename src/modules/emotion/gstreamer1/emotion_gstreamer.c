@@ -1638,52 +1638,18 @@ _create_pipeline (Emotion_Gstreamer *ev,
 			 const char *uri)
 {
    GstElement *playbin;
-   GstElement *bin = NULL;
-   GstElement *vsink = NULL;
-   GstElement *queue = NULL;
-   GstPad *pad;
+   GstElement *vsink;
    GstBus *bus;
    int flags;
-   const char *launch;
 
    if (!uri)
      return NULL;
 
-   launch = emotion_webcam_custom_get(uri);
-   if (launch)
+   playbin = gst_element_factory_make("playbin", "playbin");
+   if (!playbin)
      {
-        GError *error = NULL;
-
-        /* FIXME: This code path is broken in many places and won't
-         * work as is */
-        playbin = gst_parse_bin_from_description(launch, 1, &error);
-        if (!playbin)
-          {
-             ERR("Unable to setup command : '%s' got error '%s'.", launch, error->message);
-             g_error_free(error);
-             return NULL;
-          }
-        if (error)
-          {
-             WRN("got recoverable error '%s' for command : '%s'.", error->message, launch);
-             g_error_free(error);
-          }
-     }
-   else
-     {
-        playbin = gst_element_factory_make("playbin", "playbin");
-        if (!playbin)
-          {
-             ERR("Unable to create 'playbin' GstElement.");
-             return NULL;
-          }
-     }
-
-   bin = gst_bin_new(NULL);
-   if (!bin)
-     {
-       ERR("Unable to create GstBin !");
-       goto unref_pipeline;
+        ERR("Unable to create 'playbin' GstElement.");
+        return NULL;
      }
 
    vsink = gst_element_factory_make("emotion-sink", "sink");
@@ -1695,33 +1661,10 @@ _create_pipeline (Emotion_Gstreamer *ev,
 
    g_object_set(G_OBJECT(vsink), "emotion-object", o, NULL);
 
-   /* We need queue to force each video sink to be in its own thread */
-   queue = gst_element_factory_make("queue", "equeue");
-   if (!queue)
-     {
-        ERR("Unable to create 'queue' GstElement.");
-        goto unref_pipeline;
-     }
-
-   gst_bin_add_many(GST_BIN(bin), queue, vsink, NULL);
-   gst_element_link_many(queue, vsink, NULL);
-
-   /* link both sink to GstTee */
-   pad = gst_element_get_static_pad(queue, "sink");
-   gst_element_add_pad(bin, gst_ghost_pad_new("sink", pad));
-   gst_object_unref(pad);
-
-   if (launch)
-     {
-        g_object_set(G_OBJECT(playbin), "sink", bin, NULL);
-     }
-   else
-     {
-        g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
-        g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
-        g_object_set(G_OBJECT(playbin), "video-sink", bin, NULL);
-        g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
-     }
+   g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
+   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
+   g_object_set(G_OBJECT(playbin), "video-sink", vsink, NULL);
+   g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
 
    bus = gst_element_get_bus(playbin);
    gst_bus_set_sync_handler(bus, _bus_sync_handler, ev, NULL);
@@ -1748,7 +1691,6 @@ _create_pipeline (Emotion_Gstreamer *ev,
 
  unref_pipeline:
    gst_object_unref(vsink);
-   gst_object_unref(bin);
    gst_object_unref(playbin);
    return NULL;
 }
