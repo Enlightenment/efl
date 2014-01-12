@@ -1248,6 +1248,20 @@ _for_each_tag(GstTagList const* list,
              break;
           }
 
+        if (!strcmp(tag, GST_TAG_DATE_TIME))
+          {
+             gchar *str;
+             const GValue *date;
+             g_free(ev->metadata->year);
+             date = gst_tag_list_get_value_index(list, GST_TAG_DATE_TIME, 0);
+             if (date)
+               str = g_strdup_value_contents(date);
+             else
+               str = NULL;
+             ev->metadata->year = str;
+             break;
+          }
+
         if (!strcmp(tag, GST_TAG_TRACK_NUMBER))
           {
              gchar *str;
