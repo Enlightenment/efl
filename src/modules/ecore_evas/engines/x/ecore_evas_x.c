@@ -1435,8 +1435,9 @@ _ecore_evas_x_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 
    if (ee->gl_sync_draw_done < 0)
      {
-        if (getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE"))
-          ee->gl_sync_draw_done = atoi(getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE"));
+        char *sync = getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE");
+        if (sync && (atoi(sync) == 1))
+          ee->gl_sync_draw_done = 1;
         else
           ee->gl_sync_draw_done = 0;
      }
