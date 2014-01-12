@@ -828,20 +828,41 @@ em_audio_channel_volume_get(void *video)
 /* spu stuff */
 
 static int
-em_spu_channel_count(void *video EINA_UNUSED)
+em_spu_channel_count(void *video)
 {
-   return 0;
+   Emotion_Gstreamer *ev = video;
+   gint n;
+
+   if (!ev->ready) return 0;
+
+   g_object_get(ev->pipeline, "n-text", &n, NULL);
+
+   return n;
 }
 
 static void
-em_spu_channel_set(void *video EINA_UNUSED, int channel EINA_UNUSED)
+em_spu_channel_set(void *video, int channel)
 {
+   Emotion_Gstreamer *ev = video;
+
+   if (!ev->ready) return;
+
+   if (channel < 0) channel = -1;
+
+   g_object_set (ev->pipeline, "current-text", channel, NULL);
 }
 
 static int
-em_spu_channel_get(void *video EINA_UNUSED)
+em_spu_channel_get(void *video)
 {
-   return 1;
+   Emotion_Gstreamer *ev = video;
+   gint cur;
+
+   if (!ev->ready) return -1;
+
+   g_object_get(ev->pipeline, "current-text", &cur, NULL);
+
+   return cur;
 }
 
 static const char *
