@@ -3229,11 +3229,13 @@ test_genlist19(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(win);
 }
 
-static unsigned _gl20_objects = 5;
-static const char *_gl20_object_names[] = {"None", "Square", "Button", "Check", "Box"};
+/*************/
+
+static unsigned _gl_focus_objects = 5;
+static const char *_gl_focus_object_names[] = {"None", "Square", "Button", "Check", "Box"};
 
 static char *
-gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+gl_focus_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    unsigned char op = (uintptr_t)data % 100;
@@ -3244,12 +3246,12 @@ gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UN
    v2 = op % 10;
    if (v2 > 4) v2 = 4;
    snprintf(buf, sizeof(buf), " %s / %s ",
-            _gl20_object_names[v1], _gl20_object_names[v2]);
+            _gl_focus_object_names[v1], _gl_focus_object_names[v2]);
    return strdup(buf);
 }
 
 static Evas_Object *
-gl20_content_get(void *data, Evas_Object *obj, const char *part)
+gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *cnt = NULL;
 
@@ -3272,9 +3274,9 @@ gl20_content_get(void *data, Evas_Object *obj, const char *part)
          cnt = elm_box_add(obj);
          evas_object_size_hint_align_set(cnt, EVAS_HINT_FILL, EVAS_HINT_FILL);
          elm_box_horizontal_set(cnt, EINA_TRUE);
-         elm_box_pack_end(cnt, gl20_content_get((void *)2, obj, ""));
-         elm_box_pack_end(cnt, gl20_content_get((void *)3, obj, ""));
-         elm_box_pack_end(cnt, gl20_content_get((void *)2, obj, ""));
+         elm_box_pack_end(cnt, gl_focus_content_get((void *)2, obj, ""));
+         elm_box_pack_end(cnt, gl_focus_content_get((void *)3, obj, ""));
+         elm_box_pack_end(cnt, gl_focus_content_get((void *)2, obj, ""));
          break;
       default:
          break;
@@ -3289,7 +3291,7 @@ gl20_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-gl20_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
+gl_focus_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
 {
     elm_genlist_focus_on_selection_set(gl, focus);
     elm_check_state_set(chk, focus);
@@ -3297,21 +3299,21 @@ gl20_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
 }
 
 static void
-gl20_focus_check_changed(void *data, Evas_Object *obj, void *event_info  EINA_UNUSED)
+gl_focus_focus_check_changed(void *data, Evas_Object *obj, void *event_info  EINA_UNUSED)
 {
    Eina_Bool nextstate = !elm_genlist_focus_on_selection_get(data);
-   gl20_focus_on_selection_set(data, obj, nextstate);
+   gl_focus_focus_on_selection_set(data, obj, nextstate);
 }
 
 static void
-gl20_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+gl_focus_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_animate_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
 }
 
 void
-test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_genlist_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gl, *bx, *bxx, *chk;
    unsigned lhand, rhand;
@@ -3342,18 +3344,18 @@ test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus on selection");
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed", gl20_focus_check_changed, gl);
+   evas_object_smart_callback_add(chk, "changed", gl_focus_focus_check_changed, gl);
    elm_box_pack_end(bx, chk);
    evas_object_show(chk);
 
-   gl20_focus_on_selection_set(gl, chk, EINA_TRUE);
+   gl_focus_focus_on_selection_set(gl, chk, EINA_TRUE);
 
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus Animation");
    elm_check_state_set(chk, EINA_TRUE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  gl20_focus_animate_check_changed, win);
+                                  gl_focus_focus_animate_check_changed, win);
    elm_box_pack_end(bx, chk);
    evas_object_show(chk);
 
@@ -3361,30 +3363,30 @@ test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
-   itc1->func.text_get = gl20_text_get;
-   itc1->func.content_get  = gl20_content_get;
+   itc1->func.text_get = gl_focus_text_get;
+   itc1->func.content_get  = gl_focus_content_get;
    itc1->func.state_get = NULL;
    itc1->func.del = NULL;
 
    itc4 = elm_genlist_item_class_new();
    itc4->item_style = "tree_effect";
-   itc4->func.text_get = gl20_text_get;
-   itc4->func.content_get  = gl20_content_get;
+   itc4->func.text_get = gl_focus_text_get;
+   itc4->func.content_get  = gl_focus_content_get;
    itc4->func.state_get = NULL;
    itc4->func.del = NULL;
 
-   for (lhand = 0; lhand < _gl20_objects; lhand++)
+   for (lhand = 0; lhand < _gl_focus_objects; lhand++)
      {
-        for (rhand = 0; rhand < _gl20_objects; rhand++)
+        for (rhand = 0; rhand < _gl_focus_objects; rhand++)
           {
              unsigned digit1 = lhand * 10 + rhand;
              elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit1,
                    NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-             unsigned digit2 = (_gl20_objects - lhand -1) * 10 +
-                (_gl20_objects - rhand -1);
+             unsigned digit2 = (_gl_focus_objects - lhand -1) * 10 +
+                (_gl_focus_objects - rhand -1);
              elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit2,
                    NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-             if (rhand == (_gl20_objects - 1))
+             if (rhand == (_gl_focus_objects - 1))
                elm_genlist_item_append(gl, itc4, (void*)(uintptr_t)digit1,
                      NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
           }
