@@ -1180,7 +1180,6 @@ _for_each_tag(GstTagList const* list,
 
    if (!ev || !ev->metadata) return;
 
-   /* FIXME: Should use the GStreamer tag merging functions */
    count = gst_tag_list_get_tag_size(list, tag);
 
    for (i = 0; i < count; i++)
