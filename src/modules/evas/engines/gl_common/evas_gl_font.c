@@ -5,10 +5,8 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 {
    Evas_Engine_GL_Context *gc = context;
    Evas_GL_Texture *tex;
-   DATA8 *data;
-   int w, h, j, nw;
-   DATA8 *ndata;
-   int fh;
+   int w, h, j, nw, fh, x, y;
+   DATA8 *ndata, *data, *p1, *p2;
 
    if (fg->ext_dat) return fg->ext_dat; // FIXME: one engine at a time can do this :(
 
@@ -16,80 +14,38 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
    h = fg->glyph_out->bitmap.rows;
    if ((w == 0) || (h == 0)) return NULL;
 
-   data = fg->glyph_out->bitmap.buffer;
-   j = fg->glyph_out->bitmap.pitch;
+   if (!fg->glyph_out->rle) return NULL;
+   data = evas_common_font_glyph_uncompress(fg, &w, &h);
+   if (!data) return NULL;
+   j = w;
    if (j < w) j = w;
 
+   // expand to 32bit (4 byte) aligned rows for texture upload
    nw = ((w + 3) / 4) * 4;
    ndata = alloca(nw *h);
    if (!ndata) return NULL;
-   if ((fg->glyph_out->bitmap.num_grays == 256) &&
-       (fg->glyph_out->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY))
+   for (y = 0; y < h; y++)
      {
-	int x, y;
-	DATA8 *p1, *p2;
-
-	for (y = 0; y < h; y++)
-	  {
-	     p1 = data + (j * y);
-	     p2 = ndata + (nw * y);
-	     for (x = 0; x < w; x++)
-	       {
-		  *p2 = *p1;
-		  p1++;
-		  p2++;
-	       }
-	  }
+        p1 = data + (j * y);
+        p2 = ndata + (nw * y);
+        for (x = 0; x < w; x++)
+          {
+             *p2 = *p1;
+             p1++;
+             p2++;
+          }
      }
-   else
-     {
-	DATA8 *tmpbuf = NULL, *dp, *tp, bits;
-	int bi, bj, end;
-	const DATA8 bitrepl[2] = {0x0, 0xff};
-
-	tmpbuf = alloca(w);
-	if (tmpbuf)
-	  {
-	     int x, y;
-	     DATA8 *p1, *p2;
-
-	     for (y = 0; y < h; y++)
-	       {
-		  p1 = tmpbuf;
-		  p2 = ndata + (nw * y);
-		  tp = tmpbuf;
-		  dp = data + (y * fg->glyph_out->bitmap.pitch);
-		  for (bi = 0; bi < w; bi += 8)
-		    {
-		       bits = *dp;
-		       if ((w - bi) < 8) end = w - bi;
-		       else end = 8;
-		       for (bj = 0; bj < end; bj++)
-			 {
-			    *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
-			    tp++;
-			 }
-		       dp++;
-		    }
-		  for (x = 0; x < w; x++)
-		    {
-		       *p2 = *p1;
-		       p1++;
-		       p2++;
-		    }
-	       }
-	  }
-     }
-//   fh = h;
    fh = fg->fi->max_h;
    tex = evas_gl_common_texture_alpha_new(gc, ndata, w, h, fh);
-   if (!tex) return NULL;
+   if (!tex) goto done;
    tex->sx1 = ((double)(tex->x)) / (double)tex->pt->w;
    tex->sy1 = ((double)(tex->y)) / (double)tex->pt->h;
    tex->sx2 = ((double)(tex->x + tex->w)) / (double)tex->pt->w;
    tex->sy2 = ((double)(tex->y + tex->h)) / (double)tex->pt->h;
    tex->fglyph = fg;
    gc->font_glyph_textures = eina_list_append(gc->font_glyph_textures, tex);
+done:
+   free(data);
    return tex;
 }
 

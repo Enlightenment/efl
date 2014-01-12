@@ -196,8 +196,6 @@ struct _Slave_Msg_Glyph {
    unsigned int rows;
    unsigned int width;
    unsigned int pitch;
-   unsigned int num_grays;
-   unsigned int pixel_mode;
 };
 
 typedef struct _Slave_Msg_Glyph Slave_Msg_Glyph;

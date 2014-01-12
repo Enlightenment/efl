@@ -14,10 +14,8 @@
 struct _Evas_Glyph
 {
    RGBA_Font_Glyph *fg;
-   void *data;
-   Eina_Rectangle coord;
+   int x, y;
    FT_UInt idx;
-   int j;
 };
 
 EAPI void
@@ -33,7 +31,7 @@ evas_common_font_draw_init(void)
  */
 EAPI Eina_Bool
 evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
-                           Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w,
+                           Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func EINA_UNUSED, int ext_x, int ext_y, int ext_w,
                            int ext_h, int im_w, int im_h EINA_UNUSED)
 {
    DATA32 *im;
@@ -43,183 +41,33 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    if (!glyphs->array) return EINA_FALSE;
 
    im = dst->image.data;
-
    EINA_INARRAY_FOREACH(glyphs->array, glyph)
      {
         RGBA_Font_Glyph *fg;
-        int chr_x, chr_y;
+        int chr_x, chr_y, w;
 
         fg = glyph->fg;
-
-	/* FIXME: Why was that moved out of prepare ? This increase cache miss. */
-        glyph->coord.w = fg->glyph_out->bitmap.width;
-        glyph->coord.h = fg->glyph_out->bitmap.rows;
-        glyph->j = fg->glyph_out->bitmap.pitch;
-        glyph->data = fg->glyph_out->bitmap.buffer;
-
-        if (dc->font_ext.func.gl_new)
+        if ((!fg->ext_dat) && (dc->font_ext.func.gl_new))
           {
              /* extension calls */
              fg->ext_dat = dc->font_ext.func.gl_new(dc->font_ext.data, fg);
              fg->ext_dat_free = dc->font_ext.func.gl_free;
           }
-
-        chr_x = x + glyph->coord.x;
-        chr_y = y + glyph->coord.y;
-
+        w = fg->glyph_out->bitmap.width;
+        chr_x = x + glyph->x;
+        chr_y = y + glyph->y;
         if (chr_x < (ext_x + ext_w))
           {
-             DATA8 *data;
-             int i, j, w, h;
-
-             data = glyph->data;
-             j = glyph->j;
-             w = glyph->coord.w;
-             if (j < w) j = w;
-             h = glyph->coord.h;
-
-#ifdef HAVE_PIXMAN
-# ifdef PIXMAN_FONT             
-             int index;
-             DATA32 *font_alpha_buffer;
-             pixman_image_t *font_mask_image;
-
-             font_alpha_buffer = alloca(w * h * sizeof(DATA32));
-             for (index = 0; index < (w * h); index++)
-               font_alpha_buffer[index] = data[index] << 24;
-             
-             font_mask_image = pixman_image_create_bits(PIXMAN_a8r8g8b8, w, h,
-                                                        font_alpha_buffer, 
-                                                        w * sizeof(DATA32));
-
-             if (!font_mask_image) return EINA_FALSE;
-# endif
-#endif
-
+             if ((w > 0) && ((chr_x + w) > ext_x))
                {
-                  if ((j > 0) && (chr_x + w > ext_x))
-                    {
-                       if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
-                         {
-                            /* ext glyph draw */
-                            dc->font_ext.func.gl_draw(dc->font_ext.data,
-                                                      (void *)dst,
-                                                      dc, fg, chr_x,
-                                                      y - (chr_y - y));
-                         }
-                       else
-                         {
-                            if ((fg->glyph_out->bitmap.num_grays == 256) &&
-                                (fg->glyph_out->bitmap.pixel_mode == FT_PIXEL_MODE_GRAY))
-                              {
-#ifdef HAVE_PIXMAN
-# ifdef PIXMAN_FONT
-                                 if ((dst->pixman.im) && 
-                                     (dc->col.pixman_color_image))
-                                   pixman_image_composite(PIXMAN_OP_OVER, 
-                                                          dc->col.pixman_color_image, 
-                                                          font_mask_image, 
-                                                          dst->pixman.im,
-                                                          chr_x, 
-                                                          y - (chr_y - y), 
-                                                          0, 0, 
-                                                          chr_x, 
-                                                          y - (chr_y - y), 
-                                                          w, h);
-                                 else
-# endif                                   
-#endif
-                                   {
-                                      for (i = 0; i < h; i++)
-                                        {
-                                           int dx, dy;
-                                           int in_x, in_w;
-                                           
-                                           in_x = 0;
-                                           in_w = 0;
-                                           dx = chr_x;
-                                           dy = y - (chr_y - i - y);
-
-					   if ((dx < (ext_x + ext_w)) &&
-					       (dy >= (ext_y)) &&
-					       (dy < (ext_y + ext_h)))
-					     {
-					       if (dx + w > (ext_x + ext_w))
-						 in_w += (dx + w) - (ext_x + ext_w);
-					       if (dx < ext_x)
-						 {
-						   in_w += ext_x - dx;
-						   in_x = ext_x - dx;
-						   dx = ext_x;
-						 }
-					       if (in_w < w)
-						 {
-						   func(NULL, data + (i * j) + in_x, dc->col.col,
-							im + (dy * im_w) + dx, w - in_w);
-						 }
-					     }
-                                        }
-                                   }
-                              }
-                            else
-                              {
-                                 DATA8 *tmpbuf = NULL, *dp, *tp, bits;
-                                 int bi, bj;
-                                 const DATA8 bitrepl[2] = {0x0, 0xff};
-
-                                 tmpbuf = alloca(w);
-                                 for (i = 0; i < h; i++)
-                                   {
-                                      int dx, dy;
-                                      int in_x, in_w, end;
-                                      
-                                      in_x = 0;
-                                      in_w = 0;
-                                      dx = chr_x;
-                                      dy = y - (chr_y - i - y);
-
-				      tp = tmpbuf;
-				      dp = data + (i * fg->glyph_out->bitmap.pitch);
-				      for (bi = 0; bi < w; bi += 8)
-					{
-					  bits = *dp;
-					  if ((w - bi) < 8) end = w - bi;
-					  else end = 8;
-					  for (bj = 0; bj < end; bj++)
-					    {
-					      *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
-					      tp++;
-					    }
-					  dp++;
-					}
-				      if ((dx < (ext_x + ext_w)) &&
-					  (dy >= (ext_y)) &&
-					  (dy < (ext_y + ext_h)))
-					{
-					  if (dx + w > (ext_x + ext_w))
-					    in_w += (dx + w) - (ext_x + ext_w);
-					  if (dx < ext_x)
-					    {
-					      in_w += ext_x - dx;
-					      in_x = ext_x - dx;
-					      dx = ext_x;
-					    }
-					  if (in_w < w)
-					    {
-					      func(NULL, tmpbuf + in_x, dc->col.col,
-						   im + (dy * im_w) + dx, w - in_w);
-					    }
-                                        }
-                                   }
-                              }
-                         }
-                    }
+                  if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
+                    dc->font_ext.func.gl_draw(dc->font_ext.data, (void *)dst,
+                                              dc, fg, chr_x, y - (chr_y - y));
+                  else if (fg->glyph_out->rle)
+                    evas_common_font_glyph_draw(fg, dc, im, im_w,
+                                                chr_x, y - (chr_y - y),
+                                                ext_x, ext_y, ext_w, ext_h);
                }
-#ifdef HAVE_PIXMAN
-# ifdef PIXMAN_FONT
-             pixman_image_unref(font_mask_image);
-# endif
-#endif
           }
         else
           break;
@@ -362,8 +210,8 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 
         glyph->fg = fg;
         glyph->idx = idx;
-        glyph->coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
-        glyph->coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
+        glyph->x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
+        glyph->y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
      }
    EVAS_FONT_WALK_TEXT_END();
 
@@ -389,11 +237,6 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    return;
 
 error:
-   if (fg)
-     {
-        if (fg->glyph_out) free(fg->glyph_out);
-        free(fg);
-     }
    eina_inarray_free(glyphs);
 }
 

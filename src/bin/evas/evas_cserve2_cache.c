@@ -1933,10 +1933,6 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
         buf += sizeof(int);
         memcpy(buf, &gldata->pitch, sizeof(int));
         buf += sizeof(int);
-        memcpy(buf, &gldata->num_grays, sizeof(int));
-        buf += sizeof(int);
-        memcpy(buf, &gldata->pixel_mode, sizeof(int));
-        buf += sizeof(int);
         memcpy(buf, &gldata->hint, sizeof(int));
         buf += sizeof(int);
      }
@@ -2177,8 +2173,6 @@ _glyphs_load_request_response(Glyphs_Request *req,
              gldata->rows = msg->glyphs[j].rows;
              gldata->width = msg->glyphs[j].width;
              gldata->pitch = msg->glyphs[j].pitch;
-             gldata->num_grays = msg->glyphs[j].num_grays;
-             gldata->pixel_mode = msg->glyphs[j].pixel_mode;
              gldata->hint = hint;
 
              fe->nglyphs++;

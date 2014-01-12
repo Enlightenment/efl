@@ -968,14 +968,16 @@ struct _RGBA_Font_Source
  */
 struct _RGBA_Font_Glyph_Out
 {
+   unsigned char *rle;
    struct {
-      int rows;
-      int width;
-      int pitch;
       unsigned char *buffer;
-      short num_grays;
-      char pixel_mode;
+      unsigned short rows;
+      unsigned short width;
+      unsigned short pitch;
+      unsigned short rle_alloc : 1;
+      unsigned short no_free_glout : 1;
    } bitmap;
+   int rle_size;
 };
 
 struct _RGBA_Font_Glyph
@@ -986,7 +988,6 @@ struct _RGBA_Font_Glyph
    Evas_Coord      y_bear;
    FT_Glyph        glyph;
    RGBA_Font_Glyph_Out *glyph_out;
-   void            (*glyph_out_free)(void *);
    /* this is a problem - only 1 engine at a time can extend such a font... grrr */
    void           *ext_dat;
    void           (*ext_dat_free) (void *ext_dat);

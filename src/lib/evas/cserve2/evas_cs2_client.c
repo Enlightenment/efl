@@ -1952,10 +1952,11 @@ _font_entry_glyph_map_rebuild_check(Font_Entry *fe, Font_Hint_Flags hints)
              gl->base.bitmap.rows = gd->rows;
              gl->base.bitmap.width = gd->width;
              gl->base.bitmap.pitch = gd->pitch;
-             gl->base.bitmap.buffer = (unsigned char *)
-                   fe->map->mempool.data + gl->offset;
-             gl->base.bitmap.num_grays = gd->num_grays;
-             gl->base.bitmap.pixel_mode = gd->pixel_mode;
+             gl->base.bitmap.buffer = NULL;
+             gl->base.rle = (unsigned char *)
+               fe->map->mempool.data + gl->offset;
+             gl->base.rle_size = gl->size;
+             gl->base.bitmap.rle_alloc = EINA_FALSE;
              gl->idx = gd->index;
              gl->rid = 0;
 
@@ -2062,7 +2063,7 @@ _glyph_request_cb(void *data, const void *msg, int size)
      {
         string_t shm_id;
         unsigned int idx, offset, glsize, hints;
-        int rows, width, pitch, num_grays, pixel_mode;
+        int rows, width, pitch;
         CS_Glyph_Out *gl;
 
         pos = buf - (const char*) resp;
@@ -2082,10 +2083,6 @@ _glyph_request_cb(void *data, const void *msg, int size)
         memcpy(&width, buf, sizeof(int));
         buf += sizeof(int);
         memcpy(&pitch, buf, sizeof(int));
-        buf += sizeof(int);
-        memcpy(&num_grays, buf, sizeof(int));
-        buf += sizeof(int);
-        memcpy(&pixel_mode, buf, sizeof(int));
         buf += sizeof(int);
         memcpy(&hints, buf, sizeof(int));
         buf += sizeof(int);
@@ -2112,10 +2109,12 @@ _glyph_request_cb(void *data, const void *msg, int size)
         gl->base.bitmap.rows = rows;
         gl->base.bitmap.width = width;
         gl->base.bitmap.pitch = pitch;
-        gl->base.bitmap.buffer =
+        gl->base.bitmap.buffer = NULL;
+        gl->base.bitmap.rle_alloc = 0;
+        gl->base.bitmap.no_free_glout = 1;
+        gl->base.rle =
               (unsigned char *) gl->map->mempool.data + gl->offset;
-        gl->base.bitmap.num_grays = num_grays;
-        gl->base.bitmap.pixel_mode = pixel_mode;
+        gl->base.rle_size = gl->size;
         gl->rid = 0;
 
         if (!eina_clist_element_is_linked(&gl->map_entry))

@@ -15,6 +15,7 @@
 
 #include FT_OUTLINE_H
 #include FT_SYNTHESIS_H
+#include FT_BITMAP_H
 
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
@@ -352,10 +353,17 @@ _glyph_free(RGBA_Font_Glyph *fg)
 {
    if ((!fg) || (fg == (void *)(-1))) return;
 
+   if (fg->glyph_out)
+     {
+        if ((fg->glyph_out->rle) && (fg->glyph_out->bitmap.rle_alloc))
+          free(fg->glyph_out->rle);
+        fg->glyph_out->rle = NULL;
+        if (!fg->glyph_out->bitmap.no_free_glout) free(fg->glyph_out);
+        fg->glyph_out = NULL;
+     }
    FT_Done_Glyph(fg->glyph);
    /* extension calls */
    if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
-   if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
    free(fg);
 }
 
@@ -578,23 +586,32 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
 
    fbg = (FT_BitmapGlyph)fg->glyph;
 
-   fg->glyph_out = malloc(sizeof(RGBA_Font_Glyph_Out));
+   fg->glyph_out = calloc(1, sizeof(RGBA_Font_Glyph_Out));
    fg->glyph_out->bitmap.rows = fbg->bitmap.rows;
    fg->glyph_out->bitmap.width = fbg->bitmap.width;
    fg->glyph_out->bitmap.pitch = fbg->bitmap.pitch;
    fg->glyph_out->bitmap.buffer = fbg->bitmap.buffer;
-   fg->glyph_out->bitmap.num_grays = fbg->bitmap.num_grays;
-   fg->glyph_out->bitmap.pixel_mode = fbg->bitmap.pixel_mode;
-
-   fg->glyph_out_free = free;
-   /* This '+ 200' is just an estimation of how much memory freetype will use
+   fg->glyph_out->bitmap.rle_alloc = EINA_TRUE;
+   
+   /* This '+ 100' is just an estimation of how much memory freetype will use
     * on it's size. This value is not really used anywhere in code - it's
     * only for statistics. */
    size = sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) +
-    (fg->glyph_out->bitmap.width * fg->glyph_out->bitmap.rows) + 200;
+    (fg->glyph_out->bitmap.width * fg->glyph_out->bitmap.rows / 2) + 100;
    fi->usage += size;
    if (fi->inuse) evas_common_font_int_use_increase(size);
 
+   fg->glyph_out->rle = evas_common_font_glyph_compress
+   (fbg->bitmap.buffer, fbg->bitmap.num_grays, fbg->bitmap.pixel_mode,
+    fbg->bitmap.pitch, fbg->bitmap.width, fbg->bitmap.rows,
+    &(fg->glyph_out->rle_size));
+
+   fg->glyph_out->bitmap.buffer = NULL;
+
+   // this may be technically incorrect as we go and free a bitmap buffer
+   // behind the ftglyph's back...
+   FT_Bitmap_Done(evas_ft_lib, &(fbg->bitmap));
+   
    return EINA_TRUE;
 }
 

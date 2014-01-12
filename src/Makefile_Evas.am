@@ -146,6 +146,7 @@ lib/evas/common/evas_font_draw.c \
 lib/evas/common/evas_font_load.c \
 lib/evas/common/evas_font_main.c \
 lib/evas/common/evas_font_query.c \
+lib/evas/common/evas_font_compress.c \
 lib/evas/common/evas_image_load.c \
 lib/evas/common/evas_image_save.c \
 lib/evas/common/evas_image_main.c \
@@ -250,6 +251,7 @@ static_libs/libunibreak/ChangeLog
 # Engines
 
 EXTRA_DIST += \
+lib/evas/common/evas_font_compress_draw.c \
 lib/evas/common/evas_map_image_internal.c \
 lib/evas/common/evas_map_image_core.c \
 lib/evas/common/evas_map_image_loop.c \

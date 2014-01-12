@@ -313,6 +313,9 @@ _font_slave_glyph_load(Font_Info *fi, unsigned int idx, unsigned int hint)
    return EINA_TRUE;
 }
 
+// import the 1 func we need
+EAPI void *evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode, int pitch_data, int w, int h, int *size_ret);
+
 /* This function will render the glyph currently in the glyph slot into the
  * given Font Cache.
  */
@@ -321,18 +324,32 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
                          unsigned int idx)
 {
    Font_Source_Info *fsi = fi->fsi;
-   unsigned int glyphsize;
+   int glyphsize = 0;
    FT_Glyph glyph;
    FT_BitmapGlyph bglyph;
    char *data;
    int buffer_id = 0;
+   void *buf;
 
    FT_Get_Glyph(fsi->face->glyph, &glyph);
    FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, 0, 1);
    bglyph = (FT_BitmapGlyph)glyph;
 
+   if ((bglyph->bitmap.pitch < 1) || (bglyph->bitmap.rows < 1))
+     {
+        FT_Done_Glyph(glyph);
+        goto on_error;
+     }
    glyphsize = bglyph->bitmap.pitch * bglyph->bitmap.rows;
-   if (!glyphsize)
+
+   buf = evas_common_font_glyph_compress(bglyph->bitmap.buffer,
+                                         bglyph->bitmap.num_grays,
+                                         bglyph->bitmap.pixel_mode,
+                                         bglyph->bitmap.pitch,
+                                         bglyph->bitmap.width,
+                                         bglyph->bitmap.rows,
+                                         &glyphsize);
+   if (!buf)
      {
         FT_Done_Glyph(glyph);
         goto on_error;
@@ -342,10 +359,12 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    data = cserve2_shared_mempool_buffer_get(response->mempool, buffer_id);
    if (!data)
      {
+        free(buf);
         FT_Done_Glyph(glyph);
         goto on_error;
      }
-   memcpy(data, bglyph->bitmap.buffer, glyphsize);
+   memcpy(data, buf, glyphsize);
+   free(buf);
 
    // TODO: Check if we have problems with alignment
    response->glyphs[response->nglyphs].index = idx;
@@ -356,8 +375,6 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    response->glyphs[response->nglyphs].rows = bglyph->bitmap.rows;
    response->glyphs[response->nglyphs].width = bglyph->bitmap.width;
    response->glyphs[response->nglyphs].pitch = bglyph->bitmap.pitch;
-   response->glyphs[response->nglyphs].num_grays = bglyph->bitmap.num_grays;
-   response->glyphs[response->nglyphs].pixel_mode = bglyph->bitmap.pixel_mode;
    response->nglyphs++;
 
    FT_Done_Glyph(glyph);
