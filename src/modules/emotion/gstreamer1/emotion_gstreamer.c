@@ -1564,7 +1564,7 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer *ev,
 
         g_object_set(G_OBJECT(ev->pipeline), "vis-plugin", vis, NULL);
         g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL);
-        flags |= 0x00000008;
+        flags |= GST_PLAY_FLAG_VIS;
         g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL);
      }
 
