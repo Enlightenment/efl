@@ -804,8 +804,6 @@ em_audio_channel_volume_set(void  *video,
 
    if (vol < 0.0)
      vol = 0.0;
-   if (vol > 1.0)
-     vol = 1.0;
    ev->volume = vol;
 
    if (!ev->pipeline) return;
