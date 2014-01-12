@@ -54,6 +54,27 @@
 #ifndef GL_RGBA16
 # define GL_RGBA16 0x805B
 #endif
+#ifndef GL_R3_G3_B2
+# define GL_R3_G3_B2 0x2A10
+#endif
+#ifndef GL_RGB4
+# define GL_RGB4 0x804F
+#endif
+#ifndef GL_RGB5
+# define GL_RGB5 0x8050
+#endif
+#ifndef GL_RGB8
+# define GL_RGB8 0x8051
+#endif
+#ifndef GL_RGB10
+# define GL_RGB10 0x8052
+#endif
+#ifndef GL_RGB12
+# define GL_RGB12 0x8053
+#endif
+#ifndef GL_RGB16
+# define GL_RGB16 0x8054
+#endif
 #ifndef GL_ALPHA4
 # define GL_ALPHA4 0x803B
 #endif

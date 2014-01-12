@@ -168,8 +168,11 @@ _tex_format_index(GLuint format)
       case GL_BGRA:
         return 0;
       case GL_RGB:
+      case GL_R3_G3_B2:
       case GL_RGB4:
+      case GL_RGB5:
       case GL_RGB8:
+      case GL_RGB10:
       case GL_RGB12:
       case GL_RGB16:
         return 1;
