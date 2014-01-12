@@ -252,18 +252,12 @@ em_pos_set(void   *video,
 
    if (!ev->pipeline) return;
 
-   if (ev->play)
-     gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
-
    gst_element_seek(ev->pipeline, 1.0,
                           GST_FORMAT_TIME,
                           GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
                           GST_SEEK_TYPE_SET,
                           (gint64)(pos * (double)GST_SECOND),
                           GST_SEEK_TYPE_NONE, -1);
-
-   if (ev->play)
-     gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 }
 
 static double
