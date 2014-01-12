@@ -1433,10 +1433,6 @@ _ecore_evas_x_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
-   /* some GL drivers are doing buffer copy in a separate thread.
-    * we need to check whether GL driver sends SYNC_DRAW_DONE msg afger copying
-    * that are required in order to exactly render.
-    */
    if (ee->gl_sync_draw_done < 0)
      {
         if (getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE"))
