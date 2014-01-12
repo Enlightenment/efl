@@ -2371,6 +2371,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         if (ee->alpha == alpha) return;
 
         Evas_Engine_Info_GL_X11 *einfo;
+        Ecore_Window prev_win;
 
         einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
         if (!einfo) return;
@@ -2380,8 +2381,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         ee->shaped = 0;
         ee->alpha = alpha;
         _ecore_evas_x_sync_clear(ee);
-        ecore_x_window_free(ee->prop.window);
-        ecore_event_window_unregister(ee->prop.window);
+        prev_win = ee->prop.window;
         ee->prop.window = 0;
 
         einfo->info.destination_alpha = alpha;
@@ -2415,6 +2415,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                            ee->req.w, ee->req.h,
                                            ee->prop.override, ee->alpha, NULL);
           }
+
+        ecore_x_window_free(prev_win);
+        ecore_event_window_unregister(prev_win);
 
         if (!ee->prop.window) return;
 /*
