@@ -103,6 +103,8 @@ em_file_open(void *video,
 
    ev->shutdown = EINA_FALSE;
    ev->ready = EINA_FALSE;
+   ev->live = EINA_FALSE;
+   ev->buffering = EINA_FALSE;
 
    DBG("setting file to '%s'", uri);
    ev->pipeline = _create_pipeline(ev, ev->obj, uri);
@@ -174,7 +176,7 @@ em_play(void   *video,
 
    if (!ev->pipeline) return;
 
-   if (ev->ready)
+   if (ev->ready && !ev->buffering)
      gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = EINA_TRUE;
 }
@@ -1398,6 +1400,35 @@ _bus_main_handler(void *data)
 
            break;
         }
+      case GST_MESSAGE_BUFFERING:
+        {
+           gint percent = 0;
+           
+           /* If the stream is live, we do not care about buffering. */
+           if (ev->live)
+             {
+                ev->buffering = FALSE;
+                break;
+             }
+           
+           gst_message_parse_buffering (msg, &percent);
+
+           /* Wait until buffering is complete before start/resume playing */
+           if (percent < 100)
+             gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
+           else if (ev->play)
+             gst_element_set_state (ev->pipeline, GST_STATE_PLAYING);
+
+           ev->buffering = (percent < 100);
+
+           break;
+        }
+      case GST_MESSAGE_CLOCK_LOST:
+        {
+           gst_element_set_state (ev->pipeline, GST_STATE_PAUSED);
+           gst_element_set_state (ev->pipeline, GST_STATE_PLAYING);
+           break;
+        }
       default:
          break;
      }
@@ -1441,6 +1472,7 @@ _emotion_gstreamer_pause(void *data, Ecore_Thread *thread)
    res = gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res == GST_STATE_CHANGE_NO_PREROLL)
      {
+        ev->live = EINA_TRUE;
         gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 	gst_element_get_state(ev->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
      }
@@ -1470,7 +1502,7 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
 
    ev->threads = eina_list_remove(ev->threads, thread);
 
-   if (ev->play)
+   if (ev->play && !ev->buffering)
      {
         gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
      }
