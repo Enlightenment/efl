@@ -71,6 +71,13 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
      }
 }
 
+Emotion_Gstreamer *
+emotion_gstreamer_ref(Emotion_Gstreamer *ev)
+{
+  g_atomic_int_inc (&ev->ref_count);
+  return ev;
+}
+
 static void
 em_cleanup(Emotion_Gstreamer *ev)
 {
@@ -91,6 +98,17 @@ em_cleanup(Emotion_Gstreamer *ev)
      }
 }
 
+void
+emotion_gstreamer_unref(Emotion_Gstreamer *ev)
+{
+  if (g_atomic_int_dec_and_test(&ev->ref_count))
+    {
+       em_cleanup(ev);
+
+       free(ev);
+    }
+}
+
 static void
 em_del(void *video)
 {
@@ -103,19 +121,11 @@ em_del(void *video)
         EINA_LIST_FREE(ev->threads, t)
           ecore_thread_cancel(t);
 
-        ev->shutdown = EINA_TRUE;
-        return;
      }
 
-   if (ev->in != ev->out)
-     {
-        ev->shutdown = EINA_TRUE;
-        return;
-     }
+   ev->shutdown = EINA_TRUE;
 
-   em_cleanup(ev);
-
-   free(ev);
+   emotion_gstreamer_unref(ev);
 }
 
 static Eina_Bool
@@ -1024,6 +1034,8 @@ em_add(const Emotion_Engine *api,
 
    ev->api = api;
    ev->obj = obj;
+   
+   ev->ref_count = 1;
 
    /* Default values */
    ev->vis = EMOTION_VIS_NONE;
@@ -1365,8 +1377,8 @@ _bus_main_handler(void *data)
                                      ev);
                 gst_tag_list_free(new_tags);
              }
-           break;
         }
+         break;
       case GST_MESSAGE_ASYNC_DONE:
          _emotion_seek_done(ev->obj);
          break;
@@ -1603,8 +1615,7 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
         if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
      }
 
-   if (ev->in == ev->out && ev->shutdown)
-     ev->api->del(ev);
+   emotion_gstreamer_unref(ev);
 }
 
 static void
@@ -1626,10 +1637,8 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
         if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
      }
 
-   if (ev->in == ev->out && ev->shutdown)
-     ev->api->del(ev);
-   else
-     _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
+   _emotion_gstreamer_video_pipeline_parse(data, EINA_TRUE);
+   emotion_gstreamer_unref(ev);
 }
 
 static GstElement *
@@ -1676,7 +1685,7 @@ _create_pipeline (Emotion_Gstreamer *ev,
                                   ecore_thread_run(_emotion_gstreamer_pause,
                                                    _emotion_gstreamer_end,
                                                    _emotion_gstreamer_cancel,
-                                                   ev));
+                                                   emotion_gstreamer_ref(ev)));
 
    /** NOTE: you need to set: GST_DEBUG_DUMP_DOT_DIR=/tmp EMOTION_ENGINE=gstreamer to save the $EMOTION_GSTREAMER_DOT file in '/tmp' */
    /** then call dot -Tpng -oemotion_pipeline.png /tmp/$TIMESTAMP-$EMOTION_GSTREAMER_DOT.dot */

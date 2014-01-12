@@ -49,6 +49,8 @@ struct _Emotion_Gstreamer
 {
    const Emotion_Engine *api;
 
+   volatile int     ref_count;
+
    /* Gstreamer elements */
    GstElement       *pipeline;
    GstElement       *vsink;
@@ -64,9 +66,6 @@ struct _Emotion_Gstreamer
 
    Emotion_Gstreamer_Metadata *metadata;
 
-   int               in;
-   int               out;
-
    Emotion_Vis       vis;
 
    Eina_Bool         play         : 1;
@@ -74,7 +73,7 @@ struct _Emotion_Gstreamer
    Eina_Bool         audio_mute   : 1;
    Eina_Bool         play_started : 1;
    Eina_Bool         pipeline_parsed : 1;
-   Eina_Bool         shutdown    : 1;
+   Eina_Bool         shutdown     : 1;
 };
 
 struct _EmotionVideoSink {
@@ -203,6 +202,9 @@ void emotion_gstreamer_buffer_free(Emotion_Gstreamer_Buffer *send);
 Emotion_Gstreamer_Message *emotion_gstreamer_message_alloc(Emotion_Gstreamer *ev,
                                                            GstMessage *msg);
 void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
+
+Emotion_Gstreamer * emotion_gstreamer_ref (Emotion_Gstreamer *ev);
+void emotion_gstreamer_unref (Emotion_Gstreamer *ev);
 
 typedef struct _ColorSpace_Format_Convertion ColorSpace_Format_Convertion;
 

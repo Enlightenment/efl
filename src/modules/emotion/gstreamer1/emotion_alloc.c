@@ -48,9 +48,7 @@ emotion_gstreamer_message_alloc(Emotion_Gstreamer *ev,
    send = malloc(sizeof (Emotion_Gstreamer_Message));
    if (!send) return NULL;
 
-   ev->out++;
-
-   send->ev = ev;
+   send->ev = emotion_gstreamer_ref(ev);
    send->msg = gst_message_ref(msg);
 
    return send;
@@ -59,13 +57,7 @@ emotion_gstreamer_message_alloc(Emotion_Gstreamer *ev,
 void
 emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send)
 {
-   send->ev->in++;
-
-   if (send->ev->in == send->ev->out
-       && send->ev->threads == NULL
-       && send->ev->shutdown)
-     send->ev->api->del(send->ev);
-
+   emotion_gstreamer_unref(send->ev);
    gst_message_unref(send->msg);
    free(send);
 }
