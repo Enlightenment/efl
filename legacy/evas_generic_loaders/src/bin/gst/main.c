@@ -45,7 +45,7 @@ _gst_init(const char *filename)
    GError              *error = NULL;
    GstFormat            format;
    GstStateChangeReturn ret;
-   int                  vidstr = 0;
+//   int                  vidstr = 0;
 
    if (!filename || !*filename)
      return EINA_FALSE;
@@ -164,13 +164,17 @@ _gst_shutdown()
 }
 
 static void
-_gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
+_gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED, double pos)
 {
    GstBuffer *buffer;
 
    D("load image\n");
-   gst_element_seek_simple(pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
-                           duration / 2);
+   if (pos >= 0.0)
+     gst_element_seek_simple(pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+                             pos * 1000000000.0);
+   else
+     gst_element_seek_simple(pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+                             duration / 2);
    g_signal_emit_by_name(sink, "pull-preroll", &buffer, NULL);
    D("load image : %p %d\n", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
 
@@ -184,11 +188,11 @@ _gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 int
 main(int argc, char **argv)
 {
-   char *file;
-   int i;
+   char *file, *p;
+   int i, numonly;
    int size_w = 0, size_h = 0;
    int head_only = 0;
-   int page = 0;
+   long long pos = -1.0;
 
    if (argc < 2) return -1;
    // file is ALWAYS first arg, other options come after
@@ -201,7 +205,16 @@ main(int argc, char **argv)
         else if (!strcmp(argv[i], "-key"))
           {
              i++;
-             page = atoi(argv[i]);
+             numonly = 1;
+             for (p = argv[i]; *p; p++)
+               {
+                  if ((!*p < '0') || (*p > 9))
+                    {
+                       numonly = 0;
+                       break;
+                    }
+               }
+             if (numonly) pos = (double)(atoll(argv[i])) / 1000.0;
              i++;
           }
         else if (!strcmp(argv[i], "-opt-scale-down-by"))
@@ -232,7 +245,7 @@ main(int argc, char **argv)
 
    if (!head_only)
      {
-        _gst_load_image(size_w, size_h);
+        _gst_load_image(size_w, size_h, pos);
      }
 
    D("size...: %ix%i\n", width, height);
