@@ -1339,32 +1339,36 @@ _bus_main_handler(void *data)
    ev = send->ev;
    msg = send->msg;
 
+   /* Just exit immediately if we're shutting down */
+   if (ev->shutdown)
+     {
+        emotion_gstreamer_message_free(send);
+        _emotion_pending_ecore_end();
+        return;
+     }
+
    switch (GST_MESSAGE_TYPE(msg))
      {
       case GST_MESSAGE_EOS:
-         if (!ev->shutdown)
-           {
-              ev->play = 0;
-              _emotion_decode_stop(ev->obj);
-              _emotion_playback_finished(ev->obj);
-           }
+         ev->play = 0;
+         _emotion_decode_stop(ev->obj);
+         _emotion_playback_finished(ev->obj);
          break;
       case GST_MESSAGE_TAG:
-         if (!ev->shutdown)
-           {
-              GstTagList *new_tags;
-              gst_message_parse_tag(msg, &new_tags);
-              if (new_tags)
-                {
-                   gst_tag_list_foreach(new_tags,
-                                        (GstTagForeachFunc)_for_each_tag,
-                                        ev);
-                   gst_tag_list_free(new_tags);
-                }
-           }
-         break;
+        {
+           GstTagList *new_tags;
+           gst_message_parse_tag(msg, &new_tags);
+           if (new_tags)
+             {
+                gst_tag_list_foreach(new_tags,
+                                     (GstTagForeachFunc)_for_each_tag,
+                                     ev);
+                gst_tag_list_free(new_tags);
+             }
+           break;
+        }
       case GST_MESSAGE_ASYNC_DONE:
-         if (!ev->shutdown) _emotion_seek_done(ev->obj);
+         _emotion_seek_done(ev->obj);
          break;
       case GST_MESSAGE_STATE_CHANGED:
         {
@@ -1376,15 +1380,11 @@ _bus_main_handler(void *data)
                gst_element_state_get_name(old_state),
                gst_element_state_get_name(new_state));
 
-           if (GST_MESSAGE_SRC(msg) == GST_OBJECT(ev->pipeline) && new_state >= GST_STATE_PAUSED && !ev->play_started && !ev->shutdown)
+           if (GST_MESSAGE_SRC(msg) == GST_OBJECT(ev->pipeline) && new_state >= GST_STATE_PAUSED && !ev->play_started)
              {
+                ev->play_started = 1;
                 _emotion_gstreamer_video_pipeline_parse(ev, EINA_TRUE);
-                /* FIXME: This is reentrant because of _emotion_open_done() */
-                if (!ev->play_started)
-                  {
-                     _emotion_playback_started(ev->obj);
-                     ev->play_started = 1;
-                  }
+                _emotion_playback_started(ev->obj);
              }
            break;
         }
