@@ -1595,6 +1595,9 @@ _create_pipeline (Emotion_Gstreamer *ev,
 
    ev->pipeline = playbin;
    ev->vsink = vsink;
+
+   ev->metadata = calloc(1, sizeof(Emotion_Gstreamer_Metadata));
+
    ev->threads = eina_list_append(ev->threads,
                                   ecore_thread_run(_emotion_gstreamer_pause,
                                                    _emotion_gstreamer_end,
