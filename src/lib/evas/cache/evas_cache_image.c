@@ -1372,6 +1372,7 @@ evas_cache_image_colorspace(Image_Entry *im, int cspace)
 {
    if (im->space == cspace) return;
    im->space = cspace;
+   if (!im->cache) return;
    im->cache->func.color_space(im, cspace);
 }
 
@@ -1396,6 +1397,7 @@ evas_cache_private_set(Evas_Cache_Image *cache, const void *data)
 EAPI DATA32 *
 evas_cache_image_pixels(Image_Entry *im)
 {
+   if (!im->cache) return NULL;
    return im->cache->func.surface_pixels(im);
 }
 
