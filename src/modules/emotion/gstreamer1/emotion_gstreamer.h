@@ -71,8 +71,7 @@ struct _Emotion_Gstreamer
    Eina_Bool         play         : 1;
    Eina_Bool         video_mute   : 1;
    Eina_Bool         audio_mute   : 1;
-   Eina_Bool         play_started : 1;
-   Eina_Bool         pipeline_parsed : 1;
+   Eina_Bool         ready        : 1;
    Eina_Bool         shutdown     : 1;
 };
 
