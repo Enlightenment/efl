@@ -132,10 +132,10 @@ _accessible_get_index_in_parent(const Eldbus_Service_Interface *iface EINA_UNUSE
    const char *obj_path = eldbus_service_object_path_get(iface);
    Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
-   int index;
+   int idx;
 
-   eo_do(obj, elm_atspi_obj_index_in_parent_get(&index));
-   eldbus_message_arguments_append(ret, "i", index);
+   eo_do(obj, elm_atspi_obj_index_in_parent_get(&idx));
+   eldbus_message_arguments_append(ret, "i", idx);
 
    return ret;
 }
@@ -146,16 +146,16 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    const char *obj_path = eldbus_service_object_path_get(iface);
    Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
    Elm_Atspi_Object *child;
-   int index;
+   int idx;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
 
-   if (!eldbus_message_arguments_get(msg, "i", &index))
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    ret = eldbus_message_method_return_new(msg);
    iter = eldbus_message_iter_get(ret);
-   eo_do(obj, elm_atspi_obj_child_at_index_get(index, &child));
+   eo_do(obj, elm_atspi_obj_child_at_index_get(idx, &child));
    object_append_reference(iter, child);
 
    return ret;
@@ -637,18 +637,18 @@ static const Eldbus_Service_Interface_Desc component_iface_desc = {
 static Eina_Bool
 _atspi_object_del_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eldbus_Message *signal;
+   Eldbus_Message *msg;
    Eldbus_Message_Iter *iter;
    char* path;
 
-   signal = eldbus_service_signal_new(_cache_interface, REMOVE_ACCESSIBLE);
-   iter = eldbus_message_iter_get(signal);
+   msg = eldbus_service_signal_new(_cache_interface, REMOVE_ACCESSIBLE);
+   iter = eldbus_message_iter_get(msg);
    object_append_reference(iter, obj);
    path = _path_from_access_object(obj);
 
    //ERR("_atspi_object_del_cbi: %d", eo_ref_get(obj));
 
-   eldbus_service_signal_send(_cache_interface, signal);
+   eldbus_service_signal_send(_cache_interface, msg);
    eina_hash_del(_cache, path, obj);
 
    eldbus_service_object_unregister(data);
