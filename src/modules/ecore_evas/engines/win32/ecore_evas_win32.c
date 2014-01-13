@@ -908,7 +908,7 @@ _ecore_evas_win32_override_set(Ecore_Evas *ee, Eina_Bool on)
 }
 
 static void
-_ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, Eina_Boo on)
+_ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    struct _Ecore_Win32_Window *window;
    Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data;
