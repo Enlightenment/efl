@@ -1597,7 +1597,7 @@ _mouse_up_cb(void *data,
              top = elm_widget_top_get(data);
              if (top)
                {
-                  if (top && eo_isa(top, ELM_OBJ_WIN_CLASS))
+                  if (eo_isa(top, ELM_OBJ_WIN_CLASS))
                     top_is_win = EINA_TRUE;
 
                   if (top_is_win && sd->input_panel_enable && sd->input_panel_show_on_demand &&
