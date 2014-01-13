@@ -713,7 +713,7 @@ _x11_is_uri_type_data(X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selectio
    p = (char *)data->data;
    if (!p) return EINA_TRUE;
    cnp_debug("Got %s\n", p);
-   if (strncmp(p, "file://", 7))
+   if (strncmp(p, "file:/", 6))
      {
         if (*p != '/') return EINA_FALSE;
      }
@@ -886,7 +886,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
         for (i = 0; i < files->num_files ; i++)
           {
              p = files->files[i];
-             if ((strncmp(p, "file://", 7)) && (p[0] != '/')) continue;
+             if ((strncmp(p, "file:/", 6)) && (p[0] != '/')) continue;
              len += strlen(files->files[i]) + 1;
           }
         p = NULL;
@@ -896,7 +896,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
              for (i = 0; i < files->num_files ; i++)
                {
                   p = files->files[i];
-                  if (!strncmp(p, "file://", 7)) p += 7;
+                  if (!strncmp(p, "file:/", 6)) p += 5;
                   else if (p[0] != '/') continue;
                   len = strlen(p);
                   strcpy(s, p);
@@ -917,13 +917,13 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
    else
      {
         p = (char *)data->data;
-        if ((!strncmp(p, "file://", 7)) || (p[0] == '/'))
+        if ((!strncmp(p, "file:/", 6)) || (p[0] == '/'))
           {
              int len = data->length;
-             if (!strncmp(p, "file://", 7))
+             if (!strncmp(p, "file:/", 6))
                {
-                  p += 7;
-                  len -= 7;
+                  p += 5;
+                  len -= 5;
                }
              stripstr = malloc(len + 1);
              if (!stripstr) return 0;
@@ -3066,15 +3066,15 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    drop = _wl_dropable_find_geom(win, savedtypes.x, savedtypes.y);
 
    p = data;
-   if ((!strncmp(p, "file://", 7)) || (p[0] == '/'))
+   if ((!strncmp(p, "file:/", 6)) || (p[0] == '/'))
      {
         int len = 0;
 
         len = sel->buflen;
-        if (!strncmp(p, "file://", 7))
+        if (!strncmp(p, "file:/", 6))
           {
-             p += 7;
-             len -= 7;
+             p += 5;
+             len -= 5;
           }
         if (!(s = malloc(len + 1))) return;
         memcpy(s, p, len);
