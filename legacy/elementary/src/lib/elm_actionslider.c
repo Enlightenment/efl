@@ -352,9 +352,9 @@ _drag_button_up_cb(void *data,
 
 static void
 _track_move_cb(void *data,
-       Evas_Object *o __UNUSED__,
+       Evas_Object *o EINA_UNUSED,
        const char *emission,
-       const char *source __UNUSED__)
+       const char *source EINA_UNUSED)
 {
    Evas_Object *obj = data;
 
