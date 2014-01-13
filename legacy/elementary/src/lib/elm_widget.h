@@ -801,19 +801,17 @@ EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
-  Elm_Widget_Smart_Data *ptr;			     \
-  ptr = (o ?	                                     \
-	 eo_data_scope_get(o, ELM_OBJ_WIDGET_CLASS) :\
-	 NULL);					     \
-  if (!ptr)					     \
+  Elm_Widget_Smart_Data *ptr;                        \
+  ptr = eo_data_scope_get(o, ELM_OBJ_WIDGET_CLASS);  \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("no widget data for object %p (%s)", \
-                o, evas_object_type_get(o));	     \
+       CRI("no widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return __VA_ARGS__;                           \
     }
 
-#define ELM_WIDGET_CHECK(obj)                       \
-  if (!obj || !eo_isa((obj), ELM_OBJ_WIDGET_CLASS)) \
+#define ELM_WIDGET_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_WIDGET_CLASS))) \
     return
 
 /**
