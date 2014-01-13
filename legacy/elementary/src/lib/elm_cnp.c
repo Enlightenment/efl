@@ -2074,7 +2074,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    /* dragwin has to be rotated as the main window is */
    Evas_Object *win = elm_widget_top_get(obj);
    if (win && eo_isa(win, ELM_OBJ_WIN_CLASS))
-      elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
+     elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
 
    if (createicon)
      {
