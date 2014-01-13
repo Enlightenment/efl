@@ -118,7 +118,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 
    eo_do(obj, eo_parent_get(&parent));
 
-   if (!eo_isa(parent, ELM_OBJ_WIN_CLASS))
+   if (parent && !eo_isa(parent, ELM_OBJ_WIN_CLASS))
      {
         eo_error_set(obj);  /* *has* to have a parent window */
         return;
