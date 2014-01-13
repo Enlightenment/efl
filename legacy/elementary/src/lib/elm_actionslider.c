@@ -351,6 +351,73 @@ _drag_button_up_cb(void *data,
 }
 
 static void
+_track_move_cb(void *data,
+       Evas_Object *o __UNUSED__,
+       const char *emission,
+       const char *source __UNUSED__)
+{
+   Evas_Object *obj = data;
+
+   ELM_ACTIONSLIDER_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!strcmp(emission, "elm.right,mouse,down"))
+     {
+        if (sd->final_position == 0.0)
+          {
+             if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
+               {
+                  evas_object_smart_callback_call(obj, SIG_CHANGED, "center");
+                  sd->final_position = 0.5;
+               }
+             else if (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT)
+               {
+                  evas_object_smart_callback_call(obj, SIG_CHANGED, "right");
+                  sd->final_position = 1.0;
+               }
+          }
+        else if ((sd->final_position == 0.5) &&
+                 (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
+          {
+             evas_object_smart_callback_call(obj, SIG_CHANGED, "right");
+             sd->final_position = 1.0;
+          }
+     }
+   else if (!strcmp(emission, "elm.center,mouse,down"))
+     {
+        if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
+          {
+             evas_object_smart_callback_call(obj, SIG_CHANGED, "center");
+             sd->final_position = 0.5;
+          }
+     }
+   else
+     {
+        if (sd->final_position == 1.0)
+          {
+             if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
+               {
+                  evas_object_smart_callback_call(obj, SIG_CHANGED, "center");
+                  sd->final_position = 0.5;
+               }
+             else if (sd->enabled_position & ELM_ACTIONSLIDER_LEFT)
+               {
+                  evas_object_smart_callback_call(obj, SIG_CHANGED, "left");
+                  sd->final_position = 0.0;
+               }
+          }
+        else if (sd->final_position == 0.5 &&
+                (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
+          {
+             evas_object_smart_callback_call(obj, SIG_CHANGED, "left");
+             sd->final_position = 0.0;
+          }
+     }
+   if (sd->button_animator) ecore_animator_del(sd->button_animator);
+   sd->button_animator = ecore_animator_add(_button_animator, obj);
+}
+
+static void
 _mirrored_part_fix(const Evas_Object *obj,
                    const char **part)
 {
@@ -417,6 +484,15 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_signal_callback_add
      (wd->resize_obj, "elm.drag_button,mouse,move", "*",
      _drag_button_move_cb, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,right,mouse,down", "*",
+     _track_move_cb, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,left,mouse,down", "*",
+     _track_move_cb, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,center,mouse,down", "*",
+     _track_move_cb, obj);
 
    if (!elm_layout_theme_set
        (obj, "actionslider", "base", elm_widget_style_get(obj)))

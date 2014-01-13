@@ -42,7 +42,7 @@ group { name: "elm/actionslider/base/default";
             rel2.to: "bg";
          }
       }
-      part { name: "elm.text.left"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.left"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -60,7 +60,7 @@ group { name: "elm/actionslider/base/default";
             color_class: "button_text_disabled";
          }
       }
-      part { name: "elm.text.center"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.center"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -78,7 +78,7 @@ group { name: "elm/actionslider/base/default";
             color_class: "button_text_disabled";
          }
       }
-      part { name: "elm.text.right"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.right"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -228,6 +228,18 @@ group { name: "elm/actionslider/base/default";
       program {
          signal: "mouse,move"; source: "elm.drag_button_base";
          action: SIGNAL_EMIT "elm.drag_button,mouse,move" "elm";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "elm.text.right";
+         action: SIGNAL_EMIT "elm,right,mouse,down" "elm";
+      }
+     program {
+         signal: "mouse,down,1*"; source: "elm.text.left";
+         action: SIGNAL_EMIT "elm,left,mouse,down" "elm";
+      }
+     program {
+         signal: "mouse,down,1*"; source: "elm.text.center";
+         action: SIGNAL_EMIT "elm,center,mouse,down" "elm";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
