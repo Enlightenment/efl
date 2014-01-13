@@ -1889,7 +1889,7 @@ _glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
    size += shmname_size + idxname_size;
    size += req->nanswer * 10 * sizeof(int);
 
-   response = malloc(size);
+   response = calloc(1, size);
    if (!response) return NULL;
    msg = (Msg_Font_Glyphs_Loaded *) response;
    buf = response + sizeof(Msg_Font_Glyphs_Loaded);
@@ -1979,7 +1979,7 @@ _file_path_join(const char *path, const char *end)
    len = strlen(path);
    len += strlen(end);
    len += strlen(EVAS_PATH_SEPARATOR);
-   res = malloc(len + 1);
+   res = calloc(1, len + 1);
    if (!res) return NULL;
    strcpy(res, path);
    strcat(res, EVAS_PATH_SEPARATOR);
@@ -2056,7 +2056,7 @@ _glyphs_load_request_prepare(Glyphs_Request *req)
 
    // Won't render more than this number of glyphs
    max = req->nglyphs - req->nanswer;
-   req->render = malloc(sizeof(*req->render) * max);
+   req->render = calloc(max, sizeof(*req->render));
 
    for (i = req->current; i < req->nglyphs; i++)
      {
