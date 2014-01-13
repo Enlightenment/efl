@@ -379,7 +379,11 @@ elm_web_legacy.h \
 elm_win.h \
 elm_win_common.h \
 elm_win_eo.h \
-elm_win_legacy.h
+elm_win_legacy.h \
+elm_atspi_object.h \
+elm_atspi_object_common.h \
+elm_atspi_object_eo.h \
+elm_atspi_object_legacy.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
@@ -483,8 +487,8 @@ els_box.c \
 els_cursor.c \
 els_tooltip.c \
 elu_ews_wm.c \
+elm_atspi_object.c \
 elm_atspi_bridge.c
-
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
