@@ -483,39 +483,39 @@ _ecore_evas_ews_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 }
 
 static void
-_ecore_evas_ews_borderless_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.borderless == val) return;
-   ee->prop.borderless = val;
+   if (ee->prop.borderless == on) return;
+   ee->prop.borderless = on;
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
 }
 
 static void
-_ecore_evas_ews_override_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.override == val) return;
+   if (ee->prop.override == on) return;
    if (ee->visible) evas_object_show(ee->engine.ews.image);
    if (ee->prop.focused) evas_object_focus_set(ee->engine.ews.image, EINA_TRUE);
-   ee->prop.override = val;
+   ee->prop.override = on;
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
 }
 
 static void
-_ecore_evas_ews_maximized_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.maximized == val) return;
-   ee->prop.maximized = val;
-   if (val) evas_object_show(ee->engine.ews.image);
+   if (ee->prop.maximized == on) return;
+   ee->prop.maximized = on;
+   if (on) evas_object_show(ee->engine.ews.image);
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_MAXIMIZED_CHANGE);
 }
 
 static void
-_ecore_evas_ews_fullscreen_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.fullscreen == val) return;
-   ee->prop.fullscreen = val;
+   if (ee->prop.fullscreen == on) return;
+   ee->prop.fullscreen = on;
 
-   if (!val)
+   if (!on)
      {
         evas_object_move(ee->engine.ews.image, ee->x, ee->y);
         evas_object_resize(ee->engine.ews.image, ee->w, ee->h);
@@ -546,20 +546,20 @@ _ecore_evas_ews_avoid_damage_set(Ecore_Evas *ee, int val)
 }
 
 static void
-_ecore_evas_ews_withdrawn_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.withdrawn == val) return;
-   ee->prop.withdrawn = val;
+   if (ee->prop.withdrawn == on) return;
+   ee->prop.withdrawn = on;
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
 }
 
 static void
-_ecore_evas_ews_sticky_set(Ecore_Evas *ee, int val)
+_ecore_evas_ews_sticky_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.sticky == val) return;
-   ee->prop.sticky = val;
-   if ((val) && (ee->func.fn_sticky)) ee->func.fn_sticky(ee);
-   else if ((!val) && (ee->func.fn_unsticky)) ee->func.fn_unsticky(ee);
+   if (ee->prop.sticky == on) return;
+   ee->prop.sticky = on;
+   if ((on) && (ee->func.fn_sticky)) ee->func.fn_sticky(ee);
+   else if ((!on) && (ee->func.fn_unsticky)) ee->func.fn_unsticky(ee);
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
 }
 

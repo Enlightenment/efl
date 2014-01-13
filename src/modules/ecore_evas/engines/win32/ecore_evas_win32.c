@@ -861,7 +861,7 @@ _ecore_evas_win32_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 }
 
 static void
-_ecore_evas_win32_borderless_set(Ecore_Evas *ee, int on)
+_ecore_evas_win32_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (((ee->prop.borderless) && (on)) ||
        ((!ee->prop.borderless) && (!on))) return;
@@ -890,7 +890,7 @@ _ecore_evas_win32_borderless_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_win32_override_set(Ecore_Evas *ee, int on)
+_ecore_evas_win32_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
    struct _Ecore_Win32_Window *window;
 
@@ -908,7 +908,7 @@ _ecore_evas_win32_override_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
+_ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, Eina_Boo on)
 {
    struct _Ecore_Win32_Window *window;
    Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data;
@@ -1272,8 +1272,8 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
-   ee->prop.sticky = 0;
+   ee->prop.request_pos = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
    /* FIXME: sticky to add */
    ee->prop.window = 0;
 

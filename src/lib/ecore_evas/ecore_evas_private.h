@@ -83,13 +83,13 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_layer_set) (Ecore_Evas *ee, int layer);
    void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
    void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);
-   void (*fn_borderless_set) (Ecore_Evas *ee, int on);
-   void (*fn_override_set) (Ecore_Evas *ee, int on);
-   void (*fn_maximized_set) (Ecore_Evas *ee, int on);
-   void (*fn_fullscreen_set) (Ecore_Evas *ee, int on);
+   void (*fn_borderless_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_override_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_maximized_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_fullscreen_set) (Ecore_Evas *ee, Eina_Bool on);
    void (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
-   void (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
-   void (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
+   void (*fn_withdrawn_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_sticky_set) (Ecore_Evas *ee, Eina_Bool on);
    void (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
    void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
@@ -98,10 +98,10 @@ struct _Ecore_Evas_Engine_Func
 
    void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
    void (*fn_aspect_set) (Ecore_Evas *ee, double aspect);
-   void (*fn_urgent_set) (Ecore_Evas *ee, int urgent);
-   void (*fn_modal_set) (Ecore_Evas *ee, int modal);
-   void (*fn_demands_attention_set) (Ecore_Evas *ee, int demand);
-   void (*fn_focus_skip_set) (Ecore_Evas *ee, int skip);
+   void (*fn_urgent_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_modal_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_demands_attention_set) (Ecore_Evas *ee, Eina_Bool on);
+   void (*fn_focus_skip_set) (Ecore_Evas *ee, Eina_Bool on);
 
    int (*fn_render) (Ecore_Evas *ee);
    void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
@@ -191,20 +191,19 @@ struct _Ecore_Evas
       double          aspect;
       Eina_Bool       focused      : 1;
       Eina_Bool       iconified    : 1;
-//FIXME: keep going change to Eina_Bool
-      char            borderless   : 1;
-      char            override     : 1;
-      char            maximized    : 1;
-      char            fullscreen   : 1;
-      char            withdrawn    : 1;
-      char            sticky       : 1;
-      char            request_pos  : 1;
-      char            draw_frame   : 1;
-      char            hwsurface    : 1;
-      char            urgent           : 1;
-      char            modal            : 1;
-      char            demand_attention : 1;
-      char            focus_skip       : 1;
+      Eina_Bool       borderless   : 1;
+      Eina_Bool       override     : 1;
+      Eina_Bool       maximized    : 1;
+      Eina_Bool       fullscreen   : 1;
+      Eina_Bool       withdrawn    : 1;
+      Eina_Bool       sticky       : 1;
+      Eina_Bool       request_pos  : 1;
+      Eina_Bool       draw_frame   : 1;
+      Eina_Bool       hwsurface    : 1;
+      Eina_Bool       urgent           : 1;
+      Eina_Bool       modal            : 1;
+      Eina_Bool       demand_attention : 1;
+      Eina_Bool       focus_skip       : 1;
   } prop;
 
    struct {

@@ -72,13 +72,13 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_layer_set) (Ecore_Evas *ee, int layer);
    NULL, //void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);
-   NULL, //void (*fn_borderless_set) (Ecore_Evas *ee, int on);
-   NULL, //void (*fn_override_set) (Ecore_Evas *ee, int on);
-   NULL, //void (*fn_maximized_set) (Ecore_Evas *ee, int on);
-   NULL, //void (*fn_fullscreen_set) (Ecore_Evas *ee, int on);
+   NULL, //void (*fn_borderless_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_override_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_maximized_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_fullscreen_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
-   NULL, //void (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
-   NULL, //void (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
+   NULL, //void (*fn_withdrawn_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_sticky_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
    NULL, //void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
    NULL, //void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
@@ -87,10 +87,10 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    
    NULL, //void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
    NULL, //void (*fn_aspect_set) (Ecore_Evas *ee, double aspect);
-   NULL, //void (*fn_urgent_set) (Ecore_Evas *ee, int urgent);
-   NULL, //void (*fn_modal_set) (Ecore_Evas *ee, int modal);
-   NULL, //void (*fn_demands_attention_set) (Ecore_Evas *ee, int demand);
-   NULL, //void (*fn_focus_skip_set) (Ecore_Evas *ee, int skip);
+   NULL, //void (*fn_urgent_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_modal_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_demands_attention_set) (Ecore_Evas *ee, Eina_Bool on);
+   NULL, //void (*fn_focus_skip_set) (Ecore_Evas *ee, Eina_Bool on);
    
    NULL, //int (*fn_render) (Ecore_Evas *ee);
    NULL, //void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);

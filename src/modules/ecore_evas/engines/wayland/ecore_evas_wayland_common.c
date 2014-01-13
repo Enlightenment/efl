@@ -1265,43 +1265,43 @@ _ecore_evas_wl_common_border_update(Ecore_Evas *ee)
 }
 
 void
-_ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, int borderless)
+_ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (ee->prop.borderless == borderless) return;
-   ee->prop.borderless = borderless;
+   if (ee->prop.borderless == on) return;
+   ee->prop.borderless = on;
 
    _ecore_evas_wl_common_border_update(ee);
    _ecore_evas_wl_common_state_update(ee);
 }
 
 void
-_ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max)
+_ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (ee->prop.maximized == max) return;
+   if (ee->prop.maximized == on) return;
    wdata = ee->engine.data;
-   ecore_wl_window_maximized_set(wdata->win, max);
+   ecore_wl_window_maximized_set(wdata->win, on);
 //   _ecore_evas_wl_common_state_update(ee);
 }
 
 void
-_ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full)
+_ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (ee->prop.fullscreen == full) return;
+   if (ee->prop.fullscreen == on) return;
    wdata = ee->engine.data;
-   ecore_wl_window_fullscreen_set(wdata->win, full);
+   ecore_wl_window_fullscreen_set(wdata->win, on);
 //   _ecore_evas_wl_common_state_update(ee);
 }
 
@@ -1480,16 +1480,16 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 }
 
 void
-_ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, int val)
+_ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    val = !!val;
 
-   if (ee->prop.withdrawn == val)
+   if (ee->prop.withdrawn == on)
      return;
 
-   ee->prop.withdrawn = val;
+   ee->prop.withdrawn = on;
    if (val)
      ecore_evas_hide(ee);
    else

@@ -1158,12 +1158,12 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
    ee->prop.focused = EINA_FALSE;
-   ee->prop.borderless = 1;
-   ee->prop.override = 1;
-   ee->prop.maximized = 0;
-   ee->prop.fullscreen = 0;
-   ee->prop.withdrawn = 0;
-   ee->prop.sticky = 0;
+   ee->prop.borderless = EINA_TRUE;
+   ee->prop.override = EINA_TRUE;
+   ee->prop.maximized = EINA_FALSE;
+   ee->prop.fullscreen = EINA_FALSE;
+   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
 
    bdata->image = o;
    evas_object_data_set(bdata->image, "Ecore_Evas", ee);
@@ -2042,12 +2042,12 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
    ee->prop.focused = EINA_FALSE;
-   ee->prop.borderless = 1;
-   ee->prop.override = 1;
-   ee->prop.maximized = 0;
-   ee->prop.fullscreen = 0;
-   ee->prop.withdrawn = 0;
-   ee->prop.sticky = 0;
+   ee->prop.borderless = EINA_TRUE;
+   ee->prop.override = EINA_TRUE;
+   ee->prop.maximized = EINA_FALSE;
+   ee->prop.fullscreen = EINA_FALSE;
+   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */
    ee->evas = evas_new();

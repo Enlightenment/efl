@@ -242,7 +242,7 @@ _ecore_evas_screen_resized(Ecore_Evas *ee)
    int w, h;
 
    /* Do not resize if the window is not fullscreen */
-   if (ee->prop.fullscreen == 0) return;
+   if (!ee->prop.fullscreen) return;
 
    ecore_psl1ght_screen_resolution_get (&w, &h);
 
@@ -439,12 +439,12 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
    ee->prop.focused = EINA_TRUE;
-   ee->prop.borderless = 1;
-   ee->prop.override = 1;
-   ee->prop.maximized = 1;
-   ee->prop.fullscreen = 0;
-   ee->prop.withdrawn = 0;
-   ee->prop.sticky = 0;
+   ee->prop.borderless = EINA_TRUE;
+   ee->prop.override = EINA_TRUE;
+   ee->prop.maximized = EINA_TRUE;
+   ee->prop.fullscreen = EINA_FALSE;
+   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
    ee->prop.window = 0;
 
    /* init evas here */

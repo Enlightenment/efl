@@ -516,8 +516,8 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent, int x, int y, int w, i
   ee->prop.max.w = 32767;
   ee->prop.max.h = 32767;
   ee->prop.layer = 4;
-  ee->prop.request_pos = 0;
-  ee->prop.sticky = 0;
+  ee->prop.request_pos = EINA_FALSE;
+  ee->prop.sticky = EINA_FALSE;
   ee->prop.window = 0;
 
   printf("Create New Evas\n");

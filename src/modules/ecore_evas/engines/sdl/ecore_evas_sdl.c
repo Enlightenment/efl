@@ -480,12 +480,12 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
    ee->prop.focused = EINA_TRUE;
-   ee->prop.borderless = 1;
-   ee->prop.override = 1;
-   ee->prop.maximized = 1;
+   ee->prop.borderless = EINA_TRUE;
+   ee->prop.override = EINA_TRUE;
+   ee->prop.maximized = EINA_TRUE;
    ee->prop.fullscreen = fullscreen;
-   ee->prop.withdrawn = 0;
-   ee->prop.sticky = 0;
+   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
    ee->prop.window = 0;
    ee->alpha = alpha;
    ee->prop.hwsurface = hwsurface;

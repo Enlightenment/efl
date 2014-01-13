@@ -448,7 +448,7 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
 }
 
 static void
-_ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
+_ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Eina_List *l;
    Ecore_Fb_Input_Device *dev;
@@ -613,12 +613,12 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
    ee->prop.focused = EINA_FALSE;
-   ee->prop.borderless = 1;
-   ee->prop.override = 1;
-   ee->prop.maximized = 1;
-   ee->prop.fullscreen = 0;
-   ee->prop.withdrawn = 0;
-   ee->prop.sticky = 0;
+   ee->prop.borderless = EINA_TRUE;
+   ee->prop.override = EINA_TRUE;
+   ee->prop.maximized = EINA_TRUE;
+   ee->prop.fullscreen = EINA_FALSE;
+   ee->prop.withdrawn = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */
    ee->evas = evas_new();

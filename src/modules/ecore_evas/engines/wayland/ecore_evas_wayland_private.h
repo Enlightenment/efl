@@ -65,8 +65,8 @@ void _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect);
 void _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
 void _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer);
 void _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on);
-void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max);
-void _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full);
+void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on);
+void _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore);
 int  _ecore_evas_wl_common_pre_render(Ecore_Evas *ee);
 /* int  _ecore_evas_wl_common_render_updates(Ecore_Evas *ee); */
@@ -76,8 +76,8 @@ void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int
 void _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
 void _ecore_evas_wl_common_render_updates(void *data, Evas *evas, void *event);
 void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize);
-void _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, int borderless);
-void _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, int val);
+void _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on);
+void _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on);
 
 void _ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee);
 

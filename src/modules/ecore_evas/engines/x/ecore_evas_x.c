@@ -306,7 +306,7 @@ _ecore_evas_x_window_profile_set(Ecore_Evas *ee)
 
 # ifdef BUILD_ECORE_EVAS_OPENGL_X11
 static Ecore_X_Window
-_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, int override, int argb, const int *opt)
+_ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y, int w, int h, Eina_Bool override, int argb, const int *opt)
 {
    Evas_Engine_Info_GL_X11 *einfo;
    Ecore_X_Window win;
@@ -793,11 +793,11 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
         edata->state.above        = 0;
         edata->state.below        = 0;
 
-        ee->prop.modal      = 0;
-        ee->prop.maximized  = 0;
-        ee->prop.sticky     = 0;
-        ee->prop.fullscreen = 0;
-        ee->prop.focus_skip = 0;
+        ee->prop.modal      = EINA_FALSE;
+        ee->prop.maximized  = EINA_FALSE;
+        ee->prop.sticky     = EINA_FALSE;
+        ee->prop.fullscreen = EINA_FALSE;
+        ee->prop.focus_skip = EINA_FALSE;
         
         ecore_x_netwm_window_state_get(e->win, &state, &num);
         if (state)
@@ -808,30 +808,30 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
                     {
                      case ECORE_X_WINDOW_STATE_MODAL:
                        edata->state.modal = 1;
-                       ee->prop.modal = 1;
+                       ee->prop.modal = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_STICKY:
-                       ee->prop.sticky = 1;
+                       ee->prop.sticky = EINA_TRUE;
                        edata->state.sticky = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
                        edata->state.maximized_v = 1;
-                       ee->prop.maximized = 1;
+                       ee->prop.maximized = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
                        edata->state.maximized_h = 1;
-                       ee->prop.maximized = 1;
+                       ee->prop.maximized = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_SHADED:
                        edata->state.shaded = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
                        edata->state.skip_taskbar = 1;
-                       ee->prop.focus_skip = 1;
+                       ee->prop.focus_skip = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_SKIP_PAGER:
                        edata->state.skip_pager = 1;
-                       ee->prop.focus_skip = 1;
+                       ee->prop.focus_skip = EINA_TRUE;
                        break;
                      case ECORE_X_WINDOW_STATE_FULLSCREEN:
                        ee->prop.fullscreen = 1;
@@ -879,7 +879,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
              if ((!ee->prop.withdrawn) || (ee->prop.iconified))
                {
                   state_change = 1;
-                  ee->prop.withdrawn = 1;
+                  ee->prop.withdrawn = EINA_TRUE;
                   ee->prop.iconified = EINA_FALSE;
                }
              break;
@@ -888,7 +888,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
                {
                   state_change = 1;
                   ee->prop.iconified = EINA_TRUE;
-                  ee->prop.withdrawn = 0;
+                  ee->prop.withdrawn = EINA_FALSE;
                }
              break;
            case ECORE_X_WINDOW_STATE_HINT_NORMAL:
@@ -896,7 +896,7 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
                {
                   state_change = 1;
                   ee->prop.iconified = EINA_FALSE;
-                  ee->prop.withdrawn = 0;
+                  ee->prop.withdrawn = EINA_FALSE;
                }
              break;
            default:
@@ -1777,7 +1777,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
                   if (!ee->should_be_visible)
                     {
                        /* We need to request pos */
-                       ee->prop.request_pos = 1;
+                       ee->prop.request_pos = EINA_TRUE;
                        _ecore_evas_x_size_pos_hints_update(ee);
                     }
                   if (ee->func.fn_move) ee->func.fn_move(ee);
@@ -1800,7 +1800,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
         if (!ee->should_be_visible)
           {
              /* We need to request pos */
-             ee->prop.request_pos = 1;
+             ee->prop.request_pos = EINA_TRUE;
              _ecore_evas_x_size_pos_hints_update(ee);
           }
      }
@@ -2560,58 +2560,61 @@ _ecore_evas_x_aspect_set(Ecore_Evas *ee, double aspect)
 }
 
 static void
-_ecore_evas_x_urgent_set(Ecore_Evas *ee, int urgent)
+_ecore_evas_x_urgent_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.urgent == urgent) return;
+   if (ee->prop.urgent == on) return;
 
-   ee->prop.urgent = urgent;
+   ee->prop.urgent = on;
    _ecore_evas_x_hints_update(ee);
 }
 
 static void
-_ecore_evas_x_modal_set(Ecore_Evas *ee, int modal)
+_ecore_evas_x_modal_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
-   if (ee->prop.modal == modal) return;
+   if (ee->prop.modal == on) return;
 
-   ee->prop.modal = modal;
+   ee->prop.modal = on;
    if (ee->should_be_visible)
      ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                      ECORE_X_WINDOW_STATE_MODAL, -1, modal);
+                                      ECORE_X_WINDOW_STATE_MODAL, -1, on);
    else
      _ecore_evas_x_state_update(ee);
 }
 
 static void
-_ecore_evas_x_demand_attention_set(Ecore_Evas *ee, int demand)
+_ecore_evas_x_demand_attention_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
-   if (ee->prop.demand_attention == demand) return;
+   if (ee->prop.demand_attention == on) return;
 
-   ee->prop.demand_attention = demand;
+   ee->prop.demand_attention = on;
    if (ee->should_be_visible)
      ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                      ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION, -1, demand);
+                                      ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION,
+                                      -1, on);
    else
      _ecore_evas_x_state_update(ee);
 }
 
 static void
-_ecore_evas_x_focus_skip_set(Ecore_Evas *ee, int skip)
+_ecore_evas_x_focus_skip_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
-   if (ee->prop.focus_skip == skip) return;
+   if (ee->prop.focus_skip == on) return;
 
-   ee->prop.focus_skip = skip;
+   ee->prop.focus_skip = on;
    if (ee->should_be_visible)
      {
         ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                         ECORE_X_WINDOW_STATE_SKIP_TASKBAR, -1, skip);
+                                         ECORE_X_WINDOW_STATE_SKIP_TASKBAR, -1,
+                                         on);
         ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                         ECORE_X_WINDOW_STATE_SKIP_PAGER, -1, skip);
+                                         ECORE_X_WINDOW_STATE_SKIP_PAGER, -1,
+                                         on);
      }
    else
      _ecore_evas_x_state_update(ee);
@@ -2821,7 +2824,7 @@ _ecore_evas_x_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 }
 
 static void
-_ecore_evas_x_borderless_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.borderless == on) return;
    ee->prop.borderless = on;
@@ -2831,33 +2834,33 @@ _ecore_evas_x_borderless_set(Ecore_Evas *ee, int on)
 /* FIXME: This function changes the initial state of the ee
  * whilest the iconic function changes the current state! */
 static void
-_ecore_evas_x_withdrawn_set(Ecore_Evas *ee, int withdrawn)
+_ecore_evas_x_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   if (ee->prop.withdrawn == withdrawn) return;
-//   ee->prop.withdrawn = withdrawn;
+   if (ee->prop.withdrawn == on) return;
+//   ee->prop.withdrawn = on;
    _ecore_evas_x_hints_update(ee);
-   if (withdrawn)
+   if (on)
      ecore_evas_hide(ee);
    else
      ecore_evas_show(ee);
 }
 
 static void
-_ecore_evas_x_sticky_set(Ecore_Evas *ee, int sticky)
+_ecore_evas_x_sticky_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
-   if (ee->prop.sticky == sticky) return;
+   if (ee->prop.sticky == on) return;
 
    /* We dont want to set prop.sticky here as it will cause
     * the sticky callback not to get called. Its set on the
     * property change event.
-    * ee->prop.sticky = sticky;
+    * ee->prop.sticky = on;
     */
-//   edata->state.sticky = sticky;
+//   edata->state.sticky = on;
    if (ee->should_be_visible)
      ecore_x_netwm_state_request_send(ee->prop.window, edata->win_root,
-                                      ECORE_X_WINDOW_STATE_STICKY, -1, sticky);
+                                      ECORE_X_WINDOW_STATE_STICKY, -1, on);
    else
      _ecore_evas_x_state_update(ee);
 }
@@ -2906,7 +2909,7 @@ _ecore_evas_x_reinit_win(Ecore_Evas *ee)
 */
 
 static void
-_ecore_evas_x_override_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.override == on) return;
    if (ee->should_be_visible) ecore_x_window_hide(ee->prop.window);
@@ -2917,7 +2920,7 @@ _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_x_maximized_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
@@ -2937,7 +2940,7 @@ _ecore_evas_x_maximized_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
@@ -3471,7 +3474,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
+   ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = 0;
    edata->state.sticky = 0;
 
@@ -3674,7 +3677,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
+   ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = 0;
    edata->state.sticky = 0;
 
@@ -4002,7 +4005,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
+   ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = 0;
    edata->state.sticky = 0;
 
@@ -4139,7 +4142,7 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
+   ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = 0;
    edata->state.sticky = 0;
 

@@ -153,8 +153,8 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
-   ee->prop.request_pos = 0;
-   ee->prop.sticky = 0;
+   ee->prop.request_pos = EINA_FALSE;
+   ee->prop.sticky = EINA_FALSE;
    ee->prop.draw_frame = frame;
    ee->alpha = EINA_FALSE;
 

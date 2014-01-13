@@ -2023,7 +2023,7 @@ ecore_evas_withdrawn_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky)
+ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2032,7 +2032,7 @@ ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky)
         return;
      }
 
-   IFC(ee, fn_sticky_set) (ee, sticky);
+   IFC(ee, fn_sticky_set) (ee, on);
    IFE;
 }
 
@@ -2101,7 +2101,7 @@ ecore_evas_aspect_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent)
+ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2110,7 +2110,7 @@ ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent)
         return;
      }
 
-   IFC(ee, fn_urgent_set) (ee, urgent);
+   IFC(ee, fn_urgent_set) (ee, on);
    IFE;
 }
 
@@ -2127,7 +2127,7 @@ ecore_evas_urgent_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal)
+ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2136,7 +2136,7 @@ ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal)
         return;
      }
 
-   IFC(ee, fn_modal_set) (ee, modal);
+   IFC(ee, fn_modal_set) (ee, on);
    IFE;
 }
 
@@ -2153,7 +2153,7 @@ ecore_evas_modal_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand)
+ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2162,7 +2162,7 @@ ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand)
         return;
      }
 
-   IFC(ee, fn_demands_attention_set) (ee, demand);
+   IFC(ee, fn_demands_attention_set) (ee, on);
    IFE;
 }
 
@@ -2179,7 +2179,7 @@ ecore_evas_demand_attention_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip)
+ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2188,7 +2188,7 @@ ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip)
         return;
      }
 
-   IFC(ee, fn_focus_skip_set) (ee, skip);
+   IFC(ee, fn_focus_skip_set) (ee, on);
    IFE;
 }
 
