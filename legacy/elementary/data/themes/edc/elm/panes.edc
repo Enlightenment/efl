@@ -81,6 +81,20 @@ group { name: "elm/panes/vertical/default";
          }
       }
    }
+   programs {
+      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+         action: SIGNAL_EMIT "elm,action,press" "elm";
+      }
+      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+      }
+      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+         action: SIGNAL_EMIT "elm,action,click,double" "elm";
+      }
+   }
 }
 
 group { name: "elm/panes/horizontal/default";
@@ -160,6 +174,20 @@ group { name: "elm/panes/horizontal/default";
             rel2.to_y: "elm.swallow.event";
             color: 0 0 0 0;
          }
+      }
+   }
+   programs {
+      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+         action: SIGNAL_EMIT "elm,action,press" "elm";
+      }
+      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+      }
+      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+         action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
    }
 }
@@ -309,6 +337,18 @@ group { name: "elm/panes/vertical/flush";
       }
    }
    programs {
+      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+         action: SIGNAL_EMIT "elm,action,press" "elm";
+      }
+      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+      }
+      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+         action: SIGNAL_EMIT "elm,action,click,double" "elm";
+      }
       program {
          signal: "mouse,in"; source: "bar1";
          action: STATE_SET "active" 0.0;
@@ -510,6 +550,18 @@ group { name: "elm/panes/horizontal/flush";
          transition: DECELERATE 0.5;
          target: "glow2a";
          target: "glow2b";
+      }
+      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+         action: SIGNAL_EMIT "elm,action,press" "elm";
+      }
+      program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
+         action: SIGNAL_EMIT "elm,action,unpress" "elm";
+      }
+      program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
+         action: SIGNAL_EMIT "elm,action,click,double" "elm";
       }
    }
 }

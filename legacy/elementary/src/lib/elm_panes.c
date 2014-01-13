@@ -207,16 +207,16 @@ _elm_panes_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_panes_content_left_size_set(obj, 0.5);
 
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click", "",
+     (wd->resize_obj, "elm,action,click", "*",
      _on_clicked, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,click,double", "",
+     (wd->resize_obj, "elm,action,click,double", "*",
      _double_clicked, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,press", "",
+     (wd->resize_obj, "elm,action,press", "*",
      _on_pressed, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,unpress", "",
+     (wd->resize_obj, "elm,action,unpress", "*",
      _on_unpressed, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
