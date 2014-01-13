@@ -65,7 +65,7 @@ _box_custom_layout(Evas_Object *o,
 {
    Elm_Index_Smart_Data *sd = data;
 
-   _els_box_layout(o, priv, sd->horizontal, 1, 0);
+   _els_box_layout(o, priv, sd->horizontal, EINA_TRUE, EINA_FALSE);
 }
 
 static void

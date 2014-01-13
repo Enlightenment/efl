@@ -8,7 +8,7 @@
 #include "els_box.h"
 
 static void
-_smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horizontal, int homogeneous)
+_smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, Eina_Bool horizontal, Eina_Bool homogeneous)
 {
    Evas_Coord minw, minh, mnw, mnh, maxw, maxh;
    const Eina_List *l;
@@ -119,7 +119,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
 }
 
 void
-_els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int homogeneous, int rtl)
+_els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal, Eina_Bool homogeneous, Eina_Bool rtl)
 {
    Evas_Coord x, y, w, h, xx, yy;
    const Eina_List *l;
