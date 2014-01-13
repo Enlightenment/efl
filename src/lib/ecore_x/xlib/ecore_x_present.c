@@ -111,6 +111,7 @@ ecore_x_present_select_events(Ecore_X_Window win, unsigned int events)
 {
 #ifdef ECORE_XPRESENT
    XPresentSelectInput(_ecore_x_disp, win, events);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #else
    (void)win;
    (void)events;
@@ -122,6 +123,7 @@ ecore_x_present_notify_msc(Ecore_X_Window win, unsigned int serial, unsigned lon
 {
 #ifdef ECORE_XPRESENT
    XPresentNotifyMSC(_ecore_x_disp, win, serial, target_msc, divisor, remainder);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #else
    (void)win;
    (void)serial;
@@ -142,6 +144,7 @@ ecore_x_present_pixmap(Ecore_X_Window win, Ecore_X_Pixmap pixmap, unsigned int s
    XPresentPixmap(_ecore_x_disp, win, pixmap, serial, valid, update,
                   x_off, y_off, target_crtc, wait_fence, idle_fence, options, target_msc,
                   divisor, remainder, (XPresentNotify*)notifies, num_notifies);
+   if (_ecore_xlib_sync) ecore_x_sync();
 #else
    (void)win;
    (void)pixmap;

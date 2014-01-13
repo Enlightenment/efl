@@ -134,7 +134,9 @@ _ecore_xcb_event_handle_present_event(xcb_ge_event_t *ev)
 EAPI void
 ecore_x_present_select_events(Ecore_X_Window win, unsigned int events)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XCB_XPRESENT
+   CHECK_XCB_CONN;
    xcb_present_select_input(_ecore_xcb_conn, _ecore_xcb_event_xpresent, win, events);
 #else
    (void)win;
@@ -145,7 +147,9 @@ ecore_x_present_select_events(Ecore_X_Window win, unsigned int events)
 EAPI void
 ecore_x_present_notify_msc(Ecore_X_Window win, unsigned int serial, unsigned long long target_msc, unsigned long long divisor, unsigned long long remainder)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XCB_XPRESENT
+   CHECK_XCB_CONN;
    xcb_present_notify_msc(_ecore_xcb_conn, win, serial, target_msc, divisor, remainder);
 #else
    (void)win;
@@ -163,7 +167,9 @@ ecore_x_present_pixmap(Ecore_X_Window win, Ecore_X_Pixmap pixmap, unsigned int s
                        unsigned long long target_msc, unsigned long long divisor, unsigned long long remainder,
                        Ecore_X_Present *notifies, int num_notifies)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XCB_XPRESENT
+   CHECK_XCB_CONN;
    xcb_present_pixmap(_ecore_xcb_conn, win, pixmap, serial, valid, update,
                   x_off, y_off, target_crtc, wait_fence, idle_fence, options, target_msc,
                   divisor, remainder, num_notifies, (xcb_present_notify_t*)notifies);
