@@ -57,49 +57,44 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
      }
    else
      {
+        /* calculate but after switched w and h for horizontal mode */
+        Evas_Coord *rw, *rh, *rminw, *rminh, *rmaxw, *rmaxh;
+        if (!horizontal)
+          {
+             rw = &mnw;
+             rh = &mnh;
+             rminw = &minw;
+             rminh = &minh;
+             rmaxw = &maxw;
+             rmaxh = &maxh;
+          }
+        else
+          {
+             rw = &mnh;
+             rh = &mnw;
+             rminw = &minh;
+             rminh = &minw;
+             rmaxw = &maxh;
+             rmaxh = &maxw;
+          }
         EINA_LIST_FOREACH(priv->children, l, opt)
           {
              evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
-             if (horizontal)
-               {
-                  if (minh < mnh) minh = mnh;
-                  minw += mnw;
-               }
-             else
-               {
-                  if (minw < mnw) minw = mnw;
-                  minh += mnh;
-               }
+             if (*rminw < *rw) *rminw = *rw;
+             *rminh += *rh;
+
              evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
-             if (horizontal)
+             if (*rh < 0)
                {
-                  if (mnw < 0)
-                    {
-                       maxw = -1;
-                       max = EINA_FALSE;
-                    }
-                  if (max) maxw += mnw;
-
-                  if (mnh >= 0)
-                    {
-                       if (maxh == -1) maxh = mnh;
-                       else if (maxh > mnh) maxh = mnh;
-                    }
+                  *rmaxh = -1;
+                  max = EINA_FALSE;
                }
-             else
-               {
-                  if (mnh < 0)
-                    {
-                       maxh = -1;
-                       max = EINA_FALSE;
-                    }
-                  if (max) maxh += mnh;
+             if (max) *rmaxh += *rh;
 
-                  if (mnw >= 0)
-                    {
-                       if (maxw == -1) maxw = mnw;
-                       else if (maxw > mnw) maxw = mnw;
-                    }
+             if (*rw >= 0)
+               {
+                  if (*rmaxw == -1) *rmaxw = *rw;
+                  else if (*rmaxw > *rw) *rmaxw = *rw;
                }
           }
      }
@@ -133,6 +128,8 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    int count = 0;
    double expand = 0.0;
    double ax, ay;
+   double wx, wy;
+   double *rwy;
    Evas_Object_Box_Option *opt;
 
    _smart_extents_calculate(o, priv, horizontal, homogeneous);
@@ -140,34 +137,18 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    evas_object_size_hint_min_get(o, &minw, &minh);
-   evas_object_size_hint_align_get(o, &ax, &ay);
    if ((w < minw) || (h < minh)) return;
    count = eina_list_count(priv->children);
-   if (rtl) ax = 1.0 - ax;
 
-   if (w < minw)
-     {
-        x = x + ((w - minw) * (1.0 - ax));
-        w = minw;
-     }
-   if (h < minh)
-     {
-        y = y + ((h - minh) * (1.0 - ay));
-        h = minh;
-     }
+   /* accummulate expand as same way but after switched x and y for horizontal mode */
+   if (!horizontal)
+     rwy = &wy;
+   else
+     rwy = &wx;
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-        double wx, wy;
-
         evas_object_size_hint_weight_get(opt->obj, &wx, &wy);
-        if (horizontal)
-          {
-             if (wx > 0.0) expand += wx;
-          }
-        else
-          {
-             if (wy > 0.0) expand += wy;
-          }
+        if (*rwy > 0.0) expand += *rwy;
      }
    if (!expand)
      {
@@ -189,7 +170,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Coord mnw, mnh, mxw, mxh;
-        double wx, wy;
         int fw, fh, xw, xh;
 
         obj = opt->obj;
