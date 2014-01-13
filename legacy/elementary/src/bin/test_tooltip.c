@@ -200,6 +200,23 @@ _tt_text_replace(void *data       EINA_UNUSED,
 }
 
 static void
+_tt_move_lock(void *data       EINA_UNUSED,
+              Evas_Object     *obj,
+              void *event_info EINA_UNUSED)
+{
+   if (!elm_tooltip_move_lock_get(obj))
+     {
+        elm_tooltip_move_lock_set(obj, EINA_TRUE);
+        elm_object_tooltip_text_set(obj, "Locked");
+     }
+   else
+     {
+        elm_tooltip_move_lock_set(obj, EINA_FALSE);
+        elm_object_tooltip_text_set(obj, "Free");
+     }
+}
+
+static void
 _tt_orient_text_replace(void *data       EINA_UNUSED,
                         Evas_Object     *obj,
                         void *event_info EINA_UNUSED)
@@ -485,6 +502,13 @@ test_tooltip(void *data       EINA_UNUSED,
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Simple text tooltip");
    elm_object_tooltip_text_set(bt, "Simple text tooltip");
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Movement Lock Tooltip, click to change");
+   elm_object_tooltip_text_set(bt, "Free");
+   evas_object_smart_callback_add(bt, "clicked", _tt_move_lock, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

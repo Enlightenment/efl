@@ -33,6 +33,38 @@ typedef enum
  } Elm_Tooltip_Orient;
 
 /**
+ * @def elm_tooltip_move_lock_set
+ * @since 1.9
+ *
+ * @brief Enable/Disable tooltip movement with respect to mouse pointer
+ *
+ * @param[in] obj The tooltip's anchor object
+ * @param[in] lock If EINA_TRUE, tooltip movement with respect to mouse pointer is disabled
+ *
+ * This function allows to enable/disable a tooltip to move with respect to mouse pointer
+ *
+ * @ingroup Tooltips
+ * @see elm_tooltip_move_lock_get
+ */
+EAPI void elm_tooltip_move_lock_set(Evas_Object *obj, Eina_Bool lock);
+
+/**
+ * @def elm_tooltip_move_lock_get
+ * @since 1.9
+ *
+ * @brief Get the lock status of tooltip movement with respect to mouse pointer
+ *
+ * @param[in] obj The tooltip's anchor object
+ * @return The lock status of tooltip movement with respect to mouse pointer
+ *
+ * This function returns the status of tooltip movement with respect to mouse pointer
+ *
+ * @ingroup Tooltips
+ * @see elm_tooltip_move_lock_set
+ */
+EAPI Eina_Bool elm_tooltip_move_lock_get(const Evas_Object *obj);
+
+/**
  * @def elm_object_tooltip_orient_set
  * @since 1.9
  *

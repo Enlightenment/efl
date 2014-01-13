@@ -7,6 +7,8 @@ Changes since Elementary 1.8.0:
 
 Additions:
 
+   * Add elm_tooltip_move_lock_set() and elm_tooltip_move_lock_get()
+
 Improvements:
 
 Fixes:

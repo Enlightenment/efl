@@ -1772,3 +1772,7 @@
 2013-12-01  Mike Blumenkrantz
 
         * fix mouse eventing on e border theme
+
+2013-12-09  Abhinandan Aryadipta (aryarockstar)
+
+        * tooltip: Added elm_tooltip_move_lock_set() and elm_tooltip_move_lock_get().
