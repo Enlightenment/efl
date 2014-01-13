@@ -1484,16 +1484,15 @@ _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   val = !!val;
-
-   if (ee->prop.withdrawn == on)
-     return;
+   if (ee->prop.withdrawn == on) return;
 
    ee->prop.withdrawn = on;
-   if (val)
+
+   if (on)
      ecore_evas_hide(ee);
    else
      ecore_evas_show(ee);
+
    _ecore_evas_wl_common_state_update(ee);
 }
 
