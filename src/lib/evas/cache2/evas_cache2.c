@@ -932,7 +932,12 @@ evas_cache2_image_scale_load(Image_Entry *im,
      }
 
    evas_cserve2_image_load_wait(ret);
-   evas_cache2_image_load_data(ret);
+   error = evas_cache2_image_load_data(ret);
+   if (error != EVAS_LOAD_ERROR_NONE)
+     {
+        _evas_cache2_image_entry_delete(im->cache2, ret);
+        goto parent_out;
+     }
 
    ret->references++;
    ret->w = dst_w;
