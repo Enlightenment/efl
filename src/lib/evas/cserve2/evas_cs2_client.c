@@ -1057,9 +1057,6 @@ _image_open_server_send(Image_Entry *ie)
         has_load_opts = EINA_TRUE;
      }
 
-   ie->data1 = NULL;
-   ie->data2 = NULL;
-
    file = ie->file;
    key = ie->key;
 
@@ -1092,13 +1089,18 @@ _image_open_server_send(Image_Entry *ie)
    else
      EINA_REFCOUNT_REF(fentry);
 
-   dentry = calloc(1, sizeof(*dentry));
-   if (!dentry)
+   if (!ie->data2)
      {
-        EINA_REFCOUNT_UNREF(fentry)
-          eina_hash_del(_file_entries, fentry->hkey, fentry);
-        return 0;
+        dentry = calloc(1, sizeof(*dentry));
+        if (!dentry)
+          {
+             EINA_REFCOUNT_UNREF(fentry)
+               eina_hash_del(_file_entries, fentry->hkey, fentry);
+             return 0;
+          }
+        dentry->image_id = ++_data_id;
      }
+   else dentry = ie->data2;
 
    memset(&msg_open, 0, sizeof(msg_open));
    msg_open.base.rid = _next_rid();
@@ -1107,7 +1109,7 @@ _image_open_server_send(Image_Entry *ie)
    msg_open.path_offset = 0;
    msg_open.key_offset = flen;
    msg_open.has_load_opts = has_load_opts;
-   msg_open.image_id = ++_data_id;
+   msg_open.image_id = dentry->image_id;
 
    size = sizeof(msg_open) + flen + klen;
    if (has_load_opts)
@@ -1118,6 +1120,7 @@ _image_open_server_send(Image_Entry *ie)
         EINA_REFCOUNT_UNREF(fentry)
           eina_hash_del(_file_entries, fentry->hkey, fentry);
         free(dentry);
+        ie->data2 = NULL;
         return 0;
      }
    memcpy(buf, &msg_open, sizeof(msg_open));
@@ -1129,9 +1132,10 @@ _image_open_server_send(Image_Entry *ie)
    if (!_server_send(buf, size, _image_opened_cb, ie))
      {
         ERR("Couldn't send message to server.");
-        free(dentry);
         EINA_REFCOUNT_UNREF(fentry)
           eina_hash_del(_file_entries, fentry->hkey, fentry);
+        free(dentry);
+        ie->data2 = NULL;
         return 0;
      }
 
