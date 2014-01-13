@@ -1382,7 +1382,7 @@ _bus_main_handler(void *data)
                      gint flags;
                      const char *vis_name;
                      
-                     if (!(vis_name = emotion_visualization_element_name_get(ev->vis)))
+                     if ((vis_name = emotion_visualization_element_name_get(ev->vis)))
                        {                       
                           vis = gst_element_factory_make(vis_name, "vis");
                           g_object_set(G_OBJECT(ev->pipeline), "vis-plugin", vis, NULL);
