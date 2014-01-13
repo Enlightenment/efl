@@ -184,7 +184,7 @@ _name_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 _role_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   AtspiRole *ret = ARG_GET(list, int*);
+   AtspiRole *ret = ARG_GET(list, AtspiRole *);
    Atspi_Object_Data *ad = _pd;
 
    *ret = ad->role;

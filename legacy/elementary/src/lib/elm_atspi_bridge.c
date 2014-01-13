@@ -20,7 +20,7 @@
 
 #define ELM_ACCESS_OBJECT_PATH_ROOT "root"
 #define ELM_ACCESS_OBJECT_PATH_PREFIX  "/org/a11y/atspi/accessible/"
-#define ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE ELM_ACCESS_OBJECT_PATH_PREFIX "%u"
+#define ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE ELM_ACCESS_OBJECT_PATH_PREFIX "%llu"
 
 static int _init_count = 0;
 static Eldbus_Connection *_a11y_bus = NULL;
@@ -179,9 +179,9 @@ static Elm_Atspi_Object *
 _access_object_from_path(const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
-   uintptr_t eo_ptr = NULL;
+   unsigned long long eo_ptr = 0;
    Elm_Atspi_Object *eo = NULL;
-   const char* tmp = path;
+   const char *tmp = path;
 
    int len = (sizeof(ELM_ACCESS_OBJECT_PATH_PREFIX) / sizeof(char)) - 1;
 
@@ -192,7 +192,7 @@ _access_object_from_path(const char *path)
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
      return _root;
 
-   sscanf(tmp, "%u", &eo_ptr);
+   sscanf(tmp, "%llu", &eo_ptr);
    eo = (Elm_Atspi_Object *)eo_ptr;
    return eo_isa(eo, ELM_ATSPI_CLASS) ? eo : NULL;
 }
@@ -206,7 +206,7 @@ _path_from_access_object(Elm_Atspi_Object *eo)
    if (eo == _root)
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
    else
-     snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (uintptr_t)eo);
+     snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long)eo);
    return strdup(path);
 }
 
