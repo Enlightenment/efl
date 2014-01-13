@@ -329,6 +329,7 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
    FT_BitmapGlyph bglyph;
    char *data;
    int buffer_id = 0;
+   Eina_Bool valid = EINA_FALSE;
    void *buf;
 
    FT_Get_Glyph(fsi->face->glyph, &glyph);
@@ -342,6 +343,7 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
      }
    glyphsize = bglyph->bitmap.pitch * bglyph->bitmap.rows;
 
+   valid = EINA_TRUE;
    buf = evas_common_font_glyph_compress(bglyph->bitmap.buffer,
                                          bglyph->bitmap.num_grays,
                                          bglyph->bitmap.pixel_mode,
@@ -384,7 +386,10 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Glyphs_Loaded *response,
 on_error:
    // Create invalid entry for this index. There will be an empty slot in
    // the mempool (usually 8 bytes) because we need the Glyph_Data index entry.
-   ERR("Could not load glyph %d. Creating empty invalid entry.", idx);
+   if (valid)
+     ERR("Failed to load glyph %d. Running out of memory?", idx);
+   else
+     WRN("Could not load glyph %d. Creating empty invalid entry.", idx);
    memset(&response->glyphs[response->nglyphs], 0, sizeof(Slave_Msg_Glyph));
    if (buffer_id > 0)
      cserve2_shared_mempool_buffer_del(response->mempool, buffer_id);
