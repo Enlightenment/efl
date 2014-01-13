@@ -1591,17 +1591,15 @@ _image_entry_new(Client *client, int rid,
    ref = eina_hash_find(client->files.referencing, &client_file_id);
    if (!ref)
      {
-        ERR("Couldn't find file id for client image id: %d",
-            client_file_id);
-        cserve2_client_error_send(client, rid,
-                                  CSERVE2_INVALID_CACHE);
+        ERR("Couldn't find file id for client image id: %d", client_file_id);
+        cserve2_client_error_send(client, rid, CSERVE2_INVALID_CACHE);
         return NULL;
      }
    fd = _file_data_find(ref->entry->id);
    if (!fd || fd->invalid)
      {
-        cserve2_client_error_send(client, rid,
-                                  CSERVE2_FILE_CHANGED);
+        ERR("Can't find file data %d (rid %d)", ref->entry->id, rid);
+        cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
         return NULL;
      }
 
@@ -2922,8 +2920,8 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
    ref = eina_hash_find(client->images.referencing, &client_image_id);
    if (!ref)
      {
-        ERR("Can't load: client %d has no image id %d",
-            client->id, client_image_id);
+        ERR("Can't load: client %d has no image id %d (rid %d)",
+            client->id, client_image_id, rid);
         cserve2_client_error_send(client, rid, CSERVE2_NOT_LOADED);
         return;
      }
@@ -2932,6 +2930,7 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata)
      {
+        ERR("Can't load image %d for rid %d: data not found", ENTRYID(ientry), rid);
         cserve2_client_error_send(client, rid, CSERVE2_INVALID_CACHE);
         return;
      }
@@ -2939,6 +2938,8 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
    fd = _file_data_find(idata->file_id);
    if (!fd || fd->invalid)
      {
+        ERR("Can't load image %d for rid %d%s", idata->file_id, rid,
+            fd->invalid ? ": invalid" : "");
         cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
         return;
      }

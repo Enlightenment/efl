@@ -144,8 +144,8 @@ _cserve2_client_open(Client *client)
    end = key + strlen(key) + 1;
 
    INF("Received OPEN command: RID=%d", msg->base.rid);
-   INF("File_ID: %d, path=\"%s\", key=\"%s\", has_load_opts=%d",
-       msg->file_id, path, key, (int) msg->has_load_opts);
+   INF("File_ID: %d, Image_ID: %d, path=\"%s\", key=\"%s\", has_load_opts=%d",
+       msg->file_id, msg->image_id, path, key, (int) msg->has_load_opts);
 
    if (!key[0]) key = NULL;
    if (msg->has_load_opts)

@@ -604,7 +604,14 @@ _server_dispatch(Eina_Bool *failed)
 
    rid = msg->rid;
    if (!found)
-     WRN("Got unexpected response %d for request %d", msg->type, rid);
+     {
+        if (msg->type == CSERVE2_ERROR)
+          {
+             Msg_Error *error = (Msg_Error *) msg;
+             ERR("Cserve2 sent error %d for rid %d", error->error, rid);
+          }
+        else WRN("Got unexpected response %d for request %d", msg->type, rid);
+     }
 
    free(msg);
    return rid;
