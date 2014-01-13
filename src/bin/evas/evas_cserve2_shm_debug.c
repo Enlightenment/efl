@@ -399,7 +399,7 @@ _files_all_print_short()
         if (!fd->id || !fd->refcount) continue;
 
         printf("%7d %7d %5dx%-6d %d %d %6.6s %6d %6d '%s':'%s'\n",
-               k, fd->id, fd->w, fd->h, !!fd->alpha, !!fd->invalid,
+               k, fd->id, fd->w, fd->h, !!fd->alpha, !!fd->changed,
                fd->loader_data ? _shared_string_get(fd->loader_data) : "",
                fd->path, fd->key, _shared_string_get(fd->path),
                _shared_string_get(fd->key));
@@ -444,7 +444,7 @@ _files_all_print_all(void)
                fd->animated ? "YES" : "NO",
                fd->frame_count, fd->loop_count, fd->loop_hint);
         printf("Alpha:         %s\n", fd->alpha ? "YES" : "NO");
-        printf("Invalid:       %s\n", fd->invalid ? "YES" : "NO");
+        printf("Changed:       %s\n", fd->changed ? "YES" : "NO");
 
         printf_newline(0);
      }
@@ -564,7 +564,7 @@ _images_all_print_full(void)
                     fd->animated ? "YES" : "NO",
                     fd->frame_count, fd->loop_count, fd->loop_hint);
              printf("          Alpha:         %s\n", fd->alpha ? "YES" : "NO");
-             printf("          Invalid:       %s\n", fd->invalid ? "YES" : "NO");
+             printf("          Changed:       %s\n", fd->changed ? "YES" : "NO");
           }
         else
           printf("File: ID %d not found\n", id->file_id);

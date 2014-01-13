@@ -1458,7 +1458,7 @@ _entry_reference_del(Entry *entry, Reference *ref)
         if (fd)
           {
              // FIXME: Check difference with master (2 cases vs. only one)
-             if (fd->invalid || !fentry->images)
+             if (fd->changed || !fentry->images)
                eina_hash_del_by_key(file_entries, &entry->id);
           }
         else
@@ -1477,7 +1477,7 @@ _entry_reference_del(Entry *entry, Reference *ref)
           {
              File_Data *fdata = _file_data_find(idata->file_id);
 
-             if (fdata->invalid)
+             if (fdata->changed)
                _image_entry_free(ientry);
              else
                _entry_unused_push(ientry);
@@ -1596,9 +1596,10 @@ _image_entry_new(Client *client, int rid,
         return NULL;
      }
    fd = _file_data_find(ref->entry->id);
-   if (!fd || fd->invalid)
+   if (!fd || fd->changed)
      {
-        ERR("Can't find file data %d (rid %d)", ref->entry->id, rid);
+        ERR("Can't find file data %d (rid %d)%s",
+            ref->entry->id, rid, fd ? ": file changed" : "");
         cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
         return NULL;
      }
@@ -1707,7 +1708,7 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
         fd = _file_data_find(fentry_id);
         if (fd)
           {
-             fd->invalid = EINA_TRUE;
+             fd->changed = EINA_TRUE;
              _file_id_free(fd);
              eina_hash_set(file_entries, &fd->id, NULL);
           }
@@ -2936,10 +2937,10 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
      }
 
    fd = _file_data_find(idata->file_id);
-   if (!fd || fd->invalid)
+   if (!fd || fd->changed)
      {
         ERR("Can't load image %d for rid %d%s", idata->file_id, rid,
-            fd->invalid ? ": invalid" : "");
+            fd ? ": file changed" : "");
         cserve2_client_error_send(client, rid, CSERVE2_FILE_CHANGED);
         return;
      }

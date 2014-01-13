@@ -348,7 +348,7 @@ struct _File_Data {
    int loop_count;
    int loop_hint;
    Eina_Bool alpha : 1;
-   Eina_Bool invalid : 1;
+   Eina_Bool changed : 1;
    Eina_Bool valid : 1;
    Eina_Bool animated : 1;
 };
