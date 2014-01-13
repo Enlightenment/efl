@@ -2613,6 +2613,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
         ERR("Could not create new file entry!");
         return -1;
      }
+   memset(fd, 0, sizeof(*fd));
    fd->valid = EINA_FALSE;
    fd->path = cserve2_shared_string_add(path);
    fd->key = cserve2_shared_string_add(key);
