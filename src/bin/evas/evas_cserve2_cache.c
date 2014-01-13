@@ -1673,26 +1673,27 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
 {
    File_Watch *fw = data;
    File_Entry *fentry;
-   Eina_List *l;
+   Eina_List *l, *l_next;
 
-   EINA_LIST_FOREACH(fw->entries, l, fentry)
+   EINA_LIST_FOREACH_SAFE(fw->entries, l, l_next, fentry)
      {
-        Eina_List *ll;
+        Eina_List *ll, *ll_next;
         Image_Entry *ie;
         File_Data *fd;
+        int fentry_id = ENTRYID(fentry);
 
         fentry->watcher = NULL;
 
-        EINA_LIST_FOREACH(fentry->images, ll, ie)
+        EINA_LIST_FOREACH_SAFE(fentry->images, ll, ll_next, ie)
           {
              Image_Data *idata;
 
              idata = _image_data_find(ENTRYID(ie));
-             eina_hash_set(image_entries, &ENTRYID(ie), NULL);
              if (ASENTRY(ie)->request /*&& !ie->base.request->processing*/)
                cserve2_request_cancel_all(ASENTRY(ie)->request,
                                           CSERVE2_FILE_CHANGED);
              ASENTRY(ie)->request = NULL;
+             eina_hash_set(image_entries, &ENTRYID(ie), NULL);
 
              if (idata)
                {
@@ -1702,8 +1703,10 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
                }
           }
 
+        // from this point, fentry might have died already
+        // clean up if it's still alive somewhere
 
-        fd = _file_data_find(ENTRYID(fentry));
+        fd = _file_data_find(fentry_id);
         if (fd)
           {
              fd->invalid = EINA_TRUE;
@@ -1711,15 +1714,19 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
              eina_hash_set(file_entries, &fd->id, NULL);
           }
 
-        if (ASENTRY(fentry)->request
-            /*&& !ASENTRY(fentry)->request->processing*/)
+        fentry = (File_Entry *) eina_hash_find(file_entries, &fentry_id);
+        if (fentry)
           {
-             cserve2_request_cancel_all(ASENTRY(fentry)->request,
-                                        CSERVE2_FILE_CHANGED);
-             ASENTRY(fentry)->request = NULL;
+             if (ASENTRY(fentry)->request
+                 /*&& !ASENTRY(fentry)->request->processing*/)
+               {
+                  cserve2_request_cancel_all(ASENTRY(fentry)->request,
+                                             CSERVE2_FILE_CHANGED);
+                  ASENTRY(fentry)->request = NULL;
+               }
+             if (!fentry->images && !ASENTRY(fentry)->references)
+               _hash_file_entry_free(fentry);
           }
-        if (!fentry->images && !ASENTRY(fentry)->references)
-          _hash_file_entry_free(fentry);
      }
 
    eina_hash_del_by_key(file_watch, fw->path);
