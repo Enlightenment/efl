@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-01-06 23:44+0900\n"
+"POT-Creation-Date: 2014-01-14 17:18+0900\n"
 "PO-Revision-Date: 2013-11-07 09:25+0100\n"
 "Last-Translator: Aníbal Garrido Hermo <khanyux@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -15,20 +15,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:1341
+#: src/lib/elc_fileselector.c:1324
 msgid "Up"
 msgstr "Arriba"
 
-#: src/lib/elc_fileselector.c:1356
+#: src/lib/elc_fileselector.c:1339
 msgid "Home"
 msgstr "Cartafol persoal"
 
-#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
-#: src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:1566 src/lib/elm_entry.c:1348
+#: src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/lib/elc_fileselector.c:1592
+#: src/lib/elc_fileselector.c:1575
 msgid "OK"
 msgstr "Aceptar"
 
@@ -160,7 +160,7 @@ msgstr "Reloxo"
 msgid "color selector palette item"
 msgstr "Paleta de selección de cor"
 
-#: src/lib/elm_config.c:2441
+#: src/lib/elm_config.c:2482
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -172,23 +172,23 @@ msgstr "selector de día"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1333
+#: src/lib/elm_entry.c:1335
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1338
+#: src/lib/elm_entry.c:1340
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1344 src/lib/elm_entry.c:1367
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:1358
+#: src/lib/elm_entry.c:1360
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:3312
+#: src/lib/elm_entry.c:3335
 msgid "Entry"
 msgstr "Entrada"
 

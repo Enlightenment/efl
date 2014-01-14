@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-01-06 23:44+0900\n"
+"POT-Creation-Date: 2014-01-14 17:18+0900\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -20,20 +20,20 @@ msgstr ""
 "X-Poedit-Language: Dutch\n"
 "X-Poedit-Country: NETHERLANDS\n"
 
-#: src/lib/elc_fileselector.c:1341
+#: src/lib/elc_fileselector.c:1324
 msgid "Up"
 msgstr "Omhoog"
 
-#: src/lib/elc_fileselector.c:1356
+#: src/lib/elc_fileselector.c:1339
 msgid "Home"
 msgstr "Persoonlijke map"
 
-#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
-#: src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:1566 src/lib/elm_entry.c:1348
+#: src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/lib/elc_fileselector.c:1592
+#: src/lib/elc_fileselector.c:1575
 msgid "OK"
 msgstr "OK"
 
@@ -165,7 +165,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2441
+#: src/lib/elm_config.c:2482
 msgid "default:LTR"
 msgstr "Standaard: LTR"
 
@@ -177,23 +177,23 @@ msgstr ""
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1333
+#: src/lib/elm_entry.c:1335
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: src/lib/elm_entry.c:1338
+#: src/lib/elm_entry.c:1340
 msgid "Cut"
 msgstr "Knippen"
 
-#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1344 src/lib/elm_entry.c:1367
 msgid "Paste"
 msgstr "Plakken"
 
-#: src/lib/elm_entry.c:1358
+#: src/lib/elm_entry.c:1360
 msgid "Select"
 msgstr "Selecteren"
 
-#: src/lib/elm_entry.c:3312
+#: src/lib/elm_entry.c:3335
 msgid "Entry"
 msgstr ""
 

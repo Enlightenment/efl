@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-01-06 23:44+0900\n"
+"POT-Creation-Date: 2014-01-14 17:18+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@samsung.com>\n"
 "Language-Team: General\n"
@@ -16,20 +16,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:1341
+#: src/lib/elc_fileselector.c:1324
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1356
+#: src/lib/elc_fileselector.c:1339
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
-#: src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:1566 src/lib/elm_entry.c:1348
+#: src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "בטל"
 
-#: src/lib/elc_fileselector.c:1592
+#: src/lib/elc_fileselector.c:1575
 msgid "OK"
 msgstr "אשר"
 
@@ -161,7 +161,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2441
+#: src/lib/elm_config.c:2482
 msgid "default:LTR"
 msgstr "default:RTL"
 
@@ -173,23 +173,23 @@ msgstr ""
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1333
+#: src/lib/elm_entry.c:1335
 msgid "Copy"
 msgstr "העתק"
 
-#: src/lib/elm_entry.c:1338
+#: src/lib/elm_entry.c:1340
 msgid "Cut"
 msgstr "גזור"
 
-#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1344 src/lib/elm_entry.c:1367
 msgid "Paste"
 msgstr "הדבק"
 
-#: src/lib/elm_entry.c:1358
+#: src/lib/elm_entry.c:1360
 msgid "Select"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_entry.c:3312
+#: src/lib/elm_entry.c:3335
 msgid "Entry"
 msgstr ""
 

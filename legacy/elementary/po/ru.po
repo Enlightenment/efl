@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-01-06 23:44+0900\n"
+"POT-Creation-Date: 2014-01-14 17:18+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -20,20 +20,20 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/lib/elc_fileselector.c:1341
+#: src/lib/elc_fileselector.c:1324
 msgid "Up"
 msgstr "Вверх"
 
-#: src/lib/elc_fileselector.c:1356
+#: src/lib/elc_fileselector.c:1339
 msgid "Home"
 msgstr "Дом"
 
-#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
-#: src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:1566 src/lib/elm_entry.c:1348
+#: src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/lib/elc_fileselector.c:1592
+#: src/lib/elc_fileselector.c:1575
 msgid "OK"
 msgstr "ОК"
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:2441
+#: src/lib/elm_config.c:2482
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -186,23 +186,23 @@ msgstr "элемент диска выбора"
 msgid "diskselector item"
 msgstr "элемент диска выбора"
 
-#: src/lib/elm_entry.c:1333
+#: src/lib/elm_entry.c:1335
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/lib/elm_entry.c:1338
+#: src/lib/elm_entry.c:1340
 msgid "Cut"
 msgstr "Вырезать"
 
-#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1344 src/lib/elm_entry.c:1367
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:1358
+#: src/lib/elm_entry.c:1360
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elm_entry.c:3312
+#: src/lib/elm_entry.c:3335
 msgid "Entry"
 msgstr "Запись"
 

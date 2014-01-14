@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-01-06 23:44+0900\n"
+"POT-Creation-Date: 2014-01-14 17:18+0900\n"
 "PO-Revision-Date: 2013-01-23 05:24+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -18,20 +18,20 @@ msgstr ""
 "X-Launchpad-Export-Date: 2013-05-24 05:46+0000\n"
 "X-Generator: Launchpad (build 16640)\n"
 
-#: src/lib/elc_fileselector.c:1341
+#: src/lib/elc_fileselector.c:1324
 msgid "Up"
 msgstr "Supren"
 
-#: src/lib/elc_fileselector.c:1356
+#: src/lib/elc_fileselector.c:1339
 msgid "Home"
 msgstr "Hejmo"
 
-#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
-#: src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:1566 src/lib/elm_entry.c:1348
+#: src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "Nuligi"
 
-#: src/lib/elc_fileselector.c:1592
+#: src/lib/elc_fileselector.c:1575
 msgid "OK"
 msgstr "Bone"
 
@@ -163,7 +163,7 @@ msgstr "Horloĝo"
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:2441
+#: src/lib/elm_config.c:2482
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -176,23 +176,23 @@ msgstr "ero de diskelektilo"
 msgid "diskselector item"
 msgstr "ero de diskelektilo"
 
-#: src/lib/elm_entry.c:1333
+#: src/lib/elm_entry.c:1335
 msgid "Copy"
 msgstr "Kopii"
 
-#: src/lib/elm_entry.c:1338
+#: src/lib/elm_entry.c:1340
 msgid "Cut"
 msgstr "Eltondi"
 
-#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1344 src/lib/elm_entry.c:1367
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:1358
+#: src/lib/elm_entry.c:1360
 msgid "Select"
 msgstr "Elekti"
 
-#: src/lib/elm_entry.c:3312
+#: src/lib/elm_entry.c:3335
 msgid "Entry"
 msgstr "Ero"
 
