@@ -1280,7 +1280,9 @@ EAPI Ecore_Wl_Window *elm_win_wl_window_get(const Evas_Object *obj);
  *
  * The floating mode can be used on mobile environment. For example, if the
  * video-player window sets the floating mode, then e (enlightenment window
- * manager) changes its geometry and handles it like a popup.
+ * manager) changes its geometry and handles it like a popup. This is similar to
+ * a multi window concept in a mobile phone. The way of handling floating mode
+ * window is decided by enlightenment window manager.
  *
  * @ingroup Win
  * @see elm_win_floating_mode_get()
