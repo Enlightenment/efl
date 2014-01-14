@@ -39,7 +39,14 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void _elm_pan_content_set(Evas_Object *, Evas_Object *);
-
+static void
+_elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
+                        double t_in,
+                        Evas_Coord pos_x);
+static void
+_elm_scroll_scroll_to_y(Elm_Scrollable_Smart_Interface_Data *sid,
+                        double t_in,
+                        Evas_Coord pos_y);
 static double
 _round(double value, int pos)
 {
@@ -1925,6 +1932,7 @@ _elm_scroll_wheel_event_cb(void *data,
    Evas_Event_Mouse_Wheel *ev;
    Evas_Coord x = 0, y = 0, vw = 0, vh = 0, cw = 0, ch = 0;
    int direction = 0;
+   int pagenumber_h = 0, pagenumber_v = 0;
 
    sid = data;
    ev = event_info;
@@ -1967,25 +1975,52 @@ _elm_scroll_wheel_event_cb(void *data,
    eo_do(sid->obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
    if (sid->pan_obj)
      eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
-   if (!direction)
+   if (!_paging_is_enabled(sid))
      {
-        if (ch > vh || cw <= vw)
-          y += ev->z * sid->step.y;
-        else
-          x += ev->z * sid->step.x;
-     }
-   else if (direction == 1)
-     {
-        if (cw > vw || ch <= vh)
-          x += ev->z * sid->step.x;
-        else
-          y += ev->z * sid->step.y;
-     }
+        if (!direction)
+          {
+             if (ch > vh || cw <= vw)
+               y += ev->z * sid->step.y;
+             else
+               x += ev->z * sid->step.x;
+          }
+        else if (direction == 1)
+          {
+             if (cw > vw || ch <= vh)
+               x += ev->z * sid->step.x;
+             else
+               y += ev->z * sid->step.y;
+          }
 
-   if ((!sid->hold) && (!sid->freeze))
+        if ((!sid->hold) && (!sid->freeze))
+          {
+             _elm_scroll_wanted_coordinates_update(sid, x, y);
+             eo_do(sid->obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
+          }
+     }
+   else
      {
-        _elm_scroll_wanted_coordinates_update(sid, x, y);
-        eo_do(sid->obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
+        eo_do(sid->obj, elm_scrollable_interface_current_page_get(&pagenumber_h, &pagenumber_v));
+        if (!direction)
+          {
+             if (ch > vh || cw <= vw)
+               y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
+             else
+               x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
+          }
+        else if (direction == 1)
+          {
+             if (cw > vw || ch <= vh)
+               x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
+             else
+               y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
+          }
+
+        if ((!sid->hold) && (!sid->freeze))
+          {
+             _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
+             _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
+          }
      }
 }
 
