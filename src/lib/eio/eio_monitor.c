@@ -37,7 +37,11 @@ _eio_monitor_free(Eio_Monitor *monitor)
    if (!monitor->delete_me)
      eina_hash_del(_eio_monitors, monitor->path, monitor);
 
-   if (monitor->exist) eio_file_cancel(monitor->exist);
+   if (monitor->exist)
+     {
+        eio_file_cancel(monitor->exist);
+        monitor->exist = NULL;
+     }
 
    if (monitor->backend)
      {
@@ -185,6 +189,9 @@ _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
 {
    Eio_Monitor_Event *ev;
 
+   if (monitor->delete_me)
+     return;
+
    ev = calloc(1, sizeof (Eio_Monitor_Event));
    if (!ev) return;
 
@@ -199,6 +206,9 @@ void
 _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
 {
   const char *tmp;
+
+  if (monitor->delete_me)
+    return;
 
   /* destroy old state */
   if (monitor->exist)
