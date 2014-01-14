@@ -789,7 +789,6 @@ on_stat_error:
      else
        *error = EVAS_LOAD_ERROR_GENERIC;
 
-   if (im) _evas_cache2_image_entry_delete(cache, im);
    return NULL;
 }
 
