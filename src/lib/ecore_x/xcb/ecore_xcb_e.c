@@ -1471,11 +1471,13 @@ EAPI Ecore_X_Window
 ecore_x_e_illume_zone_get(Ecore_X_Window win)
 {
    Ecore_X_Window zone = 0;
+   int ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!ecore_x_window_prop_window_get(win, ECORE_X_ATOM_E_ILLUME_ZONE,
-                                       &zone, 1))
+   ret = ecore_x_window_prop_window_get(win, ECORE_X_ATOM_E_ILLUME_ZONE,
+                                        &zone, 1);
+   if ((ret == 0) || (ret == -1))
      return 0;
 
    return zone;
