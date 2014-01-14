@@ -8,8 +8,6 @@ static int list_mouse_down = 0;
 static void
 _dismissed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Evas_Object *ctxpopup_data = evas_object_data_get(obj, "im");
-   if (ctxpopup_data) evas_object_del(ctxpopup_data);
    evas_object_del(obj);
 }
 
@@ -40,33 +38,10 @@ _print_current_dir(Evas_Object *obj)
 }
 
 static void
-_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    printf("Button Clicked\n");
-
-   Evas_Object *im;
-   char buf[PATH_MAX];
-   void *ctxpopup_data;
-
-   ctxpopup_data = evas_object_data_get(data, "id");
-   if (!ctxpopup_data) return;
-
-   if (!strcmp("list_item_6", (char *) ctxpopup_data))
-     {
-        ctxpopup_data = evas_object_data_get(data, "im");
-        if (ctxpopup_data) return;
-
-        im = evas_object_image_filled_add(evas_object_evas_get(obj));
-        snprintf(buf, sizeof(buf), "%s/images/%s",
-                 elm_app_data_dir_get(), "twofish.jpg");
-        evas_object_image_file_set(im, buf, NULL);
-        evas_object_move(im, 40, 40);
-        evas_object_resize(im, 320, 320);
-        evas_object_show(im);
-        evas_object_data_set((Evas_Object *)data, "im", im);
-
-        evas_object_raise((Evas_Object *)data);
-     }
 }
 
 static void
@@ -238,8 +213,36 @@ _list_item_cb5(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    evas_object_show(ctxpopup);
    _print_current_dir(ctxpopup);
 
-   evas_object_data_set(ctxpopup, "id", "list_item_5");
-   evas_object_smart_callback_add(btn, "clicked", _btn_clicked, ctxpopup);
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, ctxpopup);
+}
+
+static void
+_ctxpopup_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   evas_object_del(data);
+}
+
+static void
+_restack_btn_clicked_cb(void *data, Evas_Object *obj,
+                        void *event_info EINA_UNUSED)
+{
+   Evas_Object *im, *ctxpopup = data;
+   char buf[PATH_MAX];
+
+   printf("Restack button clicked\n");
+
+   im = evas_object_image_filled_add(evas_object_evas_get(obj));
+   snprintf(buf, sizeof(buf), "%s/images/%s",
+            elm_app_data_dir_get(), "twofish.jpg");
+   evas_object_image_file_set(im, buf, NULL);
+   evas_object_move(im, 40, 40);
+   evas_object_resize(im, 320, 320);
+   evas_object_show(im);
+
+   evas_object_raise(ctxpopup);
+   evas_object_event_callback_add(ctxpopup, EVAS_CALLBACK_DEL,
+                                  _ctxpopup_del_cb, im);
 }
 
 static void
@@ -277,8 +280,8 @@ _list_item_cb6(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    evas_object_show(ctxpopup);
    _print_current_dir(ctxpopup);
 
-   evas_object_data_set(ctxpopup, "id", "list_item_6");
-   evas_object_smart_callback_add(btn, "clicked", _btn_clicked, ctxpopup);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _restack_btn_clicked_cb, ctxpopup);
 }
 
 static void
