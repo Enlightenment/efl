@@ -152,6 +152,10 @@ elm_app_client.h \
 elm_app_client_view_eo.h \
 elm_app_client_view.h \
 elm_app.h \
+elm_atspi_object.h \
+elm_atspi_object_common.h \
+elm_atspi_object_eo.h \
+elm_atspi_object_legacy.h \
 elm_authors.h \
 elm_bg.h \
 elm_bg_eo.h \
@@ -379,11 +383,7 @@ elm_web_legacy.h \
 elm_win.h \
 elm_win_common.h \
 elm_win_eo.h \
-elm_win_legacy.h \
-elm_atspi_object.h \
-elm_atspi_object_common.h \
-elm_atspi_object_eo.h \
-elm_atspi_object_legacy.h
+elm_win_legacy.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
@@ -408,6 +408,8 @@ elm_app_server.c \
 elm_app_server_view.c \
 elm_app_client.c \
 elm_app_client_view.c \
+elm_atspi_object.c \
+elm_atspi_bridge.c \
 elm_bg.c \
 elm_box.c \
 elm_bubble.c \
@@ -486,9 +488,7 @@ elm_win.c \
 els_box.c \
 els_cursor.c \
 els_tooltip.c \
-elu_ews_wm.c \
-elm_atspi_object.c \
-elm_atspi_bridge.c
+elu_ews_wm.c
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
