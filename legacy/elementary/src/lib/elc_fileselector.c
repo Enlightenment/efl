@@ -336,7 +336,7 @@ _ls_filter_cb(void *data,
    if (info->type == EINA_FILE_DIR)
      dir = EINA_TRUE;
 
-   if (lreq->sd->only_folder && dir)
+   if (lreq->sd->only_folder && !dir)
      return EINA_FALSE;
 
    cf = lreq->sd->current_filter;
