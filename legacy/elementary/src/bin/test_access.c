@@ -82,7 +82,7 @@ Evas_Object *gl_access_content_full_get(void *data EINA_UNUSED, Evas_Object *obj
    int i;
    Evas_Object *grid;
 
-   if (strcmp(part, "elm.swallow.content") != 0) return NULL;
+   if (strcmp(part, "elm.swallow.content")) return NULL;
 
    grid = elm_gengrid_add(obj);
    elm_gengrid_item_size_set(grid,
