@@ -2611,7 +2611,8 @@ _elm_widget_focus_list_direction_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
    for (; l; l = eina_list_next(l))
      {
         Evas_Object *cur = list_data_get(l);
-        elm_widget_focus_direction_get(cur, base, degree, direction, weight);
+        if (cur)
+          elm_widget_focus_direction_get(cur, base, degree, direction, weight);
      }
    if (current_best != *direction)
      *ret = EINA_TRUE;
@@ -2884,6 +2885,7 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         Evas_Object *tmp = NULL;
         Evas_Object *cur = list_data_get(l);
 
+        if (!cur) continue;
         if (elm_widget_parent_get(cur) != obj)
           continue;
 
