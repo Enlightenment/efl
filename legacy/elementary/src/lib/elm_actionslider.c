@@ -346,8 +346,6 @@ _drag_button_up_cb(void *data,
      }
    if (sd->button_animator) ecore_animator_del(sd->button_animator);
    sd->button_animator = ecore_animator_add(_button_animator, obj);
-
-#undef _FINAL_FIX_POS_ON_MIRROREDNESS
 }
 
 static void
