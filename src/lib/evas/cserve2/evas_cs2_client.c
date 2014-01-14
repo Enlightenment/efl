@@ -3033,7 +3033,6 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
    Eina_Bool add_to_hash = SHARED_INDEX_ADD_TO_HASH;
    int k;
 
-
    DBG("Trying to find if image '%s:%s' is already loaded by cserve2",
        ie->file, ie->key);
 
@@ -3045,6 +3044,11 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
 
    if (!ie->cache_key)
      {
+        if (ie->flags.dirty)
+          {
+             DBG("Image is dirty (file changed?), not in cache.");
+             return NULL;
+          }
         CRI("Looking for an image in remote cache without hash key?");
         return NULL;
      }
