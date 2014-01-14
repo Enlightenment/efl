@@ -139,7 +139,8 @@ _item_unselect(Elm_Toolbar_Item *item)
    item->selected = EINA_FALSE;
    sd->selected_item = NULL;
    edje_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
-   elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
+   if (item->icon)
+     elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
 }
 
 static void
@@ -744,16 +745,16 @@ _item_disable_hook(Elm_Object_Item *it)
 {
    Elm_Toolbar_Item *toolbar_it = (Elm_Toolbar_Item *)it;
 
+   const char* emission;
+
    if (elm_widget_item_disabled_get(toolbar_it))
-     {
-        edje_object_signal_emit(VIEW(toolbar_it), "elm,state,disabled", "elm");
-        elm_widget_signal_emit(toolbar_it->icon, "elm,state,disabled", "elm");
-     }
+     emission = "elm,state,disabled";
    else
-     {
-        edje_object_signal_emit(VIEW(toolbar_it), "elm,state,enabled", "elm");
-        elm_widget_signal_emit(toolbar_it->icon, "elm,state,enabled", "elm");
-     }
+     emission = "elm,state,enabled";
+
+   edje_object_signal_emit(VIEW(toolbar_it), emission, "elm");
+   if (toolbar_it->icon)
+     edje_object_signal_emit(toolbar_it->icon, emission, "elm");
 
    _resize_cb(WIDGET(toolbar_it), NULL, NULL, NULL);
 }
@@ -879,7 +880,8 @@ _item_select(Elm_Toolbar_Item *it)
                     }
                }
              edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
-             elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
+             if (it->icon)
+               elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
              _item_show(it);
           }
      }
@@ -960,12 +962,14 @@ _item_theme_hook(Evas_Object *obj,
         if (it->selected)
           {
              edje_object_signal_emit(view, "elm,state,selected", "elm");
-             elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
+             if (it->icon)
+               elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
           }
         if (elm_widget_item_disabled_get(it))
           {
              edje_object_signal_emit(view, "elm,state,disabled", "elm");
-             elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
+             if (it->icon)
+               elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
           }
         if (it->icon)
           {
@@ -1891,7 +1895,8 @@ _mouse_in_cb(void *data,
    Elm_Toolbar_Item *it = data;
 
    edje_object_signal_emit(VIEW(it), "elm,state,highlighted", "elm");
-   elm_widget_signal_emit(it->icon, "elm,state,highlighted", "elm");
+   if (it->icon)
+     elm_widget_signal_emit(it->icon, "elm,state,highlighted", "elm");
 }
 
 static void
@@ -1903,7 +1908,8 @@ _mouse_out_cb(void *data,
    Elm_Toolbar_Item *it = data;
 
    edje_object_signal_emit(VIEW(it), "elm,state,unhighlighted", "elm");
-   elm_widget_signal_emit(it->icon, "elm,state,unhighlighted", "elm");
+   if (it->icon)
+     elm_widget_signal_emit(it->icon, "elm,state,unhighlighted", "elm");
 }
 
 static void
@@ -3655,10 +3661,13 @@ elm_toolbar_item_state_set(Elm_Object_Item *it,
           (obj, item, it_state->icon, it_state->icon_str,
           sd->icon_size, "elm,state,icon_set,backward");
      }
-   if (elm_widget_item_disabled_get(item))
-     elm_widget_signal_emit(item->icon, "elm,state,disabled", "elm");
-   else
-     elm_widget_signal_emit(item->icon, "elm,state,enabled", "elm");
+   if (item->icon)
+     {
+        if (elm_widget_item_disabled_get(item))
+          elm_widget_signal_emit(item->icon, "elm,state,disabled", "elm");
+        else
+          elm_widget_signal_emit(item->icon, "elm,state,enabled", "elm");
+     }
 
    item->current_state = next_state;
 
