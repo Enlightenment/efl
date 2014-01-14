@@ -188,6 +188,9 @@ command_read(int fd, Slave_Command *cmd, void **params)
    if (ret < (int)sizeof(int) * 2)
      return EINA_FALSE;
 
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ints[0] > 0) && (ints[0] <= 0xFFFF), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((ints[1] >= 0) && (ints[1] < SLAVE_COMMAND_LAST), EINA_FALSE);
+
    size = ints[0];
    buf = malloc(size);
    if (!buf) return EINA_FALSE;

@@ -99,7 +99,8 @@ typedef enum {
    FONT_LOAD,
    FONT_GLYPHS_LOAD,
    SLAVE_QUIT,
-   ERROR
+   ERROR,
+   SLAVE_COMMAND_LAST
 } Slave_Command;
 
 struct _Slave_Msg_Image_Open {
