@@ -3647,17 +3647,17 @@
   * window. All the options set through the example will affect the behavior of
   * this icon.
   *
-  * We start with the code for creating a window and its background:
+  * We start with the code for creating a window:
   *
   * @skip int
-  * @until show(bg)
+  * @until elm_win_autodel_set
   *
   * Now we create the icon object, and set lookup order of the icon, and choose
   * the "home" icon:
   *
-  * @until home
+  * @until elm_icon_standard_set
   *
-  * An intersting thing is that after setting this, it's possible to check where
+  * An interesting thing is that after setting this, it's possible to check where
   * in the filesystem is the theme used by this icon, and the name of the group
   * used:
   *
@@ -5365,7 +5365,8 @@
  * changes.
  *
  * We will start with the usual setup code:
- * @until show(bg)
+ * @skip EAPI_MAIN
+ * @until elm_win_autodel_set
  *
  * And now we create our first checkbox, set its label, tell it to change
  * the value of @p value when the checkbox stats is changed and ask to be
@@ -5387,6 +5388,8 @@
  * And finally implement the callback that will be called when the first
  * checkbox's state changes. This callback will use @p data to print a
  * message:
+ * @dontinclude check_example_01.c
+ * @skip static
  * @until }
  * @note This work because @p data is @p value(from the main function) and @p
  * value is changed when the checkbox is changed.
