@@ -1051,6 +1051,9 @@ _image_entry_free(Image_Entry *ientry)
    File_Entry *fentry;
    Image_Data *idata;
 
+   if (!ientry || !ENTRYID(ientry))
+     return;
+
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata || !idata->refcount)
      {
