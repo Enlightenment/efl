@@ -237,7 +237,7 @@ EAPI void elm_access_highlight_set(Evas_Object* obj);
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
- * The return value would be useful, when the @type is ELM_ACCESS_ACTION_HIGHLIGHT_NEXT
+ * The return value would be useful, when the @p type is ELM_ACCESS_ACTION_HIGHLIGHT_NEXT
  * or ELM_ACCESS_ACTION_HIGHLIGHT_PREV. If there is no way to give a highlight,
  * @c EINA_FALSE will be returned.
  *

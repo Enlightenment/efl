@@ -56,7 +56,7 @@ EAPI Eina_Bool        elm_image_memfile_set(Evas_Object *obj, const void *img, s
  * @c ".edj", for this case).
  *
  * @note If you use animated gif image and create multiple image objects with
- * one gif image file, you should set the @group differently for each object.
+ * one gif image file, you should set the @p group differently for each object.
  * Or image objects will share one evas image cache entry and you will get
  * unwanted frames.
  *
@@ -82,7 +82,7 @@ EAPI Eina_Bool        elm_image_mmap_set(Evas_Object *obj, const Eina_File *file
  * case).
  *
  * @note If you use animated gif image and create multiple image objects with
- * one gif image file, you should set the @group differently for each object.
+ * one gif image file, you should set the @p group differently for each object.
  * Or image objects will share one evas image cache entry and you will get
  * unwanted frames.
  *

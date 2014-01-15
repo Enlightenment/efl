@@ -124,7 +124,7 @@ EAPI void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const c
  * child objects as content at given parts. This sets new content to
  * a given part. If any object was already set as a content object in
  * the same part, the previous object will be deleted automatically
- * with this call. If the @content is NULL, this call will just delete the
+ * with this call. If the @p content is NULL, this call will just delete the
  * previous object. If the If you wish to preserve it, issue
  * elm_object_part_content_unset() on it first.
  *
