@@ -313,6 +313,8 @@ _elm_panel_smart_content_get(Eo *obj, void *_pd, va_list *list)
    Elm_Panel_Smart_Data *sd = _pd;
    const char *part = va_arg(*list, const char *);
    Evas_Object **ret = va_arg(*list, Evas_Object **);
+   if (!ret) return;
+
    *ret = NULL;
 
    if (part && strcmp(part, "default"))
@@ -492,7 +494,7 @@ _orient_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Panel_Orient *ret = va_arg(*list, Elm_Panel_Orient *);
    Elm_Panel_Smart_Data *sd = _pd;
 
-   *ret = sd->orient;
+   if (ret) *ret = sd->orient;
 }
 
 EAPI void
@@ -509,7 +511,7 @@ _hidden_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool hidden = va_arg(*list, int);
    Elm_Panel_Smart_Data *sd = _pd;
 
-   if (sd->hidden == hidden) return;
+   if (sd->hidden == !!hidden) return;
 
    _panel_toggle(NULL, obj, NULL, NULL);
 }
@@ -529,7 +531,7 @@ _hidden_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Panel_Smart_Data *sd = _pd;
 
-   *ret = sd->hidden;
+   if (ret) *ret = sd->hidden;
 }
 
 EAPI void
