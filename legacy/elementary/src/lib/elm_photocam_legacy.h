@@ -44,11 +44,13 @@ EAPI const char            *elm_photocam_file_get(const Evas_Object *obj);
  * @param obj The photocam object
  * @param zoom The zoom level to set
  *
- * This sets the zoom level. 1 will be 1:1 pixel for pixel. 2 will be 2:1
- * (that is 2x2 photo pixels will display as 1 on-screen pixel). 4:1 will be
- * 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom parameter must
- * be greater than 0. It is suggested to stick to powers of 2. (1, 2, 4, 8,
- * 16, 32, etc.).
+ * This sets the zoom level. If @p zoom is 1, it means no zoom. If it's smaller
+ * than 1, it means zoom in. If it's bigger than 1, it means zoom out. For
+ * example, @p zoom 1 will be 1:1 pixel for pixel. @p zoom 2 will be 2:1
+ * (that is 2x2 photo pixels will display as 1 on-screen pixel) which is a zoom
+ * out. 4:1 will be 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom
+ * parameter must be greater than 0. It is suggested to stick to powers of 2.
+ * (1, 2, 4, 8, 16, 32, etc.).
  *
  * @ingroup Photocam
  */
