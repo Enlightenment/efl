@@ -175,15 +175,6 @@ end:
 }
 
 static void
-_mirrored_set(Evas_Object *obj,
-              Eina_Bool rtl)
-{
-   ELM_FILESELECTOR_ENTRY_DATA_GET(obj, sd);
-
-   elm_widget_mirrored_set(sd->button, rtl);
-}
-
-static void
 _elm_fileselector_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    const char *style;
@@ -201,7 +192,7 @@ _elm_fileselector_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    style = elm_widget_style_get(obj);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   elm_widget_mirrored_set(sd->button, elm_widget_mirrored_get(obj));
 
    if (elm_object_disabled_get(obj))
      elm_layout_signal_emit(obj, "elm,state,disabled", "elm");
@@ -351,6 +342,7 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    priv->button = elm_fileselector_button_add(obj);
    elm_widget_mirrored_automatic_set(priv->button, EINA_FALSE);
+   elm_widget_mirrored_set(priv->button, elm_widget_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
 
    elm_fileselector_button_expandable_set
@@ -396,7 +388,6 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    elm_layout_sizing_eval(obj);
 }
 
