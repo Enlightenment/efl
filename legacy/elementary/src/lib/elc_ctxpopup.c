@@ -1038,18 +1038,6 @@ _list_resize_cb(void *data,
 }
 
 static void
-_ctxpopup_restack_cb(void *data EINA_UNUSED,
-                     Evas *e EINA_UNUSED,
-                     Evas_Object *obj,
-                     void *event_info EINA_UNUSED)
-{
-   ELM_CTXPOPUP_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   evas_object_stack_below(sd->bg, wd->resize_obj);
-}
-
-static void
 _list_del(Elm_Ctxpopup_Smart_Data *sd)
 {
    if (!sd->list) return;
@@ -1140,9 +1128,6 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->dir_priority[2] = ELM_CTXPOPUP_DIRECTION_RIGHT;
    priv->dir_priority[3] = ELM_CTXPOPUP_DIRECTION_DOWN;
    priv->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESTACK, _ctxpopup_restack_cb, obj);
 
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set
