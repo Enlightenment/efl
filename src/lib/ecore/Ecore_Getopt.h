@@ -65,7 +65,8 @@ typedef enum {
    ECORE_GETOPT_ACTION_VERSION,
    ECORE_GETOPT_ACTION_COPYRIGHT,
    ECORE_GETOPT_ACTION_LICENSE,
-   ECORE_GETOPT_ACTION_BREAK
+   ECORE_GETOPT_ACTION_BREAK,
+   ECORE_GETOPT_ACTION_CATEGORY
 } Ecore_Getopt_Action;
 
 typedef enum {
@@ -388,6 +389,9 @@ struct _Ecore_Getopt
   {shortname, longname, help, NULL,    \
    ECORE_GETOPT_ACTION_BREAK,                   \
    {.dummy = NULL}}
+
+#define ECORE_GETOPT_CATEGORY(name) \
+  {0, NULL, name, NULL, ECORE_GETOPT_ACTION_CATEGORY, {.dummy = NULL}}
 
 #define ECORE_GETOPT_SENTINEL {0, NULL, NULL, NULL, 0, {.dummy = NULL}}
 

@@ -629,6 +629,12 @@ _ecore_getopt_help_desc(FILE                    *fp,
    int metavarlen = 3;
    int used;
 
+   if (desc->action == ECORE_GETOPT_ACTION_CATEGORY)
+     {
+        fprintf(fp, "\n%s\n", desc->help);
+        return;
+     }
+
    arg_req = _ecore_getopt_desc_arg_requirement(desc);
    if (arg_req != ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO)
      _ecore_getopt_help_desc_setup_metavar
