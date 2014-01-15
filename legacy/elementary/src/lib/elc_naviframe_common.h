@@ -73,31 +73,35 @@ EAPI void             elm_naviframe_item_style_set(Elm_Object_Item *it, const ch
 EAPI const char      *elm_naviframe_item_style_get(const Elm_Object_Item *it);
 
 /**
- * @brief Show/Hide the title area
+ * @brief Enable/Disable the title area with transition effect
  *
  * @param it The naviframe item
- * @param visible If @c EINA_TRUE, title area will be visible, hidden
+ * @param enabled If @c EINA_TRUE, title area will be enabled, disabled
  *        otherwise
+ * @param transition If @c EINA_TRUE, transition effect of the title will be
+ *        visible, invisible otherwise
  *
- * When the title area is invisible, then the controls would be hidden so as     * to expand the content area to full-size.
+ * When the title area is disabled, then the controls would be hidden so as
+ * to expand the content area to full-size.
  *
- * @see also elm_naviframe_item_title_visible_get()
- *
- * @ingroup Naviframe
- */
-EAPI void             elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible);
-
-/**
- * @brief Get a value whether title area is visible or not.
- *
- * @param it The naviframe item
- * @return If @c EINA_TRUE, title area is visible
- *
+ * @see also elm_naviframe_item_title_enabled_get()
  * @see also elm_naviframe_item_title_visible_set()
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Bool        elm_naviframe_item_title_visible_get(const Elm_Object_Item *it);
+EAPI void             elm_naviframe_item_title_enabled_set(Elm_Object_Item *it, Eina_Bool enabled, Eina_Bool transition);
+
+/**
+ * @brief Get a value whether title area is enabled or not.
+ *
+ * @param it The naviframe item
+ * @return If @c EINA_TRUE, title area is enabled
+ *
+ * @see also elm_naviframe_item_title_enabled_set()
+ *
+ * @ingroup Naviframe
+ */
+EAPI Eina_Bool        elm_naviframe_item_title_enabled_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set a function to be called when @c it of the naviframe is going to be
@@ -126,6 +130,6 @@ elm_naviframe_item_simple_push(Evas_Object *obj, Evas_Object *content)
 {
    Elm_Object_Item *it;
    it = elm_naviframe_item_push(obj, NULL, NULL, NULL, content, NULL);
-   elm_naviframe_item_title_visible_set(it, EINA_FALSE);
+   elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
    return it;
 }

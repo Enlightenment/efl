@@ -463,6 +463,14 @@ group { name: "elm/naviframe/item/basic/default";
       program {
          signal: "elm,state,title,show"; source: "elm";
          action: STATE_SET "default" 0.0;
+         target: "top";
+         target: "shadow";
+         target: "elm.swallow.content";
+         target: "buttons_clip";
+      }
+      program {
+         signal: "elm,action,title,show"; source: "elm";
+         action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "top";
          target: "shadow";
@@ -472,9 +480,18 @@ group { name: "elm/naviframe/item/basic/default";
       program { name: "titleshow2";
          action: STATE_SET "default" 0.0;
          target: "buttons_clip";
+         after: "title_transition_finished";
       }
       program {
          signal: "elm,state,title,hide"; source: "elm";
+         action: STATE_SET "title-hidden" 0.0;
+         target: "buttons_clip";
+         target: "top";
+         target: "shadow";
+         target: "elm.swallow.content";
+      }
+      program {
+         signal: "elm,action,title,hide"; source: "elm";
          action: STATE_SET "title-hidden" 0.0;
          target: "buttons_clip";
          after: "titlehide2";
@@ -485,6 +502,10 @@ group { name: "elm/naviframe/item/basic/default";
          target: "top";
          target: "shadow";
          target: "elm.swallow.content";
+         after: "title_transition_finished";
+      }
+      program { name: "title_transition_finished";
+         action: SIGNAL_EMIT "elm,action,title,transition,finished" "elm";
       }
       program {
          signal: "elm,state,prev_btn,show"; source: "elm";

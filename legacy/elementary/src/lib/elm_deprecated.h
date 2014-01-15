@@ -534,6 +534,39 @@ EINA_DEPRECATED EAPI void      elm_object_domain_translatable_text_part_set(Evas
 EINA_DEPRECATED EAPI const char *elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part);
 
 /**
+ * @brief Show/Hide the title area
+ *
+ * @param it The naviframe item
+ * @param visible If @c EINA_TRUE, title area will be visible, hidden
+ *        otherwise
+ *
+ * When the title area is invisible, then the controls would be hidden so as
+ * to expand the content area to full-size.
+ *
+ * @deprecated Use elm_naviframe_item_title_enabled_set() instead.
+ *
+ * @see also elm_naviframe_item_title_visible_get()
+ * @see also elm_naviframe_item_title_enabled_get()
+ *
+ * @ingroup Naviframe
+ */
+EINA_DEPRECATED EAPI void      elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible);
+
+/**
+ * @brief Get a value whether title area is visible or not.
+ *
+ * @param it The naviframe item
+ * @return If @c EINA_TRUE, title area is visible
+ *
+ * @deprecated Use elm_naviframe_item_title_enabled_get() instead.
+ *
+ * @see also elm_naviframe_item_title_visible_set()
+ *
+ * @ingroup Naviframe
+ */
+EINA_DEPRECATED EAPI Eina_Bool elm_naviframe_item_title_visible_get(const Elm_Object_Item *it);
+
+/**
  * Enable/disable horizontal and vertical bouncing effect.
  *
  * @param obj The genlist object

@@ -59,6 +59,9 @@
  * @ref Layout:
  * @li @c "transition,finished" - When the transition is finished in
  *                                changing the item
+ * @li @c "title,transition,finished" - When the title area's transition
+ *                                      is finished in changing the state
+ *                                      of the title
  * @li @c "title,clicked" - User clicked title area
  * @li @c "focused" - When the naviframe has received focus. (since 1.8)
  * @li @c "unfocused" - When the naviframe has lost focus. (since 1.8)

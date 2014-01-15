@@ -127,8 +127,9 @@ _navi_it_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 static void
 _title_visible(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_naviframe_item_title_visible_set(data,
-                               !elm_naviframe_item_title_visible_get(data));
+   elm_naviframe_item_title_enabled_set(data,
+                                        !elm_naviframe_item_title_enabled_get(data),
+                                        EINA_TRUE);
 }
 
 static void
@@ -242,7 +243,7 @@ _page4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    elm_object_item_part_content_set(it, "icon", ic);
-   elm_naviframe_item_title_visible_set(it, EINA_FALSE);
+   elm_naviframe_item_title_enabled_set(it, EINA_FALSE, EINA_FALSE);
    evas_object_smart_callback_add(content, "clicked", _title_visible, it);
 }
 

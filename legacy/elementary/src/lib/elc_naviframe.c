@@ -23,10 +23,12 @@ static const char SUBTITLE_PART[] = "elm.text.subtitle";
 static const char TITLE_ACCESS_PART[] = "access.title";
 
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
+static const char SIG_TITLE_TRANSITION_FINISHED[] = "title,transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_TRANSITION_FINISHED, ""},
+   {SIG_TITLE_TRANSITION_FINISHED, ""},
    {SIG_TITLE_CLICKED, ""},
    {"focused", ""}, /**< handled by elm_widget */
    {"unfocused", ""}, /**< handled by elm_widget */
@@ -300,12 +302,34 @@ _item_style_set(Elm_Naviframe_Item *it,
 }
 
 static void
-_item_title_visible_update(Elm_Naviframe_Item *nit)
+_on_item_title_transition_finished(void *data,
+                                   Evas_Object *obj __UNUSED__,
+                                   const char *emission __UNUSED__,
+                                   const char *source __UNUSED__)
 {
-   if (nit->title_visible)
-     elm_object_signal_emit(VIEW(nit), "elm,state,title,show", "elm");
+   Elm_Naviframe_Item *it = data;
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_TITLE_TRANSITION_FINISHED, data);
+}
+
+static void
+_item_title_enabled_update(Elm_Naviframe_Item *nit, Eina_Bool transition)
+{
+   transition = !!transition;
+   if (transition)
+     {
+        if (nit->title_enabled)
+          elm_object_signal_emit(VIEW(nit), "elm,action,title,show", "elm");
+        else
+          elm_object_signal_emit(VIEW(nit), "elm,action,title,hide", "elm");
+     }
    else
-     elm_object_signal_emit(VIEW(nit), "elm,state,title,hide", "elm");
+     {
+        if (nit->title_enabled)
+          elm_object_signal_emit(VIEW(nit), "elm,state,title,show", "elm");
+        else
+          elm_object_signal_emit(VIEW(nit), "elm,state,title,hide", "elm");
+     }
 }
 
 static void
@@ -324,7 +348,7 @@ _elm_naviframe_smart_theme(Eo *obj, void *_pd, va_list *list)
         if ((style && sstyle) && strcmp(style, sstyle))
           _item_style_set(it, it->style);
         _item_signals_emit(it);
-        _item_title_visible_update(it);
+        _item_title_enabled_update(it, EINA_FALSE);
      }
 
    elm_layout_sizing_eval(obj);
@@ -341,7 +365,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
    char *ret;
 
    nit = data;
-   if (!nit->title_visible) return NULL;
+   if (!nit->title_enabled) return NULL;
 
    layout = VIEW(nit);
    info = elm_object_part_text_get(layout, TITLE_PART);
@@ -1176,6 +1200,8 @@ _item_new(Evas_Object *obj,
    elm_object_signal_callback_add
      (VIEW(it), "elm,action,popped,finished", "*", _on_item_pop_finished, it);
    elm_object_signal_callback_add
+     (VIEW(it), "elm,action,title,transition,finished", "*", _on_item_title_transition_finished, it);
+   elm_object_signal_callback_add
      (VIEW(it), "elm,action,title,clicked", "*", _on_item_title_clicked, it);
 
    _item_style_set(it, item_style);
@@ -1212,7 +1238,7 @@ _item_new(Evas_Object *obj,
    _item_content_set(it, content);
    _item_dispmode_set(it, sd->dispmode);
 
-   it->title_visible = EINA_TRUE;
+   it->title_enabled = EINA_TRUE;
 
    return it;
 }
@@ -1921,7 +1947,7 @@ elm_naviframe_item_style_set(Elm_Object_Item *it,
 
    _item_style_set(nit, item_style);
    _item_signals_emit(nit);
-   _item_title_visible_update(nit);
+   _item_title_enabled_update(nit, EINA_FALSE);
 }
 
 EAPI const char *
@@ -1934,29 +1960,45 @@ elm_naviframe_item_style_get(const Elm_Object_Item *it)
    return nit->style;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_naviframe_item_title_visible_set(Elm_Object_Item *it,
                                      Eina_Bool visible)
+{
+   elm_naviframe_item_title_enabled_set(it, visible, EINA_FALSE);
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
+{
+   return elm_naviframe_item_title_enabled_get(it);
+}
+
+EAPI void
+elm_naviframe_item_title_enabled_set(Elm_Object_Item *it,
+                                     Eina_Bool enabled,
+                                     Eina_Bool transition)
 {
    Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
 
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(it);
 
-   visible = !!visible;
-   if (nit->title_visible == visible) return;
+   enabled = !!enabled;
+   if (nit->title_enabled == enabled) return;
 
-   nit->title_visible = visible;
-   _item_title_visible_update(nit);
+   nit->title_enabled = enabled;
+
+   transition = !!transition;
+   _item_title_enabled_update(nit, transition);
 }
 
 EAPI Eina_Bool
-elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
+elm_naviframe_item_title_enabled_get(const Elm_Object_Item *it)
 {
    Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
 
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
-   return nit->title_visible;
+   return nit->title_enabled;
 }
 
 EAPI void
