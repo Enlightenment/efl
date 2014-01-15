@@ -247,7 +247,7 @@ struct elm_test
 };
 
 static int
-elm_test_sort(const void *pa, const void *pb)
+_elm_test_sort(const void *pa, const void *pb)
 {
    const struct elm_test *a = pa, *b = pb;
    int res = strcasecmp(a->category, b->category);
@@ -263,7 +263,7 @@ _elm_test_add(Eina_List **p_list, const char *icon, const char *category, const 
    t->category = category;
    t->name = name;
    t->cb = cb;
-   *p_list = eina_list_sorted_insert(*p_list, elm_test_sort, t);
+   *p_list = eina_list_sorted_insert(*p_list, _elm_test_sort, t);
 }
 
 void
