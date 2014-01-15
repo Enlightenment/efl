@@ -132,9 +132,21 @@ my_bt_zoom_in(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    double zoom;
 
    zoom = elm_photocam_zoom_get(data);
-   zoom -= 0.5;
+   if (zoom > 1.5)
+     zoom -= 0.5;
+   else if ((zoom > 1.0) && (zoom <= 1.5))
+     zoom = 1.0;
+   else if (zoom == 1.0)
+     zoom = 0.8;
+   else
+     zoom = zoom * zoom;
+
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
-   if (zoom >= (1.0 / 32.0)) elm_photocam_zoom_set(data, zoom);
+   if (zoom >= (1.0 / 32.0))
+     {
+        printf("zoom %f\n", zoom);
+        elm_photocam_zoom_set(data, zoom);
+     }
 }
 
 static void
@@ -145,7 +157,11 @@ my_bt_zoom_out(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
    zoom = elm_photocam_zoom_get(data);
    zoom += 0.5;
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
-   if (zoom <= 256.0) elm_photocam_zoom_set(data, zoom);
+   if (zoom <= 256.0)
+     {
+        printf("zoom %f\n", zoom);
+        elm_photocam_zoom_set(data, zoom);
+     }
 }
 
 static void
