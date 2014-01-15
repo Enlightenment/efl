@@ -211,10 +211,10 @@ _anim(void *data)
 }
 
 static void
-_close_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
           void *event_info EINA_UNUSED)
 {
-   elm_exit();
+   evas_object_del(data);
 }
 
 static void
@@ -283,7 +283,7 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _close_cb, NULL);
+   evas_object_smart_callback_add(bt, "clicked", _close_cb, win);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
