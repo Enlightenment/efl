@@ -359,16 +359,11 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   /* just to bootstrap and have theme hook to work */
-   if (!elm_layout_theme_set(obj, "panel", "top", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
    eo_do(obj, elm_wdg_theme(NULL));
 
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_size_hint_align_set(priv->bx, 0.5, 0.5);
    evas_object_box_layout_set(priv->bx, _box_layout_cb, priv, NULL);
-   elm_layout_content_set(obj, "elm.swallow.content", priv->bx);
    evas_object_show(priv->bx);
 
    elm_layout_signal_callback_add
@@ -379,16 +374,25 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->event = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->event, 0, 0, 0, 0);
    evas_object_pass_events_set(priv->event, EINA_TRUE);
-   if (edje_object_part_exists
-       (wd->resize_obj, "elm.swallow.event"))
-     {
-        Evas_Coord minw = 0, minh = 0;
-
-        elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-        evas_object_size_hint_min_set(priv->event, minw, minh);
-        elm_layout_content_set(obj, "elm.swallow.event", priv->event);
-     }
    elm_widget_sub_object_add(obj, priv->event);
+
+   /* just to bootstrap and have theme hook to work */
+   if (!elm_layout_theme_set(obj, "panel", "top", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+   else
+     {
+        elm_layout_content_set(obj, "elm.swallow.content", priv->bx);
+
+        if (edje_object_part_exists
+            (wd->resize_obj, "elm.swallow.event"))
+          {
+             Evas_Coord minw = 0, minh = 0;
+
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             evas_object_size_hint_min_set(priv->event, minw, minh);
+             elm_layout_content_set(obj, "elm.swallow.event", priv->event);
+          }
+     }
 
    elm_layout_sizing_eval(obj);
 }
