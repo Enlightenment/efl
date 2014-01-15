@@ -73,7 +73,7 @@ ecore_x_gesture_events_selected_get(Ecore_X_Window win)
      return ECORE_X_GESTURE_EVENT_MASK_NONE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (GestureSuccess != XGestureGetSelectedEvents(_ecore_x_disp, win, &mask))
+   if (GestureSuccess != XGestureGetSelectedEvents(_ecore_x_disp, win, (Mask *)&mask))
      mask = ECORE_X_GESTURE_EVENT_MASK_NONE;
    if (_ecore_xlib_sync) ecore_x_sync();
 
