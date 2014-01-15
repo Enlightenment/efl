@@ -1373,7 +1373,7 @@ _elm_win_object_focus_in(void *data,
 
    target = _elm_win_focus_target_get(obj);
    sd->focus_highlight.cur.target = target;
-   if (elm_widget_highlight_in_theme_get(target))
+   if (target && elm_widget_highlight_in_theme_get(target))
      sd->focus_highlight.cur.handled = EINA_TRUE;
    else
      _elm_win_focus_target_callbacks_add(sd);
