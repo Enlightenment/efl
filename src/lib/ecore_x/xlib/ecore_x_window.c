@@ -848,11 +848,23 @@ EAPI void
 ecore_x_window_cursor_set(Ecore_X_Window win,
                           Ecore_X_Cursor c)
 {
+#ifdef ECORE_XI2
+   int devid;
+#endif
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+#ifdef ECORE_XI2
+   XIGetClientPointer(_ecore_x_disp, None, &devid);
+   if (c == 0)
+     XIUndefineCursor(_ecore_x_disp, devid, win);
+   else
+     XIDefineCursor(_ecore_x_disp, devid, win, c);
+#else
    if (c == 0)
      XUndefineCursor(_ecore_x_disp, win);
    else
      XDefineCursor(_ecore_x_disp, win, c);
+#endif
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
