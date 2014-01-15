@@ -120,9 +120,9 @@ main(int argc, const char *argv[])
    /* start client */
    ecore_main_loop_begin();
 
-   ecore_con_init();
-   ecore_init();
-   eina_init();
+   ecore_con_shutdown();
+   ecore_shutdown();
+   eina_shutdown();
 
    return 0;
 }
