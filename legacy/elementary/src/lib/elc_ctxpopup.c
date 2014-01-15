@@ -981,9 +981,6 @@ _on_show(void *data EINA_UNUSED,
    sd->emitted = EINA_FALSE;
    sd->visible = EINA_TRUE;
 
-   evas_object_show(sd->bg);
-   evas_object_show(sd->arrow);
-
    _show_signals_emit(obj, sd->dir);
 
    elm_layout_sizing_eval(obj);
@@ -1001,9 +998,6 @@ _on_hide(void *data EINA_UNUSED,
 
    if (!sd->visible) return;
 
-   evas_object_hide(sd->bg);
-   evas_object_hide(sd->arrow);
-
    sd->visible = EINA_FALSE;
    sd->list_visible = EINA_FALSE;
 }
@@ -1014,10 +1008,6 @@ _on_move(void *data EINA_UNUSED,
          Evas_Object *obj,
          void *event_info EINA_UNUSED)
 {
-   ELM_CTXPOPUP_DATA_GET(obj, sd);
-
-   if (sd->visible) evas_object_show(sd->arrow);
-
    elm_layout_sizing_eval(obj);
 }
 
@@ -1044,9 +1034,6 @@ _list_resize_cb(void *data,
 
    sd->list_visible = EINA_TRUE;
 
-   evas_object_show(sd->bg);
-   evas_object_show(sd->arrow);
-
    elm_layout_sizing_eval(data);
 }
 
@@ -1057,7 +1044,9 @@ _ctxpopup_restack_cb(void *data EINA_UNUSED,
                      void *event_info EINA_UNUSED)
 {
    ELM_CTXPOPUP_DATA_GET(obj, sd);
-   evas_object_stack_below(sd->bg, obj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_stack_below(sd->bg, wd->resize_obj);
 }
 
 static void
@@ -1120,6 +1109,7 @@ static void
 _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Ctxpopup_Smart_Data *priv = _pd;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -1136,13 +1126,14 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default");
    edje_object_signal_callback_add
      (priv->bg, "elm,action,click", "*", _bg_clicked_cb, obj);
-
-   evas_object_stack_below(priv->bg, obj);
+   evas_object_smart_member_add(priv->bg, obj);
+   evas_object_stack_below(priv->bg, wd->resize_obj);
 
    //Arrow
    priv->arrow = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set
      (obj, priv->arrow, "ctxpopup", "arrow", "default");
+   evas_object_smart_member_add(priv->arrow, obj);
 
    priv->dir_priority[0] = ELM_CTXPOPUP_DIRECTION_UP;
    priv->dir_priority[1] = ELM_CTXPOPUP_DIRECTION_LEFT;
