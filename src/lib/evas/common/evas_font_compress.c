@@ -466,11 +466,12 @@ evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret)
 EAPI void
 evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, 
                             RGBA_Draw_Context *dc,
-                            DATA32 *dst, int dst_pitch,
+                            RGBA_Image *dst_image, int dst_pitch,
                             int x, int y, int cx, int cy, int cw, int ch)
 {
    RGBA_Font_Glyph_Out *fgo = fg->glyph_out;
    int w, h, x1, x2, y1, y2, i, *iptr;
+   DATA32 *dst = dst_image->image.data;
    DATA32 coltab[16], col;
    DATA16 mtab[16], v;
    DATA8 tmp;

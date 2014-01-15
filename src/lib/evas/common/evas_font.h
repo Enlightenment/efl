@@ -84,7 +84,7 @@ EAPI int               evas_common_font_query_run_font_end_get(RGBA_Font *fn, RG
 EAPI void              evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_props, int *ascent, int *descent);
 
 EAPI void             *evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode, int pitch_data, int w, int h, int *size_ret);
-EAPI void              evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, RGBA_Draw_Context *dc, DATA32 *dst, int dst_pitch, int x, int y, int cx, int cy, int cw, int ch);
+EAPI void              evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, RGBA_Draw_Context *dc, RGBA_Image *dst, int dst_pitch, int x, int y, int cx, int cy, int cw, int ch);
 EAPI DATA8            *evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret);
 
 void evas_common_font_load_init(void);

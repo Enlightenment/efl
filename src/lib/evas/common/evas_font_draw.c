@@ -34,13 +34,11 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                            Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func EINA_UNUSED, int ext_x, int ext_y, int ext_w,
                            int ext_h, int im_w, int im_h EINA_UNUSED)
 {
-   DATA32 *im;
    Evas_Glyph *glyph;
 
    if (!glyphs) return EINA_FALSE;
    if (!glyphs->array) return EINA_FALSE;
 
-   im = dst->image.data;
    EINA_INARRAY_FOREACH(glyphs->array, glyph)
      {
         RGBA_Font_Glyph *fg;
@@ -64,7 +62,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                     dc->font_ext.func.gl_draw(dc->font_ext.data, (void *)dst,
                                               dc, fg, chr_x, y - (chr_y - y));
                   else if (fg->glyph_out->rle)
-                    evas_common_font_glyph_draw(fg, dc, im, im_w,
+                    evas_common_font_glyph_draw(fg, dc, dst, im_w,
                                                 chr_x, y - (chr_y - y),
                                                 ext_x, ext_y, ext_w, ext_h);
                }
