@@ -303,9 +303,9 @@ _item_style_set(Elm_Naviframe_Item *it,
 
 static void
 _on_item_title_transition_finished(void *data,
-                                   Evas_Object *obj __UNUSED__,
-                                   const char *emission __UNUSED__,
-                                   const char *source __UNUSED__)
+                                   Evas_Object *obj EINA_UNUSED,
+                                   const char *emission EINA_UNUSED,
+                                   const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item *it = data;
 
