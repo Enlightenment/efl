@@ -594,7 +594,7 @@ _mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
 void
 test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx0, *bx, *bt, *gl, *lb;
+   Evas_Object *win, *bx, *bt, *gl, *lb;
    Ecore_Animator *ani;
    GLData *gld = NULL;
 
@@ -604,38 +604,12 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    // new window - do the usual and give it a name, title and delete handler
    win = elm_win_util_standard_add("glview", "GLView");
-
    elm_win_autodel_set(win, EINA_TRUE);
 
-   bx0 = elm_box_add(win);
-   elm_box_horizontal_set(bx0, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx0);
-   evas_object_show(bx0);
-
-   /* add an ok button */
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "OK");
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, 0.0, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bx0, bt);
-   evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _on_done, win);
-
    bx = elm_box_add(win);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bx0, bx);
+   elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
-
-   /* add an ok button */
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "OK");
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _on_done, win);
 
    // Add a GLView
    gl = elm_glview_add(win);
@@ -669,6 +643,22 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
         evas_object_data_set(gl, "ani", ani);
         evas_object_data_set(gl, "gld", gld);
         evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
+
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "Direct Mode");
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+        evas_object_smart_callback_add(bt, "clicked", _on_direct, gl);
+
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "Indirect Mode");
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+        evas_object_smart_callback_add(bt, "clicked", _on_indirect, gl);
      }
    else
      {
@@ -678,30 +668,20 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                             " 2. Run elementary_test with engine option or<br/>"
                             "    ex) $ <b>ELM_ENGINE=gl</b> elementary_test<br/>"
                             " 3. Change your back-end engine from elementary_config.<br/></align>");
-        evas_object_size_hint_weight_set(lb, 0.0, 0.0);
+        evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(bx, lb);
         evas_object_show(lb);
         free(gld);
      }
 
-   /* add an ok button */
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Direct");
+   elm_object_text_set(bt, "Close");
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _on_direct, gl);
-
-   /* add an ok button */
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "I");
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, 0.0, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bx0, bt);
-   evas_object_show(bt);
-   evas_object_smart_callback_add(bt, "clicked", _on_indirect, gl);
+   evas_object_smart_callback_add(bt, "clicked", _on_done, win);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
