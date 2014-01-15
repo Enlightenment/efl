@@ -44,24 +44,24 @@ struct _Elm_Radio_Smart_Data
 
 #define ELM_RADIO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_RADIO_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_RADIO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_RADIO_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
+  if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
+       CRI("No widget data for object %p (%s)",       \
+           o, evas_object_type_get(o));               \
        return val;                                    \
     }
 
-#define ELM_RADIO_CHECK(obj)                                      \
-  if (!eo_isa((obj), ELM_OBJ_RADIO_CLASS)) \
+#define ELM_RADIO_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_RADIO_CLASS))) \
     return
 
 #endif

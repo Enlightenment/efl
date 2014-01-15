@@ -35,26 +35,26 @@ struct _Elm_Actionslider_Smart_Data
 #define ELM_ACTIONSLIDER_DATA_GET(o, sd) \
   Elm_Actionslider_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_ACTIONSLIDER_CLASS)
 
-#define ELM_ACTIONSLIDER_DATA_GET_OR_RETURN(o, ptr)     \
-  ELM_ACTIONSLIDER_DATA_GET(o, ptr);                    \
-  if (!ptr)                                          \
+#define ELM_ACTIONSLIDER_DATA_GET_OR_RETURN(o, ptr)  \
+  ELM_ACTIONSLIDER_DATA_GET(o, ptr);                 \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_ACTIONSLIDER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_ACTIONSLIDER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                               \
-    {                                                     \
-       CRI("No widget data for object %p (%s)",      \
-                o, evas_object_type_get(o));              \
-       return val;                                        \
+  if (EINA_UNLIKELY(!ptr))                                   \
+    {                                                        \
+       CRI("No widget data for object %p (%s)",              \
+           o, evas_object_type_get(o));                      \
+       return val;                                           \
     }
 
-#define ELM_ACTIONSLIDER_CHECK(obj)                       \
-  if (!eo_isa((obj), ELM_OBJ_ACTIONSLIDER_CLASS)) \
+#define ELM_ACTIONSLIDER_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_ACTIONSLIDER_CLASS))) \
     return
 
 #endif

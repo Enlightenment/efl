@@ -18,8 +18,8 @@
  * @}
  */
 
-#define ELM_TABLE_CHECK(obj)               \
-  if (!eo_isa((obj), ELM_OBJ_TABLE_CLASS)) \
+#define ELM_TABLE_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_TABLE_CLASS))) \
     return
 
 #endif

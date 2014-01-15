@@ -148,24 +148,24 @@ typedef enum _Length_Unit
 
 #define ELM_ENTRY_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_ENTRY_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_ENTRY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_ENTRY_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
+  if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
+       CRI("No widget data for object %p (%s)",       \
+           o, evas_object_type_get(o));               \
        return val;                                    \
     }
 
-#define ELM_ENTRY_CHECK(obj)                     \
-  if (!eo_isa((obj), ELM_OBJ_ENTRY_CLASS))       \
+#define ELM_ENTRY_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_ENTRY_CLASS))) \
     return
 
 #endif

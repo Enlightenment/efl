@@ -51,26 +51,26 @@ struct _Elm_Progress_Status
 #define ELM_PROGRESSBAR_DATA_GET(o, sd) \
   Elm_Progressbar_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PROGRESSBAR_CLASS)
 
-#define ELM_PROGRESSBAR_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_PROGRESSBAR_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
+#define ELM_PROGRESSBAR_DATA_GET_OR_RETURN(o, ptr)   \
+  ELM_PROGRESSBAR_DATA_GET(o, ptr);                  \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_PROGRESSBAR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_PROGRESSBAR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRI("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
+  if (EINA_UNLIKELY(!ptr))                                  \
+    {                                                       \
+       CRI("No widget data for object %p (%s)",             \
+           o, evas_object_type_get(o));                     \
+       return val;                                          \
     }
 
-#define ELM_PROGRESSBAR_CHECK(obj)                                      \
-  if (!eo_isa((obj), ELM_OBJ_PROGRESSBAR_CLASS)) \
+#define ELM_PROGRESSBAR_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_PROGRESSBAR_CLASS))) \
     return
 
 #endif

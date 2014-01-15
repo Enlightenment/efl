@@ -94,33 +94,33 @@ extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
   Elm_Prefs_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PREFS_CLASS)
 
 #define ELM_PREFS_ENTRY(o, sd)                                              \
-  if (!sd->data_file || !sd->page)                                          \
+  if (EINA_UNLIKELY(!sd->data_file || !sd->page))                           \
     {                                                                       \
-       CRI("You must issue elm_prefs_file_set() on this widget before" \
-                " you make this call");                                     \
+       CRI("You must issue elm_prefs_file_set() on this widget before"      \
+           " you make this call");                                          \
     }                                                                       \
   return
 
 #define ELM_PREFS_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PREFS_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_PREFS_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_PREFS_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
+  if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
+       CRI("No widget data for object %p (%s)",       \
+           o, evas_object_type_get(o));               \
        return val;                                    \
     }
 
-#define ELM_PREFS_CHECK(obj)               \
-  if (!eo_isa((obj), ELM_OBJ_PREFS_CLASS)) \
+#define ELM_PREFS_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_PREFS_CLASS))) \
     return
 
 #endif

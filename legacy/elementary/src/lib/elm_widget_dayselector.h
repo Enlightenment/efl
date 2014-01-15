@@ -44,24 +44,24 @@ struct _Elm_Dayselector_Item
 
 #define ELM_DAYSELECTOR_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_DAYSELECTOR_DATA_GET(o, ptr);                  \
-  if (!ptr)                                          \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_DAYSELECTOR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_DAYSELECTOR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                 \
+  if (EINA_UNLIKELY(!ptr))                                  \
     {                                                       \
-       CRI("No widget data for object %p (%s)",        \
-                o, evas_object_type_get(o));                \
+       CRI("No widget data for object %p (%s)",             \
+           o, evas_object_type_get(o));                     \
        return val;                                          \
     }
 
-#define ELM_DAYSELECTOR_CHECK(obj)                       \
-  if (!eo_isa((obj), ELM_OBJ_DAYSELECTOR_CLASS)) \
+#define ELM_DAYSELECTOR_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_DAYSELECTOR_CLASS))) \
     return
 
 #endif

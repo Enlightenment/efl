@@ -47,24 +47,24 @@ struct _Elm_Photo_Smart_Data
 
 #define ELM_PHOTO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PHOTO_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
+  if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
+       CRI("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));              \
        return;                                       \
     }
 
 #define ELM_PHOTO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
   ELM_PHOTO_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
+  if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
+       CRI("No widget data for object %p (%s)",       \
+           o, evas_object_type_get(o));               \
        return val;                                    \
     }
 
-#define ELM_PHOTO_CHECK(obj)                                                 \
-  if (!eo_isa((obj), ELM_OBJ_PHOTO_CLASS)) \
+#define ELM_PHOTO_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_PHOTO_CLASS))) \
     return
 
 #endif
