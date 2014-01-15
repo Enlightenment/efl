@@ -349,15 +349,10 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
-   if (!elm_layout_theme_set
-       (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
    priv->button = elm_fileselector_button_add(obj);
    elm_widget_mirrored_automatic_set(priv->button, EINA_FALSE);
    elm_widget_style_set(priv->button, "fileselector_entry/default");
 
-   elm_layout_content_set(obj, "elm.swallow.button", priv->button);
    elm_fileselector_button_expandable_set
      (priv->button, _elm_config->fileselector_expand_enable);
 
@@ -374,7 +369,6 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_style_set(priv->entry, "fileselector_entry/default");
    elm_entry_single_line_set(priv->entry, EINA_TRUE);
    elm_entry_editable_set(priv->entry, EINA_TRUE);
-   elm_layout_content_set(obj, "elm.swallow.entry", priv->entry);
 
 #define SIG_FWD(name) \
   evas_object_smart_callback_add(priv->entry, SIG_##name, _##name##_fwd, obj)
@@ -390,6 +384,15 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    SIG_FWD(SELECTION_COPY);
    SIG_FWD(SELECTION_CUT);
 #undef SIG_FWD
+
+   if (!elm_layout_theme_set
+       (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+   else
+     {
+        elm_layout_content_set(obj, "elm.swallow.button", priv->button);
+        elm_layout_content_set(obj, "elm.swallow.entry", priv->entry);
+     }
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
