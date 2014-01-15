@@ -237,7 +237,7 @@ _panel_toggle(void *data EINA_UNUSED,
         elm_layout_signal_emit(obj, "elm,action,hide", "elm");
         sd->hidden = EINA_TRUE;
         evas_object_repeat_events_set(obj, EINA_TRUE);
-        if (elm_widget_focus_get(sd->content))
+        if (sd->content && elm_widget_focus_get(sd->content))
           {
              elm_widget_focused_object_clear(obj);
              elm_widget_focus_steal(obj);
