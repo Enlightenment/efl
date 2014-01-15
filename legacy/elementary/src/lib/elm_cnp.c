@@ -1684,11 +1684,15 @@ _x11_drag_move(void *data EINA_UNUSED, Ecore_X_Xdnd_Position *pos)
 static Ecore_X_Window
 _x11_elm_widget_xwin_get(const Evas_Object *obj)
 {
-   Evas_Object *top;
+   Evas_Object *top, *par;
    Ecore_X_Window xwin = 0;
 
    top = elm_widget_top_get(obj);
-   if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
+   if (!top)
+     {
+        par = elm_widget_parent_widget_get(obj);
+        if (par) top = elm_widget_top_get(par);
+     }
    if (top) xwin = elm_win_xwindow_get(top);
    if (!xwin)
      {
