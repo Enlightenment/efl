@@ -1876,8 +1876,6 @@ initialize(void)
 
    String                  config_module_name = "simple";
 
-   printf("Initializing Ecore SCIM IMModule...\n");
-
    SCIM_DEBUG_FRONTEND(1) << "Initializing Ecore SCIM IMModule...\n";
 
    // Get system language.
