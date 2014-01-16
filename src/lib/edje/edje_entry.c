@@ -1304,6 +1304,10 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                       (!strcmp(ev->key, "KP_Down") && !ev->string) ||
                       !strcmp(ev->key, "Up") ||
                       (!strcmp(ev->key, "KP_Up") && !ev->string) ||
+                      !strcmp(ev->key, "Left") ||
+                      (!strcmp(ev->key, "KP_Left") && !ev->string) ||
+                      !strcmp(ev->key, "Right") ||
+                      (!strcmp(ev->key, "KP_Right") && !ev->string) ||
                       !strcmp(ev->key, "Next") ||
                       (!strcmp(ev->key, "KP_Next") && !ev->string) ||
                       !strcmp(ev->key, "Prior") ||
