@@ -10,9 +10,9 @@ group { name: "e/widgets/menu/default/background";
             image.border: 14 14 14 14;
             image.middle: 0;
             rel1.to: "top";
-            rel1.offset: -7  -3;
+            rel1.offset: -4  -3;
             rel2.to: "base";
-            rel2.offset: 6 11;
+            rel2.offset: 3 7;
             fill.smooth: 0;
          }
       }
