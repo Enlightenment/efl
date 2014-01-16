@@ -42,7 +42,6 @@ struct _Elm_Flipselector_Item
 
    const char   *label;
    Evas_Smart_Cb func;
-   void         *data;
    int           deleted : 1;
 };
 
