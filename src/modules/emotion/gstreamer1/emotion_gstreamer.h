@@ -60,6 +60,10 @@ struct _Emotion_Gstreamer
    /* Evas object */
    Evas_Object      *obj;
 
+   gulong            audio_buffer_probe;
+   GstPad           *audio_buffer_probe_pad;
+   gint              audio_buffer_probe_pending;
+
    /* Characteristics of stream */
    double            position;
    double            volume;

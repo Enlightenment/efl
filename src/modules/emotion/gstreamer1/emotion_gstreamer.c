@@ -141,6 +141,14 @@ em_file_close(void *video)
 
    if (ev->pipeline)
      {
+       if (ev->audio_buffer_probe)
+         {
+            gst_pad_remove_probe(ev->audio_buffer_probe_pad, ev->audio_buffer_probe);
+            gst_object_unref(ev->audio_buffer_probe_pad);
+            ev->audio_buffer_probe_pad = NULL;
+            ev->audio_buffer_probe = 0;
+         }
+
        gst_element_set_state(ev->pipeline, GST_STATE_NULL);
        g_object_set(G_OBJECT(ev->vsink), "emotion-object", NULL, NULL);
        gst_object_unref(ev->pipeline);
@@ -1311,6 +1319,35 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
 }
 
 static void
+audio_buffer_probe_main(void *data)
+{
+   Emotion_Gstreamer *ev = data;
+
+   if (!ev->shutdown)
+     _emotion_frame_new(ev->obj);
+
+   g_atomic_int_set(&ev->audio_buffer_probe_pending, 0);
+
+   emotion_gstreamer_unref(ev);
+   _emotion_pending_ecore_end();
+}
+
+static GstPadProbeReturn
+audio_buffer_probe(GstPad *pad EINA_UNUSED, GstPadProbeInfo *info EINA_UNUSED, gpointer user_data)
+{
+   Emotion_Gstreamer *ev = user_data;
+
+   /* Don't call too many of these */
+   if (!g_atomic_int_compare_and_exchange(&ev->audio_buffer_probe_pending, 0, 1))
+     return GST_PAD_PROBE_OK;
+
+   _emotion_pending_ecore_begin();
+   ecore_main_loop_thread_safe_call_async(audio_buffer_probe_main, emotion_gstreamer_ref(ev));
+
+   return GST_PAD_PROBE_OK;
+}
+
+static void
 _bus_main_handler(void *data)
 {
    Emotion_Gstreamer_Message *send;
@@ -1389,6 +1426,19 @@ _bus_main_handler(void *data)
                           g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL);
                           flags |= GST_PLAY_FLAG_VIS;
                           g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL);
+                       }
+                     else
+                       {
+                          GstElement *audio_sink;
+
+                          g_object_get(ev->pipeline, "audio-sink", &audio_sink, NULL);
+                          ev->audio_buffer_probe_pad = gst_element_get_static_pad(audio_sink, "sink");
+                          ev->audio_buffer_probe = gst_pad_add_probe(ev->audio_buffer_probe_pad,
+                                                                     GST_PAD_PROBE_TYPE_BUFFER | GST_PAD_PROBE_TYPE_BUFFER_LIST,
+                                                                     audio_buffer_probe,
+                                                                     ev,
+                                                                     NULL);
+                          gst_object_unref(audio_sink);
                        }
                   }
 
