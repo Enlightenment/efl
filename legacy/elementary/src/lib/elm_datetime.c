@@ -803,33 +803,39 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
+   // module - initialise module for datetime
+   if (!dt_mod) dt_mod = _dt_mod_init();
+   if (dt_mod)
+     {
+        if (dt_mod->obj_hook)
+          {
+             priv->mod_data = dt_mod->obj_hook(obj);
+
+             // update module data
+             if (priv->mod_data)
+               {
+                  priv->mod_data->base = obj;
+                  priv->mod_data->field_limit_get = _field_limit_get;
+                  priv->mod_data->field_format_get = _field_format_get;
+               }
+          }
+
+        if (dt_mod->field_create)
+          {
+             for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
+               {
+                  field = priv->field_list + idx;
+                  field->item_obj = dt_mod->field_create(priv->mod_data, idx);
+               }
+          }
+     }
+
    if (!elm_layout_theme_set(obj, "datetime", "base",
                              elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
-   // module - initialise module for datetime
-   if (!dt_mod) dt_mod = _dt_mod_init();
-   if ((dt_mod) && (dt_mod->obj_hook)) priv->mod_data = dt_mod->obj_hook(obj);
-
-   // update module data
-   if (priv->mod_data)
-     {
-        priv->mod_data->base = obj;
-        priv->mod_data->field_limit_get = _field_limit_get;
-        priv->mod_data->field_format_get = _field_format_get;
-     }
-
    _field_list_init(obj);
    _reload_format(obj);
-
-   if ((dt_mod) && (dt_mod->field_create))
-     {
-        for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
-          {
-             field = priv->field_list + idx;
-             field->item_obj = dt_mod->field_create(priv->mod_data, idx);
-          }
-     }
 
    _field_list_arrange(obj);
 
