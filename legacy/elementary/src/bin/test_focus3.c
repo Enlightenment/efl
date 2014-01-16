@@ -56,7 +56,6 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    win = elm_win_util_standard_add("focus3", "Focus 3");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 480);
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -102,6 +101,7 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
+   evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
 
@@ -219,8 +219,6 @@ test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -341,6 +339,9 @@ test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(tg, "changed", custom_chain_unset_cb, bx);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
 }
 
 static void
@@ -375,8 +376,6 @@ test_focus_custom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
    elm_win_focus_highlight_style_set(win, "glow");
-   evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -453,4 +452,7 @@ test_focus_custom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
 }
