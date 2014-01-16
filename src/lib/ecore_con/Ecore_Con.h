@@ -114,7 +114,7 @@
  * As Ecore_Con works on an event driven design, as data arrives, events will
  * be produced containing the data that arrived. It is up to the user of
  * Ecore_Con to either parse as they go, append to a file to later parse the
- * whole file in one go, or append to memory to parse or handle leter.
+ * whole file in one go, or append to memory to parse or handle later.
  * 
  * To help with this Eina has some handy API's. The Eina_Binbuf and 
  * Eina_Strbuf APIs, abstract dynamic buffer management and make it trivial 
