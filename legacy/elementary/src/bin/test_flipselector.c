@@ -81,7 +81,7 @@ test_flipselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 {
    char buf[8];
    unsigned int i;
-   Evas_Object *win, *bx, *fp, *bt, *bx2, *sl;
+   Evas_Object *win, *bx, *fp, *fpd, *bt, *bx2, *sl;
    Elm_Object_Item *it;
    static const char *lbl[] = {
         "Elementary",
@@ -148,12 +148,12 @@ test_flipselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-   fp = elm_flipselector_add(bx);
-   evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_flipselector_item_append(fp, "disabled", NULL, NULL);
-   elm_object_disabled_set(fp, EINA_TRUE);
-   elm_box_pack_end(bx, fp);
-   evas_object_show(fp);
+   fpd = elm_flipselector_add(bx);
+   evas_object_size_hint_weight_set(fpd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_flipselector_item_append(fpd, "disabled", NULL, NULL);
+   elm_object_disabled_set(fpd, EINA_TRUE);
+   elm_box_pack_end(bx, fpd);
+   evas_object_show(fpd);
 
    sl = elm_slider_add(bx);
    elm_object_text_set(sl, "Flip Interval:");
