@@ -3311,7 +3311,7 @@ void
 _edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand)
 #else
 void
-_edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand __UNUSED__)
+_edje_entry_input_panel_show_on_demand_set(Edje_Real_Part *rp, Eina_Bool ondemand EINA_UNUSED)
 #endif
 {
    Entry *en;
