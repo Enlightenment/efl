@@ -25,7 +25,7 @@ _create_emotion_object(Evas *e)
 {
    Evas_Object *em = emotion_object_add(e);
 
-   emotion_object_init(em, "gstreamer");
+   emotion_object_init(em, "gstreamer1");
 
    evas_object_smart_callback_add(
        em, "playback_started", _playback_started_cb, NULL);
