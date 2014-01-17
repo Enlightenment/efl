@@ -117,16 +117,13 @@ struct _Eet_File_Node
    void             *data;
    Eet_File_Node    *next; /* FIXME: make buckets linked lists */
 
-   unsigned long int offset;
-   unsigned long int dictionary_offset;
-   unsigned long int name_offset;
-
+   unsigned int      offset;
    unsigned int      name_size;
    unsigned int      size;
    unsigned int      data_size;
 
    unsigned char     compression_type;
-   
+
    unsigned char     free_name : 1;
    unsigned char     compression : 1;
    unsigned char     ciphered : 1;
