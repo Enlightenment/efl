@@ -2,6 +2,7 @@
 #define _EVAS_FILTER_H
 
 #include "evas_common_private.h"
+#include "evas_private.h"
 
 typedef struct _Evas_Filter_Context Evas_Filter_Context;
 typedef struct _Evas_Filter_Command Evas_Filter_Command;
@@ -106,9 +107,12 @@ int                      evas_filter_buffer_image_new(Evas_Filter_Context *ctx, 
 int                      evas_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h, Eina_Bool alpha_only);
 #define                  evas_filter_buffer_alloc_new(ctx, w, h, a) evas_filter_buffer_data_new(ctx, NULL, w, h, a)
 void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid);
+void                    *evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid);
 Eina_Bool                evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data, int w, int h, Eina_Bool alpha_only);
 
 Eina_Bool                evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_async);
+
+Eina_Bool                evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, Evas_Font_Set *font, int x, int y, Evas_Text_Props *text_props, Eina_Bool do_async);
 
 /**
  * @brief Blend a source buffer into a destination buffer, allowing X,Y offsets, Alpha to RGBA conversion with color

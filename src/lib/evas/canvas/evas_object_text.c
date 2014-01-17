@@ -2131,9 +2131,11 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         int inbuf = 1;
         int outbuf = 2;
         int targetbuf;
-        RGBA_Image *input, *outputimg; // FIXME: This is engine dependent
+        RGBA_Image *input, *outputimg = NULL; // FIXME: This is engine dependent
         void *filter_ctx;
+        static int gl_engine = -1;
         Eina_Bool ok;
+        int ox = 0, oy = 0;
 
         /* NOTE: Font effect rendering is now done ENTIRELY on CPU.
          * So we rely on cache/cache2 to allocate a real image buffer,
@@ -2141,6 +2143,10 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
          * after the rendering has been done, as we simply push the output
          * image to GL.
          */
+
+        // FIXME. Disabled redraw for OpenGL.
+        if (gl_engine == -1)
+          gl_engine = !!strstr(obj->layer->evas->engine.module->definition->name, "gl");
 
         W = obj->cur->geometry.w;
         H = obj->cur->geometry.h;
@@ -2205,39 +2211,29 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         // Output
         targetbuf = evas_filter_buffer_image_new(filter, surface);
 
+        // Context: FIXME it should be a sw context only
         filter_ctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
         // Alloc input now so we can draw text asap
         evas_filter_buffer_data_set(filter, inbuf, NULL, W, H, EINA_TRUE);
-        input = evas_filter_buffer_backing_get(filter, inbuf);
 
-        // Allocate output so we can keep it around
+        // Allocate and steal output so we can keep it around
         evas_filter_buffer_data_set(filter, outbuf, NULL, W, H, EINA_FALSE);
-        outputimg = evas_filter_buffer_backing_get(filter, outbuf);
+        if (!gl_engine)
+          outputimg = evas_filter_buffer_backing_steal(filter, outbuf);
         o->cur.filter.output = outputimg;
 
         // Render text to input buffer
-        {
-           int ox, oy;
-           ox = 0;
-           oy = 0;
-
-           EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
-             if ((o->font) && (it->text_props.len > 0))
-               {
-                  evas_font_draw_async_check(obj, output,
-                                             filter_ctx,
-                                             input,
-                                             o->font,
-                                             sl + ox + it->x,
-                                             st + oy + (int) o->max_ascent,
-                                             W, H,
-                                             W, H,
-                                             &it->text_props,
-                                             do_async);
-               }
-        }
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
+          if ((o->font) && (it->text_props.len > 0))
+            {
+               evas_filter_font_draw(filter, filter_ctx, inbuf, o->font,
+                                     sl + ox + it->x,
+                                     st + oy + (int) o->max_ascent,
+                                     &it->text_props,
+                                     do_async);
+            }
 
         // FIXME: This final blend is not necessary. Needs to be removed.
         evas_filter_command_blend_add(filter, context, outbuf, targetbuf,

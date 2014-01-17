@@ -518,6 +518,18 @@ evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid)
    return buffer->backing;
 }
 
+void *
+evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid)
+{
+   Evas_Filter_Buffer *buffer;
+
+   buffer = _filter_buffer_get(ctx, bufid);
+   if (!buffer) return NULL;
+
+   buffer->allocated = EINA_FALSE;
+   return buffer->backing;
+}
+
 static Evas_Filter_Command *
 _command_new(Evas_Filter_Context *ctx, Evas_Filter_Mode mode,
              Evas_Filter_Buffer *input, Evas_Filter_Buffer *mask,
@@ -1199,6 +1211,49 @@ evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd)
 }
 
 
+/* Font drawing stuff */
+Eina_Bool
+evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
+                      Evas_Font_Set *font, int x, int y,
+                      Evas_Text_Props *text_props, Eina_Bool do_async)
+{
+   Eina_Bool async_unref;
+   Evas_Filter_Buffer *fb;
+   void *surface;
+
+   fb = _filter_buffer_get(ctx, bufid);
+   if (!fb) return EINA_FALSE;
+
+   surface = fb->backing;
+   if (!surface) return EINA_FALSE;
+
+   if (!ctx->gl_engine)
+     {
+        // Copied from evas_font_draw_async_check
+        async_unref = ENFN->font_draw(ENDT, draw_context, surface,
+                                      font, x, y, fb->w, fb->h, fb->w, fb->h,
+                                      text_props, do_async);
+        if (do_async && async_unref)
+          {
+             evas_common_font_glyphs_ref(text_props->glyphs);
+             evas_unref_queue_glyph_put(ctx->evas, text_props->glyphs);
+          }
+     }
+   else
+     {
+        // FIXME/GL: Render in software only.
+        // Copied from eng_font_draw in the software engine.
+
+        if (do_async) WRN("Async flag is ignored here!");
+        evas_common_font_draw_prepare(text_props);
+        evas_common_font_draw(surface, draw_context, x, y, text_props->glyphs);
+        evas_common_cpu_end_opt();
+     }
+
+   return EINA_TRUE;
+}
+
+
 /* Clip full input rect (0, 0, sw, sh) to target (dx, dy, dw, dh)
  * and get source's clipped sx, sy as well as destination x, y, cols and rows */
 void
@@ -1286,10 +1341,13 @@ _filter_command_run(Evas_Filter_Command *cmd)
         return EINA_TRUE;
      }
 
-   if (!cmd->output->backing && !cmd->output->w && !cmd->output->h)
+   if (!cmd->output->w && !cmd->output->h)
      {
-        cmd->output->w = cmd->ctx->w;
-        cmd->output->h = cmd->ctx->h;
+        if (!cmd->output->backing)
+          {
+             cmd->output->w = cmd->ctx->w;
+             cmd->output->h = cmd->ctx->h;
+          }
      }
 
    if ((cmd->output->w <= 0) || (cmd->output->h <= 0))
