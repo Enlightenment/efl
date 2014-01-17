@@ -1,8 +1,9 @@
-dnl EFL_CHECK_LUA(EFL)
+dnl EFL_CHECK_LUA_OLD(EFL)
 dnl checks for lua 5.1 or 5.2 in pkg-config (multiple names) and -llua directly
 dnl will call EFL_ADD_LIBS() or EFL_DEPEND_PKG() as required.
 dnl this is a strict call and will abort if lua is not found
-AC_DEFUN([EFL_CHECK_LUA],
+dnl keep in mind that this is only executed if --enable-lua-old is set
+AC_DEFUN([EFL_CHECK_LUA_OLD],
 [dnl
 requirement_lua=""
 PKG_CHECK_EXISTS([lua >= 5.1.0], [requirement_lua="lua >= 5.1.0"],

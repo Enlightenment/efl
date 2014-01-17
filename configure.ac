@@ -576,8 +576,8 @@ AC_ARG_ENABLE([systemd],
 
 if test "x${have_systemd_pkg}" = "xauto" -o "x${have_systemd_pkg}" = "xyes"; then
    PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
-	[have_systemd_pkg="yes"],
-	[have_systemd_pkg="no"])
+   [have_systemd_pkg="yes"],
+   [have_systemd_pkg="no"])
 fi
 
 # check for systemd library if requested
@@ -3170,20 +3170,20 @@ EFL_OPTIONAL_DEPEND_PKG([EEZE], [${want_libmount}],
 EFL_ADD_FEATURE([EEZE], [libmount], [${have_eeze_mount}])
 
 PKG_CHECK_EXISTS([mount < 2.19.0],
-	         [have_libmount_old="yes"],
-		 [have_libmount_old="no"])
+                 [have_libmount_old="yes"],
+                 [have_libmount_old="no"])
 AC_MSG_CHECKING([Use old libmount API (before 2.19.0)])
 AC_MSG_RESULT([${have_libmount_old}])
 
 PKG_CHECK_EXISTS([mount == 2.19.0],
-	         [have_libmount_219="yes"],
-		 [have_libmount_219="no"])
+                 [have_libmount_219="yes"],
+                 [have_libmount_219="no"])
 AC_MSG_CHECKING([Use libmount 2.19.0 API])
 AC_MSG_RESULT([${have_libmount_219}])
 
 PKG_CHECK_EXISTS([mount > 2.19.0],
-		 [have_libmount_new="yes"],
-		 [have_libmount_new="no"])
+                 [have_libmount_new="yes"],
+                 [have_libmount_new="no"])
 AC_MSG_CHECKING([Use new libmount API (older than 2.19.0)])
 AC_MSG_RESULT([${have_libmount_new}])
 
@@ -3230,7 +3230,7 @@ AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eeze_eject"], [eject bin to use])
 EFL_LIB_END_OPTIONAL([Eeze])
 
 AM_CONDITIONAL([EEZE_LIBMOUNT_AFTER_219],
-	       [test "x${have_libmount_new}" = "xyes"])
+               [test "x${have_libmount_new}" = "xyes"])
 AM_CONDITIONAL([EEZE_LIBMOUNT_BEFORE_219],
                [test "x${have_libmount_old}" = "xyes"])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xyes"])
@@ -3584,6 +3584,19 @@ AC_ARG_ENABLE([multisense],
    ],
    [want_multisense="no"])
 
+want_lua_old="no"
+AC_ARG_ENABLE([lua-old],
+   [AC_HELP_STRING([--enable-lua-old],
+       [Enable interpreted Lua support (5.1 or 5.2). @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_lua_old="yes"
+    else
+       want_lua_old="no"
+    fi
+   ],
+   [want_lua_old="no"])
+
 # TODO: should we keep or remove these?
 want_edje_program_cache="no"
 want_edje_calc_cache="yes"
@@ -3612,8 +3625,14 @@ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
 
 EFL_ADD_FEATURE([EDJE], [physics])
 EFL_ADD_FEATURE([EDJE], [multisense])
+EFL_ADD_FEATURE([EDJE], [lua-old])
 
-EFL_CHECK_LUA([EDJE])
+if test "${want_lua_old}" = "yes"; then
+   EFL_CHECK_LUA_OLD([EDJE])
+else
+   EFL_DEPEND_PKG([EDJE], [LUAJIT], [luajit >= 2.0.0])
+fi
+
 EFL_ADD_LIBS([EDJE], [-lm])
 
 EFL_EVAL_PKGS([EDJE])
@@ -3629,6 +3648,10 @@ AM_CONDITIONAL([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"])
 AC_DEFINE_IF([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"],
   [1], [Use Multisense])
 AC_SUBST([want_multisense])
+AM_CONDITIONAL([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"])
+AC_DEFINE_IF([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"],
+  [1], [Use interpreted Lua (5.1 or 5.2)])
+AC_SUBST([want_lua_old])
 AC_SUBST([want_physics])
 
 ### Checks for header files
