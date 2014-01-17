@@ -57,6 +57,14 @@ struct _Evas_Filter_Context
       void *data;
    } post_run;
 
+   struct
+   {
+      // Only used with the GL engine.
+      int bufid;
+      void *context;
+      int x, y;
+   } target;
+
    Eina_Bool gl_engine : 1;
 };
 
@@ -139,6 +147,7 @@ struct _Evas_Filter_Buffer
 
    Evas_Object *source;
    void *backing;
+   void *glimage;
    int w, h;
 
    Eina_Bool alpha_only : 1;  // 1 channel (A) instead of 4 (RGBA)

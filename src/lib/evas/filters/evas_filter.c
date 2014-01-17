@@ -330,7 +330,6 @@ _rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
      }
    else
      {
-        WRN("EXPERIMENTAL OpenGL support. VERY HACKISH!");
         // FIXME: Directly calling the alloc functions since we want to use sw surfaces.
 
         if (!data)
@@ -370,6 +369,9 @@ evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
    if (fb->backing)
      {
         int W, H;
+
+        if (fb->ctx->gl_engine)
+          return EINA_TRUE;
 
         fb->ENFN->image_size_get(fb->ENDT, fb->backing, &W, &H);
         if ((W == w) && (H == h))
@@ -526,8 +528,13 @@ evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid)
    buffer = _filter_buffer_get(ctx, bufid);
    if (!buffer) return NULL;
 
-   buffer->allocated = EINA_FALSE;
-   return buffer->backing;
+   if (!buffer->glimage)
+     {
+        buffer->allocated = EINA_FALSE;
+        return buffer->backing;
+     }
+   else
+     return buffer->glimage;
 }
 
 static Evas_Filter_Command *
@@ -1211,6 +1218,78 @@ evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd)
 }
 
 
+/* Final target */
+Eina_Bool
+evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
+                       void *surface, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
+
+   ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
+   if (!ctx->gl_engine)
+     {
+        /* FIXME: This extraneous blend could be avoided if all filters
+         * drawing to output (buffer #2) support proper colors and offsets.
+         */
+        evas_filter_command_blend_add(ctx, draw_context, 2, ctx->target.bufid,
+                                      x, y, EVAS_FILTER_FILL_MODE_NONE);
+     }
+   else
+     {
+        // Since GL has sync rendering, draw_context is safe to keep around
+        Evas_Filter_Buffer *target, *image;
+        RGBA_Image *im;
+
+        ctx->target.context = draw_context;
+        ctx->target.x = x;
+        ctx->target.y = y;
+
+        target = _filter_buffer_get(ctx, ctx->target.bufid);
+        target->glimage = target->backing;
+        target->backing = NULL;
+
+        image = _filter_buffer_get(ctx, 2);
+        im = image->backing;
+        image->glimage = ENFN->image_new_from_data
+          (ENDT, image->w, image->h, im->image.data, EINA_TRUE, im->cache_entry.space);
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_filter_target_render(Evas_Filter_Context *ctx)
+{
+   Evas_Filter_Buffer *src, *dst;
+   Eina_Bool ok;
+
+   /* FIXME: This is some hackish hook to send the final buffer on the screen
+    * Only used for OpenGL now, since evas_filter_target_set() adds a blend
+    * command in case of pure software rendering.
+    */
+
+   if (!ctx->gl_engine) return EINA_FALSE;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ctx->target.bufid, EINA_FALSE);
+
+   src = _filter_buffer_get(ctx, 2);
+   if (!src) return EINA_FALSE;
+
+   dst = _filter_buffer_get(ctx, ctx->target.bufid);
+   if (!dst) return EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src->glimage, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst->glimage, EINA_FALSE);
+
+   ok = ENFN->image_draw(ENDT, ctx->target.context,
+                         dst->glimage, src->glimage,
+                         0, 0, src->w, src->h,
+                         ctx->target.x, ctx->target.y, src->w, src->h,
+                         EINA_TRUE, EINA_FALSE);
+
+   return ok;
+}
+
+
 /* Font drawing stuff */
 Eina_Bool
 evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
@@ -1367,9 +1446,6 @@ _filter_command_run(Evas_Filter_Command *cmd)
    //func = cmd->ENFN->filter_command_func_get(cmd);
    // FIXME: Must call engine function, not CPU directly.
 
-   if (strncmp(cmd->ctx->evas->engine.module->definition->name, "software", 8))
-     WRN("EXPERIMENTAL OpenGL support! ALL HELL WILL BREAK LOOSE!");
-
    switch (cmd->mode)
      {
       case EVAS_FILTER_MODE_BLEND:
@@ -1436,7 +1512,9 @@ _filter_chain_run(Evas_Filter_Context *ctx)
           }
      }
 
-   return ok;
+   if (!ok) return EINA_FALSE;
+
+   return _filter_target_render(ctx);
 }
 
 static void
@@ -1457,6 +1535,9 @@ evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_async)
 
    if (!ctx->commands)
      return EINA_TRUE;
+
+   if (ctx->gl_engine)
+     WRN("EXPERIMENTAL OpenGL support! Might very well crash or not render anything.");
 
    if (do_async)
      {

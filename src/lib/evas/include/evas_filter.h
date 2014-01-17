@@ -113,6 +113,7 @@ Eina_Bool                evas_filter_buffer_data_set(Evas_Filter_Context *ctx, i
 Eina_Bool                evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_async);
 
 Eina_Bool                evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, Evas_Font_Set *font, int x, int y, Evas_Text_Props *text_props, Eina_Bool do_async);
+Eina_Bool                evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context, void *surface, int x, int y);
 
 /**
  * @brief Blend a source buffer into a destination buffer, allowing X,Y offsets, Alpha to RGBA conversion with color

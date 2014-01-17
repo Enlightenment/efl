@@ -2128,12 +2128,9 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
      {
         int X, Y, W, H;
         Evas_Filter_Context *filter;
-        int inbuf = 1;
-        int outbuf = 2;
-        int targetbuf;
-        RGBA_Image *input, *outputimg = NULL; // FIXME: This is engine dependent
+        const int inbuf = 1;
+        const int outbuf = 2;
         void *filter_ctx;
-        static int gl_engine = -1;
         Eina_Bool ok;
         int ox = 0, oy = 0;
 
@@ -2143,10 +2140,6 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
          * after the rendering has been done, as we simply push the output
          * image to GL.
          */
-
-        // FIXME. Disabled redraw for OpenGL.
-        if (gl_engine == -1)
-          gl_engine = !!strstr(obj->layer->evas->engine.module->definition->name, "gl");
 
         W = obj->cur->geometry.w;
         H = obj->cur->geometry.h;
@@ -2185,7 +2178,6 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
              else
                {
                   // Render this image only
-                  outputimg = o->cur.filter.output;
                   ENFN->image_draw(ENDT, context,
                                    surface, o->cur.filter.output,
                                    0, 0, W, H,         // src
@@ -2208,21 +2200,15 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         // Proxies
         evas_filter_context_proxy_render_all(filter, eo_obj, EINA_FALSE);
 
-        // Output
-        targetbuf = evas_filter_buffer_image_new(filter, surface);
-
         // Context: FIXME it should be a sw context only
         filter_ctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
-        // Alloc input now so we can draw text asap
+        // Allocate main buffers now
         evas_filter_buffer_data_set(filter, inbuf, NULL, W, H, EINA_TRUE);
-
-        // Allocate and steal output so we can keep it around
         evas_filter_buffer_data_set(filter, outbuf, NULL, W, H, EINA_FALSE);
-        if (!gl_engine)
-          outputimg = evas_filter_buffer_backing_steal(filter, outbuf);
-        o->cur.filter.output = outputimg;
+        evas_filter_target_set(filter, context, surface, X + x, Y + y);
+        o->cur.filter.output = evas_filter_buffer_backing_steal(filter, outbuf);
 
         // Render text to input buffer
         EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
@@ -2234,10 +2220,6 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
                                      &it->text_props,
                                      do_async);
             }
-
-        // FIXME: This final blend is not necessary. Needs to be removed.
-        evas_filter_command_blend_add(filter, context, outbuf, targetbuf,
-                                      X + x, Y + y, EVAS_FILTER_FILL_MODE_NONE);
 
         ENFN->context_free(ENDT, filter_ctx);
 
