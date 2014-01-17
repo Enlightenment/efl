@@ -15,6 +15,10 @@
 #include "evas_private.h"
 #include "evas_filter_private.h"
 
+#ifdef EVAS_CSERVE2
+# include "evas_cs2_private.h"
+#endif
+
 static void _buffer_free(Evas_Filter_Buffer *fb);
 static void _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd);
 
@@ -43,10 +47,14 @@ evas_filter_context_new(Evas_Public_Data *evas)
 {
    Evas_Filter_Context *ctx;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
+
    ctx = calloc(1, sizeof(Evas_Filter_Context));
    if (!ctx) return NULL;
 
    ctx->evas = evas;
+   ctx->gl_engine = !!strstr(evas->engine.module->definition->name, "gl");
+
    return ctx;
 }
 
@@ -70,6 +78,31 @@ evas_filter_context_clear(Evas_Filter_Context *ctx)
    ctx->last_command_id = 0;
 
    // Note: don't reset post_run, as it it set by the client
+}
+
+static void
+_filter_buffer_backing_free(Evas_Filter_Buffer *fb)
+{
+   void *backing;
+   if (!fb) return;
+
+   backing = fb->backing;
+   fb->backing = NULL;
+
+   if (!fb->allocated) return;
+   fb->allocated = EINA_FALSE;
+
+   if (!backing) return;
+
+   if (!fb->ctx->gl_engine)
+     fb->ENFN->image_free(fb->ENDT, backing);
+   else
+     {
+        if (!evas_cserve2_use_get())
+          evas_cache_image_drop(backing);
+        else
+          evas_cache2_image_close(backing);
+     }
 }
 
 /** @hidden private bind proxy to context */
@@ -209,8 +242,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
           if (source->proxy->surface && !source->proxy->redraw)
             {
                INF("Source already rendered");
-               if (fb->backing && fb->allocated)
-                 fb->ENFN->image_free(fb->ENDT, fb->backing);
+               _filter_buffer_backing_free(fb);
                fb->backing = source->proxy->surface;
                fb->w = source->cur->geometry.w;
                fb->h = source->cur->geometry.h;
@@ -221,8 +253,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             {
                INF("Source needs to be rendered");
                _proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
-               if (fb->backing && fb->allocated)
-                 fb->ENFN->image_free(fb->ENDT, fb->backing);
+               _filter_buffer_backing_free(fb);
                fb->backing = source->proxy->surface;
                fb->w = source->cur->geometry.w;
                fb->h = source->cur->geometry.h;
@@ -284,15 +315,42 @@ _rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
    size_t sz;
 
    cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
-   if (!data)
+   if (!fb->ctx->gl_engine)
      {
-        image = fb->ENFN->image_new_from_copied_data
-              (fb->ENDT, fb->w, fb->h, NULL, EINA_TRUE, cspace);
+        if (!data)
+          {
+             image = fb->ENFN->image_new_from_copied_data
+                   (fb->ENDT, fb->w, fb->h, NULL, EINA_TRUE, cspace);
+          }
+        else
+          {
+             image = fb->ENFN->image_new_from_data
+                   (fb->ENDT, fb->w, fb->h, data, EINA_TRUE, cspace);
+          }
      }
    else
      {
-        image = fb->ENFN->image_new_from_data
-              (fb->ENDT, fb->w, fb->h, data, EINA_TRUE, cspace);
+        WRN("EXPERIMENTAL OpenGL support. VERY HACKISH!");
+        // FIXME: Directly calling the alloc functions since we want to use sw surfaces.
+
+        if (!data)
+          {
+             if (!evas_cserve2_use_get())
+               image = (RGBA_Image *) evas_cache_image_copied_data
+                     (evas_common_image_cache_get(), fb->w, fb->h, NULL, EINA_TRUE, cspace);
+             else
+                image = (RGBA_Image *) evas_cache2_image_copied_data
+                      (evas_common_image_cache2_get(), fb->w, fb->h, NULL, EINA_TRUE, cspace);
+          }
+        else
+          {
+             if (!evas_cserve2_use_get())
+               image = (RGBA_Image *) evas_cache_image_data
+                     (evas_common_image_cache_get(), fb->w, fb->h, data, EINA_TRUE, cspace);
+             else
+               image = (RGBA_Image *) evas_cache2_image_data
+                     (evas_common_image_cache2_get(), fb->w, fb->h, data, EINA_TRUE, cspace);
+          }
      }
    if (!image) return EINA_FALSE;
 
@@ -323,9 +381,7 @@ evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
              //return EINA_FALSE;
              return EINA_TRUE;
           }
-        fb->ENFN->image_free(fb->ENDT, fb->backing);
-        fb->backing = NULL;
-        fb->allocated = EINA_FALSE;
+        _filter_buffer_backing_free(fb);
      }
    if ((fb->w && (fb->w != w)) || (fb->h && (fb->h != h)))
      {
@@ -367,10 +423,7 @@ evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
    fb = _filter_buffer_get(ctx, bufid);
    if (!fb) return EINA_FALSE;
 
-   if (fb->allocated)
-     fb->ENFN->image_free(fb->ENDT, fb->backing);
-   fb->allocated = EINA_FALSE;
-   fb->backing = NULL;
+   _filter_buffer_backing_free(fb);
    if (w <= 0 || h <= 0)
      return EINA_FALSE;
 
@@ -436,9 +489,7 @@ evas_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h,
 static void
 _buffer_free(Evas_Filter_Buffer *fb)
 {
-   if (!fb) return;
-   if (fb->allocated)
-     fb->ENFN->image_free(fb->ENDT, fb->backing);
+   _filter_buffer_backing_free(fb);
    free(fb);
 }
 
@@ -1259,7 +1310,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
    // FIXME: Must call engine function, not CPU directly.
 
    if (strncmp(cmd->ctx->evas->engine.module->definition->name, "software", 8))
-     CRI("Only the software engine is supported for now.");
+     WRN("EXPERIMENTAL OpenGL support! ALL HELL WILL BREAK LOOSE!");
 
    switch (cmd->mode)
      {

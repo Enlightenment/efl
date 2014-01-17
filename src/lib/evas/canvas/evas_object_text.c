@@ -10,6 +10,10 @@ EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID = EO_NOOP;
 
 #define MY_CLASS_NAME "Evas_Text"
 
+#ifdef EVAS_CSERVE2
+# include "evas_cs2_private.h"
+#endif
+
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
@@ -2131,6 +2135,13 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         void *filter_ctx;
         Eina_Bool ok;
 
+        /* NOTE: Font effect rendering is now done ENTIRELY on CPU.
+         * So we rely on cache/cache2 to allocate a real image buffer,
+         * that we can draw to. The OpenGL texture will be created only
+         * after the rendering has been done, as we simply push the output
+         * image to GL.
+         */
+
         W = obj->cur->geometry.w;
         H = obj->cur->geometry.h;
         X = obj->cur->geometry.x;
@@ -2197,16 +2208,13 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         filter_ctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
-        // Alloc input now
+        // Alloc input now so we can draw text asap
         evas_filter_buffer_data_set(filter, inbuf, NULL, W, H, EINA_TRUE);
         input = evas_filter_buffer_backing_get(filter, inbuf);
 
         // Allocate output so we can keep it around
-        outputimg = ENFN->image_new_from_copied_data
-              (ENDT, W, H, NULL, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
-        memset(outputimg->image.data, 0, W * H * sizeof(DATA32));
-        evas_filter_buffer_data_set
-              (filter, outbuf, outputimg->image.data, W, H, EINA_FALSE);
+        evas_filter_buffer_data_set(filter, outbuf, NULL, W, H, EINA_FALSE);
+        outputimg = evas_filter_buffer_backing_get(filter, outbuf);
         o->cur.filter.output = outputimg;
 
         // Render text to input buffer

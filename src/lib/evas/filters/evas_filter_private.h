@@ -56,6 +56,8 @@ struct _Evas_Filter_Context
       Evas_Filter_Cb cb;
       void *data;
    } post_run;
+
+   Eina_Bool gl_engine : 1;
 };
 
 struct _Evas_Filter_Command

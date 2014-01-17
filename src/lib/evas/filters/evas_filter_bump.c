@@ -16,6 +16,10 @@
 #undef ENDT
 #define ENFN cmd->ctx->evas->engine.func
 #define ENDT cmd->ctx->evas->engine.data.output
+
+#ifdef CLAMP
+# undef CLAMP
+#endif
 #define CLAMP(a,b,c) MIN(MAX((b),(a)),(c))
 
 #define DEFAULT_ZANGLE 45.f
