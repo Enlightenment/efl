@@ -723,7 +723,10 @@ _image_opened_cb(void *data, const void *msg_received, int size)
         else
           ERR("Invalid message type received: %d (%s)", answer->type, __FUNCTION__);
         EINA_REFCOUNT_UNREF(fentry)
-          eina_hash_del(_file_entries, fentry->hkey, fentry);
+          {
+             eina_hash_del(_file_entries, fentry->hkey, fentry);
+             ie->data1 = NULL;
+          }
         return EINA_TRUE;
      }
 
