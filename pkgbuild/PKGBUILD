@@ -10,7 +10,7 @@ license=('BSD' 'LGPL2.1' 'GPL2' 'custom')
 depends=('bullet' 'libpng' 'libjpeg-turbo'
          'gstreamer' 'gst-plugins-base-libs' 'gst-plugins-base'
          'gst-plugins-good' 'gst-plugins-bad'
-         'zlib' 'lua' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus'
+         'zlib' 'luajit' 'libtiff' 'openssl' 'util-linux' 'curl' 'dbus'
          'glibc' 'fontconfig' 'freetype2' 'fribidi' 'libpulse'
          'libsndfile' 'systemd' 'libx11' 'libxau' 'libxcomposite'
          'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
