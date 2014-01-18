@@ -25,6 +25,11 @@
 # endif
 #endif
 
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+# include <unistd.h>
+# include <sys/types.h>
+#endif
+
 #include "emotion_modules.h"
 #include "emotion_gstreamer.h"
 
