@@ -2135,7 +2135,7 @@ _elm_prefs_init(void)
 
    if (!(m = _elm_module_find_as("prefs_iface")))
      {
-        ERR("prefs iface module could not be loaded,"
+        DBG("prefs iface module could not be loaded,"
             " the prefs widget won't function");
 
         return;
