@@ -376,7 +376,7 @@ _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_U
         ee->req.w = ee->w;
         ee->req.h = ee->h;
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);
              evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
@@ -481,7 +481,7 @@ _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
         ee->h = height;
         ecore_win32_window_resize((struct _Ecore_Win32_Window *)ee->prop.window,
                                   width, height);
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);
              evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
@@ -528,7 +528,7 @@ _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
         ee->h = height;
         ecore_win32_window_move_resize((struct _Ecore_Win32_Window *)ee->prop.window,
                                        x, y, width, height);
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);
              evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
@@ -586,7 +586,7 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
                                          &w, &h);
              ecore_win32_window_resize((struct _Ecore_Win32_Window *)ee->prop.window,
                                        h, w);
-             if ((rotation == 0) || (rotation == 180))
+             if (ECORE_EVAS_RIGHT_ANGLED(ee))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -618,7 +618,7 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_RIGHT_ANGLED(ee))
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
    else
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);

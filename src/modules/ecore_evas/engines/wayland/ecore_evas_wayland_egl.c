@@ -455,7 +455,7 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-        if ((ee->rotation == 0) || (ee->rotation == 180))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
         else
           ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);

@@ -219,7 +219,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              minw = (ee->prop.min.w + fh);
              minh = (ee->prop.min.h + fw);
@@ -303,7 +303,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         orig_w = nw;
         orig_h = nh;
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              nw -= fh;
              nh -= fw;
@@ -382,7 +382,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
              else
                {
                   /* resize the canvas based on rotation */
-                  if ((rotation == 0) || (rotation == 180))
+                  if (ECORE_EVAS_RIGHT_ANGLED(ee))
                     {
                        /* resize the ecore_wayland window */
                        ecore_wl_window_resize(wdata->win, 
@@ -407,7 +407,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                }
 
              /* add canvas damage */
-             if ((ee->rotation == 0) || (ee->rotation == 180))
+             if (ECORE_EVAS_RIGHT_ANGLED(ee))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
@@ -421,7 +421,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
         else
           {
              /* resize the canvas based on rotation */
-             if ((rotation == 0) || (rotation == 180))
+             if (ECORE_EVAS_RIGHT_ANGLED(ee))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -436,7 +436,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
              /* add canvas damage */
-             if ((ee->rotation == 0) || (ee->rotation == 180))
+             if (ECORE_EVAS_RIGHT_ANGLED(ee))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -485,7 +485,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
         /* add canvas damage */
-        if ((ee->rotation == 0) || (ee->rotation == 180))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
         else
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -613,7 +613,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         double a;
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              minw = (ee->prop.min.w - fh);
              minh = (ee->prop.min.h - fw);
@@ -697,7 +697,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         orig_w = w;
         orig_h = h;
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              w += fh;
              h += fw;
@@ -717,7 +717,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         ee->req.w = orig_w;
         ee->req.h = orig_h;
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
+        if (ECORE_EVAS_RIGHT_ANGLED(ee))
           {
              evas_output_size_set(ee->evas, h, w);
              evas_output_viewport_set(ee->evas, 0, 0, h, w);
