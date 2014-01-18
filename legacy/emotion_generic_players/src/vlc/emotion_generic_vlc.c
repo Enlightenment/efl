@@ -343,12 +343,14 @@ _tmp_format(void **opaque, char *chroma,
    return 1;
 }
 
+/*
 static void
 _tmp_play(void *data EINA_UNUSED,
           const void *samples EINA_UNUSED, unsigned count EINA_UNUSED,
           int64_t pts EINA_UNUSED)
 {
 }
+*/
 
 static void
 _file_set(App *app)
