@@ -11328,6 +11328,12 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
                                             eo_obj, obj);
         goto done;
      }
+   if (obj->cur->render_op != obj->prev->render_op)
+     {
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                            eo_obj, obj);
+        goto done;
+     }
 done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes,
                                          eo_obj, is_v, was_v);
