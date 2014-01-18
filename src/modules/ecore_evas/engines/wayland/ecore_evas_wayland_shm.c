@@ -446,10 +446,10 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
-        else
+        if (ECORE_EVAS_PORTRAIT(ee))
           ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
+        else
+          ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
      }
 }
 

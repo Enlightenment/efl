@@ -1157,14 +1157,14 @@ ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    if (ee->prop.fullscreen) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
-        IFC(ee, fn_resize) (ee, h, w);
+        IFC(ee, fn_resize) (ee, w, h);
         IFE;
      }
    else
      {
-        IFC(ee, fn_resize) (ee, w, h);
+        IFC(ee, fn_resize) (ee, h, w);
         IFE;
      }
 }
@@ -1181,14 +1181,14 @@ ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
    if (ee->prop.fullscreen) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
-        IFC(ee, fn_move_resize) (ee, x, y, h, w);
+        IFC(ee, fn_move_resize) (ee, x, y, w, h);
         IFE;
      }
    else
      {
-        IFC(ee, fn_move_resize) (ee, x, y, w, h);
+        IFC(ee, fn_move_resize) (ee, x, y, h, w);
         IFE;
      }
 }
@@ -1202,19 +1202,19 @@ ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
                          "ecore_evas_geometry_get");
         return;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-        if (x) *x = ee->x;
-        if (y) *y = ee->y;
-        if (w) *w = ee->h;
-        if (h) *h = ee->w;
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
         if (x) *x = ee->x;
         if (y) *y = ee->y;
         if (w) *w = ee->w;
         if (h) *h = ee->h;
+     }
+   else
+     {
+        if (x) *x = ee->x;
+        if (y) *y = ee->y;
+        if (w) *w = ee->h;
+        if (h) *h = ee->w;
      }
 }
 
@@ -1227,19 +1227,19 @@ ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, in
                          "ecore_evas_request_geometry_get");
         return;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-        if (x) *x = ee->req.x;
-        if (y) *y = ee->req.y;
-        if (w) *w = ee->req.h;
-        if (h) *h = ee->req.w;
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
         if (x) *x = ee->req.x;
         if (y) *y = ee->req.y;
         if (w) *w = ee->req.w;
         if (h) *h = ee->req.h;
+     }
+   else
+     {
+        if (x) *x = ee->req.x;
+        if (y) *y = ee->req.y;
+        if (w) *w = ee->req.h;
+        if (h) *h = ee->req.w;
      }
 }
 
@@ -1505,14 +1505,14 @@ ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
      }
    if (w < 0) w = 0;
    if (h < 0) h = 0;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
-        IFC(ee, fn_size_min_set) (ee, h, w);
+        IFC(ee, fn_size_min_set) (ee, w, h);
         IFE;
      }
    else
      {
-        IFC(ee, fn_size_min_set) (ee, w, h);
+        IFC(ee, fn_size_min_set) (ee, h, w);
         IFE;
      }
 }
@@ -1526,15 +1526,15 @@ ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h)
                          "ecore_evas_size_min_get");
         return;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-        if (w) *w = ee->prop.min.h;
-        if (h) *h = ee->prop.min.w;
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
         if (w) *w = ee->prop.min.w;
         if (h) *h = ee->prop.min.h;
+     }
+   else
+     {
+        if (w) *w = ee->prop.min.h;
+        if (h) *h = ee->prop.min.w;
      }
 }
 
@@ -1549,14 +1549,14 @@ ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
      }
    if (w < 0) w = 0;
    if (h < 0) h = 0;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
-        IFC(ee, fn_size_max_set) (ee, h, w);
+        IFC(ee, fn_size_max_set) (ee, w, h);
         IFE;
      }
    else
      {
-        IFC(ee, fn_size_max_set) (ee, w, h);
+        IFC(ee, fn_size_max_set) (ee, h, w);
         IFE;
      }
 }
@@ -1570,15 +1570,15 @@ ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h)
                          "ecore_evas_size_max_get");
         return;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-        if (w) *w = ee->prop.max.h;
-        if (h) *h = ee->prop.max.w;
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
         if (w) *w = ee->prop.max.w;
         if (h) *h = ee->prop.max.h;
+     }
+   else
+     {
+        if (w) *w = ee->prop.max.h;
+        if (h) *h = ee->prop.max.w;
      }
 }
 
@@ -1593,14 +1593,14 @@ ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
      }
    if (w < 0) w = 0;
    if (h < 0) h = 0;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
-        IFC(ee, fn_size_base_set) (ee, h, w);
+        IFC(ee, fn_size_base_set) (ee, w, h);
         IFE;
      }
    else
      {
-        IFC(ee, fn_size_base_set) (ee, w, h);
+        IFC(ee, fn_size_base_set) (ee, h, w);
         IFE;
      }
 }
@@ -1614,15 +1614,15 @@ ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h)
                          "ecore_evas_size_base_get");
         return;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-        if (w) *w = ee->prop.base.h;
-        if (h) *h = ee->prop.base.w;
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
         if (w) *w = ee->prop.base.w;
         if (h) *h = ee->prop.base.h;
+     }
+   else
+     {
+        if (w) *w = ee->prop.base.h;
+        if (h) *h = ee->prop.base.w;
      }
 }
 
@@ -1637,14 +1637,14 @@ ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
      }
    if (w < 0) w = 0;
    if (h < 0) h = 0;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
-        IFC(ee, fn_size_step_set) (ee, h, w);
+        IFC(ee, fn_size_step_set) (ee, w, h);
         IFE;
      }
    else
      {
-        IFC(ee, fn_size_step_set) (ee, w, h);
+        IFC(ee, fn_size_step_set) (ee, h, w);
         IFE;
      }
 }
@@ -1658,15 +1658,15 @@ ecore_evas_size_step_get(const Ecore_Evas *ee, int *w, int *h)
                          "ecore_evas_size_step_get");
         return;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-        if (w) *w = ee->prop.step.h;
-        if (h) *h = ee->prop.step.w;
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
         if (w) *w = ee->prop.step.w;
         if (h) *h = ee->prop.step.h;
+     }
+   else
+     {
+        if (w) *w = ee->prop.step.h;
+        if (h) *h = ee->prop.step.w;
      }
 }
 

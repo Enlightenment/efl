@@ -1373,15 +1373,15 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
         ee->h = e->h;
         ee->req.w = ee->w;
         ee->req.h = ee->h;
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-          }
-        else
+        if (ECORE_EVAS_PORTRAIT(ee))
           {
              evas_output_size_set(ee->evas, ee->w, ee->h);
              evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
           }
         if (ee->prop.avoid_damage)
           {
@@ -1854,15 +1854,15 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
              ee->w = w;
              ee->h = h;
              if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-               }
-             else
+             if (ECORE_EVAS_PORTRAIT(ee))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+               }
+             else
+               {
+                  evas_output_size_set(ee->evas, ee->h, ee->w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
              if (ee->prop.avoid_damage)
                {
@@ -1913,15 +1913,15 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
                }
              ee->w = w;
              ee->h = h;
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-               }
-             else
+             if (ECORE_EVAS_PORTRAIT(ee))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+               }
+             else
+               {
+                  evas_output_size_set(ee->evas, ee->h, ee->w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
              if (ee->prop.avoid_damage)
                {
@@ -1992,7 +1992,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 
                   ecore_x_window_size_get(ee->prop.window, &w, &h);
                   ecore_x_window_resize(ee->prop.window, h, w);
-                  if ((rotation == 0) || (rotation == 180))
+                  if (ECORE_EVAS_PORTRAIT(ee))
                     {
                        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
                        evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
@@ -2004,17 +2004,17 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                     }
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
                }
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
-             else
+             if (ECORE_EVAS_PORTRAIT(ee))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
           }
         else
           {
              /* int w, h; */
 
              /* ecore_x_window_size_get(ee->prop.window, &w, &h); */
-             if ((rotation == 0) || (rotation == 180))
+             if (ECORE_EVAS_PORTRAIT(ee))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -2025,10 +2025,10 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                   evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-             else
+             if (ECORE_EVAS_PORTRAIT(ee))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
           }
         ecore_evas_size_min_get(ee, &minw, &minh);
         ecore_evas_size_max_get(ee, &maxw, &maxh);
@@ -2053,10 +2053,10 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                                        ecore_x_current_time_get());
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-        else
+        if (ECORE_EVAS_PORTRAIT(ee))
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
      }
 }
 
@@ -3013,10 +3013,10 @@ _avoid_damage_do(Ecore_Evas *ee, int on)
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
                }
-             if ((ee->rotation == 90) || (ee->rotation == 270))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-             else
+             if (ECORE_EVAS_PORTRAIT(ee))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
              if (ee->prop.avoid_damage == ECORE_EVAS_AVOID_DAMAGE_BUILT_IN)
                {
                   edata->using_bg_pixmap = 1;

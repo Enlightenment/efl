@@ -33,6 +33,9 @@ EAPI extern int _ecore_evas_log_dom;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_ecore_evas_log_dom, __VA_ARGS__)
 
+#define ECORE_EVAS_PORTRAIT(ee) \
+  ((ee->rotation == 0) || (ee->rotation == 180))
+
 
 #define IDLE_FLUSH_TIME 0.5
 #ifndef _ECORE_EVAS_H

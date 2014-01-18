@@ -84,10 +84,10 @@ _ecore_evas_fb_gain(void *data)
    if (ee)
      {
         ee->visible = 1;
-        if ((ee->rotation == 90) || (ee->rotation == 270))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-        else
+        if (ECORE_EVAS_PORTRAIT(ee))
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
      }
 
    EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
@@ -286,17 +286,17 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-       evas_output_size_set(ee->evas, ee->h, ee->w);
-       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-       evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
        evas_output_size_set(ee->evas, ee->w, ee->h);
        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+   else
+     {
+       evas_output_size_set(ee->evas, ee->h, ee->w);
+       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+       evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
      }
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
@@ -309,17 +309,17 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, in
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-       evas_output_size_set(ee->evas, ee->h, ee->w);
-       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-       evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
        evas_output_size_set(ee->evas, ee->w, ee->h);
        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+   else
+     {
+       evas_output_size_set(ee->evas, ee->h, ee->w);
+       evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+       evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
      }
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
@@ -355,7 +355,7 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
           }
         else
           {
-             if ((rotation == 0) || (rotation == 180))
+             if (ECORE_EVAS_PORTRAIT(ee))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -377,10 +377,11 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
           }
         ee->rotation = rotation;
      }
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   else
+     evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+
    _ecore_evas_mouse_move_process_fb(ee, ee->mouse.x, ee->mouse.y);
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
@@ -625,15 +626,15 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
 
-   if ((rotation == 90) || (rotation == 270))
-     {
-       evas_output_size_set(ee->evas, h, w);
-       evas_output_viewport_set(ee->evas, 0, 0, h, w);
-     }
-   else
+   if (ECORE_EVAS_PORTRAIT(ee))
      {
        evas_output_size_set(ee->evas, w, h);
        evas_output_viewport_set(ee->evas, 0, 0, w, h);
+     }
+   else
+     {
+       evas_output_size_set(ee->evas, h, w);
+       evas_output_viewport_set(ee->evas, 0, 0, h, w);
      }
 
    einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
