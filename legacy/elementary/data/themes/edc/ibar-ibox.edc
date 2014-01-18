@@ -215,21 +215,26 @@ group { name: "e/modules/ibar/menu";
          target: "sizer";
          target: "clip";
       }
+
       program { signal: "e,action,show"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "sizer";
          target: "clip";
-         transition: DECELERATE 0.2;
+         transition: SINUSOIDAL 0.2;
+         after: "show2";
       }
+      program { name: "show2";
+         action: SIGNAL_EMIT "e,action,show,done" "";
+      }
+
       program { signal: "e,action,hide"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "sizer";
          target: "clip";
-         transition: ACCELERATE 0.2;
+         transition: SINUSOIDAL 0.2;
          after: "hide2";
       }
       program { name: "hide2";
-         in: 0.2 0.0;
          action: SIGNAL_EMIT "e,action,hide,done" "";
       }
    }
