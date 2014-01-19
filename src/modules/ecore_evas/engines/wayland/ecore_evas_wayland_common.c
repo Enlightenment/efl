@@ -303,7 +303,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         orig_w = nw;
         orig_h = nh;
 
-          }
         if (ECORE_EVAS_PORTRAIT(ee))
           {
              nw -= fw;
