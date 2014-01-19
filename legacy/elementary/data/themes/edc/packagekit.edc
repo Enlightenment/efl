@@ -1,0 +1,180 @@
+
+images {
+   image: "packagekit_base.png" COMP;
+   image: "packagekit_info_bugfix.png" COMP;
+   image: "packagekit_info_enhancement.png" COMP;
+   image: "packagekit_info_important.png" COMP;
+   image: "packagekit_info_low.png" COMP;
+   image: "packagekit_info_normal.png" COMP;
+   image: "packagekit_info_security.png" COMP;
+   image: "packagekit_work1.png" COMP;
+   image: "packagekit_work2.png" COMP;
+   image: "packagekit_work3.png" COMP;
+   image: "packagekit_work4.png" COMP;
+   image: "packagekit_updates.png" COMP;
+   image: "packagekit_updated.png" COMP;
+   image: "packagekit_error.png" COMP;
+}
+
+group { name: "icon";
+   max: 24 24;
+   parts {
+      part { name: "image";
+         type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            image.normal: "packagekit_base.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/bugfix";
+   parts {
+      part { name: "image"; type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "packagekit_info_bugfix.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/enhancement";
+   parts {
+      part { name: "image"; type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "packagekit_info_enhancement.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/important";
+   parts {
+      part { name: "image"; type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "packagekit_info_important.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/low";
+   parts {
+      part { name: "image"; type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "packagekit_info_low.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/normal";
+   parts {
+      part { name: "image"; type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "packagekit_info_normal.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/icon/security";
+   parts {
+      part { name: "image"; type: IMAGE;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "packagekit_info_security.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/packagekit/main";
+   max: 128 128;
+   parts {
+      part { name: "base"; type: IMAGE;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            image.normal: "packagekit_base.png";
+         }
+      }
+      part { name: "status"; type: IMAGE;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            visible: 0;
+         }
+         description { state: "running" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "packagekit_work1.png";
+            image.tween: "packagekit_work2.png";
+            image.tween: "packagekit_work3.png";
+            image.tween: "packagekit_work4.png";
+         }
+         description { state: "updates" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "packagekit_updates.png";
+         }
+         description { state: "updated" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "packagekit_updated.png";
+         }
+         description { state: "error" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "packagekit_error.png";
+         }
+      }
+      part { name: "num_updates"; type: TEXT;
+         effect: SHADOW;
+         description { state: "default" 0.0;
+            text {
+               font: FNBD;
+               size: 9;
+            }
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "packagekit,state,none"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "status";
+      }
+      program {
+         name: "working";
+         signal: "packagekit,state,working"; source: "e";
+         action: STATE_SET "running" 0.0;
+         target: "status";
+         transition: LINEAR 0.3;
+         after: "working";
+      }
+      program {
+         signal: "packagekit,state,updates"; source: "e";
+         action: STATE_SET "updates" 0.0;
+         target: "status";
+      }
+      program {
+         signal: "packagekit,state,updated"; source: "e";
+         action: STATE_SET "updated" 0.0;
+         target: "status";
+      }
+      program {
+         signal: "packagekit,state,error"; source: "e";
+         action: STATE_SET "error" 0.0;
+         target: "status";
+      }
+   }
+}
