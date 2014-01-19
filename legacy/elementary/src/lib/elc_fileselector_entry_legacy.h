@@ -217,7 +217,8 @@ EAPI Eina_Bool                   elm_fileselector_entry_is_save_get(const Evas_O
 /**
  * Set whether a given file selector entry widget's internal file
  * selector will raise an Elementary "inner window", instead of a
- * dedicated Elementary window. By default, it won't.
+ * dedicated Elementary window. By default, it depends on the current
+ * profile.
  *
  * @param obj The file selector entry widget
  * @param value @c EINA_TRUE to make it use an inner window, @c

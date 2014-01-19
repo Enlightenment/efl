@@ -212,7 +212,7 @@ test_fileselector_button(void *data       EINA_UNUSED,
    bt = elm_check_add(win);
    elm_object_style_set(bt, "toggle");
    elm_object_text_set(bt, "Inwin mode");
-   elm_check_state_set (bt, EINA_TRUE);
+   elm_check_state_set(bt, elm_fileselector_button_inwin_mode_get(fs_bt));
    evas_object_smart_callback_add(bt, "changed", _inwin_mode_toggle, fs_bt);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
