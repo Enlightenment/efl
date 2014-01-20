@@ -2658,11 +2658,11 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
    int keyl;
    int quote, escape;
 
-   key = alloca(strlen(prefix) + 2 + 1);
+   keyl = strlen(prefix) + 2;
+   key = alloca(keyl + 1);
    if (!key) return;
    strcpy(key, prefix);
    strcat(key, ":\"");
-   keyl = strlen(key);
    quote = 0;
    escape = 0;
    for (p = s; (p) && (*p); p++)
