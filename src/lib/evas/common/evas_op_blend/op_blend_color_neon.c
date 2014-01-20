@@ -28,8 +28,10 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 		// Use 'tmp' not 'd'
 		"vld1.32	d0[0], [%[d]]		\n\t"
 		// Only touch d1
+		"vmovl.u8	q10, d0			\n\t"
 		"vmull.u8	q0, d0, d14		\n\t"
-		"vqrshrn.u16	d0, q0, #8		\n\t"
+		"vadd.u16	q0, q0, q10		\n\t"
+		"vshrn.u16	d0, q0, #8		\n\t"
 		"vadd.u8	d0, d12, d0		\n\t"
 		"vst1.32	d0[0], [%[d]]		\n\t"
 
@@ -47,8 +49,10 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 
 	AP "dualloopint:					\n\t"
 		"vldr.32	d0, [%[d]]		\n\t"
+		"vmovl.u8	q10, d0			\n\t"
 		"vmull.u8	q1, d0, d14		\n\t"
-		"vqrshrn.u16	d0, q1, #8		\n\t"
+		"vadd.u16	q1, q1, q10		\n\t"
+		"vshrn.u16	d0, q1, #8		\n\t"
 		"vqadd.u8	d0, d0, d12		\n\t"
 
 		"vstm		%[d]!, {d0}		\n\t"
@@ -66,15 +70,23 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 	AP "quadloopint:\n\t"
 		"vldm	%[d],	{d0,d1,d2,d3}		\n\t"
 
+		"vmovl.u8	q10, d0			\n\t"
+		"vmovl.u8	q11, d1			\n\t"
+		"vmovl.u8	q12, d2			\n\t"
+		"vmovl.u8	q13, d3			\n\t"
 		"vmull.u8	q2, d0, d14		\n\t"
 		"vmull.u8	q3, d1, d15		\n\t"
 		"vmull.u8	q4, d2, d14		\n\t"
 		"vmull.u8	q5, d3, d15		\n\t"
+		"vadd.u16	q2, q2, q10		\n\t"
+		"vadd.u16	q3, q3, q11		\n\t"
+		"vadd.u16	q4, q4, q12		\n\t"
+		"vadd.u16	q5, q5, q13		\n\t"
 
-		"vqrshrn.u16	d0, q2, #8		\n\t"
-		"vqrshrn.u16	d1, q3, #8		\n\t"
-		"vqrshrn.u16	d2, q4, #8		\n\t"
-		"vqrshrn.u16	d3, q5, #8		\n\t"
+		"vshrn.u16	d0, q2, #8		\n\t"
+		"vshrn.u16	d1, q3, #8		\n\t"
+		"vshrn.u16	d2, q4, #8		\n\t"
+		"vshrn.u16	d3, q5, #8		\n\t"
 
 		"vqadd.u8	q0, q6, q0		\n\t"
 		"vqadd.u8	q1, q6, q1		\n\t"
@@ -95,8 +107,10 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 		"sub		%[tmp],%[e],$0x7	\n\t"
 	AP "dualloop2int:					\n\t"
 		"vldr.64	d0, [%[d]]		\n\t"
+		"vmovl.u8	q10, d0			\n\t"
 		"vmull.u8	q1, d0, d14		\n\t"
-		"vqrshrn.u16	d0, q1, #8		\n\t"
+		"vadd.u16	q1, q1, q10		\n\t"
+		"vshrn.u16	d0, q1, #8		\n\t"
 		"vqadd.u8	d0, d0, d12		\n\t"
 
 		"vstr.64	d0, [%[d]]		\n\t"
@@ -111,8 +125,10 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 
 	AP "singleloop2:					\n\t"
 		"vld1.32	d0[0], [%[d]]		\n\t"
+		"vmovl.u8	q10, d0			\n\t"
 		"vmull.u8	q1, d0, d14		\n\t"
-		"vqrshrn.u16	d0, q1, #8		\n\t"
+		"vadd.u16	q1, q1, q10		\n\t"
+		"vshrn.u16	d0, q1, #8		\n\t"
 		"vqadd.u8	d0, d0, d12		\n\t"
 
 		"vst1.32	d0[0], [%[d]]		\n\t"
@@ -122,7 +138,7 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 	  : // output regs
 	  // Input
           :  [e] "r" (e = d + l), [d] "r" (d), [c] "r" (c), [tmp] "r" (tmp)
-          : "q0", "q1", "q2","q3", "q4","q5","q6", "q7","memory" // clobbered
+          : "q0", "q1", "q2","q3", "q4","q5","q6", "q7", "q10", "q11", "q12", "q13", "memory" // clobbered
 
 	);
 #undef AP
