@@ -5808,6 +5808,27 @@ _anchor_hover_end(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 /* END - ANCHOR HOVER */
 
 static void
+_elm_entry_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Elm_Activate act = va_arg(*list, Elm_Activate);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
+   if (act != ELM_ACTIVATE_DEFAULT) return;
+
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   if (!elm_widget_disabled_get(obj) &&
+       !evas_object_freeze_events_get(obj))
+     {
+        evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+        if (sd->editable && sd->input_panel_enable)
+          edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
+     }
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
 _elm_entry_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -5839,6 +5860,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_entry_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION), _elm_entry_smart_on_focus_region),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_entry_smart_sub_object_del),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_entry_smart_activate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_entry_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_entry_smart_focus_direction_manager_is),
 
