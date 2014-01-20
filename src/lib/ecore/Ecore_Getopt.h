@@ -360,9 +360,9 @@ struct _Ecore_Getopt
                              ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES,                                  \
                              NULL)
 
-#define ECORE_GETOPT_HELP(shortname, longname)      \
-  {shortname, longname, "show this message.", NULL, \
-   ECORE_GETOPT_ACTION_HELP,                        \
+#define ECORE_GETOPT_HELP(shortname, longname)            \
+  {shortname, longname, "show this message.", "CATEGORY", \
+   ECORE_GETOPT_ACTION_HELP,                              \
    {.dummy = NULL}}
 
 #define ECORE_GETOPT_VERSION(shortname, longname)      \
@@ -390,8 +390,8 @@ struct _Ecore_Getopt
    ECORE_GETOPT_ACTION_BREAK,                   \
    {.dummy = NULL}}
 
-#define ECORE_GETOPT_CATEGORY(name) \
-  {0, NULL, name, NULL, ECORE_GETOPT_ACTION_CATEGORY, {.dummy = NULL}}
+#define ECORE_GETOPT_CATEGORY(name, help) \
+  {0, name, help, NULL, ECORE_GETOPT_ACTION_CATEGORY, {.dummy = NULL}}
 
 #define ECORE_GETOPT_SENTINEL {0, NULL, NULL, NULL, 0, {.dummy = NULL}}
 
@@ -410,6 +410,7 @@ struct _Ecore_Getopt
 #define ECORE_GETOPT_VALUE_NONE {.ptrp = NULL}
 
 EAPI void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
+EAPI Eina_Bool  ecore_getopt_help_category(FILE *fp, const Ecore_Getopt *info, const char *category);
 EAPI Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
 EAPI int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv);
 

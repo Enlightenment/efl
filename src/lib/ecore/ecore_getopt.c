@@ -355,7 +355,7 @@ _ecore_getopt_desc_arg_requirement(const Ecore_Getopt_Desc *desc)
         return desc->action_param.callback.arg_req;
 
       case ECORE_GETOPT_ACTION_HELP:
-        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
+        return ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL;
 
       case ECORE_GETOPT_ACTION_VERSION:
         return ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO;
@@ -620,9 +620,55 @@ _ecore_getopt_help_desc_choices(FILE                    *fp,
    return _ecore_getopt_help_line(fp, base, total, used, ".", 1);
 }
 
+static int
+_ecore_getopt_help_desc_categories(FILE                    *fp,
+                                   const int                base,
+                                   const int                total,
+                                   int                      used,
+                                   const Ecore_Getopt_Desc *desc)
+{
+   const char sep[] = ", ";
+   const int seplen = sizeof(sep) - 1;
+   Eina_Bool cat_before = EINA_FALSE;
+
+   if (used > 0)
+     {
+        fputc('\n', fp);
+        used = 0;
+     }
+   for (; used < base; used++)
+     fputc(' ', fp);
+
+   /* do not print available categories if none available */
+   for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
+     if (desc->action == ECORE_GETOPT_ACTION_CATEGORY) goto hascat;
+
+   return _ecore_getopt_help_line(fp, base, total, used,
+                                  _("No categories available."),
+                                  strlen(_("No categories available.")));
+
+hascat:
+   used = _ecore_getopt_help_line
+       (fp, base, total, used, _("Categories: "), strlen(_("Categories: ")));
+
+   for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
+     {
+         if (desc->action != ECORE_GETOPT_ACTION_CATEGORY || !desc->longname)
+           continue;
+         if (cat_before)
+           used = _ecore_getopt_help_line(fp, base, total, used, sep, seplen);
+         used = _ecore_getopt_help_line
+             (fp, base, total, used, desc->longname, strlen(desc->longname));
+         cat_before = EINA_TRUE;
+     }
+
+   return _ecore_getopt_help_line(fp, base, total, used, ".", 1);
+}
+
 static void
 _ecore_getopt_help_desc(FILE                    *fp,
-                        const Ecore_Getopt_Desc *desc)
+                        const Ecore_Getopt_Desc *desc,
+                        const Ecore_Getopt      *parser)
 {
    Ecore_Getopt_Desc_Arg_Requirement arg_req;
    char metavar[32] = "ARG";
@@ -699,6 +745,11 @@ _ecore_getopt_help_desc(FILE                    *fp,
         _ecore_getopt_help_desc_choices(fp, helpcol, cols, used, desc);
         break;
 
+      case ECORE_GETOPT_ACTION_HELP:
+        _ecore_getopt_help_desc_categories(fp, helpcol, cols, used,
+                                           parser->descs);
+        break;
+
       default:
         break;
      }
@@ -710,7 +761,8 @@ end:
 static Eina_Bool
 _ecore_getopt_desc_is_sentinel(const Ecore_Getopt_Desc *desc)
 {
-   return (desc->shortname == '\0') && (!desc->longname);
+   return (desc->shortname == '\0') && (!desc->longname)
+     && (desc->action != ECORE_GETOPT_ACTION_CATEGORY);
 }
 
 static void
@@ -722,7 +774,7 @@ _ecore_getopt_help_options(FILE               *fp,
    fputs(_("Options:\n"), fp);
 
    for (desc = parser->descs; !_ecore_getopt_desc_is_sentinel(desc); desc++)
-     _ecore_getopt_help_desc(fp, desc);
+     _ecore_getopt_help_desc(fp, desc, parser);
 
    fputc('\n', fp);
 
@@ -730,25 +782,18 @@ _ecore_getopt_help_options(FILE               *fp,
 
    fputs(_("Positional arguments:\n"), fp);
    for (; desc->metavar != NULL; desc++)
-     _ecore_getopt_help_desc(fp, desc);
+     _ecore_getopt_help_desc(fp, desc, parser);
 
    fputc('\n', fp);
 }
 
-/**
- * Show nicely formatted help message for the given parser.
- *
- * @param fp The file the message will be printed on.
- * @param parser The parser to be used.
- */
-EAPI void
-ecore_getopt_help(FILE               *fp,
-                  const Ecore_Getopt *parser)
+static Eina_Bool
+_ecore_getopt_help_prepare(const Ecore_Getopt *parser)
 {
    const char *var;
 
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!parser) return;
+   if (!parser) return EINA_FALSE;
 
    if (_argc < 1)
      {
@@ -769,9 +814,73 @@ ecore_getopt_help(FILE               *fp,
         helpcol = cols / 3;
      }
 
+   return EINA_TRUE;
+}
+
+/**
+ * Show nicely formatted help message for the given parser.
+ *
+ * @param fp The file the message will be printed on.
+ * @param parser The parser to be used.
+ *
+ * @see ecore_getopt_help_category()
+ */
+EAPI void
+ecore_getopt_help(FILE               *fp,
+                  const Ecore_Getopt *parser)
+{
+   if (!_ecore_getopt_help_prepare(parser))
+     return;
+
    _ecore_getopt_help_usage(fp, parser);
    _ecore_getopt_help_description(fp, parser);
    _ecore_getopt_help_options(fp, parser);
+}
+
+/**
+ * Show help for a single category (along with program usage and description).
+ *
+ * @param fp The file the message will be printed on.
+ * @param parser The parser to be used.
+ * @param category The category to print.
+ *
+ * @return @c EINA_TRUE when the category exists, @c EINA_FALSE otherwise.
+ *
+ * @see ecore_getopt_help()
+ */
+EAPI Eina_Bool
+ecore_getopt_help_category(FILE               *fp,
+                           const Ecore_Getopt *parser,
+                           const char         *category)
+{
+   const Ecore_Getopt_Desc *desc;
+   Eina_Bool found = EINA_FALSE;
+
+   if (!category || !_ecore_getopt_help_prepare(parser)) return EINA_FALSE;
+   for (desc = parser->descs; !_ecore_getopt_desc_is_sentinel(desc); desc++)
+     {
+        if (desc->action != ECORE_GETOPT_ACTION_CATEGORY) continue;
+        if (!desc->longname || strcmp(desc->longname, category)) continue;
+        found = EINA_TRUE;
+        break;
+     }
+   if (!found)
+     {
+        fprintf(stderr, _("ERROR: unknown category '%s'.\n"), category);
+        return EINA_FALSE;
+     }
+
+   _ecore_getopt_help_usage(fp, parser);
+   _ecore_getopt_help_description(fp, parser);
+
+   fprintf(fp, "%s\n", (desc++)->help);
+   for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
+     {
+        if (desc->action == ECORE_GETOPT_ACTION_CATEGORY) break;
+        _ecore_getopt_help_desc(fp, desc, parser);
+     }
+
+   return EINA_TRUE;
 }
 
 static const Ecore_Getopt_Desc *
@@ -787,7 +896,7 @@ _ecore_getopt_parse_find_long(const Ecore_Getopt *parser,
 
    for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
      {
-        if (!desc->longname)
+        if (!desc->longname || desc->action == ECORE_GETOPT_ACTION_CATEGORY)
           continue;
 
         if (p)
@@ -873,7 +982,7 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser,
                goto found_nonarg;
           }
 
-                  
+
 
         if (desc->action == ECORE_GETOPT_ACTION_BREAK)
           abreak = 1;
@@ -1430,10 +1539,12 @@ static Eina_Bool
 _ecore_getopt_parse_help(const Ecore_Getopt      *parser,
                          const Ecore_Getopt_Desc *desc EINA_UNUSED,
                          Ecore_Getopt_Value      *val,
-                         const char              *arg_val EINA_UNUSED)
+                         const char              *arg_val)
 {
    if (val->boolp)
      (*val->boolp) = EINA_TRUE;
+   if (arg_val)
+     return ecore_getopt_help_category(stdout, parser, arg_val);
    ecore_getopt_help(stdout, parser);
    return EINA_TRUE;
 }
@@ -1862,6 +1973,8 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
      {
         if (desc == orig)
           return NULL;
+        if (desc->action == ECORE_GETOPT_ACTION_CATEGORY)
+          continue;
 
         if (desc->longname && (strcmp(name, desc->longname) == 0))
           return desc;
