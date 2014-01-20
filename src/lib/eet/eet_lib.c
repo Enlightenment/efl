@@ -482,7 +482,12 @@ eet_flush2(Eet_File *ef)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
           {
-             if (fwrite(efn->data, efn->size, 1, fp) != 1)
+             if (efn->data)
+               {
+                  if (fwrite(efn->data, efn->size, 1, fp) != 1)
+                    goto write_error;
+               }
+             else if (fwrite(ef->data + efn->offset, efn->size, 1, fp) != 1)
                goto write_error;
           }
      }
@@ -904,15 +909,8 @@ eet_internal_read2(Eet_File *ef)
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
 
-        /* read-only mode, so currently we have no data loaded */
-        if (ef->mode == EET_FILE_MODE_READ)
-          efn->data = NULL;  /* read-write mode - read everything into ram */
-        else
-          {
-             efn->data = malloc(efn->size);
-             if (efn->data)
-               memcpy(efn->data, ef->data + efn->offset, efn->size);
-          }
+        /* There is no need to load data at this stage */
+        efn->data = NULL;
 
         /* compute the possible position of a signature */
         if (signature_base_offset < efn->offset + efn->size)
