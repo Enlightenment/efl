@@ -2956,6 +2956,7 @@ _edje_entry_user_insert(Edje_Real_Part *rp, const char *text)
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
+   _edje_entry_imf_context_reset(rp);
    info = _text_filter_markup_prepend(en->ed, en, en->cursor, text, NULL, NULL,
                                      EINA_TRUE, EINA_TRUE);
    _anchors_get(en->cursor, rp->object, en);
