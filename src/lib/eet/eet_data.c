@@ -3629,7 +3629,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
 
         if (!edd && group_type == EET_G_UNKNOWN && IS_SIMPLE_TYPE(type))
           {
-             unsigned char dd[128];
+             unsigned long long dd[128];
 
              ret = eet_data_get_type(ed,
                                      type,
@@ -4516,7 +4516,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
 
    if (IS_SIMPLE_TYPE(type))
      {
-        unsigned char dd[128];
+        unsigned long long dd[128];
 
         ret = eet_data_get_type(ed,
                                 type,
