@@ -49,6 +49,12 @@
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_eina_one_big_mp_log_dom, __VA_ARGS__)
 
+#define OVER_MEM_TO_LIST(_pool, _over_mem)                      \
+  ((Eina_Inlist *)(((char *)_over_mem) + (_pool)->offset_to_item_inlist))
+
+#define OVER_MEM_FROM_LIST(_pool, _node)        \
+  ((void *)(((char *)_node) - (_pool)->offset_to_item_inlist))
+
 static int _eina_one_big_mp_log_dom = -1;
 
 typedef struct _One_Big One_Big;
@@ -57,6 +63,7 @@ struct _One_Big
    const char *name;
 
    int item_size;
+   int offset_to_item_inlist;
 
    int usage;
    int over;
@@ -114,15 +121,14 @@ eina_one_big_malloc(void *data, EINA_UNUSED unsigned int size)
      }
 
  retry_smaller:
-   mem = malloc(sizeof(Eina_Inlist) + pool->item_size);
+   mem = malloc(sizeof(Eina_Inlist) + pool->offset_to_item_inlist);
    if (mem)
      {
+        Eina_Inlist *node = OVER_MEM_TO_LIST(pool, mem);
         pool->over++;
         /* Only need to zero list elements and not the payload here */
-        memset(mem, 0, sizeof(Eina_Inlist));
-        pool->over_list = eina_inlist_append(pool->over_list, 
-                                             (Eina_Inlist *)mem);
-        mem = ((unsigned char *)mem) + sizeof(Eina_Inlist);
+        memset(node, 0, sizeof(Eina_Inlist));
+        pool->over_list = eina_inlist_append(pool->over_list, node);
      }
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(mem, pool->item_size);
@@ -162,7 +168,7 @@ eina_one_big_free(void *data, void *ptr)
 #endif
         Eina_Inlist *il;
 
-        il = (Eina_Inlist *)(((unsigned char *)ptr) - sizeof(Eina_Inlist));
+        il = OVER_MEM_TO_LIST(pool, ptr);
 
 #ifndef NDEBUG
         for (it = pool->over_list; it != NULL; it = it->next)
@@ -172,7 +178,7 @@ eina_one_big_free(void *data, void *ptr)
 #endif
 
         pool->over_list = eina_inlist_remove(pool->over_list, il);
-        free(il);
+        free(ptr);
         pool->over--;
      }
 
@@ -210,6 +216,14 @@ eina_one_big_init(const char *context,
 
    pool->item_size = eina_mempool_alignof(item_size);
    pool->max = va_arg(args, int);
+
+   pool->offset_to_item_inlist = pool->item_size;
+   if (pool->offset_to_item_inlist % (int)sizeof(void *) != 0)
+     {
+        pool->offset_to_item_inlist =
+          (((pool->offset_to_item_inlist / (int)sizeof(void *)) + 1) *
+           (int)sizeof(void *));
+     }
 
    if (length)
      {
@@ -253,8 +267,9 @@ eina_one_big_shutdown(void *data)
         while (pool->over_list)
           {
              Eina_Inlist *il = pool->over_list;
+             void *ptr = OVER_MEM_FROM_LIST(pool, il);
              pool->over_list = eina_inlist_remove(pool->over_list, il);
-             free(il);
+             free(ptr);
              pool->over--;
           }
      }
