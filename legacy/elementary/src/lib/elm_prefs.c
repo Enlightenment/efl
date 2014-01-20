@@ -516,7 +516,7 @@ elm_prefs_add(Evas_Object *parent)
 
    if (!_elm_prefs_init_count)
      {
-        ERR("prefs_iface module is not loaded! you can't"
+        CRI("prefs_iface module is not loaded! you can't"
             " create prefs widgets");
         return NULL;
      }
@@ -1160,6 +1160,13 @@ _elm_prefs_file_set(Eo *obj, void *_pd, va_list *list)
 
    Elm_Prefs_Smart_Data *sd = _pd;
 
+   if (!_elm_prefs_init_count)
+     {
+        CRI("prefs_iface module is not loaded! you can't"
+            " create prefs widgets");
+        *ret = EINA_FALSE;
+        return;
+     }
    prefix = elm_app_data_dir_get();
    if (!strlen(prefix))
      {
