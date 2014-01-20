@@ -689,7 +689,7 @@ _show_region_job(void *data)
      {
         Evas_Coord x, y, w, h;
 
-        elm_widget_show_region_get(focus_obj, &x, &y, &w, &h);
+        elm_widget_focus_region_get(focus_obj, &x, &y, &w, &h);
 
         if (h < _elm_config->finger_size)
           h = _elm_config->finger_size;
