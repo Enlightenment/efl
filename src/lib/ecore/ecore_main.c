@@ -890,7 +890,7 @@ _ecore_main_loop_init(void)
 
         ecore_glib_source_id = g_source_attach(ecore_glib_source, NULL);
         if (ecore_glib_source_id <= 0)
-          CRIT("Failed to attach glib source to default context");
+          CRI("Failed to attach glib source to default context");
      }
 #endif
 
