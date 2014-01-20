@@ -277,7 +277,7 @@ eina_inlist_append_relative(Eina_Inlist *list,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
 
-   if (relative)
+   if ((relative) && (list))
      {
         if (relative->next)
           {
@@ -305,7 +305,7 @@ eina_inlist_prepend_relative(Eina_Inlist *list,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
 
-   if (relative)
+   if ((relative) && (list))
      {
         new_l->prev = relative->prev;
         new_l->next = relative;
