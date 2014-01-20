@@ -2136,17 +2136,21 @@ _elm_prefs_init(void)
    _elm_prefs_descriptors_init();
    _elm_prefs_data_init();
 
+   if (!(m = _elm_module_find_as("prefs_iface")))
+     {
+        WRN("prefs iface module could not be loaded,"
+            " the prefs widget won't function");
+
+        --_elm_prefs_init_count;
+        _elm_prefs_descriptors_shutdown();
+        _elm_prefs_data_shutdown();
+        return;
+     }
+
    _elm_prefs_page_widgets_map = eina_hash_string_superfast_new(NULL);
    _elm_prefs_item_widgets_map = eina_hash_string_superfast_new(NULL);
    _elm_prefs_item_type_widgets_map = eina_hash_int32_new(NULL);
 
-   if (!(m = _elm_module_find_as("prefs_iface")))
-     {
-        DBG("prefs iface module could not be loaded,"
-            " the prefs widget won't function");
-
-        return;
-     }
    m->init_func(m);
 }
 
