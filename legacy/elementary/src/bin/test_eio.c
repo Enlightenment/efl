@@ -223,7 +223,7 @@ test_eio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    elm_object_text_set(fs_bt, "Select a dir");
    elm_object_part_content_set(fs_bt, "icon", ic);
    elm_fileselector_button_inwin_mode_set(fs_bt, EINA_TRUE);
-   elm_fileselector_button_folder_only_set(fs_bt, EINA_TRUE);
+   elm_fileselector_folder_only_set(fs_bt, EINA_TRUE);
 
    elm_box_pack_end(hbox, fs_bt);
    elm_box_pack_end(vbox, hbox);
