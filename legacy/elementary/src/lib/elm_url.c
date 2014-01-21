@@ -88,7 +88,7 @@ _elm_url_data(void *data, int type EINA_UNUSED, void *event)
 }
 
 Elm_Url *
-elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel cancel_cb, Elm_Url_Progress progress_cb, const void *data)
+_elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel cancel_cb, Elm_Url_Progress progress_cb, const void *data)
 {
    Ecore_Con_Url *target;
    Elm_Url *r;
@@ -139,14 +139,14 @@ elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel cancel_cb
 }
 
 void
-elm_url_cancel(Elm_Url *r)
+_elm_url_cancel(Elm_Url *r)
 {
    r->cb.cancel((void*) r->data, r, 0);
    _elm_url_free(r);
 }
 
 const char *
-elm_url_get(Elm_Url *r)
+_elm_url_get(Elm_Url *r)
 {
    return r->url;
 }

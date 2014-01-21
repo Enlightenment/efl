@@ -475,9 +475,9 @@ typedef void (*Elm_Url_Done)(void *data, Elm_Url *url, Eina_Binbuf *download);
 typedef void (*Elm_Url_Cancel)(void *data, Elm_Url *url, int error);
 typedef void (*Elm_Url_Progress)(void *data, Elm_Url *url, double now, double total);
 
-Elm_Url *elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel cancel_cb, Elm_Url_Progress progress_cb, const void *data);
-void elm_url_cancel(Elm_Url *r);
-const char *elm_url_get(Elm_Url *r);
+Elm_Url *_elm_url_download(const char *url, Elm_Url_Done done_cb, Elm_Url_Cancel cancel_cb, Elm_Url_Progress progress_cb, const void *data);
+void _elm_url_cancel(Elm_Url *r);
+const char *_elm_url_get(Elm_Url *r);
 
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;

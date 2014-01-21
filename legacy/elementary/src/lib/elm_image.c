@@ -496,7 +496,7 @@ _elm_image_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
    evas_object_del(sd->prev_img);
-   if (sd->remote) elm_url_cancel(sd->remote);
+   if (sd->remote) _elm_url_cancel(sd->remote);
    free(sd->remote_data);
    eina_stringshare_del(sd->key);
 
@@ -922,10 +922,10 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
    if (sd->remote_data) free(sd->remote_data);
    length = eina_binbuf_length_get(download);
    sd->remote_data = eina_binbuf_string_steal(download);
-   f = eina_file_virtualize(elm_url_get(url),
+   f = eina_file_virtualize(_elm_url_get(url),
                             sd->remote_data, length,
                             EINA_FALSE);
-   _elm_image_smart_internal_file_set(obj, sd, elm_url_get(url), f, sd->key, &ret);
+   _elm_image_smart_internal_file_set(obj, sd, _elm_url_get(url), f, sd->key, &ret);
    eina_file_close(f);
 
    if (!ret)
@@ -992,7 +992,7 @@ _elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
 
    unsigned int i;
 
-   if (sd->remote) elm_url_cancel(sd->remote);
+   if (sd->remote) _elm_url_cancel(sd->remote);
    sd->remote = NULL;
 
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
@@ -1000,7 +1000,7 @@ _elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
        {
           // Found a remote target !
           evas_object_hide(sd->img);
-          sd->remote = elm_url_download(file,
+          sd->remote = _elm_url_download(file,
                                         _elm_image_smart_download_done,
                                         _elm_image_smart_download_cancel,
                                         _elm_image_smart_download_progress,
@@ -1027,7 +1027,7 @@ _elm_image_smart_mmap_set(Eo *obj, void *_pd, va_list *list)
 
   Elm_Image_Smart_Data *sd = _pd;
 
-  if (sd->remote) elm_url_cancel(sd->remote);
+  if (sd->remote) _elm_url_cancel(sd->remote);
   sd->remote = NULL;
 
   _elm_image_smart_internal_file_set(obj, sd,

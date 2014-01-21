@@ -1413,7 +1413,7 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->f) eina_file_close(sd->f);
    free(sd->remote_data);
-   if (sd->remote) elm_url_cancel(sd->remote);
+   if (sd->remote) _elm_url_cancel(sd->remote);
    eina_stringshare_del(sd->file);
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
@@ -1560,10 +1560,10 @@ _elm_photocam_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *d
    if (sd->remote_data) free(sd->remote_data);
    length = eina_binbuf_length_get(download);
    sd->remote_data = eina_binbuf_string_steal(download);
-   f = eina_file_virtualize(elm_url_get(url),
+   f = eina_file_virtualize(_elm_url_get(url),
                             sd->remote_data, length,
                             EINA_FALSE);
-   _internal_file_set(obj, sd, elm_url_get(url), f, &ret);
+   _internal_file_set(obj, sd, _elm_url_get(url), f, &ret);
    eina_file_close(f);
 
    if (ret != EVAS_LOAD_ERROR_NONE)
@@ -1634,14 +1634,14 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    sd->f = NULL;
 
    free(sd->remote_data);
-   if (sd->remote) elm_url_cancel(sd->remote);
+   if (sd->remote) _elm_url_cancel(sd->remote);
    sd->remote = NULL;
 
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
      if (strncmp(remote_uri[i], file, strlen(remote_uri[i])) == 0)
        {
           // Found a remote target !
-          sd->remote = elm_url_download(file,
+          sd->remote = _elm_url_download(file,
                                         _elm_photocam_download_done,
                                         _elm_photocam_download_cancel,
                                         _elm_photocam_download_progress,
