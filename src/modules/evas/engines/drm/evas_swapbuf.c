@@ -17,7 +17,7 @@
 /* local function prototypes */
 
 Outbuf *
-evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha)
+evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, int fd)
 {
    Outbuf *ob = NULL;
 
@@ -33,16 +33,17 @@ evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina
    ob->rotation = rotation;
    ob->depth = depth;
    ob->priv.destination_alpha = alpha;
+   ob->priv.fd = fd;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
         ob->priv.swapper = 
-          evas_swapper_setup(0, 0, w, h, depth, alpha);
+          evas_swapper_setup(0, 0, w, h, depth, alpha, fd);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         ob->priv.swapper = 
-          evas_swapper_setup(0, 0, h, w, depth, alpha);
+          evas_swapper_setup(0, 0, h, w, depth, alpha, fd);
      }
 
    /* check that a swapper was created */
@@ -117,12 +118,12 @@ evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int ro
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
         ob->priv.swapper = 
-          evas_swapper_setup(x, y, w, h, depth, alpha);
+          evas_swapper_setup(x, y, w, h, depth, alpha, ob->priv.fd);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
         ob->priv.swapper = 
-          evas_swapper_setup(x, y, h, w, depth, alpha);
+          evas_swapper_setup(x, y, h, w, depth, alpha, ob->priv.fd);
      }
 }
 
