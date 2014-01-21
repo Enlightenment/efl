@@ -99,6 +99,7 @@ tests/eo/suite/eo_test_class_errors.c \
 tests/eo/suite/eo_test_call_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_value.c \
+tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo\" \
