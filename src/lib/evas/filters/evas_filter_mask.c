@@ -169,7 +169,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    DATA8 *src;
    DATA32 *dst, *msk, *span;
    int op = cmd->draw.render_op;
-   int w, h, mw, mh, x, y, my;
+   int w, h, mw, mh, y, my, r;
    int stepsize, stepcount, step;
    DATA32 color2;
 
@@ -227,7 +227,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask, color2, out, 1, op);
 
    // Apply mask using Gfx functions
-   for (y = 0, my = 0; y < h; y++, my++, msk += stepsize)
+   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
         if (my >= mh)
           {
@@ -242,14 +242,14 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
              func2(span, NULL, color2, dst, stepsize);
           }
 
-        x = stepsize * stepcount;
-        if (x < w)
+        r = w - (stepsize * stepcount);
+        if (r > 0)
           {
-             memset(span, 0, (w - x) * sizeof(DATA32));
-             func1(msk, src, 0, span, w - x);
-             func2(span, NULL, color2, dst, w - x);
-             dst += w - x;
-             src += w - x;
+             memset(span, 0, r * sizeof(DATA32));
+             func1(msk, src, 0, span, r);
+             func2(span, NULL, color2, dst, r);
+             dst += r;
+             src += r;
           }
      }
 
@@ -267,7 +267,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    DATA32 *dst;
    DATA32 color;
    int op = cmd->draw.render_op;
-   int w, h, mw, mh, x, y, my;
+   int w, h, mw, mh, y, my, r;
    int stepsize, stepcount, step;
 
    /* Mechanism:
@@ -319,7 +319,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    func = evas_common_gfx_func_composite_mask_color_span_get(color, out, 1, op);
    span_func = evas_common_alpha_func_get(EVAS_RENDER_MASK);
 
-   for (y = 0, my = 0; y < h; y++, my++, msk += stepsize)
+   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
         if (my >= mh)
           {
@@ -334,14 +334,14 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
              func(NULL, span, color, dst, stepsize);
           }
 
-        x = stepsize * stepcount;
-        if (x < w)
+        r = w - (stepsize * stepcount);
+        if (r > 0)
           {
-             memcpy(span, msk, (w - x) * sizeof(DATA8));
-             span_func(src, span, w - x);
-             func(NULL, span, color, dst, w - x);
-             dst += w - x;
-             src += w - x;
+             memcpy(span, msk, r * sizeof(DATA8));
+             span_func(src, span, r);
+             func(NULL, span, color, dst, r);
+             dst += r;
+             src += r;
           }
      }
 
