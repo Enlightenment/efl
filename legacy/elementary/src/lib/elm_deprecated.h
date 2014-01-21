@@ -1450,6 +1450,192 @@ EINA_DEPRECATED EAPI void        elm_fileselector_button_is_save_set(Evas_Object
  */
 EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_is_save_get(const Evas_Object *obj);
 
+/**
+ * Set the initial file system path and the entry's path string for
+ * a given file selector entry widget
+ *
+ * @param obj The file selector entry widget
+ * @param path The path string
+ *
+ * It must be a <b>directory</b> path, which will have the contents
+ * displayed initially in the file selector's view, when invoked
+ * from @p obj. The default initial path is the @c "HOME"
+ * environment variable's value.
+ *
+ * @see elm_fileselector_path_get()
+ *
+ * @deprecated Use elm_fileselector_path_set() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_path_set(Evas_Object *obj, const char *path);
+
+/**
+ * Get the entry's path string for a given file selector entry
+ * widget
+ *
+ * @param obj The file selector entry widget
+ * @return path The path string
+ *
+ * @see elm_fileselector_path_set() for more details
+ *
+ * @deprecated Use elm_fileselector_path_get() instead.
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI const char *elm_fileselector_entry_path_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable a tree view in the given file selector entry
+ * widget's internal file selector
+ *
+ * @param obj The file selector entry widget
+ * @param value @c EINA_TRUE to enable tree view, @c EINA_FALSE to disable
+ *
+ * This has the same effect as elm_fileselector_expandable_set(),
+ * but now applied to a file selector entry's internal file
+ * selector.
+ *
+ * @note There's no way to put a file selector entry's internal
+ * file selector in "grid mode", as one may do with "pure" file
+ * selectors.
+ *
+ * @see elm_fileselector_expandable_get()
+ *
+ * @deprecated Use elm_fileselector_expandable_set() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value);
+
+/**
+ * Get whether tree view is enabled for the given file selector
+ * entry widget's internal file selector
+ *
+ * @param obj The file selector entry widget
+ * @return @c EINA_TRUE if @p obj widget's internal file selector
+ * is in tree view, @c EINA_FALSE otherwise (and or errors)
+ *
+ * @see elm_fileselector_expandable_set() for more details
+ *
+ * @deprecated Use elm_fileselector_expandable_get() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_expandable_get(const Evas_Object *obj);
+
+/**
+ * Set whether a given file selector entry widget's internal file
+ * selector is to display folders only or the directory contents,
+ * as well.
+ *
+ * @param obj The file selector entry widget
+ * @param value @c EINA_TRUE to make @p obj widget's internal file
+ * selector only display directories, @c EINA_FALSE to make files
+ * to be displayed in it too
+ *
+ * This has the same effect as elm_fileselector_folder_only_set(),
+ * but now applied to a file selector entry's internal file
+ * selector.
+ *
+ * @see elm_fileselector_folder_only_get()
+ *
+ * @deprecated Use elm_fileselector_folder_only_set() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value);
+
+/**
+ * Get whether a given file selector entry widget's internal file
+ * selector is displaying folders only or the directory contents,
+ * as well.
+ *
+ * @param obj The file selector entry widget
+ * @return @c EINA_TRUE if @p obj widget's internal file
+ * selector is only displaying directories, @c EINA_FALSE if files
+ * are being displayed in it too (and on errors)
+ *
+ * @see elm_fileselector_folder_only_set() for more details
+ *
+ * @deprecated Use elm_fileselector_folder_only_get() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_folder_only_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable the file name entry box where the user can type
+ * in a name for a file, in a given file selector entry widget's
+ * internal file selector.
+ *
+ * @param obj The file selector entry widget
+ * @param value @c EINA_TRUE to make @p obj widget's internal
+ * file selector a "saving dialog", @c EINA_FALSE otherwise
+ *
+ * This has the same effect as elm_fileselector_is_save_set(),
+ * but now applied to a file selector entry's internal file
+ * selector.
+ *
+ * @see elm_fileselector_is_save_get()
+ *
+ * @deprecated Use elm_fileselector_is_save_set() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value);
+
+/**
+ * Get whether the given file selector entry widget's internal
+ * file selector is in "saving dialog" mode
+ *
+ * @param obj The file selector entry widget
+ * @return @c EINA_TRUE, if @p obj widget's internal file selector
+ * is in "saving dialog" mode, @c EINA_FALSE otherwise (and on
+ * errors)
+ *
+ * @see elm_fileselector_is_save_set() for more details
+ *
+ * @deprecated Use elm_fileselector_is_save_get() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_is_save_get(const Evas_Object *obj);
+
+/**
+ * Set the initial file system path for a given file selector entry
+ * widget
+ *
+ * @param obj The file selector entry widget
+ * @param path The path string
+ *
+ * It must be a <b>directory</b> path, which will have the contents
+ * displayed initially in the file selector's view, when invoked
+ * from @p obj. The default initial path is the @c "HOME"
+ * environment variable's value.
+ *
+ * @see elm_fileselector_path_get()
+ *
+ * @deprecated Use elm_fileselector_selected_set() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
+
+/**
+ * Get the parent directory's path to the latest file selection on
+ * a given filer selector entry widget
+ *
+ * @param obj The file selector object
+ * @return The (full) path of the directory of the last selection
+ * on @p obj widget, a @b stringshared string
+ *
+ * @see elm_fileselector_path_set()
+ *
+ * @deprecated Use elm_fileselector_selected_get() instead.
+ *
+ * @ingroup File_Selector_Entry
+ */
+EINA_DEPRECATED EAPI const char *elm_fileselector_entry_selected_get(const Evas_Object *obj);
 
 //TODO: remvoe below - use elm_access_text_set(); or elm_access_cb_set();
 EINA_DEPRECATED EAPI void elm_access_external_info_set(Evas_Object *obj, const char *text);

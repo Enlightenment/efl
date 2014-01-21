@@ -420,7 +420,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_entry_selected_set(Evas_Object *obj,
                                     const char *path)
 {
@@ -438,7 +438,7 @@ _selected_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    elm_fileselector_path_set(sd->button, path);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_fileselector_entry_selected_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
@@ -529,7 +529,7 @@ _window_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    elm_fileselector_button_window_size_get(sd->button, width, height);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_entry_path_set(Evas_Object *obj,
                                 const char *path)
 {
@@ -554,7 +554,7 @@ _path_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_fileselector_entry_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
@@ -574,7 +574,7 @@ _path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->path;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_entry_expandable_set(Evas_Object *obj,
                                       Eina_Bool value)
 {
@@ -591,7 +591,7 @@ _expandable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    elm_fileselector_expandable_set(sd->button, value);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_fileselector_entry_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
@@ -609,7 +609,7 @@ _expandable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = elm_fileselector_expandable_get(sd->button);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_entry_folder_only_set(Evas_Object *obj,
                                        Eina_Bool value)
 {
@@ -626,7 +626,7 @@ _folder_only_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    elm_fileselector_folder_only_set(sd->button, value);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_fileselector_entry_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
@@ -644,7 +644,7 @@ _folder_only_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = elm_fileselector_folder_only_get(sd->button);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_entry_is_save_set(Evas_Object *obj,
                                    Eina_Bool value)
 {
@@ -661,7 +661,7 @@ _is_save_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    elm_fileselector_is_save_set(sd->button, value);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_fileselector_entry_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
