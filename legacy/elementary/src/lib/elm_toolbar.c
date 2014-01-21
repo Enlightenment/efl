@@ -666,7 +666,8 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
    if (!sd->items) return;
 
    if ((!strcmp(ev->key, "Return")) ||
-       ((!strcmp(ev->key, "KP_Enter")) && !ev->string))
+       (!strcmp(ev->key, "KP_Enter")) ||
+       (!strcmp(ev->key, "space")))
      {
         if (sd->highlighted_item)
           _item_select(sd->highlighted_item);
