@@ -10,7 +10,7 @@
 #undef INF
 #undef DBG
 
-#define CRI(...) EINA_LOG_DOM_CRIT(_elm_ext_log_dom, __VA_ARGS__)
+#define CRI(...)      EINA_LOG_DOM_CRIT(_elm_ext_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR (_elm_ext_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_elm_ext_log_dom, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_elm_ext_log_dom, __VA_ARGS__)
