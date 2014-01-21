@@ -315,7 +315,7 @@ _window_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (height) *height = sd->h;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_button_path_set(Evas_Object *obj,
                                  const char *path)
 {
@@ -334,7 +334,7 @@ _path_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (sd->fs) elm_fileselector_selected_set(sd->fs, sd->fsd.path);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_fileselector_button_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
@@ -352,7 +352,7 @@ _path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->fsd.path;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_button_expandable_set(Evas_Object *obj,
                                        Eina_Bool value)
 {
@@ -371,7 +371,7 @@ _expandable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (sd->fs) elm_fileselector_expandable_set(sd->fs, sd->fsd.expandable);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_fileselector_button_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
@@ -389,7 +389,7 @@ _expandable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->fsd.expandable;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_button_folder_only_set(Evas_Object *obj,
                                         Eina_Bool value)
 {
@@ -408,7 +408,7 @@ _folder_only_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (sd->fs) elm_fileselector_folder_only_set(sd->fs, sd->fsd.folder_only);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_fileselector_button_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
@@ -426,7 +426,7 @@ _folder_only_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->fsd.folder_only;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_fileselector_button_is_save_set(Evas_Object *obj,
                                     Eina_Bool value)
 {
@@ -445,7 +445,7 @@ _is_save_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (sd->fs) elm_fileselector_is_save_set(sd->fs, sd->fsd.is_save);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_fileselector_button_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
