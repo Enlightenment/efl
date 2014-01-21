@@ -1,3 +1,116 @@
+2013-11-14  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c: Add/update comments and doc comments.
+	(lb_init_breaking_class): Rename to treat_first_char.
+	(lb_classify_break_simple): Rename to get_lb_result_simple.
+	(lb_classify_break_lookup): Rename to get_lb_result_lookup.
+	(set_linebreaks): Remove an unused local variable.
+
+2013-11-14  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreakdata.c: Regenerate from LineBreak-6.3.0.txt.
+
+2013-11-13  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Fix compilation problems under MSVC.
+	* src/linebreak.c (lb_init_breaking_class): Remove `inline'.
+	(lb_classify_break_simple): Ditto.
+	(lb_classify_break_lookup): Ditto.
+	(lb_classify_break_lookup): Move local variable declaration before
+	assertions.
+
+2013-11-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.am (libunibreak_la_LDFLAGS): Set the version-info to
+	`2:0:1'.
+
+2013-11-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreakdef.c: Adjust the order of code.
+	(lb_process_next_char): Make its return type int.
+	* src/linebreak.c (lb_process_next_char): Ditto.
+
+2013-11-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c: Make minor changes in doc comments, formatting,
+	and names.
+	* src/linebreakdef.c: Ditto.
+
+2013-11-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* AUTHORS: Add `Petr Filipsky'.
+
+2013-11-10  Petr Filipsky  <philodej@gmail.com>
+
+	Expose low level line-breaking API for incremental processing.
+	* src/linebreak.h: Add prototype declarations for
+	lb_init_break_context and lb_process_next_char.
+	(struct LineBreakContext): New struct.
+	* src/linebreak.h (LINEBREAK_UNDEFINED): New macro constant.
+	(lb_init_breaking_class): New static function.
+	(lb_classify_break_simple): New static function.
+	(lb_classify_break_lookup): New static function.
+	(lb_init_break_context): New function.
+	(lb_process_next_char): New function.
+	(set_linebreaks): Implement with lb_init_break_context and
+	lb_process_next_char.
+
+2013-11-05  Petr Filipsky  <philodej@gmail.com>
+
+	* src/wordbreakdef.h (enum WordBreakClass): Update according to
+	Table 3 of Unicode Standard Annex 29, Revision 23.
+
+2013-09-30  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Update for the libunibreak 1.1 release.
+	* configure.ac (AC_INIT): Change the library version to `1.1'.
+	* Doxyfile (PROJECT_NUMBER): Change to `1.1'.
+	* Makefile.am (EXTRA_DIST): Add the `tools' directory.
+	* NEWS: Add information about libunibreak 1.1.
+	* src/Makefile.am (libunibreak_la_LDFLAGS): Set the version to `1:1'.
+
+2013-09-29  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.msvc: Modernize obsolete/deprecated MSVC options.
+
+2013-09-28  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/wordbreak.c: Update copyright year and UAX information.
+	* src/wordbreak.h: Ditto.
+	* src/wordbreakdef.h: Ditto.
+
+2013-09-28  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Fix the errors caused by libtool 2.4 (really annoying to the level
+	of WTF for making me add the foolish dependency on m4).
+	* Makefile.am (ACLOCAL_AMFLAGS): Add `-I m4'.
+	* bootstrap: Add a line to execute autoreconf.
+	* configure.ac (AC_CONFIG_MACRO_DIR): Set to `[m4]'.
+	* purge: Make it remove also the m4 directory.
+
+2013-09-28  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* Makefile.am (EXTRA_DIST): Add `README.md'.
+
+2013-09-28  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* README.md: New Markdown version of README.
+	* README: Remove.
+
+2013-05-13  Tom Hacohen  <tom@stosb.com>
+
+	Update files according to UAX #29-21, for Unicode 6.2.0.
+	* README: Update the reference to UAX #29-21.
+	* src/wordbreak.c (set_wordbreaks): Update for WBP_Regional.
+	* src/wordbreakdef.h (WBP_Regional): New enumerator for the new
+	property `RI' as defined in UAX #29-21.
+	* src/wordbreakdata.c: Regenerate from WordBreakProperty-6.2.0.txt.
+
+2013-05-06  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.am (install-exec-hook): Make sure `--disable-static'
+	can work (thanks to Eugene V. Lyubimkin).
+
 2012-10-06  Wu Yongwei  <wuyongwei@gmail.com>
 
 	Update files according to UAX #14-30, for Unicode 6.2.0.
@@ -82,11 +195,12 @@
 
 2012-08-11  Wu Yongwei  <wuyongwei@gmail.com>
 
+	Update for the libunibreak 1.0 release.
 	* configure.ac (AC_INIT): Change the library name and version to
 	`libunibreak' and `1.0'.
 	(AC_PROG_LN_S): New macro.
 	(AC_OUTPUT): Change to `libunibreak.pc'.
-	* Doxyfile: (PROJECT_NAME): Change to `libunibreak'.
+	* Doxyfile (PROJECT_NAME): Change to `libunibreak'.
 	(PROJECT_NUMBER): Change to `1.0'.
 	* LICENCE: Add copyright information about Tom Hacohen.
 	* Makefile.am (lib_LTLIBRARIES): Change to `libunibreak.la'.
@@ -96,7 +210,7 @@
 	a symlink to libunibreak.a.
 	* Makefile.msvc: Change the library name to `libunibreak', and the
 	output library to `unibreak.lib'.
-	* NEW: Add information about libunibreak 1.0.
+	* NEWS: Add information about libunibreak 1.0.
 	* README: Change the library name, and add information about word
 	break.
 

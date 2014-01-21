@@ -1,10 +1,11 @@
-/* vim: set tabstop=4 shiftwidth=4: */
+/* vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
 
 /*
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2012 Tom Hacohen <tom@stosb.com>
+ * Copyright (C) 2013 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2013 Petr Filipsky <philodej at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -24,47 +25,55 @@
  *    distribution.
  *
  * The main reference is Unicode Standard Annex 29 (UAX #29):
- *		<URL:http://unicode.org/reports/tr29>
+ *      <URL:http://unicode.org/reports/tr29>
  *
  * When this library was designed, this annex was at Revision 17, for
  * Unicode 6.0.0:
- *		<URL:http://www.unicode.org/reports/tr29/tr29-17.html>
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
+ *
+ * This library has been updated according to Revision 21, for
+ * Unicode 6.2.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-21.html>
  *
  * The Unicode Terms of Use are available at
- *		<URL:http://www.unicode.org/copyright.html>
+ *      <URL:http://www.unicode.org/copyright.html>
  */
 
 /**
- * @file	wordbreakdef.h
+ * @file    wordbreakdef.h
  *
  * Definitions of internal data structures, declarations of global
  * variables, and function prototypes for the word breaking algorithm.
  *
- * @version	2.2, 2013/05/14
- * @author	Tom Hacohen
+ * @version 2.4, 2013/11/10
+ * @author  Tom Hacohen
+ * @author  Petr Filipsky
  */
 
 /**
  * Word break classes.  This is a direct mapping of Table 3 of Unicode
- * Standard Annex 29, Revision 17.
+ * Standard Annex 29, Revision 23.
  */
 enum WordBreakClass
 {
-	WBP_Undefined,
-	WBP_CR,
-	WBP_LF,
-	WBP_Newline,
-	WBP_Extend,
-	WBP_Format,
-	WBP_Katakana,
-	WBP_ALetter,
-	WBP_MidNumLet,
-	WBP_MidLetter,
-	WBP_MidNum,
-	WBP_Numeric,
-	WBP_ExtendNumLet,
-	WBP_Regional,
-	WBP_Any
+    WBP_Undefined,
+    WBP_CR,
+    WBP_LF,
+    WBP_Newline,
+    WBP_Extend,
+    WBP_Format,
+    WBP_Katakana,
+    WBP_ALetter,
+    WBP_MidNumLet,
+    WBP_MidLetter,
+    WBP_MidNum,
+    WBP_Numeric,
+    WBP_ExtendNumLet,
+    WBP_Regional,
+    WBP_Hebrew,
+    WBP_Single,
+    WBP_Double,
+    WBP_Any
 };
 
 /**
@@ -73,7 +82,7 @@ enum WordBreakClass
  */
 struct WordBreakProperties
 {
-	utf32_t start;				/**< Starting coding point */
-	utf32_t end;				/**< End coding point */
-	enum WordBreakClass prop;	/**< The word breaking property */
+    utf32_t start;              /**< Starting coding point */
+    utf32_t end;                /**< End coding point */
+    enum WordBreakClass prop;   /**< The word breaking property */
 };
