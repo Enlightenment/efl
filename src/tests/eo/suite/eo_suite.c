@@ -22,6 +22,7 @@ static const Eo_Test_Case etc[] = {
   { "Eo class errors", eo_test_class_errors },
   { "Eo call errors", eo_test_call_errors },
   { "Eo eina value", eo_test_value },
+  { "Eo threaded eo calls", eo_test_threaded_calls },
   { NULL, NULL }
 };
 
