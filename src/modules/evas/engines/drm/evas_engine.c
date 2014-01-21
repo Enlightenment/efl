@@ -30,7 +30,7 @@ struct _Render_Engine
 };
 
 /* local function prototypes */
-static void *_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, int try_swap);
+static void *_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, int fd, int try_swap);
 static Tilebuf_Rect *_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3);
 
 /* engine function prototypes */
@@ -56,7 +56,7 @@ int _evas_engine_drm_log_dom = -1;
 
 /* local functions */
 static void *
-_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, int try_swap)
+_output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool destination_alpha, int fd, int try_swap)
 {
    Render_Engine *re = NULL;
 
@@ -79,7 +79,7 @@ _output_engine_setup(int w, int h, unsigned int rotation, unsigned int depth, Ei
    if (try_swap)
      {
         if ((re->ob = evas_swapbuf_setup(w, h, rotation, depth,
-                                         destination_alpha)))
+                                         destination_alpha, fd)))
           {
              re->outbuf_free = evas_swapbuf_free;
              re->outbuf_reconfigure = evas_swapbuf_reconfigure;
@@ -233,7 +233,7 @@ eng_setup(Evas *eo_evas, void *einfo)
               _output_engine_setup(epd->output.w, epd->output.h,
                                    info->info.rotation, info->info.depth,
                                    info->info.destination_alpha,
-                                   try_swap)))
+                                   info->info.fd, try_swap)))
           return 0;
         re->info = info;
      }
@@ -256,7 +256,8 @@ eng_setup(Evas *eo_evas, void *einfo)
         if ((re->ob = evas_swapbuf_setup(epd->output.w, epd->output.h,
                                          info->info.rotation,
                                          info->info.depth,
-                                         info->info.destination_alpha)))
+                                         info->info.destination_alpha, 
+                                         info->info.fd)))
           {
              re->outbuf_free = evas_swapbuf_free;
              re->outbuf_reconfigure = evas_swapbuf_reconfigure;
