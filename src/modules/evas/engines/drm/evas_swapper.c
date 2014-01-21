@@ -272,10 +272,10 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 
    struct drm_mode_create_dumb carg;
    struct drm_mode_destroy_dumb darg;
-   struct drm_mode_map_dump marg;
+   struct drm_mode_map_dumb marg;
 
    memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
-   carb.bpp = 32;
+   carg.bpp = 32;
    carg.width = wb->w;
    carg.height = wb->h;
 
