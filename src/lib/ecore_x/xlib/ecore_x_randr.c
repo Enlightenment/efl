@@ -2206,10 +2206,17 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
           {
              if (info->name)
                {
-                  ret = malloc(info->nameLen + 1);
-                  memcpy(ret, info->name, info->nameLen);
-                  ret[info->nameLen] = 0;
-                  if (len) *len = info->nameLen;
+                  size_t s;
+#ifdef XRANDR_GOOD
+                  s = info->nameLen;
+#else
+                  /* pre 1.4.0 does not fill in info->nameLen */
+                  s = strlen(info->name);
+#endif
+                  ret = malloc(s + 1);
+                  memcpy(ret, info->name, s);
+                  ret[s] = 0;
+                  if (len) *len = s;
                }
 
              /* free the output info */

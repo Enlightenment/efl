@@ -2875,9 +2875,7 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent])
    ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput])
 
-   if test echo "$ECORE_X_LIBS" | grep -q Xrandr ; then
-      PKG_CHECK_EXISTS([xrandr > 1.3.1], [], [AC_MSG_ERROR([Xrandr >= 1.3.1 required])])
-   fi
+   PKG_CHECK_EXISTS([xrandr > 1.3.2], [AC_DEFINE([XRANDR_GOOD], [1], [good xrandr])], [])
 
    if test "${want_xpresent}" = "yes"; then
       ECORE_CHECK_X_EXTENSION([Xpresent], [Xpresent.h], [Xpresent], [XPresentQueryExtension])
