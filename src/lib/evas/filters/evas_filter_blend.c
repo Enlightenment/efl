@@ -32,6 +32,21 @@ _filter_blend_cpu_alpha(Evas_Filter_Command *cmd)
    DATA8 *maskdata, *dstdata;
    int sw, sh, dw, dh, ox, oy, sx = 0, sy = 0, dx = 0, dy = 0, rows, cols, y;
 
+   /*
+    * NOTE: Alpha to alpha blending does not support stretching operations
+    * yet, because we don't have any scaling functions for alpha buffers.
+    * Also, I'm not going to implement it by converting to RGBA either.
+    */
+   if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY)
+     {
+        CRI("Alpha to alpha blending does not support stretch");
+        return EINA_FALSE;
+     }
+
+   // TODO: Call _mapped_blend_cpu to implement repeat fill mode.
+   if (cmd->draw.fillmode != EVAS_FILTER_FILL_MODE_NONE)
+     ERR("Fill modes are not implemented for Alpha --> RGBA");
+
    func = evas_common_alpha_func_get(cmd->draw.render_op);
    if (!func)
      return EINA_FALSE;
@@ -306,6 +321,10 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
    if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
      return EINA_FALSE;
 
+   // TODO: Call _mapped_blend_cpu to implement repeat fill mode.
+   if (cmd->draw.fillmode != EVAS_FILTER_FILL_MODE_NONE)
+     ERR("Fill modes are not implemented for Alpha --> RGBA");
+
    in = cmd->input->backing;
    out = cmd->output->backing;
    sw = in->cache_entry.w;
@@ -349,48 +368,92 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
 }
 
 static Eina_Bool
+_image_draw_cpu_rgba2alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
+                           void *surface, void *image,
+                           int src_x, int src_y, int src_w, int src_h,
+                           int dst_x, int dst_y, int dst_w, int dst_h,
+                           int smooth EINA_UNUSED,
+                           Eina_Bool do_async EINA_UNUSED)
+{
+   RGBA_Image *src = image;
+   RGBA_Image *dst = surface;
+   DATA32* srcdata = src->image.data;
+   DATA8* dstdata = dst->mask.data;
+   int x, y, sw, dw;
+   DEFINE_DIVIDER(3);
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
+
+   sw = src->cache_entry.w;
+   dw = dst->cache_entry.w;
+
+   srcdata += src_y * sw;
+   dstdata += dst_y * dw;
+   for (y = src_h; y; y--)
+     {
+        DATA32 *s = srcdata + src_x;
+        DATA8 *d = dstdata + dst_x;
+        for (x = src_w; x; x--, d++, s++)
+          {
+             // TODO: Add weights like in YUV <--> RGB?
+             *d = DIVIDE(R_VAL(s) + G_VAL(s) + B_VAL(s));
+          }
+        srcdata += sw;
+        dstdata += dw;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _filter_blend_cpu_rgba2alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
-   DATA8 *dstdata;
-   DATA32 *srcdata;
-   int sw, sh, dw, dh, ox, oy, sx = 0, sy = 0, dx = 0, dy = 0, rows, cols, y, x;
-   DEFINE_DIVIDER(3);
+   int sw, sh, dx, dy, dw, dh, sx, sy;
 
    if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
      return EINA_FALSE;
 
    in = cmd->input->backing;
    out = cmd->output->backing;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
+
+   sx = 0;
+   sy = 0;
    sw = in->cache_entry.w;
    sh = in->cache_entry.h;
+
    dw = out->cache_entry.w;
    dh = out->cache_entry.h;
-   ox = cmd->draw.ox;
-   oy = cmd->draw.oy;
-   srcdata = in->image.data;
-   dstdata = out->mask.data;
+   dx = cmd->draw.ox;
+   dy = cmd->draw.oy;
 
-   _clip_to_target(&sx, &sy, sw, sh, ox, oy, dw, dh, &dx, &dy, &rows, &cols);
-   // FIXME/TODO: Clip to context clip
-
-   if (cols <= 0 || rows <= 0)
+   if ((dw <= 0) || (dh <= 0) || (sw <= 0) || (sh <= 0))
      return EINA_TRUE;
 
-   srcdata += sy * sw;
-   dstdata += dy * dw;
-   for (y = rows; y; y--)
+   // Stretch if necessary.
+   if ((sw != dw || sh != dh) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        DATA32 *s = srcdata + sx;
-        DATA8 *d = dstdata + dx;
-        for (x = cols; x; x--, d++, s++)
-          {
-             // TODO: Add weights?
-             *d = DIVIDE(R_VAL(s) + G_VAL(s) + B_VAL(s));
-          }
-        srcdata += sw;
-        dstdata += dw;
+        Evas_Filter_Buffer *fb;
+
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+          sw = dw;
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+          sh = dh;
+
+        BUFFERS_LOCK();
+        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->input, sw, sh);
+        BUFFERS_UNLOCK();
+
+        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+        fb->locked = EINA_FALSE;
+        in = fb->backing;
      }
+
+   _mapped_blend_cpu(cmd->ENDT, NULL, in, out, cmd->draw.fillmode,
+                     sx, sy, sw, sh, dx, dy, dw, dh,
+                     _image_draw_cpu_rgba2alpha);
 
    return EINA_TRUE;
 }
