@@ -94,7 +94,7 @@ EAPI void                        elm_fileselector_entry_window_size_get(const Ev
  *
  * @ingroup File_Selector_Entry
  */
-EAPI void                        elm_fileselector_entry_path_set(Evas_Object *obj, const char *path);
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_path_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the entry's path string for a given file selector entry
@@ -107,7 +107,7 @@ EAPI void                        elm_fileselector_entry_path_set(Evas_Object *ob
  *
  * @ingroup File_Selector_Entry
  */
-EAPI const char                 *elm_fileselector_entry_path_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI const char *elm_fileselector_entry_path_get(const Evas_Object *obj);
 
 /**
  * Enable/disable a tree view in the given file selector entry
@@ -128,7 +128,7 @@ EAPI const char                 *elm_fileselector_entry_path_get(const Evas_Obje
  *
  * @ingroup File_Selector_Entry
  */
-EAPI void                        elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value);
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether tree view is enabled for the given file selector
@@ -142,7 +142,7 @@ EAPI void                        elm_fileselector_entry_expandable_set(Evas_Obje
  *
  * @ingroup File_Selector_Entry
  */
-EAPI Eina_Bool                   elm_fileselector_entry_expandable_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_expandable_get(const Evas_Object *obj);
 
 /**
  * Set whether a given file selector entry widget's internal file
@@ -162,7 +162,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_expandable_get(const Eva
  *
  * @ingroup File_Selector_Entry
  */
-EAPI void                        elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value);
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether a given file selector entry widget's internal file
@@ -178,7 +178,7 @@ EAPI void                        elm_fileselector_entry_folder_only_set(Evas_Obj
  *
  * @ingroup File_Selector_Entry
  */
-EAPI Eina_Bool                   elm_fileselector_entry_folder_only_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_folder_only_get(const Evas_Object *obj);
 
 /**
  * Enable/disable the file name entry box where the user can type
@@ -197,7 +197,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_folder_only_get(const Ev
  *
  * @ingroup File_Selector_Entry
  */
-EAPI void                        elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value);
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether the given file selector entry widget's internal
@@ -212,7 +212,7 @@ EAPI void                        elm_fileselector_entry_is_save_set(Evas_Object 
  *
  * @ingroup File_Selector_Entry
  */
-EAPI Eina_Bool                   elm_fileselector_entry_is_save_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_entry_is_save_get(const Evas_Object *obj);
 
 /**
  * Set whether a given file selector entry widget's internal file
@@ -262,7 +262,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_inwin_mode_get(const Eva
  *
  * @ingroup File_Selector_Entry
  */
-EAPI void                        elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the parent directory's path to the latest file selection on
@@ -276,4 +276,4 @@ EAPI void                        elm_fileselector_entry_selected_set(Evas_Object
  *
  * @ingroup File_Selector_Entry
  */
-EAPI const char                 *elm_fileselector_entry_selected_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI const char *elm_fileselector_entry_selected_get(const Evas_Object *obj);

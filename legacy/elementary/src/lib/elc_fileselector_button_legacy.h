@@ -93,7 +93,7 @@ EAPI void                        elm_fileselector_button_window_size_get(const E
  *
  * @ingroup File_Selector_Button
  */
-EAPI void                        elm_fileselector_button_path_set(Evas_Object *obj, const char *path);
+EINA_DEPRECATED EAPI void        elm_fileselector_button_path_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the initial file system path set for a given file selector
@@ -106,7 +106,7 @@ EAPI void                        elm_fileselector_button_path_set(Evas_Object *o
  *
  * @ingroup File_Selector_Button
  */
-EAPI const char                 *elm_fileselector_button_path_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI const char *elm_fileselector_button_path_get(const Evas_Object *obj);
 
 /**
  * Enable/disable a tree view in the given file selector button
@@ -128,7 +128,7 @@ EAPI const char                 *elm_fileselector_button_path_get(const Evas_Obj
  *
  * @ingroup File_Selector_Button
  */
-EAPI void                        elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value);
+EINA_DEPRECATED EAPI void        elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether tree view is enabled for the given file selector
@@ -142,7 +142,7 @@ EAPI void                        elm_fileselector_button_expandable_set(Evas_Obj
  *
  * @ingroup File_Selector_Button
  */
-EAPI Eina_Bool                   elm_fileselector_button_expandable_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_expandable_get(const Evas_Object *obj);
 
 /**
  * Set whether a given file selector button widget's internal file
@@ -162,7 +162,7 @@ EAPI Eina_Bool                   elm_fileselector_button_expandable_get(const Ev
  *
  * @ingroup File_Selector_Button
  */
-EAPI void                        elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value);
+EINA_DEPRECATED EAPI void        elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether a given file selector button widget's internal file
@@ -178,7 +178,7 @@ EAPI void                        elm_fileselector_button_folder_only_set(Evas_Ob
  *
  * @ingroup File_Selector_Button
  */
-EAPI Eina_Bool                   elm_fileselector_button_folder_only_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_folder_only_get(const Evas_Object *obj);
 
 /**
  * Enable/disable the file name entry box where the user can type
@@ -197,7 +197,7 @@ EAPI Eina_Bool                   elm_fileselector_button_folder_only_get(const E
  *
  * @ingroup File_Selector_Button
  */
-EAPI void                        elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value);
+EINA_DEPRECATED EAPI void        elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether the given file selector button widget's internal
@@ -212,7 +212,7 @@ EAPI void                        elm_fileselector_button_is_save_set(Evas_Object
  *
  * @ingroup File_Selector_Button
  */
-EAPI Eina_Bool                   elm_fileselector_button_is_save_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool   elm_fileselector_button_is_save_get(const Evas_Object *obj);
 
 /**
  * Set whether a given file selector button widget's internal file

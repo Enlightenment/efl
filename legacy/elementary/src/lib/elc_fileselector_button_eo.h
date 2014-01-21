@@ -10,14 +10,6 @@ enum
    ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_GET,
    ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_SET,
    ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_GET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_SET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_GET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_SET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_GET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_SET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_GET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_SET,
-   ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_GET,
    ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_INWIN_MODE_SET,
    ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_INWIN_MODE_GET,
    ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_LAST
@@ -85,123 +77,6 @@ enum
  * @ingroup File_Selector_Button
  */
 #define elm_obj_fileselector_button_window_size_get(width, height) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_SIZE_GET), EO_TYPECHECK(Evas_Coord *, width), EO_TYPECHECK(Evas_Coord *, height)
-
-/**
- * @def elm_obj_fileselector_button_path_set
- * @since 1.8
- *
- * Set the initial file system path for a given file selector
- *
- * @param[in] path
- *
- * @see elm_fileselector_button_path_set
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_path_set(path) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_SET), EO_TYPECHECK(const char *, path)
-
-/**
- * @def elm_obj_fileselector_button_path_get
- * @since 1.8
- *
- * Get the initial file system path set for a given file selector
- *
- * @param[out] ret
- *
- * @see elm_fileselector_button_path_get
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_path_get(ret) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_PATH_GET), EO_TYPECHECK(const char **, ret)
-
-/**
- * @def elm_obj_fileselector_button_expandable_set
- * @since 1.8
- *
- * Enable/disable a tree view in the given file selector button
- *
- * @param[in] value
- *
- * @see elm_fileselector_button_expandable_set
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_expandable_set(value) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_SET), EO_TYPECHECK(Eina_Bool, value)
-
-/**
- * @def elm_obj_fileselector_button_expandable_get
- * @since 1.8
- *
- * Get whether tree view is enabled for the given file selector
- *
- * @param[out] ret
- *
- * @see elm_fileselector_button_expandable_get
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_expandable_get(ret) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_EXPANDABLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
-
-/**
- * @def elm_obj_fileselector_button_folder_only_set
- * @since 1.8
- *
- * Set whether a given file selector button widget's internal file
- * selector is to display folders only or the directory contents,
- * as well.
- *
- * @param[in] value
- *
- * @see elm_fileselector_button_folder_only_set
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_folder_only_set(value) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_SET), EO_TYPECHECK(Eina_Bool, value)
-
-/**
- * @def elm_obj_fileselector_button_folder_only_get
- * @since 1.8
- *
- * Get whether a given file selector button widget's internal file
- * selector is displaying folders only or the directory contents,
- * as well.
- *
- * @param[out] ret
- *
- * @see elm_fileselector_button_folder_only_get
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_folder_only_get(ret) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_FOLDER_ONLY_GET), EO_TYPECHECK(Eina_Bool *, ret)
-
-/**
- * @def elm_obj_fileselector_button_is_save_set
- * @since 1.8
- *
- * Enable/disable the file name entry box where the user can type
- *
- * @param[in] value
- *
- * @see elm_fileselector_button_is_save_set
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_is_save_set(value) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_SET), EO_TYPECHECK(Eina_Bool, value)
-
-/**
- * @def elm_obj_fileselector_button_is_save_get
- * @since 1.8
- *
- * Get whether the given file selector button widget's internal
- * file selector is in "saving dialog" mode
- *
- * @param[out] ret
- *
- * @see elm_fileselector_button_is_save_get
- *
- * @ingroup File_Selector_Button
- */
-#define elm_obj_fileselector_button_is_save_get(ret) ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_IS_SAVE_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_obj_fileselector_button_inwin_mode_set

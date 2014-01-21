@@ -116,8 +116,8 @@ _folder_only_toggle(void            *data,
 {
    Evas_Object *fs_en = data;
    Evas_Object *ic = elm_object_part_content_get(fs_en, "button icon");
-   Eina_Bool value = elm_fileselector_entry_folder_only_get(fs_en);
-   elm_fileselector_entry_folder_only_set(fs_en, !value);
+   Eina_Bool value = elm_fileselector_folder_only_get(fs_en);
+   elm_fileselector_folder_only_set(fs_en, !value);
    printf("Folder only flag set to: %s\n", value ? "false" : "true");
    if (!value)
      {
@@ -137,8 +137,8 @@ _expandable_toggle(void            *data,
                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_en = data;
-   Eina_Bool value = elm_fileselector_entry_expandable_get(fs_en);
-   elm_fileselector_entry_expandable_set(fs_en, !value);
+   Eina_Bool value = elm_fileselector_expandable_get(fs_en);
+   elm_fileselector_expandable_set(fs_en, !value);
    printf("Expandable flag set to: %s\n", value ? "false" : "true");
 }
 
@@ -197,7 +197,7 @@ test_fileselector_entry(void *data       EINA_UNUSED,
    elm_icon_standard_set(ic, "file");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    fs_en = elm_fileselector_entry_add(win);
-   elm_fileselector_entry_path_set(fs_en, "/tmp/test_fs_bt");
+   elm_fileselector_path_set(fs_en, "/tmp/test_fs_bt");
    elm_object_text_set(fs_en, "Select a file");
    elm_object_part_content_set(fs_en, "button icon", ic);
    evas_object_size_hint_weight_set(fs_en, EVAS_HINT_EXPAND, 0.0);

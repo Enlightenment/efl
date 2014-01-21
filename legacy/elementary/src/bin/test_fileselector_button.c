@@ -119,7 +119,7 @@ _current_sel_toggle(void            *data,
 {
    Evas_Object *fs_bt = data;
    Eina_Bool value = elm_check_state_get(obj);
-   elm_fileselector_button_is_save_set(fs_bt, value);
+   elm_fileselector_is_save_set(fs_bt, value);
    printf("Current selection editable entry set to: %s\n",
           value ? "true" : "false");
 }
@@ -131,7 +131,7 @@ _folder_only_toggle(void            *data,
 {
    Evas_Object *fs_bt = data;
    Eina_Bool value = elm_check_state_get(obj);
-   elm_fileselector_button_folder_only_set(fs_bt, value);
+   elm_fileselector_folder_only_set(fs_bt, value);
    printf("Folder only flag set to: %s\n", value ? "true" : "false");
 }
 
@@ -142,7 +142,7 @@ _expandable_toggle(void            *data,
 {
    Evas_Object *fs_bt = data;
    Eina_Bool value = elm_check_state_get(obj);
-   elm_fileselector_button_expandable_set(fs_bt, value);
+   elm_fileselector_expandable_set(fs_bt, value);
    printf("Expandable flag set to: %s\n", value ? "true" : "false");
 }
 
@@ -190,7 +190,7 @@ test_fileselector_button(void *data       EINA_UNUSED,
    fs_bt = elm_fileselector_button_add(win);
    elm_object_text_set(fs_bt, "Select a file");
    elm_object_part_content_set(fs_bt, "icon", ic);
-   elm_fileselector_button_path_set(fs_bt, "/tmp/test_fs_bt");
+   elm_fileselector_path_set(fs_bt, "/tmp/test_fs_bt");
 
    elm_box_pack_end(vbox, fs_bt);
    evas_object_show(fs_bt);
