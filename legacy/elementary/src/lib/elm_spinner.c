@@ -258,24 +258,46 @@ _entry_value_apply(Evas_Object *obj)
 }
 
 static void
-_entry_toggle_cb(void *data,
-                 Evas_Object *obj EINA_UNUSED,
+_entry_activated_cb(void *data,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   _entry_value_apply(data);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+   if (sd->delay_timer) ecore_timer_del(sd->delay_timer);
+   sd->delay_timer = ecore_timer_add(0.2, _delay_change, data);
+}
+
+static void
+_entry_toggle_cb(void *data EINA_UNUSED,
+                 Evas_Object *obj,
                  const char *emission EINA_UNUSED,
                  const char *source EINA_UNUSED)
 {
-   ELM_SPINNER_DATA_GET(data, sd);
+   ELM_SPINNER_DATA_GET(obj, sd);
 
    if (sd->dragging)
      {
         sd->dragging = 0;
         return;
      }
-   if (elm_widget_disabled_get(data)) return;
+   if (elm_widget_disabled_get(obj)) return;
    if (!sd->editable) return;
-   if (sd->entry_visible) _entry_value_apply(data);
+   if (sd->entry_visible) _entry_value_apply(obj);
    else
      {
-        elm_layout_signal_emit(data, "elm,state,active", "elm");
+        if (!sd->ent)
+          {
+             sd->ent = elm_entry_add(obj);
+             elm_entry_single_line_set(sd->ent, EINA_TRUE);
+             evas_object_smart_callback_add
+                (sd->ent, "activated", _entry_activated_cb, obj);
+             elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
+          }
+
+        elm_layout_signal_emit(obj, "elm,state,active", "elm");
         _entry_show(sd);
         elm_entry_select_all(sd->ent);
         elm_widget_focus_set(sd->ent, EINA_TRUE);
@@ -402,19 +424,6 @@ _button_dec_stop_cb(void *data,
 }
 
 static void
-_entry_activated_cb(void *data,
-                    Evas_Object *obj EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
-{
-   ELM_SPINNER_DATA_GET(data, sd);
-
-   _entry_value_apply(data);
-   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
-   if (sd->delay_timer) ecore_timer_del(sd->delay_timer);
-   sd->delay_timer = ecore_timer_add(0.2, _delay_change, data);
-}
-
-static void
 _elm_spinner_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
@@ -482,7 +491,7 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                  (!strcmp(ev->key, "KP_Enter")) ||
                  (!strcmp(ev->key, "space")))
           {
-             _entry_toggle_cb(obj, NULL, NULL, NULL);
+             _entry_toggle_cb(NULL, obj, NULL, NULL);
           }
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
@@ -710,14 +719,8 @@ _elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 
-   priv->ent = elm_entry_add(obj);
-   elm_entry_single_line_set(priv->ent, EINA_TRUE);
-   evas_object_smart_callback_add
-     (priv->ent, "activated", _entry_activated_cb, obj);
-
-   elm_layout_content_set(obj, "elm.swallow.entry", priv->ent);
    elm_layout_signal_callback_add
-     (obj, "elm,action,entry,toggle", "*", _entry_toggle_cb, obj);
+     (obj, "elm,action,entry,toggle", "*", _entry_toggle_cb, NULL);
 
    _label_write(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
