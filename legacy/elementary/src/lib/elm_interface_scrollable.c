@@ -4643,14 +4643,14 @@ _elm_scroll_interface_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_scrollable_interface_content_set(NULL));
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);
 
-   if (sid->down.hold_enterer) ecore_idle_enterer_del(sid->down.hold_enterer);
-   if (sid->down.hold_animator) ecore_animator_del(sid->down.hold_animator);
-   if (sid->down.onhold_animator) ecore_animator_del(sid->down.onhold_animator);
-   if (sid->down.momentum_animator) ecore_animator_del(sid->down.momentum_animator);
-   if (sid->down.bounce_x_animator) ecore_animator_del(sid->down.bounce_x_animator);
-   if (sid->down.bounce_y_animator) ecore_animator_del(sid->down.bounce_y_animator);
-   if (sid->scrollto.x.animator) ecore_animator_del(sid->scrollto.x.animator);
-   if (sid->scrollto.y.animator) ecore_animator_del(sid->scrollto.y.animator);
+   ecore_idle_enterer_del(sid->down.hold_enterer);
+   ecore_animator_del(sid->down.hold_animator);
+   ecore_animator_del(sid->down.onhold_animator);
+   ecore_animator_del(sid->down.momentum_animator);
+   ecore_animator_del(sid->down.bounce_x_animator);
+   ecore_animator_del(sid->down.bounce_y_animator);
+   ecore_animator_del(sid->scrollto.x.animator);
+   ecore_animator_del(sid->scrollto.y.animator);
 }
 
 static void

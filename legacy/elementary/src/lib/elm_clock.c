@@ -145,7 +145,7 @@ _on_clock_val_up_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->sel_obj = obj;
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ecore_timer_del(sd->spin);
    sd->spin = ecore_timer_add(sd->interval, _on_clock_val_up, data);
 
    _on_clock_val_up(data);
@@ -161,7 +161,7 @@ _on_clock_val_down_start(void *data,
 
    sd->interval = sd->first_interval;
    sd->sel_obj = obj;
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ecore_timer_del(sd->spin);
    sd->spin = ecore_timer_add(sd->interval, _on_clock_val_down, data);
 
    _on_clock_val_down(data);
@@ -705,8 +705,8 @@ _elm_clock_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Clock_Smart_Data *sd = _pd;
 
-   if (sd->ticker) ecore_timer_del(sd->ticker);
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ecore_timer_del(sd->ticker);
+   ecore_timer_del(sd->spin);
 
    /* NB: digits are killed for being sub objects, automatically */
 

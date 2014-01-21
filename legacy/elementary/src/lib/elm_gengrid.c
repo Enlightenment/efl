@@ -267,7 +267,7 @@ _elm_gengrid_pan_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    va_arg(*list, Evas_Coord);
    va_arg(*list, Evas_Coord);
 
-   if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
+   ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
 }
 
@@ -282,7 +282,7 @@ _elm_gengrid_pan_smart_resize(Eo *obj, void *_pd, va_list *list)
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
-   if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
+   ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
 }
 
@@ -359,7 +359,7 @@ _item_mouse_move_cb(void *data,
                sd->reorder_item_y = oy + oh - sd->item_height;
              else sd->reorder_item_y = it_scrl_y;
 
-             if (sd->calc_job) ecore_job_del(sd->calc_job);
+             ecore_job_del(sd->calc_job);
              sd->calc_job = ecore_job_add(_calc_job, sd->obj);
           }
         return;
@@ -594,8 +594,7 @@ _item_mouse_up_cb(void *data,
           (WIDGET(it), SIG_MOVED, sd->reorder_it);
         sd->reorder_it = NULL;
         sd->move_effect_enabled = EINA_FALSE;
-        if (sd->calc_job)
-          ecore_job_del(sd->calc_job);
+        ecore_job_del(sd->calc_job);
         sd->calc_job =
           ecore_job_add(_calc_job, sd->obj);
 
@@ -1243,8 +1242,7 @@ _item_place(Elm_Gen_Item *it,
 
                             wsd->reorder_item_changed = EINA_TRUE;
                             wsd->move_effect_enabled = EINA_TRUE;
-                            if (wsd->calc_job)
-                              ecore_job_del(wsd->calc_job);
+                            ecore_job_del(wsd->calc_job);
                             wsd->calc_job =
                               ecore_job_add(_calc_job, wsd->obj);
 
@@ -2058,7 +2056,7 @@ _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
      sd->group_items = eina_list_remove(sd->group_items, it);
 
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(sd->calc_cb, sd->obj);
 
    if (sd->last_selected_item == (Elm_Object_Item *)it)
@@ -2451,7 +2449,7 @@ _elm_gengrid_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
    ELM_SAFE_FREE(sd->stack, evas_object_del);
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -2555,7 +2553,7 @@ _item_size_set(Eo *obj, void *_pd, va_list *list)
    if ((sd->item_width == w) && (sd->item_height == h)) return;
    sd->item_width = w;
    sd->item_height = h;
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 }
 
@@ -2598,7 +2596,7 @@ _group_item_size_set(Eo *obj, void *_pd, va_list *list)
    if ((sd->group_item_width == w) && (sd->group_item_height == h)) return;
    sd->group_item_width = w;
    sd->group_item_height = h;
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 }
 
@@ -2715,7 +2713,7 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    if (it->group)
      sd->group_items = eina_list_prepend(sd->group_items, it);
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -2756,7 +2754,7 @@ _item_prepend(Eo *obj, void *_pd, va_list *list)
    if (it->group)
      sd->group_items = eina_list_append(sd->group_items, it);
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -2804,7 +2802,7 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
      sd->group_items = eina_list_append_relative
          (sd->group_items, it, ((Elm_Gen_Item *)relative)->parent);
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -2852,7 +2850,7 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
      sd->group_items = eina_list_prepend_relative
          (sd->group_items, it, ((Elm_Gen_Item *)relative)->parent);
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -2900,7 +2898,7 @@ _item_sorted_insert(Eo *obj, void *_pd, va_list *list)
        (sd->items, EINA_INLIST_GET(it), _elm_gengrid_item_compare, sd->state);
    _item_position_update(sd->items, 0);
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -2925,7 +2923,7 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
    sd->horizontal = horizontal;
 
    /* Update the items to conform to the new layout */
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 }
 

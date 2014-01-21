@@ -195,7 +195,7 @@ _mouse_down(void *data,
 
    if (ev->button != 1) return;
 
-   if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
+   ecore_timer_del(sd->long_press_timer);
    sd->long_press_timer = ecore_timer_add(_elm_config->longpress_timeout,
                                           _long_press_cb, data);
    evas_object_event_callback_add
@@ -303,7 +303,7 @@ _elm_photo_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Photo_Smart_Data * sd = _pd;
 
-   if (sd->long_press_timer) ecore_timer_del(sd->long_press_timer);
+   ecore_timer_del(sd->long_press_timer);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

@@ -3799,7 +3799,7 @@ _elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           free(sd->gesture[i]);
           sd->gesture[i] = NULL; /* Referenced by _event_history_clear */
        }
-   if (sd->gest_taps_timeout) ecore_timer_del(sd->gest_taps_timeout);
+   ecore_timer_del(sd->gest_taps_timeout);
 
    /* Then take care of clearing events */
    _event_history_clear(obj);

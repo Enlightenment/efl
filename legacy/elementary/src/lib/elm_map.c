@@ -627,7 +627,7 @@ _grid_item_update(Grid_Item *gi)
         gi->file_have = EINA_TRUE;
      }
 
-   if (gi->wsd->loaded_timer) ecore_timer_del(gi->wsd->loaded_timer);
+   ecore_timer_del(gi->wsd->loaded_timer);
    gi->wsd->loaded_timer = ecore_timer_add(0.25, _loaded_timeout_cb, gi->wsd->obj);
 }
 
@@ -1161,7 +1161,7 @@ _zoom_with_animation(Elm_Map_Smart_Data *sd,
    sd->ani.cnt = cnt;
    sd->ani.zoom = sd->zoom;
    sd->ani.diff = (double)(zoom - sd->zoom) / cnt;
-   if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
+   ecore_animator_del(sd->zoom_animator);
    sd->zoom_animator = ecore_animator_add(_zoom_anim_cb, sd->obj);
 }
 
@@ -1262,7 +1262,7 @@ _mouse_down_cb(void *data,
      evas_object_smart_callback_call
        (sd->obj, SIG_PRESS, ev);
 
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   ecore_timer_del(sd->long_timer);
    sd->ev = *ev;
    sd->long_timer =
      ecore_timer_add(_elm_config->longpress_timeout, _long_press_cb, data);
@@ -4081,12 +4081,12 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FREE(sd->track, track)
      evas_object_del(track);
 
-   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
-   if (sd->user_agent) eina_stringshare_del(sd->user_agent);
-   if (sd->ua) eina_hash_free(sd->ua);
-   if (sd->zoom_timer) ecore_timer_del(sd->zoom_timer);
-   if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
+   ecore_timer_del(sd->scr_timer);
+   ecore_timer_del(sd->long_timer);
+   eina_stringshare_del(sd->user_agent);
+   eina_hash_free(sd->ua);
+   ecore_timer_del(sd->zoom_timer);
+   ecore_animator_del(sd->zoom_animator);
 
    _grid_all_clear(sd);
    // Removal of download list should be after grid clear.
@@ -4103,7 +4103,7 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ERR("Deletion of %s failed", buf);
    }
 
-   if (sd->loaded_timer) ecore_timer_del(sd->loaded_timer);
+   ecore_timer_del(sd->loaded_timer);
    if (sd->map) evas_map_free(sd->map);
 
    eo_unref(sd->pan_obj);
@@ -4426,7 +4426,7 @@ _paused_set(Eo *obj, void *_pd, va_list *list)
      {
         if (sd->zoom_animator)
           {
-             if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
+             ecore_animator_del(sd->zoom_animator);
              sd->zoom_animator = NULL;
              _zoom_do(sd, sd->zoom);
           }

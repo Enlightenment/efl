@@ -232,7 +232,7 @@ _store_genlist_item_realized(void *data, Evas_Object *obj EINA_UNUSED, void *eve
    if (!sti) return;
    st->realized_count++;
    sti->live = EINA_TRUE;
-   if (sti->eval_job) ecore_job_del(sti->eval_job);
+   ecore_job_del(sti->eval_job);
    sti->eval_job = ecore_job_add(_store_item_eval, sti);
 }
 
@@ -245,7 +245,7 @@ _store_genlist_item_unrealized(void *data, Evas_Object *obj EINA_UNUSED, void *e
    if (!sti) return;
    st->realized_count--;
    sti->live = EINA_FALSE;
-   if (sti->eval_job) ecore_job_del(sti->eval_job);
+   ecore_job_del(sti->eval_job);
    sti->eval_job = ecore_job_add(_store_item_eval, sti);
 }
 

@@ -339,7 +339,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
 static void
 _elm_win_state_eval_queue(void)
 {
-   if (_elm_win_state_eval_job) ecore_job_del(_elm_win_state_eval_job);
+   ecore_job_del(_elm_win_state_eval_job);
    _elm_win_state_eval_job = ecore_job_add(_elm_win_state_eval, NULL);
 }
 
@@ -644,7 +644,7 @@ _elm_win_resize(Ecore_Evas *ee)
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->deferred_resize_job) ecore_job_del(sd->deferred_resize_job);
+   ecore_job_del(sd->deferred_resize_job);
    sd->deferred_resize_job = ecore_job_add(_elm_win_resize_job, sd->obj);
 }
 
@@ -812,8 +812,7 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
 static void
 _elm_win_focus_highlight_reconfigure_job_start(Elm_Win_Smart_Data *sd)
 {
-   if (sd->focus_highlight.reconf_job)
-     ecore_job_del(sd->focus_highlight.reconf_job);
+   ecore_job_del(sd->focus_highlight.reconf_job);
 
    sd->focus_highlight.reconf_job = ecore_job_add(
        _elm_win_focus_highlight_reconfigure_job, sd->obj);
@@ -1467,16 +1466,14 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         ecore_evas_callback_resize_set(sd->ee, NULL);
      }
 
-   if (sd->deferred_resize_job) ecore_job_del(sd->deferred_resize_job);
-   if (sd->deferred_child_eval_job) ecore_job_del(sd->deferred_child_eval_job);
-   if (sd->shot.info) eina_stringshare_del(sd->shot.info);
-   if (sd->shot.timer) ecore_timer_del(sd->shot.timer);
+   ecore_job_del(sd->deferred_resize_job);
+   ecore_job_del(sd->deferred_child_eval_job);
+   eina_stringshare_del(sd->shot.info);
+   ecore_timer_del(sd->shot.timer);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->x.client_message_handler)
-     ecore_event_handler_del(sd->x.client_message_handler);
-   if (sd->x.property_handler)
-     ecore_event_handler_del(sd->x.property_handler);
+   ecore_event_handler_del(sd->x.client_message_handler);
+   ecore_event_handler_del(sd->x.property_handler);
 #endif
 
    if (sd->img_obj)

@@ -493,9 +493,9 @@ _elm_image_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Image_Smart_Data *sd = _pd;
 
-   if (sd->anim_timer) ecore_timer_del(sd->anim_timer);
-   if (sd->img) evas_object_del(sd->img);
-   if (sd->prev_img) evas_object_del(sd->prev_img);
+   ecore_timer_del(sd->anim_timer);
+   evas_object_del(sd->img);
+   evas_object_del(sd->prev_img);
    if (sd->remote) elm_url_cancel(sd->remote);
    free(sd->remote_data);
    eina_stringshare_del(sd->key);

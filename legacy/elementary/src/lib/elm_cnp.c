@@ -4119,8 +4119,7 @@ _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_UP,
          _cont_obj_mouse_up, st);
 
-   if (st->tm)
-     ecore_timer_del(st->tm);
+   ecore_timer_del(st->tm);
 
    st->e = e;
    st->x_down = ev->canvas.x;

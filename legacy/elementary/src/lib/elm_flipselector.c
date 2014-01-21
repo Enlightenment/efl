@@ -497,7 +497,7 @@ _signal_val_up_start(void *data,
 
    sd->interval = sd->first_interval;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ecore_timer_del(sd->spin);
    sd->spin = ecore_timer_add(sd->interval, _signal_val_up, data);
 
    _signal_val_up(data);
@@ -530,7 +530,7 @@ _signal_val_down_start(void *data,
 
    sd->interval = sd->first_interval;
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ecore_timer_del(sd->spin);
    sd->spin = ecore_timer_add(sd->interval, _signal_val_down, data);
 
    _signal_val_down(data);
@@ -587,7 +587,7 @@ _elm_flipselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    while (sd->items)
      elm_widget_item_del(DATA_GET(sd->items));
 
-   if (sd->spin) ecore_timer_del(sd->spin);
+   ecore_timer_del(sd->spin);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

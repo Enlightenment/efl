@@ -714,7 +714,7 @@ _on_content_resize(void *data,
        (sd->clipboard_state == ECORE_X_ILLUME_CLIPBOARD_STATE_OFF))
      return;
 
-   if (sd->show_region_job) ecore_job_del(sd->show_region_job);
+   ecore_job_del(sd->show_region_job);
    sd->show_region_job = ecore_job_add(_show_region_job, data);
 }
 
@@ -927,11 +927,11 @@ _elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->prop_hdl) ecore_event_handler_del(sd->prop_hdl);
 #endif
 
-   if (sd->show_region_job) ecore_job_del(sd->show_region_job);
-   if (sd->port_indi_timer) ecore_timer_del(sd->port_indi_timer);
-   if (sd->land_indi_timer) ecore_timer_del(sd->land_indi_timer);
-   if (sd->portrait_indicator) evas_object_del(sd->portrait_indicator);
-   if (sd->landscape_indicator) evas_object_del(sd->landscape_indicator);
+   ecore_job_del(sd->show_region_job);
+   ecore_timer_del(sd->port_indi_timer);
+   ecore_timer_del(sd->land_indi_timer);
+   evas_object_del(sd->portrait_indicator);
+   evas_object_del(sd->landscape_indicator);
 
    top = elm_widget_top_get(obj);
    evas_object_data_set(top, "\377 elm,conformant", NULL);

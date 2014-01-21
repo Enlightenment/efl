@@ -136,7 +136,7 @@ _elm_photocam_pan_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    va_arg(*list, Evas_Coord);
    va_arg(*list, Evas_Coord);
 
-   if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
+   ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job_cb, psd->wobj);
 }
 
@@ -153,7 +153,7 @@ _elm_photocam_pan_smart_resize(Eo *obj, void *_pd, va_list *list)
    if ((ow == w) && (oh == h)) return;
 
    psd->wsd->resized = EINA_TRUE;
-   if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
+   ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job_cb, psd->wobj);
 }
 
@@ -734,7 +734,7 @@ _main_img_preloaded_cb(void *data,
         sd->grids = eina_list_prepend(sd->grids, g);
         _grid_load(obj, g);
      }
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, data);
    evas_object_smart_callback_call(data, SIG_LOADED, NULL);
    sd->preload_num--;
@@ -772,7 +772,7 @@ _zoom_do(Evas_Object *obj,
    sd->show.w = ow;
    sd->show.h = oh;
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
    if (t >= 1.0)
      {
@@ -854,7 +854,7 @@ _mouse_down_cb(void *data,
    else
      evas_object_smart_callback_call(data, SIG_PRESS, NULL);
    sd->longpressed = EINA_FALSE;
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   ecore_timer_del(sd->long_timer);
    sd->long_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _long_press_cb, data);
 }
@@ -959,7 +959,7 @@ _scroll_cb(Evas_Object *obj,
         if (sd->no_smooth == 1) _smooth_update(obj);
      }
 
-   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
+   ecore_timer_del(sd->scr_timer);
    sd->scr_timer = ecore_timer_add(0.5, _scroll_timeout_cb, obj);
 
    evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
@@ -1414,13 +1414,12 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->f) eina_file_close(sd->f);
    free(sd->remote_data);
    if (sd->remote) elm_url_cancel(sd->remote);
-   if (sd->file) eina_stringshare_del(sd->file);
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
-   if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
-   if (sd->zoom_animator) ecore_animator_del(sd->zoom_animator);
-   if (sd->g_layer_zoom.bounce.animator)
-     ecore_animator_del(sd->g_layer_zoom.bounce.animator);
+   eina_stringshare_del(sd->file);
+   ecore_job_del(sd->calc_job);
+   ecore_timer_del(sd->scr_timer);
+   ecore_timer_del(sd->long_timer);
+   ecore_animator_del(sd->zoom_animator);
+   ecore_animator_del(sd->g_layer_zoom.bounce.animator);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1629,7 +1628,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
         ecore_animator_del(sd->zoom_animator);
         sd->zoom_animator = NULL;
      }
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    evas_object_hide(sd->img);
    if (sd->f) eina_file_close(sd->f);
    sd->f = NULL;
@@ -1895,7 +1894,7 @@ done:
           }
      }
 
-   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
    if (!sd->paused)
      {

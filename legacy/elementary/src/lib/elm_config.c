@@ -234,13 +234,13 @@ _prop_change(void *data  EINA_UNUSED,
      {
         if (event->atom == _atom[ATOM_E_PROFILE])
           {
-             if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
+             ecore_timer_del(_prop_change_delay_timer);
              _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
                  (event->atom == _atom[ATOM_E_CONFIG]))
           {
-             if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
+             ecore_timer_del(_prop_change_delay_timer);
              _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
           }
      }

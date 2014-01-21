@@ -1235,10 +1235,10 @@ _mouse_down_cb(void *data,
 
    _item_highlight(it);
    sd->longpressed = EINA_FALSE;
-   if (it->long_timer) ecore_timer_del(it->long_timer);
+   ecore_timer_del(it->long_timer);
    it->long_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _long_press_cb, it);
-   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
+   ecore_timer_del(it->swipe_timer);
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
 
    /* Always call the callbacks last - the user may delete our context! */

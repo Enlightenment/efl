@@ -504,7 +504,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    nit = (Elm_Naviframe_Item *)it;
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
-   if (nit->animator) ecore_animator_del(nit->animator);
+   ecore_animator_del(nit->animator);
 
    top = (it == elm_naviframe_top_item_get(WIDGET(nit)));
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
@@ -1397,7 +1397,7 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    //All popping items which are not called yet by animator.
    EINA_LIST_FREE(sd->popping, it)
      {
-        if (it->animator) ecore_animator_del(it->animator);
+        ecore_animator_del(it->animator);
         elm_widget_item_del(it);
      }
 
@@ -1542,7 +1542,7 @@ _item_push(Eo *obj, void *_pd, va_list *list)
         prev_it->unfocusable = elm_widget_tree_unfocusable_get(VIEW(prev_it));
         elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_TRUE);
 
-        if (it->animator) ecore_animator_del(it->animator);
+        ecore_animator_del(it->animator);
         it->animator = ecore_animator_add(_push_transition_cb, it);
      }
    else
@@ -1738,7 +1738,7 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
 
-        if (it->animator) ecore_animator_del(it->animator);
+        ecore_animator_del(it->animator);
         it->animator = ecore_animator_add(_pop_transition_cb, it);
         sd->popping = eina_list_append(sd->popping, it);
      }
@@ -1824,7 +1824,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(nit)));
-   if (nit->animator) ecore_animator_del(nit->animator);
+   ecore_animator_del(nit->animator);
    nit->animator = ecore_animator_add(_push_transition_cb, nit);
 }
 

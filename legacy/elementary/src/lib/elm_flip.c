@@ -1650,7 +1650,7 @@ _up_cb(void *data,
    if (!sd->finish) tm = 1.0 - tm;
    else sd->next_state = !sd->state;
    tm *= 1.0; // FIXME: config for anim time
-   if (sd->animator) ecore_animator_del(sd->animator);
+   ecore_animator_del(sd->animator);
    sd->animator = ecore_animator_timeline_add(tm, _event_anim, sd);
    sd->len = tm;
    sd->start = ecore_loop_time_get();
@@ -1731,7 +1731,7 @@ _move_cb(void *data,
      }
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (sd->job) ecore_job_del(sd->job);
+   ecore_job_del(sd->job);
    sd->job = ecore_job_add(_update_job, fl);
 }
 
@@ -1889,7 +1889,7 @@ _elm_flip_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Flip_Smart_Data *sd = _pd;
 
-   if (sd->animator) ecore_animator_del(sd->animator);
+   ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());

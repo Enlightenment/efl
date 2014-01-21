@@ -285,7 +285,7 @@ _drag_button_up_cb(void *data,
         sd->final_position = 0.5;
         evas_object_smart_callback_call(obj, SIG_SELECTED, (char *)center);
 
-        if (sd->button_animator) ecore_animator_del(sd->button_animator);
+        ecore_animator_del(sd->button_animator);
         sd->button_animator = ecore_animator_add(_button_animator, obj);
 
         return;
@@ -344,7 +344,7 @@ _drag_button_up_cb(void *data,
         else
           sd->final_position = 0;
      }
-   if (sd->button_animator) ecore_animator_del(sd->button_animator);
+   ecore_animator_del(sd->button_animator);
    sd->button_animator = ecore_animator_add(_button_animator, obj);
 }
 
@@ -411,7 +411,7 @@ _track_move_cb(void *data,
              sd->final_position = 0.0;
           }
      }
-   if (sd->button_animator) ecore_animator_del(sd->button_animator);
+   ecore_animator_del(sd->button_animator);
    sd->button_animator = ecore_animator_add(_button_animator, obj);
 }
 

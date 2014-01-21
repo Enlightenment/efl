@@ -832,8 +832,7 @@ _elm_entry_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           }
         else
           {
-             if (sd->deferred_recalc_job)
-               ecore_job_del(sd->deferred_recalc_job);
+             ecore_job_del(sd->deferred_recalc_job);
              sd->deferred_recalc_job =
                ecore_job_add(_deferred_recalc_job, obj);
           }
@@ -1080,7 +1079,7 @@ _hover_dismissed_cb(void *data,
           }
      }
    elm_widget_scroll_freeze_pop(data);
-   if (sd->hov_deljob) ecore_job_del(sd->hov_deljob);
+   ecore_job_del(sd->hov_deljob);
    sd->hov_deljob = ecore_job_add(_hover_del_job, data);
 }
 
@@ -3392,27 +3391,24 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   if (sd->file) eina_stringshare_del(sd->file);
+   eina_stringshare_del(sd->file);
 
-   if (sd->hov_deljob) ecore_job_del(sd->hov_deljob);
+   ecore_job_del(sd->hov_deljob);
    if ((sd->api) && (sd->api->obj_unhook))
      sd->api->obj_unhook(obj);  // module - unhook
 
-   if (sd->mgf_proxy) evas_object_del(sd->mgf_proxy);
-   if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
-   if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
+   evas_object_del(sd->mgf_proxy);
+   evas_object_del(sd->mgf_bg);
+   evas_object_del(sd->mgf_clip);
 
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->sel_notify_handler)
-     ecore_event_handler_del(sd->sel_notify_handler);
-   if (sd->sel_clear_handler)
-     ecore_event_handler_del(sd->sel_clear_handler);
+   ecore_event_handler_del(sd->sel_notify_handler);
+   ecore_event_handler_del(sd->sel_clear_handler);
 #endif
-   if (sd->cut_sel) eina_stringshare_del(sd->cut_sel);
-   if (sd->text) eina_stringshare_del(sd->text);
-   if (sd->deferred_recalc_job)
-     ecore_job_del(sd->deferred_recalc_job);
+   eina_stringshare_del(sd->cut_sel);
+   eina_stringshare_del(sd->text);
+   ecore_job_del(sd->deferred_recalc_job);
    if (sd->append_text_idler)
      {
         ecore_idler_del(sd->append_text_idler);
@@ -3420,7 +3416,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->append_text_left = NULL;
         sd->append_text_idler = NULL;
      }
-   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
+   ecore_timer_del(sd->longpress_timer);
    EINA_LIST_FREE(sd->items, it)
      {
         eina_stringshare_del(it->label);

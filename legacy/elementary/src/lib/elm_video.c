@@ -254,7 +254,7 @@ _elm_video_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Video_Smart_Data *sd = _pd;
 
-   if (sd->timer) ecore_timer_del(sd->timer);
+   ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());

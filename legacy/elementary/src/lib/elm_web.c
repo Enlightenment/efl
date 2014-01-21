@@ -259,7 +259,7 @@ _view_smart_del(Evas_Object *obj)
 
    sd = evas_object_smart_data_get(obj);
 
-   if (sd->mouse.pan_anim) ecore_animator_del(sd->mouse.pan_anim);
+   ecore_animator_del(sd->mouse.pan_anim);
 
    _ewk_view_parent_sc.sc.del(obj);
 }
@@ -911,7 +911,7 @@ _ewk_view_resized_cb(void *data,
    if (!(sd->zoom.mode != ELM_WEB_ZOOM_MODE_MANUAL))
      return;
 
-   if (sd->zoom.timer) ecore_timer_del(sd->zoom.timer);
+   ecore_timer_del(sd->zoom.timer);
    sd->zoom.timer = ecore_timer_add(0.5, _reset_zoom_timer_cb, data);
 }
 
@@ -1205,8 +1205,8 @@ _elm_web_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 #ifdef HAVE_ELEMENTARY_WEB
    Elm_Web_Smart_Data *sd = _pd;
 
-   if (sd->zoom.timer) ecore_timer_del(sd->zoom.timer);
-   if (sd->bring_in.animator) ecore_animator_del(sd->bring_in.animator);
+   ecore_timer_del(sd->zoom.timer);
+   ecore_animator_del(sd->bring_in.animator);
 
 #else
    (void)_pd;
@@ -2758,7 +2758,7 @@ _region_bring_in(Eo *obj, void *_pd, va_list *list)
    sd->bring_in.start.y = sy;
    sd->bring_in.end.x = rx;
    sd->bring_in.end.y = ry;
-   if (sd->bring_in.animator) ecore_animator_del(sd->bring_in.animator);
+   ecore_animator_del(sd->bring_in.animator);
    sd->bring_in.animator = ecore_animator_timeline_add(
        _elm_config->bring_in_scroll_friction, _bring_in_anim_cb, obj);
 #else

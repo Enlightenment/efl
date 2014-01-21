@@ -788,7 +788,7 @@ elm_box_transition_free(void *data)
      (box_data->box, SIG_CHILD_ADDED, _transition_layout_child_added);
    evas_object_smart_callback_del
      (box_data->box, SIG_CHILD_REMOVED, _transition_layout_child_removed);
-   if (box_data->animator) ecore_animator_del(box_data->animator);
+   ecore_animator_del(box_data->animator);
 
    free(data);
 }

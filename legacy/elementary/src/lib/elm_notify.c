@@ -270,7 +270,7 @@ static void
 _timer_init(Evas_Object *obj,
             Elm_Notify_Smart_Data *sd)
 {
-   if (sd->timer) ecore_timer_del(sd->timer);
+   ecore_timer_del(sd->timer);
    if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, obj);
    else
@@ -502,7 +502,7 @@ _elm_notify_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);
    elm_notify_parent_set(obj, NULL);
    elm_notify_allow_events_set(obj, EINA_FALSE);
-   if (sd->timer) ecore_timer_del(sd->timer);
+   ecore_timer_del(sd->timer);
 
    ELM_SAFE_FREE(sd->notify, evas_object_del);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());

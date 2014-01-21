@@ -737,7 +737,7 @@ _resize_cb(void *data,
    evas_object_geometry_get(data, &x, &y, NULL, &h);
    evas_object_move(sd->more, x, y + h);
 
-   if (sd->resize_job) ecore_job_del(sd->resize_job);
+   ecore_job_del(sd->resize_job);
    sd->resize_job = ecore_job_add(_resize_job, data);
 }
 
@@ -2586,9 +2586,7 @@ _elm_toolbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    sd->delete_me = EINA_TRUE;
 
-   if (sd->resize_job)
-     ecore_job_del(sd->resize_job);
-
+   ecore_job_del(sd->resize_job);
    sd->resize_job = NULL;
 
    it = ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
@@ -2599,7 +2597,7 @@ _elm_toolbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         it = next;
      }
    if (sd->more_item) elm_widget_item_del(sd->more_item);
-   if (sd->long_timer) ecore_timer_del(sd->long_timer);
+   ecore_timer_del(sd->long_timer);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
