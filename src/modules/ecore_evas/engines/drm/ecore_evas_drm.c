@@ -188,6 +188,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         einfo->info.depth = 32; // FIXME
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
+        einfo->info.fd = ecore_drm_device_fd_get(dev);
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
