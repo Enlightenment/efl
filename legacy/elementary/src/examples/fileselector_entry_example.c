@@ -44,8 +44,8 @@ _current_sel_toggle(void        *data,
                     void        *event_info)
 {
    Evas_Object *fs_entry = data;
-   Eina_Bool old_val = elm_fileselector_entry_is_save_get(fs_entry);
-   elm_fileselector_entry_is_save_set(fs_entry, !old_val);
+   Eina_Bool old_val = elm_fileselector_is_save_get(fs_entry);
+   elm_fileselector_is_save_set(fs_entry, !old_val);
 
    printf("%s text entry with selected item's name\n",
           old_val ? "Disabling" : "Enabling");
@@ -57,8 +57,8 @@ _folder_only_toggle(void        *data,
                     void        *event_info)
 {
    Evas_Object *fs_entry = data;
-   Eina_Bool old_val = elm_fileselector_entry_folder_only_get(fs_entry);
-   elm_fileselector_entry_folder_only_set(fs_entry, !old_val);
+   Eina_Bool old_val = elm_fileselector_folder_only_get(fs_entry);
+   elm_fileselector_folder_only_set(fs_entry, !old_val);
 
    printf("Folder only mode set to: %s\n", old_val ? "false" : "true");
 }
@@ -69,8 +69,8 @@ _expandable_toggle(void        *data,
                    void        *event_info)
 {
    Evas_Object *fs_entry = data;
-   Eina_Bool old_val = elm_fileselector_entry_expandable_get(fs_entry);
-   elm_fileselector_entry_expandable_set(fs_entry, !old_val);
+   Eina_Bool old_val = elm_fileselector_expandable_get(fs_entry);
+   elm_fileselector_expandable_set(fs_entry, !old_val);
 
    printf("Expandable folders mode set to: %s\n", old_val ? "false" : "true");
 }
@@ -98,7 +98,7 @@ elm_main(int    argc,
    /* file selector entry */
    fs_entry = elm_fileselector_entry_add(win);
    evas_object_size_hint_align_set(fs_entry, EVAS_HINT_FILL, 0);
-   elm_fileselector_entry_path_set(fs_entry, "/tmp");
+   elm_fileselector_path_set(fs_entry, "/tmp");
    elm_object_text_set(fs_entry, "Select a file");
    elm_object_part_content_set(fs_entry, "button icon", ic);
 
@@ -119,7 +119,7 @@ elm_main(int    argc,
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "editable selection");
-   elm_check_state_set(ck, elm_fileselector_entry_is_save_get(fs_entry));
+   elm_check_state_set(ck, elm_fileselector_is_save_get(fs_entry));
    evas_object_smart_callback_add(ck, "changed", _current_sel_toggle, fs_entry);
    elm_box_pack_end(hbox, ck);
    evas_object_show(ck);
@@ -133,14 +133,14 @@ elm_main(int    argc,
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "folders only");
-   elm_check_state_set(ck, elm_fileselector_entry_folder_only_get(fs_entry));
+   elm_check_state_set(ck, elm_fileselector_folder_only_get(fs_entry));
    evas_object_smart_callback_add(ck, "changed", _folder_only_toggle, fs_entry);
    elm_box_pack_end(hbox, ck);
    evas_object_show(ck);
 
    ck = elm_check_add(win);
    elm_object_text_set(ck, "expandable");
-   elm_check_state_set(ck, elm_fileselector_entry_expandable_get(fs_entry));
+   elm_check_state_set(ck, elm_fileselector_expandable_get(fs_entry));
    evas_object_smart_callback_add(ck, "changed", _expandable_toggle, fs_entry);
    elm_box_pack_end(hbox, ck);
    evas_object_show(ck);
