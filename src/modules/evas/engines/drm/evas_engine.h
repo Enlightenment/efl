@@ -98,10 +98,12 @@ struct _Outbuf
         Eina_List *prev_pending_writes;
 
         Eina_Bool destination_alpha : 1;
+
+        int fd;
      } priv;
 };
 
-Outbuf *evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha);
+Outbuf *evas_swapbuf_setup(int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha, int fd);
 void evas_swapbuf_free(Outbuf *ob);
 void evas_swapbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, unsigned int rotation, Outbuf_Depth depth, Eina_Bool alpha);
 RGBA_Image *evas_swapbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
