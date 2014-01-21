@@ -2829,12 +2829,12 @@ proceed:
    if (sd->append_text_len > 0)
      {
         char *tmpbuf;
-        size_t tlen;
+        size_t len, tlen;
 
         tlen = strlen(text);
+        len = tlen + sd->append_text_len - sd->append_text_position;
         /* FIXME: need that or we do copy uninitialised data */
-        tmpbuf = calloc(1, tlen + sd->append_text_len -
-                        sd->append_text_position + 1);
+        tmpbuf = calloc(1, len + 1);
         if (!tmpbuf)
           {
              ERR("Failed to allocate memory for entry's text %p", obj);
@@ -2846,7 +2846,7 @@ proceed:
           memcpy(tmpbuf + tlen, sd->append_text_left
                  + sd->append_text_position, sd->append_text_len
                  - sd->append_text_position);
-        tmpbuf[sd->append_text_len] = '\0';
+        tmpbuf[len] = '\0';
         eina_stringshare_replace(&sd->text, tmpbuf);
         free(tmpbuf);
      }
