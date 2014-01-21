@@ -2206,13 +2206,8 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
           {
              if (info->name)
                {
-                  /* FIXME: TODO: NB:
-                   * 
-                   * Old randr code says there is an xrandr bug here with 
-                   * nameLen. Test This !!!
-                   * 
-                   */
-                  ret = strdup(info->name);
+                  ret = malloc(info->nameLen);
+                  memcpy(ret, info->name, info->nameLen);
                   if (len) *len = info->nameLen;
                }
 
