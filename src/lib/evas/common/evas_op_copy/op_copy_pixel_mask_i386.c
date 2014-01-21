@@ -24,7 +24,7 @@ _op_copy_p_mas_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int 
 		MOV_R2P(mm1, *d, mm0)
 		break;
 	  }
-	m++;  d++;
+	m++;  s++;  d++;
      }
 }
 
