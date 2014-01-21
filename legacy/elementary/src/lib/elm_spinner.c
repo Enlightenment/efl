@@ -478,6 +478,12 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
              goto success;
           }
+        else if ((!strcmp(ev->key, "Return")) ||
+                 (!strcmp(ev->key, "KP_Enter")) ||
+                 (!strcmp(ev->key, "space")))
+          {
+             _entry_toggle_cb(obj, NULL, NULL, NULL);
+          }
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
