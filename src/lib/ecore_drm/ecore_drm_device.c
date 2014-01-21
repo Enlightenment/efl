@@ -576,3 +576,10 @@ ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
 
    return EINA_TRUE;
 }
+
+EAPI int 
+ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
+{
+   if (!dev) return -1;
+   return dev->drm.fd;
+}
