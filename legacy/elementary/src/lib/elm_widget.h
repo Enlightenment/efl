@@ -1285,7 +1285,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
 #define elm_wdg_disable(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
- * @def elm_wdg_theme
+ * @def elm_wdg_theme_apply
  * @since 1.8
  *
  * 'Virtual' function on the widget being re-themed.
