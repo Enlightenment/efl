@@ -599,7 +599,7 @@ _elm_conformant_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    _conformant_parts_swallow(obj);
@@ -1012,7 +1012,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_conformant_smart_del),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_conformant_smart_parent_set),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_conformant_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_conformant_smart_theme),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_conformant_smart_content_aliases_get),
         EO_OP_FUNC_SENTINEL

@@ -1109,7 +1109,7 @@ enum
 {
    ELM_WIDGET_SUB_ID_ON_FOCUS,
    ELM_WIDGET_SUB_ID_DISABLE,
-   ELM_WIDGET_SUB_ID_THEME,
+   ELM_WIDGET_SUB_ID_THEME_APPLY,
    ELM_WIDGET_SUB_ID_TRANSLATE,
    ELM_WIDGET_SUB_ID_EVENT,
    ELM_WIDGET_SUB_ID_ON_FOCUS_REGION,
@@ -1247,7 +1247,7 @@ enum
    ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET,
    ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET,
 #if 0
-   ELM_WIDGET_SUB_ID_THEME, /* API + virtual*/
+   ELM_WIDGET_SUB_ID_THEME_APPLY, /* API + virtual*/
    ELM_WIDGET_SUB_ID_THEME_SPECIFIC,
    ELM_WIDGET_SUB_ID_TRANSLATE, /* API + virtual*/
 #endif
@@ -1293,7 +1293,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[out] ret
  *
  */
-#define elm_wdg_theme(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), EO_TYPECHECK(Eina_Bool *, ret)
+#define elm_wdg_theme_apply(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_wdg_translate

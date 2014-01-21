@@ -518,7 +518,7 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
                          elm_widget_style_get(obj));
      }
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    if (sd->popup)
@@ -1098,7 +1098,7 @@ _elm_slider_horizontal_set(Eo *obj, void *_pd, va_list *list)
    if (sd->horizontal == horizontal) return;
    sd->horizontal = horizontal;
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -1464,7 +1464,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_slider_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _elm_slider_smart_calculate),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_slider_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_slider_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_slider_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_slider_smart_activate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_slider_smart_focus_next_manager_is),

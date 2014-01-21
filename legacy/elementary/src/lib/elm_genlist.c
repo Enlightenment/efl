@@ -2780,7 +2780,7 @@ _elm_genlist_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    Elm_Genlist_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -7600,7 +7600,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_genlist_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_genlist_smart_move),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_genlist_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_genlist_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_genlist_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_genlist_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_genlist_smart_on_focus),

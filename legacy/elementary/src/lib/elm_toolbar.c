@@ -1158,7 +1158,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
 
    Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    elm_widget_theme_object_set
@@ -2020,7 +2020,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    _item_del(item);
 
    if (item != sd->more_item)
-      eo_do(obj, elm_wdg_theme(NULL));
+      eo_do(obj, elm_wdg_theme_apply(NULL));
 
    return EINA_TRUE;
 }
@@ -2760,7 +2760,7 @@ _icon_size_set(Eo *obj, void *_pd, va_list *list)
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
    else sd->icon_size = sd->theme_icon_size;
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI int
@@ -3969,7 +3969,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_toolbar_smart_move),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_toolbar_smart_on_focus),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_toolbar_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_toolbar_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_toolbar_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_toolbar_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_toolbar_smart_focus_next_manager_is),

@@ -134,7 +134,7 @@ _elm_panel_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -361,7 +361,7 @@ _elm_panel_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_size_hint_align_set(priv->bx, 0.5, 0.5);
@@ -557,7 +557,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_panel_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_panel_smart_focus_next),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_panel_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_panel_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_panel_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS), _elm_panel_smart_access),
 

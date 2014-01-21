@@ -280,7 +280,7 @@ _pos_set(Eo *obj, void *_pd, va_list *list)
    eina_stringshare_replace
      (&ld->group, corner_string[sd->pos]);
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI Elm_Bubble_Pos

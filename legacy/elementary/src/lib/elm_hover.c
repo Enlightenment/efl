@@ -291,7 +291,7 @@ _elm_hover_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
    Elm_Hover_Smart_Data *sd = _pd;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
@@ -863,7 +863,7 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_hover_smart_show),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_hover_smart_hide),
 
-           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_hover_smart_theme),
+           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_hover_smart_theme),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD), _elm_hover_smart_sub_object_add),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_hover_smart_sub_object_del),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_hover_smart_parent_set),

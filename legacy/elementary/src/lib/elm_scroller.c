@@ -371,7 +371,7 @@ _elm_scroller_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -868,7 +868,7 @@ _custom_widget_base_theme_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (eina_stringshare_replace(&(ld->klass), klass) ||
        eina_stringshare_replace(&(ld->group), group))
-      eo_do(obj, elm_wdg_theme(NULL));
+      eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI void
@@ -1264,7 +1264,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_scroller_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_scroller_smart_move),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_scroller_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_scroller_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_scroller_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_scroller_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_scroller_smart_focus_next),

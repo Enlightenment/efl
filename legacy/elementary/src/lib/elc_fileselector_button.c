@@ -56,7 +56,7 @@ _elm_fileselector_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *li
    /* file selector button's style has an extra bit */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -191,7 +191,7 @@ _elm_fileselector_button_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED
 
    evas_object_smart_callback_add(obj, "clicked", _button_clicked, priv);
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
@@ -505,7 +505,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_fileselector_button_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_fileselector_button_smart_del),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_fileselector_button_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_fileselector_button_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_fileselector_button_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_fileselector_button_smart_admits_autorepeat_get),

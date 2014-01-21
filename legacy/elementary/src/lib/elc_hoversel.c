@@ -61,7 +61,7 @@ _elm_hoversel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    /* hoversel's style has an extra bit: orientation */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -261,7 +261,7 @@ _elm_hoversel_smart_add(Eo *obj, void *_pd EINA_UNUSED,
    evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
 
    //What are you doing here?
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 static void
@@ -389,7 +389,7 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
 
    sd->horizontal = !!horizontal;
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -690,7 +690,7 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_hoversel_smart_show),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_hoversel_smart_hide),
 
-           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_hoversel_smart_theme),
+           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_hoversel_smart_theme),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_hoversel_smart_translate),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_hoversel_smart_parent_set),
            EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_hoversel_smart_event),

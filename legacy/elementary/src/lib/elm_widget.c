@@ -756,7 +756,7 @@ elm_widget_theme(Evas_Object *obj)
      elm_cursor_theme(cur);
 
    Eina_Bool ret2;
-   eo_do(obj, elm_wdg_theme(&ret2));
+   eo_do(obj, elm_wdg_theme_apply(&ret2));
    ret &= ret2;
 
    return ret;
@@ -801,7 +801,7 @@ elm_widget_theme_specific(Evas_Object *obj,
      elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 static void
@@ -6318,7 +6318,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_widget_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_widget_disable),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_widget_theme_func),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_widget_theme_func),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_widget_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_widget_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION), _elm_widget_on_focus_region),
@@ -6461,7 +6461,7 @@ _class_constructor(Eo_Class *klass)
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ON_FOCUS, "'Virtual' function handling focus in/out events on the widget."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISABLE, "'Virtual' function on the widget being disabled."),
-     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_THEME, "'Virtual' function on the widget being re-themed."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_THEME_APPLY, "'Virtual' function on the widget being re-themed."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TRANSLATE, "'Virtual' function handling language changes on Elementary."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_EVENT, "'Virtual' function handling input events on the widget."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION, "'Virtual' function returning an inner area of a widget that should be brought into the visible are of a broader viewport, may this context arise."),

@@ -554,7 +554,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
    if (!int_ret) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -3537,7 +3537,7 @@ _text_style_user_push(Eo *obj, void *_pd, va_list *list)
    Elm_Entry_Smart_Data *sd = _pd;
 
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI void
@@ -3554,7 +3554,7 @@ _text_style_user_pop(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI const char *
@@ -3595,7 +3595,7 @@ _single_line_set(Eo *obj, void *_pd, va_list *list)
    sd->line_wrap = ELM_WRAP_NONE;
    if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
      elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 
    if (sd->scroll)
      {
@@ -3668,7 +3668,7 @@ _password_set(Eo *obj, void *_pd, va_list *list)
         _entry_selection_callbacks_register(obj);
      }
 
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -3913,7 +3913,7 @@ _line_wrap_set(Eo *obj, void *_pd, va_list *list)
    if (sd->line_wrap == wrap) return;
    sd->last_w = -1;
    sd->line_wrap = wrap;
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI Elm_Wrap_Type
@@ -3950,7 +3950,7 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->editable == editable) return;
    sd->editable = editable;
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 
    if (editable)
      elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
@@ -5109,7 +5109,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
         elm_widget_on_show_region_hook_set(obj, NULL, NULL);
      }
    sd->last_w = -1;
-   eo_do(obj, elm_wdg_theme(NULL));
+   eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -5856,7 +5856,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_entry_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_entry_smart_disable),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME), _elm_entry_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_entry_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_entry_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION), _elm_entry_smart_on_focus_region),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_entry_smart_sub_object_del),
