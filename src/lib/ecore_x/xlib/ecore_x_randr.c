@@ -2206,8 +2206,9 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
           {
              if (info->name)
                {
-                  ret = malloc(info->nameLen);
+                  ret = malloc(info->nameLen + 1);
                   memcpy(ret, info->name, info->nameLen);
+                  ret[info->nameLen] = 0;
                   if (len) *len = info->nameLen;
                }
 
