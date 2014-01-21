@@ -96,6 +96,7 @@ _item_show_region(void *data)
 {
    Elm_Gengrid_Smart_Data *sd = data;
    Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, col = 0, row = 0, minx = 0, miny = 0;
+   Evas_Coord vw = 0, vh = 0;
    Elm_Gen_Item *it = NULL;
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
 
@@ -115,24 +116,15 @@ _item_show_region(void *data)
                row = cvh / sd->item_height;
                if (row <= 0) row = 1;
                x = (it->position - 1) / row;
-               if (x > 0)
-                 y = (it->position - 1) % x;
-               it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
-                       + (GG_IT(it)->prev_group * sd->group_item_width)
-                       + minx;
-               if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_MIDDLE)
-                 {
-                    if (it_xpos > 0) it_xpos = it_xpos + (cvw / 2) - (sd->item_width / 2);
-                    else it_xpos = it_xpos - (cvw / 2) + (sd->item_width / 2);
-                 }
-               else if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_TOP)
-                 {
-                    if (it_xpos > 0) it_xpos = it_xpos + cvw - sd->item_width;
-                 }
-               else if (sd->s_type != ELM_GENGRID_ITEM_SCROLLTO_IN)
-                 {
-                    it_xpos = 0;
-                 }
+               if (x == 0) y = it->position - 1;
+               else if (x > 0) y = (it->position - 1) % x;
+               if (x >= 1)
+                 it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
+                    + (GG_IT(it)->prev_group * sd->group_item_width)
+                    + minx;
+               else it_xpos = minx;
+               miny = miny + ((cvh - (sd->item_height * row))
+                    * GG_IT(it)->wsd->align_y);
                it_ypos = y * sd->item_height + miny;
                it->x = x;
                it->y = y;
@@ -142,41 +134,46 @@ _item_show_region(void *data)
                col = cvw / sd->item_width;
                if (col <= 0) col = 1;
                y = (it->position - 1) / col;
-               if (y > 0)
-                 x = (it->position - 1) % y;
-               it_ypos = ((y - GG_IT(it)->prev_group) * sd->item_height)
-                       + (GG_IT(it)->prev_group * sd->group_item_height)
-                       + miny;
-               if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_MIDDLE)
-                 {
-                    if (it_ypos > 0) it_ypos = it_ypos + (cvh / 2) - (sd->item_height / 2);
-                    else it_ypos = it_ypos - (cvh / 2) + (sd->item_height / 2);
-                 }
-               else if (sd->s_type == ELM_GENGRID_ITEM_SCROLLTO_TOP)
-                 {
-                    if (it_ypos > 0) it_ypos = it_ypos + cvh - sd->item_height;
-                 }
-               else if (sd->s_type != ELM_GENGRID_ITEM_SCROLLTO_IN)
-                 {
-                    it_ypos = 0;
-                 }
+               if (y == 0) x = it->position - 1;
+               else if (y > 0) x = (it->position - 1) % y;
                it_xpos = x * sd->item_width + minx;
+               if (y >= 1)
+                 it_ypos = ((y - GG_IT(it)->prev_group) * sd->item_height)
+                    + (GG_IT(it)->prev_group * sd->group_item_height)
+                    + miny;
+               else it_ypos = miny;
+               minx = minx + ((cvw - (sd->item_width * col))
+                    * GG_IT(it)->wsd->align_x);
                it->x = x;
                it->y = y;
+            }
+
+          switch (sd->scroll_to_type)
+            {
+               case ELM_GENGRID_ITEM_SCROLLTO_TOP:
+                  eo_do(WIDGET(it), elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+                  break;
+               case ELM_GENGRID_ITEM_SCROLLTO_MIDDLE:
+                  eo_do(WIDGET(it), elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+                  it_xpos = it_xpos - ((vw - sd->item_width) / 2);
+                  it_ypos = it_ypos - ((vh - sd->item_height) / 2);
+                  break;
+               default:
+                  vw = sd->item_width;
+                  vh = sd->item_height;
+                  break;
             }
 
           if (sd->show_region)
             {
                eo_do(WIDGET(it), elm_scrollable_interface_content_region_show(
-                                           it_xpos, it_ypos, sd->item_width,
-                                           sd->item_height));
+                                                     it_xpos, it_ypos, vw, vh));
                sd->show_region = EINA_FALSE;
             }
           if (sd->bring_in)
             {
                eo_do(WIDGET(it), elm_scrollable_interface_region_bring_in(
-                                           it_xpos, it_ypos, sd->item_width,
-                                           sd->item_height));
+                                                 it_xpos, it_ypos, vw, vh));
                sd->bring_in = EINA_FALSE;
             }
        }
@@ -3811,7 +3808,7 @@ elm_gengrid_item_show(Elm_Object_Item *item,
 
    sd->show_region = EINA_TRUE;
    sd->show_it = it;
-   sd->s_type = type;
+   sd->scroll_to_type = type;
 
    _item_show_region(sd);
 }
@@ -3830,7 +3827,7 @@ elm_gengrid_item_bring_in(Elm_Object_Item *item,
 
    sd->bring_in = EINA_TRUE;
    sd->bring_in_it = it;
-   sd->s_type = type;
+   sd->scroll_to_type = type;
 
    _item_show_region(sd);
 }
