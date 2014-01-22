@@ -546,7 +546,7 @@ _resize_job(void *data)
 
    evas_object_resize(sd->bx, w, h);
 
-// Remove the first or last separator since it is not neccessary
+// Remove the first or last separator since it is not necessary
    list = evas_object_box_children_get(sd->bx_more);
    EINA_INLIST_FOREACH(sd->items, it)
      {

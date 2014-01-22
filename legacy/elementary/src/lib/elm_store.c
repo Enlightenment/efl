@@ -144,7 +144,7 @@ _store_genlist_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 ////// **** WARNING ***********************************************************
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *
 //     ************************************************************************
-/* TODO: refactor lock part into core? this does not depend on filesystm part */
+/* TODO: refactor lock part into core? this does not depend on filesystem part */
 static void
 _store_filesystem_fetch_do(void *data, Ecore_Thread *th EINA_UNUSED)
 {
@@ -169,7 +169,7 @@ _store_filesystem_fetch_do(void *data, Ecore_Thread *th EINA_UNUSED)
 //     ************************************************************************
 ////   * End of separate thread function.                                     *
 ////// ************************************************************************
-/* TODO: refactor lock part into core? this does not depend on filesystm part */
+/* TODO: refactor lock part into core? this does not depend on filesystem part */
 static void
 _store_filesystem_fetch_end(void *data, Ecore_Thread *th)
 {
@@ -180,7 +180,7 @@ _store_filesystem_fetch_end(void *data, Ecore_Thread *th)
    if (th == sti->fetch_th) sti->fetch_th = NULL;
 }
 
-/* TODO: refactor lock part into core? this does not depend on filesystm part */
+/* TODO: refactor lock part into core? this does not depend on filesystem part */
 static void
 _store_filesystem_fetch_cancel(void *data, Ecore_Thread *th)
 {

@@ -1808,7 +1808,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_FILE_SET, "Set the file that will be used as the image's source."),
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_FILE_GET, "Get the file that will be used as image."),
 
-     EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SIZING_EVAL, "'Virtual' function on evalutating the object's final geometry."),
+     EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SIZING_EVAL, "'Virtual' function on evaluating the object's final geometry."),
 
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_SET, "'Virtual' function on setting whether the object's image should be scaled smoothly or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_GET, "'Virtual' function on retrieving whether the object's image is to scaled smoothly or not."),

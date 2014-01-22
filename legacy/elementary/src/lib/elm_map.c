@@ -1089,7 +1089,7 @@ _zoom_do(Elm_Map_Smart_Data *sd,
    sd->size.h = sd->size.w;
 
    // Fix to zooming with (viewport center vx, vy) as the center to prevent
-   // from zooming with (0,0) as the cetner. (scroller default behavior)
+   // from zooming with (0,0) as the center. (scroller default behavior)
    _viewport_coord_get(sd, &vx, &vy, &vw, &vh);
    if ((vw > 0) && (vh > 0) && (ow > 0) && (oh > 0))
      {
@@ -1375,7 +1375,7 @@ _icon_dup(Evas_Object *icon,
    if (!icon || !parent) return NULL;
    dupp = evas_object_image_filled_add(evas_object_evas_get(parent));
    evas_object_image_source_set(dupp, icon);
-   // Set size as origin' sizse for proxy
+   // Set size as origin' size for proxy
    evas_object_geometry_get(icon, NULL, NULL, &w, &h);
    if (w <= 0 || h <= 0)
      {
@@ -2581,7 +2581,7 @@ _overlay_place(Elm_Map_Smart_Data *sd)
           _overlay_bubble_coord_update(overlay->ovl);
      }
 
-   // Classify into group boss or follwer
+   // Classify into group boss or follower
    EINA_LIST_FOREACH(sd->overlays, l, overlay)
      {
         Elm_Map_Overlay *boss;

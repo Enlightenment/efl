@@ -258,7 +258,7 @@ _base_geometry_calc(Evas_Object *obj,
      base_size.x = min_size.x;
 
    //Check the Which direction is available.
-   //If find a avaialble direction, it adjusts position and size.
+   //If find a available direction, it adjusts position and size.
    for (idx = 0; idx < 4; idx++)
      {
         switch (sd->dir_priority[idx])
