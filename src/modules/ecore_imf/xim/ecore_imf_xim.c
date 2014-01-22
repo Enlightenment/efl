@@ -1024,7 +1024,10 @@ done:
              imf_context_data->feedbacks = calloc(imf_context_data->preedit_length, sizeof(XIMFeedback));
 
              for (i = 0; i < imf_context_data->preedit_length; i++)
-               imf_context_data->feedbacks[i] = t->feedback[i];
+               {
+                  if (t)
+                    imf_context_data->feedbacks[i] = t->feedback[i];
+               }
           }
 
         ecore_imf_context_preedit_changed_event_add(ctx);
