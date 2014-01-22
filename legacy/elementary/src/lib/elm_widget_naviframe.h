@@ -57,6 +57,8 @@ struct _Elm_Naviframe_Item
    Eina_Bool    title_enabled : 1;
    Eina_Bool    unfocusable : 1;
    Eina_Bool    popping : 1;
+   Eina_Bool    delete_me : 1;
+   int          ref;
 };
 
 typedef struct _Elm_Naviframe_Content_Item_Pair Elm_Naviframe_Content_Item_Pair;

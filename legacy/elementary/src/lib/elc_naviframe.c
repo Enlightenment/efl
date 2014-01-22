@@ -504,6 +504,9 @@ _item_del_pre_hook(Elm_Object_Item *it)
    nit = (Elm_Naviframe_Item *)it;
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
+   nit->delete_me = EINA_TRUE;
+   if (nit->ref > 0) return EINA_FALSE;
+
    ecore_animator_del(nit->animator);
 
    top = (it == elm_naviframe_top_item_get(WIDGET(nit)));
@@ -1696,14 +1699,26 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
    if (it->popping) return;
    it->popping = EINA_TRUE;
 
+   evas_object_ref(obj);
    if (it->pop_cb)
      {
+        it->ref++;
         if (!it->pop_cb(it->pop_data, (Elm_Object_Item *)it))
           {
+             it->ref--;
+             if (it->delete_me)
+               {
+                  _item_del_pre_hook(it);
+                  _elm_widget_item_free(it);
+               }
              it->popping = EINA_FALSE;
+             evas_object_unref(obj);
+
              return;
           }
+        it->ref--;
      }
+   evas_object_unref(obj);
 
    if (sd->preserve)
      content = it->content;
