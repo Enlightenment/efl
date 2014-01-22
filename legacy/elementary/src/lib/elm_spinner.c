@@ -17,6 +17,8 @@ EAPI Eo_Op ELM_OBJ_SPINNER_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "Elm_Spinner"
 #define MY_CLASS_NAME_LEGACY "elm_spinner"
 
+#define ELM_SPINNER_DELAY_CHANGE_TIME 0.2
+
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DRAG_START[] = "spinner,drag,start";
 static const char SIG_DRAG_STOP[] = "spinner,drag,stop";
@@ -114,11 +116,11 @@ apply:
 }
 
 static Eina_Bool
-_delay_change(void *data)
+_delay_change_timer_cb(void *data)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   sd->delay_timer = NULL;
+   sd->delay_change_timer = NULL;
    evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
 
    return ECORE_CALLBACK_CANCEL;
@@ -153,8 +155,9 @@ _value_set(Evas_Object *obj,
    sd->val = new_val;
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
-   ecore_timer_del(sd->delay_timer);
-   sd->delay_timer = ecore_timer_add(0.2, _delay_change, obj);
+   ecore_timer_del(sd->delay_change_timer);
+   sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
+                                            _delay_change_timer_cb, obj);
 
    return EINA_TRUE;
 }
@@ -266,8 +269,9 @@ _entry_activated_cb(void *data,
 
    _entry_value_apply(data);
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
-   ecore_timer_del(sd->delay_timer);
-   sd->delay_timer = ecore_timer_add(0.2, _delay_change, data);
+   ecore_timer_del(sd->delay_change_timer);
+   sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
+                                            _delay_change_timer_cb, data);
 }
 
 static void
@@ -547,7 +551,7 @@ _elm_spinner_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (!elm_widget_focus_get(obj))
      {
-        ELM_SAFE_FREE(sd->delay_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
 
         _entry_value_apply(obj);
@@ -740,7 +744,7 @@ _elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Spinner_Smart_Data *sd = _pd;
 
    eina_stringshare_del(sd->label);
-   ecore_timer_del(sd->delay_timer);
+   ecore_timer_del(sd->delay_change_timer);
    ecore_timer_del(sd->spin_timer);
 
    if (sd->special_values)

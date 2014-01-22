@@ -25,12 +25,13 @@ struct _Elm_Spinner_Smart_Data
    Evas_Object          *ent;
    const char           *label;
    double                val, val_min, val_max, val_base;
-   double                step; // step for the value change. 1 by default.
-   double                drag_start_val; // spinner value on drag start.
-                                         // this is reset to 0 when drag stops.
+   double                step; /*<< step for the value change. 1 by default. */
+   double                drag_start_val; /*<< spinner value on drag start.
+                                         this is reset to 0 when drag stops. */
    double                spin_speed, interval, first_interval;
    int                   round;
-   Ecore_Timer          *delay_timer, *spin_timer;
+   Ecore_Timer          *delay_change_timer; /*<< a timer for a delay,changed smart callback */
+   Ecore_Timer          *spin_timer; /*<< a timer for a repeated spinner value change on mouse down */
    Eina_List            *special_values;
 
    Eina_Bool             entry_visible : 1;
