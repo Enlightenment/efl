@@ -529,7 +529,7 @@ _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
         edje_object_signal_emit(sd->entry_edje, "elm,state,enabled", "elm");
         if (sd->scroll)
           {
-             edje_object_signal_emit(sd->scr_edje, "elm,state,disabled", "elm");
+             edje_object_signal_emit(sd->scr_edje, "elm,state,enabled", "elm");
              eo_do(obj, elm_scrollable_interface_freeze_set(EINA_FALSE));
           }
         sd->disabled = EINA_FALSE;
