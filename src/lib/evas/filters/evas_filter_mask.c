@@ -12,7 +12,7 @@ static Eina_Bool _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd);
 static Eina_Bool _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd);
 static Eina_Bool _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd);
 static Eina_Bool _mask_cpu_rgba_alpha_rgba(Evas_Filter_Command *cmd);
-
+static Eina_Bool _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd);
 
 Evas_Filter_Apply_Func
 evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
@@ -43,7 +43,7 @@ evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
         if (cmd->mask->alpha_only && !cmd->output->alpha_only)
           return _mask_cpu_rgba_alpha_rgba;
         else if (!cmd->mask->alpha_only && !cmd->output->alpha_only)
-          return evas_filter_blend_cpu_func_get(cmd); // Check this. Merge?
+          return _mask_cpu_rgba_rgba_rgba;
      }
 
    CRI("If input or mask is RGBA, then output must also be RGBA: %s [%s] %s",
@@ -346,5 +346,52 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
      }
 
    free(span);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
+{
+   Evas_Filter_Command fake_cmd;
+   Evas_Filter_Apply_Func blend;
+   Evas_Filter_Buffer *fb;
+   int w, h;
+
+   fake_cmd = *cmd;
+   w = cmd->input->w;
+   h = cmd->input->h;
+
+   /* Blend 2 rgba images into rgba destination.
+    * Mechanism:
+    * 1. Copy input to temp (COPY)
+    * 2. Blend mask to temp (MUL)
+    * 3. Blend temp to output (render_op)
+    */
+
+   // Copy
+   BUFFERS_LOCK();
+   fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->input, w, h);
+   BUFFERS_UNLOCK();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+   fb->locked = EINA_TRUE;
+
+   // Mask --> Temp
+   fake_cmd.input = cmd->mask;
+   fake_cmd.mask = NULL;
+   fake_cmd.output = fb;
+   fake_cmd.draw.render_op = EVAS_RENDER_MUL;
+   blend = evas_filter_blend_cpu_func_get(&fake_cmd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
+   blend(&fake_cmd);
+
+   // Temp --> Output
+   fake_cmd.draw.render_op = EVAS_RENDER_BLEND;
+   fake_cmd.input = fb;
+   fake_cmd.output = cmd->output;
+   blend = evas_filter_blend_cpu_func_get(&fake_cmd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
+   blend(&fake_cmd);
+
+   fb->locked = EINA_FALSE;
    return EINA_TRUE;
 }

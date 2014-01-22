@@ -45,6 +45,8 @@ static struct
    { "repeat_y", EVAS_FILTER_FILL_MODE_REPEAT_Y },
    { "repeat_x_stretch_y", EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y },
    { "repeat_y_stretch_x", EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X },
+   { "stretch_y_repeat_x", EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y },
+   { "stretch_x_repeat_y", EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X },
    { "repeat", EVAS_FILTER_FILL_MODE_REPEAT_XY }, // alias
    { "repeat_xy", EVAS_FILTER_FILL_MODE_REPEAT_XY },
    { "stretch", EVAS_FILTER_FILL_MODE_STRETCH_XY }, // alias
