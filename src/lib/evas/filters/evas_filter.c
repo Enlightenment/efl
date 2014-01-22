@@ -1344,10 +1344,9 @@ _clip_to_target(int *sx /* OUT */, int *sy /* OUT */, int sw, int sh,
    if (ox > 0)
      {
         (*dx) = ox;
-        if (((*dx) + sw) > (dw))
+        (*cols) = sw;
+        if (((*dx) + (*cols)) > (dw))
           (*cols) = dw - (*dx);
-        else
-          (*cols) = sw;
      }
    else if (ox < 0)
      {
@@ -1364,10 +1363,9 @@ _clip_to_target(int *sx /* OUT */, int *sy /* OUT */, int sw, int sh,
    if (oy > 0)
      {
         (*dy) = oy;
-        if (((*dy) + sh) > (dh))
+        (*rows) = sh;
+        if (((*dy) + (*rows)) > (dh))
           (*rows) = dh - (*dy);
-        else
-          (*rows) = sh;
      }
    else if (oy < 0)
      {
