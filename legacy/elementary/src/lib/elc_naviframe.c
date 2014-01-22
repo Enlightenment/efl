@@ -529,7 +529,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
         if (sd->freeze_events)
           evas_object_freeze_events_set(VIEW(prev_it), EINA_FALSE);
         _resize_object_reset(WIDGET(prev_it), prev_it);
-        evas_object_show(VIEW(prev_it));
 
         _prev_page_focus_recover(prev_it);
 
@@ -1071,8 +1070,7 @@ _on_item_push_finished(void *data,
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   evas_object_hide(VIEW(it));
-
+   elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
    elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
 
    if (sd->freeze_events)
@@ -1522,8 +1520,6 @@ _item_push(Eo *obj, void *_pd, va_list *list)
                   title_label, prev_btn, next_btn, content, item_style);
    if (!it) return;
 
-   evas_object_show(VIEW(it));
-
    if (prev_it) elm_widget_focused_object_clear(VIEW(prev_it));
    _resize_object_reset(obj, it);
    if (prev_it)
@@ -1604,6 +1600,8 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
        (sd->stack, EINA_INLIST_GET(it),
        EINA_INLIST_GET(((Elm_Naviframe_Item *)before)));
 
+   elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
+
    elm_layout_sizing_eval(obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -1656,12 +1654,13 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
      {
         elm_widget_focused_object_clear(VIEW(after));
         _resize_object_reset(obj, it);
-        evas_object_show(VIEW(it));
-        evas_object_hide(VIEW(after));
+
         if (elm_object_focus_allow_get(VIEW(it)))
           elm_object_focus_set(VIEW(it), EINA_TRUE);
         else
           elm_object_focus_set(WIDGET(it), EINA_TRUE);
+        elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
+        elm_object_signal_emit(VIEW(after), "elm,state,invisible", "elm");
      }
 
    elm_layout_sizing_eval(obj);
@@ -1732,7 +1731,6 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
-        evas_object_show(VIEW(prev_it));
         elm_object_signal_emit(VIEW(prev_it), "elm,state,prev,popped", "elm");
 
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
@@ -1817,9 +1815,6 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
      }
 
    elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed", "elm");
-
-   evas_object_show(VIEW(nit));
-
    elm_object_signal_emit(VIEW(nit), "elm,state,new,pushed", "elm");
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
