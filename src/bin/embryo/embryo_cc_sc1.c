@@ -574,7 +574,7 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
    if (getenv("EFL_RUN_IN_TREE"))
      {
         struct stat st;
-        snprintf(str, sizeof(str), "%s/data/embryo/", PACKAGE_SRC_DIR);
+        snprintf(str, sizeof(str), "%s/data/embryo", PACKAGE_SRC_DIR);
         if (stat(str, &st) != 0)
           str[0] = '\0';
      }
