@@ -387,7 +387,7 @@ _elm_fileselector_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         elm_layout_content_set(obj, "elm.swallow.entry", priv->entry);
      }
 
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
 }

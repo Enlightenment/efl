@@ -38,9 +38,14 @@ ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
+   {"focused", ""}, /**< handled by elm_widget */
+   {"unfocused", ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 #undef ELM_PRIV_FILESELECTOR_SIGNALS
+
+static void _ok(void *data, Evas_Object *obj, void *event_info);
+static void _canc(void *data, Evas_Object *obj, void *event_info);
 
 /* final routine on deletion */
 static void
@@ -134,6 +139,33 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    elm_layout_sizing_eval(obj);
 
+   if (ret) *ret = EINA_TRUE;
+}
+
+static void
+_elm_fileselector_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *src = va_arg(*list, Evas_Object *);
+   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
+   Evas_Event_Key_Down *ev = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   if (ret) *ret = EINA_FALSE;
+   (void) src;
+
+   if (elm_widget_disabled_get(obj)) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
+   if ((!strcmp(ev->key, "Return")) ||
+       (!strcmp(ev->key, "KP_Enter")))
+     _ok(obj, NULL, NULL);
+   else if (!strcmp(ev->key, "Escape"))
+     _canc(obj, NULL, NULL);
+   else
+     return;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
 }
 
@@ -1306,7 +1338,7 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->expand = !!_elm_config->fileselector_expand_enable;
    priv->double_tap_navigation = !!_elm_config->fileselector_double_tap_navigation_enable;
@@ -2280,6 +2312,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_fileselector_smart_del),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_fileselector_smart_theme),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_fileselector_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_fileselector_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_fileselector_smart_focus_direction_manager_is),
 

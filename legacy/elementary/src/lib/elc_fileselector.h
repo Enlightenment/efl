@@ -52,6 +52,8 @@
  * - @c "done" - the user has clicked on the "ok" or "cancel"
  *      buttons (@c event_info is a pointer to the selection's
  *      path, a @b stringshared string)
+ * - @c "focused" - When the fileselector has received focus. (since 1.9)
+ * - @c "unfocused" - When the fileselector has lost focus. (since 1.9)
  *
  * For text, elm_layout_text_set() will work here on:
  * @li @c "ok" - OK button label if the ok button is set. @since 1.8
