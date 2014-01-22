@@ -920,8 +920,7 @@ _elm_dbus_menu_unregister(Eo *obj)
      _elm_dbus_menu_app_menu_unregister(obj);
    eldbus_service_interface_unregister(sd->dbus_menu->iface);
    eldbus_connection_unref(sd->dbus_menu->bus);
-   if (sd->dbus_menu->signal_idler)
-     ecore_idler_del(sd->dbus_menu->signal_idler);
+   ecore_idler_del(sd->dbus_menu->signal_idler);
 
    eina_hash_free(sd->dbus_menu->elements);
    free(sd->dbus_menu);

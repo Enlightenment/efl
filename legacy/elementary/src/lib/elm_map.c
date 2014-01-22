@@ -4090,7 +4090,7 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _grid_all_clear(sd);
    // Removal of download list should be after grid clear.
-   if (sd->download_idler) ecore_idler_del(sd->download_idler);
+   ecore_idler_del(sd->download_idler);
    eina_list_free(sd->download_list);
 
    _source_all_unload(sd);

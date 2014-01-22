@@ -4012,7 +4012,7 @@ _item_idle_enterer(void *data)
 static void
 _requeue_idle_enterer(Elm_Genlist_Smart_Data *sd)
 {
-   if (sd->queue_idle_enterer) ecore_idle_enterer_del(sd->queue_idle_enterer);
+   ecore_idle_enterer_del(sd->queue_idle_enterer);
    sd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, sd->obj);
 }
 

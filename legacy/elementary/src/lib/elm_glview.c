@@ -171,12 +171,8 @@ _set_render_policy_callback(Evas_Object *obj)
    switch (sd->render_policy)
      {
       case ELM_GLVIEW_RENDER_POLICY_ON_DEMAND:
-        // Delete idle_enterer if it for some reason is around
-        if (sd->render_idle_enterer)
-          {
-             ecore_idle_enterer_del(sd->render_idle_enterer);
-             sd->render_idle_enterer = NULL;
-          }
+         // Delete idle_enterer if it for some reason is around
+         ELM_SAFE_FREE(sd->render_idle_enterer, ecore_idle_enterer_del);
 
         // Set pixel getter callback
         evas_object_image_pixels_get_callback_set
@@ -267,8 +263,7 @@ _elm_glview_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd->del_func(obj);
      }
 
-   if (sd->render_idle_enterer)
-     ecore_idle_enterer_del(sd->render_idle_enterer);
+   ecore_idle_enterer_del(sd->render_idle_enterer);
 
    if (sd->surface) evas_gl_surface_destroy(sd->evasgl, sd->surface);
    if (sd->context) evas_gl_context_destroy(sd->evasgl, sd->context);
