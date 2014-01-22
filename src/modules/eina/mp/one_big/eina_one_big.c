@@ -160,6 +160,10 @@ eina_one_big_free(void *data, void *ptr)
      {
         eina_trash_push(&pool->empty, ptr);
         pool->usage--;
+
+#ifndef NVALGRIND
+        VALGRIND_MEMPOOL_FREE(pool, ptr);
+#endif
      }
    else
      {
@@ -178,13 +182,13 @@ eina_one_big_free(void *data, void *ptr)
 #endif
 
         pool->over_list = eina_inlist_remove(pool->over_list, il);
+
+#ifndef NVALGRIND
+        VALGRIND_MEMPOOL_FREE(pool, ptr);
+#endif
         free(ptr);
         pool->over--;
      }
-
-#ifndef NVALGRIND
-   VALGRIND_MEMPOOL_FREE(pool, ptr);
-#endif
 
    eina_lock_release(&pool->mutex);
 }
