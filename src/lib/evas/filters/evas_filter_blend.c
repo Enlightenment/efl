@@ -181,7 +181,10 @@ _mapped_blend_cpu(void *data, void *drawctx,
         if (dx > 0) left = dx % sw;
         else if (dx < 0) left = sw + (dx % sw);
         cols = (dw  /*- left*/) / sw;
-        right = dw - (sw * (cols - 1)) - left;
+        if (left > 0)
+          right = dw - (sw * (cols - 1)) - left;
+        else
+          right = dw - (sw * cols);
         dx = 0;
      }
    else if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
@@ -201,7 +204,10 @@ _mapped_blend_cpu(void *data, void *drawctx,
         if (dy > 0) top = dy % sh;
         else if (dy < 0) top = sh + (dy % sh);
         rows = (dh /*- top*/) / sh;
-        bottom = dh - (sh * (rows - 1)) - top;
+        if (top > 0)
+          bottom = dh - (sh * (rows - 1)) - top;
+        else
+          bottom = dh - (sh * rows);
         dy = 0;
      }
    else if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
