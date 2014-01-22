@@ -326,11 +326,12 @@ _elm_widget_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
 
    EINA_LIST_FREE(sd->event_cb, ecb)
-     free(ecb);
+      free(ecb);
 
    eina_stringshare_del(sd->style);
    if (sd->theme) elm_theme_free(sd->theme);
    _if_focused_revert(obj, EINA_TRUE);
+   elm_widget_focus_custom_chain_unset(obj);
    eina_stringshare_del(sd->access_info);
    evas_object_smart_data_set(obj, NULL);
 }
@@ -1983,8 +1984,8 @@ _elm_widget_focus_custom_chain_append(Eo *obj, void *_pd, va_list *list)
 
    if (!_elm_widget_focus_chain_manager_is(obj)) return;
 
-   evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL,
-                                       _elm_object_focus_chain_del_cb, obj);
+   evas_object_event_callback_add(child, EVAS_CALLBACK_DEL,
+                                  _elm_object_focus_chain_del_cb, obj);
 
    if (!relative_child)
      sd->focus_chain = eina_list_append(sd->focus_chain, child);
@@ -2029,8 +2030,8 @@ _elm_widget_focus_custom_chain_prepend(Eo *obj, void *_pd, va_list *list)
 
    if (!_elm_widget_focus_chain_manager_is(obj)) return;
 
-   evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL,
-                                       _elm_object_focus_chain_del_cb, obj);
+   evas_object_event_callback_add(child, EVAS_CALLBACK_DEL,
+                                  _elm_object_focus_chain_del_cb, obj);
 
    if (!relative_child)
      sd->focus_chain = eina_list_prepend(sd->focus_chain, child);
