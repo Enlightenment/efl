@@ -601,9 +601,7 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eina_stringshare_del(sd->thumb.file.key);
    eina_stringshare_del(sd->thumb.thumb.path);
    eina_stringshare_del(sd->thumb.thumb.key);
-
-   if (sd->thumb.eeh)
-     ecore_event_handler_del(sd->thumb.eeh);
+   ecore_event_handler_del(sd->thumb.eeh);
 
    _edje_signals_free(sd);
 

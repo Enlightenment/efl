@@ -2685,8 +2685,7 @@ _elm_config_shutdown(void)
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
-        ecore_event_handler_del(_prop_change_handler);
-        _prop_change_handler = NULL;
+        ELM_SAFE_FREE(_prop_change_handler, ecore_event_handler_del);
 #endif
      }
    ELM_SAFE_FREE(_elm_config, _config_free);
