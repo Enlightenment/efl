@@ -723,10 +723,10 @@ _grid_item_free(Grid_Item *gi)
    _grid_item_unload(gi);
    if (gi->g && gi->g->grid)
      eina_matrixsparse_data_idx_set(gi->g->grid, gi->y, gi->x, NULL);
-   if (gi->url) eina_stringshare_del(gi->url);
+   eina_stringshare_del(gi->url);
    if (gi->file_have) ecore_file_remove(gi->file);
-   if (gi->file) eina_stringshare_del(gi->file);
-   if (gi->img) evas_object_del(gi->img);
+   eina_stringshare_del(gi->file);
+   evas_object_del(gi->img);
 
    free(gi);
 }
@@ -2077,7 +2077,7 @@ _overlay_route_free(Overlay_Route *route)
 
    EINA_LIST_FREE(route->nodes, n)
      {
-        if (n->pos.address) eina_stringshare_del(n->pos.address);
+        eina_stringshare_del(n->pos.address);
         free(n);
      }
 
@@ -4848,13 +4848,13 @@ elm_map_route_del(Elm_Map_Route *route)
 
    EINA_LIST_FREE(route->waypoint, w)
      {
-        if (w->point) eina_stringshare_del(w->point);
+        eina_stringshare_del(w->point);
         free(w);
      }
 
    EINA_LIST_FREE(route->nodes, n)
      {
-        if (n->pos.address) eina_stringshare_del(n->pos.address);
+        eina_stringshare_del(n->pos.address);
         free(n);
      }
 

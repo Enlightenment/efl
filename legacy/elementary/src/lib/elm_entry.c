@@ -355,8 +355,8 @@ _filter_free(Elm_Entry_Markup_Filter *tf)
 
         if (as)
           {
-             if (as->accepted) eina_stringshare_del(as->accepted);
-             if (as->rejected) eina_stringshare_del(as->rejected);
+             eina_stringshare_del(as->accepted);
+             eina_stringshare_del(as->rejected);
 
              free(as);
           }
@@ -1867,8 +1867,7 @@ _entry_selection_cleared_signal_cb(void *data,
                  (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
                  sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
 
-             eina_stringshare_del(sd->cut_sel);
-             sd->cut_sel = NULL;
+             ELM_SAFE_FREE(sd->cut_sel, eina_stringshare_del);
           }
         else
           {
@@ -3433,8 +3432,8 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         _filter_free(tf);
      }
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
-   if (sd->input_panel_imdata) free(sd->input_panel_imdata);
-   if (sd->anchor_hover.hover_style) eina_stringshare_del(sd->anchor_hover.hover_style);
+   free(sd->input_panel_imdata);
+   eina_stringshare_del(sd->anchor_hover.hover_style);
 
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));

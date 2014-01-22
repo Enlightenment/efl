@@ -948,8 +948,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
      }
 
    sd->remote = NULL;
-   eina_stringshare_del(sd->key);
-   sd->key = NULL;
+   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
 }
 
 static void
@@ -962,8 +961,7 @@ _elm_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error
    evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
 
    sd->remote = NULL;
-   eina_stringshare_del(sd->key);
-   sd->key = NULL;
+   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
 }
 
 static void

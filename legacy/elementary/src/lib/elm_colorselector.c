@@ -1587,12 +1587,12 @@ _elm_colorselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _mouse_out_canvas, obj);
 
    ecore_timer_del(sd->longpress_timer);
-   if (sd->palette_name) eina_stringshare_del(sd->palette_name);
+   eina_stringshare_del(sd->palette_name);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->grab.mouse_motion) ecore_event_handler_del(sd->grab.mouse_motion);
-   if (sd->grab.mouse_up) ecore_event_handler_del(sd->grab.mouse_up);
-   if (sd->grab.key_up) ecore_event_handler_del(sd->grab.key_up);
+   ecore_event_handler_del(sd->grab.mouse_motion);
+   ecore_event_handler_del(sd->grab.mouse_up);
+   ecore_event_handler_del(sd->grab.key_up);
 #endif
 
    _items_del(sd);

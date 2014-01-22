@@ -212,8 +212,8 @@ _destructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    Atspi_Object_Data *ad = _pd;
 
-   if (ad->name) eina_stringshare_del(ad->name);
-   if (ad->description) eina_stringshare_del(ad->description);
+   eina_stringshare_del(ad->name);
+   eina_stringshare_del(ad->description);
 
    eo_do_super(obj, ELM_ATSPI_CLASS, eo_destructor());
 }

@@ -1494,10 +1494,10 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _elm_win_focus_highlight_shutdown(sd);
    eina_stringshare_del(sd->focus_highlight.style);
 
-   if (sd->title) eina_stringshare_del(sd->title);
-   if (sd->icon_name) eina_stringshare_del(sd->icon_name);
-   if (sd->role) eina_stringshare_del(sd->role);
-   if (sd->icon) evas_object_del(sd->icon);
+   eina_stringshare_del(sd->title);
+   eina_stringshare_del(sd->icon_name);
+   eina_stringshare_del(sd->role);
+   evas_object_del(sd->icon);
 
    if (sd->main_menu) evas_object_del(sd->main_menu);
 

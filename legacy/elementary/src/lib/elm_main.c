@@ -174,19 +174,13 @@ static void
 _prefix_shutdown(void)
 {
    if (app_pfx) eina_prefix_free(app_pfx);
-   if (app_domain) eina_stringshare_del(app_domain);
-   if (app_checkfile) eina_stringshare_del(app_checkfile);
-   if (app_compile_bin_dir) eina_stringshare_del(app_compile_bin_dir);
-   if (app_compile_lib_dir) eina_stringshare_del(app_compile_lib_dir);
-   if (app_compile_data_dir) eina_stringshare_del(app_compile_data_dir);
-   if (app_compile_locale_dir) eina_stringshare_del(app_compile_locale_dir);
+   ELM_SAFE_FREE(app_domain, eina_stringshare_del);
+   ELM_SAFE_FREE(app_checkfile, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_bin_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_lib_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_data_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_locale_dir, eina_stringshare_del);
    app_mainfunc = NULL;
-   app_domain = NULL;
-   app_checkfile = NULL;
-   app_compile_bin_dir = NULL;
-   app_compile_lib_dir = NULL;
-   app_compile_data_dir = NULL;
-   app_compile_locale_dir = NULL;
    app_prefix_dir = NULL;
    app_bin_dir = NULL;
    app_lib_dir = NULL;

@@ -829,9 +829,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
    ELM_POPUP_DATA_GET(WIDGET(it), sd);
 
-   if (it->icon)
-     evas_object_del(it->icon);
-
+   evas_object_del(it->icon);
    eina_stringshare_del(it->label);
    sd->items = eina_list_remove(sd->items, it);
    if (!eina_list_count(sd->items))

@@ -1530,12 +1530,12 @@ _elm_multibuttonentry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    sd->selected_it = NULL;
 
-   if (sd->label_str) eina_stringshare_del(sd->label_str);
-   if (sd->guide_text_str) eina_stringshare_del(sd->guide_text_str);
+   eina_stringshare_del(sd->label_str);
+   eina_stringshare_del(sd->guide_text_str);
    evas_object_del(sd->entry);
-   if (sd->label) evas_object_del(sd->label);
-   if (sd->guide_text) evas_object_del(sd->guide_text);
-   if (sd->end) evas_object_del(sd->end);
+   evas_object_del(sd->label);
+   evas_object_del(sd->guide_text);
+   evas_object_del(sd->end);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

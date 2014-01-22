@@ -591,7 +591,7 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Icon_Smart_Data *sd = _pd;
 
-   if (sd->stdicon) eina_stringshare_del(sd->stdicon);
+   eina_stringshare_del(sd->stdicon);
 
    if (sd->thumb.request)
      {

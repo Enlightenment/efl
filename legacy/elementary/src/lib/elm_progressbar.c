@@ -306,7 +306,7 @@ _elm_progressbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Progressbar_Smart_Data *sd = _pd;
    Elm_Progress_Status *progress_obj;
 
-   if (sd->units) eina_stringshare_del(sd->units);
+   eina_stringshare_del(sd->units);
    if (sd->progress_status)
       {
          EINA_LIST_FREE(sd->progress_status, progress_obj)

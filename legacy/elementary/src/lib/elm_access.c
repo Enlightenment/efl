@@ -210,7 +210,7 @@ _access_add_set(Elm_Access_Info *ac, int type)
           {
              if (!ai->func)
                {
-                  if (ai->data) eina_stringshare_del(ai->data);
+                  eina_stringshare_del(ai->data);
                }
              ai->func = NULL;
              ai->data = NULL;
@@ -571,7 +571,7 @@ _elm_access_clear(Elm_Access_Info *ac)
      {
         if (!ai->func)
           {
-             if (ai->data) eina_stringshare_del(ai->data);
+             eina_stringshare_del(ai->data);
           }
         free(ai);
      }

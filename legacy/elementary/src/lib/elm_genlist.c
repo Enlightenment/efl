@@ -1252,8 +1252,8 @@ _item_cache_clean(Elm_Genlist_Smart_Data *sd)
         sd->item_cache = eina_inlist_remove
             (sd->item_cache, sd->item_cache->last);
         sd->item_cache_count--;
-        if (itc->spacer) evas_object_del(itc->spacer);
-        if (itc->base_view) evas_object_del(itc->base_view);
+        evas_object_del(itc->spacer);
+        evas_object_del(itc->base_view);
         eina_stringshare_del(itc->item_style);
         free(itc);
      }
@@ -1265,8 +1265,8 @@ _item_cache_clean(Elm_Genlist_Smart_Data *sd)
 static void
 _item_cache_free(Item_Cache *itc)
 {
-   if (itc->spacer) evas_object_del(itc->spacer);
-   if (itc->base_view) evas_object_del(itc->base_view);
+   evas_object_del(itc->spacer);
+   evas_object_del(itc->base_view);
    eina_stringshare_del(itc->item_style);
    free(itc);
 }
