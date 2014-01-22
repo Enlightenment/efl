@@ -191,12 +191,14 @@ group { name: "elm/fileselector_entry/base/default";
          }
       }
       part { name: "elm.swallow.button"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             align: 1.0 0.0;
             fixed: 1 0;
+            min: 40 4;
             rel1 {
                relative: 1.0 0.0;
-               offset: -41 0;
+               offset: -1 0;
             }
          }
       }
