@@ -399,7 +399,7 @@ _store_filesystem_list_do(void *data, Ecore_Thread *th EINA_UNUSED)
           }
         else
           {
-             if (info->base.sort_id) free(info->base.sort_id);
+             free(info->base.sort_id);
              free(info);
           }
         if (ecore_thread_check(th)) break;
@@ -469,7 +469,7 @@ _store_filesystem_list_update(void *data, Ecore_Thread *th EINA_UNUSED, void *ms
                                             NULL/* func data */);
    st->items = eina_inlist_append(st->items, (Eina_Inlist *)sti);
 done:
-   if (info->base.sort_id) free(info->base.sort_id);
+   free(info->base.sort_id);
    free(info);
 }
 

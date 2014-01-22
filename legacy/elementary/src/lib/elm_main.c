@@ -836,10 +836,7 @@ elm_quicklaunch_prepare(int    argc,
    strcat(p, exename);
    strcat(p, LIBEXT);
    if (access(exe2, R_OK | X_OK) != 0)
-     {
-        free(exe2);
-        exe2 = NULL;
-     }
+     ELM_SAFE_FREE(exe2, free);
 
    /* Try linking to executable first. Works with PIE files. */
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
@@ -944,8 +941,7 @@ elm_quicklaunch_fork(int    argc,
 
    if (quicklaunch_on)
      {
-        if (_elm_appname) free(_elm_appname);
-        _elm_appname = NULL;
+        ELM_SAFE_FREE(_elm_appname, free);
         if ((argv) && (argv[0]))
           _elm_appname = strdup(ecore_file_file_get(argv[0]));
 

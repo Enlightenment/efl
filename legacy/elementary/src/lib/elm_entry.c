@@ -121,8 +121,7 @@ _file_load(const char *file)
 
    if (eina_file_map_faulted(f, tmp))
      {
-        free(text);
-        text = NULL;
+        ELM_SAFE_FREE(text, free);
      }
 
  on_error:
@@ -347,7 +346,7 @@ _filter_free(Elm_Entry_Markup_Filter *tf)
      {
         Elm_Entry_Filter_Limit_Size *lim = tf->data;
 
-        if (lim) free(lim);
+        free(lim);
      }
    else if (tf->func == elm_entry_filter_accept_set)
      {
@@ -2566,19 +2565,16 @@ _chars_add_till_limit(Evas_Object *obj,
                     unit_size = strlen(utfstr);
                   else if (unit == LENGTH_UNIT_CHAR)
                     unit_size = evas_string_char_len_get(utfstr);
-                  free(utfstr);
-                  utfstr = NULL;
+                  ELM_SAFE_FREE(utfstr, free);
                }
-             free(markup);
-             markup = NULL;
+             ELM_SAFE_FREE(markup, free);
           }
         if (can_add < unit_size)
           {
              if (!i)
                {
                   evas_object_smart_callback_call(obj, SIG_MAX_LENGTH, NULL);
-                  free(*text);
-                  *text = NULL;
+                  ELM_SAFE_FREE(*text, free);
                   return;
                }
              can_add = 0;
@@ -2750,8 +2746,7 @@ _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
    if (sd->append_text_idler)
      {
         ecore_idler_del(sd->append_text_idler);
-        free(sd->append_text_left);
-        sd->append_text_left = NULL;
+        ELM_SAFE_FREE(sd->append_text_left, free);
         sd->append_text_idler = NULL;
      }
 
@@ -3410,8 +3405,7 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (sd->append_text_idler)
      {
         ecore_idler_del(sd->append_text_idler);
-        free(sd->append_text_left);
-        sd->append_text_left = NULL;
+        ELM_SAFE_FREE(sd->append_text_left, free);
         sd->append_text_idler = NULL;
      }
    ecore_timer_del(sd->longpress_timer);
@@ -4700,8 +4694,7 @@ elm_entry_filter_limit_size(void *data,
         if ((len >= lim->max_char_count) && (newlen > 0))
           {
              evas_object_smart_callback_call(entry, SIG_MAX_LENGTH, NULL);
-             free(*text);
-             *text = NULL;
+             ELM_SAFE_FREE(*text, free);
              free(current);
              free(utfstr);
              return;
@@ -4717,8 +4710,7 @@ elm_entry_filter_limit_size(void *data,
         if ((len >= lim->max_byte_count) && (newlen > 0))
           {
              evas_object_smart_callback_call(entry, SIG_MAX_LENGTH, NULL);
-             free(*text);
-             *text = NULL;
+             ELM_SAFE_FREE(*text, free);
              free(current);
              free(utfstr);
              return;
@@ -5507,8 +5499,7 @@ _input_panel_imdata_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    int len = va_arg(*list, int);
    Elm_Entry_Smart_Data *sd = _pd;
 
-   if (sd->input_panel_imdata)
-     free(sd->input_panel_imdata);
+   free(sd->input_panel_imdata);
 
    sd->input_panel_imdata = calloc(1, len);
    sd->input_panel_imdata_len = len;

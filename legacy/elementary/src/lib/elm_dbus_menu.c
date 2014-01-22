@@ -923,8 +923,7 @@ _elm_dbus_menu_unregister(Eo *obj)
    ecore_idler_del(sd->dbus_menu->signal_idler);
 
    eina_hash_free(sd->dbus_menu->elements);
-   free(sd->dbus_menu);
-   sd->dbus_menu = NULL;
+   ELM_SAFE_FREE(sd->dbus_menu, free);
 }
 
 void

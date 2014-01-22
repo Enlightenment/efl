@@ -213,7 +213,7 @@ _prop_change_delay_cb(void *data EINA_UNUSED)
         s = ecore_x_window_prop_string_get(_config_win, _atom[ATOM_E_PROFILE]);
         if (s)
           {
-             if (_elm_profile) free(_elm_profile);
+             free(_elm_profile);
              _elm_profile = s;
           }
      }

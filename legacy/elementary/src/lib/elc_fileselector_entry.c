@@ -397,7 +397,7 @@ _elm_fileselector_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Fileselector_Entry_Smart_Data *sd = _pd;
 
-   if (sd->path) free(sd->path);
+   free(sd->path);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -569,7 +569,7 @@ _path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    const char **ret = va_arg(*list, const char **);
    Elm_Fileselector_Entry_Smart_Data *sd = _pd;
 
-   if (sd->path) free(sd->path);
+   free(sd->path);
    sd->path = elm_entry_markup_to_utf8(elm_object_text_get(sd->entry));
    *ret = sd->path;
 }

@@ -118,10 +118,9 @@ _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
 
    obj_data->freeze_events = evas_object_freeze_events_get(obj);
 
-   if ((!transit->state_keep) && (obj_data->state))
+   if (!transit->state_keep)
      {
-        free(obj_data->state);
-        obj_data->state = NULL;
+        ELM_SAFE_FREE(obj_data->state, free);
      }
    else
      {
@@ -172,8 +171,7 @@ _transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *
    Elm_Transit_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
    if (obj_data)
      {
-        if (obj_data->state)
-          free(obj_data->state);
+        free(obj_data->state);
         free(obj_data);
      }
    _remove_obj_from_list(transit, obj);

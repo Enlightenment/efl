@@ -216,7 +216,7 @@ _nominatim_url_cb(const Evas_Object *obj,
 
         if (str)
           {
-             if (str[0]) free(str[0]);
+             free(str[0]);
              free(str);
           }
      }
@@ -709,7 +709,7 @@ _grid_item_create(Grid *g,
      }
    else eina_stringshare_replace(&gi->url, url);
 
-   if (url) free(url);
+   free(url);
    eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 
    return gi;
@@ -3130,7 +3130,7 @@ _name_request(const Evas_Object *obj,
                                  &(name->job), sd->ua) || !(name->job))
      {
         ERR("Can't request Name from %s to %s", url, name->fname);
-        if (name->address) free(name->address);
+        free(name->address);
         free(name->fname);
         free(name);
         free(fname);
@@ -4797,10 +4797,10 @@ _route_add(Eo *obj, void *_pd, va_list *list)
    if (!url)
      {
         ERR("Route URL is NULL");
-        if (type_name) free(type_name);
+        free(type_name);
         return;
      }
-   if (type_name) free(type_name);
+   free(type_name);
 
    route = ELM_NEW(Elm_Map_Route);
    route->wsd = sd;
@@ -4939,8 +4939,8 @@ elm_map_name_del(Elm_Map_Name *name)
    EINA_SAFETY_ON_NULL_RETURN(name->wsd);
    ELM_MAP_CHECK((name->wsd)->obj);
 
-   if (name->job) ecore_file_download_abort(name->job);
-   if (name->address) free(name->address);
+   ecore_file_download_abort(name->job);
+   free(name->address);
    if (name->fname)
      {
         ecore_file_remove(name->fname);

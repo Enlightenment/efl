@@ -3946,8 +3946,7 @@ _part_text_translatable_set(Eina_Inlist **translate_strings, const char *part, E
              eina_stringshare_del(ts->id);
              eina_stringshare_del(ts->domain);
              eina_stringshare_del(ts->string);
-             free(ts);
-             ts = NULL;
+             ELM_SAFE_FREE(ts, free);
           }
      }
 

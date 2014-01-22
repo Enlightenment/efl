@@ -491,8 +491,8 @@ _shot_do(Elm_Win_Smart_Data *sd)
             file, key, flags);
      }
    free(file);
-   if (key) free(key);
-   if (flags) free(flags);
+   free(key);
+   free(flags);
    ecore_evas_free(ee);
    if (sd->shot.repeat_count) sd->shot.shot_counter++;
 }

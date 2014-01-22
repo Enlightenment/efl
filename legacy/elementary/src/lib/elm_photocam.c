@@ -513,8 +513,7 @@ _grid_clear(Evas_Object *obj,
           }
      }
 
-   free(g->grid);
-   g->grid = NULL;
+   ELM_SAFE_FREE(g->grid, free);
    g->gw = 0;
    g->gh = 0;
 }
@@ -1404,7 +1403,7 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    EINA_LIST_FREE(sd->grids, g)
      {
-        if (g->grid) free(g->grid);
+        free(g->grid);
         free(g);
      }
    eo_unref(sd->pan_obj);
@@ -1556,7 +1555,7 @@ _elm_photocam_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf *d
    size_t length;
    Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
 
-   if (sd->remote_data) free(sd->remote_data);
+   free(sd->remote_data);
    length = eina_binbuf_length_get(download);
    sd->remote_data = eina_binbuf_string_steal(download);
    f = eina_file_virtualize(_elm_url_get(url),
