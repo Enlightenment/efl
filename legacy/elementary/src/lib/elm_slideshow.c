@@ -354,7 +354,7 @@ _elm_slideshow_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    const char *layout;
 
    elm_slideshow_clear(obj);
-   if (sd->transitions) elm_widget_stringlist_free(sd->transitions);
+   elm_widget_stringlist_free(sd->transitions);
    ecore_timer_del(sd->timer);
 
    EINA_LIST_FREE(sd->layout.list, layout)
