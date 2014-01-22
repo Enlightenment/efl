@@ -1034,13 +1034,11 @@ _elm_prefs_page_populate(Elm_Prefs_Page_Node *page,
 err:
    EINA_LIST_FOREACH(page->items, l, it)
      {
-        if (it->w_obj) evas_object_del(it->w_obj);
-        it->w_obj = NULL;
+        ELM_SAFE_FREE(it->w_obj, evas_object_del);
         it->w_impl = NULL;
      }
 
-   if (page->w_obj) evas_object_del(page->w_obj);
-   page->w_obj = NULL;
+   ELM_SAFE_FREE(page->w_obj, evas_object_del);
    page->w_impl = NULL;
 
    return EINA_FALSE;
@@ -2084,10 +2082,10 @@ _prefs_item_del_cb(void *data EINA_UNUSED,
 
    it = evas_object_data_get(obj, "prefs_item");
    lbl = evas_object_data_del(it->w_obj, "label_widget");
-   if (lbl) evas_object_del(lbl);
+   evas_object_del(lbl);
 
    icon = evas_object_data_del(it->w_obj, "icon_widget");
-   if (icon) evas_object_del(icon);
+   evas_object_del(icon);
 
    ELM_PREFS_DATA_GET(it->prefs, sd);
 

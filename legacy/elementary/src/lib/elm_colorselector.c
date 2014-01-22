@@ -1113,23 +1113,14 @@ _elm_colorselector_smart_theme(Eo *obj, void *_pd, va_list *list)
      {
         if (sd->cb_data[i])
           {
-             evas_object_del(sd->cb_data[i]->colorbar);
-             sd->cb_data[i]->colorbar = NULL;
-             evas_object_del(sd->cb_data[i]->bar);
-             sd->cb_data[i]->bar = NULL;
-             evas_object_del(sd->cb_data[i]->lbt);
-             sd->cb_data[i]->lbt = NULL;
-             evas_object_del(sd->cb_data[i]->rbt);
-             sd->cb_data[i]->rbt = NULL;
+             ELM_SAFE_FREE(sd->cb_data[i]->colorbar, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->bar, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->lbt, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->rbt, evas_object_del);
              if (i != 0)
-               {
-                  evas_object_del(sd->cb_data[i]->bg_rect);
-                  sd->cb_data[i]->bg_rect = NULL;
-               }
-             evas_object_del(sd->cb_data[i]->arrow);
-             sd->cb_data[i]->arrow = NULL;
-             evas_object_del(sd->cb_data[i]->touch_area);
-             sd->cb_data[i]->touch_area = NULL;
+               ELM_SAFE_FREE(sd->cb_data[i]->bg_rect, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->arrow, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->touch_area, evas_object_del);
           }
      }
 

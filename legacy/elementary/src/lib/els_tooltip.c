@@ -183,8 +183,7 @@ _elm_tooltip_content_del(Elm_Tooltip *tt)
      (tt->content, EVAS_CALLBACK_DEL,
       _elm_tooltip_content_del_cb, tt);
    evas_object_hide(tt->content);
-   evas_object_del(tt->content);
-   tt->content = NULL;
+   ELM_SAFE_FREE(tt->content, evas_object_del);
 }
 
 static void

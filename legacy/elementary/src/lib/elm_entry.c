@@ -1419,9 +1419,9 @@ _magnifier_create(void *data)
    Evas *e;
    Evas_Coord w, h, mw, mh;
 
-   if (sd->mgf_proxy) evas_object_del(sd->mgf_proxy);
-   if (sd->mgf_bg) evas_object_del(sd->mgf_bg);
-   if (sd->mgf_clip) evas_object_del(sd->mgf_clip);
+   evas_object_del(sd->mgf_proxy);
+   evas_object_del(sd->mgf_bg);
+   evas_object_del(sd->mgf_clip);
 
    e = evas_object_evas_get(data);
 
@@ -2124,8 +2124,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
        !elm_layout_content_get(sd->anchor_hover.hover, "top") &&
        !elm_layout_content_get(sd->anchor_hover.hover, "bottom"))
      {
-        evas_object_del(sd->anchor_hover.hover);
-        sd->anchor_hover.hover = NULL;
+        ELM_SAFE_FREE(sd->anchor_hover.hover, evas_object_del);
      }
    else
      evas_object_show(sd->anchor_hover.hover);

@@ -305,8 +305,7 @@ _item_content_set_hook(Elm_Object_Item *it,
    item = (Elm_Menu_Item *)it;
    if (content == item->content) return;
 
-   if (item->content) evas_object_del(item->content);
-
+   evas_object_del(item->content);
    item->content = content;
    if (item->content)
      elm_layout_content_set(VIEW(item), "elm.swallow.content", item->content);
@@ -634,8 +633,8 @@ _elm_menu_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_event_callback_del_full
       (sd->bx, EVAS_CALLBACK_RESIZE, _menu_resize_cb, obj);
 
-   if (sd->hv) evas_object_del(sd->hv);
-   if (sd->location) evas_object_del(sd->location);
+   evas_object_del(sd->hv);
+   evas_object_del(sd->location);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

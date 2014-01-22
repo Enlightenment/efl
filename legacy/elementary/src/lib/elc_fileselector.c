@@ -1583,10 +1583,8 @@ _buttons_ok_cancel_set(Eo *obj, void *_pd, va_list *list)
      }
    else if (!visible)
      {
-        evas_object_del(sd->cancel_button);
-        sd->cancel_button = NULL;
-        evas_object_del(sd->ok_button);
-        sd->ok_button = NULL;
+        ELM_SAFE_FREE(sd->cancel_button, evas_object_del);
+        ELM_SAFE_FREE(sd->ok_button, evas_object_del);
      }
 }
 

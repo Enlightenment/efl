@@ -3845,11 +3845,7 @@ _elm_scroll_extern_pan_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-        if (sid->pan_obj)
-          {
-             evas_object_del(sid->pan_obj);
-             sid->pan_obj = NULL;
-          }
+        ELM_SAFE_FREE(sid->pan_obj, evas_object_del);
      }
    if (!pan)
      {

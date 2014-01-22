@@ -1293,8 +1293,7 @@ _item_cache_add(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(obj));
    if (sd->item_cache_max <= 0)
      {
-        evas_object_del(VIEW(it));
-        VIEW(it) = NULL;
+        ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
 
         evas_event_thaw(evas_object_evas_get(obj));
@@ -4472,8 +4471,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
 
    if (it->item->nocache_once || it->item->nocache)
      {
-        evas_object_del(VIEW(it));
-        VIEW(it) = NULL;
+        ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
      }
    else
@@ -4988,10 +4986,7 @@ _elm_genlist_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->queue = eina_list_free(sd->queue);
    elm_genlist_clear(obj);
    for (i = 0; i < 2; i++)
-     {
-        evas_object_del(sd->stack[i]);
-        sd->stack[i] = NULL;
-     }
+     ELM_SAFE_FREE(sd->stack[i], evas_object_del);
    eo_unref(sd->pan_obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 

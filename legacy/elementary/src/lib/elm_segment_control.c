@@ -460,7 +460,7 @@ _item_content_set_hook(Elm_Object_Item *it,
      {
         if (content == item->icon) return;
 
-        if (item->icon) evas_object_del(item->icon);
+        evas_object_del(item->icon);
         item->icon = content;
         if (!item->icon)
           {

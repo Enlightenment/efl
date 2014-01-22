@@ -204,7 +204,7 @@ _elm_image_edje_file_set(Evas_Object *obj,
    if (!sd->edje)
      {
         pclip = evas_object_clip_get(sd->img);
-        if (sd->img) evas_object_del(sd->img);
+        evas_object_del(sd->img);
 
         /* Edje object instead */
         sd->img = edje_object_add(evas_object_evas_get(obj));

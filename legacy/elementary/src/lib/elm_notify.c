@@ -405,7 +405,7 @@ _elm_notify_smart_content_set(Eo *obj, void *_pd, va_list *list)
    if (part && strcmp(part, "default")) return;
    if (sd->content == content) goto end;
 
-   if (sd->content) evas_object_del(sd->content);
+   evas_object_del(sd->content);
    sd->content = content;
 
    if (content)

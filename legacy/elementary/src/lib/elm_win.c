@@ -1498,8 +1498,7 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eina_stringshare_del(sd->icon_name);
    eina_stringshare_del(sd->role);
    evas_object_del(sd->icon);
-
-   if (sd->main_menu) evas_object_del(sd->main_menu);
+   evas_object_del(sd->main_menu);
 
    _elm_win_profile_del(sd);
    _elm_win_available_profiles_del(sd);
@@ -2471,8 +2470,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    if (!elm_widget_theme_object_set
        (sd->obj, sd->frame_obj, "border", "base", style))
      {
-        evas_object_del(sd->frame_obj);
-        sd->frame_obj = NULL;
+        ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
         return;
      }
 
@@ -2542,11 +2540,7 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
 {
    int w, h;
 
-   if (sd->client_obj)
-     {
-        evas_object_del(sd->client_obj);
-        sd->client_obj = NULL;
-     }
+   ELM_SAFE_FREE(sd->client_obj, evas_object_del);
 
    if (sd->frame_obj)
      {
@@ -2580,8 +2574,7 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
           (sd->frame_obj, "elm,action,close", "elm",
               _elm_win_frame_cb_close);
 
-        evas_object_del(sd->frame_obj);
-        sd->frame_obj = NULL;
+        ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
      }
 
    evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
@@ -2832,8 +2825,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
              tmp_sd.ee = ecore_evas_object_ecore_evas_get(tmp_sd.img_obj);
              if (!tmp_sd.ee)
                {
-                  evas_object_del(tmp_sd.img_obj);
-                  tmp_sd.img_obj = NULL;
+                  ELM_SAFE_FREE(tmp_sd.img_obj, evas_object_del);
                }
           }
         break;

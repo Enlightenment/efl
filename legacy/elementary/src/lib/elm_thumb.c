@@ -206,8 +206,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    evas = evas_object_evas_get(sd->obj);
    if ((sd->view) && (sd->is_video ^ sd->was_video))
      {
-        evas_object_del(sd->view);
-        sd->view = NULL;
+        ELM_SAFE_FREE(sd->view, evas_object_del);
      }
    sd->was_video = sd->is_video;
 

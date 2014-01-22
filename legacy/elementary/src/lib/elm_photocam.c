@@ -1408,8 +1408,7 @@ _elm_photocam_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         free(g);
      }
    eo_unref(sd->pan_obj);
-   evas_object_del(sd->pan_obj);
-   sd->pan_obj = NULL;
+   ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    if (sd->f) eina_file_close(sd->f);
    free(sd->remote_data);
@@ -2262,11 +2261,7 @@ _gesture_enabled_set(Eo *obj, void *_pd, va_list *list)
 
    sd->do_gesture = gesture;
 
-   if (sd->g_layer)
-     {
-        evas_object_del(sd->g_layer);
-        sd->g_layer = NULL;
-     }
+   ELM_SAFE_FREE(sd->g_layer, evas_object_del);
 
    if (!gesture) return;
 

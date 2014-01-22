@@ -5063,8 +5063,7 @@ _elm_widget_item_free(Elm_Widget_Item *item)
    if (item->del_func)
      item->del_func((void *)item->data, item->widget, item);
 
-   if (item->view)
-     evas_object_del(item->view);
+   evas_object_del(item->view);
 
    eina_stringshare_del(item->access_info);
 

@@ -1505,7 +1505,7 @@ _overlay_default_content_update(Overlay_Default *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    if (ovl->content == content) return;
-   if (ovl->content) evas_object_del(ovl->content);
+   evas_object_del(ovl->content);
    ovl->content = content;
 
    if (ovl->content)
@@ -1555,7 +1555,7 @@ _overlay_default_class_content_update(Overlay_Default *ovl,
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (ovl->clas_content) evas_object_del(ovl->clas_content);
+   evas_object_del(ovl->clas_content);
    ovl->clas_content = _icon_dup(content, ovl->layout);
    _overlay_default_layout_update(ovl);
 }
@@ -1568,7 +1568,7 @@ _overlay_default_icon_update(Overlay_Default *ovl,
 
    if (ovl->icon == icon) return;
 
-   if (ovl->icon) evas_object_del(ovl->icon);
+   evas_object_del(ovl->icon);
    ovl->icon = icon;
    _overlay_default_layout_update(ovl);
 }
@@ -1579,7 +1579,7 @@ _overlay_default_class_icon_update(Overlay_Default *ovl,
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
+   evas_object_del(ovl->clas_icon);
    ovl->clas_icon = _icon_dup(icon, ovl->layout);
    _overlay_default_layout_update(ovl);
 }
@@ -1599,11 +1599,11 @@ _overlay_default_free(Overlay_Default *ovl)
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (ovl->content) evas_object_del(ovl->content);
-   if (ovl->icon) evas_object_del(ovl->icon);
-   if (ovl->clas_content) evas_object_del(ovl->clas_content);
-   if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
-   if (ovl->layout) evas_object_del(ovl->layout);
+   evas_object_del(ovl->content);
+   evas_object_del(ovl->icon);
+   evas_object_del(ovl->clas_content);
+   evas_object_del(ovl->clas_icon);
+   evas_object_del(ovl->layout);
 
    free(ovl);
 }
@@ -1777,7 +1777,7 @@ _overlay_class_icon_update(Overlay_Class *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    if (ovl->icon == icon) return;
-   if (ovl->icon) evas_object_del(ovl->icon);
+   evas_object_del(ovl->icon);
    ovl->icon = icon;
    // For using proxy, it should have size and be shown but moved away to hide.
    evas_object_resize(icon, 32, 32);
@@ -1804,7 +1804,7 @@ _overlay_class_content_update(Overlay_Class *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    if (ovl->content == content) return;
-   if (ovl->content) evas_object_del(ovl->content);
+   evas_object_del(ovl->content);
    ovl->content = content;
    // For using proxy, it should have size and be shown but moved away to hide.
    // content should have it's own size
@@ -1855,8 +1855,8 @@ _overlay_class_free(Overlay_Class *clas)
              _overlay_default_class_icon_update(overlay->ovl, NULL);
           }
      }
-   if (clas->icon) evas_object_del(clas->icon);
-   if (clas->members) eina_list_free(clas->members);
+   evas_object_del(clas->icon);
+   eina_list_free(clas->members);
 
    free(clas);
 }

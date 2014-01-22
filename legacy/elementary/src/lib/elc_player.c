@@ -563,8 +563,7 @@ _elm_player_smart_content_set(Eo *obj, void *_pd, va_list *list)
    if (!_elm_video_check(content)) return;
    if (sd->video == content) goto end;
 
-   if (sd->video) evas_object_del(sd->video);
-
+   evas_object_del(sd->video);
    sd->video = content;
 
    if (!content) goto end;

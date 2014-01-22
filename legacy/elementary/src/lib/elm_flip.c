@@ -1749,7 +1749,7 @@ _flip_content_set(Evas_Object *obj,
 
    if (*cont == content) return EINA_TRUE;
 
-   if (*cont) evas_object_del(*cont);
+   evas_object_del(*cont);
    *cont = content;
 
    if (content)

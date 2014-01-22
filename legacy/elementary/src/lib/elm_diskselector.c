@@ -333,9 +333,7 @@ _item_del(Elm_Diskselector_Item *item)
    ELM_DISKSELECTOR_DATA_GET(WIDGET(item), sd);
    sd->item_count -= 1;
    eina_stringshare_del(item->label);
-
-   if (item->icon)
-     evas_object_del(item->icon);
+   evas_object_del(item->icon);
 }
 
 static void
@@ -488,7 +486,7 @@ _item_icon_set(Elm_Diskselector_Item *it,
 {
    if (it->icon == icon) return;
 
-   if (it->icon) evas_object_del(it->icon);
+   evas_object_del(it->icon);
    it->icon = icon;
 
    if (VIEW(it))

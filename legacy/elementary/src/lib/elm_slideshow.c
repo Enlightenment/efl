@@ -223,8 +223,7 @@ _item_realize(Elm_Slideshow_Item *item)
             (sd->items_built, sd->items_built);
         if (item->itc->func.del)
           item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
-        evas_object_del(VIEW(item));
-        VIEW(item) = NULL;
+        ELM_SAFE_FREE(VIEW(item), evas_object_del);
      }
 }
 

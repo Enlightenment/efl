@@ -220,7 +220,7 @@ _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if (sd->content) evas_object_del(sd->content);
+   evas_object_del(sd->content);
    sd->content = content;
 
    if (content)

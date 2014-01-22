@@ -654,7 +654,7 @@ _elm_scroller_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (sd->content == content) return;
 
-   if (sd->content) evas_object_del(sd->content);
+   evas_object_del(sd->content);
    sd->content = content;
 
    if (content)

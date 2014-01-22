@@ -786,7 +786,7 @@ _elm_ctxpopup_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (content == sd->content) goto end;
 
-   if (sd->content) evas_object_del(sd->content);
+   evas_object_del(sd->content);
    if (sd->content == sd->list) sd->list = NULL;
 
    evas_object_size_hint_weight_set
@@ -1040,10 +1040,7 @@ _list_resize_cb(void *data,
 static void
 _list_del(Elm_Ctxpopup_Smart_Data *sd)
 {
-   if (!sd->list) return;
-
-   evas_object_del(sd->list);
-   sd->list = NULL;
+   ELM_SAFE_FREE(sd->list, evas_object_del);
 }
 
 static Eina_Bool
@@ -1158,11 +1155,8 @@ _elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _parent_detach(obj);
 
    elm_ctxpopup_clear(obj);
-   evas_object_del(sd->arrow);
-   sd->arrow = NULL; /* stops _sizing_eval() from going on on deletion */
-
-   evas_object_del(sd->bg);
-   sd->bg = NULL;
+   ELM_SAFE_FREE(sd->arrow, evas_object_del); /* stops _sizing_eval() from going on on deletion */
+   ELM_SAFE_FREE(sd->bg, evas_object_del);
 
    EINA_LIST_FREE(sd->items, it)
      elm_widget_item_free(it);
