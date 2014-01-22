@@ -37,6 +37,8 @@
  *   pointer comes as the @c event_info data (a stringshared
  *   string)
  * - @c "language,changed" - the program's language changed
+ * - @c "focused" - When the fileselector button has received focus. (since 1.8)
+ * - @c "unfocused" - When the fileselector button has lost focus. (since 1.8)
  *
  * Default text parts of the fileselector_button widget that you can use for
  * are:
