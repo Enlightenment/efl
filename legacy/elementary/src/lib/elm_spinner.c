@@ -3,7 +3,7 @@
 #endif
 
 #include <Elementary.h>
-//#include <ctype.h>
+#include <ctype.h>
 
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
