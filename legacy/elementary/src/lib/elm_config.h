@@ -1206,9 +1206,14 @@ EAPI void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
 /**
  * Get the indicator service name according to the rotation degree.
  *
- * @param rotation The rotation which related with the indicator service name, in degrees (0-360),
+ * @param rotation The rotation which related with the indicator service name,
+ * in degrees (0-360),
  *
- * @return The indicator service name according to the rotation degree.
+ * @return The indicator service name according to the rotation degree. The
+ * indicator service name can be either @c "elm_indicator_portrait" or
+ * @c "elm_indicator_landscape".
+ *
+ * @note Do not free the return string.
  */
 EAPI const char *elm_config_indicator_service_get(int rotation);
 
