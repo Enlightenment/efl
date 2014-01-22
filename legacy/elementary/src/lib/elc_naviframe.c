@@ -874,6 +874,7 @@ _elm_naviframe_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    Elm_Naviframe_Smart_Data *sd = _pd;
 
+   if (sd->on_deletion) return;
    if (!sd->stack) return;
 
    top = (EINA_INLIST_CONTAINER_GET(sd->stack->last, Elm_Naviframe_Item));
@@ -1399,7 +1400,6 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         elm_widget_item_del(it);
      }
 
-   sd->on_deletion = EINA_FALSE;
    evas_object_del(sd->dummy_edje);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
