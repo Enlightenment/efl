@@ -367,7 +367,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                _evas_render_prev_cur_clip_cache_add(e, obj);
              if (obj->proxy->proxies)
                {
-                  if (obj->smart.smart && evas_object_smart_changed_get(eo_obj))
+                  if (!obj->smart.smart || evas_object_smart_changed_get(eo_obj))
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
                                             Evas_Object_Proxy_Data, proxy_write)
