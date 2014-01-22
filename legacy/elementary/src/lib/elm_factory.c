@@ -253,7 +253,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    if (wd->content == content) return;
 
    prev_content = _content_unset_hook(obj, part);
-   if (prev_content) evas_object_del(prev_content);
+   evas_object_del(prev_content);
 
    wd->content = content;
    if (!content) return;

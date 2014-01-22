@@ -936,7 +936,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
         cnp_debug("Couldn't find a file\n");
         return 0;
      }
-   if (savedtypes.imgfile) free(savedtypes.imgfile);
+   free(savedtypes.imgfile);
    if (savedtypes.textreq)
      {
         savedtypes.textreq = 0;
@@ -1270,7 +1270,7 @@ _x11_dnd_enter(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 
    cnp_debug("Types\n");
    savedtypes.ntypes = enter->num_types;
-   if (savedtypes.types) free(savedtypes.types);
+   free(savedtypes.types);
    savedtypes.types = malloc(sizeof(char *) * enter->num_types);
    if (!savedtypes.types) return EINA_FALSE;
 
@@ -1284,8 +1284,7 @@ _x11_dnd_enter(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
              /* Request it, so we know what it is */
              cnp_debug("Sending uri request\n");
              savedtypes.textreq = 1;
-             if (savedtypes.imgfile) free(savedtypes.imgfile);
-             savedtypes.imgfile = NULL;
+             ELM_SAFE_FREE(savedtypes.imgfile, free);
              ecore_x_selection_xdnd_request(enter->win, text_uri);
           }
      }
@@ -2303,7 +2302,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
 
              ecore_wl_dnd_selection_set(ecore_wl_input_get(), types);
 
-             if (sel->selbuf) free(sel->selbuf);
+             free(sel->selbuf);
              sel->buflen = buflen;
              sel->selbuf = strdup((char*)selbuf);
 
@@ -2658,8 +2657,7 @@ _wl_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
           {
              drops = eina_list_remove(drops, dropable);
              eo_do(obj, eo_base_data_del("__elm_dropable"));
-             free(dropable);
-             dropable = NULL;
+             ELM_SAFE_FREE(dropable, free);
              evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                    _all_drop_targets_cbs_del);
           }
@@ -2708,7 +2706,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
    ecore_wl_dnd_drag_types_set(ecore_wl_input_get(), types);
 
    /* set the drag data used when a drop occurs */
-   if (wl_cnp_selection.selbuf) free(wl_cnp_selection.selbuf);
+   free(wl_cnp_selection.selbuf);
    wl_cnp_selection.selbuf = strdup((char*)data);
    wl_cnp_selection.buflen = strlen(wl_cnp_selection.selbuf);
 
@@ -2801,7 +2799,7 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if ((!ev->num_types) || (!ev->types)) return ECORE_CALLBACK_PASS_ON;
 
    savedtypes.ntypes = ev->num_types;
-   if (savedtypes.types) free(savedtypes.types);
+   free(savedtypes.types);
    savedtypes.types = malloc(sizeof(char *) * ev->num_types);
    if (!savedtypes.types) return EINA_FALSE;
 
@@ -2811,8 +2809,7 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (savedtypes.types[i] == text_uri)
           {
              savedtypes.textreq = 1;
-             if (savedtypes.imgfile) free(savedtypes.imgfile);
-             savedtypes.imgfile = NULL;
+             ELM_SAFE_FREE(savedtypes.imgfile, free);
           }
      }
 
@@ -3376,8 +3373,7 @@ _local_elm_cnp_selection_set(Evas_Object *obj EINA_UNUSED,
                              const void *selbuf, size_t buflen)
 {
    _local_elm_cnp_init();
-   if (_local_selinfo[selection].sel.buf)
-     free(_local_selinfo[selection].sel.buf);
+   free(_local_selinfo[selection].sel.buf);
    _local_selinfo[selection].format = format;
    _local_selinfo[selection].sel.buf = malloc(buflen + 1);
    if (_local_selinfo[selection].sel.buf)
@@ -3407,9 +3403,7 @@ _local_elm_object_cnp_selection_clear(Evas_Object *obj EINA_UNUSED,
                                       Elm_Sel_Type selection)
 {
    _local_elm_cnp_init();
-   if (_local_selinfo[selection].sel.buf)
-     free(_local_selinfo[selection].sel.buf);
-   _local_selinfo[selection].sel.buf = NULL;
+   ELM_SAFE_FREE(_local_selinfo[selection].sel.buf, free);
    _local_selinfo[selection].sel.size = 0;
    return EINA_TRUE;
 }

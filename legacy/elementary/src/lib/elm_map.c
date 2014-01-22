@@ -216,7 +216,7 @@ _nominatim_url_cb(const Evas_Object *obj,
 
         if (str)
           {
-             if (str[0]) free(str[0]);
+             free(str[0]);
              free(str);
           }
      }
@@ -709,7 +709,7 @@ _grid_item_create(Grid *g,
      }
    else eina_stringshare_replace(&gi->url, url);
 
-   if (url) free(url);
+   free(url);
    eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 
    return gi;
@@ -723,10 +723,10 @@ _grid_item_free(Grid_Item *gi)
    _grid_item_unload(gi);
    if (gi->g && gi->g->grid)
      eina_matrixsparse_data_idx_set(gi->g->grid, gi->y, gi->x, NULL);
-   if (gi->url) eina_stringshare_del(gi->url);
+   eina_stringshare_del(gi->url);
    if (gi->file_have) ecore_file_remove(gi->file);
-   if (gi->file) eina_stringshare_del(gi->file);
-   if (gi->img) evas_object_del(gi->img);
+   eina_stringshare_del(gi->file);
+   evas_object_del(gi->img);
 
    free(gi);
 }
@@ -1505,7 +1505,7 @@ _overlay_default_content_update(Overlay_Default *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    if (ovl->content == content) return;
-   if (ovl->content) evas_object_del(ovl->content);
+   evas_object_del(ovl->content);
    ovl->content = content;
 
    if (ovl->content)
@@ -1555,7 +1555,7 @@ _overlay_default_class_content_update(Overlay_Default *ovl,
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (ovl->clas_content) evas_object_del(ovl->clas_content);
+   evas_object_del(ovl->clas_content);
    ovl->clas_content = _icon_dup(content, ovl->layout);
    _overlay_default_layout_update(ovl);
 }
@@ -1568,7 +1568,7 @@ _overlay_default_icon_update(Overlay_Default *ovl,
 
    if (ovl->icon == icon) return;
 
-   if (ovl->icon) evas_object_del(ovl->icon);
+   evas_object_del(ovl->icon);
    ovl->icon = icon;
    _overlay_default_layout_update(ovl);
 }
@@ -1579,7 +1579,7 @@ _overlay_default_class_icon_update(Overlay_Default *ovl,
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
+   evas_object_del(ovl->clas_icon);
    ovl->clas_icon = _icon_dup(icon, ovl->layout);
    _overlay_default_layout_update(ovl);
 }
@@ -1599,11 +1599,11 @@ _overlay_default_free(Overlay_Default *ovl)
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (ovl->content) evas_object_del(ovl->content);
-   if (ovl->icon) evas_object_del(ovl->icon);
-   if (ovl->clas_content) evas_object_del(ovl->clas_content);
-   if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
-   if (ovl->layout) evas_object_del(ovl->layout);
+   evas_object_del(ovl->content);
+   evas_object_del(ovl->icon);
+   evas_object_del(ovl->clas_content);
+   evas_object_del(ovl->clas_icon);
+   evas_object_del(ovl->layout);
 
    free(ovl);
 }
@@ -1672,7 +1672,7 @@ _overlay_group_coord_member_update(Overlay_Group *grp,
    _coord_to_region_convert
      (grp->wsd, x, y, grp->wsd->size.w, &grp->lon, &grp->lat);
 
-   if (grp->members) eina_list_free(grp->members);
+   eina_list_free(grp->members);
    grp->members = members;
    snprintf(text, sizeof(text), "%d", eina_list_count(members));
 
@@ -1728,9 +1728,9 @@ _overlay_group_free(Overlay_Group *grp)
 {
    EINA_SAFETY_ON_NULL_RETURN(grp);
 
-   if (grp->overlay) free(grp->overlay);
+   free(grp->overlay);
    if (grp->ovl) _overlay_default_free(grp->ovl);
-   if (grp->members) eina_list_free(grp->members);
+   eina_list_free(grp->members);
 
    free(grp);
 }
@@ -1777,7 +1777,7 @@ _overlay_class_icon_update(Overlay_Class *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    if (ovl->icon == icon) return;
-   if (ovl->icon) evas_object_del(ovl->icon);
+   evas_object_del(ovl->icon);
    ovl->icon = icon;
    // For using proxy, it should have size and be shown but moved away to hide.
    evas_object_resize(icon, 32, 32);
@@ -1804,7 +1804,7 @@ _overlay_class_content_update(Overlay_Class *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    if (ovl->content == content) return;
-   if (ovl->content) evas_object_del(ovl->content);
+   evas_object_del(ovl->content);
    ovl->content = content;
    // For using proxy, it should have size and be shown but moved away to hide.
    // content should have it's own size
@@ -1855,8 +1855,8 @@ _overlay_class_free(Overlay_Class *clas)
              _overlay_default_class_icon_update(overlay->ovl, NULL);
           }
      }
-   if (clas->icon) evas_object_del(clas->icon);
-   if (clas->members) eina_list_free(clas->members);
+   evas_object_del(clas->icon);
+   eina_list_free(clas->members);
 
    free(clas);
 }
@@ -2077,7 +2077,7 @@ _overlay_route_free(Overlay_Route *route)
 
    EINA_LIST_FREE(route->nodes, n)
      {
-        if (n->pos.address) eina_stringshare_del(n->pos.address);
+        eina_stringshare_del(n->pos.address);
         free(n);
      }
 
@@ -3130,7 +3130,7 @@ _name_request(const Evas_Object *obj,
                                  &(name->job), sd->ua) || !(name->job))
      {
         ERR("Can't request Name from %s to %s", url, name->fname);
-        if (name->address) free(name->address);
+        free(name->address);
         free(name->fname);
         free(name);
         free(fname);
@@ -4090,7 +4090,7 @@ _elm_map_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _grid_all_clear(sd);
    // Removal of download list should be after grid clear.
-   if (sd->download_idler) ecore_idler_del(sd->download_idler);
+   ecore_idler_del(sd->download_idler);
    eina_list_free(sd->download_list);
 
    _source_all_unload(sd);
@@ -4797,10 +4797,10 @@ _route_add(Eo *obj, void *_pd, va_list *list)
    if (!url)
      {
         ERR("Route URL is NULL");
-        if (type_name) free(type_name);
+        free(type_name);
         return;
      }
-   if (type_name) free(type_name);
+   free(type_name);
 
    route = ELM_NEW(Elm_Map_Route);
    route->wsd = sd;
@@ -4848,13 +4848,13 @@ elm_map_route_del(Elm_Map_Route *route)
 
    EINA_LIST_FREE(route->waypoint, w)
      {
-        if (w->point) eina_stringshare_del(w->point);
+        eina_stringshare_del(w->point);
         free(w);
      }
 
    EINA_LIST_FREE(route->nodes, n)
      {
-        if (n->pos.address) eina_stringshare_del(n->pos.address);
+        eina_stringshare_del(n->pos.address);
         free(n);
      }
 
@@ -4939,8 +4939,8 @@ elm_map_name_del(Elm_Map_Name *name)
    EINA_SAFETY_ON_NULL_RETURN(name->wsd);
    ELM_MAP_CHECK((name->wsd)->obj);
 
-   if (name->job) ecore_file_download_abort(name->job);
-   if (name->address) free(name->address);
+   ecore_file_download_abort(name->job);
+   free(name->address);
    if (name->fname)
      {
         ecore_file_remove(name->fname);

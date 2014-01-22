@@ -67,8 +67,8 @@ _item_free(Elm_Segment_Item *it)
    if (sd->selected_item == it) sd->selected_item = NULL;
    if (sd->items) sd->items = eina_list_remove(sd->items, it);
 
-   if (it->icon) evas_object_del(it->icon);
-   if (it->label) eina_stringshare_del(it->label);
+   evas_object_del(it->icon);
+   eina_stringshare_del(it->label);
 }
 
 static void
@@ -460,7 +460,7 @@ _item_content_set_hook(Elm_Object_Item *it,
      {
         if (content == item->icon) return;
 
-        if (item->icon) evas_object_del(item->icon);
+        evas_object_del(item->icon);
         item->icon = content;
         if (!item->icon)
           {

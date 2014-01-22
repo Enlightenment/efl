@@ -220,7 +220,7 @@ _elm_mapbuf_smart_content_set(Eo *obj, void *_pd, va_list *list)
         return;
      }
 
-   if (sd->content) evas_object_del(sd->content);
+   evas_object_del(sd->content);
    sd->content = content;
 
    if (content)
@@ -330,8 +330,7 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Mapbuf_Smart_Data *priv = _pd;
 
-   if (priv->idler) ecore_idler_del(priv->idler);
-   priv->idler = NULL;
+   ELM_SAFE_FREE(priv->idler, ecore_idler_del);
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }

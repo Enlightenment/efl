@@ -56,12 +56,10 @@ _elm_module_shutdown(void)
 
         EINA_LIST_FREE(tl, m) _elm_module_del(m);
 
-        eina_hash_free(modules);
-        modules = NULL;
+        ELM_SAFE_FREE(modules, eina_hash_free);
      }
 
-   if (modules_as) eina_hash_free(modules_as);
-   modules_as = NULL;
+   ELM_SAFE_FREE(modules_as, eina_hash_free);
 }
 
 void

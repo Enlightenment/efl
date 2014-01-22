@@ -206,8 +206,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
    evas = evas_object_evas_get(sd->obj);
    if ((sd->view) && (sd->is_video ^ sd->was_video))
      {
-        evas_object_del(sd->view);
-        sd->view = NULL;
+        ELM_SAFE_FREE(sd->view, evas_object_del);
      }
    sd->was_video = sd->is_video;
 
@@ -287,14 +286,9 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
      EINA_LIST_FREE(retry, sd)
        {
           eo_data_unref(sd->obj, sd);
-          eina_stringshare_del(sd->thumb.thumb_path);
-          sd->thumb.thumb_path = NULL;
-
-          eina_stringshare_del(sd->thumb.thumb_key);
-          sd->thumb.thumb_key = NULL;
-
-          evas_object_del(sd->view);
-          sd->view = NULL;
+          ELM_SAFE_FREE(sd->thumb.thumb_path, eina_stringshare_del);
+          ELM_SAFE_FREE(sd->thumb.thumb_key, eina_stringshare_del);
+          ELM_SAFE_FREE(sd->view, evas_object_del);
 
           wd = eo_data_scope_get(sd->obj, ELM_OBJ_WIDGET_CLASS);
           edje_object_signal_emit
@@ -580,19 +574,14 @@ _elm_thumb_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
       (sd->view, EVAS_CALLBACK_IMAGE_PRELOADED, _on_thumb_preloaded,
        sd);
 
-   if (sd->view)
-     {
-        evas_object_del(sd->view);
-        sd->view = NULL;
-     }
-
+   ELM_SAFE_FREE(sd->view, evas_object_del);
    eina_stringshare_del(sd->thumb.thumb_path);
    eina_stringshare_del(sd->thumb.thumb_key);
 
    eina_stringshare_del(sd->file);
    eina_stringshare_del(sd->key);
 
-   if (sd->eeh) ecore_event_handler_del(sd->eeh);
+   ecore_event_handler_del(sd->eeh);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

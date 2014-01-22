@@ -226,11 +226,7 @@ _string_check(void *data)
    Evas_Object *obj = data;
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
-   if (sd->string_check_idle_enterer)
-     {
-        ecore_idle_enterer_del(sd->string_check_idle_enterer);
-        sd->string_check_idle_enterer = NULL;
-     }
+   ELM_SAFE_FREE(sd->string_check_idle_enterer, ecore_idle_enterer_del);
 
    // call string check idle enterer directly
    _string_check_idle_enterer_cb(data);
@@ -337,9 +333,7 @@ _item_del(Elm_Diskselector_Item *item)
    ELM_DISKSELECTOR_DATA_GET(WIDGET(item), sd);
    sd->item_count -= 1;
    eina_stringshare_del(item->label);
-
-   if (item->icon)
-     evas_object_del(item->icon);
+   evas_object_del(item->icon);
 }
 
 static void
@@ -492,7 +486,7 @@ _item_icon_set(Elm_Diskselector_Item *it,
 {
    if (it->icon == icon) return;
 
-   if (it->icon) evas_object_del(it->icon);
+   evas_object_del(it->icon);
    it->icon = icon;
 
    if (VIEW(it))
@@ -1421,17 +1415,8 @@ _elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      }
    sd->r_items = eina_list_free(sd->r_items);
 
-   if (sd->scroller_move_idle_enterer)
-     {
-        ecore_idle_enterer_del(sd->scroller_move_idle_enterer);
-        sd->scroller_move_idle_enterer = NULL;
-     }
-
-   if (sd->string_check_idle_enterer)
-     {
-        ecore_idle_enterer_del(sd->string_check_idle_enterer);
-        sd->string_check_idle_enterer = NULL;
-     }
+   ELM_SAFE_FREE(sd->scroller_move_idle_enterer, ecore_idle_enterer_del);
+   ELM_SAFE_FREE(sd->string_check_idle_enterer, ecore_idle_enterer_del);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

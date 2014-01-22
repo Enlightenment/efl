@@ -81,11 +81,8 @@ _index_box_clear(Evas_Object *obj,
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
-        if (!VIEW(it)) continue;
         if (it->level != level) continue;
-
-        evas_object_del(VIEW(it));
-        VIEW(it) = NULL;
+        ELM_SAFE_FREE(VIEW(it), evas_object_del);
      }
 
    sd->level_active[level] = EINA_FALSE;
@@ -362,11 +359,9 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
           }
         elm_layout_content_set(obj, "elm.swallow.index.1", sd->bx[1]);
      }
-   else if (sd->bx[1])
-     {
-        evas_object_del(sd->bx[1]);
-        sd->bx[1] = NULL;
-     }
+   else
+     ELM_SAFE_FREE(sd->bx[1], evas_object_del);
+
    if (edje_object_part_exists
          (wd->resize_obj, "elm.swallow.event.1"))
      {
@@ -380,11 +375,9 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
         elm_layout_content_set(obj, "elm.swallow.event.1", sd->event_rect[1]);
         evas_object_size_hint_min_set(sd->event_rect[1], minw, minh);
      }
-   else if (sd->event_rect[1])
-     {
-        evas_object_del(sd->event_rect[1]);
-        sd->event_rect[1] = NULL;
-     }
+   else
+     ELM_SAFE_FREE(sd->event_rect[1], evas_object_del);
+
    edje_object_message_signal_process(wd->resize_obj);
 
    elm_layout_sizing_eval(obj);

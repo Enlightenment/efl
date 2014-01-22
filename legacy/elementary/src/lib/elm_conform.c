@@ -924,7 +924,7 @@ _elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Conformant_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->prop_hdl) ecore_event_handler_del(sd->prop_hdl);
+   ecore_event_handler_del(sd->prop_hdl);
 #endif
 
    ecore_job_del(sd->show_region_job);

@@ -793,7 +793,7 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
    evas_object_lower(sd->alpha_bg);
    evas_object_hide(sd->alpha_bg);
    sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
-   if (sd->move_items) sd->move_items = eina_list_free(sd->move_items);
+   sd->move_items = eina_list_free(sd->move_items);
 
    evas_object_smart_callback_call(sd->pan_obj, "changed", NULL);
    evas_object_smart_callback_call
@@ -1252,8 +1252,8 @@ _item_cache_clean(Elm_Genlist_Smart_Data *sd)
         sd->item_cache = eina_inlist_remove
             (sd->item_cache, sd->item_cache->last);
         sd->item_cache_count--;
-        if (itc->spacer) evas_object_del(itc->spacer);
-        if (itc->base_view) evas_object_del(itc->base_view);
+        evas_object_del(itc->spacer);
+        evas_object_del(itc->base_view);
         eina_stringshare_del(itc->item_style);
         free(itc);
      }
@@ -1265,8 +1265,8 @@ _item_cache_clean(Elm_Genlist_Smart_Data *sd)
 static void
 _item_cache_free(Item_Cache *itc)
 {
-   if (itc->spacer) evas_object_del(itc->spacer);
-   if (itc->base_view) evas_object_del(itc->base_view);
+   evas_object_del(itc->spacer);
+   evas_object_del(itc->base_view);
    eina_stringshare_del(itc->item_style);
    free(itc);
 }
@@ -1293,8 +1293,7 @@ _item_cache_add(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(obj));
    if (sd->item_cache_max <= 0)
      {
-        evas_object_del(VIEW(it));
-        VIEW(it) = NULL;
+        ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
 
         evas_event_thaw(evas_object_evas_get(obj));
@@ -4012,7 +4011,7 @@ _item_idle_enterer(void *data)
 static void
 _requeue_idle_enterer(Elm_Genlist_Smart_Data *sd)
 {
-   if (sd->queue_idle_enterer) ecore_idle_enterer_del(sd->queue_idle_enterer);
+   ecore_idle_enterer_del(sd->queue_idle_enterer);
    sd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, sd->obj);
 }
 
@@ -4472,8 +4471,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
 
    if (it->item->nocache_once || it->item->nocache)
      {
-        evas_object_del(VIEW(it));
-        VIEW(it) = NULL;
+        ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
      }
    else
@@ -4988,10 +4986,7 @@ _elm_genlist_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    sd->queue = eina_list_free(sd->queue);
    elm_genlist_clear(obj);
    for (i = 0; i < 2; i++)
-     {
-        evas_object_del(sd->stack[i]);
-        sd->stack[i] = NULL;
-     }
+     ELM_SAFE_FREE(sd->stack[i], evas_object_del);
    eo_unref(sd->pan_obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
@@ -6513,8 +6508,7 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
           {
              Evas_Object* eobj;
              Eina_List* l;
-             eina_list_free(it->item_focus_chain);
-             it->item_focus_chain = NULL;
+             it->item_focus_chain = eina_list_free(it->item_focus_chain);
              EINA_LIST_FOREACH(it->content_objs, l, eobj)
                if (elm_object_focus_allow_get(eobj))
                  it->item_focus_chain = eina_list_append(it->item_focus_chain, eobj);

@@ -201,9 +201,9 @@ _elm_fileselector_button_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED
 {
    Elm_Fileselector_Button_Smart_Data *sd = _pd;
 
-   if (sd->window_title) eina_stringshare_del(sd->window_title);
-   if (sd->fsd.path) eina_stringshare_del(sd->fsd.path);
-   if (sd->fsw) evas_object_del(sd->fsw);
+   eina_stringshare_del(sd->window_title);
+   eina_stringshare_del(sd->fsd.path);
+   evas_object_del(sd->fsw);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }

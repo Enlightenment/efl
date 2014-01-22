@@ -381,14 +381,12 @@ _elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
 
    /* parent's edje file setting path replicated here (we got .eet
     * extension, so bypassing it) */
-   if (id->prev_img)
-     evas_object_del(id->prev_img);
-   id->prev_img = NULL;
+   ELM_SAFE_FREE(id->prev_img, evas_object_del);
 
    if (!id->edje)
      {
         pclip = evas_object_clip_get(id->img);
-        if (id->img) evas_object_del(id->img);
+        evas_object_del(id->img);
 
         /* Edje object instead */
         id->img = edje_object_add(evas_object_evas_get(obj));
@@ -591,7 +589,7 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Icon_Smart_Data *sd = _pd;
 
-   if (sd->stdicon) eina_stringshare_del(sd->stdicon);
+   eina_stringshare_del(sd->stdicon);
 
    if (sd->thumb.request)
      {
@@ -603,9 +601,7 @@ _elm_icon_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eina_stringshare_del(sd->thumb.file.key);
    eina_stringshare_del(sd->thumb.thumb.path);
    eina_stringshare_del(sd->thumb.thumb.key);
-
-   if (sd->thumb.eeh)
-     ecore_event_handler_del(sd->thumb.eeh);
+   ecore_event_handler_del(sd->thumb.eeh);
 
    _edje_signals_free(sd);
 

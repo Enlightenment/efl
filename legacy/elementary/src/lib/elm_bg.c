@@ -177,11 +177,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    const char *p;
    Eina_Bool int_ret;
 
-   if (sd->img)
-     {
-        evas_object_del(sd->img);
-        sd->img = NULL;
-     }
+   ELM_SAFE_FREE(sd->img, evas_object_del);
    if (!file)
      {
         ELM_SAFE_FREE(sd->file, eina_stringshare_del);

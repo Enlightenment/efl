@@ -174,19 +174,13 @@ static void
 _prefix_shutdown(void)
 {
    if (app_pfx) eina_prefix_free(app_pfx);
-   if (app_domain) eina_stringshare_del(app_domain);
-   if (app_checkfile) eina_stringshare_del(app_checkfile);
-   if (app_compile_bin_dir) eina_stringshare_del(app_compile_bin_dir);
-   if (app_compile_lib_dir) eina_stringshare_del(app_compile_lib_dir);
-   if (app_compile_data_dir) eina_stringshare_del(app_compile_data_dir);
-   if (app_compile_locale_dir) eina_stringshare_del(app_compile_locale_dir);
+   ELM_SAFE_FREE(app_domain, eina_stringshare_del);
+   ELM_SAFE_FREE(app_checkfile, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_bin_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_lib_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_data_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(app_compile_locale_dir, eina_stringshare_del);
    app_mainfunc = NULL;
-   app_domain = NULL;
-   app_checkfile = NULL;
-   app_compile_bin_dir = NULL;
-   app_compile_lib_dir = NULL;
-   app_compile_data_dir = NULL;
-   app_compile_locale_dir = NULL;
    app_prefix_dir = NULL;
    app_bin_dir = NULL;
    app_lib_dir = NULL;
@@ -332,10 +326,8 @@ elm_shutdown(void)
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
 
-   if (system_handlers[0])
-     ecore_event_handler_del(system_handlers[0]);
-   if (system_handlers[1])
-     ecore_event_handler_del(system_handlers[1]);
+   ecore_event_handler_del(system_handlers[0]);
+   ecore_event_handler_del(system_handlers[1]);
 
    _elm_win_shutdown();
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
@@ -844,10 +836,7 @@ elm_quicklaunch_prepare(int    argc,
    strcat(p, exename);
    strcat(p, LIBEXT);
    if (access(exe2, R_OK | X_OK) != 0)
-     {
-        free(exe2);
-        exe2 = NULL;
-     }
+     ELM_SAFE_FREE(exe2, free);
 
    /* Try linking to executable first. Works with PIE files. */
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
@@ -952,8 +941,7 @@ elm_quicklaunch_fork(int    argc,
 
    if (quicklaunch_on)
      {
-        if (_elm_appname) free(_elm_appname);
-        _elm_appname = NULL;
+        ELM_SAFE_FREE(_elm_appname, free);
         if ((argv) && (argv[0]))
           _elm_appname = strdup(ecore_file_file_get(argv[0]));
 

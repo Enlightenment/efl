@@ -1461,10 +1461,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   if (sid->down.hold_enterer)
-     {
-        ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
-     }
+   ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
 
    eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
@@ -1790,10 +1787,7 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   if (sid->down.hold_enterer)
-     {
-        ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
-     }
+   ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
    if (sid->down.momentum_animator)
      {
         ELM_SAFE_FREE(sid->down.momentum_animator, ecore_animator_del);
@@ -2639,10 +2633,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
-        if (sid->down.hold_enterer)
-          {
-             ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
-          }
+        ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
         if (sid->down.scroll)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
@@ -2729,10 +2720,7 @@ _elm_scroll_mouse_down_event_cb(void *data,
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   if (sid->down.hold_enterer)
-     {
-        ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
-     }
+   ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
    if (sid->down.momentum_animator)
      {
         ELM_SAFE_FREE(sid->down.momentum_animator, ecore_animator_del);
@@ -3047,7 +3035,7 @@ _elm_scroll_hold_animator(void *data)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
-   if (sid->down.hold_enterer) ecore_idle_enterer_del(sid->down.hold_enterer);
+   ecore_idle_enterer_del(sid->down.hold_enterer);
    sid->down.hold_enterer =
      ecore_idle_enterer_before_add(_elm_scroll_hold_enterer, sid);
    return ECORE_CALLBACK_RENEW;
@@ -3857,11 +3845,7 @@ _elm_scroll_extern_pan_set(Eo *obj, void *_pd, va_list *list)
      }
    else
      {
-        if (sid->pan_obj)
-          {
-             evas_object_del(sid->pan_obj);
-             sid->pan_obj = NULL;
-          }
+        ELM_SAFE_FREE(sid->pan_obj, evas_object_del);
      }
    if (!pan)
      {

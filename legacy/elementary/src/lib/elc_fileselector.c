@@ -46,9 +46,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void
 _elm_fileselector_smart_del_do(Elm_Fileselector_Smart_Data *sd)
 {
-   if (sd->path) eina_stringshare_del(sd->path);
-   if (sd->selection) eina_stringshare_del(sd->selection);
-   if (sd->populate_idler) free(ecore_idler_del(sd->populate_idler));
+   eina_stringshare_del(sd->path);
+   eina_stringshare_del(sd->selection);
+   free(ecore_idler_del(sd->populate_idler));
 
    eo_do_super(sd->obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1583,10 +1583,8 @@ _buttons_ok_cancel_set(Eo *obj, void *_pd, va_list *list)
      }
    else if (!visible)
      {
-        evas_object_del(sd->cancel_button);
-        sd->cancel_button = NULL;
-        evas_object_del(sd->ok_button);
-        sd->ok_button = NULL;
+        ELM_SAFE_FREE(sd->cancel_button, evas_object_del);
+        ELM_SAFE_FREE(sd->ok_button, evas_object_del);
      }
 }
 

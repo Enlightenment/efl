@@ -188,11 +188,10 @@ _list_del(Elm_Popup_Smart_Data *sd)
    evas_object_event_callback_del
      (sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb);
 
-   evas_object_del(sd->tbl);
+   ELM_SAFE_FREE(sd->tbl, evas_object_del);
    sd->scr = NULL;
    sd->box = NULL;
    sd->spacer = NULL;
-   sd->tbl = NULL;
 }
 
 static void
@@ -229,8 +228,7 @@ _elm_popup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         if (sd->buttons[i])
           {
              evas_object_del(sd->buttons[i]->btn);
-             free(sd->buttons[i]);
-             sd->buttons[i] = NULL;
+             ELM_SAFE_FREE(sd->buttons[i], free);
           }
      }
    if (sd->items)
@@ -580,8 +578,7 @@ _button_remove(Evas_Object *obj,
    if (!sd->last_button_number)
      {
         _visuals_set(obj);
-        evas_object_del(sd->action_area);
-        sd->action_area = NULL;
+        ELM_SAFE_FREE(sd->action_area, evas_object_del);
         edje_object_message_signal_process(wd->resize_obj);
      }
    else
@@ -728,9 +725,7 @@ _item_icon_set(Elm_Popup_Item *it,
 {
    if (it->icon == icon) return;
 
-   if (it->icon)
-     evas_object_del(it->icon);
-
+   evas_object_del(it->icon);
    it->icon = icon;
    if (it->icon)
      {
@@ -829,9 +824,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
    ELM_POPUP_DATA_GET(WIDGET(it), sd);
 
-   if (it->icon)
-     evas_object_del(it->icon);
-
+   evas_object_del(it->icon);
    eina_stringshare_del(it->label);
    sd->items = eina_list_remove(sd->items, it);
    if (!eina_list_count(sd->items))
@@ -1048,7 +1041,7 @@ _title_icon_set(Evas_Object *obj,
 
    if (sd->title_icon == icon) return EINA_TRUE;
    title_visibility_old = (sd->title_text) || (sd->title_icon);
-   if (sd->title_icon) evas_object_del(sd->title_icon);
+   evas_object_del(sd->title_icon);
 
    sd->title_icon = icon;
    title_visibility_current = (sd->title_text) || (sd->title_icon);
@@ -1914,8 +1907,7 @@ _item_append(Eo *obj, void *_pd, va_list *list)
      {
         prev_content = elm_layout_content_get
             (sd->content_area, CONTENT_PART);
-        if (prev_content)
-          evas_object_del(prev_content);
+        evas_object_del(prev_content);
      }
 
    //The first item is appended.

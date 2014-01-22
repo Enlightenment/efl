@@ -68,7 +68,7 @@ _access_action_callback_call(Evas_Object *obj,
    if (a && (a->fn[type].cb))
      ret = a->fn[type].cb(a->fn[type].user_data, obj, action_info);
 
-   if (ai) free(ai);
+   free(ai);
 
    return ret;
 }
@@ -210,7 +210,7 @@ _access_add_set(Elm_Access_Info *ac, int type)
           {
              if (!ai->func)
                {
-                  if (ai->data) eina_stringshare_del(ai->data);
+                  eina_stringshare_del(ai->data);
                }
              ai->func = NULL;
              ai->data = NULL;
@@ -571,7 +571,7 @@ _elm_access_clear(Elm_Access_Info *ac)
      {
         if (!ai->func)
           {
-             if (ai->data) eina_stringshare_del(ai->data);
+             eina_stringshare_del(ai->data);
           }
         free(ai);
      }
@@ -738,7 +738,7 @@ _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj)
                }
           }
      }
-   if (txt) free(txt);
+   free(txt);
 }
 
 EAPI void
@@ -1118,7 +1118,7 @@ _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
    Action_Info *a;
    a = evas_object_data_get(obj, "_elm_access_action_info");
    evas_object_data_del(obj,  "_elm_access_action_info");
-   if (a) free(a);
+   free(a);
 }
 
 EAPI void

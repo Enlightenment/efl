@@ -213,7 +213,7 @@ _prop_change_delay_cb(void *data EINA_UNUSED)
         s = ecore_x_window_prop_string_get(_config_win, _atom[ATOM_E_PROFILE]);
         if (s)
           {
-             if (_elm_profile) free(_elm_profile);
+             free(_elm_profile);
              _elm_profile = s;
           }
      }
@@ -651,7 +651,7 @@ _elm_config_font_overlay_set(const char    *text_class,
         if (strcmp(efd->text_class, text_class))
           continue;
 
-        if (efd->font) eina_stringshare_del(efd->font);
+        eina_stringshare_del(efd->font);
         efd->font = eina_stringshare_add(font);
         efd->size = size;
         _elm_config->font_overlays =
@@ -686,7 +686,7 @@ _elm_config_font_overlay_remove(const char *text_class)
         _elm_config->font_overlays =
           eina_list_remove_list(_elm_config->font_overlays, l);
         eina_stringshare_del(efd->text_class);
-        if (efd->font) eina_stringshare_del(efd->font);
+        eina_stringshare_del(efd->font);
         free(efd);
 
         return;
@@ -968,25 +968,25 @@ _config_free(Elm_Config *cfg)
      {
         eina_stringshare_del(fontdir);
      }
-   if (cfg->engine) eina_stringshare_del(cfg->engine);
+   eina_stringshare_del(cfg->engine);
    EINA_LIST_FREE(cfg->font_overlays, fo)
      {
-        if (fo->text_class) eina_stringshare_del(fo->text_class);
-        if (fo->font) eina_stringshare_del(fo->font);
+        eina_stringshare_del(fo->text_class);
+        eina_stringshare_del(fo->font);
         free(fo);
      }
    EINA_LIST_FREE(cfg->color_palette, palette)
      {
-        if (palette->palette_name) eina_stringshare_del(palette->palette_name);
+        eina_stringshare_del(palette->palette_name);
         EINA_LIST_FREE(palette->color_list, color) free(color);
         free(palette);
      }
-   if (cfg->theme) eina_stringshare_del(cfg->theme);
-   if (cfg->modules) eina_stringshare_del(cfg->modules);
-   if (cfg->indicator_service_0) eina_stringshare_del(cfg->indicator_service_0);
-   if (cfg->indicator_service_90) eina_stringshare_del(cfg->indicator_service_90);
-   if (cfg->indicator_service_180) eina_stringshare_del(cfg->indicator_service_180);
-   if (cfg->indicator_service_270) eina_stringshare_del(cfg->indicator_service_270);
+   eina_stringshare_del(cfg->theme);
+   eina_stringshare_del(cfg->modules);
+   eina_stringshare_del(cfg->indicator_service_0);
+   eina_stringshare_del(cfg->indicator_service_90);
+   eina_stringshare_del(cfg->indicator_service_180);
+   eina_stringshare_del(cfg->indicator_service_270);
    free(cfg);
 }
 
@@ -1436,7 +1436,7 @@ _config_update(void)
        }
      if (s)
        {
-          if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
+          eina_stringshare_del(_elm_config->modules);
           _elm_config->modules = s;
        }
      IFCFGEND;
@@ -2685,8 +2685,7 @@ _elm_config_shutdown(void)
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
-        ecore_event_handler_del(_prop_change_handler);
-        _prop_change_handler = NULL;
+        ELM_SAFE_FREE(_prop_change_handler, ecore_event_handler_del);
 #endif
      }
    ELM_SAFE_FREE(_elm_config, _config_free);

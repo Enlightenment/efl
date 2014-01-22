@@ -398,13 +398,7 @@ static void
 _elm_hover_subs_del(Elm_Hover_Smart_Data *sd)
 {
    ELM_HOVER_PARTS_FOREACH
-   {
-      if (sd->subs[i].obj)
-        {
-           evas_object_del(sd->subs[i].obj);
-           sd->subs[i].obj = NULL;
-        }
-   }
+     ELM_SAFE_FREE(sd->subs[i].obj, evas_object_del);
 }
 
 static void

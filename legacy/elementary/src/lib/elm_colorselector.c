@@ -1113,23 +1113,14 @@ _elm_colorselector_smart_theme(Eo *obj, void *_pd, va_list *list)
      {
         if (sd->cb_data[i])
           {
-             evas_object_del(sd->cb_data[i]->colorbar);
-             sd->cb_data[i]->colorbar = NULL;
-             evas_object_del(sd->cb_data[i]->bar);
-             sd->cb_data[i]->bar = NULL;
-             evas_object_del(sd->cb_data[i]->lbt);
-             sd->cb_data[i]->lbt = NULL;
-             evas_object_del(sd->cb_data[i]->rbt);
-             sd->cb_data[i]->rbt = NULL;
+             ELM_SAFE_FREE(sd->cb_data[i]->colorbar, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->bar, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->lbt, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->rbt, evas_object_del);
              if (i != 0)
-               {
-                  evas_object_del(sd->cb_data[i]->bg_rect);
-                  sd->cb_data[i]->bg_rect = NULL;
-               }
-             evas_object_del(sd->cb_data[i]->arrow);
-             sd->cb_data[i]->arrow = NULL;
-             evas_object_del(sd->cb_data[i]->touch_area);
-             sd->cb_data[i]->touch_area = NULL;
+               ELM_SAFE_FREE(sd->cb_data[i]->bg_rect, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->arrow, evas_object_del);
+             ELM_SAFE_FREE(sd->cb_data[i]->touch_area, evas_object_del);
           }
      }
 
@@ -1587,12 +1578,12 @@ _elm_colorselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _mouse_out_canvas, obj);
 
    ecore_timer_del(sd->longpress_timer);
-   if (sd->palette_name) eina_stringshare_del(sd->palette_name);
+   eina_stringshare_del(sd->palette_name);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->grab.mouse_motion) ecore_event_handler_del(sd->grab.mouse_motion);
-   if (sd->grab.mouse_up) ecore_event_handler_del(sd->grab.mouse_up);
-   if (sd->grab.key_up) ecore_event_handler_del(sd->grab.key_up);
+   ecore_event_handler_del(sd->grab.mouse_motion);
+   ecore_event_handler_del(sd->grab.mouse_up);
+   ecore_event_handler_del(sd->grab.key_up);
 #endif
 
    _items_del(sd);

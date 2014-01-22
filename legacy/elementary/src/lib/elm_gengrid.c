@@ -2262,7 +2262,7 @@ _elm_gengrid_clear(Evas_Object *obj,
    sd->clear_me = EINA_FALSE;
    sd->pan_changed = EINA_TRUE;
    ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
-   if (sd->selected) sd->selected = eina_list_free(sd->selected);
+   sd->selected = eina_list_free(sd->selected);
    if (sd->clear_cb) sd->clear_cb(sd);
    sd->pan_x = 0;
    sd->pan_y = 0;

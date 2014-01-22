@@ -204,7 +204,7 @@ _elm_image_edje_file_set(Evas_Object *obj,
    if (!sd->edje)
      {
         pclip = evas_object_clip_get(sd->img);
-        if (sd->img) evas_object_del(sd->img);
+        evas_object_del(sd->img);
 
         /* Edje object instead */
         sd->img = edje_object_add(evas_object_evas_get(obj));
@@ -919,7 +919,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
    size_t length;
    Eina_Bool ret = EINA_FALSE;
 
-   if (sd->remote_data) free(sd->remote_data);
+   free(sd->remote_data);
    length = eina_binbuf_length_get(download);
    sd->remote_data = eina_binbuf_string_steal(download);
    f = eina_file_virtualize(_elm_url_get(url),
@@ -948,8 +948,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
      }
 
    sd->remote = NULL;
-   eina_stringshare_del(sd->key);
-   sd->key = NULL;
+   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
 }
 
 static void
@@ -962,8 +961,7 @@ _elm_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error
    evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
 
    sd->remote = NULL;
-   eina_stringshare_del(sd->key);
-   sd->key = NULL;
+   ELM_SAFE_FREE(sd->key, eina_stringshare_del);
 }
 
 static void
@@ -1411,7 +1409,7 @@ _elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
       default:
         ERR("unknown orient %d", orient);
         evas_object_image_data_set(sd->img, data);  // give it back
-        if (data2) free(data2);
+        free(data2);
 
         return;
      }
@@ -1427,7 +1425,7 @@ _elm_image_smart_orient_set(Eo *obj, void *_pd, va_list *list)
           }
         to += hw;
      }
-   if (data2) free(data2);
+   free(data2);
 
    evas_object_image_data_set(sd->img, data);
    evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);

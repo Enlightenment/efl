@@ -449,8 +449,7 @@ _hover_end(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         VIEW(it) = NULL;
      }
-   evas_object_del(sd->hover);
-   sd->hover = NULL;
+   ELM_SAFE_FREE(sd->hover, evas_object_del);
 
    evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
 }

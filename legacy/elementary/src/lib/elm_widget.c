@@ -328,10 +328,10 @@ _elm_widget_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FREE(sd->event_cb, ecb)
      free(ecb);
 
-   if (sd->style) eina_stringshare_del(sd->style);
+   eina_stringshare_del(sd->style);
    if (sd->theme) elm_theme_free(sd->theme);
    _if_focused_revert(obj, EINA_TRUE);
-   if (sd->access_info) eina_stringshare_del(sd->access_info);
+   eina_stringshare_del(sd->access_info);
    evas_object_smart_data_set(obj, NULL);
 }
 
@@ -3946,8 +3946,7 @@ _part_text_translatable_set(Eina_Inlist **translate_strings, const char *part, E
              eina_stringshare_del(ts->id);
              eina_stringshare_del(ts->domain);
              eina_stringshare_del(ts->string);
-             free(ts);
-             ts = NULL;
+             ELM_SAFE_FREE(ts, free);
           }
      }
 
@@ -4170,7 +4169,7 @@ _elm_widget_access_info_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const char *txt = va_arg(*list, const char *);
    Elm_Widget_Smart_Data *sd = _pd;
-   if (sd->access_info) eina_stringshare_del(sd->access_info);
+   eina_stringshare_del(sd->access_info);
    if (!txt) sd->access_info = NULL;
    else sd->access_info = eina_stringshare_add(txt);
 }
@@ -5063,11 +5062,9 @@ _elm_widget_item_free(Elm_Widget_Item *item)
    if (item->del_func)
      item->del_func((void *)item->data, item->widget, item);
 
-   if (item->view)
-     evas_object_del(item->view);
+   evas_object_del(item->view);
 
-   if (item->access_info)
-     eina_stringshare_del(item->access_info);
+   eina_stringshare_del(item->access_info);
 
    while (item->signals)
      _elm_widget_item_signal_callback_list_get(item, item->signals);
@@ -6079,7 +6076,7 @@ _elm_widget_item_access_info_set(Elm_Widget_Item *item,
                                  const char *txt)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   if (item->access_info) eina_stringshare_del(item->access_info);
+   eina_stringshare_del(item->access_info);
    if (!txt) item->access_info = NULL;
    else item->access_info = eina_stringshare_add(txt);
 }

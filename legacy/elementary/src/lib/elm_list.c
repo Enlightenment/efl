@@ -1396,11 +1396,7 @@ _item_content_set_hook(Elm_Object_Item *it,
           evas_object_rectangle_add(evas_object_evas_get(WIDGET(item)));
         evas_object_color_set(content, 0, 0, 0, 0);
      }
-   if (*icon_p)
-     {
-        evas_object_del(*icon_p);
-        *icon_p = NULL;
-     }
+   evas_object_del(*icon_p);
    *icon_p = content;
 
    if (VIEW(item))

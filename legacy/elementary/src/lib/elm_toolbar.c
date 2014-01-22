@@ -121,11 +121,7 @@ _items_visibility_fix(Elm_Toolbar_Smart_Data *sd,
 static void
 _item_menu_destroy(Elm_Toolbar_Item *item)
 {
-   if (item->o_menu)
-     {
-        evas_object_del(item->o_menu);
-        item->o_menu = NULL;
-     }
+   ELM_SAFE_FREE(item->o_menu, evas_object_del);
    item->menu = EINA_FALSE;
 }
 
@@ -934,10 +930,10 @@ _item_del(Elm_Toolbar_Item *it)
         evas_object_del(it->icon);
      }
 
-   if (it->object) evas_object_del(it->object);
+   evas_object_del(it->object);
    //TODO: See if checking for sd->menu_parent is necessary before
    //deleting menu
-   if (it->o_menu) evas_object_del(it->o_menu);
+   evas_object_del(it->o_menu);
 }
 
 static void
@@ -1346,7 +1342,7 @@ _item_content_set_hook(Elm_Object_Item *it,
    if (part && strcmp(part, "object")) return;
    if (item->object == content) return;
 
-   if (item->object) evas_object_del(item->object);
+   evas_object_del(item->object);
 
    item->object = content;
    if (item->object)
@@ -1574,8 +1570,7 @@ _transit_del_cb(void *data, Elm_Transit *transit EINA_UNUSED)
    if (item->proxy)
      {
         evas_object_image_source_visible_set(elm_image_object_get(item->proxy), EINA_TRUE);
-        evas_object_del(item->proxy);
-        item->proxy = NULL;
+        ELM_SAFE_FREE(item->proxy, evas_object_del);
      }
    item->trans = NULL;
 
@@ -1759,8 +1754,7 @@ _mouse_up_reorder(Elm_Toolbar_Item *it,
    if (it->proxy)
      {
         evas_object_image_source_visible_set(elm_image_object_get(it->proxy), EINA_TRUE);
-        evas_object_del(it->proxy);
-        it->proxy = NULL;
+        ELM_SAFE_FREE(it->proxy, evas_object_del);
      }
 
    eo_do(obj, elm_scrollable_interface_hold_set(EINA_FALSE));
@@ -3557,8 +3551,7 @@ elm_toolbar_item_state_add(Elm_Object_Item *it,
 
    if (!_item_icon_set(icon_obj, "toolbar/", icon))
      {
-        evas_object_del(icon_obj);
-        icon_obj = NULL;
+        ELM_SAFE_FREE(icon_obj, evas_object_del);
         icon = NULL;
      }
 
@@ -3602,7 +3595,7 @@ elm_toolbar_item_state_del(Elm_Object_Item *it,
 
    eina_stringshare_del(state->label);
    eina_stringshare_del(state->icon_str);
-   if (state->icon) evas_object_del(state->icon);
+   evas_object_del(state->icon);
    free(state);
 
    item->states = eina_list_remove_list(item->states, del_state);

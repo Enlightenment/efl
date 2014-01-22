@@ -352,18 +352,8 @@ _time_update(Evas_Object *obj)
         Evas_Coord mw, mh;
 
         for (i = 0; i < 6; i++)
-          {
-             if (sd->digit[i])
-               {
-                  evas_object_del(sd->digit[i]);
-                  sd->digit[i] = NULL;
-               }
-          }
-        if (sd->am_pm_obj)
-          {
-             evas_object_del(sd->am_pm_obj);
-             sd->am_pm_obj = NULL;
-          }
+          ELM_SAFE_FREE(sd->digit[i], evas_object_del);
+        ELM_SAFE_FREE(sd->am_pm_obj, evas_object_del);
 
         if ((sd->seconds) && (sd->am_pm))
           {

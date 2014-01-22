@@ -260,7 +260,7 @@ _elm_theme_idler_clean(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object 
    Ecore_Idler *idler;
 
    idler = evas_object_data_get(obj, "elm-theme-reload-idler");
-   if (idler) ecore_idler_del(idler);
+   ecore_idler_del(idler);
    evas_object_data_del(obj, "elm-theme-reload-idler");
 }
 

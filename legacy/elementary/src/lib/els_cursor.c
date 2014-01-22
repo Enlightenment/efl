@@ -182,8 +182,7 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
    if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
                              cur->style ? cur->style : "default"))
      {
-        evas_object_del(cur->obj);
-        cur->obj = NULL;
+        ELM_SAFE_FREE(cur->obj, evas_object_del);
         return EINA_FALSE;
      }
 
@@ -439,8 +438,7 @@ elm_object_cursor_unset(Evas_Object *obj)
      {
         evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_DEL,
                                             _elm_cursor_obj_del, cur);
-        evas_object_del(cur->obj);
-        cur->obj = NULL;
+        ELM_SAFE_FREE(cur->obj, evas_object_del);
      }
 
    if (cur->visible)
@@ -518,11 +516,7 @@ elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_sea
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
    cur->theme_search = theme_search;
-   if (cur->obj)
-     {
-        evas_object_del(cur->obj);
-        cur->obj = NULL;
-     }
+   ELM_SAFE_FREE(cur->obj, evas_object_del);
    _elm_cursor_cur_set(cur);
 }
 

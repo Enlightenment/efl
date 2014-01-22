@@ -108,9 +108,9 @@ _elm_font_properties_free(Elm_Font_Properties *efp)
    const char *str;
 
    EINA_LIST_FREE(efp->styles, str)
-     if (str) eina_stringshare_del(str);
+     eina_stringshare_del(str);
 
-   if (efp->name) eina_stringshare_del(efp->name);
+   eina_stringshare_del(efp->name);
    free(efp);
 }
 
@@ -147,8 +147,8 @@ elm_font_properties_free(Elm_Font_Properties *efp)
 
    EINA_SAFETY_ON_NULL_RETURN(efp);
    EINA_LIST_FREE(efp->styles, str)
-     if (str) eina_stringshare_del(str);
-   if (efp->name) eina_stringshare_del(efp->name);
+     eina_stringshare_del(str);
+   eina_stringshare_del(efp->name);
    free(efp);
 }
 

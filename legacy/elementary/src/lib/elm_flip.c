@@ -679,8 +679,7 @@ _state_update(Evas_Object *obj)
         sd->slices2 = calloc(sd->slices_w * sd->slices_h, sizeof(Slice *));
         if (!sd->slices2)
           {
-             free(sd->slices);
-             sd->slices = NULL;
+             ELM_SAFE_FREE(sd->slices, free);
              return 0;
           }
      }
@@ -1749,7 +1748,7 @@ _flip_content_set(Evas_Object *obj,
 
    if (*cont == content) return EINA_TRUE;
 
-   if (*cont) evas_object_del(*cont);
+   evas_object_del(*cont);
    *cont = content;
 
    if (content)

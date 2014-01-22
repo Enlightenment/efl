@@ -548,7 +548,7 @@ _item_content_set(Elm_Naviframe_Item *it,
 {
    if (it->content == content) return;
 
-   if (it->content) evas_object_del(it->content);
+   evas_object_del(it->content);
    it->content = content;
 
    if (!content) return;
@@ -565,7 +565,7 @@ _item_title_prev_btn_set(Elm_Naviframe_Item *it,
                          Evas_Object *btn)
 {
    if (it->title_prev_btn == btn) return;
-   if (it->title_prev_btn) evas_object_del(it->title_prev_btn);
+   evas_object_del(it->title_prev_btn);
    it->title_prev_btn = btn;
    if (!btn) return;
 
@@ -582,7 +582,7 @@ _item_title_next_btn_set(Elm_Naviframe_Item *it,
                          Evas_Object *btn)
 {
    if (it->title_next_btn == btn) return;
-   if (it->title_next_btn) evas_object_del(it->title_next_btn);
+   evas_object_del(it->title_next_btn);
    it->title_next_btn = btn;
    if (!btn) return;
 
@@ -598,7 +598,7 @@ _item_title_icon_set(Elm_Naviframe_Item *it,
                      Evas_Object *icon)
 {
    if (it->title_icon == icon) return;
-   if (it->title_icon) evas_object_del(it->title_icon);
+   evas_object_del(it->title_icon);
    it->title_icon = icon;
    if (!icon) return;
 
