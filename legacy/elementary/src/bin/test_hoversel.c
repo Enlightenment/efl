@@ -104,8 +104,10 @@ static void
 _hoversel_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                       void *event_info)
 {
-   printf("'selected' callback is called. (selected item : %s)\n",
-          elm_object_item_text_get(event_info));
+   const char *txt = elm_object_item_text_get(event_info);
+
+   printf("'selected' callback is called. (selected item : %s)\n", txt);
+   elm_object_text_set(obj, txt);
 }
 
 static void
