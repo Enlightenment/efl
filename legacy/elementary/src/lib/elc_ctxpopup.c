@@ -257,8 +257,8 @@ _base_geometry_calc(Evas_Object *obj,
    if ((min_size.x > 0) && (base_size.x < min_size.x))
      base_size.x = min_size.x;
 
-   //Check the Which direction is available.
-   //If find a available direction, it adjusts position and size.
+   //Check available directions. If there is one, it adjusts ctxpopup's position
+   // and size.
    for (idx = 0; idx < 4; idx++)
      {
         switch (sd->dir_priority[idx])
