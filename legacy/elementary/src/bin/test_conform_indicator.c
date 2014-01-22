@@ -51,8 +51,9 @@ _rot_270(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 static void
 _visible_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   printf("visible change before=%d\n",vis);
-   Evas_Object *win = (Evas_Object *) data;
+   Evas_Object *win = data;
+
+   printf("visible change before = %d\n", vis);
    if (vis == 0)
      {
         elm_win_indicator_mode_set(win, ELM_WIN_INDICATOR_SHOW);
@@ -63,8 +64,9 @@ _visible_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
         elm_win_indicator_mode_set(win, ELM_WIN_INDICATOR_HIDE);
         vis = 0;
      }
+
    /*Add App code here*/
-   printf("visible change after=%d\n",vis);
+   printf("visible change after = %d\n", vis);
 }
 
 static void
@@ -74,8 +76,6 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
 {
    Evas_Object *win, *conform, *bt, *bx;
    Evas_Object *plug_port = NULL, *plug_land = NULL;
-   char *svr_name_port = "elm_indicator_portrait";
-   char *svr_name_land = "elm_indicator_landscape";
 
    win = elm_win_util_standard_add("conformant-indicator",
                                    "Conformant Indicator");
@@ -89,11 +89,10 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    evas_object_show(conform);
 
    bx = elm_box_add(conform);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
+   elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Rot 0");
    evas_object_smart_callback_add(bt, "clicked", _rot_0, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -101,7 +100,7 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Rot 90");
    evas_object_smart_callback_add(bt, "clicked", _rot_90, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -109,7 +108,7 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Rot 180");
    evas_object_smart_callback_add(bt, "clicked", _rot_180, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -117,7 +116,7 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Rot 270");
    evas_object_smart_callback_add(bt, "clicked", _rot_270, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -126,16 +125,18 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    evas_object_show(bt);
 
    /* portrait plug */
-   plug_port = elm_plug_add(win);
+   plug_port = elm_plug_add(bx);
    if (!plug_port)
      {
-        printf("fail to create plug to server[%s]\n", svr_name_port);
+        printf("fail to create plug to server [elm_indicator_portrait]\n");
+        evas_object_del(win);
         return;
      }
 
-   if (!elm_plug_connect(plug_port, svr_name_port, 0, EINA_FALSE))
+   if (!elm_plug_connect(plug_port, "elm_indicator_portrait", 0, EINA_FALSE))
      {
-        printf("fail to connect to server[%s]\n", svr_name_port);
+        printf("fail to connect to server [elm_indicator_portraits]\n");
+        evas_object_del(win);
         return;
      }
    evas_object_size_hint_weight_set(plug_port, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -144,15 +145,17 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    elm_box_pack_end(bx, plug_port);
 
    /* landscape plug */
-   plug_land = elm_plug_add(win);
+   plug_land = elm_plug_add(bx);
    if (!plug_land)
      {
-        printf("fail to create plug to server[%s]\n", svr_name_land);
+        printf("fail to create plug to server [elm_indicator_landscape]\n");
+        evas_object_del(win);
         return;
      }
-   if (!elm_plug_connect(plug_land, svr_name_land, 0, EINA_FALSE))
+   if (!elm_plug_connect(plug_land, "elm_indicator_landscape", 0, EINA_FALSE))
      {
-        printf("fail to connect to server[%s]\n", svr_name_land);
+        printf("fail to connect to server [elm_indicator_landscape]\n");
+        evas_object_del(win);
         return;
      }
    evas_object_size_hint_weight_set(plug_land, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -160,15 +163,13 @@ _launch_conformant_indicator_window_btn_cb(void *data EINA_UNUSED,
    evas_object_show(plug_land);
    elm_box_pack_end(bx, plug_land);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx);
    elm_object_text_set(bt, "Show/Hide");
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _visible_change_cb, win);
-
-   elm_object_content_set(conform, bx);
 
    evas_object_resize(win, 400, 600);
    evas_object_show(win);
@@ -219,7 +220,7 @@ _fill_portrait(Evas_Object *win)
    evas_object_move(btn, 260, 0);
    evas_object_show(btn);
 
-   // This check: indicator get mouse event well from application
+   // This checks whether the indicator gets mouse event from application correctly
    evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, btn);
    evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, btn);
 }
@@ -247,7 +248,7 @@ _fill_landscape(Evas_Object *win)
    evas_object_move(btn, 580, 0);
    evas_object_show(btn);
 
-   // This check: indicator get mouse event well from application
+   // This checks whether the indicator gets mouse event from application correctly
    evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, btn);
    evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, btn);
 }
@@ -260,7 +261,7 @@ _create_portrait(void)
    win_port = elm_win_add(NULL, "portrait_indicator", ELM_WIN_SOCKET_IMAGE);
    if (!win_port)
      {
-        printf("fail to elm_win_add:port\n");
+        printf("fail to create a portrait indicator window\n");
         return NULL;
      }
    elm_win_autodel_set(win_port, EINA_TRUE);
@@ -268,13 +269,13 @@ _create_portrait(void)
    port_indi_name = elm_config_indicator_service_get(0);
    if (!port_indi_name)
      {
-        printf("indicator cannot portrait service name: use default name\n");
+        printf("indicator has no portrait service name: use default name\n");
         port_indi_name = "elm_indicator_portrait";
      }
 
    if (!elm_win_socket_listen(win_port, port_indi_name, 0, EINA_FALSE))
      {
-        printf("fail to elm_win_socket_listen():port \n");
+        printf("failed to listen portrait window socket.\n");
         evas_object_del(win_port);
         return NULL;
      }
@@ -286,6 +287,7 @@ _create_portrait(void)
    evas_object_resize(win_port, 720, 60);
 
    _fill_portrait(win_port);
+
    return win_port;
 }
 
@@ -297,7 +299,7 @@ _create_landscape(void)
    win_land = elm_win_add(NULL, "win_socket_test:land", ELM_WIN_SOCKET_IMAGE);
    if (!win_land)
      {
-        printf("fail to elm_win_add:land\n");
+        printf("fail to create a landscape indicator window\n");
         return NULL;
      }
    elm_win_autodel_set(win_land, EINA_TRUE);
@@ -305,13 +307,13 @@ _create_landscape(void)
    land_indi_name = elm_config_indicator_service_get(90);
    if (!land_indi_name)
      {
-        printf("indicator cannot landscape service name: use default name\n");
+        printf("indicator has no landscape service name: use default name\n");
         land_indi_name = "elm_indicator_landscape";
      }
 
    if (!elm_win_socket_listen(win_land, land_indi_name, 0, 0))
      {
-        printf("fail to elm_win_socket_listen():land\n");
+        printf("fail to listen landscape window socket.\n");
         evas_object_del(win_land);
         return NULL;
      }
@@ -356,7 +358,6 @@ test_conformant_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
@@ -376,7 +377,7 @@ test_conformant_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
    evas_object_smart_callback_add(btn, "clicked",
-                                  _launch_conformant_indicator_window_btn_cb, win);
+                                  _launch_conformant_indicator_window_btn_cb, NULL);
 
    evas_object_resize(win, 200, 200);
    evas_object_show(win);
