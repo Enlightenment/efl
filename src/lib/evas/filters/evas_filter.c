@@ -149,6 +149,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
 {
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Evas_Object_Protected_Data *source;
+   Eina_Bool source_clip = EINA_FALSE;
    void *ctx;
    int w, h;
 
@@ -194,9 +195,8 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
 
         ctx = e->engine.func->context_new(e->engine.data.output);
 
-        // FIXME: Not implemented for class Evas_Text.
-        Eina_Bool source_clip;
-        eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
+        if (eo_isa(eo_proxy, EVAS_OBJ_IMAGE_CLASS))
+          eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
 
         Evas_Proxy_Render_Data proxy_render_data = {
              .eo_proxy = eo_proxy,
