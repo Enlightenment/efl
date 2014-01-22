@@ -489,12 +489,18 @@ eina_rwlock_release(Eina_RWLock *mutex)
    return EINA_LOCK_SUCCEED;
 }
 
-static inline Eina_Bool 
-eina_tls_new(Eina_TLS *key)
+static inline Eina_Bool
+eina_tls_cb_new(Eina_TLS *key, void (*delete_cb)(void*))
 {
-   if (pthread_key_create(key, NULL) != 0)
+   if (pthread_key_create(key, delete_cb) != 0)
       return EINA_FALSE;
    return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_tls_new(Eina_TLS *key)
+{
+   return eina_tls_cb_new(key, NULL);
 }
 
 static inline void 

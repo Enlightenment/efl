@@ -91,6 +91,8 @@ static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
 
 /** @relates static Eina_Bool eina_tls_new(pthread_key_t *key) */
 static inline Eina_Bool eina_tls_new(Eina_TLS *key);
+/** @relates static Eina_Bool eina_tls_cb_new(pthread_key_t *key, void (*delete_cb)(void*)) */
+static inline Eina_Bool eina_tls_cb_new(Eina_TLS *key, void (*delete_cb)(void*));
 /** @relates static void eina_tls_free(pthread_key_t key) */
 static inline void eina_tls_free(Eina_TLS key);
 /** @relates static void eina_tls_get(pthread_key_t key) */
