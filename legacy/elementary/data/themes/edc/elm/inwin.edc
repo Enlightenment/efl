@@ -9,7 +9,7 @@ group { name: "elm/win/inwin/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 150 150 150 64;
+            color: 0 0 0 128;
          }
       }
       part { name: "pop"; mouse_events: 1;
