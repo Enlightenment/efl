@@ -1707,10 +1707,7 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
           {
              it->ref--;
              if (it->delete_me)
-               {
-                  _item_del_pre_hook(it);
-                  _elm_widget_item_free(it);
-               }
+               elm_widget_item_del(it);
              it->popping = EINA_FALSE;
              evas_object_unref(obj);
 
