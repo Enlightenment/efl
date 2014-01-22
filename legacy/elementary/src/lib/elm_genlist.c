@@ -793,7 +793,7 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
    evas_object_lower(sd->alpha_bg);
    evas_object_hide(sd->alpha_bg);
    sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
-   if (sd->move_items) sd->move_items = eina_list_free(sd->move_items);
+   sd->move_items = eina_list_free(sd->move_items);
 
    evas_object_smart_callback_call(sd->pan_obj, "changed", NULL);
    evas_object_smart_callback_call
@@ -6508,8 +6508,7 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
           {
              Evas_Object* eobj;
              Eina_List* l;
-             eina_list_free(it->item_focus_chain);
-             it->item_focus_chain = NULL;
+             it->item_focus_chain = eina_list_free(it->item_focus_chain);
              EINA_LIST_FOREACH(it->content_objs, l, eobj)
                if (elm_object_focus_allow_get(eobj))
                  it->item_focus_chain = eina_list_append(it->item_focus_chain, eobj);
