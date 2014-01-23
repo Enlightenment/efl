@@ -109,6 +109,21 @@ typedef struct _Eldbus_Service_Interface_Desc
 EAPI Eldbus_Service_Interface *eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
+ * @brief Register a fallback interface handler for a given subsection of the object hierarchy.
+ * Note: Use eldbus_service_interface_unregister() to unregister a interface.
+ * @param conn where the interface should listen
+ * @param path a '/' delimited string of path elements
+ * @param desc description of interface
+ * @see eldbus_service_interface_unregister()
+ *
+ * @since 1.9
+ *
+ * @return Interface
+ */
+EAPI Eldbus_Service_Interface *
+eldbus_service_interface_fallback_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
  * @brief Unregister a interface.
  * Note: This doesn't unregister the object path if interface count reaches 0.
  * Use eldbus_service_object_unregister() to unregister the object.

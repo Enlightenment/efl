@@ -146,6 +146,8 @@ struct _Eldbus_Service_Object
    Eldbus_Service_Object *parent;
    Eina_Inlist *children;
 
+   Eina_Bool fallback :1; /* Fallback mechanism flag */
+
    //ObjectManager data
    Eldbus_Service_Interface *objmanager;
    Eina_List *iface_added;

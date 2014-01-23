@@ -647,7 +647,7 @@ _eldbus_service_object_parent_find(Eldbus_Service_Object *obj)
 }
 
 static Eldbus_Service_Object *
-_eldbus_service_object_add(Eldbus_Connection *conn, const char *path)
+_eldbus_service_object_add(Eldbus_Connection *conn, const char *path, Eina_Bool fallback)
 {
    Eldbus_Service_Object *obj, *rootobj;
    Eina_Inlist *safe;
@@ -656,8 +656,9 @@ _eldbus_service_object_add(Eldbus_Connection *conn, const char *path)
    obj = calloc(1, sizeof(Eldbus_Service_Object));
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
-   if (!dbus_connection_register_object_path(conn->dbus_conn, path, &vtable,
-                                             obj))
+   obj->fallback = fallback;
+   if ((fallback && !dbus_connection_register_fallback(conn->dbus_conn, path, &vtable, obj)) ||
+      (!fallback && !dbus_connection_register_object_path(conn->dbus_conn, path, &vtable, obj)))
      {
         free(obj);
         return NULL;
@@ -667,6 +668,8 @@ _eldbus_service_object_add(Eldbus_Connection *conn, const char *path)
    obj->path = eina_stringshare_add(path);
    obj->interfaces = eina_hash_string_superfast_new(NULL);
    eldbus_connection_free_cb_add(conn, _on_connection_free, obj);
+
+   if (obj->fallback) return obj;
 
    eina_hash_add(obj->interfaces, introspectable->name, introspectable);
    eina_hash_add(obj->interfaces, properties_iface->name, properties_iface);
@@ -924,8 +927,8 @@ fail_signature:
    return NULL;
 }
 
-EAPI Eldbus_Service_Interface *
-eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
+static Eldbus_Service_Interface *
+_eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc, Eina_Bool fallback)
 {
    Eldbus_Service_Object *obj;
    Eldbus_Service_Interface *iface;
@@ -950,7 +953,7 @@ eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, con
      return NULL;
 
    if (!obj)
-     obj = _eldbus_service_object_add(conn, path);
+     obj = _eldbus_service_object_add(conn, path, fallback);
    else
      obj->introspection_dirty = EINA_TRUE;
    EINA_SAFETY_ON_NULL_GOTO(obj, fail);
@@ -980,6 +983,18 @@ fail:
      _object_free(obj);
 
    return NULL;
+}
+
+EAPI Eldbus_Service_Interface *
+eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
+{
+   return _eldbus_service_interface_register(conn, path, desc, EINA_FALSE);
+}
+
+EAPI Eldbus_Service_Interface *
+eldbus_service_interface_fallback_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
+{
+   return _eldbus_service_interface_register(conn, path, desc, EINA_TRUE);
 }
 
 static Eina_Bool
@@ -1275,10 +1290,17 @@ _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *u
    const Eldbus_Method *method;
    Eldbus_Message *eldbus_msg, *reply;
    Eldbus_Connection *conn;
+   const char* fallback_path = NULL;
 
    obj = user_data;
    if (!obj) return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
    conn = obj->conn;
+
+   if (obj->fallback)
+     {
+       fallback_path = eina_stringshare_add(obj->path);
+       eina_stringshare_replace(&obj->path, dbus_message_get_path(msg));
+     }
 
    DBG("Connection@%p Got message:\n"
           "  Type: %s\n"
@@ -1330,6 +1352,12 @@ _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *u
 
    eldbus_connection_unref(conn);
    eldbus_shutdown();
+
+   if (obj->fallback)
+     {
+        eina_stringshare_replace(&obj->path, fallback_path);
+        eina_stringshare_del(fallback_path);
+     }
 
    return DBUS_HANDLER_RESULT_HANDLED;
 }
