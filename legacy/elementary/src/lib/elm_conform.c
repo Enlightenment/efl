@@ -24,6 +24,8 @@ EAPI Eo_Op ELM_OBJ_CONFORMANT_BASE_ID = EO_NOOP;
 
 static char CONFORMANT_KEY[] = "_elm_conform_key";
 
+#define ELM_CONFORM_INDICATOR_TIME 1.0
+
 #ifdef HAVE_ELEMENTARY_X
 #define SUB_TYPE_COUNT 2
 static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
@@ -367,7 +369,8 @@ _land_indicator_disconnected(void *data,
 
    ELM_CONFORMANT_DATA_GET(conform, sd);
 
-   sd->land_indi_timer = ecore_timer_add(1, _land_indicator_connect_cb, conform);
+   sd->land_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
+                                         _land_indicator_connect_cb, conform);
 }
 
 static void
@@ -379,7 +382,8 @@ _port_indicator_disconnected(void *data,
 
    ELM_CONFORMANT_DATA_GET(conform, sd);
 
-   sd->port_indi_timer = ecore_timer_add(1, _port_indicator_connect_cb, conform);
+   sd->port_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
+                                         _port_indicator_connect_cb, conform);
 }
 
 static Evas_Object *
