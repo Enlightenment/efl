@@ -26,6 +26,9 @@
 #undef WIN32_LEAN_AND_MEAN
 
 EAPI extern Eina_Bool _threads_activated;
+EAPI extern Eina_Bool _eina_thread_tls_cb_register(Eina_TLS key, Eina_TLS_Delete_Cb cb);
+EAPI extern Eina_Bool _eina_thread_tls_cb_unregister(Eina_TLS key);
+EAPI extern Eina_Bool _eina_thread_tls_key_add(Eina_TLS key);
 
 typedef HANDLE    Eina_Lock;
 typedef Eina_Lock Eina_Spinlock;
@@ -151,17 +154,32 @@ eina_rwlock_release(Eina_RWLock *mutex)
    return eina_lock_release(mutex);
 }
 
-static inline Eina_Bool 
+static inline Eina_Bool
+eina_tls_cb_new(Eina_TLS *key, Eina_TLS_Delete_Cb delete_cb)
+{
+   if ((*key = TlsAlloc()) == TLS_OUT_OF_INDEXES)
+      return EINA_FALSE;
+   if (delete_cb)
+     {
+        if (!_eina_thread_tls_cb_register(*key, delete_cb))
+          {
+             TlsFree(key);
+             return EINA_FALSE;
+          }
+     }
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
 eina_tls_new(Eina_TLS *key)
 {
-   if (TlsAlloc() == TLS_OUT_OF_INDEXES)
-      return EINA_FALSE;
-   return EINA_TRUE;
+   return eina_tls_cb_new(key, NULL);
 }
 
 static inline void 
 eina_tls_free(Eina_TLS key)
 {
+   _eina_thread_tls_cb_unregister(key);
    TlsFree(key);
 }
 
@@ -176,6 +194,7 @@ eina_tls_set(Eina_TLS key, const void *data)
 {
    if (TlsSetValue(key, (LPVOID)data) == 0)
       return EINA_FALSE;
+   _eina_thread_tls_key_add(key);
    return EINA_TRUE;
 }
 

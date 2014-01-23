@@ -27,6 +27,7 @@
 #include "eina_sched.h"
 #ifdef _WIN32
 # include "eina_list.h"
+# include "eina_lock.h"
 #endif
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -38,6 +39,12 @@
 # include <windows.h>
 # undef WIN32_LEAN_AND_MEAN
 
+typedef struct _Eina_TLS_Cbs_Win32 Eina_TLS_Cbs_Win32;
+struct _Eina_TLS_Cbs_Win32
+{
+   Eina_TLS key;
+   Eina_TLS_Delete_Cb cb;
+};
 typedef struct _Eina_Thread_Win32 Eina_Thread_Win32;
 struct _Eina_Thread_Win32
 {
@@ -45,6 +52,7 @@ struct _Eina_Thread_Win32
    void *(*func)(void *data);
    void *data;
    void *ret;
+   Eina_List *tls_keys;
 
    Eina_Thread index;
 };
@@ -54,6 +62,81 @@ struct _Eina_Thread_Win32
 static unsigned long int _current_index = 1; /* start from one as the main loop == 0 */
 static Eina_List *_thread_pool = NULL;
 static Eina_List *_thread_running = NULL;
+static Eina_List *_tls_keys_cbs = NULL;
+
+static inline Eina_TLS_Cbs_Win32 *
+_eina_thread_tls_cb_find(Eina_TLS key)
+{
+   Eina_TLS_Cbs_Win32 *cb;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_tls_keys_cbs, l, cb)
+      if (cb->key == key)
+        return cb;
+
+   return NULL;
+}
+
+static inline void
+_eina_thread_tls_keys_clean(Eina_Thread_Win32 *tw)
+{
+   void *data;
+   Eina_TLS_Cbs_Win32 *cb;
+
+   EINA_LIST_FREE(tw->tls_keys, data)
+     {
+        Eina_TLS key = data;
+        cb = _eina_thread_tls_cb_find(key);
+        if (cb)
+          cb->cb(eina_tls_get(key));
+     }
+   tw->tls_keys = NULL;
+}
+
+EAPI Eina_Bool
+_eina_thread_tls_cb_register(Eina_TLS key, Eina_TLS_Delete_Cb cb)
+{
+   Eina_TLS_Cbs_Win32 *tls_cb = malloc(sizeof(Eina_TLS_Cbs_Win32));
+   if (!cb) return EINA_FALSE;
+
+   tls_cb->key = key;
+   tls_cb->cb = cb;
+   _tls_keys_cbs = eina_list_append(_tls_keys_cbs, tls_cb);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+_eina_thread_tls_cb_unregister(Eina_TLS key)
+{
+   Eina_TLS_Cbs_Win32 *cb = _eina_thread_tls_cb_find(key);
+   if (!cb) return EINA_FALSE;
+
+   _tls_keys_cbs = eina_list_remove(_tls_keys_cbs, cb);
+   free(cb);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+_eina_thread_tls_key_add(Eina_TLS key)
+{
+   HANDLE t;
+   Eina_Thread_Win32 *tw;
+   Eina_List *l;
+
+   t = GetCurrentThread();
+   EINA_LIST_FOREACH(_thread_running, l, tw)
+      if (tw->thread == t)
+        {
+           void *data = key;
+           if (!eina_list_data_find(tw->tls_keys, data))
+             tw->tls_keys = eina_list_append(tw->tls_keys, data);
+           return EINA_TRUE;
+        }
+
+   return EINA_FALSE;
+}
 
 static Eina_Thread_Win32 *
 _eina_thread_win32_find(Eina_Thread index)
@@ -123,6 +206,7 @@ _eina_thread_create(Eina_Thread *t,
 
    tw->func = func;
    tw->data = (void *)data;
+   tw->tls_keys = NULL;
 
    tw->thread = CreateThread(NULL, 0, _eina_thread_win32_cb, tw, 0, NULL);
    if (!tw->thread) goto on_error;
@@ -159,6 +243,7 @@ _eina_thread_join(Eina_Thread t)
    tw->thread = NULL;
    tw->func = NULL;
    tw->data = NULL;
+   _eina_thread_tls_keys_clean(tw);
 
    _thread_running = eina_list_remove(_thread_running, tw);
    _thread_pool = eina_list_append(_thread_pool, _thread_pool);

@@ -77,33 +77,57 @@ START_TEST(eina_test_spinlock)
 END_TEST
 
 static Eina_TLS key;
+static int _eina_tls_free_count = 0;
+
+static void *
+_eina_test_tls_alloc(int v)
+{
+   int *ptr = malloc(sizeof(int));
+   *ptr = v;
+
+   return ptr;
+}
+
+static void
+_eina_test_tls_free(void *ptr)
+{
+   _eina_tls_free_count++;
+   free(ptr);
+}
 
 static void *
 _eina_test_tls_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
-   unsigned int mystack = 21;
+   int *ptr;
 
-   fail_if(!eina_tls_set(key, &mystack));
-   fail_if(eina_tls_get(key) != &mystack);
+   ptr = eina_tls_get(key);
+   fail_if(eina_tls_get(key) != NULL);
+
+   fail_if(!eina_tls_set(key, _eina_test_tls_alloc(24)));
+
+   ptr = eina_tls_get(key);
+   fail_if(eina_tls_get(key) == NULL);
+   fail_if(*ptr != 24);
 
    return NULL;
 }
 
 START_TEST(eina_test_tls)
 {
-   unsigned int ft = 42;
-
    fail_if(!eina_init());
 
-   fail_if(!eina_tls_new(&key));
+   fail_if(!eina_tls_cb_new(&key, _eina_test_tls_free));
 
-   fail_if(!eina_tls_set(key, &ft));
+   fail_if(!eina_tls_set(key, _eina_test_tls_alloc(42)));
 
    fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, 0, _eina_test_tls_thread, NULL));
 
    eina_thread_join(thread);
+   fail_if(_eina_tls_free_count != 1);
 
-   fail_if(eina_tls_get(key) != &ft);
+   int *ptr = eina_tls_get(key);
+   fail_if(eina_tls_get(key) == NULL);
+   fail_if(*ptr != 42);
 
    eina_tls_free(key);
 

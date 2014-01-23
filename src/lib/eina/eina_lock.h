@@ -42,6 +42,8 @@ typedef enum
    EINA_LOCK_DEADLOCK
 } Eina_Lock_Result;
 
+typedef void (*Eina_TLS_Delete_Cb)(void *ptr);
+
 #ifdef _WIN32_WCE
 # include "eina_inline_lock_wince.x"
 #elif defined(_WIN32)
@@ -91,6 +93,8 @@ static inline Eina_Lock_Result eina_rwlock_release(Eina_RWLock *mutex);
 
 /** @relates static Eina_Bool eina_tls_new(pthread_key_t *key) */
 static inline Eina_Bool eina_tls_new(Eina_TLS *key);
+/** @relates static Eina_Bool eina_tls_cb_new(pthread_key_t *key, Eina_TLS_Delete_Cb delete_cb) */
+static inline Eina_Bool eina_tls_cb_new(Eina_TLS *key, Eina_TLS_Delete_Cb delete_cb);
 /** @relates static void eina_tls_free(pthread_key_t key) */
 static inline void eina_tls_free(Eina_TLS key);
 /** @relates static void eina_tls_get(pthread_key_t key) */
