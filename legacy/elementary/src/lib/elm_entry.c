@@ -19,6 +19,7 @@ EAPI Eo_Op ELM_OBJ_ENTRY_BASE_ID = EO_NOOP;
  * Possibly also find a way to set it to a low value for weak computers,
  * and to a big value for better computers. */
 #define _CHUNK_SIZE 10000
+#define ELM_ENTRY_DELAY_WRITE_TIME 2.0
 
 #define ELM_PRIV_ENTRY_SIGNALS(cmd) \
    cmd(SIG_ABORTED, "aborted", "") \
@@ -1703,7 +1704,8 @@ _entry_changed_handle(void *data,
    evas_event_thaw(evas_object_evas_get(data));
    evas_event_thaw_eval(evas_object_evas_get(data));
    if ((sd->auto_save) && (sd->file))
-     sd->delay_write = ecore_timer_add(2.0, _delay_write, data);
+     sd->delay_write = ecore_timer_add(ELM_ENTRY_DELAY_WRITE_TIME,
+                                       _delay_write, data);
 
    _return_key_enabled_check(data);
    text = edje_object_part_text_get(sd->entry_edje, "elm.text");
@@ -4900,7 +4902,8 @@ _file_save(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    _save_do(obj);
-   sd->delay_write = ecore_timer_add(2.0, _delay_write, obj);
+   sd->delay_write = ecore_timer_add(ELM_ENTRY_DELAY_WRITE_TIME,
+                                     _delay_write, obj);
 }
 
 EAPI void
