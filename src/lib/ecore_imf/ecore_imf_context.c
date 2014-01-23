@@ -858,10 +858,13 @@ ecore_imf_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input
         return;
      }
 
-   if (ctx->klass->input_panel_layout_set)
-     ctx->klass->input_panel_layout_set(ctx, layout);
+   if (ctx->input_panel_layout != layout)
+     {
+        if (ctx->klass->input_panel_layout_set)
+          ctx->klass->input_panel_layout_set(ctx, layout);
 
-   ctx->input_panel_layout = layout;
+        ctx->input_panel_layout = layout;
+     }
 }
 
 EAPI Ecore_IMF_Input_Panel_Layout
@@ -916,8 +919,13 @@ ecore_imf_context_input_panel_language_set(Ecore_IMF_Context *ctx, Ecore_IMF_Inp
         return;
      }
 
-   if (ctx->klass->input_panel_language_set) ctx->klass->input_panel_language_set(ctx, lang);
-   ctx->input_panel_lang = lang;
+   if (ctx->input_panel_lang != lang)
+     {
+        if (ctx->klass->input_panel_language_set)
+          ctx->klass->input_panel_language_set(ctx, lang);
+
+        ctx->input_panel_lang = lang;
+     }
 }
 
 EAPI Ecore_IMF_Input_Panel_Lang
@@ -1002,8 +1010,12 @@ ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_
         return;
      }
 
-   ctx->input_panel_return_key_type = return_key_type;
-   if (ctx->klass->input_panel_return_key_type_set) ctx->klass->input_panel_return_key_type_set(ctx, return_key_type);
+   if (ctx->input_panel_return_key_type != return_key_type)
+     {
+        ctx->input_panel_return_key_type = return_key_type;
+        if (ctx->klass->input_panel_return_key_type_set)
+          ctx->klass->input_panel_return_key_type_set(ctx, return_key_type);
+     }
 }
 
 EAPI Ecore_IMF_Input_Panel_Return_Key_Type
@@ -1029,8 +1041,12 @@ ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Ei
         return;
      }
 
-   ctx->input_panel_return_key_disabled = disabled;
-   if (ctx->klass->input_panel_return_key_disabled_set) ctx->klass->input_panel_return_key_disabled_set(ctx, disabled);
+   if (ctx->input_panel_return_key_disabled != disabled)
+     {
+        ctx->input_panel_return_key_disabled = disabled;
+        if (ctx->klass->input_panel_return_key_disabled_set)
+          ctx->klass->input_panel_return_key_disabled_set(ctx, disabled);
+     }
 }
 
 EAPI Eina_Bool
@@ -1056,10 +1072,13 @@ ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bo
         return;
      }
 
-   if (ctx->klass->input_panel_caps_lock_mode_set)
-     ctx->klass->input_panel_caps_lock_mode_set(ctx, mode);
+   if (ctx->input_panel_caps_lock_mode != mode)
+     {
+        if (ctx->klass->input_panel_caps_lock_mode_set)
+          ctx->klass->input_panel_caps_lock_mode_set(ctx, mode);
 
-   ctx->input_panel_caps_lock_mode = mode;
+        ctx->input_panel_caps_lock_mode = mode;
+     }
 }
 
 EAPI Eina_Bool
