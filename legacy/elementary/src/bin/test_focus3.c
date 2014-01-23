@@ -336,7 +336,7 @@ test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_check_state_set(tg, EINA_TRUE);
-   evas_object_smart_callback_add(tg, "changed", custom_chain_unset_cb, bx);
+   evas_object_smart_callback_add(tg, "changed", custom_chain_unset_cb, bx2);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
