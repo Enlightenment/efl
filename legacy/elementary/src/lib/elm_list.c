@@ -15,6 +15,8 @@ EAPI Eo_Op ELM_OBJ_LIST_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "Elm_List"
 #define MY_CLASS_NAME_LEGACY "elm_list"
 
+#define ELM_LIST_SWIPE_TIME 0.4
+
 static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
 static const char SIG_SELECTED[] = "selected";
@@ -1238,7 +1240,7 @@ _mouse_down_cb(void *data,
    it->long_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _long_press_cb, it);
    ecore_timer_del(it->swipe_timer);
-   it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
+   it->swipe_timer = ecore_timer_add(ELM_LIST_SWIPE_TIME, _swipe_cancel, it);
 
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
