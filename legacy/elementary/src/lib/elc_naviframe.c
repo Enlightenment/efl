@@ -1708,9 +1708,9 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
              it->ref--;
              if (it->delete_me)
                elm_widget_item_del(it);
-             it->popping = EINA_FALSE;
+             else
+               it->popping = EINA_FALSE;
              evas_object_unref(obj);
-
              return;
           }
         it->ref--;
