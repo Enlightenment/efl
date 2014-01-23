@@ -492,7 +492,7 @@ eina_tls_cb_new(Eina_TLS *key, Eina_TLS_Delete_Cb delete_cb)
      {
         if (!_eina_thread_tls_cb_register(*key, delete_cb))
           {
-             TlsFree(key);
+             TlsFree(*key);
              return EINA_FALSE;
           }
      }
