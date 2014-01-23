@@ -107,6 +107,7 @@ typedef struct _Ecore_IMF_Event_Preedit_End        Ecore_IMF_Event_Preedit_End;
 typedef struct _Ecore_IMF_Event_Preedit_Changed    Ecore_IMF_Event_Preedit_Changed;
 typedef struct _Ecore_IMF_Event_Commit             Ecore_IMF_Event_Commit;
 typedef struct _Ecore_IMF_Event_Delete_Surrounding Ecore_IMF_Event_Delete_Surrounding;
+typedef struct _Ecore_IMF_Event_Selection          Ecore_IMF_Event_Selection;
 
 /* Events to filter */
 typedef struct _Ecore_IMF_Event_Mouse_Down         Ecore_IMF_Event_Mouse_Down;
@@ -147,7 +148,8 @@ typedef enum
    ECORE_IMF_CALLBACK_PREEDIT_END,        /**< "PREEDIT_END" is called when a preediting sequence has been completed or canceled. @since 1.2 */
    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. @since 1.2 */
    ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user @since 1.2 */
-   ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor @since 1.2 */
+   ECORE_IMF_CALLBACK_DELETE_SURROUNDING, /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor @since 1.2 */
+   ECORE_IMF_CALLBACK_SELECTION_SET       /**< "SELECTION_SET" is called when the input method needs to set the selection @since 1.9 */
 } Ecore_IMF_Callback_Type;
 
 /**
@@ -342,6 +344,13 @@ struct _Ecore_IMF_Event_Delete_Surrounding
    Ecore_IMF_Context *ctx;
    int                offset;
    int                n_chars;
+};
+
+struct _Ecore_IMF_Event_Selection
+{
+   Ecore_IMF_Context *ctx;
+   int                start;
+   int                end;
 };
 
 struct _Ecore_IMF_Event_Mouse_Down
