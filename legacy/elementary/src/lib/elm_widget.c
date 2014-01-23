@@ -29,6 +29,9 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
   ((_elm_access_auto_highlight_get()) ? (elm_widget_highlight_get(obj)) : \
                                         (elm_widget_focus_get(obj)))
 
+const char SIG_WIDGET_FOCUSED[] = "focused";
+const char SIG_WIDGET_UNFOCUSED[] = "unfocused";
+
 typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Label_Data            Elm_Label_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
@@ -6235,13 +6238,13 @@ _elm_widget_on_focus(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
           {
              if (!sd->resize_obj)
                evas_object_focus_set(obj, EINA_TRUE);
-             evas_object_smart_callback_call(obj, "focused", NULL);
+             evas_object_smart_callback_call(obj, SIG_WIDGET_FOCUSED, NULL);
           }
         else
           {
              if (!sd->resize_obj)
                evas_object_focus_set(obj, EINA_FALSE);
-             evas_object_smart_callback_call(obj, "unfocused", NULL);
+             evas_object_smart_callback_call(obj, SIG_WIDGET_UNFOCUSED, NULL);
           }
      }
    else

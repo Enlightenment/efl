@@ -26,8 +26,8 @@ static const char SIG_URL_CHANGED[] = "url,changed";
 static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { SIG_URI_CHANGED, "s" },
    { SIG_URL_CHANGED, "s" },
-   { "focused", ""}, /**< handled by elm_widget */
-   { "unfocused", ""}, /**< handled by elm_widget */
+   { SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
+   { SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    { NULL, NULL }
 };
 

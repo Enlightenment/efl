@@ -72,8 +72,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DOWNLOAD_PROGRESS, ""},
    {SIG_DOWNLOAD_DONE, ""},
    {SIG_DOWNLOAD_ERROR, ""},
-   {"focused", ""}, /**< handled by elm_widget */
-   {"unfocused", ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

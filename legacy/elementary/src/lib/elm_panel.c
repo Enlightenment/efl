@@ -15,8 +15,8 @@ EAPI Eo_Op ELM_OBJ_PANEL_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_panel"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {"focused", ""}, /**< handled by elm_widget */
-   {"unfocused", ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

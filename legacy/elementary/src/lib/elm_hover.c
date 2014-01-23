@@ -54,8 +54,8 @@ ELM_PRIV_HOVER_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_HOVER_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
-   {"focused", ""}, /**< handled by elm_widget */
-   {"unfocused", ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 #undef ELM_PRIV_HOVER_SIGNALS

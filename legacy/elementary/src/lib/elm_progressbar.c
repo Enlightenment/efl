@@ -24,8 +24,8 @@ static const char SIG_CHANGED[] = "changed";
  * ones coming from elm layout): */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
-   {"focused", ""}, /**< handled by elm_widget */
-   {"unfocused", ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

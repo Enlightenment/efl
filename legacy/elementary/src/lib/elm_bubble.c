@@ -19,8 +19,8 @@ static const char SIG_CLICKED[] = "clicked";
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
    {SIG_CLICKED, ""},
-   {"focused", ""}, /**< handled by elm_widget */
-   {"unfocused", ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 
