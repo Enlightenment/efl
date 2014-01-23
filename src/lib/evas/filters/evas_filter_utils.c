@@ -10,8 +10,8 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
                               int w, int h)
 {
    Evas_Filter_Buffer *fb;
-   void *dstdata = NULL;
-   void *srcdata;
+   Image_Entry *dstdata = NULL;
+   Image_Entry *srcdata;
    void *drawctx;
 
    srcdata = evas_filter_buffer_backing_get(ctx, src->id);
@@ -20,11 +20,17 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
    fb = evas_filter_temporary_buffer_get(ctx, w, h, src->alpha_only);
    if (!fb) return NULL;
 
-   if (evas_filter_buffer_alloc(fb, w, h))
-     dstdata = evas_filter_buffer_backing_get(ctx, fb->id);
+   dstdata = evas_filter_buffer_backing_get(ctx, fb->id);
    if (!dstdata)
      {
-        ERR("Buffer allocation failed for size %dx%d", w, h);
+        CRI("No backing found for buffer %d", fb->id);
+        return NULL;
+     }
+
+   if ((dstdata->w != w) || (dstdata->h != h))
+     {
+        CRI("Buffer size mismatch: got %dx%d requested %dx%d",
+            dstdata->w, dstdata->h, w, h);
         return NULL;
      }
 

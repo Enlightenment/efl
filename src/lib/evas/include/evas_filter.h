@@ -101,14 +101,18 @@ Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas);
 void                     evas_filter_context_destroy(Evas_Filter_Context *ctx);
 void                     evas_filter_context_post_run_callback_set(Evas_Filter_Context *ctx, Evas_Filter_Cb cb, void *data);
 #define                  evas_filter_context_autodestroy(ctx) evas_filter_context_post_run_callback_set(ctx, ((Evas_Filter_Cb) evas_filter_context_destroy), ctx)
+Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx, unsigned w, unsigned h);
 
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only);
 int                      evas_filter_buffer_image_new(Evas_Filter_Context *ctx, RGBA_Image *image);
-int                      evas_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h, Eina_Bool alpha_only);
+//int                      evas_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h, Eina_Bool alpha_only);
 #define                  evas_filter_buffer_alloc_new(ctx, w, h, a) evas_filter_buffer_data_new(ctx, NULL, w, h, a)
 void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid);
 void                    *evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid);
-Eina_Bool                evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data, int w, int h, Eina_Bool alpha_only);
+Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer);
+
+// Do not use
+EINA_DEPRECATED Eina_Bool                evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data, int w, int h, Eina_Bool alpha_only);
 
 Eina_Bool                evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_async);
 

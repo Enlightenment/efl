@@ -51,9 +51,6 @@ _filter_blend_cpu_alpha(Evas_Filter_Command *cmd)
    if (!func)
      return EINA_FALSE;
 
-   if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
-     return EINA_FALSE;
-
    in = cmd->input->backing;
    out = cmd->output->backing;
    sw = in->cache_entry.w;
@@ -96,13 +93,12 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
    RGBA_Draw_Context *drawctx;
    int sw, sh, dx, dy, dw, dh, sx, sy;
 
-   if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
-     return EINA_FALSE;
-
    in = cmd->input->backing;
    out = cmd->output->backing;
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
 
    sx = 0;
    sy = 0;
@@ -324,9 +320,6 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
    DATA8 *maskdata;
    int sw, sh, dw, dh, ox, oy, sx = 0, sy = 0, dx = 0, dy = 0, rows, cols, y;
 
-   if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
-     return EINA_FALSE;
-
    // TODO: Call _mapped_blend_cpu to implement repeat fill mode.
    if (cmd->draw.fillmode != EVAS_FILTER_FILL_MODE_NONE)
      ERR("Fill modes are not implemented for Alpha --> RGBA");
@@ -342,6 +335,19 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
    dstdata = out->image.data;
    maskdata = in->mask.data;
    col = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+
+   // TODO: Fix this crash. Change proxy image and OUTPUT data is NULL. Why?
+
+   if (!dstdata)
+     {
+        ERR("Empty destination from buffer #%d %dx%d %p", cmd->output->id, dw, dh, out);
+        //abort();
+        return EINA_FALSE;
+     }
+   if (!maskdata)
+     abort();
+   //EINA_SAFETY_ON_NULL_RETURN_VAL(dstdata, EINA_FALSE);
+   //EINA_SAFETY_ON_NULL_RETURN_VAL(maskdata, EINA_FALSE);
 
    func = evas_common_gfx_func_composite_mask_color_span_get
      (col, out, 1, cmd->draw.render_op);
@@ -417,9 +423,6 @@ _filter_blend_cpu_rgba2alpha(Evas_Filter_Command *cmd)
    RGBA_Image *in, *out;
    int sw, sh, dx, dy, dw, dh, sx, sy;
 
-   if (!evas_filter_buffer_alloc(cmd->output, cmd->output->w, cmd->output->h))
-     return EINA_FALSE;
-
    in = cmd->input->backing;
    out = cmd->output->backing;
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
@@ -439,6 +442,7 @@ _filter_blend_cpu_rgba2alpha(Evas_Filter_Command *cmd)
      return EINA_TRUE;
 
    // Stretch if necessary.
+#warning FIXME Must be in the main loop because of buffer allocation
    if ((sw != dw || sh != dh) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
         Evas_Filter_Buffer *fb;

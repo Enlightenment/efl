@@ -2133,6 +2133,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         void *filter_ctx;
         Eina_Bool ok;
         int ox = 0, oy = 0;
+        Image_Entry *previous = o->cur.filter.output;
 
         /* NOTE: Font effect rendering is now done ENTIRELY on CPU.
          * So we rely on cache/cache2 to allocate a real image buffer,
@@ -2146,7 +2147,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         X = obj->cur->geometry.x;
         Y = obj->cur->geometry.y;
 
-        if (o->cur.filter.output)
+        if (previous)
           {
              Eina_Bool redraw = o->cur.filter.changed;
 
@@ -2170,16 +2171,11 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
                   eina_iterator_free(it);
                }
 
-             if (redraw)
-               {
-                  ENFN->image_free(ENDT, o->cur.filter.output);
-                  o->cur.filter.output = NULL;
-               }
-             else
+             if (!redraw)
                {
                   // Render this image only
                   ENFN->image_draw(ENDT, context,
-                                   surface, o->cur.filter.output,
+                                   surface, previous,
                                    0, 0, W, H,         // src
                                    X + x, Y + y, W, H, // dst
                                    EINA_FALSE,         // smooth
@@ -2205,10 +2201,15 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
         // Allocate main buffers now
-        evas_filter_buffer_data_set(filter, inbuf, NULL, W, H, EINA_TRUE);
-        evas_filter_buffer_data_set(filter, outbuf, NULL, W, H, EINA_FALSE);
+        evas_filter_context_buffers_allocate_all(filter, W, H);
+        //evas_filter_buffer_data_set(filter, inbuf, NULL, W, H, EINA_TRUE);
+        //evas_filter_buffer_data_set(filter, outbuf, NULL, W, H, EINA_FALSE);
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
+
+        // Steal output and release previous
         o->cur.filter.output = evas_filter_buffer_backing_steal(filter, outbuf);
+        if (o->cur.filter.output != previous)
+          evas_filter_buffer_backing_release(filter, previous);
 
         // Render text to input buffer
         EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)

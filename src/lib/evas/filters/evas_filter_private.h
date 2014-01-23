@@ -154,6 +154,8 @@ struct _Evas_Filter_Buffer
    Eina_Bool allocated : 1;   // allocated on demand, belongs to this context
    Eina_Bool transient : 1;   // temporary buffer (automatic allocation)
    Eina_Bool locked : 1;      // internal flag
+   Eina_Bool stolen : 1;      // stolen by the client
+   Eina_Bool delete_me : 1;   // request delete asap (after released by client)
 };
 
 enum _Evas_Filter_Interpolation_Mode
