@@ -7,14 +7,6 @@
 #include "elm_widget_diskselector.h"
 #include "elm_interface_scrollable.h"
 
-#ifndef MAX
-# define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef CEIL
-#define CEIL(a)    (((a) % 2 != 0) ? ((a) / 2 + 1) : ((a) / 2))
-#endif
-
 #define DISPLAY_ITEM_NUM_MIN 3
 
 EAPI Eo_Op ELM_OBJ_DISKSELECTOR_BASE_ID = EO_NOOP;

@@ -14,10 +14,6 @@ EAPI Eo_Op ELM_OBJ_HOVER_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "Elm_Hover"
 #define MY_CLASS_NAME_LEGACY "elm_hover"
 
-#ifndef MAX
-# define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-
 #define ELM_HOVER_PARTS_FOREACH unsigned int i; \
   for (i = 0; i < sizeof(sd->subs) / sizeof(sd->subs[0]); i++)
 

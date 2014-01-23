@@ -159,6 +159,9 @@ extern const char *_elm_engines[];
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #undef MAX
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#undef CEIL
+#define CEIL(a)   (((a) % 2 != 0) ? ((a) / 2 + 1) : ((a) / 2))
+
 
 #define ELM_SAFE_FREE(_h, _fn) do { _fn((void*)_h); _h = NULL; } while (0)
 

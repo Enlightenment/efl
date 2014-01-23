@@ -14,14 +14,6 @@ EAPI Eo_Op ELM_OBJ_CONFORMANT_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME "Elm_Conformant"
 #define MY_CLASS_NAME_LEGACY "elm_conformant"
 
-#ifndef MIN
-# define MIN(a, b) ((a) < (b)) ? (a) : (b)
-#endif
-
-#ifndef MAX
-# define MAX(a, b) ((a) < (b)) ? (b) : (a)
-#endif
-
 static char CONFORMANT_KEY[] = "_elm_conform_key";
 
 #define ELM_CONFORM_INDICATOR_TIME 1.0
