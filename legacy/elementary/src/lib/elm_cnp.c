@@ -298,10 +298,10 @@ static void           _x11_drag_move                (void *data EINA_UNUSED, Eco
 static Ecore_X_Window _x11_elm_widget_xwin_get           (const Evas_Object *obj);
 
 static Eina_Bool _x11_elm_cnp_init                       (void);
-static Eina_Bool _x11_elm_cnp_selection_set              (Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
+static Eina_Bool _x11_elm_cnp_selection_set              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
 static void      _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 static Eina_Bool _x11_elm_object_cnp_selection_clear     (Evas_Object *obj, Elm_Sel_Type selection);
-static Eina_Bool _x11_elm_cnp_selection_get              (Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
+static Eina_Bool _x11_elm_cnp_selection_get              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
 static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Format format,
                                                           Elm_Drag_State entercb, void *enterdata,
                                                           Elm_Drag_State leavecb, void *leavedata,
@@ -1726,9 +1726,8 @@ _x11_elm_cnp_init(void)
 }
 
 static Eina_Bool
-_x11_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen)
+_x11_elm_cnp_selection_set(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
-   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    X11_Cnp_Selection *sel;
 
    _x11_elm_cnp_init();
@@ -1819,11 +1818,10 @@ _x11_elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 }
 
 static Eina_Bool
-_x11_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
+_x11_elm_cnp_selection_get(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection,
                            Elm_Sel_Format format, Elm_Drop_Cb datacb,
                            void *udata)
 {
-   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    X11_Cnp_Selection *sel;
 
    _x11_elm_cnp_init();
@@ -3619,8 +3617,9 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 #ifdef HAVE_ELEMENTARY_X
-   if (_x11_elm_widget_xwin_get(obj))
-     return _x11_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
+   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+   if (xwin)
+     return _x11_elm_cnp_selection_set(xwin, obj, selection, format, selbuf, buflen);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    if (elm_win_wl_window_get(obj))
@@ -3670,8 +3669,9 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 #ifdef HAVE_ELEMENTARY_X
-   if (_x11_elm_widget_xwin_get(obj))
-     return _x11_elm_cnp_selection_get(obj, selection, format, datacb, udata);
+   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+   if (xwin)
+     return _x11_elm_cnp_selection_get(xwin, obj, selection, format, datacb, udata);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    if (elm_win_wl_window_get(obj))
