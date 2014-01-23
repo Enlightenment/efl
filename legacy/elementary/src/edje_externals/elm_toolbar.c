@@ -26,8 +26,10 @@ typedef struct _Elm_Params_Toolbar
      if (!strcmp(STR, CHOICES[i]))       \
        return i;
 
-static const char *_toolbar_shrink_modes[] = {"none", "hide",
-                                              "scroll", "menu", NULL};
+static const char *_toolbar_shrink_modes[] =
+{
+   "none", "hide", "scroll", "menu", NULL
+};
 
 static Elm_Toolbar_Shrink_Mode
 _toolbar_shrink_choices_setting_get(const char *shrink_mode_str)
@@ -39,7 +41,9 @@ _toolbar_shrink_choices_setting_get(const char *shrink_mode_str)
 }
 
 static void
-external_toolbar_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_toolbar_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                           const void *from_params, const void *to_params,
+                           float pos EINA_UNUSED)
 {
    const Elm_Params_Toolbar *p;
    Elm_Toolbar_Shrink_Mode shrink_mode;
@@ -78,7 +82,8 @@ external_toolbar_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void 
 }
 
 static Eina_Bool
-external_toolbar_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_toolbar_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                           const Edje_External_Param *param)
 {
    Elm_Toolbar_Shrink_Mode shrink_mode;
 
@@ -153,7 +158,8 @@ external_toolbar_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_
 }
 
 static Eina_Bool
-external_toolbar_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_toolbar_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                           Edje_External_Param *param)
 {
    if (!strcmp(param->name, "icon size"))
      {
@@ -229,7 +235,9 @@ external_toolbar_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_
 }
 
 static void *
-external_toolbar_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
+external_toolbar_params_parse(void *data EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED,
+                              const Eina_List *params)
 {
    Elm_Params_Toolbar *mem;
    Edje_External_Param *param;
@@ -279,10 +287,11 @@ external_toolbar_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static Evas_Object *external_toolbar_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                                 const Evas_Object *obj EINA_UNUSED,
+                                                 const char *content EINA_UNUSED)
 {
-	ERR("No content.");
-	return NULL;
+   ERR("No content.");
+   return NULL;
 }
 
 static void

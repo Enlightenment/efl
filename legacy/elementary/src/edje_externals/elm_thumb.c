@@ -1,5 +1,4 @@
 #include <assert.h>
-
 #include "private.h"
 
 typedef struct _Elm_Params_Thumb
@@ -8,7 +7,7 @@ typedef struct _Elm_Params_Thumb
    const char *animate;
 } Elm_Params_Thumb;
 
-static const char* choices[] = {"loop", "start", "stop", NULL};
+static const char* choices[] = { "loop", "start", "stop", NULL };
 
 static Elm_Thumb_Animation_Setting
 _anim_setting_get(const char *anim_str)
@@ -19,14 +18,16 @@ _anim_setting_get(const char *anim_str)
 
    for (i = 0; i < ELM_THUMB_ANIMATION_LAST; i++)
      {
-	if (!strcmp(anim_str, choices[i]))
-	  return i;
+        if (!strcmp(anim_str, choices[i]))
+          return i;
      }
    return ELM_THUMB_ANIMATION_LAST;
 }
 
 static void
-external_thumb_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_thumb_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const void *from_params, const void *to_params,
+                         float pos EINA_UNUSED)
 {
    const Elm_Params_Thumb *p;
 
@@ -36,24 +37,25 @@ external_thumb_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *f
 
    if (p->animate)
      {
-	Elm_Thumb_Animation_Setting set = _anim_setting_get(p->animate);
-	if (set != ELM_THUMB_ANIMATION_LAST)
-	   elm_thumb_animate_set(obj, set);
+        Elm_Thumb_Animation_Setting set = _anim_setting_get(p->animate);
+        if (set != ELM_THUMB_ANIMATION_LAST)
+          elm_thumb_animate_set(obj, set);
      }
 }
 
 static Eina_Bool
-external_thumb_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_thumb_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "animate"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
-	  {
-	     Elm_Thumb_Animation_Setting set = _anim_setting_get(param->s);
-	     if (set == ELM_THUMB_ANIMATION_LAST) return EINA_FALSE;
-	     elm_thumb_animate_set(obj, set);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
+          {
+             Elm_Thumb_Animation_Setting set = _anim_setting_get(param->s);
+             if (set == ELM_THUMB_ANIMATION_LAST) return EINA_FALSE;
+             elm_thumb_animate_set(obj, set);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -63,20 +65,21 @@ external_thumb_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_Ex
 }
 
 static Eina_Bool
-external_thumb_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_thumb_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                         Edje_External_Param *param)
 {
    if (!strcmp(param->name, "animate"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
-	  {
-	     Elm_Thumb_Animation_Setting anim_set = elm_thumb_animate_get(obj);
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
+          {
+             Elm_Thumb_Animation_Setting anim_set = elm_thumb_animate_get(obj);
 
-	     if (anim_set == ELM_THUMB_ANIMATION_LAST)
-	       return EINA_FALSE;
+             if (anim_set == ELM_THUMB_ANIMATION_LAST)
+               return EINA_FALSE;
 
-	     param->s = choices[anim_set];
-	     return EINA_TRUE;
-	  }
+             param->s = choices[anim_set];
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -86,7 +89,9 @@ external_thumb_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_Ex
 }
 
 static void *
-external_thumb_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
+external_thumb_params_parse(void *data EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED,
+                            const Eina_List *params)
 {
    Elm_Params_Thumb *mem;
    Edje_External_Param *param;
@@ -98,18 +103,19 @@ external_thumb_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "animate"))
-	  mem->animate = eina_stringshare_add(param->s);
+        if (!strcmp(param->name, "animate"))
+          mem->animate = eina_stringshare_add(param->s);
      }
 
    return mem;
 }
 
 static Evas_Object *external_thumb_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                               const Evas_Object *obj EINA_UNUSED,
+                                               const char *content EINA_UNUSED)
 {
-	ERR("No content.");
-	return NULL;
+   ERR("No content.");
+   return NULL;
 }
 
 static void
@@ -129,10 +135,10 @@ static Edje_External_Param_Info external_thumb_params[] =
     EDJE_EXTERNAL_PARAM_INFO_SENTINEL
   };
 
-DEFINE_EXTERNAL_ICON_ADD(thumb, "thumb")
-
 static Evas_Object *
-external_thumb_add(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *edje, const Eina_List *params EINA_UNUSED, const char *part_name)
+external_thumb_add(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
+                   Evas_Object *edje, const Eina_List *params EINA_UNUSED,
+                   const char *part_name)
 {
    Evas_Object *parent, *obj;
    external_elm_init();
@@ -143,4 +149,6 @@ external_thumb_add(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *
    external_signals_proxy(obj, edje, part_name);
    return obj;
 }
-DEFINE_EXTERNAL_TYPE(thumb, "Thumbnail")
+
+DEFINE_EXTERNAL_ICON_ADD(thumb, "thumb");
+DEFINE_EXTERNAL_TYPE(thumb, "Thumb");

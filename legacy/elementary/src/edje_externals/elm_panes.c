@@ -1,7 +1,6 @@
 #include "private.h"
 #include <assert.h>
 
-
 typedef struct _Elm_Params_Panes Elm_Params_Panes;
 
 struct _Elm_Params_Panes {
@@ -195,4 +194,4 @@ static Edje_External_Param_Info external_panes_params[] = {
 };
 
 DEFINE_EXTERNAL_ICON_ADD(panes, "panes");
-DEFINE_EXTERNAL_TYPE_SIMPLE(panes, "panes");
+DEFINE_EXTERNAL_TYPE_SIMPLE(panes, "Panes");

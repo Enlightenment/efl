@@ -10,7 +10,9 @@ typedef struct _Elm_Params_Bubble
 } Elm_Params_Bubble;
 
 static void
-external_bubble_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_bubble_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                          const void *from_params, const void *to_params,
+                          float pos EINA_UNUSED)
 {
    const Elm_Params_Bubble *p;
 
@@ -26,44 +28,45 @@ external_bubble_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *
 }
 
 static Eina_Bool
-external_bubble_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_bubble_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                          const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     elm_object_text_set(obj, param->s);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             elm_object_text_set(obj, param->s);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "icon"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Evas_Object *icon = external_common_param_icon_get(obj, param);
-	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_object_part_content_set(obj, "icon", icon);
-        return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             Evas_Object *icon = external_common_param_icon_get(obj, param);
+             if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
+             elm_object_part_content_set(obj, "icon", icon);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "info"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     elm_object_part_text_set(obj, "info", param->s);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             elm_object_part_text_set(obj, "info", param->s);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "content"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Evas_Object *content = \
-		    external_common_param_edje_object_get(obj, param);
-	     if ((strcmp(param->s, "")) && (!content)) return EINA_FALSE;
-	     elm_object_content_set(obj, content);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             Evas_Object *content = \
+                                    external_common_param_edje_object_get(obj, param);
+             if ((strcmp(param->s, "")) && (!content)) return EINA_FALSE;
+             elm_object_content_set(obj, content);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -73,33 +76,34 @@ external_bubble_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_E
 }
 
 static Eina_Bool
-external_bubble_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_bubble_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                          Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     param->s = elm_object_text_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_object_text_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "icon"))
      {
-	/* not easy to get icon name back from live object */
-	return EINA_FALSE;
+        /* not easy to get icon name back from live object */
+        return EINA_FALSE;
      }
    else if (!strcmp(param->name, "info"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     param->s = elm_object_part_text_get(obj, "info");
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_object_part_text_get(obj, "info");
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "content"))
      {
-	/* not easy to get content name back from live object */
-	return EINA_FALSE;
+        /* not easy to get content name back from live object */
+        return EINA_FALSE;
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -109,7 +113,8 @@ external_bubble_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_E
 }
 
 static void *
-external_bubble_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina_List *params)
+external_bubble_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
+                             const Eina_List *params)
 {
    Elm_Params_Bubble *mem;
    Edje_External_Param *param;
@@ -123,19 +128,20 @@ external_bubble_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Ein
 
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "info"))
-	  mem->info = eina_stringshare_add(param->s);
-	else if (!strcmp(param->name, "content"))
-	  mem->content = external_common_param_edje_object_get(obj, param);
-	else if (!strcmp(param->name, "label"))
-	  mem->label = eina_stringshare_add(param->s);
+        if (!strcmp(param->name, "info"))
+          mem->info = eina_stringshare_add(param->s);
+        else if (!strcmp(param->name, "content"))
+          mem->content = external_common_param_edje_object_get(obj, param);
+        else if (!strcmp(param->name, "label"))
+          mem->label = eina_stringshare_add(param->s);
      }
 
    return mem;
 }
 
 static Evas_Object *external_bubble_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                                const Evas_Object *obj EINA_UNUSED,
+                                                const char *content EINA_UNUSED)
 {
    if (!strcmp(content, "content"))
      return elm_object_content_get(obj);
@@ -155,7 +161,8 @@ external_bubble_params_free(void *params)
    free(params);
 }
 
-static Edje_External_Param_Info external_bubble_params[] = {
+static Edje_External_Param_Info external_bubble_params[] =
+{
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),

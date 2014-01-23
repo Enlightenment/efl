@@ -7,7 +7,9 @@ typedef struct _Elm_Params_Label
 } Elm_Params_Label;
 
 static void
-external_label_state_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_label_state_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                         const void *from_params, const void *to_params,
+                         float pos EINA_UNUSED)
 {
    const Elm_Params_Label *p;
 
@@ -19,15 +21,16 @@ external_label_state_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, c
 }
 
 static Eina_Bool
-external_label_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_label_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     elm_object_text_set(obj, param->s);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             elm_object_text_set(obj, param->s);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -37,15 +40,16 @@ external_label_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_Ex
 }
 
 static Eina_Bool
-external_label_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_label_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                         Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     param->s = elm_object_text_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_object_text_get(obj);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -55,7 +59,8 @@ external_label_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_Ex
 }
 
 static void *
-external_label_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params EINA_UNUSED)
+external_label_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                            const Eina_List *params EINA_UNUSED)
 {
    Elm_Params_Label *mem;
    Edje_External_Param *param;
@@ -68,17 +73,18 @@ external_label_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    EINA_LIST_FOREACH(params, l, param)
      {
         if (!strcmp(param->name, "label"))
-           mem->label = eina_stringshare_add(param->s);
+          mem->label = eina_stringshare_add(param->s);
      }
 
    return mem;
 }
 
 static Evas_Object *external_label_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                               const Evas_Object *obj EINA_UNUSED,
+                                               const char *content EINA_UNUSED)
 {
-	ERR("no content");
-	return NULL;
+   ERR("no content");
+   return NULL;
 }
 
 static void
@@ -86,15 +92,15 @@ external_label_params_free(void *params)
 {
    Elm_Params_Label *mem = params;
    if (mem->label)
-      eina_stringshare_del(mem->label);
+     eina_stringshare_del(mem->label);
    free(params);
 }
 
 static Edje_External_Param_Info external_label_params[] = {
-   DEFINE_EXTERNAL_COMMON_PARAMS,
-   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
-   EDJE_EXTERNAL_PARAM_INFO_SENTINEL
+     DEFINE_EXTERNAL_COMMON_PARAMS,
+     EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
+     EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
 DEFINE_EXTERNAL_ICON_ADD(label, "label");
-DEFINE_EXTERNAL_TYPE_SIMPLE(label, "label");
+DEFINE_EXTERNAL_TYPE_SIMPLE(label, "Label");

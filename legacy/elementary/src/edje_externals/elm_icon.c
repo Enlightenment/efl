@@ -97,12 +97,12 @@ external_icon_param_set(void *data EINA_UNUSED, Evas_Object *obj,
    const char *file;
 
    if (!strcmp(param->name, "file")
-		   && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+       && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
      {
         Eina_Bool ret = elm_image_file_set(obj, param->s, NULL);
-	if (ret)
-	  param_icon->file = param->s;
-	return ret;
+        if (ret)
+          param_icon->file = param->s;
+        return ret;
      }
    else if (!strcmp(param->name, "smooth")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
@@ -171,7 +171,7 @@ external_icon_param_get(void *data EINA_UNUSED,
                         Edje_External_Param *param)
 {
    if (!strcmp(param->name, "file")
-		   && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+       && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
      {
         param->s = param_icon->file;
         return EINA_TRUE;

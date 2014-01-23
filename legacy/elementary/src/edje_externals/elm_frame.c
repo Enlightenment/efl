@@ -8,7 +8,9 @@ typedef struct _Elm_Params_Frame
 } Elm_Params_Frame;
 
 static void
-external_frame_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_frame_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const void *from_params, const void *to_params,
+                         float pos EINA_UNUSED)
 {
    const Elm_Params_Frame *p;
 
@@ -21,7 +23,8 @@ external_frame_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *f
 }
 
 static Eina_Bool
-external_frame_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_frame_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -50,7 +53,8 @@ external_frame_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_Ex
 }
 
 static Eina_Bool
-external_frame_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_frame_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                         Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -73,7 +77,8 @@ external_frame_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_Ex
 }
 
 static void *
-external_frame_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina_List *params)
+external_frame_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
+                            const Eina_List *params)
 {
    Elm_Params_Frame *mem;
    Edje_External_Param *param;
@@ -95,7 +100,8 @@ external_frame_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina
 }
 
 static Evas_Object *external_frame_content_get(void *data EINA_UNUSED,
-                                               const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                               const Evas_Object *obj EINA_UNUSED,
+                                               const char *content EINA_UNUSED)
 {
    if (!strcmp(content, "content"))
      return elm_object_content_get(obj);

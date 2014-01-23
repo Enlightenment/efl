@@ -234,7 +234,8 @@ external_notify_param_get(void *data EINA_UNUSED,
 
 static void *
 external_notify_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
-                             const Eina_List *params) {
+                             const Eina_List *params)
+{
    Elm_Params_Notify *mem;
    Edje_External_Param *param;
    const Eina_List *l;
@@ -276,11 +277,13 @@ external_notify_content_get(void *data EINA_UNUSED,
 }
 
 static void
-external_notify_params_free(void *params) {
+external_notify_params_free(void *params)
+{
    free(params);
 }
 
-static Edje_External_Param_Info external_notify_params[] = {
+static Edje_External_Param_Info external_notify_params[] =
+{
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("content"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("allow_events"),

@@ -14,7 +14,10 @@ typedef struct _Elm_Params_Bg
      if (!strcmp(STR, CHOICES[i]))                              \
        return i;
 
-static const char *_bg_options[] = {"center", "scale", "stretch", "tile", NULL};
+static const char *_bg_options[] =
+{
+   "center", "scale", "stretch", "tile", NULL
+};
 
 static Elm_Bg_Option
 _bg_option_get(const char *option)
@@ -144,7 +147,8 @@ external_bg_params_free(void *params)
    free(mem);
 }
 
-static Edje_External_Param_Info external_bg_params[] = {
+static Edje_External_Param_Info external_bg_params[] =
+{
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("file"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("option"),

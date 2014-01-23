@@ -1,5 +1,4 @@
 #include <assert.h>
-
 #include "private.h"
 
 typedef struct _Elm_Params_List
@@ -22,9 +21,11 @@ typedef struct _Elm_Params_List
     if (strcmp(STR, CHOICES[i]) == 0)           \
       return i
 
-static const char *scroller_policy_choices[] = {"auto", "on", "off", NULL};
-static const char *list_mode_choices[] = {"compress", "scroll", "limit",
-                                          "expand", NULL};
+static const char *scroller_policy_choices[] = { "auto", "on", "off", NULL };
+static const char *list_mode_choices[] =
+{
+   "compress", "scroll", "limit", "expand", NULL
+};
 
 static Elm_Scroller_Policy
 _scroller_policy_choices_setting_get(const char *policy_str)
@@ -45,7 +46,9 @@ _list_mode_setting_get(const char *mode_str)
 }
 
 static void
-external_list_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_list_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                        const void *from_params, const void *to_params,
+                        float pos EINA_UNUSED)
 {
    const Elm_Params_List *p;
    Elm_Scroller_Policy policy_h, policy_v;
@@ -97,7 +100,8 @@ external_list_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *fr
 }
 
 static Eina_Bool
-external_list_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_list_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                        const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "list mode"))
      {
@@ -168,7 +172,8 @@ external_list_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_Ext
 }
 
 static Eina_Bool
-external_list_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_list_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                        Edje_External_Param *param)
 {
    if (!strcmp(param->name, "horizontal mode"))
      {
@@ -241,7 +246,8 @@ external_list_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_Ext
 }
 
 static void *
-external_list_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
+external_list_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                           const Eina_List *params)
 {
    Elm_Params_List *mem;
    Edje_External_Param *param;
@@ -278,7 +284,9 @@ external_list_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    return mem;
 }
 
-static Evas_Object *external_list_content_get(void *data EINA_UNUSED, const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+static Evas_Object *external_list_content_get(void *data EINA_UNUSED,
+                                              const Evas_Object *obj EINA_UNUSED,
+                                              const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;
@@ -313,5 +321,5 @@ static Edje_External_Param_Info external_list_params[] = {
   EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
-DEFINE_EXTERNAL_ICON_ADD(list, "list")
+DEFINE_EXTERNAL_ICON_ADD(list, "list");
 DEFINE_EXTERNAL_TYPE_SIMPLE(list, "List");

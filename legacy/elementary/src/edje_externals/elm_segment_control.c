@@ -16,7 +16,9 @@ external_segment_control_state_set(void *data EINA_UNUSED,
 }
 
 static Eina_Bool
-external_segment_control_param_set(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Edje_External_Param *param)
+external_segment_control_param_set(void *data EINA_UNUSED,
+                                   Evas_Object *obj EINA_UNUSED,
+                                   const Edje_External_Param *param)
 {
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -25,7 +27,9 @@ external_segment_control_param_set(void *data EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static Eina_Bool
-external_segment_control_param_get(void *data EINA_UNUSED, const Evas_Object *obj EINA_UNUSED, Edje_External_Param *param)
+external_segment_control_param_get(void *data EINA_UNUSED,
+                                   const Evas_Object *obj EINA_UNUSED,
+                                   Edje_External_Param *param)
 {
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -34,7 +38,9 @@ external_segment_control_param_get(void *data EINA_UNUSED, const Evas_Object *ob
 }
 
 static void *
-external_segment_control_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params EINA_UNUSED)
+external_segment_control_params_parse(void *data EINA_UNUSED,
+                                      Evas_Object *obj EINA_UNUSED,
+                                      const Eina_List *params EINA_UNUSED)
 {
    Elm_Params_Segment_Control *mem;
    //Edje_External_Param *param;
@@ -53,7 +59,8 @@ external_segment_control_params_parse(void *data EINA_UNUSED, Evas_Object *obj E
 }
 
 static Evas_Object *external_segment_control_content_get(void *data EINA_UNUSED,
-                                                         const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                                         const Evas_Object *obj EINA_UNUSED,
+                                                         const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;
@@ -72,4 +79,4 @@ static Edje_External_Param_Info external_segment_control_params[] = {
 };
 
 DEFINE_EXTERNAL_ICON_ADD(segment_control, "segment_control");
-DEFINE_EXTERNAL_TYPE_SIMPLE(segment_control, "segment_control");
+DEFINE_EXTERNAL_TYPE_SIMPLE(segment_control, "Segment Control");

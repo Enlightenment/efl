@@ -1,5 +1,4 @@
 #include <assert.h>
-
 #include "private.h"
 
 typedef struct _Elm_Params_Fileselector
@@ -16,7 +15,9 @@ typedef struct _Elm_Params_Fileselector
 } Elm_Params_Fileselector;
 
 static void
-external_fileselector_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_fileselector_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                                const void *from_params, const void *to_params,
+                                float pos EINA_UNUSED)
 {
    const Elm_Params_Fileselector *p;
 
@@ -35,39 +36,40 @@ external_fileselector_state_set(void *data EINA_UNUSED, Evas_Object *obj, const 
 }
 
 static Eina_Bool
-external_fileselector_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_fileselector_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                                const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "save"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_fileselector_is_save_set(obj, param->i);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_fileselector_is_save_set(obj, param->i);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "folder only"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_fileselector_folder_only_set(obj, param->i);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_fileselector_folder_only_set(obj, param->i);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "show buttons"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_fileselector_buttons_ok_cancel_set(obj, param->i);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_fileselector_buttons_ok_cancel_set(obj, param->i);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "expandable"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_fileselector_expandable_set(obj, param->i);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_fileselector_expandable_set(obj, param->i);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -77,39 +79,40 @@ external_fileselector_param_set(void *data EINA_UNUSED, Evas_Object *obj, const 
 }
 
 static Eina_Bool
-external_fileselector_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_fileselector_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                                Edje_External_Param *param)
 {
    if (!strcmp(param->name, "save"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_fileselector_is_save_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_fileselector_is_save_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "folder only"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_fileselector_folder_only_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_fileselector_folder_only_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "show buttons"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_fileselector_buttons_ok_cancel_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_fileselector_buttons_ok_cancel_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "expandable"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_fileselector_expandable_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_fileselector_expandable_get(obj);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -131,33 +134,34 @@ external_fileselector_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA
 
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "save"))
-	  {
-	     mem->is_save = !!param->i;
-	     mem->is_save_set = EINA_TRUE;
-	  }
-	else if (!strcmp(param->name, "folder only"))
-	  {
-	     mem->folder_only = !!param->i;
-	     mem->folder_only_set = EINA_TRUE;
-	  }
-	else if (!strcmp(param->name, "show buttons"))
-	  {
-	     mem->show_buttons = !!param->i;
-	     mem->show_buttons_set = EINA_TRUE;
-	  }
-	else if (!strcmp(param->name, "expandable"))
-	  {
-	     mem->expandable = !!param->i;
-	     mem->expandable_set = EINA_TRUE;
-	  }
+        if (!strcmp(param->name, "save"))
+          {
+             mem->is_save = !!param->i;
+             mem->is_save_set = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "folder only"))
+          {
+             mem->folder_only = !!param->i;
+             mem->folder_only_set = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "show buttons"))
+          {
+             mem->show_buttons = !!param->i;
+             mem->show_buttons_set = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "expandable"))
+          {
+             mem->expandable = !!param->i;
+             mem->expandable_set = EINA_TRUE;
+          }
      }
 
    return mem;
 }
 
 static Evas_Object *external_fileselector_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                                      const Evas_Object *obj EINA_UNUSED,
+                                                      const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;
@@ -171,15 +175,14 @@ external_fileselector_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_fileselector_params[] =
-  {
-    DEFINE_EXTERNAL_COMMON_PARAMS,
-    EDJE_EXTERNAL_PARAM_INFO_BOOL("save"),
-    EDJE_EXTERNAL_PARAM_INFO_BOOL("folder only"),
-    EDJE_EXTERNAL_PARAM_INFO_BOOL("show buttons"),
-    EDJE_EXTERNAL_PARAM_INFO_BOOL("expandable"),
-    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
-  };
+{
+   DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("save"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("folder only"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("show buttons"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("expandable"),
+   EDJE_EXTERNAL_PARAM_INFO_SENTINEL
+};
 
-DEFINE_EXTERNAL_ICON_ADD(fileselector, "fileselector")
-DEFINE_EXTERNAL_TYPE_SIMPLE(fileselector, "File Selector")
-
+DEFINE_EXTERNAL_ICON_ADD(fileselector, "fileselector");
+DEFINE_EXTERNAL_TYPE_SIMPLE(fileselector, "Fileselector");

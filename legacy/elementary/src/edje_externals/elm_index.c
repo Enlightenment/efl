@@ -9,7 +9,9 @@ typedef struct _Elm_Params_Index
 } Elm_Params_Index;
 
 static void
-external_index_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_index_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const void *from_params, const void *to_params,
+                         float pos EINA_UNUSED)
 {
    const Elm_Params_Index *p;
 
@@ -22,7 +24,8 @@ external_index_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *f
 }
 
 static Eina_Bool
-external_index_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_index_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "active"))
      {
@@ -39,7 +42,8 @@ external_index_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_Ex
 }
 
 static Eina_Bool
-external_index_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_index_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                         Edje_External_Param *param)
 {
    if (!strcmp(param->name, "active"))
      {
@@ -57,7 +61,8 @@ external_index_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_Ex
 }
 
 static void *
-external_index_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const Eina_List *params)
+external_index_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                            const Eina_List *params)
 {
    Elm_Params_Index *mem;
    Edje_External_Param *param;
@@ -80,7 +85,8 @@ external_index_params_parse(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 }
 
 static Evas_Object *external_index_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                               const Evas_Object *obj EINA_UNUSED,
+                                               const char *content EINA_UNUSED)
 {
    ERR("No content.");
    return NULL;
@@ -100,4 +106,4 @@ static Edje_External_Param_Info external_index_params[] = {
 };
 
 DEFINE_EXTERNAL_ICON_ADD(index, "index");
-DEFINE_EXTERNAL_TYPE_SIMPLE(index, "index");
+DEFINE_EXTERNAL_TYPE_SIMPLE(index, "Index");

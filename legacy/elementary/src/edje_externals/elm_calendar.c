@@ -1,5 +1,4 @@
 #include <assert.h>
-
 #include "private.h"
 
 typedef struct _Elm_Params_Calendar
@@ -17,9 +16,10 @@ typedef struct _Elm_Params_Calendar
      if (!strcmp(STR, CHOICES[i]))                              \
        return i;
 
-
-static const char *_calendar_select_modes[] = {"default", "always", "none",
-                                               "ondemand", NULL};
+static const char *_calendar_select_modes[] =
+{
+   "default", "always", "none", "ondemand", NULL
+};
 
 static Elm_Calendar_Select_Mode
 _calendar_select_mode_get(const char *select_mode)

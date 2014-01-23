@@ -14,7 +14,9 @@ typedef struct _Elm_Params_Button
 } Elm_Params_Button;
 
 static void
-external_button_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_button_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                          const void *from_params, const void *to_params,
+                          float pos EINA_UNUSED)
 {
    const Elm_Params_Button *p;
 
@@ -35,49 +37,50 @@ external_button_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *
 }
 
 static Eina_Bool
-external_button_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_button_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                          const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     elm_object_text_set(obj, param->s);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             elm_object_text_set(obj, param->s);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "icon"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     Evas_Object *icon = external_common_param_icon_get(obj, param);
-	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_object_part_content_set(obj, "icon", icon);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             Evas_Object *icon = external_common_param_icon_get(obj, param);
+             if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
+             elm_object_part_content_set(obj, "icon", icon);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "autorepeat_initial"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
-	  {
-	     elm_button_autorepeat_initial_timeout_set(obj, param->d);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             elm_button_autorepeat_initial_timeout_set(obj, param->d);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "autorepeat_gap"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
-	  {
-	     elm_button_autorepeat_gap_timeout_set(obj, param->d);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             elm_button_autorepeat_gap_timeout_set(obj, param->d);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "autorepeat"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_button_autorepeat_set(obj, param->i);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_button_autorepeat_set(obj, param->i);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -87,44 +90,45 @@ external_button_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_E
 }
 
 static Eina_Bool
-external_button_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_External_Param *param)
+external_button_param_get(void *data EINA_UNUSED, const Evas_Object *obj,
+                          Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     param->s = elm_object_text_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_object_text_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "icon"))
      {
-	/* not easy to get icon name back from live object */
-	return EINA_FALSE;
+        /* not easy to get icon name back from live object */
+        return EINA_FALSE;
      }
    else if (!strcmp(param->name, "autorepeat_initial"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
-	  {
-	     param->d = elm_button_autorepeat_initial_timeout_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             param->d = elm_button_autorepeat_initial_timeout_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "autorepeat_gap"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
-	  {
-	     param->d = elm_button_autorepeat_gap_timeout_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             param->d = elm_button_autorepeat_gap_timeout_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "autorepeat"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_button_autorepeat_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_button_autorepeat_get(obj);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -134,7 +138,8 @@ external_button_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_E
 }
 
 static void *
-external_button_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina_List *params)
+external_button_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
+                             const Eina_List *params)
 {
    Elm_Params_Button *mem;
    Edje_External_Param *param;
@@ -148,33 +153,34 @@ external_button_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Ein
 
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "autorepeat_initial"))
-	  {
-	     mem->autorepeat_initial = param->d;
-	     mem->autorepeat_initial_exists = EINA_TRUE;
-	  }
+        if (!strcmp(param->name, "autorepeat_initial"))
+          {
+             mem->autorepeat_initial = param->d;
+             mem->autorepeat_initial_exists = EINA_TRUE;
+          }
         else if (!strcmp(param->name, "autorepeat_gap"))
-	  {
-	     mem->autorepeat_gap = param->d;
-	     mem->autorepeat_gap_exists = EINA_TRUE;
-	  }
-	else if (!strcmp(param->name, "autorepeat"))
-	  {
-	     mem->autorepeat = !!param->i;
-	     mem->autorepeat_exists = EINA_TRUE;
-	  }
-	else if (!strcmp(param->name, "label"))
-	  mem->label = eina_stringshare_add(param->s);
+          {
+             mem->autorepeat_gap = param->d;
+             mem->autorepeat_gap_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "autorepeat"))
+          {
+             mem->autorepeat = !!param->i;
+             mem->autorepeat_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "label"))
+          mem->label = eina_stringshare_add(param->s);
      }
 
    return mem;
 }
 
 static Evas_Object *external_button_content_get(void *data EINA_UNUSED,
-		const Evas_Object *obj EINA_UNUSED, const char *content EINA_UNUSED)
+                                                const Evas_Object *obj EINA_UNUSED,
+                                                const char *content EINA_UNUSED)
 {
-	ERR("No content.");
-	return NULL;
+   ERR("No content.");
+   return NULL;
 }
 
 static void
@@ -182,11 +188,12 @@ external_button_params_free(void *params)
 {
    Elm_Params_Button *mem = params;
    if (mem->label)
-      eina_stringshare_del(mem->label);
+     eina_stringshare_del(mem->label);
    free(params);
 }
 
-static Edje_External_Param_Info external_button_params[] = {
+static Edje_External_Param_Info external_button_params[] =
+{
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),

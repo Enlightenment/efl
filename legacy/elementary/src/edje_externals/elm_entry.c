@@ -1,5 +1,4 @@
 #include <assert.h>
-
 #include "private.h"
 
 typedef struct _Elm_Params_Entry
@@ -29,9 +28,10 @@ typedef struct _Elm_Params_Entry
     if (strcmp((STR), (CHOICES)[i]) == 0)           \
       return i
 
-
-static const char *entry_line_wrap_choices[] = {"none", "char", "word",
-                                          "mixed", NULL};
+static const char *entry_line_wrap_choices[] =
+{
+   "none", "char", "word", "mixed", NULL
+};
 
 static Elm_Wrap_Type
 _entry_line_wrap_choices_setting_get(const char *line_wrap_str)
@@ -43,7 +43,9 @@ _entry_line_wrap_choices_setting_get(const char *line_wrap_str)
 }
 
 static void
-external_entry_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *from_params, const void *to_params, float pos EINA_UNUSED)
+external_entry_state_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const void *from_params, const void *to_params,
+                         float pos EINA_UNUSED)
 {
    const Elm_Params_Entry *p;
    Eina_Bool hbounce, vbounce;
@@ -85,7 +87,8 @@ external_entry_state_set(void *data EINA_UNUSED, Evas_Object *obj, const void *f
 }
 
 static Eina_Bool
-external_entry_param_set(void *data EINA_UNUSED, Evas_Object *obj, const Edje_External_Param *param)
+external_entry_param_set(void *data EINA_UNUSED, Evas_Object *obj,
+                         const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "label"))
      {
@@ -278,7 +281,8 @@ external_entry_param_get(void *data EINA_UNUSED, const Evas_Object *obj, Edje_Ex
 }
 
 static void *
-external_entry_params_parse(void *data EINA_UNUSED, Evas_Object *obj, const Eina_List *params)
+external_entry_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
+                            const Eina_List *params)
 {
    Elm_Params_Entry *mem;
    Edje_External_Param *param;
