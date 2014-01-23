@@ -7,7 +7,7 @@
 Evas_Filter_Buffer *
 evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
                               Evas_Filter_Buffer *src,
-                              int w, int h)
+                              unsigned w, unsigned h)
 {
    Evas_Filter_Buffer *fb;
    Image_Entry *dstdata = NULL;
@@ -33,6 +33,10 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
             dstdata->w, dstdata->h, w, h);
         return NULL;
      }
+
+   // FIXME: Not supported on GL engine. HAHAHAHAHA
+   if (ctx->gl_engine)
+     CRI("Support not implemened yet. lol yeah");
 
    if (!src->alpha_only)
      {

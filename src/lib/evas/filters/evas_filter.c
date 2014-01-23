@@ -43,7 +43,7 @@ struct _Evas_Filter_Thread_Command
 /* Main functions */
 
 Evas_Filter_Context *
-evas_filter_context_new(Evas_Public_Data *evas)
+evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
 {
    Evas_Filter_Context *ctx;
 
@@ -53,6 +53,7 @@ evas_filter_context_new(Evas_Public_Data *evas)
    if (!ctx) return NULL;
 
    ctx->evas = evas;
+   ctx->async = async;
    ctx->gl_engine = !!strstr(evas->engine.module->definition->name, "gl");
 
    return ctx;
@@ -86,7 +87,10 @@ _backing_free(Evas_Filter_Context *ctx, Image_Entry *ie)
    if (!ie) return;
 
    if (!ctx->gl_engine)
-     ENFN->image_free(ENDT, ie);
+     {
+        if (!ctx->async)
+          ENFN->image_free(ENDT, ie);
+     }
    else
      {
         if (!evas_cserve2_use_get())
@@ -119,7 +123,8 @@ _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 /** @hidden private bind proxy to context */
 void
 evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy,
-                               Evas_Object *eo_source, int bufid)
+                               Evas_Object *eo_source, int bufid,
+                               Eina_Stringshare *name)
 {
    Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
    Evas_Object_Protected_Data *source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
@@ -129,9 +134,11 @@ evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy,
    EINA_SAFETY_ON_NULL_RETURN(fb);
 
    if (fb->source == eo_source) return;
-   if (fb->source) evas_object_unref(fb->source);
+   evas_object_unref(fb->source);
+   eina_stringshare_del(fb->source_name);
    fb->source = eo_source;
    if (!fb->source) return;
+   fb->source_name = eina_stringshare_ref(name);
 
    evas_object_ref(eo_source);
 
@@ -271,6 +278,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                fb->allocated = EINA_FALSE;
                fb->alpha_only = EINA_FALSE;
             }
+          DBG("Source has dimensions %dx%d (buffer %d)", fb->w, fb->h, fb->id);
        }
 }
 
@@ -436,45 +444,129 @@ evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
 */
 
 Eina_Bool
-evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx, unsigned w, unsigned h)
+evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
+                                         unsigned w, unsigned h)
 {
+   Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *fb;
    Image_Entry *ie;
    Eina_List *li;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
+   ctx->w = w;
+   ctx->h = h;
+
+   //DBG("Allocating all buffers based on output size %ux%u", w, h);
+
+   EINA_INLIST_FOREACH(ctx->commands, cmd)
+     {
+        Evas_Filter_Fill_Mode fillmode = cmd->draw.fillmode;
+        Evas_Filter_Buffer *in, *fb, *out;
+
+        in = cmd->input;
+        if (!in->w && !in->h)
+          {
+             in->w = w;
+             in->h = h;
+          }
+
+        if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY)
+          {
+             unsigned sw = w, sh = h;
+
+             switch (cmd->mode)
+               {
+                case EVAS_FILTER_MODE_BLEND:
+                  in = cmd->input;
+                  break;
+                case EVAS_FILTER_MODE_BUMP:
+                case EVAS_FILTER_MODE_DISPLACE:
+                case EVAS_FILTER_MODE_MASK:
+                  in = cmd->mask;
+                  break;
+                default:
+                  CRI("Invalid fillmode set for command %d", cmd->mode);
+                  return EINA_FALSE;
+               }
+
+             if (in->w) sw = in->w;
+             if (in->h) sh = in->h;
+
+             if ((sw != w) || (sh != h))
+               {
+                  if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+                    sw = w;
+                  if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+                    sh = h;
+
+                  //DBG("Allocating temporary buffer of size %ux%u", sw, sh);
+                  fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
+                  fb->transient = EINA_TRUE;
+               }
+          }
+
+        if (cmd->draw.need_temp_buffer)
+          {
+             Evas_Filter_Buffer *in;
+             unsigned sw = w, sh = h;
+
+             in = cmd->input;
+             if (in->w) sw = in->w;
+             if (in->h) sh = in->h;
+
+             //DBG("Allocating temporary buffer of size %ux%u", sw, sh);
+             fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
+             fb->transient = EINA_TRUE;
+          }
+
+        out = cmd->output;
+        if (!out->w && !out->h)
+          {
+             out->w = w;
+             out->h = h;
+          }
+     }
+
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      {
-        if (fb->source) continue;
-
         ie = fb->backing;
         if (ie)
           {
-             if ((ie->w != w) || (ie->h != h))
+             if (ctx->async)
                {
-                  CRI("Inconsistent buffer size!");
-                  continue;
+                  ie->references++;
+                  evas_unref_queue_image_put(ctx->evas, ie);
                }
-             ie->references++;
              continue;
           }
 
+        if (fb->source)
+          continue;
+
+        if (fb->glimage)
+          continue;
+
         if (!fb->w && !fb->h)
           {
-             fb->w = w;
-             fb->h = h;
+             ERR("Size should be known at this point. Is this a dangling buffer?");
+             continue;
           }
+
+        //DBG("Allocating buffer of size %ux%u", fb->w, fb->h);
         ie = (Image_Entry *) _rgba_image_alloc(fb, NULL);
         if (!ie)
           {
              ERR("Buffer %d allocation failed!", fb->id);
-             continue;
+             return EINA_FALSE;
           }
 
         fb->backing = ie;
+        if (ctx->async)
+          {
+             ie->references++;
+             evas_unref_queue_image_put(ctx->evas, ie);
+          }
      }
-
-   // To unref: evas_unref_queue_image_put
 
    return EINA_TRUE;
 }
@@ -495,8 +587,8 @@ evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only)
 }
 
 Eina_Bool
-evas_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
-                            int w, int h, Eina_Bool alpha_only)
+_filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
+                        int w, int h, Eina_Bool alpha_only)
 {
    Evas_Filter_Buffer *fb;
 
@@ -542,33 +634,31 @@ evas_filter_buffer_image_new(Evas_Filter_Context *ctx, RGBA_Image *image)
    return fb->id;
 }
 
-/*
-int
-evas_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h,
-                            Eina_Bool alpha_only)
+Evas_Filter_Buffer *
+_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h,
+                        Eina_Bool alpha_only)
 {
    Evas_Filter_Buffer *fb;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(w > 0 && h > 0, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(w > 0 && h > 0, NULL);
 
    fb = calloc(1, sizeof(Evas_Filter_Buffer));
-   if (!fb) return -1;
+   if (!fb) return NULL;
 
    fb->id = ++(ctx->last_buffer_id);
    fb->ctx = ctx;
    ctx->buffers = eina_list_append(ctx->buffers, fb);
 
-   if (!evas_filter_buffer_data_set(ctx, fb->id, data, w, h, alpha_only))
+   if (!_filter_buffer_data_set(ctx, fb->id, data, w, h, alpha_only))
      {
         ctx->buffers = eina_list_remove(ctx->buffers, fb);
         free(fb);
-        return -1;
+        return NULL;
      }
 
-   return fb->id;
+   return fb;
 }
-*/
 
 static void
 _buffer_free(Evas_Filter_Buffer *fb)
@@ -682,8 +772,8 @@ _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd)
    free(cmd);
 }
 
-static Evas_Filter_Command *
-_command_get(Evas_Filter_Context *ctx, int cmdid)
+Evas_Filter_Command *
+_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdid)
 {
    Evas_Filter_Command *cmd;
 
@@ -982,6 +1072,10 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
                                 &cmd->draw.clip.x, &cmd->draw.clip.y,
                                 &cmd->draw.clip.w, &cmd->draw.clip.h);
 
+   if (cmd->draw.clip_use)
+     DBG("Draw clip: %d,%d,%d,%d", cmd->draw.clip.x, cmd->draw.clip.y,
+         cmd->draw.clip.w, cmd->draw.clip.h);
+
    return cmd->id;
 }
 
@@ -1027,7 +1121,7 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
                                              curve, EVAS_FILTER_CHANNEL_ALPHA);
    if (threshcmd < 0)
      {
-        _command_del(ctx, _command_get(ctx, blurcmd));
+        _command_del(ctx, _evas_filter_command_get(ctx, blurcmd));
         return -1;
      }
 
@@ -1129,7 +1223,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
                                           out->id, 0, 0,
                                           EVAS_FILTER_FILL_MODE_NONE) < 0)
           {
-             _command_del(ctx, _command_get(ctx, cmdid));
+             _command_del(ctx, _evas_filter_command_get(ctx, cmdid));
              cmdid = -1;
           }
      }
@@ -1336,12 +1430,9 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
-   ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
    if (!ctx->gl_engine)
      {
-        /* FIXME: This extraneous blend could be avoided if all filters
-         * drawing to output (buffer #2) support proper colors and offsets.
-         */
+        ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
         evas_filter_command_blend_add(ctx, draw_context, 2, ctx->target.bufid,
                                       x, y, EVAS_FILTER_FILL_MODE_NONE);
      }
@@ -1351,6 +1442,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
         Evas_Filter_Buffer *target, *image;
         RGBA_Image *im;
 
+        ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
         ctx->target.context = draw_context;
         ctx->target.x = x;
         ctx->target.y = y;
@@ -1513,7 +1605,6 @@ static Eina_Bool
 _filter_command_run(Evas_Filter_Command *cmd)
 {
    Evas_Filter_Apply_Func func = NULL;
-   Eina_Bool ok;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, EINA_FALSE);
@@ -1577,8 +1668,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
         return EINA_FALSE;
      }
 
-   func(cmd);
-   return ok;
+   return func(cmd);
 }
 
 static Eina_Bool
@@ -1586,13 +1676,6 @@ _filter_chain_run(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
    Eina_Bool ok = EINA_TRUE;
-   Evas_Filter_Buffer *in;
-
-   in = _filter_buffer_get(ctx, 1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
-
-   ctx->w = in->w;
-   ctx->h = in->h;
 
    EINA_INLIST_FOREACH(ctx->commands, cmd)
      {
@@ -1619,7 +1702,7 @@ _filter_thread_run_cb(void *data)
 }
 
 Eina_Bool
-evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_async)
+evas_filter_run(Evas_Filter_Context *ctx)
 {
    Eina_Bool ret;
 
@@ -1631,7 +1714,7 @@ evas_filter_run(Evas_Filter_Context *ctx, Eina_Bool do_async)
    if (ctx->gl_engine)
      WRN("EXPERIMENTAL OpenGL support! Might very well crash or not render anything.");
 
-   if (do_async)
+   if (ctx->async)
      {
         evas_thread_cmd_enqueue(_filter_thread_run_cb, ctx);
         return EINA_TRUE;

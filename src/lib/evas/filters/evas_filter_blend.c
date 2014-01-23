@@ -442,7 +442,6 @@ _filter_blend_cpu_rgba2alpha(Evas_Filter_Command *cmd)
      return EINA_TRUE;
 
    // Stretch if necessary.
-#warning FIXME Must be in the main loop because of buffer allocation
    if ((sw != dw || sh != dh) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
         Evas_Filter_Buffer *fb;

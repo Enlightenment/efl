@@ -59,12 +59,12 @@ struct _Evas_Filter_Context
 
    struct
    {
-      // Only used with the GL engine.
       int bufid;
       void *context;
       int x, y;
    } target;
 
+   Eina_Bool async : 1;
    Eina_Bool gl_engine : 1;
 };
 
@@ -135,6 +135,7 @@ struct _Evas_Filter_Command
       Evas_Filter_Fill_Mode fillmode;
       Eina_Bool clip_use : 1;
       Eina_Bool clip_mode_lrtb : 1;
+      Eina_Bool need_temp_buffer : 1;
    } draw;
 };
 
@@ -146,6 +147,7 @@ struct _Evas_Filter_Buffer
    Evas_Filter_Context *ctx;
 
    Evas_Object *source;
+   Eina_Stringshare *source_name;
    void *backing;
    void *glimage;
    int w, h;
@@ -166,7 +168,7 @@ enum _Evas_Filter_Interpolation_Mode
 };
 
 void                     evas_filter_context_clear(Evas_Filter_Context *ctx);
-void                     evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid);
+void                     evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid, Eina_Stringshare *name);
 
 /* FIXME: CPU filters entry points. Move these to the Evas Engine itself. */
 Evas_Filter_Apply_Func   evas_filter_blend_cpu_func_get(Evas_Filter_Command *cmd);
@@ -182,8 +184,12 @@ Evas_Filter_Apply_Func   evas_filter_transform_cpu_func_get(Evas_Filter_Command 
 void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, int dh, int *dx, int *dy, int *rows, int *cols);
 Eina_Bool evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h);
 Evas_Filter_Buffer *_filter_buffer_get(Evas_Filter_Context *ctx, int bufid);
+Eina_Bool           _filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data, int w, int h, Eina_Bool alpha_only);
+Evas_Filter_Buffer *_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h, Eina_Bool alpha_only);
+#define             evas_filter_buffer_alloc_new(ctx, w, h, a) _filter_buffer_data_new(ctx, NULL, w, h, a)
 Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
-Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, int w, int h);
+Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, unsigned w, unsigned h);
 Eina_Bool evas_filter_interpolate(DATA8* output /* 256 values */, DATA8* points /* pairs x + y */, int point_count, Evas_Filter_Interpolation_Mode mode);
+Evas_Filter_Command *_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdid);
 
 #endif // EVAS_FILTER_PRIVATE_H

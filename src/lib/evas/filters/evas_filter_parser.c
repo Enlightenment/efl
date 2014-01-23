@@ -45,8 +45,8 @@ static struct
    { "repeat_y", EVAS_FILTER_FILL_MODE_REPEAT_Y },
    { "repeat_x_stretch_y", EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y },
    { "repeat_y_stretch_x", EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X },
-   { "stretch_y_repeat_x", EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y },
-   { "stretch_x_repeat_y", EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X },
+   { "stretch_y_repeat_x", EVAS_FILTER_FILL_MODE_REPEAT_X_STRETCH_Y }, // alias
+   { "stretch_x_repeat_y", EVAS_FILTER_FILL_MODE_REPEAT_Y_STRETCH_X }, // alias
    { "repeat", EVAS_FILTER_FILL_MODE_REPEAT_XY }, // alias
    { "repeat_xy", EVAS_FILTER_FILL_MODE_REPEAT_XY },
    { "stretch", EVAS_FILTER_FILL_MODE_STRETCH_XY }, // alias
@@ -1460,6 +1460,7 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    cmdid = evas_filter_command_blend_add(ctx, dc, in->cid, out->cid, ox, oy,
                                          fillmode);
    if (isset) RESETCOLOR();
+   if (cmdid < 0) return cmdid;
 
    return cmdid;
 }
@@ -1654,6 +1655,15 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    SETCOLOR(color);
    cmdid = evas_filter_command_mask_add(ctx, dc, in->cid, mask->cid, out->cid, fillmode);
    RESETCOLOR();
+   if (cmdid < 0) return cmdid;
+
+   if (!in->alpha && !mask->alpha && !out->alpha)
+     {
+        Evas_Filter_Command *cmd;
+
+        cmd = _evas_filter_command_get(ctx, cmdid);
+        cmd->draw.need_temp_buffer = EINA_TRUE;
+     }
 
    return cmdid;
 }
@@ -1834,7 +1844,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj,
         if (buf->proxy)
           {
              Eo *eo_source = evas_filter_program_proxy_source_get(pgm, buf->proxy);
-             evas_filter_context_proxy_bind(ctx, eo_obj, eo_source, buf->cid);
+             evas_filter_context_proxy_bind(ctx, eo_obj, eo_source, buf->cid, buf->proxy);
           }
      }
 

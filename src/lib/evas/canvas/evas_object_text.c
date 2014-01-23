@@ -2184,7 +2184,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
                }
           }
 
-        filter = evas_filter_context_new(obj->layer->evas);
+        filter = evas_filter_context_new(obj->layer->evas, do_async);
         ok = evas_filter_context_program_use(filter, eo_obj, o->cur.filter.chain);
         if (!filter || !ok)
           {
@@ -2200,10 +2200,8 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         filter_ctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
-        // Allocate main buffers now
+        // Allocate all buffers now
         evas_filter_context_buffers_allocate_all(filter, W, H);
-        //evas_filter_buffer_data_set(filter, inbuf, NULL, W, H, EINA_TRUE);
-        //evas_filter_buffer_data_set(filter, outbuf, NULL, W, H, EINA_FALSE);
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
 
         // Steal output and release previous
@@ -2226,7 +2224,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
 
         // Add post-run callback and run filter
         evas_filter_context_autodestroy(filter);
-        evas_filter_run(filter, do_async);
+        evas_filter_run(filter);
         o->cur.filter.changed = EINA_FALSE;
 
         INF("Effect rendering done. Return.");
