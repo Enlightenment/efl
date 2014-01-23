@@ -908,6 +908,20 @@ EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_C
 EAPI void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
 
 /**
+ * Set the callback to be used on selection_get request.
+ *
+ * This callback will be called when the Input Method Context
+ * module requests the selection context.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param func The callback to be called.
+ * @param data The data pointer to be passed to @p func
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.9.0
+ */
+EAPI void                          ecore_imf_context_retrieve_selection_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text), const void *data);
+
+/**
  * Set the input mode used by the Ecore Input Context.
  *
  * The input mode can be one of the input modes defined in
@@ -1042,6 +1056,28 @@ EAPI void                         *ecore_imf_context_data_get(Ecore_IMF_Context 
  * @ingroup Ecore_IMF_Context_Module_Group
  */
 EAPI Eina_Bool                     ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
+
+/**
+ * Retrieve the selected text.
+ *
+ * This function is implemented by calling the
+ * Ecore_IMF_Context::retrieve_selection_func (
+ * set using #ecore_imf_context_retrieve_selection_callback_set).
+ *
+ * There is no obligation for a widget to respond to the
+ * retrieve_surrounding_func, so input methods must be prepared
+ * to function without context.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param text Location to store a UTF-8 encoded string of the selected text.
+ *             If the function returns @c EINA_TRUE, then you must free
+ *             the result stored in this location with free().
+ * @return @c EINA_TRUE if selected text was provided; otherwise
+ * @c EINA_FALSE.
+ * @ingroup Ecore_IMF_Context_Module_Group
+ * @since 1.9.0
+ */
+EAPI Eina_Bool                     ecore_imf_context_selection_get(Ecore_IMF_Context *ctx, char **text);
 
 /**
  * Adds ECORE_IMF_EVENT_PREEDIT_START to the event queue.

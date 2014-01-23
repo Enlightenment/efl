@@ -462,6 +462,20 @@ ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina
 }
 
 EAPI void
+ecore_imf_context_retrieve_selection_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text), const void *data)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_retrieve_selection_callback_set");
+        return;
+     }
+
+   ctx->retrieve_selection_func = func;
+   ctx->retrieve_selection_data = (void *) data;
+}
+
+EAPI void
 ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -558,6 +572,29 @@ ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *curs
           {
              if (text) *text = NULL;
              if (cursor_pos) *cursor_pos = 0;
+          }
+     }
+   return result;
+}
+
+EAPI Eina_Bool
+ecore_imf_context_selection_get(Ecore_IMF_Context *ctx, char **text)
+{
+   Eina_Bool result = EINA_FALSE;
+
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_selection_get");
+        return EINA_FALSE;
+     }
+
+   if (ctx->retrieve_selection_func)
+     {
+        result = ctx->retrieve_selection_func(ctx->retrieve_selection_data, ctx, text);
+        if (!result)
+          {
+             if (text) *text = NULL;
           }
      }
    return result;
