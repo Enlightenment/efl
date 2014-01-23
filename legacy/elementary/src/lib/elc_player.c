@@ -50,6 +50,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { SIG_EJECT_CLICKED, "" },
    { SIG_VOLUME_CLICKED, "" },
    { SIG_MUTE_CLICKED, "" },
+   { SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    { SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    { SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    { NULL, NULL }

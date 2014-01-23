@@ -32,6 +32,7 @@
  *             the check objects (@c event_info is always @c NULL).
  * - @c "focused" - When the check has received focus. (since 1.8)
  * - @c "unfocused" - When the check has lost focus. (since 1.8)
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Default content parts of the check widget that you can use for are:
  * @li "icon" - An icon of the check

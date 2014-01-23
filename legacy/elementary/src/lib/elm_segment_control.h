@@ -29,6 +29,7 @@
  * - @c "changed" - When the user clicks on a segment item which is not
  *   previously selected and get selected. The event_info parameter is the
  *   segment item pointer.
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Available styles for it:
  * - @c "default"

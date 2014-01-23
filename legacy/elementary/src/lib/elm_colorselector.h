@@ -30,6 +30,7 @@
  *   color item.
  * - @c "focused" - When the colorselector has received focus. (since 1.8)
  * - @c "unfocused" - When the colorselector has lost focus. (since 1.8)
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * See @ref tutorial_colorselector.
  * @{

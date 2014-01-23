@@ -17,6 +17,7 @@ EAPI Eo_Op ELM_OBJ_SEGMENT_CONTROL_BASE_ID = EO_NOOP;
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

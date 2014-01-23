@@ -35,6 +35,7 @@
  * @li @c "scroll,drag,stop" - dragging the diskselector has stopped
  * @li @c "focused" - When the diskselector has received focus. (since 1.8)
  * @li @c "unfocused" - When the diskselector has lost focus. (since 1.8)
+ * @li @c "language,changed" - the program's language changed (since 1.9)
  *
  * @note The "scroll,anim,*" and "scroll,drag,*" signals are only emitted by
  * user intervention.

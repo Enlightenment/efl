@@ -19,7 +19,7 @@ static const char SIG_THEME_CHANGED[] = "theme,changed";
 /* smart callbacks coming from elm layout objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_THEME_CHANGED, ""},
-   {SIG_WIDGET_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 

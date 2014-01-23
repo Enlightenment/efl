@@ -16,6 +16,7 @@
  * Signals that you can add callbacks for are:
  * @li @c "clicked" - the user clicked the empty space in the menu to dismiss.
  * @li @c "dismissed" - the user clicked the empty space in the menu to dismiss (since 1.8)
+ * @li @c "language,changed" - the program's language changed (since 1.9)
  *
  * Default content parts of the menu items that you can use for are:
  * @li @c "default" - A main content of the menu item

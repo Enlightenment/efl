@@ -32,6 +32,7 @@
  *   from the last item in its list to the first
  * - @c "focused" - When the flip selector has received focus. (since 1.8)
  * - @c "unfocused" - When the flip selector has lost focus. (since 1.8)
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Available styles for it:
  * - @c "default"

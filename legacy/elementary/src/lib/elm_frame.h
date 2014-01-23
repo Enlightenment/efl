@@ -28,6 +28,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "clicked" - The user has clicked the frame's label
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Default content parts of the frame widget that you can use for are:
  * @li "default" - A content of the frame

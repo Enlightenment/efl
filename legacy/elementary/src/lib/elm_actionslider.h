@@ -34,6 +34,7 @@
  *              label is passed as event info).
  * @li @c "pos_changed" - when the indicator reaches any of the
  *                 positions("left", "right" or "center").
+ * @li @c "language,changed" - the program's language changed (since 1.9)
  *
  * Default text parts of the actionslider widget that you can use for are:
  * @li "indicator" - An indicator label of the actionslider

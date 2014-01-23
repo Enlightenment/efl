@@ -59,6 +59,7 @@
  *   in callback contains the current visible item
  * - @c "focused" - When the slideshow has received focus. (since 1.8)
  * - @c "unfocused" - When the slideshow has lost focus. (since 1.8)
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Supported @c elm_object_item common APIs.
  * @li @ref elm_object_item_del

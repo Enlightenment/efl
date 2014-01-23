@@ -22,6 +22,7 @@ ELM_PRIV_MENU_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_MENU_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 #undef ELM_PRIV_MENU_SIGNALS

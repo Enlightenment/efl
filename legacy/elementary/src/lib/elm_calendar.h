@@ -27,6 +27,7 @@
  * calendar is changed.
  * - @c "focused" - When the calendar has received focus. (since 1.8)
  * - @c "unfocused" - When the calendar has lost focus. (since 1.8)
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit

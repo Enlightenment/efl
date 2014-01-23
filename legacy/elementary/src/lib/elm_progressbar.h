@@ -38,6 +38,7 @@
  * @li @c "changed" - when the value is changed (since 1.7)
  * @li @c "focused" - When the progressbar has received focus. (since 1.8)
  * @li @c "unfocused" - When the progressbar has lost focus. (since 1.8)
+ * @li @c "language,changed" - the program's language changed (since 1.9)
  *
  * This widget has the following styles:
  * - @c "default"

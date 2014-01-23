@@ -44,6 +44,7 @@
  * the value change.
  * - @c "focused" - When the slider has received focus. (since 1.8)
  * - @c "unfocused" - When the slider has lost focus. (since 1.8)
+ * - @c "language,changed" - the program's language changed (since 1.9)
  *
  * Available styles for it:
  * - @c "default"
