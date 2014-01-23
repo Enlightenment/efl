@@ -5,6 +5,8 @@ static Eina_Bool _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_C
 static void      _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx, void *event_info);
 static void      _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *event_info);
 static void      _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx, void *event);
+static void      _edje_entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx, void *event_info);
+static Eina_Bool _edje_entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx, char **text);
 #endif
 
 typedef struct _Entry Entry;
@@ -2495,9 +2497,11 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
 
         ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context,
                                                             _edje_entry_imf_retrieve_surrounding_cb, ed);
+        ecore_imf_context_retrieve_selection_callback_set(en->imf_context, _edje_entry_imf_retrieve_selection_cb, ed);
         ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_COMMIT, _edje_entry_imf_event_commit_cb, ed);
         ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb, ed);
         ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _edje_entry_imf_event_preedit_changed_cb, ed);
+        ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_SELECTION_SET, _edje_entry_imf_event_selection_set_cb, ed);
         ecore_imf_context_input_mode_set(en->imf_context,
                                          rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD ?
                                          ECORE_IMF_INPUT_MODE_INVISIBLE : ECORE_IMF_INPUT_MODE_FULL);
@@ -2545,6 +2549,7 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
              ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_COMMIT, _edje_entry_imf_event_commit_cb);
              ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb);
              ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _edje_entry_imf_event_preedit_changed_cb);
+             ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_SELECTION_SET, _edje_entry_imf_event_selection_set_cb);
 
              ecore_imf_context_del(en->imf_context);
              en->imf_context = NULL;
@@ -4188,6 +4193,58 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
 end:
    evas_textblock_cursor_free(del_start);
    evas_textblock_cursor_free(del_end);
+}
+
+static void
+_edje_entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
+{
+   Edje *ed = data;
+   Edje_Real_Part *rp = ed->focused_part;
+   Entry *en = NULL;
+   Ecore_IMF_Event_Selection *ev = event_info;
+
+   if ((!rp) || (!ev)) return;
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return;
+   else
+     en = rp->typedata.text->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+       (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
+     return;
+
+   evas_textblock_cursor_pos_set(en->cursor, ev->start);
+
+   _sel_start(en->cursor, rp->object, en);
+
+   evas_textblock_cursor_pos_set(en->cursor, ev->end);
+
+   _sel_extend(ed, en->cursor, rp->object, en);
+}
+
+static Eina_Bool
+_edje_entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, char **text)
+{
+   Edje *ed = data;
+   Edje_Real_Part *rp = ed->focused_part;
+   Entry *en = NULL;
+
+   if (!rp) return EINA_FALSE;
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return EINA_FALSE;
+   else
+     en = rp->typedata.text->entry_data;
+   if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+       (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
+     return EINA_FALSE;
+
+   if (en->have_selection)
+     {
+        if (text)
+          *text = strdup(_edje_entry_selection_get(rp));
+        return EINA_TRUE;
+     }
+   else
+     return EINA_FALSE;
 }
 #endif
 
