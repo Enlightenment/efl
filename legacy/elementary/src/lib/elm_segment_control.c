@@ -32,6 +32,8 @@ _elm_segment_control_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *li
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
 
+   eo_do_super(obj, MY_CLASS, elm_wdg_translate(NULL));
+
    if (ret) *ret = EINA_TRUE;
 }
 

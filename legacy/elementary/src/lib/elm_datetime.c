@@ -372,6 +372,8 @@ _elm_datetime_smart_translate(Eo *obj, void *_pd, va_list *list)
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
 
+   eo_do_super(obj, MY_CLASS, elm_wdg_translate(NULL));
+
    if (ret) *ret = EINA_TRUE;
 }
 

@@ -78,6 +78,8 @@ _elm_dayselector_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         elm_object_text_set(VIEW(it), buf);
      }
 
+   eo_do_super(obj, MY_CLASS, elm_wdg_translate(NULL));
+
  exit:
    if (ret) *ret = EINA_TRUE;
 }
