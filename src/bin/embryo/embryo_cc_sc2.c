@@ -146,10 +146,8 @@ plungefile(char *name, int try_currentpath, int try_includepaths)
 	  {
 	     char                path[PATH_MAX];
 
-	     strncpy(path, ptr, sizeof path);
+             snprintf(path, sizeof (path), "%s/%s", ptr, name);
 	     path[sizeof path - 1] = '\0';	/* force '\0' termination */
-	     strncat(path, name, sizeof(path) - strlen(path) - 1);
-	     path[sizeof path - 1] = '\0';
 	     result = plungequalifiedfile(path);
 	  }			/* while */
      }				/* if */
