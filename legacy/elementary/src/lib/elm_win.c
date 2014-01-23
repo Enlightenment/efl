@@ -763,7 +763,6 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    else
      common_visible = sd->focus_highlight.cur.visible;
 
-   _elm_win_focus_highlight_visible_set(sd, common_visible);
    if (sig)
      elm_widget_signal_emit(target, sig, "elm");
 
@@ -798,6 +797,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    evas_object_raise(fobj);
 
 the_end:
+   _elm_win_focus_highlight_visible_set(sd, common_visible);
    sd->focus_highlight.geometry_changed = EINA_FALSE;
    sd->focus_highlight.prev = sd->focus_highlight.cur;
 }
