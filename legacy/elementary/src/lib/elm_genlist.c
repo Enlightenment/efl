@@ -86,7 +86,6 @@ EAPI Eo_Op ELM_OBJ_GENLIST_BASE_ID = EO_NOOP;
     cmd(SIG_TREE_EFFECT_FINISHED , "tree,effect,finished", "") \
     cmd(SIG_HIGHLIGHTED, "highlighted", "") \
     cmd(SIG_UNHIGHLIGHTED, "unhighlighted", "") \
-    cmd(SIG_LANG_CHANGED, "language,changed", "") \
     cmd(SIG_PRESSED, "pressed", "") \
     cmd(SIG_RELEASED, "released", "")
 
@@ -94,6 +93,7 @@ ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
 
@@ -2823,15 +2823,6 @@ _show_region_hook(void *data EINA_UNUSED,
    x += sd->pan_x;
    y += sd->pan_y;
    eo_do(obj, elm_scrollable_interface_content_region_show(x, y, w, h));
-}
-
-static void
-_elm_genlist_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
-
-   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -7594,7 +7585,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_genlist_smart_move),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_genlist_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_genlist_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_genlist_smart_event),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_genlist_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD), _elm_genlist_smart_sub_object_add),

@@ -24,10 +24,9 @@ EAPI Eo_Op ELM_OBJ_DAYSELECTOR_BASE_ID = EO_NOOP;
 #define ITEM_POS_MIDDLE           "elm,pos,check,middle"
 
 static const char SIG_CHANGED[] = "dayselector,changed";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
-   {SIG_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 
@@ -54,7 +53,7 @@ _dayselector_resize(void *data,
 }
 
 static void
-_elm_dayselector_smart_translate(Eo *obj, void *_pd, va_list *list)
+_elm_dayselector_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
@@ -78,8 +77,6 @@ _elm_dayselector_smart_translate(Eo *obj, void *_pd, va_list *list)
         strftime(buf, sizeof(buf), "%a", &time_daysel);
         elm_object_text_set(VIEW(it), buf);
      }
-
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
  exit:
    if (ret) *ret = EINA_TRUE;

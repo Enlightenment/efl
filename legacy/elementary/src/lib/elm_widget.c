@@ -31,6 +31,7 @@ EAPI Eo_Op ELM_WIDGET_BASE_ID = EO_NOOP;
 
 const char SIG_WIDGET_FOCUSED[] = "focused";
 const char SIG_WIDGET_UNFOCUSED[] = "unfocused";
+const char SIG_WIDGET_LANG_CHANGED[] = "language,changed";
 
 typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Label_Data            Elm_Label_Data;
@@ -4129,6 +4130,7 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list 
         sd->on_translate = EINA_FALSE;
      }
 #endif
+   evas_object_smart_callback_call(obj, SIG_WIDGET_LANG_CHANGED, NULL);
 }
 
 EAPI void

@@ -63,10 +63,9 @@ static const char *ignore_separators = "()";
 static Datetime_Mod_Api *dt_mod = NULL;
 
 static const char SIG_CHANGED[] = "changed";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
-   {SIG_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
@@ -372,8 +371,6 @@ _elm_datetime_smart_translate(Eo *obj, void *_pd, va_list *list)
 
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
-
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }

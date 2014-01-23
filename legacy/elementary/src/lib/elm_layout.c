@@ -15,12 +15,11 @@ EAPI Eo_Op ELM_OBJ_LAYOUT_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_layout"
 
 static const char SIG_THEME_CHANGED[] = "theme,changed";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 
 /* smart callbacks coming from elm layout objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_THEME_CHANGED, ""},
-   {SIG_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""},
    {NULL, NULL}
 };
 
@@ -69,14 +68,6 @@ struct _Elm_Layout_Sub_Object_Cursor
 
    Eina_Bool    engine_only : 1;
 };
-
-static void
-_elm_layout_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
-   if (ret) *ret = EINA_TRUE;
-}
 
 static void
 _on_sub_object_size_hint_change(void *data,
@@ -2263,7 +2254,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_layout_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_layout_smart_disable),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_layout_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_layout_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_layout_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_layout_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_layout_smart_focus_direction_manager_is),

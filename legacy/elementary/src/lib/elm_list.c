@@ -24,7 +24,6 @@ static const char SIG_EDGE_TOP[] = "edge,top";
 static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
 static const char SIG_EDGE_LEFT[] = "edge,left";
 static const char SIG_EDGE_RIGHT[] = "edge,right";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 static const char SIG_SWIPE[] = "swipe";
 static const char SIG_HIGHLIGHTED[] = "highlighted";
 static const char SIG_UNHIGHLIGHTED[] = "unhighlighted";
@@ -38,10 +37,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EDGE_BOTTOM, ""},
    {SIG_EDGE_LEFT, ""},
    {SIG_EDGE_RIGHT, ""},
-   {SIG_LANG_CHANGED, ""},
    {SIG_SWIPE, ""},
    {SIG_HIGHLIGHTED, ""},
    {SIG_UNHIGHLIGHTED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
@@ -437,7 +436,7 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_elm_list_smart_translate(Eo *obj, void *_pd, va_list *list)
+_elm_list_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_List_Smart_Data *sd = _pd;
@@ -446,8 +445,6 @@ _elm_list_smart_translate(Eo *obj, void *_pd, va_list *list)
 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
-
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }

@@ -31,13 +31,13 @@ EAPI const char ELM_FILESELECTOR_ENTRY_SMART_NAME[] = "elm_fileselector_entry";
    cmd(SIG_SELECTION_CUT, "selection,cut", "") \
    cmd(SIG_UNPRESSED, "unpressed", "") \
    cmd(SIG_FILE_CHOSEN, "file,chosen", "s") \
-   cmd(SIG_LANG_CHANGED, "language,changed", "")
 
 ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
    ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
 #undef ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS
@@ -90,14 +90,6 @@ _ACTIVATED_fwd(void *data,
    file = elm_object_text_get(sd->entry);
    elm_fileselector_path_set(sd->button, file);
    evas_object_smart_callback_call(data, SIG_ACTIVATED, event_info);
-}
-
-static void
-_elm_fileselector_entry_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
-   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -725,7 +717,6 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_fileselector_entry_smart_disable),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_fileselector_entry_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_fileselector_entry_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_fileselector_entry_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT),  _elm_fileselector_entry_smart_focus_next),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_fileselector_entry_smart_focus_direction_manager_is),

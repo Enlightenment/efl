@@ -489,6 +489,7 @@ extern int _elm_win_deferred_free;
 extern const char *_elm_preferred_engine;
 extern const char SIG_WIDGET_FOCUSED[];
 extern const char SIG_WIDGET_UNFOCUSED[];
+extern const char SIG_WIDGET_LANG_CHANGED[];
 
 #ifdef ENABLE_NLS
 /* Our gettext wrapper, used to disable translation of elm if the app

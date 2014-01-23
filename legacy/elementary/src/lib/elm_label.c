@@ -16,10 +16,9 @@ EAPI Eo_Op ELM_OBJ_LABEL_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_label"
 
 static const char SIG_SLIDE_END[] = "slide,end";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_SLIDE_END, ""},
    {NULL, NULL}
 };
@@ -342,15 +341,6 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
         eo_do(obj, elm_obj_layout_sizing_eval());
      }
    if (ret) *ret = int_ret;
-}
-
-static void
-_elm_label_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
-
-   if (ret) *ret = EINA_TRUE;
 }
 
 static char *
@@ -734,7 +724,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_label_smart_add),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_label_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_label_smart_translate),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_label_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_label_smart_focus_direction_manager_is),
 

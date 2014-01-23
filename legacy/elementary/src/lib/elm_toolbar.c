@@ -25,7 +25,6 @@ static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL, ""},
    {SIG_SCROLL_ANIM_START, ""},
@@ -35,7 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
    {SIG_LONGPRESSED, ""},
    {SIG_CLICKED_DOUBLE, ""},
-   {SIG_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
@@ -1384,7 +1383,7 @@ _item_content_unset_hook(Elm_Object_Item *it,
 }
 
 static void
-_elm_toolbar_smart_translate(Eo *obj, void *_pd, va_list *list)
+_elm_toolbar_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Toolbar_Smart_Data *sd = _pd;
@@ -1392,8 +1391,6 @@ _elm_toolbar_smart_translate(Eo *obj, void *_pd, va_list *list)
 
    EINA_INLIST_FOREACH(sd->items, it)
      elm_widget_item_translate(it);
-
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
 
    if (ret) *ret = EINA_TRUE;
 }

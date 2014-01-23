@@ -310,7 +310,6 @@ static const char SIG_NAME_LOADED[] = "name,loaded";
 static const char SIG_NAME_LOADED_FAIL[] = "name,loaded,fail";
 static const char SIG_OVERLAY_CLICKED[] = "overlay,clicked";
 static const char SIG_OVERLAY_DEL[] = "overlay,del";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
@@ -337,19 +336,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_NAME_LOADED_FAIL, ""},
    {SIG_OVERLAY_CLICKED, ""},
    {SIG_OVERLAY_DEL, ""},
-   {SIG_LANG_CHANGED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
-
-static void
-_elm_map_smart_translate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   evas_object_smart_callback_call(obj, SIG_LANG_CHANGED, NULL);
-   if (ret) *ret = EINA_TRUE;
-}
 
 static void
 _edj_overlay_size_get(Elm_Map_Smart_Data *sd,
@@ -5996,7 +5987,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_map_smart_on_focus),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_map_smart_theme),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_map_smart_event),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_map_smart_translate),
 
         EO_OP_FUNC(ELM_OBJ_MAP_ID(ELM_OBJ_MAP_SUB_ID_ZOOM_SET), _zoom_set),
         EO_OP_FUNC(ELM_OBJ_MAP_ID(ELM_OBJ_MAP_SUB_ID_ZOOM_GET), _zoom_get),
