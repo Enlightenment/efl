@@ -18,7 +18,7 @@ EAPI Eo_Op ELM_OBJ_ENTRY_BASE_ID = EO_NOOP;
  * FIXME: This size is arbitrary, should probably choose a better size.
  * Possibly also find a way to set it to a low value for weak computers,
  * and to a big value for better computers. */
-#define _CHUNK_SIZE 10000
+#define ELM_ENTRY_CHUNK_SIZE 10000
 #define ELM_ENTRY_DELAY_WRITE_TIME 2.0
 
 #define ELM_PRIV_ENTRY_SIGNALS(cmd) \
@@ -2434,14 +2434,14 @@ _text_append_idler(void *data)
    sd->changed = EINA_TRUE;
 
    start = sd->append_text_position;
-   if ((start + _CHUNK_SIZE) < sd->append_text_len)
+   if ((start + ELM_ENTRY_CHUNK_SIZE) < sd->append_text_len)
      {
         int pos = start;
         int tag_start, esc_start;
 
         tag_start = esc_start = -1;
         /* Find proper markup cut place */
-        while (pos - start < _CHUNK_SIZE)
+        while (pos - start < ELM_ENTRY_CHUNK_SIZE)
           {
              int prev_pos = pos;
              Eina_Unicode tmp =
@@ -2744,8 +2744,8 @@ _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
      }
 
    len = strlen(entry);
-   /* Split to ~_CHUNK_SIZE chunks */
-   if (len > _CHUNK_SIZE)
+   /* Split to ~ ELM_ENTRY_CHUNK_SIZE chunks */
+   if (len > ELM_ENTRY_CHUNK_SIZE)
      {
         sd->append_text_left = (char *)malloc(len + 1);
      }
