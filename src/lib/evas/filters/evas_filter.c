@@ -148,7 +148,8 @@ evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy,
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, proxy_src_write)
      {
-        proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies, eo_proxy);
+        if (!eina_list_data_find(source->proxy->proxies, eo_proxy))
+          proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies, eo_proxy);
         proxy_src_write->redraw = EINA_TRUE;
      }
    EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_src_write);
