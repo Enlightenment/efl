@@ -641,7 +641,8 @@ _ecore_getopt_help_desc_categories(FILE                    *fp,
 
    /* do not print available categories if none available */
    for (; !_ecore_getopt_desc_is_sentinel(desc); desc++)
-     if (desc->action == ECORE_GETOPT_ACTION_CATEGORY) goto hascat;
+     if (desc->action == ECORE_GETOPT_ACTION_CATEGORY && desc->longname)
+       goto hascat;
 
    return _ecore_getopt_help_line(fp, base, total, used,
                                   _("No categories available."),
