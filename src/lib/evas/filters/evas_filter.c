@@ -532,11 +532,9 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
         ie = fb->backing;
         if (ie)
           {
-             if (ctx->async)
-               {
-                  ie->references++;
-                  evas_unref_queue_image_put(ctx->evas, ie);
-               }
+             // Not checking for async. It's also safe for sync rendering.
+             ie->references++;
+             evas_unref_queue_image_put(ctx->evas, ie);
              continue;
           }
 
@@ -561,11 +559,9 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
           }
 
         fb->backing = ie;
-        if (ctx->async)
-          {
-             ie->references++;
-             evas_unref_queue_image_put(ctx->evas, ie);
-          }
+        fb->allocated = (ie != NULL);
+        if (ctx->async && fb->allocated)
+          evas_unref_queue_image_put(ctx->evas, ie);
      }
 
    return EINA_TRUE;
@@ -609,6 +605,8 @@ _filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
 
    fb->backing = _rgba_image_alloc(fb, data);
    fb->allocated = (!data && (fb->backing != NULL));
+   if (ctx->async && fb->allocated)
+     evas_unref_queue_image_put(ctx->evas, fb->backing);
    return fb->allocated;
 }
 
@@ -706,7 +704,14 @@ evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid)
    if (buffer->glimage)
      return buffer->glimage;
    else
-     return buffer->backing;
+     {
+        if (ctx->async)
+          {
+             Image_Entry *ie = buffer->backing;
+             if (ie) ie->references++;
+          }
+        return buffer->backing;
+     }
 }
 
 Eina_Bool
@@ -727,14 +732,25 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
              if (fb->delete_me)
                {
                   ctx->buffers = eina_list_remove_list(ctx->buffers, li);
-                  _buffer_free(fb);
+                  if (ctx->async)
+                    {
+                       if (fb->allocated)
+                         evas_unref_queue_image_put(ctx->evas, ie);
+                       free(fb);
+                    }
+                  else
+                    _buffer_free(fb);
                   return EINA_TRUE;
                }
              return EINA_TRUE;
           }
      }
 
-   _backing_free(ctx, ie);
+   if (ctx->async)
+     evas_unref_queue_image_put(ctx->evas, ie);
+   else
+     _backing_free(ctx, ie);
+
    return EINA_TRUE;
 }
 
