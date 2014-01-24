@@ -302,7 +302,7 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Object_Textgrid *o, 
      {
         Evas_Textgrid_Hash_Glyphs *tmp;
         unsigned char *tmp_used;
-        int count, i;
+        int count;
 
         /* FIXME: find empty entry */
         if (o->master[offset].next[(codepoint & mask) >> shift] == 0)
