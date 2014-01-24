@@ -152,7 +152,11 @@ _eina_test_rwlock_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    counter = 7200;
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
 
+   fail_if(!eina_barrier_wait(&barrier));
+
+   fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
    fail_if(!eina_condition_broadcast(&cond));
+   fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
 
    return NULL;
 }
@@ -183,14 +187,16 @@ START_TEST(eina_test_rwlock)
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
 
    fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
+   fail_if(!eina_barrier_wait(&barrier));
+
    fail_if(!eina_condition_wait(&cond));
    fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
-   
+
    fail_if(eina_rwlock_take_read(&mutex) != EINA_LOCK_SUCCEED);
    fail_if(counter != 7200);
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
 
-   eina_condition_timedwait(&cond, 0.01);
+   /* eina_condition_timedwait(&cond, 0.01); */
    eina_thread_join(thread);
 
    eina_condition_free(&cond);
