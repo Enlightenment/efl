@@ -20,13 +20,9 @@ pkgver() {
   cd "../.."
 
   if [[ -d .git ]]; then
-    for _i in v_maj v_min v_mic; do
-      local v_ver=$v_ver.$(grep -m1 $_i configure.ac | sed 's/m4//' | grep -o "[[:digit:]]*")
-    done
-
-    v_ver=$(awk -F , -v v_ver=${v_ver#.} '/^AC_INIT/ {gsub(/v_ver/, v_ver); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
-
-    printf "$v_ver.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+    local efl_version=$(grep -m 1 EFL_VERSION configure.ac | grep -o "[[:digit:]]*" | tr '\n' '.')
+    efl_version=$(awk -F , -v efl_version=${efl_version%.} '/^AC_INIT/ {gsub(/efl_version/, efl_version); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
+    printf "$efl_version.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
   else
     ./configure --version | awk '/^elementary/ {gsub("-", ""); print $NF}'
   fi
