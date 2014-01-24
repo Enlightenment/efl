@@ -509,9 +509,7 @@ libelementary_la_LIBADD = \
 @EVIL_LIBS@ \
 @LTLIBINTL@
 
-libelementary_la_LDFLAGS = \
--no-undefined @lt_enable_auto_import@ \
--version-info @version_info@ @release_info@
+libelementary_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 EXTRA_DIST = \
 elm_factory.h \

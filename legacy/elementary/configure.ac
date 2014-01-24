@@ -1,25 +1,7 @@
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_define([v_maj], [1])
-m4_define([v_min], [8])
-m4_define([v_mic], [99])
-m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))
-##--   When released, remove the dnl on the below line
-dnl m4_undefine([v_rev])
-##--   When doing snapshots - change soname. remove dnl on below line
-dnl m4_define([relname], [dev])
-dnl m4_define([v_rel], [-release relname])
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])],
-[m4_define([v_ver], [v_maj.v_min.v_mic])])
-m4_define([lt_rev], m4_eval(v_maj + v_min))
-m4_define([lt_cur], v_mic)
-m4_define([lt_age], v_min)
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-
+EFL_VERSION([1], [8], [99], [dev])
 AC_INIT([elementary], [v_ver], [enlightenment-devel@lists.sourceforge.net])
-AC_PREREQ(2.52)
+
+AC_PREREQ(2.60)
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
@@ -34,18 +16,10 @@ AH_BOTTOM([
 #endif /* EFL_CONFIG_H__ */
 ])
 
+AC_USE_SYSTEM_EXTENSIONS
+
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
-
-AC_GNU_SOURCE
-
-AC_C_BIGENDIAN
-AC_ISC_POSIX
-AC_PROG_CC
-AC_PROG_CC_STDC
-AC_HEADER_STDC
-AC_C_CONST
-AC_FUNC_ALLOCA
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
@@ -145,28 +119,21 @@ define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
+EFL_INIT
 #AC_PROG_LIBTOOL
 
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
-m4_ifdef([v_rel], , [m4_define([v_rel], [])])
-AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
-AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
-AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
-AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
-version_info="lt_rev:lt_cur:lt_age"
-release_info="v_rel"
-AC_SUBST(version_info)
-AC_SUBST(release_info)
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-VMAJ=v_maj
-VMIN=v_min
-AC_SUBST(VMAJ)
-AC_SUBST(VMIN)
-ELM_VERSION_MAJOR=v_maj
-ELM_VERSION_MINOR=v_min
+AC_GNU_SOURCE
+
+AC_C_BIGENDIAN
+AC_ISC_POSIX
+AC_PROG_CC
+AC_PROG_CC_STDC
+AC_HEADER_STDC
+AC_C_CONST
+AC_FUNC_ALLOCA
+
+ELM_VERSION_MAJOR="v_maj"
+ELM_VERSION_MINOR="v_min"
 AC_SUBST(ELM_VERSION_MAJOR)
 AC_SUBST(ELM_VERSION_MINOR)
 
@@ -178,7 +145,6 @@ case "$host_os" in
     MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
     ;;
 esac
-AC_SUBST(release_info)
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
@@ -186,8 +152,6 @@ EFL_SHARED_EXTENSION="${shrext_cmds}"
 AC_DEFINE_UNQUOTED(EFL_SHARED_EXTENSION, "${EFL_SHARED_EXTENSION}", "Shared extension")
 
 requirement_elm=""
-
-PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private
 if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
@@ -239,28 +203,26 @@ AC_SUBST(ELM_WINCE_DEF)
 
 AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 
-efl_version="1.8.99"
-
 PKG_CHECK_MODULES([ELEMENTARY],
    [
-    eina >= ${efl_version}
-    eet >= ${efl_version}
-    evas >= ${efl_version}
-    ecore >= ${efl_version}
-    ecore-evas >= ${efl_version}
-    ecore-file >= ${efl_version}
-    ecore-input >= ${efl_version}
-    edje >= ${efl_version}
-    eo >= ${efl_version}
-    ethumb_client >= ${efl_version}
-    emotion >= ${efl_version}
-    ecore-imf >= ${efl_version}
-    ecore-con >= ${efl_version}
-    eio >= ${efl_version}
-    eldbus >= ${efl_version}
-    efreet >= ${efl_version}
-    efreet-mime >= ${efl_version}
-    efreet-trash >= ${efl_version}
+    eina >= efl_version
+    eet >= efl_version
+    evas >= efl_version
+    ecore >= efl_version
+    ecore-evas >= efl_version
+    ecore-file >= efl_version
+    ecore-input >= efl_version
+    edje >= efl_version
+    eo >= efl_version
+    ethumb_client >= efl_version
+    emotion >= efl_version
+    ecore-imf >= efl_version
+    ecore-con >= efl_version
+    eio >= efl_version
+    eldbus >= efl_version
+    efreet >= efl_version
+    efreet-mime >= efl_version
+    efreet-trash >= efl_version
    ]
 )
 
@@ -268,24 +230,24 @@ EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
 
 requirement_elm="\
-    eina >= ${efl_version} \
-    eet >= ${efl_version} \
-    evas >= ${efl_version} \
-    ecore >= ${efl_version} \
-    ecore-evas >= ${efl_version} \
-    ecore-file >= ${efl_version} \
-    ecore-input >= ${efl_version} \
-    edje >= ${efl_version} \
-    eo >= ${efl_version} \
-    ethumb_client >= ${efl_version} \
-    emotion >= ${efl_version} \
-    ecore-imf >= ${efl_version} \
-    ecore-con >= ${efl_version} \
-    eio >= ${efl_version} \
-    eldbus >= ${efl_version} \
-    efreet >= ${efl_version} \
-    efreet-mime >= ${efl_version} \
-    efreet-trash >= ${efl_version} \
+    eina >= efl_version \
+    eet >= efl_version \
+    evas >= efl_version \
+    ecore >= efl_version \
+    ecore-evas >= efl_version \
+    ecore-file >= efl_version \
+    ecore-input >= efl_version \
+    edje >= efl_version \
+    eo >= efl_version \
+    ethumb_client >= efl_version \
+    emotion >= efl_version \
+    ecore-imf >= efl_version \
+    ecore-con >= efl_version \
+    eio >= efl_version \
+    eldbus >= efl_version \
+    efreet >= efl_version \
+    efreet-mime >= efl_version \
+    efreet-trash >= efl_version \
     "
 
 have_elementary_x="no"
@@ -296,11 +258,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= ${efl_version}],
+      [ecore-x >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-x >= efl_version ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
@@ -320,11 +282,11 @@ AC_ARG_ENABLE([ecore-fb],
 
 if test "x$want_elementary_fb" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_FB],
-      [ecore-fb >= ${efl_version}],
+      [ecore-fb >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_FB, 1, [FB support for Elementary])
        have_elementary_fb="yes"
-       requirement_elm="ecore-fb >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-fb >= efl_version ${requirement_elm}"
       ],
       [have_elementary_fb="no"]
    )
@@ -343,11 +305,11 @@ AC_ARG_ENABLE([ecore-psl1ght],
 
 if test "x$want_elementary_psl1ght" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_PSL1GHT],
-      [ecore-psl1ght >= ${efl_version}],
+      [ecore-psl1ght >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_PSL1GHT, 1, [PSL1GHT support for Elementary])
        have_elementary_psl1ght="yes"
-       requirement_elm="ecore-psl1ght >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-psl1ght >= efl_version ${requirement_elm}"
       ],
       [have_elementary_psl1ght="no"]
    )
@@ -366,11 +328,11 @@ AC_ARG_ENABLE([ecore-sdl],
 
 if test "x$want_elementary_sdl" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_SDL],
-      [ecore-sdl >= ${efl_version}],
+      [ecore-sdl >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_SDL, 1, [SDL support for Elementary])
        have_elementary_sdl="yes"
-       requirement_elm="ecore-sdl >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-sdl >= efl_version ${requirement_elm}"
       ],
       [have_elementary_sdl="no"]
    )
@@ -389,11 +351,11 @@ AC_ARG_ENABLE([ecore-cocoa],
 
 if test "x$want_elementary_cocoa" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_COCOA],
-      [ecore-cocoa >= ${efl_version}],
+      [ecore-cocoa >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_COCOA, 1, [COCOA support for Elementary])
        have_elementary_cocoa="yes"
-       requirement_elm="ecore-cocoa >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-cocoa >= efl_version ${requirement_elm}"
       ],
       [have_elementary_cocoa="no"]
    )
@@ -412,11 +374,11 @@ AC_ARG_ENABLE([ecore-win32],
 
 if test "x$want_elementary_win32" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32 >= ${efl_version}],
+      [ecore-win32 >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
        have_elementary_win32="yes"
-       requirement_elm="ecore-win32 >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-win32 >= efl_version ${requirement_elm}"
       ],
       [have_elementary_win32="no"]
    )
@@ -435,11 +397,11 @@ AC_ARG_ENABLE([ecore-wince],
 
 if test "x$want_elementary_wince" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_WINCE],
-      [ecore-wince >= ${efl_version}],
+      [ecore-wince >= efl_version],
       [
        AC_DEFINE(HAVE_ELEMENTARY_WINCE, 1, [Windows CE support for Elementary])
        have_elementary_wince="yes"
-       requirement_elm="ecore-wince >= ${efl_version} ${requirement_elm}"
+       requirement_elm="ecore-wince >= efl_version ${requirement_elm}"
       ],
       [have_elementary_wince="no"]
    )
