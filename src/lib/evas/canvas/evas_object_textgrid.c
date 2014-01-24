@@ -297,14 +297,18 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Object_Textgrid *o, 
           }
         offset--;
      }
-   if (o->master[offset].next[(codepoint & mask) >> shift] == 0)
+   if ((o->master[offset].next[(codepoint & mask) >> shift] == 0)
+       || ((o->master[offset].next[(codepoint & mask) >> shift] & 0xFFFFFF) >= o->glyphs_length))
      {
         Evas_Textgrid_Hash_Glyphs *tmp;
         unsigned char *tmp_used;
-        int count;
+        int count, i;
 
         /* FIXME: find empty entry */
-        count = o->glyphs_length + 1;
+        if (o->master[offset].next[(codepoint & mask) >> shift] == 0)
+          count = o->glyphs_length + 1;
+        else
+          count = (o->master[offset].next[(codepoint & mask) >> shift] & 0xFFFFFF) + 1;
         tmp = realloc(o->glyphs, count * sizeof (Evas_Textgrid_Hash_Glyphs));
         if (!tmp) return 0xFFFFFFFF;
         o->glyphs = tmp;
@@ -312,10 +316,11 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Object_Textgrid *o, 
         if (!tmp_used) return 0xFFFFFFFF;
         o->glyphs_used = tmp_used;
 
+        // FIXME: What should we write when allocating more than one new entry?
         o->master[offset].next[(codepoint & mask) >> shift] = o->glyphs_length + 0xFF000000;
 
-        memset(o->glyphs + o->glyphs_length, 0, sizeof (Evas_Textgrid_Hash_Glyphs));
-        o->glyphs_used[o->glyphs_length] = 0;
+        memset(o->glyphs + o->glyphs_length, 0, (count - o->glyphs_length) * sizeof (Evas_Textgrid_Hash_Glyphs));
+        memset(o->glyphs_used, 0, (count - o->glyphs_length) * sizeof(o->glyphs_used[0]));
         o->glyphs_length = count;
      }
 
