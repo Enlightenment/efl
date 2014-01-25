@@ -1038,7 +1038,7 @@ _on_text_activated(void *data,
 
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
-   path = elm_object_text_get(obj);
+   path = elm_widget_part_text_get(obj, NULL);
 
    if (!ecore_file_exists(path))
      {
@@ -1077,11 +1077,12 @@ _on_text_activated(void *data,
              Elm_Object_Item *item = elm_genlist_first_item_get(sd->files_view);
              while (item)
                {
-                  const char *item_path = elm_object_item_data_get(item);
+                  const char *item_path = elm_widget_item_data_get(item);
                   if (!strcmp(item_path, path))
                     {
                        elm_genlist_item_selected_set(item, EINA_TRUE);
-                       elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
+                       elm_widget_part_text_set(sd->name_entry, NULL,
+                                                ecore_file_file_get(path));
                        break;
                     }
                   item = elm_genlist_item_next_get(item);
@@ -1096,7 +1097,8 @@ _on_text_activated(void *data,
                   if (!strcmp(item_path, path))
                     {
                        elm_gengrid_item_selected_set(item, EINA_TRUE);
-                       elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
+                       elm_widget_part_text_set(sd->name_entry, NULL,
+                                                ecore_file_file_get(path));
                        break;
                     }
                   item = elm_gengrid_item_next_get(item);
