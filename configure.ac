@@ -127,7 +127,7 @@ case "${build_tests}" in
      want_tests="yes"
      want_coverage="yes"
      ;;
-   none)
+   no*)
      ;;
    *)
      AC_MSG_ERROR([Unknown build tests option: --with-tests=${build_tests}])
