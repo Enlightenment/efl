@@ -3189,7 +3189,7 @@ AC_MSG_RESULT([${have_libmount_219}])
 PKG_CHECK_EXISTS([mount > 2.19.0],
                  [have_libmount_new="yes"],
                  [have_libmount_new="no"])
-AC_MSG_CHECKING([Use new libmount API (older than 2.19.0)])
+AC_MSG_CHECKING([Use new libmount API (newer than 2.19.0)])
 AC_MSG_RESULT([${have_libmount_new}])
 
 if test "x${have_libmount_old}" = "xyes"; then
