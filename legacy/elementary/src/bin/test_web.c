@@ -345,6 +345,48 @@ _useragent_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+_select_tag_test_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Web_Test *wt = data;
+   const char *selected = elm_object_item_text_get(event_info);
+   const char select_html[] = "<!doctype html><body>"
+       "<select>"
+       "<option>eina</option>"
+       "<option>ecore</option>"
+       "<option>evas</option>"
+       "<option>edje</option>"
+       "<option>eet</option>"
+       "<option>emotion</option>"
+       "<option>elementary</option>"
+       "</select>"
+       "</body>";
+
+   printf("selected test : %s\n", selected);
+   elm_object_text_set(obj, selected);
+
+   elm_web_html_string_load(wt->web, select_html, NULL, NULL);
+}
+
+static void
+_new_window_test_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Web_Test *wt = data;
+   const char *selected = elm_object_item_text_get(event_info);
+   const char new_window_html[] = "<!doctype html><body>"
+       "<script>"
+       "var open = function() {"
+       "  window.open('http://www.enlightenment.org','','width=400,height=300');"
+       "};"
+       "</script>"
+       "<input type='button' onclick='open();' value='click to open new window'>"
+       "</body>";
+
+   printf("selected test : %s\n", selected);
+   elm_object_text_set(obj, selected);
+
+   elm_web_html_string_load(wt->web, new_window_html, NULL, NULL);
+}
+static void
 _main_web_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Web_Test *wt = data;
@@ -513,7 +555,7 @@ test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 void
 test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *web;
+   Evas_Object *win, *bx, *web, *hoversel;
    Web_Test *wt;
 
    elm_need_web();
@@ -528,14 +570,28 @@ test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
+   hoversel = elm_hoversel_add(bx);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Test cases");
+
+   elm_hoversel_item_add(hoversel, "<select> tag", NULL, ELM_ICON_NONE,
+                         _select_tag_test_cb, wt);
+   elm_hoversel_item_add(hoversel, "new window", NULL, ELM_ICON_NONE,
+                         _new_window_test_cb, wt);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
+
    web = elm_web_add(win);
    evas_object_size_hint_weight_set(web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(web, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, web);
    evas_object_show(web);
 
+   elm_web_window_create_hook_set(web, _new_window_hook, wt);
+
    evas_object_event_callback_add(web, EVAS_CALLBACK_DEL, _main_web_del_cb, wt);
    wt->web = web;
+
 
    elm_web_html_string_load(wt->web,
                             "<!doctype html><body>Hello, WebKit/Efl</body>",
