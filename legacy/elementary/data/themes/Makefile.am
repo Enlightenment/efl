@@ -494,7 +494,6 @@ img/packagekit_work1.png \
 img/packagekit_work2.png \
 img/packagekit_work3.png \
 img/packagekit_work4.png \
-img/packagekit_updates.png \
 img/packagekit_updated.png \
 img/packagekit_error.png \
 img/pointer_entry_bar.png \

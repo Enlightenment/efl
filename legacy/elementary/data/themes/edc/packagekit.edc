@@ -11,7 +11,6 @@ images {
    image: "packagekit_work2.png" COMP;
    image: "packagekit_work3.png" COMP;
    image: "packagekit_work4.png" COMP;
-   image: "packagekit_updates.png" COMP;
    image: "packagekit_updated.png" COMP;
    image: "packagekit_error.png" COMP;
 }
@@ -123,8 +122,6 @@ group { name: "e/modules/packagekit/main";
          }
          description { state: "updates" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
-            image.normal: "packagekit_updates.png";
          }
          description { state: "updated" 0.0;
             inherit: "default" 0.0;
@@ -138,11 +135,11 @@ group { name: "e/modules/packagekit/main";
          }
       }
       part { name: "num_updates"; type: TEXT;
-         effect: SHADOW;
          description { state: "default" 0.0;
             text {
                font: FNBD;
-               size: 9;
+               size: 11;
+               align: 0.5 0.8;
             }
          }
       }
@@ -154,12 +151,17 @@ group { name: "e/modules/packagekit/main";
          target: "status";
       }
       program {
-         name: "working";
          signal: "packagekit,state,working"; source: "e";
          action: STATE_SET "running" 0.0;
          target: "status";
+         after: "running";
+      }
+      program {
+         name: "running";
+         action: STATE_SET "running" 0.0;
+         target: "status";
          transition: LINEAR 0.3;
-         after: "working";
+         after: "running";
       }
       program {
          signal: "packagekit,state,updates"; source: "e";
