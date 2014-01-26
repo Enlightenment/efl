@@ -773,11 +773,7 @@ _view_add(Evas_Object *parent)
         static Ewk_View_Smart_Class api =
           EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("EWK_View_Elementary");
 
-#ifndef TILED_BACKING_STORE
-        ewk_view_single_smart_set(&api);
-#else
-        ewk_view_tiled_smart_set(&api);
-#endif
+        ewk_view_smart_set(&api);
 
         _ewk_view_parent_sc = api;
 
