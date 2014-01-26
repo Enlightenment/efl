@@ -994,7 +994,7 @@ _elm_image_smart_file_set(Eo *obj, void *_pd, va_list *list)
    sd->remote = NULL;
 
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
-     if (strncmp(remote_uri[i], file, strlen(remote_uri[i])) == 0)
+     if (!strncmp(remote_uri[i], file, strlen(remote_uri[i])))
        {
           // Found a remote target !
           evas_object_hide(sd->img);

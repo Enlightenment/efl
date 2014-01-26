@@ -183,7 +183,7 @@ _access_object_from_path(const char *path)
    Elm_Atspi_Object *eo = NULL;
    const char *tmp = path;
 
-   int len = (sizeof(ELM_ACCESS_OBJECT_PATH_PREFIX) / sizeof(char)) - 1;
+   int len = strlen(ELM_ACCESS_OBJECT_PATH_PREFIX);
 
    if (strncmp(path, ELM_ACCESS_OBJECT_PATH_PREFIX, len))
      return NULL;

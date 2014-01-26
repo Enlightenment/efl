@@ -124,8 +124,8 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
        (strcmp("elm.swallow.icon", sub_d->part) &&
         (strcmp("elm.swallow.end", sub_d->part)))) return;
 
-   if (strncmp(sub_d->part, "elm.swallow.", sizeof("elm.swallow.") - 1) == 0)
-     type = sub_d->part + sizeof("elm.swallow.") - 1;
+   if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
+     type = sub_d->part + strlen("elm.swallow.");
    else
      type = sub_d->part;
 
@@ -153,8 +153,8 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
-   if (strncmp(sub_d->part, "elm.text.", sizeof("elm.text.") - 1) == 0)
-     type = sub_d->part + sizeof("elm.text.") - 1;
+   if (!strncmp(sub_d->part, "elm.text.", strlen("elm.text.")))
+     type = sub_d->part + strlen("elm.text.");
    else
      type = sub_d->part;
 

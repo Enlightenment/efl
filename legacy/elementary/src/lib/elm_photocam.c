@@ -1636,7 +1636,7 @@ _file_set(Eo *obj, void *_pd, va_list *list)
    sd->remote = NULL;
 
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
-     if (strncmp(remote_uri[i], file, strlen(remote_uri[i])) == 0)
+     if (!strncmp(remote_uri[i], file, strlen(remote_uri[i])))
        {
           // Found a remote target !
           sd->remote = _elm_url_download(file,

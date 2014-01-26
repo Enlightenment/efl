@@ -2635,11 +2635,11 @@ _xml_name_attrs_dump_cb(void *data,
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
 
-   if (!strncmp(key, NOMINATIM_ATTR_LON, sizeof(NOMINATIM_ATTR_LON)))
+   if (!strncmp(key, NOMINATIM_ATTR_LON, strlen(NOMINATIM_ATTR_LON)))
      dump->lon = _elm_atof(value);
-   else if (!strncmp(key, NOMINATIM_ATTR_LAT, sizeof(NOMINATIM_ATTR_LAT)))
+   else if (!strncmp(key, NOMINATIM_ATTR_LAT, strlen(NOMINATIM_ATTR_LAT)))
      dump->lat = _elm_atof(value);
-   else if (!strncmp(key, NOMINATIM_ATTR_ADDRESS, sizeof(NOMINATIM_ATTR_ADDRESS)))
+   else if (!strncmp(key, NOMINATIM_ATTR_ADDRESS, strlen(NOMINATIM_ATTR_ADDRESS)))
      {
         if (!dump->address)
           dump->address = strdup(value);
@@ -2726,8 +2726,7 @@ _xml_name_dump_cb(void *data,
          attrs = eina_simple_xml_tag_attributes_find(value, length);
          if (attrs)
            {
-              if (!strncmp(value, NOMINATIM_RESULT,
-                           sizeof(NOMINATIM_RESULT) - 1))
+              if (!strncmp(value, NOMINATIM_RESULT, strlen(NOMINATIM_RESULT)))
                 dump->id = NAME_XML_NAME;
               else dump->id = NAME_XML_NONE;
 
