@@ -1037,6 +1037,48 @@ _anchors_clear(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED,
      }
 }
 
+/* FIXME: This is horrible. It's just a copy&paste (with some adjustments)
+ * from textblock. I didn't want to introduce any non-API links between the
+ * libs so I just copied it. Should have been handled differently. */
+static char *
+_anchor_format_parse(const char *item)
+{
+   const char *start, *end;
+   char *tmp;
+   size_t len;
+
+   start = strchr(item, '=');
+   start++; /* Advance after the '=' */
+   /* If we can find a quote as the first non-space char,
+    * our new delimiter is a quote, not a space. */
+   while (*start == ' ')
+      start++;
+
+   if (*start == '\'')
+     {
+        start++;
+        end = strchr(start, '\'');
+        while ((end) && (end > start) && (end[-1] == '\\'))
+          end = strchr(end + 1, '\'');
+     }
+   else
+     {
+        end = strchr(start, ' ');
+        while ((end) && (end > start) && (end[-1] == '\\'))
+          end = strchr(end + 1, ' ');
+     }
+
+   /* Null terminate before the spaces */
+   if (end) len = end - start;
+   else len = strlen(start);
+
+   tmp = malloc(len);
+   strncpy(tmp, start, len);
+   tmp[len] = '\0';
+
+   return tmp;
+}
+
 static void
 _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
@@ -1063,7 +1105,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
              p = strstr(s, "href=");
              if (p)
                {
-                  an->name = strdup(p + 5);
+                  an->name = _anchor_format_parse(p);
                }
              en->anchors = eina_list_append(en->anchors, an);
              an->start = evas_object_textblock_cursor_new(o);
@@ -1114,7 +1156,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
              p = strstr(s, "href=");
              if (p)
                {
-                  an->name = strdup(p + 5);
+                  an->name = _anchor_format_parse(p);
                }
              en->anchors = eina_list_append(en->anchors, an);
              an->start = evas_object_textblock_cursor_new(o);
