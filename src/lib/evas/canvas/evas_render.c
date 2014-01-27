@@ -1760,8 +1760,7 @@ evas_render_updates_internal(Evas *eo_e,
    for (i = 0; i < e->restack_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->restack_objects, i);
-        eo_obj = obj->object;
-        obj->func->render_pre(eo_obj, obj, obj->private_data);
+        obj->func->render_pre(obj->object, obj, obj->private_data);
         _evas_render_prev_cur_clip_cache_add(e, obj);
      }
    OBJS_ARRAY_CLEAN(&e->restack_objects);
@@ -1886,8 +1885,7 @@ evas_render_updates_internal(Evas *eo_e,
                {
                   obj = (Evas_Object_Protected_Data *)eina_array_data_get
                      (&e->obscuring_objects, i);
-                  eo_obj = obj->object;
-                  if (evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh))
+                  if (evas_object_is_in_output_rect(obj->object, obj, ux - fx, uy - fy, uw, uh))
                     {
                        OBJ_ARRAY_PUSH(&e->temporary_objects, obj);
 
@@ -2145,8 +2143,7 @@ evas_render_updates_internal(Evas *eo_e,
    for (i = 0; i < e->delete_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->delete_objects, i);
-        eo_obj = obj->object;
-        evas_object_free(eo_obj, 1);
+        evas_object_free(obj->object, 1);
      }
    eina_array_clean(&e->delete_objects);
    /* if we deleted no objects this frame or we deleted a lot (> 1024) then
