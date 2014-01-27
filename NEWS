@@ -1,6 +1,19 @@
 =========
-EFL 1.8.4
+EFL 1.8.5
 =========
+
+Changes since 1.8.4:
+--------------------
+
+    * embryo: force the insertion of a '/' in the path to be sure that file path
+      make sense.
+    * eet_data: guarantee double-word alignment for temporary stack buffer.
+    * eina/mp/one_big: fix alignment issues.
+    * configure: include required NEON build flags.
+    * eina-inlist - handle prepend/append relative if list is null (empty)
+    * eina: fix memory leak of inserting the wrong value in the hash.
+    * Evas/cserve2: Fix valgrind warning about uninitialized memory
+    * Evas cserve2: Fix crash in cserve2 when slaves die
 
 Changes since 1.8.3:
 --------------------
@@ -55,10 +68,6 @@ Changes since 1.8.3:
     * eldbus: don't do a double initialization due to ecore module using eldbus
       now.
     * ecore_con: fix crash on timeout when using dns.c resolver
-
-=========
-EFL 1.8.3
-=========
 
 Changes since 1.8.2:
 --------------------
