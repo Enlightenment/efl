@@ -498,6 +498,12 @@ group { name: "e/comp/frame/rotate/fast";
       program { name: "focus_off3";
          transition: LINEAR 0;
       }
+      program { name: "iconify";
+         transition: DECELERATE 0.15 CURRENT;
+      }
+      program { name: "uniconify";
+         transition: DECELERATE 0.15 CURRENT;
+      }
    }
 }
 
@@ -534,6 +540,12 @@ group { name: "e/comp/frame/flip/fast";
       }
       program { name: "focus_off3";
          transition: LINEAR 0;
+      }
+      program { name: "iconify";
+         transition: DECELERATE 0.15 CURRENT;
+      }
+      program { name: "uniconify";
+         transition: DECELERATE 0.15 CURRENT;
       }
    }
 }
@@ -607,6 +619,12 @@ group { name: "e/comp/frame/default/fast";
       program {
          name: "focus_off";
          transition: SINUSOIDAL 0;
+      }
+      program { name: "iconify";
+         transition: DECELERATE 0.15 CURRENT;
+      }
+      program { name: "uniconify";
+         transition: DECELERATE 0.15 CURRENT;
       }
    }
 }
