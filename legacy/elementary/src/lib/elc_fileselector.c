@@ -291,7 +291,7 @@ _anchors_do(Evas_Object *obj,
    tok = eina_str_split(s, "/", 0);
    free(s);
 
-   eina_strlcat(buf, "<a href=/>root</a>", sizeof(buf));
+   eina_strlcat(buf, "<a href='/'>root</a>", sizeof(buf));
    for (i = 0; tok[i]; i++)
      {
         if ((!tok[i]) || (!tok[i][0])) continue;
