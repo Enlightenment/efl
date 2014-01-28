@@ -81,7 +81,7 @@
 
 /**
  * @example emotion_basic_example.c
- * This example show how to create and play an Emotion object. See @ref
+ * This example shows how to create and play an Emotion object. See @ref
  * emotion_basic_example_c "the explanation here".
  */
 

@@ -152,23 +152,23 @@ More examples can be found at @ref edje_examples.
 /**
 
 @example embryo_custom_state.edc
-This example show how to create a custom state from embryo. Clicking on the
+This example shows how to create a custom state from embryo. Clicking on the
 3 labels will rotate the object in the given direction.
 
 @example embryo_pong.edc
 Super-simple Pong implementation in pure embryo.
 
 @example embryo_run_program.edc
-This example show how to run an edje program from embryo code.
+This example shows how to run an edje program from embryo code.
 
 @example embryo_set_state.edc
-This example show how to change the state of a part from embryo code.
+This example shows how to change the state of a part from embryo code.
 
 @example embryo_set_text.edc
-This example show how to set the text in TEXT part from embryo code.
+This example shows how to set the text in TEXT part from embryo code.
 
 @example embryo_timer.edc
-This example show the usage of timers in embryo.
+This example shows the usage of timers in embryo.
 
 @example external_elm_anchorblock.edc
 This example use an elementary anchorblock and a button to animate the text.
@@ -177,20 +177,20 @@ This example use an elementary anchorblock and a button to animate the text.
 This example create some elementary buttons and do some actions on user click.
 
 @example external_elm_check.edc
-This example show EXTERNAL checkbox in action.
+This example shows EXTERNAL checkbox in action.
 
 @example external_elm_panes.edc
-This example show EXTERNAL elementary panes in action.
+This example shows EXTERNAL elementary panes in action.
 
 @example external_emotion_elm.edc
 Super-concise video player example using Edje/Emotion/Elementary.
 
 @example lua_script.edc
-This example show the usage of lua scripting to create and animate some
+This example shows the usage of lua scripting to create and animate some
 objects in the canvas.
 
 @example toggle_using_filter.edc
-This example show how to toggle the state of a part using the 'filter'
+This example shows how to toggle the state of a part using the 'filter'
 param in edje programs
 
 */

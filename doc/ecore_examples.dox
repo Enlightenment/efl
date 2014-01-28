@@ -440,7 +440,7 @@
  * @page ecore_poller_example_c ecore poller - Repetitive polling tasks
  * @dontinclude ecore_poller_example.c
  *
- * This example show how to setup, and explains how an @ref Ecore_Poller is
+ * This example shows how to setup, and explains how an @ref Ecore_Poller is
  * called. You can @ref ecore_poller_example.c "see the full source code here".
  *
  * In this example we store the initial time of the program just to use as
@@ -912,7 +912,7 @@
 
 /**
  * @example ecore_timer_example.c
- * This example show how to use timers to have timed events inside ecore.
+ * This example shows how to use timers to have timed events inside ecore.
  * See @ref ecore_timer_example_c "the example explained".
  */
 
