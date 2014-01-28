@@ -1072,7 +1072,7 @@ _anchor_format_parse(const char *item)
    if (end) len = end - start;
    else len = strlen(start);
 
-   tmp = malloc(len);
+   tmp = malloc(len + 1);
    strncpy(tmp, start, len);
    tmp[len] = '\0';
 
