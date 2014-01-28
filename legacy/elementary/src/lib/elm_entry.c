@@ -1960,7 +1960,9 @@ _signal_anchor_geoms_do_things_with_lol(Elm_Entry_Smart_Data *sd,
 
    if (!geoms) return;
 
-   evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
+   evas_object_geometry_get(
+      edje_object_part_object_get(sd->entry_edje, "elm.text"),
+      &x, &y, NULL, NULL);
    evas_pointer_canvas_xy_get
      (evas_object_evas_get(sd->entry_edje), &px, &py);
 
