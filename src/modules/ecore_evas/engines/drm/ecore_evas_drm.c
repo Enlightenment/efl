@@ -342,6 +342,7 @@ _ecore_evas_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {
    int rend = 0;
 
+   DBG("\tRender Updates Process\n");
    if ((ee->visible) && (updates))
      {
         Eina_List *l;
@@ -350,6 +351,7 @@ _ecore_evas_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
         EINA_LIST_FOREACH(updates, l, r)
           {
              /* TODO: damage window */
+             DBG("\t\tDamage Window: %d %d %d %d\n", r->x, r->y, r->w, r->h);
           }
      }
    else
