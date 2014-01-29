@@ -16,14 +16,14 @@
 # include "Evas.h"
 # include "Evas_Engine_Drm.h"
 
-# include <xf86drm.h>
-# include <xf86drmMode.h>
-# include <drm_fourcc.h>
+/* # include <xf86drm.h> */
+/* # include <xf86drmMode.h> */
+/* # include <drm_fourcc.h> */
 
-# ifdef GL_GLES
-#  include <EGL/egl.h>
-#  define GL_GLEXT_PROTOTYPES
-# endif
+/* # ifdef GL_GLES */
+/* #  include <EGL/egl.h> */
+/* #  define GL_GLEXT_PROTOTYPES */
+/* # endif */
 
 extern int _evas_engine_drm_log_dom;
 
@@ -81,8 +81,8 @@ struct _Outbuf
 
    struct 
      {
-        /* struct gbm_device *gbm; */
-        /* unsigned int format; */
+        /* file descriptor for drm card */
+        int fd;
 
         /* swapper */
         void *swapper;
@@ -98,8 +98,6 @@ struct _Outbuf
         Eina_List *prev_pending_writes;
 
         Eina_Bool destination_alpha : 1;
-
-        int fd;
      } priv;
 };
 
@@ -121,5 +119,10 @@ void *evas_swapper_buffer_map(Wl_Swapper *ws, int *w, int *h);
 void evas_swapper_buffer_unmap(Wl_Swapper *ws);
 int evas_swapper_buffer_state_get(Wl_Swapper *ws);
 void evas_swapper_buffer_idle_flush(Wl_Swapper *ws);
+
+int evas_buffer_manager_init(void);
+int evas_buffer_manager_shutdown(void);
+Eina_Bool evas_buffer_manager_open(int fd);
+void evas_buffer_manager_close(void);
 
 #endif
