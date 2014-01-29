@@ -229,6 +229,13 @@ eng_setup(Evas *eo_evas, void *einfo)
              else try_swap = 1;
           }
 
+        /* ensure the buffer manager has been opened */
+        if (!evas_buffer_manager_open(info->info.fd))
+          {
+             fprintf(stderr, "COULD NOT OPEN BUFFER MANAGER !!!\n");
+             return 0;
+          }
+
         if (!(re = 
               _output_engine_setup(epd->output.w, epd->output.h,
                                    info->info.rotation, info->info.depth,
@@ -574,6 +581,9 @@ module_open(Evas_Module *em)
    if (!_evas_module_engine_inherit(&pfunc, "software_generic"))
      return 0;
 
+   /* try to init the buffer manager */
+   if (!evas_buffer_manager_init()) return 0;
+
    /* copy base functions from the software_generic engine */
    func = pfunc;
 
@@ -603,6 +613,9 @@ module_open(Evas_Module *em)
 static void 
 module_close(Evas_Module *em EINA_UNUSED)
 {
+   /* shutdown the buffer manager */
+   evas_buffer_manager_shutdown();
+
    /* if we have the log domain, unregister it */
    if (_evas_engine_drm_log_dom > -1)
      eina_log_domain_unregister(_evas_engine_drm_log_dom);
