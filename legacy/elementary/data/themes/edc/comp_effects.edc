@@ -1,4 +1,5 @@
 #define COMP_EFFECT_DURATION 0.4
+#define COMP_EFFECT_DURATION_FAST 0.2
 
 group { name: "e/comp/effects/none";
    parts {
@@ -469,17 +470,17 @@ group { name: "e/comp/effects/iconify/default";
          source: "e";
          filter: "mover" "default";
          action: STATE_SET "custom" 0.0;
-         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         transition: ACCELERATE_FACTOR COMP_EFFECT_DURATION 2 CURRENT;
          target: "mover";
          after: "done";
       }
       program {
-         name: "hide"; //iconify
+         name: "hide"; //uniconify
          signal: "e,action,go";
          source: "e";
          filter: "mover" "custom";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         transition: DECELERATE_FACTOR COMP_EFFECT_DURATION_FAST 2 CURRENT;
          target: "mover";
          after: "done";
       }
