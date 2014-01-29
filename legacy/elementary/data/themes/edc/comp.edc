@@ -247,34 +247,7 @@ group { name: "e/comp/screen/overlay/noeffects";
 
 group { name: "e/comp/frame/default";
    images.image: "win_glow.png" COMP;
-   script {
-      public iconifying;
-      public uniconifying;
-
-      public message(Msg_Type:type, id, ...) {
-         // relative to obj x/y/w/h for src/dst of iconify
-         if ((type == MSG_INT_SET) && (id == 10)) {
-            new x, y, w, h;
-            x = getarg(2);
-            y = getarg(3);
-            w = getarg(4);
-            h = getarg(5);
-            custom_state(PART:"iconify-src", "default", 0.0);
-            set_state_val(PART:"iconify-src", STATE_REL1, 0.0, 0.0);
-            set_state_val(PART:"iconify-src", STATE_REL2, 0.0, 0.0);
-            set_state_val(PART:"iconify-src", STATE_REL1_OFFSET, x, y);
-            set_state_val(PART:"iconify-src", STATE_REL2_OFFSET, x + w - 1, y + h - 1);
-            set_state(PART:"iconify-src", "custom", 0.0);
-         }
-      }
-   }
    parts {
-      part { name: "iconify-src"; type: SPACER;
-         description { state: "default" 0.0;
-            rel2.relative: 0.0 0.0;
-            rel2.offset: 0 0;
-         }
-      }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: -1.0  -1.0;
@@ -319,10 +292,6 @@ group { name: "e/comp/frame/default";
             inherit: "default" 0.0;
             rel1.relative: 0.0  0.0;
             rel2.relative: 1.0  1.0;
-         }
-         description { state: "iconic";
-            rel1.to: "iconify-src";
-            rel2.to: "iconify-src";
          }
       }
       part { name: "focus-clipper";
@@ -430,48 +399,6 @@ group { name: "e/comp/frame/default";
          transition: SINUSOIDAL 0.6 CURRENT;
          target: "glow";
       }
-      program { name: "iconify_defer";
-         action: SIGNAL_EMIT "e,action,iconify,done" "e";
-      }
-      program { name: "uniconify_defer";
-         action: SIGNAL_EMIT "e,action,uniconify,done" "e";
-      }
-      program { name: "iconify";
-         action: STATE_SET "iconic" 0.0;
-         transition: ACCELERATE_FACTOR 0.4 2 CURRENT;
-         target: "shower";
-         after: "iconify_defer";
-      }
-      program { name: "uniconify";
-         action: STATE_SET "visible" 0.0;
-         transition: DECELERATE_FACTOR 0.2 2 CURRENT;
-         target: "shower";
-         after: "uniconify_defer";
-      }
-      program {
-         signal: "e,action,uniconify"; source: "e";
-         script {
-            if (iconifying==1) {
-               stop_program(get_program_id("iconify"));
-               iconifying=0;
-               run_program(get_program_id("iconify_defer"));
-            }
-            uniconifying=1;
-            run_program(get_program_id("uniconify"));
-         }
-      }
-      program {
-         signal: "e,action,iconify"; source: "e";
-         script {
-            if (uniconifying==1) {
-               stop_program(get_program_id("uniconify"));
-               uniconifying=0;
-               run_program(get_program_id("uniconify_defer"));
-            }
-            iconifying=1;
-            run_program(get_program_id("iconify"));
-         }
-      }
    }
 }
 
@@ -525,12 +452,6 @@ group { name: "e/comp/frame/rotate/fast";
       program { name: "focus_off3";
          transition: LINEAR 0;
       }
-      program { name: "iconify";
-         transition: DECELERATE 0.15 CURRENT;
-      }
-      program { name: "uniconify";
-         transition: DECELERATE 0.15 CURRENT;
-      }
    }
 }
 
@@ -567,12 +488,6 @@ group { name: "e/comp/frame/flip/fast";
       }
       program { name: "focus_off3";
          transition: LINEAR 0;
-      }
-      program { name: "iconify";
-         transition: DECELERATE 0.15 CURRENT;
-      }
-      program { name: "uniconify";
-         transition: DECELERATE 0.15 CURRENT;
       }
    }
 }
@@ -647,12 +562,6 @@ group { name: "e/comp/frame/default/fast";
          name: "focus_off";
          transition: SINUSOIDAL 0;
       }
-      program { name: "iconify";
-         transition: DECELERATE 0.15 CURRENT;
-      }
-      program { name: "uniconify";
-         transition: DECELERATE 0.15 CURRENT;
-      }
    }
 }
 
@@ -712,14 +621,6 @@ group { name: "e/comp/frame/none";
       program {
          signal: "e,state,hidden"; source: "e";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
-      }
-      program {
-         signal: "e,action,iconify"; source: "e";
-         action: SIGNAL_EMIT "e,action,iconify,done" "e";
-      }
-      program {
-         signal: "e,action,uniconify"; source: "e";
-         action: SIGNAL_EMIT "e,action,uniconify,done" "e";
       }
    }
 }

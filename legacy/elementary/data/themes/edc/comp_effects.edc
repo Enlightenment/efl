@@ -420,6 +420,84 @@ group { name: "e/comp/effects/auto/grow";
    }
 }
 
+group { name: "e/comp/effects/iconify/default";
+   alias: "e/comp/effects/iconify/ibar";
+   alias: "e/comp/effects/iconify/ibox";
+   alias: "e/comp/effects/iconify/tasks";
+   inherit: "e/comp/effects/auto/pane";
+   data.item: "noclip" "1";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            // border geom[4] / destination[4]
+            new x, y, w, h;
+            new dx, dy, dw, dh;
+            x = getarg(2);
+            y = getarg(3);
+            w = getarg(4);
+            h = getarg(5);
+            dx = getarg(6);
+            dy = getarg(7);
+            dw = getarg(8);
+            dh = getarg(9);
+            x = x + (w / 2);
+            y = y + (h / 2);
+            dx = dx - x;
+            dy = dy - y;
+            custom_state(PART:"mover", "default", 0.0);
+            set_state_val(PART:"mover", STATE_REL1, 1.0, 1.0);
+            set_state_val(PART:"mover", STATE_REL2, 0.0, 0.0);
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, dx, dy);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, dx + dw - 1, dy + dh - 1);
+         }
+      }
+   }
+   programs {
+      program {
+         name: "show"; //iconify
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "custom" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "hide"; //iconify
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
 #if 0 //this is weirdly broken with proxy visibility somehow...
 group { name: "e/comp/effects/auto/rotate";
    inherit: "e/comp/effects/auto/pane";
