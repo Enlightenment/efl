@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: efl 1.8.3\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-18 10:00+0100\n"
-"PO-Revision-Date: 2013-12-25 17:30+0100\n"
+"POT-Creation-Date: 2014-01-07 15:32+0100\n"
+"PO-Revision-Date: 2014-01-29 15:08+0100\n"
 "Last-Translator: rezso <rezso@rezso.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
-"Language: hu\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
@@ -52,7 +52,7 @@ msgstr "Lehetőségek:"
 
 #: src/lib/ecore/ecore_getopt.c:653
 msgid "Options:\n"
-msgstr "Kapcsolók:\n"
+msgstr "Opciók:\n"
 
 #: src/lib/ecore/ecore_getopt.c:787
 #, c-format
@@ -72,9 +72,8 @@ msgstr "HIBA: "
 #: src/lib/ecore/ecore_getopt.c:1090 src/lib/ecore/ecore_getopt.c:1105
 #: src/lib/ecore/ecore_getopt.c:1122 src/lib/ecore/ecore_getopt.c:1169
 #: src/lib/ecore/ecore_getopt.c:1289 src/lib/ecore/ecore_getopt.c:1330
-#, fuzzy
 msgid "value has no pointer set.\n"
-msgstr "Nincs beállítandó érték megadva a kulcshoz: „%s”\n"
+msgstr "érték nem határoz meg mutatót.\n"
 
 #: src/lib/ecore/ecore_getopt.c:969 src/lib/ecore/ecore_getopt.c:1189
 #, c-format
@@ -92,9 +91,8 @@ msgid "invalid choice \"%s\". Valid values are: "
 msgstr "érvénytelen érték: \"%s\", az érvényes értékek:"
 
 #: src/lib/ecore/ecore_getopt.c:1163
-#, fuzzy
 msgid "missing parameter to append.\n"
-msgstr "indent: hibás a %s paraméterezése \n"
+msgstr "hiányzó hozzáadandó paraméter.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1267
 msgid "could not parse value.\n"
