@@ -990,7 +990,13 @@ _ok(void *data,
 
    name = elm_object_text_get(sd->name_entry);
    if (name && name[0] != '\0')
-     selection = eina_stringshare_printf("%s/%s", sd->path, name);
+     {
+        int len = eina_stringshare_strlen(sd->path);
+        if (sd->path[len - 1] == '/')
+          selection = eina_stringshare_printf("%s%s", sd->path, name);
+        else
+          selection = eina_stringshare_printf("%s/%s", sd->path, name);
+     }
    else
      selection = eina_stringshare_add(elm_fileselector_selected_get(fs));
 
