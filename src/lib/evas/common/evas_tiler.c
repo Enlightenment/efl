@@ -605,7 +605,7 @@ rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error)
 		  keep_dirty = 0;
 		  break;
 	       }
-	     else if (intra.area <= accepted_error)
+	     else if ((intra.area - area) <= accepted_error)
 	       {
 		  /*  .---.cur     .---.r
 		   *  |   |        |   |
