@@ -16,9 +16,9 @@ struct _Wl_Buffer
 {
    Wl_Swapper *ws;
    int w, h;
-   /* struct gbm_bo *bo; */
    void *data;
    int offset;
+   unsigned int id, hdl;
    size_t size;
    Eina_Bool valid : 1;
 };
@@ -32,9 +32,6 @@ struct _Wl_Swapper
    int dx, dy, w, h, depth;
    int buff_cur, buff_num;
 
-   /* struct gbm_device *gbm; */
-   /* unsigned int format; */
-
    /* void *data; */
 
    Eina_Bool alpha : 1;
@@ -46,7 +43,7 @@ struct _Wl_Swapper
 /* static Eina_Bool _evas_swapper_shm_pool_new(Wl_Swapper *ws); */
 /* static void _evas_swapper_shm_pool_free(Wl_Swapper *ws); */
 static Eina_Bool _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb);
-static void _evas_swapper_buffer_free(Wl_Buffer *wb);
+static void _evas_swapper_buffer_free(Wl_Swapper *ws, Wl_Buffer *wb);
 static void _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, unsigned int count);
 
 /* local variables */
@@ -119,7 +116,7 @@ evas_swapper_reconfigure(Wl_Swapper *ws, int dx, int dy, int w, int h, Outbuf_De
 
    /* loop the swapper's buffers and free them */
    for (i = 0; i < ws->buff_num; i++)
-     _evas_swapper_buffer_free(&(ws->buff[i]));
+     _evas_swapper_buffer_free(ws, &(ws->buff[i]));
 
    ws->dx += dx;
    ws->dy += dy;
@@ -172,7 +169,7 @@ evas_swapper_free(Wl_Swapper *ws)
 
    /* loop the swapper's buffers and free them */
    for (i = 0; i < ws->buff_num; i++)
-     _evas_swapper_buffer_free(&(ws->buff[i]));
+     _evas_swapper_buffer_free(ws, &(ws->buff[i]));
 
    if (ws->in_use)
      {
@@ -255,7 +252,7 @@ evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
         if (!(wb = (&(ws->buff[i])))) continue;
 
         /* if this buffer is not valid, then unmap data */
-        if (!wb->valid) _evas_swapper_buffer_free(wb);
+        if (!wb->valid) _evas_swapper_buffer_free(ws, wb);
      }
 }
 
@@ -263,31 +260,50 @@ evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
 static Eina_Bool 
 _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 {
-   int id;
+   struct drm_mode_create_dumb carg;
+   struct drm_mode_map_dumb marg;
+   struct drm_mode_destroy_dumb darg;
+   int ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    wb->w = ws->w;
    wb->h = ws->h;
 
-   struct drm_mode_create_dumb carg;
-   struct drm_mode_destroy_dumb darg;
-   struct drm_mode_map_dumb marg;
-
    memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
    carg.bpp = 32;
    carg.width = wb->w;
    carg.height = wb->h;
 
-   drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
-   drmModeAddFB(ws->drm_fd, wb->w, wb->h, 24, 32, carg.pitch, carg.handle, &id);
+   ret = drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
+   if (ret < 0)
+     {
+        ERR("Failed to create dumb buffer: %m");
+        return EINA_FALSE;
+     }
+
+   ret = drmModeAddFB(ws->drm_fd, wb->w, wb->h, 24, 32, 
+                      carg.pitch, carg.handle, &wb->id);
+   if (ret)
+     {
+        ERR("Failed to add fb: %m");
+        goto err;
+     }
 
    memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
    marg.handle = carg.handle;
-   drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
-   wb->data = mmap(0, carg.size, PROT_WRITE, MAP_SHARED, 
+   ret = drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
+   if (ret)
+     {
+        ERR("Failed to Map fb: %m");
+        goto err_map;
+     }
+
+   wb->data = mmap(0, carg.size, PROT_WRITE | PROT_READ, MAP_SHARED, 
                    ws->drm_fd, marg.offset);
    memset(wb->data, 0, carg.size);
+
+   wb->hdl = marg.handle;
 
    /* create actual wl_buffer */
    /* wb->buffer =  */
@@ -303,23 +319,39 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 
    /* return allocated buffer */
    return EINA_TRUE;
+
+err_map:
+   drmModeRmFB(ws->drm_fd, wb->id);
+err:
+   memset(&darg, 0, sizeof(darg));
+   darg.handle = carg.handle;
+   drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+   return EINA_FALSE;
 }
 
 static void 
-_evas_swapper_buffer_free(Wl_Buffer *wb)
+_evas_swapper_buffer_free(Wl_Swapper *ws, Wl_Buffer *wb)
 {
+   struct drm_mode_destroy_dumb darg;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* check for valid buffer */
    if ((!wb) || (wb->valid)) return;
 
+   /* unmap the buffer data */
+   if (wb->data) munmap(wb->data, wb->size);
+   wb->data = NULL;
+
    /* kill the wl_buffer */
+   if (wb->id) drmModeRmFB(ws->drm_fd, wb->id);
+
    /* if (wb->buffer) wl_buffer_destroy(wb->buffer); */
    /* wb->buffer = NULL; */
 
-   /* unmap the buffer data */
-   /* if (wb->data) munmap(wb->data, wb->size); */
-   /* wb->data = NULL; */
+   memset(&darg, 0, sizeof(darg));
+   darg.handle = wb->hdl;
+   drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
 }
 
 static void 
@@ -367,6 +399,7 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
    /* surface attach */
    if (ws->buffer_sent != wb)
      {
+        DBG("Send Buffer !!");
         /* wl_surface_attach(ws->surface, wb->buffer, ws->dx, ws->dy); */
         ws->dx = 0;
         ws->dy = 0;
