@@ -466,10 +466,22 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
         if (!strncmp(name, ":style=", 7))
           {
 #define _SET_STYLE(x) \
-             fdesc->x = _evas_font_style_find_internal(name + 7, tend, \
+             fdesc->x = _evas_font_style_find_internal(name + strlen(#x) + 2, tend, \
                    _style_##x##_map, _STYLE_MAP_LEN(_style_##x##_map));
              _SET_STYLE(slant);
              _SET_STYLE(weight);
+             _SET_STYLE(width);
+          }
+        else if (!strncmp(name, ":slant=", 7))
+          {
+             _SET_STYLE(slant);
+          }
+        else if (!strncmp(name, ":weight=", 8))
+          {
+             _SET_STYLE(weight);
+          }
+        else if (!strncmp(name, ":width=", 7))
+          {
              _SET_STYLE(width);
 #undef _SET_STYLE
           }
