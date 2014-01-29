@@ -79,7 +79,8 @@ ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
 EAPI void 
 ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags)
 {
-   if (!sprite) return;
+   if ((!sprite) || (!sprite->output)) return;
+
    if (fb_id)
      {
         drmModeSetPlane(sprite->drm_fd, sprite->plane_id, 
@@ -94,4 +95,21 @@ ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags)
                         sprite->output->crtc_id, 0, 0, 
                         0, 0, 0, 0, 0, 0, 0, 0);
      }
+}
+
+EAPI Eina_Bool 
+ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supported)
+{
+   Ecore_Drm_Device *dev;
+   unsigned int c = 0;
+
+   dev = output->dev;
+
+   for (c = 0; c < dev->crtc_count; c++)
+     {
+        if (dev->crtcs[c] != output->crtc_id) continue;
+        if ((supported) && (1 << c)) return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
