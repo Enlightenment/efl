@@ -290,6 +290,14 @@ static int _fc_width_map[] =
 };
 # endif
 
+static int _fc_spacing_map[] =
+{
+   FC_PROPORTIONAL,
+   FC_DUAL,
+   FC_MONO,
+   FC_CHARCELL
+};
+
 #endif
 
 struct _Style_Map
@@ -332,6 +340,14 @@ static Style_Map _style_slant_map[] =
      {"normal", EVAS_FONT_SLANT_NORMAL},
      {"oblique", EVAS_FONT_SLANT_OBLIQUE},
      {"italic", EVAS_FONT_SLANT_ITALIC}
+};
+
+static Style_Map _style_spacing_map[] =
+{
+     {"proportional", EVAS_FONT_SPACING_PROPORTIONAL},
+     {"dualwidth", EVAS_FONT_SPACING_DUAL},
+     {"monospace", EVAS_FONT_SPACING_MONO},
+     {"charcell", EVAS_FONT_SPACING_CHARCELL}
 };
 
 #define _STYLE_MAP_LEN(x) (sizeof(x) / sizeof(*(x)))
@@ -439,7 +455,7 @@ evas_font_desc_cmp(const Evas_Font_Description *a,
    /* FIXME: Do actual comparison, i.e less than and bigger than. */
    return !((a->name == b->name) && (a->weight == b->weight) &&
          (a->slant == b->slant) && (a->width == b->width) &&
-         (a->lang == b->lang));
+         (a->spacing == b->spacing) && (a->lang == b->lang));
 }
 
 void
@@ -483,6 +499,10 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
         else if (!strncmp(name, ":width=", 7))
           {
              _SET_STYLE(width);
+          }
+        else if (!strncmp(name, ":spacing=", 9))
+          {
+             _SET_STYLE(spacing);
 #undef _SET_STYLE
           }
         else if (!strncmp(name, ":lang=", 6))
@@ -715,6 +735,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
         p_nm = FcPatternBuild (NULL,
               FC_WEIGHT, FcTypeInteger, _fc_weight_map[fdesc->weight],
               FC_SLANT,  FcTypeInteger, _fc_slant_map[fdesc->slant],
+              FC_SPACING,  FcTypeInteger, _fc_spacing_map[fdesc->spacing],
 #ifdef FC_WIDTH
               FC_WIDTH,  FcTypeInteger, _fc_width_map[fdesc->width],
 #endif

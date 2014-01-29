@@ -92,10 +92,19 @@ enum _Evas_Font_Width
    EVAS_FONT_WIDTH_ULTRAEXPANDED
 };
 
+enum _Evas_Font_Spacing
+{
+   EVAS_FONT_SPACING_PROPORTIONAL,
+   EVAS_FONT_SPACING_DUAL,
+   EVAS_FONT_SPACING_MONO,
+   EVAS_FONT_SPACING_CHARCELL
+};
+
 typedef enum _Evas_Font_Style               Evas_Font_Style;
 typedef enum _Evas_Font_Slant               Evas_Font_Slant;
 typedef enum _Evas_Font_Weight              Evas_Font_Weight;
 typedef enum _Evas_Font_Width               Evas_Font_Width;
+typedef enum _Evas_Font_Spacing             Evas_Font_Spacing;
 
 /* General types - used for script type chceking */
 #define OPAQUE_TYPE(type) struct __##type { int a; }; \
@@ -713,6 +722,7 @@ struct _Evas_Font_Description
    Evas_Font_Slant slant;
    Evas_Font_Weight weight;
    Evas_Font_Width width;
+   Evas_Font_Spacing spacing;
 
    Eina_Bool is_new : 1;
 };
