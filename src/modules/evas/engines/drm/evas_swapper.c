@@ -91,7 +91,8 @@ evas_swapper_setup(int dx, int dy, int w, int h, Outbuf_Depth depth, Eina_Bool a
         /* try to create new internal Wl_Buffer */
         if (!_evas_swapper_buffer_new(ws, &(ws->buff[i])))
           {
-             /* failed to create wl_buffer. free the swapper */
+             /* failed to create buffer. free the swapper */
+             ERR("Failed to create new buffer");
              evas_swapper_free(ws);
              return NULL;
           }
@@ -108,11 +109,7 @@ evas_swapper_reconfigure(Wl_Swapper *ws, int dx, int dy, int w, int h, Outbuf_De
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!ws)
-     {
-        ERR("No swapper to reconfigure.");
-        return NULL;
-     }
+   if (!ws) return NULL;
 
    /* loop the swapper's buffers and free them */
    for (i = 0; i < ws->buff_num; i++)
@@ -260,9 +257,9 @@ evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
 static Eina_Bool 
 _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
 {
-   struct drm_mode_create_dumb carg;
-   struct drm_mode_map_dumb marg;
-   struct drm_mode_destroy_dumb darg;
+   /* struct drm_mode_create_dumb carg; */
+   /* struct drm_mode_map_dumb marg; */
+   /* struct drm_mode_destroy_dumb darg; */
    int ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -270,69 +267,60 @@ _evas_swapper_buffer_new(Wl_Swapper *ws, Wl_Buffer *wb)
    wb->w = ws->w;
    wb->h = ws->h;
 
-   memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
-   carg.bpp = 32;
-   carg.width = wb->w;
-   carg.height = wb->h;
+   /* NB: Create drm Dumb FB for software rendering */
+   /* memset(&carg, 0, sizeof(struct drm_mode_create_dumb)); */
+   /* carg.bpp = 32; */
+   /* carg.width = wb->w; */
+   /* carg.height = wb->h; */
 
-   ret = drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
-   if (ret < 0)
-     {
-        ERR("Failed to create dumb buffer: %m");
-        return EINA_FALSE;
-     }
+   /* ret = drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg); */
+   /* if (ret < 0) */
+   /*   { */
+   /*      ERR("Failed to create dumb buffer: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
 
-   ret = drmModeAddFB(ws->drm_fd, wb->w, wb->h, 24, 32, 
-                      carg.pitch, carg.handle, &wb->id);
-   if (ret)
-     {
-        ERR("Failed to add fb: %m");
-        goto err;
-     }
+   /* ret = drmModeAddFB(ws->drm_fd, wb->w, wb->h, 24, 32,  */
+   /*                    carg.pitch, carg.handle, &wb->id); */
+   /* if (ret) */
+   /*   { */
+   /*      ERR("Failed to add fb: %m"); */
+   /*      goto err; */
+   /*   } */
 
-   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
-   marg.handle = carg.handle;
-   ret = drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
-   if (ret)
-     {
-        ERR("Failed to Map fb: %m");
-        goto err_map;
-     }
+   /* memset(&marg, 0, sizeof(struct drm_mode_map_dumb)); */
+   /* marg.handle = carg.handle; */
+   /* ret = drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_MAP_DUMB, &marg); */
+   /* if (ret) */
+   /*   { */
+   /*      ERR("Failed to Map fb: %m"); */
+   /*      goto err_map; */
+   /*   } */
 
-   wb->data = mmap(0, carg.size, PROT_WRITE | PROT_READ, MAP_SHARED, 
-                   ws->drm_fd, marg.offset);
-   memset(wb->data, 0, carg.size);
+   /* wb->data = mmap(0, carg.size, PROT_WRITE | PROT_READ, MAP_SHARED,  */
+   /*                 ws->drm_fd, marg.offset); */
+   /* memset(wb->data, 0, carg.size); */
 
-   wb->hdl = marg.handle;
-
-   /* create actual wl_buffer */
-   /* wb->buffer =  */
-   /*   wl_shm_pool_create_buffer(ws->pool, ws->used_size, wb->w, wb->h,  */
-   /*                             (wb->w * sizeof(int)), format); */
-
-   /* add wayland buffer listener */
-   /* wl_buffer_add_listener(wb->buffer, &_evas_swapper_buffer_listener, wb); */
-
-   /* wb->data = (char *)ws->data + ws->used_size; */
+   /* wb->hdl = marg.handle; */
 
    wb->ws = ws;
 
    /* return allocated buffer */
    return EINA_TRUE;
 
-err_map:
-   drmModeRmFB(ws->drm_fd, wb->id);
-err:
-   memset(&darg, 0, sizeof(darg));
-   darg.handle = carg.handle;
-   drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
-   return EINA_FALSE;
+/* err_map: */
+/*    drmModeRmFB(ws->drm_fd, wb->id); */
+/* err: */
+/*    memset(&darg, 0, sizeof(darg)); */
+/*    darg.handle = carg.handle; */
+/*    drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg); */
+/*    return EINA_FALSE; */
 }
 
 static void 
 _evas_swapper_buffer_free(Wl_Swapper *ws, Wl_Buffer *wb)
 {
-   struct drm_mode_destroy_dumb darg;
+   /* struct drm_mode_destroy_dumb darg; */
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -340,18 +328,18 @@ _evas_swapper_buffer_free(Wl_Swapper *ws, Wl_Buffer *wb)
    if ((!wb) || (wb->valid)) return;
 
    /* unmap the buffer data */
-   if (wb->data) munmap(wb->data, wb->size);
-   wb->data = NULL;
+   /* if (wb->data) munmap(wb->data, wb->size); */
+   /* wb->data = NULL; */
 
    /* kill the wl_buffer */
-   if (wb->id) drmModeRmFB(ws->drm_fd, wb->id);
+   /* if (wb->id) drmModeRmFB(ws->drm_fd, wb->id); */
 
    /* if (wb->buffer) wl_buffer_destroy(wb->buffer); */
    /* wb->buffer = NULL; */
 
-   memset(&darg, 0, sizeof(darg));
-   darg.handle = wb->hdl;
-   drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+   /* memset(&darg, 0, sizeof(darg)); */
+   /* darg.handle = wb->hdl; */
+   /* drmIoctl(ws->drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg); */
 }
 
 static void 
@@ -375,7 +363,7 @@ _evas_swapper_buffer_put(Wl_Swapper *ws, Wl_Buffer *wb, Eina_Rectangle *rects, u
      {
         /* call function to mmap buffer data */
         if (!_evas_swapper_buffer_new(ws, wb))
-        return;
+          return;
      }
 
    rect = eina_rectangle_new(0, 0, 0, 0);
