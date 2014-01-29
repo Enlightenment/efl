@@ -85,12 +85,16 @@ group { name: "e/comp/screen/overlay/default";
       }
    }
    programs {
+         program { name: "screensaver_post";
+            action: SIGNAL_EMIT "e,state,screensaver,active" "e";
+         }
          program {
             name: "screensaver_on";
             signal: "e,state,screensaver,on"; source: "e";
             action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 3.0 CURRENT;
             target: "blanker";
+            after: "screensaver_post";
          }
          program {
             name: "screensaver_on2";
