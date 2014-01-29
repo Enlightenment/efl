@@ -243,7 +243,34 @@ group { name: "e/comp/screen/overlay/noeffects";
 
 group { name: "e/comp/frame/default";
    images.image: "win_glow.png" COMP;
+   script {
+      public iconifying;
+      public uniconifying;
+
+      public message(Msg_Type:type, id, ...) {
+         // relative to obj x/y/w/h for src/dst of iconify
+         if ((type == MSG_INT_SET) && (id == 10)) {
+            new x, y, w, h;
+            x = getarg(2);
+            y = getarg(3);
+            w = getarg(4);
+            h = getarg(5);
+            custom_state(PART:"iconify-src", "default", 0.0);
+            set_state_val(PART:"iconify-src", STATE_REL1, 0.0, 0.0);
+            set_state_val(PART:"iconify-src", STATE_REL2, 0.0, 0.0);
+            set_state_val(PART:"iconify-src", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"iconify-src", STATE_REL2_OFFSET, x + w - 1, y + h - 1);
+            set_state(PART:"iconify-src", "custom", 0.0);
+         }
+      }
+   }
    parts {
+      part { name: "iconify-src"; type: SPACER;
+         description { state: "default" 0.0;
+            rel2.relative: 0.0 0.0;
+            rel2.offset: 0 0;
+         }
+      }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: -1.0  -1.0;
@@ -290,8 +317,8 @@ group { name: "e/comp/frame/default";
             rel2.relative: 1.0  1.0;
          }
          description { state: "iconic";
-            rel1.relative: 0.0 1.0;
-            rel2.relative: 0.0 1.0;
+            rel1.to: "iconify-src";
+            rel2.to: "iconify-src";
          }
       }
       part { name: "focus-clipper";
@@ -316,10 +343,6 @@ group { name: "e/comp/frame/default";
             rel2.to: "shower";
          }
       }
-   }
-   script {
-      public iconifying;
-      public uniconifying;
    }
    programs {
       program {
@@ -411,13 +434,13 @@ group { name: "e/comp/frame/default";
       }
       program { name: "iconify";
          action: STATE_SET "iconic" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: ACCELERATE_FACTOR 0.4 2 CURRENT;
          target: "shower";
          after: "iconify_defer";
       }
       program { name: "uniconify";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE_FACTOR 0.2 2 CURRENT;
          target: "shower";
          after: "uniconify_defer";
       }
