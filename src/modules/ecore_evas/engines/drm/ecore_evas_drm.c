@@ -353,6 +353,9 @@ _ecore_evas_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
              /* TODO: damage window */
              DBG("\t\tDamage Window: %d %d %d %d\n", r->x, r->y, r->w, r->h);
           }
+
+        _ecore_evas_idle_timeout_update(ee);
+        rend = 1;
      }
    else
      evas_norender(ee->evas);
@@ -395,7 +398,7 @@ _ecore_evas_render(Ecore_Evas *ee)
         return 0;
      }
 
-   DBG("Render Ecore_Evas\n");
+   /* DBG("Render Ecore_Evas\n"); */
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, ee2)
      {
