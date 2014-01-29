@@ -163,6 +163,7 @@ EAPI void ecore_drm_inputs_disable(Ecore_Drm_Input *input);
 EAPI Eina_Bool ecore_drm_sprites_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_sprites_destroy(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags);
+EAPI Eina_Bool ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supported);
 
 EAPI Ecore_Drm_Fb *ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
