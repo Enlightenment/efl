@@ -74,14 +74,13 @@ _ecore_drm_output_hardware_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output
 
    flags = (GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
 
+   /* FIXME: NB: Should this really be XARGB8888 ?? */
    if (!(output->surface = 
          gbm_surface_create(dev->gbm, w, h, GBM_FORMAT_ARGB8888, flags)))
      {
         ERR("Could not create output surface");
         return EINA_FALSE;
      }
-
-   /* TODO: create egl window surface */
 
    if (!(output->egl.surface = 
          eglCreateWindowSurface(dev->egl.disp, dev->egl.cfg, 
@@ -126,6 +125,7 @@ static void
 _ecore_drm_output_hardware_render(Ecore_Drm_Output *output)
 {
    struct gbm_bo *bo;
+   int ret;
 
    if (!output) return;
    if (!output->current_mode) return;
@@ -133,15 +133,20 @@ _ecore_drm_output_hardware_render(Ecore_Drm_Output *output)
    glViewport(output->x, output->y, 
               output->current_mode->width, output->current_mode->height);
 
-   eglMakeCurrent(output->dev->egl.disp, output->egl.surface, 
-                  output->egl.surface, output->dev->egl.ctxt);
+   if (eglMakeCurrent(output->dev->egl.disp, output->egl.surface, 
+                      output->egl.surface, output->dev->egl.ctxt) == EGL_FALSE)
+     return;
 
    /* TODO: calculate damage */
 
    /* TODO: repaint surfaces */
 
    /* TODO: call egl functions to repaint */
+   glClearColor(1.0, 1.0, 0.0, 1.0);
+   glClear(GL_COLOR_BUFFER_BIT);
+   glFlush();
 
+   /* eglSwapInterval(output->dev->egl.disp, 1); */
    eglSwapBuffers(output->dev->egl.disp, output->egl.surface);
 
    if (!(bo = gbm_surface_lock_front_buffer(output->surface)))
@@ -150,7 +155,11 @@ _ecore_drm_output_hardware_render(Ecore_Drm_Output *output)
         return;
      }
 
-   /* output->next = _get_from_bo(); */
+   if (!(output->next = _ecore_drm_fb_bo_get(output->dev, bo)))
+     {
+        ERR("Failed to get FB from bo");
+        gbm_surface_release_buffer(output->surface, bo);
+     }
 }
 #endif
 
@@ -484,6 +493,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 
    for (i = 0; i < res->count_connectors; i++)
      {
+        if (i > 0) break;
         /* get the connector */
         if (!(conn = drmModeGetConnector(dev->drm.fd, res->connectors[i])))
           continue;
@@ -600,7 +610,7 @@ ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
         if (fb->from_client)
           gbm_bo_destroy(fb->bo);
         else
-          gbm_surface_release_buffer(output->surface, output->current->bo);
+          gbm_surface_release_buffer(output->surface, fb->bo);
      }
 #endif
 }
@@ -608,11 +618,13 @@ ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 EAPI void 
 ecore_drm_output_repaint(Ecore_Drm_Output *output)
 {
+   Eina_List *l;
+   Ecore_Drm_Sprite *sprite;
    int ret = 0;
 
    if (!output) return;
 
-   DBG("Output Repaint");
+   DBG("Output Repaint: %d %d", output->crtc_id, output->conn_id);
 
    /* TODO: assign planes ? */
 
@@ -630,13 +642,13 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
           }
      }
 
-   output->need_repaint = EINA_FALSE;
-
    if (!output->next)
      {
         DBG("\tNo Next Fb");
         return;
      }
+
+   output->need_repaint = EINA_FALSE;
 
    if (!output->current)
      {
@@ -663,7 +675,31 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
 
    output->pending_flip = EINA_TRUE;
 
-   /* TODO: finish */
+   EINA_LIST_FOREACH(output->dev->sprites, l, sprite)
+     {
+        unsigned int flags = 0, id = 0;
+        drmVBlank vbl = 
+          {
+             .request.type = (DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT),
+             .request.sequence = 1,
+          };
+
+        if (((!sprite->current_fb) && (!sprite->next_fb)) || 
+            (!ecore_drm_sprites_crtc_supported(output, sprite->crtcs)))
+          continue;
+
+        if ((sprite->next_fb) && (!output->dev->cursors_broken))
+          id = sprite->next_fb->id;
+
+        ecore_drm_sprites_fb_set(sprite, id, flags);
+
+        vbl.request.signal = (unsigned long)sprite;
+        ret = drmWaitVBlank(output->dev->drm.fd, &vbl);
+        if (ret) ERR("Error Wait VBlank: %m");
+
+        sprite->output = output;
+        output->pending_vblank = EINA_TRUE;
+     }
 
    return;
 
