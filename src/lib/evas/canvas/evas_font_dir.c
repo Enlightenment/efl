@@ -223,11 +223,10 @@ evas_font_free(Evas *eo_evas, void *font)
 
 #ifdef HAVE_FONTCONFIG
 static Evas_Font_Set *
-evas_load_fontconfig(Evas *eo_evas, FcFontSet *set, int size,
+_evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int size,
       Font_Rend_Flags wanted_rend)
 {
    Evas_Public_Data *evas = eo_data_scope_get(eo_evas, EVAS_CLASS);
-   Evas_Font_Set *font = NULL;
    int i;
 
    /* Do loading for all in family */
@@ -568,7 +567,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
-        font = evas_load_fontconfig(evas->evas, found_fd->set, size, wanted_rend);
+        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend);
         goto on_find;
      }
 #endif
@@ -601,7 +600,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
-        font = evas_load_fontconfig(evas->evas, found_fd->set, size, wanted_rend);
+        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend);
         goto on_find;
      }
 #endif
@@ -781,7 +780,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	  }
 	else
           {
-             font = evas_load_fontconfig(evas->evas, set, size, wanted_rend);
+             font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend);
           }
      }
 #endif
