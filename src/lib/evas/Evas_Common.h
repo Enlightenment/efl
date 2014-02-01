@@ -5236,6 +5236,10 @@ EAPI Eina_Bool            evas_key_modifier_is_set(const Evas_Modifier *m, const
 EAPI Eina_Bool            evas_key_lock_is_set(const Evas_Lock *l, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @}
+ */
+
+/**
  * @defgroup Evas_Touch_Point_List Touch Point List Functions
  *
  * Functions to get information of touched points in the Evas.
