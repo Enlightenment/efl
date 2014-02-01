@@ -870,7 +870,7 @@ EAPI Eina_Bool edje_edit_part_restack_above(Evas_Object *obj, const char *part);
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
-edje_edit_part_restack_part_above(Evas_Object *obj, const char* part, const char *below);
+edje_edit_part_restack_part_above(Evas_Object *obj, const char* part, const char *above);
 
 /** Set a new name for part.
  *
