@@ -4254,12 +4254,16 @@ _edje_entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_U
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
      return;
 
+   _edje_entry_imf_context_reset(rp);
+
    _sel_clear(ed, en->cursor, rp->object, en);
    evas_textblock_cursor_pos_set(en->cursor, ev->start);
    _sel_enable(ed, en->cursor, rp->object, en);
    _sel_start(en->cursor, rp->object, en);
    evas_textblock_cursor_pos_set(en->cursor, ev->end);
    _sel_extend(ed, en->cursor, rp->object, en);
+
+   _edje_entry_real_part_configure(en->ed, rp);
 }
 
 static Eina_Bool
