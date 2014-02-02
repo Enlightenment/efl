@@ -1,4 +1,80 @@
    // EFM icons //
+
+#define EFM_MIME_ICON(_NAME, _IMAGE, _STRING, _SIZE) \
+   group { name: "e/icons/fileman/mime/"_NAME; \
+      max: _SIZE _SIZE; \
+      images.image: "efm_generic_icon_shadow.png" COMP; \
+      images.image: "efm_generic_icon_base.png" COMP; \
+      images.image: "efm_generic_icon_over.png" COMP; \
+      images.image: _IMAGE COMP; \
+      parts { \
+         part { name: "spacer"; type: SPACER; \
+            description { state: "default" 0.0; \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+            } \
+         } \
+         part { name: "shadow"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               rel1.to: "spacer"; \
+               rel1.relative: (15/240) (10/240); \
+               rel2.to: "spacer"; \
+               rel2.relative: (225/240) (240/240); \
+               image.normal: "efm_generic_icon_shadow.png"; \
+            } \
+         } \
+         part { name: "base"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               rel1.to: "spacer"; \
+               rel1.relative: (30/240) (15/240); \
+               rel2.to: "spacer"; \
+               rel2.relative: (210/240) (225/240); \
+               image.normal: "efm_generic_icon_base.png"; \
+            } \
+         } \
+         part { name: "content"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               rel1.to: "base"; \
+               rel1.relative: (28/180) (28/210); \
+               rel2.to: "base"; \
+               rel2.relative: (152/180) (182/210); \
+               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               image.normal: _IMAGE; \
+            } \
+         } \
+         part { name: "over"; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               rel1.to: "base"; \
+               rel2.to: "base"; \
+               image.normal: "efm_generic_icon_over.png"; \
+            } \
+         } \
+         part { name: "typestr"; type: TEXT; mouse_events: 0; \
+            description { state: "default" 0.0; \
+               rel1.to: "over"; \
+               rel1.relative: (72/180) (142/210); \
+               rel2.to: "over"; \
+               rel2.relative: (178/180) (188/210); \
+               color: 255 255 255 255; \
+               text { font: FN; size: 8; \
+                  fit: 0 1; \
+                  align: 0.5 0.5; \
+                  text: _STRING; \
+               } \
+            } \
+         } \
+      } \
+   }
+
+   EFM_MIME_ICON("audio/mpeg", "efm_generic_icon_content_audio.png", ".MP3", 240);
+   EFM_MIME_ICON("audio/x-wav","efm_generic_icon_content_audio.png", ".WAV", 240);
+   EFM_MIME_ICON("audio/x-flac","efm_generic_icon_content_audio.png", ".FLAC", 240);
+   EFM_MIME_ICON("audio/x-musepack","efm_generic_icon_content_audio.png", ".MPC", 240);
+   EFM_MIME_ICON("audio/x-vorbis+ogg","efm_generic_icon_content_audio.png", ".OGG", 240);
+   EFM_MIME_ICON("application/x-audacity-project","efm_generic_icon_content_audio.png", ".AUP", 240);
+   EFM_MIME_ICON("audio/x-ms-wma","efm_generic_icon_content_audio.png", ".WMA", 240);
+
+#undefine EFM_MIME_ICON
+
    /* #define EFMICON(NAME, FILE, SIZE)                    \
     * group { name: "e/icons/fileman/"NAME;                \
     *    max: SIZE SIZE;                                  \
@@ -127,13 +203,13 @@
    MIMEBASE("application/x-xcf","icon_mime_image_generic.png", ".XCF", 128);
    MIMEBASE("application/x-cbz","icon_mime_image_generic.png", ".CBZ", 128);
    MIMEBASE("application/x-cbr","icon_mime_image_generic.png", ".CBR", 128);
-   MIMEBASE("audio/mpeg","icon_mime_audio_generic.png", ".MP3", 128);
-   MIMEBASE("audio/x-wav","icon_mime_audio_generic.png", ".WAV", 128);
-   MIMEBASE("audio/x-flac","icon_mime_audio_generic.png", ".FLAC", 128);
-   MIMEBASE("audio/x-musepack","icon_mime_audio_generic.png", ".MPC", 128);
-   MIMEBASE("audio/x-vorbis+ogg","icon_mime_audio_generic.png", ".OGG", 128);
-   MIMEBASE("application/x-audacity-project","icon_mime_audio_generic.png", ".AUP", 128);
-   MIMEBASE("audio/x-ms-wma","icon_mime_audio_generic.png", ".WMA", 128);
+//   MIMEBASE("audio/mpeg","icon_mime_audio_generic.png", ".MP3", 128);
+//   MIMEBASE("audio/x-wav","icon_mime_audio_generic.png", ".WAV", 128);
+//   MIMEBASE("audio/x-flac","icon_mime_audio_generic.png", ".FLAC", 128);
+//   MIMEBASE("audio/x-musepack","icon_mime_audio_generic.png", ".MPC", 128);
+//   MIMEBASE("audio/x-vorbis+ogg","icon_mime_audio_generic.png", ".OGG", 128);
+//   MIMEBASE("application/x-audacity-project","icon_mime_audio_generic.png", ".AUP", 128);
+//   MIMEBASE("audio/x-ms-wma","icon_mime_audio_generic.png", ".WMA", 128);
    MIMEBASE("text/css","icon_mime_text_generic.png", ".CSS", 128);
    MIMEBASE("text/html","icon_mime_text_generic.png", ".HTML", 128);
    MIMEBASE("text/x-csrc","icon_mime_text_generic.png", ".C", 128);
