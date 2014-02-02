@@ -514,9 +514,7 @@ _state_update(State *st)
 
         for (row = 0, gy = 0; gy < h; gy += gszh, row++)
           {
-             Vertex3 vo[4];
-
-             memset(vo, 0, sizeof (vo));
+             Vertex3 vo[4] = { 0 };
 
              if (b > 0) nn = num + st->slices_h - row - 1;
              else nn = num + row;

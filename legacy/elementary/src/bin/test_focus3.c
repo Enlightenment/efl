@@ -364,9 +364,8 @@ void
 test_focus_custom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fr, *bx, *bx2, *bt, *spinner, *sp, *chk;
-   char win_focus_theme[PATH_MAX];
+   char win_focus_theme[PATH_MAX] = { 0 };
 
-   memset(win_focus_theme, 0, sizeof(win_focus_theme));
    sprintf(win_focus_theme, "%s/objects/test_focus_custom.edj", elm_app_data_dir_get());
 
    elm_theme_overlay_add(NULL, win_focus_theme);
