@@ -385,6 +385,9 @@ img/icon_prev.png \
 img/icon_refresh.png \
 img/icon_rewind_mono.png \
 img/icon_rewind.png \
+img/icon_spanner.png  \
+img/icon_splat.png \
+img/icon_splat_half.png \
 img/icon_stop_mono.png \
 img/icon_stop.png \
 img/icon_system-lock-screen.png \
@@ -402,6 +405,7 @@ img/icon_wallpaper_pan.png \
 img/icon_wallpaper_stretch.png \
 img/icon_wallpaper_tile.png \
 img/icon_wallpaper_within.png \
+img/icon_warning.png \
 img/ic_win_move.png \
 img/ic_win_resize.png \
 img/img_example_1.png \
@@ -484,18 +488,6 @@ img/mini_box_glow.png \
 img/music_control_icon.png \
 img/outline_glow.png \
 img/packagekit_base.png \
-img/packagekit_info_bugfix.png \
-img/packagekit_info_enhancement.png \
-img/packagekit_info_important.png \
-img/packagekit_info_low.png \
-img/packagekit_info_normal.png \
-img/packagekit_info_security.png \
-img/packagekit_work1.png \
-img/packagekit_work2.png \
-img/packagekit_work3.png \
-img/packagekit_work4.png \
-img/packagekit_updated.png \
-img/packagekit_error.png \
 img/pointer_entry_bar.png \
 img/pointer_glow.png \
 img/pointer_mono.png \
