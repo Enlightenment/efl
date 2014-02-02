@@ -481,28 +481,28 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 
         if (!strncmp(name, ":style=", 7))
           {
-#define _SET_STYLE(x) \
-             fdesc->x = _evas_font_style_find_internal(name + strlen(#x) + 2, tend, \
+#define _SET_STYLE(x, len) \
+             fdesc->x = _evas_font_style_find_internal(name + len, tend, \
                    _style_##x##_map, _STYLE_MAP_LEN(_style_##x##_map));
-             _SET_STYLE(slant);
-             _SET_STYLE(weight);
-             _SET_STYLE(width);
+             _SET_STYLE(slant, 7);
+             _SET_STYLE(weight, 7);
+             _SET_STYLE(width, 7);
           }
         else if (!strncmp(name, ":slant=", 7))
           {
-             _SET_STYLE(slant);
+             _SET_STYLE(slant, 7);
           }
         else if (!strncmp(name, ":weight=", 8))
           {
-             _SET_STYLE(weight);
+             _SET_STYLE(weight, 8);
           }
         else if (!strncmp(name, ":width=", 7))
           {
-             _SET_STYLE(width);
+             _SET_STYLE(width, 7);
           }
         else if (!strncmp(name, ":spacing=", 9))
           {
-             _SET_STYLE(spacing);
+             _SET_STYLE(spacing, 9);
 #undef _SET_STYLE
           }
         else if (!strncmp(name, ":lang=", 6))
