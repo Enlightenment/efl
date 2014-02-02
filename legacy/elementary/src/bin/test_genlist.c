@@ -5,11 +5,6 @@
 #endif
 #include <Elementary.h>
 
-#define WEIGHT evas_object_size_hint_weight_set
-#define ALIGN_ evas_object_size_hint_align_set
-#define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
-#define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
-
 Evas_Object * _elm_min_set(Evas_Object *obj, Evas_Object *parent,
                            Evas_Coord w, Evas_Coord h);
 
@@ -3455,7 +3450,8 @@ _item_styles_list_create(Evas_Object *parent)
    int i = 0;
 
    list = elm_list_add(parent);
-   EXPAND(list); FILL(list);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    while (_genlist_styles[i])
      {
@@ -3478,7 +3474,7 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
-   EXPAND(box);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
@@ -3486,13 +3482,14 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(list);
 
    table = _elm_min_set(list, box, 200, 0);
-   WEIGHT(table, 0, EVAS_HINT_EXPAND);
-   FILL(table);
+   evas_object_size_hint_weight_set(table, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, table);
    evas_object_show(table);
 
    gl = elm_genlist_add(box);
-   EXPAND(gl); FILL(gl);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
     _genlist_renew(gl, "default");
    elm_box_pack_end(box, gl);
    evas_object_show(gl);

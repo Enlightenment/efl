@@ -5,11 +5,6 @@
 #endif
 #include <Elementary.h>
 
-#define WEIGHT evas_object_size_hint_weight_set
-#define ALIGN_ evas_object_size_hint_align_set
-#define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
-#define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
-
 static Elm_Gengrid_Item_Class *gic, *ggic;
 
 Evas_Object *grid_content_get(void *data, Evas_Object *obj, const char *part);
@@ -890,7 +885,8 @@ _gengrid_create(Evas_Object *obj, int items, const char *style)
         elm_gengrid_item_size_set(grid,
                                   elm_config_scale_get() * 150,
                                   elm_config_scale_get() * 150);
-        EXPAND(grid); FILL(grid);
+        evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
 
    ic = elm_gengrid_item_class_new();
@@ -929,7 +925,8 @@ _item_styles_list_create(Evas_Object *parent)
    Evas_Object *list;
 
    list = elm_list_add(parent);
-   EXPAND(list); FILL(list);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_list_item_append(list, "default", NULL, NULL,
                         _item_style_sel_cb, "default");
    elm_list_item_append(list, "default_style", NULL, NULL,
@@ -962,10 +959,12 @@ _elm_min_set(Evas_Object *obj, Evas_Object *parent, Evas_Coord w, Evas_Coord h)
 
    rect = evas_object_rectangle_add(evas_object_evas_get(table));
    evas_object_size_hint_min_set(rect, w, h);
-   EXPAND(rect); FILL(rect);
+   evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(table, rect, 0, 0, 1, 1);
 
-   EXPAND(obj); FILL(obj);
+   evas_object_size_hint_weight_set(obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(table, obj, 0, 0, 1, 1);
 
    return table;
@@ -982,7 +981,7 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
-   EXPAND(box);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
@@ -990,8 +989,8 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(list);
 
    table = _elm_min_set(list, box, 100, 0);
-   WEIGHT(table, 0, EVAS_HINT_EXPAND);
-   FILL(table);
+   evas_object_size_hint_weight_set(table, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, table);
    evas_object_show(table);
 

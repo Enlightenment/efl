@@ -3,11 +3,6 @@
 #endif
 #include <Elementary.h>
 
-#define WEIGHT evas_object_size_hint_weight_set
-#define ALIGN_ evas_object_size_hint_align_set
-#define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
-#define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
-
 #define BUTTON_TEXT_SET(BT, TEXT) \
    elm_object_text_set((BT), (TEXT)); \
    elm_object_tooltip_text_set((BT), (TEXT)); \
@@ -316,22 +311,22 @@ test_naviframe_complex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
-   EXPAND(box);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_horizontal_set(box, EINA_TRUE);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
    tb = elm_toolbar_add(win);
-   WEIGHT(tb, 0, EVAS_HINT_EXPAND);
-   FILL(tb);
+   evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_toolbar_horizontal_set(tb, EINA_FALSE);
    elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_box_pack_end(box, tb);
    evas_object_show(tb);
 
    nf = elm_naviframe_add(win);
-   EXPAND(nf);
-   FILL(nf);
+   evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(nf, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, nf);
    evas_object_show(nf);
 
@@ -339,7 +334,7 @@ test_naviframe_complex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
      {
         const char *label[] = { "View 1", "View 2", "View 3", "View 4" };
         o = elm_naviframe_add(win);
-        EXPAND(o);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
         btn = elm_button_add(o);
         evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
