@@ -73,8 +73,8 @@ test_flip_page.c \
 test_flipselector.c \
 test_floating.c \
 test_focus.c \
-test_focus2.c \
-test_focus3.c \
+test_focus_custom_chain.c \
+test_focus_style.c \
 test_gengrid.c \
 test_genlist.c \
 test_gesture_layer.c \

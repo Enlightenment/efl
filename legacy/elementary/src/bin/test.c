@@ -185,9 +185,9 @@ void test_cursor3(void *data, Evas_Object *obj, void *event_info);
 void test_cursor4(void *data, Evas_Object *obj, void *event_info);
 void test_focus(void *data, Evas_Object *obj, void *event_info);
 void test_focus2(void *data, Evas_Object *obj, void *event_info);
-void test_focus3(void *data, Evas_Object *obj, void *event_info);
-void test_focus4(void *data, Evas_Object *obj, void *event_info);
-void test_focus_custom(void *data, Evas_Object *obj, void *event_info);
+void test_focus_hide_del(void *data, Evas_Object *obj, void *event_info);
+void test_focus_custom_chain(void *data, Evas_Object *obj, void *event_info);
+void test_focus_style(void *data, Evas_Object *obj, void *event_info);
 void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
@@ -750,9 +750,9 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Focus", "Focus", test_focus);
    ADD_TEST(NULL, "Focus", "Focus 2", test_focus2);
-   ADD_TEST(NULL, "Focus", "Focus 3", test_focus3);
-   ADD_TEST(NULL, "Focus", "Focus 4", test_focus4);
-   ADD_TEST(NULL, "Focus", "Focus Custom", test_focus_custom);
+   ADD_TEST(NULL, "Focus", "Focus Hide/Del", test_focus_hide_del);
+   ADD_TEST(NULL, "Focus", "Focus Custom Chain", test_focus_custom_chain);
+   ADD_TEST(NULL, "Focus", "Focus Style", test_focus_style);
 
    //------------------------------//
    ADD_TEST(NULL, "Naviframe", "Naviframe", test_naviframe);

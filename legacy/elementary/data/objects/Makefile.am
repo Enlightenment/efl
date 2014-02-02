@@ -7,7 +7,7 @@ EDJE_CC_FLAGS += -id $(top_srcdir)/data/objects -fd $(top_srcdir)/data/objects
 
 filesdir = $(datadir)/elementary/objects
 
-files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb test_focus_custom.edj
+files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj test_prefs.edj test_prefs.epb test_focus_style.edj
 
 EXTRA_DIST = \
 test.edc \
@@ -19,7 +19,7 @@ cursors.edc \
 font_preview.edc \
 postit_ent.edc \
 multibuttonentry.edc \
-test_focus_custom.edc \
+test_focus_style.edc \
 over.png \
 under.png \
 sky.jpg \
@@ -81,10 +81,10 @@ test_prefs.epb: Makefile test_prefs.epc
 	$(top_srcdir)/data/objects/test_prefs.epc \
 	$(top_builddir)/data/objects/test_prefs.epb
 
-test_focus_custom.edj: Makefile test_focus_custom.edc
+test_focus_style.edj: Makefile test_focus_style.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \
-	$(top_srcdir)/data/objects/test_focus_custom.edc \
-	$(top_builddir)/data/objects/test_focus_custom.edj
+	$(top_srcdir)/data/objects/test_focus_style.edc \
+	$(top_builddir)/data/objects/test_focus_style.edj
 
 clean-local:
 	rm -f *.edj
