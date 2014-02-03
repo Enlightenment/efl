@@ -367,7 +367,7 @@ enum
 #define ELM_FILESELECTOR_INTERFACE_CHECK(obj, ...) \
   if (EINA_UNLIKELY(!eo_isa(obj, ELM_FILESELECTOR_INTERFACE))) \
     { \
-       ERR("The object (%p) doesn't implement the Elementary scrollable" \
+       ERR("The object (%p) doesn't implement the Elementary fileselector" \
             " interface", obj); \
        if (getenv("ELM_ERROR_ABORT")) abort(); \
        return __VA_ARGS__; \
