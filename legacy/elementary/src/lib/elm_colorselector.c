@@ -1372,6 +1372,14 @@ _item_resize(void *data EINA_UNUSED,
    elm_layout_sizing_eval(obj);
 }
 
+static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   elm_object_signal_emit(VIEW(it), emission, source);
+}
+
 static Elm_Color_Item *
 _item_new(Evas_Object *obj)
 {
@@ -1403,6 +1411,8 @@ _item_new(Evas_Object *obj)
    evas_object_event_callback_add
      (item->color_obj, EVAS_CALLBACK_MOUSE_UP, _on_color_released, item);
    elm_object_part_content_set(VIEW(item), "color_obj", item->color_obj);
+
+   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
 
    _item_sizing_eval(item);
    evas_object_show(VIEW(item));
