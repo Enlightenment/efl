@@ -277,8 +277,9 @@ EAPI void
 edje_thaw(void)
 {
 #ifdef FASTFREEZE
+   if (!_edje_freeze_val) return;
    _edje_freeze_val--;
-   if ((_edje_freeze_val <= 0) && (_edje_freeze_calc_count > 0))
+   if ((_edje_freeze_val == 0) && (_edje_freeze_calc_count > 0))
      {
         Edje *ed;
 
