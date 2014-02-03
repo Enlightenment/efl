@@ -557,7 +557,7 @@ test_focus2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
-/**** focus 3 ****/
+/**** focus hide/del ****/
 
 static Evas_Object *foc = NULL;
 

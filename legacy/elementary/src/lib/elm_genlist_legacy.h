@@ -631,15 +631,14 @@ EAPI void elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode m
 EAPI Elm_Object_Select_Mode elm_genlist_select_mode_get(const Evas_Object *obj);
 
 /**
- * Set whether the genlist items' should be highlighted when item selected.
+ * Set whether the genlist items should be highlighted on item selection.
  *
  * @param obj The genlist object.
  * @param highlight @c EINA_TRUE to enable highlighting or @c EINA_FALSE to
  * disable it.
  *
- * This will turn on/off the highlight effect when item selection and
- * they will, or will not highlighted. The selected and clicked
- * callback functions will still be called.
+ * This will turn on/off the highlight effect on item selection. The selected
+ * and clicked callback functions will still be called.
  *
  * Highlight is enabled by default.
  *
