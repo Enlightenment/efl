@@ -1261,8 +1261,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
                                                                (uint32_t *)&alpha_data_buffer, 4);
                       
                       if ((dst->pixman.im) && (dc->col.pixman_color_image))
-                        pixman_image_composite(PIXMAN_OP_OVER,
-                                               dc->col.pixman_color_image,
+                        pixman_image_composite(op, dc->col.pixman_color_image,
                                                aa_mask_image, dst->pixman.im,
                                                pix_x, pix_y, 0, 0,
                                                pix_x, pix_y, 1, 1);
@@ -1285,8 +1284,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
                                                                (uint32_t *)&alpha_data_buffer, 4);
                       
                       if ((dst->pixman.im) && (dc->col.pixman_color_image))
-                        pixman_image_composite(PIXMAN_OP_OVER,
-                                               dc->col.pixman_color_image,
+                        pixman_image_composite(op, dc->col.pixman_color_image,
                                                aa_mask_image, dst->pixman.im,
                                                pix_x, pix_y + 1, 0, 0,
                                                pix_x, pix_y + 1, 1, 1);
@@ -1354,8 +1352,7 @@ next_x:
                   aa_mask_image = pixman_image_create_bits(PIXMAN_a8, 1, 1, (uint32_t *)&alpha_data_buffer, 4);
                   
                   if ((dst->pixman.im) && (dc->col.pixman_color_image))
-                    pixman_image_composite(PIXMAN_OP_OVER,
-                                           dc->col.pixman_color_image,
+                    pixman_image_composite(op, dc->col.pixman_color_image,
                                            aa_mask_image, dst->pixman.im,
                                            pix_x, pix_y, 0, 0,
                                            pix_x, pix_y, 1, 1);
@@ -1377,12 +1374,11 @@ next_x:
                   alpha_data_buffer = aa;
                   aa_mask_image = pixman_image_create_bits(PIXMAN_a8, 1, 1, 
                                                            (uint32_t *)&alpha_data_buffer, 4);
-                  
+
                   if ((dst->pixman.im) && (dc->col.pixman_color_image))
-                       pixman_image_composite(PIXMAN_OP_OVER, 
-                                              dc->col.pixman_color_image, 
+                       pixman_image_composite(op, dc->col.pixman_color_image,
                                               aa_mask_image, dst->pixman.im,
-                                              pix_x + 1, pix_y, 0, 0, 
+                                              pix_x + 1, pix_y, 0, 0,
                                               pix_x + 1, pix_y, 1, 1);
                   else
 # endif
