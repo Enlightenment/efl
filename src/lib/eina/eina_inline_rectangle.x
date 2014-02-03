@@ -173,7 +173,7 @@ eina_rectangle_union(Eina_Rectangle *dst, const Eina_Rectangle *src)
 	}
 	/* right */
 	if ((dst->x + dst->w) < (src->x + src->w))
-		dst->w = src->x + src->w;
+		dst->w = src->x + src->w - dst->x;
 	/* top */
 	if (dst->y > src->y)
 	{
@@ -182,7 +182,7 @@ eina_rectangle_union(Eina_Rectangle *dst, const Eina_Rectangle *src)
 	}
 	/* bottom */
 	if ((dst->y + dst->h) < (src->y + src->h))
-		dst->h = src->y + src->h;
+		dst->h = src->y + src->h - dst->y;
 }
 
 /**
