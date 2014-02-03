@@ -73,6 +73,22 @@ evas_common_font_font_all_unload(void)
    evas_common_font_all_clear();
 }
 
+/* FIXME: This function should not be used. It's a short-cut fix that is meant
+ * to improve font fallback for in-theme fonts. It will break if we stop using
+ * freetype (unlikely) or do anything else fancy. */
+void *
+evas_common_font_freetype_face_get(RGBA_Font *font)
+{
+   RGBA_Font_Int *fi = font->fonts->data;
+
+   if (!fi)
+      return NULL;
+
+   evas_common_font_int_reload(fi);
+
+   return fi->src->ft.face;
+}
+
 EAPI int
 evas_common_font_instance_ascent_get(RGBA_Font_Int *fi)
 {

@@ -10,6 +10,7 @@
 
 #ifdef HAVE_FONTCONFIG
 #include <fontconfig/fontconfig.h>
+#include <fontconfig/fcfreetype.h>
 #endif
 
 #include "evas_common_private.h"
@@ -782,6 +783,33 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
           {
              font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend);
           }
+     }
+   else /* Add a fallback list from fontconfig according to the found font. */
+     {
+#if FC_MAJOR >= 2 && FC_MINOR >= 11
+	FcResult res;
+
+        FT_Face face = evas_common_font_freetype_face_get((RGBA_Font *) font);
+
+        if (face)
+          {
+             p_nm = FcFreeTypeQueryFace(face, (FcChar8 *) "", 0, NULL);
+             FcConfigSubstitute(fc_config, p_nm, FcMatchPattern);
+             FcDefaultSubstitute(p_nm);
+
+             /* do matching */
+             set = FcFontSort(fc_config, p_nm, FcTrue, NULL, &res);
+             if (!set)
+               {
+                  FcPatternDestroy(p_nm);
+                  p_nm = NULL;
+               }
+             else
+               {
+                  font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend);
+               }
+          }
+#endif
      }
 #endif
 

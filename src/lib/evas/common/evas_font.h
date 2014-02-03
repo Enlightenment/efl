@@ -21,6 +21,7 @@ EAPI int               evas_common_font_instance_max_descent_get      (RGBA_Font
 EAPI int               evas_common_font_instance_underline_position_get       (RGBA_Font_Int *fi);
 EAPI int               evas_common_font_instance_underline_thickness_get      (RGBA_Font_Int *fi);
 EAPI int               evas_common_font_get_line_advance     (RGBA_Font *fn);
+void *evas_common_font_freetype_face_get(RGBA_Font *font); /* XXX: Not EAPI on purpose. Not ment to be used in modules. */
 
 /* draw */
 typedef Eina_Bool (*Evas_Common_Font_Draw_Cb)(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, int im_w, int im_h);
