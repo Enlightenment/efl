@@ -243,7 +243,7 @@ EAPI void      elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime
 EAPI void      elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, int min, int max);
 
 /**
- * @brief Get the current value of a field.
+ * @brief Get the current value of a Datetime object.
  *
  * Year: years since 1900. Negative value represents year below 1900 (year
  * value -30 represents 1870). Year default range is from 70 to 137.
@@ -260,7 +260,7 @@ EAPI void      elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field
  * @param currtime Time structure.
  * @return EINA_TRUE if current time is returned successfully.
  *
- * @see elm_datetime_field_value_set()
+ * @see elm_datetime_value_set()
  * @ingroup Datetime
  */
 EAPI Eina_Bool elm_datetime_value_get(const Evas_Object *obj, struct tm *currtime);

@@ -1284,7 +1284,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_FIELD_VISIBLE_SET, "Set a field to be visible or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_FIELD_LIMIT_GET, "Get the field limits of a field."),
      EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_FIELD_LIMIT_SET, "Set the field limits of a field."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_VALUE_GET, "Get the current value of a field."),
+     EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_VALUE_GET, "Get the current value of a Datetime object."),
      EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_VALUE_SET, "Set the current value of a Datetime object."),
      EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_VALUE_MIN_GET, "Get the lower boundary of a field."),
      EO_OP_DESCRIPTION(ELM_OBJ_DATETIME_SUB_ID_VALUE_MIN_SET, "Set the lower boundary of a field."),

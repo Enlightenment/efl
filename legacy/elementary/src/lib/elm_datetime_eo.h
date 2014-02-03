@@ -118,7 +118,7 @@ enum
  * @def elm_obj_datetime_value_get
  * @since 1.8
  *
- * @brief Get the current value of a field.
+ * @brief Get the current value of a Datetime object.
  *
  * @param[in,out] currtime
  * @param[out] ret
