@@ -103,14 +103,13 @@ _field_list_display(Evas_Object *obj)
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
+   if (!dt_mod || !dt_mod->field_value_display) return;
+
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if (field->fmt_exist && field->visible)
-          {
-             if ((dt_mod) && (dt_mod->field_value_display))
-               dt_mod->field_value_display(sd->mod_data, field->item_obj);
-          }
+          dt_mod->field_value_display(sd->mod_data, field->item_obj);
      }
 }
 
@@ -326,6 +325,7 @@ _reload_format(Evas_Object *obj)
    _expand_format(dt_fmt);
 
    // reset all the fields to disable state
+   sd->enabled_field_count = 0;
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
@@ -335,6 +335,13 @@ _reload_format(Evas_Object *obj)
 
    field_count = _parse_format(obj, dt_fmt);
    free(dt_fmt);
+
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
+     {
+        field = sd->field_list + idx;
+        if (field->fmt_exist && field->visible)
+          sd->enabled_field_count++;
+     }
 
    // assign locations to disabled fields for uniform usage
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
@@ -495,20 +502,14 @@ _elm_datetime_smart_disable(Eo *obj, void *_pd, va_list *list)
 static void
 _elm_datetime_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   Datetime_Field *field;
    Evas_Coord minw = -1, minh = -1;
-   unsigned int idx, field_count = 0;
 
    Elm_Datetime_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
-     {
-        field = sd->field_list + idx;
-        if ((field->visible) && (field->fmt_exist)) field_count++;
-     }
-   if (field_count)
-     elm_coords_finger_size_adjust(field_count, &minw, 1, &minh);
+   if (sd->enabled_field_count)
+     elm_coords_finger_size_adjust(sd->enabled_field_count, &minw, 1, &minh);
+
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -835,8 +836,6 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    _field_list_init(obj);
    _reload_format(obj);
-
-   _field_list_arrange(obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
