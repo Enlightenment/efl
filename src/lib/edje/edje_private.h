@@ -2141,6 +2141,7 @@ void          _edje_var_list_str_insert(Edje *ed, int id, int n, const char *v);
 
 int           _edje_var_timer_add           (Edje *ed, double in, const char *fname, int val);
 void          _edje_var_timer_del           (Edje *ed, int id);
+void          _edje_var_timer_reset         (Edje *ed, int id);
 
 int           _edje_var_anim_add            (Edje *ed, double len, const char *fname, int val);
 void          _edje_var_anim_del            (Edje *ed, int id);

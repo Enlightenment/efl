@@ -647,7 +647,7 @@ _edje_embryo_fn_reset_timer(Embryo_Program *ep, Embryo_Cell *params)
    ed = embryo_program_data_get(ep);
    id = params[1];
    if (id <= 0) return 0;
-   _edje_var_timer_del(ed, id);
+   _edje_var_timer_reset(ed, id);
    return 0;
 }
 
