@@ -83,6 +83,7 @@ test_prefs.epb: Makefile test_prefs.epc
 
 test_focus_style.edj: Makefile test_focus_style.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) \
+	-id $(top_srcdir)/data/themes/img \
 	$(top_srcdir)/data/objects/test_focus_style.edc \
 	$(top_builddir)/data/objects/test_focus_style.edj
 

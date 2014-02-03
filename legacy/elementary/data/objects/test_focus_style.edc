@@ -386,4 +386,66 @@ collections {
          }
       } //programs ends
    } //group ends
+
+   group { name: "elm/layout/focus/example";
+      data.item: "focus_part" "focus_area";
+      parts {
+         part { name: "bg"; type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               color: 255 255 0 255;
+               min: 150 40;
+               max: 150 40;
+            }
+         }
+         part { name: "elm.text"; type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+               text.text: "layout";
+               text.size: 9;
+               color: 0 0 0 255;
+            }
+         }
+         part { name: "focus_area"; type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+               rel2.relative: 0 0;
+               align: 0 0;
+               min: 60 30;
+               max: 60 30;
+               fixed: 1 1;
+               color: 125 125 125 125;
+            }
+         }
+         part { name: "elm.text1"; type: TEXT;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "focus_area";
+               rel2.to: "focus_area";
+               text.text: "focus_part";
+               text.size: 9;
+               color: 255 0 255 255;
+            }
+         }
+      }
+   } //group ends
+
+// to customize check default style
+#include "../../data/themes/macros.edc"
+#include "../../data/themes/edc/elm/check.edc"
+   group { name: "elm/check/base/focus_text";
+      data.item: "focus_part" "elm.text";
+      inherit: "elm/check/base/default";
+   }
+
+// to customize button default style
+#include "../../data/themes/edc/elm/button.edc"
+   group { name: "elm/button/base/focus_icon";
+      data.item: "focus_part" "elm.swallow.content";
+      inherit: "elm/button/base/default";
+   }
 }

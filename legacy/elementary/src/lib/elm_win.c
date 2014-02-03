@@ -682,6 +682,38 @@ _elm_win_focus_highlight_visible_set(Elm_Win_Smart_Data *sd,
 }
 
 static void
+_elm_win_focus_highlight_geometry_get(Evas_Object *target, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Evas_Coord tx = 0, ty = 0, tw = 0, th = 0;
+   const char *target_hl_part = NULL;
+   Evas_Object *edje_obj = NULL;
+   ELM_WIDGET_DATA_GET_OR_RETURN(target, wd);
+
+   evas_object_geometry_get(target, x, y, w, h);
+   if (wd->resize_obj && eo_isa(wd->resize_obj, EDJE_OBJ_CLASS))
+     {
+        edje_obj = wd->resize_obj;
+        if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
+          return;
+     }
+   else if (wd->resize_obj && eo_isa(wd->resize_obj, ELM_OBJ_LAYOUT_CLASS))
+     {
+        printf("inside layout\n");
+        edje_obj = elm_layout_edje_get(wd->resize_obj);
+        if (!(target_hl_part = elm_layout_data_get(wd->resize_obj, "focus_part")))
+          return;
+     }
+   else return;
+
+   edje_object_part_geometry_get(edje_obj, target_hl_part,
+                                 &tx, &ty, &tw, &th);
+   *x += tx;
+   *y += ty;
+   if (tw != *w) *w = tw;
+   if (th != *h) *h = th;
+}
+
+static void
 _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
                                     Evas_Object *obj)
 {
@@ -692,8 +724,8 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
    Evas_Object *target = sd->focus_highlight.cur.target;
 
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
-   evas_object_geometry_get(target, &tx, &ty, &tw, &th);
-   evas_object_geometry_get(previous, &px, &py, &pw, &ph);
+   _elm_win_focus_highlight_geometry_get(target, &tx, &ty, &tw, &th);
+   _elm_win_focus_highlight_geometry_get(previous, &px, &py, &pw, &ph);
    evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
    evas_object_clip_unset(obj);
@@ -719,7 +751,7 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Smart_Data *sd,
    Evas_Coord x, y, w, h;
 
    clip = evas_object_clip_get(target);
-   evas_object_geometry_get(target, &x, &y, &w, &h);
+   _elm_win_focus_highlight_geometry_get(target, &x, &y, &w, &h);
 
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
