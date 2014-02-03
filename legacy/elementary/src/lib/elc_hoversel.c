@@ -216,24 +216,20 @@ _item_signal_emit_hook(Elm_Object_Item *it,
                        const char *emission,
                        const char *source)
 {
-   if (VIEW(it))
-     elm_object_signal_emit(VIEW(it), emission, source);
+   elm_object_signal_emit(VIEW(it), emission, source);
 }
 
 static void
 _item_style_set_hook(Elm_Object_Item *it,
                      const char *style)
 {
-   if (VIEW(it))
-     elm_object_style_set(VIEW(it), style);
+   elm_object_style_set(VIEW(it), style);
 }
 
 static const char *
 _item_style_get_hook(Elm_Object_Item *it)
 {
-   if (VIEW(it))
-     return elm_object_style_get(VIEW(it));
-   return NULL;
+   return elm_object_style_get(VIEW(it));
 }
 
 static Eina_Bool
