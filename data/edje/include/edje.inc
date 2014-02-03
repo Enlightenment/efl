@@ -60,6 +60,7 @@ native Float:fetch_float  (id, pos);
 /********************/
 native       timer       (Float:in, fname[], val);
 native       cancel_timer(id);
+native       reset_timer(id);
 
 /*******************/
 /* Edje anim calls */

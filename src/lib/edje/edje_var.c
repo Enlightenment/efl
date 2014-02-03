@@ -1022,6 +1022,16 @@ _edje_var_timer_del(Edje *ed, int id)
    free(et);
 }
 
+void
+_edje_var_timer_reset(Edje *ed, int id)
+{
+   Edje_Var_Timer *et;
+
+   et = _edje_var_timer_find(ed, id);
+   if (et)
+     ecore_timer_reset(et->timer);
+}
+
 int
 _edje_var_anim_add(Edje *ed, double len, const char *fname, int val)
 {

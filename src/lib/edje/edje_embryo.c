@@ -66,6 +66,7 @@
  * set_str(id, str[])
  * timer(Float:in, fname[], val)
  * cancel_timer(id)
+ * reset_timer(id)
  * anim(Float:len, fname[], val)
  * cancel_anim(id)
  * emit(sig[], src[])
@@ -623,6 +624,21 @@ _edje_embryo_fn_timer(Embryo_Program *ep, Embryo_Cell *params)
 /* cancel_timer(id) */
 static Embryo_Cell
 _edje_embryo_fn_cancel_timer(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int id;
+
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   id = params[1];
+   if (id <= 0) return 0;
+   _edje_var_timer_del(ed, id);
+   return 0;
+}
+
+/* reset_timer(id) */
+static Embryo_Cell
+_edje_embryo_fn_reset_timer(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int id;
@@ -3690,6 +3706,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 
    embryo_program_native_call_add(ep, "timer", _edje_embryo_fn_timer);
    embryo_program_native_call_add(ep, "cancel_timer", _edje_embryo_fn_cancel_timer);
+   embryo_program_native_call_add(ep, "reset_timer", _edje_embryo_fn_reset_timer);
 
    embryo_program_native_call_add(ep, "anim", _edje_embryo_fn_anim);
    embryo_program_native_call_add(ep, "cancel_anim", _edje_embryo_fn_cancel_anim);
