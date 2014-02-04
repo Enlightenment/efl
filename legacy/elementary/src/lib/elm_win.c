@@ -698,7 +698,6 @@ _elm_win_focus_highlight_geometry_get(Evas_Object *target, Evas_Coord *x, Evas_C
      }
    else if (wd->resize_obj && eo_isa(wd->resize_obj, ELM_OBJ_LAYOUT_CLASS))
      {
-        printf("inside layout\n");
         edje_obj = elm_layout_edje_get(wd->resize_obj);
         if (!(target_hl_part = elm_layout_data_get(wd->resize_obj, "focus_part")))
           return;
