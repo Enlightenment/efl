@@ -90,6 +90,7 @@
  * @author Anil Kumar Nahak <ak.nahak@@samsung.com>
  * @author Michal Jagiello <m.jagiello@@samsung.com>
  * @author Chinmaya Panigrahi <c.panigrahi@@samsung.com>
+ * @author Mohammad Irfan <mohammad.i@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.

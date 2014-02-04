@@ -32,6 +32,8 @@ struct _Elm_Spinner_Smart_Data
    int                   round;
    Ecore_Timer          *delay_change_timer; /*<< a timer for a delay,changed smart callback */
    Ecore_Timer          *spin_timer; /*<< a timer for a repeated spinner value change on mouse down */
+   Ecore_Timer          *longpress_timer; /*<< a timer to detect long press. After lonpress timeout,
+                                          start continuous change of values until mouse up */
    Eina_List            *special_values;
 
    Eina_Bool             entry_visible : 1;

@@ -323,16 +323,18 @@ _spin_value(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static void
-_val_inc_start(Evas_Object *obj)
+static Eina_Bool
+_val_inc_start(void *data)
 {
-   ELM_SPINNER_DATA_GET(obj, sd);
+   ELM_SPINNER_DATA_GET(data, sd);
 
    sd->interval = sd->first_interval;
    sd->spin_speed = sd->step;
+   sd->longpress_timer = NULL;
    ecore_timer_del(sd->spin_timer);
-   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, obj);
-   _spin_value(obj);
+   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
+   _spin_value(data);
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -345,16 +347,18 @@ _val_inc_stop(Evas_Object *obj)
    ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
 }
 
-static void
-_val_dec_start(Evas_Object *obj)
+static Eina_Bool
+_val_dec_start(void *data)
 {
-   ELM_SPINNER_DATA_GET(obj, sd);
+   ELM_SPINNER_DATA_GET(data, sd);
 
    sd->interval = sd->first_interval;
    sd->spin_speed = -sd->step;
+   sd->longpress_timer = NULL;
    ecore_timer_del(sd->spin_timer);
-   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, obj);
-   _spin_value(obj);
+   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
+   _spin_value(data);
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -381,7 +385,9 @@ _button_inc_start_cb(void *data,
         if ((sd->val_updated) && (sd->val == sd->val_min)) return;
         return;
      }
-   _val_inc_start(data);
+   ecore_timer_del(sd->longpress_timer);
+   sd->longpress_timer = ecore_timer_add
+            (_elm_config->longpress_timeout, _val_inc_start, data);
 }
 
 static void
@@ -390,6 +396,13 @@ _button_inc_stop_cb(void *data,
                     const char *emission EINA_UNUSED,
                     const char *source EINA_UNUSED)
 {
+    ELM_SPINNER_DATA_GET(data, sd);
+    if (sd->longpress_timer)
+      {
+         ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+         sd->spin_speed = sd->step;
+         _spin_value(data);
+      }
    _val_inc_stop(data);
 }
 
@@ -406,7 +419,9 @@ _button_dec_start_cb(void *data,
         _entry_value_apply(obj);
         if ((sd->val_updated) && (sd->val == sd->val_max)) return;
      }
-   _val_dec_start(data);
+   ecore_timer_del(sd->longpress_timer);
+   sd->longpress_timer = ecore_timer_add
+             (_elm_config->longpress_timeout, _val_dec_start, data);
 }
 
 static void
@@ -415,6 +430,13 @@ _button_dec_stop_cb(void *data,
                     const char *emission EINA_UNUSED,
                     const char *source EINA_UNUSED)
 {
+   ELM_SPINNER_DATA_GET(data, sd);
+   if (sd->longpress_timer)
+     {
+        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+        sd->spin_speed = -sd->step;
+        _spin_value(data);
+     }
    _val_dec_stop(data);
 }
 
