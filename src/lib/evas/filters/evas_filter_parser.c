@@ -1046,7 +1046,7 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "mask"), EINA_FALSE);
 
    /*
-   * mask [mask=]BUFFER [input=BUFFER] [output=BUFFER] [color=COLOR]
+   * mask [mask=]BUFFER [src=BUFFER] [dst=BUFFER] [color=COLOR]
    */
 
    instr->type = EVAS_FILTER_MODE_MASK;

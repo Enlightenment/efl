@@ -33,8 +33,9 @@ _smallest_pow2_larger_than(int val)
 # define DIVIDE_BY_DIAMETER(val) ((val) / diameter)
 #endif
 
-// Switch from Pascal Triangle based gaussian to Sine
-#define MAX_GAUSSIAN_RADIUS 5
+// Switch from Pascal Triangle based gaussian to Sine.
+// Gaussian is now disabled (because gauss and sine are too different)
+#define MAX_GAUSSIAN_RADIUS 0
 #if MAX_GAUSSIAN_RADIUS > 12
 # error Impossible value
 #endif
