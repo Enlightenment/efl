@@ -140,6 +140,12 @@ _ecore_x_selection_set(Window w,
    else
      return EINA_FALSE;
 
+   if (selections[in].data)
+     {
+        free(selections[in].data);
+        memset(&selections[in], 0, sizeof(Ecore_X_Selection_Intern));
+     }
+
    if (data)
      {
         selections[in].win = w;
@@ -151,11 +157,6 @@ _ecore_x_selection_set(Window w,
         if (!buf) return EINA_FALSE;
         memcpy(buf, data, size);
         selections[in].data = buf;
-     }
-   else if (selections[in].data)
-     {
-        free(selections[in].data);
-        memset(&selections[in], 0, sizeof(Ecore_X_Selection_Data));
      }
 
    return EINA_TRUE;

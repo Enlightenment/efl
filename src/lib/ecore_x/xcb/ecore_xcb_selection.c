@@ -624,6 +624,12 @@ _ecore_xcb_selection_set(Ecore_X_Window win,
    else
      return EINA_FALSE;
 
+   if (selections[in].data)
+     {
+        free(selections[in].data);
+        memset(&selections[in], 0, sizeof(Ecore_X_Selection_Intern));
+     }
+
    if (data)
      {
         unsigned char *buff = NULL;
@@ -637,11 +643,6 @@ _ecore_xcb_selection_set(Ecore_X_Window win,
         if (!buff) return EINA_FALSE;
         memcpy(buff, data, size);
         _selections[in].data = buff;
-     }
-   else if (_selections[in].data)
-     {
-        free(_selections[in].data);
-        memset(&_selections[in], 0, sizeof(Ecore_X_Selection_Data));
      }
 
    return EINA_TRUE;
