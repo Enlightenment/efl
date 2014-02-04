@@ -78,7 +78,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)1);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    ic = elm_icon_add(bx);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -91,7 +90,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)2);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -105,7 +103,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)3);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -118,7 +115,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)4);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Label Only");
@@ -142,7 +138,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)6);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
@@ -164,7 +159,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)8);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    ic = elm_icon_add(bx);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -178,7 +172,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)9);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -191,7 +184,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)10);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -207,7 +199,6 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)11);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   evas_object_show(ic);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
