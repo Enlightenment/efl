@@ -107,6 +107,7 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
+   elm_spinner_editable_set(sp, EINA_TRUE);
    evas_object_smart_callback_add(sp, "changed", _changed_cb, NULL);
    evas_object_smart_callback_add(sp, "delay,changed", _delay_changed_cb, NULL);
 
