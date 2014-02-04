@@ -247,6 +247,10 @@ img/downlight_glow_left.png \
 img/downlight_glow.png \
 img/downlight_glow_right.png \
 img/downlight_glow_up.png \
+img/efm_generic_icon_shadow.png \
+img/efm_generic_icon_base.png \
+img/efm_generic_icon_over.png \
+img/efm_generic_icon_content_audio.png \
 img/emo-angry.png \
 img/emo-angry-shout.png \
 img/emo-crazy-laugh.png \
