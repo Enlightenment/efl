@@ -48,7 +48,7 @@ _datetime_resize_cb(void *data, Evas *e EINA_UNUSED,Evas_Object *obj EINA_UNUSED
    Ctxpopup_Module_Data *ctx_mod;
 
    ctx_mod = (Ctxpopup_Module_Data *)data;
-   if (!ctx_mod) return;
+   if (!ctx_mod || !ctx_mod->ctxpopup) return;
 
    evas_object_hide(ctx_mod->ctxpopup);
 }
@@ -60,7 +60,7 @@ _datetime_move_cb(void *data, Evas *e EINA_UNUSED,Evas_Object *obj EINA_UNUSED,
    Ctxpopup_Module_Data *ctx_mod;
 
    ctx_mod = (Ctxpopup_Module_Data *)data;
-   if (!ctx_mod) return;
+   if (!ctx_mod || !ctx_mod->ctxpopup) return;
 
    evas_object_hide(ctx_mod->ctxpopup);
 }
@@ -135,13 +135,26 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Evas_Coord x = 0, y = 0, w = 0, h = 0, width;
 
    ctx_mod = (Ctxpopup_Module_Data *)data;
-   if (!ctx_mod || !ctx_mod->ctxpopup) return;
+   if (!ctx_mod) return;
+
+   snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(obj));
+
+   if (!ctx_mod->ctxpopup)
+     {
+        ctx_mod->ctxpopup = elm_ctxpopup_add(obj);
+        elm_object_style_set(ctx_mod->ctxpopup, buf);
+        elm_ctxpopup_horizontal_set(ctx_mod->ctxpopup, EINA_TRUE);
+        evas_object_size_hint_weight_set(ctx_mod->ctxpopup, EVAS_HINT_EXPAND,
+                                         EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(ctx_mod->ctxpopup, EVAS_HINT_FILL, 0.5);
+        evas_object_smart_callback_add(ctx_mod->ctxpopup, "dismissed",
+                                       _ctxpopup_dismissed_cb, ctx_mod);
+     }
 
    elm_ctxpopup_hover_parent_set(ctx_mod->ctxpopup, elm_widget_top_get(obj));
 
    // because of the diskselector behaviour, it is being recreated
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
-   snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(obj));
    elm_object_style_set(diskselector, buf);
    elm_object_content_set(ctx_mod->ctxpopup, diskselector);
 
@@ -314,20 +327,8 @@ EAPI Elm_Datetime_Module_Data *
 obj_hook(Evas_Object *obj)
 {
    Ctxpopup_Module_Data *ctx_mod;
-   char buf[BUFF_SIZE];
-
    ctx_mod = ELM_NEW(Ctxpopup_Module_Data);
    if (!ctx_mod) return NULL;
-
-   ctx_mod->ctxpopup = elm_ctxpopup_add(obj);
-   snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(obj));
-   elm_object_style_set(ctx_mod->ctxpopup, buf);
-   elm_ctxpopup_horizontal_set(ctx_mod->ctxpopup, EINA_TRUE);
-   evas_object_size_hint_weight_set(ctx_mod->ctxpopup, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ctx_mod->ctxpopup, EVAS_HINT_FILL, 0.5);
-   evas_object_smart_callback_add(ctx_mod->ctxpopup, "dismissed",
-                                  _ctxpopup_dismissed_cb, ctx_mod);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                   _datetime_resize_cb, ctx_mod);
