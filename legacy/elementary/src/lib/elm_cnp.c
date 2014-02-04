@@ -1752,12 +1752,12 @@ _x11_elm_cnp_selection_set(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type s
    evas_object_event_callback_add
      (sel->widget, EVAS_CALLBACK_DEL, _x11_sel_obj_del, sel);
 
+   ELM_SAFE_FREE(sel->selbuf, free);
    if (selbuf)
      {
         if (format == ELM_SEL_FORMAT_IMAGE)
           {
              // selbuf is actual image data, not text/string
-             ELM_SAFE_FREE(sel->selbuf, free);
              sel->selbuf = malloc(buflen + 1);
              if (!sel->selbuf)
                {
@@ -1770,8 +1770,6 @@ _x11_elm_cnp_selection_set(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type s
         else
           sel->selbuf = strdup((char*)selbuf);
      }
-   else
-     sel->selbuf = NULL;
 
    return EINA_TRUE;
 }
