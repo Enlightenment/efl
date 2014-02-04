@@ -659,3 +659,93 @@ test_focus_hide_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+/**** focus 3 ****/
+
+static Evas_Object *
+create_button(Evas_Object *parent, const char *text, Eina_Bool expand)
+{
+   Evas_Object *btn = elm_button_add(parent);
+   elm_object_text_set(btn, text);
+   if (expand)
+     {
+        evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+
+   evas_object_show(btn);
+
+   return btn;
+}
+
+void
+test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *sc, *btn_top, *btn_down, *btn[20], *box_btn, *lb, *fr;
+
+   char win_focus_theme[PATH_MAX] = { 0 };
+   char item_name[PATH_MAX];
+   int  i;
+
+   snprintf(win_focus_theme, sizeof(win_focus_theme), "%s/objects/test_focus_custom.edj", elm_app_data_dir_get());
+
+   elm_theme_extension_add(NULL, win_focus_theme);
+
+   win = elm_win_util_standard_add("focus3", "Focus 3");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+   elm_win_focus_highlight_style_set(win, "glow");
+   evas_object_resize(win, 320, 400);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   fr = elm_frame_add(box);
+   elm_object_text_set(fr, "Focus Check Points");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(fr);
+   elm_object_text_set(lb, "<align=left>This test cases list down the"
+                           " focus related check points for regression test.<br/>"
+                           " 1. Focus cut for the first/last item by scroller<br/>"
+                           " 2. Focus animation on the last item<br/>"
+                           " 3. Focus goes out of view port while scrolling<br/>"
+                           " 4. Sometimes focus moves but the area of focus does not change<br/>"
+                           "    e.g if focus is on 'top' and with down key it comes on Item1 <br/>"
+                           "    but the area is same as of top <br/>"
+                           " </align>");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+
+   btn_top = create_button(box, "top", EINA_FALSE);
+   elm_box_pack_end(box, btn_top);
+
+   sc = elm_scroller_add(box);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, sc);
+
+   box_btn = elm_box_add(sc);
+   evas_object_size_hint_weight_set(box_btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_content_set(sc, box_btn);
+   evas_object_show(box_btn);
+   evas_object_show(sc);
+
+   for (i = 0; i < 20; i++)
+     {
+        sprintf(item_name, "Item %d", i);
+        btn[i] = create_button(box_btn, item_name, EINA_TRUE);
+        elm_box_pack_end(box_btn, btn[i]);
+     }
+
+   btn_down = create_button(box, "down", EINA_FALSE);
+   evas_object_show(btn_down);
+   elm_box_pack_end(box, btn_down);
+
+   evas_object_show(win);
+}
+

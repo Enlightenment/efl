@@ -111,6 +111,7 @@ void test_genlist17(void *data, Evas_Object *obj, void *event_info);
 void test_genlist18(void *data, Evas_Object *obj, void *event_info);
 void test_genlist19(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_focus(void *data, Evas_Object *obj, void *event_info);
+void test_genlist_item_focus(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_item_styles(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_multi_select(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_del(void *data, Evas_Object *obj, void *event_info);
@@ -189,6 +190,7 @@ void test_focus_hide_del(void *data, Evas_Object *obj, void *event_info);
 void test_focus_custom_chain(void *data, Evas_Object *obj, void *event_info);
 void test_focus_style(void *data, Evas_Object *obj, void *event_info);
 void test_focus_part(void *data, Evas_Object *obj, void *event_info);
+void test_focus3(void *data, Evas_Object *obj, void *event_info);
 void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
@@ -641,6 +643,7 @@ add_tests:
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Tree and Decorate All Mode", test_genlist18);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Full Widget", test_genlist19);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Focus", test_genlist_focus);
+   ADD_TEST(NULL, "Lists - Genlist", "Genlist Item Focus", test_genlist_item_focus);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Item Styles", test_genlist_item_styles);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Multi Select", test_genlist_multi_select);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Del", test_genlist_del);
@@ -755,7 +758,8 @@ add_tests:
    ADD_TEST(NULL, "Focus", "Focus Custom Chain", test_focus_custom_chain);
    ADD_TEST(NULL, "Focus", "Focus Style", test_focus_style);
    ADD_TEST(NULL, "Focus", "Focus On Part", test_focus_part);
-
+   ADD_TEST(NULL, "Focus", "Focus 3", test_focus3);
+   
    //------------------------------//
    ADD_TEST(NULL, "Naviframe", "Naviframe", test_naviframe);
    ADD_TEST(NULL, "Naviframe", "Naviframe 2", test_naviframe2);

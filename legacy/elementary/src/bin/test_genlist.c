@@ -3781,3 +3781,93 @@ test_genlist_del(void *data EINA_UNUSED,
    evas_object_resize(win, 320, 500);
    evas_object_show(win);
 }
+
+void
+test_genlist_item_focus(void *data EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bx_horiz, *gl, *btn, *fr, *lb;
+   int i;
+
+   win = elm_win_util_standard_add("genlist-item-focus", "Genlist Item Focus");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx_horiz = elm_box_add(win);
+   elm_box_horizontal_set(bx_horiz, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx_horiz, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx_horiz);
+   evas_object_show(bx_horiz);
+
+   btn = elm_button_add(bx_horiz);
+   elm_object_text_set(btn, "Left");
+   elm_box_pack_end(bx_horiz, btn);
+   evas_object_show(btn);
+
+   bx = elm_box_add(bx_horiz);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_horiz, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Genlist Item Focus");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(fr);
+   elm_object_text_set(lb, "<align=left>This test cases list down the"
+                           " focus check points related to genlist items.<br/>"
+                           "   1. No focus highlight on widget items<br/>"
+                           "   2. No animation on widget item<br/>"
+                           "   3. No focus movement between widget to widget items<br/>"
+                           "   </align>");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Up");
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   gl = elm_genlist_add(bx);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+   elm_object_focus_set(gl, EINA_TRUE);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Down");
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(bx_horiz);
+   elm_object_text_set(btn, "Right");
+   elm_box_pack_end(bx_horiz, btn);
+   evas_object_show(btn);
+
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del = NULL;
+
+   for (i = 0; i < 50; i++)
+     {
+        elm_genlist_item_append(gl, itc1,
+                                (void *)(uintptr_t)i/* item data */,
+                                NULL/* parent */,
+                                ELM_GENLIST_ITEM_NONE,
+                                gl_sel/* func */,
+                                (void *)(uintptr_t)(i * 10)/* func data */);
+     }
+   elm_genlist_item_class_free(itc1);
+
+   evas_object_resize(win, 320, 450);
+   evas_object_show(win);
+}
+
