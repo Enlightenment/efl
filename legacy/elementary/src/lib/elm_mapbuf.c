@@ -96,8 +96,6 @@ _configure(Evas_Object *obj)
    ELM_MAPBUF_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   static Evas_Map *m = NULL;
-
    if (!sd->content) return;
    if (sd->enabled && !evas_object_visible_get(obj)) return;
 
@@ -107,17 +105,18 @@ _configure(Evas_Object *obj)
 
    if (sd->enabled)
      {
-        if (!m) m = evas_map_new(4);
-        evas_map_util_points_populate_from_geometry(m, x, y, w, h, 0);
+        if (!sd->map) sd->map = evas_map_new(4);
+        evas_map_util_points_populate_from_geometry(sd->map, x, y, w, h, 0);
         for (i = 0; i < (int)(sizeof(sd->colors)/sizeof(sd->colors[0])); i++)
           {
-             evas_map_point_color_set(m, i, sd->colors[i].r, sd->colors[i].g,
-                                      sd->colors[i].b, sd->colors[i].a);
+             evas_map_point_color_set(sd->map, i, sd->colors[i].r,
+                                      sd->colors[i].g, sd->colors[i].b,
+                                      sd->colors[i].a);
           }
 
-        evas_map_smooth_set(m, sd->smooth);
-        evas_map_alpha_set(m, sd->alpha);
-        evas_object_map_set(sd->content, m);
+        evas_map_smooth_set(sd->map, sd->smooth);
+        evas_map_alpha_set(sd->map, sd->alpha);
+        evas_object_map_set(sd->content, sd->map);
         evas_object_map_enable_set(sd->content, EINA_TRUE);
      }
    else
@@ -276,6 +275,17 @@ _elm_mapbuf_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
+_elm_mapbuf_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Mapbuf_Smart_Data *priv = _pd;
+
+   ELM_SAFE_FREE(priv->idler, ecore_idler_del);
+   ELM_SAFE_FREE(priv->map, evas_map_free);
+
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+}
+
+static void
 _elm_mapbuf_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Elm_Mapbuf_Smart_Data *priv = _pd;
@@ -323,16 +333,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY));
-}
-
-static void
-_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Mapbuf_Smart_Data *priv = _pd;
-
-   ELM_SAFE_FREE(priv->idler, ecore_idler_del);
-
-   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EAPI void
@@ -573,9 +573,9 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_mapbuf_smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_mapbuf_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_mapbuf_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_mapbuf_smart_move),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_mapbuf_smart_show),

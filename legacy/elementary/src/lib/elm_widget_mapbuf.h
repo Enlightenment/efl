@@ -23,6 +23,7 @@ struct _Elm_Mapbuf_Smart_Data
    Evas_Object          *self;
    Evas_Object          *content;
    Ecore_Idler          *idler;
+   Evas_Map             *map;
    struct
      {
         int r, g, b, a;
