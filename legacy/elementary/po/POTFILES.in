@@ -23,8 +23,9 @@
 ./src/bin/test_flip.c
 ./src/bin/test_flipselector.c
 ./src/bin/test_floating.c
-./src/bin/test_focus2.c
 ./src/bin/test_focus.c
+./src/bin/test_focus_custom_chain.c
+./src/bin/test_focus_style.c
 ./src/bin/test_gengrid.c
 ./src/bin/test_genlist.c
 ./src/bin/test_hover.c
