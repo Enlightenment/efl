@@ -693,10 +693,11 @@ _field_format_get(Evas_Object *obj,
 {
    Datetime_Field *field;
 
+   if (field_type > ELM_DATETIME_AMPM) return NULL;
+
    ELM_DATETIME_DATA_GET(obj, sd);
 
    field = sd->field_list + field_type;
-   if (!field) return NULL;
 
    return field->fmt;
 }
@@ -711,10 +712,11 @@ _field_limit_get(Evas_Object *obj,
    Datetime_Field *field;
    unsigned int idx;
 
+   if (field_type > ELM_DATETIME_AMPM) return;
+
    ELM_DATETIME_DATA_GET(obj, sd);
 
    field = sd->field_list + field_type;
-   if (!field) return;
 
    min = field->min;
    max = field->max;
