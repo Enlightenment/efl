@@ -383,7 +383,6 @@ _button_inc_start_cb(void *data,
      {
         _entry_value_apply(obj);
         if ((sd->val_updated) && (sd->val == sd->val_min)) return;
-        return;
      }
    ecore_timer_del(sd->longpress_timer);
    sd->longpress_timer = ecore_timer_add
