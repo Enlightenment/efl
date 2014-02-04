@@ -1450,7 +1450,9 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
    if (!ctx->gl_engine)
      {
         ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
-        evas_filter_command_blend_add(ctx, draw_context, 2, ctx->target.bufid,
+        evas_filter_command_blend_add(ctx, draw_context,
+                                      EVAS_FILTER_BUFFER_OUTPUT_ID,
+                                      ctx->target.bufid,
                                       x, y, EVAS_FILTER_FILL_MODE_NONE);
      }
    else
@@ -1468,7 +1470,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
         target->glimage = target->backing;
         target->backing = NULL;
 
-        image = _filter_buffer_get(ctx, 2);
+        image = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
         im = image->backing;
         image->glimage = ENFN->image_new_from_data
           (ENDT, image->w, image->h, im->image.data, EINA_TRUE, im->cache_entry.space);
@@ -1491,7 +1493,7 @@ _filter_target_render(Evas_Filter_Context *ctx)
    if (!ctx->gl_engine) return EINA_FALSE;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(ctx->target.bufid, EINA_FALSE);
 
-   src = _filter_buffer_get(ctx, 2);
+   src = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
    if (!src) return EINA_FALSE;
 
    dst = _filter_buffer_get(ctx, ctx->target.bufid);

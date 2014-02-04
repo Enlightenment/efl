@@ -23,6 +23,9 @@ typedef void (* Evas_Filter_Cb) (Evas_Filter_Context *ctx, void *data);
 #define EVAS_FILTER_BUFFER_RGBA  EINA_FALSE
 #define EVAS_FILTER_BUFFER_ALPHA EINA_TRUE
 
+#define EVAS_FILTER_BUFFER_INPUT_ID  1
+#define EVAS_FILTER_BUFFER_OUTPUT_ID 2
+
 enum _Evas_Filter_Mode
 {
    EVAS_FILTER_MODE_BLEND,        /**< Blend with current context render_op */

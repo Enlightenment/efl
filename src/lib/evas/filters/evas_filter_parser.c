@@ -1704,13 +1704,8 @@ _instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
           channel = EVAS_FILTER_CHANNEL_ALPHA;
      }
 
-   if (interpolation)
-     {
-        if (!strcasecmp(interpolation, "none"))
-          mode = EVAS_FILTER_INTERPOLATION_MODE_NONE;
-        else if (!strcasecmp(interpolation, "cubic"))
-          mode = EVAS_FILTER_INTERPOLATION_MODE_CUBIC;
-     }
+   if (interpolation && !strcasecmp(interpolation, "none"))
+     mode = EVAS_FILTER_INTERPOLATION_MODE_NONE;
 
    if (!points_str) goto interpolated;
    copy = strdup(points_str);

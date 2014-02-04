@@ -163,8 +163,7 @@ struct _Evas_Filter_Buffer
 enum _Evas_Filter_Interpolation_Mode
 {
    EVAS_FILTER_INTERPOLATION_MODE_NONE,
-   EVAS_FILTER_INTERPOLATION_MODE_LINEAR,
-   EVAS_FILTER_INTERPOLATION_MODE_CUBIC
+   EVAS_FILTER_INTERPOLATION_MODE_LINEAR
 };
 
 void                     evas_filter_context_clear(Evas_Filter_Context *ctx);

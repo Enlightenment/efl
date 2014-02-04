@@ -105,13 +105,6 @@ _interpolate_linear(DATA8 *output, DATA8 *points, int point_count)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_interpolate_cubic(DATA8 *output, DATA8 *points, int point_count)
-{
-   CRI("Not implemented yet");
-   return EINA_FALSE;
-}
-
 Eina_Bool
 evas_filter_interpolate(DATA8 *output, DATA8 *points, int point_count,
                         Evas_Filter_Interpolation_Mode mode)
@@ -120,8 +113,6 @@ evas_filter_interpolate(DATA8 *output, DATA8 *points, int point_count,
      {
       case EVAS_FILTER_INTERPOLATION_MODE_NONE:
         return _interpolate_none(output, points, point_count);
-      case EVAS_FILTER_INTERPOLATION_MODE_CUBIC:
-        return _interpolate_cubic(output, points, point_count);
       case EVAS_FILTER_INTERPOLATION_MODE_LINEAR:
       default:
         return _interpolate_linear(output, points, point_count);
