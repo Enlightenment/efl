@@ -155,6 +155,7 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    // because of the diskselector behaviour, it is being recreated
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
+   evas_object_smart_callback_add(diskselector, "clicked", _diskselector_cb, NULL);
    elm_object_style_set(diskselector, buf);
    elm_object_content_set(ctx_mod->ctxpopup, diskselector);
 
@@ -193,7 +194,6 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
              disk_data->sel_field_type = field_type;
              disk_data->sel_field_value = idx;
              item = elm_diskselector_item_append(diskselector, label, NULL, NULL, disk_data);
-             evas_object_smart_callback_add(diskselector, "clicked", _diskselector_cb, NULL);
              elm_object_item_del_cb_set(item, _diskselector_item_free_cb);
           }
      }
