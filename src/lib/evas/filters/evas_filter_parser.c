@@ -1221,6 +1221,11 @@ _instruction_buffer_parse(Evas_Filter_Program *pgm, char *command)
           alpha = EINA_FALSE;
         else if (!strcasecmp(tok2, "alpha"))
           alpha = EINA_TRUE;
+        else if (!strncasecmp("src=", tok2, 4))
+          {
+             src = tok2 + 4;
+             alpha = EINA_FALSE;
+          }
         else
           PARSE_CHECK(!"Invalid buffer type");
      }
