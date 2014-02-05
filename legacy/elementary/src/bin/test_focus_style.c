@@ -174,3 +174,60 @@ test_focus_part(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+void
+test_focus_object_style(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *fr, *bx, *bt;
+   char win_focus_theme[PATH_MAX] = { 0 };
+
+   snprintf(win_focus_theme, sizeof(win_focus_theme), "%s/objects/test_focus_custom.edj", elm_app_data_dir_get());
+   elm_theme_extension_add(NULL, win_focus_theme);
+
+   win = elm_win_util_standard_add("object-focus-style", "Object Focus Style");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, fr);
+   elm_object_style_set(fr, "pad_large");
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   bt = elm_button_add(bx);
+   elm_object_text_set(bt, "Button 1");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx);
+   elm_object_text_set(bt, "Button 2");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx);
+   elm_object_text_set(bt, "Button Glow In Focus Style");
+   elm_object_focus_highlight_style_set(bt, "glow");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx);
+   elm_object_text_set(bt, "Button 4");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}

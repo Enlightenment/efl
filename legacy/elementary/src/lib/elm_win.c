@@ -767,6 +767,8 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    Eina_Bool visible_changed;
    Eina_Bool common_visible;
    const char *sig = NULL;
+   const char *focus_style_target = NULL;
+   const char *focus_style_previous = NULL;
 
    _elm_win_focus_highlight_reconfigure_job_stop(sd);
 
@@ -801,13 +803,21 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
      goto the_end;
 
-   if (sd->focus_highlight.theme_changed)
+   focus_style_previous = elm_widget_focus_highlight_style_get(previous);
+   focus_style_target = elm_widget_focus_highlight_style_get(target);
+
+   if (sd->focus_highlight.theme_changed ||
+       (focus_style_target != focus_style_previous))
      {
         const char *str;
-        if (sd->focus_highlight.style)
+
+        if (focus_style_target)
+          str = focus_style_target;
+        else if (sd->focus_highlight.style)
           str = sd->focus_highlight.style;
         else
           str = "default";
+
         elm_widget_theme_object_set
           (sd->obj, fobj, "focus_highlight", "top", str);
         sd->focus_highlight.theme_changed = EINA_FALSE;

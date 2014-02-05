@@ -284,3 +284,36 @@ EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina
  * @ingroup Focus
  */
 EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj);
+
+/**
+ * Set the focus highlight style to be used by a given widget.
+ *
+ * @param obj The Elementary widget for which focus style needs to be set.
+ * @param style The name of the focus style to use on it.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @note This overrides the style which is set 
+ * by elm_win_focus_highlight_style_set().
+ *
+ * @see elm_object_focus_highlight_style_get
+ *
+ * @since 1.9
+ *
+ * @ingroup Focus
+ */
+EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const char *style);
+
+/**
+ * Get the focus highlight style to be used by a given widget.
+ * 
+ * @param obj The Elementary widget to query for its focus highlight style.
+ * @return The focus highlight style name used by widget.
+ *
+ * @see elm_object_focus_highlight_style_set()
+ *
+ * @since 1.9
+ *
+ * @ingroup Focus
+ */
+EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
+

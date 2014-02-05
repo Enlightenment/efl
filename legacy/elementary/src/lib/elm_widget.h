@@ -395,6 +395,7 @@ typedef struct _Elm_Widget_Smart_Data
    double                        scale;
    Elm_Theme                    *theme;
    const char                   *style;
+   const char                   *focus_highlight_style;  /**< custom focus style for a widget */
    const char                   *access_info;
    unsigned int                  focus_order;
    Eina_Bool                     focus_order_on_calc;
@@ -643,6 +644,8 @@ EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *ob
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
 EAPI Evas_Object     *elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI void             elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
+EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style);
+EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
@@ -1216,6 +1219,8 @@ enum
    ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET,
    ELM_WIDGET_SUB_ID_FOCUS_REGION_GET,
    ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW,
+   ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET,
+   ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET,
 
    ELM_WIDGET_SUB_ID_THEME_OBJECT_SET,
    ELM_WIDGET_SUB_ID_ORIENTATION_SET,
@@ -2316,6 +2321,27 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_focus_region_show() ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW)
+
+/**
+ * @def elm_wdg_focus_highlight_style_set
+ * @since 1.9
+ *
+ * This function set the widget focus highlight style. 
+ *
+ * @param[in] style
+ * @param[out] ret
+ */
+#define elm_wdg_focus_highlight_style_set(style, ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET), EO_TYPECHECK(const char *, style), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_focus_highlight_style_get
+ * @since 1.9
+ *
+ * This function returns the widget focus highlight style.
+ *
+ * @param[out] ret
+ */
+#define elm_wdg_focus_highlight_style_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET), EO_TYPECHECK(const char **, ret)
 
 /**
  * @def elm_wdg_theme_object_set

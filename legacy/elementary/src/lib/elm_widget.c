@@ -650,6 +650,46 @@ _elm_widget_focus_region_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
      }
 }
 
+EAPI Eina_Bool
+elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style)
+{
+   ELM_WIDGET_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(obj, elm_wdg_focus_highlight_style_set(style, &ret));
+   return ret;
+}
+
+static void
+_elm_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *style = va_arg(*list, const char *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+   Elm_Widget_Smart_Data *sd = _pd;
+   if (eina_stringshare_replace(&sd->focus_highlight_style, style))
+     {
+        if (ret) *ret = EINA_TRUE;
+        return;
+     }
+}
+
+EAPI const char *
+elm_widget_focus_highlight_style_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_CHECK(obj) NULL;
+   const char *ret = NULL;
+   eo_do((Eo *) obj, elm_wdg_focus_highlight_style_get(&ret));
+   return ret;
+}
+
+static void
+_elm_widget_focus_highlight_style_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char **ret = va_arg(*list, const char **);
+   Elm_Widget_Smart_Data *sd = _pd;
+   *ret = sd->focus_highlight_style;
+}
+
 static void
 _parent_focus(Evas_Object *obj)
 {
@@ -6424,6 +6464,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET), _elm_widget_focus_order_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET), _elm_widget_focus_region_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW), _elm_widget_focus_region_show),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET), _elm_widget_focus_highlight_style_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET), _elm_widget_focus_highlight_style_get),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET), _elm_widget_theme_object_set),
 
@@ -6472,7 +6514,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_NEXT, "'Virtual' function handling passing focus to sub-objects."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS, "'Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION,"'Virtual' function handling passing focus to sub-objects given a direction, in degrees."),
-     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD, "'Virtual' function handling sub objects being added."),
+	 EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SUB_OBJECT_ADD, "'Virtual' function handling sub objects being added."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL, "'Virtual' function handling sub objects being removed."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ACCESS, "'Virtual' function on the widget being set access."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PARENT_SET, "'Virtual' function handling parent widget attachment to new object."),
@@ -6572,6 +6614,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_ORDER_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_REGION_GET, "Get the focus region of the given widget."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_REGION_SHOW, "Show the focus region of the given widget."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_SET, "Function to set the focus highlight style."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_STYLE_GET, "Function to get the focus highlight style."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_THEME_OBJECT_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ORIENTATION_SET, "description here"),
