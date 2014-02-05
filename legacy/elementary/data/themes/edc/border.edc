@@ -20,34 +20,8 @@ group { name: "e/widgets/border/default/border";
    images.image: "glow_round_corners_small.png" COMP;
    images.image: "knob_round_small_busy.png" COMP;
    images.image: "screen_circular_shadow.png" COMP;
-   images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
    parts {
-      part { name: "shadow_clip"; type: RECT; mouse_events: 0;
-         description { state: "default";
-            rel1.to: "shadow";
-            rel2.to: "shadow";
-         }
-         description { state: "hidden";
-            visible: 0;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0; clip_to: "shadow_clip";
-         description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            rel1.to: "top";
-            rel1.offset: -7 -3;
-            rel2.to: "bottom";
-            rel2.offset: 6 11;
-            fill.smooth: 0;
-         }
-         description { state: "shaded";
-            inherit: "default";
-            rel2.to: "top";
-         }
-      }
       part { name: "client_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to_y: "e.swallow.client";
@@ -538,16 +512,6 @@ group { name: "e/widgets/border/default/border";
    }
    programs {
       program {
-         signal: "e,state,shadow,on"; source: "e";
-         action: STATE_SET "default" 0.0;
-         target: "shadow_clip";
-      }
-      program {
-         signal: "e,state,shadow,off"; source: "e";
-         action: STATE_SET "hidden" 0.0;
-         target: "shadow_clip";
-      }
-      program {
          signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
          target: "top";
@@ -623,15 +587,10 @@ group { name: "e/widgets/border/default/border";
          action: STATE_SET "default" 0.0;
          target: "knob_spinner";
       }
-      program { name: "shade_hide";
-         action: STATE_SET "hidden" 0.0;
-         target: "client_clip";
-      }
       program {
          signal: "e,state,shaded"; source: "e";
-         action: STATE_SET "shaded" 0.0;
-         target: "shadow";
-         after: "shade_hide";
+         action: STATE_SET "hidden" 0.0;
+         target: "client_clip";
          after: "shading";
       }
       program { name: "shading";
@@ -659,7 +618,6 @@ group { name: "e/widgets/border/default/border";
          signal: "e,state,unshading"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.client";
-         target: "shadow";
          target: "client_clip";
       }
 //      program {
