@@ -27,6 +27,7 @@ enum
    ELM_OBJ_ENTRY_SUB_ID_EDITABLE_GET,
    ELM_OBJ_ENTRY_SUB_ID_SELECT_NONE,
    ELM_OBJ_ENTRY_SUB_ID_SELECT_ALL,
+   ELM_OBJ_ENTRY_SUB_ID_SELECT_REGION_SET,
    ELM_OBJ_ENTRY_SUB_ID_CURSOR_GEOMETRY_GET,
    ELM_OBJ_ENTRY_SUB_ID_CURSOR_NEXT,
    ELM_OBJ_ENTRY_SUB_ID_CURSOR_PREV,
@@ -393,6 +394,21 @@ enum
  * @ingroup Entry
  */
 #define elm_obj_entry_select_all() ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_ALL)
+
+/**
+ * @def elm_obj_entry_select_region_set
+ * @since 1.9
+ *
+ * This selects a region of text within the entry.
+ *
+ * @param[in] start
+ * @param[in] end
+ *
+ * @see elm_entry_select_region_set
+ *
+ * @ingroup Entry
+ */
+#define elm_obj_entry_select_region_set(start, end) ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_REGION_SET), EO_TYPECHECK(int, start), EO_TYPECHECK(int, end)
 
 /**
  * @def elm_obj_entry_cursor_geometry_get

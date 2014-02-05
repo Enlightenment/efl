@@ -658,6 +658,13 @@ my_ent_bt_non(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 }
 
 static void
+my_ent_bt_region(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_select_region_set(en, 10, 16);
+}
+
+static void
 my_ent_bt_ins(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
@@ -927,6 +934,16 @@ test_entry3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Non");
    evas_object_smart_callback_add(bt, "clicked", my_ent_bt_non, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, EINA_FALSE);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Region");
+   evas_object_smart_callback_add(bt, "clicked", my_ent_bt_region, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);

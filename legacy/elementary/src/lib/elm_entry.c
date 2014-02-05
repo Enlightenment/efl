@@ -4018,6 +4018,36 @@ _select_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    edje_object_part_text_select_all(sd->entry_edje, "elm.text");
 }
 
+EAPI void
+elm_entry_select_region_set(Evas_Object *obj, int start, int end)
+{
+   ELM_ENTRY_CHECK(obj);
+   eo_do(obj, elm_obj_entry_select_region_set(start, end));
+}
+
+static void
+_select_region_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Entry_Smart_Data *sd = _pd;
+   int start = va_arg(*list, int);
+   int end = va_arg(*list, int);
+
+   if ((sd->password)) return;
+   if (sd->sel_mode)
+     {
+        sd->sel_mode = EINA_FALSE;
+        if (!_elm_config->desktop_entry)
+          edje_object_part_text_select_allow_set
+            (sd->entry_edje, "elm.text", EINA_FALSE);
+        edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+     }
+
+   edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, start);
+   edje_object_part_text_select_begin(sd->entry_edje, "elm.text");
+   edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, end);
+   edje_object_part_text_select_extend(sd->entry_edje, "elm.text");
+}
+
 EAPI Eina_Bool
 elm_entry_cursor_geometry_get(const Evas_Object *obj,
                               Evas_Coord *x,
@@ -5880,6 +5910,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_EDITABLE_GET), _editable_get),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_NONE), _select_none),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_ALL), _select_all),
+        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_REGION_SET), _select_region_set),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_GEOMETRY_GET), _cursor_geometry_get),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_NEXT), _cursor_next),
         EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_PREV), _cursor_prev),
@@ -5979,6 +6010,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_EDITABLE_GET, "Get whether the entry is editable or not."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECT_NONE, "This drops any existing text selection within the entry."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECT_ALL, "This selects all text within the entry."),
+     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECT_REGION_SET, "This selects a region of text within the entry."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_GEOMETRY_GET, "This function returns the geometry of the cursor."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_NEXT, "This moves the cursor one place to the right within the entry."),
      EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_PREV, "This moves the cursor one place to the left within the entry."),

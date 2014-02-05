@@ -348,6 +348,17 @@ EAPI void               elm_entry_select_none(Evas_Object *obj);
 EAPI void               elm_entry_select_all(Evas_Object *obj);
 
 /**
+ * This selects a region of text within the entry.
+ *
+ * @param obj The entry object
+ * @param start The starting position
+ * @param end The end position
+ *
+ * @ingroup Entry
+ */
+EAPI void               elm_entry_select_region_set(Evas_Object *obj, int start, int end);
+
+/**
  * This function returns the geometry of the cursor.
  *
  * It's useful if you want to draw something on the cursor (or where it is),
