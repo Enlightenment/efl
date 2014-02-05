@@ -364,7 +364,7 @@ _slice_light(Elm_Flip_Smart_Data *sd EINA_UNUSED,
                              255, 255, 255, // light color
                              0, 0, 0);   // ambient minimum
 
-   // multiply brightness by 1.2 to make lightish bits all white so we dont
+   // multiply brightness by 1.2 to make lightish bits all white so we don't
    // add shading where we could otherwise be pure white
    for (i = 0; i < 4; i++)
      {
@@ -649,7 +649,7 @@ _state_update(Evas_Object *obj)
    //--//
    rhol = -(n * M_PI);
 
-   // theta == curliness (how much page culrs in on itself
+   // theta == curliness (how much page curls in on itself
    n = sin((1.0 - perc) * M_PI);
    n = n * 1.2;
    theta = 7.86 + n;
