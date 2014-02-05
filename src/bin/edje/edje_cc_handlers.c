@@ -7314,6 +7314,13 @@ static void
 st_collections_group_parts_part_description_text_filter(void)
 {
    Edje_Part_Description_Text *ed;
+   Eina_List *sources = NULL;
+   Eina_Stringshare *name;
+   char *token, *code;
+   Eina_Bool valid = EINA_TRUE;
+
+   static const char *allowed_name_chars =
+         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
 
    check_arg_count(1);
 
@@ -7325,8 +7332,62 @@ st_collections_group_parts_part_description_text_filter(void)
      }
 
    ed = (Edje_Part_Description_Text*) current_desc;
+   ed->text.filter_sources = NULL;
 
    ed->text.filter.str = parse_str(0);
+   if (!ed->text.filter.str) return;
+
+   // Parse list of buffers that have a source
+   // note: does not support comments
+   code = strdup(ed->text.filter.str);
+   for (token = strtok(code, ";"); token; token = strtok(NULL, ";"))
+     {
+        size_t len;
+
+        len = strspn(token, " \n\t");
+        token += len;
+
+        if (!strncasecmp("buffer", token, 6))
+          {
+             // note: a valid string won't necessary compile at runtime
+
+             token = strchr(token, ':');
+             if (!token)
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token = strchr(token, '(');
+             if (!token)
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token = strcasestr(token, "src");
+             if (!token) continue;
+             token += 3;
+             len = strspn(token, " =\n\t");
+             if (!len || !token[len])
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token += len;
+             len = strspn(token, allowed_name_chars);
+             if (!len || !token[len])
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token[len] = '\0';
+             name = eina_stringshare_add(token);
+
+             sources = eina_list_append(sources, name);
+          }
+     }
+   free(code);
+
+   if (valid) ed->text.filter_sources = sources;
 }
 
 

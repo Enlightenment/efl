@@ -169,7 +169,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    char		*font2 = NULL;
    char         *sfont = NULL;
    int		 size;
-   const char   *filter;
+   const char   *filter, *source_name;
+   Eina_List    *filter_sources = NULL, *prev_sources = NULL, *li;
    Evas_Coord	 tw, th;
    Evas_Coord	 sw, sh;
    int		 inlined_font = 0, free_text = 0;
@@ -188,6 +189,12 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->typedata.text->font) font = ep->typedata.text->font;
    if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
    if (ep->typedata.text->filter) filter = ep->typedata.text->filter;
+   if (ep->typedata.text->filter_sources != chosen_desc->text.filter_sources)
+     {
+        prev_sources = ep->typedata.text->filter_sources;
+        filter_sources = chosen_desc->text.filter_sources;
+        ep->typedata.text->filter_sources = chosen_desc->text.filter_sources;
+     }
 
    if (ep->typedata.text->text_source)
      {
@@ -421,9 +428,19 @@ arrange_text:
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
    eo_do(ep->object,
          evas_obj_text_font_set(font, size),
-         evas_obj_text_filter_program_set(filter),
          evas_obj_text_text_set(text));
    part_get_geometry(ep, &tw, &th);
+
+   /* filters */
+   EINA_LIST_FOREACH(prev_sources, li, source_name)
+     eo_do(ep->object, evas_obj_text_filter_source_set(source_name, NULL));
+   EINA_LIST_FOREACH(filter_sources, li, source_name)
+     {
+        Edje_Real_Part *rp = _edje_real_part_get(ed, source_name);
+        eo_do(ep->object, evas_obj_text_filter_source_set(source_name, rp ? rp->object : NULL));
+     }
+   eo_do(ep->object, evas_obj_text_filter_program_set(filter));
+
    /* Handle alignment */
      {
         FLOAT_T align_x;
