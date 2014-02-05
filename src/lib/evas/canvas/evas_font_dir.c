@@ -786,7 +786,6 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
      }
    else /* Add a fallback list from fontconfig according to the found font. */
      {
-#if FC_MAJOR >= 2 && FC_MINOR >= 11
 	FcResult res;
 
         FT_Face face = evas_common_font_freetype_face_get((RGBA_Font *) font);
@@ -809,7 +808,6 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                   font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend);
                }
           }
-#endif
      }
 #endif
 
