@@ -6557,8 +6557,15 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                }
              else if (*p == 0)
                {
-                  eina_strbuf_append_length(sbuf, s, p - s);
-                  s = NULL;
+                  if (s)
+                    {
+                       eina_strbuf_append_length(sbuf, s, p - s);
+                       s = NULL;
+                    }
+                  else
+                    {
+                       ERR("There is a invalid markup tag. Please check the text.");
+                    }
                }
              if (*p == 0)
                 break;
@@ -6571,8 +6578,15 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                    * mark the start of the tag */
                   tag_start = p;
                   tag_end = NULL;
-                  eina_strbuf_append_length(sbuf, s, p - s);
-                  s = NULL;
+                  if (s)
+                    {
+                       eina_strbuf_append_length(sbuf, s, p - s);
+                       s = NULL;
+                    }
+                  else
+                    {
+                       ERR("There is a invalid markup tag. Please check the text.");
+                    }
                }
           }
         else if (*p == '>')
@@ -6591,8 +6605,15 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                    * the start of the escape sequence */
                   esc_start = p;
                   esc_end = NULL;
-                  eina_strbuf_append_length(sbuf, s, p - s);
-                  s = NULL;
+                  if (s)
+                    {
+                       eina_strbuf_append_length(sbuf, s, p - s);
+                       s = NULL;
+                    }
+                  else
+                    {
+                       ERR("There is a invalid markup tag. Please check the text.");
+                    }
                }
           }
         else if (*p == ';')
