@@ -59,20 +59,10 @@ static const Elm_Text_Class _elm_text_classes[] = {
    {NULL, NULL}
 };
 
-static void        _desc_init(void);
-static void        _desc_shutdown(void);
-static void        _profile_fetch_from_conf(void);
 static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
-static Elm_Config *_config_user_load(void);
-static Elm_Config *_config_system_load(void);
-static void        _config_load(void);
 static void        _config_update(void);
 static void        _env_get(void);
-static size_t      _elm_data_dir_snprintf(char       *dst,
-                                          size_t      size,
-                                          const char *fmt, ...)
-                                          EINA_PRINTF(3, 4);
 
 #define ELM_CONFIG_VAL(edd, type, member, dtype) \
   EET_DATA_DESCRIPTOR_ADD_BASIC(edd, type, #member, member, dtype)
