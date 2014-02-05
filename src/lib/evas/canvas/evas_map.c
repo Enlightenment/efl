@@ -731,6 +731,8 @@ evas_map_count_get(const Evas_Map *m)
    return m->count;
 }
 
+/* FIXME: coordinates should be float/double for accuracy.
+   Rotation center position will be flickered by rounding problem. */
 EAPI void
 evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
