@@ -355,6 +355,7 @@ EAPI void               elm_entry_select_all(Evas_Object *obj);
  * @param end The end position
  *
  * @ingroup Entry
+ * @since 1.9
  */
 EAPI void               elm_entry_select_region_set(Evas_Object *obj, int start, int end);
 
