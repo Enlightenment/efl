@@ -152,6 +152,8 @@ struct _Evas_Filter_Buffer
    void *glimage;
    int w, h;
 
+   Evas_Object *proxy;
+
    Eina_Bool alpha_only : 1;  // 1 channel (A) instead of 4 (RGBA)
    Eina_Bool allocated : 1;   // allocated on demand, belongs to this context
    Eina_Bool transient : 1;   // temporary buffer (automatic allocation)

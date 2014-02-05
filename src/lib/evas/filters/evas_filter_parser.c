@@ -103,7 +103,7 @@ struct _Evas_Filter_Instruction
 struct _Evas_Filter_Program
 {
    Eina_Stringshare *name; // Optional for now
-   Eina_Hash /* const char * : Evas_Object */ *proxies;
+   Eina_Hash /* const char * : Evas_Filter_Proxy_Binding */ *proxies;
    Eina_Inlist /* Evas_Filter_Instruction */ *instructions;
    Eina_Inlist /* Buffer */ *buffers;
    Eina_Bool valid : 1;
@@ -1181,7 +1181,6 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
      }
 
    eina_stringshare_del(pgm->name);
-   eina_hash_free(pgm->proxies);
    free(pgm);
 }
 
@@ -1375,64 +1374,19 @@ evas_filter_program_new(const char *name)
    pgm = calloc(1, sizeof(Evas_Filter_Program));
    if (!pgm) return NULL;
    pgm->name = eina_stringshare_add(name);
-   pgm->proxies = eina_hash_string_small_new(EINA_FREE_CB(evas_object_unref));
    _buffer_add(pgm, "input", EINA_TRUE, NULL);
    _buffer_add(pgm, "output", EINA_FALSE, NULL);
 
    return pgm;
 }
 
-/** Bind an object for proxy rendering */
-
-void
-evas_filter_program_source_set(Evas_Filter_Program *pgm,
-                               const char *name, Evas_Object *object)
-{
-   Evas_Object *old;
-
-   old = eina_hash_find(pgm->proxies, name);
-   if (old == object) return;
-   if (old) eina_hash_del(pgm->proxies, name, old);
-
-   evas_object_ref(object);
-   eina_hash_add(pgm->proxies, name, object);
-}
-
+/** Bind objects for proxy rendering */
 void
 evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
                                    Eina_Hash *proxies)
 {
-   Eina_Hash_Tuple *tuple;
-   Eina_Iterator *it;
-   Evas_Object *old;
-
-   if (!pgm || !proxies) return;
-
-   it = eina_hash_iterator_tuple_new(proxies);
-   EINA_ITERATOR_FOREACH(it, tuple)
-     {
-        Eina_Stringshare *name = tuple->key;
-        Eo *source = tuple->data;
-
-        old = eina_hash_find(pgm->proxies, name);
-        if (old)
-          {
-             INF("Buffer %s already exists, skipping proxy source.", name);
-             continue;
-          }
-
-        INF("Binding object %p as '%s'", source, name);
-        evas_filter_program_source_set(pgm, name, source);
-     }
-   eina_iterator_free(it);
-}
-
-/** Get object used for proxy rendering */
-
-Evas_Object *
-evas_filter_program_source_get(Evas_Filter_Program *pgm, const char *name)
-{
-   return (Evas_Object *) eina_hash_find(pgm->proxies, name);
+   if (!pgm) return;
+   pgm->proxies = proxies;
 }
 
 /** Glue with Evas' filters */
@@ -1851,7 +1805,7 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 Eina_Bool
-evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj,
+evas_filter_context_program_use(Evas_Filter_Context *ctx,
                                 Evas_Filter_Program *pgm)
 {
    Buffer *buf;
@@ -1873,8 +1827,16 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj,
         buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
         if (buf->proxy)
           {
-             Eo *eo_source = evas_filter_program_source_get(pgm, buf->proxy);
-             evas_filter_context_source_set(ctx, eo_obj, eo_source, buf->cid, buf->proxy);
+             Evas_Filter_Proxy_Binding *pb;
+             Evas_Filter_Buffer *fb;
+
+             pb = eina_hash_find(pgm->proxies, buf->proxy);
+             if (!pb) continue;
+
+             fb = _filter_buffer_get(ctx, buf->cid);
+             fb->proxy = pb->eo_proxy;
+             fb->source = pb->eo_source;
+             fb->source_name = eina_stringshare_ref(pb->name);
           }
      }
 

@@ -49,7 +49,8 @@ struct _Evas_Object_Text
       struct {
          Eina_Stringshare    *code;
          Evas_Filter_Program *chain;
-         Eina_Hash           *sources;
+         Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
+         int                  sources_count;
          void                *output;
          Eina_Bool            changed : 1;
       } filter;
@@ -1977,13 +1978,15 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
    /* free filter output */
    if (o->cur.filter.output)
-     {
-        ENFN->image_free(ENDT, o->cur.filter.output);
-        o->cur.filter.output = NULL;
-     }
+     ENFN->image_free(ENDT, o->cur.filter.output);
+   eina_hash_free(o->cur.filter.sources);
    evas_filter_program_del(o->cur.filter.chain);
    eina_stringshare_del(o->cur.filter.code);
+   o->cur.filter.output = NULL;
    o->cur.filter.chain = NULL;
+   o->cur.filter.sources = NULL;
+   o->cur.filter.code = NULL;
+   o->cur.filter.sources_count = 0;
 
    /* free obj */
    _evas_object_text_items_clear(o);
@@ -2156,14 +2159,14 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
              // Scan proxies to find if any changed
              if (!redraw && o->cur.filter.sources)
                {
+                  Evas_Filter_Proxy_Binding *pb;
                   Evas_Object_Protected_Data *source;
-                  Evas_Object *eo_source;
                   Eina_Iterator *it;
 
                   it = eina_hash_iterator_data_new(o->cur.filter.sources);
-                  EINA_ITERATOR_FOREACH(it, eo_source)
+                  EINA_ITERATOR_FOREACH(it, pb)
                     {
-                       source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
+                       source = eo_data_scope_get(pb->eo_source, EVAS_OBJ_CLASS);
                        if (source->changed)
                          {
                             redraw = EINA_TRUE;
@@ -2187,7 +2190,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
           }
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
-        ok = evas_filter_context_program_use(filter, eo_obj, o->cur.filter.chain);
+        ok = evas_filter_context_program_use(filter, o->cur.filter.chain);
         if (!filter || !ok)
           {
              ERR("Parsing failed?");
@@ -2730,41 +2733,91 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
 }
 
 static void
+_filter_source_hash_free_cb(void *data)
+{
+   Evas_Filter_Proxy_Binding *pb = data;
+   Evas_Object_Protected_Data *proxy, *source;
+   Evas_Object_Text *o;
+
+   proxy = eo_data_scope_get(pb->eo_proxy, EVAS_OBJ_CLASS);
+   source = eo_data_scope_get(pb->eo_source, EVAS_OBJ_CLASS);
+
+   if (source)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
+                             Evas_Object_Proxy_Data, source_write)
+          source_write->proxies = eina_list_remove(source_write->proxies, pb->eo_proxy);
+        EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, source_write)
+     }
+
+   o = eo_data_scope_get(pb->eo_proxy, MY_CLASS);
+
+   if (o && proxy)
+     {
+        o->cur.filter.sources_count--;
+        if (!o->cur.filter.sources_count)
+          {
+             EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy,
+                                  Evas_Object_Proxy_Data, proxy_write)
+               proxy_write->is_proxy = EINA_FALSE;
+             EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write)
+          }
+     }
+
+   eina_stringshare_del(pb->name);
+   free(pb);
+}
+
+static void
 _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object_Text *o = _pd;
    Evas_Object_Protected_Data *obj;
-   Evas_Filter_Program *pgm = NULL;
+   Evas_Filter_Program *pgm = o->cur.filter.chain;
    const char *name = va_arg(list, const char *);
-   Evas_Object *proxy = va_arg(list, Evas_Object *);
+   Evas_Object *eo_source = va_arg(list, Evas_Object *);
+   Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
+   Evas_Object_Protected_Data *source;
 
-   pgm = o->cur.filter.chain;
-   if (!pgm)
+   if (!o->cur.filter.sources)
      {
-        Evas_Object *old;
-        if (!proxy) return;
-        if (!o->cur.filter.sources)
-          {
-             o->cur.filter.sources = eina_hash_string_small_new
-                   (EINA_FREE_CB(evas_object_unref));
-          }
-        else
-          {
-             old = eina_hash_find(o->cur.filter.sources, name);
-             if (old == proxy) return;
-             if (old) eina_hash_del(o->cur.filter.sources, name, old);
-          }
-        evas_object_ref(proxy);
-        eina_hash_add(o->cur.filter.sources, name, proxy);
-        o->cur.filter.changed = EINA_TRUE;
-        return;
+        o->cur.filter.sources = eina_hash_string_small_new
+              (EINA_FREE_CB(_filter_source_hash_free_cb));
+     }
+   else
+     {
+        pb_old = eina_hash_find(o->cur.filter.sources, name);
+        if (pb_old && (pb_old->eo_source == eo_source)) return;
+        eina_hash_del(o->cur.filter.sources, name, pb_old);
      }
 
-   evas_filter_program_source_set(pgm, name, proxy);
-   o->cur.filter.changed = EINA_TRUE;
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
+   if (!source) return;
+
+   pb = calloc(1, sizeof(*pb));
+   pb->eo_proxy = eo_obj;
+   pb->eo_source = eo_source;
+   pb->name = eina_stringshare_add(name);
+
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
+                        Evas_Object_Proxy_Data, source_write)
+     if (!eina_list_data_find(source_write->proxies, eo_obj))
+       source_write->proxies = eina_list_append(source_write->proxies, eo_obj);
+   EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, source_write)
+
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
+                        Evas_Object_Proxy_Data, proxy_write)
+     proxy_write->is_proxy = EINA_TRUE;
+   EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write)
+
+   eina_hash_add(o->cur.filter.sources, pb->name, pb);
+   o->cur.filter.sources_count++;
+
+   evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
 
    // Update object
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   o->cur.filter.changed = EINA_TRUE;
    _evas_object_text_items_clear(o);
    o->changed = 1;
    _evas_object_text_recalc(eo_obj, o->cur.text);

@@ -120,41 +120,6 @@ _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
    _backing_free(fb->ctx, backing);
 }
 
-/** @hidden private bind proxy to context */
-void
-evas_filter_context_source_set(Evas_Filter_Context *ctx, Evas_Object *eo_proxy,
-                               Evas_Object *eo_source, int bufid,
-                               Eina_Stringshare *name)
-{
-   Evas_Object_Protected_Data *proxy = eo_data_scope_get(eo_proxy, EVAS_OBJ_CLASS);
-   Evas_Object_Protected_Data *source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
-   Evas_Filter_Buffer *fb;
-
-   fb = _filter_buffer_get(ctx, bufid);
-   EINA_SAFETY_ON_NULL_RETURN(fb);
-
-   if (fb->source == eo_source) return;
-   evas_object_unref(fb->source);
-   eina_stringshare_del(fb->source_name);
-   fb->source = eo_source;
-   if (!fb->source) return;
-   fb->source_name = eina_stringshare_ref(name);
-
-   evas_object_ref(eo_source);
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
-     proxy_write->is_proxy = EINA_TRUE;
-   EINA_COW_WRITE_END(evas_object_proxy_cow, proxy->proxy, proxy_write);
-
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, proxy_src_write)
-     {
-        if (!eina_list_data_find(source->proxy->proxies, eo_proxy))
-          proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies, eo_proxy);
-        proxy_src_write->redraw = EINA_TRUE;
-     }
-   EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_src_write);
-}
-
 
 /**
  * Render the source object when a proxy is set.

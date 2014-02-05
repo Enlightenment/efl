@@ -9,6 +9,7 @@ typedef struct _Evas_Filter_Command Evas_Filter_Command;
 typedef struct _Evas_Filter_Program Evas_Filter_Program;
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
 typedef struct _Evas_Filter_Buffer Evas_Filter_Buffer;
+typedef struct _Evas_Filter_Proxy_Binding Evas_Filter_Proxy_Binding;
 typedef enum _Evas_Filter_Mode Evas_Filter_Mode;
 typedef enum _Evas_Filter_Blur_Type Evas_Filter_Blur_Type;
 typedef enum _Evas_Filter_Channel Evas_Filter_Channel;
@@ -93,11 +94,10 @@ enum _Evas_Filter_Transform_Flags
 Evas_Filter_Program     *evas_filter_program_new(const char *name);
 Eina_Bool                evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 void                     evas_filter_program_del(Evas_Filter_Program *pgm);
-Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj, Evas_Filter_Program *pgm);
+Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
-void                     evas_filter_program_source_set(Evas_Filter_Program *pgm, const char *name, Evas_Object *object);
+//void                     evas_filter_program_source_set(Evas_Filter_Program *pgm, const char *name, Evas_Object *object);
 void                     evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
-Evas_Object             *evas_filter_program_source_get(Evas_Filter_Program *pgm, const char *name);
 void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
 
 /* Filter context (low level) */
@@ -239,6 +239,14 @@ int                      evas_filter_command_bump_map_add(Evas_Filter_Context *c
  * @return               Filter command ID or -1 in case of error
  */
 int                      evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags, int ox, int oy);
+
+/* Simple binding between a filter object and its sources */
+struct _Evas_Filter_Proxy_Binding
+{
+   Evas_Object *eo_proxy;
+   Evas_Object *eo_source;
+   Eina_Stringshare *name;
+};
 
 #endif
 
