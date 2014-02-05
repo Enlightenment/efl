@@ -314,6 +314,7 @@ static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_elipsis(void);
+static void st_collections_group_parts_part_description_text_filter(void);
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
@@ -651,6 +652,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
      {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_elipsis},
+     {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_text_filter},
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
@@ -5212,6 +5214,7 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.text.str = STRDUP(ted->text.text.str);
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
+              ted->text.filter.str = STRDUP(ted->text.filter.str);
 
               data_queue_copied_part_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source));
               data_queue_copied_part_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source));
@@ -7293,6 +7296,37 @@ st_collections_group_parts_part_description_text_elipsis(void)
    ed = (Edje_Part_Description_Text*) current_desc;
 
    ed->text.elipsis = parse_float_range(0, -1.0, 1.0);
+}
+
+/**
+    @page edcref
+
+    @property
+        filter
+    @parameters
+        [filter program as a string]
+    @effect
+        Applies a series of filtering operations to the text.
+        EXPERIMENTAL FEATURE. TO BE DOCUMENTED.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_text_filter(void)
+{
+   Edje_Part_Description_Text *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_TEXT)
+     {
+        ERR("parse error %s:%i. text attributes in non-TEXT part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Text*) current_desc;
+
+   ed->text.filter.str = parse_str(0);
 }
 
 

@@ -169,6 +169,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    char		*font2 = NULL;
    char         *sfont = NULL;
    int		 size;
+   const char   *filter;
    Evas_Coord	 tw, th;
    Evas_Coord	 sw, sh;
    int		 inlined_font = 0, free_text = 0;
@@ -181,10 +182,12 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (sc == 0.0) sc = _edje_scale;
    text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
+   filter = chosen_desc->text.filter.str;
 
    if (ep->typedata.text->text) text = ep->typedata.text->text;
    if (ep->typedata.text->font) font = ep->typedata.text->font;
    if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
+   if (ep->typedata.text->filter) filter = ep->typedata.text->filter;
 
    if (ep->typedata.text->text_source)
      {
@@ -418,6 +421,7 @@ arrange_text:
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
    eo_do(ep->object,
          evas_obj_text_font_set(font, size),
+         evas_obj_text_filter_program_set(filter),
          evas_obj_text_text_set(text));
    part_get_geometry(ep, &tw, &th);
    /* Handle alignment */

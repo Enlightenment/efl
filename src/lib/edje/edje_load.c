@@ -1358,10 +1358,11 @@ _edje_file_del(Edje *ed)
              else if ((rp->type == EDJE_RP_TYPE_TEXT) &&
                       (rp->typedata.text))
                {
-                  if (rp->typedata.text->text) eina_stringshare_del(rp->typedata.text->text);
-                  if (rp->typedata.text->font) eina_stringshare_del(rp->typedata.text->font);
-                  if (rp->typedata.text->cache.in_str) eina_stringshare_del(rp->typedata.text->cache.in_str);
-                  if (rp->typedata.text->cache.out_str) eina_stringshare_del(rp->typedata.text->cache.out_str);
+                  eina_stringshare_del(rp->typedata.text->text);
+                  eina_stringshare_del(rp->typedata.text->font);
+                  eina_stringshare_del(rp->typedata.text->cache.in_str);
+                  eina_stringshare_del(rp->typedata.text->cache.out_str);
+                  eina_stringshare_del(rp->typedata.text->filter);
                   free(rp->typedata.text);
                }
              else if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
@@ -1746,10 +1747,11 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
 
               text = (Edje_Part_Description_Text *) desc;
 
-              if (text->text.text.str)      eina_stringshare_del(text->text.text.str);
-              if (text->text.text_class)    eina_stringshare_del(text->text.text_class);
-              if (text->text.style.str)     eina_stringshare_del(text->text.style.str);
-              if (text->text.font.str)      eina_stringshare_del(text->text.font.str);
+              eina_stringshare_del(text->text.text.str);
+              eina_stringshare_del(text->text.text_class);
+              eina_stringshare_del(text->text.style.str);
+              eina_stringshare_del(text->text.font.str);
+              eina_stringshare_del(text->text.filter.str);
            }
          break;
      }
