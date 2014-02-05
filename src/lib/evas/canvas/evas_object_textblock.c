@@ -6564,7 +6564,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag. Please check the text.");
+                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
              if (*p == 0)
@@ -6585,7 +6585,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag. Please check the text.");
+                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
           }
@@ -6612,7 +6612,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag. Please check the text.");
+                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
           }
