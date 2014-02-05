@@ -803,7 +803,8 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
      goto the_end;
 
-   focus_style_previous = elm_widget_focus_highlight_style_get(previous);
+   if (previous)
+     focus_style_previous = elm_widget_focus_highlight_style_get(previous);
    focus_style_target = elm_widget_focus_highlight_style_get(target);
 
    if (sd->focus_highlight.theme_changed ||
