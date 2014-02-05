@@ -7318,6 +7318,9 @@ st_collections_group_parts_part_description_text_filter(void)
    Eina_Stringshare *name;
    char *token, *code;
    Eina_Bool valid = EINA_TRUE;
+   Edje_Part_Collection *pc;
+
+   static int part_key = 0;
 
    static const char *allowed_name_chars =
          "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
@@ -7336,6 +7339,8 @@ st_collections_group_parts_part_description_text_filter(void)
 
    ed->text.filter.str = parse_str(0);
    if (!ed->text.filter.str) return;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
 
    // Parse list of buffers that have a source
    // note: does not support comments
@@ -7383,6 +7388,7 @@ st_collections_group_parts_part_description_text_filter(void)
              name = eina_stringshare_add(token);
 
              sources = eina_list_append(sources, name);
+             data_queue_part_lookup(pc, name, &part_key);
           }
      }
    free(code);
