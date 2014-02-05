@@ -982,6 +982,7 @@ _field_visible_set(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Datetime_Field_Type fieldtype = va_arg(*list, Elm_Datetime_Field_Type);
    Eina_Bool visible = va_arg(*list, int);
+   char buf[BUFFER_SIZE];
    Datetime_Field *field;
 
    Elm_Datetime_Smart_Data *sd = _pd;
@@ -989,10 +990,51 @@ _field_visible_set(Eo *obj, void *_pd, va_list *list)
    if (fieldtype > ELM_DATETIME_AMPM) return;
 
    field = sd->field_list + fieldtype;
+   visible = !!visible;
    if (field->visible == visible) return;
 
    field->visible = visible;
-   _reload_format(obj);
+
+   if (visible)
+     {
+        sd->enabled_field_count++;
+
+        if (!field->fmt_exist) return;
+
+        snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
+                 field->location);
+        elm_layout_signal_emit(obj, buf, "elm");
+
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+        edje_object_message_signal_process(wd->resize_obj);
+
+        snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
+        elm_layout_content_unset(obj, buf);
+        elm_layout_content_set(obj, buf, field->item_obj);
+     }
+   else
+     {
+        sd->enabled_field_count--;
+
+        if (!field->fmt_exist) return;
+
+        snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
+                 field->location);
+        elm_layout_signal_emit(obj, buf, "elm");
+
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+        edje_object_message_signal_process(wd->resize_obj);
+
+        snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
+        evas_object_hide(elm_layout_content_unset(obj, buf));
+     }
+
+   elm_layout_sizing_eval(obj);
+
+   if (!visible) return;
+   if (!dt_mod || !dt_mod->field_value_display) return;
+
+   dt_mod->field_value_display(sd->mod_data, field->item_obj);
 }
 
 EAPI void
