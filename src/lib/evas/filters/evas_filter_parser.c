@@ -1386,6 +1386,7 @@ evas_filter_program_source_set(Evas_Filter_Program *pgm,
    Evas_Object *old;
 
    old = eina_hash_find(pgm->proxies, name);
+   if (old == object) return;
    if (old) eina_hash_del(pgm->proxies, name, old);
 
    evas_object_ref(object);

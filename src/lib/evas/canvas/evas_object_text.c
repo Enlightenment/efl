@@ -2736,11 +2736,18 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
    pgm = o->cur.filter.chain;
    if (!pgm)
      {
+        Evas_Object *old;
         if (!proxy) return;
         if (!o->cur.filter.sources)
           {
              o->cur.filter.sources = eina_hash_string_small_new
                    (EINA_FREE_CB(evas_object_unref));
+          }
+        else
+          {
+             old = eina_hash_find(o->cur.filter.sources, name);
+             if (old == proxy) return;
+             if (old) eina_hash_del(o->cur.filter.sources, name, old);
           }
         evas_object_ref(proxy);
         eina_hash_add(o->cur.filter.sources, name, proxy);
