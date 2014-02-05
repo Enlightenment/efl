@@ -688,7 +688,6 @@ EFL_LIB_START([Eina])
 
 ### Default values
 
-have_magic_debug="yes"
 have_safety_checks="yes"
 want_log="yes"
 case "${build_profile}" in
@@ -724,7 +723,6 @@ case "${build_profile}" in
 esac
 
 EINA_CONFIG([HAVE_ALLOCA_H], [test "x${ac_cv_working_alloca_h}" = "xyes"])
-EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 EINA_CONFIG([SAFETY_CHECKS], [test "x${have_safety_checks}" = "xyes"])
 EINA_CONFIG([DEFAULT_MEMPOOL], [test "x${want_default_mempool}" = "xyes"])
 
@@ -738,6 +736,18 @@ AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
    [1], [Report Eina stringshare usage pattern])
 
 ### Additional options to configure
+AC_ARG_ENABLE([magic-debug],
+   [AC_HELP_STRING([--disable-magic-debug], [disable magic debug of eina structure @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       have_magic_debug="yes"
+    else
+       have_magic_debug="no"
+    fi
+   ],
+   [have_magic_debug="yes"])
+
+EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 
 ### Checks for programs
 
