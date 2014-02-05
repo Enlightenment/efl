@@ -47,6 +47,7 @@ struct _Evas_Object_Text
 
       // special effects. VERY EXPERIMENTAL for now.
       struct {
+         Eina_Stringshare    *code;
          Evas_Filter_Program *chain;
          Eina_Hash           *sources;
          void                *output;
@@ -1981,6 +1982,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         o->cur.filter.output = NULL;
      }
    evas_filter_program_del(o->cur.filter.chain);
+   eina_stringshare_del(o->cur.filter.code);
    o->cur.filter.chain = NULL;
 
    /* free obj */
@@ -2696,6 +2698,8 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Filter_Program *pgm = NULL;
 
    if (!o) return;
+   if (o->cur.filter.code == arg) return;
+   if (o->cur.filter.code && arg && !strcmp(arg, o->cur.filter.code)) return;
 
    // Parse filter program
    evas_filter_program_del(o->cur.filter.chain);
@@ -2712,6 +2716,7 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    o->cur.filter.chain = pgm;
    o->cur.filter.changed = EINA_TRUE;
+   eina_stringshare_replace(&o->cur.filter.code, arg);
 
    // Update object
    obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
