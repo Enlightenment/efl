@@ -2227,10 +2227,9 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         evas_filter_run(filter);
         o->cur.filter.changed = EINA_FALSE;
 
-        INF("Effect rendering done. Return.");
+        DBG("Effect rendering done.");
         return;
      }
-
 
    /* End of the EXPERIMENTAL code */
 
@@ -2703,7 +2702,7 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
    if (arg)
      {
         pgm = evas_filter_program_new("Evas_Text: Filter Program");
-        evas_filter_program_proxy_source_bind_all(pgm, o->cur.filter.sources);
+        evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
         if (!evas_filter_program_parse(pgm, arg))
           {
              ERR("Parsing failed!");
@@ -2726,7 +2725,7 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
 }
 
 static void
-_filter_object_bind(Eo *eo_obj, void *_pd, va_list *list)
+_filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object_Text *o = _pd;
    Evas_Object_Protected_Data *obj;
@@ -2749,7 +2748,7 @@ _filter_object_bind(Eo *eo_obj, void *_pd, va_list *list)
         return;
      }
 
-   evas_filter_program_proxy_source_bind(pgm, name, proxy);
+   evas_filter_program_source_set(pgm, name, proxy);
    o->cur.filter.changed = EINA_TRUE;
 
    // Update object
@@ -2806,7 +2805,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET), _text_ellipsis_set),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET), _text_ellipsis_get),
         EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET), _filter_program_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_OBJECT_BIND), _filter_object_bind),
+        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET), _filter_source_set),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -2845,7 +2844,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET, "Gets the ellipsis of a text object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET, "Sets the ellipsis of a text object."),
      EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET, "Text special effects: Set the style program (string)."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FILTER_OBJECT_BIND, "Text special effects: Bind an Evas_Object to a name for proxy rendering."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET, "Text special effects: Bind an Evas_Object to a name for proxy rendering."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

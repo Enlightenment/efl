@@ -95,8 +95,9 @@ Eina_Bool                evas_filter_program_parse(Evas_Filter_Program *pgm, con
 void                     evas_filter_program_del(Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj, Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
-void                     evas_filter_program_proxy_source_bind(Evas_Filter_Program *pgm, const char *name, Evas_Object *object);
-Evas_Object             *evas_filter_program_proxy_source_get(Evas_Filter_Program *pgm, const char *name);
+void                     evas_filter_program_source_set(Evas_Filter_Program *pgm, const char *name, Evas_Object *object);
+void                     evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
+Evas_Object             *evas_filter_program_source_get(Evas_Filter_Program *pgm, const char *name);
 void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
 
 /* Filter context (low level) */

@@ -122,7 +122,7 @@ _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 
 /** @hidden private bind proxy to context */
 void
-evas_filter_context_proxy_bind(Evas_Filter_Context *ctx, Evas_Object *eo_proxy,
+evas_filter_context_source_set(Evas_Filter_Context *ctx, Evas_Object *eo_proxy,
                                Evas_Object *eo_source, int bufid,
                                Eina_Stringshare *name)
 {

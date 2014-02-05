@@ -1380,8 +1380,8 @@ evas_filter_program_new(const char *name)
 /** Bind an object for proxy rendering */
 
 void
-evas_filter_program_proxy_source_bind(Evas_Filter_Program *pgm,
-                                      const char *name, Evas_Object *object)
+evas_filter_program_source_set(Evas_Filter_Program *pgm,
+                               const char *name, Evas_Object *object)
 {
    Evas_Object *old;
 
@@ -1392,10 +1392,39 @@ evas_filter_program_proxy_source_bind(Evas_Filter_Program *pgm,
    eina_hash_add(pgm->proxies, name, object);
 }
 
+void
+evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
+                                   Eina_Hash *proxies)
+{
+   Eina_Hash_Tuple *tuple;
+   Eina_Iterator *it;
+   Evas_Object *old;
+
+   if (!pgm || !proxies) return;
+
+   it = eina_hash_iterator_tuple_new(proxies);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     {
+        Eina_Stringshare *name = tuple->key;
+        Eo *source = tuple->data;
+
+        old = eina_hash_find(pgm->proxies, name);
+        if (old)
+          {
+             INF("Buffer %s already exists, skipping proxy source.", name);
+             continue;
+          }
+
+        INF("Binding object %p as '%s'", source, name);
+        evas_filter_program_source_set(pgm, name, source);
+     }
+   eina_iterator_free(it);
+}
+
 /** Get object used for proxy rendering */
 
 Evas_Object *
-evas_filter_program_proxy_source_get(Evas_Filter_Program *pgm, const char *name)
+evas_filter_program_source_get(Evas_Filter_Program *pgm, const char *name)
 {
    return (Evas_Object *) eina_hash_find(pgm->proxies, name);
 }
@@ -1838,8 +1867,8 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Object *eo_obj,
         buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
         if (buf->proxy)
           {
-             Eo *eo_source = evas_filter_program_proxy_source_get(pgm, buf->proxy);
-             evas_filter_context_proxy_bind(ctx, eo_obj, eo_source, buf->cid, buf->proxy);
+             Eo *eo_source = evas_filter_program_source_get(pgm, buf->proxy);
+             evas_filter_context_source_set(ctx, eo_obj, eo_source, buf->cid, buf->proxy);
           }
      }
 
