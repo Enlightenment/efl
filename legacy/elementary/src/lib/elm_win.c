@@ -118,7 +118,8 @@ struct _Elm_Win_Smart_Data
       {
          Evas_Object *target;
          Eina_Bool    visible : 1;
-         Eina_Bool    handled : 1;
+         Eina_Bool    in_theme: 1; /*<< focus highlight is handled by theme.
+                                     this is set true if edc data item "focus_highlight" is set to "on" during focus in callback. */
       } cur, prev;
 
       const char  *style;
@@ -777,13 +778,13 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
        (!sd->focus_highlight.theme_changed))
      return;
 
-   if ((previous) && (sd->focus_highlight.prev.handled))
+   if ((previous) && (sd->focus_highlight.prev.in_theme))
      elm_widget_signal_emit
        (previous, "elm,action,focus_highlight,hide", "elm");
 
    if (!target)
      common_visible = EINA_FALSE;
-   else if (sd->focus_highlight.cur.handled)
+   else if (sd->focus_highlight.cur.in_theme)
      {
         common_visible = EINA_FALSE;
         if (sd->focus_highlight.cur.visible)
@@ -797,7 +798,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
    if (sig)
      elm_widget_signal_emit(target, sig, "elm");
 
-   if ((!target) || (!common_visible) || (sd->focus_highlight.cur.handled))
+   if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
      goto the_end;
 
    if (sd->focus_highlight.theme_changed)
@@ -821,7 +822,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
      }
 
    if ((sd->focus_highlight.animate_supported) && (previous) &&
-       (!sd->focus_highlight.prev.handled))
+       (!sd->focus_highlight.prev.in_theme))
      _elm_win_focus_highlight_anim_setup(sd, fobj);
    else
      _elm_win_focus_highlight_simple_setup(sd, fobj);
@@ -1404,7 +1405,7 @@ _elm_win_object_focus_in(void *data,
    target = _elm_win_focus_target_get(obj);
    sd->focus_highlight.cur.target = target;
    if (target && elm_widget_highlight_in_theme_get(target))
-     sd->focus_highlight.cur.handled = EINA_TRUE;
+     sd->focus_highlight.cur.in_theme = EINA_TRUE;
    else
      _elm_win_focus_target_callbacks_add(sd);
 
@@ -1421,11 +1422,11 @@ _elm_win_object_focus_out(void *data,
    if (!sd->focus_highlight.cur.target)
      return;
 
-   if (!sd->focus_highlight.cur.handled)
+   if (!sd->focus_highlight.cur.in_theme)
      _elm_win_focus_target_callbacks_del(sd);
 
    sd->focus_highlight.cur.target = NULL;
-   sd->focus_highlight.cur.handled = EINA_FALSE;
+   sd->focus_highlight.cur.in_theme = EINA_FALSE;
 
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
