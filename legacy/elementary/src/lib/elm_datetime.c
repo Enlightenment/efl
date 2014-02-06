@@ -389,26 +389,22 @@ _datetime_items_get(const Evas_Object *obj)
 {
    Eina_List *items = NULL;
    Datetime_Field *field;
-   int loc = 0;
    unsigned int idx;
-   Eina_Bool visible[ELM_DATETIME_TYPE_COUNT];
+   Datetime_Field *sorted_fields[ELM_DATETIME_TYPE_COUNT];
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
-        if (field->fmt_exist && field->visible) visible[idx] = EINA_TRUE;
-        else visible[idx] = EINA_FALSE;
+        sorted_fields[field->location] = field;
      }
-   for (loc = 0; loc < ELM_DATETIME_TYPE_COUNT; loc++)
+
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
-        for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
-          {
-             field = sd->field_list + idx;
-             if ((field->location == loc) && (visible[idx]))
-               items = eina_list_append(items, field->item_obj);
-          }
+        field = sorted_fields + idx;
+        if (field->fmt_exist && field->visible)
+          items = eina_list_append(items, field->item_obj);
      }
 
    // ACCESS
