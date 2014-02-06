@@ -712,7 +712,7 @@ _field_limit_get(Evas_Object *obj,
    Datetime_Field *field;
    unsigned int idx;
 
-   if (field_type > ELM_DATETIME_AMPM) return;
+   if (field_type > ELM_DATETIME_MINUTE) return;
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
