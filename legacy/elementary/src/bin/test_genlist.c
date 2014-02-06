@@ -3490,7 +3490,6 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    gl = elm_genlist_add(box);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    _genlist_renew(gl, "default");
    elm_box_pack_end(box, gl);
    evas_object_show(gl);
 
@@ -3499,6 +3498,7 @@ test_genlist_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_box_pack_end(box, check);
    evas_object_show(check);
    evas_object_data_set(gl, "check", check);
+   _genlist_renew(gl, "default");
 
    evas_object_data_set(list, "genlist", gl);
 
