@@ -94,7 +94,7 @@ EAPI double elm_popup_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
  * @brief Sets whether events should be passed to by a click outside.
  *
  * @param obj The popup object
- * @param allow EINA_TRUE Events are passed to lower objects, else not
+ * @param allow @c EINA_TRUE Events are passed to lower objects, else not
  *
  * Enabling allow event will remove the Blocked event area and events will
  * pass to the lower layer objects otherwise they are blocked.
@@ -109,7 +109,7 @@ EAPI void elm_popup_allow_events_set(Evas_Object *obj, Eina_Bool allow);
  * @brief Returns value indicating whether allow event is enabled or not
  *
  * @param obj The popup object
- * @return EINA_FALSE if Blocked event area is present else EINA_TRUE
+ * @return @c EINA_FALSE if Blocked event area is present else @c EINA_TRUE
  *
  * @ingroup Popup
  * @see elm_popup_allow_events_set()

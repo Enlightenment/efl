@@ -25,7 +25,7 @@ EAPI Evas_Object               *elm_multibuttonentry_entry_get(const Evas_Object
  * Otherwise, only single line of the entry will be displayed.
  *
  * @param obj The multibuttonentry object
- * @return EINA_TRUE if the widget is in expanded state. EINA_FALSE if not.
+ * @return @c EINA_TRUE if the widget is in expanded state. @c EINA_FALSE if not.
  *
  * @ingroup Multibuttonentry
  */
@@ -38,7 +38,7 @@ EAPI Eina_Bool                  elm_multibuttonentry_expanded_get(const Evas_Obj
  *
  * @param obj The multibuttonentry object
  * @param expanded the value of expanded state.
- *        Set this to EINA_TRUE for expanded state.
+ *        Set this to @c EINA_TRUE for expanded state.
  *        Set this to EINA_FALSE for single line state.
  *
  * @ingroup Multibuttonentry
@@ -152,7 +152,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *
  * Set the selected state of an item
  *
  * @param it The item
- * @param selected if it's EINA_TRUE, select the item otherwise, unselect the item
+ * @param selected if it's @c EINA_TRUE, select the item otherwise, unselect the item
  *
  * @ingroup Multibuttonentry
  */
@@ -163,7 +163,7 @@ EAPI void                       elm_multibuttonentry_item_selected_set(Elm_Objec
  * Get the selected state of an item
  *
  * @param it The item
- * @return EINA_TRUE if the item is selected, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the item is selected, @c EINA_FALSE otherwise.
  *
  * @ingroup Multibuttonentry
  */
@@ -270,7 +270,7 @@ elm_multibuttonentry_format_function_set(Evas_Object *obj,
  * Sets if the multibuttonentry is to be editable or not.
  *
  * @param obj The multibuttonentry object
- * @param editable If EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable.
+ * @param editable If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable.
  *
  * @ingroup Multibuttonentry
  *
@@ -282,7 +282,7 @@ EAPI void elm_multibuttonentry_editable_set(Evas_Object *obj, Eina_Bool editable
  * Get whether the multibuttonentry is editable or not.
  *
  * @param obj The multibuttonentry object
- * @return EINA_TRUE if the multibuttonentry is editable by the user. EINA_FALSE if not.
+ * @return @c EINA_TRUE if the multibuttonentry is editable by the user. @c EINA_FALSE if not.
  *
  * @ingroup Multibuttonentry
  *

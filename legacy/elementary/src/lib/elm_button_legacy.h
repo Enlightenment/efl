@@ -31,7 +31,7 @@ EAPI void                         elm_button_autorepeat_set(Evas_Object *obj, Ei
  * Get whether the autorepeat feature is enabled
  *
  * @param obj The button object
- * @return EINA_TRUE if autorepeat is on, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if autorepeat is on, @c EINA_FALSE otherwise
  *
  * @see elm_button_autorepeat_set()
  *

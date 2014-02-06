@@ -86,8 +86,8 @@ EAPI void                         elm_hoversel_hover_end(Evas_Object *obj);
  * @brief Returns whether the hoversel is expanded.
  *
  * @param obj The hoversel object
- * @return  This will return EINA_TRUE if the hoversel is expanded or
- * EINA_FALSE if it is not expanded.
+ * @return  This will return @c EINA_TRUE if the hoversel is expanded or
+ * @c EINA_FALSE if it is not expanded.
  *
  * @ingroup Hoversel
  */

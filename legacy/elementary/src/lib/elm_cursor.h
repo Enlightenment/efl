@@ -108,7 +108,7 @@ EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool
  * Get if the cursor set should be searched on the theme for this object cursor.
  *
  * @param obj an object with cursor already set.
- * @return EINA_TRUE if the cursor set should be searched on widget's theme,
+ * @return @c EINA_TRUE if the cursor set should be searched on widget's theme,
  * EINA_FALSE otherwise.
  *
  * @ingroup Cursors

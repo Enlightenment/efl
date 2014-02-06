@@ -258,7 +258,7 @@ EAPI void      elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field
  *
  * @param obj The datetime object.
  * @param currtime Time structure.
- * @return EINA_TRUE if current time is returned successfully.
+ * @return @c EINA_TRUE if current time is returned successfully.
  *
  * @see elm_datetime_value_set()
  * @ingroup Datetime
@@ -282,7 +282,7 @@ EAPI Eina_Bool elm_datetime_value_get(const Evas_Object *obj, struct tm *currtim
  *
  * @param obj The datetime object.
  * @param newtime Time structure filled with values to be set.
- * @return EINA_TRUE if current time is set successfully.
+ * @return @c EINA_TRUE if current time is set successfully.
  *
  * @see elm_datetime_value_set()
  * @ingroup Datetime
@@ -305,7 +305,7 @@ EAPI Eina_Bool elm_datetime_value_set(Evas_Object *obj, const struct tm *newtime
  *
  * @param obj The datetime object
  * @param mintime Time structure.
- * @return EINA_TRUE if minimum value is successfully returned.
+ * @return @c EINA_TRUE if minimum value is successfully returned.
  *
  * @see elm_datetime_value_min_set()
  * @ingroup Datepicker
@@ -328,7 +328,7 @@ EAPI Eina_Bool elm_datetime_value_min_get(const Evas_Object *obj, struct tm *min
  *
  * @param obj The datetime object.
  * @param mintime Time structure containing the minimum time value.
- * @return EINA_TRUE if minimum value is accepted.
+ * @return @c EINA_TRUE if minimum value is accepted.
  *
  * @see elm_datetime_value_min_get()
  * @ingroup Datetime
@@ -351,7 +351,7 @@ EAPI Eina_Bool elm_datetime_value_min_set(Evas_Object *obj, const struct tm *min
   *
   * @param obj The datetime object
   * @param maxtime Time structure containing the maximum time value.
-  * @return EINA_TRUE if maximum value is returned successfully.
+  * @return @c EINA_TRUE if maximum value is returned successfully.
   *
   * @see elm_datetime_value_max_set()
   * @ingroup Datetime
@@ -374,7 +374,7 @@ EAPI Eina_Bool elm_datetime_value_max_get(const Evas_Object *obj, struct tm *max
  *
  * @param obj The datetime object
  * @param maxtime Time structure containing the maximum time value.
- * @return EINA_TRUE if maximum value is accepted.
+ * @return @c EINA_TRUE if maximum value is accepted.
  *
  * @see elm_datetime_value_max_get()
  * @ingroup Datetime

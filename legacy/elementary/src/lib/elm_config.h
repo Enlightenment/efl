@@ -614,7 +614,7 @@ EAPI double      elm_config_tooltip_delay_get(void);
 /**
  * Set the duration after which tooltip will be shown.
  *
- * @return EINA_TRUE if value is set.
+ * @return @c EINA_TRUE if value is set.
  */
 EAPI void        elm_config_tooltip_delay_set(double delay);
 
@@ -693,7 +693,7 @@ EAPI Eina_Bool elm_config_password_show_last_get(void);
  *
  * This enables or disables show last setting of password mode.
  *
- * @param password_show_last If EINA_TRUE enables "show last" in password mode.
+ * @param password_show_last If @c EINA_TRUE, enables "show last" in password mode.
  * @see elm_config_password_show_last_timeout_set()
  * @ingroup Password_last_show
  */
@@ -889,7 +889,7 @@ EAPI Eina_Bool        elm_config_access_get(void);
 /**
  * Set access mode
  *
- * @param is_accesss If EINA_TRUE enables access mode
+ * @param is_accesss If @c EINA_TRUE, enables access mode
  *
  * @note Elementary objects may have information (e.g. label on the elm_button)
  * to be read. This information is read by access module when an object
@@ -919,7 +919,7 @@ EAPI Eina_Bool        elm_config_selection_unfocused_clear_get(void);
 /**
  * Set whether selection should be cleared when entry widget is unfocused.
  *
- * @param enabled If EINA_TRUE clear selection when unfocus,
+ * @param enabled If @c EINA_TRUE, clear selection when unfocus,
  * otherwise does not clear selection when unfocus.
  *
  * @since 1.7
@@ -1129,7 +1129,7 @@ EAPI Eina_Bool            elm_config_focus_highlight_enabled_get(void);
 /**
  * Set the enable status of the focus highlight
  *
- * @param enable Enable highlight if EINA_TRUE, disable otherwise
+ * @param enable Enable highlight if @c EINA_TRUE, disable otherwise
  *
  * Set whether to show or not the highlight on focused objects
  *
@@ -1157,7 +1157,7 @@ EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
 /**
  * Set the enable status of the highlight animation
  *
- * @param animate Enable animation if EINA_TRUE, disable otherwise
+ * @param animate Enable animation if @c EINA_TRUE, disable otherwise
  *
  * Set whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
@@ -1175,7 +1175,7 @@ EAPI void                 elm_config_focus_highlight_animate_set(Eina_Bool anima
  * Get the system mirrored mode. This determines the default mirrored mode
  * of widgets.
  *
- * @return EINA_TRUE if mirrored is set, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if mirrored is set, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool elm_config_mirrored_get(void);
 
@@ -1183,23 +1183,23 @@ EAPI Eina_Bool elm_config_mirrored_get(void);
  * Set the system mirrored mode. This determines the default mirrored mode
  * of widgets.
  *
- * @param mirrored EINA_TRUE to set mirrored mode, EINA_FALSE to unset it.
+ * @param mirrored @c EINA_TRUE to set mirrored mode, @c EINA_FALSE to unset it.
  */
 EAPI void      elm_config_mirrored_set(Eina_Bool mirrored);
 
 /**
- * Get the clouseau state. EINA_TRUE if clouseau was tried to be run.
+ * Get the clouseau state. @c EINA_TRUE if clouseau was tried to be run.
  *
  * @since 1.8
- * @return EINA_TRUE if clouseau was tried to run, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if clouseau was tried to run, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool elm_config_clouseau_enabled_get(void);
 
 /**
- * Get the clouseau state. EINA_TRUE if clouseau should be attempted to be run.
+ * Get the clouseau state. @c EINA_TRUE if clouseau should be attempted to be run.
  *
  * @since 1.8
- * @param enabled EINA_TRUE to try and run clouseau, EINA_FALSE otherwise.
+ * @param enabled @c EINA_TRUE to try and run clouseau, @c EINA_FALSE otherwise.
  */
 EAPI void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
 

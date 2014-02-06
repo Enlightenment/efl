@@ -122,7 +122,7 @@ EAPI void             elm_naviframe_item_simple_promote(Evas_Object *obj, Evas_O
  * @brief preserve the content objects when items are popped.
  *
  * @param obj The naviframe object
- * @param preserve Enable the preserve mode if EINA_TRUE, disable otherwise
+ * @param preserve Enable the preserve mode if @c EINA_TRUE, disable otherwise
  *
  * @see also elm_naviframe_content_preserve_on_pop_get()
  *
@@ -207,7 +207,7 @@ EAPI Eina_List *elm_naviframe_items_get(const Evas_Object *obj) EINA_MALLOC EINA
 /**
  * @brief Set the event enabled when pushing/popping items
  *
- * If @c enabled is EINA_TRUE, the contents of the naviframe item will
+ * If @p enabled is @c EINA_TRUE, the contents of the naviframe item will
  * receives events from mouse and keyboard during view changing such as
  * item push/pop.
  *
@@ -229,7 +229,7 @@ EAPI void             elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Boo
  * @brief Get the value of event enabled status.
  *
  * @param obj The naviframe object
- * @return EINA_TRUE, when event is enabled
+ * @return @c EINA_TRUE, when event is enabled
  *
  * @see elm_naviframe_event_enabled_set()
  *

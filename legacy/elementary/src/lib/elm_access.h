@@ -102,7 +102,7 @@ typedef enum _Elm_Highlight_Direction Elm_Highlight_Direction;
  *
  * @param data user data
  * @param action_info information to classify the action
- * Returns EINA_TRUE on success, EINA FALSE otherwise
+ * Returns @c EINA_TRUE on success, @c EINA FALSE otherwise
  *
  */
 typedef Eina_Bool (*Elm_Access_Action_Cb)(void *data, Evas_Object *obj, Elm_Access_Action_Info *action_info);

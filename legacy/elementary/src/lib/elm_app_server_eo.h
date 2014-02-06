@@ -114,7 +114,7 @@ typedef Elm_App_Server_View *(*Elm_App_Server_Create_View_Cb)(Elm_App_Server *ap
  * If view id is available and unique, return the full DBus object path of view
  *
  * @param[in] id view identifier
- * @param[out] ret EINA_TRUE if id is valid or EINA_FALSE if not
+ * @param[out] ret @c EINA_TRUE if id is valid or @c EINA_FALSE if not
  */
 #define elm_app_server_view_check(id, ret) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_VIEW_CHECK), EO_TYPECHECK(const char *, id), EO_TYPECHECK(Eina_Bool *, ret)
 

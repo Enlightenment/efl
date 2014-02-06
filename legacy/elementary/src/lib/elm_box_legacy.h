@@ -15,14 +15,14 @@ EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
  *
  * By default, box object arranges their contents vertically from top to
  * bottom.
- * By calling this function with @p horizontal as EINA_TRUE, the box will
+ * By calling this function with @p horizontal as @c EINA_TRUE, the box will
  * become horizontal, arranging contents from left to right.
  *
  * @note This flag is ignored if a custom layout function is set.
  *
  * @param obj The box object
- * @param horizontal The horizontal flag (EINA_TRUE = horizontal,
- * EINA_FALSE = vertical)
+ * @param horizontal The horizontal flag (@c EINA_TRUE = horizontal,
+ * @c EINA_FALSE = vertical)
  *
  * @ingroup Box
  */
@@ -32,7 +32,7 @@ EAPI void                elm_box_horizontal_set(Evas_Object *obj, Eina_Bool hori
  * Get the horizontal orientation
  *
  * @param obj The box object
- * @return EINA_TRUE if the box is set to horizontal mode, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if the box is set to horizontal mode, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool           elm_box_horizontal_get(const Evas_Object *obj);
 
@@ -55,7 +55,7 @@ EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool hom
  * Get whether the box is using homogeneous mode or not
  *
  * @param obj The box object
- * @return EINA_TRUE if it's homogeneous, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if it's homogeneous, @c EINA_FALSE otherwise
  *
  * @ingroup Box
  */

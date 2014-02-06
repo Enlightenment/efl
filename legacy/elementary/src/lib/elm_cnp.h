@@ -2,10 +2,12 @@
  * @defgroup CopyPaste CopyPaste
  * @ingroup Elementary
  *
+ * Copy and paste feature implementations.
+ *
  * Implements the following functionality
- *    a. select, copy/cut and paste
- *    b. clipboard
- *    c. drag and drop
+ * a. select, copy/cut and paste
+ * b. clipboard
+ * c. drag and drop
  * in order to share data across application windows.
  *
  * Contains functions to select text or a portion of data,
@@ -207,7 +209,7 @@ typedef void (*Elm_Drag_Start) (void *data, Evas_Object *obj);
  * @param format Selection format
  * @param buf The data selected
  * @param buflen The size of @p buf
- * @return If EINA_TRUE, setting data was successful.
+ * @return If @c EINA_TRUE, setting data was successful.
  *
  * @ingroup CopyPaste
  *
@@ -231,7 +233,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
  * @param obj The source widget
  * @param datacb The user data callback if the target widget isn't elm_entry
  * @param udata The user data pointer for @p datacb
- * @return If EINA_TRUE, getting selection data was successful.
+ * @return If @c EINA_TRUE, getting selection data was successful.
  *
  * @ingroup CopyPaste
  */
@@ -248,7 +250,7 @@ EAPI Eina_Bool elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
  *
  * @param obj The source widget
  * @param selection Selection type for copying and pasting
- * @return If EINA_TRUE, clearing data was successful.
+ * @return If @c EINA_TRUE, clearing data was successful.
  *
  * @ingroup CopyPaste
  *
@@ -301,7 +303,7 @@ EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type sel
  * @param posdata The application data to pass to posdata
  * @param dropcb The function to call when a drop has occurred
  * @param dropdata The application data to pass to dropcb
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -326,7 +328,7 @@ EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
  * @param posdata The application data to pass to posdata
  * @param dropcb The function to call when a drop has occurred
  * @param dropdata The application data to pass to dropcb
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -354,7 +356,7 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
  * @param acceptdata Application data passed to @p acceptcb
  * @param dragdone Function to call when drag is done
  * @param donecbdata Application data to pass to @p dragdone
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -374,7 +376,7 @@ EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
  * It can only be initiated from the source window.
  *
  * @param obj The source of the current drag.
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -387,7 +389,7 @@ EAPI Eina_Bool elm_drag_cancel(Evas_Object *obj);
  *
  * @param obj The source of a drag if a drag is underway
  * @param action The drag action to be done
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -463,7 +465,7 @@ struct _Elm_Drag_User_Info
  *
  * @param obj The container object
  * @param it The Elm_Object_Item pointer where drag-start
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  */
 typedef Eina_Bool (*Elm_Item_Container_Data_Get_Cb)(
       Evas_Object *obj,
@@ -478,7 +480,7 @@ typedef Eina_Bool (*Elm_Item_Container_Data_Get_Cb)(
  * @param tm_to_drag Time period to wait before start dragging.
  * @param itemgetcb Callback to get Evas_Object pointer for item at (x,y)
  * @param data_get  Callback to get drag info
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -490,7 +492,7 @@ EAPI Eina_Bool elm_drag_item_container_add(Evas_Object *obj, double tm_to_anim, 
  * @brief Deletes a item container from drag-source list
  *
  * @param obj The target object
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -512,7 +514,7 @@ EAPI Eina_Bool elm_drag_item_container_del(Evas_Object *obj);
  * @param posdata The application data to pass to posdata
  * @param dropcb The function to call when a drop has occurred
  * @param dropdata The application data to pass to dropcb
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns @c EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *
@@ -530,7 +532,7 @@ EAPI Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
  * @brief Removes a container from list of drop targets.
  *
  * @param obj The container object
- * @return Returns EINA_TRUE, if successful, or EINA_FALSE if not.
+ * @return Returns EINA_TRUE, if successful, or @c EINA_FALSE if not.
  *
  * @ingroup CopyPaste
  *

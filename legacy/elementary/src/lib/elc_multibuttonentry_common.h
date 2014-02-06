@@ -6,8 +6,8 @@
  * @param item_data data specific to this item.
  * @param data data specific to the multibuttonentry.
  *
- * @return EINA_TRUE
- *         EINA_FALSE otherwise.
+ * @return @c EINA_TRUE
+ *         @c EINA_FALSE otherwise.
  *
  * @ingroup Multibuttonentry
  */
