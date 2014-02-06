@@ -1,7 +1,7 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
 pkgname=('elementary' 'elementary_test' 'elementary_doc')
 [[ -d ../.git ]] && pkgname=('elementary-git' 'elementary_test-git' 'elementary_doc-git')
-pkgver=1.8.99.8967.a1cfce6
+pkgver=1.8.99.9334.01199ad
 pkgrel=1
 pkgdesc="Enlightenment GUI toolkit - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
@@ -33,7 +33,7 @@ build() {
   export CFLAGS="$CFLAGS -fvisibility=hidden -fomit-frame-pointer"
   [[ -e Makefile ]] && make clean distclean
   [[ -e autogen.sh ]] && _configure=autogen.sh || _configure=configure
-  ./$_configure --prefix=/usr --disable-static
+  ./$_configure --prefix=/usr --disable-static --with-elementary-web-backend=none
   make
   make doc
 }
