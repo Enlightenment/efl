@@ -58,8 +58,8 @@ BuildRequires:  pkgconfig(sndfile)
 BuildRequires:  pkgconfig(libpulse)
 
 #emotion
-BuildRequires:  pkgconfig(gstreamer-0.10)
-BuildRequires:  pkgconfig(gstreamer-plugins-base-0.10)
+BuildRequires:  pkgconfig(gstreamer-1.0)
+BuildRequires:  pkgconfig(gstreamer-plugins-base-1.0)
 
 #evas
 BuildRequires:  libexif-devel
