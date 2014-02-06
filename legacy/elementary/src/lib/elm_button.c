@@ -26,8 +26,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_REPEATED, ""},
    {SIG_PRESSED, ""},
    {SIG_UNPRESSED, ""},
-   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
-   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
+   {SIG_LAYOUT_UNFOCUSED, ""}, /**< handled by elm_layout */
    {NULL, NULL}
 };
 

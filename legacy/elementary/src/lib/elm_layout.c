@@ -15,10 +15,14 @@ EAPI Eo_Op ELM_OBJ_LAYOUT_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_layout"
 
 static const char SIG_THEME_CHANGED[] = "theme,changed";
+const char SIG_LAYOUT_FOCUSED[] = "focused";
+const char SIG_LAYOUT_UNFOCUSED[] = "unfocused";
 
 /* smart callbacks coming from elm layout objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_THEME_CHANGED, ""},
+   {SIG_LAYOUT_FOCUSED, ""},
+   {SIG_LAYOUT_UNFOCUSED, ""},
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {NULL, NULL}
 };
@@ -392,20 +396,20 @@ _elm_layout_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
-   if (!int_ret) return;
+   if (!elm_widget_can_focus_get(obj)) return;
 
    if (elm_widget_focus_get(obj))
      {
         elm_layout_signal_emit(obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
+        evas_object_smart_callback_call(obj, SIG_LAYOUT_FOCUSED, NULL);
      }
    else
      {
         elm_layout_signal_emit(obj, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
+        evas_object_smart_callback_call(obj, SIG_LAYOUT_UNFOCUSED, NULL);
      }
 
    if (ret) *ret = EINA_TRUE;

@@ -38,8 +38,8 @@ ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_FILESELECTOR_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
-   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
-   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
+   {SIG_LAYOUT_UNFOCUSED, ""}, /**< handled by elm_layout */
    {NULL, NULL}
 };
 #undef ELM_PRIV_FILESELECTOR_SIGNALS

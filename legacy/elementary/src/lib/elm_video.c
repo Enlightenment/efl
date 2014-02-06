@@ -21,8 +21,8 @@ EAPI Eo_Op ELM_OBJ_VIDEO_BASE_ID = EO_NOOP;
 #define MY_CLASS_NAME_LEGACY "elm_video"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
-   {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
+   {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
+   {SIG_LAYOUT_UNFOCUSED, ""}, /**< handled by elm_layout */
    {NULL, NULL}
 };
 
