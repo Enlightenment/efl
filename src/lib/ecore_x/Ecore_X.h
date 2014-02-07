@@ -1772,6 +1772,7 @@ EAPI void                            ecore_x_e_illume_home_del_send(Ecore_X_Wind
 EAPI void                            ecore_x_e_illume_access_action_next_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_prev_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win);
+EAPI void                            ecore_x_e_illume_access_action_over_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_read_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win);
