@@ -400,6 +400,10 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_paragraph_last(main_cur);
    fail_if(evas_textblock_cursor_compare(cur, main_cur));
 
+   /* Try positions between the first paragraph and the first line. */
+   evas_object_textblock_text_markup_set(tb, buf);
+   fail_if(!evas_textblock_cursor_char_coord_set(cur, 5, 1));
+
    /* Try positions beyond the left/right limits of lines. */
    for (i = 0 ; i < 2 ; i++)
      {
