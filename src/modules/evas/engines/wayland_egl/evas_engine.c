@@ -2292,8 +2292,12 @@ eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
 }
 
 static void
-eng_image_content_hint_set(void *data EINA_UNUSED, void *image, int hint)
+eng_image_content_hint_set(void *data, void *image, int hint)
 {
+   Render_Engine *re;
+   re = (Render_Engine *)data;
+
+   if (re) eng_window_use(re->win);
    if (image) evas_gl_common_image_content_hint_set(image, hint);
 }
 
