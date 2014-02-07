@@ -586,6 +586,7 @@ struct _Elm_Widget_Item
    Evas_Object                   *track_obj;
 
    Eina_Bool                      disabled : 1;
+   Eina_Bool                      on_deletion : 1;
    Eina_Bool                      on_translate : 1;
 };
 
@@ -1071,6 +1072,23 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_part_text_custom_update(item) \
   _elm_widget_item_part_text_custom_update((Elm_Widget_Item *)item)
+
+#define ELM_WIDGET_CHECK_OR_RETURN(obj, ...)                    \
+   do {                                                         \
+        if (!obj || !evas_object_smart_data_get(obj))           \
+          {                                                     \
+             ERR("Object [%p] is NULL or already deleted", obj);\
+             return __VA_ARGS__;                                \
+          }                                                     \
+   } while (0)
+
+#define ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, ...)              \
+   do {                                                         \
+       if (item && (item)->on_deletion) {                       \
+            WRN("Elm_Widget_Item " # item " is deleting");      \
+            return __VA_ARGS__;                                 \
+        }                                                       \
+   } while (0)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)              \
    do {                                                         \
