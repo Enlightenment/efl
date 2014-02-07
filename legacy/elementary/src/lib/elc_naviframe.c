@@ -1669,6 +1669,8 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
         else
           elm_object_focus_set(WIDGET(it), EINA_TRUE);
      }
+   else
+     elm_object_signal_emit(VIEW(it), "elm,state,invisible", "elm");
 
    elm_layout_sizing_eval(obj);
 
