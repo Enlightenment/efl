@@ -63,7 +63,7 @@ AC_DEFUN([_EFL_CHECK_FUNC_DLADDR],
 case "$host_os" in
    mingw*)
       $2="yes"
-      EFL_ADD_LIBS([$1], [-ldl])
+      EFL_ADD_LIBS([$1], [lib/evil/libdl.la])
    ;;
    *)
       EFL_FIND_LIB_FOR_CODE([$1], [-ldl], [$2], [[
@@ -84,7 +84,7 @@ AC_DEFUN([_EFL_CHECK_FUNC_DLOPEN],
 case "$host_os" in
    mingw*)
       $2="yes"
-      EFL_ADD_LIBS([$1], [-ldl])
+      EFL_ADD_LIBS([$1], [lib/evil/libdl.la])
    ;;
    *)
       EFL_FIND_LIB_FOR_CODE([$1], [-ldl], [$2], [[
@@ -101,7 +101,7 @@ AC_DEFUN([_EFL_CHECK_FUNC_DLSYM],
 case "$host_os" in
    mingw*)
       $2="yes"
-      EFL_ADD_LIBS([$1], [-ldl])
+      EFL_ADD_LIBS([$1], [lib/evil/libdl.la])
    ;;
    *)
       EFL_FIND_LIB_FOR_CODE([$1], [-ldl], [$2], [[
