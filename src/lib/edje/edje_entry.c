@@ -2167,11 +2167,9 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
      return;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-     {
-        _edje_entry_imf_cursor_info_set(en);
-        return;
-     }
+
+   /* We don't check for ON_HOLD because we'd like to end selection anyway when
+    * mouse is up, even if it's held. */
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
