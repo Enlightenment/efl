@@ -573,9 +573,8 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    elm_widget_theme_object_set
      (obj, sd->entry_edje, "entry", _elm_entry_theme_group_get(obj), style);
 
-   if (_elm_config->desktop_entry)
-     edje_object_part_text_select_allow_set
-       (sd->entry_edje, "elm.text", EINA_TRUE);
+   edje_object_part_text_select_allow_set
+       (sd->entry_edje, "elm.text", _elm_config->desktop_entry);
 
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);
