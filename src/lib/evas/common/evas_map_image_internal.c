@@ -12,7 +12,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    Line *spans;
    DATA32 *buf = NULL, *sp;
    RGBA_Gfx_Func func = NULL;
-   int havea = 0;
+   Eina_Bool havea = EINA_FALSE;
    int havecol = 4;
 
    cx = clip_x;
@@ -20,17 +20,18 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    cw = clip_w;
    ch = clip_h;
 
-   // find y top line and y bottom line
+   // find y top line and collect point color info
    ytop = p[0].y;
-   if ((p[0].col >> 24) < 0xff) havea = 1;
+   if ((p[0].col >> 24) < 0xff) havea = EINA_TRUE;
    if (p[0].col == 0xffffffff) havecol--;
    for (i = 1; i < 4; i++)
      {
         if (p[i].y < ytop) ytop = p[i].y;
-        if ((p[i].col >> 24) < 0xff) havea = 1;
+        if ((p[i].col >> 24) < 0xff) havea = EINA_TRUE;
         if (p[i].col == 0xffffffff) havecol--;
      }
 
+   // find y bottom line
    ybottom = p[0].y;
    for (i = 1; i < 4; i++)
      {
@@ -98,7 +99,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         src->cache_entry.flags.alpha = pa;
      }
 
-   if (!havecol)
+   if (havecol == 0)
      {
 #undef COLMUL
 #include "evas_map_image_core.c"
@@ -166,7 +167,7 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
         src->cache_entry.flags.alpha = pa;
      }
 
-   if (!havecol)
+   if (havecol == 0)
      {
 #undef COLMUL
 #include "evas_map_image_core.c"
