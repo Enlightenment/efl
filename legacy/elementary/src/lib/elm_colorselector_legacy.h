@@ -80,6 +80,21 @@ EAPI Elm_Object_Item *elm_colorselector_palette_color_add(Evas_Object *obj, int 
 EAPI void elm_colorselector_palette_clear(Evas_Object *obj);
 
 /**
+ * Get list of palette items.
+ *
+ * @param obj The Colorselector object
+ * @return The list of color palette items.
+ *
+ * Note That palette item list is internally managed by colorselector widget and
+ * it should not be freed/modified by application.
+ *
+ * @since 1.9
+ *
+ * @ingroup Colorselector
+ */
+EAPI const Eina_List *elm_colorselector_palette_items_get(const Evas_Object *obj);
+
+/**
  * Set current palette's name
  *
  * @param obj The Colorselector object

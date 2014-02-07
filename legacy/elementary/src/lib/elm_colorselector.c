@@ -2149,6 +2149,23 @@ _palette_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      sd->focused = ELM_COLORSELECTOR_COMPONENTS;
 }
 
+EAPI const Eina_List *
+elm_colorselector_palette_items_get(const Evas_Object *obj)
+{
+   ELM_COLORSELECTOR_CHECK(obj) NULL;
+   const Eina_List *color_list = NULL;
+   eo_do((Eo *) obj, elm_obj_colorselector_palette_items_get(&color_list));
+   return color_list;
+}
+
+static void
+_palette_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Eina_List **ret = va_arg(*list, const Eina_List **);
+   Elm_Colorselector_Smart_Data *sd = _pd;
+   *ret = sd->items;
+}
+
 EAPI void
 elm_colorselector_palette_name_set(Evas_Object *obj,
                                    const char *palette_name)
@@ -2213,6 +2230,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_MODE_GET), _mode_get),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_COLOR_ADD), _palette_color_add),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_CLEAR), _palette_clear),
+        EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_ITEMS_GET), _palette_items_get),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_SET), _palette_name_set),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_GET), _palette_name_get),
         EO_OP_FUNC_SENTINEL
@@ -2231,6 +2249,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_MODE_GET, "Get Colorselector's mode."),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_COLOR_ADD, "Add a new color item to palette."),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_CLEAR, "Clear the palette items."),
+     EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_ITEMS_GET, "Get palette's item list"),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_SET, "Set current palette's name."),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_GET, "Get current palette's name."),
      EO_OP_DESCRIPTION_SENTINEL
