@@ -2317,11 +2317,13 @@ _ecore_xcb_event_handle_generic_event(xcb_generic_event_t *event)
 // FIXME: should we generate generic events as WELL as input events?
 //        return;
      }
+#ifdef ECORE_XCB_XPRESENT
    else if (ev->pad0 == _ecore_xcb_event_xpresent)
      {
         _ecore_xcb_event_handle_present_event((xcb_ge_event_t*)event);
         return;
      }
+#endif
 
    if (!(e = calloc(1, sizeof(Ecore_X_Event_Generic))))
      return;

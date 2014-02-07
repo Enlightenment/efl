@@ -64,7 +64,9 @@ _ecore_xcb_extensions_init(void)
    _ecore_xcb_gesture_init();
 #endif
 
+#ifdef ECORE_XCB_XPRESENT
    _ecore_xcb_present_init();
+#endif
 
 /* #ifdef ECORE_XCB_DRI */
 /*    _ecore_xcb_dri_init(); */
@@ -137,7 +139,10 @@ _ecore_xcb_extensions_finalize(void)
    _ecore_xcb_gesture_finalize();
 #endif
 
+#ifdef ECORE_XCB_XPRESENT
    _ecore_xcb_present_finalize();
+#endif
+
 /* #ifdef ECORE_XCB_DRI */
 /*    _ecore_xcb_dri_finalize(); */
 /* #endif */
