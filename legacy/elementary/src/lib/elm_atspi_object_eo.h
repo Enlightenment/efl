@@ -1,46 +1,31 @@
-void _elm_atspi_object_global_callback_add(Eo_Event_Cb cv, void *user_data);
-void _elm_atspi_object_global_callback_del(Eo_Event_Cb cv);
-
 #define ELM_ATSPI_CLASS elm_atspi_obj_class_get()
-const Eo_Class *elm_atspi_obj_class_get(void) EINA_CONST;
 
-#define ELM_ATSPI_WIDGET_CLASS elm_atspi_widget_obj_class_get()
-const Eo_Class *elm_atspi_widget_obj_class_get(void) EINA_CONST;
+const Eo_Class *elm_atspi_obj_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ELM_ATSPI_OBJ_BASE_ID;
 
 enum
 {
-   ELM_ATSPI_OBJ_SUB_ID_NAME_GET, /* virtual */
-   ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_GET, /* virtual */
+   ELM_ATSPI_OBJ_SUB_ID_NAME_GET,
+   ELM_ATSPI_OBJ_SUB_ID_NAME_SET,
+   ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_GET,
+   ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_SET,
+   ELM_ATSPI_OBJ_SUB_ID_PARENT_GET,
    ELM_ATSPI_OBJ_SUB_ID_CHILD_AT_INDEX_GET,
-   ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET, /* virtual */
-   ELM_ATSPI_OBJ_SUB_ID_PARENT_GET, /* virtual */
-   ELM_ATSPI_OBJ_SUB_ID_OBJECT_GET,
+   ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET,
    ELM_ATSPI_OBJ_SUB_ID_INDEX_IN_PARENT_GET,
-   ELM_ATSPI_OBJ_SUB_ID_RELATION_SET_GET, /* virtual */
-   ELM_ATSPI_OBJ_SUB_ID_ROLE_GET, /* virtual */
+   ELM_ATSPI_OBJ_SUB_ID_RELATION_SET_GET,
+   ELM_ATSPI_OBJ_SUB_ID_RELATION_SET_SET,
+   ELM_ATSPI_OBJ_SUB_ID_ROLE_GET,
+   ELM_ATSPI_OBJ_SUB_ID_ROLE_SET,
    ELM_ATSPI_OBJ_SUB_ID_ROLE_NAME_GET,
    ELM_ATSPI_OBJ_SUB_ID_LOCALIZED_ROLE_NAME_GET,
-   ELM_ATSPI_OBJ_SUB_ID_STATE_GET, /* virtual */
-   ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET, /* virtual */
+   ELM_ATSPI_OBJ_SUB_ID_STATE_GET,
+   ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET,
    ELM_ATSPI_OBJ_SUB_ID_LAST
 };
 
 #define ELM_ATSPI_OBJ_ID(sub_id) (ELM_ATSPI_OBJ_BASE_ID + sub_id)
-
-/* Elm_Atspi_Object events */
-extern const Eo_Event_Description _EV_ATSPI_OBJ_NAME_CHANGED;
-#define EV_ATSPI_OBJ_NAME_CHANGED (&(_EV_ATSPI_OBJ_NAME_CHANGED))
-
-extern const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_ADD;
-#define EV_ATSPI_OBJ_CHILD_ADD (&(_EV_ATSPI_OBJ_CHILD_ADD))
-
-extern const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_DEL;
-#define EV_ATSPI_OBJ_CHILD_DEL (&(_EV_ATSPI_OBJ_CHILD_DEL))
-
-extern const Eo_Event_Description _EV_ATSPI_OBJ_STATE_CHANGED;
-#define EV_ATSPI_OBJ_STATE_CHANGED (&(_EV_ATSPI_OBJ_STATE_CHANGED))
 
 /* Component Interface */
 #define ELM_ATSPI_COMPONENT_INTERFACE elm_atspi_component_interface_get()
@@ -68,17 +53,6 @@ enum
 
 #define ELM_ATSPI_COMPONENT_INTERFACE_ID(sub_id) (ELM_ATSPI_COMPONENT_INTERFACE_BASE_ID + sub_id)
 /* Component Interface - END */
-
-/* Window Interface */
-#define ELM_ATSPI_WINDOW_INTERFACE elm_atspi_window_interface_get()
-const Eo_Class *elm_atspi_window_interface_get(void) EINA_CONST;
-
-extern const Eo_Event_Description _EV_ATSPI_OBJ_WINDOW_ACTIVATED;
-#define EV_ATSPI_OBJ_WINDOW_ACTIVATED (&(_EV_ATSPI_OBJ_WINDOW_ACTIVATED))
-
-extern const Eo_Event_Description _EV_ATSPI_OBJ_WINDOW_DEACTIVATED;
-#define EV_ATSPI_OBJ_WINDOW_DEACTIVATED (&(_EV_ATSPI_OBJ_WINDOW_DEACTIVATED))
-/* Window Interface - END */
 
 /* Action Interface */
 #define ELM_ATSPI_ACTION_INTERFACE elm_accessible_action_interface_get()
@@ -134,7 +108,6 @@ enum
 };
 /* Text Interface - END */
 
-
 /* EditableText Interface */
 #define ELM_ATSPI_EDITABLE_TEXT_INTERFACE elm_accessible_editable_text_interface_get()
 
@@ -154,9 +127,10 @@ enum
 };
 /* EditableText Interface - END */
 
-/* Value Interface */
 #define ELM_ATSPI_VALUE_INTERFACE elm_accessible_value_interface_get()
 
+
+/* Value Interface */
 const Eo_Class *elm_accessible_value_interface_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ELM_ATSPI_VALUE_INTERFACE_BASE_ID;
@@ -210,9 +184,17 @@ enum
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_NAME_GET), \
    EO_TYPECHECK(const char **, ret)
 
+#define elm_atspi_obj_name_set(name)\
+   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_NAME_SET),\
+   EO_TYPECHECK(const char *, name)
+
 #define elm_atspi_obj_role_get(role)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_GET), \
    EO_TYPECHECK(AtspiRole*, role)
+
+#define elm_atspi_obj_role_set(role)\
+   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_SET),\
+   EO_TYPECHECK(AtspiRole, role)
 
 #define elm_atspi_obj_role_name_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_NAME_GET),\
@@ -226,6 +208,14 @@ enum
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_GET),\
    EO_TYPECHECK(const char **, ret)
 
+#define elm_atspi_obj_description_set(desc)\
+   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_SET),\
+   EO_TYPECHECK(const char *, desc)
+
+#define elm_atspi_obj_parent_get(ret)\
+   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET),\
+   EO_TYPECHECK(Elm_Atspi_Object**, ret)
+
 #define elm_atspi_obj_child_at_index_get(idx, ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILD_AT_INDEX_GET), \
    EO_TYPECHECK(int, idx),\
@@ -235,14 +225,6 @@ enum
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET),\
    EO_TYPECHECK(Eina_List**, ret)
 
-#define elm_atspi_obj_parent_get(ret)\
-   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET),\
-   EO_TYPECHECK(Elm_Atspi_Object**, ret)
-
-#define elm_atspi_obj_object_get(ret)\
-   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_OBJECT_GET),\
-   EO_TYPECHECK(Evas_Object**, ret)
-
 #define elm_atspi_obj_index_in_parent_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_INDEX_IN_PARENT_GET),\
    EO_TYPECHECK(int*, ret)
@@ -251,13 +233,11 @@ enum
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_RELATION_SET_GET),\
    EO_TYPECHECK()
 
-#define elm_atspi_obj_state_get(ret)\
-   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_STATE_GET),\
-   EO_TYPECHECK(Elm_Atspi_State*, ret)
+#define elm_atspi_obj_relation_set_set() ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_RELATION_SET_SET), EO_TYPECHECK()
 
-#define elm_atspi_obj_attributes_get()\
-   ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET),\
-   EO_TYPECHECK()
+#define elm_atspi_obj_state_get() ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_STATE_GET), EO_TYPECHECK()
+
+#define elm_atspi_obj_attributes_get() ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET), EO_TYPECHECK()
 
 #define elm_atspi_component_interface_contains(x, y, type, ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_CONTAINS),\
