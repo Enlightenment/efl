@@ -150,7 +150,8 @@ test_focus_part(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    layout = elm_layout_add(bx);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(chk, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_theme_set(layout, "layout", "focus", "example");
+   if (!elm_layout_theme_set(layout, "layout", "focus", "example"))
+     printf("error setting focus example layout\n");
    elm_box_pack_end(bx, layout);
    elm_object_focus_allow_set(layout, EINA_TRUE);
    evas_object_show(layout);
