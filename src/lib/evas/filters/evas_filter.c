@@ -436,9 +436,11 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
         ie = fb->backing;
         if (ie)
           {
-             // Not checking for async. It's also safe for sync rendering.
-             ie->references++;
-             evas_unref_queue_image_put(ctx->evas, ie);
+             if (ctx->async)
+               {
+                  ie->references++;
+                  evas_unref_queue_image_put(ctx->evas, ie);
+               }
              continue;
           }
 
@@ -648,10 +650,22 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
                }
              return EINA_TRUE;
           }
+        else if (fb->glimage == stolen_buffer)
+          {
+             fb->stolen = EINA_FALSE;
+             if (fb->delete_me)
+               {
+                  ENFN->image_free(ENDT, stolen_buffer);
+                  free(fb);
+               }
+             return EINA_TRUE;
+          }
      }
 
    if (ctx->async)
      evas_unref_queue_image_put(ctx->evas, ie);
+   else if (ctx->gl_engine)
+     ENFN->image_free(ENDT, stolen_buffer);
    else
      _backing_free(ctx, ie);
 

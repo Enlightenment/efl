@@ -34,9 +34,10 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
         return NULL;
      }
 
-   // FIXME: Not supported on GL engine. HAHAHAHAHA
+   // FIXME: Not supported on GL engine.
+   // Yeah, we need to call the CPU scaling functions and not the engine.
    if (ctx->gl_engine)
-     CRI("Support not implemened yet. lol yeah");
+     CRI("Support for stretching not implemened yet for GL.");
 
    if (!src->alpha_only)
      {
