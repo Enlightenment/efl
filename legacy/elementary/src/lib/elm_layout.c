@@ -812,6 +812,9 @@ _elm_layout_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
+        edje_object_signal_callback_del_full
+           (wd->resize_obj, esd->emission, esd->source,
+            _edje_signal_callback, esd);
         eina_stringshare_del(esd->emission);
         eina_stringshare_del(esd->source);
         free(esd);

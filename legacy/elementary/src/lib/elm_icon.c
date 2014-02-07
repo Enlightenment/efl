@@ -339,12 +339,27 @@ _elm_icon_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
+_edje_signal_callback(void *data,
+                      Evas_Object *obj EINA_UNUSED,
+                      const char *emission,
+                      const char *source)
+{
+   Edje_Signal_Data *esd = data;
+
+   esd->func(esd->data, esd->obj, emission, source);
+}
+
+static void
 _edje_signals_free(Elm_Icon_Smart_Data *sd)
 {
    Edje_Signal_Data *esd;
+   Elm_Image_Smart_Data *id = eo_data_scope_get(sd->obj, ELM_OBJ_IMAGE_CLASS);
 
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
+        edje_object_signal_callback_del_full
+           (id->img, esd->emission, esd->source,
+            _edje_signal_callback, esd);
         eina_stringshare_del(esd->emission);
         eina_stringshare_del(esd->source);
         free(esd);
@@ -620,17 +635,6 @@ _elm_icon_signal_emit(Evas_Object *obj,
    if (!id->edje) return;
 
    edje_object_signal_emit(id->img, emission, source);
-}
-
-static void
-_edje_signal_callback(void *data,
-                      Evas_Object *obj EINA_UNUSED,
-                      const char *emission,
-                      const char *source)
-{
-   Edje_Signal_Data *esd = data;
-
-   esd->func(esd->data, esd->obj, emission, source);
 }
 
 /* WARNING: to be deprecated */
