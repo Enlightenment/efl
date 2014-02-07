@@ -347,68 +347,6 @@ _rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
    return image;
 }
 
-/*
-Eina_Bool
-evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h)
-{
-   if (!fb) return EINA_FALSE;
-   INF("Allocate buffer %d: backing %p", fb->id, fb->backing);
-   if (fb->backing)
-     {
-        RGBA_Image *im;
-        int W, H;
-
-        if (fb->ctx->gl_engine)
-          {
-             // This needs to be counter-checked.
-             INF("Nope, gl engine is used");
-             return EINA_TRUE;
-          }
-
-        im = fb->backing;
-        if (!im->image.data)
-          {
-             if (fb->allocated)
-               fb->ENFN->image_free(fb->ENDT, im);
-             fb->allocated = EINA_FALSE;
-             fb->backing = NULL;
-          }
-        else
-          {
-             fb->ENFN->image_size_get(fb->ENDT, fb->backing, &W, &H);
-             if ((W == w) && (H == h))
-               {
-                  INF("Nope, already fine");
-                  return EINA_TRUE;
-               }
-
-             if (!fb->transient)
-               ERR("Buffer dimensions mismatch with external image!");
-             _filter_buffer_backing_free(fb);
-          }
-     }
-   if ((fb->w && (fb->w != w)) || (fb->h && (fb->h != h)))
-     {
-        ERR("Buffer dimensions mismatch!");
-        //return EINA_FALSE;
-     }
-   if (fb->allocated && fb->backing)
-     {
-        RGBA_Image *a = fb->backing;
-        INF("Already allocated. Is that true? backing %p and data %p", a, a?a->image.data:NULL);
-        return EINA_TRUE;
-     }
-   fb->w = w;
-   fb->h = h;
-
-   fb->backing = _rgba_image_alloc(fb, NULL);
-   fb->allocated = (fb->backing != NULL);
-   RGBA_Image *a = fb->backing;
-   INF("Allocated buf %d with backing %p data %p", fb->id, fb->backing, a?a->image.data:0);
-   return fb->allocated;
-}
-*/
-
 Eina_Bool
 evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
                                          unsigned w, unsigned h)
@@ -516,7 +454,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
              continue;
           }
 
-        //DBG("Allocating buffer of size %ux%u", fb->w, fb->h);
+        //DBG("Allocating buffer of size %ux%u alpha %d", fb->w, fb->h, fb->alpha_only);
         ie = (Image_Entry *) _rgba_image_alloc(fb, NULL);
         if (!ie)
           {
@@ -785,6 +723,12 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
                   return buf;
                }
           }
+     }
+
+   if (ctx->running && ctx->async)
+     {
+        ERR("Can not create a new buffer from this thread!");
+        return NULL;
      }
 
    buf = _buffer_new(ctx, w, h, alpha_only);
@@ -1661,19 +1605,23 @@ _filter_chain_run(Evas_Filter_Context *ctx)
    Evas_Filter_Command *cmd;
    Eina_Bool ok = EINA_TRUE;
 
+   ctx->running = EINA_TRUE;
    EINA_INLIST_FOREACH(ctx->commands, cmd)
      {
         ok = _filter_command_run(cmd);
         if (!ok)
           {
              ERR("Filter processing failed!");
-             return EINA_FALSE;
+             goto end;
           }
      }
 
-   if (!ok) return EINA_FALSE;
+   if (!ok) goto end;
+   ok = _filter_target_render(ctx);
 
-   return _filter_target_render(ctx);
+end:
+   ctx->running = EINA_FALSE;
+   return ok;
 }
 
 static void
