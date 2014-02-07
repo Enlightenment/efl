@@ -53,6 +53,7 @@ struct _Evas_Object_Text
          int                  sources_count;
          void                *output;
          Eina_Bool            changed : 1;
+         Eina_Bool            invalid : 1; // Code parse failed
       } filter;
    } cur, prev;
 
@@ -2129,7 +2130,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
     * remotely similar to its final form. You've been warned :)
     */
 
-   if (o->cur.filter.chain)
+   if (o->cur.filter.chain || (o->cur.filter.code && !o->cur.filter.invalid))
      {
         int X, Y, W, H;
         Evas_Filter_Context *filter;
@@ -2152,7 +2153,22 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         X = obj->cur->geometry.x;
         Y = obj->cur->geometry.y;
 
-        if (previous)
+        if (!o->cur.filter.chain)
+          {
+             Evas_Filter_Program *pgm;
+             pgm = evas_filter_program_new("Evas_Text");
+             evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
+             if (!evas_filter_program_parse(pgm, o->cur.filter.code))
+               {
+                  ERR("Filter program parsing failed");
+                  evas_filter_program_del(pgm);
+                  o->cur.filter.invalid = EINA_TRUE;
+                  goto normal_render;
+               }
+             o->cur.filter.chain = pgm;
+             o->cur.filter.invalid = EINA_FALSE;
+          }
+        else if (previous)
           {
              Eina_Bool redraw = o->cur.filter.changed;
 
@@ -2719,6 +2735,7 @@ _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
      }
    o->cur.filter.chain = pgm;
    o->cur.filter.changed = EINA_TRUE;
+   o->cur.filter.invalid = (pgm == NULL);
    eina_stringshare_replace(&o->cur.filter.code, arg);
 
    // Update object
@@ -2777,7 +2794,10 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
    const char *name = va_arg(list, const char *);
    Evas_Object *eo_source = va_arg(list, Evas_Object *);
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
-   Evas_Object_Protected_Data *source;
+   Evas_Object_Protected_Data *source = NULL;
+
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   if (eo_source) source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
 
    if (!o->cur.filter.sources)
      {
@@ -2787,13 +2807,20 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
    else
      {
         pb_old = eina_hash_find(o->cur.filter.sources, name);
-        if (pb_old && (pb_old->eo_source == eo_source)) return;
-        eina_hash_del(o->cur.filter.sources, name, pb_old);
+        if (pb_old)
+          {
+             if (pb_old->eo_source == eo_source) goto update;
+             eina_hash_del(o->cur.filter.sources, name, pb_old);
+          }
      }
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
-   if (!source) return;
+   if (!source)
+     {
+        pb_old = eina_hash_find(o->cur.filter.sources, name);
+        if (!pb_old) return;
+        eina_hash_del_by_key(o->cur.filter.sources, name);
+        goto update;
+     }
 
    pb = calloc(1, sizeof(*pb));
    pb->eo_proxy = eo_obj;
@@ -2817,7 +2844,9 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
 
    // Update object
+update:
    o->cur.filter.changed = EINA_TRUE;
+   o->cur.filter.invalid = EINA_FALSE;
    _evas_object_text_items_clear(o);
    o->changed = 1;
    _evas_object_text_recalc(eo_obj, o->cur.text);

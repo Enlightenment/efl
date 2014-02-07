@@ -635,6 +635,7 @@ static Buffer *
 _buffer_get(Evas_Filter_Program *pgm, const char *name)
 {
    Buffer *buf;
+   Eo *source;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
@@ -642,6 +643,22 @@ _buffer_get(Evas_Filter_Program *pgm, const char *name)
    EINA_INLIST_FOREACH(pgm->buffers, buf)
      if (!strcasecmp(buf->name, name))
        return buf;
+
+   // Auto proxies
+   if (pgm->proxies)
+     {
+        source = eina_hash_find(pgm->proxies, name);
+        if (!source) return NULL;
+
+        buf = calloc(1, sizeof(Buffer));
+        if (!buf) return NULL;
+
+        buf->name = eina_stringshare_add(name);
+        buf->proxy = eina_stringshare_add(name);
+        buf->alpha = EINA_FALSE;
+        pgm->buffers = eina_inlist_append(pgm->buffers, EINA_INLIST_GET(buf));
+        return buf;
+     }
 
    return NULL;
 }
