@@ -755,7 +755,7 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Smart_Data *sd,
 
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
-   evas_object_clip_set(obj, clip);
+   if (clip) evas_object_clip_set(obj, clip);
 }
 
 static void
