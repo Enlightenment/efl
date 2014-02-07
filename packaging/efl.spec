@@ -505,6 +505,7 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
 %endif
 %if %{with x}
     --with-x11=xlib \
+    --disable-gesture \
 %else
     --with-x11=none \
     --enable-tile-rotate \
