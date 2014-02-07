@@ -1919,3 +1919,14 @@ ecore_x_e_illume_window_state_get(Ecore_X_Window win)
    return _ecore_x_e_illume_window_state_get(atom);
 }
 
+EAPI void
+ecore_x_e_illume_window_state_send(Ecore_X_Window win,
+                                   Ecore_X_Illume_Window_State state)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send(win,
+                                 ECORE_X_ATOM_E_ILLUME_WINDOW_STATE,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                 _ecore_x_e_illume_window_state_atom_get(state),
+                                 0, 0, 0, 0);
+}

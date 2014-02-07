@@ -2670,11 +2670,10 @@ EAPI void                                  ecore_x_e_illume_indicator_type_set(E
 EAPI Ecore_X_Illume_Indicator_Type_Mode    ecore_x_e_illume_indicator_type_get(Ecore_X_Window win);  /**< @since 1.8 */
 EAPI void                                  ecore_x_e_illume_indicator_type_send(Ecore_X_Window win, Ecore_X_Illume_Indicator_Type_Mode mode);  /**< @since 1.8 */
 
-EAPI void
-ecore_x_e_illume_window_state_set(Ecore_X_Window win,
-                                  Ecore_X_Illume_Window_State state);
-
+EAPI void                                  ecore_x_e_illume_window_state_set(Ecore_X_Window win, Ecore_X_Illume_Window_State state);
 EAPI Ecore_X_Illume_Window_State           ecore_x_e_illume_window_state_get(Ecore_X_Window win);
+EAPI void                                  ecore_x_e_illume_window_state_send(Ecore_X_Window win, Ecore_X_Illume_Window_State state);
+
 EAPI void                                  ecore_x_xkb_select_group(int group); /* @since 1.7 */
 
 #ifdef __cplusplus
