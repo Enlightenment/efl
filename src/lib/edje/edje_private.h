@@ -1175,6 +1175,8 @@ struct _Edje_Part_Description_Spec_Text
    Edje_String    style; /* the text style if a textblock */
    Edje_String    font; /* if a specific font is asked for */
    Edje_String    repch; /* replacement char for password mode entry */
+   Edje_String    filter; /* special effects */
+   Eina_List     *filter_sources; /* proxy sources for special effects */
 
    Edje_Alignment align; /* text alignment within bounds */
    Edje_Color     color3;
@@ -1530,6 +1532,8 @@ struct _Edje_Real_Part_Text
    const char            *text; // 4
    const char            *font; // 4
    const char            *style; // 4
+   const char            *filter; // 4
+   Eina_List             *filter_sources; // 4
    Edje_Position          offset; // 8
    short                  size; // 2
    struct {
@@ -1542,7 +1546,7 @@ struct _Edje_Real_Part_Text
       const char         *out_str; // 4
       FLOAT_T             align_x, align_y; // 16
    } cache;
-}; // 76
+}; // 84
 // FIXME make text a potiner to struct and alloc at end
 // if part type is TEXT move common members textblock +
 // text to front and have smaller struct for textblock

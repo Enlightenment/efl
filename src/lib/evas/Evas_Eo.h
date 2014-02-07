@@ -1846,6 +1846,8 @@ enum
    EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET,
    EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET,
    EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET,
+   EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET,
+   EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET,
    EVAS_OBJ_TEXT_SUB_ID_LAST
 };
 
@@ -2270,6 +2272,26 @@ enum
  * @see evas_object_text_ellipsis_set
  */
 #define evas_obj_text_ellipsis_get(ellipsis) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET), EO_TYPECHECK(double *, ellipsis)
+
+/**
+ * @def evas_obj_text_filter_program_set
+ * @since 1.9
+ * @note EXPERIMENTAL code
+ */
+#define evas_obj_text_filter_program_set(str) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET), EO_TYPECHECK(const char *, str)
+
+/**
+ *
+ * Bind an object to use as a mask or texture in special filter
+ *
+ * @param[in]  name   Object name as used in the program code
+ * @param[in]  obj    Eo object to use through proxy rendering
+ *
+ * @see evas_obj_text_filter_program_set
+ *
+ * @note EXPERIMENTAL FEATURE.
+ */
+#define evas_obj_text_filter_source_set(name, obj) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET), EO_TYPECHECK(const char *, name), EO_TYPECHECK(Eo *, obj)
 
 /**
  * @}

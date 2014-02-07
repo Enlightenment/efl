@@ -622,6 +622,8 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = _pd;
    Evas_Object_Protected_Data *tmp;
+   Evas_Object *proxy;
+   Eina_List *l, *l2;
 
    evas_object_hide(eo_obj);
    if (obj->focused)
@@ -654,8 +656,8 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_grabs_cleanup(eo_obj, obj);
    EINA_LIST_FREE(obj->clip.clipees, tmp)
      evas_object_clip_unset(tmp->object);
-   while (obj->proxy->proxies)
-     evas_object_image_source_unset(obj->proxy->proxies->data);
+   EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
+     evas_object_image_source_unset(proxy);
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);

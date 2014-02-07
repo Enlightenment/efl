@@ -3231,8 +3231,9 @@ _proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src_write)
      {
-        proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies,
-                                                    eo_proxy);
+        if (!eina_list_data_find(proxy_src_write->proxies, eo_proxy))
+          proxy_src_write->proxies = eina_list_append(proxy_src_write->proxies,
+                                                      eo_proxy);
         proxy_src_write->redraw = EINA_TRUE;
      }
    EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_src_write);

@@ -8,6 +8,7 @@
 #include "evas_private.h"
 
 #include "evas_font_private.h"
+#include "evas_blend_private.h"
 
 #ifdef EVAS_CSERVE2
 # include "../cserve2/evas_cs2_private.h"
@@ -449,8 +450,8 @@ evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret)
    int *iptr;
    
    if (!buf) return NULL;
-   *wret = fgo->bitmap.width;
-   *hret = fgo->bitmap.rows;
+   if (wret) *wret = fgo->bitmap.width;
+   if (hret) *hret = fgo->bitmap.rows;
    iptr = (int *)fgo->rle;
    if (*iptr > 0) // rle4
      decompress_rle4(fgo->rle, buf, fgo->bitmap.width,
@@ -488,37 +489,63 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
    x1 = 0; x2 = w;
    if ((x + x1) < cx) x1 = cx - x;
    if ((x + x2) > (cx + cw)) x2 = cx + cw - x;
-   // build fast multiply + mask color tables to avoid compute. this works
-   // because of our very limited 4bit range of alpha values
    col = dc->col.col;
-   for (i = 0; i <= 0xf; i++)
+   if (dst_image->cache_entry.space == EVAS_COLORSPACE_GRY8)
      {
-        v = (i << 4) | i;
-        coltab[i] = MUL_SYM(v, col);
-        tmp = (coltab[i] >> 24);
-        mtab[i] = 256 - (tmp + (tmp >> 7));
+        // FIXME: Font draw not optimized for Alpha targets! SLOW!
+        // This is not pretty :)
+
+        DATA8 *dst8 = dst_image->mask.data + x + (y * dst_pitch);
+        Alpha_Gfx_Func func;
+        DATA8 *src8;
+        int row;
+
+        func = evas_common_alpha_func_get(dc->render_op);
+        src8 = evas_common_font_glyph_uncompress(fg, NULL, NULL);
+        if (!src8) return;
+
+        for (row = y1; row < y2; row++)
+          {
+             DATA8 *d = dst8 + ((row - y1) * dst_pitch);
+             DATA8 *s = src8 + (row * w) + x1;
+             func(s, d, x2 - x1);
+          }
+        free(src8);
      }
-#ifdef BUILD_MMX
-   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+   else
      {
+        // build fast multiply + mask color tables to avoid compute. this works
+        // because of our very limited 4bit range of alpha values
+        for (i = 0; i <= 0xf; i++)
+          {
+             v = (i << 4) | i;
+             coltab[i] = MUL_SYM(v, col);
+             tmp = (coltab[i] >> 24);
+             mtab[i] = 256 - (tmp + (tmp >> 7));
+          }
+#ifdef BUILD_MMX
+        if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+          {
 #define MMX 1
 #include "evas_font_compress_draw.c"
 #undef MMX
-     }
-   else 
+          }
+        else
 #endif
-   
+
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-     {
+        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          {
 #define NEON 1
 #include "evas_font_compress_draw.c"
 #undef NEON
-     }
-   else
+          }
+        else
 #endif
-   
-     {
+
+          // Plain C
+          {
 #include "evas_font_compress_draw.c"
+          }
      }
 }

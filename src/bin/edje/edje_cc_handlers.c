@@ -314,6 +314,7 @@ static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_elipsis(void);
+static void st_collections_group_parts_part_description_text_filter(void);
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
@@ -651,6 +652,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
      {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_elipsis},
+     {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_text_filter},
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
@@ -5212,6 +5214,7 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.text.str = STRDUP(ted->text.text.str);
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
+              ted->text.filter.str = STRDUP(ted->text.filter.str);
 
               data_queue_copied_part_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source));
               data_queue_copied_part_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source));
@@ -7293,6 +7296,104 @@ st_collections_group_parts_part_description_text_elipsis(void)
    ed = (Edje_Part_Description_Text*) current_desc;
 
    ed->text.elipsis = parse_float_range(0, -1.0, 1.0);
+}
+
+/**
+    @page edcref
+
+    @property
+        filter
+    @parameters
+        [filter program as a string]
+    @effect
+        Applies a series of filtering operations to the text.
+        EXPERIMENTAL FEATURE. TO BE DOCUMENTED.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_text_filter(void)
+{
+   Edje_Part_Description_Text *ed;
+   Eina_List *sources = NULL;
+   Eina_Stringshare *name;
+   char *token, *code;
+   Eina_Bool valid = EINA_TRUE;
+   Edje_Part_Collection *pc;
+
+   static int part_key = 0;
+
+   static const char *allowed_name_chars =
+         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_TEXT)
+     {
+        ERR("parse error %s:%i. text attributes in non-TEXT part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Text*) current_desc;
+   ed->text.filter_sources = NULL;
+
+   ed->text.filter.str = parse_str(0);
+   if (!ed->text.filter.str) return;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   // Parse list of buffers that have a source
+   // note: does not support comments
+   code = strdup(ed->text.filter.str);
+   for (token = strtok(code, ";"); token; token = strtok(NULL, ";"))
+     {
+        size_t len;
+
+        len = strspn(token, " \n\t");
+        token += len;
+
+        if (!strncasecmp("buffer", token, 6))
+          {
+             // note: a valid string won't necessary compile at runtime
+
+             token = strchr(token, ':');
+             if (!token)
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token = strchr(token, '(');
+             if (!token)
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token = strcasestr(token, "src");
+             if (!token) continue;
+             token += 3;
+             len = strspn(token, " =\n\t");
+             if (!len || !token[len])
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token += len;
+             len = strspn(token, allowed_name_chars);
+             if (!len || !token[len])
+               {
+                  valid = EINA_FALSE;
+                  break;
+               }
+             token[len] = '\0';
+             name = eina_stringshare_add(token);
+
+             sources = eina_list_append(sources, name);
+             data_queue_part_lookup(pc, name, &part_key);
+          }
+     }
+   free(code);
+
+   if (valid) ed->text.filter_sources = sources;
 }
 
 
