@@ -89,7 +89,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    int i, y, yp, yy;
    int py[4];
    int edge[4][4], edge_num, order[4];
-   FPc uv[4][2], u, v, x, h, t, uu, vv;
+   FPc uv[4][2], u, v, x, t, uu, vv, edge_h;
    DATA32 col[4];
    Eina_Bool interp_col = EINA_FALSE;
    Eina_Bool swapped;
@@ -145,7 +145,6 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
      }
    for (y = ystart; y <= yend; y++)
      {
-        yp = y - ystart;
         edge_num = 0;
 
         //Find edges that intersects with current scanline.
@@ -173,11 +172,12 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              int e2 = edge[i][1];
              FPc t256;
 
-             h = (p[e2].y - p[e1].y) >> FP; // height of edge
-             if (h < 1) h = 1;
+             // compute x point that proportionated to the y point offset
+             edge_h = (p[e2].y - p[e1].y) >> FP;  //edge height
+             if (edge_h < 1) edge_h = 1;
              t = (((y << FP) + (FP1 / 2) - 1) - p[e1].y) >> FP;
-             x = p[e2].x - p[e1].x;
-             x = p[e1].x + ((x * t) / h);
+             x= p[e2].x - p[e1].x;  //edge width
+             x = p[e1].x + ((x * t) / edge_h); // intersected x point
 
 /*             
              // FIXME: 3d accuracy here
@@ -225,10 +225,11 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                   t = ((z1 - zt) * hf) / dz;
                }
  */
+             //compute texture u coordinate
              u = p[e2].u - p[e1].u;
              uu = u >> FP;
              if (uu < 0) uu = -uu;
-             if (uu == h)
+             if (uu == edge_h)
                {
                   yy = ((y << FP) - p[e1].y) >> FP;
                   if (u > 0)
@@ -239,15 +240,16 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              else
                {
                   if (u >= 0)
-                     u = p[e1].u + ((u * t) / h);
+                     u = p[e1].u + ((u * t) / edge_h);
                   else
-                     u = p[e1].u + (((u * t) - (FP1 / 2)) / h);
+                     u = p[e1].u + (((u * t) - (FP1 / 2)) / edge_h);
                }
 
+             //compute texture v coordinate
              v = p[e2].v - p[e1].v;
              vv = v >> FP;
              if (vv < 0) vv = -vv;
-             if (vv == h)
+             if (vv == edge_h)
                {
                   yy = ((y << FP) - p[e1].y) >> FP;
                   if (v > 0)
@@ -258,13 +260,13 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              else
                {
                   if (v >= 0)
-                     v = p[e1].v + ((v * t) / h);
+                     v = p[e1].v + ((v * t) / edge_h);
                   else
-                     v = p[e1].v + (((v * t) - (FP1 / 2)) / h);
+                     v = p[e1].v + (((v * t) - (FP1 / 2)) / edge_h);
                }
 
              // FIXME: 3d accuracy for color too
-             t256 = (t << 8) / h; // maybe * 255?
+             t256 = (t << 8) / edge_h; // maybe * 255?
              col[i] = INTERP_256(t256, p[e2].col, p[e1].col);
 
              // FIXME: store z persp
@@ -292,6 +294,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                }
           }
         while (swapped);
+
+        yp = y - ystart;
 
         if (edge_num == 2)
           {
