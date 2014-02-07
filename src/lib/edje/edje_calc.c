@@ -322,10 +322,13 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
         if (d->state.name && (d->state.name == state_name ||
                               !strcmp(d->state.name, state_name)))
           {
-             if (!approximate && d->state.value == state_val)
+             if (!approximate)
                {
-                  return _edje_get_description_by_orientation(ed, d,
-                                                              &ep->other.desc_rtl[i], ep->type);
+                  if (d->state.value == state_val)
+                    return _edje_get_description_by_orientation(ed, d,
+                                                                &ep->other.desc_rtl[i], ep->type);
+                  else
+                    continue;
                }
              else
                {
