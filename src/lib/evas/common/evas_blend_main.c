@@ -165,12 +165,9 @@ evas_common_gfx_func_composite_color_span_get(DATA32 col, RGBA_Image *dst, int p
 
    if ((col & 0xff000000) == 0xff000000)
      {
-	if (op == _EVAS_RENDER_BLEND)
-	   op = _EVAS_RENDER_COPY;
-	if (op == EVAS_RENDER_BLEND_REL)
-	   op = _EVAS_RENDER_COPY_REL;
+        if (op == _EVAS_RENDER_BLEND) op = _EVAS_RENDER_COPY;
+        else if (op == EVAS_RENDER_BLEND_REL) op = _EVAS_RENDER_COPY_REL;
      }
-
    comp = evas_gfx_compositor_get(op);
    if (comp)
 	func = comp->composite_color_span_get(col, dst, pixels);
@@ -187,12 +184,9 @@ evas_common_gfx_func_composite_pixel_color_span_get(RGBA_Image *src, DATA32 col,
 
    if ((src && (!src->cache_entry.flags.alpha)) && ((col & 0xff000000) == 0xff000000))
      {
-	if (op == _EVAS_RENDER_BLEND)
-	   op = _EVAS_RENDER_COPY;
-	if (op == _EVAS_RENDER_BLEND_REL)
-	   op = _EVAS_RENDER_COPY_REL;
+       if (op == _EVAS_RENDER_BLEND) op = _EVAS_RENDER_COPY;
+       else if (op == _EVAS_RENDER_BLEND_REL) op = _EVAS_RENDER_COPY_REL;
      }
-
    comp = evas_gfx_compositor_get(op);
    if (comp)
 	func = comp->composite_pixel_color_span_get(src, col, dst, pixels);
@@ -237,10 +231,8 @@ evas_common_gfx_func_composite_pixel_pt_get(Image_Entry_Flags src_flags, RGBA_Im
 
    if (!src_flags.alpha)
      {
-	if (op == _EVAS_RENDER_BLEND)
-	   op = _EVAS_RENDER_COPY;
-	if (op == _EVAS_RENDER_BLEND_REL)
-	   op = _EVAS_RENDER_COPY_REL;
+       if (op == _EVAS_RENDER_BLEND) op = _EVAS_RENDER_COPY;
+       else if (op == _EVAS_RENDER_BLEND_REL) op = _EVAS_RENDER_COPY_REL;
      }
    comp = evas_gfx_compositor_get(op);
    if (comp)
@@ -258,12 +250,9 @@ evas_common_gfx_func_composite_color_pt_get(DATA32 col, RGBA_Image *dst, int op)
 
    if ((col & 0xff000000) == 0xff000000)
      {
-	if (op == _EVAS_RENDER_BLEND)
-	   op = _EVAS_RENDER_COPY;
-	if (op == EVAS_RENDER_BLEND_REL)
-	   op = _EVAS_RENDER_COPY_REL;
+        if (op == _EVAS_RENDER_BLEND) op = _EVAS_RENDER_COPY;
+        else if (op == EVAS_RENDER_BLEND_REL) op = _EVAS_RENDER_COPY_REL;
      }
-
    comp = evas_gfx_compositor_get(op);
    if (comp)
 	func = comp->composite_color_pt_get(col, dst);
@@ -280,12 +269,9 @@ evas_common_gfx_func_composite_pixel_color_pt_get(Image_Entry_Flags src_flags, D
 
    if ((!src_flags.alpha) && ((col & 0xff000000) == 0xff000000))
      {
-	if (op == _EVAS_RENDER_BLEND)
-	   op = _EVAS_RENDER_COPY;
-	if (op == _EVAS_RENDER_BLEND_REL)
-	   op = _EVAS_RENDER_COPY_REL;
+        if (op == _EVAS_RENDER_BLEND) op = _EVAS_RENDER_COPY;
+        else if (op == _EVAS_RENDER_BLEND_REL) op = _EVAS_RENDER_COPY_REL;
      }
-
    comp = evas_gfx_compositor_get(op);
    if (comp)
 	func = comp->composite_pixel_color_pt_get(src_flags, col, dst);
