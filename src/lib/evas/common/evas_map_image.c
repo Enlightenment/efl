@@ -94,15 +94,10 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
    Eina_Bool interp_col = EINA_FALSE;
    Eina_Bool swapped;
 
-#if 1 // maybe faster on x86?
-   for (i = 0; i < 4; i++) py[i] = p[i].y >> FP;
-# define PY(x) (py[x])
-#else
-# define PY(x) (p[x].y >> FP) 
-#endif
+   for (i = 0; i < 4; i++) py[i] = (p[i].y >> FP);
 
    //Horizontal Line?
-   if ((PY(0) == PY(1)) && (PY(0) == PY(2)) && (PY(0) == PY(3)))
+   if ((py[0] == py[1]) && (py[0] == py[2]) && (py[0] == py[3]))
      {
         int leftp, rightp;
 
@@ -117,7 +112,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
         for (y = ystart; y <= yend; y++)
           {
              yp = y - ystart;
-             if (y == PY(0))
+             if (y == py[0])
                {
                   i = 0;
                   spans[yp].span[i].x1 = p[leftp].x >> FP;
@@ -156,13 +151,13 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
         //Find edges that intersects with current scanline.
         for (i = 0; i < 4; i++)
           {
-             if ((PY(i) <= y) && (PY((i + 1) % 4) > y))
+             if ((py[i] <= y) && (py[(i + 1) % 4] > y))
                {
                   edge[edge_num][0] = i;
                   edge[edge_num][1] = (i + 1) % 4;
                   edge_num++;
                }
-             else if ((PY((i + 1) % 4) <= y) && (PY(i) > y))
+             else if ((py[(i + 1) % 4] <= y) && (py[i] > y))
                {
                   edge[edge_num][0] = (i + 1) % 4;
                   edge[edge_num][1] = i;
