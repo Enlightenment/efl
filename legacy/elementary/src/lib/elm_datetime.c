@@ -402,7 +402,7 @@ _datetime_items_get(const Evas_Object *obj)
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
-        field = sorted_fields + idx;
+        field = sorted_fields[idx];
         if (field->fmt_exist && field->visible)
           items = eina_list_append(items, field->item_obj);
      }
