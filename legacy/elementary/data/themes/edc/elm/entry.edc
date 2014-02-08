@@ -436,24 +436,18 @@ group { name: "elm/entry/base/default";
    styles {
       style { name: "entry_style";
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry color_class=entry left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff underline=on underline_color=#3399ff";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";
+         COMMON_TEXTBLOCK_TAGS
+         ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style";
          base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff88 underline=on underline_color=#3399ff88";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff88";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#888888";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
          base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "hilight" "+ font_weight=Bold";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
 //   data.item: "context_menu_orientation" "horizontal";
@@ -561,24 +555,18 @@ group { name: "elm/entry/base-mixedwrap/default";
    styles {
       style { name: "entry_style_mixedwrap";
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=mixed text_class=entry color_class=entry left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff underline=on underline_color=#3399ff";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";
+         COMMON_TEXTBLOCK_TAGS
+         ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_mixedwrap";
          base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff88 underline=on underline_color=#3399ff88";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff88";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#888888";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_mixedwrap";
          base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "hilight" "+ font_weight=Bold";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
@@ -620,24 +608,18 @@ group { name: "elm/entry/base-charwrap/default";
    styles {
       style { name: "entry_style_charwrap";
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=char text_class=entry color_class=entry left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff underline=on underline_color=#3399ff";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";
+         COMMON_TEXTBLOCK_TAGS
+         ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_charwrap";
          base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff88 underline=on underline_color=#3399ff88";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff88";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#888888";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_charwrap";
          base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "hilight" "+ font_weight=Bold";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
@@ -714,24 +696,18 @@ group { name: "elm/entry/base-single/default";
    styles {
       style { name: "entry_single_style";
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=none text_class=entry color_class=entry left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff underline=on underline_color=#3399ff";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";
+         COMMON_TEXTBLOCK_TAGS
+         ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_disabled_style";
          base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "link" "+ color=#3399ff88 underline=on underline_color=#3399ff88";
-         tag:  "hilight" "+ font_weight=Bold";
-         tag:  "preedit" "+ underline=on underline_color=#3399ff88";
-         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#888888";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_guide_style";
          base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
-         tag:  "em" "+ font_style=Oblique";
-         tag:  "hilight" "+ font_weight=Bold";
+         COMMON_TEXTBLOCK_TAGS
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {

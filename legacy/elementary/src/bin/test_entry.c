@@ -854,6 +854,134 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    evas_object_show(win);
 }
 
+
+static char *default_style_text = 
+   "<title>Elementary typography</title><br>"
+   "<ps>"
+   "<subtitle>Basic tags</subtitle><br>"
+   "Elm by default provide the <b>bold</b>, the <i>italic</i>, the "
+   "<hilight>hilight</hilight> and the <link>link</link> tags.<br>"
+   "<ps>"
+   "<subtitle>Font sizes</subtitle><br>"
+   "You can also use the <big>big</big> or <bigger>bigger</bigger> and "
+   "the <small>small</small> or <smaller>smaller</smaller> tags.<br>"
+   "<ps>"
+   "<subtitle>Status indicators</subtitle><br>"
+   "<info>info</info>, <success>success</success>, <warning>warning</warning> and <failure>failure</failure><br>"
+   "<ps>"
+   "<subtitle>Forms attributes</subtitle><br>"
+   "<name>Song:</name> <val>The show must go on</val><br>"
+   "<name>Artist:</name> <val>Queen</val><br>"
+   "<name>Album:</name> <val>Innuendo</val><br>"
+   "<ps>"
+   "<subtitle>Syntax highlight</subtitle><br>"
+   "<code>"
+   "<preprocessor>#include</preprocessor> <string>&lt;stdlib.h&gt;</string><br>"
+   "<preprocessor>#include</preprocessor> <string>&lt;Evas.h&gt;</string><br>"
+   "<br>"
+   "<preprocessor>#define</preprocessor> MESSAGE <string>\"Hello World\"</string><br>"
+   "<br>"
+   "<comment>/* Prints a message to standard output */</comment><br>"
+   "<type>void</type> <function>print_message</function><brace>(</brace><type>const char</type> *msg<brace>)</brace> <brace>{</brace><br>"
+   "   printf<brace>(</brace><string>\"%s\\n\"</string>, msg<brace>)</brace>;<br>"
+   "<brace>}</brace><br>"
+   "<br>"
+   "<type>int</type> <function>main</function><brace>(</brace><type>int</type> argc, <type>char</type> *argv[]<brace>)</brace> <brace>{</brace><br>"
+   "   <type>int</type> num_int = <number>123</number>;<br>"
+   "   <type>float</type> num_float = <number>0.999</number>;<br>"
+   "   <type>char</type> *str = <string>\"This is a string\"</string>;<br>"
+   "   <type>Evas_Object</type> *obj = <keyword>NULL</keyword>;<br>"
+   "   print_message<brace>(</brace>MESSAGE<brace>)</brace>;<br>"
+   "   <keyword>return</keyword> <number>0</number>;<br>"
+   "<brace>}</brace><br>"
+   "<ps>"
+   "<line_added>+diff line added</line_added><br>"
+   "<line_removed>-diff line removed</line_removed><br>"
+   "<line_changed> diff line changed</line_changed><br>"
+   "</code>";
+
+static void
+ent_bt_def_style_disabled(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_object_disabled_set(en, elm_check_state_get(obj));
+}
+
+static void
+ent_bt_def_style_scrollable(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_scrollable_set(en, elm_check_state_get(obj));
+}
+
+static void
+ent_bt_def_style_markup(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+
+   if (elm_check_state_get(obj))
+   {
+      char *markup = elm_entry_utf8_to_markup(default_style_text);
+      elm_object_text_set(en, markup);
+      free(markup);
+   }
+   else
+      elm_object_text_set(en, default_style_text);
+}
+
+void
+test_entry_style_default(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *vbx, *en, *o;
+
+   win = elm_win_util_standard_add("entry-style", "Entry Default Style");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 400, 400);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   en = elm_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(en, default_style_text);
+   elm_entry_editable_set(en, EINA_TRUE);
+   elm_box_pack_end(bx, en);
+   evas_object_show(en);
+
+   o = elm_separator_add(win);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   vbx = elm_box_add(win);
+   elm_box_horizontal_set(vbx, EINA_TRUE);
+   elm_box_pack_end(bx, vbx);
+   evas_object_show(vbx);
+
+   o = elm_check_add(win);
+   elm_object_text_set(o, "show markup");
+   evas_object_smart_callback_add(o, "changed", ent_bt_def_style_markup, en);
+   elm_box_pack_end(vbx, o);
+   evas_object_show(o);
+   
+   o = elm_check_add(win);
+   elm_object_text_set(o, "disabled");
+   evas_object_smart_callback_add(o, "changed", ent_bt_def_style_disabled, en);
+   elm_box_pack_end(vbx, o);
+   evas_object_show(o);
+
+   o = elm_check_add(win);
+   elm_object_text_set(o, "scrollable");
+   evas_object_smart_callback_add(o, "changed", ent_bt_def_style_scrollable, en);
+   elm_box_pack_end(vbx, o);
+   evas_object_show(o);
+
+   evas_object_show(win);
+}
+
 static void
 _entry_activated_cb(void *data EINA_UNUSED, Evas_Object *obj,
                     void *event_info EINA_UNUSED)
