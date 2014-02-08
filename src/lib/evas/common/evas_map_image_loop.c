@@ -6,7 +6,8 @@
    MOV_P2R(c1, mm7, mm0); // col
 #   endif   
 #  endif   
-# endif
+# endif //SCALE_USING_MMX
+
 # ifdef SCALE_USING_NEON
    FPU_NEON;
    VMOV_I2R_NEON(q2, #255);
@@ -26,46 +27,44 @@
    // here we have c1 and c2 spread through q9 register
 #   endif
 #  endif
-# endif
-     while (ww > 0)
+# endif //SCALE_USING_NEON
+
+   while (ww > 0)
      {
 # ifdef COLBLACK
         *d = 0xff000000; // col
-# else        
+# else
         FPc u1, v1, u2, v2;
         FPc rv, ru;
         DATA32 val1, val2, val3, val4;
-        
+
         u1 = u;
         if (u1 < 0) u1 = 0;
         else if (u1 >= swp) u1 = swp - 1;
-        
+
         v1 = v;
         if (v1 < 0) v1 = 0;
         else if (v1 >= shp) v1 = shp - 1;
-        
+
         u2 = u1 + FPFPI1;
         if (u2 >= swp) u2 = swp - 1;
-        
+
         v2 = v1 + FPFPI1;
         if (v2 >= shp) v2 = shp - 1;
-        
+
         ru = (u >> (FP + FPI - 8)) & 0xff;
         rv = (v >> (FP + FPI - 8)) & 0xff;
-        
-        s = sp + ((v1 >> (FP + FPI)) * sw) + 
-          (u1 >> (FP + FPI));
+
+        s = sp + ((v1 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
         val1 = *s;
-        s = sp + ((v1 >> (FP + FPI)) * sw) + 
-          (u2 >> (FP + FPI));
+        s = sp + ((v1 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
         val2 = *s;
-        
-        s = sp + ((v2 >> (FP + FPI)) * sw) + 
-          (u1 >> (FP + FPI));
+
+        s = sp + ((v2 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
         val3 = *s;
-        s = sp + ((v2 >> (FP + FPI)) * sw) + 
-          (u2 >> (FP + FPI));
+        s = sp + ((v2 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
         val4 = *s;
+
 #  ifdef SCALE_USING_MMX
         MOV_A2R(rv, mm4);
         MOV_A2R(ru, mm6);
@@ -86,7 +85,7 @@
 #    ifdef COLSAME
 //        MOV_P2R(c1, mm7, mm0); // col
         MUL4_SYM_R2R(mm7, mm1, mm5); // col
-#    else        
+#    else
         cc = cv >> 16; // col
         cv += cd; // col
         MOV_A2R(cc, mm2); // col
@@ -94,8 +93,8 @@
         MOV_P2R(c2, mm4, mm0); // col
         INTERP_256_R2R(mm2, mm4, mm3, mm5); // col
         MUL4_SYM_R2R(mm3, mm1, mm5); // col
-#    endif        
-#   endif                            
+#    endif
+#   endif
         MOV_R2P(mm1, *d, mm0);
 #  elif defined SCALE_USING_NEON
         // not sure if we need this condition, but it doesn't affect the result
@@ -122,13 +121,18 @@
             VMOV_R2R_NEON(d9, d0);
             VMOV_R2R_NEON(d11, d2);
             // by this point we have all required data in right registers
-            INTERP_256_NEON(q3, q5, q4, q2); // interpolate val1,val2 and val3,val4
+            // interpolate val1,val2 and val3,val4
+            INTERP_256_NEON(q3, q5, q4, q2);
 #   ifdef COLMUL
 #    ifdef COLSAME
             INTERP_256_NEON(d14, d9, d8, d4);
 #    else
-            VSWP_NEON(d9, d12); // move result of val3,val4 interpolation (and c1 if COLMUL is defined) for next step
-            INTERP_256_NEON(q7, q6, q4, q2); // second stage of interpolation, also here c1 and c2 are interpolated
+            /* move result of val3,val4 interpolation (and c1 if COLMUL is
+               defined) for next step */
+            VSWP_NEON(d9, d12);
+            /* second stage of interpolation, also here c1 and c2 are
+               interpolated */
+            INTERP_256_NEON(q7, q6, q4, q2);
 #    endif
 #   else
             INTERP_256_NEON(d14, d9, d8, d4);
@@ -148,21 +152,21 @@
         val1 = INTERP_256(ru, val2, val1);
         val3 = INTERP_256(ru, val4, val3);
         val1 = INTERP_256(rv, val3, val1); // col
-#   ifdef COLMUL                            
-#   ifdef COLSAME
+#   ifdef COLMUL
+#    ifdef COLSAME
         *d = MUL4_SYM(c1, val1);
-#   else        
+#    else
         val2 = INTERP_256((cv >> 16), c2, c1); // col
         *d   = MUL4_SYM(val2, val1); // col
         cv += cd; // col
-#   endif
-#   else                            
+#    endif
+#   else
         *d   = val1;
 #   endif
 #  endif
         u += ud;
         v += vd;
-# endif        
+# endif //COLBLACK
         d++;
         ww--;
      }
@@ -205,8 +209,7 @@
 # ifdef COLBLACK
         *d = 0xff000000; // col
 # else
-        s = sp + ((v >> (FP + FPI)) * sw) + 
-          (u >> (FP + FPI));
+        s = sp + ((v >> (FP + FPI)) * sw) + (u >> (FP + FPI));
 #  ifdef COLMUL
         val1 = *s; // col
 #   ifdef COLSAME
@@ -240,7 +243,7 @@
 /*
 #    endif
  */
-#   endif        
+#   endif
 #  else
         *d = *s;
 #  endif
