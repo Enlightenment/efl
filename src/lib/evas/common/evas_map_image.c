@@ -270,8 +270,8 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              col[i] = INTERP_256(t256, p[e2].col, p[e1].col);
 
              // FIXME: store z persp
-             uv[i][1] = v;
              uv[i][0] = u;
+             uv[i][1] = v;
              edge[i][2] = x >> FP;
              edge[i][3] = x;
              // also fill in order

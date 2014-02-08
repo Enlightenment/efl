@@ -5,7 +5,7 @@
         for (y = ystart; y <= yend; y++)
           {
              int x, w, ww;
-             FPc u, v, ud, vd, dv, ue, ve;
+             FPc u, v, u2, v2, ud, vd, dv;
              DATA32 *d, *s;
 #ifdef COLMUL
              FPc cv, cd; // col
@@ -24,44 +24,47 @@
                {
                   Span *span;
                   span = &(line->span[i]);
+
+                  //The polygon shape won't be completed type
                   if (span->x1 < 0) break;
 
-                  long long tl;
                   x = span->x1;
+
                   w = (span->x2 - x);
                   if (w <= 0) continue;
+
                   dv = (span->o2 - span->o1);
                   if (dv <= 0) continue;
 
                   ww = w;
+
+                  //correct elaborate u point
                   u = span->u[0] << FPI;
+                  int z = u;
                   if (u < 0) u = 0;
                   else if (u > swp) u = swp;
+                  u2 = span->u[1] << FPI;
+                  if (u2 < 0) u2 = 0;
+                  else if (u2 > swp) u2 = swp;
+                  ud = (u2 - u) / w;
+                  ud = ((long long)ud * (w << FP)) / dv;
+                  u -= (ud * (span->o1 - (span->x1 << FP))) / FP1;
+                  if (ud < 0) u += ud;
+                  if (u < 0) u = 0;
+                  else if (u >= swp) u = swp - 1;
+
+                  //correct elaborate v point
                   v = span->v[0] << FPI;
                   if (v < 0) v = 0;
                   else if (v > shp) v = shp;
-                  ue = span->u[1] << FPI;
-                  if (ue < 0) ue = 0;
-                  else if (ue > swp) ue = swp;
-                  ve = span->v[1] << FPI;
-                  if (ve < 0) ve = 0;
-                  else if (ve > shp) ve = shp;
-                  ud = (ue - u) / w;
-                  vd = (ve - v) / w;
-                  tl = (long long)ud * (w << FP);
-                  tl = tl / dv;
-                  ud = tl;
-                  u -= (ud * (span->o1 - (span->x1 << FP))) / FP1;
-
-                  tl = (long long)vd * (w << FP);
-                  tl = tl / dv;
-                  vd = tl;
+                  int z2 = v;
+                  v2 = span->v[1] << FPI;
+                  if (v2 < 0) v2 = 0;
+                  else if (v2 > shp) v2 = shp;
+                  vd = (v2 - v) / w;
+                  vd = ((long long)vd * (w << FP)) / dv;
                   v -= (vd * (span->o1 - (span->x1 << FP))) / FP1;
-
-                  if (ud < 0) u += ud;
                   if (vd < 0) v += vd;
-                  if (u < 0) u = 0;
-                  else if (u >= swp) u = swp - 1;
                   if (v < 0) v = 0;
                   else if (v >= shp) v = shp - 1;
 
@@ -126,7 +129,7 @@
         for (y = ystart; y <= yend; y++)
           {
              int x, w, ww;
-             FPc u, v, ud, vd, ue, ve;
+             FPc u, v, u2, v2, ud, vd;
              DATA32 *d, *s;
 #ifdef COLMUL
              FPc cv, cd; // col
@@ -138,37 +141,45 @@
                {
                   Span *span;
                   span = &(line->span[i]);
+
+                  //The polygon shape won't be completed type
                   if (span->x1 < 0) break;
 
                   x = span->x1;
-                  w = (span->x2 - x);
 
+                  w = (span->x2 - x);
                   if (w <= 0) continue;
+
                   ww = w;
+
+                  //correct elaborate u point
                   u = span->u[0] << FPI;
                   if (u < 0) u = 0;
                   else if (u > swp) u = swp;
+                  u2 = span->u[1] << FPI;
+                  if (u2 < 0) u2 = 0;
+                  else if (u2 > swp) u2 = swp;
+                  ud = (u2 - u) / w;
+                  if (ud < 0) u += ud;
+                  if (u < 0) u = 0;
+                  else if (u >= swp) u = swp - 1;
+
+                  //correct elaborate v point
                   v = span->v[0] << FPI;
                   if (v < 0) v = 0;
                   else if (v > shp) v = shp;
-                  ue = span->u[1] << FPI;
-                  if (ue < 0) ue = 0;
-                  else if (ue > swp) ue = swp;
-                  ve = span->v[1] << FPI;
-                  if (ve < 0) ve = 0;
-                  else if (ve > shp) ve = shp;
-                  ud = (ue - u) / w;
-                  vd = (ve - v) / w;
+                  v2 = span->v[1] << FPI;
+                  if (v2 < 0) v2 = 0;
+                  else if (v2 > shp) v2 = shp;
+                  vd = (v2 - v) / w;
+                  if (vd < 0) v += vd;
+                  if (v < 0) v = 0;
+                  else if (v >= shp) v = shp - 1;
+
                   if (direct)
                     d = dst->image.data + (y * dst->cache_entry.w) + x;
                   else
                     d = buf;
-                  if (ud < 0) u += ud;
-                  if (vd < 0) v += vd;
-                  if (u < 0) u = 0;
-                  else if (u >= swp) u = swp - 1;
-                  if (v < 0) v = 0;
-                  else if (v >= shp) v = shp - 1;
 #undef SMOOTH
 #ifdef COLMUL
                   c1 = span->col[0]; // col
