@@ -137,7 +137,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                        spans[yp].span[i].x1 = -1;
                     }
                }
-             //Exceptional Case.
+             //The polygon shape seems not be completed definitely.
              else
                spans[yp].span[0].x1 = -1;
           }
@@ -371,7 +371,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
                                           interp_col);
                }
           }
-        //Exceptional Case.
+        //The polygon shape seems not be completed definitely.
         else
           spans[yp].span[0].x1 = -1;
      }
