@@ -767,6 +767,11 @@ echo "Tests......................: no"
 else
 echo "Tests......................: make check"
 fi
+if test "${build_doc}" = "no"; then
+echo "Docs.......................: no (doxygen not found)"
+else
+echo "Docs.......................: make doc"
+fi
 echo
 echo "Installation...............: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...................: $prefix"
