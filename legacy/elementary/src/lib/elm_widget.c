@@ -6318,6 +6318,19 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
+static Eina_Bool
+_atspi_obj_create(void *data)
+{
+   Elm_Atspi_Object *parent = NULL;
+   Elm_Atspi_Object *obj = _elm_atspi_factory_construct(data);
+   if (obj)
+     {
+       eo_do(obj, elm_atspi_obj_parent_get(&parent));
+       eo_do(parent, eo_event_callback_call(EV_ATSPI_OBJ_CHILD_ADD, obj, NULL));
+     }
+   return EINA_FALSE;
+}
+
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
@@ -6331,6 +6344,9 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
          eo_parent_get(&parent));
    eo_do(obj, elm_wdg_parent_set(parent));
    sd->on_create = EINA_FALSE;
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     ecore_idle_enterer_add(_atspi_obj_create, obj);
 }
 
 static void
