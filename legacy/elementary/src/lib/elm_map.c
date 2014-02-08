@@ -337,6 +337,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_OVERLAY_CLICKED, ""},
    {SIG_OVERLAY_DEL, ""},
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_UNFOCUSED, ""}, /**< handled by elm_widget */
    {NULL, NULL}

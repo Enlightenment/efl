@@ -19,6 +19,7 @@ static const char SIG_SLIDE_END[] = "slide,end";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
+   {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_SLIDE_END, ""},
    {NULL, NULL}
 };
