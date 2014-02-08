@@ -1029,9 +1029,8 @@ elm_menu_item_icon_name_set(Elm_Object_Item *it,
    ELM_MENU_ITEM_CHECK_OR_RETURN(it);
    EINA_SAFETY_ON_NULL_RETURN(icon);
 
-   if (!*icon) return;
-   if ((item->icon_str) && (!strcmp(item->icon_str, icon))) return;
-   if ((snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0) &&
+   if ((icon[0] != '\0') &&
+       (snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0) &&
        (elm_icon_standard_set(item->content, icon_tmp) ||
         elm_icon_standard_set(item->content, icon)))
      {

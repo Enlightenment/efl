@@ -19,6 +19,7 @@ EAPI Evas_Object                 *elm_menu_item_object_get(const Elm_Object_Item
  * @param icon The name of icon object to set for the content of @p item
  *
  * Once this icon is set, any previously set icon will be deleted.
+ * To hide icon set it to "".
  *
  * @ingroup Menu
  */
