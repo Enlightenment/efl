@@ -320,10 +320,31 @@ _elm_layout_smart_disable(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_TRUE;
 }
 
+static void
+_elm_layout_highlight_in_theme(Evas_Object *obj)
+{
+   const char *fh;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   fh = edje_object_data_get
+       (wd->resize_obj, "focus_highlight");
+   if ((fh) && (!strcmp(fh, "on")))
+     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+   else
+     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+
+   fh = edje_object_data_get
+       (wd->resize_obj, "access_highlight");
+   if ((fh) && (!strcmp(fh, "on")))
+     elm_widget_access_highlight_in_theme_set(obj, EINA_TRUE);
+   else
+     elm_widget_access_highlight_in_theme_set(obj, EINA_FALSE);
+}
+
 static Eina_Bool
 _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
-   const char *fh;
    Eina_Bool ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -340,12 +361,7 @@ _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
      (wd->resize_obj,
      elm_widget_scale_get(obj) * elm_config_scale_get());
 
-   fh = edje_object_data_get
-       (wd->resize_obj, "focus_highlight");
-   if ((fh) && (!strcmp(fh, "on")))
-     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
-   else
-     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+   _elm_layout_highlight_in_theme(obj);
 
    evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
 

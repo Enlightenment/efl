@@ -426,6 +426,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     tree_unfocusable : 1;
    Eina_Bool                     highlight_ignore : 1;
    Eina_Bool                     highlight_in_theme : 1;
+   Eina_Bool                     access_highlight_in_theme : 1;
    Eina_Bool                     disabled : 1;
    Eina_Bool                     is_mirrored : 1;
    Eina_Bool                     mirrored_auto_mode : 1; /* This is
@@ -623,6 +624,8 @@ EAPI void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Boo
 EAPI Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
 EAPI Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
+EAPI void             elm_widget_access_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
+EAPI Eina_Bool        elm_widget_access_highlight_in_theme_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_focus_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_focused_object_get(const Evas_Object *obj);
@@ -1156,6 +1159,8 @@ enum
    ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_GET,
    ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_SET,
    ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET,
+   ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_SET,
+   ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_GET,
 
    ELM_WIDGET_SUB_ID_SCROLL_HOLD_PUSH,
    ELM_WIDGET_SUB_ID_SCROLL_HOLD_POP,
@@ -1595,6 +1600,28 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_highlight_in_theme_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_wdg_access_highlight_in_theme_set
+ * @since 1.9
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[in] access highlight
+ *
+ */
+#define elm_wdg_access_highlight_in_theme_set(highlight) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_SET), EO_TYPECHECK(Eina_Bool, highlight)
+
+/**
+ * @def elm_wdg_access_highlight_in_theme_get
+ * @since 1.9
+ *
+ * No description supplied by the EAPI.
+ *
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_access_highlight_in_theme_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_wdg_scroll_hold_push

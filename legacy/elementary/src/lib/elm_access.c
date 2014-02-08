@@ -773,11 +773,33 @@ _elm_access_object_get(const Evas_Object *obj)
    return _elm_access_info_get(obj);
 }
 
+static Evas_Object *
+_elm_access_widget_target_get(Evas_Object *obj)
+{
+   Evas_Object *o = obj;
+
+   do
+     {
+        if (elm_widget_is(o))
+          break;
+        else
+          {
+             o = elm_widget_parent_widget_get(o);
+             if (!o)
+               o = evas_object_smart_parent_get(o);
+          }
+     }
+   while (o);
+
+   return o;
+}
+
 EAPI void
 _elm_access_object_highlight(Evas_Object *obj)
 {
-   Evas_Object *o;
+   Evas_Object *o, *widget;
    Evas_Coord x, y, w, h;
+   Eina_Bool in_theme = EINA_FALSE;
 
    o = evas_object_name_find(evas_object_evas_get(obj), "_elm_access_disp");
    if (!o)
@@ -802,6 +824,15 @@ _elm_access_object_highlight(Evas_Object *obj)
                                                  _access_obj_hilight_move_cb, NULL);
              evas_object_event_callback_del_full(ptarget, EVAS_CALLBACK_RESIZE,
                                                  _access_obj_hilight_resize_cb, NULL);
+
+             widget = _elm_access_widget_target_get(ptarget);
+             if (widget)
+               {
+                  if (elm_widget_access_highlight_in_theme_get(widget))
+                    {
+                       elm_widget_signal_emit(widget, "elm,action,access_highlight,hide", "elm");
+                    }
+               }
           }
      }
    evas_object_data_set(o, "_elm_access_target", obj);
@@ -822,9 +853,19 @@ _elm_access_object_highlight(Evas_Object *obj)
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
 
+   widget = _elm_access_widget_target_get(obj);
+   if (widget)
+     {
+        if (elm_widget_access_highlight_in_theme_get(widget))
+          {
+             in_theme = EINA_TRUE;
+             elm_widget_signal_emit(widget, "elm,action,access_highlight,show", "elm");
+          }
+     }
    /* use callback, should an access object do below every time when
     * a window gets a client message ECORE_X_ATOM_E_ILLMUE_ACTION_READ? */
-   if (!_access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT, NULL))
+   if (!in_theme &&
+       !_access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT, NULL))
      evas_object_show(o);
    else
      evas_object_hide(o);

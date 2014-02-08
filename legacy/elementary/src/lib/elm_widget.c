@@ -1622,6 +1622,39 @@ _elm_widget_highlight_in_theme_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list
    *ret = sd->highlight_in_theme;
 }
 
+EAPI void
+elm_widget_access_highlight_in_theme_set(Evas_Object *obj,
+                                         Eina_Bool highlight)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do(obj, elm_wdg_access_highlight_in_theme_set(highlight));
+}
+
+static void
+_elm_widget_access_highlight_in_theme_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool highlight = va_arg(*list, int);
+   Elm_Widget_Smart_Data *sd = _pd;
+   sd->access_highlight_in_theme = !!highlight;
+}
+
+EAPI Eina_Bool
+elm_widget_access_highlight_in_theme_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_wdg_access_highlight_in_theme_get(&ret));
+   return ret;
+}
+
+static void
+_elm_widget_access_highlight_in_theme_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Widget_Smart_Data *sd = _pd;
+   *ret = sd->access_highlight_in_theme;
+}
+
 EAPI Eina_Bool
 elm_widget_focus_get(const Evas_Object *obj)
 {
@@ -6468,6 +6501,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_GET), _elm_widget_highlight_ignore_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_SET), _elm_widget_highlight_in_theme_set),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET), _elm_widget_highlight_in_theme_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_SET), _elm_widget_access_highlight_in_theme_set),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_GET), _elm_widget_access_highlight_in_theme_get),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_PUSH), _elm_widget_scroll_hold_push),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SCROLL_HOLD_POP), _elm_widget_scroll_hold_pop),
@@ -6615,6 +6650,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_HIGHLIGHT_IGNORE_GET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_SET, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_HIGHLIGHT_IN_THEME_GET, "description here"),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_SET, "Set the access highlight in widget theme."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_ACCESS_HIGHLIGHT_IN_THEME_GET, "Get the access highlight in widget theme."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCROLL_HOLD_PUSH, "description here"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_SCROLL_HOLD_POP, "description here"),
