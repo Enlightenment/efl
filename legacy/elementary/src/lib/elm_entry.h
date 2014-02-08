@@ -55,6 +55,31 @@
  * @li \<b\>...\</b\>: Sets the @b bold style for the enclosed text.
  * @li \<link\>...\</link\>: Underlines the enclosed text.
  * @li \<hilight\>...\</hilight\>: Highlights the enclosed text.
+ * @li \<title\>...\</title\>: Main title.
+ * @li \<subtitle\>...\</subtitle\>: Secondary level title.
+ * @li \<bigger\>...\</bigger\>: A really big text, not so big as the titles.
+ * @li \<big\>...\</big\>: Big text.
+ * @li \<small\>...\</small\>: Small text.
+ * @li \<smaller\>...\</smaller\>: Really small text, at the point of unreadability.
+ *
+ * Entry also support tags for code syntax highlight. Note that this does not
+ * mean that the entry will automatically perform code highlight, application
+ * are responsable of applying the correct tag to code blocks.
+ * The default theme define the following tags:
+ * @li \<code\>...\</code\>: Monospace font without shadows.
+ * @li \<comment\>...\</comment\>: Code comments. 
+ * @li \<string\>...\</string\>: Strings of text.
+ * @li \<number\>...\</number\>: Numeric expression (ex: 1, 2, 0.34, etc)
+ * @li \<brace\>...\</brace\>: Braces used for code syntax.
+ * @li \<type\>...\</type\>: Variables types (ex: int, float, char, Evas_Object, etc)
+ * @li \<class\>...\</class\>: Class names, when defined, not when used.
+ * @li \<function\>...\</function\>: Function names, when defined, not called.
+ * @li \<param\>...\</param\>: Generic parameters.
+ * @li \<keyword\>...\</keyword\>: Language keywords (ex: return, NULL, while, for, etc)
+ * @li \<preprocessor\>...\</preprocessor\>: Preprocessors definitions.
+ * @li \<line_added\>...\</line_added\>: Diff addeded lines.
+ * @li \<line_removed\>...\</line_removed\>: Diff removed lines.
+ * @li \<line_changed\>...\</line_changed\>: Diff changed lines.
  *
  * @section entry-special Special markups
  *
