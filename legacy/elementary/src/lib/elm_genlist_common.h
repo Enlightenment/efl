@@ -559,6 +559,18 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
 EAPI Elm_Object_Item             *elm_genlist_item_parent_get(const Elm_Object_Item *it);
 
 /**
+ * Get the number of subitems of a given item
+ *
+ * @param it The item
+ * @return The number of subitems, 0 on error
+ *
+ * This returns the number of subitems that an item possesses.
+ *
+ * @since 1.9
+ * @ingroup Genlist
+ */
+EAPI unsigned int                 elm_genlist_item_subitems_count(const Elm_Object_Item *it);
+/**
  * Remove all sub-items (children) of the given item
  *
  * @param it The item

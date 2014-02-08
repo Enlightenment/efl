@@ -6127,6 +6127,15 @@ elm_genlist_item_parent_get(const Elm_Object_Item *it)
    return (Elm_Object_Item *)((Elm_Gen_Item *)it)->parent;
 }
 
+EAPI unsigned int
+elm_genlist_item_subitems_count(const Elm_Object_Item *it)
+{
+   Elm_Gen_Item *item = (Elm_Gen_Item *)it;
+   ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, 0);
+
+   return eina_list_count(item->item->items);
+}
+
 EAPI void
 elm_genlist_item_subitems_clear(Elm_Object_Item *item)
 {
