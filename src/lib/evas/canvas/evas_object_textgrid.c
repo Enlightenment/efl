@@ -1030,6 +1030,7 @@ evas_object_textgrid_scale_update(Evas_Object *eo_obj,
    o->cur.font_size = 0;
    o->prev.font_size = 0;
    evas_object_textgrid_font_set(eo_obj, font_name, font_size);
+   eina_stringshare_del(font_name);
 }
 
 /*********************  LOCAL *********************/
