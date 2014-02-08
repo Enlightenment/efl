@@ -84,6 +84,7 @@ test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    const Eina_List *item_list, *last_item_list;
    Elm_Object_Item *color_item;
    int r, g, b, a;
+   Elm_Object_Item *item;
 
    win = elm_win_util_standard_add("colorselector", "ColorSelector");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -113,7 +114,9 @@ test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(fr);
 
    cs = elm_colorselector_add(fr);
-   elm_colorselector_palette_color_add(cs, 255, 90, 18, 128);
+   item = elm_colorselector_palette_color_add(cs, 255, 90, 18, 128);
+   elm_colorselector_palette_item_selected_set(item, EINA_TRUE);
+
    elm_colorselector_palette_color_add(cs, 255, 213, 0, 255);
    elm_colorselector_palette_color_add(cs, 146, 255, 11, 255);
    elm_colorselector_palette_color_add(cs, 9, 186, 10, 255);

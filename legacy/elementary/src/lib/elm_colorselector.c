@@ -1272,7 +1272,7 @@ _on_color_long_press(void *data)
    ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
 
    sd->longpress_timer = NULL;
-   sd->longpressed = EINA_TRUE;
+
    evas_object_smart_callback_call
      (WIDGET(item), SIG_COLOR_ITEM_LONGPRESSED, item);
 
@@ -1293,8 +1293,6 @@ _on_color_pressed(void *data,
    ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
 
    if (ev->button != 1) return;
-   elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
-   sd->longpressed = EINA_FALSE;
 
    ecore_timer_del(sd->longpress_timer);
    sd->longpress_timer = ecore_timer_add
@@ -1317,15 +1315,17 @@ _on_color_released(void *data,
 
    if (ev->button != 1) return;
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-   elm_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
-   if (!sd->longpressed)
-     {
-        elm_colorselector_color_set
-          (WIDGET(item), item->color->r, item->color->g, item->color->b,
-          item->color->a);
-        evas_object_smart_callback_call
-          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
-     }
+
+   elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
+   elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
+                               item->color->b, item->color->a);
+   evas_object_smart_callback_call(WIDGET(item), SIG_COLOR_ITEM_SELECTED,
+                                   item);
+
+   temp_item = eina_list_data_get(sd->selected);
+   if (temp_item && (temp_item != item))
+     elm_object_signal_emit(VIEW(temp_item), "elm,state,unselected", "elm");
+
    EINA_LIST_FOREACH(sd->items, l, temp_item)
      if (item == temp_item) sd->selected = l;
    sd->focused = ELM_COLORSELECTOR_PALETTE;
@@ -2167,6 +2167,67 @@ _palette_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
+elm_colorselector_palette_item_selected_set(Elm_Object_Item *it,
+                              Eina_Bool selected)
+{
+   Elm_Color_Item *temp_item, *item;
+   item = (Elm_Color_Item *)it;
+   Eina_List *l;
+
+   ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
+   ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it);
+
+   if (selected)
+     {
+        temp_item = eina_list_data_get(sd->selected);
+        if (item == temp_item) return;
+        elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
+        elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
+                                    item->color->b, item->color->a);
+        if (temp_item)
+          elm_object_signal_emit(VIEW(temp_item), "elm,state,unselected", "elm");
+
+        EINA_LIST_FOREACH(sd->items, l, temp_item)
+          if (item == temp_item) sd->selected = l;
+     }
+   else
+     {
+        elm_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
+        sd->selected = NULL;
+     }
+}
+
+EAPI Eina_Bool
+elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it)
+{
+   Elm_Color_Item *temp_item, *item;
+   item = (Elm_Color_Item *)it;
+   ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
+
+   temp_item = eina_list_data_get(sd->selected);
+   if (item == temp_item) return EINA_TRUE;
+   else return EINA_FALSE;
+}
+
+EAPI Elm_Object_Item *
+elm_colorselector_palette_selected_item_get(const Evas_Object *obj)
+{
+   ELM_COLORSELECTOR_CHECK(obj) NULL;
+   Elm_Object_Item *ret = NULL;
+   eo_do((Eo *) obj, elm_obj_colorselector_palette_selected_item_get(&ret));
+   return ret;
+}
+
+static void
+_palette_selected_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   Elm_Colorselector_Smart_Data *sd = _pd;
+   *ret = eina_list_data_get(sd->selected);
+}
+
+EAPI void
 elm_colorselector_palette_name_set(Evas_Object *obj,
                                    const char *palette_name)
 {
@@ -2230,6 +2291,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_MODE_GET), _mode_get),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_COLOR_ADD), _palette_color_add),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_CLEAR), _palette_clear),
+        EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_SELECTED_ITEM_GET), _palette_selected_item_get),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_ITEMS_GET), _palette_items_get),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_SET), _palette_name_set),
         EO_OP_FUNC(ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_GET), _palette_name_get),
@@ -2249,6 +2311,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_MODE_GET, "Get Colorselector's mode."),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_COLOR_ADD, "Add a new color item to palette."),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_CLEAR, "Clear the palette items."),
+     EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_SELECTED_ITEM_GET, "Get Palette's current selected item"),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_ITEMS_GET, "Get palette's item list"),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_SET, "Set current palette's name."),
      EO_OP_DESCRIPTION(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_GET, "Get current palette's name."),

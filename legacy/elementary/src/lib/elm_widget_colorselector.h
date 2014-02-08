@@ -56,7 +56,6 @@ struct _Elm_Colorselector_Smart_Data
    Elm_Colorselector_Mode mode, focused;
    int                    sel_color_type;
 
-   Eina_Bool              longpressed : 1;
    Eina_Bool              config_load : 1;
 };
 

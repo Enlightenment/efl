@@ -12,6 +12,7 @@ enum
    ELM_OBJ_COLORSELECTOR_SUB_ID_MODE_GET,
    ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_COLOR_ADD,
    ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_CLEAR,
+   ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_SELECTED_ITEM_GET,
    ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_ITEMS_GET,
    ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_SET,
    ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_GET,
@@ -125,6 +126,18 @@ enum
  * @ingroup Colorselector
  */
 #define elm_obj_colorselector_palette_items_get(ret) ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_ITEMS_GET), EO_TYPECHECK(const Eina_List **, ret)
+
+/**
+ * @def elm_obj_colorselector_palette_selected_item_get
+ * @since 1.9
+ *
+ * Get current selected palette item
+ *
+ * @param[out] ret
+ *
+ * @ingroup Colorselector
+ */
+#define elm_obj_colorselector_palette_selected_item_get(ret) ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_SELECTED_ITEM_GET), EO_TYPECHECK(Elm_Object_Item **, ret)
 
 /**
  * @def elm_obj_colorselector_palette_name_set

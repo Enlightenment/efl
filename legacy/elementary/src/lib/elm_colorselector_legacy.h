@@ -95,6 +95,17 @@ EAPI void elm_colorselector_palette_clear(Evas_Object *obj);
 EAPI const Eina_List *elm_colorselector_palette_items_get(const Evas_Object *obj);
 
 /**
+ * Get the selected item in colorselector palette.
+ *
+ * @param obj The Colorselector object
+ * @return The selected item, or NULL if none is selected.
+ *
+ * @since 1.9
+ * @ingroup Colorselector
+ */
+EAPI Elm_Object_Item *elm_colorselector_palette_selected_item_get(const Evas_Object *obj);
+
+/**
  * Set current palette's name
  *
  * @param obj The Colorselector object

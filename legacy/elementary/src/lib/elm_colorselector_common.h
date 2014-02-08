@@ -56,3 +56,24 @@ EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, in
  */
 EAPI void elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r, int g, int b, int a);
 
+/**
+ * Get the selected state of color palette item.
+ *
+ * @param it The Colorpalette item
+ * @return EINA_TRUE if the item is selected, EINA_FALSE otherwise.
+ *
+ * @since 1.9
+ * @ingroup Colorselector
+ */
+EAPI Eina_Bool elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it);
+
+/**
+ * Set the selected state of color palette item
+ *
+ * @param it The Colorpalette item
+ * @param selected if it's EINA_TRUE, select the item otherwise, unselect the item
+ *
+ * @since 1.9
+ * @ingroup Colorselector
+ */
+EAPI void elm_colorselector_palette_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
