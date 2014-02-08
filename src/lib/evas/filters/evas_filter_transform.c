@@ -4,7 +4,7 @@ static Eina_Bool
 _vflip_cpu(Evas_Filter_Command *cmd)
 {
    size_t datasize, stride;
-   DATA8 *in, *out, *span;
+   DATA8 *in, *out, *span = NULL;
    int w, h, sy, dy, oy, center, t, b, objh;
    int s0, s1, d0, d1;
 
@@ -66,7 +66,7 @@ _vflip_cpu(Evas_Filter_Command *cmd)
         else
           memcpy(dst, src, stride);
      }
-
+   free(span);
    return EINA_TRUE;
 }
 

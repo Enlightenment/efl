@@ -1683,7 +1683,7 @@ _instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    const char *src, *dst, *points_str, *interpolation, *channel_name;
    DATA8 values[256] = {0}, points[512];
    int cmdid, point_count = 0;
-   char *token, *copy, *saveptr;
+   char *token, *copy = NULL, *saveptr;
    Buffer *in, *out;
    Eina_Bool parse_ok = EINA_FALSE;
 

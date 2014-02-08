@@ -803,7 +803,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                              int inbuf, int outbuf, Evas_Filter_Blur_Type type,
                              int dx, int dy, int ox, int oy)
 {
-   Evas_Filter_Command *cmd;
+   Evas_Filter_Command *cmd = NULL;
    Evas_Filter_Buffer *in = NULL, *out = NULL, *tmp = NULL, *in_dy = NULL;
    Evas_Filter_Buffer *out_dy = NULL, *out_dx = NULL;
    Evas_Filter_Buffer *copybuf = NULL, *blur_out = NULL;
@@ -951,6 +951,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (copy_back)
      {
+        if (!cmd) goto fail;
         INF("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
         id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
