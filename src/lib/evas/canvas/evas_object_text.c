@@ -2712,7 +2712,7 @@ static void
 _filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
 {
    Evas_Object_Text *o = _pd;
-   const char *arg = va_arg(list, const char *);
+   const char *arg = va_arg(*list, const char *);
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Program *pgm = NULL;
 
@@ -2791,8 +2791,8 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Text *o = _pd;
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Program *pgm = o->cur.filter.chain;
-   const char *name = va_arg(list, const char *);
-   Evas_Object *eo_source = va_arg(list, Evas_Object *);
+   const char *name = va_arg(*list, const char *);
+   Evas_Object *eo_source = va_arg(*list, Evas_Object *);
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
    Evas_Object_Protected_Data *source = NULL;
 
