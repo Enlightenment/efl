@@ -669,7 +669,8 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
 {
    Eina_List *l;
    Elm_Menu_Item *item;
-
+   char style[1024];
+   
    ELM_MENU_DATA_GET_OR_RETURN(obj, sd);
 
    if (menu_bar == sd->menu_bar) return;
@@ -678,10 +679,11 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
    elm_box_homogeneous_set(sd->bx, !menu_bar);
    sd->menu_bar = menu_bar;
 
-   if (menu_bar)
-     elm_object_style_set(sd->hv, "main_menu/default");
+   if (sd->menu_bar)
+     snprintf(style, sizeof(style), "main_menu/%s", elm_widget_style_get(obj));
    else
-     elm_object_style_set(sd->hv, "menu/default");
+     snprintf(style, sizeof(style), "menu/%s", elm_widget_style_get(obj));
+   elm_object_style_set(sd->hv, style);
 
    EINA_LIST_FOREACH(sd->items, l, item)
      {
@@ -691,14 +693,16 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
           {
              evas_object_smart_callback_add(item->submenu.hv, "clicked",
                                             _hover_dismissed_cb, WIDGET(item));
-             elm_object_style_set(item->submenu.hv, "main_menu_submenu/default");
+             snprintf(style, sizeof(style), "main_menu_submenu//%s", elm_widget_style_get(obj));
+             elm_object_style_set(item->submenu.hv, style);
           }
         else
           {
              evas_object_smart_callback_del_full(item->submenu.hv, "clicked",
                                                  _hover_dismissed_cb,
                                                  WIDGET(item));
-             elm_object_style_set(item->submenu.hv, "submenu/default");
+             snprintf(style, sizeof(style), "submenu/%s", elm_widget_style_get(obj));
+             elm_object_style_set(item->submenu.hv, style);
           }
      }
 
