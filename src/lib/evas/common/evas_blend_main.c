@@ -149,6 +149,7 @@ evas_common_gfx_func_composite_pixel_span_get(RGBA_Image *src, RGBA_Image *dst, 
         if (op == _EVAS_RENDER_BLEND) op = _EVAS_RENDER_COPY;
         else if (op == _EVAS_RENDER_BLEND_REL) op = _EVAS_RENDER_COPY_REL;
      }
+
    comp = evas_gfx_compositor_get(op);
    if (comp)
 	func = comp->composite_pixel_span_get(src, dst, pixels);
