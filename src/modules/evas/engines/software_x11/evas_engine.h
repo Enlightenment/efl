@@ -64,7 +64,8 @@ enum {
    MODE_FULL,
    MODE_COPY,
    MODE_DOUBLE,
-   MODE_TRIPLE
+   MODE_TRIPLE,
+   MODE_QUADRUPLE
 };
 
 typedef struct _Outbuf Outbuf;

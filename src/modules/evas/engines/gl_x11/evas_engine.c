@@ -37,7 +37,8 @@ enum {
    MODE_FULL,
    MODE_COPY,
    MODE_DOUBLE,
-   MODE_TRIPLE
+   MODE_TRIPLE,
+   MODE_QUADRUPLE
 };
 
 typedef struct _Render_Engine               Render_Engine;
@@ -45,7 +46,7 @@ typedef struct _Render_Engine               Render_Engine;
 struct _Render_Engine
 {
    Tilebuf_Rect            *rects;
-   Tilebuf_Rect            *rects_prev[3];
+   Tilebuf_Rect            *rects_prev[4];
    Eina_Inlist             *cur_rect;
    
    Evas_GL_X11_Window      *win;
@@ -988,6 +989,10 @@ eng_setup(Evas *eo_e, void *in)
                  (!strcasecmp(s, "t")) ||
                  (!strcasecmp(s, "3")))
           re->mode = MODE_TRIPLE;
+        else if ((!strcasecmp(s, "quadruple")) ||
+                 (!strcasecmp(s, "q")) ||
+                 (!strcasecmp(s, "4")))
+          re->mode = MODE_QUADRUPLE;
      }
    else
      {
@@ -1016,6 +1021,9 @@ eng_setup(Evas *eo_e, void *in)
              break;
            case EVAS_ENGINE_GL_X11_SWAP_MODE_TRIPLE:
              re->mode = MODE_TRIPLE;
+             break;
+           case EVAS_ENGINE_GL_X11_SWAP_MODE_QUADRUPLE:
+             re->mode = MODE_QUADRUPLE;
              break;
            default:
              break;
@@ -1105,6 +1113,7 @@ eng_output_free(void *data)
         if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
         if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
         if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
+        if (re->rects_prev[3]) evas_common_tilebuf_free_render_rects(re->rects_prev[3]);
 
         
         free(re);
@@ -1177,7 +1186,7 @@ eng_output_redraws_clear(void *data)
 }
 
 static Tilebuf_Rect *
-_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
+_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3, Tilebuf_Rect *r4)
 {
    Tilebuf_Rect *r, *rects;
    Evas_Point p1, p2;
@@ -1199,6 +1208,13 @@ _merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
    if (r3)
      {
         EINA_INLIST_FOREACH(EINA_INLIST_GET(r3), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+   if (r4)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r4), r)
           {
              evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
           }
@@ -1348,6 +1364,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                        if (age == 1) re->mode = MODE_COPY;
                        else if (age == 2) re->mode = MODE_DOUBLE;
                        else if (age == 3) re->mode = MODE_TRIPLE;
+                       else if (age == 4) re->mode = MODE_QUADRUPLE;
                        else re->mode = MODE_FULL;
                        if ((int)age != re->prev_age) re->mode = MODE_FULL;
                        re->prev_age = age;
@@ -1364,7 +1381,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              /* ensure we get rid of previous rect lists we dont need if mode
               * changed/is appropriate */
              evas_common_tilebuf_clear(re->tb);
-             CLEAR_PREV_RECTS(2);
+             CLEAR_PREV_RECTS(3);
+             re->rects_prev[3] = re->rects_prev[2];
              re->rects_prev[2] = re->rects_prev[1];
              re->rects_prev[1] = re->rects_prev[0];
              re->rects_prev[0] = re->rects;
@@ -1373,13 +1391,16 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                {
                 case MODE_FULL:
                 case MODE_COPY: // no prev rects needed
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL);
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], NULL, NULL, NULL);
                   break;
                 case MODE_DOUBLE: // double mode - only 1 level of prev rect
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL);
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL, NULL);
                   break;
-                case MODE_TRIPLE: // keep all
-                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2]);
+                case MODE_TRIPLE: // triple mode - 2 levels of prev rect
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], NULL);
+                  break;
+                case MODE_QUADRUPLE: // keep all
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2], re->rects_prev[3]);
                   break;
                 default:
                   break;
@@ -1398,6 +1419,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
            case MODE_COPY:
            case MODE_DOUBLE:
            case MODE_TRIPLE:
+           case MODE_QUADRUPLE:
              rect = (Tilebuf_Rect *)re->cur_rect;
              *x = rect->x;
              *y = rect->y;

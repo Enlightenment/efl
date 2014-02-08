@@ -832,11 +832,12 @@ evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
         if (swap_debug) printf("Reuse changed - force FULL\n");
         return MODE_FULL;
      }
-   if (swap_debug) printf("Swap state idx_reuse = %i (0=FULL, 1=COPY, 2=DOUBLE, 3=TRIPLE)\n", flags->data.idx_reuse);
+   if (swap_debug) printf("Swap state idx_reuse = %i (0=FULL, 1=COPY, 2=DOUBLE, 3=TRIPLE, 4=QUAD)\n", flags->data.idx_reuse);
    if (flags->data.idx_reuse == 0) return MODE_FULL;
    else if (flags->data.idx_reuse == 1) return MODE_COPY;
    else if (flags->data.idx_reuse == 2) return MODE_DOUBLE;
    else if (flags->data.idx_reuse == 3) return MODE_TRIPLE;
+   else if (flags->data.idx_reuse == 4) return MODE_QUADRUPLE;
    return MODE_FULL;
 }
 
