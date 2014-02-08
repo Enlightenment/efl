@@ -20,7 +20,8 @@ lib/evas/include/evas_options.h \
 lib/evas/include/evas_macros.h \
 lib/evas/include/evas_mmx.h \
 lib/evas/include/evas_common_private.h \
-lib/evas/include/evas_blend_ops.h
+lib/evas/include/evas_blend_ops.h \
+lib/evas/include/evas_filter.h
 
 # Linebreak
 
@@ -375,7 +376,8 @@ lib/evas/filters/evas_filter_displace.c \
 lib/evas/filters/evas_filter_mask.c \
 lib/evas/filters/evas_filter_parser.c \
 lib/evas/filters/evas_filter_transform.c \
-lib/evas/filters/evas_filter_utils.c
+lib/evas/filters/evas_filter_utils.c \
+lib/evas/filters/evas_filter_private.h
 
 
 ### Engines
