@@ -6136,6 +6136,15 @@ elm_genlist_item_subitems_count(const Elm_Object_Item *it)
    return eina_list_count(item->item->items);
 }
 
+EAPI const Eina_List *
+elm_genlist_item_subitems_get(const Elm_Object_Item *it)
+{
+   Elm_Gen_Item *item = (Elm_Gen_Item *)it;
+   ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, NULL);
+
+   return item->item->items;
+}
+
 EAPI void
 elm_genlist_item_subitems_clear(Elm_Object_Item *item)
 {
