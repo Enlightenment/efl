@@ -40,7 +40,6 @@
 
                   //correct elaborate u point
                   u = span->u[0] << FPI;
-                  int z = u;
                   if (u < 0) u = 0;
                   else if (u > swp) u = swp;
                   u2 = span->u[1] << FPI;
@@ -57,7 +56,6 @@
                   v = span->v[0] << FPI;
                   if (v < 0) v = 0;
                   else if (v > shp) v = shp;
-                  int z2 = v;
                   v2 = span->v[1] << FPI;
                   if (v2 < 0) v2 = 0;
                   else if (v2 > shp) v2 = shp;
