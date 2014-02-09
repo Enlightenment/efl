@@ -670,7 +670,7 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
 
    return ret;
 fail:
-   if (iter_struct) eldbus_message_iter_del(iter_struct);
+   if (ret) eldbus_message_unref(ret);
    return NULL;
 }
 
