@@ -407,7 +407,15 @@ static Ecore_Evas_Engine_Func _ecore_psl1ght_engine_func =
    _ecore_evas_screen_geometry_get, // screen_geometry_get
    NULL, // screen_dpi_get
    NULL,
-   NULL  //msg_send
+   NULL, //msg_send
+
+   NULL, // pointer_xy_get
+   NULL, // pointer_warp
+
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL  // wm_rot_manual_rotation_done
 };
 
 EAPI Ecore_Evas *

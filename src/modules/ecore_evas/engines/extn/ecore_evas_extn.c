@@ -877,7 +877,12 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 
    /* 1.8 abstractions */
    NULL, // pointer_xy_get
-   NULL // pointer_warp
+   NULL, // pointer_warp
+
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL  // wm_rot_manual_rotation_done
 };
 
 static Eina_Bool
@@ -1997,7 +2002,12 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
 
    /* 1.8 abstractions */
    NULL, // pointer_xy_get
-   NULL // pointer_warp
+   NULL, // pointer_warp
+
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL  // wm_rot_manual_rotation_done
 };
 
 EAPI Ecore_Evas *

@@ -1,3 +1,16 @@
+2014-02-09  Gwanglim Lee
+
+        * Ecore_Evas: Added window manager rotation to manage the rotation of
+        windows by the WM.
+        - add ecore_evas_wm_rotation_supported_get
+        - add ecore_evas_wm_rotation_preferred_rotation_set
+        - add ecore_evas_wm_rotation_preferred_rotation_get
+        - add ecore_evas_wm_rotation_available_rotations_set
+        - add ecore_evas_wm_rotation_available_rotations_get
+        - add ecore_evas_wm_rotation_manual_rotation_done_set
+        - add ecore_evas_wm_rotation_manual_rotation_done_get
+        - add ecore_evas_wm_rotation_manual_rotation_done
+
 2013-12-02  Daniel Juyung Seo (SeoZ)
 
         * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.

@@ -1946,6 +1946,153 @@ ecore_evas_window_available_profiles_get(Ecore_Evas *ee, char ***profiles, unsig
      return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+ecore_evas_wm_rotation_supported_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_supported_get");
+        return EINA_FALSE;
+     }
+   return ee->prop.wm_rot.supported;
+}
+
+EAPI void
+ecore_evas_wm_rotation_preferred_rotation_set(Ecore_Evas *ee, int rotation)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_preferred_rotation_set");
+        return;
+     }
+   if (rotation != -1)
+     {
+        if (ee->prop.wm_rot.available_rots)
+          {
+             Eina_Bool found = EINA_FALSE;
+             unsigned int i;
+             for (i = 0; i < ee->prop.wm_rot.count; i++)
+               {
+                  if (ee->prop.wm_rot.available_rots[i] == rotation)
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
+               }
+             if (!found) return;
+          }
+     }
+   IFC(ee, fn_wm_rot_preferred_rotation_set) (ee, rotation);
+   IFE;
+}
+
+EAPI int
+ecore_evas_wm_rotation_preferred_rotation_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_preferred_rotation_get");
+        return -1;
+     }
+   return ee->prop.wm_rot.preferred_rot;
+}
+
+EAPI void
+ecore_evas_wm_rotation_available_rotations_set(Ecore_Evas *ee, const int *rotations, unsigned int count)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_available_rotations_set");
+        return;
+     }
+   IFC(ee, fn_wm_rot_available_rotations_set) (ee, rotations, count);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_wm_rotation_available_rotations_get(const Ecore_Evas *ee, int **rotations, unsigned int *count)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_available_rotations_get");
+        return EINA_FALSE;
+     }
+   if ((!rotations) || (!count))
+     return EINA_FALSE;
+
+   if ((!ee->prop.wm_rot.available_rots) || (ee->prop.wm_rot.count == 0))
+     return EINA_FALSE;
+
+   *rotations = calloc(ee->prop.wm_rot.count, sizeof(int));
+   if (!*rotations) return EINA_FALSE;
+
+   memcpy(*rotations, ee->prop.wm_rot.available_rots, sizeof(int) * ee->prop.wm_rot.count);
+   *count = ee->prop.wm_rot.count;
+
+   return EINA_TRUE;
+}
+
+EAPI void
+ecore_evas_wm_rotation_manual_rotation_done_set(Ecore_Evas *ee, Eina_Bool set)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_manual_rotation_done_set");
+        return;
+     }
+
+   if (!ee->prop.wm_rot.app_set)
+     {
+        return;
+     }
+
+   IFC(ee, fn_wm_rot_manual_rotation_done_set) (ee, set);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_wm_rotation_manual_rotation_done_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_manual_rotation_done_get");
+        return EINA_FALSE;
+     }
+
+   if (!ee->prop.wm_rot.app_set)
+     {
+        return EINA_FALSE;
+     }
+
+   return ee->prop.wm_rot.manual_mode.set;
+}
+
+EAPI void
+ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_wm_rotation_manual_rotation_done");
+        return;
+     }
+
+   if (!ee->prop.wm_rot.app_set)
+     {
+        return;
+     }
+
+   IFC(ee, fn_wm_rot_manual_rotation_done) (ee);
+   IFE;
+}
+
 EAPI void
 ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
@@ -2703,6 +2850,11 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->prop.profile.name = NULL;
    _ecore_evas_window_available_profiles_free(ee);
    ee->prop.profile.available_list = NULL;
+   if (ee->prop.wm_rot.available_rots) free(ee->prop.wm_rot.available_rots);
+   ee->prop.wm_rot.available_rots = NULL;
+   if (ee->prop.wm_rot.manual_mode.timer)
+     ecore_timer_del(ee->prop.wm_rot.manual_mode.timer);
+   ee->prop.wm_rot.manual_mode.timer = NULL;
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
    ee->prop.cursor.object = NULL;
    if (ee->evas) evas_free(ee->evas);

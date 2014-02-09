@@ -2677,6 +2677,19 @@ EAPI void                                  ecore_x_e_illume_window_state_send(Ec
 
 EAPI void                                  ecore_x_xkb_select_group(int group); /* @since 1.7 */
 
+EAPI void                                  ecore_x_e_window_rotation_supported_set(Ecore_X_Window root, Eina_Bool enabled); /**< @since 1.9 */
+EAPI Eina_Bool                             ecore_x_e_window_rotation_supported_get(Ecore_X_Window root); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_app_set(Ecore_X_Window win, Eina_Bool set); /**< @since 1.9 */
+EAPI Eina_Bool                             ecore_x_e_window_rotation_app_get(Ecore_X_Window win); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_preferred_rotation_set(Ecore_X_Window win, int rot); /**< @since 1.9 */
+EAPI Eina_Bool                             ecore_x_e_window_rotation_preferred_rotation_get(Ecore_X_Window win, int *rot); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_available_rotations_set(Ecore_X_Window win, const int *rots, unsigned int count); /**< @since 1.9 */
+EAPI Eina_Bool                             ecore_x_e_window_rotation_available_rotations_get(Ecore_X_Window win, int **rots, unsigned int *count); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_change_prepare_send(Ecore_X_Window win, int rot, Eina_Bool resize, int w, int h); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root, Ecore_X_Window win, int rot); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_change_request_send(Ecore_X_Window win, int rot); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root, Ecore_X_Window win, int rot, int w, int h); /**< @since 1.9 */
+
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus

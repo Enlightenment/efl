@@ -684,6 +684,87 @@ EAPI void        ecore_evas_window_available_profiles_set(Ecore_Evas *ee, const 
  */
 EAPI Eina_Bool   ecore_evas_window_available_profiles_get(Ecore_Evas *ee, char ***profiles, unsigned int *count);
 /**
+ * @brief Query if the underlying windowing system supports the window manager rotation.
+ *
+ * @param ee The Ecore_Evas
+ * @return @c EINA_TRUE if the window manager rotation is supported, @c EINA_FALSE otherwise.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.9.0
+ */
+EAPI Eina_Bool   ecore_evas_wm_rotation_supported_get(const Ecore_Evas *ee);
+/**
+ * @brief Set the preferred rotation hint.
+ *
+ * @param ee The Ecore_Evas to set
+ * @param rotation Value to set the preferred rotation hint
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.9.0
+ */
+EAPI void        ecore_evas_wm_rotation_preferred_rotation_set(Ecore_Evas *ee, int rotation);
+/**
+ * @brief Get the preferred rotation hint.
+ *
+ * @param ee The Ecore_Evas to get the preferred rotation hint from.
+ * @return The preferred rotation hint, -1 on failure.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.9.0
+ */
+EAPI int         ecore_evas_wm_rotation_preferred_rotation_get(const Ecore_Evas *ee);
+/**
+ * @brief Set the array of available window rotations.
+ *
+ * @param ee The Ecore_Evas to set
+ * @param rotations The integer array of available window rotations
+ * @param count The number of members in rotations
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.9.0
+ */
+EAPI void        ecore_evas_wm_rotation_available_rotations_set(Ecore_Evas *ee, const int *rotations, unsigned int count);
+/**
+ * @brief Get the array of available window rotations.
+ *
+ * @param ee The Ecore_Evas to get available window rotations from.
+ * @param rotations Where to return the integer array of available window rotations
+ * @param count Where to return the number of members in rotations
+ * @return EINA_TRUE if available window rotations exist, EINA_FALSE otherwise
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.9.0
+ */
+EAPI Eina_Bool   ecore_evas_wm_rotation_available_rotations_get(const Ecore_Evas *ee, int **rotations, unsigned int *count);
+/**
+ * @brief Set manual rotation done mode of Ecore_Evas's window
+ *
+ * @param ee The Ecore_Evas
+ * @param set If true, the window manager will not rotate the Ecore_Evas's window until
+ * the rotation done event is received by ecore_evas_wm_rotation_manual_rotation_done.
+ * If false, the manual rotation mode is disabled.
+ *
+ * @since 1.9.0
+ */
+EAPI void        ecore_evas_wm_rotation_manual_rotation_done_set(Ecore_Evas *ee, Eina_Bool set);
+/**
+ * @brief Get manual rotation done mode of Ecore_Evas's window
+ *
+ * @param ee The Ecore_Evas
+ * @return If true, the manual rotation done mode is enabled
+ *
+ * @since 1.9.0
+ */
+EAPI Eina_Bool   ecore_evas_wm_rotation_manual_rotation_done_get(const Ecore_Evas *ee);
+/**
+ * @brief Set rotation finish manually
+ *
+ * @param ee The Ecore_Evas
+ *
+ * @since 1.9.0
+ */
+EAPI void        ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee);
+/**
  * @brief Send message to parent ecore
  *
  * @param ee The Ecore_Evas to set

@@ -115,6 +115,11 @@ struct _Ecore_Evas_Engine_Func
    /* 1.8 abstractions */
    void (*fn_pointer_xy_get) (const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
    Eina_Bool (*fn_pointer_warp) (const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
+
+   void (*fn_wm_rot_preferred_rotation_set) (Ecore_Evas *ee, int rot);
+   void (*fn_wm_rot_available_rotations_set) (Ecore_Evas *ee, const int *rots, unsigned int count);
+   void (*fn_wm_rot_manual_rotation_done_set) (Ecore_Evas *ee, Eina_Bool set);
+   void (*fn_wm_rot_manual_rotation_done) (Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface
@@ -186,6 +191,21 @@ struct _Ecore_Evas
             int       x, y;
          } hot;
       } cursor;
+      struct {
+         Eina_Bool       supported;      // indicate that the underlying window system supports window manager rotation protocol
+         Eina_Bool       app_set;        // indicate that the ee supports window manager rotation protocol
+         Eina_Bool       win_resize;     // indicate that the ee will be resized by the WM
+         int             angle;          // rotation value which is decided by the WM 
+         int             w, h;           // window size to rotate
+         int             preferred_rot;  // preferred rotation hint
+         int            *available_rots; // array of avaialable rotation values
+         unsigned int    count;          // number of elements of available_rots
+         struct {
+            Eina_Bool    set;
+            Eina_Bool    wait_for_done;
+            Ecore_Timer *timer;
+         } manual_mode;
+      } wm_rot;
       int             layer;
       Ecore_Window    window;
       unsigned char   avoid_damage;

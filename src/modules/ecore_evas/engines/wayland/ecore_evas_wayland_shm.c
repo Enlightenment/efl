@@ -79,7 +79,12 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func msg send
 
    _ecore_evas_wl_common_pointer_xy_get,
-   NULL // pointer_warp
+   NULL, // pointer_warp
+
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL  // wm_rot_manual_rotation_done
 };
 
 /* external variables */

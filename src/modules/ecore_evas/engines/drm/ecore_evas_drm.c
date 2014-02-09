@@ -96,7 +96,15 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
    NULL, //void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
    NULL, //void (*fn_msg_parent_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
-   NULL //void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+   NULL, //void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
+
+   NULL, // pointer_xy_get
+   NULL, // pointer_warp
+
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL  // wm_rot_manual_rotation_done
 };
 
 EAPI Ecore_Evas *
