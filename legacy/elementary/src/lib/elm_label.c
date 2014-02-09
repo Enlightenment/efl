@@ -78,9 +78,7 @@ static void
 _label_slide_change(Evas_Object *obj)
 {
    Evas_Object *tb;
-   Evas_Coord   lw;
    char *plaintxt;
-   double speed;
    int plainlen = 0;
 
    ELM_LABEL_DATA_GET(obj, sd);
@@ -139,17 +137,6 @@ _label_slide_change(Evas_Object *obj)
           }
         Edje_Message_Float_Set *msg =
           alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
-
-        evas_object_geometry_get(wd->resize_obj,
-                                  NULL, NULL, &lw, NULL);
-        if ((sd->slide_duration_recalc) &&
-            (lw > 0) &&
-            (sd->matchslide_duration > 0))
-          {
-             speed = (sd->matchslide_textlen + lw) / (sd->matchslide_duration);
-             sd->slide_duration = (sd->text_formatted_length + lw) / (speed);
-             sd->slide_duration_recalc = EINA_FALSE;
-          }
 
         msg->count = 1;
         msg->val[0] = sd->slide_duration;
@@ -227,10 +214,9 @@ _on_label_resize(void *data,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
-  ELM_LABEL_DATA_GET(data, sd);
+   ELM_LABEL_DATA_GET(data, sd);
 
-  if (sd->slide_duration_recalc) _label_slide_change(data);
-  if (sd->linewrap) elm_layout_sizing_eval(data);
+   if (sd->linewrap) elm_layout_sizing_eval(data);
 }
 
 static int
@@ -338,8 +324,6 @@ _stringshare_key_value_replace(const char **srcstring,
 static void
 _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
 {
-   Evas_Object *tb;
-
    Elm_Label_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    const char *part = va_arg(*list, const char *);
@@ -357,11 +341,6 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
         sd->lastw = 0;
         eo_do(obj, elm_obj_layout_sizing_eval());
      }
-
-   tb = (Evas_Object *)edje_object_part_object_get(wd->resize_obj,
-                                                   "elm.text");
-   evas_object_textblock_size_formatted_get(tb, &sd->text_formatted_length, NULL);
-
    if (ret) *ret = int_ret;
 }
 
@@ -695,41 +674,6 @@ elm_label_slide_duration_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_label_slide_speed_match(Evas_Object *obj, double duration, Evas_Coord textlen)
-{
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_slide_speed_match(duration, textlen));
-}
-
-static void
-_slide_speed_match(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double duration = va_arg(*list, double);
-   Evas_Coord textlen = va_arg(*list, Evas_Coord);
-   Elm_Label_Smart_Data *sd = _pd;
-   sd->matchslide_duration = duration;
-   sd->matchslide_textlen = textlen;
-   sd->slide_duration_recalc = EINA_TRUE;
-}
-
-EAPI Evas_Coord
-elm_label_slide_text_length_get(const Evas_Object *obj)
-{
-   ELM_LABEL_CHECK(obj) 0;
-   Evas_Coord ret = 0;
-   eo_do((Eo *) obj, elm_obj_label_slide_text_length_get(&ret));
-   return ret;
-}
-
-static void
-_slide_textlen_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *ret = va_arg(*list, Evas_Coord *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->text_formatted_length;
-}
-
-EAPI void
 elm_label_slide_go(Evas_Object *obj)
 {
    ELM_LABEL_CHECK(obj);
@@ -799,8 +743,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET), _slide_duration_set),
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), _slide_duration_get),
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO), _slide_go),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_MATCH), _slide_speed_match),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_TEXT_LENGTH_GET), _slide_textlen_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -816,11 +758,9 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET, "Get the ellipsis behavior of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_SET, "Set slide effect mode of label widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET, "Get current slide effect mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration  of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration of the label."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration (speed) of the label."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration(speed) of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO, "Start slide effect."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_MATCH, "Set the required parameter to match slide speed."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_TEXT_LENGTH_GET, "Get the text length of the label."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

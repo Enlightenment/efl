@@ -113,8 +113,6 @@ void
 test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gd, *rect, *lb, *rd, *rdg, *sl;
-   double duration;
-   Evas_Coord textlen;
 
    win = elm_win_util_standard_add("label2", "Label 2");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -213,51 +211,6 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(sl, "changed", _change_cb, lb);
    elm_grid_pack(gd, sl, 5, 60, 90, 10);
    evas_object_show(sl);
-
-   /*Test label slide speed */
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, "Test Label Slide Speed:");
-   elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_ALWAYS);
-   elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 70, 90, 10);
-   evas_object_show(lb);
-
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 5, 80, 90, 10);
-   evas_object_color_set(rect, 255, 125, 125, 255);
-   evas_object_show(rect);
-
-   lb = elm_label_add(win);
-   elm_object_style_set(lb, "slide_long");
-   elm_object_text_set(lb,
-                       "This is a label set to slide and this will"
-                       " test the speed of label with the below label."
-                       " This label has few extra char to test");
-   elm_label_slide_duration_set(lb, 8.0);
-   elm_label_slide_mode_set(lb,  ELM_LABEL_SLIDE_MODE_ALWAYS);
-   elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 80, 90, 10);
-   evas_object_show(lb);
-
-   //Get the required parameter of the previous label
-   duration = elm_label_slide_duration_get(lb);
-   textlen = elm_label_slide_text_length_get(lb);
-
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 5, 90, 90, 10);
-   evas_object_color_set(rect, 255, 125, 125, 255);
-   evas_object_show(rect);
-
-   lb = elm_label_add(win);
-   elm_object_style_set(lb, "slide_long");
-   elm_object_text_set(lb,
-                       "This is a label set to slide and this will"
-                       " match the speed of the upper label.");
-   elm_label_slide_mode_set(lb,  ELM_LABEL_SLIDE_MODE_ALWAYS);
-   elm_label_slide_speed_match(lb, duration, textlen);
-   elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 90, 90, 10);
-   evas_object_show(lb);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);

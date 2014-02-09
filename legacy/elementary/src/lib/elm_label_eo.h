@@ -22,8 +22,6 @@ enum
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_GO,
-   ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_MATCH,
-   ELM_OBJ_LABEL_SUB_ID_TEXT_LENGTH_GET,
    ELM_OBJ_LABEL_SUB_ID_LAST
 };
 
@@ -181,36 +179,6 @@ enum
  * @ingroup Label
  */
 #define elm_obj_label_slide_go() ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO)
-
-/**
- * @def elm_obj_label_slide_speed_match
- * @since 1.9
- *
- * @brief Set the required parameter to set the same speed of the label
- *
- * @param[in] duration
- * @param[in] textlen
- *
- * @see elm_label_slide_duration_set
- *
- * @ingroup Label
- */
-#define elm_obj_label_slide_speed_match(duration, textlen) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_MATCH), EO_TYPECHECK(double, duration), EO_TYPECHECK(Evas_Coord, textlen)
-
-/**
- * @def elm_obj_label_slide_text_length_get
- * @since 1.9
- *
- * @brief Get the text label length
- *
- * @param[out] ret
- *
- * @see elm_object_text_set
- *
- * @ingroup Label
- */
-#define elm_obj_label_slide_text_length_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_TEXT_LENGTH_GET), EO_TYPECHECK(Evas_Coord * , ret)
-
 /**
  * @}
  */
