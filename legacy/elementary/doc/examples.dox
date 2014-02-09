@@ -1858,7 +1858,7 @@
 /**
  * @page mapbuf_example Mapbuf Widget Example
  *
- * This code places a Elementary mapbuf widget on a window,
+ * This code places an Elementary mapbuf widget on a window,
  * to exemplify part of the widget's API.
  *
  * First we'll add an window with a background and a vertical box to
@@ -1940,7 +1940,7 @@
 /**
  * @page map_example_01 Map Example - Creation and Zoom
  *
- * This code places a Elementary map widget on a window,
+ * This code places an Elementary map widget on a window,
  * to exemplify part of the widget's API.
  *
  * Let's start adding a map to our window:
@@ -2015,7 +2015,7 @@
 /**
  * @page map_example_02 Map Example - Overlay Usage
  *
- * This code places a Elementary map widget on a window,
+ * This code places an Elementary map widget on a window,
  * to exemplify part of the widget's API, related to overlays.
  *
  * We'll start this example in the same way as
@@ -2098,7 +2098,7 @@
 /**
  * @page map_example_03 Map Example - Route and Name Usage
  *
- * This code places a Elementary map widget on a window,
+ * This code places an Elementary map widget on a window,
  * to exemplify part of the widget's API, related routes and names.
  *
  * In this example, we will suppose we need to set a route for the user
@@ -2268,7 +2268,7 @@
 /**
  * @page diskselector_example_02 Diskselector - Items management
  *
- * This code places a Elementary diskselector widgets on a window,
+ * This code places an Elementary diskselector widgets on a window,
  * along with some buttons trigerring actions on it (though its API).
  * It covers most of diskselector item functions.
  *
@@ -2504,7 +2504,7 @@
 /**
  * @page list_example_03 List - Items management
  *
- * This code places a Elementary list widgets on a window,
+ * This code places an Elementary list widgets on a window,
  * along with some buttons trigerring actions on it (though its API).
  * It covers most of elm_list_item functions.
  *
@@ -2664,7 +2664,7 @@
 /**
  * @page toolbar_example_01 Toolbar Example - Simple Items
  *
- * This code places a Elementary toolbar widget on a window,
+ * This code places an Elementary toolbar widget on a window,
  * to exemplify part of the widget's API.
  *
  * Let's start adding a button to our window, that will have its text
@@ -2721,7 +2721,7 @@
 /**
  * @page toolbar_example_02 Toolbar Example - Items with States
  *
- * This code places a Elementary toolbar widget on a window,
+ * This code places an Elementary toolbar widget on a window,
  * to exemplify part of the widget's API.
  *
  * Toolbar widgets has support to items with states. Each state
@@ -2816,7 +2816,7 @@
 /**
  * @page segment_control_example Segment Control Example
  *
- * This code places a Elementary segment control widgets on a window,
+ * This code places an Elementary segment control widgets on a window,
  * to exemplify part of the widget's API.
  *
  * Let's start adding a segment control to our window:
