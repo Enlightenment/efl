@@ -13,13 +13,18 @@ struct _Elm_Label_Smart_Data
 {
    const char           *format;
    double                slide_duration;
+   double                matchslide_duration;
+
    Evas_Coord            lastw;
    Evas_Coord            wrap_w;
+   Evas_Coord            text_formatted_length;
+   Evas_Coord            matchslide_textlen;
    Elm_Wrap_Type         linewrap;
    Elm_Label_Slide_Mode  slide_mode;
 
    Eina_Bool             ellipsis : 1;
    Eina_Bool             slide_ellipsis : 1;
+   Eina_Bool             slide_duration_recalc : 1;
 };
 
 #define ELM_LABEL_DATA_GET(o, sd) \

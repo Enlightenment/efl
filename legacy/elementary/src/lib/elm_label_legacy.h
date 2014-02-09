@@ -162,3 +162,35 @@ EAPI double                      elm_label_slide_duration_get(const Evas_Object 
  * @ingroup Label
  */
 EAPI void                        elm_label_slide_go(Evas_Object *obj);
+
+/**
+ * @brief Set the required parameter to set the same speed of the label
+ *
+ * @param obj The label object
+ * @param duration The duration of the previous slide label 
+ * @param duration The textlen of the previous slide label text
+ *
+ * @note If this API is called then it is not required to set the 
+ * duration of the label. Internally it will calcuate the duration
+ * which will match the speed of the previous label. If the duration
+ * is explicitly set it will override these parameters.
+ *
+ * @see elm_label_slide_duration_set()
+ * @since 1.9
+ *
+ * @ingroup Label
+ */
+EAPI void                        elm_label_slide_speed_match(Evas_Object *obj, double duration, Evas_Coord textlen);
+
+/**
+ * @brief Get the text length of the label
+ *
+ * @param obj The label object
+ * @return The text length of the label
+ *
+ * @see elm_object_text_set()
+ * @since 1.9
+ *
+ * @ingroup Label
+ */
+EAPI Evas_Coord                  elm_label_slide_text_length_get(const Evas_Object *obj);
