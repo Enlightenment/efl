@@ -785,6 +785,12 @@ my_ent_bt_pas(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    elm_entry_selection_paste(en);
 }
 
+static char *user_style =
+   "DEFAULT='font_size=16 color=#F00'"
+   "em='+ backing=on backing_color=#FFF'"
+   "grn='+ color=#0F0'"
+   "ul='+ underline=on underline_color=#AAA'";
+
 static void
 ent_bt_style_user_peek(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -804,12 +810,20 @@ ent_bt_style_user_pop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
    printf("Style user popped\n");
 }
 
+static void
+ent_bt_style_user_push(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_text_style_user_push(en, user_style);
+   printf("Style user pushed\n");
+}
+
 void
 test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *en, *bt, *bt2;
+   Evas_Object *win, *bx, *vbx, *en, *bt, *bt2;
 
-   win = elm_win_util_standard_add("entry-style", "Entry Style");
+   win = elm_win_util_standard_add("entry-style", "Entry User Style");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 300, 300);
 
@@ -820,22 +834,33 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
-   elm_entry_text_style_user_push(en, "DEFAULT='font_size=40 color=#FF0000'");
-   elm_object_text_set(en, "Testing Text");
+   elm_entry_text_style_user_push(en, user_style);
+   elm_object_text_set(en,
+      "Default style<br>"
+      "<em>Change a standard tag (backing)</em><br>"
+      "<grn>Create a custom tag (green)</grn><br>"
+      "<ul>Create a custom tag (underline)</ul><br>"
+      "<underline=double underline_color=#0F0 underline2_color=#00F>Unnamed tag (underline double)</><br>"
+      );
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
-   evas_object_resize(en, 200, 200);
+   evas_object_resize(en, 300, 300);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
 
+   vbx = elm_box_add(win);
+   elm_box_horizontal_set(vbx, EINA_TRUE);
+   elm_box_pack_end(bx, vbx);
+   evas_object_show(vbx);
+   
    bt = elm_button_add(win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(bt, "Peek");
    evas_object_smart_callback_add(bt, "clicked", ent_bt_style_user_peek, en);
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, bt);
+   elm_box_pack_end(vbx, bt);
    evas_object_propagate_events_set(bt, EINA_FALSE);
    elm_object_focus_allow_set(bt, EINA_FALSE);
    evas_object_show(bt);
@@ -846,7 +871,18 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    evas_object_smart_callback_add(bt2, "clicked", ent_bt_style_user_pop, en);
    evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, bt2);
+   elm_box_pack_end(vbx, bt2);
+   evas_object_propagate_events_set(bt2, EINA_FALSE);
+   elm_object_focus_allow_set(bt2, EINA_FALSE);
+   evas_object_show(bt2);
+
+   bt2 = elm_button_add(win);
+   evas_object_size_hint_weight_set(bt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_text_set(bt2, "Push");
+   evas_object_smart_callback_add(bt2, "clicked", ent_bt_style_user_push, en);
+   evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(vbx, bt2);
    evas_object_propagate_events_set(bt2, EINA_FALSE);
    elm_object_focus_allow_set(bt2, EINA_FALSE);
    evas_object_show(bt2);
