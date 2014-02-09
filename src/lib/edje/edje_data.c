@@ -477,6 +477,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.y", physics.y, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "physics.z", physics.z, EET_T_DOUBLE);
 #endif
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "channel", channel, EET_T_UCHAR);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Image_Id);
    _edje_edd_edje_part_image_id =

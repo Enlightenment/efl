@@ -80,7 +80,8 @@ eet_snd_file_tell(void *data, Eo *eo_obj EINA_UNUSED)
    return vf->offset;
 }
 
-static void _free(void *data)
+static void
+_free(void *data)
 {
    struct _edje_multisense_eet_data *eet_data = data;
 
@@ -90,18 +91,58 @@ static void _free(void *data)
    free(data);
    outs--;
 }
+
+static Eina_Bool _channel_mute_states[8] = { 0 };
+
+static Eina_Bool
+_channel_mute(Edje *ed EINA_UNUSED, int channel)
+{
+   // ed lets use set mute per object... but for now no api's for this
+   // if all are muted ... then all!
+   if (_channel_mute_states[7]) return EINA_TRUE;
+   if ((channel < 0) || (channel > 7)) return EINA_FALSE;
+   return _channel_mute_states[channel];
+   return EINA_FALSE;
+}
+
 #endif
 
-Eina_Bool
-_edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed)
+EAPI void
+edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute)
 {
- #ifdef ENABLE_MULTISENSE
+#ifdef ENABLE_MULTISENSE
+   if ((channel < 0) || (channel > 7)) return;
+   _channel_mute_states[channel] = mute;
+#else
+   (void) channel;
+   (void) mute;
+#endif
+}
+
+EAPI Eina_Bool
+edje_audio_channel_mute_get(Edje_Channel channel)
+{
+#ifdef ENABLE_MULTISENSE
+   if ((channel < 0) || (channel > 7)) return EINA_FALSE;
+   return _channel_mute_states[channel];
+#else
+   (void) channel;
+   return EINA_FALSE;
+#endif
+}
+
+Eina_Bool
+_edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed, int channel)
+{
+#ifdef ENABLE_MULTISENSE
    Eo *in;
    Edje_Sound_Sample *sample;
    char snd_id_str[255];
    int i;
    Eina_Bool ret;
 
+   if (_channel_mute(ed, channel)) return EINA_FALSE;
+   
    if (outfail) return EINA_FALSE;
    
    if (!sample_name)
@@ -189,12 +230,13 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    (void) ed;
    (void) sample_name;
    (void) speed;
+   (void) channel;
    return EINA_FALSE;
 #endif
 }
 
 Eina_Bool
-_edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration)
+_edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration, int channel)
 {
 #ifdef ENABLE_MULTISENSE
    unsigned int i;
@@ -208,6 +250,8 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
         return EINA_FALSE;
      }
    
+   if (_channel_mute(ed, channel)) return EINA_FALSE;
+
    if (outfail) return EINA_FALSE;
    
    if ((!ed) || (!ed->file) || (!ed->file->sound_dir))
@@ -245,6 +289,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
    (void) ed;
    (void) duration;
    (void) tone_name;
+   (void) channel;
    return EINA_FALSE;
 #endif
 

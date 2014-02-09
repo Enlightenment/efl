@@ -676,7 +676,7 @@ struct _Edje_Program /* a conditional program to be run */
       double z;
    } physics;
 #endif
-
+   unsigned char channel;
    Eina_Bool exec : 1;
 };
 
@@ -2427,8 +2427,8 @@ void _edje_subobj_unregister(Edje *ed, Evas_Object *ob);
 
 void _edje_multisense_init(void);
 void _edje_multisense_shutdown(void);
-Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed);
-Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration);
+Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed, int channel);
+Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration, int channel);
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 

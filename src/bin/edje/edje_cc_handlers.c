@@ -9126,7 +9126,7 @@ st_collections_group_programs_program_in(void)
            action: FOCUS_OBJECT;\n
            action: PARAM_COPY "src_part" "src_param" "dst_part" "dst_param";\n
            action: PARAM_SET "part" "param" "value";\n
-           action: PLAY_SAMPLE "sample name" speed (speed of sample - 1.0 is original speed - faster is higher pitch);\n
+           action: PLAY_SAMPLE "sample name" speed (speed of sample - 1.0 is original speed - faster is higher pitch) [channel optional EFFECT/FX | BACKGROUND/BG | MUSIC/MUS | FOREGROUND/FG | INTERFACE/UI | INPUT | ALERT;\n
            action: PLAY_TONE "tone name" duration in seconds ( Range 0.1 to 10.0 );\n
            action: PHYSICS_IMPULSE 10 -23.4 0;\n
            action: PHYSICS_TORQUE_IMPULSE 0 2.1 0.95;\n
@@ -9199,6 +9199,16 @@ st_collections_group_programs_program_action(void)
                }
           }
         ep->speed = parse_float_range(2, 0.0, 100.0);
+        if (get_arg_count() >= 4)
+          ep->channel = parse_enum(3,
+                                   "EFFECT", 0, "FX", 0,
+                                   "BACKGROUND", 1, "BG", 1,
+                                   "MUSIC", 2, "MUS", 2,
+                                   "FOREGROUND", 3, "FG", 3,
+                                   "INTERFACE", 4, "UI", 4,
+                                   "INPUT", 5,
+                                   "ALERT", 6,
+                                   NULL);
      }
    else if (ep->action == EDJE_ACTION_TYPE_SOUND_TONE)
      {
@@ -9302,6 +9312,8 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_PARAM_COPY:
       case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
         check_arg_count(5);
+        break;
+      case EDJE_ACTION_TYPE_SOUND_SAMPLE:
         break;
       default:
 	check_arg_count(3);

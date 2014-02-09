@@ -2026,3 +2026,74 @@ EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
 /**
  * @}
  */
+
+/**
+ * @defgroup Edje_Audio Edje Audio
+ *
+ * @brief Functions to manipulate audio abilities in edje.
+ *
+ * Perspective is a graphical tool that makes objets represented in 2D
+ * look like they have a 3D appearance.
+ *
+ * Edje allows us to use perspective on any edje object. This group of
+ * functions deal with the use of perspective, by creating and configuring
+ * a perspective object that must set to a edje object or a canvas,
+ * affecting all the objects inside that have no particular perspective
+ * set already.
+ *
+ * @ingroup Edje_Audio
+ *
+ * @{
+ */
+
+/**
+ * Identifiers of Edje message types, which can be sent back and forth
+ * code and a given Edje object's theme file/group.
+ *
+ * @see edje_audio_channel_mute_set()
+ * @see edje_audio_channel_mute_get()
+ * 
+ * @since 1.9
+ */
+typedef enum _Edje_Channel
+{
+   EDJE_CHANNEL_EFFECT = 0, /**< Standard audio effects */
+   EDJE_CHANNEL_BACKGROUND = 1, /**< Background audio sounds  */
+   EDJE_CHANNEL_MUSIC = 2, /**< Music audio */
+   EDJE_CHANNEL_FOREGROUND = 3, /**< Foreground audio sounds */
+   EDJE_CHANNEL_INTERFACE = 4, /**< Sounds related to the interface */
+   EDJE_CHANNEL_INPUT = 5, /**< Sounds related to regular input */
+   EDJE_CHANNEL_ALERT = 6, /**< Sounds for major alerts */
+   EDJE_CHANNEL_ALL = 7 /**< All audio channels (convenience) */
+} Edje_Channel;
+
+/**
+ * Set the mute state of audio for the process as a whole
+ * 
+ * @param channel The channel to set the mute state of
+ * @param mute The mute state
+ * 
+ * This sets the mute (no output) state of audio for the given channel.
+ * 
+ * @see edje_audio_channel_mute_get()
+ * 
+ * @since 1.9
+ */
+EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
+
+/**
+ * Get the mute state of the given channel
+ * 
+ * @param channel The channel to get the mute state of
+ * @return The mute state of the channel
+ * 
+ * @see edje_audio_channel_mute_set()
+ *
+ * @since 1.9
+ */
+EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
+
+/**
+ * @}
+ */
+

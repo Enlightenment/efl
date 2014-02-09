@@ -73,8 +73,8 @@
  * set_state(part_id, state[], Float:state_val)
  * get_state(part_id, dst[], maxlen, &Float:val)
  * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
- * play_sample(sample_name, speed)
- * play_tone(tone_name, duration)
+ * play_sample(sample_name, speed, ...)
+ * play_tone(tone_name, duration, ...)
  * run_program(program_id)
  * Direction:get_drag_dir(part_id)
  * get_drag(part_id, &Float:dx, &Float:&dy)
@@ -915,13 +915,18 @@ _edje_embryo_fn_play_sample(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed;
    char *sample_name = NULL;
    float speed = 1.0;
+   int channel = 0;
 
-   CHKPARAM(2);
+   if (params[0] < (int) (sizeof(Embryo_Cell) * 2))
+     return 0;
    ed = embryo_program_data_get(ep);
    GETSTR(sample_name, params[1]);
    if ((!sample_name)) return 0;
    speed = EMBRYO_CELL_TO_FLOAT(params[2]);
-   _edje_multisense_internal_sound_sample_play(ed, sample_name, (double)speed);
+   if (params[0] == (int) (sizeof(Embryo_Cell) * 3))
+     GETINT(channel, params[3]);
+   _edje_multisense_internal_sound_sample_play(ed, sample_name,
+                                               (double)speed, channel);
    return 0;
 }
 
@@ -931,13 +936,18 @@ _edje_embryo_fn_play_tone(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed;
    char *tone_name = NULL;
    float duration = 0.1;
+   int channel = 0;
 
-   CHKPARAM(2);
+   if (params[0] < (int) (sizeof(Embryo_Cell) * 2))
+     return 0;
    ed = embryo_program_data_get(ep);
    GETSTR(tone_name, params[1]);
    if ((!tone_name)) return 0;
    duration = EMBRYO_CELL_TO_FLOAT(params[2]);
-   _edje_multisense_internal_sound_tone_play(ed, tone_name, (double) duration);
+   if (params[0] == (int) (sizeof(Embryo_Cell) * 3))
+     GETINT(channel, params[3]);
+   _edje_multisense_internal_sound_tone_play(ed, tone_name,
+                                             (double)duration, channel);
    return 0;
 }
 

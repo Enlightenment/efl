@@ -877,12 +877,12 @@ low_mem_current:
       case EDJE_ACTION_TYPE_SOUND_SAMPLE:
          if (_edje_block_break(ed))
            goto break_prog;
-         _edje_multisense_internal_sound_sample_play(ed, pr->sample_name, pr->speed);
+         _edje_multisense_internal_sound_sample_play(ed, pr->sample_name, pr->speed, pr->channel);
          break;
       case EDJE_ACTION_TYPE_SOUND_TONE:
          if (_edje_block_break(ed))
            goto break_prog;
-         _edje_multisense_internal_sound_tone_play(ed, pr->tone_name, pr->duration);
+         _edje_multisense_internal_sound_tone_play(ed, pr->tone_name, pr->duration, pr->channel);
          break;
       case EDJE_ACTION_TYPE_PARAM_COPY:
            {
