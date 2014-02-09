@@ -41,26 +41,26 @@
         u1 = u;
         v1 = v;
 
-        u2 = u1 + FPFPI1;
+        u2 = u1 + FPFPI1;      // next u point
         if (u2 >= swp) u2 = swp - 1;
 
-        v2 = v1 + FPFPI1;
+        v2 = v1 + FPFPI1;      // next v point
         if (v2 >= shp) v2 = shp - 1;
 
         ru = (u >> (FP + FPI - 8)) & 0xff;
         rv = (v >> (FP + FPI - 8)) & 0xff;
 
         s = sp + ((v1 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
-        val1 = *s;
+        val1 = *s;             // current pixel
 
         s = sp + ((v1 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
-        val2 = *s;
+        val2 = *s;             // right pixel
 
         s = sp + ((v2 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
-        val3 = *s;
+        val3 = *s;             // bottom pixel
 
         s = sp + ((v2 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
-        val4 = *s;
+        val4 = *s;             // right bottom pixel
 
 #  ifdef SCALE_USING_MMX
         MOV_A2R(rv, mm4);
