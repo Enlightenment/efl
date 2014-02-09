@@ -951,6 +951,14 @@ _cf_caches(void            *data,
 }
 
 static void
+_cf_audio(void *data,
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
+{
+   _flip_to(data,"audio");
+}
+
+static void
 _cf_etc(void *data,
         Evas_Object *obj EINA_UNUSED,
         void *event_info EINA_UNUSED)
@@ -1459,6 +1467,62 @@ _status_config_sizing(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", fs_change, NULL);
 
    evas_object_data_set(win, "sizing", bx);
+
+   elm_naviframe_item_simple_push(naviframe, bx);
+}
+
+#define MUTE_CB(_cb, _chan) \
+static void \
+_cb(void *data       EINA_UNUSED, \
+    Evas_Object     *obj, \
+    void *event_info EINA_UNUSED) \
+{ \
+   Eina_Bool val = elm_check_state_get(obj); \
+   Eina_Bool v = elm_config_audio_mute_get(_chan); \
+   if (val == v) return; \
+   elm_config_audio_mute_set(_chan, val); \
+   elm_config_all_flush(); \
+}
+
+MUTE_CB(mute_effect_change, EDJE_CHANNEL_EFFECT)
+MUTE_CB(mute_background_change, EDJE_CHANNEL_BACKGROUND)
+MUTE_CB(mute_music_change, EDJE_CHANNEL_MUSIC)
+MUTE_CB(mute_foreground_change, EDJE_CHANNEL_FOREGROUND)
+MUTE_CB(mute_interface_change, EDJE_CHANNEL_INTERFACE)
+MUTE_CB(mute_input_change, EDJE_CHANNEL_INPUT)
+MUTE_CB(mute_alert_change, EDJE_CHANNEL_ALERT)
+MUTE_CB(mute_all_change, EDJE_CHANNEL_ALL)
+
+static void
+_status_config_audio(Evas_Object *win,
+                     Evas_Object *naviframe)
+{
+   Evas_Object *bx, *ck;
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+
+#define MUTE_CHECK(_label, _chan, _cb)  \
+   ck = elm_check_add(win); \
+   elm_object_text_set(ck, _label); \
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0); \
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5); \
+   elm_check_state_set(ck, elm_config_audio_mute_get(_chan)); \
+   elm_box_pack_end(bx, ck); \
+   evas_object_show(ck); \
+   evas_object_smart_callback_add(ck, "changed", _cb, NULL);
+
+   MUTE_CHECK("Mute Effects", EDJE_CHANNEL_EFFECT, mute_effect_change);
+   MUTE_CHECK("Mute Background", EDJE_CHANNEL_BACKGROUND, mute_background_change);
+   MUTE_CHECK("Mute Music", EDJE_CHANNEL_MUSIC, mute_music_change);
+   MUTE_CHECK("Mute Foreground", EDJE_CHANNEL_FOREGROUND, mute_foreground_change);
+   MUTE_CHECK("Mute Interface", EDJE_CHANNEL_INTERFACE, mute_interface_change);
+   MUTE_CHECK("Mute Input", EDJE_CHANNEL_INPUT, mute_input_change);
+   MUTE_CHECK("Mute Alert", EDJE_CHANNEL_ALERT, mute_alert_change);
+   MUTE_CHECK("Mute Everything", EDJE_CHANNEL_ALL, mute_all_change);
+   
+   evas_object_data_set(win, "audio", bx);
 
    elm_naviframe_item_simple_push(naviframe, bx);
 }
@@ -3487,6 +3551,7 @@ _status_config_full(Evas_Object *win,
    elm_toolbar_item_append(tb, "video-display", "Rendering",
                            _cf_rendering, win);
    elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
+   elm_toolbar_item_append(tb, "sound", "Audio", _cf_audio, win);
    elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
 
    elm_box_pack_end(bx0, tb);
@@ -3503,6 +3568,7 @@ _status_config_full(Evas_Object *win,
    _status_config_rendering(win, naviframe);
    _status_config_scrolling(win, naviframe);
    _status_config_caches(win, naviframe);
+   _status_config_audio(win, naviframe);
    _status_config_etc(win, naviframe);
    _status_config_sizing(win, naviframe); // Note: call this at the end.
 

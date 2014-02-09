@@ -266,6 +266,14 @@ struct _Elm_Config
    unsigned char clouseau_enable;
    unsigned char magnifier_enable;
    double        magnifier_scale;
+   unsigned char audio_mute_effect;
+   unsigned char audio_mute_background;
+   unsigned char audio_mute_music;
+   unsigned char audio_mute_foreground;
+   unsigned char audio_mute_interface;
+   unsigned char audio_mute_input;
+   unsigned char audio_mute_alert;
+   unsigned char audio_mute_all;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

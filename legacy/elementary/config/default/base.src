@@ -80,6 +80,14 @@ group "Elm_Config" struct {
   value "auto_throttle_amount" double: 0.1;
   value "magnifier_enable" uchar: 1;
   value "magnifier_scale" double: 1.5;
+  value "audio_mute_effect" uchar: 0;
+  value "audio_mute_background" uchar: 0;
+  value "audio_mute_music" uchar: 0;
+  value "audio_mute_foreground" uchar: 0;
+  value "audio_mute_interface" uchar: 0;
+  value "audio_mute_input" uchar: 0;
+  value "audio_mute_alert" uchar: 0;
+  value "audio_mute_all" uchar: 0;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

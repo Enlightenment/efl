@@ -61,6 +61,7 @@ static const Elm_Text_Class _elm_text_classes[] = {
 
 static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
+static void        _config_sub_apply(void);
 static void        _config_update(void);
 static void        _env_get(void);
 
@@ -161,6 +162,7 @@ _prop_config_get(void)
    _elm_config = config_data;
    _env_get();
    _config_apply();
+   _config_sub_apply();
    _elm_config_font_overlay_apply();
    _elm_rescale();
    _elm_recache();
@@ -418,6 +420,14 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, clouseau_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, magnifier_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, magnifier_scale, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, audio_mute_effect, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_background, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_music, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_foreground, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_interface, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_input, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_alert, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, audio_mute_all, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -995,6 +1005,14 @@ _config_sub_apply(void)
    edje_password_show_last_set(_elm_config->password_show_last);
    edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_EFFECT, _elm_config->audio_mute_effect);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_BACKGROUND, _elm_config->audio_mute_background);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_MUSIC, _elm_config->audio_mute_music);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_FOREGROUND, _elm_config->audio_mute_foreground);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_INTERFACE, _elm_config->audio_mute_interface);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_INPUT, _elm_config->audio_mute_input);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_ALERT, _elm_config->audio_mute_alert);
+   edje_audio_channel_mute_set(EDJE_CHANNEL_ALL, _elm_config->audio_mute_all);
 }
 
 static Eina_Bool
@@ -1200,6 +1218,14 @@ _config_load(void)
    _elm_config->disable_external_menu = EINA_FALSE;
    _elm_config->magnifier_enable = EINA_TRUE;
    _elm_config->magnifier_scale = 1.5;
+   _elm_config->audio_mute_effect = 0;
+   _elm_config->audio_mute_background = 0;
+   _elm_config->audio_mute_music = 0;
+   _elm_config->audio_mute_foreground = 0;
+   _elm_config->audio_mute_interface = 0;
+   _elm_config->audio_mute_input = 0;
+   _elm_config->audio_mute_alert = 0;
+   _elm_config->audio_mute_all = 0;
 }
 
 static const char *
@@ -2428,6 +2454,76 @@ EAPI void
 elm_config_magnifier_scale_set(double scale)
 {
    _elm_config->magnifier_scale = scale;
+}
+
+EAPI Eina_Bool
+elm_config_audio_mute_get(Edje_Channel channel)
+{
+   switch (channel)
+     {
+      case EDJE_CHANNEL_EFFECT:
+        return _elm_config->audio_mute_effect;
+        break;
+      case EDJE_CHANNEL_BACKGROUND:
+        return _elm_config->audio_mute_background;
+        break;
+      case EDJE_CHANNEL_MUSIC:
+        return _elm_config->audio_mute_music;
+        break;
+      case EDJE_CHANNEL_FOREGROUND:
+        return _elm_config->audio_mute_foreground;
+        break;
+      case EDJE_CHANNEL_INTERFACE:
+        return _elm_config->audio_mute_interface;
+        break;
+      case EDJE_CHANNEL_INPUT:
+        return _elm_config->audio_mute_input;
+        break;
+      case EDJE_CHANNEL_ALERT:
+        return _elm_config->audio_mute_alert;
+        break;
+      case EDJE_CHANNEL_ALL:
+        return _elm_config->audio_mute_all;
+        break;
+      default:
+        break;
+     }
+   return EINA_FALSE;
+}
+
+EAPI void
+elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute)
+{
+   switch (channel)
+     {
+      case EDJE_CHANNEL_EFFECT:
+        _elm_config->audio_mute_effect = mute;
+        break;
+      case EDJE_CHANNEL_BACKGROUND:
+        _elm_config->audio_mute_background = mute;
+        break;
+      case EDJE_CHANNEL_MUSIC:
+        _elm_config->audio_mute_music = mute;
+        break;
+      case EDJE_CHANNEL_FOREGROUND:
+        _elm_config->audio_mute_foreground = mute;
+        break;
+      case EDJE_CHANNEL_INTERFACE:
+        _elm_config->audio_mute_interface = mute;
+        break;
+      case EDJE_CHANNEL_INPUT:
+        _elm_config->audio_mute_input = mute;
+        break;
+      case EDJE_CHANNEL_ALERT:
+        _elm_config->audio_mute_alert = mute;
+        break;
+      case EDJE_CHANNEL_ALL:
+        _elm_config->audio_mute_all = mute;
+        break;
+      default:
+        break;
+     }
+   edje_audio_channel_mute_set(channel, mute);
 }
 
 EAPI void
