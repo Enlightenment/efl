@@ -9126,7 +9126,7 @@ st_collections_group_programs_program_in(void)
            action: FOCUS_OBJECT;\n
            action: PARAM_COPY "src_part" "src_param" "dst_part" "dst_param";\n
            action: PARAM_SET "part" "param" "value";\n
-           action: PLAY_SAMPLE "sample name";\n
+           action: PLAY_SAMPLE "sample name" speed (speed of sample - 1.0 is original speed - faster is higher pitch);\n
            action: PLAY_TONE "tone name" duration in seconds ( Range 0.1 to 10.0 );\n
            action: PHYSICS_IMPULSE 10 -23.4 0;\n
            action: PHYSICS_TORQUE_IMPULSE 0 2.1 0.95;\n
@@ -9201,7 +9201,7 @@ st_collections_group_programs_program_action(void)
                   exit(-1);
                }
           }
-        ep->speed = parse_float_range(2, 0.0, 10.0);
+        ep->speed = parse_float_range(2, 0.0, 100.0);
      }
    else if (ep->action == EDJE_ACTION_TYPE_SOUND_TONE)
      {
