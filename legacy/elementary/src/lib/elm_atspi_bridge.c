@@ -669,6 +669,9 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    eldbus_message_iter_container_close(iter, iter_struct);
 
    return ret;
+fail:
+   if (ret) eldbus_message_unref(ret);
+   return NULL;
 }
 
 static Eldbus_Message *
