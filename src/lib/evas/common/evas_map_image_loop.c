@@ -52,11 +52,13 @@
 
         s = sp + ((v1 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
         val1 = *s;
+
         s = sp + ((v1 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
         val2 = *s;
 
         s = sp + ((v2 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
         val3 = *s;
+
         s = sp + ((v2 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
         val4 = *s;
 
@@ -190,17 +192,19 @@
 #   endif
 #  endif
 # endif
+
    while (ww > 0)
      {
 # ifdef COLMUL
 #  ifndef COLBLACK
         DATA32 val1;
 #   ifdef COLSAME
-#   else        
+#   else
         DATA32 cval; // col
-#   endif        
+#   endif
 #  endif
 # endif
+
 # ifdef COLBLACK
         *d = 0xff000000; // col
 # else
