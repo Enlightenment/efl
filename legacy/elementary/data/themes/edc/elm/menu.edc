@@ -714,7 +714,7 @@ group { name: "elm/menu/main_menu_submenu/default";
       }
    }
 }
-/*
+
 //In the hover used by the menu only the bottom part is used.
 group { name: "elm/hover/base/menu/default";
    images {
@@ -1163,4 +1163,4 @@ group { name: "elm/hover/base/main_menu_submenu/default";
       }
    }
 }
-*/
+
