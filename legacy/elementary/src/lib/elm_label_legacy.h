@@ -128,8 +128,9 @@ EAPI void                        elm_label_slide_mode_set(Evas_Object *obj, Elm_
  * @ingroup Label
  */
 EAPI Elm_Label_Slide_Mode        elm_label_slide_mode_get(const Evas_Object *obj);
+
 /**
- * @brief Set the slide duration (speed) of the label
+ * @brief Set the slide duration of the label
  *
  * @param obj The label object
  * @param duration The duration in seconds in moving text from slide begin position
@@ -140,7 +141,7 @@ EAPI Elm_Label_Slide_Mode        elm_label_slide_mode_get(const Evas_Object *obj
 EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, double duration);
 
 /**
- * @brief Get the slide duration(speed) of the label
+ * @brief Get the slide duration of the label
  *
  * @param obj The label object
  * @return The duration time in moving text from slide begin position to slide end position
@@ -150,6 +151,28 @@ EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, 
  * @ingroup Label
  */
 EAPI double                      elm_label_slide_duration_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the slide speed of the label
+ *
+ * @param obj The label object
+ * @param speed The speed of the slide animation in px per seconds
+ *
+ * @ingroup Label
+ */
+EAPI void                        elm_label_slide_speed_set(Evas_Object *obj, double speed);
+
+/**
+ * @brief Get the slide speed of the label
+ *
+ * @param obj The label object
+ * @return The slide animation speed in px per seconds 
+ *
+ * @see elm_label_slide_speed_set()
+ *
+ * @ingroup Label
+ */
+EAPI double                      elm_label_slide_speed_get(const Evas_Object *obj);
 
 /**
  * @brief Start slide effect.

@@ -100,19 +100,35 @@ _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_duration_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *lb = (Evas_Object *)data;
    double val = elm_slider_value_get(obj);
+
    elm_label_slide_duration_set(lb, val);
-   elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_ALWAYS);
    elm_label_slide_go(lb);
+
+   Evas_Object *sl = evas_object_data_get(lb, "speed_slider");
+   elm_slider_value_set(sl, elm_label_slide_speed_get(lb));
+}
+
+static void
+_speed_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *lb = (Evas_Object *)data;
+   double val = elm_slider_value_get(obj);
+
+   elm_label_slide_speed_set(lb, val);
+   elm_label_slide_go(lb);
+
+   Evas_Object *sl = evas_object_data_get(lb, "duration_slider");
+   elm_slider_value_set(sl, elm_label_slide_duration_get(lb));
 }
 
 void
 test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *gd, *rect, *lb, *rd, *rdg, *sl;
+   Evas_Object *win, *gd, *rect, *lb, *lb1, *lb2, *rd, *rdg, *sl;
 
    win = elm_win_util_standard_add("label2", "Label 2");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -126,13 +142,11 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* Test Label Ellipsis */
    lb = elm_label_add(win);
    elm_object_text_set(lb, "Test Label Ellipsis:");
-   elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_ALWAYS);
-   elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 5, 90, 10);
+   elm_grid_pack(gd, lb, 5, 0, 90, 10);
    evas_object_show(lb);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 5, 15, 90, 10);
+   elm_grid_pack(gd, rect, 5, 10, 90, 10);
    evas_object_color_set(rect, 255, 125, 125, 255);
    evas_object_show(rect);
 
@@ -144,19 +158,17 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                        "at the end of the widget."
                        );
    elm_label_ellipsis_set(lb, EINA_TRUE);
-   elm_grid_pack(gd, lb, 5, 15, 90, 10);
+   elm_grid_pack(gd, lb, 5, 10, 90, 10);
    evas_object_show(lb);
 
    /* Test Label Slide */
    lb = elm_label_add(win);
    elm_object_text_set(lb, "Test Label Slide:");
-   elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_ALWAYS);
-   elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 30, 90, 10);
+   elm_grid_pack(gd, lb, 5, 20, 90, 10);
    evas_object_show(lb);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 5, 40, 90, 10);
+   elm_grid_pack(gd, rect, 5, 30, 90, 10);
    evas_object_color_set(rect, 255, 125, 125, 255);
    evas_object_show(rect);
 
@@ -169,9 +181,10 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                        "This only works with the themes \"slide_short\", "
                        "\"slide_long\" and \"slide_bounce\"."
                        );
-   elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_ALWAYS);
+   elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_AUTO);
+   elm_label_slide_speed_set(lb, 40.0);
    elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 40, 90, 10);
+   elm_grid_pack(gd, lb, 5, 30, 90, 10);
    evas_object_show(lb);
 
    rd = elm_radio_add(win);
@@ -179,7 +192,7 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(rd, "slide_short");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_size_radio_changed, lb);
-   elm_grid_pack(gd, rd, 5, 50, 30, 10);
+   elm_grid_pack(gd, rd, 5, 40, 30, 10);
    evas_object_show(rd);
    rdg = rd;
 
@@ -189,7 +202,7 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(rd, "slide_long");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_size_radio_changed, lb);
-   elm_grid_pack(gd, rd, 35, 50, 30, 10);
+   elm_grid_pack(gd, rd, 35, 40, 30, 10);
    evas_object_show(rd);
 
    rd = elm_radio_add(win);
@@ -198,19 +211,64 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(rd, "slide_bounce");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_size_radio_changed, lb);
-   elm_grid_pack(gd, rd, 65, 50, 30, 10);
+   elm_grid_pack(gd, rd, 65, 40, 30, 10);
    evas_object_show(rd);
 
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Slide Duration");
-   elm_slider_unit_format_set(sl, "%1.1f units");
-   elm_slider_min_max_set(sl, 1, 20);
-   elm_slider_value_set(sl, 10);
+   elm_slider_unit_format_set(sl, "%1.1f sec");
+   elm_slider_min_max_set(sl, 3, 30);
+   elm_slider_value_set(sl, elm_label_slide_duration_get(lb));
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_smart_callback_add(sl, "changed", _change_cb, lb);
+   evas_object_smart_callback_add(sl, "changed", _duration_change_cb, lb);
+   evas_object_data_set(lb, "duration_slider", sl);
+   elm_grid_pack(gd, sl, 5, 50, 90, 10);
+   evas_object_show(sl);
+
+   sl = elm_slider_add(win);
+   elm_object_text_set(sl, "Slide Speed");
+   elm_slider_unit_format_set(sl, "%1.1f px/sec");
+   elm_slider_min_max_set(sl, 40, 300);
+   elm_slider_value_set(sl, elm_label_slide_speed_get(lb));
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(sl, "changed", _speed_change_cb, lb);
+   evas_object_data_set(lb, "speed_slider", sl);
    elm_grid_pack(gd, sl, 5, 60, 90, 10);
    evas_object_show(sl);
+
+   /* Test 2 label at the same speed */
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Test 2 label with the same speed:");
+   elm_grid_pack(gd, lb, 5, 70, 90, 10);
+   evas_object_show(lb);
+  
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   elm_grid_pack(gd, rect, 5, 80, 90, 20);
+   evas_object_color_set(rect, 255, 125, 125, 255);
+   evas_object_show(rect);
+  
+   lb1 = elm_label_add(win);
+   elm_object_style_set(lb1, "slide_long");
+   elm_object_text_set(lb1, "This is a label set to slide with a fixed speed,"
+                            " should match the speed with the below label."
+                            " This label has few extra char for testing.");
+   elm_label_slide_mode_set(lb1, ELM_LABEL_SLIDE_MODE_ALWAYS);
+   elm_label_slide_speed_set(lb1, 40.0);
+   elm_label_slide_go(lb1);
+   elm_grid_pack(gd, lb1, 5, 80, 90, 10);
+   evas_object_show(lb1);
+
+   lb2 = elm_label_add(win);
+   elm_object_style_set(lb2, "slide_long");
+   elm_object_text_set(lb2, "This is a label set to slide and will"
+                            " match the speed of the upper label.");
+   elm_label_slide_mode_set(lb2, ELM_LABEL_SLIDE_MODE_ALWAYS);
+   elm_label_slide_speed_set(lb2, 40.0);
+   elm_label_slide_go(lb2);
+   elm_grid_pack(gd, lb2, 5, 90, 90, 10);
+   evas_object_show(lb2);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);

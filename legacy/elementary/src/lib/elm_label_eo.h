@@ -22,6 +22,8 @@ enum
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET,
    ELM_OBJ_LABEL_SUB_ID_SLIDE_GO,
+   ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_SET,
+   ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_GET,
    ELM_OBJ_LABEL_SUB_ID_LAST
 };
 
@@ -144,7 +146,7 @@ enum
  * @def elm_obj_label_slide_duration_set
  * @since 1.8
  *
- * @brief Set the slide duration (speed) of the label
+ * @brief Set the slide duration of the label
  *
  * @param[in] duration
  *
@@ -158,7 +160,7 @@ enum
  * @def elm_obj_label_slide_duration_get
  * @since 1.8
  *
- * @brief Get the slide duration(speed) of the label
+ * @brief Get the slide duration of the label
  *
  * @param[out] ret
  *
@@ -167,6 +169,34 @@ enum
  * @ingroup Label
  */
 #define elm_obj_label_slide_duration_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), EO_TYPECHECK(double *, ret)
+
+/**
+ * @def elm_obj_label_slide_speed_set
+ * @since 1.9
+ *
+ * @brief Set the slide speed of the label
+ *
+ * @param[in] speed
+ *
+ * @see elm_label_slide_speed_set
+ *
+ * @ingroup Label
+ */
+#define elm_obj_label_slide_speed_set(speed) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_SET), EO_TYPECHECK(double, speed)
+
+/**
+ * @def elm_obj_label_slide_speed_get
+ * @since 1.9
+ *
+ * @brief Get the slide speed of the label
+ *
+ * @param[out] ret
+ *
+ * @see elm_label_slide_speed_get
+ *
+ * @ingroup Label
+ */
+#define elm_obj_label_slide_speed_get(ret) ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_GET), EO_TYPECHECK(double *, ret)
 
 /**
  * @def elm_obj_label_slide_go

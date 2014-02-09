@@ -13,6 +13,7 @@ struct _Elm_Label_Smart_Data
 {
    const char           *format;
    double                slide_duration;
+   double                slide_speed;
    Evas_Coord            lastw;
    Evas_Coord            wrap_w;
    Elm_Wrap_Type         linewrap;
@@ -20,6 +21,7 @@ struct _Elm_Label_Smart_Data
 
    Eina_Bool             ellipsis : 1;
    Eina_Bool             slide_ellipsis : 1;
+   Eina_Bool             use_slide_speed : 1;
 };
 
 #define ELM_LABEL_DATA_GET(o, sd) \

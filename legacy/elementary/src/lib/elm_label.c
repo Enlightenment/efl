@@ -77,7 +77,7 @@ _label_format_set(Evas_Object *obj,
 static void
 _label_slide_change(Evas_Object *obj)
 {
-   Evas_Object *tb;
+   const Evas_Object *tb;
    char *plaintxt;
    int plainlen = 0;
 
@@ -106,6 +106,12 @@ _label_slide_change(Evas_Object *obj)
    //has slide effect.
    if (sd->slide_mode != ELM_LABEL_SLIDE_MODE_NONE)
      {
+        Evas_Coord w, tb_w;
+
+        tb = edje_object_part_object_get(wd->resize_obj, "elm.text");
+        evas_object_textblock_size_native_get(tb, &tb_w, NULL);
+        evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, NULL);
+
         if (sd->ellipsis)
           {
              sd->slide_ellipsis = EINA_TRUE;
@@ -115,26 +121,29 @@ _label_slide_change(Evas_Object *obj)
         //slide only if the slide area is smaller than text width size.
         if (sd->slide_mode == ELM_LABEL_SLIDE_MODE_AUTO)
           {
-             tb = (Evas_Object *) edje_object_part_object_get(wd->resize_obj,
-                                                              "elm.text");
-             if (tb)
-               {
-                  Evas_Coord w, tb_w;
-
-                  evas_object_textblock_size_formatted_get(tb, &tb_w, NULL);
-                  evas_object_geometry_get(wd->resize_obj,
-                                           NULL, NULL, &w, NULL);
-                  if ((tb_w > 0) && (tb_w < w))
-                    {
-                       if (sd->slide_ellipsis)
-                         {
-                            sd->slide_ellipsis = EINA_FALSE;
-                            elm_label_ellipsis_set(obj, EINA_TRUE);
-                         }
-                       return;
-                    }
-               }
+            if ((tb_w > 0) && (tb_w < w))
+              {
+                if (sd->slide_ellipsis)
+                  {
+                     sd->slide_ellipsis = EINA_FALSE;
+                     elm_label_ellipsis_set(obj, EINA_TRUE);
+                  }
+                return;
+              }
           }
+
+        // calculate speed or duration
+        if (sd->use_slide_speed)
+          {
+             if (sd->slide_speed <= 0) sd->slide_speed = 1;
+             sd->slide_duration = (tb_w + w) / sd->slide_speed;
+          }
+        else
+          {
+             if (sd->slide_duration <= 0) sd->slide_duration = 1;
+             sd->slide_speed = (tb_w + w) / sd->slide_duration;
+          }
+
         Edje_Message_Float_Set *msg =
           alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
 
@@ -216,6 +225,7 @@ _on_label_resize(void *data,
 {
    ELM_LABEL_DATA_GET(data, sd);
 
+   if (sd->slide_mode != ELM_LABEL_SLIDE_MODE_NONE) _label_slide_change(data);
    if (sd->linewrap) elm_layout_sizing_eval(data);
 }
 
@@ -662,6 +672,7 @@ _slide_duration_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    double duration = va_arg(*list, double);
    Elm_Label_Smart_Data *sd = _pd;
    sd->slide_duration = duration;
+   sd->use_slide_speed = EINA_FALSE;
 }
 
 EAPI double
@@ -671,6 +682,39 @@ elm_label_slide_duration_get(const Evas_Object *obj)
    double ret = 0.0;
    eo_do((Eo *) obj, elm_obj_label_slide_duration_get(&ret));
    return ret;
+}
+
+EAPI void
+elm_label_slide_speed_set(Evas_Object *obj, double speed)
+{
+   ELM_LABEL_CHECK(obj);
+   eo_do(obj, elm_obj_label_slide_speed_set(speed));
+}
+
+static void
+_slide_speed_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double speed = va_arg(*list, double);
+   Elm_Label_Smart_Data *sd = _pd;
+   sd->slide_speed = speed;
+   sd->use_slide_speed = EINA_TRUE;
+}
+
+EAPI double
+elm_label_slide_speed_get(const Evas_Object *obj)
+{
+   ELM_LABEL_CHECK(obj) 0.0;
+   double ret = 0.0;
+   eo_do((Eo *) obj, elm_obj_label_slide_speed_get(&ret));
+   return ret;
+}
+
+static void
+_slide_speed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *ret = va_arg(*list, double *);
+   Elm_Label_Smart_Data *sd = _pd;
+   *ret = sd->slide_speed;
 }
 
 EAPI void
@@ -743,6 +787,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET), _slide_duration_set),
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), _slide_duration_get),
         EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO), _slide_go),
+        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_SET), _slide_speed_set),
+        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_GET), _slide_speed_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -758,9 +804,11 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET, "Get the ellipsis behavior of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_SET, "Set slide effect mode of label widget."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET, "Get current slide effect mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration (speed) of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration(speed) of the label."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration of the label."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration of the label."),
      EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO, "Start slide effect."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_SET, "Set the slide speed of the label."),
+     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_GET, "Get the slide speed of the label."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {
