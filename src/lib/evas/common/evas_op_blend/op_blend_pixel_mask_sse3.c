@@ -7,7 +7,7 @@ _op_blend_p_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
    int alpha;
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          alpha = *m;
@@ -67,7 +67,7 @@ _op_blend_pas_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, 
    const __m128i ones = _mm_set_epi32(1, 1, 1, 1);
    int alpha;
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          alpha = *m;
@@ -199,7 +199,7 @@ _op_blend_rel_p_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
    int alpha;
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          c = MUL_SYM(*m, *s);

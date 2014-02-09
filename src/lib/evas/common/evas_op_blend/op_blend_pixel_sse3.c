@@ -5,7 +5,7 @@
 static void
 _op_blend_p_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          int alpha = 256 - (*s >> 24);
@@ -56,7 +56,7 @@ _op_blend_pas_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DAT
 
    const __m128i zero = _mm_setzero_si128();
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
          switch (*s & 0xff000000)
            {
@@ -182,7 +182,7 @@ _op_blend_rel_p_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, in
 
    const __m128i ones = _mm_set_epi32(1, 1, 1, 1);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          int alpha = 256 - (*s >> 24);
@@ -233,7 +233,7 @@ _op_blend_rel_pan_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
 
    const __m128i ones = _mm_set_epi32(1, 1, 1, 1);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          c = 1 + (*d >> 24);

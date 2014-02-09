@@ -406,7 +406,10 @@ mul3_sym_sse3(__m128i x, __m128i y) {
    return  _mm_and_si128(res, RGB_MASK_SSE3);
 }
 
-#define LOOP_ALIGNED_U1_A48_SSE3(DEST, LENGTH, UOP, A4OP, A8OP) \
+#endif
+#endif
+
+#define LOOP_ALIGNED_U1_A48(DEST, LENGTH, UOP, A4OP, A8OP) \
    { \
       while((uintptr_t)DEST & 0xF && LENGTH) UOP \
    \
@@ -428,9 +431,5 @@ mul3_sym_sse3(__m128i x, __m128i y) {
          } \
       } \
    }
-
-
-#endif
-#endif
 
 #endif

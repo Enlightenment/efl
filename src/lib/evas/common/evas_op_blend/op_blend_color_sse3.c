@@ -10,7 +10,7 @@ _op_blend_c_dp_sse3(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
    const __m128i a_packed = _mm_set_epi32(a, a, a, a);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          *d = c + MUL_256(a, *d);
@@ -94,7 +94,7 @@ _op_blend_rel_c_dp_sse3(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, D
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
    const __m128i alpha_packed = _mm_set_epi32(alpha, alpha, alpha, alpha);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       {  /* UOP */
 
          *d = MUL_SYM(*d >> 24, c) + MUL_256(alpha, *d);

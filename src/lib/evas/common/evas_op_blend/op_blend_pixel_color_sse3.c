@@ -9,7 +9,7 @@ _op_blend_p_c_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int 
 
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          DATA32 sc = MUL4_SYM(c, *s);
@@ -69,7 +69,7 @@ _op_blend_pan_c_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, in
    const __m128i c_alpha = _mm_set_epi32(c_a, c_a, c_a, c_a);
    const __m128i a0 = _mm_set_epi32(alpha, alpha, alpha, alpha);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          *d = ((c & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(alpha, *d);
@@ -119,7 +119,7 @@ _op_blend_p_can_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, in
    int alpha;
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          alpha = 256 - (*s >> 24);
@@ -173,7 +173,7 @@ _op_blend_pan_can_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
 
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          *d++ = 0xff000000 + MUL3_SYM(c, *s);
@@ -215,7 +215,7 @@ _op_blend_p_caa_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, in
    c = 1 + (c & 0xff);
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          DATA32 sc = MUL_256(c, *s);
@@ -268,7 +268,7 @@ _op_blend_pan_caa_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
    c = 1 + (c & 0xff);
    const __m128i c_packed = _mm_set_epi32(c, c, c,c);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          *d = INTERP_256(c, *s, *d);
@@ -397,7 +397,7 @@ _op_blend_rel_p_c_dp_sse3(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
 
    const __m128i c_packed = _mm_set_epi32(c, c, c, c);
 
-   LOOP_ALIGNED_U1_A48_SSE3(d, l,
+   LOOP_ALIGNED_U1_A48(d, l,
       { /* UOP */
 
          DATA32 sc = MUL4_SYM(c, *s);
