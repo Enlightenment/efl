@@ -1,7 +1,7 @@
 /**
  * @page Examples Examples
  *
- * Here is a page with Elementary examples.
+ * Here is a list of all Elementary examples.
  *
  * @ref bg_01_example_page
  *
@@ -118,8 +118,6 @@
  * @ref prefs_example_02
  *
  * @ref prefs_example_03
- *
- * @ref label_example_01
  */
 
 /**
@@ -483,6 +481,7 @@
  * tween_mode.
  *
  * @include transit_example_03.c
+ * @example transit_example_03.c
  */
 
 /**
@@ -500,6 +499,7 @@
  * transition will apply both.
  *
  * @include transit_example_04.c
+ * @example transit_example_04.c
  */
 
 /**
@@ -3468,11 +3468,6 @@
  *
  * @example hover_example_01.c
  */
-
-/**
-  * @page glview_example_01_page - GLView Example
-  * @include glview_example_01.c
-  */
 
 /**
   * @page tutorial_flip Flip example
@@ -6800,4 +6795,17 @@
  * @page prefs_example_03_edc prefs_example_03.edc
  * @include prefs_example_03.edc
  * @example prefs_example_03.edc
+ */
+
+/**
+ * @example prefs_data_example.c
+ * @example glview_example_01.c
+ * @example track_example_01.c
+ * @example codegen_example.c
+ * @example efl_thread_win32_1.c
+ * @example efl_thread_win32_2.c
+ * @example efl_thread_win32_3.c
+ * @example efl_thread_win32_4.c
+ * @example location_example_01.c
+ * @example naviframe_example.c
  */
