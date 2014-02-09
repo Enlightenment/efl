@@ -127,7 +127,8 @@ EAPI const Eina_List             *elm_hoversel_items_get(const Evas_Object *obj)
  * @param icon_file An image file path on disk to use for the icon or standard
  * icon name (NULL if not desired)
  * @param icon_type The icon type if relevant
- * @param func Convenience function to call when this item is selected
+ * @param func Convenience function to call when this item is selected. The last
+ * parameter @p event_info of @c func is the selected item pointer.
  * @param data Data to pass to item-related functions
  * @return A handle to the item added.
  *
