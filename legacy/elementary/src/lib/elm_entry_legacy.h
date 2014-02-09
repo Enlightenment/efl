@@ -46,6 +46,7 @@ EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
  * @param obj The entry object
  * @param style The style user to push
  *
+ * @ingroup Entry
  * @since 1.7
  */
 EAPI void      elm_entry_text_style_user_push(Evas_Object *obj, const char *style);
@@ -57,6 +58,7 @@ EAPI void      elm_entry_text_style_user_push(Evas_Object *obj, const char *styl
  *
  * @see elm_entry_text_style_user_push()
  *
+ * @ingroup Entry
  * @since 1.7
  */
 EAPI void     elm_entry_text_style_user_pop(Evas_Object *obj);
@@ -69,6 +71,7 @@ EAPI void     elm_entry_text_style_user_pop(Evas_Object *obj);
  *
  * @see elm_entry_text_style_user_push()
  *
+ * @ingroup Entry
  * @since 1.7
  */
 EAPI const char*      elm_entry_text_style_user_peek(const Evas_Object *obj);
@@ -281,6 +284,8 @@ EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *ent
  *
  * @param obj The entry object
  * @param wrap The wrap mode to use. See Elm_Wrap_Type for details on them
+ *
+ * @ingroup Entry
  */
 EAPI void               elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap);
 
