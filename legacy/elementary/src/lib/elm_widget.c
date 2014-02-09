@@ -4861,6 +4861,49 @@ _elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
 }
 
 EAPI void
+elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   ELM_WIDGET_CHECK(obj);
+   eo_do(obj, elm_wdg_focus_highlight_geometry_get(x, y, w, h));
+}
+
+static void
+_elm_widget_focus_highlight_geometry_get(Eo *obj, void *_pd, va_list *list)
+{
+   Evas_Coord *x = va_arg(*list, Evas_Coord *);
+   Evas_Coord *y = va_arg(*list, Evas_Coord *);
+   Evas_Coord *w = va_arg(*list, Evas_Coord *);
+   Evas_Coord *h = va_arg(*list, Evas_Coord *);
+
+   Evas_Coord tx = 0, ty = 0, tw = 0, th = 0;
+   const char *target_hl_part = NULL;
+   Evas_Object *edje_obj = NULL;
+   Elm_Widget_Smart_Data *sd = _pd;
+
+   evas_object_geometry_get(obj, x, y, w, h);
+   if (sd->resize_obj && eo_isa(sd->resize_obj, EDJE_OBJ_CLASS))
+     {
+        edje_obj = sd->resize_obj;
+        if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
+          return;
+     }
+   else if (sd->resize_obj && eo_isa(sd->resize_obj, ELM_OBJ_LAYOUT_CLASS))
+     {
+        edje_obj = elm_layout_edje_get(sd->resize_obj);
+        if (!(target_hl_part = elm_layout_data_get(sd->resize_obj, "focus_part")))
+          return;
+     }
+   else return;
+
+   edje_object_part_geometry_get(edje_obj, target_hl_part,
+                                 &tx, &ty, &tw, &th);
+   *x += tx;
+   *y += ty;
+   if (tw != *w) *w = tw;
+   if (th != *h) *h = th;
+}
+
+EAPI void
 elm_widget_activate(Evas_Object *obj, Elm_Activate act)
 {
    Evas_Object *parent;
@@ -6614,6 +6657,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), _elm_widget_can_focus_child_list_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET), _elm_widget_newest_focus_order_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), _elm_widget_focus_highlight_geometry_get),
 
         EO_OP_FUNC_SENTINEL
    };
@@ -6767,6 +6811,7 @@ static const Eo_Op_Description op_desc[] = {
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET, "Get the list of focusable child objects."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET, "Get the newest focused object and its order."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET, "Get the focus highlight geometry of widget."),
 
      EO_OP_DESCRIPTION_SENTINEL
 };

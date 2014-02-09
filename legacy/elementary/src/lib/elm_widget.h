@@ -736,6 +736,7 @@ EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_set(Evas_Object *obj, int rotation);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
+EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
 EAPI Evas_Object     *_elm_widget_item_widget_get(const Elm_Widget_Item *item);
@@ -1274,6 +1275,7 @@ enum
 
    ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET,
    ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET,
+   ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET,
 #if 0
    ELM_WIDGET_SUB_ID_THEME_APPLY, /* API + virtual*/
    ELM_WIDGET_SUB_ID_THEME_SPECIFIC,
@@ -2671,5 +2673,18 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  */
 #define elm_wdg_orientation_mode_disabled_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ORIENTATION_MODE_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
-#endif
+/**
+ * @def elm_wdg_focus_highlight_geometry_get
+ * @since 1.9
+ *
+ * Get the focus highlight geometry of widget.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] z
+ *
+ */
+#define elm_wdg_focus_highlight_geometry_get(x, y, w, h) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
 
+#endif
