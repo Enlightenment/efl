@@ -821,18 +821,17 @@ ent_bt_style_user_push(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 void
 test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *vbx, *en, *bt, *bt2;
+   Evas_Object *win, *bx, *hbx, *en, *bt, *bt2;
 
-   win = elm_win_util_standard_add("entry-style", "Entry User Style");
+   win = elm_win_util_standard_add("entry-user-style", "Entry User Style");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 300);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   en = elm_entry_add(win);
+   en = elm_entry_add(bx);
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
    elm_entry_text_style_user_push(en, user_style);
    elm_object_text_set(en,
@@ -845,48 +844,36 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
-   evas_object_resize(en, 300, 300);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
 
-   vbx = elm_box_add(win);
-   elm_box_horizontal_set(vbx, EINA_TRUE);
-   elm_box_pack_end(bx, vbx);
-   evas_object_show(vbx);
-   
-   bt = elm_button_add(win);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   hbx = elm_box_add(bx);
+   elm_box_horizontal_set(hbx, EINA_TRUE);
+   elm_box_pack_end(bx, hbx);
+   evas_object_show(hbx);
+
+   bt = elm_button_add(hbx);
    elm_object_text_set(bt, "Peek");
    evas_object_smart_callback_add(bt, "clicked", ent_bt_style_user_peek, en);
-   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(vbx, bt);
-   evas_object_propagate_events_set(bt, EINA_FALSE);
+   elm_box_pack_end(hbx, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
    evas_object_show(bt);
 
-   bt2 = elm_button_add(win);
-   evas_object_size_hint_weight_set(bt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   bt2 = elm_button_add(hbx);
    elm_object_text_set(bt2, "Pop");
    evas_object_smart_callback_add(bt2, "clicked", ent_bt_style_user_pop, en);
-   evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(vbx, bt2);
-   evas_object_propagate_events_set(bt2, EINA_FALSE);
+   elm_box_pack_end(hbx, bt2);
    elm_object_focus_allow_set(bt2, EINA_FALSE);
    evas_object_show(bt2);
 
-   bt2 = elm_button_add(win);
-   evas_object_size_hint_weight_set(bt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   bt2 = elm_button_add(hbx);
    elm_object_text_set(bt2, "Push");
    evas_object_smart_callback_add(bt2, "clicked", ent_bt_style_user_push, en);
-   evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
-   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(vbx, bt2);
-   evas_object_propagate_events_set(bt2, EINA_FALSE);
+   elm_box_pack_end(hbx, bt2);
    elm_object_focus_allow_set(bt2, EINA_FALSE);
    evas_object_show(bt2);
 
+   evas_object_resize(win, 300, 100);
    evas_object_show(win);
 }
 
