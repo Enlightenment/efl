@@ -142,3 +142,37 @@ EAPI Elm_Ctxpopup_Direction       elm_ctxpopup_direction_get(const Evas_Object *
  * emitted.
  */
 EAPI void                         elm_ctxpopup_dismiss(Evas_Object *obj);
+
+/**
+ * @brief Set ctxpopup auto hide mode triggered by ctxpopup policy.
+ * @since 1.9
+ *
+ * @param obj The ctxpopup object
+ * @param disabled auto hide enable/disable.
+ *
+ * Use this function when user wants ctxpopup not to hide automatically.
+ * By default, ctxpopup is dismissed whenever mouse clicked its background area, language is changed,
+ * and its parent geometry is updated(changed).
+ * Not to hide ctxpopup automatically, disable auto hide function by calling this API,
+ * then ctxpopup won't be dismissed in those scenarios.
+ *
+ * Default value of disabled is @c EINA_FALSE.
+ *
+ * @see elm_ctxpopup_auto_hide_disabled_get()
+ *
+ * @ingroup Ctxpopup
+ */
+EAPI void                         elm_ctxpopup_auto_hide_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * @brief Get ctxpopup auto hide mode triggered by ctxpopup policy.
+ * @since 1.9
+ *
+ * @param obj The ctxpopup object
+ * @return auto hide mode's state of a ctxpopup
+ *
+ * @see elm_ctxpopup_auto_hide_disabled_set() for more information.
+ *
+ * @ingroup Ctxpopup
+ */
+EAPI Eina_Bool                         elm_ctxpopup_auto_hide_disabled_get(const Evas_Object *obj);

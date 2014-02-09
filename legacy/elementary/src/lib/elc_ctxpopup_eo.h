@@ -16,6 +16,8 @@ enum
    ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_GET,
    ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_GET,
    ELM_OBJ_CTXPOPUP_SUB_ID_DISMISS,
+   ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_SET,
+   ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET,
    ELM_OBJ_CTXPOPUP_SUB_ID_LAST
 };
 
@@ -169,3 +171,31 @@ enum
  * @ingroup Ctxpopup
  */
 #define elm_obj_ctxpopup_dismiss() ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DISMISS)
+
+/**
+ * @def elm_obj_ctxpopup_auto_hide_disabled_set
+ * @since 1.9
+ *
+ * @brief Set whether ctxpopup hide automatically or not by ctxpopup policy
+ *
+ * @param[in] disabled
+ *
+ * @see elm_ctxpopup_auto_hide_disabled_get
+ *
+ * @ingroup Ctxpopup
+ */
+#define elm_obj_ctxpopup_auto_hide_disabled_set(disabled) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_SET), EO_TYPECHECK(Eina_Bool, disabled)
+
+/**
+ * @def elm_obj_ctxpopup_auto_hide_disabled_get
+ * @since 1.9
+ *
+ * @brief Get whether ctxpopup hide automatically or not by ctxpopup policy
+ *
+ * @param[out] ret
+ *
+ * @see elm_ctxpopup_auto_hide_disabled_set
+ *
+ * @ingroup Ctxpopup
+ */
+#define elm_obj_ctxpopup_auto_hide_disabled_get(ret) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)

@@ -39,7 +39,7 @@ _elm_ctxpopup_smart_translate(Eo *obj, void *_pd, va_list *list)
    Eina_List *l;
    Elm_Ctxpopup_Item *it;
 
-   evas_object_hide(obj);
+   if (sd->auto_hide) evas_object_hide(obj);
 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
@@ -634,7 +634,7 @@ static void
 _elm_ctxpopup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Coord_Rectangle rect = { 0, 0, 1, 1 };
-   Evas_Coord_Point list_size = { 0, 0 };
+   Evas_Coord_Point list_size = { 0, 0 }, parent_size = {0, 0};
 
    Elm_Ctxpopup_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -659,6 +659,9 @@ _elm_ctxpopup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
              evas_object_size_hint_min_set(obj, rect.w, rect.h);
           }
      }
+
+   evas_object_geometry_get(sd->parent, NULL, NULL, &parent_size.x, &parent_size.y);
+   evas_object_resize(sd->bg, parent_size.x, parent_size.y);
 
    evas_object_move(wd->resize_obj, rect.x, rect.y);
    evas_object_resize(wd->resize_obj, rect.w, rect.h);
@@ -696,10 +699,18 @@ _on_parent_resize(void *data,
 {
    ELM_CTXPOPUP_DATA_GET(data, sd);
 
-   sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+   if (sd->auto_hide)
+     {
+        sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
-   evas_object_hide(data);
-   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
+        evas_object_hide(data);
+        evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
+     }
+   else
+     {
+        if (sd->visible)
+          elm_layout_sizing_eval(data);
+     }
 }
 
 static void
@@ -1128,6 +1139,7 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->dir_priority[2] = ELM_CTXPOPUP_DIRECTION_RIGHT;
    priv->dir_priority[3] = ELM_CTXPOPUP_DIRECTION_DOWN;
    priv->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+   priv->auto_hide = EINA_TRUE;
 
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set
@@ -1478,6 +1490,43 @@ _dismiss(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _hide_signals_emit(obj, sd->dir);
 }
 
+EAPI void
+elm_ctxpopup_auto_hide_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   ELM_CTXPOPUP_CHECK(obj);
+   eo_do(obj, elm_obj_ctxpopup_auto_hide_disabled_set(disabled));
+}
+
+static void
+_auto_hide_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool disabled = va_arg(*list, int);
+
+   Elm_Ctxpopup_Smart_Data *sd = _pd;
+
+   disabled = !!disabled;
+   if (sd->auto_hide == !disabled) return;
+   sd->auto_hide = !disabled;
+}
+
+EAPI Eina_Bool
+elm_ctxpopup_auto_hide_disabled_get(const Evas_Object *obj)
+{
+   ELM_CTXPOPUP_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_ctxpopup_auto_hide_disabled_get(&ret));
+   return ret;
+}
+
+static void
+_auto_hide_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Ctxpopup_Smart_Data *sd = _pd;
+
+   if (ret) *ret = sd->auto_hide;
+}
+
 static void
 _class_constructor(Eo_Class *klass)
 {
@@ -1515,6 +1564,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_GET), _direction_priority_get),
         EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_GET), _direction_get),
         EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DISMISS), _dismiss),
+        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_SET), _auto_hide_disabled_set),
+        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET), _auto_hide_disabled_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1532,6 +1583,8 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_GET, "Get the direction priority of a ctxpopup."),
      EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_GET, "Get the current direction of a ctxpopup."),
      EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DISMISS, "Dismiss a ctxpopup object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_SET, "Set ctxpopup auto hide mode triggered by ctxpopup policy"),
+     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET, "Get ctxpopup auto hide mode triggered by ctxpopup policy"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 static const Eo_Class_Description class_desc = {

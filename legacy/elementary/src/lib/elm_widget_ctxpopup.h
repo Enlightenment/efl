@@ -53,6 +53,7 @@ struct _Elm_Ctxpopup_Smart_Data
    Eina_Bool              finished : 1;
    Eina_Bool              emitted : 1;
    Eina_Bool              visible : 1;
+   Eina_Bool              auto_hide : 1; /**< auto hide mode triggered by ctxpopup policy*/
 };
 
 /**

@@ -35,6 +35,7 @@ _print_current_dir(Evas_Object *obj)
          printf("ctxpopup direction: unknow!\n");
          break;
      }
+     printf(" [%s : %d] auto_hide_mode=%d\n", __func__, __LINE__, elm_ctxpopup_auto_hide_disabled_get(obj));
 }
 
 static void
@@ -324,6 +325,32 @@ _list_item_cb7(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 }
 
 static void
+_list_item_cb8(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *ctxpopup;
+   Elm_Object_Item *it = NULL;
+   Evas_Coord x,y;
+
+   if (list_mouse_down > 0) return;
+
+   ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   elm_ctxpopup_auto_hide_disabled_set(ctxpopup, EINA_TRUE);
+
+   _ctxpopup_item_new(ctxpopup, "Go to home folder", "home");
+   _ctxpopup_item_new(ctxpopup, "Save file", "file");
+   _ctxpopup_item_new(ctxpopup, "Delete file", "delete");
+   it = _ctxpopup_item_new(ctxpopup, "Navigate to folder", "folder");
+   elm_object_item_disabled_set(it, EINA_TRUE);
+   _ctxpopup_item_new(ctxpopup, "Edit entry", "edit");
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_object_move(ctxpopup, x, y);
+   evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
+}
+
+static void
 _list_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_selected_set(event_info, EINA_FALSE);
@@ -380,6 +407,8 @@ test_ctxpopup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                         _list_item_cb6, NULL);
    elm_list_item_append(list, "Ctxpopup with callback function", NULL, NULL,
                         _list_item_cb7, NULL);
+   elm_list_item_append(list, "Ctxpopup with auto hide disabled mode", NULL, NULL,
+                        _list_item_cb8, NULL);
    evas_object_show(list);
    elm_list_go(list);
 
