@@ -1724,6 +1724,20 @@ START_TEST(evas_textblock_wrapping)
    fail_if(-1 == evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch,
             NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE));
 
+   /* Getting whites back after wrapping. */
+   evas_object_resize(tb, 1, 1);
+   evas_object_textblock_text_markup_set(tb, "<wrap=word><keyword>return</keyword> <number>0</number>;</wrap>");
+
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_eq(w, 33);
+   ck_assert_int_eq(h, 25);
+
+   evas_object_resize(tb, 400, 400);
+
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_eq(w, 45);
+   ck_assert_int_eq(h, 16);
+
    END_TB_TEST();
 }
 END_TEST
