@@ -967,7 +967,7 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    *ret = NULL;
 
-   Elm_Menu_Item *subitem;
+   Elm_Menu_Item *it;
    Evas_Object *icon_obj;
 
    Elm_Menu_Smart_Data *sd = _pd;
@@ -975,41 +975,41 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    icon_obj = elm_icon_add(obj);
    if (!icon_obj) return;
 
-   subitem = elm_widget_item_new(obj, Elm_Menu_Item);
-   if (!subitem)
+   it = elm_widget_item_new(obj, Elm_Menu_Item);
+   if (!it)
      {
         evas_object_del(icon_obj);
         return;
      }
 
-   elm_widget_item_del_pre_hook_set(subitem, _item_del_pre_hook);
-   elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
-   elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
-   elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
-   elm_widget_item_content_set_hook_set(subitem, _item_content_set_hook);
-   elm_widget_item_content_get_hook_set(subitem, _item_content_get_hook);
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
+   elm_widget_item_disable_hook_set(it, _item_disable_hook);
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
+   elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
 
-   subitem->base.data = data;
-   subitem->func = func;
-   subitem->parent = (Elm_Menu_Item *)parent;
-   subitem->content = icon_obj;
+   it->base.data = data;
+   it->func = func;
+   it->parent = (Elm_Menu_Item *)parent;
+   it->content = icon_obj;
 
-   _item_obj_create(subitem);
-   elm_object_item_text_set((Elm_Object_Item *)subitem, label);
+   _item_obj_create(it);
+   elm_object_item_text_set((Elm_Object_Item *)it, label);
 
-   elm_layout_content_set(VIEW(subitem), "elm.swallow.content",
-                          subitem->content);
+   elm_layout_content_set(VIEW(it), "elm.swallow.content",
+                          it->content);
 
-   if (icon) elm_menu_item_icon_name_set((Elm_Object_Item *)subitem, icon);
+   if (icon) elm_menu_item_icon_name_set((Elm_Object_Item *)it, icon);
 
-   _elm_menu_item_add_helper(obj, (Elm_Menu_Item *)parent, subitem, sd);
+   _elm_menu_item_add_helper(obj, (Elm_Menu_Item *)parent, it, sd);
 
    if (sd->dbus_menu)
    {
-     subitem->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, (Elm_Object_Item *)subitem);
-     subitem->dbus_menu = sd->dbus_menu;
+     it->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, (Elm_Object_Item *)it);
+     it->dbus_menu = sd->dbus_menu;
    }
-   *ret = (Elm_Object_Item *)subitem;
+   *ret = (Elm_Object_Item *)it;
 }
 
 EAPI unsigned int
