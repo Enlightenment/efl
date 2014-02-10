@@ -125,6 +125,16 @@ _speed_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_slider_value_set(sl, elm_label_slide_duration_get(lb));
 }
 
+static void
+_label_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *speed_slider = evas_object_data_get(obj, "speed_slider");
+   Evas_Object *duration_slider = evas_object_data_get(obj, "duration_slider");
+
+   elm_slider_value_set(duration_slider, elm_label_slide_duration_get(obj));
+   elm_slider_value_set(speed_slider, elm_label_slide_speed_get(obj));
+}
+
 void
 test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -187,6 +197,10 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_grid_pack(gd, lb, 5, 30, 90, 10);
    evas_object_show(lb);
 
+   /* The speed or the duration of the slide animation will change when the
+    * label change size, so we need to update the sliders on resize. */
+   evas_object_event_callback_add(lb, EVAS_CALLBACK_RESIZE, _label_resize_cb, NULL);
+
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, SLIDE_SHORT);
    elm_object_text_set(rd, "slide_short");
@@ -217,7 +231,7 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Slide Duration");
    elm_slider_unit_format_set(sl, "%1.1f sec");
-   elm_slider_min_max_set(sl, 3, 30);
+   elm_slider_min_max_set(sl, 3, 40);
    elm_slider_value_set(sl, elm_label_slide_duration_get(lb));
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
