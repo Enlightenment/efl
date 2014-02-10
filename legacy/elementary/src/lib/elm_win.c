@@ -145,6 +145,14 @@ struct _Elm_Win_Smart_Data
       const char **available_list;
       unsigned int count;
    } profile;
+   struct
+   {
+      int          preferred_rot; /* indicates preferred rotation value, -1 means invalid. */
+      int         *rots; /* indicates available rotations */
+      unsigned int count; /* number of elements in available rotations */
+      Eina_Bool    wm_supported : 1; /* set true when the window manager support window rotation */
+      Eina_Bool    use : 1; /* set ture when application use window manager rotation. */
+   } wm_rot;
 
    void *trap_data;
 
@@ -186,6 +194,7 @@ static const char SIG_ROTATION_CHANGED[] = "rotation,changed";
 static const char SIG_PROFILE_CHANGED[] = "profile,changed";
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
+static const char SIG_WM_ROTATION_CHANGED[] = "wm,rotation,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -207,6 +216,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_PROFILE_CHANGED, ""},
    {SIG_FOCUSED, ""},
    {SIG_UNFOCUSED, ""},
+   {SIG_WM_ROTATION_CHANGED, ""},
    {NULL, NULL}
 };
 
@@ -224,6 +234,9 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           Evas *e,
                                           Evas_Object *obj,
                                           void *event_info);
+#ifdef HAVE_ELEMENTARY_X
+static void _elm_win_xwin_update(Elm_Win_Smart_Data *sd);
+#endif
 
 EAPI double _elm_startup_time = 0;
 
@@ -989,6 +1002,7 @@ _elm_win_state_change(Ecore_Evas *ee)
    Eina_Bool ch_fullscreen = EINA_FALSE;
    Eina_Bool ch_maximized = EINA_FALSE;
    Eina_Bool ch_profile = EINA_FALSE;
+   Eina_Bool ch_wm_rotation = EINA_FALSE;
    const char *profile;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -1023,6 +1037,15 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    profile = ecore_evas_window_profile_get(sd->ee);
    ch_profile = _elm_win_profile_set(sd, profile);
+
+   if (sd->wm_rot.use)
+     {
+        if (sd->rot != ecore_evas_rotation_get(sd->ee))
+          {
+             sd->rot = ecore_evas_rotation_get(sd->ee);
+             ch_wm_rotation = EINA_TRUE;
+          }
+     }
 
    _elm_win_state_eval_queue();
 
@@ -1059,6 +1082,17 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (ch_profile)
      {
         _elm_win_profile_update(sd);
+     }
+   if (ch_wm_rotation)
+     {
+        evas_object_size_hint_min_set(obj, -1, -1);
+        evas_object_size_hint_max_set(obj, -1, -1);
+#ifdef HAVE_ELEMENTARY_X
+        _elm_win_xwin_update(sd);
+#endif
+        elm_widget_orientation_set(obj, sd->rot);
+        evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
+        evas_object_smart_callback_call(obj, SIG_WM_ROTATION_CHANGED, NULL);
      }
 }
 
@@ -3185,6 +3219,9 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
         // do nothing
      }
 
+   sd->wm_rot.wm_supported = ecore_evas_wm_rotation_supported_get(sd->ee);
+   sd->wm_rot.preferred_rot = -1; // it means that elm_win doesn't use preferred rotation.
+
    sd->layout = edje_object_add(sd->evas);
    _elm_theme_object_set(obj, sd->layout, "win", "base", "default");
    sd->box = evas_object_box_add(sd->evas);
@@ -4561,6 +4598,203 @@ _rotation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = sd->rot;
 }
 
+EAPI Eina_Bool
+elm_win_wm_rotation_supported_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_wm_rotation_supported_get(&ret));
+   return ret;
+}
+
+static void
+_wm_rotation_supported_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->wm_rot.wm_supported;
+}
+
+/* This will unset a preferred rotation, if given preferred rotation is '-1'.
+ */
+EAPI void
+elm_win_wm_rotation_preferred_rotation_set(const Evas_Object *obj,
+                                           int rotation)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_win_wm_preferred_rotation_set(rotation));
+}
+
+static void
+_wm_preferred_rotation_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int rotation = va_arg(*list, int);
+   int rot;
+   Elm_Win_Smart_Data *sd = _pd;
+
+   if (!sd->wm_rot.use)
+     sd->wm_rot.use = EINA_TRUE;
+
+   // '-1' means that elm_win doesn't use preferred rotation.
+   if (rotation == -1)
+     rot = -1;
+   else
+     rot = _win_rotation_degree_check(rotation);
+
+   if (sd->wm_rot.preferred_rot == rot) return;
+   sd->wm_rot.preferred_rot = rot;
+
+   ecore_evas_wm_rotation_preferred_rotation_set(sd->ee, rot);
+}
+
+EAPI int
+elm_win_wm_rotation_preferred_rotation_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) -1;
+   int ret = -1;
+   eo_do((Eo *) obj, elm_obj_win_wm_preferred_rotation_get(&ret));
+   return ret;
+}
+
+static void
+_wm_preferred_rotation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = sd->wm_rot.preferred_rot;
+}
+
+EAPI void
+elm_win_wm_rotation_available_rotations_set(Evas_Object *obj,
+                                            const int   *rotations,
+                                            unsigned int count)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_win_wm_available_rotations_set(rotations, count));
+}
+
+static void
+_wm_available_rotations_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const int *rotations = va_arg(*list, const int *);
+   unsigned int count = va_arg(*list, unsigned int);
+   Elm_Win_Smart_Data *sd = _pd;
+   unsigned int i;
+   int r;
+
+   if (!sd->wm_rot.use)
+     sd->wm_rot.use = EINA_TRUE;
+
+   ELM_SAFE_FREE(sd->wm_rot.rots, free);
+   sd->wm_rot.count = 0;
+
+   if (count > 0)
+     {
+        sd->wm_rot.rots = calloc(count, sizeof(int));
+        if (!sd->wm_rot.rots) return;
+        for (i = 0; i < count; i++)
+          {
+             r = _win_rotation_degree_check(rotations[i]);
+             sd->wm_rot.rots[i] = r;
+          }
+     }
+
+   sd->wm_rot.count = count;
+
+   ecore_evas_wm_rotation_available_rotations_set(sd->ee,
+                                                  sd->wm_rot.rots,
+                                                  sd->wm_rot.count);
+}
+
+EAPI Eina_Bool
+elm_win_wm_rotation_available_rotations_get(const Evas_Object *obj,
+                                            int              **rotations,
+                                            unsigned int      *count)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_wm_available_rotations_get(rotations, count, &ret));
+   return ret;
+}
+
+static void
+_wm_available_rotations_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int **rotations = va_arg(*list, int **);
+   unsigned int *count = va_arg(*list, unsigned int *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   *ret = EINA_FALSE;
+   if (!sd->wm_rot.use) return;
+
+   if (sd->wm_rot.count > 0)
+     {
+        if (rotations)
+          {
+             *rotations = calloc(sd->wm_rot.count, sizeof(int));
+             if (*rotations)
+               {
+                  memcpy(*rotations,
+                         sd->wm_rot.rots,
+                         sizeof(int) * sd->wm_rot.count);
+               }
+          }
+     }
+
+   if (count) *count = sd->wm_rot.count;
+   *ret = EINA_TRUE;
+}
+
+EAPI void
+elm_win_wm_rotation_manual_rotation_done_set(Evas_Object *obj,
+                                             Eina_Bool    set)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_win_wm_manual_rotation_done_set(set));
+}
+
+static void
+_wm_manual_rotation_done_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int set = va_arg(*list, int);
+   Elm_Win_Smart_Data *sd = _pd;
+   if (!sd->wm_rot.use) return;
+   ecore_evas_wm_rotation_manual_rotation_done_set(sd->ee, set);
+}
+
+EAPI Eina_Bool
+elm_win_wm_rotation_manual_rotation_done_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *) obj, elm_obj_win_wm_manual_rotation_done_get(&ret));
+   return ret;
+}
+
+static void
+_wm_manual_rotation_done_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Win_Smart_Data *sd = _pd;
+   if (!sd->wm_rot.use) return;
+   *ret = ecore_evas_wm_rotation_manual_rotation_done_get(sd->ee);
+}
+
+EAPI void
+elm_win_wm_rotation_manual_rotation_done(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   eo_do((Eo *) obj, elm_obj_win_wm_manual_rotation_done());
+}
+
+static void
+_wm_manual_rotation_done(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+{
+   Elm_Win_Smart_Data *sd = _pd;
+   if (!sd->wm_rot.use) return;
+   ecore_evas_wm_rotation_manual_rotation_done(sd->ee);
+}
+
 EAPI void
 elm_win_sticky_set(Evas_Object *obj,
                    Eina_Bool sticky)
@@ -5701,6 +5935,15 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET), _xwindow_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET), _wl_window_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET), _window_id_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_ROTATION_SUPPORTED_GET), _wm_rotation_supported_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_SET), _wm_preferred_rotation_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_GET), _wm_preferred_rotation_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_SET), _wm_available_rotations_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_GET), _wm_available_rotations_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_SET), _wm_manual_rotation_done_set),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_GET), _wm_manual_rotation_done_get),
+        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE), _wm_manual_rotation_done),
+
         EO_OP_FUNC_SENTINEL
    };
 
@@ -5805,6 +6048,14 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_XWINDOW_GET, "Get the Ecore_X_Window of an Evas_Object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET, "Get the Ecore_Wl_Window of an Evas_Object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET, "Get the Ecore_Window of an Evas_Object."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_ROTATION_SUPPORTED_GET, "Query if the underlying windowing system supports the window manager rotation.."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_SET, "Set the preferred rotation hint."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_GET, "Get the preferred rotation hint."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_SET, "Set the array of available window rotations."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_GET, "Get the array of available window rotations."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_SET, "Set manual rotation done mode of obj window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_GET, "Get manual rotation done mode of obj window."),
+     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE, "Set rotation finish manually"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

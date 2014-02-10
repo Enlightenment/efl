@@ -841,6 +841,143 @@ EAPI void                  elm_win_rotation_with_resize_set(Evas_Object *obj, in
 EAPI int                   elm_win_rotation_get(const Evas_Object *obj);
 
 /**
+ * Query whether window manager supports window rotation or not.
+ *
+ * The window manager rotation allows the WM to controls the rotation of application windows.
+ * It is designed to support synchronized rotation for the multiple application windows at same time.
+ *
+ * @return @c EINA_TRUE if the window manager rotation is supported, @c EINA_FALSE otherwise.
+ *
+ * @see elm_win_wm_rotation_supported_get()
+ * @see elm_win_wm_rotation_preferred_rotation_set()
+ * @see elm_win_wm_rotation_preferred_rotation_get()
+ * @see elm_win_wm_rotation_available_rotations_set()
+ * @see elm_win_wm_rotation_available_rotations_get()
+ * @see elm_win_wm_rotation_manual_rotation_done_set()
+ * @see elm_win_wm_rotation_manual_rotation_done_get()
+ * @see elm_win_wm_rotation_manual_rotation_done()
+ *
+ * @ingroup Win
+ * @since 1.9
+ */
+EAPI Eina_Bool             elm_win_wm_rotation_supported_get(const Evas_Object *obj);
+
+/**
+ * Set the preferred rotation value.
+ *
+ * This function is used to set the orientation of window @p obj to spicific angle fixed.
+ *
+ * @param obj The window object
+ * @param rotation The preferred rotation of the window in degrees (0-360),
+ * counter-clockwise.
+ *
+ * @see elm_win_wm_rotation_preferred_rotation_get()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas_Object *obj, int rotation);
+
+/**
+ * Get the preferred rotation value.
+ *
+ * This function is used to get the preferred rotoation value.
+ *
+ * @param obj The window object
+ * @return The preferred rotation of the window in degrees (0-360),
+ * counter-clockwise.
+ *
+ * @see elm_win_wm_rotation_preferred_rotation_set()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI int                   elm_win_wm_rotation_preferred_rotation_get(const Evas_Object *obj);
+
+/**
+ * Set the array of available window rotations.
+ *
+ * This function is used to set the available rotations to give the hints to WM.
+ * WM will refer this hints and set the orientation window properly.
+ *
+ * @param obj The window object
+ * @param *rotations The array of rotation value.
+ * @param count The number of array of rotations
+ *
+ * @see elm_win_wm_rotation_available_rotations_get()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI void                  elm_win_wm_rotation_available_rotations_set(Evas_Object *obj, const int   *rotations, unsigned int count);
+
+/**
+ * Get the array of available window rotations.
+ *
+ * This function is used to get the available rotations.
+ *
+ * @param obj The window object
+ * @param rotations To store the available rotations.
+ * @param count To store the number of rotations.
+ *
+ * @see elm_win_wm_rotation_available_rotations_set()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI Eina_Bool             elm_win_wm_rotation_available_rotations_get(const Evas_Object *obj, int **rotations, unsigned int *count);
+
+/**
+ * Set the manual rotation done mode.
+ *
+ * This function is used to set or reset the manual rotation done mode.
+ * the message of rotation done is sent to WM after rendering its canvas in Ecore_Evas.
+ * but if set the manual rotation done mode,
+ * it's disabled and user should call the "elm_win_wm_rotation_manual_done" explicitly to sends the message.
+ *
+ * @param obj The window object
+ * @param set EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise.
+ *
+ * @see elm_win_wm_rotation_manual_rotation_done_get()
+ * @see elm_win_wm_rotation_manual_rotation_done()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI void                  elm_win_wm_rotation_manual_rotation_done_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * Get the state of manual rotation done mode.
+ *
+ * This function is used to get the state of manual rotation done mode.
+ *
+ * @param obj The window object
+ * @return @c EINA_TRUE manual rotationn done mode, @c EINA_FALSE otherwise.
+ *
+ * @see elm_win_wm_rotation_manual_rotation_done_set()
+ * @see elm_win_wm_rotation_manual_rotation_done()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI Eina_Bool             elm_win_wm_rotation_manual_rotation_done_get(const Evas_Object *obj);
+
+/**
+ * To notify the rotation done to WM manually.
+ *
+ * This function is used to notify the rotation done to WM manually.
+ *
+ * @param obj The window object
+ *
+ * @see elm_win_wm_rotation_manual_rotation_done_set()
+ * @see elm_win_wm_rotation_manual_rotation_done_get()
+ *
+ * ingroup Win
+ * @since 1.9
+ */
+EAPI void                  elm_win_wm_rotation_manual_rotation_done(Evas_Object *obj);
+
+/**
  * Set the sticky state of the window.
  *
  * Hints the Window Manager that the window in @p obj should be left fixed

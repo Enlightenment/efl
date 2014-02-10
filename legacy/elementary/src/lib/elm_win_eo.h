@@ -106,6 +106,14 @@ enum
      ELM_OBJ_WIN_SUB_ID_XWINDOW_GET,
      ELM_OBJ_WIN_SUB_ID_WL_WINDOW_GET,
      ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET,
+     ELM_OBJ_WIN_SUB_ID_WM_ROTATION_SUPPORTED_GET,
+     ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_SET,
+     ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_GET,
+     ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_SET,
+     ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_GET,
+     ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_SET,
+     ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_GET,
+     ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE,
      ELM_OBJ_WIN_SUB_ID_LAST
   };
 
@@ -1269,6 +1277,98 @@ enum
 #define elm_obj_win_window_id_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WINDOW_ID_GET), EO_TYPECHECK(Ecore_Window *, ret)
 
 /**
- * @}
+ * @def elm_obj_win_wm_rotation_supported_get
+ * @since 1.9
+ *
+ * Query whether window manager supports window rotation or not.
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_wm_rotation_supported_get
  */
+#define elm_obj_win_wm_rotation_supported_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_ROTATION_SUPPORTED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+/**
+ * @def elm_obj_win_wm_preferred_rotation_set
+ * @since 1.9
+ *
+ * Set the preferred rotation value.
+ *
+ * @param[in] rotation
+ *
+ * @see elm_win_wm_rotation_preferred_rotation_set
+ */
+#define elm_obj_win_wm_preferred_rotation_set(rotation) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_SET), EO_TYPECHECK(int, rotation)
+
+/**
+ * @def elm_obj_win_wm_preferred_rotation_get
+ * @since 1.9
+ *
+ * Get the preferred rotation value.
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_wm_rotation_preferred_rotation_get
+ */
+#define elm_obj_win_wm_preferred_rotation_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_PREFERRED_ROTATION_GET), EO_TYPECHECK(int *, ret)
+
+/**
+ * @def elm_obj_win_wm_available_rotations_set
+ * @since 1.9
+ *
+ * Set the array of available rotations.
+ *
+ * @param[in] rotations
+ * @param[in] count
+ *
+ * @see elm_win_wm_rotation_available_rotations_set
+ */
+#define elm_obj_win_wm_available_rotations_set(rotation, count) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_SET), EO_TYPECHECK(const int *, rotations), EO_TYPECHECK(unsigned int, count)
+
+/**
+ * @def elm_obj_win_wm_available_rotations_get
+ * @since 1.9
+ *
+ * Get the array of available window rotation value.
+ *
+ * @param[out] rotations
+ * @param[out] count
+ * @param[out] ret
+ *
+ * @see elm_win_wm_rotation_available_rotations_get
+ */
+#define elm_obj_win_wm_available_rotations_get(rotations, count, ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_AVAILABLE_ROTATIONS_GET), EO_TYPECHECK(int **, rotations), EO_TYPECHECK(unsigned int *, count), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_win_wm_manual_rotation_done_set
+ * @since 1.9
+ *
+ * Set manual rotation done mode
+ *
+ * @param[in] set
+ *
+ * @see elm_win_wm_rotation_manual_rotation_done_set
+ */
+#define elm_obj_win_wm_manual_rotation_done_set(set) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_SET), EO_TYPECHECK(Eina_Bool, set)
+
+/**
+ * @def elm_obj_win_wm_manual_rotation_done_get
+ * @since 1.9
+ *
+ * Get manual rotation done mode state
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_wm_rotation_manual_rotation_done_get
+ */
+#define elm_obj_win_wm_manual_rotation_done_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def elm_obj_win_wm_manual_rotation_done
+ * @since 1.9
+ *
+ * Set rotation finish manually
+ *
+ * @see elm_win_wm_rotation_manual_rotation_done
+ */
+#define elm_obj_win_wm_manual_rotation_done() ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE)
