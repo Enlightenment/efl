@@ -37,15 +37,13 @@ _filter_blend_cpu_alpha(Evas_Filter_Command *cmd)
     * yet, because we don't have any scaling functions for alpha buffers.
     * Also, I'm not going to implement it by converting to RGBA either.
     */
-   if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY)
-     {
-        CRI("Alpha to alpha blending does not support stretch");
-        return EINA_FALSE;
-     }
 
    // TODO: Call _mapped_blend_cpu to implement repeat fill mode.
    if (cmd->draw.fillmode != EVAS_FILTER_FILL_MODE_NONE)
-     ERR("Fill modes are not implemented for Alpha --> RGBA");
+     {
+        ERR("Fill modes are not implemented for Alpha --> Alpha blending");
+        return EINA_FALSE;
+     }
 
    func = evas_common_alpha_func_get(cmd->draw.render_op);
    if (!func)
@@ -69,7 +67,6 @@ _filter_blend_cpu_alpha(Evas_Filter_Command *cmd)
      }
 
    _clip_to_target(&sx, &sy, sw, sh, ox, oy, dw, dh, &dx, &dy, &rows, &cols);
-   // FIXME/TODO: Clip to context clip
 
    if (cols <= 0 || rows <= 0)
      return EINA_TRUE;
@@ -315,14 +312,18 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
    RGBA_Gfx_Func func;
-   DATA32 col;
+   DATA32 color;
    DATA32 *dstdata;
    DATA8 *maskdata;
    int sw, sh, dw, dh, ox, oy, sx = 0, sy = 0, dx = 0, dy = 0, rows, cols, y;
 
    // TODO: Call _mapped_blend_cpu to implement repeat fill mode.
+   // Also, alpha scaling is not implemented yet.
    if (cmd->draw.fillmode != EVAS_FILTER_FILL_MODE_NONE)
-     ERR("Fill modes are not implemented for Alpha --> RGBA");
+     {
+        ERR("Fill modes are not implemented for Alpha --> RGBA blending");
+        return EINA_FALSE;
+     }
 
    in = cmd->input->backing;
    out = cmd->output->backing;
@@ -334,35 +335,24 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
    oy = cmd->draw.oy;
    dstdata = out->image.data;
    maskdata = in->mask.data;
-   col = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+   color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
 
-   // TODO: Fix this crash. Change proxy image and OUTPUT data is NULL. Why?
-
-   if (!dstdata)
-     {
-        ERR("Empty destination from buffer #%d %dx%d %p", cmd->output->id, dw, dh, out);
-        //abort();
-        return EINA_FALSE;
-     }
-   if (!maskdata)
-     abort();
-   //EINA_SAFETY_ON_NULL_RETURN_VAL(dstdata, EINA_FALSE);
-   //EINA_SAFETY_ON_NULL_RETURN_VAL(maskdata, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dstdata, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(maskdata, EINA_FALSE);
 
    func = evas_common_gfx_func_composite_mask_color_span_get
-     (col, out, 1, cmd->draw.render_op);
+     (color, out, 1, cmd->draw.render_op);
 
    if (!func)
      return EINA_FALSE;
 
    if (!ox && !oy && (dw == sw) && (dh == sh))
      {
-        func(NULL, maskdata, col, dstdata, sw * sh);
+        func(NULL, maskdata, color, dstdata, sw * sh);
         return EINA_TRUE;
      }
 
    _clip_to_target(&sx, &sy, sw, sh, ox, oy, dw, dh, &dx, &dy, &rows, &cols);
-   // FIXME/TODO: Clip to context clip
 
    if (cols <= 0 || rows <= 0)
      return EINA_TRUE;
@@ -371,7 +361,7 @@ _filter_blend_cpu_mask_rgba(Evas_Filter_Command *cmd)
    dstdata += dy * dw;
    for (y = rows; y; y--)
      {
-        func(NULL, maskdata + sx, col, dstdata + dx, cols);
+        func(NULL, maskdata + sx, color, dstdata + dx, cols);
         maskdata += sw;
         dstdata += dw;
      }
