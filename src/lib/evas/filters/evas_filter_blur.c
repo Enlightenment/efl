@@ -4,8 +4,14 @@
 #include <math.h>
 #include <time.h>
 
-#define DEBUG_TIME 1
+// Enable debug if you're working on optimizations
+#define DEBUG_TIME 0
 
+// Windows build will break if CLOCK_MONOTONIC is used
+#if !defined(_POSIX_MONOTONIC_CLOCK) || (_POSIX_MONOTONIC_CLOCK < 0)
+# undef DEBUG_TIME
+# define DEBUG_TIME 0
+#endif
 
 #if DIV_USING_BITSHIFT
 static int
