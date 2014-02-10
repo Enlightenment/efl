@@ -67,30 +67,30 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
 {
    DEFINE_DIAMETER(radius);
    int acc[4] = {0};
-   DATA8 *d, *rs, *ls;
+   DATA8 *d, *sr, *sl;
    int x, k;
    int divider;
    int left = MIN(radius, len);
    int right = MIN(radius, (len - radius));
 
    d = (DATA8 *) dst;
-   ls = (DATA8 *) src;
-   rs = (DATA8 *) src;
+   sl = (DATA8 *) src;
+   sr = (DATA8 *) src;
 
    // Read-ahead
    for (x = left; x; x--)
      {
         for (k = 0; k < 4; k++)
-          acc[k] += rs[k];
-        rs += step;
+          acc[k] += sr[k];
+        sr += step;
      }
 
    // Left
    for (x = 0; x < left; x++)
      {
         for (k = 0; k < 4; k++)
-          acc[k] += rs[k];
-        rs += step;
+          acc[k] += sr[k];
+        sr += step;
 
         divider = x + left + 1;
         d[ALPHA] = acc[ALPHA] / divider;
@@ -104,8 +104,8 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
    for (x = len - (2 * radius); x > 0; x--)
      {
         for (k = 0; k < 4; k++)
-          acc[k] += rs[k];
-        rs += step;
+          acc[k] += sr[k];
+        sr += step;
 
         d[ALPHA] = DIVIDE_BY_DIAMETER(acc[ALPHA]);
         d[RED]   = DIVIDE_BY_DIAMETER(acc[RED]);
@@ -114,8 +114,8 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
         d += step;
 
         for (k = 0; k < 4; k++)
-          acc[k] -= ls[k];
-        ls += step;
+          acc[k] -= sl[k];
+        sl += step;
      }
 
    // Right part
@@ -129,8 +129,8 @@ _box_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step)
         d += step;
 
         for (k = 0; k < 4; k++)
-          acc[k] -= ls[k];
-        ls += step;
+          acc[k] -= sl[k];
+        sl += step;
      }
 }
 
@@ -735,6 +735,8 @@ Evas_Filter_Apply_Func
 evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->mode == EVAS_FILTER_MODE_BLUR, NULL);
 
    switch (cmd->blur.type)
@@ -774,7 +776,7 @@ evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd)
         CRI("Unsupported operation: mixing RGBA and Alpha surfaces.");
         return NULL;
       default:
-        CRI("Not implemented yet!");
+        CRI("Unsupported blur type %d", cmd->blur.type);
         return NULL;
      }
 }
