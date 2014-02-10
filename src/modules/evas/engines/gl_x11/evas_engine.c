@@ -3115,12 +3115,17 @@ eng_image_map_surface_new(void *data, int w, int h, int alpha)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   eng_window_use(re->win);
    return evas_gl_common_image_surface_new(re->win->gl_context, w, h, alpha);
 }
 
 static void
-eng_image_map_surface_free(void *data EINA_UNUSED, void *surface)
+eng_image_map_surface_free(void *data, void *surface)
 {
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   eng_window_use(re->win);
    evas_gl_common_image_free(surface);
 }
 
