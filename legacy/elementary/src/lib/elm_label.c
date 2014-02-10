@@ -130,15 +130,19 @@ _label_slide_change(Evas_Object *obj)
           }
 
         // calculate speed or duration
+        if (!strcmp(elm_object_style_get(obj), "slide_long"))
+          w = tb_w + w;
+        else // slide_short or slide_bounce
+          w = tb_w - w;
         if (sd->use_slide_speed)
           {
              if (sd->slide_speed <= 0) sd->slide_speed = 1;
-             sd->slide_duration = (tb_w + w) / sd->slide_speed;
+             sd->slide_duration = w / sd->slide_speed;
           }
         else
           {
              if (sd->slide_duration <= 0) sd->slide_duration = 1;
-             sd->slide_speed = (tb_w + w) / sd->slide_duration;
+             sd->slide_speed = w / sd->slide_duration;
           }
 
         Edje_Message_Float_Set *msg =
