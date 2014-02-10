@@ -2,7 +2,7 @@ group { name: "e/deskmirror/frame/default";
    alias: "e/deskmirror/frame/dialog";
    alias: "e/deskmirror/frame/urgent";
    alias: "e/deskmirror/frame/sparkle";
-   images.image: "win_shadow.png" COMP;
+   images.image: "mini_box_bevel_shadow.png" COMP;
    images.image: "shine.png" COMP;
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
@@ -61,14 +61,18 @@ group { name: "e/deskmirror/frame/default";
       part { name: "shadow";
          mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "win_shadow.png";
-            image.border: 7 7 3 12;
+            image.normal: "mini_box_bevel_shadow.png";
+            image.border: 7 7 7 7;
             image.middle: 0;
             rel1.to: "top";
-            rel1.offset: -7 -3;
+            rel1.offset: -5 -5;
             rel2.to: "bottom";
-            rel2.offset: 6 11;
+            rel2.offset: 4 4;
             fill.smooth: 0;
+         }
+         description { state: "off";
+            inherit: "default" 0.0;
+            visible: 0;
          }
       }
       
@@ -244,19 +248,13 @@ group { name: "e/deskmirror/frame/default";
       }
       program { name: "shon";
          signal: "e,state,shadow,on"; source: "e";
-         script {
-            custom_state(PART:"shadow", "default", 0.0);
-            set_state_val(PART:"shadow", STATE_VISIBLE, 1);
-            set_state(PART:"shadow", "custom", 0.0);
-         }
+         action: STATE_SET "default" 0.0;
+         target: "shadow";
       }
       program { name: "shoff";
          signal: "e,state,shadow,off"; source: "e";
-         script {
-            custom_state(PART:"shadow", "default", 0.0);
-            set_state_val(PART:"shadow", STATE_VISIBLE, 0);
-            set_state(PART:"shadow", "custom", 0.0);
-         }
+         action: STATE_SET "off" 0.0;
+         target: "shadow";
       }
       program {
          name: "focus";
