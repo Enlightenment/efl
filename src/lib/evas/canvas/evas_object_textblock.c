@@ -4561,6 +4561,7 @@ _layout_par(Ctxt *c)
                     }
                   else
                     {
+                       ititr->visually_deleted = EINA_FALSE;
                        prev_it = ititr;
                     }
                }
