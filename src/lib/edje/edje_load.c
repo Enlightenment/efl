@@ -1527,7 +1527,7 @@ _edje_file_free(Edje_File *edf)
                eina_stringshare_del(edf->image_dir->entries[i].entry);
           }
 
-        /* Sets have been added after edje received eet dictionnary support */
+        /* Sets have been added after edje received eet dictionary support */
         for (i = 0; i < edf->image_dir->sets_count; ++i)
           {
              Edje_Image_Directory_Set_Entry *se;
