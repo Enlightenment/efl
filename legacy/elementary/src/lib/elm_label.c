@@ -40,13 +40,11 @@ _recalc(void *data)
    Evas_Coord resw;
 
    evas_event_freeze(evas_object_evas_get(data));
-   evas_object_geometry_get
-     (wd->resize_obj, NULL, NULL, &resw, NULL);
+   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &resw, NULL);
    if (sd->wrap_w > resw)
      resw = sd->wrap_w;
 
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, resw, 0);
+   edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, resw, 0);
 
    /* This is a hack to workaround the way min size hints are treated.
     * If the minimum width is smaller than the restricted width, it means
@@ -65,8 +63,7 @@ _recalc(void *data)
 }
 
 static void
-_label_format_set(Evas_Object *obj,
-                  const char *format)
+_label_format_set(Evas_Object *obj, const char *format)
 {
    if (format)
      edje_object_part_text_style_user_push(obj, "elm.text", format);
@@ -150,8 +147,7 @@ _label_slide_change(Evas_Object *obj)
         msg->count = 1;
         msg->val[0] = sd->slide_duration;
 
-        edje_object_message_send
-           (wd->resize_obj, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(wd->resize_obj, EDJE_MESSAGE_FLOAT_SET, 0, msg);
         edje_object_signal_emit(wd->resize_obj, "elm,state,slide,start", "elm");
      }
    //no slide effect.
@@ -200,8 +196,7 @@ _elm_label_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 
    if (sd->linewrap)
      {
-        evas_object_geometry_get
-          (wd->resize_obj, NULL, NULL, &resw, &resh);
+        evas_object_geometry_get(wd->resize_obj, NULL, NULL, &resw, &resh);
         if (resw == sd->lastw) return;
         sd->lastw = resw;
         _recalc(obj);
@@ -218,10 +213,7 @@ _elm_label_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
 }
 
 static void
-_on_label_resize(void *data,
-                 Evas *e EINA_UNUSED,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+_on_label_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_LABEL_DATA_GET(data, sd);
 
@@ -230,9 +222,7 @@ _on_label_resize(void *data,
 }
 
 static int
-_get_value_in_key_string(const char *oldstring,
-                         const char *key,
-                         char **value)
+_get_value_in_key_string(const char *oldstring, const char *key, char **value)
 {
    char *curlocater, *endtag;
    int firstindex = 0, foundflag = -1;
@@ -264,10 +254,7 @@ _get_value_in_key_string(const char *oldstring,
 }
 
 static int
-_strbuf_key_value_replace(Eina_Strbuf *srcbuf,
-                          const char *key,
-                          const char *value,
-                          int deleteflag)
+_strbuf_key_value_replace(Eina_Strbuf *srcbuf, const char *key, const char *value, int deleteflag)
 {
    char *kvalue;
    const char *srcstring = NULL;
@@ -300,9 +287,8 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf,
         if (*srcstring)
           {
              /* -1 because we want it before the ' */
-             eina_strbuf_insert_printf
-               (srcbuf, " %s=%s", eina_strbuf_length_get(srcbuf) - 1, key,
-               value);
+             eina_strbuf_insert_printf (srcbuf, " %s=%s",
+                                eina_strbuf_length_get(srcbuf) - 1, key, value);
           }
         else
           {
@@ -314,10 +300,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf,
 }
 
 static int
-_stringshare_key_value_replace(const char **srcstring,
-                               const char *key,
-                               const char *value,
-                               int deleteflag)
+_stringshare_key_value_replace(const char **srcstring, const char *key, const char *value, int deleteflag)
 {
    Eina_Strbuf *sharebuf = NULL;
 
@@ -339,8 +322,9 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
    const char *part = va_arg(*list, const char *);
    const char *label = va_arg(*list, const char *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
+
+   if (ret) *ret = EINA_FALSE;
 
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
@@ -394,9 +378,8 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->format = eina_stringshare_add("");
    _label_format_set(wd->resize_obj, priv->format);
 
-   evas_object_event_callback_add
-     (wd->resize_obj, EVAS_CALLBACK_RESIZE,
-     _on_label_resize, obj);
+   evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_RESIZE,
+                                  _on_label_resize, obj);
 
    edje_object_signal_callback_add(wd->resize_obj, "elm,state,slide,end", "",
                                    _on_slide_end, obj);
@@ -405,10 +388,10 @@ _elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, _elm_config->access_mode);
 
    _elm_access_object_register(obj, wd->resize_obj);
-   _elm_access_text_set
-     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Label"));
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   _elm_access_text_set(_elm_access_info_get(obj), ELM_ACCESS_TYPE,
+                        E_("Label"));
+   _elm_access_callback_set(_elm_access_info_get(obj), ELM_ACCESS_INFO,
+                            _access_info_cb, NULL);
 
    if (!elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -422,6 +405,7 @@ elm_label_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    Evas_Object *obj = eo_add(MY_CLASS, parent);
+
    eo_unref(obj);
    return obj;
 }
@@ -436,8 +420,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 EAPI void
-elm_label_line_wrap_set(Evas_Object *obj,
-                        Elm_Wrap_Type wrap)
+elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
    ELM_LABEL_CHECK(obj);
    eo_do(obj, elm_obj_label_line_wrap_set(wrap));
@@ -506,8 +489,7 @@ _line_wrap_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
-elm_label_wrap_width_set(Evas_Object *obj,
-                         Evas_Coord w)
+elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
 {
    ELM_LABEL_CHECK(obj);
    eo_do(obj, elm_obj_label_wrap_width_set(w));
@@ -549,8 +531,7 @@ _wrap_width_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EAPI void
-elm_label_ellipsis_set(Evas_Object *obj,
-                       Eina_Bool ellipsis)
+elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 {
    ELM_LABEL_CHECK(obj);
    eo_do(obj, elm_obj_label_ellipsis_set(ellipsis));
@@ -641,8 +622,7 @@ _slide_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 EINA_DEPRECATED EAPI void
-elm_label_slide_set(Evas_Object *obj,
-                    Eina_Bool slide)
+elm_label_slide_set(Evas_Object *obj, Eina_Bool slide)
 {
    if (slide)
      elm_label_slide_mode_set(obj, ELM_LABEL_SLIDE_MODE_ALWAYS);
