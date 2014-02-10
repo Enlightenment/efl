@@ -35,7 +35,7 @@ struct _Elm_Photo_Smart_Data
    } thumb;
 
    Eina_Bool             fill_inside: 1;
-   Eina_Bool             drag_started: 1; /*<< set true when drag started */
+   Eina_Bool             drag_started: 1; /**< set true when drag started */
 };
 
 /**

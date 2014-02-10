@@ -435,8 +435,8 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     still_in : 1;
    Eina_Bool                     highlighted : 1;
    Eina_Bool                     highlight_root : 1;
-   Eina_Bool                     on_translate : 1; /*<< This is true when any types of elm translate function is being called. */
-   Eina_Bool                     on_create : 1; /*<< This is true when the widget is on creation(general widget constructor). */
+   Eina_Bool                     on_translate : 1; /**< This is true when any types of elm translate function is being called. */
+   Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
 } Elm_Widget_Smart_Data;
 
 /**

@@ -118,7 +118,7 @@ struct _Elm_Win_Smart_Data
       {
          Evas_Object *target;
          Eina_Bool    visible : 1;
-         Eina_Bool    in_theme: 1; /*<< focus highlight is handled by theme.
+         Eina_Bool    in_theme: 1; /**< focus highlight is handled by theme.
                                      this is set true if edc data item "focus_highlight" is set to "on" during focus in callback. */
       } cur, prev;
 
