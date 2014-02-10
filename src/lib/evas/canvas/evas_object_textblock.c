@@ -10816,7 +10816,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         if (na != ca || nb != cb || ng != cg || nr != cr)               \
           {                                                             \
              ENFN->context_color_set(output, context,                   \
-                                     cr / 255, cg / 255, cb / 255, ca / 255); \
+                                     nr / 255, ng / 255, nb / 255, na / 255); \
              cr = nr; cg = ng; cb = nb; ca = na;                        \
           }                                                             \
         ENFN->rectangle_draw(output,                                    \
