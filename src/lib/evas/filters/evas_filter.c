@@ -93,10 +93,12 @@ _backing_free(Evas_Filter_Context *ctx, Image_Entry *ie)
      }
    else
      {
-        if (!evas_cserve2_use_get())
-          evas_cache_image_drop(ie);
-        else
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
           evas_cache2_image_close(ie);
+        else
+#endif
+          evas_cache_image_drop(ie);
      }
 }
 
@@ -326,21 +328,25 @@ _rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
 
         if (!data)
           {
-             if (!evas_cserve2_use_get())
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               image = (RGBA_Image *) evas_cache2_image_copied_data
+                     (evas_common_image_cache2_get(), fb->w, fb->h, NULL, EINA_TRUE, cspace);
+             else
+#endif
                image = (RGBA_Image *) evas_cache_image_copied_data
                      (evas_common_image_cache_get(), fb->w, fb->h, NULL, EINA_TRUE, cspace);
-             else
-                image = (RGBA_Image *) evas_cache2_image_copied_data
-                      (evas_common_image_cache2_get(), fb->w, fb->h, NULL, EINA_TRUE, cspace);
           }
         else
           {
-             if (!evas_cserve2_use_get())
-               image = (RGBA_Image *) evas_cache_image_data
-                     (evas_common_image_cache_get(), fb->w, fb->h, data, EINA_TRUE, cspace);
-             else
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
                image = (RGBA_Image *) evas_cache2_image_data
                      (evas_common_image_cache2_get(), fb->w, fb->h, data, EINA_TRUE, cspace);
+             else
+#endif
+               image = (RGBA_Image *) evas_cache_image_data
+                     (evas_common_image_cache_get(), fb->w, fb->h, data, EINA_TRUE, cspace);
           }
      }
    if (!image) return EINA_FALSE;
