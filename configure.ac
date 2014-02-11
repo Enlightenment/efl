@@ -1145,6 +1145,18 @@ AC_ARG_ENABLE([drm],
    ],
    [want_drm="no"])
 
+AC_ARG_ENABLE([drm],
+   [AC_HELP_STRING([--enable-drm-hw-accel],
+       [enable drm hardware acceleration. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_drm_hw_accel="yes"
+    else
+       want_drm_hw_accel="no"
+    fi
+   ],
+   [want_drm_hw_accel="no"])
+
 
 # Fontconfig
 AC_ARG_ENABLE([fontconfig],
