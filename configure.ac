@@ -145,6 +145,7 @@ AC_SUBST(dbusservicedir)
 
 efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
+EFL_WITH_BIN([eolian], [eolian-gen])
 
 
 #### Default values
