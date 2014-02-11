@@ -37,32 +37,55 @@
    tag: "class" "+ color=#72AAD4 font_weight=Bold";                        \
    tag: "function" "+ color=#72AAD4 font_weight=Bold";                     \
    tag: "param" "+ color=#ffffff";                                         \
-   tag: "keyword" "+ color=#f90 font_weight=Bold";                         \
+   tag: "keyword" "+ color=#ff9900 font_weight=Bold";                      \
    tag: "preprocessor" "+ color=#3399ff font_weight=Bold";                 \
    tag: "line_added" "+ color=#00B000";                                    \
    tag: "line_removed" "+ color=#ff3a35";                                  \
-   tag: "line_changed" "+ color=#f90";
+   tag: "line_changed" "+ color=#ff9900";
+
+#define DISABLED_COMMON_TEXTBLOCK_TAGS                                     \
+   tag: "em" "+ font_style=Oblique";                                       \
+   tag: "title" "+ font_size=26";                                          \
+   tag: "subtitle" "+ font_size=18";                                       \
+   tag: "bigger" "+ font_size=12";                                         \
+   tag: "big" "+ font_size=11";                                            \
+   tag: "small" "+ font_size=8";                                           \
+   tag: "smaller" "+ font_size=7";                                         \
+   tag: "code" "+ style=shadow,bottom shadow_color=#ffffff19 font=Mono color=#151515"; \
+   tag: "comment" "+ color=#002800";                                       \
+   tag: "string" "+ color=#300504";                                        \
+   tag: "number" "+ color=#202008 font_weight=Bold";                       \
+   tag: "brace" "+ color=#000000";                                         \
+   tag: "type" "+ color=#101820";                                          \
+   tag: "class" "+ color=#121c20 font_weight=Bold";                        \
+   tag: "function" "+ color=#121c20 font_weight=Bold";                     \
+   tag: "param" "+ color=#151515";                                         \
+   tag: "keyword" "+ color=#201200 font_weight=Bold";                      \
+   tag: "preprocessor" "+ color=#101820 font_weight=Bold";                 \
+   tag: "line_added" "+ color=#002800";                                    \
+   tag: "line_removed" "+ color=#300504";                                  \
+   tag: "line_changed" "+ color=#201200";
 
 #define ENABLED_TEXTBLOCK_TAGS                                             \
    tag: "hilight" "+ font_weight=Bold style=glow glow_color=#3399ff80";    \
    tag: "link" "+ color=#3399ff underline=on underline_color=#3399ff";     \
    tag: "preedit" "+ underline=on underline_color=#3399ff";                \
    tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";  \
-   tag: "name" "+ color=#888888";                                          \
+   tag: "name" "+ color=#888888 font_weight=Bold";                         \
    tag: "val" "+ color=#ffffff";                                           \
-   tag: "info" "+ color=#3399ff style=glow glow_color=#3399ff40";          \
-   tag: "success" "+ color=#00cc00 style=glow glow_color=#00cc0040";       \
-   tag: "warning" "+ color=#ff7c00 style=glow glow_color=#ff7c0040";       \
-   tag: "failure" "+ color=#ff0000 style=glow glow_color=#ff000040";
+   tag: "info" "+ color=#3399ff style=glow glow_color=#3399ff30";          \
+   tag: "success" "+ color=#00ff00 style=glow glow_color=#00ff0030";       \
+   tag: "warning" "+ color=#ff7c00 style=glow glow_color=#ff7c0030";       \
+   tag: "failure" "+ color=#ff0000 style=glow glow_color=#ff000030";
 
 #define DISABLED_TEXTBLOCK_TAGS                                            \
    tag: "hilight" "+ font_weight=Bold style=glow glow_color=#3399ff20";    \
-   tag: "link" "+ color=#3399ff88 underline=on underline_color=#3399ff88"; \
+   tag: "link" "+ color=#101820 shadow_color=#66aaff28 underline=on underline_color=#101820"; \
    tag: "preedit" "+ underline=on underline_color=#3399ff88";              \
-   tag: "preedit_sel" "+ backing=on backing_color=#000 color=#888888";     \
-   tag: "name" "+ color=#666666";                                          \
+   tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#888888";  \
+   tag: "name" "+ color=#151515 font_weight=Bold";                         \
    tag: "val" "+ color=#151515";                                           \
-   tag: "info" "+ color=#174878 style=glow glow_color=#17487820";          \
-   tag: "success" "+ color=#006600 style=glow glow_color=#00440020";       \
-   tag: "warning" "+ color=#703700 style=glow glow_color=#70370020";       \
-   tag: "failure" "+ color=#660000 style=glow glow_color=#66000020";
+   tag: "info" "+ color=#3399ff60 style=glow glow_color=#3399ff18";        \
+   tag: "success" "+ color=#00ff0060 style=glow glow_color=#00ff0018";     \
+   tag: "warning" "+ color=#ff7c0060 style=glow glow_color=#ff7c0018";     \
+   tag: "failure" "+ color=#ff000060 style=glow glow_color=#ff000018";
