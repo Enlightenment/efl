@@ -37,4 +37,4 @@ bin_eolian_eolian_LDADD = @USE_EOLIAN_LIBS@
 bin_eolian_eolian_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
 
-EXTRA_DIST += bin/eolian/eo_lexer.rl
+EXTRA_DIST += lib/eolian/eo_lexer.rl
