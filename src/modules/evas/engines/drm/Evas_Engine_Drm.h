@@ -11,8 +11,19 @@ struct _Evas_Engine_Info_Drm
 
    struct 
      {
+        Evas *evas;
+
         unsigned int rotation, depth;
         Eina_Bool destination_alpha : 1;
+
+        int fd;
+        Eina_Bool own_fd : 1;
+
+        int tty;
+        Eina_Bool own_tty : 1;
+
+        int output;
+        int plane;
      } info;
 
    /* non-blocking or blocking mode */
