@@ -3,6 +3,217 @@
 
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
 
+/* Note on the documentation:
+ * To keep it simple, I'm not using any fancy features, only <ul>/<li> lists
+ * and @a, @b, @c flags from Doxygen.
+ * Let's keep it that way.
+ *
+ * This is a REFERENCE documentation, not supposed to contain tons of examples,
+ * but each filter command should have one simple copy and pasteable example.
+ */
+
+/**
+  @page evasfiltersref Evas filters reference
+
+  The Evas filters are a combination of filters used to apply specific effects
+  to an @ref Evas_Object "Evas Object". For the moment, these effects are
+  specific to the @ref Evas_Object_Text "Text Objects".
+
+  The filters can be applied to an object using a simple script language
+  specifically designed for these effects. A script will contain a series
+  of buffer declarations and filter commands to apply to these buffers.
+
+  Basically, when applying an effect to a @ref Evas_Object_Text "Text Object",
+  an alpha-only @c input buffer is created, where the text is rendered, and
+  an RGBA @c output buffer is created, where the text with effects shall be
+  finally rendered.
+
+  The script language is case insensitive, except for the buffer names.
+  All spaces will be discarded during parsing.
+
+  Here are the available commands:
+  <ul>
+    <li> @ref sec_syntax "Syntax" </li>
+    <li> @ref sec_buffers "Buffer management" </li>
+    <ul>
+      <li> @ref sec_buffers_cspace "Colorspaces" </li>
+      <li> @ref sec_buffers_auto "Automatic buffers" </li>
+      <li> @ref sec_buffers_cmd "BUFFER command" </li>
+    </ul>
+    <li> @ref sec_commands "Commands" </li>
+    <ul>
+      <li> @ref sec_commands_blend "BLEND command"</li>
+      <li> @ref sec_commands_blur "BLUR command"</li>
+      <li> @ref sec_commands_grow "GROW command"</li>
+      <li> @ref sec_commands_curve "CURVE command"</li>
+      <li> @ref sec_commands_fill "FILL command"</li>
+      <li> @ref sec_commands_mask "MASK command"</li>
+      <li> @ref sec_commands_bump "BUMP command"</li>
+      <li> @ref sec_commands_displace "DISPLACE command"</li>
+      <li> @ref sec_commands_transform "TRANSFORM command"</li>
+    </ul>
+  </ul>
+
+  All the examples in this page can (should) be directly used in
+  @ref evas_obj_text_filter_program_set.
+
+  Note that most of the text effects work better with larger font sizes (> 50px),
+  and so do the examples in this page.
+ */
+
+/**
+  @page evasfiltersref
+  @section sec_syntax Syntax
+
+  Here is a simple example illustrating the syntax:
+
+  @code
+    buffer : fat (alpha);
+    grow (5, dst = fat);
+    blur (8, src = fat, color = darkblue);
+    blur (4, color = cyan);
+    blend ();
+  @endcode
+
+  This example will display a cyan and dark blue glow surrounding the
+  main text (its color depends on the object's theme).
+
+  The syntax is pretty simple and follows a small set of rules:
+  <ul>
+    <li>All whitespaces are discarded</li>
+    <li>All commands are case-insensitive, except for the buffer and source names</li>
+    <li>All dimensions are in pixels</li>
+    <li>The commands will be executed in sequential order</li>
+    <li>All commands must be terminated by a semicolon ';'</li>
+    <li>Most commands have default values</li>
+    <li>A command argument can either be set by name, or sequentially omitting the name (similarily to Python)</li>
+    <li>Boolean values can be either 1/0, on/off, yes/no, enabled/disabled, true/false</li>
+  </ul>
+
+  Since the spaces are discarded, the above code is equivalent to:
+  @code
+    buffer:fat(alpha);grow(5,dst=fat);blur(8,src=fat,color=darkblue);blur(4,color=cyan);blend();
+  @endcode
+
+  <h3>Special keywords and their values</h3>
+
+  Some options accept a certain set of values (like enums):
+  <ul>
+    <li>Booleans</li>
+    <ul>
+      <li>1/0, on/off, yes/no, enabled/disabled, true/false</li>
+    </ul>
+    @anchor evasfilters_color
+    <li>Color</li>
+    <ul>
+      <li>Hexademical values: @c #RRGGBB, @c #RRGGBBAA, @c #RGB, @c #RGBA</li>
+      <li>white: @c #FFFFFF</li>
+      <li>black: @c #000000</li>
+      <li>red: @c #FF0000</li>
+      <li>green: @c #008000</li>
+      <li>blue: @c #0000FF</li>
+      <li>darkblue: @c #0000A0</li>
+      <li>yellow: @c #FFFF00</li>
+      <li>magenta: @c #FF00FF</li>
+      <li>cyan: @c #00FFFF</li>
+      <li>orange: @c #FFA500</li>
+      <li>purple: @c #800080</li>
+      <li>brown: @c #A52A2A</li>
+      <li>maroon: @c #800000</li>
+      <li>lime: @c #00FF00</li>
+      <li>gray: @c #808080</li>
+      <li>grey: @c #808080</li>
+      <li>silver: @c #C0C0C0</li>
+      <li>olive: @c #808000</li>
+      <li>invisible, transparent: @c #0000 (alpha is zero)</li>
+    </ul>
+    <li>Fillmode</li>
+    <ul>
+      <li>none</li>
+      <li>stretch_x</li>
+      <li>stretch_y</li>
+      <li>repeat_x</li>
+      <li>repeat_y</li>
+      <li>repeat_x_stretch_y, stretch_y_repeat_x</li>
+      <li>repeat_y_stretch_x, stretch_x_repeat_y</li>
+      <li>repeat, repeat_xy</li>
+      <li>stretch, stretch_xy</li>
+    </ul>
+  </ul>
+ */
+
+/**
+  @page evasfiltersref
+  @section sec_buffers Buffer management
+
+  The Evas filters subsystem is based on the concept of using various
+  buffers as image layers and drawing or applying filters to these buffers.
+
+  Most of the buffers are allocated automatically at runtime, depending on the
+  various inputs and commands used (eg. 2-D blur will require a temporary
+  intermediate buffer).
+
+  @subsection sec_buffers_cspace Colorspaces and size
+
+  The buffers' size will be automatically defined at runtime, based on the
+  content of the input and the series of operations to apply (eg. blur adds
+  some necessary margins).
+
+  The buffers can be either ALPHA (1 color channel only) or RGBA (full color).
+  Some operations might require specifically an ALPHA buffer, some others RGBA.
+
+  Most buffers will have the same size, except those specified by an external
+  source.
+
+
+  @subsection sec_buffers_auto Automatic buffers
+
+  The two most important buffers, input and output, are statically defined and
+  always present when running a filter. input is an ALPHA buffer, containing
+  the @ref Evas_Object_Text "Text Object"'s rendered text, and output is the
+  final target on which to render as RGBA.
+
+  Some operations, like 2-D blur might require temporary intermediate buffers,
+  that will be allocated automatically. Those buffers are internal only and
+  can't be used from the script.
+
+  Finally, if a buffer is created using another Evas Object as source (see
+  @ref sec_buffers_cmd "buffer" for more details), its pixel data will be filled
+  by rendering the Evas Object into this buffer. This is how it will be
+  possible to load external images, textures and even animations into a buffer.
+
+
+  @subsection sec_buffers_cmd Buffer command
+
+  @code
+    buffer : name;
+    buffer : name (alpha);
+    buffer : name (rgba);
+    buffer : name (src = partname);
+  @endcode
+
+  The "buffer" instruction is a @a special command used to declare a new buffer
+  in the filters context. This buffer can be either ALPHA, RGBA or based on
+  an other Evas Object (proxy source).
+  If no option is given, an RGBA buffer will be created.
+
+  @param name      An alpha-numerical name, starting with a letter (a-z, A-Z).
+                   Can not be @c input or @c output, as these are reserved names.
+                   Must be unique.
+
+  @param (args)    [alpha] OR [rgba] OR [src = partname] <br>
+    Create a new named buffer, specify its colorspace or source. Possible options:
+    @li @c alpha: Create an alpha-only buffer (1 channel, no color)
+    @li @c rgba: Create an RGBA buffer (4 channels, full color)
+    @li <tt>src = partname</tt>: Use another <tt>Evas Object</tt> as source for this
+      buffer's pixels. The name can either be an Edje part name or the one
+      specified in evas_obj_text_filter_source_set.
+
+  @see evas_obj_text_filter_source_set
+
+  @since 1.9
+ */
+
 // Map of the most common HTML color names
 static struct
 {
@@ -735,16 +946,50 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    if (padb) *padb = b;
 }
 
+/**
+  @page evasfiltersref
+  @section sec_commands Filter commands
+  @page evasfiltersref
+
+  This section will present the various filter instructions, their syntax
+  and their effects.
+ */
+
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_blend Blend
+
+  Blend a buffer onto another. This is the simplest filter, as it just
+  renders one buffer on another, potentially using a color, an
+  offset and fill options.
+
+  @code
+    blend (src = input, dst = output, ox = 0, oy = 0, color = white, fillmode = none);
+  @endcode
+
+  @param src Source buffer to blend.
+  @param dst Destination buffer for blending.
+  @param ox  X offset. Moves the buffer to the right (ox > 0) or to the left (ox < 0) by N pixels.
+  @param oy  Y offset. Moves the buffer to the bottom (oy > 0) or to the top (oy < 0) by N pixels.
+  @param color A color to use as multiplier. See @ref evasfilters_color "colors". <br>
+                 If the input is an alpha buffer and the output is RGBA, this will
+                 draw the buffer in this color.
+  @param fillmode @c NONE, @c STRETCH, @c REPEAT <br>
+                 Map the input onto the whole surface of the output by stretching or
+                 repeating it.
+
+  If @a src is an alpha buffer and @a dst is an RGBA buffer, then the @a color option should be set.
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _blend_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "blend"), EINA_FALSE);
-
-   /*
-   * blend [src=BUFFER] [dst=BUFFER] [ox=INT] [oy=INT] (color=COLOR)
-   */
 
    instr->type = EVAS_FILTER_MODE_BLEND;
    instr->pad.update = _blend_padding_update;
@@ -813,17 +1058,45 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
      }
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_blur Blur
+
+  Apply blur effect on a buffer (box or gaussian).
+
+  @code
+    blur (rx = 3, ry = -1, type = default, ox = 0, oy = 0, color = white, src = input, dst = output);
+  @endcode
+
+  @param rx    X radius. Specifies the radius of the blurring kernel (X direction).
+  @param ry    Y radius. Specifies the radius of the blurring kernel (Y direction). If -1 is used, then @a ry = @a rx.
+  @param type  Blur type to apply. One of @c default, @c box or @c gaussian. @c default is an alias for @c gaussian.
+  @param ox    X offset. Moves the buffer to the right (@a ox > 0) or to the left (@a ox < 0) by N pixels.
+  @param oy    Y offset. Moves the buffer to the bottom (@a oy > 0) or to the top (@a oy < 0) by N pixels.
+  @param color A color to use as multiplier. See @ref evasfilters_color "colors". <br>
+                 If the input is an alpha buffer and the output is RGBA, this will
+                 draw the buffer in this color.
+  @param src   Source buffer to blur.
+  @param dst   Destination buffer for blending.
+
+  If @a src is an alpha buffer and @a dst is an RGBA buffer, then the color option should be set.
+
+  @a ox and @a oy can be used to move the blurry output by a few pixels, like a drop shadow. Example:
+  @code
+    blur (10, color = black, oy = 5, ox = 5);
+    blend ();
+  @endcode
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _blur_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "blur"), EINA_FALSE);
-
-   /*
-   * blur [rx=]REAL [ry=REAL] [type=STRING] [ox=INT] [oy=INT] \
-   *      (color=COLOR) (src=BUFFER) (dst=BUFFER)
-   */
 
    instr->type = EVAS_FILTER_MODE_BLUR;
    instr->pad.update = _blur_padding_update;
@@ -839,18 +1112,52 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_bump Bump
+
+  Apply a light effect (ambient light, specular reflection and shadows) based on a bump map.
+
+  This can be used to give a relief effect on the object.
+
+  @code
+    bump (map, azimuth = 135.0, elevation = 45.0, depth = 8.0, specular = 0.0,
+          color = white, compensate = false, src = input, dst = output,
+          black = black, white = white, fillmode = repeat);
+  @endcode
+
+  @param map        An alpha buffer treated like a Z map for the light effect (bump map). Must be specified.
+  @param azimuth    The angle between the light vector and the X axis in the XY plane (Z = 0). 135.0 means 45 degrees from the top-left. Counter-clockwise notation.
+  @param elevation  The angle between the light vector and the Z axis. 45.0 means 45 degrees to the screen's plane. Ranges from 0 to 90 only.
+  @param depth      The depth of the object in an arbitrary unit. More depth means the shadows will be stronger. Default is 8.0.
+  @param specular   An arbitrary unit for the specular light effect. Default is 0.0, but a common value would be 40.0.
+  @param color      The main color of the object if src is an alpha buffer. This represents the light's normal color. See @ref evasfilters_color "colors".
+  @param compensate If set to true, compensate for whitening or darkening on flat surfaces. Default is false but it is recommended if specular light is wanted.
+  @param src        Source buffer. This should be an alpha buffer.
+  @param dst        Destination buffer. This should be an RGBA buffer (although alpha is supported). Must be of the same size as @a src.
+  @param black      The shadows' color. Usually this will be black (@c #000).
+  @param white      The specular light's color. Usually this will be white (@c #FFF).
+  @param fillmode   This specifies how to handle @a map when its dimensions don't match those of @a src and @a dst. Default is to @c repeat.
+
+  @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
+
+  Here is a full example for a size 100 font, of a very simple bevel effect:
+  @code
+    buffer : a (alpha);
+    blur (5, dst = a);
+    bump (map = a, compensate = yes, color = cyan, specular = 10.0);
+  @endcode
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _bump_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "bump"), EINA_FALSE);
-
-   /*
-   * bump [map=]ABUFFER [azimuth=REAL] [elevation=REAL] [depth=REAL] \
-   *      [specular-factor=REAL] (color=COLOR) (compensate=BOOL) \
-   *      (src=BUFFER) (dst=BUFFER) (black=COLOR) (white=COLOR);
-   */
 
    instr->type = EVAS_FILTER_MODE_BUMP;
    _instruction_param_seq_add(instr, "map", VT_BUFFER, NULL);
@@ -869,6 +1176,52 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_curve Curve
+
+  Apply a color curve to a specific channel in a buffer.
+
+  @code
+    curve (points, interpolation = linear, channel = rgb, src = input, dst = output);
+  @endcode
+
+  Modify the colors of a buffer. This applies a color curve y = f(x) to every pixel.
+
+  @param points        The color curve to apply. See below for the syntax.
+  @param interpolation How to interpolate between points. One of @c linear (y = ax + b) or @c none (y = Yk).
+  @param channel       Target channel for the color modification. One of @c R(ed), @c G(reen), @c B(lue), @c A(lpha), @c RGB and @c RGBA. If @a src is an alpha buffer, this parameter will be ignored.
+  @param src           Source buffer.
+  @param dst           Destination buffer, must be of same dimensions and color space as @a src.
+
+  The @a points argument contains a list of (X,Y) points in the range 0..255,
+  describing a function <tt>f(x) = y</tt> to apply to all pixel values.
+
+  The syntax of this @a points string is <tt>x1:y1 - x2:y2 - x3:y3 - ... - xn:yn</tt>
+  (remember that all spaces are discarded).
+  The points @c xn are in @a increasing order: <tt>x1 < x2 < x3 < ... < xn</tt>,
+  and all values @c xn or @c yn are within the range 0..255.
+
+  The identity curve is then described as <tt>0:0-255:255</tt>, with linear interpolation:
+  @code
+    curve(points = 0:0 - 255:255, interpolation = linear);
+  @endcode
+  If ignored, y(x = 0) is 0 and y(x = 255) is 255.
+
+  The following example will generate a 4px thick stroke around text letters:
+  @code
+    buffer : a (alpha);
+    blur (4, dst = a);
+    curve (0:0 - 20:0 - 60:255 - 160:255 - 200:0 - 255:0, src = a, dst = a);
+    blend(src = a, color = black);
+  @endcode
+
+  The curve command can be used to alter the output of a blur operation.
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _curve_instruction_prepare(Evas_Filter_Instruction *instr)
 {
@@ -877,20 +1230,6 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "curve"), EINA_FALSE);
-
-   /*
-   * curve [points=]INTERPSTR [interpolation=]STRING (src=BUFFER) (dst=BUFFER)
-   *
-   * INTERPSTR is a STRING of the following format:
-   * "x1:y1-x2:y2-x3:y3...xn:yn"
-   * Where xk and yk are all numbers in [0-255] and xk are in increasing order
-   *
-   * The interpolation STRING can be one of:
-   * - none:   y = yk in [xk,xk+1] (staircase effect)
-   * - linear: linear interpolation y = ax + b
-   * - cubic:  cubic interpolation y = ax^3 + bx^2 + cx + d
-   * Invalid values default to linear
-   */
 
    instr->type = EVAS_FILTER_MODE_CURVE;
 
@@ -941,22 +1280,59 @@ _displace_padding_update(Evas_Filter_Program *pgm,
    if (padb) *padb = b;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_displace Displace
+
+  Apply a displacement map on a buffer.
+
+  @code
+    displace (map, intensity = 10, flags = 0, src = input, dst = output, fillmode = repeat);
+  @endcode
+
+  @param map       An RGBA buffer containing a displacement map. See below for more details.
+  @param intensity Maximum distance for the displacement.
+                   This means 0 and 255 will represent a displacement of @c intensity pixels.
+  @param flags     One of @c default, @c nearest, @c smooth, @c nearest_stretch or @c smooth_stretch.
+                   This defines how pixels should be treated when going out of the @a src image bounds.
+                   @c default is equivalent to @c smooth_stretch.
+  @param src       Source buffer
+  @param dst       Destination buffer. Must be of same color format and size as @a src.
+  @param fillmode  Defines how to handle cases where the map has a different size from @a src and @a dst. It should most likely be @c stretch or @c repeat.
+
+  <h3>Displacement map</h3>
+
+  The @a map buffer is an RGBA image containing displacement and alpha values.
+  Its size can be different from @c src or @c dst.
+
+  The @b red channel is used for X displacements while the @b green channel is
+  used for Y displacements. All subpixel values are in the range 0..255.
+  A value of 128 means 0 displacement, lower means displace to the top/left
+  and higher than 128 displace to the bottom/right.
+
+  If <tt>signed char</tt> is used instead of <tt>unsigned char</tt> to represent
+  these R and G values, then < 0 means displace top/left while > 0 means bottom/right.
+
+  The @c alpha channel is used as an alpha multiplier for blending.
+
+  Considering <tt>I(x, y)</tt> represents the pixel at position (x, y) in the
+  image I, then here is how the displacement is applied to @a dst:
+  @code
+    D = map (x, y)
+    dst (x, y) += D.alpha * src (D.red * intensity / 128, D.green * intensity / 128)
+  @endcode
+  Of course, the real algorithm takes into account interpolation between pixels as well.
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _displace_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "displace"), EINA_FALSE);
-
-   /*
-   * displace [map=]BUFFER [intensity=]INT [flags=]STRING \
-   *          [src=BUFFER] [dst=BUFFER]
-   *
-   * flags can be: (FIXME TBD)
-   *  alpha
-   *  RG/redgreen
-   *  XY
-   */
 
    instr->type = EVAS_FILTER_MODE_DISPLACE;
    instr->pad.update = _displace_padding_update;
@@ -970,22 +1346,40 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_fill Fill
+
+  Fill a buffer with a specific color.
+  Not blending, can be used to clear a buffer.
+
+  @code
+    fill (dst = output, color = transparent, l = 0, r = 0, t = 0, b = 0);
+  @endcode
+
+  @param dst       Target buffer to fill with @a color.
+  @param color     The color used to fill the buffer. All pixels within the fill area will be reset to this value. See @ref evasfilters_color "colors".
+  @param l         Left padding: skip @a l pixels from the left border of the buffer
+  @param r         Right padding: skip @a r pixels from the right border of the buffer
+  @param t         Top padding: skip @a t pixels from the top border of the buffer
+  @param b         Bottom padding: skip @a b pixels from the bottom border of the buffer
+
+  This function should generally not be used, except for:
+  <ul>
+    <li>@a Testing an effect over a specific background color</li>
+    <li>Clearing out a buffer with either white or transparent color</li>
+  </ul>
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _fill_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "fill"), EINA_FALSE);
-
-   /*
-   * fill [dst=BUFFER] [color=COLOR] (l=INT) (r=INT) (t=INT) (b=INT)
-   *
-   * Works with both Alpha and RGBA.
-   *
-   * The geometry is defined by l, r, t, b, offsets from the edges of the buffer
-   * These offsets always go INWARDS, which means b > 0 goes UP, while t > 0
-   * goes DOWN.
-   */
 
    instr->type = EVAS_FILTER_MODE_FILL;
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
@@ -1034,16 +1428,43 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    if (out->pad.b < b) out->pad.b = b;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_grow Grow
+
+  Grow or shrink a buffer's contents. This is not a zoom effect.
+
+  @code
+    grow (radius, smooth = true, src = input, dst = output);
+  @endcode
+
+  @param radius  The radius of the grow kernel.
+                 If a negative value is specified, the contents will shrink rather than grow.
+  @param smooth  If @c true, use a smooth transitions between black and white (smooth blur and smoother curve).
+  @param src     Source buffer to blur.
+  @param dst     Destination buffer for blending. This must be of same size and colorspace as @a src.
+
+  Example:
+  @code
+    buffer : fat (alpha);
+    grow (4, dst = fat);
+    blend (src = fat, color = black);
+    blend (color = white);
+  @endcode
+  This will first grow the letters in the buffer @c input by 4px, and then draw
+  this buffer in black in the background. Blending white on top of that will
+  give a simple impression of stroked text.
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _grow_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "grow"), EINA_FALSE);
-
-   /*
-   * grow [radius=]INT (smooth=BOOL) (src=BUFFER) (dst=BUFFER)
-   */
 
    instr->type = EVAS_FILTER_MODE_GROW;
    instr->pad.update = _grow_padding_update;
@@ -1055,16 +1476,44 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_mask Mask
+
+  Blend two buffers into a destination.
+
+  @code
+    mask (mask, src = input, dst = output, color = white, fillmode = none);
+  @endcode
+
+  @param mask     A mask or texture to blend with the input @a src into the target @a dst.
+  @param src      Source buffer. This can also be thought of a mask if @a src is alpha and @a mask is RGBA.
+  @param dst      Destination buffer for blending. This must be of same size and colorspace as @a src.
+  @param color    A color to use as multiplier for the blend operation. White means no change. See @ref evasfilters_color "colors".
+  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src. Should be set when masking with external textures. Default is none.
+
+  Note that @a src and @a mask are interchangeable, if they have the same dimensions.
+
+  Example:
+  @code
+    buffer: a (alpha);
+    blur(5, dst = a);
+    curve(points = 0:255 - 128:255 - 255:0, src = a, dst = a);
+    blend(color = black);
+    mask(mask = a, color = cyan);
+  @endcode
+  This will create a simple cyan inner glow effect on black text.
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _mask_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "mask"), EINA_FALSE);
-
-   /*
-   * mask [mask=]BUFFER [src=BUFFER] [dst=BUFFER] [color=COLOR]
-   */
 
    instr->type = EVAS_FILTER_MODE_MASK;
    _instruction_param_seq_add(instr, "mask", VT_BUFFER, NULL);
@@ -1110,16 +1559,45 @@ _transform_padding_update(Evas_Filter_Program *pgm,
    if (padb) *padb = b;
 }
 
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_transform Transform
+
+  Apply a geometrical transformation to a buffer.
+
+  Right now, only <b>vertical flip</b> is implemented and available.
+
+  @code
+    transform (dst, op = vflip, src = input, oy = 0);
+  @endcode
+
+  @param dst      Destination buffer. Must be of the same colorspace as @a src. Must be specified.
+  @param op       Must be @c vflip. There is no other operation yet.
+  @param src      Source buffer to transform.
+  @param oy       Y offset.
+
+  Example:
+  @code
+    buffer : t (alpha);
+    transform (oy = 20, dst = t);
+    blend (src = t, color = silver);
+    blend (color = white);
+  @endcode
+  This will create a mirrored text effect, for a font of 50px.
+
+  @note Because of the meaning of @a oy, this effect probably needs to be
+        customized for a single font size (FIXME).
+
+  @since 1.9
+ */
+
 static Eina_Bool
 _transform_instruction_prepare(Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "transform"), EINA_FALSE);
-
-   /*
-    * mask [op=]STRING [input=BUFFER] [output=BUFFER] (oy=INT)
-    */
 
    instr->type = EVAS_FILTER_MODE_TRANSFORM;
    instr->pad.update = _transform_padding_update;
@@ -1208,13 +1686,6 @@ _instruction_buffer_parse(Evas_Filter_Program *pgm, char *command)
    char *bufname = NULL, *src = NULL, *tok, *tok2;
    Eina_Bool alpha = EINA_FALSE;
    size_t sz;
-
-   /** @internal
-    * Parse a buffer instruction. Its syntax is:
-    * buffer:a;
-    * buffer:a(rgba);
-    * buffer:a(alpha);
-    */
 
    tok = strchr(command, ':');
    PARSE_CHECK(tok);

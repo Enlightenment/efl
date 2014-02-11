@@ -2275,21 +2275,35 @@ enum
 
 /**
  * @def evas_obj_text_filter_program_set
+ *
+ * Set an Evas filter program on this Text Object.
+ * If the program fails to compile (syntax error, invalid buffer name, etc...),
+ * the standard text effects will be applied instead (SHADOW, etc...).
+ *
+ * @param[in] program  The program code, as defined by the @ref evasfiltersref
+ *  "Evas filters script language". Pass NULL to remove the former program and
+ *  switch back to the standard text effects.
+ *
  * @since 1.9
- * @note EXPERIMENTAL code
+ * @note EXPERIMENTAL FEATURE. This is an unstable API, please use only for testing purposes.
+ * @see @ref evasfiltersref "Evas filters reference"
  */
-#define evas_obj_text_filter_program_set(str) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET), EO_TYPECHECK(const char *, str)
+#define evas_obj_text_filter_program_set(program) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET), EO_TYPECHECK(const char *, program)
 
 /**
+ * @def evas_obj_text_filter_source_set
  *
- * Bind an object to use as a mask or texture in special filter
+ * Bind an object to use as a mask or texture with Evas Filters. This will
+ * create automatically a new RGBA buffer containing the source object's
+ * pixels (as it is rendered).
  *
  * @param[in]  name   Object name as used in the program code
  * @param[in]  obj    Eo object to use through proxy rendering
  *
  * @see evas_obj_text_filter_program_set
- *
- * @note EXPERIMENTAL FEATURE.
+ * @since 1.9
+ * @note EXPERIMENTAL FEATURE. This is an unstable API, please use only for testing purposes.
+ * @see @ref evasfiltersref "Evas filters reference"
  */
 #define evas_obj_text_filter_source_set(name, obj) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET), EO_TYPECHECK(const char *, name), EO_TYPECHECK(Eo *, obj)
 

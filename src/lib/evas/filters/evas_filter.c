@@ -712,7 +712,7 @@ _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd)
    ctx->commands = eina_inlist_remove(ctx->commands, EINA_INLIST_GET(cmd));
    switch (cmd->mode)
      {
-      case EVAS_FILTER_MODE_CURVE: free(cmd->curve.data);
+      case EVAS_FILTER_MODE_CURVE: free(cmd->curve.data); break;
       default: break;
      }
    free(cmd);

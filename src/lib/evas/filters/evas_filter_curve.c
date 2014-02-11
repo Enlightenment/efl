@@ -41,7 +41,7 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
         return EINA_FALSE;
      }
 
-   // One channel
+   // One channel (R, G or B)
    if (offset >= 0)
      {
         for (k = len; k; k--, dst++, src++)
@@ -49,7 +49,7 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
         return EINA_TRUE;
      }
 
-   // RGB
+   // All RGB channels
    if (cmd->curve.channel == EVAS_FILTER_CHANNEL_RGB)
      {
 #ifndef WORDS_BIGENDIAN
