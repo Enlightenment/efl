@@ -1,8 +1,8 @@
 /**
  * @mainpage Elementary
  * @image html  elementary.png
- * @version 1.7.0
- * @date 2008-2013
+ * @version 1.9.0
+ * @date 2008-2014
  *
  * @section intro What is Elementary?
  *
