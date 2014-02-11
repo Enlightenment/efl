@@ -122,11 +122,16 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         return NULL;
      }
 
+   /* try to allocate space for new ecore_evas */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
         ERR("Failed to allocate space for new Ecore_Evas");
         return NULL;
      }
+
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+
+   /* try to init drm */
 
    return ee;
 }
