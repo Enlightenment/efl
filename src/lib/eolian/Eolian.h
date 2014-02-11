@@ -94,21 +94,21 @@ typedef enum
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_eo_file_parse(const char *filename);
+EAPI Eina_Bool eolian_eo_file_parse(const char *filename);
 
 /*
  * @brief Init Eolian.
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_init();
+EAPI Eina_Bool eolian_init();
 
 /*
  * @brief Shutdown Eolian.
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_shutdown();
+EAPI Eina_Bool eolian_shutdown();
 
 /*
  * @brief Show information about a given class.
@@ -120,7 +120,7 @@ Eina_Bool eolian_shutdown();
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_show(const char *class_name);
+EAPI Eina_Bool eolian_show(const char *class_name);
 
 /*
  * @brief Returns the class type of the given class
@@ -130,7 +130,7 @@ Eina_Bool eolian_show(const char *class_name);
  *
  * @ingroup Eolian
  */
-Eolian_Class_Type eolian_class_type_get(const char *class_name);
+EAPI Eolian_Class_Type eolian_class_type_get(const char *class_name);
 
 /*
  * @brief Returns the names list of all the classes stored into the database.
@@ -140,7 +140,7 @@ Eolian_Class_Type eolian_class_type_get(const char *class_name);
  * @ingroup Eolian
  */
 /* Returns the list of class names of the database */
-const Eina_List *eolian_class_names_list_get();
+EAPI const Eina_List *eolian_class_names_list_get();
 
 /*
  * @brief Indicates if class exists in the database.
@@ -150,7 +150,7 @@ const Eina_List *eolian_class_names_list_get();
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_class_exists(const char *class_name);
+EAPI Eina_Bool eolian_class_exists(const char *class_name);
 
 /*
  * @brief Returns the description of a class.
@@ -160,8 +160,7 @@ Eina_Bool eolian_class_exists(const char *class_name);
  *
  * @ingroup Eolian
  */
-const char*
-eolian_class_description_get(const char *class_name);
+EAPI const char *eolian_class_description_get(const char *class_name);
 
 /*
  * @brief Returns the legacy prefix of a class
@@ -171,8 +170,7 @@ eolian_class_description_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-const char*
-eolian_class_legacy_prefix_get(const char *class_name);
+EAPI const char *eolian_class_legacy_prefix_get(const char *class_name);
 
 /*
  * @brief Returns the names list of the inherit classes of a class
@@ -182,7 +180,7 @@ eolian_class_legacy_prefix_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-const Eina_List *eolian_class_inherits_list_get(const char *class_name);
+EAPI const Eina_List *eolian_class_inherits_list_get(const char *class_name);
 
 /*
  * @brief Returns a list of functions of a class.
@@ -193,7 +191,7 @@ const Eina_List *eolian_class_inherits_list_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-const Eina_List *eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type func_type);
+EAPI const Eina_List *eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type func_type);
 
 /*
  * @brief Returns the Function Id for the default constructor.
@@ -203,7 +201,7 @@ const Eina_List *eolian_class_functions_list_get(const char *class_name, Eolian_
  *
  * @ingroup Eolian
  */
-Eolian_Function eolian_class_default_constructor_get(const char *class_name);
+EAPI Eolian_Function eolian_class_default_constructor_get(const char *class_name);
 
 /*
  * @brief Returns the Function Id for the default destructor.
@@ -213,7 +211,7 @@ Eolian_Function eolian_class_default_constructor_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-Eolian_Function eolian_class_default_destructor_get(const char *class_name);
+EAPI Eolian_Function eolian_class_default_destructor_get(const char *class_name);
 
 /*
  * @brief Returns the type of a function
@@ -223,7 +221,7 @@ Eolian_Function eolian_class_default_destructor_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
+EAPI Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
 
 /*
  * @brief Returns the name of a function
@@ -233,7 +231,7 @@ Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-const char *eolian_function_name_get(Eolian_Function function_id);
+EAPI const char *eolian_function_name_get(Eolian_Function function_id);
 
 /*
  * @brief Indicates if a function of a certain type exists in a class.
@@ -245,7 +243,7 @@ const char *eolian_function_name_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_class_function_exists(const char *classname, const char *func_name, Eolian_Function_Type f_type);
+EAPI Eina_Bool eolian_class_function_exists(const char *classname, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific data for a function.
@@ -256,7 +254,7 @@ Eina_Bool eolian_class_function_exists(const char *classname, const char *func_n
  *
  * @ingroup Eolian
  */
-const char *eolian_function_data_get(Eolian_Function function_id, const char *key);
+EAPI const char *eolian_function_data_get(Eolian_Function function_id, const char *key);
 
 /*
  * @brief Returns a specific description for a function.
@@ -278,7 +276,7 @@ const char *eolian_function_data_get(Eolian_Function function_id, const char *ke
  *
  * @ingroup Eolian
  */
-Eolian_Function_Parameter eolian_function_parameter_get(const Eolian_Function function_id, const char *param_name);
+EAPI Eolian_Function_Parameter eolian_function_parameter_get(const Eolian_Function function_id, const char *param_name);
 
 /*
  * @brief Returns a list of parameter handles for a function pointed by its id.
@@ -288,7 +286,7 @@ Eolian_Function_Parameter eolian_function_parameter_get(const Eolian_Function fu
  *
  * @ingroup Eolian
  */
-const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
+EAPI const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
 
 /*
  * @brief Get information about a function parameter
@@ -301,7 +299,7 @@ const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-void eolian_parameter_information_get(Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
+EAPI void eolian_parameter_information_get(Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
 
 /*
  * @brief Get type of a parameter
@@ -311,7 +309,7 @@ void eolian_parameter_information_get(Eolian_Function_Parameter param_desc, Eoli
  *
  * @ingroup Eolian
  */
-Eina_Stringshare* eolian_parameter_type_get(const Eolian_Function_Parameter param);
+EAPI Eina_Stringshare *eolian_parameter_type_get(const Eolian_Function_Parameter param);
 
 /*
  * @brief Get name of a parameter
@@ -321,7 +319,7 @@ Eina_Stringshare* eolian_parameter_type_get(const Eolian_Function_Parameter para
  *
  * @ingroup Eolian
  */
-Eina_Stringshare* eolian_parameter_name_get(const Eolian_Function_Parameter param);
+EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter param);
 
 /*
  * @brief Indicates if a parameter has a const attribute.
@@ -334,7 +332,7 @@ Eina_Stringshare* eolian_parameter_name_get(const Eolian_Function_Parameter para
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter param_desc);
+EAPI Eina_Bool eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter param_desc);
 
 /*
  * @brief Get the return type of a function.
@@ -348,7 +346,7 @@ Eina_Bool eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter par
  *
  * @ingroup Eolian
  */
-const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
+EAPI const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.
@@ -358,7 +356,7 @@ const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_
  *
  * @ingroup Eolian
  */
-Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
+EAPI Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
 
 /*
  * @brief Get information about an overriding function (implement).
@@ -371,8 +369,7 @@ Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-Eina_Bool
-eolian_implement_information_get(Eolian_Implement impl,
+EAPI Eina_Bool eolian_implement_information_get(Eolian_Implement impl,
       const char **class_name, const char **func_name, Eolian_Function_Type *type);
 
 /*
@@ -383,8 +380,7 @@ eolian_implement_information_get(Eolian_Implement impl,
  *
  * @ingroup Eolian
  */
-const Eina_List*
-eolian_class_implements_list_get(const char *class_name);
+EAPI const Eina_List *eolian_class_implements_list_get(const char *class_name);
 
 /*
  * @brief Get the list of events defined in a class.
@@ -394,8 +390,7 @@ eolian_class_implements_list_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-const Eina_List*
-eolian_class_events_list_get(const char *class_name);
+EAPI const Eina_List *eolian_class_events_list_get(const char *class_name);
 
 /*
  * @brief Get information about an event.
@@ -407,8 +402,7 @@ eolian_class_events_list_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-Eina_Bool
-eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_desc);
+EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_desc);
 
 #ifdef __cplusplus
 } // extern "C" {
