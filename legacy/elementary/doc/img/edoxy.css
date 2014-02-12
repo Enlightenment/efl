@@ -394,6 +394,10 @@ HR {
 	color: #ff66ff;
 	font-style: italic;
 	white-space: nowrap;
+	vertical-align: top;
+}
+.paramdir {
+	vertical-align: top;
 }
 /* End Styling for detailed member documentation */
 
