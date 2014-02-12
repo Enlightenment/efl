@@ -33,7 +33,7 @@ _evas_outbuf_buffer_new(Outbuf *ob, Buffer *buffer)
         return EINA_FALSE;
      }
 
-   /* evas_drm_outbuf_framebuffer_set(ob, buffer); */
+   evas_drm_outbuf_framebuffer_set(ob, buffer);
 
    return EINA_TRUE;
 }
@@ -62,7 +62,8 @@ _evas_outbuf_buffer_put(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsig
 
    if (ob->priv.sent != buffer)
      {
-        if (!buffer->valid) evas_drm_outbuf_framebuffer_set(ob, buffer);
+        /* DBG("Send New Buffer: %d", buffer->fb); */
+        /* if (!buffer->valid) evas_drm_outbuf_framebuffer_set(ob, buffer); */
         if (!evas_drm_framebuffer_send(ob, buffer, rects, count))
           ERR("Could not send buffer");
      }
@@ -300,7 +301,8 @@ evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, i
              return NULL;
           }
 
-        img->cache_entry.flags.alpha |= ob->destination_alpha;
+        img->cache_entry.flags.alpha = ob->destination_alpha;
+//        img->cache_entry.flags.alpha |= ob->destination_alpha;
 
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
@@ -318,6 +320,7 @@ evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, i
         if (cy) *cy = 0;
         if (cw) *cw = w;
         if (ch) *ch = h;
+
         return img;
      }
 
