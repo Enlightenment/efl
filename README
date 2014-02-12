@@ -445,9 +445,9 @@ Required by default:
   * bullet
   * libpng
   * libjpeg
-  * gstreamer (0.10) (ensure you have all the gstreamer codecs you need/want)
+  * gstreamer (1.x) (ensure all codecs you want are installed. 0.10 optional)
   * zlib
-  * lua (5.1 or 5.2)
+  * luajit (lua 5.1 or 5.2 optional support)
   * libtiff
   * openssl
   * curl
