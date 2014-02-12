@@ -962,7 +962,7 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
    instr->pad.update = _displace_padding_update;
    _instruction_param_seq_add(instr, "map", VT_BUFFER, NULL);
    _instruction_param_seq_add(instr, "intensity", VT_INT, 10);
-   _instruction_param_seq_add(instr, "flags", VT_INT, 0x0); // FIXME
+   _instruction_param_seq_add(instr, "flags", VT_STRING, "default");
    _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
@@ -1554,18 +1554,32 @@ static int
 _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                     Evas_Filter_Instruction *instr, void *dc)
 {
-   //Evas_Filter_Displacement_Flags flags = EVAS_FILTER_DISPLACE_RG;
    Evas_Filter_Fill_Mode fillmode;
-   const char *src, *dst, *map;
+   Evas_Filter_Displacement_Flags flags =
+         EVAS_FILTER_DISPLACE_STRETCH | EVAS_FILTER_DISPLACE_LINEAR;
+   const char *src, *dst, *map, *flagsstr;
    Buffer *in, *out, *mask;
-   int cmdid, intensity, flags;
+   int cmdid, intensity;
+   Eina_Bool isset = EINA_FALSE;
 
    src = _instruction_param_gets(instr, "src", NULL);
    dst = _instruction_param_gets(instr, "dst", NULL);
    map = _instruction_param_gets(instr, "map", NULL);
    intensity = _instruction_param_geti(instr, "intensity", NULL);
-   flags = _instruction_param_geti(instr, "flags", NULL);
+   flagsstr = _instruction_param_gets(instr, "flags", &isset);
    fillmode = _fill_mode_get(instr);
+
+   if (!flagsstr) flagsstr = "default";
+   if (!strcasecmp(flagsstr, "nearest"))
+     flags = EVAS_FILTER_DISPLACE_NEAREST;
+   else if (!strcasecmp(flagsstr, "smooth"))
+     flags = EVAS_FILTER_DISPLACE_LINEAR;
+   else if (!strcasecmp(flagsstr, "nearest_stretch"))
+     flags = EVAS_FILTER_DISPLACE_NEAREST | EVAS_FILTER_DISPLACE_STRETCH;
+   else if (!strcasecmp(flagsstr, "default") || !strcasecmp(flagsstr, "smooth_stretch"))
+     flags = EVAS_FILTER_DISPLACE_STRETCH | EVAS_FILTER_DISPLACE_LINEAR;
+   else if (isset)
+     WRN("Invalid flags '%s' in displace operation. Using default instead", flagsstr);
 
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
