@@ -87,13 +87,13 @@ PKG_CHECK_MODULES([EMOTION], [emotion >= v_maj.v_min])
 
 MODULE_ARCH=`pkg-config --variable=module_arch emotion`
 if test -z "${MODULE_ARCH}"; then
-   EMOTION_VERSION=`pkg-config --modversion emotion | cut -d. -f1-3`
+   EMOTION_VERSION=`pkg-config --modversion emotion | cut -d. -f1-2`
    case "$host_os" in
       mingw32ce*)
-         MODULE_ARCH="$host_os-$host_cpu"
+         MODULE_ARCH="v"
       ;;
       *)
-         MODULE_ARCH="$host_os-$host_cpu-${EMOTION_VERSION}"
+         MODULE_ARCH="v-${EMOTION_VERSION}"
       ;;
    esac
 fi
