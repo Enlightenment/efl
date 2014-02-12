@@ -152,7 +152,6 @@ _mapped_blend_cpu(void *data, void *drawctx,
 
    if (fillmode == EVAS_FILTER_FILL_MODE_NONE)
      {
-        int rows, cols;
         _clip_to_target(&sx, &sy, sw, sh, dx, dy, out->cache_entry.w,
                         out->cache_entry.h, &dx, &dy, &rows, &cols);
 

@@ -1422,8 +1422,6 @@ evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
    ENFN->context_clip_set(ENDT, dc, l, r, t, b); } while (0)
 #define RESETCLIP() do { ENFN->context_clip_set(ENDT, dc, _l, _r, _t, _b); } while (0)
 
-int A, R, G, B;
-
 static Evas_Filter_Fill_Mode
 _fill_mode_get(Evas_Filter_Instruction *instr)
 {
@@ -1451,7 +1449,7 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    DATA32 color;
    Buffer *in, *out;
    Evas_Filter_Fill_Mode fillmode;
-   int cmdid, ox, oy;
+   int cmdid, ox, oy, A, R, G, B;
 
    src = _instruction_param_gets(instr, "src", NULL);
    dst = _instruction_param_gets(instr, "dst", NULL);
@@ -1480,7 +1478,7 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    const char *src, *dst, *typestr;
    DATA32 color;
    Buffer *in, *out;
-   int cmdid, ox, oy, rx, ry;
+   int cmdid, ox, oy, rx, ry, A, R, G, B;
 
    src = _instruction_param_gets(instr, "src", NULL);
    dst = _instruction_param_gets(instr, "dst", NULL);
@@ -1645,8 +1643,7 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    const char *src, *dst, *msk;
    Buffer *in, *out, *mask;
    DATA32 color;
-   int R, G, B, A;
-   int cmdid;
+   int R, G, B, A, cmdid;
 
    src = _instruction_param_gets(instr, "src", NULL);
    dst = _instruction_param_gets(instr, "dst", NULL);

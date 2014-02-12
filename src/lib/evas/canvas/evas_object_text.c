@@ -2177,10 +2177,10 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
                {
                   Evas_Filter_Proxy_Binding *pb;
                   Evas_Object_Protected_Data *source;
-                  Eina_Iterator *it;
+                  Eina_Iterator *iter;
 
-                  it = eina_hash_iterator_data_new(o->cur.filter.sources);
-                  EINA_ITERATOR_FOREACH(it, pb)
+                  iter = eina_hash_iterator_data_new(o->cur.filter.sources);
+                  EINA_ITERATOR_FOREACH(iter, pb)
                     {
                        source = eo_data_scope_get(pb->eo_source, EVAS_OBJ_CLASS);
                        if (source->changed)
@@ -2189,7 +2189,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
                             break;
                          }
                     }
-                  eina_iterator_free(it);
+                  eina_iterator_free(iter);
                }
 
              if (!redraw)

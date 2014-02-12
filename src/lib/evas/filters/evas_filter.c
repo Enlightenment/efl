@@ -378,7 +378,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
    EINA_INLIST_FOREACH(ctx->commands, cmd)
      {
         Evas_Filter_Fill_Mode fillmode = cmd->draw.fillmode;
-        Evas_Filter_Buffer *in, *fb, *out;
+        Evas_Filter_Buffer *in, *out;
 
         in = cmd->input;
         if (!in->w && !in->h)
@@ -424,7 +424,6 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 
         if (cmd->draw.need_temp_buffer)
           {
-             Evas_Filter_Buffer *in;
              unsigned sw = w, sh = h;
 
              in = cmd->input;
