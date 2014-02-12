@@ -513,4 +513,5 @@ libelementary_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 EXTRA_DIST = \
 elm_factory.h \
-elm_factory.c
+elm_factory.c \
+elm_intro.h.in

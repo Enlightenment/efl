@@ -688,6 +688,7 @@ doc/widgets/Makefile
 src/Makefile
 src/lib/Makefile
 src/lib/Elementary.h
+src/lib/elm_intro.h
 src/bin/Makefile
 src/modules/Makefile
 src/modules/prefs/Makefile
