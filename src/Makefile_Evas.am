@@ -995,7 +995,8 @@ DRM_SOURCES = \
 modules/evas/engines/drm/evas_drm.c \
 modules/evas/engines/drm/evas_outbuf.c \
 modules/evas/engines/drm/evas_engine.c \
-modules/evas/engines/drm/evas_engine.h
+modules/evas/engines/drm/evas_engine.h \
+modules/evas/engines/drm/Evas_Engine_Drm.h
 if EVAS_STATIC_BUILD_DRM
 lib_evas_libevas_la_SOURCES += $(DRM_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += @evas_engine_drm_cflags@
