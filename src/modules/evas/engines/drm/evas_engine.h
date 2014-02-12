@@ -11,6 +11,12 @@
 #include <xf86drmMode.h>
 #include <drm_fourcc.h>
 
+/* #ifdef HAVE_DRM_HW_ACCEL */
+/* # include <gbm.h> */
+/* # include <EGL/egl.h> */
+/* # include <EGL/eglext.h> */
+/* #endif */
+
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -45,7 +51,7 @@ extern int _evas_engine_drm_log_dom;
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
 /* define a maximum number of 'buffers' (double-buff, triple-buff, etc) */
-# define NUM_BUFFERS 2
+# define NUM_BUFFERS 3
 
 typedef struct _Buffer Buffer;
 typedef struct _Outbuf Outbuf;
@@ -74,6 +80,14 @@ struct _Buffer
    unsigned int fb;
    void *data;
 
+/* # ifdef HAVE_DRM_HW_ACCEL */
+/*    struct gbm_surface *surface; */
+/*    struct  */
+/*      { */
+/*         EGLSurface surface; */
+/*      } egl; */
+/* # endif */
+
    Eina_Bool valid : 1;
 };
 
@@ -99,6 +113,8 @@ struct _Outbuf
 
         Eina_List *pending_writes;
         Eina_List *prev_pending_writes;
+
+        Eina_Bool use_async_page_flip : 1;
      } priv;
 };
 
