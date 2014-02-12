@@ -3902,7 +3902,7 @@ AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = 
 
 BARF_OK="xno"
 # Harfbuzz
-AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-proboably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa],
+AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa],
    [ You will be told when this is needed ],
    [
     if test "x${enableval}" = "xyes" ; then
@@ -4203,77 +4203,127 @@ if test -n "$CFOPT_WARNING"; then
   fi
   if test "x${want_fontconfig}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "You have disabled fontconfig. This is going to make general font"
+    echo "searching not work, and only some very direct 'load /path/file.ttf'"
+    echo "will wok alongside some old-school ttf file path searching. This"
+    echo "is very likely not what you want, so highly reconsider turning"
+    echo "fontconfig off. Having it off will lead to visual problems like"
+    echo "missing text in many UI areas etc."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_fribidi}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Fribidi is used for handling right-to-left text (like Arabic,"
+    echo "Hebrew, Farsi, Persian etc.) and is very likely not a feature"
+    echo "you want to disable unless you know for absolute certain you"
+    echo "will never encounter and have to display such scripts. Also"
+    echo "note that we don't test with fribidi disabled so you may also"
+    echo "trigger code paths with bugs that are never normally used."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_pixman}" = "xyes"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Pixman allows you to replace some rendering paths in Evas with"
+    echo "Pixman. Pixman may or may not be faster (probably slower), and"
+    echo "the rendering paths with Pixman enabled are not tested often so"
+    echo "this may introduce rendering bugs. Do not turn Pixman on unless"
+    echo "you wish to deal with these bugs."
     echo "_____________________________________________________________________"
   fi
   if test "x${have_tile_rotate}" = "xyes"; then
     echo "_____________________________________________________________________"
-    echo "...not tested much..."
+    echo "Tiled rotation code is not tested much, so be aware that you"
+    echo "may introduce bugs by enabling this."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_g_main_loop}" = "xyes"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Using the Glib mainloop as the mainloop in Ecore is not tested"
+    echo "regularly, but the glib mainloop integration (on by default) is."
+    echo "You can use apps that use glib mainloop constructs by default"
+    echo "this way, but the Ecore mainloop is not built on top of glib."
+    echo "You have enabled ecore to be built on top of glib and thus you"
+    echo "may experience bugs that normally would not be there. Be prepared"
+    echo "to fix these if they arise."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_gstreamer}" = "xyes"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Gstreamer 0.10 is no longer supported, and EFL has moved to use"
+    echo "Gstreamer 1.x. The old Gstremaer code is not tested or maintained"
+    echo "and will eventually be removed entirely. Don't enable the old"
+    echo "Gstreamer support unless you want to deal with the issues yourself."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_gstreamer1}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "You disabled Gstreamer 1.x support. You likely don't want to do"
+    echo "this as it will heavily limit your media support options and render"
+    echo "some functionality as useless, leading to visible application bugs."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_eo_id}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Eo's ID absttraction interface is a major safety system that"
+    echo "protects code from crashing or misbehaving in many cases. It does"
+    echo "come at a slight cost, but the safety and protection is worth it."
+    echo "Also by disabling this, you may also introduce security holes in"
+    echo "EFL as well as cause all sorts of previously non-existant crashes."
+    echo "Seriously reconsider disabling EO ID."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_evas_cserve2}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Evas Cserve is built and on by default and no testing is done"
+    echo "for the old non-cserve2 code paths, so by disabling this you"
+    echo "may be introducing bugs. Be aware of this and be prepared to"
+    echo "deal with the bugs as a result of this."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_audio}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "You disabled audio support in Ecore. This is not tested and may"
+    echo "Create bugs for you due to it creating untested code paths."
+    echo "Reconsider disabling audio."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_pulseaudio}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "The only audio output method supported by Ecore right now is via"
+    echo "Pulseaudio. You have disabled that and likely have broken a whole"
+    echo "bunch of things in the process. Reconsider your configure options."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_xinput2}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "You have disabled xinput2 support. This means a whole lot of input"
+    echo "devices in X11 will not work correctly. You likely do not want to"
+    echo "do this."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_xim}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "You disabled XIM input method support. This is the most basic and"
+    echo "core input method protocol supported in X11 and you almost certainly"
+    echo "want the suport for it. Input methods allow for complex text input"
+    echo "like for Chinese, Japanese and Korean as well as virtual keyboards"
+    echo "on touch/mobile devices."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_scim}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "SCIM is a modern and very common input method framework and you"
+    echo "disabled support for it. You very likely want the support for"
+    echo "complex language input, so please reconsider this. Input methods"
+    echo "allow for complex text input like for Chinese, Japanese and Korean"
+    echo "as well as virtual keyboards on touch/mobile devices."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_libmount}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "...bad feature req..."
+    echo "Libmount has been disabled, and it is used heavily inside Eeze"
+    echo "for support of removable devices etc. and disabling this will"
+    echo "hurt support for Enlightenment and its filemanager."
     echo "_____________________________________________________________________"
   fi
   echo "_____________________________________________________________________"
@@ -4283,7 +4333,7 @@ if test -n "$CFOPT_WARNING"; then
   echo "_____________________________________________________________________"
   if test -n "$BARF_OK"; then
     echo "Please add the following option to acknowledge this:"
-    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-proboably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa"
+    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa"
     echo "_____________________________________________________________________"
     rm -f Makefile
     exit 1
