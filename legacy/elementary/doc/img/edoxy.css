@@ -115,6 +115,7 @@ DIV.fragment {
 	padding-right: 2px;
 	padding-top: 2px;
 	padding-bottom: 2px;
+	line-height: 70%;
 }
 PRE.fragment {
         font-family: monospace, fixed;
