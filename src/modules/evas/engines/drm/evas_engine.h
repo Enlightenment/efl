@@ -11,12 +11,6 @@
 #include <xf86drmMode.h>
 #include <drm_fourcc.h>
 
-/* #ifdef HAVE_DRM_HW_ACCEL */
-/* # include <gbm.h> */
-/* # include <EGL/egl.h> */
-/* # include <EGL/eglext.h> */
-/* #endif */
-
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -54,6 +48,7 @@ extern int _evas_engine_drm_log_dom;
 # define NUM_BUFFERS 3
 
 typedef struct _Buffer Buffer;
+typedef struct _Plane Plane;
 typedef struct _Outbuf Outbuf;
 
 enum
@@ -78,17 +73,28 @@ struct _Buffer
    int stride, size;
    int handle;
    unsigned int fb;
-   void *data;
+   void *data; // used for software framebuffers
 
-/* # ifdef HAVE_DRM_HW_ACCEL */
-/*    struct gbm_surface *surface; */
-/*    struct  */
-/*      { */
-/*         EGLSurface surface; */
-/*      } egl; */
-/* # endif */
+# ifdef HAVE_DRM_HW_ACCEL
+   void *bo; // used for hardware framebuffers
+# endif
 
    Eina_Bool valid : 1;
+};
+
+struct _Plane
+{
+   unsigned int id;
+   unsigned int crtcs;
+
+   struct 
+     {
+        unsigned int x, y;
+        unsigned int w, h;
+     } src, dst;
+
+   unsigned int num_formats;
+   unsigned int formats[];
 };
 
 struct _Outbuf
@@ -102,19 +108,25 @@ struct _Outbuf
         RGBA_Image *onebuf;
         Eina_Array onebuf_regions;
 
+        int fd;
+        unsigned int conn, crtc;
+
         Buffer buffer[NUM_BUFFERS], *sent;
         int curr, num;
 
-        int fd;
-        unsigned int conn, crtc;
         drmModeModeInfo mode;
         drmEventContext ctx;
         Eina_Bool pending_flip : 1;
+        Eina_Bool use_async_page_flip : 1;
 
         Eina_List *pending_writes;
         Eina_List *prev_pending_writes;
 
-        Eina_Bool use_async_page_flip : 1;
+        Eina_List *planes;
+
+# ifdef HAVE_DRM_HW_ACCEL
+        void *surface;
+# endif
      } priv;
 };
 
