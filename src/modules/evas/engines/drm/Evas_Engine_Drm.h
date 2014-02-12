@@ -30,6 +30,8 @@ struct _Evas_Engine_Info_Drm
         int plane;
 
 # ifdef HAVE_DRM_HW_ACCEL
+        void *bufmgr;
+
         struct 
           {
              EGLDisplay disp;
