@@ -593,6 +593,7 @@ AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DRM],
 
 requirement=""
 have_dep="no"
+have_hw_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
@@ -604,7 +605,7 @@ PKG_CHECK_EXISTS([libdrm],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
-  if test "x${want_drm_hw_accel}" = "xyes"; then
+  if test "x${want_drm_hw_accel}" = "xyes" ; then
     PKG_CHECK_EXISTS([gbm egl >= 7.10 glesv2],
      [
       have_hw_dep="yes"
@@ -613,7 +614,7 @@ if test "x${have_dep}" = "xyes" ; then
      [have_hw_dep="no"])
   fi
 
-  if test "x${have_hw_dep}" = "xyes"; then
+  if test "x${have_hw_dep}" = "xyes" ; then
     AC_DEFINE(HAVE_DRM_HW_ACCEL, 1, [Enabled drm hardware accelerated rendering])
   fi
   AM_CONDITIONAL([HAVE_DRM_HW_ACCEL], [test "x${have_hw_dep}" = "xyes"])
