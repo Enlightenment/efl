@@ -7,27 +7,64 @@
  * pass any 'user data' to the signal handlers :( */
 static Evas_Engine_Info_Drm *siginfo;
 
+static char *
+_evas_drm_card_driver_get(const char *dev)
+{
+   struct stat st;
+   int maj, min;
+   char *path, path_link[PATH_MAX + 1] = "";
+   char *drv;
+
+   if (stat(dev, &st) < 0) return NULL;
+
+   if (!S_ISCHR(st.st_mode)) return NULL;
+
+   maj = major(st.st_rdev);
+   min = minor(st.st_rdev);
+
+   asprintf(&path, "/sys/dev/char/%d:%d/device/driver", maj, min);
+   if (readlink(path, path_link, sizeof(path_link) - 1) < 0)
+     {
+        free(path);
+        return NULL;
+     }
+
+   free(path);
+
+   if (!(drv = strrchr(path_link, '/'))) return NULL;
+   return strdup(drv + strlen("/"));
+}
+
 static int 
 _evas_drm_card_open(int card)
 {
-   char dev[32];
+   char dev[32], *driver;
    int fd = -1;
    uint64_t dumb;
 
    sprintf(dev, DRM_DEV_NAME, DRM_DIR_NAME, card);
 
-   if ((fd = open(dev, (O_RDWR | O_CLOEXEC))) < 0)
+   driver = _evas_drm_card_driver_get(dev);
+   DBG("Drm Device Driver: %s", driver);
+
+   if ((fd = drmOpen(driver, NULL)) < 0)
      {
         CRI("Could not open drm device %s: %m", dev);
         return -1;
      }
 
-   drmVersionPtr ver;
-   if ((ver = drmGetVersion(fd)))
-     {
-        DBG("Drm Driver Name: %s", ver->name);
-        drmFreeVersion(ver);
-     }
+   /* if ((fd = open(dev, (O_RDWR | O_CLOEXEC))) < 0) */
+   /*   { */
+   /*      CRI("Could not open drm device %s: %m", dev); */
+   /*      return -1; */
+   /*   } */
+
+   /* drmVersionPtr ver; */
+   /* if ((ver = drmGetVersion(fd))) */
+   /*   { */
+   /*      DBG("Drm Driver Name: %s", ver->name); */
+   /*      drmFreeVersion(ver); */
+   /*   } */
 
    /* check for dumb buffer support
     * 
@@ -273,16 +310,15 @@ _evas_drm_outbuf_page_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, uns
    ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
 }
 
-static void 
-_evas_drm_outbuf_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
-{
-   Outbuf *ob;
+/* static void  */
+/* _evas_drm_outbuf_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data) */
+/* { */
+/*    Outbuf *ob; */
 
-   /* get the output buffer from data */
-   if (!(ob = data)) return;
+/*    if (!(ob = data)) return; */
 
-   DBG("VBlank Event");
-}
+/*    DBG("VBlank Event"); */
+/* } */
 
 Eina_Bool 
 evas_drm_init(Evas_Engine_Info_Drm *info, int card)
@@ -365,6 +401,7 @@ evas_drm_outbuf_setup(Outbuf *ob)
    drmModeRes *res;
    drmModeConnector *conn;
    int i = 0;
+   uint64_t dumb;
 
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
@@ -373,7 +410,15 @@ evas_drm_outbuf_setup(Outbuf *ob)
    memset(&ob->priv.ctx, 0, sizeof(ob->priv.ctx));
    ob->priv.ctx.version = DRM_EVENT_CONTEXT_VERSION;
    ob->priv.ctx.page_flip_handler = _evas_drm_outbuf_page_flip;
-   ob->priv.ctx.vblank_handler = _evas_drm_outbuf_vblank;
+   /* ob->priv.ctx.vblank_handler = _evas_drm_outbuf_vblank; */
+
+   /* check if this card supports async page flipping */
+   ob->priv.use_async_page_flip = EINA_TRUE;
+   if ((drmGetCap(ob->priv.fd, DRM_CAP_ASYNC_PAGE_FLIP, &dumb) < 0) || (!dumb))
+     {
+        WRN("Drm Device does not support async page flip");
+        ob->priv.use_async_page_flip = EINA_FALSE;
+     }
 
    /* try to get drm resources */
    if (!(res = drmModeGetResources(ob->priv.fd)))
@@ -441,9 +486,9 @@ evas_drm_outbuf_setup(Outbuf *ob)
 
         for (m = 0; m < conn->count_modes; m++)
           {
-             DBG("Output Available Mode: %d: %d %d %d", ob->priv.conn, 
-                 conn->modes[m].hdisplay, conn->modes[m].vdisplay, 
-                 conn->modes[m].vrefresh);
+             /* DBG("Output Available Mode: %d: %d %d %d", ob->priv.conn,  */
+             /*     conn->modes[m].hdisplay, conn->modes[m].vdisplay,  */
+             /*     conn->modes[m].vrefresh); */
 
              /* try to find a mode which matches the requested size */
              if ((conn->modes[m].hdisplay == ob->w) && 
@@ -460,6 +505,31 @@ evas_drm_outbuf_setup(Outbuf *ob)
 
         break;
      }
+
+   /* unsigned int p = 0; */
+   /* unsigned int f = 0; */
+   /* drmModePlaneResPtr planes; */
+   /* drmModePlanePtr plane; */
+   /* planes = drmModeGetPlaneResources(ob->priv.fd); */
+   /* for (p = 0; p < planes->count_planes; p++) */
+   /*   { */
+   /*      plane = drmModeGetPlane(ob->priv.fd, planes->planes[p]); */
+   /*      DBG("Plane %d, %d %d", p, plane->x, plane->y); */
+   /*      DBG("\tFB: %d", plane->fb_id); */
+   /*      DBG("\tCrtc: %d, %d %d", plane->crtc_id, plane->crtc_x, plane->crtc_y); */
+   /*      DBG("\tSupported Formats"); */
+   /*      for (f = 0; f < plane->count_formats; f++) */
+   /*        { */
+   /*           DBG("\t\t%C%C%C%C", (plane->formats[f] & 0xFF),  */
+   /*               ((plane->formats[f] >> 8) & 0xFF), */
+   /*               ((plane->formats[f] >> 16) & 0xFF),  */
+   /*               ((plane->formats[f] >> 24) & 0xFF)); */
+   /*        } */
+
+   /*      drmModeFreePlane(plane); */
+   /*   } */
+
+   /* drmModeFreePlaneResources(planes); */
 
    /* free drm resources */
    drmModeFreeResources(res);
@@ -507,9 +577,13 @@ evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth)
    buffer->size = carg.size;
    buffer->handle = carg.handle;
 
+   /* DBG("Buffer: %d %d", buffer->w, buffer->h); */
+   /* DBG("Buffer Stride: %d", buffer->stride); */
+   /* DBG("Buffer Size: %d", buffer->size); */
+
    /* try to create a framebuffer object */
    /* FIXME: Hardcoded bpp */
-   if (drmModeAddFB(fd, buffer->w, buffer->h, 24, depth, buffer->stride, 
+   if (drmModeAddFB(fd, buffer->w, buffer->h, 32, depth, buffer->stride, 
                     buffer->handle, &buffer->fb))
      {
         ERR("Could not create framebuffer object: %m");
@@ -530,8 +604,7 @@ evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth)
 
    /* do actual mmap of memory */
    buffer->data = 
-     mmap(0, buffer->size, (PROT_WRITE), 
-//     mmap(0, buffer->size, (PROT_READ | PROT_WRITE), 
+     mmap(0, buffer->size, (PROT_READ | PROT_WRITE), 
           MAP_SHARED, fd, marg.offset);
    if (buffer->data == MAP_FAILED)
      {
@@ -581,6 +654,7 @@ Eina_Bool
 evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsigned int count)
 {
    int ret;
+   unsigned int flags = 0;
 
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
@@ -612,8 +686,10 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, uns
      }
 #endif
 
-   ret = drmModePageFlip(ob->priv.fd, ob->priv.crtc, buffer->fb, 
-                         DRM_MODE_PAGE_FLIP_EVENT, ob);
+   flags = DRM_MODE_PAGE_FLIP_EVENT;
+   if (ob->priv.use_async_page_flip) flags |= DRM_MODE_PAGE_FLIP_ASYNC;
+
+   ret = drmModePageFlip(ob->priv.fd, ob->priv.crtc, buffer->fb, flags, ob);
    if (ret)
      {
         ERR("Cannot flip crtc for connector %u: %m", ob->priv.conn);
@@ -623,7 +699,7 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, uns
    ob->priv.sent = buffer;
    ob->priv.pending_flip = EINA_TRUE;
 
-//   while (ob->priv.pending_flip)
+   while (ob->priv.pending_flip)
      drmHandleEvent(ob->priv.fd, &ob->priv.ctx);
 
    return EINA_TRUE;
