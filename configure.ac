@@ -1145,7 +1145,8 @@ AC_ARG_ENABLE([drm],
    ],
    [want_drm="no"])
 
-AC_ARG_ENABLE([drm_hw_accel],
+want_drm_hw_accel="no"
+AC_ARG_ENABLE([drm-hw-accel],
    [AC_HELP_STRING([--enable-drm-hw-accel],
        [enable drm hardware acceleration. @<:@default=disabled@:>@])],
    [
