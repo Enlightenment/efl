@@ -597,6 +597,12 @@ have_hw_dep="no"
 evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
+if test "x${with_opengl}" = "xes" ; then
+    gl_library="glesv2"
+else
+    gl_library="gl"
+fi
+
 PKG_CHECK_EXISTS([libdrm],
    [
     have_dep="yes"
@@ -605,14 +611,16 @@ PKG_CHECK_EXISTS([libdrm],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
+  AC_MSG_CHECKING([whether to enable Drm hardware acceleration])
   if test "x${want_drm_hw_accel}" = "xyes" ; then
-    PKG_CHECK_EXISTS([gbm egl >= 7.10 glesv2],
+    PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
      [
       have_hw_dep="yes"
-      requirement="libdrm gbm egl >= 7.10 glesv2"
+      requirement +="egl >= 7.10 ${gl_library}"
      ],
      [have_hw_dep="no"])
   fi
+  AC_MSG_RESULT([${have_hw_dep}])
 
   if test "x${have_hw_dep}" = "xyes" ; then
     AC_DEFINE(HAVE_DRM_HW_ACCEL, 1, [Enabled drm hardware accelerated rendering])
