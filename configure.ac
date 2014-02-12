@@ -166,21 +166,21 @@ case "$host_os" in
       AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
    ;;
    mingw32ce*)
-      MODULE_ARCH="$host_os-$host_cpu"
+      MODULE_ARCH="v"
       MODULE_EXT=".dll"
    ;;
    mingw*)
       have_win32="yes"
       have_windows="yes"
-      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+      MODULE_ARCH="v-v_maj.v_min"
       MODULE_EXT=".dll"
    ;;
    cygwin*)
-      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+      MODULE_ARCH="v-v_maj.v_min"
       MODULE_EXT=".dll"
    ;;
    *)
-      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+      MODULE_ARCH="v-v_maj.v_min"
       MODULE_EXT=".so"
    ;;
 esac
