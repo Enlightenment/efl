@@ -320,6 +320,60 @@ _evas_drm_outbuf_page_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, uns
 /*    DBG("VBlank Event"); */
 /* } */
 
+static Eina_Bool 
+_evas_drm_outbuf_planes_setup(Outbuf *ob, drmModePlaneResPtr pres)
+{
+   drmModePlanePtr dplane;
+   Plane *oplane;
+   unsigned int p = 0;
+   unsigned int f = 0;
+
+   for (p = 0; p < pres->count_planes; p++)
+     {
+        /* try to get this plane */
+        if (!(dplane = drmModeGetPlane(ob->priv.fd, pres->planes[p])))
+          continue;
+
+        /* try to allocate space for our plane */
+        if (!(oplane = 
+              malloc(sizeof(Plane)  + 
+                     ((sizeof(unsigned int)) * dplane->count_formats))))
+          {
+             drmModeFreePlane(dplane);
+             continue;
+          }
+
+        oplane->crtcs = dplane->possible_crtcs;
+        oplane->id = dplane->plane_id;
+        oplane->num_formats = dplane->count_formats;
+        memcpy(oplane->formats, dplane->formats, 
+               dplane->count_formats * sizeof(dplane->formats[0]));
+
+        DBG("Plane %d, %d %d", p, dplane->x, dplane->y);
+        DBG("\tFB: %d", dplane->fb_id);
+        DBG("\tCrtc: %d, %d %d", dplane->crtc_id, 
+            dplane->crtc_x, dplane->crtc_y);
+
+        DBG("\tSupported Formats");
+        for (f = 0; f < dplane->count_formats; f++)
+          {
+             DBG("\t\t%C%C%C%C", (dplane->formats[f] & 0xFF), 
+                 ((dplane->formats[f] >> 8) & 0xFF),
+                 ((dplane->formats[f] >> 16) & 0xFF), 
+                 ((dplane->formats[f] >> 24) & 0xFF));
+          }
+
+        /* free this plane */
+        drmModeFreePlane(dplane);
+
+        /* append this plane */
+        ob->priv.planes = eina_list_append(ob->priv.planes, oplane);
+     }
+
+   if (eina_list_count(ob->priv.planes) < 1) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 Eina_Bool 
 evas_drm_init(Evas_Engine_Info_Drm *info, int card)
 {
@@ -400,6 +454,7 @@ evas_drm_outbuf_setup(Outbuf *ob)
 {
    drmModeRes *res;
    drmModeConnector *conn;
+   drmModePlaneResPtr pres;
    int i = 0;
    uint64_t dumb;
 
@@ -506,30 +561,18 @@ evas_drm_outbuf_setup(Outbuf *ob)
         break;
      }
 
-   /* unsigned int p = 0; */
-   /* unsigned int f = 0; */
-   /* drmModePlaneResPtr planes; */
-   /* drmModePlanePtr plane; */
-   /* planes = drmModeGetPlaneResources(ob->priv.fd); */
-   /* for (p = 0; p < planes->count_planes; p++) */
-   /*   { */
-   /*      plane = drmModeGetPlane(ob->priv.fd, planes->planes[p]); */
-   /*      DBG("Plane %d, %d %d", p, plane->x, plane->y); */
-   /*      DBG("\tFB: %d", plane->fb_id); */
-   /*      DBG("\tCrtc: %d, %d %d", plane->crtc_id, plane->crtc_x, plane->crtc_y); */
-   /*      DBG("\tSupported Formats"); */
-   /*      for (f = 0; f < plane->count_formats; f++) */
-   /*        { */
-   /*           DBG("\t\t%C%C%C%C", (plane->formats[f] & 0xFF),  */
-   /*               ((plane->formats[f] >> 8) & 0xFF), */
-   /*               ((plane->formats[f] >> 16) & 0xFF),  */
-   /*               ((plane->formats[f] >> 24) & 0xFF)); */
-   /*        } */
+   /* get any plane resource from the card */
+   pres = drmModeGetPlaneResources(ob->priv.fd);
 
-   /*      drmModeFreePlane(plane); */
-   /*   } */
+   /* if we have at least one plane, set it up */
+   if (pres->count_planes > 0)
+     {
+        if (!_evas_drm_outbuf_planes_setup(ob, pres))
+          WRN("Could not setup hardware planes");
+     }
 
-   /* drmModeFreePlaneResources(planes); */
+   /* free plane resources */
+   drmModeFreePlaneResources(pres);
 
    /* free drm resources */
    drmModeFreeResources(res);
@@ -545,6 +588,7 @@ evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer)
    /* validate params */
    if ((!ob) || (!buffer)) return;
 
+   buffer->valid = EINA_FALSE;
    ret = drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, buffer->fb, 0, 0, 
                         &ob->priv.conn, 1, &ob->priv.mode);
 
@@ -696,11 +740,11 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, uns
         return EINA_FALSE;
      }
 
-   ob->priv.sent = buffer;
+   /* ob->priv.sent = buffer; */
    ob->priv.pending_flip = EINA_TRUE;
 
-   while (ob->priv.pending_flip)
-     drmHandleEvent(ob->priv.fd, &ob->priv.ctx);
+   /* while (ob->priv.pending_flip) */
+   /*   drmHandleEvent(ob->priv.fd, &ob->priv.ctx); */
 
    return EINA_TRUE;
 }
