@@ -404,6 +404,9 @@ _edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_r
    Eina_List *l, *hist;
    Edje_Part_Collection *edc;
    Edje_Part *ep;
+#ifdef HAVE_EIO
+   Eina_Bool added = EINA_FALSE;
+#endif
 
    if (!_edje_file_hash)
      {
@@ -434,7 +437,11 @@ find_list:
    if (!edf) return NULL;
 
 #ifdef HAVE_EIO
-   if (ed) edf->edjes = eina_list_append(edf->edjes, ed);
+   if (ed)
+     {
+        edf->edjes = eina_list_append(edf->edjes, ed);
+        added = EINA_TRUE;
+     }
 #else
    (void) ed;
 #endif
@@ -546,7 +553,10 @@ open:
 	  }
      }
 #ifdef HAVE_EIO
-   if (edc && ed) edf->edjes = eina_list_append(edf->edjes, ed);
+   if (!added)
+     {
+        if (edc && ed) edf->edjes = eina_list_append(edf->edjes, ed);
+     }
 #else
    (void) ed;
 #endif
