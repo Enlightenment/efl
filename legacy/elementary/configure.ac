@@ -139,10 +139,10 @@ AC_SUBST(ELM_VERSION_MINOR)
 
 case "$host_os" in
   mingw32ce* | cegcc*)
-    MODULE_ARCH="$host_os-$host_cpu"
+    MODULE_ARCH="v"
     ;;
   *)
-    MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+    MODULE_ARCH="v-v_maj.v_min.v_mic"
     ;;
 esac
 AC_SUBST(MODULE_ARCH)
