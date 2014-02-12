@@ -188,6 +188,10 @@ if BUILD_ENGINE_WAYLAND_EGL
 pkgconfig_DATA += pc/evas-wayland-egl.pc
 endif
 
+if BUILD_ENGINE_DRM
+pkgconfig_DATA += pc/evas-drm.pc
+endif
+
 if HAVE_ECORE_COCOA
 pkgconfig_DATA += pc/ecore-cocoa.pc
 endif
