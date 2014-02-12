@@ -19,6 +19,8 @@ AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE([1.6 dist-bzip2 -Wall color-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+CFOPT_WARNING=""
+
 #### Apply configuring with legacy api's only, eo api's or both.
 
 EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
@@ -337,6 +339,7 @@ AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "${want_tests}" = "yes"])
 # check for crypto/tls library to use
 case "$build_crypto" in
    gnutls)
+      CFOPT_WARNING="xyes"
       EFL_DEPEND_PKG([crypto], [GNUTLS], [gnutls >= 2.12.16])
 
       AM_PATH_LIBGCRYPT([], [:],
@@ -860,6 +863,9 @@ AC_MSG_RESULT([${enable_log}])
 EINA_CONFIG([ENABLE_LOG], [test "x${enable_log}" = "xyes"])
 
 EFL_CHECK_THREADS
+if test "x${efl_have_threads}" = "xno"; then
+   CFOPT_WARNING="xyes"
+fi
 
 EFL_ADD_PUBLIC_LIBS([EINA], [${EFL_PTHREAD_LIBS}])
 EFL_ADD_CFLAGS([EINA], [${EFL_PTHREAD_CFLAGS}])
@@ -998,6 +1004,7 @@ case "${with_x11}" in
    xcb)
      want_x11_xcb="yes"
      want_x11_any="yes"
+     CFOPT_WARNING="xyes"
      ;;
    none)
      want_x11_none="yes"
@@ -1127,6 +1134,7 @@ AC_ARG_ENABLE([fontconfig],
        want_fontconfig="yes"
     else
        want_fontconfig="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_fontconfig="yes"])
@@ -1140,6 +1148,7 @@ AC_ARG_ENABLE([fribidi],
        want_fribidi="yes"
     else
        want_fribidi="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_fribidi="yes"])
@@ -1153,6 +1162,7 @@ AC_ARG_ENABLE([eo_id],
        want_eo_id="yes"
     else
        want_eo_id="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_eo_id="yes"])
@@ -1190,6 +1200,7 @@ AC_ARG_ENABLE([pixman],
    [
     if test "x${enableval}" = "xyes" ; then
        want_pixman="yes"
+       CFOPT_WARNING="xyes"
     else
        want_pixman="no"
     fi
@@ -1275,6 +1286,7 @@ AC_ARG_ENABLE([tile-rotate],
    [
     if test "x${enableval}" = "xyes" ; then
        have_tile_rotate="yes"
+       CFOPT_WARNING="xyes"
     else
        have_tile_rotate="no"
     fi
@@ -1658,6 +1670,7 @@ AC_ARG_ENABLE([cserve],
        want_evas_cserve2="yes"
     else
        want_evas_cserve2="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_evas_cserve2="yes"])
@@ -1804,6 +1817,7 @@ AC_ARG_ENABLE([g-main-loop],
    [
     if test "x${enableval}" = "xyes" ; then
        want_g_main_loop="yes"
+       CFOPT_WARNING="xyes"
     else
        want_g_main_loop="no"
     fi
@@ -1816,6 +1830,7 @@ AC_ARG_ENABLE([gstreamer],
    [
     if test "x${enableval}" = "xyes" ; then
        want_gstreamer="yes"
+       CFOPT_WARNING="xyes"
     else
        want_gstreamer="no"
     fi
@@ -1830,6 +1845,7 @@ AC_ARG_ENABLE([gstreamer1],
        want_gstreamer1="yes"
     else
        want_gstreamer1="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_gstreamer1="yes"])
@@ -2496,6 +2512,7 @@ AC_ARG_ENABLE([audio],
        want_audio="yes"
     else
        want_audio="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_audio="yes"])
@@ -2520,6 +2537,7 @@ AC_ARG_ENABLE([pulseaudio],
        want_pulseaudio="yes"
     else
        want_pulseaudio="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_pulseaudio="yes"])
@@ -2728,6 +2746,7 @@ AC_ARG_ENABLE([xinput2],
        want_xinput2="yes"
     else
        want_xinput2="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_xinput2="yes"])
@@ -2750,6 +2769,7 @@ AC_ARG_ENABLE([xim],
        want_xim="yes"
     else
        want_xim="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_xim="yes"])
@@ -2761,6 +2781,7 @@ AC_ARG_ENABLE([scim],
        want_scim="yes"
     else
        want_scim="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_scim="yes"])
@@ -3176,6 +3197,7 @@ AC_ARG_ENABLE([libmount],
        want_libmount="yes"
     else
        want_libmount="no"
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_libmount="yes"])
@@ -3539,6 +3561,7 @@ AC_ARG_ENABLE([physics],
     if test "x${enableval}" = "xyes" ; then
        want_physics="yes"
     else
+       CFOPT_WARNING="xyes"
        want_physics="no"
     fi
    ],
@@ -3877,6 +3900,19 @@ AC_ARG_ENABLE([always-build-examples],
    [want_always_build_examples="no"])
 AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = "yes"])
 
+BARF_OK="xno"
+# Harfbuzz
+AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-proboably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa],
+   [ You will be told when this is needed ],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       BARF_OK=""
+    else
+       BARF_OK="xno"
+    fi
+   ],
+   [ BARF_OK="xno" ])
+
 
 AC_CONFIG_FILES([
 Makefile
@@ -4106,42 +4142,151 @@ if test "x${have_systemd_pkg}" = "xyes" -a "x${want_systemd}" = "xno"; then
    echo "                ||     ||"
 fi
 
-if test "x${with_x11}" = "xxcb"; then
-   echo "_____________________________________________________________________"
-   echo "!!-- WARNING --!!"
-   echo "_____________________________________________________________________"
-   echo "You have chosen to use XCB instead of Xlib. It is a myth that XCB"
-   echo "is amazingly faster than Xlib (when used sensibly). It can be"
-   echo "faster in a few corner cases on startup of an app, but it comes"
-   echo "with many downsides. One of those is more complex code inside"
-   echo "ecore_x, which is far less tested in XCB mode than Xlib. Also"
-   echo "the big catch is that OpenGL support basically requires Xlib anyway"
-   echo "so if you want OpenGL in X11, you need Xlib regardless and so you"
-   echo "gain nothing really in terms of speed and no savings in memory"
-   echo "because Xlib is still linked, loaded and used, BUT instead you"
-   echo "have OpenGL drivers working with an hybrid XCB/Xlib (mostly XCB)"
-   echo "toolkit and this is basically never tested by anyone working on"
-   echo "the OpenGL drivers, so you will have bugs. Do not enable XCB"
-   echo "and use OpenGL. XCB is only useful if you wish to shave a few Kb"
-   echo "off the memory footprint of a whole system and live with less"
-   echo "tested code, and possibly unimplemented features in ecore_x. To"
-   echo "remove the XCB setup, remove the --with-x11=xcb option to"
-   echo "configure."
-   echo "_____________________________________________________________________"
-   sleep 10
-fi
 
-if test "x${build_crypto}" = "xgnutls"; then
-   echo "_____________________________________________________________________"
-   echo "!!-- WARNING --!!"
-   echo "_____________________________________________________________________"
-   echo "You have chosen gnutls as the crypto back-end. This will have some"
-   echo "side-effects that can break set-uid root binaries that happen to"
-   echo "link to and/or use EFL. These do actually exist. Gnutls will drop"
-   echo "root privs if it detects being setuid, thus breaking these tools"
-   echo "and their functionality. Only enable gnutls if you REALLY know"
-   echo "what you are doing and are willing to live with broken "
-   echo "functionality."
-   echo "_____________________________________________________________________"
-   sleep 10
+if test -n "$CFOPT_WARNING"; then
+  echo "_____________________________________________________________________"
+  echo ""
+  echo "==-- WARNING --=="
+  echo ""
+  echo "_____________________________________________________________________"
+  if test "x${with_x11}" = "xxcb"; then
+    echo "_____________________________________________________________________"
+    echo "You have chosen to use XCB instead of Xlib. It is a myth that XCB"
+    echo "is amazingly faster than Xlib (when used sensibly). It can be"
+    echo "faster in a few corner cases on startup of an app, but it comes"
+    echo "with many downsides. One of those is more complex code inside"
+    echo "ecore_x, which is far less tested in XCB mode than Xlib. Also"
+    echo "the big catch is that OpenGL support basically requires Xlib anyway"
+    echo "so if you want OpenGL in X11, you need Xlib regardless and so you"
+    echo "gain nothing really in terms of speed and no savings in memory"
+    echo "because Xlib is still linked, loaded and used, BUT instead you"
+    echo "have OpenGL drivers working with an hybrid XCB/Xlib (mostly XCB)"
+    echo "toolkit and this is basically never tested by anyone working on"
+    echo "the OpenGL drivers, so you will have bugs. Do not enable XCB"
+    echo "and use OpenGL. XCB is only useful if you wish to shave a few Kb"
+    echo "off the memory footprint of a whole system and live with less"
+    echo "tested code, and possibly unimplemented features in ecore_x. To"
+    echo "remove the XCB setup, remove the --with-x11=xcb option to"
+    echo "configure."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${build_crypto}" = "xgnutls"; then
+    echo "_____________________________________________________________________"
+    echo "You have chosen gnutls as the crypto back-end. This will have some"
+    echo "side-effects that can break set-uid root binaries that happen to"
+    echo "link to and/or use EFL. These do actually exist. Gnutls will drop"
+    echo "root privs if it detects being setuid, thus breaking these tools"
+    echo "and their functionality. Only enable gnutls if you REALLY know"
+    echo "what you are doing and are willing to live with broken "
+    echo "functionality."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_physics}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "You have chosen to disable physics support. This disables lots of"
+    echo "core functionality and is effectively never tested. You are going"
+    echo "to find features that suddenly don't work and as a result cause"
+    echo "a series of breakages. This is simply not tested so you are on"
+    echo "your own in terms of ensuring everything works if you do this"
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${efl_have_threads}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "You have disabled threading support. A lot of code is literally"
+    echo "written to need threading. We never test or even build with"
+    echo "threading disabled, so doing this is entering uncharted territory."
+    echo "There is a very good chance things may not compile at all, or if"
+    echo "the do, they will break at runtime in weird and wonderful ways."
+    echo "Highly reconsider what you are doing here, or be prepared to deal"
+    echo "with the fallout yourself."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_fontconfig}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_fribidi}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_pixman}" = "xyes"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${have_tile_rotate}" = "xyes"; then
+    echo "_____________________________________________________________________"
+    echo "...not tested much..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_g_main_loop}" = "xyes"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_gstreamer}" = "xyes"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_gstreamer1}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_eo_id}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_evas_cserve2}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_audio}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_pulseaudio}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_xinput2}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_xim}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_scim}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_libmount}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "...bad feature req..."
+    echo "_____________________________________________________________________"
+  fi
+  echo "_____________________________________________________________________"
+  echo ""
+  echo "==-- WARNING --=="
+  echo ""
+  echo "_____________________________________________________________________"
+  if test -n "$BARF_OK"; then
+    echo "Please add the following option to acknowledge this:"
+    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-proboably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa"
+    echo "_____________________________________________________________________"
+    rm -f Makefile
+    exit 1
+  fi
+  sleep 10
 fi
