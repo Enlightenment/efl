@@ -646,6 +646,47 @@ _elm_scroll_smooth_debug_movetime_add(int x,
 
 #endif
 
+static void
+_elm_scroll_scroll_bar_h_visibility_apply(Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   if (sid->hbar_flags != ELM_SCROLLER_POLICY_OFF)
+     {
+        if (sid->hbar_visible)
+          edje_object_signal_emit
+            (sid->edje_obj, "elm,action,show,hbar", "elm");
+        else
+          edje_object_signal_emit
+            (sid->edje_obj, "elm,action,hide,hbar", "elm");
+     }
+   else
+     edje_object_signal_emit(sid->edje_obj, "elm,action,hide,hbar", "elm");
+   edje_object_message_signal_process(sid->edje_obj);
+   _elm_scroll_scroll_bar_size_adjust(sid);
+   if (sid->cb_func.content_min_limit)
+     sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
+}
+
+static void
+_elm_scroll_scroll_bar_v_visibility_apply(Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   if (sid->vbar_flags != ELM_SCROLLER_POLICY_OFF)
+     {
+        if (sid->vbar_visible)
+          edje_object_signal_emit
+            (sid->edje_obj, "elm,action,show,vbar", "elm");
+        else
+          edje_object_signal_emit
+            (sid->edje_obj, "elm,action,hide,vbar", "elm");
+     }
+   else
+     edje_object_signal_emit
+       (sid->edje_obj, "elm,action,hide,vbar", "elm");
+   edje_object_message_signal_process(sid->edje_obj);
+   _elm_scroll_scroll_bar_size_adjust(sid);
+   if (sid->cb_func.content_min_limit)
+     sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
+}
+
 static int
 _elm_scroll_scroll_bar_h_visibility_adjust(
   Elm_Scrollable_Smart_Interface_Data *sid)
@@ -712,25 +753,8 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
                }
           }
      }
-   if (scroll_h_vis_change)
-     {
-        if (sid->hbar_flags != ELM_SCROLLER_POLICY_OFF)
-          {
-             if (sid->hbar_visible)
-               edje_object_signal_emit
-                 (sid->edje_obj, "elm,action,show,hbar", "elm");
-             else
-               edje_object_signal_emit
-                 (sid->edje_obj, "elm,action,hide,hbar", "elm");
-          }
-        else
-          edje_object_signal_emit
-            (sid->edje_obj, "elm,action,hide,hbar", "elm");
-        edje_object_message_signal_process(sid->edje_obj);
-        _elm_scroll_scroll_bar_size_adjust(sid);
-        if (sid->cb_func.content_min_limit)
-          sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
-     }
+
+   if (scroll_h_vis_change) _elm_scroll_scroll_bar_h_visibility_apply(sid);
 
    _elm_direction_arrows_eval(sid);
    return scroll_h_vis_change;
@@ -802,25 +826,7 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
                }
           }
      }
-   if (scroll_v_vis_change)
-     {
-        if (sid->vbar_flags != ELM_SCROLLER_POLICY_OFF)
-          {
-             if (sid->vbar_visible)
-               edje_object_signal_emit
-                 (sid->edje_obj, "elm,action,show,vbar", "elm");
-             else
-               edje_object_signal_emit
-                 (sid->edje_obj, "elm,action,hide,vbar", "elm");
-          }
-        else
-          edje_object_signal_emit
-            (sid->edje_obj, "elm,action,hide,vbar", "elm");
-        edje_object_message_signal_process(sid->edje_obj);
-        _elm_scroll_scroll_bar_size_adjust(sid);
-        if (sid->cb_func.content_min_limit)
-          sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
-     }
+   if (scroll_v_vis_change) _elm_scroll_scroll_bar_v_visibility_apply(sid);
 
    _elm_direction_arrows_eval(sid);
    return scroll_v_vis_change;
@@ -1058,6 +1064,8 @@ _elm_scroll_reload_cb(void *data,
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    _elm_scroll_policy_signal_emit(sid);
+   _elm_scroll_scroll_bar_h_visibility_apply(sid);
+   _elm_scroll_scroll_bar_v_visibility_apply(sid);
 }
 
 static void
@@ -3438,6 +3446,8 @@ static void
 _elm_scroll_reconfigure(Elm_Scrollable_Smart_Interface_Data *sid)
 {
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_scroll_scroll_bar_h_visibility_apply(sid);
+   _elm_scroll_scroll_bar_v_visibility_apply(sid);
    _elm_scroll_page_adjust(sid);
 }
 
