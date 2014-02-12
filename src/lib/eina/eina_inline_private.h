@@ -41,12 +41,17 @@ _eina_time_get(Eina_Nano_Time *tp)
 {
 #ifndef _WIN32
 # if defined(CLOCK_PROCESS_CPUTIME_ID)
-   return clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp);
-# elif defined(CLOCK_PROF)
-   return clock_gettime(CLOCK_PROF, tp);
-# elif defined(CLOCK_REALTIME)
-   return clock_gettime(CLOCK_REALTIME, tp);
-# else
+   if (!clock_gettime(CLOCK_PROCESS_CPUTIME_ID, tp))
+     return 0;
+# endif
+# if defined(CLOCK_PROF)
+   if (!clock_gettime(CLOCK_PROF, tp))
+     return 0;
+# endif
+# if defined(CLOCK_REALTIME)
+   if (!clock_gettime(CLOCK_REALTIME, tp))
+     return 0;
+# endif
    struct timeval tv;
 
    if (gettimeofday(&tv, NULL))
@@ -56,7 +61,6 @@ _eina_time_get(Eina_Nano_Time *tp)
    tp->tv_nsec = tv.tv_usec * 1000L;
 
    return 0;
-# endif
 #else
    return QueryPerformanceCounter(tp);
 #endif /* _WIN2 */
