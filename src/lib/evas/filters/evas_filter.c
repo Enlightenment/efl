@@ -1,6 +1,7 @@
-/**
- * @file evas_filter.c
- * @brief Infrastructure for simple filters applied to RGBA and Alpha buffers.
+/*
+ * \@file evas_filter.c
+ *
+ * Infrastructure for simple filters applied to RGBA and Alpha buffers.
  * Originally used by font effects.
  *
  * Filters include:
@@ -9,6 +10,8 @@
  * - Displacement maps
  * - Color curves
  * - Blending and masking
+ *
+ * The reference documentation can be found in evas_filter_parser.c
  */
 
 #include "evas_filter.h"

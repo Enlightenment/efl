@@ -1,8 +1,4 @@
-/**
- * @brief Simple bump maps algorithms for the software engine
- * @file evas_filter_bump.c
- * @author Jean-Philippe ANDRE <jpeg@videolan.org>
- */
+/* Simple bump map algorithms for the software engine */
 
 #include "evas_common_private.h"
 #include "evas_private.h"

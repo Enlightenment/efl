@@ -1,6 +1,4 @@
-/** @file evas_filter_utils.c
- * @brief Utility functions for the filters.
- */
+/* Utility functions for the filters.  */
 
 #include "evas_filter_private.h"
 
