@@ -5166,6 +5166,7 @@ _edje_child_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *child, void *ei
    Eina_List *l;
    Edje *ed = evas_object_data_get(child, ".edje");
 
+   if (!ed) return;
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (rp->part->type == EDJE_PART_TYPE_BOX)
        {
@@ -5201,7 +5202,7 @@ _edje_child_add(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
 {
    evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_child_del_cb, rp);
    evas_object_data_set(child, ".edje", ed);
-
+   if (!ed) return;
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
@@ -5215,7 +5216,7 @@ _edje_child_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *child)
 {
    evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_child_del_cb, rp);
    evas_object_data_del(child, ".edje");
-
+   if (!ed) return;
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
@@ -6320,7 +6321,7 @@ _edje_object_part_swallow_free_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, E
    Edje_Real_Part *rp;
 
    ed = evas_object_data_get(obj, ".edje");
-
+   if (!ed) return;
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj)
        {
@@ -6420,7 +6421,7 @@ _edje_object_part_swallow_changed_hints_cb(void *data, EINA_UNUSED Evas *e, Evas
 
    rp = data;
    ed = evas_object_data_get(obj, ".edje");
-
+   if (!ed) return;
    _edje_real_part_swallow_hints_update(rp);
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
