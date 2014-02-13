@@ -594,7 +594,7 @@ eet_node_dump_group_start(int               level,
    int chnk_type;
 
    chnk_type = (group_type >= EET_G_UNKNOWN && group_type <= EET_G_HASH) ?
-     group_type : EET_G_LAST;
+     group_type : EET_G_UNKNOWN;
 
    eet_node_dump_level(level, dumpfunc, dumpdata);
    dumpfunc(dumpdata, "group \"");
