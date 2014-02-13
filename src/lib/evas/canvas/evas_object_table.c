@@ -1169,6 +1169,7 @@ _pack(Eo *o, void *_pd, va_list *list)
    unsigned short rowspan = va_arg(*list, int);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
+   Eina_Bool optalloc = EINA_FALSE;
 
    Evas_Object_Table_Option *opt;
 
@@ -1212,6 +1213,7 @@ _pack(Eo *o, void *_pd, va_list *list)
              ERR("could not allocate table option data.");
              return;
           }
+        optalloc = EINA_TRUE;
      }
 
    opt->obj = child;
@@ -1249,6 +1251,7 @@ _pack(Eo *o, void *_pd, va_list *list)
              priv->size.cols = max_col;
              priv->size.rows = max_row;
           }
+        if (optalloc) free(opt);
      }
    else
      {
