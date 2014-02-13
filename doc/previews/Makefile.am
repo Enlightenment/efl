@@ -27,7 +27,7 @@ noinst_PROGRAMS = preview_text_filter
 DATADIR = ${top_srcdir}/doc/previews/img
 HTMLDIR = ${top_srcdir}/doc/html
 
-PREVIEWS =
+PREVIEWS = blend blur bump curve grow mask transform
 
 previews-data:
 	$(MKDIR_P) $(DATADIR)
