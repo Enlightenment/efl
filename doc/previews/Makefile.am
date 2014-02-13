@@ -14,10 +14,12 @@ AM_CPPFLAGS = \
 	-D_GNU_SOURCE
 
 LDADD = \
+	-L$(top_srcdir)/src/lib/eo/.libs \
 	-L$(top_srcdir)/src/lib/eina/.libs \
 	-L$(top_srcdir)/src/lib/ecore/.libs \
 	-L$(top_srcdir)/src/lib/evas/.libs \
 	-L$(top_srcdir)/src/lib/ecore_evas/.libs \
+        -leo \
 	-leina \
 	-levas \
 	-lecore \
