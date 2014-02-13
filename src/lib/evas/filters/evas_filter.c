@@ -1116,7 +1116,11 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
    if (!copy) return -1;
 
    cmd = _command_new(ctx, EVAS_FILTER_MODE_CURVE, in, NULL, out);
-   if (!cmd) return -1;
+   if (!cmd)
+     {
+        free(copy);
+        return -1;
+     }
 
    memcpy(copy, curve, 256 * sizeof(DATA8));
    cmd->curve.data = copy;
