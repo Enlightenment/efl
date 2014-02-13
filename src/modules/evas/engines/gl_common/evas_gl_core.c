@@ -1591,7 +1591,7 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx)
       ctx->context = evgl_engine->funcs->context_create(eng_data, NULL);
 
    // Call engine create context
-   if (!ctx)
+   if (!ctx->context)
      {
         ERR("Error creating context from the Engine.");
         free(ctx);
