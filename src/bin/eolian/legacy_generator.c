@@ -397,7 +397,7 @@ legacy_header_append(const char *classname, int eo_version, Eina_Strbuf *header)
 }
 
 Eina_Bool
-legacy_source_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
+legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version, Eina_Strbuf *buf)
 {
    const Eina_List *itr;
 
@@ -424,12 +424,12 @@ legacy_source_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
         if (prop_read)
           {
              eo1_bind_func_generate(classname, fn, GET, str_bodyf);
-             _eapi_func_generate(classname, fn, GET, str_bodyf);
+             if (legacy) _eapi_func_generate(classname, fn, GET, str_bodyf);
           }
         if (prop_write)
           {
              eo1_bind_func_generate(classname, fn, SET, str_bodyf);
-             _eapi_func_generate(classname, fn, SET, str_bodyf);
+             if (legacy) _eapi_func_generate(classname, fn, SET, str_bodyf);
           }
      }
 
@@ -437,7 +437,7 @@ legacy_source_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
    EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, METHOD_FUNC), itr, fn)
      {
         eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf);
-        _eapi_func_generate(classname, fn, UNRESOLVED, str_bodyf);
+        if (legacy) _eapi_func_generate(classname, fn, UNRESOLVED, str_bodyf);
      }
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_bodyf));

@@ -10,6 +10,7 @@
 #define EO_SUFFIX ".eo"
 
 static int eo_version = 0;
+static Eina_Bool legacy_support = EINA_FALSE;
 
 static Eina_Bool
 _generate_h_file(char *filename, char *classname, Eina_Bool append)
@@ -58,7 +59,7 @@ _generate_c_file(char *filename, char *classname, Eina_Bool append)
    Eina_Bool ret = EINA_FALSE;
 
    Eina_Strbuf *cfile = eina_strbuf_new();
-   legacy_source_generate(classname, eo_version, cfile);
+   legacy_source_generate(classname, legacy_support, eo_version, cfile);
 
    FILE* fd = fopen(filename, (append) ? "a" : "w");
    if (!fd)
@@ -171,6 +172,7 @@ int main(int argc, char **argv)
           {"ah",         required_argument,   0, 3},
           {"al",         required_argument,   0, 4},
           {"gle",        required_argument,   0, 5},
+          {"legacy",     no_argument,         0, 6},
           {"include",    required_argument,   0, 'I'},
           {"class",      required_argument,   0, 'c'},
           {0, 0, 0, 0}
@@ -185,6 +187,7 @@ int main(int argc, char **argv)
            case 3: h_filename = optarg; happend = EINA_TRUE; break;
            case 4: leg_filename = optarg; lappend = EINA_TRUE; break;
            case 5: eoleg_filename = optarg; break;
+           case 6: legacy_support = EINA_TRUE; break;
            case 'V': show = EINA_TRUE; break;
            case 'h': help = EINA_TRUE; break;
            case 'I':
@@ -225,13 +228,14 @@ int main(int argc, char **argv)
 
    if (!files || help || !classname)
      {
-        printf("Usage: %s [-h/--help] [-V/--verbose] [-I/--include input_dir] [--gh|--gc|--ah] filename [-c/--class] classname \n", argv[0]);
+        printf("Usage: %s [-h/--help] [-V/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah] filename [-c/--class] classname \n", argv[0]);
         printf("       --eo1/--eo2 Set generator to eo1/eo2 mode. Must be specified\n");
         printf("       --gh Generate c header file [.h] for eo class specified by classname\n");
         printf("       --gc Generate c source file [.c] for eo class specified by classname\n");
         printf("       --ah Append eo class definitions to an existing c header file [.h]\n");
         printf("       --al Append legacy function definitions to an existing c header file [.h]\n");
         printf("       --gle Generate eo and legacy file [.h]\n");
+        printf("       --legacy Generate legacy\n");
         return 0;
      }
 

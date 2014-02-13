@@ -41,13 +41,14 @@ Eina_Bool legacy_header_append(const char *classname, int eo_version, Eina_Strbu
  * code from scratch.
  *
  * @param[in] classname class name
+ * @param[in] legacy indicates if the legacy has to be generated
  * @param[in] eo_version Eo version to generate
  * @param[inout] buf buffer to fill
  *
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
-Eina_Bool legacy_source_generate(const char *classname, int eo_version, Eina_Strbuf *buf);
+Eina_Bool legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version, Eina_Strbuf *buf);
 
 #endif
 
