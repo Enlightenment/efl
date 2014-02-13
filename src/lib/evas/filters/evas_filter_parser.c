@@ -664,7 +664,7 @@ _bool_parse(const char *str, Eina_Bool *b)
 static Eina_Bool
 _color_parse(const char *word, DATA32 *color)
 {
-   unsigned long value;
+   DATA32 value;
    Eina_Bool success = EINA_FALSE;
 
    PARSE_CHECK(word && *word);
@@ -694,7 +694,7 @@ _color_parse(const char *word, DATA32 *color)
    if ((value & 0xFF000000) == 0 && (value != 0))
      value |= 0xFF000000;
 
-   if (color) *color = (DATA32) value;
+   if (color) *color = value;
    success = EINA_TRUE;
 
 end:
