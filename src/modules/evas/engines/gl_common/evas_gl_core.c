@@ -1373,10 +1373,12 @@ evgl_engine_init(void *eng_data, EVGL_Interface *efunc)
    return evgl_engine;
 
 error:
-   if (evgl_engine->resource_key)
-      eina_tls_free(evgl_engine->resource_key);
    if (evgl_engine)
-      free(evgl_engine);
+     {
+        if (evgl_engine->resource_key)
+          eina_tls_free(evgl_engine->resource_key);
+        free(evgl_engine);
+     }
    evgl_engine = NULL;
    return NULL;
 }
