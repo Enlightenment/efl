@@ -429,7 +429,7 @@ cserve2_shared_array_repack(Shared_Array *sa, int generation_id,
 
    // Create new array
    sa2 = cserve2_shared_array_new(sa->header->tag, generation_id, elemsize, newcount);
-   if (!sa)
+   if (!sa2)
      {
         ERR("Can not repack array: failed to create new array");
         return NULL;
