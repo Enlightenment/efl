@@ -67,13 +67,7 @@
 
   Here is a simple example illustrating the syntax:
 
-  @code
-    buffer : fat (alpha);
-    grow (8, dst = fat);
-    blur (12, src = fat, color = darkblue);
-    blur (4, color = cyan);
-    blend ();
-  @endcode
+  @include filter_example_1.txt
 
   This example will display a cyan and dark blue glow surrounding the
   main text (its color depends on the object's theme).
@@ -985,9 +979,7 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the @a color option should be set.
 
-  @code
-    blend (color = #3399FF);
-  @endcode
+  @include filter_blend.txt
 
   <center>
   @image html filter_blend.png
@@ -1095,10 +1087,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the color option should be set.
 
   @a ox and @a oy can be used to move the blurry output by a few pixels, like a drop shadow. Example:
-  @code
-    blur (10, color = black, oy = 5, ox = 5);
-    blend ();
-  @endcode
+  @include filter_blur.txt
 
   <center>
   @image html filter_blur.png
@@ -1159,11 +1148,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
   @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
 
   Here is a full example for a size 100 font, of a very simple bevel effect:
-  @code
-    buffer : a (alpha);
-    blur (5, dst = a);
-    bump (map = a, compensate = yes, color = cyan, specular = 10.0);
-  @endcode
+  @include filter_bump.txt
 
   <center>
   @image html filter_bump.png
@@ -1230,12 +1215,7 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
   If ignored, y(x = 0) is 0 and y(x = 255) is 255.
 
   The following example will generate a 4px thick stroke around text letters:
-  @code
-    buffer : a (alpha);
-    blur (4, dst = a);
-    curve (0:0 - 20:0 - 60:255 - 160:255 - 200:0 - 255:0, src = a, dst = a);
-    blend(src = a, color = black);
-  @endcode
+  @include filter_curve.txt
 
   <center>
   @image html filter_curve.png
@@ -1470,12 +1450,8 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   @param dst     Destination buffer for blending. This must be of same size and colorspace as @a src.
 
   Example:
-  @code
-    buffer : fat (alpha);
-    grow (4, dst = fat);
-    blend (src = fat, color = black);
-    blend (color = white);
-  @endcode
+  @include filter_grow.txt
+
   This will first grow the letters in the buffer @c input by 4px, and then draw
   this buffer in black in the background. Blending white on top of that will
   give a simple impression of stroked text.
@@ -1524,13 +1500,8 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.
 
   Example:
-  @code
-    buffer: a (alpha);
-    blur(5, dst = a);
-    curve(points = 0:255 - 128:255 - 255:0, src = a, dst = a);
-    blend(color = black);
-    mask(mask = a, color = cyan);
-  @endcode
+  @include filter_mask.txt
+
   This will create a simple cyan inner glow effect on black text.
 
   <center>
@@ -1610,12 +1581,8 @@ _transform_padding_update(Evas_Filter_Program *pgm,
   @param oy       Y offset.
 
   Example:
-  @code
-    buffer : t (alpha);
-    transform (oy = 20, dst = t);
-    blend (src = t, color = silver);
-    blend (color = white);
-  @endcode
+  @include filter_transform.txt
+
   This will create a mirrored text effect, for a font of 50px.
 
   <center>

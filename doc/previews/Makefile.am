@@ -35,7 +35,12 @@ previews-data:
 	$(MKDIR_P) $(HTMLDIR)
 	@for a in $(PREVIEWS) ; do \
 		echo "  GEN      filter_$${a}.png" ; \
-		source ${top_srcdir}/doc/previews/filter_$${a}.sh ; \
+		FONT="Sans" ; \
+		SIZE=24 ; \
+		FILTER=`cat ${top_srcdir}/src/examples/evas/filters/filter_$${a}.txt` ; \
+		if [ -e ${top_srcdir}/doc/previews/filter_$${a}.sh ] ; then \
+			source ${top_srcdir}/doc/previews/filter_$${a}.sh ; \
+		fi ; \
 		$(top_srcdir)/doc/previews/preview_text_filter "$${TEXT}" "$${FILTER}" "$(DATADIR)/filter_$${a}.png" "$${FONT}" "$${SIZE}" ; \
 		cp "$(DATADIR)/filter_$${a}.png" "$(HTMLDIR)/" ; \
 	done
