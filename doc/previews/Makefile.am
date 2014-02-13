@@ -3,6 +3,7 @@ if EFL_BUILD_DOC
 .PHONY: doc
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir)/src/lib/eo \
 	-I$(top_srcdir)/src/lib/efl \
 	-I$(top_srcdir)/src/lib/eina \
 	-I$(top_srcdir)/src/lib/evas \
