@@ -1,3 +1,5 @@
+SUBDIRS = previews
+
 MAINTAINERCLEANFILES = Makefile.in 
 
 .PHONY: doc
@@ -9,7 +11,13 @@ if EFL_BUILD_DOC
 doc-clean:
 	rm -rf html/ latex/ man/ xml/ $(top_builddir)/$(PACKAGE_DOCNAME).tar*
 
-doc: all
+previews-build:
+	@$(MAKE) -C previews
+
+previews-data:
+	@$(MAKE) -C previews doc
+
+doc: all previews-build previews-data
 	$(efl_doxygen)
 	cp $(srcdir)/img/* html/
 	cp $(srcdir)/img/*.eps latex/

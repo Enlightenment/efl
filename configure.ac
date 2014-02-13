@@ -3919,6 +3919,7 @@ Makefile
 data/Makefile
 doc/Makefile
 doc/Doxyfile
+doc/previews/Makefile
 src/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
