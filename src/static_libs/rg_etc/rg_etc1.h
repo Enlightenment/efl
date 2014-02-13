@@ -1,52 +1,40 @@
 // File: rg_etc1.h - Fast, high quality ETC1 block packer/unpacker - Rich Geldreich <richgel99@gmail.com>
 // Please see ZLIB license at the end of this file.
-#pragma once
+#ifndef __RG_ETC1_H__
+#define __RG_ETC1_H__
 
-namespace rg_etc1
+typedef unsigned char bool;
+
+// Unpacks an 8-byte ETC1 compressed block to a block of 4x4 32bpp RGBA pixels.
+// Returns false if the block is invalid. Invalid blocks will still be unpacked with clamping.
+// This function is thread safe, and does not dynamically allocate any memory.
+// If preserve_alpha is true, the alpha channel of the destination pixels will not be overwritten. Otherwise, alpha will be set to 255.
+bool rg_etc1_unpack_block(const void *pETC1_block, unsigned int* pDst_pixels_rgba, bool preserve_alpha);
+
+// Quality setting = the higher the quality, the slower.
+// To pack large textures, it is highly recommended to call pack_etc1_block() in parallel, on different blocks, from multiple threads (particularly when using cHighQuality).
+typedef enum {
+  rg_etc1_low_quality,
+  rg_etc1_medium_quality,
+  rg_etc1_high_quality
+} rg_etc1_quality;
+
+
+typedef struct
 {
-   // Unpacks an 8-byte ETC1 compressed block to a block of 4x4 32bpp RGBA pixels.
-   // Returns false if the block is invalid. Invalid blocks will still be unpacked with clamping.
-   // This function is thread safe, and does not dynamically allocate any memory.
-   // If preserve_alpha is true, the alpha channel of the destination pixels will not be overwritten. Otherwise, alpha will be set to 255.
-   bool unpack_etc1_block(const void *pETC1_block, unsigned int* pDst_pixels_rgba, bool preserve_alpha = false);
+   rg_etc1_quality m_quality;
+   bool m_dithering;
+}rg_etc1_pack_params;
 
-   // Quality setting = the higher the quality, the slower. 
-   // To pack large textures, it is highly recommended to call pack_etc1_block() in parallel, on different blocks, from multiple threads (particularly when using cHighQuality).
-   enum etc1_quality
-   { 
-      cLowQuality,
-      cMediumQuality,
-      cHighQuality,
-   };
-      
-   struct etc1_pack_params
-   {
-      etc1_quality m_quality;
-      bool m_dithering;
-                              
-      inline etc1_pack_params() 
-      {
-         clear();
-      }
+// Important: pack_etc1_block_init() must be called before calling pack_etc1_block().
+void rg_etc1_pack_block_init();
 
-      void clear()
-      {
-         m_quality = cHighQuality;
-         m_dithering = false;
-      }
-   };
-
-   // Important: pack_etc1_block_init() must be called before calling pack_etc1_block().
-   void pack_etc1_block_init();
-
-   // Packs a 4x4 block of 32bpp RGBA pixels to an 8-byte ETC1 block.
-   // 32-bit RGBA pixels must always be arranged as (R,G,B,A) (R first, A last) in memory, independent of platform endianness. A should always be 255.
-   // Returns squared error of result.
-   // This function is thread safe, and does not dynamically allocate any memory.
-   // pack_etc1_block() does not currently support "perceptual" colorspace metrics - it primarily optimizes for RGB RMSE.
-   unsigned int pack_etc1_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, etc1_pack_params& pack_params);
-            
-} // namespace rg_etc1
+// Packs a 4x4 block of 32bpp RGBA pixels to an 8-byte ETC1 block.
+// 32-bit RGBA pixels must always be arranged as (R,G,B,A) (R first, A last) in memory, independent of platform endianness. A should always be 255.
+// Returns squared error of result.
+// This function is thread safe, and does not dynamically allocate any memory.
+// pack_etc1_block() does not currently support "perceptual" colorspace metrics - it primarily optimizes for RGB RMSE.
+unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_etc1_pack_params *pack_params);
 
 //------------------------------------------------------------------------------
 //
@@ -74,3 +62,4 @@ namespace rg_etc1
 // 3. This notice may not be removed or altered from any source distribution.
 //
 //------------------------------------------------------------------------------
+#endif // __RG_ETC1_H__
