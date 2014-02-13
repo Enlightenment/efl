@@ -1646,7 +1646,6 @@ _filter_chain_run(Evas_Filter_Context *ctx)
           }
      }
 
-   if (!ok) goto end;
    ok = _filter_target_render(ctx);
 
 end:
