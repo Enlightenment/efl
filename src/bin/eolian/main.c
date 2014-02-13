@@ -1,3 +1,5 @@
+#include <getopt.h>
+
 #include <Eina.h>
 #include <Ecore_File.h>
 
@@ -146,7 +148,7 @@ end:
 int main(int argc, char **argv)
 {
    eina_init();
-   int i, ret = 0;
+   int ret = 0;
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
    Eina_List *files = NULL, *itr;
    Eina_List *classes = NULL;
@@ -157,123 +159,79 @@ int main(int argc, char **argv)
    Eina_Bool happend = EINA_FALSE;
    Eina_Bool lappend = EINA_FALSE;
 
-   for(i = 1; i < argc; i++)
+   static struct option long_options[] =
      {
-        if (!strcmp(argv[i], "-eo1"))
-          {
-             eo_version = 1;
-             continue;
-          }
-        if (!strcmp(argv[i], "-eo2"))
-          {
-             eo_version = 2;
-             continue;
-          }
-        if (!strcmp(argv[i], "-gh") && (i < (argc-1)))
-          {
-             h_filename = argv[i + 1];
-             continue;
-          }
-        if (!strcmp(argv[i], "-gc") && (i < (argc-1)))
-          {
-             c_filename = argv[i + 1];
-             continue;
-          }
-        if (!strcmp(argv[i], "-gl") && (i < (argc-1)))
-          {
-             leg_filename = argv[i + 1];
-             continue;
-          }
-        if (!strcmp(argv[i], "-gle") && (i < (argc-1)))
-          {
-             eoleg_filename = argv[i + 1];
-             continue;
-          }
-        if (!strcmp(argv[i], "-ah") && (i < (argc-1)))
-          {
-             h_filename = argv[i + 1];
-             happend = EINA_TRUE;
-             continue;
-          }
-        if (!strcmp(argv[i], "-al") && (i < (argc-1)))
-          {
-             leg_filename = argv[i + 1];
-             lappend = EINA_TRUE;
-             continue;
-          }
-        if (!strcmp(argv[i], "--class") && (i < (argc-1)))
-          {
-             classes = eina_list_append(classes, argv[i + 1]);
-             continue;
-          }
-        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help"))
-          {
-             help = EINA_TRUE;
-             continue;
-          }
-        if (!strcmp(argv[i], "--show"))
-          {
-             show = EINA_TRUE;
-             continue;
-          }
-        /* Directory parameter found. */
-        if ((!strcmp(argv[i], "-d") || !strcmp(argv[i], "--dir")) && (i < (argc-1)))
-          {
-             i++;
-             char *dir = ecore_file_realpath(argv[i]);
-             if (strlen(dir) != 0)
-               {
-                  if (ecore_file_is_dir(dir))
-                    {
-                       Eina_List *dir_files;
-                       char *file;
-                       /* Get all files from directory. Not recursively!!!*/
-                       dir_files = ecore_file_ls(dir);
-                       EINA_LIST_FREE(dir_files, file)
-                         {
-                            char *filepath = malloc(strlen(dir) + 1 + strlen(file) + 1);
-                            sprintf(filepath, "%s/%s", dir, file);
-                            if ((!ecore_file_is_dir(filepath)) && eina_str_has_suffix(filepath, EO_SUFFIX))
-                              {
-                                 /* Allocated string will be freed during deletion of "files" list. */
-                                 files = eina_list_append(files, strdup(filepath));
-                              }
-                            free(filepath);
-                            free(file);
-                         }
-                    }
-               }
-             free(dir);
-             continue;
-          }
-        if ((!strcmp(argv[i], "-f") || !strcmp(argv[i], "--file")) && (i < (argc-1)))
-          {
-             i++;
-             char *realpath = ecore_file_realpath(argv[i]);
-             if (strlen(realpath) != 0)
-               {
-                  if (!ecore_file_is_dir(realpath))
-                    {
-                       if (eina_str_has_suffix(realpath, EO_SUFFIX))
-                         files = eina_list_append(files, strdup(realpath));
-                    }
-               }
-             free(realpath);
-             continue;
-          }
+        /* These options set a flag. */
+          {"eo1",        no_argument,         &eo_version, 1},
+          {"eo2",        no_argument,         &eo_version, 2},
+          {"verbose",    no_argument,         0, 'V'},
+          {"help",       no_argument,         0, 'h'},
+          {"gh",         required_argument,   0, 1},
+          {"gc",         required_argument,   0, 2},
+          {"ah",         required_argument,   0, 3},
+          {"al",         required_argument,   0, 4},
+          {"gle",        required_argument,   0, 5},
+          {"include",    required_argument,   0, 'I'},
+          {"class",      required_argument,   0, 'c'},
+          {0, 0, 0, 0}
+     };
+   int long_index =0, opt;
+   while ((opt = getopt_long(argc, argv,"Vho:I:c:", long_options, &long_index )) != -1)
+     {
+        switch (opt) {
+           case 0: break;
+           case 1: h_filename = optarg; break;
+           case 2: c_filename = optarg; break;
+           case 3: h_filename = optarg; happend = EINA_TRUE; break;
+           case 4: leg_filename = optarg; lappend = EINA_TRUE; break;
+           case 5: eoleg_filename = optarg; break;
+           case 'V': show = EINA_TRUE; break;
+           case 'h': help = EINA_TRUE; break;
+           case 'I':
+                     {
+                        printf("%s\n", optarg);
+                        char *dir = ecore_file_realpath(optarg);
+                        if (strlen(dir) != 0)
+                          {
+                             if (ecore_file_is_dir(dir))
+                               {
+                                  Eina_List *dir_files;
+                                  char *file;
+                                  /* Get all files from directory. Not recursively!!!*/
+                                  dir_files = ecore_file_ls(dir);
+                                  EINA_LIST_FREE(dir_files, file)
+                                    {
+                                       char *filepath = malloc(strlen(dir) + 1 + strlen(file) + 1);
+                                       sprintf(filepath, "%s/%s", dir, file);
+                                       if ((!ecore_file_is_dir(filepath)) && eina_str_has_suffix(filepath, EO_SUFFIX))
+                                         {
+                                            /* Allocated string will be freed during deletion of "files" list. */
+                                            files = eina_list_append(files, strdup(filepath));
+                                         }
+                                       free(filepath);
+                                       free(file);
+                                    }
+                               }
+                          }
+                        free(dir);
+                        break;
+                     }
+           case 'c': classes = eina_list_append(classes, optarg); break;
+           default: help = EINA_TRUE;
+        }
      }
 
    if (eina_list_count(classes)) classname = eina_list_data_get(classes);
 
    if (!files || help || !classname)
      {
-        printf("Usage: %s [-h/--help] [--show] [-d/--dir input_dir] [-f/--file input_file] [-gh|-gc|-ah] filename [--class] classname \n", argv[0]);
-        printf("       -eo1/-eo2 Set generator to eo1/eo2 mode. Must be specified\n");
-        printf("       -gh Generate c header file [.h] for eo class specified by classname\n");
-        printf("       -gc Generate c source file [.c] for eo class specified by classname\n");
-        printf("       -ah Append eo class definitions to an existing c header file [.h]\n");
-        printf("       -al Append legacy function definitions to an existing c header file [.h]\n");
-        printf("       -gle Generate eo and legacy file [.h]\n");
+        printf("Usage: %s [-h/--help] [-V/--verbose] [-I/--include input_dir] [--gh|--gc|--ah] filename [-c/--class] classname \n", argv[0]);
+        printf("       --eo1/--eo2 Set generator to eo1/eo2 mode. Must be specified\n");
+        printf("       --gh Generate c header file [.h] for eo class specified by classname\n");
+        printf("       --gc Generate c source file [.c] for eo class specified by classname\n");
+        printf("       --ah Append eo class definitions to an existing c header file [.h]\n");
+        printf("       --al Append legacy function definitions to an existing c header file [.h]\n");
+        printf("       --gle Generate eo and legacy file [.h]\n");
         return 0;
      }
 
