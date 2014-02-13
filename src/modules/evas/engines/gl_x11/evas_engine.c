@@ -2466,7 +2466,7 @@ eng_image_native_set(void *data, void *image, void *native)
                       eina_hash_add(re->win->gl_context->shared->native_pm_hash, &pmid, im);
                       if ((tex_target & GLX_TEXTURE_2D_BIT_EXT))
                         target = GLX_TEXTURE_2D_EXT;
-                      else if ((target & GLX_TEXTURE_RECTANGLE_BIT_EXT))
+                      else if ((tex_target & GLX_TEXTURE_RECTANGLE_BIT_EXT))
                         {
                            ERR("rect!!! (not handled)");
                            target = GLX_TEXTURE_RECTANGLE_EXT;
