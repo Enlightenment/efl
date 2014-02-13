@@ -69,14 +69,18 @@
 
   @code
     buffer : fat (alpha);
-    grow (5, dst = fat);
-    blur (8, src = fat, color = darkblue);
+    grow (8, dst = fat);
+    blur (12, src = fat, color = darkblue);
     blur (4, color = cyan);
     blend ();
   @endcode
 
   This example will display a cyan and dark blue glow surrounding the
   main text (its color depends on the object's theme).
+
+  <center>
+  @image html filter_example_1.png
+  </center>
 
   The syntax is pretty simple and follows a small set of rules:
   <ul>
