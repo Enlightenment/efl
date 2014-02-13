@@ -2455,12 +2455,6 @@ st_collections_group_sound_sample_source(void)
    sample = 
      edje_file->sound_dir->samples +
      edje_file->sound_dir->samples_count - 1;
-   
-   if (!sample)
-     {
-        ERR("Invalid sound sample source definition.");
-        exit(-1);
-     }
    sample->snd_src = parse_str(0);
    check_arg_count(1);
 }
