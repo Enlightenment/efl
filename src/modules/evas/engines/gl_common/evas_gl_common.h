@@ -531,6 +531,8 @@ struct _Evas_Engine_GL_Context
    void *egldisp;
    void *eglctxt;
 #endif
+
+   GLuint preserve_bit;
 };
 
 struct _Evas_GL_Texture_Pool
@@ -692,7 +694,12 @@ void              evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+void              evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc,
+                                              int rot, int gw, int gh,
+                                              int cx, int cy, int cw, int ch,
+                                              int bitmask);
 void              evas_gl_common_context_done(Evas_Engine_GL_Context *gc);
+void              evas_gl_common_tiling_done(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc, Evas_GL_Image *surface);
 
 void              evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
@@ -818,7 +825,7 @@ void              evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_P
 
 void              evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int y2);
 
-int               evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* fname, int frame);
+int               evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* fname, int frame, const char* suffix);
 
 extern void       (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 extern void       (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);

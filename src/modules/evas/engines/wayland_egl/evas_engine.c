@@ -1231,13 +1231,15 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         if (swap_buffer_debug)
           {
              char fname[100];
+             char suffix[100];
              int ret = 0;
              sprintf(fname, "%p", (void*)re->win);
 
              ret = evas_gl_common_buffer_dump(re->win->gl_context,
                                               (const char*)dname,
                                               (const char*)fname,
-                                              re->frame_cnt);
+                                              re->frame_cnt,
+                                              suffix);
              if (!ret) swap_buffer_debug_mode = 0;
           }
      }
@@ -1272,31 +1274,31 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                     {
                      case 0:
                        rects[i + 0] = r->x;
-                       rects[i + 1] = gh - r->y;
+                       rects[i + 1] = gh - (r->y + r->h);
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
                      case 90:
                        rects[i + 0] = r->y;
-                       rects[i + 1] = gw - (gw - (r->x + r->w));
+                       rects[i + 1] = r->x;
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
                      case 180:
                        rects[i + 0] = gw - (r->x + r->w);
-                       rects[i + 1] = gh - (gh - (r->y + r->h));
+                       rects[i + 1] = r->y;
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
                      case 270:
                        rects[i + 0] = gh - (r->y + r->h);
-                       rects[i + 1] = gw - r->x;
+                       rects[i + 1] = gw - (r->x + r->w);
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
                      default:
                        rects[i + 0] = r->x;
-                       rects[i + 1] = gh - r->y;
+                       rects[i + 1] = gh - (r->y + r->h);
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;

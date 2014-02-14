@@ -56,7 +56,9 @@ void
 _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
 {
    EVGL_Context *ctx = NULL;
+   EVGL_Resource *rsc;
 
+   rsc = _evgl_tls_resource_get();
    ctx = _evgl_current_context_get();
 
    if (!ctx)
@@ -69,13 +71,35 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
    if (framebuffer==0)
      {
         if (_evgl_direct_enabled())
-           glBindFramebuffer(target, 0);
+          {
+             glBindFramebuffer(target, 0);
+
+             if (rsc->direct.partial.enabled)
+               {
+                  if (!ctx->partial_render)
+                    {
+                       evgl_direct_partial_render_start();
+                       ctx->partial_render = 1;
+                    }
+               }
+          }
         else
-           glBindFramebuffer(target, ctx->surface_fbo);
+          {
+             glBindFramebuffer(target, ctx->surface_fbo);
+          }
         ctx->current_fbo = 0;
      }
    else
      {
+        if (_evgl_direct_enabled())
+          {
+             if (ctx->current_fbo == 0)
+               {
+                  if (rsc->direct.partial.enabled)
+                     evgl_direct_partial_render_end();
+               }
+          }
+
         glBindFramebuffer(target, framebuffer);
 
         // Save this for restore when doing make current

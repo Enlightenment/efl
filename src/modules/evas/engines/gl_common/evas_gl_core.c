@@ -1409,7 +1409,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
 {
    EVGL_Surface *sfc = NULL;
    char *s = NULL;
-   int direct_override = 0;
+   int direct_override = 0, direct_mem_opt = 0;
 
    // Check if engine is valid
    if (!evgl_engine)
@@ -1440,6 +1440,16 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
            if (direct_override == 1)
               evgl_engine->direct_override = 1;
         }
+
+   // Check if Direct Rendering Memory Optimzation flag is on
+   // Creates resources on demand when it fallsback to fbo rendering
+   if (!evgl_engine->direct_mem_opt)
+     if ((s = getenv("EVAS_GL_DIRECT_MEM_OPT")))
+       {
+          direct_mem_opt = atoi(s);
+          if (direct_mem_opt == 1)
+             evgl_engine->direct_mem_opt = 1;
+       }
 
    // Allocate surface structure
    sfc = calloc(1, sizeof(EVGL_Surface));
@@ -1672,6 +1682,12 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    // Unset
    if ((!sfc) && (!ctx))
      {
+        if (rsc->current_ctx)
+          {
+             if (rsc->direct.partial.enabled)
+                evgl_direct_partial_render_end();
+          }
+
         if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
           {
              ERR("Error doing make_current(NULL, NULL).");
@@ -1687,6 +1703,12 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         return 1;
      }
 
+   // Disable partial rendering for previous context
+   if ((rsc->current_ctx) && (rsc->current_ctx != ctx))
+     {
+        evas_gl_common_tiling_done(NULL);
+        rsc->current_ctx->partial_render = 0;
+     }
 
    // Allocate or free resources depending on what mode (direct of fbo) it's
    // running only if the env var EVAS_GL_DIRECT_MEM_OPT is set.
@@ -1707,15 +1729,22 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           }
         else
           {
-             // Create internal buffers if not yet created
-             if (!sfc->buffers_allocated)
+             if (evgl_engine->direct_override)
                {
-                  if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 1))
+                  DBG("Not creating fallback surfaces even though it should. Use at OWN discretion!");
+               }
+             else
+               {
+                  // Create internal buffers if not yet created
+                  if (!sfc->buffers_allocated)
                     {
-                       ERR("Unable Create Specificed Surfaces.  Unsupported format!");
-                       return 0;
+                       if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 1))
+                         {
+                            ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+                            return 0;
+                         };
+                       sfc->buffers_allocated = 1;
                     }
-                  sfc->buffers_allocated = 1;
                }
           }
      }
@@ -1742,6 +1771,20 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              glBindFramebuffer(GL_FRAMEBUFFER, 0);
              ctx->current_fbo = 0;
           }
+
+        if (ctx->current_fbo == 0)
+          {
+             // If master clip is set and clip is greater than 0, do partial render
+             if (rsc->direct.partial.enabled)
+               {
+                  if (!ctx->partial_render)
+                    {
+                       evgl_direct_partial_render_start();
+                       ctx->partial_render = 1;
+                    }
+               }
+          }
+
         rsc->direct.rendered = 1;
      }
    else
@@ -1749,10 +1792,22 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         // Attach fbo and the buffers
         if (ctx->current_sfc != sfc)
           {
-             if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo))
+             if ((evgl_engine->direct_mem_opt) && (evgl_engine->direct_override))
                {
-                  ERR("Attaching buffers to context fbo failed. Engine: %p  Surface: %p Context FBO: %u", evgl_engine, sfc, ctx->surface_fbo);
-                  return 0;
+                  DBG("Not creating fallback surfaces even though it should. Use at OWN discretion!");
+               }
+             else
+               {
+                  // If it's transitioning from direct render to fbo render
+                  // Call end tiling
+                  if (rsc->direct.partial.enabled)
+                     evgl_direct_partial_render_end();
+
+                  if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo))
+                    {
+                       ERR("Attaching buffers to context fbo failed. Engine: %p  Surface: %p Context FBO: %u", evgl_engine, sfc, ctx->surface_fbo);
+                       return 0;
+                    }
                }
 
              // Bind to the previously bound buffer
@@ -1879,6 +1934,28 @@ evgl_api_get()
    return &gl_funcs;
 }
 
+
+void
+evgl_direct_partial_info_set(int pres)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   rsc->direct.partial.enabled  = EINA_TRUE;
+   rsc->direct.partial.preserve = pres;
+}
+
+void
+evgl_direct_partial_info_clear()
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   rsc->direct.partial.enabled = EINA_FALSE;
+}
+
 void
 evgl_direct_override_get(int *override, int *force_off)
 {
@@ -1886,6 +1963,41 @@ evgl_direct_override_get(int *override, int *force_off)
    *force_off = evgl_engine->direct_force_off;
 }
 
+void
+evgl_direct_partial_render_start()
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   evas_gl_common_tiling_start(NULL,
+                               rsc->direct.rot,
+                               rsc->direct.win_w,
+                               rsc->direct.win_h,
+                               rsc->direct.clip.x,
+                               rsc->direct.win_h - rsc->direct.clip.y - rsc->direct.clip.h,
+                               rsc->direct.clip.w,
+                               rsc->direct.clip.h,
+                               rsc->direct.partial.preserve);
+
+   if (!rsc->direct.partial.preserve)
+      rsc->direct.partial.preserve = GL_COLOR_BUFFER_BIT0_QCOM;
+}
+
+void
+evgl_direct_partial_render_end()
+{
+   EVGL_Context *ctx;
+   ctx = _evgl_current_context_get();
+
+   if (!ctx) return;
+
+   if (ctx->partial_render)
+     {
+        evas_gl_common_tiling_done(NULL);
+        ctx->partial_render = 0;
+     }
+}
 //-----------------------------------------------------//
 
 

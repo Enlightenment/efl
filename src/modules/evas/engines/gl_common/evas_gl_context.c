@@ -158,7 +158,8 @@ gl_symbols(void)
 
    FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", glsym_func_void);
    FINDSYM(glsym_glStartTiling, "glStartTiling", glsym_func_void);
-   
+   FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", glsym_func_void);
+
    FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTiling", glsym_func_void);
    
@@ -1044,6 +1045,43 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
    gc->h = h;
    if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc);
 }
+
+void
+evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc EINA_UNUSED,
+                            int rot, int gw, int gh,
+                            int cx, int cy, int cw, int ch,
+                            int bitmask)
+{
+   if (!glsym_glStartTiling) return;
+   switch (rot)
+     {
+      case 0: // UP this way: ^
+        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        break;
+      case 90: // UP this way: <
+        glsym_glStartTiling(gh - (cy + ch), cx, ch, cw, bitmask);
+        break;
+      case 180: // UP this way: v
+        glsym_glStartTiling(gw - (cx + cw), gh - (cy + ch), cw, ch, bitmask);
+        break;
+      case 270: // UP this way: >
+        glsym_glStartTiling(cy, gw - (cx + cw), ch, cw, bitmask);
+        break;
+      default: // assume up is up
+        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        break;
+     }
+}
+
+void
+evas_gl_common_tiling_done(Evas_Engine_GL_Context *gc EINA_UNUSED)
+{
+   if (glsym_glEndTiling)
+     {
+        glsym_glEndTiling(GL_COLOR_BUFFER_BIT0_QCOM);
+     }
+}
+
 
 void
 evas_gl_common_context_done(Evas_Engine_GL_Context *gc)
@@ -2836,10 +2874,16 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (!gc->master_clip.used)
                     {
                        if (!fbo)
-                         start_tiling(gc, gc->rot, gw, gh, 
-                                      gc->master_clip.x, 
-                                      gh - gc->master_clip.y - gc->master_clip.h,
-                                      gc->master_clip.w, gc->master_clip.h, 0);
+                         {
+                            start_tiling(gc, gc->rot, gw, gh,
+                                         gc->master_clip.x,
+                                         gh - gc->master_clip.y - gc->master_clip.h,
+                                         gc->master_clip.w, gc->master_clip.h,
+                                         gc->preserve_bit);
+
+                            if (!gc->preserve_bit)
+                               gc->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
+                         }
                        else
                          start_tiling(gc, 0, gw, gh, 
                                       gc->master_clip.x, gc->master_clip.y,
@@ -3195,14 +3239,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 }
 
 int
-evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* buf_name, int frame)
+evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* buf_name, int frame, const char *suffix)
 {
    RGBA_Image *im = NULL;
    DATA32 *data1, *data2;
    char fname[100];
    int ok = 0;
 
-   sprintf(fname, "./%s/evas_win_%s-fc_%03d.png", dname, buf_name, frame);
+   sprintf(fname, "./%s/win_%s-fc_%03d_%s.png", dname, buf_name, frame, suffix);
 
    data1 = (DATA32 *)malloc(gc->w * gc->h * sizeof(DATA32));
    data2 = (DATA32 *)malloc(gc->w * gc->h * sizeof(DATA32));

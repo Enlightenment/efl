@@ -1414,6 +1414,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    rect = (Tilebuf_Rect *)re->cur_rect;
    if (re->rects)
      {
+        re->win->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
+
         switch (re->mode)
           {
            case MODE_COPY:
@@ -1574,13 +1576,15 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         if (swap_buffer_debug)
           {
              char fname[100];
+             char suffix[100];
              int ret = 0;
              snprintf(fname, sizeof(fname), "%p", (void*)re->win);
 
              ret = evas_gl_common_buffer_dump(re->win->gl_context,
                                               (const char*)dname,
                                               (const char*)fname,
-                                              re->frame_cnt);
+                                              re->frame_cnt,
+                                              suffix);
              if (!ret) swap_buffer_debug_mode = 0;
           }
      }
@@ -1616,31 +1620,31 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                     {
                      case 0:
                        rects[i + 0] = r->x;
-                       rects[i + 1] = gh - r->y;
+                       rects[i + 1] = gh - (r->y + r->h);
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
                      case 90:
                        rects[i + 0] = r->y;
-                       rects[i + 1] = gw - (gw - (r->x + r->w));
+                       rects[i + 1] = r->x;
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
                      case 180:
                        rects[i + 0] = gw - (r->x + r->w);
-                       rects[i + 1] = gh - (gh - (r->y + r->h));
+                       rects[i + 1] = r->y;
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
                      case 270:
                        rects[i + 0] = gh - (r->y + r->h);
-                       rects[i + 1] = gw - r->x;
+                       rects[i + 1] = gw - (r->x + r->w);
                        rects[i + 2] = r->h;
                        rects[i + 3] = r->w;
                        break;
                      default:
                        rects[i + 0] = r->x;
-                       rects[i + 1] = gh - r->y;
+                       rects[i + 1] = gh - (r->y + r->h);
                        rects[i + 2] = r->w;
                        rects[i + 3] = r->h;
                        break;
@@ -3007,21 +3011,42 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
         re->win->gl_context->dc = context;
 
-        // Set necessary info for direct rendering
-        evgl_direct_info_set(re->win->gl_context->w,
-                             re->win->gl_context->h,
-                             re->win->gl_context->rot,
-                             dst_x, dst_y, dst_w, dst_h,
-                             re->win->gl_context->dc->clip.x,
-                             re->win->gl_context->dc->clip.y,
-                             re->win->gl_context->dc->clip.w,
-                             re->win->gl_context->dc->clip.h);
+        if (re->func.get_pixels)
+          {
+             if ((re->win->gl_context->master_clip.enabled) &&
+                 (re->win->gl_context->master_clip.w > 0) &&
+                 (re->win->gl_context->master_clip.h > 0))
+               {
+                  // Pass the preserve flag info the evas_gl
+                  evgl_direct_partial_info_set(re->win->gl_context->preserve_bit);
+               }
 
-        // Call pixel get function
-        re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
+             // Set necessary info for direct rendering
+             evgl_direct_info_set(re->win->gl_context->w,
+                                  re->win->gl_context->h,
+                                  re->win->gl_context->rot,
+                                  dst_x, dst_y, dst_w, dst_h,
+                                  re->win->gl_context->dc->clip.x,
+                                  re->win->gl_context->dc->clip.y,
+                                  re->win->gl_context->dc->clip.w,
+                                  re->win->gl_context->dc->clip.h);
 
-        // Clear direct rendering info
-        evgl_direct_info_clear();
+             // Call pixel get function
+             re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
+
+             // Call end tile if it's being used
+             if ((re->win->gl_context->master_clip.enabled) &&
+                 (re->win->gl_context->master_clip.w > 0) &&
+                 (re->win->gl_context->master_clip.h > 0))
+               {
+                  evgl_direct_partial_render_end();
+                  evgl_direct_partial_info_clear();
+                  re->win->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
+               }
+
+             // Reset direct rendering info
+             evgl_direct_info_clear();
+          }
      }
    else
      {
@@ -3278,10 +3303,23 @@ eng_gl_context_destroy(void *data, void *context)
 static int
 eng_gl_make_current(void *data, void *surface, void *context)
 {
+   Render_Engine *re  = (Render_Engine *)data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
    EVGLINIT(data, 0);
+   if ((sfc) && (ctx))
+     {
+        if ((re->win->gl_context->havestuff) ||
+            (re->win->gl_context->master_clip.used))
+          {
+             eng_window_use(re->win);
+             evas_gl_common_context_flush(re->win->gl_context);
+             if (re->win->gl_context->master_clip.used)
+                evas_gl_common_context_done(re->win->gl_context);
+          }
+     }
+
    return evgl_make_current(data, sfc, ctx);
 }
 
@@ -3544,8 +3582,14 @@ eng_context_flush(void *data)
    Render_Engine *re;
    re = (Render_Engine *)data;
 
-   eng_window_use(re->win);
-   evas_gl_common_context_flush(re->win->gl_context);
+   if ((re->win->gl_context->havestuff) ||
+     (re->win->gl_context->master_clip.used))
+   {
+      eng_window_use(re->win);
+      evas_gl_common_context_flush(re->win->gl_context);
+      if (re->win->gl_context->master_clip.used)
+         evas_gl_common_context_done(re->win->gl_context);
+   }
 }
 
 static int

@@ -134,6 +134,9 @@ struct _EVGL_Context
    int          viewport_updated;
    int          viewport_coord[4];
 
+   // Partial Rendering
+   int          partial_render;
+
    EVGL_Surface *current_sfc;
 };
 
@@ -225,9 +228,14 @@ struct _EVGL_Resource
              int             x, y, w, h;
         } clip;
 
-        Eina_Bool            enabled : 1;
+        struct {
+             int             preserve;
+             Eina_Bool       enabled : 1;
+        } partial;
 
+        Eina_Bool            enabled : 1;
    } direct;
+
 };
 
 struct _EVGL_Engine
