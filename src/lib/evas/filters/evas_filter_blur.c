@@ -567,7 +567,7 @@ static void
 _gaussian_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div;
+   int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
 
@@ -588,7 +588,7 @@ static void
 _gaussian_blur_vert_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div;
+   int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
 
@@ -609,7 +609,7 @@ static void
 _gaussian_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div;
+   int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
 
@@ -630,7 +630,7 @@ static void
 _gaussian_blur_vert_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div;
+   int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
 

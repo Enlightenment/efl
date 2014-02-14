@@ -62,7 +62,7 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
    return ctx;
 }
 
-/** @hidden private function to reset the filter context */
+/* Private function to reset the filter context. Used from parser.c */
 void
 evas_filter_context_clear(Evas_Filter_Context *ctx)
 {
