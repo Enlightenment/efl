@@ -437,7 +437,7 @@ eina_rectangle_pool_request(Eina_Rectangle_Pool *pool, int w, int h)
       return NULL;
 
    /* Sort empty if dirty */
-   if (pool->sorted)
+   if (!pool->sorted)
      {
         pool->empty =
            eina_list_sort(pool->empty, 0, EINA_COMPARE_CB(_eina_rectangle_cmp));
