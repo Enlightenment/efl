@@ -1,0 +1,9 @@
+if HAVE_EOLIAN_GEN
+EOLIAN_GEN = @eolian_gen@
+else
+EOLIAN_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
+endif
+
+AM_V_EOL = $(am__v_EOL_@AM_V@)
+am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
+am__v_EOL_0 = @echo "  EOLIAN   " $@;

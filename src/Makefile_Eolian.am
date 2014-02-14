@@ -38,17 +38,7 @@ bin_eolian_eolian_gen_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
 bin_eolian_eolian_gen_LDADD = @USE_EOLIAN_LIBS@
 bin_eolian_eolian_gen_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
-
 ### Helper for other modules using Eolian
-
-if HAVE_EOLIAN_GEN
-EOLIAN_GEN = @eolian_gen@
-else
-EOLIAN_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
-endif
-
-AM_V_EOL = $(am__v_EOL_@AM_V@)
-am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
-am__v_EOL_0 = @echo "  EOLIAN   " $@;
+include Makefile_Eolian_Helper.am
 
 EXTRA_DIST += lib/eolian/eo_lexer.rl
