@@ -3470,19 +3470,32 @@ _on_edje_move(void *data,
 
 static void
 _on_edje_resize(void *data,
-                Evas *e EINA_UNUSED,
+                Evas *e,
                 Evas_Object *edje_obj,
                 void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
-   int w, h;
+   Evas_Coord w, h;
+   int current_calc;
+   Eina_Bool reconf_ok = EINA_TRUE;
 
    evas_object_geometry_get(edje_obj, NULL, NULL, &w, &h);
 
    sid->w = w;
    sid->h = h;
 
-   _elm_scroll_reconfigure(sid);
+   current_calc = evas_smart_objects_calculate_count_get(e);
+   if (current_calc == sid->current_calc)
+     {
+        sid->size_count++;
+        if (sid->size_count > 3) reconf_ok = EINA_FALSE;
+     }
+   else
+     {
+        sid->current_calc = current_calc;
+        sid->size_count = 0;
+     }
+   if (reconf_ok) _elm_scroll_reconfigure(sid);
    _elm_scroll_wanted_region_set(sid->obj);
 }
 

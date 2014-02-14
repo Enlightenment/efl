@@ -1193,8 +1193,10 @@ struct _Elm_Scrollable_Smart_Interface_Data
    double     pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
    int        page_limit_h, page_limit_v;
+   int        current_calc;
 
    unsigned char size_adjust_recurse;
+   unsigned char size_count;
    Eina_Bool  size_adjust_recurse_abort : 1;
 
    Eina_Bool  momentum_animator_disabled : 1;
