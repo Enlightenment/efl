@@ -95,6 +95,7 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
         for (x = 0, map_x = 0; x < w; x++, dst++, src++, map_x++)
           {
              int offx = 0, offy = 0, offx_dec = 0, offy_dec = 0, val = 0;
+             DATA32 col = 0;
              Eina_Bool out = 0;
 
              // wrap (x)
@@ -121,16 +122,16 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
 
              // get value
              if (out && !stretch)
-               val = A_VAL(src + offx + offy * w) << (ALPHA * 8);
+               col = A_VAL(src + offx + offy * w) << (ALPHA * 8);
              else if (!smooth)
-               val = src[offx + offy * w];
+               col = src[offx + offy * w];
              else
                {
                   int R, G, B, A;
                   DATA32 s00, s01, s10, s11; // indexes represent x,y
                   int mul00, mul01, mul10, mul11;
 
-                  mul00 = (128 - offx_dec) * (128 * offy_dec);
+                  mul00 = (128 - offx_dec) * (128 - offy_dec);
                   mul01 = (128 - offx_dec) * offy_dec;
                   mul10 = offx_dec * (128 - offy_dec);
                   mul11 = offx_dec * offy_dec;
@@ -152,18 +153,24 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
                   B = (BLUE_OF(s00) * mul00) + (BLUE_OF(s10) * mul10)
                         + (BLUE_OF(s01) * mul01) + (BLUE_OF(s11) * mul11);
 
+                  A >>= 14;
                   R >>= 14;
                   G >>= 14;
                   B >>= 14;
 
-                  val = ARGB_JOIN(A, R, G, B);
+                  col = ARGB_JOIN(A, R, G, B);
                }
 
-             // apply alpha
-             if (blend && map[ALPHA] != 0xFF)
-               *dst = INTERP_256(map[ALPHA], val, *dst);
+             if (map[ALPHA] != 0xFF)
+               col = MUL_256(map[ALPHA], col);
+
+             if (blend)
+               {
+                  DATA32 a = 256 - ALPHA_OF(col);
+                  *dst = col + MUL_256(a, *dst);
+               }
              else
-               *dst = val;
+               *dst = col;
           }
      }
 }
