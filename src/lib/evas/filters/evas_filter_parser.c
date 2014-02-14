@@ -1246,7 +1246,7 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
 
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static void
@@ -1619,7 +1619,7 @@ _instruction_create(const char *name)
    Evas_Filter_Instruction *instr;
    Eina_Bool (* prepare) (Evas_Filter_Instruction *) = NULL;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(name && *name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(name && *name, NULL);
 
    if (!strcasecmp(name, "blend"))
      prepare = _blend_instruction_prepare;
@@ -1649,7 +1649,12 @@ _instruction_create(const char *name)
    instr = _instruction_new(name);
    if (!instr) return NULL;
 
-   prepare(instr);
+   if (!prepare(instr))
+     {
+        CRI("Failed to prepare instruction '%s'. Check the code.", name);
+        _instruction_del(instr);
+        return NULL;
+     }
    return instr;
 }
 
