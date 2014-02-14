@@ -77,20 +77,20 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
 
 static void
 _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
-                             DATA32 *src, DATA32 *dst, DATA8 *map_start,
+                             DATA32 *src, DATA32 *dst, DATA32 *map_start,
                              Eina_Bool stretch, Eina_Bool smooth,
                              Eina_Bool blend)
 {
    int x, y, map_x, map_y;
-   const int map_stride = sizeof(DATA32) * map_w;
    const int dx = RED;
    const int dy = GREEN;
+   Eina_Bool unpremul = EINA_FALSE;
    DATA8 *map;
 
    for (y = 0, map_y = 0; y < h; y++, map_y++)
      {
         if (map_y >= map_h) map_y = 0;
-        map = map_start + (map_y * map_stride);
+        map = (DATA8 *) (map_start + map_y * map_w);
 
         for (x = 0, map_x = 0; x < w; x++, dst++, src++, map_x++)
           {
@@ -102,9 +102,16 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
              if (map_x >= map_w)
                {
                   map_x = 0;
-                  map = map_start + (map_y * map_stride);
+                  map = (DATA8 *) (map_start + map_y * map_w);
                }
              else map += sizeof(DATA32);
+
+             if (!map[ALPHA]) continue;
+             if (!unpremul && map[ALPHA] != 0xFF)
+               {
+                  unpremul = EINA_TRUE;
+                  evas_data_argb_unpremul(map_start, map_w * map_h);
+               }
 
              // x
              val = ((int) map[dx] - 128) * intensity;
@@ -173,6 +180,9 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
                *dst = col;
           }
      }
+
+   if (unpremul)
+     evas_data_argb_premul(map_start, map_w * map_h);
 }
 
 /**
@@ -226,8 +236,7 @@ static Eina_Bool
 _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
 {
    int w, h, map_w, map_h, intensity;
-   DATA32 *dst, *src;
-   DATA8 *map_start;
+   DATA32 *dst, *src, *map_start;
    Eina_Bool stretch, smooth, blend;
 
    w = cmd->input->w;
@@ -239,7 +248,7 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
    src = ((RGBA_Image *) cmd->input->backing)->image.data;
-   map_start = ((RGBA_Image *) cmd->mask->backing)->mask.data;
+   map_start = ((RGBA_Image *) cmd->mask->backing)->image.data;
    dst = ((RGBA_Image *) cmd->output->backing)->image.data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(map_start, EINA_FALSE);
