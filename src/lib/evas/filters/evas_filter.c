@@ -876,6 +876,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         if (!convert && (ox || oy))
           {
              copybuf = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
+             if (!copybuf) goto fail;
              copy_back = EINA_TRUE;
           }
 
@@ -960,6 +961,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    if (copy_back)
      {
         if (!cmd) goto fail;
+        if (!copybuf) goto fail;
         INF("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
         id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
