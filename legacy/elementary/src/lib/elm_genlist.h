@@ -1,5 +1,5 @@
 /**
- * @defgroup Genlist Genlist
+ * @defgroup Genlist Genlist (Generic list)
  * @ingroup Elementary
  *
  * @image html genlist_inheritance_tree.png
