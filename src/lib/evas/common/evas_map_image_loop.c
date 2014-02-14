@@ -39,7 +39,12 @@
         DATA32 val1, val2, val3, val4;
 
         u1 = u;
+        if (u1 < 0) u1 = 0;
+        else if (u1 >= swp) u1 = swp - 1;
+
         v1 = v;
+        if (v1 < 0) v1 = 0;
+        else if (v1 >= shp) v1 = shp - 1;
 
         u2 = u1 + FPFPI1;      // next u point
         if (u2 >= swp) u2 = swp - 1;
