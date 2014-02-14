@@ -88,8 +88,8 @@ main_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_
    ecore_main_loop_quit();
    EINA_LIST_FREE(video_objs, o)
      {
-	emotion_object_last_position_save(o);
-	evas_object_del(o);
+        emotion_object_last_position_save(o);
+        evas_object_del(o);
      }
    return EINA_TRUE;
 }
@@ -213,120 +213,120 @@ bg_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      broadcast_event(EMOTION_EVENT_10);
    else if (!strcmp(ev->keyname, "bracketleft"))
      {
-	EINA_LIST_FOREACH(video_objs, l, o)
-	  emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) - 0.1);
+        EINA_LIST_FOREACH(video_objs, l, o)
+          emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) - 0.1);
      }
    else if (!strcmp(ev->keyname, "bracketright"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
-	  emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) + 0.1);
+          emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) + 0.1);
      }
    else if (!strcmp(ev->keyname, "v"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
-	  {
-	     if (emotion_object_video_mute_get(o))
-	       emotion_object_video_mute_set(o, 0);
-	     else
-	       emotion_object_video_mute_set(o, 1);
-	  }
+          {
+             if (emotion_object_video_mute_get(o))
+               emotion_object_video_mute_set(o, 0);
+             else
+               emotion_object_video_mute_set(o, 1);
+          }
      }
    else if (!strcmp(ev->keyname, "a"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
-	  {
-	     if (emotion_object_audio_mute_get(o))
-	       {
-		  emotion_object_audio_mute_set(o, 0);
-		  printf("unmute\n");
-	       }
-	     else
-	       {
-		  emotion_object_audio_mute_set(o, 1);
-		  printf("mute\n");
-	       }
-	  }
+          {
+            if (emotion_object_audio_mute_get(o))
+              {
+                 emotion_object_audio_mute_set(o, 0);
+                 printf("unmute\n");
+              }
+            else
+              {
+                 emotion_object_audio_mute_set(o, 1);
+                 printf("mute\n");
+              }
+          }
      }
    else if (!strcmp(ev->keyname, "i"))
      {
-	EINA_LIST_FOREACH(video_objs, l, o)
-	  {
-	     printf("audio channels: %i\n", emotion_object_audio_channel_count(o));
-	     printf("video channels: %i\n", emotion_object_video_channel_count(o));
-	     printf("spu channels: %i\n", emotion_object_spu_channel_count(o));
-	     printf("seekable: %i\n", emotion_object_seekable_get(o));
-	  }
+        EINA_LIST_FOREACH(video_objs, l, o)
+          {
+             printf("audio channels: %i\n", emotion_object_audio_channel_count(o));
+             printf("video channels: %i\n", emotion_object_video_channel_count(o));
+             printf("spu channels: %i\n", emotion_object_spu_channel_count(o));
+             printf("seekable: %i\n", emotion_object_seekable_get(o));
+          }
      }
    else if (!strcmp(ev->keyname, "f"))
      {
-	if (!ecore_evas_fullscreen_get(ecore_evas))
-	  ecore_evas_fullscreen_set(ecore_evas, 1);
-	else
-	  ecore_evas_fullscreen_set(ecore_evas, 0);
+       if (!ecore_evas_fullscreen_get(ecore_evas))
+         ecore_evas_fullscreen_set(ecore_evas, 1);
+       else
+         ecore_evas_fullscreen_set(ecore_evas, 0);
      }
    else if (!strcmp(ev->keyname, "d"))
      {
-	if (!ecore_evas_avoid_damage_get(ecore_evas))
-	  ecore_evas_avoid_damage_set(ecore_evas, 1);
-	else
-	  ecore_evas_avoid_damage_set(ecore_evas, 0);
+        if (!ecore_evas_avoid_damage_get(ecore_evas))
+          ecore_evas_avoid_damage_set(ecore_evas, 1);
+        else
+          ecore_evas_avoid_damage_set(ecore_evas, 0);
      }
    else if (!strcmp(ev->keyname, "s"))
      {
-	if (!ecore_evas_shaped_get(ecore_evas))
-	  {
-	     ecore_evas_shaped_set(ecore_evas, 1);
-	     evas_object_hide(o_bg);
-	  }
-	else
-	  {
-	     ecore_evas_shaped_set(ecore_evas, 0);
-	     evas_object_show(o_bg);
-	  }
+        if (!ecore_evas_shaped_get(ecore_evas))
+          {
+             ecore_evas_shaped_set(ecore_evas, 1);
+             evas_object_hide(o_bg);
+          }
+        else
+          {
+             ecore_evas_shaped_set(ecore_evas, 0);
+             evas_object_show(o_bg);
+          }
      }
    else if (!strcmp(ev->keyname, "b"))
      {
-	if (!ecore_evas_borderless_get(ecore_evas))
-	  ecore_evas_borderless_set(ecore_evas, 1);
-	else
-	  ecore_evas_borderless_set(ecore_evas, 0);
+        if (!ecore_evas_borderless_get(ecore_evas))
+          ecore_evas_borderless_set(ecore_evas, 1);
+        else
+          ecore_evas_borderless_set(ecore_evas, 0);
      }
    else if (!strcmp(ev->keyname, "q"))
      {
-	ecore_main_loop_quit();
-	while (video_objs)
-	  {
-	     printf("del obj!\n");
-	     evas_object_del(video_objs->data);
-	     video_objs = eina_list_remove_list(video_objs, video_objs);
-	     printf("done\n");
-	  }
+        ecore_main_loop_quit();
+        while (video_objs)
+          {
+             printf("del obj!\n");
+             evas_object_del(video_objs->data);
+             video_objs = eina_list_remove_list(video_objs, video_objs);
+             printf("done\n");
+          }
      }
    else if (!strcmp(ev->keyname, "z"))
      {
-	vis = (vis + 1) % EMOTION_VIS_LAST;
-	printf("new visualization: %d\n", vis);
+        vis = (vis + 1) % EMOTION_VIS_LAST;
+        printf("new visualization: %d\n", vis);
 
-	EINA_LIST_FOREACH(video_objs, l, o)
-	  {
-	     Eina_Bool supported;
+        EINA_LIST_FOREACH(video_objs, l, o)
+          {
+             Eina_Bool supported;
 
-	     supported = emotion_object_vis_supported(o, vis);
-	     if (supported)
-	       emotion_object_vis_set(o, vis);
-	     else
-	       {
-		  const char *file;
+             supported = emotion_object_vis_supported(o, vis);
+             if (supported)
+               emotion_object_vis_set(o, vis);
+             else
+               {
+                  const char *file;
 
-		  file = emotion_object_file_get(o);
-		  printf("object %p (%s) does not support visualization %d\n",
-			 o, file, vis);
-	       }
-	  }
+                  file = emotion_object_file_get(o);
+                  printf("object %p (%s) does not support visualization %d\n",
+                  o, file, vis);
+               }
+          }
      }
    else
      {
-	printf("UNHANDLED: %s\n", ev->keyname);
+        printf("UNHANDLED: %s\n", ev->keyname);
      }
 }
 
@@ -356,7 +356,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
    ps = pos - (pm * 60);
    pf = pos * 100 - (ps * 100) - (pm * 60 * 100) - (ph * 60 * 60 * 100);
    snprintf(buf, sizeof(buf), "%i:%02i:%02i.%02i / %i:%02i:%02i",
-	    ph, pm, ps, pf, lh, lm, ls);
+            ph, pm, ps, pf, lh, lm, ls);
    edje_object_part_text_set(edje, "video_progress_txt", buf);
 }
 
@@ -367,11 +367,11 @@ video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
 
    if (0)
      {
-	double t;
-	static double pt = 0.0;
-	t = ecore_time_get();
-	printf("FPS: %3.3f\n", 1.0 / (t - pt));
-	pt = t;
+        double t;
+        static double pt = 0.0;
+        t = ecore_time_get();
+        printf("FPS: %3.3f\n", 1.0 / (t - pt));
+        pt = t;
      }
 }
 
@@ -420,9 +420,9 @@ static void
 video_obj_channels_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("channels changed: [AUD %i][VID %i][SPU %i]\n",
-	  emotion_object_audio_channel_count(obj),
-	  emotion_object_video_channel_count(obj),
-	  emotion_object_spu_channel_count(obj));
+          emotion_object_audio_channel_count(obj),
+          emotion_object_video_channel_count(obj),
+          emotion_object_spu_channel_count(obj));
 }
 
 static void
@@ -435,30 +435,30 @@ static void
 video_obj_progress_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("progress: \"%s\" %3.3f\n",
-	  emotion_object_progress_info_get(obj),
-	  emotion_object_progress_status_get(obj));
+          emotion_object_progress_info_get(obj),
+          emotion_object_progress_status_get(obj));
 }
 
 static void
 video_obj_ref_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("video ref to: \"%s\" %i\n",
-	  emotion_object_ref_file_get(obj),
-	  emotion_object_ref_num_get(obj));
+          emotion_object_ref_file_get(obj),
+          emotion_object_ref_num_get(obj));
 }
 
 static void
 video_obj_button_num_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("video spu buttons to: %i\n",
-	  emotion_object_spu_button_count_get(obj));
+          emotion_object_spu_button_count_get(obj));
 }
 
 static void
 video_obj_button_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("video selected spu button: %i\n",
-	  emotion_object_spu_button_get(obj));
+          emotion_object_spu_button_get(obj));
 }
 
 
@@ -569,23 +569,23 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
    fd = evas_object_data_get(o, "frame_data");
    if (fd->moving)
      {
-	Evas_Coord x, y, ox, oy;
+        Evas_Coord x, y, ox, oy;
 
-	evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
-	evas_object_geometry_get(o, &ox, &oy, NULL, NULL);
-	evas_object_move(o, ox + (x - fd->x), oy + (y - fd->y));
-	fd->x = x;
-	fd->y = y;
+        evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+        evas_object_geometry_get(o, &ox, &oy, NULL, NULL);
+        evas_object_move(o, ox + (x - fd->x), oy + (y - fd->y));
+        fd->x = x;
+        fd->y = y;
      }
    else if (fd->resizing)
      {
-	Evas_Coord x, y, ow, oh;
+        Evas_Coord x, y, ow, oh;
 
-	evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
-	evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
-	evas_object_resize(o, ow + (x - fd->x), oh + (y - fd->y));
-	fd->x = x;
-	fd->y = y;
+        evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+        evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
+        evas_object_resize(o, ow + (x - fd->x), oh + (y - fd->y));
+        fd->x = x;
+        fd->y = y;
      }
 }
 
