@@ -60,7 +60,7 @@ _usage(const char *argv0, FILE *f)
 int
 main(int argc, char **argv)
 {
-   Widget_Preview_Data wpd = { NULL, NULL, NULL };
+   Widget_Preview_Data wpd = { NULL, NULL, NULL, NULL };
    const char *font = "Sans";
    const char *filter, *text;
    int fontsize = 32;
