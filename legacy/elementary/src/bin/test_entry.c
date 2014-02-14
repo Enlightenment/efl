@@ -839,7 +839,7 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
       "<em>Change a standard tag (backing)</em><br>"
       "<grn>Create a custom tag (green)</grn><br>"
       "<ul>Create a custom tag (underline)</ul><br>"
-      "<underline=double underline_color=#0F0 underline2_color=#00F>Unnamed tag (underline double)</><br>"
+      "<underline=double underline_color=#0F0 underline2_color=#00F>Unnamed tag (underline double)</underline><br>"
       );
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -873,7 +873,7 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_object_focus_allow_set(bt2, EINA_FALSE);
    evas_object_show(bt2);
 
-   evas_object_resize(win, 300, 100);
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
 
