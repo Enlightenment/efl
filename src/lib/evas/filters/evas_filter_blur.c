@@ -452,6 +452,7 @@ _gaussian_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step,
              acc += (*s) * weights[j + radius - k];
              divider += weights[j + radius - k];
           }
+        if (!divider) goto div_zero;
         *dst = acc / divider;
      }
 
@@ -476,8 +477,14 @@ _gaussian_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step,
              acc += (*s) * weights[j];
              divider += weights[j];
           }
+        if (!divider) goto div_zero;
         *dst = acc / divider;
      }
+
+   return;
+
+div_zero:
+   CRI("Division by zero avoided! Something is very wrong here!");
 }
 
 static void
@@ -504,6 +511,7 @@ _gaussian_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step
              acc[BLUE]  += B_VAL(s) * weights[weightidx];
              divider += weights[weightidx];
           }
+        if (!divider) goto div_zero;
         A_VAL(dst) = acc[ALPHA] / divider;
         R_VAL(dst) = acc[RED]   / divider;
         G_VAL(dst) = acc[GREEN] / divider;
@@ -542,11 +550,17 @@ _gaussian_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step
              acc[BLUE]  += B_VAL(s) * weights[j];
              divider += weights[j];
           }
+        if (!divider) goto div_zero;
         A_VAL(dst) = acc[ALPHA] / divider;
         R_VAL(dst) = acc[RED]   / divider;
         G_VAL(dst) = acc[GREEN] / divider;
         B_VAL(dst) = acc[BLUE]  / divider;
      }
+
+   return;
+
+div_zero:
+   CRI("Division by zero avoided! Something is very wrong here!");
 }
 
 static void
