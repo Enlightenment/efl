@@ -569,7 +569,7 @@ _cserve2_requests_process(void)
                  requests[rtype].processing, EINA_INLIST_GET(req));
 
               if (!(*idle))
-                sw = _slave_for_request_create(type);
+                _slave_for_request_create(type);
 
               if (!(*idle))
                 {
