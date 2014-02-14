@@ -2079,6 +2079,7 @@ _instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    Buffer *buf;
    int R, G, B, A, l, r, t, b;
    Evas_Filter_Command *cmd;
+   Eina_Inlist *il;
    DATA32 color;
    int cmdid;
 
@@ -2095,7 +2096,11 @@ _instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    cmdid = evas_filter_command_fill_add(ctx, dc, buf->cid);
    RESETCOLOR();
 
-   cmd = EINA_INLIST_CONTAINER_GET(eina_inlist_last(ctx->commands), Evas_Filter_Command);
+   if (cmdid < 0) return -1;
+   il = eina_inlist_last(ctx->commands);
+   if (!il) return -1;
+
+   cmd = EINA_INLIST_CONTAINER_GET(il, Evas_Filter_Command);
    cmd->draw.clip.l = l;
    cmd->draw.clip.r = r;
    cmd->draw.clip.t = t;
