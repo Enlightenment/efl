@@ -667,7 +667,7 @@ init_video_object(const char *module_filename, const char *filename)
    edje_object_signal_callback_add(oe, "mouse,move", "*", video_obj_signal_frame_move_cb, oe);
 
    edje_object_part_drag_value_set(oe, "video_speed", 0.0, 1.0);
-   edje_object_part_text_set(oe, "video_speed_txt", "1.0");
+   edje_object_part_text_set(oe, "video_speed_txt", "255");
 
    edje_object_signal_emit(o, "video_state", "play");
 

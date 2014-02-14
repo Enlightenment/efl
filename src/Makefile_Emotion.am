@@ -195,6 +195,9 @@ EMOTION_DATA_FILES = \
 tests/emotion/data/bpause.png \
 tests/emotion/data/bplay.png \
 tests/emotion/data/bstop.png \
+tests/emotion/data/icon_pause.png \
+tests/emotion/data/icon_play.png \
+tests/emotion/data/icon_stop.png \
 tests/emotion/data/e_logo.png \
 tests/emotion/data/fr1.png \
 tests/emotion/data/fr2.png \

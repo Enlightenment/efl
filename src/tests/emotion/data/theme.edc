@@ -26,6 +26,9 @@ images {
   image: "bplay.png"               COMP;
   image: "bstop.png"               COMP;
   image: "pnl.png"                 COMP;
+  image: "icon_pause.png"          COMP;
+  image: "icon_play.png"           COMP;
+  image: "icon_stop.png"           COMP;
 }
 
 collections {
@@ -812,14 +815,14 @@ collections {
          part { name: "video_speed_confine"; mouse_events: 0; type:  RECT;
             description { state: "default" 0.0;
                rel1 {
-                  to:       "video_frame_left";
-                  relative: 1.0  0.0;
+                  to:       "video_frame_right";
+                  relative: 0.0  0.0;
                   offset:   0    24;
                }
                rel2 {
-                  to:       "video_frame_left";
-                  relative: 1.0  1.0;
-                  offset:   48   -49;
+                  to:       "video_frame_right";
+                  relative: 0.5  1.0;
+                  offset:   0   -48;
                }
                color: 0 0 0 0;
             }
@@ -855,15 +858,15 @@ collections {
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 0.0  0.5;
-                  offset:   0    0;
+                  offset:   2    -20;
                }
                rel2 {
                   to:       "video_frame_bottom";
                   relative: 0.0  0.5;
-                  offset:   0    0;
+                  offset:   2    -20;
                }
                image {
-                  normal: "knob.png";
+                  normal: "icon_play.png";
                }
             }
          }
@@ -874,15 +877,15 @@ collections {
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 0.5  0.5;
-                  offset:   0    0;
+                  offset:   0    -20;
                }
                rel2 {
                   to:       "video_frame_bottom";
                   relative: 0.5  0.5;
-                  offset:   0    0;
+                  offset:   0    -20;
                }
                image {
-                  normal: "knob.png";
+                  normal: "icon_pause.png";
                }
             }
          }
@@ -893,15 +896,15 @@ collections {
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 1.0  0.5;
-                  offset:   0    0;
+                  offset:   -2    -20;
                }
                rel2 {
                   to:       "video_frame_bottom";
                   relative: 1.0  0.5;
-                  offset:   0    0;
+                  offset:   -2    -20;
                }
                image {
-                  normal: "knob.png";
+                  normal: "icon_stop.png";
                }
             }
          }
@@ -938,15 +941,14 @@ collections {
          part { name: "video_progress_txt"; type: TEXT; mouse_events: 0;
             effect: OUTLINE;
             description { state: "default" 0.0;
-               align: 1.0 1.0;
                fixed: 1 1;
                rel1 {
-                  relative: 1.0  1.0;
-                  offset:   -2    -2;
+                  relative: 0.0  0.0;
+                  offset:   0    0;
                }
                rel2 {
                   relative: 1.0  1.0;
-                  offset:   -2   -2;
+                  offset:   0    0;
                }
                color:       255 255 255 255;
                color2:      0 0 0 255;
@@ -954,7 +956,7 @@ collections {
                   text: "XX:XX:XX / XX:XX:XX";
                   font: "Sans";
                   size: 10;
-                  align: 1.0 1.0;
+                  align: 0.5 1.0;
                   min: 1 1;
                };
             }
@@ -1225,14 +1227,14 @@ collections {
          part { name: "video_speed_confine"; mouse_events: 0; type:  RECT;
             description { state: "default" 0.0;
                rel1 {
-                  to:       "video_frame_left";
-                  relative: 1.0  0.0;
+                  to:       "video_frame_right";
+                  relative: 0.0  0.0;
                   offset:   0    24;
                }
                rel2 {
-                  to:       "video_frame_left";
-                  relative: 1.0  1.0;
-                  offset:   48   -49;
+                  to:       "video_frame_right";
+                  relative: 0.5  1.0;
+                  offset:   0   -48;
                }
                color: 0 0 0 0;
             }
@@ -1268,35 +1270,34 @@ collections {
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 0.0  0.5;
-                  offset:   0    0;
+                  offset:   2    -20;
                }
                rel2 {
                   to:       "video_frame_bottom";
                   relative: 0.0  0.5;
-                  offset:   0    0;
+                  offset:   2    -20;
                }
                image {
-                  normal: "knob.png";
+                  normal: "icon_play.png";
                }
             }
          }
-         part { name: "video_pause";
-            mouse_events: 1;
+         part { name: "video_pause"; mouse_events: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 0.5  0.5;
-                  offset:   0    0;
+                  offset:   0    -20;
                }
                rel2 {
                   to:       "video_frame_bottom";
                   relative: 0.5  0.5;
-                  offset:   0    0;
+                  offset:   0    -20;
                }
                image {
-                  normal: "knob.png";
+                  normal: "icon_pause.png";
                }
             }
          }
@@ -1307,15 +1308,15 @@ collections {
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 1.0  0.5;
-                  offset:   0    0;
+                  offset:   -2    -20;
                }
                rel2 {
                   to:       "video_frame_bottom";
                   relative: 1.0  0.5;
-                  offset:   0    0;
+                  offset:   -2    -20;
                }
                image {
-                  normal: "knob.png";
+                  normal: "icon_stop.png";
                }
             }
          }
@@ -1352,15 +1353,14 @@ collections {
          part { name: "video_progress_txt"; type: TEXT; mouse_events: 0;
             effect: OUTLINE;
             description { state: "default" 0.0;
-               align: 1.0 1.0;
                fixed: 1 1;
                rel1 {
-                  relative: 1.0  1.0;
-                  offset:   -2    -2;
+                  relative: 0.0  0.0;
+                  offset:   0    0;
                }
                rel2 {
                   relative: 1.0  1.0;
-                  offset:   -2   -2;
+                  offset:   0    0;
                }
                color:       255 255 255 255;
                color2:      0 0 0 255;
@@ -1368,7 +1368,7 @@ collections {
                   text: "XX:XX:XX / XX:XX:XX";
                   font: "Sans";
                   size: 10;
-                  align: 1.0 1.0;
+                  align: 0.5 1.0;
                   min: 1 1;
                };
             }
