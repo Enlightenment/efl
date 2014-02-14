@@ -29,14 +29,10 @@ images {
 }
 
 collections {
-   group {
-      name: "background";
+   group { name: "background";
       parts {
-         part {
-            name: "bg";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "bg"; mouse_events: 0;
+            description { state: "default" 0.0;
                color_class: "background";
                rel1 {
                   relative: 0.0  0.0;
@@ -63,11 +59,8 @@ collections {
             }
          }
 /*       
-         part {
-            name: "logo";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "logo"; mouse_events: 0;
+            description { state: "default" 0.0;
                min:   120 140;
                rel1 {
                   relative: 0.0  0.0;
@@ -83,11 +76,8 @@ collections {
             }
          }
  */
-         part {
-            name: "shadow";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "shadow"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   0    0;
@@ -104,8 +94,7 @@ collections {
       }
    }
 #if 0
-   group {
-      name: "video_controller";
+   group { name: "video_controller";
       parts {
          // need swallow parts:
          // "video_swallow"
@@ -117,13 +106,9 @@ collections {
          // need dragables:
          // "video_progress" horizontal
          // "video_speed" vertical
-         part {
-            name: "video_swallow";
-            mouse_events: 0;
-            type:  SWALLOW;
+         part { name: "video_swallow"; mouse_events: 0; type: SWALLOW;
             clip_to: "vclip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "fr_c1";
                   relative: 0.0  0.0;
@@ -136,12 +121,8 @@ collections {
                }
             }
          }
-         part {
-            name: "vclip";
-            mouse_events: 0;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "vclip"; mouse_events: 0; type: RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "fr_c1";
                   relative: 0.0  0.0;
@@ -154,8 +135,7 @@ collections {
                }
                color: 255 255 255 255;
             }
-            description {
-               state: "faded" 0.0;
+            description { state: "faded" 0.0;
                rel1 {
                   to:       "fr_c1";
                   relative: 0.0  0.0;
@@ -168,8 +148,7 @@ collections {
                }
                color: 255 255 255 180;
             }
-            description {
-               state: "dim" 0.0;
+            description { state: "dim" 0.0;
                rel1 {
                   to:       "fr_c1";
                   relative: 0.0  0.0;
@@ -183,11 +162,8 @@ collections {
                color: 255 255 255 80;
             }
          }
-         part {
-            name: "fr_c1";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_c1"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   0    0;
@@ -201,11 +177,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_c2";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_c2"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 1.0  0.0;
                   offset:   -35    0;
@@ -219,11 +192,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_c3";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_c3"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  1.0;
                   offset:   0    -35;
@@ -237,11 +207,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_c4";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_c4"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 1.0  1.0;
                   offset:   -35  -35;
@@ -255,11 +222,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_s1";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_s1"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  1.0;
                   offset:   0    0;
@@ -275,11 +239,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_s2";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_s2"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 1.0  0.0;
                   offset:   0    0;
@@ -295,11 +256,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_s3";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_s3"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  1.0;
                   offset:   0    0;
@@ -315,11 +273,8 @@ collections {
                }
             }
          }
-         part {
-            name: "fr_t";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "fr_t"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 1.0  0.0;
                   offset:   0    0;
@@ -336,12 +291,9 @@ collections {
                }
             }
          }
-         part {
-            name: "panel_bg";
-            mouse_events: 0;
+         part { name: "panel_bg"; mouse_events: 0;
             clip_to: "panel_clip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   0    0;
@@ -368,12 +320,9 @@ collections {
                }
             }
          }
-         part {
-            name: "prog_container";
-            mouse_events: 0;
+         part { name: "prog_container"; mouse_events: 0;
             clip_to: "panel_clip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   4    4;
@@ -390,12 +339,9 @@ collections {
                }
             }
          }
-         part {
-            name: "prog_done";
-            mouse_events: 0;
+         part { name: "prog_done"; mouse_events: 0;
             clip_to: "panel_clip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   0    0;
@@ -413,18 +359,14 @@ collections {
                }
             }
          }
-         part {
-            name: "video_progress";
-            type: RECT;
+         part { name: "video_progress"; type: RECT; mouse_events: 1;
             clip_to: "panel_clip";
-            mouse_events: 1;
             dragable {
                x:        1 1 0;
                y:        0 0 0;
                confine: "prog_container";
             }
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                min:   10 5;
                align: 0.5 0.5;
                rel1 {
@@ -440,12 +382,9 @@ collections {
                color:       0 255 0 50;
             }
          }
-         part {
-            name: "video_progress_img";
-            mouse_events: 0;
+         part { name: "video_progress_img"; mouse_events: 0;
             clip_to: "panel_clip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                min:   9 16;
                align: 0.5 1.0;
                fixed: 1 1;
@@ -466,12 +405,9 @@ collections {
                }
             }
          }
-         part {
-            name: "b_stop";
-            mouse_events: 0;
+         part { name: "b_stop"; mouse_events: 0;
             clip_to: "panel_clip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                min: 22 22;
                max: 22 22;
                align: 0.0 0.0;
@@ -490,12 +426,9 @@ collections {
                }
             }
          }
-         part {
-            name: "b_play";
-            mouse_events: 0;
+         part { name: "b_play"; mouse_events: 0;
             clip_to: "panel_clip";
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                min: 22 22;
                max: 22 22;
                align: 0.0 1.0;
@@ -513,8 +446,7 @@ collections {
                   normal: "bstop.png";
                }
             }
-            description {
-               state: "play" 0.0;
+            description { state: "play" 0.0;
                min: 22 22;
                max: 22 22;
                align: 0.0 1.0;
@@ -532,8 +464,7 @@ collections {
                   normal: "bplay.png";
                }
             }
-            description {
-               state: "pause" 0.0;
+            description { state: "pause" 0.0;
                min: 22 22;
                max: 22 22;
                align: 0.0 1.0;
@@ -552,14 +483,10 @@ collections {
                }
             }
          }
-         part {
-            name: "panel_clip";
-            mouse_events: 0;
-            type:  RECT;
+         part { name: "panel_clip"; mouse_events: 0; type:  RECT;
             clip_to: "vclip";
-            description {
+            description { state: "default" 0.0;
                visible: 0;
-               state: "default" 0.0;
                rel1 {
                   to:       "panel";
                   relative: 0.0  0.0;
@@ -572,9 +499,8 @@ collections {
                }
                color: 255 255 255 0;
             }
-            description {
+            description { state: "shown" 0.0;
                visible: 1;
-               state: "shown" 0.0;
                rel1 {
                   to:       "panel";
                   relative: 0.0  0.0;
@@ -588,13 +514,9 @@ collections {
                color: 255 255 255 255;
             }
          }
-         part {
-            name: "video_progress_txt";
-            type: TEXT;
-            mouse_events: 0;
+         part { name: "video_progress_txt"; type: TEXT; mouse_events: 0;
             effect: OUTLINE;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "panel";
                   relative: 0.0  1.0;
@@ -615,12 +537,8 @@ collections {
                };
             }
          }
-         part {
-            name: "panel";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "panel"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "fr_c3";
                   relative: 0.0  0.0;
@@ -634,12 +552,8 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "panel2";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "panel2"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "fr_c1";
                   relative: 0.0  0.0;
@@ -654,12 +568,8 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "video_resizer";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_resizer"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "fr_c4";
                   relative: 0.0  0.0;
@@ -673,12 +583,8 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "video_mover";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_mover"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "fr_t";
                   relative: 0.0  0.0;
@@ -694,40 +600,34 @@ collections {
          }
       }
       programs {
-         program {
-            name: "video_move_start";
+         program { name: "video_move_start";
             signal: "mouse,down,*";
             source: "video_mover";
             action: SIGNAL_EMIT "frame_move" "start";
          }
-         program {
-            name: "video_move_stop";
+         program { name: "video_move_stop";
             signal: "mouse,up,*";
             source: "video_mover";
             action: SIGNAL_EMIT "frame_move" "stop";
          }
-         program {
-            name: "video_resize_start";
+         program { name: "video_resize_start";
             signal: "mouse,down,*";
             source: "video_resizer";
             action: SIGNAL_EMIT "frame_resize" "start";
          }
-         program {
-            name: "video_resize_stop";
+         program { name: "video_resize_stop";
             signal: "mouse,up,*";
             source: "video_resizer";
             action: SIGNAL_EMIT "frame_resize" "stop";
          }
-         program {
-            name: "panel_show";
+         program { name: "panel_show";
             signal: "mouse,in";
             source: "panel";
             action: STATE_SET "shown" 0.0;
             transition: LINEAR 1.0;
             target: "panel_clip";
          }
-         program {
-            name: "panel_hide";
+         program { name: "panel_hide";
             signal: "mouse,in";
             source: "panel2";
             action: STATE_SET "default" 0.0;
@@ -737,8 +637,7 @@ collections {
       }
    }
 #else
-   group {
-      name: "video_controller";
+   group { name: "video_controller";
       parts {
          // need swallow parts:
          // "video_swallow"
@@ -750,12 +649,8 @@ collections {
          // need dragables:
          // "video_progress" horizontal
          // "video_speed" vertical
-         part {
-            name: "video_swallow";
-            mouse_events: 0;
-            type: SWALLOW;
-            description {
-               state: "default" 0.0;
+         part { name: "video_swallow"; mouse_events: 0; type: SWALLOW;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  0.0;
@@ -768,11 +663,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_left";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_left"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   0    0;
@@ -787,11 +679,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_right";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_right"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 1.0  0.0;
                   offset:   -32  0;
@@ -806,11 +695,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_top";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_top"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  0.0;
@@ -826,11 +712,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_bottom";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_bottom"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  1.0;
@@ -846,12 +729,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_speed_txt";
-            type: TEXT;
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_speed_txt"; type: TEXT; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 0.0  0.0;
@@ -871,13 +750,9 @@ collections {
                };
             }
          }
-         part {
-            name: "video_progress_confine";
-            mouse_events: 0;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_progress_confine"; mouse_events: 0; type:  RECT;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   1 18;
                align: 0.5 0.0;
                rel1 {
@@ -893,18 +768,14 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "video_progress";
-            type: RECT;
-            mouse_events: 1;
+         part { name: "video_progress"; type: RECT; mouse_events: 1;
             dragable {
                x:        1 1 0;
                y:        0 0 0;
                confine: "video_progress_confine";
             }
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   34 18;
                rel1 {
                   to:       "video_progress_confine";
@@ -919,12 +790,9 @@ collections {
                color:       0 0 0 0;
             }
          }
-         part {
-            name: "video_progress_img";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_progress_img"; mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   42 26;
                rel1 {
                   to:       "video_progress";
@@ -941,12 +809,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_speed_confine";
-            mouse_events: 0;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_speed_confine"; mouse_events: 0; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  0.0;
@@ -960,17 +824,14 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "video_speed";
-            mouse_events: 1;
+         part { name: "video_speed"; mouse_events: 1;
             dragable {
                x:        0 0 0;
                y:        -1 1 0;
                confine: "video_speed_confine";
             }
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_speed_confine";
@@ -987,12 +848,9 @@ collections {
                }
             }
          }
-         part {
-            name: "video_play";
-            mouse_events: 1;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_play"; mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
@@ -1009,12 +867,9 @@ collections {
                }
             }
          }
-         part {
-            name: "video_pause";
-            mouse_events: 1;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_pause"; mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
@@ -1031,12 +886,9 @@ collections {
                }
             }
          }
-         part {
-            name: "video_stop";
-            mouse_events: 1;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_stop"; mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
@@ -1053,12 +905,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_mover";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_mover"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_top";
                   relative: 0.0  0.0;
@@ -1072,12 +920,8 @@ collections {
                color: 255 20 20 20;
             }
          }
-         part {
-            name: "video_resizer";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_resizer"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_right";
                   relative: 0.0  1.0;
@@ -1091,13 +935,9 @@ collections {
                color: 20 20 255 20;
             }
          }
-         part {
-            name: "video_progress_txt";
-            type: TEXT;
-            mouse_events: 0;
+         part { name: "video_progress_txt"; type: TEXT; mouse_events: 0;
             effect: OUTLINE;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                align: 1.0 1.0;
                fixed: 1 1;
                rel1 {
@@ -1132,44 +972,37 @@ collections {
          // "video_state" "play"
          // "video_state" "pause"
          // "video_state" "stop"
-         program {
-            name: "video_play";
+         program { name: "video_play";
             signal: "mouse,down,1";
             source: "video_play";
             action:     SIGNAL_EMIT "video_control" "play";
          }
-         program {
-            name: "video_pause";
+         program { name: "video_pause";
             signal: "mouse,down,1";
             source: "video_pause";
             action:     SIGNAL_EMIT "video_control" "pause";
          }
-         program {
-            name: "video_stop";
+         program { name: "video_stop";
             signal: "mouse,down,1";
             source: "video_stop";
             action:     SIGNAL_EMIT "video_control" "stop";
          }
-         program {
-            name: "video_move_start";
+         program { name: "video_move_start";
             signal: "mouse,down,*";
             source: "video_mover";
             action:     SIGNAL_EMIT "frame_move" "start";
          }
-         program {
-            name: "video_move_stop";
+         program { name: "video_move_stop";
             signal: "mouse,up,*";
             source: "video_mover";
             action:     SIGNAL_EMIT "frame_move" "stop";
          }
-         program {
-            name: "video_resize_start";
+         program { name: "video_resize_start";
             signal: "mouse,down,*";
             source: "video_resizer";
             action:     SIGNAL_EMIT "frame_resize" "start";
          }
-         program {
-            name: "video_resize_stop";
+         program { name: "video_resize_stop";
             signal: "mouse,up,*";
             source: "video_resizer";
             action:     SIGNAL_EMIT "frame_resize" "stop";
@@ -1177,8 +1010,7 @@ collections {
       }
    }
 
-   group {
-      name: "video_controller/reflex";
+   group { name: "video_controller/reflex";
       parts {
          // need swallow parts:
          // "video_swallow"
@@ -1190,12 +1022,8 @@ collections {
          // need dragables:
          // "video_progress" horizontal
          // "video_speed" vertical
-         part {
-            name: "video_swallow";
-            mouse_events: 0;
-            type: SWALLOW;
-            description {
-               state: "default" 0.0;
+         part { name: "video_swallow"; mouse_events: 0; type: SWALLOW;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  0.0;
@@ -1209,57 +1037,47 @@ collections {
             }
          }
 
-         part {
-                 name: "swallow_center";
-                 type: RECT;
-                 description {
-                         state: "default" 0.0;
-                         visible: 0;
-                         rel1 {
-                                 to: "video_swallow";
-                                 relative: 0.5 1.0;
-                         }
-                         rel2 {
-                                 to: "video_swallow";
-                                 relative: 0.5 1.0;
-                         }
-                 }
-         }
-         part {
-                 name: "swallow_mirror";
-                 type: PROXY;
-                 mouse_events: 0;
-                 description {
-                         state: "default" 0.0;
-                         source: "video_swallow";
-                         rel1 {
-                                 to: "video_swallow";
-                         }
-                         rel2 {
-                                 to: "video_swallow";
-                         }
-                         perspective {
-                                 zplane: 0;
-                                 focal: 1000;
-                         }
-                         color: 255 255 255 96;
-                         map {
-                                 on: 1;
-                                 smooth: 0;
-                                 alpha: 1;
-                                 rotation {
-                                         center: "swallow_center";
-                                         x: 100;
-                                 }
-                         }
-                 }
-         }
-
-         part {
-            name: "video_frame_left";
-            mouse_events: 0;
+         part { name: "swallow_center"; type: RECT;
             description {
                state: "default" 0.0;
+               visible: 0;
+               rel1 {
+                  to: "video_swallow";
+                  relative: 0.5 1.0;
+               }
+               rel2 {
+                  to: "video_swallow";
+                  relative: 0.5 1.0;
+               }
+            }
+         }
+         part { name: "swallow_mirror"; type: PROXY; mouse_events: 0;
+            description { state: "default" 0.0;
+               source: "video_swallow";
+               rel1 {
+                  to: "video_swallow";
+               }
+               rel2 {
+                  to: "video_swallow";
+               }
+               perspective {
+                  zplane: 0;
+                  focal: 1000;
+               }
+               color: 255 255 255 96;
+               map {
+                  on: 1;
+                  smooth: 0;
+                  alpha: 1;
+                  rotation {
+                     center: "swallow_center";
+                     x: 100;
+                  }
+               }
+            }
+         }
+         part { name: "video_frame_left"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  0.0;
                   offset:   0    0;
@@ -1274,11 +1092,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_right";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_right"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 1.0  0.0;
                   offset:   -32  0;
@@ -1293,11 +1108,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_top";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_top"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  0.0;
@@ -1313,11 +1125,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_frame_bottom";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_frame_bottom"; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  1.0;
@@ -1333,12 +1142,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_speed_txt";
-            type: TEXT;
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
+         part { name: "video_speed_txt"; type: TEXT; mouse_events: 0;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_bottom";
                   relative: 0.0  0.0;
@@ -1358,13 +1163,9 @@ collections {
                };
             }
          }
-         part {
-            name: "video_progress_confine";
-            mouse_events: 0;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_progress_confine"; mouse_events: 0; type:  RECT;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   1 18;
                align: 0.5 0.0;
                rel1 {
@@ -1380,18 +1181,14 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "video_progress";
-            type: RECT;
-            mouse_events: 1;
+         part { name: "video_progress"; type: RECT; mouse_events: 1;
             dragable {
                x:        1 1 0;
                y:        0 0 0;
                confine: "video_progress_confine";
             }
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   34 18;
                rel1 {
                   to:       "video_progress_confine";
@@ -1406,12 +1203,9 @@ collections {
                color:       0 0 0 0;
             }
          }
-         part {
-            name: "video_progress_img";
-            mouse_events: 0;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_progress_img"; mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   42 26;
                rel1 {
                   to:       "video_progress";
@@ -1428,12 +1222,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_speed_confine";
-            mouse_events: 0;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_speed_confine"; mouse_events: 0; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_left";
                   relative: 1.0  0.0;
@@ -1447,17 +1237,14 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "video_speed";
-            mouse_events: 1;
+         part { name: "video_speed"; mouse_events: 1;
             dragable {
                x:        0 0 0;
                y:        -1 1 0;
                confine: "video_speed_confine";
             }
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_speed_confine";
@@ -1474,12 +1261,9 @@ collections {
                }
             }
          }
-         part {
-            name: "video_play";
-            mouse_events: 1;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_play"; mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
@@ -1496,12 +1280,10 @@ collections {
                }
             }
          }
-         part {
-            name: "video_pause";
+         part { name: "video_pause";
             mouse_events: 1;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
@@ -1518,12 +1300,9 @@ collections {
                }
             }
          }
-         part {
-            name: "video_stop";
-            mouse_events: 1;
-            description {
-               state: "default" 0.0;
-                   fixed: 1 1;
+         part { name: "video_stop"; mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
                min:   24 24;
                rel1 {
                   to:       "video_frame_bottom";
@@ -1540,12 +1319,8 @@ collections {
                }
             }
          }
-         part {
-            name: "video_mover";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_mover"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_top";
                   relative: 0.0  0.0;
@@ -1559,12 +1334,8 @@ collections {
                color: 255 20 20 20;
             }
          }
-         part {
-            name: "video_resizer";
-            mouse_events: 1;
-            type:  RECT;
-            description {
-               state: "default" 0.0;
+         part { name: "video_resizer"; mouse_events: 1; type:  RECT;
+            description { state: "default" 0.0;
                rel1 {
                   to:       "video_frame_right";
                   relative: 0.0  1.0;
@@ -1578,13 +1349,9 @@ collections {
                color: 20 20 255 20;
             }
          }
-         part {
-            name: "video_progress_txt";
-            type: TEXT;
-            mouse_events: 0;
+         part { name: "video_progress_txt"; type: TEXT; mouse_events: 0;
             effect: OUTLINE;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                align: 1.0 1.0;
                fixed: 1 1;
                rel1 {
@@ -1619,44 +1386,37 @@ collections {
          // "video_state" "play"
          // "video_state" "pause"
          // "video_state" "stop"
-         program {
-            name: "video_play";
+         program { name: "video_play";
             signal: "mouse,down,1";
             source: "video_play";
             action:     SIGNAL_EMIT "video_control" "play";
          }
-         program {
-            name: "video_pause";
+         program { name: "video_pause";
             signal: "mouse,down,1";
             source: "video_pause";
             action:     SIGNAL_EMIT "video_control" "pause";
          }
-         program {
-            name: "video_stop";
+         program { name: "video_stop";
             signal: "mouse,down,1";
             source: "video_stop";
             action:     SIGNAL_EMIT "video_control" "stop";
          }
-         program {
-            name: "video_move_start";
+         program { name: "video_move_start";
             signal: "mouse,down,*";
             source: "video_mover";
             action:     SIGNAL_EMIT "frame_move" "start";
          }
-         program {
-            name: "video_move_stop";
+         program { name: "video_move_stop";
             signal: "mouse,up,*";
             source: "video_mover";
             action:     SIGNAL_EMIT "frame_move" "stop";
          }
-         program {
-            name: "video_resize_start";
+         program { name: "video_resize_start";
             signal: "mouse,down,*";
             source: "video_resizer";
             action:     SIGNAL_EMIT "frame_resize" "start";
          }
-         program {
-            name: "video_resize_stop";
+         program { name: "video_resize_stop";
             signal: "mouse,up,*";
             source: "video_resizer";
             action:     SIGNAL_EMIT "frame_resize" "stop";
