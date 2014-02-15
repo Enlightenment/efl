@@ -229,10 +229,11 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
    Eolian_Event event;
    EINA_LIST_FOREACH(eolian_class_events_list_get(classname), l, event)
      {
-        const char *evname;
-        const char *evdesc;
+        const char *evname = NULL;
+        const char *evdesc = NULL;
         eolian_class_event_information_get(event, &evname, &evdesc);
 
+        if (!evdesc) evdesc = "No description";
         eina_strbuf_reset(tmpbuf);
         eina_strbuf_append(tmpbuf, evdesc);
         eina_strbuf_replace_all(tmpbuf, "\n", "\n * ");
