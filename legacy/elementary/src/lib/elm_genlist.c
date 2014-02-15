@@ -5448,6 +5448,29 @@ elm_genlist_item_append(Evas_Object *obj,
    return ret;
 }
 
+static Eina_List *
+_list_last_recursive(Eina_List *list)
+{
+   Eina_List *ll, *ll2;
+   Elm_Gen_Item *it2;
+
+   ll = eina_list_last(list);
+   if (!ll) return NULL;
+
+   it2 = ll->data;
+
+   if (it2->item->items)
+     {
+        ll2 = _list_last_recursive(it2->item->items);
+        if (ll2)
+          {
+             return ll2;
+          }
+     }
+
+   return ll;
+}
+
 static void
 _item_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
@@ -5477,7 +5500,7 @@ _item_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    else
      {
         Elm_Gen_Item *it2 = NULL;
-        Eina_List *ll = eina_list_last(it->parent->item->items);
+        Eina_List *ll = _list_last_recursive(it->parent->item->items);
 
         if (ll) it2 = ll->data;
         it->parent->item->items =
