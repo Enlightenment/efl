@@ -3,6 +3,7 @@
 #include <Elementary.h>
 
 static Evas_Object *win = NULL;
+static Eina_List *threads;
 
 struct info
 {
@@ -82,6 +83,7 @@ th_end(void *data, Ecore_Thread *th)
    evas_object_show(inf->obj);
    free(inf->pix);
    free(inf);
+   threads = eina_list_remove(threads, th);
 }
 
 static void // if the thread is cancelled - free pix, keep obj tho
@@ -121,6 +123,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *o;
+   Ecore_Thread *th;
    int i;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -143,7 +146,8 @@ elm_main(int argc, char **argv)
              evas_object_resize(o, 256, 256);
              inf->obj = o;
              inf->pix = malloc(256 * 256 * sizeof(int));
-             ecore_thread_run(th_do, th_end, th_cancel, inf);
+             th = ecore_thread_run(th_do, th_end, th_cancel, inf);
+             threads = eina_list_append(threads, th);
              // bonus - slide the objects around all the time with an
              // animator that ticks off every frame.
              ecore_animator_add(anim, o);
@@ -154,6 +158,10 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
+
+   // if some threads are still running - cancel them
+   EINA_LIST_FREE(threads, th) ecore_thread_cancel(th);
+   
    elm_shutdown();
 
    return 0;
