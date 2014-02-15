@@ -94,6 +94,7 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
+   ecore_thread_cancel(thr);
    elm_shutdown();
 
    return 0;
