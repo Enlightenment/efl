@@ -647,18 +647,6 @@ init_video_object(const char *module_filename, const char *filename)
    evas_object_show(oe);
 }
 
-static Eina_Bool
-check_positions(void *data EINA_UNUSED)
-{
-   const Eina_List *lst;
-   Evas_Object *o;
-
-   EINA_LIST_FOREACH(video_objs, lst, o)
-     video_obj_time_changed(o, evas_object_smart_parent_get(o));
-
-   return !!video_objs;
-}
-
 int
 main(int argc, char **argv)
 {
@@ -767,7 +755,6 @@ main(int argc, char **argv)
      }
 
    // start the main loop
-   ecore_animator_add(check_positions, NULL);
    ecore_main_loop_begin();
 
    // shutdown
