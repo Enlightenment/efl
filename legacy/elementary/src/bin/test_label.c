@@ -78,7 +78,7 @@ test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 static void
 _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
-   Evas_Object *lb = (Evas_Object *)data;
+   Evas_Object *lb = data;
    int style =  elm_radio_value_get((Evas_Object *)obj);
    switch (style)
      {
@@ -102,7 +102,7 @@ _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 static void
 _duration_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Evas_Object *lb = (Evas_Object *)data;
+   Evas_Object *lb = data;
    double val = elm_slider_value_get(obj);
 
    elm_label_slide_duration_set(lb, val);
@@ -115,7 +115,7 @@ _duration_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 static void
 _speed_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Evas_Object *lb = (Evas_Object *)data;
+   Evas_Object *lb = data;
    double val = elm_slider_value_get(obj);
 
    elm_label_slide_speed_set(lb, val);
@@ -126,7 +126,8 @@ _speed_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
-_label_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_label_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
+                 void *event_info EINA_UNUSED)
 {
    Evas_Object *speed_slider = evas_object_data_get(obj, "speed_slider");
    Evas_Object *duration_slider = evas_object_data_get(obj, "duration_slider");
