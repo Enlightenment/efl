@@ -65,16 +65,11 @@ struct _App {
    Eina_Bool inited;
 };
 
-Eina_Bool
-exit_func(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-   return EINA_TRUE;
-}
 
-#define SEND_CMD_PARAM(app, i)                          \
-  if ((app)->fd_write)                                  \
-    if (!ecore_pipe_write((app)->fd_write, &(i), sizeof((i)))) \
+/* Commands sent to the emotion pipe */
+#define SEND_CMD_PARAM(app, i)                                  \
+  if ((app)->fd_write)                                          \
+    if (!ecore_pipe_write((app)->fd_write, &(i), sizeof((i))))  \
       ecore_main_loop_quit();
 
 static void
@@ -200,6 +195,37 @@ _send_all_meta_info(struct _App *app)
    _send_cmd_str(app, meta);
 }
 
+static void
+_send_length_changed(struct _App *app, const struct libvlc_event_t *ev)
+{
+   float length = ev->u.media_player_length_changed.new_length;
+   length /= 1000;
+
+   _send_cmd(app, EM_RESULT_LENGTH_CHANGED);
+   SEND_CMD_PARAM(app, length);
+}
+
+static void
+_send_seekable_changed(struct _App *app, const struct libvlc_event_t *ev)
+{
+   int seekable = ev->u.media_player_seekable_changed.new_seekable;
+
+   _send_cmd(app, EM_RESULT_SEEKABLE_CHANGED);
+   SEND_CMD_PARAM(app, seekable);
+}
+
+static void
+_send_file_set(struct _App *app)
+{
+   if (app->opening)
+      _send_cmd(app, EM_RESULT_FILE_SET);
+
+   if (app->closing)
+     _send_file_closed(app);
+}
+
+
+/* libvlc */
 static Eina_Bool
 _loaded_idler(void *data)
 {
@@ -241,35 +267,6 @@ _position_changed(App *app)
    _send_all_meta_info(app);
 
    ecore_idler_add(_loaded_idler, app);
-}
-
-static void
-_send_length_changed(struct _App *app, const struct libvlc_event_t *ev)
-{
-   float length = ev->u.media_player_length_changed.new_length;
-   length /= 1000;
-
-   _send_cmd(app, EM_RESULT_LENGTH_CHANGED);
-   SEND_CMD_PARAM(app, length);
-}
-
-static void
-_send_seekable_changed(struct _App *app, const struct libvlc_event_t *ev)
-{
-   int seekable = ev->u.media_player_seekable_changed.new_seekable;
-
-   _send_cmd(app, EM_RESULT_SEEKABLE_CHANGED);
-   SEND_CMD_PARAM(app, seekable);
-}
-
-static void
-_send_file_set(struct _App *app)
-{
-   if (app->opening)
-      _send_cmd(app, EM_RESULT_FILE_SET);
-
-   if (app->closing)
-     _send_file_closed(app);
 }
 
 static void
@@ -352,9 +349,47 @@ _tmp_play(void *data EINA_UNUSED,
 }
 */
 
+static void *
+_lock(void *data, void **pixels)
+{
+   App *app = data;
+
+   if (app->playing)
+     *pixels = app->vf.frames[app->vs->frame.player];
+   else
+     *pixels = NULL;
+
+   return NULL; // picture identifier, not needed here
+}
+
+static void
+_unlock(void *data EINA_UNUSED, void *id EINA_UNUSED, void *const *pixels EINA_UNUSED)
+{
+}
+
+static void
+_display(void *data, void *id EINA_UNUSED)
+{
+   App *app = data;
+
+   if (!app->playing)
+     return;
+
+   eina_semaphore_lock(&app->vs->lock);
+   app->vs->frame.last = app->vs->frame.player;
+   app->vs->frame.player = app->vs->frame.next;
+   app->vs->frame.next = app->vs->frame.last;
+   if (!app->vs->frame_drop++)
+     _send_cmd(app, EM_RESULT_FRAME_NEW);
+   eina_semaphore_release(&app->vs->lock, 1);
+}
+
+
+/* Commands received from the emotion pipe */
 static void
 _file_set(App *app)
 {
+   DBG("Path: %s", app->filename);
    app->m = libvlc_media_new_path(app->libvlc, app->filename);
    if (!app->m)
      {
@@ -390,41 +425,6 @@ _file_set(App *app)
    app->tmpbuffer = malloc(sizeof(char) * DEFAULTWIDTH * DEFAULTHEIGHT * 4);
    libvlc_audio_set_mute(app->mp, 1);
    libvlc_media_player_play(app->mp);
-}
-
-static void *
-_lock(void *data, void **pixels)
-{
-   App *app = data;
-
-   if (app->playing)
-     *pixels = app->vf.frames[app->vs->frame.player];
-   else
-     *pixels = NULL;
-
-   return NULL; // picture identifier, not needed here
-}
-
-static void
-_unlock(void *data EINA_UNUSED, void *id EINA_UNUSED, void *const *pixels EINA_UNUSED)
-{
-}
-
-static void
-_display(void *data, void *id EINA_UNUSED)
-{
-   App *app = data;
-
-   if (!app->playing)
-     return;
-
-   eina_semaphore_lock(&app->vs->lock);
-   app->vs->frame.last = app->vs->frame.player;
-   app->vs->frame.player = app->vs->frame.next;
-   app->vs->frame.next = app->vs->frame.last;
-   if (!app->vs->frame_drop++)
-     _send_cmd(app, EM_RESULT_FRAME_NEW);
-   eina_semaphore_release(&app->vs->lock, 1);
 }
 
 static void
@@ -687,11 +687,19 @@ _remote_command(void *data, void *buffer, unsigned int nbyte)
      }
 }
 
-void
+static void
 _dummy(void *data EINA_UNUSED, void *buffer EINA_UNUSED, unsigned int nbyte EINA_UNUSED)
 {
-   /* This function is useless for the pipe we use to send message back to emotion,
-      but still needed */
+   /* This function is useless for the pipe we use to send message back
+      to emotion, but still needed */
+}
+
+/* Main */
+Eina_Bool
+exit_func(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+   return EINA_TRUE;
 }
 
 int
@@ -763,12 +771,10 @@ main(int argc, const char *argv[])
    ecore_main_loop_begin();
 
    libvlc_release(app.libvlc);
-
    ecore_event_handler_del(hld);
 
    ecore_shutdown();
    eina_shutdown();
-
    return 0;
 
  error:
