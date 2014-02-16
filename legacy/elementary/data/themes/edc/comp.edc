@@ -247,6 +247,7 @@ group { name: "e/comp/screen/overlay/noeffects";
 
 group { name: "e/comp/frame/default";
    images.image: "win_glow.png" COMP;
+   images.image: "win_shadow.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
