@@ -143,6 +143,9 @@ _elm_web_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
+   //TODO: need a way to change theme
+   ewk_view_theme_set(resize_obj, WEBKIT_DATADIR "/themes/default.edj");
+
    _view_smart_callback_proxy(resize_obj, obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 #endif
