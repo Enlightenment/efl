@@ -712,7 +712,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE), _ecore_animator_freeze),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW), _ecore_animator_thaw),
 
-        EO_OP_FUNC(ECORE_ANIMATOR_ID(ECORE_ANIMATOR_SUB_ID_CONSTRUCTOR), _animator_constructor),
+        EO_OP_FUNC(ECORE_ANIMATOR_ID(ECORE_ANIMATOR_SUB_ID_ANIMATOR_CONSTRUCTOR), _animator_constructor),
         EO_OP_FUNC(ECORE_ANIMATOR_ID(ECORE_ANIMATOR_SUB_ID_TIMELINE_CONSTRUCTOR), _animator_timeline_constructor),
         EO_OP_FUNC_SENTINEL
    };
@@ -721,7 +721,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ECORE_ANIMATOR_SUB_ID_CONSTRUCTOR, "Add an animator to call func at every animation tick during main loop execution."),
+     EO_OP_DESCRIPTION(ECORE_ANIMATOR_SUB_ID_ANIMATOR_CONSTRUCTOR, "Add an animator to call func at every animation tick during main loop execution."),
      EO_OP_DESCRIPTION(ECORE_ANIMATOR_SUB_ID_TIMELINE_CONSTRUCTOR, "Add an animator that runs for a limited time"),
      EO_OP_DESCRIPTION_SENTINEL
 };
