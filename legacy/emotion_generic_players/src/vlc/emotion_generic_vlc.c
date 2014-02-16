@@ -50,11 +50,8 @@ struct _App {
    char *shmname;
    void *tmpbuffer;
    int w, h;
-   // Use Ecore infra for that instead
-   Ecore_Pipe *fd_read; // read commands from theads here
-   Ecore_Pipe *fd_write; // write commands from threads here
-   /* int em_read; // read commands from emotion here */
-   /* int em_write; // write commands to emotion here */
+   Ecore_Pipe *fd_read;  // read commands from emotion here
+   Ecore_Pipe *fd_write; // write commands for emotion here
    int size_sent;
    int opening;
    int closing;
@@ -278,25 +275,32 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
    switch (ev->type)
    {
       case libvlc_MediaPlayerTimeChanged:
+         DBG("libvlc_MediaPlayerTimeChanged"); 
          _send_time_changed(app, ev);
          break;
       case libvlc_MediaPlayerPositionChanged:
+         DBG("libvlc_MediaPlayerPositionChanged");
          _position_changed(app);
          break;
       case libvlc_MediaPlayerLengthChanged:
+         DBG("libvlc_MediaPlayerLengthChanged");
          _send_length_changed(app, ev);
          break;
       case libvlc_MediaPlayerSeekableChanged:
+         DBG("libvlc_MediaPlayerSeekableChanged");
          _send_seekable_changed(app, ev);
          break;
       case libvlc_MediaPlayerPlaying:
+         DBG("libvlc_MediaPlayerPlaying");
          _send_resize(app, app->w, app->h);
          _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
          break;
       case libvlc_MediaPlayerStopped:
+         DBG("libvlc_MediaPlayerStopped");
          _send_file_set(app);
          break;
       case libvlc_MediaPlayerEndReached:
+         DBG("libvlc_MediaPlayerEndReached");
          app->playing = 0;
          _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
          break;
@@ -336,6 +340,7 @@ _tmp_format(void **opaque, char *chroma,
    lines[0] = lines[1] = lines[2] = *height;
 
    _send_resize(app, *width, *height);
+   DBG("%d %d", *width, *height);
    
    return 1;
 }
@@ -405,9 +410,10 @@ _file_set(App *app)
      }
 
    app->opening = 1;
-   libvlc_video_set_format(app->mp, "RV32", DEFAULTWIDTH, DEFAULTHEIGHT, DEFAULTWIDTH * 4);
+   libvlc_video_set_format(app->mp, "RV32", DEFAULTWIDTH, DEFAULTHEIGHT, DEFAULTWIDTH * 4); // needed??
    libvlc_video_set_callbacks(app->mp, _tmp_lock, _tmp_unlock, _tmp_display, app);
    libvlc_video_set_format_callbacks(app->mp, _tmp_format, NULL);
+
    /* On my system the mute below is not working and I can't find a way
       to make it work, so the following set should help, but then it has
       other side effect...
@@ -420,7 +426,7 @@ _file_set(App *app)
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
                        _event_cb, app);
 
-   app->mevent_mgr = libvlc_media_event_manager(app->m);
+   app->mevent_mgr = libvlc_media_event_manager(app->m); // needed??
 
    app->tmpbuffer = malloc(sizeof(char) * DEFAULTWIDTH * DEFAULTHEIGHT * 4);
    libvlc_audio_set_mute(app->mp, 1);
@@ -432,6 +438,7 @@ _file_set_done(App *app)
 {
    int r;
 
+   DBG("Path: %s", app->filename);
    app->opening = 0;
 
    r = emotion_generic_shm_get(app->shmname, &app->vs, &app->vf);
@@ -472,6 +479,7 @@ _file_set_done(App *app)
 static void
 _file_close(App *app)
 {
+   DBG("Path: %s", app->filename);
    app->playing = 0;
    if (app->opening)
      goto release_resources;
@@ -499,6 +507,7 @@ release_resources:
 static void
 _stop(App *app)
 {
+   DBG("Stop");
    if (app->mp)
      libvlc_media_player_set_pause(app->mp, 1);
 }
@@ -506,6 +515,7 @@ _stop(App *app)
 static void
 _play(App *app, float pos)
 {
+   DBG("Play at %.3f", pos);
    if (!app->mp)
      return;
 
@@ -531,6 +541,7 @@ _position_set(struct _App *app, float position)
 {
    libvlc_time_t new_time;
 
+   DBG("Posistion set %.3f", position);
    if (!app->mp)
      return;
 
@@ -541,6 +552,7 @@ _position_set(struct _App *app, float position)
 static void
 _speed_set(App *app, float rate)
 {
+   DBG("Speed set %.3f", rate);
    if (!app->mp)
      return;
 
@@ -550,6 +562,7 @@ _speed_set(App *app, float rate)
 static void
 _mute_set(App *app, int mute)
 {
+   DBG("Mute %d", mute);
    if (!app->mp)
      return;
 
@@ -561,6 +574,7 @@ _volume_set(App *app, float volume)
 {
    int vol;
 
+   DBG("Volume set %.2f", volume);
    if (!app->mp)
      return;
 
@@ -572,18 +586,21 @@ _volume_set(App *app, float volume)
 static void
 _spu_track_set(App *app, int track)
 {
+   DBG("SPU track %d", track);
    libvlc_video_set_spu(app->mp, track);
 }
 
 static void
 _audio_track_set(App *app, int track)
 {
+   DBG("Audio track %d", track);
    libvlc_audio_set_track(app->mp, track);
 }
 
 static void
 _video_track_set(App *app, int track)
 {
+   DBG("Video Track %d", track);
    libvlc_video_set_track(app->mp, track);
 }
 
@@ -698,6 +715,7 @@ _dummy(void *data EINA_UNUSED, void *buffer EINA_UNUSED, unsigned int nbyte EINA
 Eina_Bool
 exit_func(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
+   DBG("Quit signal received !");
    ecore_main_loop_quit();
    return EINA_TRUE;
 }
