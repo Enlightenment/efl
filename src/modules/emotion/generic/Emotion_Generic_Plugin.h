@@ -24,7 +24,7 @@ enum _Emotion_Generic_Cmd
    EM_CMD_PLAY,            // param: position (float)
    EM_CMD_STOP,            // param: none
    EM_CMD_FILE_SET,        // param: filename (string)
-   EM_CMD_FILE_SET_DONE,   // param: success (int)
+   EM_CMD_FILE_SET_DONE,   // param: none
    EM_CMD_FILE_CLOSE,      // param: none
    EM_CMD_POSITION_SET,    // param: position (float)
    EM_CMD_SPEED_SET,       // param: speed (float)
