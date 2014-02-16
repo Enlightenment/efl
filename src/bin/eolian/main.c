@@ -13,7 +13,7 @@ static int eo_version = 0;
 static Eina_Bool legacy_support = EINA_FALSE;
 
 static Eina_Bool
-_generate_h_file(char *filename, char *classname, Eina_Bool append)
+_generate_h_file(char *filename, const char *classname, Eina_Bool append)
 {
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *hfile = eina_strbuf_new();
@@ -54,7 +54,7 @@ end:
 }
 
 static Eina_Bool
-_generate_c_file(char *filename, char *classname, Eina_Bool append)
+_generate_c_file(char *filename, const char *classname, Eina_Bool append)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -79,7 +79,7 @@ end:
 
 // TODO join with header gen.
 static Eina_Bool
-_generate_legacy_header_file(char *filename, char *classname, Eina_Bool append)
+_generate_legacy_header_file(char *filename, const char *classname, Eina_Bool append)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -120,7 +120,7 @@ end:
 }
 
 static Eina_Bool
-_generate_eo_and_legacy_h_file(char *filename, char *classname)
+_generate_eo_and_legacy_h_file(char *filename, const char *classname)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -151,11 +151,11 @@ int main(int argc, char **argv)
    eina_init();
    int ret = 0;
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
-   Eina_List *files = NULL, *itr;
-   Eina_List *classes = NULL;
+   Eina_List *included_files = NULL, *itr;
+   Eina_List *files4gen = NULL;
+   const char *classname;
    char *h_filename = NULL, *c_filename = NULL,
-        *classname = NULL, *leg_filename = NULL,
-        *eoleg_filename = NULL;
+        *leg_filename = NULL, *eoleg_filename = NULL;
 
    Eina_Bool happend = EINA_FALSE;
    Eina_Bool lappend = EINA_FALSE;
@@ -174,11 +174,10 @@ int main(int argc, char **argv)
           {"gle",        required_argument,   0, 5},
           {"legacy",     no_argument,         0, 6},
           {"include",    required_argument,   0, 'I'},
-          {"class",      required_argument,   0, 'c'},
           {0, 0, 0, 0}
      };
    int long_index =0, opt;
-   while ((opt = getopt_long(argc, argv,"Vho:I:c:", long_options, &long_index )) != -1)
+   while ((opt = getopt_long(argc, argv,"Vho:I:", long_options, &long_index )) != -1)
      {
         switch (opt) {
            case 0: break;
@@ -208,8 +207,8 @@ int main(int argc, char **argv)
                                        sprintf(filepath, "%s/%s", dir, file);
                                        if ((!ecore_file_is_dir(filepath)) && eina_str_has_suffix(filepath, EO_SUFFIX))
                                          {
-                                            /* Allocated string will be freed during deletion of "files" list. */
-                                            files = eina_list_append(files, strdup(filepath));
+                                            /* Allocated string will be freed during deletion of "included_files" list. */
+                                            included_files = eina_list_append(included_files, strdup(filepath));
                                          }
                                        free(filepath);
                                        free(file);
@@ -219,19 +218,24 @@ int main(int argc, char **argv)
                         free(dir);
                         break;
                      }
-           case 'c': classes = eina_list_append(classes, optarg); break;
            default: help = EINA_TRUE;
         }
      }
-
-   if (eina_list_count(classes)) classname = eina_list_data_get(classes);
-
-   if (!files || help || !classname)
+   while (optind < argc)
      {
-        printf("Usage: %s [-h/--help] [-V/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah] filename [-c/--class] classname \n", argv[0]);
+        char *short_name = argv[optind++];
+        char *included_file;
+        EINA_LIST_FOREACH(included_files, itr, included_file)
+           if (strstr(included_file, short_name))
+              files4gen = eina_list_append(files4gen, included_file);
+     }
+
+   if (!included_files || help || !files4gen)
+     {
+        printf("Usage: %s [-h/--help] [-V/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah filename] eo_file... \n", argv[0]);
         printf("       --eo1/--eo2 Set generator to eo1/eo2 mode. Must be specified\n");
-        printf("       --gh Generate c header file [.h] for eo class specified by classname\n");
-        printf("       --gc Generate c source file [.c] for eo class specified by classname\n");
+        printf("       --gh Generate c header file [.h]\n");
+        printf("       --gc Generate c source file [.c]\n");
         printf("       --ah Append eo class definitions to an existing c header file [.h]\n");
         printf("       --al Append legacy function definitions to an existing c header file [.h]\n");
         printf("       --gle Generate eo and legacy file [.h]\n");
@@ -241,7 +245,7 @@ int main(int argc, char **argv)
 
    eolian_init();
    const char *filename;
-   EINA_LIST_FOREACH(files, itr, filename)
+   EINA_LIST_FOREACH(included_files, itr, filename)
      {
         if (!eolian_eo_file_parse(filename))
           {
@@ -250,7 +254,15 @@ int main(int argc, char **argv)
           }
      }
 
-   if (show) eolian_show(classname);
+   char *fname;
+   if (show)
+     {
+        EINA_LIST_FOREACH(files4gen, itr, fname)
+          {
+             const char *cname = eolian_class_find_by_file(fname);
+             eolian_show(cname);
+          }
+     }
 
    if (!eo_version)
      {
@@ -258,6 +270,8 @@ int main(int argc, char **argv)
         ret = 1;
         goto end;
      }
+
+   classname = eolian_class_find_by_file(eina_list_data_get(files4gen));
 
    if (h_filename)
      {
@@ -268,10 +282,12 @@ int main(int argc, char **argv)
    if (c_filename)
      {
         printf("Generating source file %s\n", c_filename);
-        Eina_List *l = NULL;
-        char *cname = NULL;
-        EINA_LIST_FOREACH(classes,l,cname)
-          _generate_c_file(c_filename, cname, (classes != l));
+        const char *cname;
+        EINA_LIST_FOREACH(files4gen, itr, fname)
+          {
+             cname = eolian_class_find_by_file(fname);
+             _generate_c_file(c_filename, cname, (files4gen != itr));
+          }
      }
 
    if (leg_filename)
@@ -287,9 +303,9 @@ int main(int argc, char **argv)
      }
 
 end:
-   EINA_LIST_FREE(files, filename)
+   EINA_LIST_FREE(included_files, filename)
       free((char *)filename);
-   eina_list_free(classes);
+   eina_list_free(files4gen);
    eolian_shutdown();
    eina_shutdown();
    return ret;

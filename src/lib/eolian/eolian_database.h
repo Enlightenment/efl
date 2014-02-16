@@ -24,6 +24,10 @@ database_class_description_set(const char *class_name, const char *description);
 void
 database_class_legacy_prefix_set(const char *class_name, const char *legacy_prefix);
 
+/* Set file of class */
+Eina_Bool
+database_class_file_set(const char *class_name, const char *file_name);
+
 /* Create a function */
 Eolian_Function database_function_new(const char *function_name, Eolian_Function_Type foo_type);
 

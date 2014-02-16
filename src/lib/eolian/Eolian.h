@@ -129,6 +129,17 @@ EAPI int eolian_shutdown(void);
 EAPI Eina_Bool eolian_show(const char *class_name);
 
 /*
+ * @brief Finds a class by its location (.eo file)
+ *
+ * @param[in] file_name filename where the class is stored.
+ * @return the class name stored in the file
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *
+eolian_class_find_by_file(const char *file_name);
+
+/*
  * @brief Returns the class type of the given class
  *
  * @param[in] class_name name of the class

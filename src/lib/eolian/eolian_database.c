@@ -7,6 +7,7 @@ static int _database_init_count = 0;
 typedef struct
 {
    Eina_Stringshare *name;
+   Eina_Stringshare *file;
    Eolian_Class_Type type;
    Eina_Stringshare *description;
    Eina_Stringshare *legacy_prefix;
@@ -103,6 +104,7 @@ _class_del(Class_desc *class)
    EINA_LIST_FREE(class->events, ev) database_event_free(ev);
 
    eina_stringshare_del(class->name);
+   eina_stringshare_del(class->file);
    eina_stringshare_del(class->description);
    eina_stringshare_del(class->legacy_prefix);
    free(class);
@@ -162,6 +164,35 @@ database_class_add(const char *class_name, Eolian_Class_Type type)
         eina_hash_set(_classes, desc->name, desc);
      }
    return EINA_TRUE;
+}
+
+Eina_Bool
+database_class_file_set(const char *class_name, const char *file_name)
+{
+   Class_desc *cl = _class_get(class_name);
+   if (!cl) return EINA_FALSE;
+   cl->file = eina_stringshare_add(file_name);
+   return EINA_TRUE;
+}
+
+EAPI const char *
+eolian_class_find_by_file(const char *file_name)
+{
+   const Eina_List *names_list = eolian_class_names_list_get();
+   const Eina_List *itr;
+   const char *class_name;
+   Eina_Stringshare *shr_file = eina_stringshare_add(file_name);
+   EINA_LIST_FOREACH(names_list, itr, class_name)
+     {
+        Class_desc *cl = _class_get(class_name);
+        if (cl->file == shr_file)
+          {
+             eina_stringshare_del(shr_file);
+             return class_name;
+          }
+     }
+   eina_stringshare_del(shr_file);
+   return NULL;
 }
 
 EAPI Eolian_Class_Type

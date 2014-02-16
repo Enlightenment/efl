@@ -2846,6 +2846,8 @@ eo_tokenizer_database_fill(const char *filename)
              else type = EOLIAN_CLASS_UNKNOWN_TYPE;
           }
         database_class_add(kls->name, type);
+        database_class_file_set(kls->name, filename);
+
         if (kls->comment) database_class_description_set(kls->name, kls->comment);
 
         EINA_LIST_FOREACH(kls->inherits, l, s)
