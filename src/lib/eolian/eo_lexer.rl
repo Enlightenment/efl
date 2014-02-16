@@ -355,7 +355,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    end_statement     = ';';
    begin_def         = '{';
-   end_def           = '}' end_statement;
+   end_def           = '}' end_statement?;
    begin_list        = '(';
    end_list          = ')';
    list_separator    = ',';
