@@ -251,6 +251,9 @@ _index_box_auto_fill(Evas_Object *obj,
                {
                   it->head = head;
                   head->omitted = eina_list_append(head->omitted, it);
+                  // if it is selected but omitted, send signal to it's head
+                  if (it->selected)
+                    edje_object_signal_emit(VIEW(it->head), "elm,state,active", "elm");
                }
              continue;
           }
@@ -289,6 +292,9 @@ _index_box_auto_fill(Evas_Object *obj,
         elm_widget_sub_object_add(obj, o);
         evas_object_box_append(sd->bx[level], o);
         stacking = edje_object_data_get(o, "stacking");
+
+        if (it->selected)
+          edje_object_signal_emit(o, "elm,state,active", "elm");
 
         if (stacking)
           {
