@@ -809,6 +809,12 @@ group { name: "elm/scroller/base/default";
 group { name: "elm/scroller/base/noclip";
    inherit: "elm/scroller/base/default";
    parts {
+      part { name: "clipper";
+         description { state: "default" 0.0;
+            rel1.offset: -999999 -999999;
+            rel2.offset: 999999 999999;
+         }
+      }
       part { name: "elm.swallow.background";
          description { state: "default" 0.0;
             rel1.offset: 0 0;
