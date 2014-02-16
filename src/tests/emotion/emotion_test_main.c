@@ -31,7 +31,6 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_STORE_STR('b', "backend", "backend to use"),
       ECORE_GETOPT_STORE_INT('v', "vis", "visualization type"),
       ECORE_GETOPT_STORE_TRUE('w', "webcams", "show all the available v4l streams"),
-      ECORE_GETOPT_COUNT('v', "verbose", "be more verbose"),
       ECORE_GETOPT_STORE_TRUE('R', "reflex", "show video reflex effect"),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
@@ -61,7 +60,6 @@ static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_inf
 
 static Evas_Object *o_bg = NULL;
 
-static double       start_time = 0.0;
 static Ecore_Evas  *ecore_evas = NULL;
 static Evas        *evas       = NULL;
 static int          startw     = 800;
@@ -70,6 +68,7 @@ static int          starth     = 600;
 static Eina_List   *video_objs = NULL;
 static Emotion_Vis  vis        = EMOTION_VIS_NONE;
 static unsigned char reflex    = 0;
+static const char  *theme_file = NULL;
 
 static void
 main_resize(Ecore_Evas *ee)
@@ -100,29 +99,13 @@ main_delete_request(Ecore_Evas *ee EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
-static const char *
-theme_get(void)
-{
-   static int is_local = -1;
-   if (is_local == -1)
-     {
-        struct stat st;
-        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj", &st) == 0);
-     }
-
-   if (is_local)
-     return PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj";
-   else
-     return PACKAGE_DATA_DIR"/data/theme.edj";
-}
-
 void
 bg_setup(void)
 {
    Evas_Object *o;
 
    o = edje_object_add(evas);
-   edje_object_file_set(o, theme_get(), "background");
+   edje_object_file_set(o, theme_file, "background");
    evas_object_move(o, 0, 0);
    evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
@@ -615,9 +598,9 @@ init_video_object(const char *module_filename, const char *filename)
    evas_object_event_callback_add(oe, EVAS_CALLBACK_FREE, _oe_free_cb, NULL);
    evas_object_data_set(oe, "frame_data", fd);
    if (reflex)
-     edje_object_file_set(oe, theme_get(), "video_controller/reflex");
+     edje_object_file_set(oe, theme_file, "video_controller/reflex");
    else
-     edje_object_file_set(oe, theme_get(), "video_controller");
+     edje_object_file_set(oe, theme_file, "video_controller");
    edje_extern_object_min_size_set(o, w, h);
    edje_object_part_swallow(oe, "video_swallow", o);
    edje_object_size_min_calc(oe, &w, &h);
@@ -683,7 +666,6 @@ main(int argc, char **argv)
    Eina_Rectangle     geometry = {0, 0, startw, starth};
    char              *engine = NULL;
    char              *backend = NULL;
-   int                verbose = 0;
    Eina_Bool          webcams = EINA_FALSE;
    int                visual = EMOTION_VIS_NONE;
    unsigned char      help = 0;
@@ -695,7 +677,6 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_STR(backend),
       ECORE_GETOPT_VALUE_INT(visual),
       ECORE_GETOPT_VALUE_BOOL(webcams),
-      ECORE_GETOPT_VALUE_INT(verbose),
       ECORE_GETOPT_VALUE_BOOL(reflex),
       ECORE_GETOPT_VALUE_NONE,
       ECORE_GETOPT_VALUE_NONE,
@@ -704,15 +685,29 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_NONE
     };
 
+   // init ecore_evas
    if (!ecore_evas_init())
      return -1;
+
+   // init edje
    if (!edje_init())
      goto shutdown_ecore_evas;
-
-   start_time = ecore_time_get();
-   ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
    edje_frametime_set(1.0 / 30.0);
 
+   // search the theme file
+   struct stat st;
+   if (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj", &st) == 0)
+      theme_file = PACKAGE_BUILD_DIR"/src/tests/emotion/data/theme.edj";
+   else if (stat(PACKAGE_DATA_DIR"/data/theme.edj", &st) == 0)
+      theme_file = PACKAGE_DATA_DIR"/data/theme.edj";
+   else
+     {
+        printf("Cannot find the theme file\n");
+        goto shutdown_edje;
+     }
+   printf("theme file: %s\n", theme_file);
+
+   // parse command line arguments
    ecore_app_args_set(argc, (const char **)argv);
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0) goto shutdown_edje;
@@ -723,25 +718,20 @@ main(int argc, char **argv)
         printf("must provide at least one file to play!\n");
         goto shutdown_edje;
      }
-
-   if ((geometry.w == 0) || (geometry.h == 0))
-     {
-        if (geometry.w == 0) geometry.w = 320;
-        if (geometry.h == 0) geometry.h = 240;
-     }
+   if (geometry.w == 0) geometry.w = 320;
+   if (geometry.h == 0) geometry.h = 240;
 
    printf("evas engine: %s\n", engine ? engine : "<auto>");
    printf("emotion backend: %s\n", backend ? backend : "<auto>");
    printf("vis: %d\n", vis);
    printf("geometry: %d %d %dx%d\n", geometry.x, geometry.y, geometry.w, geometry.h);
 
-   ecore_evas = ecore_evas_new
-     (engine, geometry.x, geometry.y, geometry.w, geometry.h, NULL);
-   if (!ecore_evas)
-     goto shutdown_edje;
+   ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
 
-//   ecore_evas_alpha_set(ecore_evas, EINA_TRUE);
-
+   // create the ecore_evas window
+   ecore_evas = ecore_evas_new(engine, geometry.x, geometry.y,
+                               geometry.w, geometry.h, NULL);
+   if (!ecore_evas) goto shutdown_edje;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
    ecore_evas_title_set(ecore_evas, "Evas Media Test Program");
@@ -751,10 +741,13 @@ main(int argc, char **argv)
    evas_image_cache_set(evas, 8 * 1024 * 1024);
    evas_font_cache_set(evas, 1 * 1024 * 1024);
 
+   // init emotion
    emotion_init();
 
+   // create the checkboard background edje object
    bg_setup();
 
+   // open files and webcams
    for (; args < argc; args++)
      init_video_object(backend, argv[args]);
 
@@ -773,10 +766,11 @@ main(int argc, char **argv)
           }
      }
 
+   // start the main loop
    ecore_animator_add(check_positions, NULL);
-
    ecore_main_loop_begin();
 
+   // shutdown
    main_signal_exit(NULL, 0, NULL);
 
    emotion_shutdown();
