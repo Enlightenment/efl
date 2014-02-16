@@ -116,22 +116,6 @@ theme_get(void)
      return PACKAGE_DATA_DIR"/data/theme.edj";
 }
 
-static const char *
-fonts_dir_get(void)
-{
-   static int is_local = -1;
-   if (is_local == -1)
-     {
-        struct stat st;
-        is_local = (stat(PACKAGE_BUILD_DIR"/src/tests/emotion/data/fonts", &st) == 0);
-     }
-
-   if (is_local)
-     return PACKAGE_BUILD_DIR"/src/tests/emotion/data/fonts";
-   else
-     return PACKAGE_DATA_DIR"/data/fonts";
-}
-
 void
 bg_setup(void)
 {
@@ -766,7 +750,6 @@ main(int argc, char **argv)
    evas = ecore_evas_get(ecore_evas);
    evas_image_cache_set(evas, 8 * 1024 * 1024);
    evas_font_cache_set(evas, 1 * 1024 * 1024);
-   evas_font_path_append(evas, fonts_dir_get());
 
    emotion_init();
 
