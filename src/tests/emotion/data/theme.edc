@@ -647,11 +647,13 @@ collections {
          // 
          // need txt parts:
          // "video_speed_txt"
+         // "video_volume_txt"
          // "video_progress_txt"
          // 
          // need dragables:
          // "video_progress" horizontal
          // "video_speed" vertical
+         // "video_volume" vertical
          part { name: "video_swallow"; mouse_events: 0; type: SWALLOW;
             description { state: "default" 0.0;
                rel1 {
@@ -735,21 +737,32 @@ collections {
          part { name: "video_speed_txt"; type: TEXT; mouse_events: 0;
             description { state: "default" 0.0;
                rel1 {
-                  to:       "video_frame_bottom";
-                  relative: 0.0  0.0;
-                  offset:   0    8;
+                  to:       "video_frame_top";
                }
                rel2 {
-                  to:       "video_frame_bottom";
-                  relative: 1.0  1.0;
-                  offset:   -1   -13;
+                  to:       "video_frame_top";
                }
                color:       0 0 0 255;
                text {
-                  text: "Video Speed";
                   font: "Sans";
-                  size: 6;
+                  size: 8;
                   align: 1.0 0.5;
+               };
+            }
+         }
+         part { name: "video_volume_txt"; type: TEXT; mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1 {
+                  to:       "video_frame_top";
+               }
+               rel2 {
+                  to:       "video_frame_top";
+               }
+               color:       0 0 0 255;
+               text {
+                  font: "Sans";
+                  size: 8;
+                  align: 0.0 0.5;
                };
             }
          }
@@ -843,6 +856,43 @@ collections {
                }
                rel2 {
                   to:       "video_speed_confine";
+                  relative: 0.5  0.5;
+                  offset:   0    0;
+               }
+               image {
+                  normal: "knob.png";
+               }
+            }
+         }
+         part { name: "video_volume_confine"; mouse_events: 0; type:  RECT;
+            description { state: "default" 0.0;
+               rel1 {
+                  to:       "video_frame_left";
+                  offset:   10    24;
+               }
+               rel2 {
+                  to:       "video_frame_left";
+                  offset:   0   -48;
+               }
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "video_volume"; mouse_events: 1;
+            dragable {
+               x:        0 0 0;
+               y:        -1 1 0;
+               confine: "video_volume_confine";
+            }
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min:   24 24;
+               rel1 {
+                  to:       "video_volume_confine";
+                  relative: 0.5  0.5;
+                  offset:   0    0;
+               }
+               rel2 {
+                  to:       "video_volume_confine";
                   relative: 0.5  0.5;
                   offset:   0    0;
                }
@@ -969,6 +1019,7 @@ collections {
          // "video_control" "stop"
          // "drag" "video_progress"
          // "drag" "video_speed"
+         // "drag" "video_volume"
          // 
          // get signals:
          // "video_state" "play"

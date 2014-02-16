@@ -511,8 +511,21 @@ video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission EINA_
    edje_object_part_drag_value_get(o, source, &x, &y);
    spd = 255 * y;
    evas_object_color_set(ov, spd, spd, spd, spd);
-   snprintf(buf, sizeof(buf), "%.0f", spd);
+   snprintf(buf, sizeof(buf), "alpha %.0f", spd);
    edje_object_part_text_set(o, "video_speed_txt", buf);
+}
+
+static void
+video_obj_signal_vol_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   Evas_Object *ov = data;
+   double vol;
+   char buf[256];
+
+   edje_object_part_drag_value_get(o, source, NULL, &vol);
+   emotion_object_audio_volume_set(ov, vol);
+   snprintf(buf, sizeof(buf), "vol %.2f", vol);
+   edje_object_part_text_set(o, "video_volume_txt", buf);
 }
 
 static void
@@ -605,11 +618,10 @@ init_video_object(const char *module_filename, const char *filename)
      return;
    emotion_object_vis_set(o, vis);
    if (!emotion_object_file_set(o, filename))
-     {
        return;
-     }
    emotion_object_last_position_load(o);
    emotion_object_play_set(o, 1);
+   emotion_object_audio_volume_set(o, 0.5);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, 320, 240);
    emotion_object_smooth_scale_set(o, 1);
@@ -659,6 +671,7 @@ init_video_object(const char *module_filename, const char *filename)
    edje_object_signal_callback_add(oe, "video_control", "stop", video_obj_signal_stop_cb, o);
    edje_object_signal_callback_add(oe, "drag", "video_progress", video_obj_signal_jump_cb, o);
    edje_object_signal_callback_add(oe, "drag", "video_speed", video_obj_signal_speed_cb, o);
+   edje_object_signal_callback_add(oe, "drag", "video_volume", video_obj_signal_vol_cb, o);
 
    edje_object_signal_callback_add(oe, "frame_move", "start", video_obj_signal_frame_move_start_cb, oe);
    edje_object_signal_callback_add(oe, "frame_move", "stop", video_obj_signal_frame_move_stop_cb, oe);
@@ -667,7 +680,10 @@ init_video_object(const char *module_filename, const char *filename)
    edje_object_signal_callback_add(oe, "mouse,move", "*", video_obj_signal_frame_move_cb, oe);
 
    edje_object_part_drag_value_set(oe, "video_speed", 0.0, 1.0);
-   edje_object_part_text_set(oe, "video_speed_txt", "255");
+   edje_object_part_text_set(oe, "video_speed_txt", "alpha 255");
+
+   edje_object_part_drag_value_set(oe, "video_volume", 0.0, 0.5);
+   edje_object_part_text_set(oe, "video_volume_txt", "vol 0.50");
 
    edje_object_signal_emit(o, "video_state", "play");
 
