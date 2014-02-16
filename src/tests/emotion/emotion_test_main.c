@@ -564,12 +564,10 @@ static void
 init_video_object(const char *module_filename, const char *filename)
 {
    Evas_Object *o, *oe;
-   int iw, ih;
-   Evas_Coord w, h;
+   Evas_Coord w, h, offset;
    Frame_Data *fd;
 
-
-/* basic video object setup */
+   /* basic video object setup */
    o = emotion_object_add(evas);
    if (!emotion_object_init(o, module_filename))
      return;
@@ -583,32 +581,27 @@ init_video_object(const char *module_filename, const char *filename)
    evas_object_resize(o, 320, 240);
    emotion_object_smooth_scale_set(o, 1);
    evas_object_show(o);
-/* end basic video setup. all the rest here is just to be fancy */
-
 
    video_objs = eina_list_append(video_objs, o);
+   /* end basic video setup. all the rest here is just to be fancy */
 
-   emotion_object_size_get(o, &iw, &ih);
-   w = iw; h = ih;
 
    fd = calloc(1, sizeof(Frame_Data));
    if (!fd) exit(1);
-   
+
    oe = edje_object_add(evas);
-   evas_object_event_callback_add(oe, EVAS_CALLBACK_FREE, _oe_free_cb, NULL);
+   evas_object_event_callback_add(oe, EVAS_CALLBACK_FREE, _oe_free_cb, fd);
    evas_object_data_set(oe, "frame_data", fd);
    if (reflex)
      edje_object_file_set(oe, theme_file, "video_controller/reflex");
    else
      edje_object_file_set(oe, theme_file, "video_controller");
-   edje_extern_object_min_size_set(o, w, h);
    edje_object_part_swallow(oe, "video_swallow", o);
+
+   offset = 20 * (eina_list_count(video_objs) - 1);
+   evas_object_move(oe, offset, offset);
    edje_object_size_min_calc(oe, &w, &h);
-//   evas_object_move(oe, rand() % (int)(startw - w), rand() % (int)(starth - h));
-   evas_object_move(oe, 0, 0);
    evas_object_resize(oe, w, h);
-   edje_extern_object_min_size_set(o, 0, 0);
-   edje_object_part_swallow(oe, "video_swallow", o);
 
    evas_object_smart_callback_add(o, "frame_decode", video_obj_frame_decode_cb, oe);
    evas_object_smart_callback_add(o, "frame_resize", video_obj_frame_resize_cb, oe);
