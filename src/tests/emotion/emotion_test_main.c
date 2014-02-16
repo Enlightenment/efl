@@ -211,16 +211,6 @@ bg_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
      broadcast_event(EMOTION_EVENT_9);
    else if (!strcmp(ev->keyname, "-"))
      broadcast_event(EMOTION_EVENT_10);
-   else if (!strcmp(ev->keyname, "bracketleft"))
-     {
-        EINA_LIST_FOREACH(video_objs, l, o)
-          emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) - 0.1);
-     }
-   else if (!strcmp(ev->keyname, "bracketright"))
-     {
-        EINA_LIST_FOREACH(video_objs, l, o)
-          emotion_object_audio_volume_set(o, emotion_object_audio_volume_get(o) + 0.1);
-     }
    else if (!strcmp(ev->keyname, "v"))
      {
         EINA_LIST_FOREACH(video_objs, l, o)
@@ -489,7 +479,7 @@ video_obj_signal_stop_cb(void *data, Evas_Object *o, const char *emission EINA_U
 }
 
 static void
-video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source)
 {
    Evas_Object *ov = data;
    double len;
@@ -501,7 +491,7 @@ video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission EINA_U
 }
 
 static void
-video_obj_signal_alpha_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+video_obj_signal_alpha_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source)
 {
    Evas_Object *ov = data;
    double alpha;
@@ -516,7 +506,7 @@ video_obj_signal_alpha_cb(void *data, Evas_Object *o, const char *emission EINA_
 }
 
 static void
-video_obj_signal_vol_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+video_obj_signal_vol_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source)
 {
    Evas_Object *ov = data;
    double vol;
