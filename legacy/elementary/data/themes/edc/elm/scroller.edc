@@ -805,3 +805,31 @@ group { name: "elm/scroller/base/default";
       }
    }
 }
+
+group { name: "elm/scroller/base/noclip";
+   inherit: "elm/scroller/base/default";
+   parts {
+      part { name: "elm.swallow.background";
+         description { state: "default" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+         }
+      }
+      part { name: "elm.swallow.content";
+         description { state: "default" 0.0;
+            rel1.offset: 0 1;
+            rel2.offset: -1 -1;
+         }
+      }
+      part { name: "inset";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "shadow";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+   }
+}
