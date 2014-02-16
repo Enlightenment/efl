@@ -71,3 +71,41 @@ _template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const
    eina_strbuf_replace_all(buf, "@#eoprefix", eoprefix);
 }
 
+char*
+_nextline(char *str, unsigned int lines)
+{
+   if (!str) return NULL;
+
+   char *ret = str;
+   while ((lines--) && *ret)
+     {
+        ret= strchr(ret, '\n');
+        if (ret) ret++;
+     }
+   return ret;
+}
+
+char*
+_startline(char *str, char *pos)
+{
+   if (!str || !pos) return NULL;
+
+   char *ret =  pos;
+   while ((ret > str) && (*(ret-1)!='\n')) ret--;
+
+   return ret;
+}
+
+char*
+_first_line_get(const char *str)
+{
+   Eina_Strbuf *ret = eina_strbuf_new();
+   if (str)
+     {
+        const char *p = strchr(str, '\n');
+        size_t offs = (p) ? (size_t)(p - str) : strlen(str);
+        eina_strbuf_append_n(ret, str, offs);
+     }
+   return eina_strbuf_string_steal(ret);
+}
+

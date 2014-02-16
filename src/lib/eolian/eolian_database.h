@@ -3,8 +3,8 @@
 
 #include <Eolian.h>
 
-Eina_Bool database_init();
-Eina_Bool database_shutdown();
+int database_init();
+int database_shutdown();
 
 /* Add a class in the database */
 Eina_Bool database_class_add(const char *class_name, Eolian_Class_Type type);

@@ -2,6 +2,7 @@
 #include "eolian_database.h"
 
 static Eina_Hash *_classes = NULL;
+static int _database_init_count = 0;
 
 typedef struct
 {
@@ -122,21 +123,32 @@ _class_get(const char *class_name)
    return cl;
 }
 
-Eina_Bool
+int
 database_init()
 {
+   if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
    if (!_classes)
       _classes = eina_hash_stringshared_new(_hash_free_cb);
-   return EINA_TRUE;
+   return ++_database_init_count;
 }
 
-Eina_Bool
+int
 database_shutdown()
 {
-   eina_hash_free(_classes);
-   eina_shutdown();
-   return EINA_TRUE;
+   if (_database_init_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
+   _database_init_count--;
+
+   if (_database_init_count == 0)
+     {
+        eina_hash_free(_classes);
+        eina_shutdown();
+     }
+   return _database_init_count;
 }
 
 Eina_Bool
@@ -186,7 +198,7 @@ static Eina_Bool _class_name_get(const Eina_Hash *hash EINA_UNUSED, const void *
 }
 
 EAPI const Eina_List *
-eolian_class_names_list_get()
+eolian_class_names_list_get(void)
 {
    Eina_List *list = NULL;
    eina_hash_foreach(_classes, _class_name_get, &list);

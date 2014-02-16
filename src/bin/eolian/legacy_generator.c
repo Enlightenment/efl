@@ -280,31 +280,6 @@ legacy_header_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
    return EINA_TRUE;
 }
 
-static char*
-_nextline(char *str, unsigned int lines)
-{
-   if (!str) return NULL;
-
-   char *ret = str;
-   while ((lines--) && *ret)
-     {
-        ret= strchr(ret, '\n');
-        if (ret) ret++;
-     }
-   return ret;
-}
-
-static char*
-_startline(char *str, char *pos)
-{
-   if (!str || !pos) return NULL;
-
-   char *ret =  pos;
-   while ((ret > str) && (*(ret-1)!='\n')) ret--;
-
-   return ret;
-}
-
 Eina_Bool
 legacy_header_append(const char *classname, int eo_version, Eina_Strbuf *header)
 {
@@ -449,4 +424,3 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version, 
 
    return EINA_TRUE;
 }
-

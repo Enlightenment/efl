@@ -6,6 +6,10 @@ extern "C" {
 #endif
 
 #include <Eina.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 
 /* Function Id used to extract information on class functions
  *
@@ -84,6 +88,8 @@ typedef enum
    EOLIAN_CLASS_INTERFACE
 } Eolian_Class_Type;
 
+#ifdef EFL_BETA_API_SUPPORT
+
 /*
  * @brief Parse a given .eo file and fill the database.
  *
@@ -101,14 +107,14 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filename);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_init();
+EAPI int eolian_init(void);
 
 /*
  * @brief Shutdown Eolian.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_shutdown();
+EAPI int eolian_shutdown(void);
 
 /*
  * @brief Show information about a given class.
@@ -140,7 +146,7 @@ EAPI Eolian_Class_Type eolian_class_type_get(const char *class_name);
  * @ingroup Eolian
  */
 /* Returns the list of class names of the database */
-EAPI const Eina_List *eolian_class_names_list_get();
+EAPI const Eina_List *eolian_class_names_list_get(void);
 
 /*
  * @brief Indicates if class exists in the database.
@@ -403,6 +409,8 @@ EAPI const Eina_List *eolian_class_events_list_get(const char *class_name);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_desc);
+
+#endif
 
 #ifdef __cplusplus
 } // extern "C" {
