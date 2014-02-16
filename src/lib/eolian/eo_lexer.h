@@ -41,7 +41,7 @@ typedef struct _eo_tokenizer
       Eo_Accessor_Def *accessor;
       Eo_Accessor_Param *accessor_param;
       Eina_List *str_items;
-      Eo_Signal_Def *signal;
+      Eo_Event_Def *event;
       Eo_Implement_Def *impl;
       Eo_Implement_Legacy_Param_Def *impl_leg_param;
    } tmp;

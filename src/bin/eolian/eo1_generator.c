@@ -24,7 +24,7 @@ _@#class_class_constructor(Eo_Class *klass)\n\
         EO_OP_FUNC_SENTINEL\n\
    };\n\
    eo_class_funcs_set(klass, func_desc);\n\
-   _user_@#class_class_constructor(klass);\n\
+   _@#class_class_constructor(klass);\n\
 }\n\
 \n\
 static const Eo_Op_Description @#class_op_desc[] = {@#list_op\n\

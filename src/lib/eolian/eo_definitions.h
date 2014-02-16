@@ -84,11 +84,11 @@ typedef struct _eo_method_def
 
 /* SIGNAL */
 
-typedef struct _eo_signal_def
+typedef struct _eo_event_def
 {
    const char *name;
    const char *comment;
-} Eo_Signal_Def;
+} Eo_Event_Def;
 
 /* DEFAULT CONSTRUCTOR */
 
@@ -139,7 +139,7 @@ typedef struct _eo_class_def
    const char *legacy_prefix;
    Eina_List *inherits;
    Eina_List *implements;
-   Eina_List *signals;
+   Eina_List *events;
    Eina_List *constructors;
    Eina_List *destructors;
    Eina_List *properties;
@@ -160,7 +160,7 @@ void eo_definitions_method_def_free(Eo_Method_Def *prop);
 
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 
-void eo_definitions_signal_def_free(Eo_Signal_Def *sgn);
+void eo_definitions_event_def_free(Eo_Event_Def *sgn);
 
 void eo_definitions_dfltctor_def_free(Eo_DfltCtor_Def *ctor);
 void eo_definitions_dfltdtor_def_free(Eo_DfltDtor_Def *dtor);

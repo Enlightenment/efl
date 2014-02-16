@@ -73,7 +73,7 @@ eo_definitions_method_def_free(Eo_Method_Def *meth)
 }
 
 void
-eo_definitions_signal_def_free(Eo_Signal_Def *sgn)
+eo_definitions_event_def_free(Eo_Event_Def *sgn)
 {
    if (sgn->name)
      eina_stringshare_del(sgn->name);
@@ -123,7 +123,7 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    Eina_List *l;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
-   Eo_Signal_Def *sgn;
+   Eo_Event_Def *sgn;
    Eo_Implement_Def *impl;
 
    if (kls->name)
@@ -151,8 +151,8 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    EINA_LIST_FREE(kls->methods, meth)
       eo_definitions_method_def_free(meth);
 
-   EINA_LIST_FREE(kls->signals, sgn)
-      eo_definitions_signal_def_free(sgn);
+   EINA_LIST_FREE(kls->events, sgn)
+      eo_definitions_event_def_free(sgn);
 
    if (kls->dflt_ctor) eo_definitions_dfltctor_def_free(kls->dflt_ctor);
    if (kls->dflt_dtor) eo_definitions_dfltdtor_def_free(kls->dflt_dtor);

@@ -243,11 +243,11 @@ _eo_tokenizer_accessor_get(Eo_Tokenizer *toknz, Eo_Accessor_Type type)
    return accessor;
 }
 
-static Eo_Signal_Def*
-_eo_tokenizer_signal_get(Eo_Tokenizer *toknz, char *p)
+static Eo_Event_Def*
+_eo_tokenizer_event_get(Eo_Tokenizer *toknz, char *p)
 {
-   Eo_Signal_Def *sgn = calloc(1, sizeof(Eo_Signal_Def));
-   if (sgn == NULL) ABORT(toknz, "calloc Eo_Signal_Def failure");
+   Eo_Event_Def *sgn = calloc(1, sizeof(Eo_Event_Def));
+   if (sgn == NULL) ABORT(toknz, "calloc Eo_Event_Def failure");
 
    sgn->name = _eo_tokenizer_token_get(toknz, p);
 
@@ -345,7 +345,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    alnum_u           = alnum | '_';
    alpha_u           = alpha | '_';
    ident             = alpha+ >save_fpc (alnum | '_' )+;
-   signal            = alpha+ >save_fpc (alnum | '_' | ',' )+;
+   event            = alpha+ >save_fpc (alnum | '_' | ',' )+;
    class_meth        = alpha+ >save_fpc (alnum | '_' | '::' )+;
 
    eo_comment        = "/*@" ignore* alnum_u >save_fpc ( any | cr @inc_line )* :>> "*/";
@@ -688,7 +688,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action end_implements {
    }
 
-   action end_signals {
+   action end_events {
    }
 
    action begin_constructors {
@@ -726,16 +726,16 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto main;
    }
 
-   action end_signal_name {
-      toknz->tmp.signal = _eo_tokenizer_signal_get(toknz, fpc);
-      toknz->tmp.kls->signals = eina_list_append(toknz->tmp.kls->signals, toknz->tmp.signal);
+   action end_event_name {
+      toknz->tmp.event = _eo_tokenizer_event_get(toknz, fpc);
+      toknz->tmp.kls->events = eina_list_append(toknz->tmp.kls->events, toknz->tmp.event);
    }
 
-   action end_signal_comment {
-      if (toknz->tmp.signal->comment != NULL)
-        ABORT(toknz, "signal %s has already a comment", toknz->tmp.signal->name);
-      toknz->tmp.signal->comment = _eo_tokenizer_token_get(toknz, fpc-2);
-      toknz->tmp.signal = NULL;
+   action end_event_comment {
+      if (toknz->tmp.event->comment != NULL)
+        ABORT(toknz, "event %s has already a comment", toknz->tmp.event->name);
+      toknz->tmp.event->comment = _eo_tokenizer_token_get(toknz, fpc-2);
+      toknz->tmp.event = NULL;
    }
 
    action end_dflt_ctor_def {
@@ -851,9 +851,9 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 # implements { ... }
    implements = 'implements' ignore* begin_def ignore* impl_it* end_def;
 
-   signal_comment = ws* eo_comment %end_signal_comment;
-   signal_it = signal %end_signal_name ignore* end_statement signal_comment? ignore*;
-   signals = 'signals' ignore* begin_def ignore* signal_it* end_def;
+   event_comment = ws* eo_comment %end_event_comment;
+   event_it = event %end_event_name ignore* end_statement event_comment? ignore*;
+   events = 'events' ignore* begin_def ignore* event_it* end_def;
 
    dflt_ctor_comment = ws* eo_comment %end_dflt_ctor_comment;
    dflt_ctor = 'constructor' >save_fpc %end_dflt_ctor_def ignore* end_statement dflt_ctor_comment? ignore*;
@@ -873,7 +873,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       legacy_prefix;
       inherits       => end_inherits;
       implements     => end_implements;
-      signals        => end_signals;
+      events        => end_events;
       dflt_ctor;
       dflt_dtor;
       constructors   => begin_constructors;
@@ -1034,7 +1034,7 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
-   Eo_Signal_Def *sgn;
+   Eo_Event_Def *sgn;
    /* Eo_Ret_Def *ret; */
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
@@ -1049,8 +1049,8 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         EINA_LIST_FOREACH(kls->implements, l, s)
            printf(" %s", s);
         printf("\n");
-        printf("  signals:\n");
-        EINA_LIST_FOREACH(kls->signals, l, sgn)
+        printf("  events:\n");
+        EINA_LIST_FOREACH(kls->events, l, sgn)
            printf("    %s (%s)\n", sgn->name, sgn->comment);
 
         EINA_LIST_FOREACH(kls->constructors, l, meth)
@@ -1125,7 +1125,7 @@ eo_tokenizer_database_fill(const char *filename)
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
    Eo_Accessor_Def *accessor;
-   Eo_Signal_Def *signal;
+   Eo_Event_Def *event;
    Eo_Implement_Def *impl;
    /* Eo_Ret_Def *ret; */
 
@@ -1289,9 +1289,9 @@ eo_tokenizer_database_fill(const char *filename)
              database_class_implement_add(kls->name, impl_desc);
           }
 
-        EINA_LIST_FOREACH(kls->signals, l, signal)
+        EINA_LIST_FOREACH(kls->events, l, event)
           {
-             Eolian_Event ev = database_event_new(signal->name, signal->comment);
+             Eolian_Event ev = database_event_new(event->name, event->comment);
              database_class_event_add(kls->name, ev);
           }
 
