@@ -63,8 +63,8 @@ enum
    EDJE_OBJ_SUB_ID_PART_TEXT_IMF_CONTEXT_RESET,
    EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_SET,
    EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_GET,
-   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_SET,
-   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_GET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_SET,
+   EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_GET,
    EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_SET,
    EDJE_OBJ_SUB_ID_PART_TEXT_AUTOCAPITAL_TYPE_GET,
    EDJE_OBJ_SUB_ID_PART_TEXT_PREDICTION_ALLOW_SET,
@@ -297,7 +297,7 @@ enum
  *
  * @see edje_object_part_text_input_panel_variation_get
  */
-#define edje_obj_part_text_input_panel_variation_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int *, ret)
+#define edje_obj_part_text_input_panel_variation_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int *, ret)
 
 /**
  * @def edje_obj_part_text_input_panel_variation_set
@@ -310,7 +310,7 @@ enum
  *
  * @see edje_object_part_text_input_panel_variation_get
  */
-#define edje_obj_part_text_input_panel_variation_set(part, variation) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_VARIATION_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int, variation)
+#define edje_obj_part_text_input_panel_variation_set(part, variation) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int, variation)
 
 /**
  * @def edje_obj_part_text_autocapital_type_set
