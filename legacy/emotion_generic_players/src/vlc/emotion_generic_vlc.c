@@ -636,6 +636,10 @@ _remote_command(void *data, void *buffer, unsigned int nbyte)
               _file_close(app);
               app->last_order = EM_CMD_LAST;
               break;
+           case EM_CMD_STOP:
+              _stop(app);
+              app->last_order = EM_CMD_LAST;
+              break;
           }
      }
    else
@@ -656,9 +660,6 @@ _remote_command(void *data, void *buffer, unsigned int nbyte)
               break;
            case EM_CMD_PLAY:
               _play(app, *(float*) buffer);
-              break;
-           case EM_CMD_STOP:
-              _stop(app);
               break;
            case EM_CMD_POSITION_SET:
               _position_set(app, *(float*) buffer);
