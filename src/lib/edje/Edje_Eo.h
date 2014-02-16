@@ -2258,6 +2258,7 @@ enum
  * @param[in] emission
  * @param[in] source
  * @param[in] func
+ * @param[in] data
  * @param[out] ret
  *
  * @see edje_object_signal_callback_del
