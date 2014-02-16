@@ -128,7 +128,7 @@ extern EAPI Eo_Op ECORE_TIMER_BASE_ID;
 
 enum
 {
-   ECORE_TIMER_SUB_ID_CONSTRUCTOR,
+   ECORE_TIMER_SUB_ID_TIMER_CONSTRUCTOR,
    ECORE_TIMER_SUB_ID_LOOP_CONSTRUCTOR,
    ECORE_TIMER_SUB_ID_INTERVAL_SET,
    ECORE_TIMER_SUB_ID_INTERVAL_GET,
@@ -151,7 +151,7 @@ enum
  * @param[in] data
  *
  */
-#define ecore_timer_constructor(in, func, data) ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_CONSTRUCTOR), EO_TYPECHECK(double, in), EO_TYPECHECK(Ecore_Task_Cb, func), EO_TYPECHECK(const void *, data)
+#define ecore_timer_constructor(in, func, data) ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_TIMER_CONSTRUCTOR), EO_TYPECHECK(double, in), EO_TYPECHECK(Ecore_Task_Cb, func), EO_TYPECHECK(const void *, data)
 
 /**
  * @def ecore_timer_loop_constructor

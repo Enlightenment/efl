@@ -1002,7 +1002,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
 
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_CONSTRUCTOR), _timer_constructor),
+        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_TIMER_CONSTRUCTOR), _timer_constructor),
         EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_LOOP_CONSTRUCTOR), _timer_loop_constructor),
         EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_INTERVAL_SET), _timer_interval_set),
         EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_INTERVAL_GET), _timer_interval_get),
@@ -1021,7 +1021,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_CONSTRUCTOR, "Creates a timer to call the given function in the given period of time."),
+     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_TIMER_CONSTRUCTOR, "Creates a timer to call the given function in the given period of time."),
      EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_LOOP_CONSTRUCTOR, "Creates a timer to call the given function in the given period of time."),
      EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_INTERVAL_SET, "Change the interval the timer ticks of."),
      EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_INTERVAL_GET, "Get the interval the timer ticks on."),
