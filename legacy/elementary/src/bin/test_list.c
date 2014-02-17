@@ -1316,15 +1316,6 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    evas_object_show(bx);
 
    chk = elm_check_add(win);
-   elm_object_text_set(chk, "Focus on selection");
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed", test_list8_focus_check_changed, li);
-   elm_box_pack_end(bx, chk);
-   evas_object_show(chk);
-
-   test_list8_focus_on_selection_set(li, chk, EINA_TRUE);
-
-   chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus Animation");
    elm_check_state_set(chk, EINA_TRUE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
@@ -1332,6 +1323,15 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
                                   test_list8_focus_animate_check_changed, win);
    elm_box_pack_end(bx, chk);
    evas_object_show(chk);
+
+   chk = elm_check_add(win);
+   elm_object_text_set(chk, "Focus on selection");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed", test_list8_focus_check_changed, li);
+   elm_box_pack_end(bx, chk);
+   evas_object_show(chk);
+
+   test_list8_focus_on_selection_set(li, chk, EINA_FALSE);
 
    elm_box_pack_end(bxx, bx);
 
