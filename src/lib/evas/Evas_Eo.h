@@ -4411,7 +4411,7 @@ enum
  * @}
  */
 
-#define EVAS_COMMON_CLASS evas_common_class_get()
+#define EVAS_COMMON_INTERFACE evas_common_class_get()
 
 const Eo_Class *evas_common_class_get(void) EINA_CONST;
 
