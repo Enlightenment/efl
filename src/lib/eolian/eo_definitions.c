@@ -84,28 +84,6 @@ eo_definitions_event_def_free(Eo_Event_Def *sgn)
 }
 
 void
-eo_definitions_dfltctor_def_free(Eo_DfltCtor_Def *ctor)
-{
-   if (ctor->name)
-     eina_stringshare_del(ctor->name);
-   if (ctor->comment)
-     eina_stringshare_del(ctor->comment);
-
-   free(ctor);
-}
-
-void
-eo_definitions_dfltdtor_def_free(Eo_DfltDtor_Def *dtor)
-{
-   if (dtor->name)
-     eina_stringshare_del(dtor->name);
-   if (dtor->comment)
-     eina_stringshare_del(dtor->comment);
-
-   free(dtor);
-}
-
-void
 eo_definitions_impl_def_free(Eo_Implement_Def *impl)
 {
    if (impl->meth_name)
@@ -153,9 +131,6 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
 
    EINA_LIST_FREE(kls->events, sgn)
       eo_definitions_event_def_free(sgn);
-
-   if (kls->dflt_ctor) eo_definitions_dfltctor_def_free(kls->dflt_ctor);
-   if (kls->dflt_dtor) eo_definitions_dfltdtor_def_free(kls->dflt_dtor);
 
    free(kls);
 }

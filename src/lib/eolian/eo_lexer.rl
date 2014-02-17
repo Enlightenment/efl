@@ -254,33 +254,11 @@ _eo_tokenizer_event_get(Eo_Tokenizer *toknz, char *p)
    return sgn;
 }
 
-static Eo_DfltCtor_Def*
-_eo_tokenizer_dflt_ctor_get(Eo_Tokenizer *toknz, char *p)
-{
-   Eo_DfltCtor_Def *ctor = calloc(1, sizeof(Eo_DfltCtor_Def));
-   if (ctor == NULL) ABORT(toknz, "calloc Eo_DfltCtor_Def failure");
-
-   ctor->name = _eo_tokenizer_token_get(toknz, p);
-
-   return ctor;
-}
-
-static Eo_DfltDtor_Def*
-_eo_tokenizer_dflt_dtor_get(Eo_Tokenizer *toknz, char *p)
-{
-   Eo_DfltDtor_Def *dtor = calloc(1, sizeof(Eo_DfltDtor_Def));
-   if (dtor == NULL) ABORT(toknz, "calloc Eo_DfltDtor_Def failure");
-
-   dtor->name = _eo_tokenizer_token_get(toknz, p);
-
-   return dtor;
-}
-
 static Eo_Implement_Def*
 _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 {
    Eo_Implement_Def *impl = calloc(1, sizeof(Eo_Implement_Def));
-   if (impl == NULL) ABORT(toknz, "calloc Eo_DfltDtor_Def failure");
+   if (impl == NULL) ABORT(toknz, "calloc Eo_Implement_Def failure");
 
    impl->meth_name = _eo_tokenizer_token_get(toknz, p);
 
@@ -738,38 +716,10 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.event = NULL;
    }
 
-   action end_dflt_ctor_def {
-      if (toknz->tmp.kls->dflt_ctor != NULL)
-        ABORT(toknz, "A default constructor has already been defined");
-      toknz->tmp.kls->dflt_ctor = _eo_tokenizer_dflt_ctor_get(toknz, fpc);
-   }
-
    action end_legacy_prefix {
       if (toknz->tmp.kls->legacy_prefix != NULL)
         ABORT(toknz, "A legacy prefix has already been given");
       toknz->tmp.kls->legacy_prefix = _eo_tokenizer_token_get(toknz, fpc);
-   }
-
-   action end_dflt_dtor_def {
-      if (toknz->tmp.kls->dflt_dtor != NULL)
-        ABORT(toknz, "A default destructor has already been defined");
-      toknz->tmp.kls->dflt_dtor = _eo_tokenizer_dflt_dtor_get(toknz, fpc);
-   }
-
-   action end_dflt_ctor_comment {
-      if (toknz->tmp.kls->dflt_ctor == NULL)
-        ABORT(toknz, "No default constructor is defined for the comment");
-      if (toknz->tmp.kls->dflt_ctor->comment != NULL)
-        ABORT(toknz, "default constructor %s has already a comment", toknz->tmp.kls->dflt_ctor->name);
-      toknz->tmp.kls->dflt_ctor->comment = _eo_tokenizer_token_get(toknz, fpc-2);
-   }
-
-   action end_dflt_dtor_comment {
-      if (toknz->tmp.kls->dflt_dtor == NULL)
-        ABORT(toknz, "No default destructor is defined for the comment");
-      if (toknz->tmp.kls->dflt_dtor->comment != NULL)
-        ABORT(toknz, "default destructor %s has already a comment", toknz->tmp.kls->dflt_dtor->name);
-      toknz->tmp.kls->dflt_dtor->comment = _eo_tokenizer_token_get(toknz, fpc-2);
    }
 
    legacy_prefix = 'legacy_prefix' ignore* colon ignore* ident %end_legacy_prefix end_statement ignore*;
@@ -855,12 +805,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    event_it = event %end_event_name ignore* end_statement event_comment? ignore*;
    events = 'events' ignore* begin_def ignore* event_it* end_def;
 
-   dflt_ctor_comment = ws* eo_comment %end_dflt_ctor_comment;
-   dflt_ctor = 'constructor' >save_fpc %end_dflt_ctor_def ignore* end_statement dflt_ctor_comment? ignore*;
-
-   dflt_dtor_comment = ws* eo_comment %end_dflt_dtor_comment;
-   dflt_dtor = 'destructor' >save_fpc %end_dflt_dtor_def ignore* end_statement dflt_dtor_comment? ignore*;
-
    constructors = 'constructors' ignore* begin_def;
    destructors = 'destructors' ignore* begin_def;
    properties = 'properties' ignore* begin_def;
@@ -874,8 +818,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       inherits       => end_inherits;
       implements     => end_implements;
       events        => end_events;
-      dflt_ctor;
-      dflt_dtor;
       constructors   => begin_constructors;
       destructors    => begin_destructors;
       properties     => begin_properties;
@@ -1168,18 +1110,6 @@ eo_tokenizer_database_fill(const char *filename)
           {
              database_class_legacy_prefix_set(kls->name, kls->legacy_prefix);
           }
-        if (kls->dflt_ctor)
-          {
-             Eolian_Function foo_id = database_function_new(kls->dflt_ctor->name, DFLT_CONSTRUCTOR);
-             database_class_function_add(kls->name, foo_id);
-             database_function_description_set(foo_id, EOLIAN_COMMENT, kls->dflt_ctor->comment);
-          }
-        if (kls->dflt_dtor)
-          {
-             Eolian_Function foo_id = database_function_new(kls->dflt_dtor->name, DFLT_DESTRUCTOR);
-             database_class_function_add(kls->name, foo_id);
-             database_function_description_set(foo_id, EOLIAN_COMMENT, kls->dflt_dtor->comment);
-          }
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
              Eolian_Function foo_id = database_function_new(meth->name, CONSTRUCTOR);
@@ -1263,6 +1193,18 @@ eo_tokenizer_database_fill(const char *filename)
         EINA_LIST_FOREACH(kls->implements, l, impl)
           {
              const char *class = impl->meth_name;
+             if (!strcmp(class, "Eo_Base::constructor"))
+               {
+                  Eolian_Function foo_id = database_function_new(NULL, DFLT_CONSTRUCTOR);
+                  database_class_function_add(kls->name, foo_id);
+                  continue;
+               }
+             if (!strcmp(class, "Eo_Base::destructor"))
+               {
+                  Eolian_Function foo_id = database_function_new(NULL, DFLT_DESTRUCTOR);
+                  database_class_function_add(kls->name, foo_id);
+                  continue;
+               }
              char *func = strstr(class, "::");
              if (func) *func = '\0';
              func += 2;

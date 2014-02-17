@@ -91,22 +91,6 @@ typedef struct _eo_event_def
    const char *comment;
 } Eo_Event_Def;
 
-/* DEFAULT CONSTRUCTOR */
-
-typedef struct _eo_dflt_ctor_def
-{
-   const char *name;
-   const char *comment;
-} Eo_DfltCtor_Def;
-
-/* DEFAULT DESTRUCTOR */
-
-typedef struct _eo_dflt_dtor_def
-{
-   const char *name;
-   const char *comment;
-} Eo_DfltDtor_Def;
-
 /* IMPLEMENT */
 
 typedef struct _eo_implement_legacy_param_def
@@ -145,8 +129,6 @@ typedef struct _eo_class_def
    Eina_List *destructors;
    Eina_List *properties;
    Eina_List *methods;
-   Eo_DfltCtor_Def *dflt_ctor;
-   Eo_DfltDtor_Def *dflt_dtor;
 } Eo_Class_Def;
 
 void eo_definitions_ret_free(Eo_Ret_Def *ret);
@@ -162,9 +144,6 @@ void eo_definitions_method_def_free(Eo_Method_Def *prop);
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 
 void eo_definitions_event_def_free(Eo_Event_Def *sgn);
-
-void eo_definitions_dfltctor_def_free(Eo_DfltCtor_Def *ctor);
-void eo_definitions_dfltdtor_def_free(Eo_DfltDtor_Def *dtor);
 
 void eo_definitions_impl_def_free(Eo_Implement_Def *impl);
 #endif /* __EO_DEFINITIONS_H__ */
