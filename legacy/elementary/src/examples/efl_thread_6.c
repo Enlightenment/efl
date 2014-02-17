@@ -14,7 +14,7 @@ struct info
 // BEGIN - code running in my custom thread instance
 //
 static void
-mandel(int *pix, int w, int h)
+mandel(Ecore_Thread *th, int *pix, int w, int h)
 {
    double x, xx, y, cx, cy, cox, coy;
    int iteration, hx, hy, val, r, g, b, rr, gg, bb;
@@ -31,6 +31,8 @@ mandel(int *pix, int w, int h)
    r = rand() % 255; g = rand() % 255; b = rand() % 255;
    for (hy = 0; hy < h; hy++)
      {
+        // every line check if thread has been cancelled to return early
+        if (ecore_thread_check(th)) return;
         for (hx = 0; hx < w; hx++)
           {
              cx = (((float)hx) / ((float)w) - 0.5) / (magnify * 3.0);
@@ -68,7 +70,7 @@ th_do(void *data, Ecore_Thread *th)
    struct info *inf = data;
    // CANNOT TOUCH inf->obj here! just inf->pix which is 256x256 @ 32bpp
    // quick and dirty to consume some cpu - do a mandelbrot calc
-   mandel(inf->pix, 256, 256);
+   mandel(th, inf->pix, 256, 256);
 }
 //
 // END - code running in my custom thread instance
