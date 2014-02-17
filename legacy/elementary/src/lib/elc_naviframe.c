@@ -517,13 +517,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
      goto end;
 
-   //FIXME: Really need?
-   if (!sd->on_deletion)
-     {
-        nit->unfocusable = elm_widget_tree_unfocusable_get(VIEW(nit));
-        elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
-     }
-
    sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(nit));
 
    if (top && !sd->on_deletion) /* must raise another one */
@@ -532,6 +525,9 @@ _item_del_pre_hook(Elm_Object_Item *it)
           prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last,
                                               Elm_Naviframe_Item);
         if (!prev_it) goto end;
+
+        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
+        elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
 
         if (sd->freeze_events)
           evas_object_freeze_events_set(VIEW(prev_it), EINA_FALSE);
@@ -1081,8 +1077,6 @@ _on_item_push_finished(void *data,
 
    evas_object_hide(VIEW(it));
 
-   elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
-
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
 }
@@ -1100,7 +1094,7 @@ _on_item_pop_finished(void *data,
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    if (sd->preserve)
-     elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
+     elm_widget_tree_unfocusable_set(VIEW(it), EINA_FALSE);
    sd->popping = eina_list_remove(sd->popping, it);
 
    elm_widget_item_del(data);
@@ -1120,8 +1114,6 @@ _on_item_show_finished(void *data,
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
-
-   elm_widget_tree_unfocusable_set(VIEW(it), it->unfocusable);
 
    _prev_page_focus_recover(it);
 
@@ -1546,7 +1538,6 @@ _item_push(Eo *obj, void *_pd, va_list *list)
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
-        prev_it->unfocusable = elm_widget_tree_unfocusable_get(VIEW(prev_it));
         elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_TRUE);
 
         ecore_animator_del(it->animator);
@@ -1611,6 +1602,8 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
        (sd->stack, EINA_INLIST_GET(it),
        EINA_INLIST_GET(((Elm_Naviframe_Item *)before)));
 
+   elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+
    elm_layout_sizing_eval(obj);
 
    *ret = (Elm_Object_Item *)it;
@@ -1662,6 +1655,7 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    if (top_inserted)
      {
         elm_widget_focused_object_clear(VIEW(after));
+        elm_widget_tree_unfocusable_set(VIEW(after), EINA_TRUE);
         _resize_object_reset(obj, it);
         evas_object_show(VIEW(it));
         evas_object_hide(VIEW(after));
@@ -1729,9 +1723,6 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
 
    evas_object_data_set(VIEW(it), "out_of_list", (void *)1);
 
-   it->unfocusable = elm_widget_tree_unfocusable_get(VIEW(it));
-   elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
-
    if (sd->stack->last->prev)
      prev_it = EINA_INLIST_CONTAINER_GET
          (sd->stack->last->prev, Elm_Naviframe_Item);
@@ -1740,6 +1731,9 @@ _item_pop(Eo *obj, void *_pd, va_list *list)
 
    if (prev_it)
      {
+        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
+        elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+
         if (sd->freeze_events)
           {
              evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
@@ -1827,6 +1821,9 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 
    elm_widget_focused_object_clear(VIEW(nit));
    _resize_object_reset(WIDGET(it), nit);
+
+   elm_widget_tree_unfocusable_set(VIEW(nit), EINA_FALSE);
+   elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_TRUE);
 
    if (sd->freeze_events)
      {

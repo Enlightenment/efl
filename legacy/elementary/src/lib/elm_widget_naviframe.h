@@ -57,7 +57,6 @@ struct _Elm_Naviframe_Item
    int          ref;
 
    Eina_Bool    title_enabled : 1;
-   Eina_Bool    unfocusable : 1;
    Eina_Bool    popping : 1; /**< a flag to notify the item is on poping. this flag is set true at the start of item pop. */
    Eina_Bool    delete_me : 1; /**< a flag to notify the item is on deletion. this flag is set true at the start of item deletion. */
 };
