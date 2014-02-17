@@ -4014,6 +4014,8 @@ cmakeconfig/EthumbConfig.cmake
 cmakeconfig/EthumbConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EthumbClientConfig.cmake
 cmakeconfig/EthumbClientConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EmotionConfig.cmake
+cmakeconfig/EmotionConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT

@@ -287,6 +287,12 @@ ethumbclient_cmakeconfig_DATA = \
 cmakeconfig/EthumbClientConfig.cmake \
 cmakeconfig/EthumbClientConfigVersion.cmake
 
+emotion_cmakeconfigdir =  $(libdir)/cmake/Emotion/
+emotion_cmakeconfig_DATA = \
+cmakeconfig/EmotionConfig.cmake \
+cmakeconfig/EmotionConfigVersion.cmake
+
+
 # D-Bus services:
 
 servicedir = @dbusservicedir@
