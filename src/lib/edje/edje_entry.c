@@ -823,6 +823,10 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    ignored = rp->part->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
+        /* set to allow handling in elementary, in case we have
+         * an unwanted event propagation */
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
         n = an->name;
         if (!n) n = "";
         len = 200 + strlen(n);
@@ -846,6 +850,10 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    ignored = rp->part->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
+        /* set to allow handling in elementary, in case we have
+         * an unwanted event propagation */
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
         n = an->name;
         if (!n) n = "";
         len = 200 + strlen(n);
