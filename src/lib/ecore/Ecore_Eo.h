@@ -80,7 +80,7 @@ extern EAPI Eo_Op ECORE_ANIMATOR_BASE_ID;
 
 enum
 {
-   ECORE_ANIMATOR_SUB_ID_ANIMATOR_CONSTRUCTOR,
+   ECORE_ANIMATOR_SUB_ID_CONSTRUCTOR,
    ECORE_ANIMATOR_SUB_ID_TIMELINE_CONSTRUCTOR,
    ECORE_ANIMATOR_SUB_ID_LAST
 };
@@ -97,7 +97,7 @@ enum
  * @param[in] data
  *
  */
-#define ecore_animator_constructor(func, data) ECORE_ANIMATOR_ID(ECORE_ANIMATOR_SUB_ID_ANIMATOR_CONSTRUCTOR), EO_TYPECHECK(Ecore_Task_Cb, func), EO_TYPECHECK(const void *, data)
+#define ecore_animator_constructor(func, data) ECORE_ANIMATOR_ID(ECORE_ANIMATOR_SUB_ID_CONSTRUCTOR), EO_TYPECHECK(Ecore_Task_Cb, func), EO_TYPECHECK(const void *, data)
 
 /**
  * @def ecore_animator_timeline_constructor
