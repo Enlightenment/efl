@@ -270,7 +270,8 @@ enum
  *
  * Append custom filter into filter list
  *
- * @param[in] mime_types
+ * @param[in] filter function
+ * @param[in] data
  * @param[in] filter_name
  * @param[out] ret
  *
