@@ -1307,7 +1307,9 @@ _displace_padding_update(Evas_Filter_Program *pgm,
                    @c default is equivalent to @c smooth_stretch.
   @param src       Source buffer
   @param dst       Destination buffer. Must be of same color format and size as @a src.
-  @param fillmode  Defines how to handle cases where the map has a different size from @a src and @a dst. It should most likely be @c stretch or @c repeat. See @ref evasfilter_fillmode "fillmodes".
+  @param fillmode  Defines how to handle cases where the map has a different size from @a src and @a dst.
+                   It should be a combination of @c stretch or @c repeat: @c none is not supported.
+                   See @ref evasfilter_fillmode "fillmodes".
 
   <h3>Displacement map</h3>
 
