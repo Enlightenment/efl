@@ -60,7 +60,18 @@ static void th_cancel(void *data, Ecore_Thread *th) { printf("thread cancelled\n
 static void
 down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   ecore_thread_cancel(thr);
+   if (thr) ecore_thread_cancel(thr);
+   thr = NULL;
+}
+
+// on window delete - cancel thread then delete window and exit mainloop
+static void
+del(void *data, Evas_Object *obj, void *event_info)
+{
+   if (thr) ecore_thread_cancel(thr);
+   thr = NULL;
+   evas_object_del(obj);
+   elm_exit();
 }
 
 EAPI_MAIN int
@@ -71,7 +82,7 @@ elm_main(int argc, char **argv)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("efl-thread-5", "EFL Thread 5");
-   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_smart_callback_add(win, "delete,request", del, NULL);
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 50, 80, 180, 255);
@@ -94,7 +105,7 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
-   ecore_thread_cancel(thr);
+   if (thr) ecore_thread_cancel(thr);
    elm_shutdown();
 
    return 0;
