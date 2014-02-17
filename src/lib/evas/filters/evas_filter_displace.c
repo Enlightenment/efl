@@ -18,7 +18,8 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
         if (map_y >= map_h) map_y = 0;
         map = map_start + (map_y * map_stride);
 
-        for (x = 0, map_x = 0; x < w; x++, dst++, src++, map_x++)
+        for (x = 0, map_x = 0; x < w;
+             x++, dst++, src++, map_x++, map += sizeof(DATA32))
           {
              int offx = 0, offy = 0, offx_dec = 0, offy_dec = 0, val = 0;
              Eina_Bool out = 0;
@@ -29,7 +30,6 @@ _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
                   map_x = 0;
                   map = map_start + (map_y * map_stride);
                }
-             else map += sizeof(DATA32);
 
              // x
              val = ((int) map[dx] - 128) * intensity;
@@ -92,7 +92,8 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
         if (map_y >= map_h) map_y = 0;
         map = (DATA8 *) (map_start + map_y * map_w);
 
-        for (x = 0, map_x = 0; x < w; x++, dst++, src++, map_x++)
+        for (x = 0, map_x = 0; x < w;
+             x++, dst++, src++, map_x++, map += sizeof(DATA32))
           {
              int offx = 0, offy = 0, offx_dec = 0, offy_dec = 0, val = 0;
              DATA32 col = 0;
@@ -104,7 +105,6 @@ _filter_displace_cpu_rgba_do(int w, int h, int map_w, int map_h, int intensity,
                   map_x = 0;
                   map = (DATA8 *) (map_start + map_y * map_w);
                }
-             else map += sizeof(DATA32);
 
              if (!map[ALPHA]) continue;
              if (!unpremul && map[ALPHA] != 0xFF)
