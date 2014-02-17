@@ -63,6 +63,12 @@ my_thread_mainloop_code(void *data)
    free(inf);
 }
 
+static void
+del(void *data, Evas_Object *obj, void *event_info)
+{
+   exit(0);
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -71,7 +77,7 @@ elm_main(int argc, char **argv)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("efl-thread-3", "EFL Thread 3");
-   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_smart_callback_add(win, "delete,request", del, NULL);
 
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 50, 80, 180, 255);
@@ -86,7 +92,6 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
-   elm_shutdown();
 
    return 0;
 }
