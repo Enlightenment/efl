@@ -917,22 +917,26 @@ static void
 _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
                       int *padl, int *padr, int *padt, int *padb)
 {
-   const char *outbuf;
-   Buffer *out;
+   const char *inbuf, *outbuf;
+   Buffer *in, *out;
    int ox, oy, l = 0, r = 0, t = 0, b = 0;
 
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
 
+   inbuf = _instruction_param_gets(instr, "src", NULL);
+   in = _buffer_get(pgm, inbuf);
+   EINA_SAFETY_ON_NULL_RETURN(in);
+
    outbuf = _instruction_param_gets(instr, "dst", NULL);
    out = _buffer_get(pgm, outbuf);
    EINA_SAFETY_ON_NULL_RETURN(out);
 
-   if (ox < 0) l = (-ox);
-   else r = ox;
+   if (ox < 0) l = (-ox) + in->pad.l;
+   else r = ox + in->pad.r;
 
-   if (oy < 0) t = (-oy);
-   else b = oy;
+   if (oy < 0) t = (-oy) + in->pad.t;
+   else b = oy + in->pad.b;
 
    if (out->pad.l < l) out->pad.l = l;
    if (out->pad.r < r) out->pad.r = r;
