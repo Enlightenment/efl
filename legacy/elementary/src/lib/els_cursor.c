@@ -209,9 +209,12 @@ _elm_cursor_set_hot_spots(Elm_Cursor *cur)
 }
 
 static void
-_elm_cursor_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_cursor_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Cursor *cur = data;
+
+   Evas_Event_Mouse_In *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if (cur->visible) return;
    evas_event_freeze(cur->evas);
@@ -239,11 +242,14 @@ _elm_cursor_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_U
 }
 
 static void
-_elm_cursor_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_cursor_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Object *sobj_parent;
    Elm_Cursor *pcur = NULL;
    Elm_Cursor *cur = data;
+
+   Evas_Event_Mouse_Out *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    if (!cur->visible) return;
    evas_event_freeze(cur->evas);
