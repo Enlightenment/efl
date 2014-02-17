@@ -1764,7 +1764,7 @@ EAPI void
 elm_naviframe_item_pop_to(Elm_Object_Item *it)
 {
    Elm_Naviframe_Item *nit;
-   Eina_Inlist *l, *prev_l;
+   Eina_Inlist *l;
 
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(it);
 
@@ -1784,12 +1784,9 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
 
         if (iit == nit) break;
 
-        prev_l = l->prev;
-        sd->stack = eina_inlist_remove(sd->stack, l);
+        l = l->prev;
 
         elm_widget_item_del(iit);
-
-        l = prev_l;
      }
 
    sd->on_deletion = EINA_FALSE;
