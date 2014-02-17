@@ -939,12 +939,12 @@ _fork_and_exec(Emotion_Generic_Video *ev)
 
    ev->shmname = eina_stringshare_add(shmname);
 
-   ev->player_add = ecore_event_handler_add(
-      ECORE_EXE_EVENT_ADD, _player_add_cb, ev);
-   ev->player_del = ecore_event_handler_add(
-      ECORE_EXE_EVENT_DEL, _player_del_cb, ev);
-   ev->player_data = ecore_event_handler_add(
-      ECORE_EXE_EVENT_DATA, _player_data_cb, ev);
+   ev->player_add = ecore_event_handler_add(ECORE_EXE_EVENT_ADD,
+                                            _player_add_cb, ev);
+   ev->player_del = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                            _player_del_cb, ev);
+   ev->player_data = ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
+                                             _player_data_cb, ev);
 
    if (!_player_exec(ev))
      {
@@ -955,33 +955,6 @@ _fork_and_exec(Emotion_Generic_Video *ev)
    ev->initializing = EINA_TRUE;
 
    return EINA_TRUE;
-}
-
-static void *
-em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options *opt EINA_UNUSED)
-{
-   Emotion_Generic_Video *ev;
-
-   ev = calloc(1, sizeof(*ev));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
-
-   ev->fd_read = NULL;
-   ev->fd_write = NULL;
-   ev->speed = 1.0;
-   ev->volume = 1.0;
-   ev->audio_mute = EINA_FALSE;
-   ev->cmd.type = -1;
-
-   ev->obj = obj;
-   ev->engine = (Emotion_Engine_Generic *)api;
-
-   if (!_fork_and_exec(ev))
-     {
-        free(ev);
-        return NULL;
-     }
-
-   return ev;
 }
 
 typedef struct _Delay_Munmap Delay_Munmap;
@@ -1059,6 +1032,35 @@ em_partial_shutdown(Emotion_Generic_Video *ev)
    ev->player_del = NULL;
    if (ev->player_restart) ecore_idler_del(ev->player_restart);
    ev->player_restart = NULL;
+}
+
+
+/* Emotion interface */
+static void *
+em_add(const Emotion_Engine *api, Evas_Object *obj, const Emotion_Module_Options *opt EINA_UNUSED)
+{
+   Emotion_Generic_Video *ev;
+
+   ev = calloc(1, sizeof(*ev));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ev, NULL);
+
+   ev->fd_read = NULL;
+   ev->fd_write = NULL;
+   ev->speed = 1.0;
+   ev->volume = 1.0;
+   ev->audio_mute = EINA_FALSE;
+   ev->cmd.type = -1;
+
+   ev->obj = obj;
+   ev->engine = (Emotion_Engine_Generic *)api;
+
+   if (!_fork_and_exec(ev))
+     {
+        free(ev);
+        return NULL;
+     }
+
+   return ev;
 }
 
 static void
@@ -1278,25 +1280,29 @@ em_ratio_get(void *data)
    return ev->ratio;
 }
 
-static int em_video_handled(void *ef EINA_UNUSED)
+static int
+em_video_handled(void *ef EINA_UNUSED)
 {
    DBG("video handled!");
    return 1;
 }
 
-static int em_audio_handled(void *ef EINA_UNUSED)
+static int
+em_audio_handled(void *ef EINA_UNUSED)
 {
    DBG("audio handled!");
    return 1;
 }
 
-static int em_seekable(void *data)
+static int
+em_seekable(void *data)
 {
    Emotion_Generic_Video *ev = data;
    return ev->seekable;
 }
 
-static void em_frame_done(void *ef EINA_UNUSED)
+static void
+em_frame_done(void *ef EINA_UNUSED)
 {
 }
 
@@ -1642,7 +1648,8 @@ em_meta_get(void *data, int meta)
 {
    Emotion_Generic_Video *ev = data;
 
-   switch (meta) {
+   switch (meta)
+   {
       case EMOTION_META_INFO_TRACK_TITLE:
          return ev->meta.title;
       case EMOTION_META_INFO_TRACK_ARTIST:
@@ -1664,6 +1671,8 @@ em_meta_get(void *data, int meta)
    return NULL;
 }
 
+
+/* Players/modules */
 static const Emotion_Engine em_template_engine =
 {
    EMOTION_ENGINE_API_VERSION,
@@ -1792,7 +1801,8 @@ _player_entry_free(Emotion_Engine_Generic *eg)
    free(eg);
 }
 
-static void _players_all_from(const char *path)
+static void
+_players_all_from(const char *path)
 {
    const Eina_File_Direct_Info *info;
    int count = 0;
@@ -1844,8 +1854,8 @@ generic_module_init(void)
         return EINA_TRUE;
      }
 
-   _emotion_generic_log_domain = eina_log_domain_register
-     ("emotion-generic", EINA_COLOR_LIGHTCYAN);
+   _emotion_generic_log_domain = eina_log_domain_register("emotion-generic",
+                                                          EINA_COLOR_LIGHTCYAN);
    if (_emotion_generic_log_domain < 0)
      {
         EINA_LOG_CRIT("Could not register log domain 'emotion-generic'");
