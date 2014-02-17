@@ -191,7 +191,16 @@ tests/emotion/data/theme.edj: tests/emotion/data/theme.edc bin/edje/edje_cc${EXE
 	@$(MKDIR_P) tests/emotion/data
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/emotion/data $< $@
 
-EMOTION_DATA_FILES = \
+emotiondatafilesdir = $(datadir)/emotion/data
+emotiondatafiles_DATA = tests/emotion/data/theme.edj
+CLEANFILES += tests/emotion/data/theme.edj
+
+endif
+endif
+
+# Those probably should be in the if block, but then
+# "make distcheck" would not work
+EXTRA_DIST += \
 tests/emotion/data/bpause.png \
 tests/emotion/data/bplay.png \
 tests/emotion/data/bstop.png \
@@ -219,14 +228,5 @@ tests/emotion/data/video_frame_left.png \
 tests/emotion/data/video_frame_right.png \
 tests/emotion/data/video_frame_top.png \
 tests/emotion/data/whb.png \
-tests/emotion/data/window_inner_shadow.png
-
-emotiondatafilesdir = $(datadir)/emotion/data
-emotiondatafiles_DATA = tests/emotion/data/theme.edj
-CLEANFILES += tests/emotion/data/theme.edj
-endif
-endif
-
-EXTRA_DIST += \
-$(EMOTION_DATA_FILES) \
+tests/emotion/data/window_inner_shadow.png \
 modules/emotion/generic/README
