@@ -34,6 +34,7 @@ tags
 /aclocal.m4
 /autom4te.cache/
 /config.cache
+/config.cache-env
 /config.guess
 /config.h
 /config.h.in
@@ -46,6 +47,7 @@ tags
 /doc/html
 /doc/latex
 /doc/man
+/doc/previews/preview_text_filter
 /install-sh
 /libtool
 /ltmain.sh
