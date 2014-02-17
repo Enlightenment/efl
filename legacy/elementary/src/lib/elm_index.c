@@ -1235,6 +1235,9 @@ elm_index_item_selected_set(Elm_Object_Item *it,
 
         edje_object_signal_emit(VIEW(it_inactive), "elm,state,inactive", "elm");
         edje_object_message_signal_process(VIEW(it_inactive));
+
+        // for the case in which the selected item is unselected before mouse up
+        elm_layout_signal_emit(obj, "elm,indicator,state,inactive", "elm");
      }
 }
 
