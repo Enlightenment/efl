@@ -726,7 +726,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    class_it = ident %end_str_item ignore*;
    class_it_next = list_separator ignore* class_it;
-   inherits = 'inherits' ignore* begin_def ignore* (class_it class_it_next*)? end_def;
+   inherits = begin_list (class_it class_it_next*)? end_list %end_inherits;
 
    action impl_meth_store {
         toknz->tmp.impl = _eo_tokenizer_implement_get(toknz, fpc);
@@ -815,7 +815,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       eo_comment     => end_class_comment;
       comment        => show_comment;
       legacy_prefix;
-      inherits       => end_inherits;
       implements     => end_implements;
       events        => end_events;
       constructors   => begin_constructors;
@@ -859,7 +858,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
          "class" %class_type_set_to_class |
          "mixin" %class_type_set_to_mixin |
          "abstract" %class_type_set_to_abstract |
-         "interface" %class_type_set_to_interface) ws+ class_name ignore* begin_def;
+         "interface" %class_type_set_to_interface) ws+ class_name ws* inherits? ignore* begin_def;
 
    main := |*
       ignore+;    #=> show_ignore;
