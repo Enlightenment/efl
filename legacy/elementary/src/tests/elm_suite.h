@@ -5,5 +5,6 @@
 
 void elm_test_init(TCase *tc);
 void elm_test_check(TCase *tc);
+void elm_test_colorselector(TCase *tc);
 
 #endif /* _ELM_SUITE_H */

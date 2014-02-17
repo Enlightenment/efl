@@ -16,6 +16,7 @@ struct _Elementary_Test_Case
 static const Elementary_Test_Case etc[] = {
   { "Elementary", elm_test_init },
   { "elm_check", elm_test_check },
+  { "elm_colorselector", elm_test_colorselector },
   { NULL, NULL }
 };
 

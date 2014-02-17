@@ -2115,9 +2115,6 @@ _palette_color_add(Eo *obj, void *_pd, va_list *list)
    item->color->g = g;
    item->color->b = b;
    item->color->a = a;
-   _elm_config_color_set
-     (sd->palette_name, item->color->r, item->color->g, item->color->b,
-     item->color->a);
 
    elm_box_pack_end(sd->palette_box, VIEW(item));
    evas_object_color_set(item->color_obj,

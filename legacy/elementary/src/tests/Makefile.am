@@ -7,6 +7,7 @@ check_PROGRAMS = elm_suite
 elm_suite_SOURCES = \
 	elm_suite.c \
 	elm_test_check.c \
+	elm_test_colorselector.c \
 	elm_test_init.c
 
 elm_suite_CPPFLAGS = \
