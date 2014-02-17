@@ -125,6 +125,7 @@
       <li>olive: @c #808000</li>
       <li>invisible, transparent: @c #0000 (alpha is zero)</li>
     </ul>
+    @anchor evasfilter_fillmode
     <li>Fillmode</li>
     <ul>
       <li>none</li>
@@ -973,9 +974,8 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   @param color A color to use as multiplier. See @ref evasfilters_color "colors". <br>
                  If the input is an alpha buffer and the output is RGBA, this will
                  draw the buffer in this color.
-  @param fillmode @c NONE, @c STRETCH, @c REPEAT <br>
-                 Map the input onto the whole surface of the output by stretching or
-                 repeating it.
+  @param fillmode Map the input onto the whole surface of the output by stretching or
+                 repeating it. See @ref evasfilter_fillmode "fillmodes".
 
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the @a color option should be set.
 
@@ -1143,7 +1143,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
   @param dst        Destination buffer. This should be an RGBA buffer (although alpha is supported). Must be of the same size as @a src.
   @param black      The shadows' color. Usually this will be black (@c #000).
   @param white      The specular light's color. Usually this will be white (@c #FFF).
-  @param fillmode   This specifies how to handle @a map when its dimensions don't match those of @a src and @a dst. Default is to @c repeat.
+  @param fillmode   This specifies how to handle @a map when its dimensions don't match those of @a src and @a dst. Default is to @c repeat. See @ref evasfilter_fillmode "fillmodes".
 
   @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
 
@@ -1303,7 +1303,7 @@ _displace_padding_update(Evas_Filter_Program *pgm,
                    @c default is equivalent to @c smooth_stretch.
   @param src       Source buffer
   @param dst       Destination buffer. Must be of same color format and size as @a src.
-  @param fillmode  Defines how to handle cases where the map has a different size from @a src and @a dst. It should most likely be @c stretch or @c repeat.
+  @param fillmode  Defines how to handle cases where the map has a different size from @a src and @a dst. It should most likely be @c stretch or @c repeat. See @ref evasfilter_fillmode "fillmodes".
 
   <h3>Displacement map</h3>
 
@@ -1495,7 +1495,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   @param src      Source buffer. This can also be thought of a mask if @a src is alpha and @a mask is RGBA.
   @param dst      Destination buffer for blending. This must be of same size and colorspace as @a src.
   @param color    A color to use as multiplier for the blend operation. White means no change. See @ref evasfilters_color "colors".
-  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src. Should be set when masking with external textures. Default is none.
+  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src. Should be set when masking with external textures. Default is none. See @ref evasfilter_fillmode "fillmodes".
 
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.
 
