@@ -604,8 +604,7 @@ open_file:
 
    // if we want to go backwards, we likely need/want to re-decode from the
    // start as we have nothnig to build on
-   if ((index > 0) && (index < loader->imgnum) &&
-       (animated->animated > 1))
+   if ((index > 0) && (index < loader->imgnum) && (animated->animated))
      {
         if (loader->gif) DGifCloseFile(loader->gif);
         if ((loader->fi.map) && (loader->f))
