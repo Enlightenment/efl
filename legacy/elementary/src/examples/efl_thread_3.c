@@ -63,6 +63,7 @@ my_thread_mainloop_code(void *data)
    free(inf);
 }
 
+// on window delete - cancel thread then delete window and exit mainloop
 static void
 del(void *data, Evas_Object *obj, void *event_info)
 {
