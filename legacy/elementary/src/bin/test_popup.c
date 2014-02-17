@@ -315,6 +315,22 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_item_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+
+   printf("item,focused:%p\n", it);
+}
+
+static void
+_item_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+
+   printf("item,unfocused:%p\n", it);
+}
+
+static void
 _popup_center_title_item_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
                                     void *event_info EINA_UNUSED)
 {
@@ -360,6 +376,8 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    // popup show should be called after adding all the contents and the buttons
    // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
+   evas_object_smart_callback_add(popup, "item,focused", _item_focused_cb, NULL);
+   evas_object_smart_callback_add(popup, "item,unfocused", _item_unfocused_cb, NULL);
 }
 
 static void

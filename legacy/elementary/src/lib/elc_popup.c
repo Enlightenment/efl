@@ -23,10 +23,14 @@ static const char CONTENT_PART[] = "elm.swallow.content";
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
+static const char SIG_ITEM_FOCUSED[] = "item,focused";
+static const char SIG_ITEM_UNFOCUSED[] = "item,unfocused";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_BLOCK_CLICKED, ""},
    {SIG_TIMEOUT, ""},
+   {SIG_ITEM_FOCUSED, ""},
+   {SIG_ITEM_UNFOCUSED, ""},
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
@@ -843,6 +847,26 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 }
 
 static void
+_item_focused_cb(void *data,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *it = data;
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_FOCUSED, it);
+}
+
+static void
+_item_unfocused_cb(void *data,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *it = data;
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_UNFOCUSED, it);
+}
+
+static void
 _item_new(Elm_Popup_Item *it)
 {
    char style[1024];
@@ -857,6 +881,7 @@ _item_new(Elm_Popup_Item *it)
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
 
    VIEW(it) = elm_layout_add(WIDGET(it));
+   elm_object_focus_allow_set(VIEW(it), EINA_TRUE);
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(WIDGET(it)));
    if (!elm_layout_theme_set(VIEW(it), "popup", "item", style))
@@ -866,6 +891,8 @@ _item_new(Elm_Popup_Item *it)
         elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "*",
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_smart_callback_add(VIEW(it), SIG_LAYOUT_FOCUSED, _item_focused_cb, it);
+        evas_object_smart_callback_add(VIEW(it), SIG_LAYOUT_UNFOCUSED, _item_unfocused_cb, it);
         evas_object_show(VIEW(it));
      }
 }
@@ -1379,6 +1406,9 @@ _elm_popup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    /* content area */
    if (sd->content) items = eina_list_append(items, sd->content_area);
 
+   /* items */
+   if (sd->box) items = eina_list_append(items, sd->box);
+
    /* action area */
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
@@ -1431,6 +1461,9 @@ _elm_popup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    /* content area */
    if (sd->content) items = eina_list_append(items, sd->content_area);
+
+   /* items */
+   if (sd->box) items = eina_list_append(items, sd->box);
 
    /* action area */
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
