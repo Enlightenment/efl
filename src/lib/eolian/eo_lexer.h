@@ -2,6 +2,7 @@
 #define __EO_TOKENIZER_H__
 
 #include <Eina.h>
+#include <Eolian.h>
 #include "eo_definitions.h"
 
 /* TOKENIZER */
@@ -34,6 +35,7 @@ typedef struct _eo_tokenizer
 
    Eina_List *classes;
    struct {
+      Eolian_Class_Type kls_type;
       Eo_Class_Def *kls;
       Eo_Property_Def *prop;
       Eo_Method_Def *meth;

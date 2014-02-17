@@ -2,6 +2,7 @@
 #define __EO_DEFINITIONS_H__
 
 #include <Eina.h>
+#include <Eolian.h>
 
 /* RET */
 
@@ -134,7 +135,7 @@ typedef struct _eo_implement_def
 typedef struct _eo_class_def
 {
    const char *name;
-   const char *type; /* Regular, RegularNonInstantiable, Mixin and Interface */
+   Eolian_Class_Type type;
    const char *comment;
    const char *legacy_prefix;
    Eina_List *inherits;

@@ -892,21 +892,32 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto tokenize_class;
    }
 
+   action class_type_set_to_class {
+      toknz->tmp.kls_type = EOLIAN_CLASS_REGULAR;
+   }
+   action class_type_set_to_abstract {
+      toknz->tmp.kls_type = EOLIAN_CLASS_ABSTRACT;
+   }
+   action class_type_set_to_mixin {
+      toknz->tmp.kls_type = EOLIAN_CLASS_MIXIN;
+   }
+   action class_type_set_to_interface {
+      toknz->tmp.kls_type = EOLIAN_CLASS_INTERFACE;
+   }
+
    action end_class_name {
       if (toknz->tmp.kls != NULL)
         ABORT(toknz, "there is a pending class definition %s", toknz->tmp.kls->name);
       toknz->tmp.kls = _eo_tokenizer_class_get(toknz, fpc);
-   }
-
-   action end_class_type {
-      if (!toknz->tmp.kls)
-         ABORT(toknz, "No pending class definition");
-      toknz->tmp.kls->type = _eo_tokenizer_token_get(toknz, fpc);
+      toknz->tmp.kls->type = toknz->tmp.kls_type;
    }
 
    class_name = ident %end_class_name;
-   class_type = ws+ "as" ws+ >save_fpc ("Regular" | "Mixin" | "RegularNonInstantiable" | "Interface") %end_class_type; # class as type(Regular, Mixin...)
-   begin_class = class_name class_type? ignore* begin_def;
+   begin_class = (
+         "class" %class_type_set_to_class |
+         "mixin" %class_type_set_to_mixin |
+         "abstract" %class_type_set_to_abstract |
+         "interface" %class_type_set_to_interface) ws+ class_name ignore* begin_def;
 
    main := |*
       ignore+;    #=> show_ignore;
@@ -1145,16 +1156,7 @@ eo_tokenizer_database_fill(const char *filename)
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {
-        Eolian_Class_Type type = EOLIAN_CLASS_REGULAR;
-        if (kls->type)
-          {
-             if (!strcmp(kls->type, "Regular")) type = EOLIAN_CLASS_REGULAR;
-             else if (!strcmp(kls->type, "RegularNonInstantiable")) type = EOLIAN_CLASS_REGULAR_NON_INSTANT;
-             else if (!strcmp(kls->type, "Mixin")) type = EOLIAN_CLASS_MIXIN;
-             else if (!strcmp(kls->type, "Interface")) type = EOLIAN_CLASS_INTERFACE;
-             else type = EOLIAN_CLASS_UNKNOWN_TYPE;
-          }
-        database_class_add(kls->name, type);
+        database_class_add(kls->name, kls->type);
         database_class_file_set(kls->name, filename);
 
         if (kls->comment) database_class_description_set(kls->name, kls->comment);
