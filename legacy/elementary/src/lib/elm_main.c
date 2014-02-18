@@ -1720,6 +1720,13 @@ elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
    return elm_widget_orientation_mode_disabled_get(obj);
 }
 
+EAPI Elm_Object_Item *
+elm_object_focused_item_get(const Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_focused_item_get(obj);
+}
+
 EAPI void
 elm_object_item_access_info_set(Elm_Object_Item *it, const char *txt)
 {
@@ -1933,4 +1940,16 @@ int
 elm_object_item_track_get(const Elm_Object_Item *it)
 {
    return elm_widget_item_track_get((Elm_Widget_Item *)it);
+}
+
+EAPI void
+elm_object_item_focus_set(Elm_Object_Item *item, Eina_Bool focused)
+{
+   elm_widget_item_focus_set(item, focused);
+}
+
+EAPI Eina_Bool
+elm_object_item_focus_get(const Elm_Object_Item *item)
+{
+   return elm_widget_item_focus_get(item);
 }

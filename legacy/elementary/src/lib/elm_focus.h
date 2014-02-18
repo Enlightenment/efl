@@ -317,3 +317,48 @@ EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const c
  */
 EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
 
+/**
+ * Get the focused object item
+ *
+ * This returns the focused object item.
+ *
+ * @param obj The container object
+ * @return The focused item, or @c NULL if none
+ *
+ * The focused item can be unfocused with function
+ * elm_object_item_focus_set().
+ *
+ * see @elm_object_item_focus_set()
+ * see @elm_object_item_focus_get()
+ *
+ * @ingroup Focus
+ * @since 1.10
+ */
+EAPI Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object *obj);
+
+/**
+ * Set the object item focused
+ *
+ * @param it The object item
+ * @param focused The focused state
+ *
+ * @see elm_object_item_focus_get()
+ *
+ * @ingroup Focus
+ * @since 1.10
+ */
+EAPI void                         elm_object_item_focus_set(Elm_Object_Item *it, Eina_Bool focused);
+
+/**
+ * Get whether the @p it is focused or not.
+ *
+ * @param it The object item
+ * @return @c EINA_TRUE means item is focused. @c EINA_FALSE indicates
+ * it's not. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ *
+ * @see elm_object_item_focus_set()
+ *
+ * @ingroup Focus
+ * @since 1.10
+ */
+EAPI Eina_Bool                    elm_object_item_focus_get(const Elm_Object_Item *it);

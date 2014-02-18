@@ -711,8 +711,8 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
    Evas_Object *target = sd->focus_highlight.cur.target;
 
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
-   elm_widget_focus_highlight_geometry_get(target, &tx, &ty, &tw, &th);
-   elm_widget_focus_highlight_geometry_get(previous, &px, &py, &pw, &ph);
+   elm_widget_focus_highlight_geometry_get(target, &tx, &ty, &tw, &th, EINA_TRUE);
+   elm_widget_focus_highlight_geometry_get(previous, &px, &py, &pw, &ph, EINA_FALSE);
    evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
    evas_object_clip_unset(obj);
@@ -738,7 +738,7 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Smart_Data *sd,
    Evas_Coord x, y, w, h;
 
    clip = evas_object_clip_get(target);
-   elm_widget_focus_highlight_geometry_get(target, &x, &y, &w, &h);
+   elm_widget_focus_highlight_geometry_get(target, &x, &y, &w, &h, EINA_TRUE);
 
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
@@ -5823,6 +5823,18 @@ _window_id_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    *ret = 0;
 }
 
+void
+_elm_win_focus_highlight_start(Evas_Object *obj)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+
+   if (!elm_win_focus_highlight_enabled_get(obj)) return;
+   sd->focus_highlight.cur.visible = EINA_TRUE;
+   sd->focus_highlight.cur.in_theme = EINA_FALSE;
+   sd->focus_highlight.geometry_changed = EINA_TRUE;
+   _elm_win_focus_highlight_reconfigure(sd);
+}
+
 EAPI Ecore_Window
 elm_win_window_id_get(const Evas_Object *obj)
 {
@@ -5963,7 +5975,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_SET), _wm_manual_rotation_done_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE_GET), _wm_manual_rotation_done_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE), _wm_manual_rotation_done),
-
         EO_OP_FUNC_SENTINEL
    };
 

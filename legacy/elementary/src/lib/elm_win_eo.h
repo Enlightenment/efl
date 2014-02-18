@@ -1372,3 +1372,7 @@ enum
  * @see elm_win_wm_rotation_manual_rotation_done
  */
 #define elm_obj_win_wm_manual_rotation_done() ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE)
+
+/**
+ * @}
+ */

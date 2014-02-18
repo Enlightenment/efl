@@ -83,6 +83,25 @@ _elm_scrollable_is(const Evas_Object *obj)
       eo_isa(obj, ELM_SCROLLABLE_INTERFACE);
 }
 
+void
+_elm_widget_focus_highlight_start(const Evas_Object *obj)
+{
+   Evas_Object *top = elm_widget_top_get(obj);
+
+   if (top && eo_isa(top, ELM_OBJ_WIN_CLASS))
+     _elm_win_focus_highlight_start(top);
+}
+
+EAPI Eina_Bool
+elm_widget_focus_highlight_enabled_get(const Evas_Object *obj)
+{
+   const Evas_Object *win = elm_widget_top_get(obj);
+
+   if (win && eo_isa(win, ELM_OBJ_WIN_CLASS))
+     return elm_win_focus_highlight_enabled_get(win);
+   return EINA_FALSE;
+}
+
 /**
  * @internal
  *
@@ -4861,10 +4880,44 @@ _elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
 }
 
 EAPI void
-elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
 {
    ELM_WIDGET_CHECK(obj);
-   eo_do(obj, elm_wdg_focus_highlight_geometry_get(x, y, w, h));
+   eo_do(obj, elm_wdg_focus_highlight_geometry_get(x, y, w, h, &is_next));
+}
+
+EAPI void
+elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
+                                                   Evas_Coord *x,
+                                                   Evas_Coord *y,
+                                                   Evas_Coord *w,
+                                                   Evas_Coord *h)
+{
+   Evas_Coord tx = 0, ty = 0, tw = 0, th = 0;
+   const char *target_hl_part = NULL;
+   const Evas_Object *edje_obj = NULL;
+
+   if (obj && eo_isa(obj, EDJE_OBJ_CLASS))
+     {
+        edje_obj = obj;
+        if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
+          return;
+     }
+   else if (obj && eo_isa(obj, ELM_OBJ_LAYOUT_CLASS))
+     {
+        edje_obj = elm_layout_edje_get(obj);
+        if (!(target_hl_part = elm_layout_data_get(obj, "focus_part")))
+          return;
+     }
+   else
+     return;
+
+  edje_object_part_geometry_get(edje_obj, target_hl_part,
+                                &tx, &ty, &tw, &th);
+  *x += tx;
+  *y += ty;
+  if (tw != *w) *w = tw;
+  if (th != *h) *h = th;
 }
 
 static void
@@ -4874,33 +4927,31 @@ _elm_widget_focus_highlight_geometry_get(Eo *obj, void *_pd, va_list *list)
    Evas_Coord *y = va_arg(*list, Evas_Coord *);
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
+   Eina_Bool *is_next = va_arg(*list, Eina_Bool *);
+   (void)is_next;
 
-   Evas_Coord tx = 0, ty = 0, tw = 0, th = 0;
-   const char *target_hl_part = NULL;
-   Evas_Object *edje_obj = NULL;
    Elm_Widget_Smart_Data *sd = _pd;
 
    evas_object_geometry_get(obj, x, y, w, h);
-   if (sd->resize_obj && eo_isa(sd->resize_obj, EDJE_OBJ_CLASS))
-     {
-        edje_obj = sd->resize_obj;
-        if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
-          return;
-     }
-   else if (sd->resize_obj && eo_isa(sd->resize_obj, ELM_OBJ_LAYOUT_CLASS))
-     {
-        edje_obj = elm_layout_edje_get(sd->resize_obj);
-        if (!(target_hl_part = elm_layout_data_get(sd->resize_obj, "focus_part")))
-          return;
-     }
-   else return;
+   elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, x, y, w, h);
+}
 
-   edje_object_part_geometry_get(edje_obj, target_hl_part,
-                                 &tx, &ty, &tw, &th);
-   *x += tx;
-   *y += ty;
-   if (tw != *w) *w = tw;
-   if (th != *h) *h = th;
+EAPI Elm_Object_Item *
+elm_widget_focused_item_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_CHECK(obj) NULL;
+   Elm_Object_Item *ret = NULL;
+   eo_do(obj, elm_wdg_focused_item_get(&ret));
+
+   return ret;
+}
+
+static void
+_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+
+   if (ret) *ret = NULL;
 }
 
 EAPI void
@@ -5297,6 +5348,42 @@ _elm_widget_item_style_get_hook_set(Elm_Widget_Item *item,
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
    item->style_get_func = func;
 }
+
+/**
+ * @internal
+ *
+ * Set the function to set the focus on widget item.
+ *
+ * @param item a valid #Elm_Widget_Item to be notified
+ * @see elm_widget_item_focus_set_hook_set() convenience macro.
+ * @ingroup Widget
+ */
+EAPI void
+_elm_widget_item_focus_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Focus_Set_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
+   item->focus_set_func = func;
+}
+
+/**
+ * @internal
+ *
+ * Set the function to set the focus on widget item.
+ *
+ * @param item a valid #Elm_Widget_Item to be notified
+ * @see elm_widget_item_focus_get_hook_set() convenience macro.
+ * @ingroup Widget
+ */
+EAPI void
+_elm_widget_item_focus_get_hook_set(Elm_Widget_Item *item,
+                                  Elm_Widget_Focus_Get_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
+   item->focus_get_func = func;
+}
+
 /**
  * @internal
  *
@@ -5452,6 +5539,20 @@ _elm_widget_item_disable_hook_set(Elm_Widget_Item *item,
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item);
    item->disable_func = func;
+}
+
+EAPI void
+_elm_widget_item_focus_set(Elm_Widget_Item *item, Eina_Bool focused)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->focus_set_func(item, focused);
+}
+
+EAPI Eina_Bool
+_elm_widget_item_focus_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   return item->focus_get_func(item);
 }
 
 EAPI void
@@ -6658,6 +6759,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET), _elm_widget_can_focus_child_list_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET), _elm_widget_newest_focus_order_get),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), _elm_widget_focus_highlight_geometry_get),
+        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_ITEM_GET), _elm_widget_focused_item_get),
 
         EO_OP_FUNC_SENTINEL
    };
@@ -6811,6 +6913,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET, "Get the list of focusable child objects."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET, "Get the newest focused object and its order."),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET, "Get the focus highlight geometry of widget."),
+     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_FOCUSED_ITEM_GET, "Get the focused widget item."),
 
      EO_OP_DESCRIPTION_SENTINEL
 };

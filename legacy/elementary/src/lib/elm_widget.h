@@ -467,6 +467,8 @@ typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Widget_Item *item, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
 typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
+typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool focused);
+typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 
 #define ELM_ACCESS_DONE          -1   /* sentence done - send done event here */
 #define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
@@ -510,6 +512,8 @@ Eina_Bool             _elm_access_auto_highlight_get(void);
 void                  _elm_access_widget_item_access_order_set(Elm_Widget_Item *item, Eina_List *objs);
 const Eina_List      *_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item);
 void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item);
+void                  _elm_widget_focus_highlight_start(const Evas_Object *obj);
+void                  _elm_win_focus_highlight_start(Evas_Object *obj);
 
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
@@ -578,6 +582,8 @@ struct _Elm_Widget_Item
    Elm_Widget_Disable_Cb          disable_func;
    Elm_Widget_Style_Set_Cb        style_set_func;
    Elm_Widget_Style_Get_Cb        style_get_func;
+   Elm_Widget_Focus_Set_Cb        focus_set_func;
+   Elm_Widget_Focus_Get_Cb        focus_get_func;
    Evas_Object                   *access_obj;
    const char                    *access_info;
    Eina_List                     *access_order;
@@ -589,6 +595,7 @@ struct _Elm_Widget_Item
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;
    Eina_Bool                      on_translate : 1;
+   Eina_Bool                      focused : 1;
 };
 
 struct _Elm_Object_Item
@@ -659,6 +666,8 @@ EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *pare
 EAPI void             elm_widget_focus_steal(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
+EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
+EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
 
 /**
@@ -734,9 +743,10 @@ EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_set(Evas_Object *obj, int rotation);
+EAPI Elm_Object_Item *elm_widget_focused_item_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
 EAPI Evas_Object     *_elm_widget_item_widget_get(const Elm_Widget_Item *item);
@@ -768,7 +778,8 @@ EAPI const char      *_elm_widget_item_part_text_get(const Elm_Widget_Item *item
 EAPI void             _elm_widget_item_part_text_custom_set(Elm_Widget_Item *item, const char *part, const char *label);
 EAPI const char      *_elm_widget_item_part_text_custom_get(Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_part_text_custom_update(Elm_Widget_Item *item);
-
+EAPI void            _elm_widget_item_focus_set(Elm_Widget_Item *item, Eina_Bool focused);
+EAPI Eina_Bool       _elm_widget_item_focus_get(const Elm_Widget_Item *item);
 EAPI void            _elm_widget_item_style_set(Elm_Widget_Item *item, const char *style);
 EAPI const char      *_elm_widget_item_style_get(Elm_Widget_Item *item);
 
@@ -788,6 +799,8 @@ EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, E
 EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
 EAPI void             _elm_widget_item_style_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Style_Set_Cb func);
 EAPI void             _elm_widget_item_style_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Style_Get_Cb func);
+EAPI void             _elm_widget_item_focus_get_hook_set(Elm_Widget_Item *item, Elm_Widget_Focus_Get_Cb func);
+EAPI void             _elm_widget_item_focus_set_hook_set(Elm_Widget_Item *item, Elm_Widget_Focus_Set_Cb func);
 EAPI void             _elm_widget_item_domain_translatable_part_text_set(Elm_Widget_Item *item, const char *part, const char *domain, const char *label);
 EAPI const char *     _elm_widget_item_translatable_part_text_get(const Elm_Widget_Item *item, const char *part);
 EAPI void             _elm_widget_item_translate(Elm_Widget_Item *item);
@@ -1042,6 +1055,21 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_style_get(item) \
   _elm_widget_item_style_get((Elm_Widget_Item *)item)
+
+/**
+ * Convenience function to query focus set hook.
+ * @see _elm_widget_item_focus_set_hook_set()
+ */
+#define elm_widget_item_focus_set_hook_set(item, func) \
+  _elm_widget_item_focus_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Focus_Set_Cb)func)
+
+/**
+ * Convenience function to query focus get hook.
+ * @see _elm_widget_item_focus_get_hook_set()
+ */
+#define elm_widget_item_focus_get_hook_set(item, func) \
+  _elm_widget_item_focus_get_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Focus_Get_Cb)func)
+
 /**
  * Convenience function to query track_cancel.
  * @see _elm_widget_item_del_pre_hook_set()
@@ -1076,6 +1104,20 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_part_text_custom_update(item) \
   _elm_widget_item_part_text_custom_update((Elm_Widget_Item *)item)
+
+/**
+ * Convenience function to set the focus on widget item.
+ * @see _elm_widget_item_focus_set()
+ */
+#define elm_widget_item_focus_set(item, focused) \
+  _elm_widget_item_focus_set((Elm_Widget_Item *)item, focused)
+
+/**
+ * Convenience function to query focus set hook.
+ * @see _elm_widget_item_focus_get()
+ */
+#define elm_widget_item_focus_get(item) \
+  _elm_widget_item_focus_get((const Elm_Widget_Item *)item)
 
 #define ELM_WIDGET_CHECK_OR_RETURN(obj, ...)                    \
    do {                                                         \
@@ -1275,6 +1317,7 @@ enum
    ELM_WIDGET_SUB_ID_CAN_FOCUS_CHILD_LIST_GET,
    ELM_WIDGET_SUB_ID_NEWEST_FOCUS_ORDER_GET,
    ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET,
+   ELM_WIDGET_SUB_ID_FOCUSED_ITEM_GET,
 #if 0
    ELM_WIDGET_SUB_ID_THEME_APPLY, /* API + virtual*/
    ELM_WIDGET_SUB_ID_THEME_SPECIFIC,
@@ -2681,9 +2724,19 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @param[in] x
  * @param[in] y
  * @param[in] w
- * @param[in] z
+ * @param[in] h
+ * @param[in] is_next
  *
  */
-#define elm_wdg_focus_highlight_geometry_get(x, y, w, h) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
-
+#define elm_wdg_focus_highlight_geometry_get(x, y, w, h, is_next) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h), EO_TYPECHECK(Eina_Bool *, is_next)
+/**
+ * @def elm_wdg_focused_item_get
+ * @since 1.10
+ *
+ * Get the focused widget item.
+ *
+ * @param[out] ret
+ *
+ */
+#define elm_wdg_focused_item_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_ITEM_GET), EO_TYPECHECK(Elm_Object_Item **, ret)
 #endif

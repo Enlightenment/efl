@@ -97,6 +97,7 @@
 
 group { name: "elm/list/item/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    images.image: "bevel_curved_horiz_out.png" COMP;
    images.image: "shadow_rounded_horiz.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
@@ -410,6 +411,7 @@ COMPRESS_ODD("elm/list/item_compress_odd/default", "elm/list/item/default")
 
 group { name: "elm/list/h_item/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    images.image: "bevel_curved_vert_out.png" COMP;
    images.image: "shadow_rounded_vert.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;

@@ -1285,6 +1285,22 @@ test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event
                                        elm_check_state_get(obj));
 }
 
+static void
+_item_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+
+   printf("item,focused: %p\n", it);
+}
+
+static void
+_item_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+
+   printf("item,unfocused: %p\n", it);
+}
+
 void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
    Evas_Object *win, *li, *bx, *bxx, *chk;
@@ -1308,6 +1324,8 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_list_horizontal_set(li, horiz);
    elm_box_pack_end(bxx, li);
    evas_object_show(li);
+   evas_object_smart_callback_add(li, "item,focused", _item_focused_cb, NULL);
+   evas_object_smart_callback_add(li, "item,unfocused", _item_unfocused_cb, NULL);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
