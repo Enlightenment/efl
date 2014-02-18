@@ -330,7 +330,7 @@ enum
 #define elm_obj_slider_step_get(ret) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_STEP_GET), EO_TYPECHECK(double *, ret)
 
 /**
- * @def elm_slider_indicator_show_on_focus_set
+ * @def elm_obj_slider_indicator_show_on_focus_set
  * @since 1.9
  *
  * show indicator of slider on focus
@@ -344,7 +344,7 @@ enum
 #define elm_obj_slider_indicator_show_on_focus_set(flag) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_SET), EO_TYPECHECK(Eina_Bool, flag)
 
 /**
- * @def elm_slider_indicator_show_on_focus_get
+ * @def elm_obj_slider_indicator_show_on_focus_get
  * @since 1.9
  *
  * Get whether the indicator of the slider is set or not
