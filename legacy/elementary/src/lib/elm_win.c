@@ -234,6 +234,9 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           Evas *e,
                                           Evas_Object *obj,
                                           void *event_info);
+static void
+_elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
+
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Elm_Win_Smart_Data *sd);
 #endif
@@ -1469,13 +1472,67 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Smart_Data *sd)
 }
 
 static void
+_win_img_hide(void *data,
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
+{
+   elm_widget_focus_hide_handle(data);
+}
+
+static void
+_win_img_mouse_up(void *data,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info)
+{
+   Evas_Event_Mouse_Up *ev = event_info;
+   if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+     elm_widget_focus_mouse_up_handle(data);
+}
+
+static void
+_win_img_focus_in(void *data,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   elm_widget_focus_steal(data);
+}
+
+static void
+_win_img_focus_out(void *data,
+                   Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   elm_widget_focused_object_clear(data);
+}
+
+static void
 _elm_win_on_img_obj_del(void *data,
                         Evas *e EINA_UNUSED,
                         Evas_Object *obj EINA_UNUSED,
                         void *event_info EINA_UNUSED)
 {
    ELM_WIN_DATA_GET(data, sd);
+   _elm_win_img_callbacks_del(sd->obj, sd->img_obj);
    sd->img_obj = NULL;
+}
+
+static void
+_elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
+{
+   evas_object_event_callback_del_full
+     (imgobj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, obj);
+   evas_object_event_callback_del_full
+     (imgobj, EVAS_CALLBACK_HIDE, _win_img_hide, obj);
+   evas_object_event_callback_del_full
+     (imgobj, EVAS_CALLBACK_MOUSE_UP, _win_img_mouse_up, obj);
+   evas_object_event_callback_del_full
+     (imgobj, EVAS_CALLBACK_FOCUS_IN, _win_img_focus_in, obj);
+   evas_object_event_callback_del_full
+     (imgobj, EVAS_CALLBACK_FOCUS_OUT, _win_img_focus_out, obj);
 }
 
 static void
@@ -1526,8 +1583,7 @@ _elm_win_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    if (sd->img_obj)
      {
-        evas_object_event_callback_del_full
-           (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, obj);
+        _elm_win_img_callbacks_del(obj, sd->img_obj);
         sd->img_obj = NULL;
      }
    else
@@ -2651,44 +2707,6 @@ _debug_key_down(void *data EINA_UNUSED,
 }
 
 #endif
-
-static void
-_win_img_hide(void *data,
-              Evas *e EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED,
-              void *event_info EINA_UNUSED)
-{
-   elm_widget_focus_hide_handle(data);
-}
-
-static void
-_win_img_mouse_up(void *data,
-                  Evas *e EINA_UNUSED,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info)
-{
-   Evas_Event_Mouse_Up *ev = event_info;
-   if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     elm_widget_focus_mouse_up_handle(data);
-}
-
-static void
-_win_img_focus_in(void *data,
-                  Evas *e EINA_UNUSED,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
-{
-   elm_widget_focus_steal(data);
-}
-
-static void
-_win_img_focus_out(void *data,
-                   Evas *e EINA_UNUSED,
-                   Evas_Object *obj EINA_UNUSED,
-                   void *event_info EINA_UNUSED)
-{
-   elm_widget_focused_object_clear(data);
-}
 
 static void
 _win_inlined_image_set(Elm_Win_Smart_Data *sd)
