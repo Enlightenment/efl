@@ -47,6 +47,8 @@
  * - @c "language,changed" - the program's language changed
  * - @c "focused" - When the list has received focus. (since 1.8)
  * - @c "unfocused" - When the list has lost focus. (since 1.8)
+ * - @c "item,focused" - When the list item has received focus. (since 1.10)
+ * - @c "item,unfocused" - When the list item has lost focus. (since 1.10)
  *
  * Available styles for it are:
  * - @c "default"
