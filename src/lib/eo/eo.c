@@ -827,8 +827,12 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              extn = _eo_class_pointer_get((Eo_Class *)extn_id);
              switch (extn->desc->type)
                {
-                case EO_CLASS_TYPE_REGULAR:
                 case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
+                   ERR("Regular non-instantiable classes ('%s') aren't allowed in class ('%s') extension list",
+                       extn->desc->name, desc->name);
+                   return NULL;
+                   break;
+                case EO_CLASS_TYPE_REGULAR:
                 case EO_CLASS_TYPE_INTERFACE:
                 case EO_CLASS_TYPE_MIXIN:
                    extn_list = eina_list_append(extn_list, extn);
