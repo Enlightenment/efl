@@ -1017,14 +1017,13 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 {
    Eina_Bool yset;
    int rx, ry, ox, oy, l, r, t, b;
-   const char *typestr, *inbuf, *outbuf;
+   const char *inbuf, *outbuf;
    Buffer *in, *out;
 
    rx = _instruction_param_geti(instr, "rx", NULL);
    ry = _instruction_param_geti(instr, "ry", &yset);
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
-   typestr = _instruction_param_gets(instr, "type", NULL);
    inbuf = _instruction_param_gets(instr, "src", NULL);
    outbuf = _instruction_param_gets(instr, "dst", NULL);
 
@@ -1033,37 +1032,24 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    EINA_SAFETY_ON_NULL_RETURN(in);
    EINA_SAFETY_ON_NULL_RETURN(out);
 
-   if (typestr && !strcasecmp(typestr, "motion"))
-     {
-        CRI("Motion blur not implemented yet!");
-        /*
-        instr->pad.l = (rx < 0) ? (-rx) : 0;
-        instr->pad.r = (rx > 0) ? (rx) : 0;
-        instr->pad.t = (ry < 0) ? (-ry) : 0;
-        instr->pad.b = (ry > 0) ? (ry) : 0;
-        */
-     }
-   else
-     {
-        if (!yset) ry = rx;
-        if (rx < 0) rx = 0;
-        if (ry < 0) ry = 0;
+   if (!yset) ry = rx;
+   if (rx < 0) rx = 0;
+   if (ry < 0) ry = 0;
 
-        l = rx + in->pad.l - ox;
-        r = rx + in->pad.r + ox;
-        t = ry + in->pad.t - oy;
-        b = ry + in->pad.b + oy;
+   l = rx + in->pad.l - ox;
+   r = rx + in->pad.r + ox;
+   t = ry + in->pad.t - oy;
+   b = ry + in->pad.b + oy;
 
-        if (out->pad.l < l) out->pad.l = l;
-        if (out->pad.r < r) out->pad.r = r;
-        if (out->pad.t < t) out->pad.t = t;
-        if (out->pad.b < b) out->pad.b = b;
+   if (out->pad.l < l) out->pad.l = l;
+   if (out->pad.r < r) out->pad.r = r;
+   if (out->pad.t < t) out->pad.t = t;
+   if (out->pad.b < b) out->pad.b = b;
 
-        if (padl) *padl = rx - ox;
-        if (padr) *padr = rx + ox;
-        if (padt) *padt = ry - oy;
-        if (padb) *padb = ry + oy;
-     }
+   if (padl) *padl = l;
+   if (padr) *padr = r;
+   if (padt) *padt = t;
+   if (padb) *padb = b;
 }
 
 /**
