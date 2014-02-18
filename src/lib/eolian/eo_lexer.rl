@@ -1194,13 +1194,13 @@ eo_tokenizer_database_fill(const char *filename)
              const char *class = impl->meth_name;
              if (!strcmp(class, "Eo_Base::constructor"))
                {
-                  Eolian_Function foo_id = database_function_new(NULL, DFLT_CONSTRUCTOR);
+                  Eolian_Function foo_id = database_function_new("constructor", DFLT_CONSTRUCTOR);
                   database_class_function_add(kls->name, foo_id);
                   continue;
                }
              if (!strcmp(class, "Eo_Base::destructor"))
                {
-                  Eolian_Function foo_id = database_function_new(NULL, DFLT_DESTRUCTOR);
+                  Eolian_Function foo_id = database_function_new("destructor", DFLT_DESTRUCTOR);
                   database_class_function_add(kls->name, foo_id);
                   continue;
                }
