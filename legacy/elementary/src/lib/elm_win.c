@@ -553,7 +553,9 @@ _shot_handle(Elm_Win_Smart_Data *sd)
 static Elm_Win_Smart_Data *
 _elm_win_associate_get(const Ecore_Evas *ee)
 {
-   ELM_WIN_DATA_GET(ecore_evas_data_get(ee, "elm_win"), sd);
+   Evas_Object *obj = ecore_evas_data_get(ee, "elm_win");
+   if (!obj) return NULL;
+   ELM_WIN_DATA_GET(obj, sd);
    return sd;
 }
 
@@ -615,7 +617,7 @@ _elm_win_move(Ecore_Evas *ee)
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
    int x, y;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
@@ -656,7 +658,7 @@ static void
 _elm_win_resize(Ecore_Evas *ee)
 {
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    ecore_job_del(sd->deferred_resize_job);
    sd->deferred_resize_job = ecore_job_add(_elm_win_resize_job, sd->obj);
@@ -666,7 +668,7 @@ static void
 _elm_win_mouse_in(Ecore_Evas *ee)
 {
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    if (sd->resizing) sd->resizing = EINA_FALSE;
 }
@@ -850,7 +852,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    Evas_Object *obj;
    unsigned int order = 0;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    obj = sd->obj;
 
@@ -883,7 +885,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
    Evas_Object *obj;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    obj = sd->obj;
 
@@ -1005,7 +1007,7 @@ _elm_win_state_change(Ecore_Evas *ee)
    Eina_Bool ch_wm_rotation = EINA_FALSE;
    const char *profile;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    obj = sd->obj;
 
@@ -1676,7 +1678,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
    Elm_Win_Smart_Data *sd = _elm_win_associate_get(ee);
    Evas_Object *obj;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd) return;
 
    obj = sd->obj;
 
