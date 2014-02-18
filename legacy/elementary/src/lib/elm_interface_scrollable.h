@@ -1021,7 +1021,7 @@ enum
 #define elm_scrollable_interface_movement_block_set(block) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_MOVEMENT_BLOCK_SET), EO_TYPECHECK(Elm_Scroller_Movement_Block, block)
 
 /**
- * @def elm_scrollable_interface_movement_block_set
+ * @def elm_scrollable_interface_movement_block_get
  * @since 1.8
  *
  * No description supplied by the EAPI.
