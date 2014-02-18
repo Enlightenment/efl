@@ -1607,6 +1607,7 @@ tests/evas/evas_test_textblock.c \
 tests/evas/evas_test_text.c \
 tests/evas/evas_test_callbacks.c \
 tests/evas/evas_test_render_engines.c \
+tests/evas/evas_test_filters.c \
 tests/evas/evas_tests_helpers.h \
 tests/evas/evas_suite.h
 

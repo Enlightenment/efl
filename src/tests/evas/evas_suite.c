@@ -24,6 +24,7 @@ static const Evas_Test_Case etc[] = {
   { "Object Text", evas_test_text },
   { "Callbacks", evas_test_callbacks },
   { "Render Engines", evas_test_render_engines },
+  { "Filters", evas_test_filters },
   { NULL, NULL }
 };
 
