@@ -780,6 +780,7 @@ _instruction_parse(Evas_Filter_Instruction *instr, const char *string)
              PARSE_CHECK(next);
              last = EINA_TRUE;
              *next++ = 0;
+             PARSE_CHECK(!*next);
           }
 
         // Named arguments
@@ -1800,7 +1801,7 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
           }
         else PARSE_CHECK(!"invalid command");
      }
-   success = EINA_TRUE;
+   success = (count > 0);
 
    DBG("Program successfully compiled with %d instruction(s)", count);
 
