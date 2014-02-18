@@ -206,59 +206,144 @@ enum
 };
 /* Selection Interface - END */
 
+/**
+ * @def elm_atspi_obj_name_get
+ * @since 1.10
+ *
+ * @param[out] ret obj name
+ */
 #define elm_atspi_obj_name_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_NAME_GET), \
    EO_TYPECHECK(const char **, ret)
 
+/**
+ * @def elm_atspi_obj_role_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_role_get(role)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_GET), \
    EO_TYPECHECK(AtspiRole*, role)
 
+/**
+ * @def elm_atspi_obj_role_name_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_role_name_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_NAME_GET),\
    EO_TYPECHECK(const char **, ret)
 
+/**
+ * @def elm_atspi_obj_localized_role_name_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_localized_role_name_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_LOCALIZED_ROLE_NAME_GET),\
    EO_TYPECHECK(const char **, ret)
 
+/**
+ * @def elm_atspi_obj_description_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_description_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_GET),\
    EO_TYPECHECK(const char **, ret)
 
+/**
+ * @def elm_atspi_obj_child_at_index_get
+ * @since 1.10
+ *
+ * @param[in] idx
+ * @param[out] ret
+ */
 #define elm_atspi_obj_child_at_index_get(idx, ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILD_AT_INDEX_GET), \
    EO_TYPECHECK(int, idx),\
    EO_TYPECHECK(Elm_Atspi_Object**, ret)
 
+/**
+ * @def elm_atspi_obj_children_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_children_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET),\
    EO_TYPECHECK(Eina_List**, ret)
 
+/**
+ * @def elm_atspi_obj_parent_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_parent_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET),\
    EO_TYPECHECK(Elm_Atspi_Object**, ret)
 
+/**
+ * @def elm_atspi_obj_object_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_object_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_OBJECT_GET),\
    EO_TYPECHECK(Evas_Object**, ret)
 
+/**
+ * @def elm_atspi_obj_index_in_parent_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_obj_index_in_parent_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_INDEX_IN_PARENT_GET),\
    EO_TYPECHECK(int*, ret)
 
+/**
+ * @def elm_atspi_obj_relation_set_get
+ * @since 1.10
+ */
 #define elm_atspi_obj_relation_set_get()\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_RELATION_SET_GET),\
    EO_TYPECHECK()
 
+/**
+ * @def elm_atspi_obj_state_get
+ * @since 1.10
+ *
+ * @param[out] ret state
+ */
 #define elm_atspi_obj_state_get(ret)\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_STATE_GET),\
    EO_TYPECHECK(Elm_Atspi_State*, ret)
 
+/**
+ * @def elm_atspi_obj_attributes_get
+ * @since 1.10
+ *
+ */
 #define elm_atspi_obj_attributes_get()\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET),\
    EO_TYPECHECK()
 
+/**
+ * @def elm_atspi_component_interface_contains
+ * @since 1.10
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] type
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_contains(x, y, type, ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_CONTAINS),\
    EO_TYPECHECK(int, x),\
@@ -266,6 +351,15 @@ enum
    EO_TYPECHECK(AtspiCoordType, type),\
    EO_TYPECHECK(Eina_Bool*, ret)
 
+/**
+ * @def elm_atspi_component_interface_accessible_at_point_get
+ * @since 1.10
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] type
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_accessible_at_point_get(x, y, type, ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ACCESSIBLE_AT_POINT_GET),\
    EO_TYPECHECK(int, x),\
@@ -273,6 +367,16 @@ enum
    EO_TYPECHECK(AtspiCoordType, type),\
    EO_TYPECHECK(Elm_Atspi_Object**, ret)
 
+/**
+ * @def elm_atspi_component_interface_extents_get
+ * @since 1.10
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ * @param[out] type
+ */
 #define elm_atspi_component_interface_extents_get(x, y, w, h, type)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_EXTENTS_GET),\
    EO_TYPECHECK(int*, x),\
@@ -281,6 +385,17 @@ enum
    EO_TYPECHECK(int*, h), \
    EO_TYPECHECK(AtspiCoordType, type)
 
+/**
+ * @def elm_atspi_component_interface_extents_set
+ * @since 1.10
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] type
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_extents_set(x, y, w, h, type, ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_EXTENTS_SET),\
    EO_TYPECHECK(int, x),\
@@ -290,12 +405,29 @@ enum
    EO_TYPECHECK(AtspiCoordType, type),\
    EO_TYPECHECK(Eina_Bool*, ret)
 
+/**
+ * @def elm_atspi_component_interface_position_get
+ * @since 1.10
+ *
+ * @param[out] x
+ * @param[out] y
+ * @param[in] type
+ */
 #define elm_atspi_component_interface_position_get(x, y, type)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_POSITION_GET),\
    EO_TYPECHECK(int*, x),\
    EO_TYPECHECK(int*, y), \
    EO_TYPECHECK(AtspiCoordType, type)
 
+/**
+ * @def elm_atspi_component_interface_position_set
+ * @since 1.10
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] type
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_position_set(x, y, type, ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_POSITION_SET),\
    EO_TYPECHECK(int, x),\
@@ -303,29 +435,68 @@ enum
    EO_TYPECHECK(AtspiCoordType, type),\
    EO_TYPECHECK(Eina_Bool*, ret)
 
+/**
+ * @def elm_atspi_component_interface_size_get
+ * @since 1.10
+ *
+ * @param[out] x
+ * @param[out] y
+ */
 #define elm_atspi_component_interface_size_get(x, y)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_SIZE_GET),\
    EO_TYPECHECK(int*, x),\
    EO_TYPECHECK(int*, y)
 
+/**
+ * @def elm_atspi_component_interface_size_set
+ * @since 1.10
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_size_set(x, y, ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_SIZE_SET),\
    EO_TYPECHECK(int, x),\
    EO_TYPECHECK(int, y),\
    EO_TYPECHECK(Eina_Bool*, ret)
 
+/**
+ * @def elm_atspi_component_interface_layer_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_layer_get(ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_LAYER_GET),\
    EO_TYPECHECK(int*, ret)
 
+/**
+ * @def elm_atspi_component_interface_z_order_get
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_z_order_get(ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_Z_ORDER_GET),\
    EO_TYPECHECK(int*, ret)
 
+/**
+ * @def elm_atspi_component_interface_focus_grab
+ * @since 1.10
+ *
+ * @param[out] ret
+ */
 #define elm_atspi_component_interface_focus_grab(ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_FOCUS_GRAB),\
    EO_TYPECHECK(Eina_Bool*, ret)
 
+/**
+ * @def elm_atspi_component_interface_alpha_get
+ * @since 1.10
+ *
+ * @param[out] ret alpha
+ */
 #define elm_atspi_component_interface_alpha_get(ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ALPHA_GET),\
    EO_TYPECHECK(double*, ret)
