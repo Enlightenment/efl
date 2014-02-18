@@ -2024,6 +2024,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    Evas_Object *icon = NULL;
    int w = 0, h = 0;
    Ecore_X_Atom actx;
+   int i;
 
    _x11_elm_cnp_init();
 
@@ -2035,7 +2036,24 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
         return EINA_FALSE;
      }
 
-   ecore_x_dnd_type_set(xwin, "text/uri-list", EINA_TRUE);
+   ecore_x_dnd_types_set(xwin, NULL, 0);
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (_x11_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
+          {
+             if (format == ELM_SEL_FORMAT_TARGETS)
+               {
+                  ecore_x_dnd_type_set(xwin, _x11_atoms[i].name, EINA_TRUE);
+                  cnp_debug("set dnd type: %s\n", _x11_atoms[i].name);
+               }
+          }
+        else if (_x11_atoms[i].formats & format)
+          {
+             ecore_x_dnd_type_set(xwin, _x11_atoms[i].name, EINA_TRUE);
+             cnp_debug("set dnd type: %s\n", _x11_atoms[i].name);
+          }
+     }
+
    sel = _x11_selections + ELM_SEL_TYPE_XDND;
    sel->active = EINA_TRUE;
    sel->widget = obj;
