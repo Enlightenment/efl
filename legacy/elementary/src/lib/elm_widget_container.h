@@ -89,7 +89,7 @@ enum
 #define elm_obj_container_content_unset(name, ret) ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), EO_TYPECHECK(const char*, name), EO_TYPECHECK(Evas_Object **,ret)
 
 /**
- * @def elm_obj_container_content_list_get
+ * @def elm_obj_container_content_swallow_list_get
  * @since 1.9
  *
  * No description supplied by the EAPI.
