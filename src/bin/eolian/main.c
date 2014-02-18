@@ -148,8 +148,7 @@ end:
 
 int main(int argc, char **argv)
 {
-   eina_init();
-   int ret = 0;
+   int ret = 1;
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
    Eina_List *included_files = NULL, *itr;
    Eina_List *files4gen = NULL;
@@ -160,12 +159,15 @@ int main(int argc, char **argv)
    Eina_Bool happend = EINA_FALSE;
    Eina_Bool lappend = EINA_FALSE;
 
+   eina_init();
+   eolian_init();
+
    static struct option long_options[] =
      {
         /* These options set a flag. */
           {"eo1",        no_argument,         &eo_version, 1},
           {"eo2",        no_argument,         &eo_version, 2},
-          {"verbose",    no_argument,         0, 'V'},
+          {"verbose",    no_argument,         0, 'v'},
           {"help",       no_argument,         0, 'h'},
           {"gh",         required_argument,   0, 1},
           {"gc",         required_argument,   0, 2},
@@ -177,7 +179,7 @@ int main(int argc, char **argv)
           {0, 0, 0, 0}
      };
    int long_index =0, opt;
-   while ((opt = getopt_long(argc, argv,"Vho:I:", long_options, &long_index )) != -1)
+   while ((opt = getopt_long(argc, argv,"vho:I:", long_options, &long_index )) != -1)
      {
         switch (opt) {
            case 0: break;
@@ -187,11 +189,10 @@ int main(int argc, char **argv)
            case 4: leg_filename = optarg; lappend = EINA_TRUE; break;
            case 5: eoleg_filename = optarg; break;
            case 6: legacy_support = EINA_TRUE; break;
-           case 'V': show = EINA_TRUE; break;
+           case 'v': show = EINA_TRUE; break;
            case 'h': help = EINA_TRUE; break;
            case 'I':
                      {
-                        printf("%s\n", optarg);
                         const char *dir = optarg;
                         if (ecore_file_is_dir(dir))
                           {
@@ -220,9 +221,9 @@ int main(int argc, char **argv)
    while (optind < argc)
       files4gen = eina_list_append(files4gen, argv[optind++]);
 
-   if (!included_files || help || !files4gen)
+   if (help)
      {
-        printf("Usage: %s [-h/--help] [-V/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah filename] eo_file... \n", argv[0]);
+        printf("Usage: %s [-h/--help] [-v/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah filename] eo_file... \n", argv[0]);
         printf("       --eo1/--eo2 Set generator to eo1/eo2 mode. Must be specified\n");
         printf("       --gh Generate c header file [.h]\n");
         printf("       --gc Generate c source file [.c]\n");
@@ -230,10 +231,16 @@ int main(int argc, char **argv)
         printf("       --al Append legacy function definitions to an existing c header file [.h]\n");
         printf("       --gle Generate eo and legacy file [.h]\n");
         printf("       --legacy Generate legacy\n");
-        return 0;
+        ret = 0;
+        goto end;
      }
 
-   eolian_init();
+   if (!files4gen)
+     {
+        printf("No input files specified.\nTerminating.\n");
+        goto end;
+     }
+
    const char *filename;
    EINA_LIST_FOREACH(included_files, itr, filename)
      {
@@ -265,7 +272,6 @@ int main(int argc, char **argv)
    if (!eo_version)
      {
         printf("No eo version specified (use --eo1 or --eo2). Aborting eo generation.\n");
-        ret = 1;
         goto end;
      }
 
@@ -300,6 +306,7 @@ int main(int argc, char **argv)
         _generate_eo_and_legacy_h_file(eoleg_filename, classname);
      }
 
+   ret = 0;
 end:
    EINA_LIST_FREE(included_files, filename)
       free((char *)filename);
