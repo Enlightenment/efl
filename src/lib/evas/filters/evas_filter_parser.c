@@ -1669,7 +1669,7 @@ _instruction_create(const char *name)
 #undef PARSE_CHECK
 #define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __FUNCTION__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
 
-void
+EAPI void
 evas_filter_program_del(Evas_Filter_Program *pgm)
 {
    Evas_Filter_Instruction *instr;
@@ -1742,7 +1742,7 @@ end:
 
 /** Parse a style program */
 
-Eina_Bool
+EAPI Eina_Bool
 evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 {
    Evas_Filter_Instruction *instr = NULL;
@@ -1832,7 +1832,7 @@ end:
 
 /** Evaluate required padding to correctly apply an effect */
 
-Eina_Bool
+EAPI Eina_Bool
 evas_filter_program_padding_get(Evas_Filter_Program *pgm,
                                 int *l, int *r, int *t, int *b)
 {
@@ -1868,7 +1868,7 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
 
 /** Create an empty filter program for style parsing */
 
-Evas_Filter_Program *
+EAPI Evas_Filter_Program *
 evas_filter_program_new(const char *name)
 {
    Evas_Filter_Program *pgm;
@@ -1883,7 +1883,7 @@ evas_filter_program_new(const char *name)
 }
 
 /** Bind objects for proxy rendering */
-void
+EAPI void
 evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
                                    Eina_Hash *proxies)
 {

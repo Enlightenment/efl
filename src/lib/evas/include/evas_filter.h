@@ -91,13 +91,12 @@ enum _Evas_Filter_Transform_Flags
 };
 
 /* Parser stuff (high level API) */
-Evas_Filter_Program     *evas_filter_program_new(const char *name);
-Eina_Bool                evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
-void                     evas_filter_program_del(Evas_Filter_Program *pgm);
+EAPI Evas_Filter_Program *evas_filter_program_new(const char *name);
+EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
+EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
-Eina_Bool                evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
-//void                     evas_filter_program_source_set(Evas_Filter_Program *pgm, const char *name, Evas_Object *object);
-void                     evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
+EAPI Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
+EAPI void                evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
 void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
 
 /* Filter context (low level) */
