@@ -329,7 +329,7 @@ enum
 #define elm_fileselector_interface_thumbnail_size_get(w, h) ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_THUMBNAIL_SIZE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
 
 /**
- * @def elm_fileselector_interface_group_thumbnail_size_set
+ * @def elm_fileselector_interface_thumbnail_size_set
  * @since 1.9
  *
  * Set the size for the thumbnail of the file selector widget's view.
