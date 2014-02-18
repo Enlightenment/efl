@@ -35,8 +35,9 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
 };
 
 static const char               *ecore_evas_sdl_default = "EFL SDL";
-static int                      _ecore_evas_fps_debug = 0;
 static Ecore_Poller             *ecore_evas_event;
+static int                      _ecore_evas_fps_debug = 0;
+static int                       ecore_evas_sdl_count = 0;
 
 static Ecore_Evas *
 _ecore_evas_sdl_match(void)
@@ -264,6 +265,7 @@ _ecore_evas_sdl_free(Ecore_Evas *ee)
    ecore_event_window_unregister(0);
    _ecore_evas_sdl_shutdown();
    ecore_sdl_shutdown();
+   ecore_evas_sdl_count--;
 }
 
 static void
@@ -321,19 +323,17 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
-   if ((w == ee->w) && (h == ee->h)) return;
-   ee->req.w = w;
-   ee->req.h = h;
-   ee->w = w;
-   ee->h = h;
-
-   evas_output_size_set(ee->evas, ee->w, ee->h);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+   if ((ee->x != x) || (ee->y != y))
+     {
+        ee->req.x = x;
+        ee->req.y = y;
+        ee->x = x;
+        ee->y = y;
+        if (ee->func.fn_move) ee->func.fn_move(ee);
+     }
+   _ecore_evas_resize(ee, w, h);
 }
 
 static void
@@ -463,6 +463,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 {
    Ecore_Evas           *ee;
 
+   if (ecore_evas_sdl_count > 0) return NULL;
    if (!name)
      name = ecore_evas_sdl_default;
 
@@ -614,6 +615,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    _ecore_evas_register(ee);
 
    sdl_ee = ee;
+   ecore_evas_sdl_count++;
    return ee;
 }
 
