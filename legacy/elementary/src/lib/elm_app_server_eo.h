@@ -84,16 +84,40 @@ typedef Elm_App_Server_View *(*Elm_App_Server_Create_View_Cb)(Elm_App_Server *ap
  */
 #define elm_app_server_title_get(ret) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_TITLE_GET), EO_TYPECHECK(Eina_Stringshare **, ret)
 
+/**
+ * @def elm_app_server_icon_set
+ * @since 1.8
+ *
+ * @param[in] icon title of icon
+ */
 #define elm_app_server_icon_set(icon) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_SET), EO_TYPECHECK(const char*, icon)
 
+/**
+ * @def elm_app_server_icon_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_icon_get(ret) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_GET), EO_TYPECHECK(Eina_Stringshare **, ret)
 
 #define elm_app_server_icon_pixels_set(w, h, has_alpha, pixels) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_PIXELS_SET), EO_TYPECHECK(unsigned int, w), EO_TYPECHECK(unsigned int, h), EO_TYPECHECK(Eina_Bool, has_alpha), EO_TYPECHECK(const unsigned char *, pixels)
 
 #define elm_app_server_icon_pixels_get(w, h, has_alpha, pixels) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_PIXELS_GET), EO_TYPECHECK(unsigned int *, w), EO_TYPECHECK(unsigned int *, h), EO_TYPECHECK(Eina_Bool *, has_alpha), EO_TYPECHECK(const unsigned char **, pixels)
 
+/**
+ * @def elm_app_server_package_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_package_get(ret) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_PACKAGE_GET), EO_TYPECHECK(Eina_Stringshare **, ret)
 
+/**
+ * @def elm_app_server_path_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_path_get(ret) ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_PATH_GET), EO_TYPECHECK(const char **, ret)
 
 /**

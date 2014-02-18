@@ -42,40 +42,132 @@ enum
  */
 #define elm_app_server_view_constructor(id) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_CONSTRUCTOR), EO_TYPECHECK(const char *, id)
 
+/**
+ * @def elm_app_server_view_resume
+ * @since 1.8
+ *
+ */
 #define elm_app_server_view_resume() ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_RESUME)
 
+/**
+ * @def elm_app_server_view_pause
+ * @since 1.8
+ *
+ */
 #define elm_app_server_view_pause() ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PAUSE)
 
+/**
+ * @def elm_app_server_view_close
+ * @since 1.8
+ *
+ */
 #define elm_app_server_view_close() ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_CLOSE)
 
+/**
+ * @def elm_app_server_view_shallow
+ * @since 1.8
+ *
+ */
 #define elm_app_server_view_shallow() ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_SHALLOW)
 
+/**
+ * @def elm_app_server_view_state_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_state_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_STATE_GET), EO_TYPECHECK(Elm_App_View_State *, ret)
 
+/**
+ * @def elm_app_server_view_window_set
+ * @since 1.8
+ *
+ * @param[in] win
+ */
 #define elm_app_server_view_window_set(win) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_WINDOW_SET), EO_TYPECHECK(Evas_Object *, win)
 
+/**
+ * @def elm_app_server_view_title_set
+ * @since 1.8
+ *
+ * @param[in] title
+ */
 #define elm_app_server_view_title_set(title) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_TITLE_SET), EO_TYPECHECK(const char *, title)
 
+/**
+ * @def elm_app_server_view_title_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_title_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_TITLE_GET), EO_TYPECHECK(const char **, ret)
 
+/**
+ * @def elm_app_server_view_icon_set
+ * @since 1.8
+ *
+ * @param[in] icon
+ */
 #define elm_app_server_view_icon_set(icon) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_NAME_SET), EO_TYPECHECK(const char *, icon)
 
+/**
+ * @def elm_app_server_view_icon_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_icon_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ICON_NAME_GET), EO_TYPECHECK(const char **, ret)
 
 #define elm_app_server_view_icon_pixels_set(w, h, has_alpha, pixels) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_ICON_PIXELS_SET), EO_TYPECHECK(unsigned int, w), EO_TYPE_CHECK(unsigned int, h), EO_TYPE_CHECK(Eina_Bool, has_alpha), EO_TYPE_CHECK(const unsigned char *, pixels)
 
 #define elm_app_server_view_icon_pixels_get(w, h, has_alpha, pixels) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_ICON_PIXELS_GET), EO_TYPECHECK(unsigned int *, w), EO_TYPE_CHECK(unsigned int *, h), EO_TYPE_CHECK(Eina_Bool *, has_alpha), EO_TYPE_CHECK(const unsigned char **, pixels)
 
+/**
+ * @def elm_app_server_view_progress_set
+ * @since 1.8
+ *
+ * @param[in] progress
+ */
 #define elm_app_server_view_progress_set(progress) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PROGRESS_SET), EO_TYPECHECK(short, progress)
 
+/**
+ * @def elm_app_server_view_progress_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_progress_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PROGRESS_GET), EO_TYPECHECK(short *, ret)
 
+/**
+ * @def elm_app_server_view_new_events_set
+ * @since 1.8
+ *
+ * @param[in] events
+ */
 #define elm_app_server_view_new_events_set(events) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_NEW_EVENTS_SET), EO_TYPECHECK(int, events)
 
+/**
+ * @def elm_app_server_view_new_events_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_new_events_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_NEW_EVENTS_GET), EO_TYPECHECK(int *, ret)
 
+/**
+ * @def elm_app_server_view_id_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_id_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_ID_GET), EO_TYPECHECK(Eina_Stringshare **, ret)
 
+/**
+ * @def elm_app_server_view_path_get
+ * @since 1.8
+ *
+ * @param[out] ret
+ */
 #define elm_app_server_view_path_get(ret) ELM_APP_SERVER_VIEW_ID(ELM_APP_SERVER_VIEW_SUB_ID_PATH_GET), EO_TYPECHECK(const char **, ret)
 
 /**
