@@ -936,13 +936,16 @@ EAPI Eina_Bool eo_destructed_is(const Eo *obj);
  * @brief Make an object a composite object of another.
  * @param comp_obj the object that will be used to composite parent.
  * @param parent the "parent" object.
+ * @return EINA_TRUE if successfull. EINA_FALSE otherwise.
  *
+ * The class of comp_obj must be part of the extensions of the class of the parent.
+ * It is not possible to attach more then 1 composite of the same class.
  * This functions also sets the parent of comp_obj to parent.
  *
  * @see eo_composite_detach()
  * @see eo_composite_is()
  */
-EAPI void eo_composite_attach(Eo *comp_obj, Eo *parent);
+EAPI Eina_Bool eo_composite_attach(Eo *comp_obj, Eo *parent);
 
 /**
  * @brief Detach a composite object from another object.

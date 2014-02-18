@@ -33,6 +33,9 @@ main(int argc, char *argv[])
    Eo *obj = eo_add(COMP_CLASS, NULL);
    eo_do(obj, eo_event_callback_add(EV_A_CHANGED, _a_changed_cb, NULL));
 
+   fail_if(!eo_isa(obj, COMP_CLASS));
+   fail_if(!eo_isa(obj, SIMPLE_CLASS));
+
    int a;
    eo_do(obj, simple_a_set(1));
    fail_if(!cb_called);
@@ -53,8 +56,11 @@ main(int argc, char *argv[])
    fail_if(!eo_composite_is(simple));
    eo_composite_detach(simple, obj);
    fail_if(eo_composite_is(simple));
-   eo_composite_attach(simple, obj);
+   fail_if(!eo_composite_attach(simple, obj));
    fail_if(!eo_composite_is(simple));
+   fail_if(eo_composite_attach(simple, obj));
+
+   fail_if(eo_composite_attach(obj, simple));
 
    eo_unref(simple);
    eo_unref(obj);
