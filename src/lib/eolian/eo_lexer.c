@@ -1371,9 +1371,9 @@ _eof_trans:
 	{
       toknz->tmp.param = _eo_tokenizer_param_get(toknz, ( toknz->p));
       if (toknz->tmp.params)
-         *(toknz->tmp.params) = eina_list_append(*(toknz->tmp.params), toknz->tmp.param);
+        *(toknz->tmp.params) = eina_list_append(*(toknz->tmp.params), toknz->tmp.param);
       else
-         ABORT(toknz, "got a param but there is no property nor method waiting for it");
+        ABORT(toknz, "got a param but there is no property nor method waiting for it");
       INF("        %s : %s", toknz->tmp.param->name, toknz->tmp.param->type);
    }
 	break;
@@ -1687,7 +1687,7 @@ _eof_trans:
       toknz->tmp.param = NULL;
       toknz->current_nesting--;
       if (toknz->tmp.prop)
-         { toknz->cs = 308; goto _again;}
+        { toknz->cs = 308; goto _again;}
       else if (toknz->tmp.meth)
         { toknz->cs = 321; goto _again;}
       else
@@ -1728,7 +1728,7 @@ _eof_trans:
       toknz->tmp.param = NULL;
       toknz->current_nesting--;
       if (toknz->tmp.prop)
-         { toknz->cs = 308; goto _again;}
+        { toknz->cs = 308; goto _again;}
       else if (toknz->tmp.meth)
         { toknz->cs = 321; goto _again;}
       else
@@ -2807,6 +2807,16 @@ eo_tokenizer_database_fill(const char *filename)
                {
                   Eolian_Function foo_id = database_function_new("destructor", DFLT_DESTRUCTOR);
                   database_class_function_add(kls->name, foo_id);
+                  continue;
+               }
+             if (!strcmp(class, "class::constructor"))
+               {
+                  database_class_ctor_enable_set(kls->name, EINA_TRUE);
+                  continue;
+               }
+             if (!strcmp(class, "class::destructor"))
+               {
+                  database_class_dtor_enable_set(kls->name, EINA_TRUE);
                   continue;
                }
              char *func = strstr(class, "::");

@@ -441,6 +441,10 @@ EAPI const Eina_List *eolian_class_events_list_get(const char *class_name);
  */
 EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_desc);
 
+EAPI Eina_Bool eolian_class_ctor_enable_get(const char *class_name);
+
+EAPI Eina_Bool eolian_class_dtor_enable_get(const char *class_name);
+
 #endif
 
 #ifdef __cplusplus

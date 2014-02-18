@@ -76,6 +76,12 @@ database_implement_legacy_return_add(Eolian_Implement_Legacy leg, Eina_Stringsha
 Eina_Bool
 database_class_implement_add(const char *class_name, Eolian_Implement impl_id);
 
+Eina_Bool
+database_class_ctor_enable_set(const char *class_name, Eina_Bool enable);
+
+Eina_Bool
+database_class_dtor_enable_set(const char *class_name, Eina_Bool enable);
+
 Eolian_Event
 database_event_new(const char *event_name, const char *event_desc);
 

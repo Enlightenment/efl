@@ -1215,6 +1215,16 @@ eo_tokenizer_database_fill(const char *filename)
                   database_class_function_add(kls->name, foo_id);
                   continue;
                }
+             if (!strcmp(class, "class::constructor"))
+               {
+                  database_class_ctor_enable_set(kls->name, EINA_TRUE);
+                  continue;
+               }
+             if (!strcmp(class, "class::destructor"))
+               {
+                  database_class_dtor_enable_set(kls->name, EINA_TRUE);
+                  continue;
+               }
              char *func = strstr(class, "::");
              if (func) *func = '\0';
              func += 2;

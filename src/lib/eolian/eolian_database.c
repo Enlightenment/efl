@@ -20,6 +20,8 @@ typedef struct
    Eina_List *destructors; /* List destructor_name -> _Function_Id */
    Eina_List *implements; /* List implements name -> _Implement_Desc */
    Eina_List *events; /* List event_name -> _Event_Desc */
+   Eina_Bool class_ctor_enable:1;
+   Eina_Bool class_dtor_enable:1;
 } Class_desc;
 
 typedef struct
@@ -799,6 +801,38 @@ eolian_class_event_information_get(Eolian_Event event, const char **event_name, 
    if (event_name) *event_name = _event_desc->name;
    if (event_comment) *event_comment = _event_desc->comment;
    return EINA_TRUE;
+}
+
+Eina_Bool
+database_class_ctor_enable_set(const char *class_name, Eina_Bool enable)
+{
+   Class_desc *desc = _class_get(class_name);
+   if (!desc) return EINA_FALSE;
+   desc->class_ctor_enable = enable;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+database_class_dtor_enable_set(const char *class_name, Eina_Bool enable)
+{
+   Class_desc *desc = _class_get(class_name);
+   if (!desc) return EINA_FALSE;
+   desc->class_dtor_enable = enable;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eolian_class_ctor_enable_get(const char *class_name)
+{
+   Class_desc *desc = _class_get(class_name);
+   return desc?desc->class_ctor_enable:EINA_FALSE;
+}
+
+Eina_Bool
+eolian_class_dtor_enable_get(const char *class_name)
+{
+   Class_desc *desc = _class_get(class_name);
+   return desc?desc->class_dtor_enable:EINA_FALSE;
 }
 
 static void
