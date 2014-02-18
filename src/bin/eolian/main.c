@@ -192,43 +192,33 @@ int main(int argc, char **argv)
            case 'I':
                      {
                         printf("%s\n", optarg);
-                        char *dir = ecore_file_realpath(optarg);
-                        if (strlen(dir) != 0)
+                        const char *dir = optarg;
+                        if (ecore_file_is_dir(dir))
                           {
-                             if (ecore_file_is_dir(dir))
+                             Eina_List *dir_files;
+                             char *file;
+                             /* Get all files from directory. Not recursively!!!*/
+                             dir_files = ecore_file_ls(dir);
+                             EINA_LIST_FREE(dir_files, file)
                                {
-                                  Eina_List *dir_files;
-                                  char *file;
-                                  /* Get all files from directory. Not recursively!!!*/
-                                  dir_files = ecore_file_ls(dir);
-                                  EINA_LIST_FREE(dir_files, file)
+                                  char *filepath = malloc(strlen(dir) + 1 + strlen(file) + 1);
+                                  sprintf(filepath, "%s/%s", dir, file);
+                                  if ((!ecore_file_is_dir(filepath)) && eina_str_has_suffix(filepath, EO_SUFFIX))
                                     {
-                                       char *filepath = malloc(strlen(dir) + 1 + strlen(file) + 1);
-                                       sprintf(filepath, "%s/%s", dir, file);
-                                       if ((!ecore_file_is_dir(filepath)) && eina_str_has_suffix(filepath, EO_SUFFIX))
-                                         {
-                                            /* Allocated string will be freed during deletion of "included_files" list. */
-                                            included_files = eina_list_append(included_files, strdup(filepath));
-                                         }
-                                       free(filepath);
-                                       free(file);
+                                       /* Allocated string will be freed during deletion of "included_files" list. */
+                                       included_files = eina_list_append(included_files, strdup(filepath));
                                     }
+                                  free(filepath);
+                                  free(file);
                                }
                           }
-                        free(dir);
                         break;
                      }
            default: help = EINA_TRUE;
         }
      }
    while (optind < argc)
-     {
-        char *short_name = argv[optind++];
-        char *included_file;
-        EINA_LIST_FOREACH(included_files, itr, included_file)
-           if (strstr(included_file, short_name))
-              files4gen = eina_list_append(files4gen, included_file);
-     }
+      files4gen = eina_list_append(files4gen, argv[optind++]);
 
    if (!included_files || help || !files4gen)
      {
@@ -254,19 +244,27 @@ int main(int argc, char **argv)
           }
      }
 
-   char *fname;
+   EINA_LIST_FOREACH(files4gen, itr, filename)
+     {
+        if (!eolian_eo_file_parse(filename))
+          {
+             printf("Error during parsing file %s\n", filename);
+             goto end;
+          }
+     }
+
    if (show)
      {
-        EINA_LIST_FOREACH(files4gen, itr, fname)
+        EINA_LIST_FOREACH(files4gen, itr, filename)
           {
-             const char *cname = eolian_class_find_by_file(fname);
-             eolian_show(cname);
+             const char *cname = eolian_class_find_by_file(filename);
+             if (cname) eolian_show(cname);
           }
      }
 
    if (!eo_version)
      {
-        printf("No eo version specified (use -eo1 or -eo2). Aborting eo generation.\n");
+        printf("No eo version specified (use --eo1 or --eo2). Aborting eo generation.\n");
         ret = 1;
         goto end;
      }
@@ -283,9 +281,9 @@ int main(int argc, char **argv)
      {
         printf("Generating source file %s\n", c_filename);
         const char *cname;
-        EINA_LIST_FOREACH(files4gen, itr, fname)
+        EINA_LIST_FOREACH(files4gen, itr, filename)
           {
-             cname = eolian_class_find_by_file(fname);
+             cname = eolian_class_find_by_file(filename);
              _generate_c_file(c_filename, cname, (files4gen != itr));
           }
      }
