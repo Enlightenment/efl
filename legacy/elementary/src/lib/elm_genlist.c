@@ -5758,25 +5758,36 @@ _item_sorted_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
             &cmp_result);
 
         if (l)
-          rel = eina_list_data_get(l);
-        else
-          rel = it->parent;
-
-        if (cmp_result >= 0)
           {
+             rel = eina_list_data_get(l);
+
+             if (cmp_result >= 0)
+               {
+                  it->parent->item->items = eina_list_prepend_relative_list
+                      (it->parent->item->items, it, l);
+                  sd->items = eina_inlist_prepend_relative
+                      (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+                  it->item->before = EINA_TRUE;
+               }
+             else if (cmp_result < 0)
+               {
+                  it->parent->item->items = eina_list_append_relative_list
+                      (it->parent->item->items, it, l);
+                  sd->items = eina_inlist_append_relative
+                      (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+                  it->item->before = EINA_FALSE;
+               }
+          }
+        else
+          {
+             rel = it->parent;
+
+             // ignoring the comparison 
              it->parent->item->items = eina_list_prepend_relative_list
                  (it->parent->item->items, it, l);
              sd->items = eina_inlist_prepend_relative
                  (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
              it->item->before = EINA_FALSE;
-          }
-        else if (cmp_result < 0)
-          {
-             it->parent->item->items = eina_list_append_relative_list
-                 (it->parent->item->items, it, l);
-             sd->items = eina_inlist_append_relative
-                 (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
-             it->item->before = EINA_TRUE;
           }
      }
    else
