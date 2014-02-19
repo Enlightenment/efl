@@ -3177,15 +3177,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
      return;
 #endif
 
-   if (ep->param1.description->rel1.id_x >= 0)
-     rp1[Rel1X] = ed->table_parts[ep->param1.description->rel1.id_x];
-   if (ep->param1.description->rel2.id_x >= 0)
-     rp1[Rel2X] = ed->table_parts[ep->param1.description->rel2.id_x];
-   if (ep->param1.description->rel1.id_y >= 0)
-     rp1[Rel1Y] = ed->table_parts[ep->param1.description->rel1.id_y];
-   if (ep->param1.description->rel2.id_y >= 0)
-     rp1[Rel2Y] = ed->table_parts[ep->param1.description->rel2.id_y];
-
+   if (ep->param1.description) 
+     {
+       if (ep->param1.description->rel1.id_x >= 0)
+         rp1[Rel1X] = ed->table_parts[ep->param1.description->rel1.id_x];
+       if (ep->param1.description->rel2.id_x >= 0)
+         rp1[Rel2X] = ed->table_parts[ep->param1.description->rel2.id_x];
+       if (ep->param1.description->rel1.id_y >= 0)
+         rp1[Rel1Y] = ed->table_parts[ep->param1.description->rel1.id_y];
+       if (ep->param1.description->rel2.id_y >= 0)
+         rp1[Rel2Y] = ed->table_parts[ep->param1.description->rel2.id_y];
+     }
    if (ep->param2)
      {
         if (ep->param2->description->rel1.id_x >= 0)

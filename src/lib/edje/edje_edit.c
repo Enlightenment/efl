@@ -2193,6 +2193,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    if (_edje_real_part_get(ed, name))
      return EINA_FALSE;
 
+   if (ed->file)
    ce = eina_hash_find(ed->file->collection, ed->group);
 
    /* Alloc Edje_Part or return */
@@ -3340,7 +3341,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 		  external->external_params = eina_list_append(external->external_params, p);
 		  pi++;
 	       }
-	     if (external->external_params)
+	     if (external->external_params && rp->typedata.swallow)
 	       rp->param1.external_params = _edje_external_params_parse(rp->typedata.swallow->swallowed_object, external->external_params);
 	  }
      }
