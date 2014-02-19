@@ -967,6 +967,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, R, G, B, A);
         if (id < 0) goto fail;
+        ox = oy = 0;
      }
 
    if (convert)

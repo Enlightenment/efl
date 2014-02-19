@@ -1037,10 +1037,10 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    if (rx < 0) rx = 0;
    if (ry < 0) ry = 0;
 
-   l = rx + in->pad.l - ox;
-   r = rx + in->pad.r + ox;
-   t = ry + in->pad.t - oy;
-   b = ry + in->pad.b + oy;
+   l = rx + in->pad.l + ((ox < 0) ? (-ox) : 0);
+   r = rx + in->pad.r + ((ox > 0) ? ox : 0);
+   t = ry + in->pad.t + ((oy < 0) ? (-oy) : 0);
+   b = ry + in->pad.b + ((oy > 0) ? oy : 0);
 
    if (out->pad.l < l) out->pad.l = l;
    if (out->pad.r < r) out->pad.r = r;
