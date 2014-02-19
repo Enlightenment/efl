@@ -2797,6 +2797,7 @@ eo_tokenizer_database_fill(const char *filename)
         EINA_LIST_FOREACH(kls->implements, l, impl)
           {
              const char *class = impl->meth_name;
+             Eina_Bool virtual_pure = EINA_FALSE;
              if (!strcmp(class, "Eo_Base::constructor"))
                {
                   Eolian_Function foo_id = database_function_new("constructor", DFLT_CONSTRUCTOR);
@@ -2819,6 +2820,7 @@ eo_tokenizer_database_fill(const char *filename)
                   database_class_dtor_enable_set(kls->name, EINA_TRUE);
                   continue;
                }
+             if (!strncmp(class, "virtual::", 9)) virtual_pure = EINA_TRUE;
              char *func = strstr(class, "::");
              if (func) *func = '\0';
              func += 2;
@@ -2829,6 +2831,19 @@ eo_tokenizer_database_fill(const char *filename)
                   *type_as_str = '\0';
                   if (!strcmp(type_as_str+2, "set")) ftype = SET;
                   else if (!strcmp(type_as_str+2, "get")) ftype = GET;
+               }
+             if (virtual_pure)
+               {
+                  /* Search the function into the existing functions of the current class */
+                  Eolian_Function foo_id = eolian_class_function_find_by_name(
+                        kls->name, func, ftype);
+                  if (!foo_id)
+                    {
+                       printf("Error - %s not known in class %s\n", class + 9, kls->name);
+                       return EINA_FALSE;
+                    }
+                  database_function_set_as_virtual_pure(foo_id);
+                  continue;
                }
              Eolian_Implement impl_desc = database_implement_new(class, func, ftype);
              if (impl->legacy)

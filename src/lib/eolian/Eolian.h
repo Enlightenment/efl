@@ -251,16 +251,16 @@ EAPI Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
 EAPI const char *eolian_function_name_get(Eolian_Function function_id);
 
 /*
- * @brief Indicates if a function of a certain type exists in a class.
+ * @brief Find a function in a class by its name and type
  *
  * @param[in] class_name name of the class
  * @param[in] func_name name of the function
  * @param[in] f_type type of the function
- * @return EINA_TRUE if exists, EINA_FALSE otherwise
+ * @return the function id if found, NULL otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_function_exists(const char *classname, const char *func_name, Eolian_Function_Type f_type);
+EAPI Eolian_Function eolian_class_function_find_by_name(const char *classname, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific data for a function.
@@ -272,6 +272,16 @@ EAPI Eina_Bool eolian_class_function_exists(const char *classname, const char *f
  * @ingroup Eolian
  */
 EAPI const char *eolian_function_data_get(Eolian_Function function_id, const char *key);
+
+/*
+ * @brief Indicates if a function is virtual pure.
+ *
+ * @param[in] function_id Id of the function
+ * @return EINA_TRUE if virtual pure, EINA_FALSE othrewise..
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_virtual_pure(Eolian_Function function_id);
 
 /*
  * @brief Returns a specific description for a function.

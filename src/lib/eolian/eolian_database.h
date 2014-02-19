@@ -57,6 +57,9 @@ void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_T
 
 void database_function_object_set_as_const(Eolian_Function foo_id, Eina_Bool is_const);
 
+Eina_Bool
+database_function_set_as_virtual_pure(Eolian_Function function_id);
+
 /* Need to add API for callbacks and implements */
 
 Eolian_Implement

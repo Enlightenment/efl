@@ -32,6 +32,7 @@ typedef struct
    Eolian_Function_Type type;
    Eina_Hash *data;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
+   Eina_Bool virtual_pure :1;
 } _Function_Id;
 
 typedef struct
@@ -460,58 +461,52 @@ eolian_implement_legacy_information_get(const Eolian_Implement_Legacy leg_desc,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool eolian_class_function_exists(const char *class_name, const char *func_name, Eolian_Function_Type f_type)
+EAPI Eolian_Function eolian_class_function_find_by_name(const char *class_name, const char *func_name, Eolian_Function_Type f_type)
 {
-   Eina_Bool ret = EINA_FALSE;
    Eina_List *itr;
    Eolian_Function foo_id;
    Class_desc *desc = _class_get(class_name);
 
-   switch (f_type)
+   if (f_type == UNRESOLVED || f_type == METHOD_FUNC)
+      EINA_LIST_FOREACH(desc->methods, itr, foo_id)
+        {
+           _Function_Id *fid = (_Function_Id *) foo_id;
+           if (!strcmp(fid->name, func_name))
+              return foo_id;
+        }
+
+   if (f_type == UNRESOLVED || f_type == PROPERTY_FUNC ||
+         f_type == SET || f_type == GET)
      {
-      case METHOD_FUNC:
-      case SET:
-      case GET:
-      case PROPERTY_FUNC:
-           {
-              EINA_LIST_FOREACH(desc->methods, itr, foo_id)
-                {
-                   _Function_Id *fid = (_Function_Id *) foo_id;
-                   if (!strcmp(fid->name, func_name))
-                     return EINA_TRUE;
-                }
-              EINA_LIST_FOREACH(desc->properties, itr, foo_id)
-                {
-                   _Function_Id *fid = (_Function_Id *) foo_id;
-                   if (!strcmp(fid->name, func_name))
-                     return EINA_TRUE;
-                }
-              break;
-           }
-      case CONSTRUCTOR:
-           {
-              EINA_LIST_FOREACH(desc->constructors, itr, foo_id)
-                {
-                   _Function_Id *fid = (_Function_Id *) foo_id;
-                   if (!strcmp(fid->name, func_name))
-                     return EINA_TRUE;
-                }
-              break;
-           }
-      case DESTRUCTOR:
-           {
-              EINA_LIST_FOREACH(desc->destructors, itr, foo_id)
-                {
-                   _Function_Id *fid = (_Function_Id *) foo_id;
-                   if (!strcmp(fid->name, func_name))
-                     return EINA_TRUE;
-                }
-              break;
-           }
-      default:
-         return EINA_FALSE;
+        EINA_LIST_FOREACH(desc->properties, itr, foo_id)
+          {
+             _Function_Id *fid = (_Function_Id *) foo_id;
+             if (!strcmp(fid->name, func_name) && (f_type == UNRESOLVED || f_type == PROPERTY_FUNC || f_type == fid->type))
+                return foo_id;
+          }
      }
-   return ret;
+
+   if (f_type == CONSTRUCTOR)
+     {
+        EINA_LIST_FOREACH(desc->constructors, itr, foo_id)
+          {
+             _Function_Id *fid = (_Function_Id *) foo_id;
+             if (!strcmp(fid->name, func_name))
+                return foo_id;
+          }
+     }
+
+   if (f_type == DESTRUCTOR)
+     {
+        EINA_LIST_FOREACH(desc->destructors, itr, foo_id)
+          {
+             _Function_Id *fid = (_Function_Id *) foo_id;
+             if (!strcmp(fid->name, func_name))
+                return foo_id;
+          }
+     }
+
+   return NULL;
 }
 
 EAPI const Eina_List *
@@ -559,6 +554,23 @@ eolian_function_name_get(Eolian_Function function_id)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
    return fid->name;
+}
+
+Eina_Bool
+database_function_set_as_virtual_pure(Eolian_Function function_id)
+{
+   _Function_Id *fid = (_Function_Id *)function_id;
+   if (!fid) return EINA_FALSE;
+   fid->virtual_pure = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eolian_function_is_virtual_pure(Eolian_Function function_id)
+{
+   _Function_Id *fid = (_Function_Id *)function_id;
+   if (!fid) return EINA_FALSE;
+   return fid->virtual_pure;
 }
 
 void

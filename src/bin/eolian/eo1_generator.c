@@ -306,6 +306,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    const char *retname = NULL;
    Eina_Bool ret_const = EINA_FALSE;
 
+   if (eolian_function_is_virtual_pure(funcid)) return EINA_TRUE;
    Eina_Strbuf *fbody = eina_strbuf_new();
    Eina_Strbuf *va_args = eina_strbuf_new();
    Eina_Strbuf *params = eina_strbuf_new(); /* only variables names */
@@ -606,7 +607,10 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              free(desc);
              eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
-             eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);
+             if (!eolian_function_is_virtual_pure(fn))
+                eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);
+             else
+                eina_strbuf_reset(tmpbuf);
              eina_strbuf_append(str_func, eina_strbuf_string_get(tmpbuf));
           }
         if (prop_write)
@@ -619,7 +623,10 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
              free(desc);
 
-             eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);
+             if (!eolian_function_is_virtual_pure(fn))
+                eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);
+             else
+                eina_strbuf_reset(tmpbuf);
              eina_strbuf_append(str_func, eina_strbuf_string_get(tmpbuf));
           }
      }
@@ -635,7 +642,10 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         free(desc);
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
-        eo1_eo_func_desc_generate(classname, funcname, tmpbuf);
+        if (!eolian_function_is_virtual_pure(fn))
+           eo1_eo_func_desc_generate(classname, funcname, tmpbuf);
+        else
+           eina_strbuf_reset(tmpbuf);
         eina_strbuf_append(str_func, eina_strbuf_string_get(tmpbuf));
      }
 
