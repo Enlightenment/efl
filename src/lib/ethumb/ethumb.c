@@ -1363,8 +1363,8 @@ EAPI Eina_Bool
 ethumb_image_save(Ethumb *e)
 {
    Eina_Bool r;
-   char *dname;
-   char flags[256];
+   char *dname, *buf, flags[256];
+   int len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
@@ -1388,16 +1388,26 @@ ethumb_image_save(Ethumb *e)
         free(dname);
         return EINA_FALSE;
      }
+   buf = alloca(strlen(e->thumb_path) + 1 + 5);
+   strcpy(buf, dname);
+   len = strlen(dname);
+   strcpy(&(buf[len]), "/.tmp.");
+   strcpy(&(buf[len + 6]), e->thumb_path + len + 1);
    free(dname);
 
    snprintf(flags, sizeof(flags), "quality=%d compress=%d",
             e->quality, e->compress);
-   r = evas_object_image_save(e->o, e->thumb_path, e->thumb_key, flags);
-
+   r = evas_object_image_save(e->o, buf, e->thumb_key, flags);
    if (!r)
      {
         ERR("could not save image: path=%s, key=%s", e->thumb_path,
             e->thumb_key);
+        return EINA_FALSE;
+     }
+   if (rename(buf, e->thumb_path) < 0)
+     {
+        ERR("could not rename image: path=%s, key=%s to path=%s",
+            buf, e->thumb_key, e->thumb_path);
         return EINA_FALSE;
      }
 
