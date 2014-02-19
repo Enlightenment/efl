@@ -2184,7 +2184,7 @@ _instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    const char *src, *dst, *points_str, *interpolation, *channel_name;
    DATA8 values[256] = {0}, points[512];
    int cmdid, point_count = 0;
-   char *token, *copy = NULL, *saveptr = NULL;
+   char *token, *copy = NULL;
    Buffer *in, *out;
    Eina_Bool parse_ok = EINA_FALSE;
 
@@ -2216,7 +2216,7 @@ _instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    if (!points_str) goto interpolated;
    copy = strdup(points_str);
-   token = strtok_r(copy, "-", &saveptr);
+   token = strtok(copy, "-");
    if (!token) goto interpolated;
 
    while (token)
@@ -2228,7 +2228,7 @@ _instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         points[point_count * 2 + 0] = x;
         points[point_count * 2 + 1] = y;
         point_count++;
-        token = strtok_r(NULL, "-", &saveptr);
+        token = strtok(NULL, "-");
      }
 
    parse_ok = evas_filter_interpolate(values, points, point_count, mode);
