@@ -94,7 +94,7 @@ struct _Eo_Object
      Eina_Inlist *data_xrefs;
 #endif
 
-     Eina_List *composite_objects;
+     const _Eo_Object **composites;
 
      int refcount;
      int datarefcount;
@@ -105,6 +105,7 @@ struct _Eo_Object
      Eina_Bool composite:1;
      Eina_Bool del:1;
      Eina_Bool manual_free:1;
+     /* [composite*] */
 };
 
 typedef struct _Dich_Chain1 Dich_Chain1;
@@ -158,6 +159,7 @@ struct _Eo_Class
    unsigned int chain_size;
    unsigned int base_id;
    unsigned int data_offset; /* < Offset of the data within object data. */
+   unsigned int composites_count;
 
    Eina_Bool constructed : 1;
    /* [extensions*] + NULL */
@@ -229,11 +231,11 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
      {
-        Eina_List *itr, *itr_n;
-        Eo *emb_obj;
-        EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
+        const _Eo_Object **comp_itr = obj->composites;
+        for (unsigned int i = 0; i < obj->klass->composites_count; i++, comp_itr++)
           {
-             eo_composite_detach(emb_obj, _eo_id_get(obj));
+             if (*comp_itr)
+               eo_composite_detach(_eo_id_get(*comp_itr), _eo_id_get(obj));
           }
      }
 
