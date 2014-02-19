@@ -4343,3 +4343,19 @@ if test -n "$CFOPT_WARNING"; then
   fi
   sleep 10
 fi
+
+if test "x$prefix" != "x/usr"; then
+  echo ""
+  echo "#-------------------------------------------------------------------#"
+  echo "##==--                          ALERT                          --==##"
+  echo "#-------------------------------------------------------------------#"
+  echo ""
+  echo "  Your installation prefix is *NOT* /usr so this means you need"
+  echo "to ensure some files are visible to dbus otherwise services cannot"
+  echo "be started when needed. You will need to do the following:"
+  echo ""
+  echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
+  echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
+  echo ""
+  echo "#-------------------------------------------------------------------#"
+fi
