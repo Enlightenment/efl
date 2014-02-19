@@ -90,7 +90,7 @@ group { name: "e/deskmirror/frame/default";
          description { state: "default" 0.0;
             rel1.to_y: "top";
             rel1.relative: 0.0 1.0;
-            rel2.to: "bottom";
+            rel2.to_y: "bottom";
             rel2.relative: 1.0 0.0;
          }
       }
