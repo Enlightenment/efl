@@ -1,5 +1,12 @@
 #include "evas_filter_private.h"
 
+/* Apply geomeetrical transformations to a buffer.
+ * This filter is a bit simplistic at the moment.
+ *
+ * It also assumes the destination is empty, as it does not use blend
+ * operations. This should probably be fixed later on (use evas_map?).
+ */
+
 static Eina_Bool
 _vflip_cpu(Evas_Filter_Command *cmd)
 {

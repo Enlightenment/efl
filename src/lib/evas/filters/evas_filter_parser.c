@@ -1565,6 +1565,7 @@ _transform_padding_update(Evas_Filter_Program *pgm,
   Apply a geometrical transformation to a buffer.
 
   Right now, only <b>vertical flip</b> is implemented and available.
+  This operation does not blend and assumes the destination buffer is empty.
 
   @code
     transform (dst, op = vflip, src = input, oy = 0);
