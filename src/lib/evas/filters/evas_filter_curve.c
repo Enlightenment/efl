@@ -41,12 +41,17 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
         return EINA_FALSE;
      }
 
+   if (src != dst)
+     memcpy(dst, src, len * sizeof(DATA32));
+   evas_data_argb_unpremul(dst, len);
+
    // One channel (R, G or B)
    if (offset >= 0)
      {
-        for (k = len; k; k--, dst++, src++)
-          C_VAL(dst) = curve[C_VAL(src)];
-        return EINA_TRUE;
+        for (k = len, s = src, d = dst; k; k--, d++, s++)
+          C_VAL(d) = curve[C_VAL(s)];
+
+        goto premul;
      }
 
    // All RGB channels
@@ -61,7 +66,8 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
              for (k = len, s = src, d = dst; k; k--, d++, s++)
                C_VAL(d) = curve[C_VAL(s)];
           }
-        return EINA_TRUE;
+
+        goto premul;
      }
 
    // Alpha
@@ -71,13 +77,11 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
    offset = 0;
 #endif
 
-   if (src != dst)
-     memcpy(dst, src, len * sizeof(DATA32));
-   evas_data_argb_unpremul(dst, len);
    for (k = len, d = dst; k; k--, d++, src++)
      C_VAL(d) = curve[C_VAL(src)];
-   evas_data_argb_premul(dst, len);
 
+premul:
+   evas_data_argb_premul(dst, len);
    return EINA_TRUE;
 }
 
