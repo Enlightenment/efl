@@ -78,6 +78,8 @@
  * @li @c "focused" - When the popup has received focus. (since 1.8)
  * @li @c "unfocused" - When the popup has lost focus. (since 1.8)
  * @li "language,changed" - the program's language changed (since 1.8)
+ * @li "item,focused" - When the popup item has recieved focus. (since 1.10)
+ * @li "item,unfocused" - When the popup item has lost focus. (since 1.10)
  *
  * Styles available for Popup
  * @li "default"
