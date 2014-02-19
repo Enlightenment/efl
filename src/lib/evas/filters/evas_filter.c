@@ -1042,13 +1042,26 @@ int
 evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
                              int inbuf, int outbuf, int radius, Eina_Bool smooth)
 {
-   int blurcmd, threshcmd, tmin = 0;
+   int blurcmd, threshcmd, blendcmd, tmin = 0, growbuf;
    int diam = abs(radius) * 2 + 1;
    DATA8 curve[256] = {0};
+   Evas_Filter_Buffer *tmp = NULL, *in;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
 
-   blurcmd = evas_filter_command_blur_add(ctx, draw_context, inbuf, outbuf,
+   in = _filter_buffer_get(ctx, inbuf);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+
+   if (inbuf != outbuf)
+     {
+        tmp = evas_filter_temporary_buffer_get(ctx, in->w, in->h, in->alpha_only);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(tmp, -1);
+        growbuf = tmp->id;
+     }
+   else
+     growbuf = outbuf;
+
+   blurcmd = evas_filter_command_blur_add(ctx, draw_context, inbuf, growbuf,
                                           EVAS_FILTER_BLUR_DEFAULT,
                                           abs(radius), abs(radius), 0, 0);
    if (blurcmd < 0) return -1;
@@ -1076,12 +1089,25 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
           memset(curve + end, 255, 256 - end);
      }
 
-   threshcmd = evas_filter_command_curve_add(ctx, draw_context, outbuf, outbuf,
+   threshcmd = evas_filter_command_curve_add(ctx, draw_context, growbuf, growbuf,
                                              curve, EVAS_FILTER_CHANNEL_ALPHA);
    if (threshcmd < 0)
      {
         _command_del(ctx, _evas_filter_command_get(ctx, blurcmd));
         return -1;
+     }
+
+   if (tmp)
+     {
+        blendcmd = evas_filter_command_blend_add(ctx, draw_context, tmp->id,
+                                                 outbuf, 0, 0,
+                                                 EVAS_FILTER_FILL_MODE_NONE);
+        if (blendcmd < 0)
+          {
+             _command_del(ctx, _evas_filter_command_get(ctx, threshcmd));
+             _command_del(ctx, _evas_filter_command_get(ctx, blurcmd));
+             return -1;
+          }
      }
 
    return blurcmd;

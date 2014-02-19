@@ -2107,6 +2107,7 @@ static int
 _instr2cmd_grow(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                 Evas_Filter_Instruction *instr, void *dc)
 {
+   Evas_Filter_Command *cmd;
    const char *src, *dst;
    Buffer *in, *out;
    Eina_Bool smooth;
@@ -2122,6 +2123,9 @@ _instr2cmd_grow(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    cmdid = evas_filter_command_grow_add(ctx, dc, in->cid, out->cid,
                                         radius, smooth);
+
+   cmd = _evas_filter_command_get(ctx, cmdid);
+   if (cmd) cmd->draw.need_temp_buffer = EINA_TRUE;
 
    return cmdid;
 }
