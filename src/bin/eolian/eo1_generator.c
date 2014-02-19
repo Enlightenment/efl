@@ -14,19 +14,29 @@ EAPI Eo_Op @#OBJCLASS_BASE_ID = EO_NOOP;\n\
 ";
 
 static const char
+tmpl_dtor[] = "\
+_gen_@#class_class_destructor(Eo_Class *klass)\n\
+{\n\
+   _@#class_class_destructor(klass);\n\
+}\n\
+\n\
+";
+
+static const char
 tmpl_eo_src_end[] = "\
 @#list_ctors_body\
 \n\
 static void\n\
-_@#class_class_constructor(Eo_Class *klass)\n\
+_gen_@#class_class_constructor(Eo_Class *klass)\n\
 {\n\
    const Eo_Op_Func_Description func_desc[] = {@#list_func\n\
         EO_OP_FUNC_SENTINEL\n\
    };\n\
    eo_class_funcs_set(klass, func_desc);\n\
-   _user_@#class_class_constructor(klass);\n\
+@#ctor_func\
 }\n\
 \n\
+@#dtor_func\
 static const Eo_Op_Description @#class_op_desc[] = {@#list_op\n\
      EO_OP_DESCRIPTION_SENTINEL\n\
 };\n\
@@ -38,12 +48,12 @@ static const Eo_Event_Description *@#class_event_desc[] = {@#list_evdesc\n\
 static const Eo_Class_Description @#class_class_desc = {\n\
      EO_VERSION,\n\
      \"@#Class\",\n\
-     EO_CLASS_TYPE_REGULAR,\n\
+     @#type_class,\n\
      EO_CLASS_DESCRIPTION_OPS(&@#OBJCLASS_BASE_ID, @#class_op_desc, @#OBJCLASS_SUB_ID_LAST),\n\
      @#class_event_desc,\n\
      sizeof(@#Class_Data),\n\
-     _@#class_class_constructor,\n\
-     NULL\n\
+     _gen_@#class_class_constructor,\n\
+     @#dtor_name\n\
 };\n\
 \n\
 EO_DEFINE_CLASS(@#objclass_class_get, &@#class_class_desc, @#list_inheritNULL);\
@@ -477,6 +487,31 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    const Eina_List *itr;
    Eolian_Function fn;
 
+   const char *str_classtype = NULL;
+   switch(eolian_class_type_get(classname))
+    {
+      case EOLIAN_CLASS_REGULAR:
+        str_classtype = "EO_CLASS_TYPE_REGULAR";
+        break;
+      case EOLIAN_CLASS_ABSTRACT:
+        str_classtype = "EO_CLASS_TYPE_REGULAR_NO_INSTANT";
+        break;
+      case EOLIAN_CLASS_MIXIN:
+        str_classtype = "EO_CLASS_TYPE_MIXIN";
+        break;
+      case EOLIAN_CLASS_INTERFACE:
+        str_classtype = "EO_CLASS_TYPE_INTERFACE";
+        break;
+      default:
+        break;
+    }
+
+   if (!str_classtype)
+     {
+        printf ("Unknown class type for class %s !\n", classname);
+        return EINA_FALSE;
+     }
+
    Eina_Strbuf *str_end = eina_strbuf_new();
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_op = eina_strbuf_new();
@@ -485,6 +520,26 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    Eina_Strbuf *str_ev = eina_strbuf_new();
 
    _template_fill(str_end, tmpl_eo_src_end, classname, "", EINA_TRUE);
+
+   eina_strbuf_replace_all(str_end, "@#type_class", str_classtype);
+
+   if (eolian_class_dtor_enable_get(classname))
+     {
+        _template_fill(tmpbuf, tmpl_dtor, classname, "", EINA_TRUE);
+        eina_strbuf_replace_all(str_end, "@#dtor_func", eina_strbuf_string_get(tmpbuf));
+        _template_fill(tmpbuf, "_gen_@#class_class_destructor", classname, "", EINA_TRUE);
+        eina_strbuf_replace_all(str_end, "@#dtor_name", eina_strbuf_string_get(tmpbuf));
+     }
+   else
+     {
+        eina_strbuf_replace_all(str_end, "@#dtor_func", "");
+        eina_strbuf_replace_all(str_end, "@#dtor_name", "NULL");
+     }
+
+   eina_strbuf_reset(tmpbuf);
+   if (eolian_class_ctor_enable_get(classname))
+      _template_fill(tmpbuf, "   _@#class_class_constructor(klass);\n", classname, "", EINA_TRUE);
+   eina_strbuf_replace_all(str_end, "@#ctor_func", eina_strbuf_string_get(tmpbuf));
 
    // default constructor
    Eolian_Function ctor_fn = eolian_class_default_constructor_get(classname);
