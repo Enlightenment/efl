@@ -508,6 +508,39 @@ _elm_entry_theme_group_get(Evas_Object *obj)
      }
 }
 
+static Eina_Bool
+_drag_drop_cb(void *data EINA_UNUSED,
+              Evas_Object *obj,
+              Elm_Selection_Data *drop)
+{
+   Eina_Bool rv;
+
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   edje_object_part_text_cursor_copy
+     (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, /*->*/ EDJE_CURSOR_USER);
+   rv = edje_object_part_text_cursor_coord_set
+       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
+
+   if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
+
+   elm_entry_entry_insert(obj, drop->data);
+   edje_object_part_text_cursor_copy
+     (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, /*->*/ EDJE_CURSOR_MAIN);
+
+   return EINA_TRUE;
+}
+
+static Elm_Sel_Format
+_get_drop_format(Evas_Object *obj)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   if ((sd->editable) && (!sd->single_line) && (!sd->password) && (!sd->disabled))
+     return ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   return ELM_SEL_FORMAT_MARKUP;
+}
+
 /* we can't reuse layout's here, because it's on entry_edje only */
 static void
 _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
@@ -516,6 +549,11 @@ _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Elm_Entry_Smart_Data *sd = _pd;
 
+   elm_drop_target_del(obj, sd->drop_format,
+                       NULL, NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+                       _drag_drop_cb, NULL);
    if (elm_object_disabled_get(obj))
      {
         edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
@@ -535,6 +573,12 @@ _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
              eo_do(obj, elm_scrollable_interface_freeze_set(EINA_FALSE));
           }
         sd->disabled = EINA_FALSE;
+        sd->drop_format = _get_drop_format(obj);
+        elm_drop_target_add(obj, sd->drop_format,
+                            NULL, NULL,
+                            NULL, NULL,
+                            NULL, NULL,
+                            _drag_drop_cb, NULL);
      }
 
    if (ret) *ret = EINA_TRUE;
@@ -2333,29 +2377,6 @@ _event_selection_clear(void *data EINA_UNUSED,
 }
 #endif
 
-static Eina_Bool
-_drag_drop_cb(void *data EINA_UNUSED,
-              Evas_Object *obj,
-              Elm_Selection_Data *drop)
-{
-   Eina_Bool rv;
-
-   ELM_ENTRY_DATA_GET(obj, sd);
-
-   edje_object_part_text_cursor_copy
-     (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, /*->*/ EDJE_CURSOR_USER);
-   rv = edje_object_part_text_cursor_coord_set
-       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
-
-   if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
-
-   elm_entry_entry_insert(obj, drop->data);
-   edje_object_part_text_cursor_copy
-     (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, /*->*/ EDJE_CURSOR_MAIN);
-
-   return EINA_TRUE;
-}
-
 static Evas_Object *
 _item_get(void *data,
           Evas_Object *edje EINA_UNUSED,
@@ -3185,6 +3206,13 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->auto_save = EINA_TRUE;
    priv->editable = EINA_TRUE;
 
+   priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   elm_drop_target_add(obj, priv->drop_format,
+                       NULL, NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+                       _drag_drop_cb, NULL);
+
    if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
@@ -3308,10 +3336,6 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
             (ECORE_X_EVENT_SELECTION_CLEAR, _event_selection_clear, obj);
      }
 #endif
-
-   elm_drop_target_add
-     (obj, ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
-         NULL, NULL, NULL, NULL, NULL, NULL, _drag_drop_cb, NULL);
 
    entries = eina_list_prepend(entries, obj);
 
@@ -3629,20 +3653,21 @@ _password_set(Eo *obj, void *_pd, va_list *list)
    if (sd->password == password) return;
    sd->password = password;
 
+   elm_drop_target_del(obj, sd->drop_format,
+                       NULL, NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+                       _drag_drop_cb, NULL);
    if (password)
      {
         sd->single_line = EINA_TRUE;
         sd->line_wrap = ELM_WRAP_NONE;
-        elm_drop_target_del(obj, ELM_SEL_FORMAT_MARKUP,
-                            NULL, NULL,
-                            NULL, NULL,
-                            NULL, NULL,
-                            _drag_drop_cb, NULL);
         _entry_selection_callbacks_unregister(obj);
      }
    else
      {
-        elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
+        sd->drop_format = _get_drop_format(obj);
+        elm_drop_target_add(obj, sd->drop_format,
                             NULL, NULL,
                             NULL, NULL,
                             NULL, NULL,
@@ -3935,18 +3960,20 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
    sd->editable = editable;
    eo_do(obj, elm_wdg_theme_apply(NULL));
 
+   elm_drop_target_del(obj, sd->drop_format,
+                       NULL, NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+                       _drag_drop_cb, NULL);
    if (editable)
-     elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,
-                         NULL, NULL,
-                         NULL, NULL,
-                         NULL, NULL,
-                         _drag_drop_cb, NULL);
-   else
-     elm_drop_target_del(obj, ELM_SEL_FORMAT_MARKUP,
-                         NULL, NULL,
-                         NULL, NULL,
-                         NULL, NULL,
-                         _drag_drop_cb, NULL);
+     {
+        sd->drop_format = _get_drop_format(obj);
+        elm_drop_target_add(obj, sd->drop_format,
+                            NULL, NULL,
+                            NULL, NULL,
+                            NULL, NULL,
+                            _drag_drop_cb, NULL);
+     }
 }
 
 EAPI Eina_Bool
@@ -5017,7 +5044,13 @@ _cnp_mode_set(Eo *obj, void *_pd, va_list *list)
    else if (cnp_mode == ELM_CNP_MODE_MARKUP)
      format |= ELM_SEL_FORMAT_IMAGE;
 
-   elm_drop_target_add(obj, format,
+   elm_drop_target_del(obj, sd->drop_format,
+                       NULL, NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+                       _drag_drop_cb, NULL);
+   sd->drop_format = format;
+   elm_drop_target_add(obj, sd->drop_format,
                        NULL, NULL,
                        NULL, NULL,
                        NULL, NULL,

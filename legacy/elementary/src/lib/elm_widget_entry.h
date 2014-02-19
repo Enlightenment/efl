@@ -72,6 +72,7 @@ struct _Elm_Entry_Smart_Data
      } anchor_hover;
 
    Elm_Cnp_Mode                          cnp_mode;
+   Elm_Sel_Format                        drop_format;
 
    Eina_Bool                             input_panel_return_key_disabled : 1;
    Eina_Bool                             drag_selection_asked : 1;
