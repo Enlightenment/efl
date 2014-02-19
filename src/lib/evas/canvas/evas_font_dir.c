@@ -444,6 +444,8 @@ evas_font_desc_dup(const Evas_Font_Description *fdesc)
    new->ref = 1;
    new->is_new = EINA_TRUE;
    new->name = eina_stringshare_ref(new->name);
+   new->fallbacks = eina_stringshare_ref(new->fallbacks);
+   new->lang = eina_stringshare_ref(new->lang);
 
    return new;
 }
