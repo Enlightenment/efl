@@ -36,3 +36,9 @@
 
         * Add various alarm/signal based timeouts for all generic
         loaders in case they get stuck
+
+OUT OF DATE NOTICE:
+-------------------
+With the start of the 1.9.x release cycle we now longer update the ChangeLog and rely on git log for
+this functionality. We keep however a NEWS files for a high level overview of changes in a new
+release which will be filled at the end of the release cycle.

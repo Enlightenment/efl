@@ -1,4 +1,19 @@
-Evas Generic Loaders 1.8.0
+Evas Generic Loaders 1.9.0
+
+Changes since Evas Generic Loaders 1.8.0:
+-----------------------------------------
+
+Improvements:
+
+   * gst loader - support key as stream position in 1/1000th of a second
+
+Fixes:
+
+   * bugfix: add a typefind to gstreamer plugin pipeline
+     previously, we would load any file and try to force it into video/x-raw-rgb, which was
+     (obviously) problematic for audio-only files. with a typefind added to the pipeline, only
+     files which can output to video/x-raw-rgb will be processed
+   * bugfix: unbreak gstreamer plugin by not using the n-video property which is only available in 1.0+
 
 Changes since Evas Generic Loaders 1.7.0:
 -----------------------------------------
