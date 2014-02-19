@@ -60,6 +60,7 @@ Should do the same for the support functions.  These ARE more important to check
 
 //--------------------------------------------------------------------------//
 typedef struct _Edje_Lua_Alloc       Edje_Lua_Alloc;
+typedef struct _Edje_Lua_Allocator   Edje_Lua_Allocator;
 typedef struct _Edje_Lua_Obj         Edje_Lua_Obj;
 typedef struct _Edje_Lua_Animator    Edje_Lua_Animator;
 typedef struct _Edje_Lua_Timer       Edje_Lua_Timer;
@@ -70,6 +71,14 @@ typedef struct _Edje_Lua_Map         Edje_Lua_Map;
 struct _Edje_Lua_Alloc
 {
    size_t max, cur;
+};
+
+struct _Edje_Lua_Allocator
+{
+   Edje_Lua_Alloc *ela;
+   void *(*func) (void *ud, void *ptr, size_t osize, size_t nsize);
+   void   *ud;
+   int     ref;
 };
 
 struct _Edje_Lua_Obj
@@ -206,8 +215,8 @@ static void *
 _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
    size_t dif;
-   Edje_Lua_Alloc *ela = ud;
-   void *ptr2;
+   Edje_Lua_Allocator *al  = ud;
+   Edje_Lua_Alloc     *ela = al->ela;
 
    // in lua 5.2 osize encodes the type of data allocted if ptr is NULL
    // LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, or LUA_TTHREAD
@@ -235,13 +244,9 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
             (int)ela->max, (int)ela->cur);
         return NULL;
      }
-   if (nsize == 0)
-     {
-        free(ptr);
-        return NULL;
-     }
-   ptr2 = realloc(ptr, nsize + 4);
-   if (ptr2) return ptr2;
+
+   ptr = al->func(al->ud, ptr, osize, nsize);
+   if (nsize == 0 || ptr) return ptr;
 
    ERR("Lua cannot re-allocate %i bytes", (int)nsize);
    return NULL;
@@ -3866,12 +3871,18 @@ static void
 _elua_init(void)                                                                           // Stack usage [-16, +20, em]
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
+   Edje_Lua_Allocator *al;
    const luaL_Reg *l;
    lua_State *L;
 
    if (lstate) return;
 
-   lstate = L = lua_newstate(_elua_alloc, &ela);                                           // Stack usage [-0, +0, -]
+   lstate = L = luaL_newstate();
+   al = lua_newuserdata(L, sizeof(Edje_Lua_Allocator));
+   al->ref  = luaL_ref(L, LUA_REGISTRYINDEX);
+   al->func = lua_getallocf(L, &(al->ud));
+   al->ela  = &ela;
+   lua_setallocf(L, _elua_alloc, al);                                                      // Stack usage [-0, +0, -]
    lua_atpanic(L, _elua_custom_panic);                                                     // Stack usage [-0, +0, -]
 
 // FIXME: figure out optimal gc settings later
@@ -3920,6 +3931,7 @@ void
 _edje_lua2_script_init(Edje *ed)                                  // Stack usage [-63, +99, em]
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
+   Edje_Lua_Allocator *al;
    const luaL_Reg *l;
    char buf[256];
    void *data;
@@ -3938,7 +3950,12 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
 #ifndef RASTER_FORGOT_WHY
    _elua_init();                                                  // This is actually truly pointless, even if raster remembers.
 #endif
-   L = ed->L = lua_newstate(_elua_alloc, &ela);                   // Stack usage [-0, +0, -]
+   L = ed->L = luaL_newstate();
+   al = lua_newuserdata(L, sizeof(Edje_Lua_Allocator));
+   al->ref  = luaL_ref(L, LUA_REGISTRYINDEX);
+   al->func = lua_getallocf(L, &(al->ud));
+   al->ela  = &ela;
+   lua_setallocf(L, _elua_alloc, al);                             // Stack usage [-0, +0, -]
    lua_atpanic(L, _elua_custom_panic);                            // Stack usage [-0, +0, -]
 
 // FIXME: figure out optimal gc settings later
@@ -4041,7 +4058,14 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
 void
 _edje_lua2_script_shutdown(Edje *ed)
 {
+   Edje_Lua_Allocator *al;
+   void *ud;
    if (!ed->L) return;
+   lua_getallocf(ed->L, &ud);
+   al = ud;
+   // restore old allocator to close the state
+   lua_setallocf(ed->L, al->func, al->ud);
+   luaL_unref(ed->L, LUA_REGISTRYINDEX, al->ref);
    lua_close(ed->L);  // Stack usage irrelevant, as it's all gone now.
    ed->L = NULL;
    while (ed->lua_objs)
