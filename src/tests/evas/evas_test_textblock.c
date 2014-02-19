@@ -1738,6 +1738,14 @@ START_TEST(evas_textblock_wrapping)
    ck_assert_int_eq(w, 45);
    ck_assert_int_eq(h, 16);
 
+   /* Complex compound clusters using Devanagari. */
+   evas_object_resize(tb, 0, 0);
+
+   evas_object_textblock_text_markup_set(tb, "<wrap=char> करेंकरेंकरेंकरेंकरेंकरें");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+
+   fail_if(w > h); /* FIXME: Not the best test, should be more strict. */
+
    END_TB_TEST();
 }
 END_TEST
