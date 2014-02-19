@@ -134,6 +134,10 @@ START_TEST(evas_filter_parser)
            "bump(m, 135.0, 45.0, 8.0, 0.0, color = white, compensate = true, "
            "src = input, dst = output, black = black, white = white, fillmode = repeat);");
    CHKGOOD("curve(0:0 - 255:255, linear, rgb, src = input, dst = output);");
+   CHKGOOD("curve(128:0 - 0:0 - 255:255, linear, rgb, src = input, dst = output);"); // invalid
+   CHKGOOD("buffer:a(rgba);blend(dst=a);curve(0:0-255:255,src=a,channel=r);");
+   CHKGOOD("buffer:a(rgba);blend(dst=a);curve(0:128-255:128,src=a,channel=g);");
+   CHKGOOD("buffer:a(rgba);blend(dst=a);curve(0:255-255:0,src=a,channel=b,interpolation=none);");
    CHKGOOD("buffer : m (rgba); "
            "displace(m, 10, default, src = input, dst = output, fillmode = repeat);");
    CHKGOOD("fill(output, transparent, 0, 0, 0, 0);");
@@ -230,37 +234,75 @@ END_TEST
 struct Filter_Test_Case {
    int l, r, t, b;
    const char *code;
+   const char *source;
 };
 
+/*
+ * The following test case are tailored to cover as much code as possible in
+ * evas/filters. This is a bit artificial, but at least we'll verify that all
+ * filters produce something and not garbage data.
+ *
+ * NOTE: If the filters fail to link (program_use()), then Evas_Object_Text
+ * will fallback to normal rendering. As a consequence, the pixels will look
+ * fine, and there won't be an error.
+ */
 static struct Filter_Test_Case _test_cases[] = {
-   // Single filters
-   // In some scripts, a first blend is used to make sure all buffers are valid
-   { 0, 0, 0, 0, "blend();" },
-   { 7, 0, 11, 0, "blend(ox = -7, oy = -11);" },
-   { 0, 7, 0, 11, "blend(ox = 7, oy = 11);" },
-   { 5, 5, 7, 7, "blur(rx = 5, ry = 7);" },
-   { 0, 0, 5, 5, "blur(rx = 0, ry = 5);" },
-   { 5, 5, 0, 0, "blur(rx = 5, ry = 0);" },
-   { 0, 15, 7, 0, "blur(rx = 5, ry = 0, ox = 10, oy = -7);" },
-   { 5, 5, 5, 5, "grow(5);" },
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,src=a,dst=a);blend(a);" },
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,dst=a);blend(a);" },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:0-255:255,src=a,channel=r);" },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:128-255:128,src=a,channel=g);" },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:255-255:0,src=a,channel=b);" },
-   { 0, 0, 0, 0, "fill(color=red);" },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(a);" },
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a);" },
-   { 7, 7, 7, 7, "buffer:a(rgba);blend(dst=a);displace(a,7);" },
-   { 0, 0, 0, 40, "buffer:a(alpha);transform(a,vflip,oy=20);blend(src=a);" },
-   { 0, 0, 40, 0, "buffer:a(alpha);transform(a,vflip,oy=-20);blend(src=a);" },
-   { 0, 0, 0, 40, "buffer:a(alpha);blend(dst=a);transform(a,vflip,oy=20,src=a);blend(src=a);" },
+   // Single filters. Blend can be used to ensure all filters are valid.
+   { 0, 0, 0, 0, "blend();", NULL },
+   { 7, 0, 11, 0, "blend(ox = -7, oy = -11);", NULL },
+   { 0, 7, 0, 11, "blend(ox = 7, oy = 11);", NULL },
+   { 0, 0, 0, 0, "buffer:a(rgba);buffer:b(alpha);blend(dst=a);blend(src=a,dst=b);blend(b);", NULL },
+
+   { 5, 5, 7, 7, "blur(rx = 5, ry = 7);", NULL },
+   { 0, 0, 5, 5, "blur(rx = 0, ry = 5, type = box);", NULL },
+   { 0, 0, 5, 5, "buffer : a (rgba); blend(dst = a); blur(src = a,rx = 0, ry = 5, type = box);", NULL },
+   { 5, 5, 0, 0, "blur(rx = 5, ry = 0, type = gaussian);", NULL },
+   { 5, 15, 7, 0, "blur(rx = 5, ry = 0, ox = 10, oy = -7, type = default);", NULL },
+
+   { 5, 5, 5, 5, "grow(5);", NULL },
+
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,src=a,dst=a);blend(a);", NULL },
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,dst=a);blend(a);", NULL },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:0-255:255,src=a,channel=r);", NULL },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:128-128:0,src=a,channel=rgb,interpolation=none);", NULL },
+
+   { 0, 0, 0, 0, "fill(color=red);", NULL },
+
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);mask(a);", NULL },
+   { 0, 0, 0, 0, "buffer:a(alpha);buffer:b(alpha);blend(dst=a);mask(a,dst=b);blend(b);", NULL },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(a);", NULL },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(mask=input,src=a);", NULL },
+   { 0, 0, 0, 0, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=red);blend(dst=a);mask(a,src=b);", NULL },
+
+   // Note: Alpha bump is not tested. Its render quality must be improved first.
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a);", NULL },
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a,compensate=yes,specular=10.0);", NULL },
+
+   { 7, 7, 7, 7, "buffer:a(alpha);buffer:b(rgba);blend(dst=b,color=#330);displace(map=b,src=input,dst=a,intensity=7);blend(a);", NULL },
+   { 7, 7, 7, 7, "buffer:a(alpha);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7);", NULL },
+   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7);", NULL },
+   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=default);", NULL },
+   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=nearest);", NULL },
+   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=smooth);", NULL },
+   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=nearest_stretch);", NULL },
+   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=smooth_stretch);", NULL },
+
+   { 0, 0, 0, 40, "buffer:a(alpha);transform(a,vflip,oy=20);blend(src=a);", NULL },
+   { 0, 0, 40, 0, "buffer:a(alpha);transform(a,vflip,oy=-20);blend(src=a);", NULL },
+   { 0, 0, 0, 40, "buffer:a(alpha);blend(dst=a);transform(a,vflip,oy=20,src=a);blend(src=a);", NULL },
 
    // Filter combos. TODO: Add some more tricky cases :)
-   { 3, 5, 7, 11, "blend(ox = -3, oy = 11); blend(ox = 5, oy = -7);" },
-   { 15, 15, 15, 15, "buffer:a(rgba);grow(10,dst=a);blur(5,src=a);" },
-   { 10, 15, 10, 17, "buffer:a(alpha);blend(dst=a,ox=5,oy=7);blur(10,src=a);blend(ox=-6,oy=-9);" },
-   { 5, 5, 5, 5, "buffer:a(alpha);blur(5,dst=a);bump(a,azimuth=45.0,color=yellow);" }
+   { 3, 5, 7, 11, "blend(ox = -3, oy = 11); blend(ox = 5, oy = -7);", NULL },
+   { 15, 15, 15, 15, "buffer:a(rgba);grow(10,dst=a);blur(5,src=a);", NULL },
+   { 10, 15, 10, 17, "buffer:a(alpha);blend(dst=a,ox=5,oy=7);blur(10,src=a);blend(ox=-6,oy=-9);", NULL },
+   { 5, 5, 5, 5, "buffer:a(alpha);blur(5,dst=a);bump(a,azimuth=45.0,color=yellow);", NULL },
+
+   // Proxy tests (RECT as a proxy object)
+   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=none);", "rect" },
+   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=repeat_x_stretch_y);", "rect" },
+   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=repeat);", "rect" },
+   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=stretch);", "rect" },
+   { 0, 0, 0, 0, "buffer:m(src=rect);buffer:b(rgba);blend(m,dst=b,fillmode=repeat_x_stretch_y);blend();", "rect" }
 };
 
 static const int _test_cases_count = sizeof(_test_cases) / sizeof(_test_cases[0]);
@@ -278,6 +320,9 @@ START_TEST(evas_filter_text_padding_test)
      {
         struct Filter_Test_Case *tc = &(_test_cases[k]);
         l = r = t = b = 0;
+
+        // Don't test proxy cases here.
+        if (tc->source) continue;
 
         eo_do(to, evas_obj_text_filter_program_set(tc->code));
         evas_object_text_style_pad_get(to, &l, &r, &t, &b);
@@ -330,6 +375,8 @@ _ecore_evas_pixels_check(Ecore_Evas *ee)
 
 START_TEST(evas_filter_text_render_test)
 {
+   Evas_Filter_Program *pgm;
+
    /* FIXME:
     * START_FILTER_TEST should be here instead of in the for loop
     * But there seems to be a problem with ecore_evas_buffer as the second
@@ -340,7 +387,7 @@ START_TEST(evas_filter_text_render_test)
      {
         START_FILTER_TEST();
 
-        Evas_Object *rect;
+        Evas_Object *rect, *o = NULL;
         Evas_Coord w, h;
 
         ecore_evas_alpha_set(ee, EINA_TRUE);
@@ -355,9 +402,25 @@ START_TEST(evas_filter_text_render_test)
         struct Filter_Test_Case *tc = &(_test_cases[k]);
         w = h = 0;
 
-        eo_do(to,
-              evas_obj_color_set(255, 255, 255, 255),
-              evas_obj_text_filter_program_set(tc->code));
+        CHKGOOD(tc->code);
+        if (tc->source)
+          {
+             o = evas_object_rectangle_add(evas);
+             evas_object_color_set(o, 0, 255, 0, 255);
+             evas_object_move(o, -999, -9999);
+             evas_object_resize(o, 10, 10);
+             evas_object_show(o);
+             eo_do(to,
+                   evas_obj_color_set(255, 255, 255, 255),
+                   evas_obj_text_filter_source_set(tc->source, o),
+                   evas_obj_text_filter_program_set(tc->code));
+          }
+        else
+          {
+             eo_do(to,
+                   evas_obj_color_set(255, 255, 255, 255),
+                   evas_obj_text_filter_program_set(tc->code));
+          }
 
         evas_object_geometry_get(to, NULL, NULL, &w, &h);
         ecore_evas_resize(ee, w, h);
@@ -368,6 +431,8 @@ START_TEST(evas_filter_text_render_test)
         if (!_ecore_evas_pixels_check(ee))
           fail("Render test failed with: [%dx%d] '%s'", w, h, tc->code);
 
+        evas_object_del(o);
+        evas_object_del(rect);
         END_FILTER_TEST();
      }
 
