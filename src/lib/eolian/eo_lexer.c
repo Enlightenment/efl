@@ -2689,6 +2689,7 @@ eo_tokenizer_database_fill(const char *filename)
    Eo_Implement_Def *impl;
    /* Eo_Ret_Def *ret; */
 
+   INF("Parsing %s", filename);
    Eo_Tokenizer *toknz = eo_tokenizer_get();
    if (!toknz)
      {

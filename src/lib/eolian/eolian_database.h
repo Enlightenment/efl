@@ -3,6 +3,33 @@
 
 #include <Eolian.h>
 
+extern int _eolian_log_dom;
+
+#ifdef CRI
+#undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_eolian_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eolian_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_eolian_log_dom, __VA_ARGS__)
+
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_eolian_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
+
 int database_init();
 int database_shutdown();
 

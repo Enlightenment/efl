@@ -126,6 +126,7 @@ _class_get(const char *class_name)
    Eina_Stringshare *shr = eina_stringshare_add(class_name);
    Class_desc *cl = eina_hash_find(_classes, shr);
    eina_stringshare_del(shr);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_name, NULL);
    return cl;
 }
 
@@ -144,7 +145,7 @@ database_shutdown()
 {
    if (_database_init_count <= 0)
      {
-        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        ERR("Init count not greater than 0 in shutdown.");
         return 0;
      }
    _database_init_count--;
@@ -174,7 +175,7 @@ Eina_Bool
 database_class_file_set(const char *class_name, const char *file_name)
 {
    Class_desc *cl = _class_get(class_name);
-   if (!cl) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
    cl->file = eina_stringshare_add(file_name);
    return EINA_TRUE;
 }
@@ -203,33 +204,27 @@ EAPI Eolian_Class_Type
 eolian_class_type_get(const char *class_name)
 {
    Class_desc *cl = _class_get(class_name);
-   return (cl?cl->type:EOLIAN_CLASS_UNKNOWN_TYPE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EOLIAN_CLASS_UNKNOWN_TYPE);
+   return cl->type;
 }
 
 Eina_Bool
 database_class_del(const char *class_name)
 {
    Class_desc *cl = _class_get(class_name);
-   if (cl)
-     {
-        eina_hash_del(_classes, class_name, NULL);
-        _class_del(cl);
-        return EINA_TRUE;
-     }
-
-   return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
+   eina_hash_del(_classes, class_name, NULL);
+   _class_del(cl);
+   return EINA_TRUE;
 }
 
 static Eina_Bool _class_name_get(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Class_desc *desc = data;
    Eina_List **list = fdata;
-   if (desc && list)
-     {
-        *list = eina_list_append(*list, desc->name);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(desc && list , EINA_FALSE);
+   *list = eina_list_append(*list, desc->name);
+   return EINA_TRUE;
 }
 
 EAPI const Eina_List *
@@ -249,7 +244,7 @@ Eina_Bool
 database_class_inherit_add(const char *class_name, const char *inherit_class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   if (!desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
    desc->inherits = eina_list_append(desc->inherits, eina_stringshare_add(inherit_class_name));
    return EINA_TRUE;
 }
@@ -258,42 +253,48 @@ EAPI const char *
 eolian_class_description_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return (desc ? desc->description : NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   return desc->description;
 }
 
 void
 database_class_description_set(const char *class_name, const char *description)
 {
    Class_desc *desc = _class_get(class_name);
-   if (desc) desc->description = eina_stringshare_add(description);
+   EINA_SAFETY_ON_NULL_RETURN(desc);
+   desc->description = eina_stringshare_add(description);
 }
 
 EAPI const char*
 eolian_class_legacy_prefix_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return (desc ? desc->legacy_prefix : NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   return desc->legacy_prefix;
 }
 
 void
 database_class_legacy_prefix_set(const char *class_name, const char *legacy_prefix)
 {
    Class_desc *desc = _class_get(class_name);
-   if (desc) desc->legacy_prefix = eina_stringshare_add(legacy_prefix);
+   EINA_SAFETY_ON_NULL_RETURN(desc);
+   desc->legacy_prefix = eina_stringshare_add(legacy_prefix);
 }
 
 EAPI const Eina_List *
 eolian_class_inherits_list_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return (desc?desc->inherits:NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   return desc->inherits;
 }
 
 EAPI const Eina_List*
 eolian_class_implements_list_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return (desc ? desc->implements : NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   return desc->implements;
 }
 
 Eolian_Function
@@ -310,6 +311,7 @@ void
 database_function_type_set(Eolian_Function function_id, Eolian_Function_Type foo_type)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
+   EINA_SAFETY_ON_NULL_RETURN(fid);
    switch (foo_type)
      {
       case SET:
@@ -327,7 +329,8 @@ database_function_type_set(Eolian_Function function_id, Eolian_Function_Type foo
 Eina_Bool database_class_function_add(const char *class_name, Eolian_Function foo_id)
 {
    Class_desc *desc = _class_get(class_name);
-   if (!foo_id || !desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(foo_id && desc, EINA_FALSE);
    _Function_Id *fid = (_Function_Id *) foo_id;
    switch (fid->type)
      {
@@ -352,6 +355,7 @@ Eina_Bool database_class_function_add(const char *class_name, Eolian_Function fo
          desc->dflt_dtor = foo_id;
          break;
       default:
+         ERR("Bad function type %d.", fid->type);
          return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -360,9 +364,9 @@ Eina_Bool database_class_function_add(const char *class_name, Eolian_Function fo
 Eolian_Implement
 database_implement_new(const char *class_name, const char *func_name, Eolian_Function_Type type)
 {
-   if (!class_name || !func_name) return NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(class_name && func_name, NULL);
    _Implement_Desc *impl_desc = calloc(1, sizeof(_Implement_Desc));
-   if (!impl_desc) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl_desc, NULL);
    impl_desc->class_name = eina_stringshare_add(class_name);
    impl_desc->func_name = eina_stringshare_add(func_name);
    impl_desc->type = type;
@@ -372,8 +376,9 @@ database_implement_new(const char *class_name, const char *func_name, Eolian_Fun
 Eina_Bool
 database_class_implement_add(const char *class_name, Eolian_Implement impl_desc)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl_desc, EINA_FALSE);
    Class_desc *desc = _class_get(class_name);
-   if (!impl_desc || !desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
    desc->implements = eina_list_append(desc->implements, impl_desc);
    return EINA_TRUE;
 }
@@ -382,7 +387,7 @@ EAPI Eina_Bool
 eolian_implement_information_get(Eolian_Implement impl, const char **class_name, const char **func_name, Eolian_Function_Type *type)
 {
    _Implement_Desc *_impl = (_Implement_Desc *)impl;
-   if (!_impl) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, EINA_FALSE);
    if (class_name) *class_name = _impl->class_name;
    if (func_name) *func_name = _impl->func_name;
    if (type) *type = _impl->type;
@@ -393,6 +398,7 @@ Eolian_Implement_Legacy
 database_implement_legacy_add(Eolian_Implement impl, const char *legacy_function_name)
 {
    _Implement_Desc *_impl = (_Implement_Desc *)impl;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, NULL);
    _impl->leg_desc = calloc(1, sizeof(_Implement_Legacy_Desc));
    _Implement_Legacy_Desc *leg_desc = (_Implement_Legacy_Desc *)_impl->leg_desc;
    if (leg_desc && legacy_function_name) leg_desc->legacy_function_name = legacy_function_name;
@@ -405,7 +411,7 @@ database_implement_legacy_param_add(Eolian_Implement_Legacy leg,
       Eina_Stringshare *comment)
 {
    _Implement_Legacy_Desc *_leg = (_Implement_Legacy_Desc *)leg;
-   if (!_leg) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_leg, NULL);
 
    _Implement_Legacy_Param *param = calloc(1, sizeof(_Implement_Legacy_Param));
    param->eo_param = eo_param;
@@ -422,7 +428,7 @@ eolian_implement_legacy_param_info_get(Eolian_Implement_Legacy_Parameter param,
       Eina_Stringshare **comment)
 {
    _Implement_Legacy_Param *_param = (_Implement_Legacy_Param *)param;
-   if (!_param) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_param, EINA_FALSE);
 
    if (eo_param) *eo_param = _param->eo_param;
    if (leg_param) *leg_param = _param->leg_param;
@@ -434,7 +440,7 @@ Eina_Bool
 database_implement_legacy_return_add(Eolian_Implement_Legacy leg, Eina_Stringshare *ret_type, Eina_Stringshare *ret_value)
 {
    _Implement_Legacy_Desc *_leg = (_Implement_Legacy_Desc *)leg;
-   if (!_leg) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_leg, EINA_FALSE);
    _leg->ret_type = ret_type;
    _leg->ret_value = ret_value;
    return EINA_TRUE;
@@ -444,6 +450,7 @@ Eolian_Implement_Legacy
 eolian_implement_legacy_desc_get(Eolian_Implement impl)
 {
    _Implement_Desc *_impl = (_Implement_Desc *)impl;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, NULL);
    return (Eolian_Implement_Legacy) (_impl->leg_desc);
 }
 
@@ -453,7 +460,7 @@ eolian_implement_legacy_information_get(const Eolian_Implement_Legacy leg_desc,
       Eina_Stringshare **ret_type, Eina_Stringshare **ret_value)
 {
    _Implement_Legacy_Desc *_leg = (_Implement_Legacy_Desc *)leg_desc;
-   if (!_leg) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_leg, EINA_FALSE);
    if (leg_func_name) *leg_func_name = _leg->legacy_function_name;
    if (params) *params = _leg->params;
    if (ret_type) *ret_type = _leg->ret_type;
@@ -461,11 +468,13 @@ eolian_implement_legacy_information_get(const Eolian_Implement_Legacy leg_desc,
    return EINA_TRUE;
 }
 
-EAPI Eolian_Function eolian_class_function_find_by_name(const char *class_name, const char *func_name, Eolian_Function_Type f_type)
+EAPI Eolian_Function
+eolian_class_function_find_by_name(const char *class_name, const char *func_name, Eolian_Function_Type f_type)
 {
    Eina_List *itr;
    Eolian_Function foo_id;
    Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
 
    if (f_type == UNRESOLVED || f_type == METHOD_FUNC)
       EINA_LIST_FOREACH(desc->methods, itr, foo_id)
@@ -513,7 +522,7 @@ EAPI const Eina_List *
 eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type foo_type)
 {
    Class_desc *desc = _class_get(class_name);
-   if (!desc) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    switch (foo_type)
      {
       case PROPERTY_FUNC:
@@ -532,6 +541,7 @@ EAPI Eolian_Function
 eolian_class_default_constructor_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    return desc->dflt_ctor;
 }
 
@@ -539,6 +549,7 @@ EAPI Eolian_Function
 eolian_class_default_destructor_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    return desc->dflt_dtor;
 }
 
@@ -546,6 +557,7 @@ EAPI Eolian_Function_Type
 eolian_function_type_get(Eolian_Function function_id)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, UNRESOLVED);
    return fid->type;
 }
 
@@ -553,6 +565,7 @@ EAPI const char *
 eolian_function_name_get(Eolian_Function function_id)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    return fid->name;
 }
 
@@ -560,7 +573,7 @@ Eina_Bool
 database_function_set_as_virtual_pure(Eolian_Function function_id)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
-   if (!fid) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    fid->virtual_pure = EINA_TRUE;
    return EINA_TRUE;
 }
@@ -569,15 +582,16 @@ EAPI Eina_Bool
 eolian_function_is_virtual_pure(Eolian_Function function_id)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
-   if (!fid) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    return fid->virtual_pure;
 }
 
 void
 database_function_data_set(Eolian_Function function_id, const char *key, const char *data)
 {
-   _Function_Id *fid = (_Function_Id *)function_id;
    EINA_SAFETY_ON_NULL_RETURN(key);
+   _Function_Id *fid = (_Function_Id *)function_id;
+   EINA_SAFETY_ON_NULL_RETURN(fid);
    if (data)
      {
         if (!eina_hash_find(fid->data, key))
@@ -593,7 +607,8 @@ EAPI const char *
 eolian_function_data_get(Eolian_Function function_id, const char *key)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
-   return (fid ? eina_hash_find(fid->data, key) : NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   return eina_hash_find(fid->data, key);
 }
 
 static _Parameter_Desc *
@@ -611,12 +626,9 @@ Eolian_Function_Parameter
 database_property_key_add(Eolian_Function foo_id, const char *type, const char *name, const char *description)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   _Parameter_Desc *param = NULL;
-   if (fid)
-     {
-        param = _parameter_new(type, name, description);
-        fid->keys = eina_list_append(fid->keys, param);
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   _Parameter_Desc *param = _parameter_new(type, name, description);
+   fid->keys = eina_list_append(fid->keys, param);
    return (Eolian_Function_Parameter)param;
 }
 
@@ -624,12 +636,9 @@ Eolian_Function_Parameter
 database_property_value_add(Eolian_Function foo_id, const char *type, const char *name, const char *description)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   _Parameter_Desc *param = NULL;
-   if (fid)
-     {
-        param = _parameter_new(type, name, description);
-        fid->params= eina_list_append(fid->params, param);
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   _Parameter_Desc *param = _parameter_new(type, name, description);
+   fid->params = eina_list_append(fid->params, param);
    return (Eolian_Function_Parameter)param;
 }
 
@@ -637,13 +646,10 @@ Eolian_Function_Parameter
 database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, const char *type, const char *name, const char *description)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   _Parameter_Desc *param = NULL;
-   if (fid)
-     {
-        param = _parameter_new(type, name, description);
-        param->param_dir = param_dir;
-        fid->params= eina_list_append(fid->params, param);
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   _Parameter_Desc *param = _parameter_new(type, name, description);
+   param->param_dir = param_dir;
+   fid->params = eina_list_append(fid->params, param);
    return (Eolian_Function_Parameter)param;
 }
 
@@ -651,21 +657,20 @@ EAPI Eolian_Function_Parameter
 eolian_function_parameter_get(const Eolian_Function foo_id, const char *param_name)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   if (fid)
-     {
-        Eina_List *itr;
-        _Parameter_Desc *param;
-        EINA_LIST_FOREACH(fid->keys, itr, param)
-           if (!strcmp(param->name, param_name)) return (Eolian_Function_Parameter)param;
-        EINA_LIST_FOREACH(fid->params, itr, param)
-           if (!strcmp(param->name, param_name)) return (Eolian_Function_Parameter)param;
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   Eina_List *itr;
+   _Parameter_Desc *param;
+   EINA_LIST_FOREACH(fid->keys, itr, param)
+      if (!strcmp(param->name, param_name)) return (Eolian_Function_Parameter)param;
+   EINA_LIST_FOREACH(fid->params, itr, param)
+      if (!strcmp(param->name, param_name)) return (Eolian_Function_Parameter)param;
    return NULL;
 }
 
 EAPI Eina_Stringshare*
 eolian_parameter_type_get(const Eolian_Function_Parameter param)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
    eina_stringshare_ref(((_Parameter_Desc*)param)->type);
    return ((_Parameter_Desc*)param)->type;
 }
@@ -673,6 +678,7 @@ eolian_parameter_type_get(const Eolian_Function_Parameter param)
 EAPI Eina_Stringshare*
 eolian_parameter_name_get(const Eolian_Function_Parameter param)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
    eina_stringshare_ref(((_Parameter_Desc*)param)->name);
    return ((_Parameter_Desc*)param)->name;
 }
@@ -681,7 +687,8 @@ EAPI const Eina_List *
 eolian_property_keys_list_get(Eolian_Function foo_id)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   return (fid?fid->keys:NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   return fid->keys;
 }
 
 EAPI const Eina_List *
@@ -694,7 +701,8 @@ EAPI const Eina_List *
 eolian_parameters_list_get(Eolian_Function foo_id)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   return (fid?fid->params:NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   return fid->params;
 }
 
 /* Get parameter information */
@@ -702,7 +710,7 @@ EAPI void
 eolian_parameter_information_get(Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description)
 {
    _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
-   if (!param) return;
+   EINA_SAFETY_ON_NULL_RETURN(param);
    if (param_dir) *param_dir = param->param_dir;
    if (type) *type = param->type;
    if (name) *name = param->name;
@@ -713,7 +721,7 @@ void
 database_parameter_get_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_const)
 {
    _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
-   if (!param) return;
+   EINA_SAFETY_ON_NULL_RETURN(param);
    param->is_const = is_const;
 }
 
@@ -721,7 +729,8 @@ EAPI Eina_Bool
 eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter param_desc)
 {
    _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
-   return param?param->is_const:EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
+   return param->is_const;
 }
 
 void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type)
@@ -756,17 +765,16 @@ void
 database_function_object_set_as_const(Eolian_Function foo_id, Eina_Bool is_const)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   if (fid)
-     {
-        fid->obj_is_const = is_const;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(fid);
+   fid->obj_is_const = is_const;
 }
 
 EAPI Eina_Bool
 eolian_function_object_is_const(Eolian_Function foo_id)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
-   return (fid?fid->obj_is_const:EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   return fid->obj_is_const;
 }
 
 Eolian_Event
@@ -793,7 +801,7 @@ Eina_Bool
 database_class_event_add(const char *class_name, Eolian_Event event_desc)
 {
    Class_desc *desc = _class_get(class_name);
-   if (!event_desc || !desc) return EINA_FALSE;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(event_desc && desc, EINA_FALSE);
    desc->events = eina_list_append(desc->events, event_desc);
    return EINA_TRUE;
 }
@@ -802,14 +810,15 @@ EAPI const Eina_List*
 eolian_class_events_list_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return (desc ? desc->events : NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   return desc->events;
 }
 
 EAPI Eina_Bool
 eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_comment)
 {
    _Event_Desc *_event_desc = (_Event_Desc *) event;
-   if (!_event_desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_event_desc, EINA_FALSE);
    if (event_name) *event_name = _event_desc->name;
    if (event_comment) *event_comment = _event_desc->comment;
    return EINA_TRUE;
@@ -819,7 +828,7 @@ Eina_Bool
 database_class_ctor_enable_set(const char *class_name, Eina_Bool enable)
 {
    Class_desc *desc = _class_get(class_name);
-   if (!desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
    desc->class_ctor_enable = enable;
    return EINA_TRUE;
 }
@@ -828,7 +837,7 @@ Eina_Bool
 database_class_dtor_enable_set(const char *class_name, Eina_Bool enable)
 {
    Class_desc *desc = _class_get(class_name);
-   if (!desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
    desc->class_dtor_enable = enable;
    return EINA_TRUE;
 }
@@ -837,14 +846,16 @@ Eina_Bool
 eolian_class_ctor_enable_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return desc?desc->class_ctor_enable:EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   return desc->class_ctor_enable;
 }
 
 Eina_Bool
 eolian_class_dtor_enable_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   return desc?desc->class_dtor_enable:EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   return desc->class_dtor_enable;
 }
 
 static void
@@ -905,6 +916,7 @@ _event_print(Eolian_Event ev, int nb_spaces)
 static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
 {
    Eolian_Function foo_id = (Eolian_Function) fid;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    const char *ret_desc = eolian_function_description_get(foo_id, EOLIAN_RETURN_COMMENT);
    switch (fid->type)
      {
@@ -1003,7 +1015,7 @@ static Eina_Bool _class_print(const Eina_Hash *hash EINA_UNUSED, const void *key
    const char *types[5] = {"", "Regular", "Regular Non Instantiable", "Mixin", "Interface"};
 
    Class_desc *desc = data;
-   if (!desc) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
    printf("Class %s:\n", desc->name);
    if (desc->description)
       printf("  description: <%s>\n", desc->description);
