@@ -7262,16 +7262,20 @@ evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
    if (!cur) return EINA_FALSE;
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
+   size_t len = eina_ustrbuf_length_get(cur->node->unicode);
+
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
      {
         const char *lang = ""; /* FIXME: get lang */
-        size_t len = eina_ustrbuf_length_get(cur->node->unicode);
         breaks = malloc(len);
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
 
-   for (i = cur->pos; BREAK_AFTER(i); i--)
+   if ((cur->pos > 0) && (cur->pos == len))
+      cur->pos--;
+
+   for (i = cur->pos ; _is_white(text[i]) && BREAK_AFTER(i) ; i--)
      {
         if (i == 0) break;
      }
@@ -7300,16 +7304,20 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
    if (!cur) return EINA_FALSE;
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
+   size_t len = eina_ustrbuf_length_get(cur->node->unicode);
+
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
      {
         const char *lang = ""; /* FIXME: get lang */
-        size_t len = eina_ustrbuf_length_get(cur->node->unicode);
         breaks = malloc(len);
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
 
-   for (i = cur->pos; (text[i]) && (BREAK_AFTER(i)); i++);
+   if (cur->pos == len)
+      return EINA_TRUE;
+
+   for (i = cur->pos; text[i] && _is_white(text[i]) && (BREAK_AFTER(i)) ; i++);
 
    for ( ; text[i] ; i++)
      {
