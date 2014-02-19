@@ -786,6 +786,8 @@ _elm_spinner_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (_elm_config->access_mode)
      _access_spinner_register(obj, EINA_TRUE);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
