@@ -117,8 +117,16 @@ _evas_common_text_props_cluster_move(const Evas_Text_Props *props, int pos,
    if (!right && (prop_pos > 0))
      {
 #ifdef OT_SUPPORT
-        return props->info->ot[props->start + prop_pos - 1].source_cluster -
-           props->text_offset;
+        int base_cluster = props->info->ot[props->start + prop_pos].source_cluster;
+        prop_pos--;
+        for ( ; prop_pos >= 0 ; prop_pos--)
+          {
+             int cur_cluster = props->info->ot[props->start + prop_pos].source_cluster;
+             if (cur_cluster != base_cluster)
+               {
+                  return cur_cluster - props->text_offset;
+               }
+          }
 #else
         return props->start + prop_pos - 1 - props->text_offset;
 #endif
@@ -126,8 +134,16 @@ _evas_common_text_props_cluster_move(const Evas_Text_Props *props, int pos,
    else if (right && (prop_pos < (int) (props->len - 1)))
      {
 #ifdef OT_SUPPORT
-        return props->info->ot[props->start + prop_pos + 1].source_cluster -
-           props->text_offset;
+        int base_cluster = props->info->ot[props->start + prop_pos].source_cluster;
+        prop_pos++;
+        for ( ; prop_pos < (int) props->len ; prop_pos++)
+          {
+             int cur_cluster = props->info->ot[props->start + prop_pos].source_cluster;
+             if (cur_cluster != base_cluster)
+               {
+                  return cur_cluster - props->text_offset;
+               }
+          }
 #else
         return props->start + prop_pos + 1 - props->text_offset;
 #endif
