@@ -70,8 +70,10 @@ _elm_calendar_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EI
 
 {
    Evas_Coord minw = -1, minh = -1;
+   ELM_CALENDAR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (sd->filling) return;
    // 7x8 (1 month+year, days, 6 dates.)
    elm_coords_finger_size_adjust(7, &minw, 8, &minh);
    edje_object_size_min_restricted_calc
@@ -214,6 +216,7 @@ _set_month_year(Elm_Calendar_Smart_Data *sd)
 {
    char *buf;
 
+   sd->filling = EINA_TRUE;
    if (sd->double_spinners) /* theme has spinner for year */
      {
         buf = _format_year(&sd->shown_time);
@@ -235,7 +238,7 @@ _set_month_year(Elm_Calendar_Smart_Data *sd)
         free(buf);
      }
    else elm_layout_text_set(sd->obj, "month_text", "");
-
+   sd->filling = EINA_FALSE;
 }
 
 static char *
@@ -356,6 +359,7 @@ _populate(Evas_Object *obj)
 
    elm_layout_freeze(obj);
 
+   sd->filling = EINA_FALSE;
    if (sd->today_it > 0) _not_today(sd);
 
    maxdays = _maxdays_get(&sd->shown_time);
@@ -363,6 +367,7 @@ _populate(Evas_Object *obj)
    yr = sd->shown_time.tm_year;
 
    _set_month_year(sd);
+   sd->filling = EINA_TRUE;
 
    /* Set days */
    day = 0;
@@ -524,8 +529,10 @@ _populate(Evas_Object *obj)
              break;
           }
      }
+   sd->filling = EINA_FALSE;
 
    elm_layout_thaw(obj);
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -537,12 +544,14 @@ _set_headers(Evas_Object *obj)
 
    elm_layout_freeze(obj);
 
+   sd->filling = EINA_TRUE;
    for (i = 0; i < ELM_DAY_LAST; i++)
      {
         part[3] = i + '0';
         elm_layout_text_set
           (obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
      }
+   sd->filling = EINA_FALSE;
 
    elm_layout_thaw(obj);
 }
