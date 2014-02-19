@@ -150,7 +150,7 @@ case "m4_defn([DOWNOTHER])" in
       ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNOTHER])} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
+requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
 requirements_internal_libs_[]m4_defn([DOWNEFL])="lib/${libdirname}/lib${libname}.la ${requirements_internal_libs_[][]m4_defn([DOWNEFL])}"
 requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_public_libs_[]m4_defn([DOWNOTHER])} ${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])}"
 m4_popdef([DOWNOTHER])dnl

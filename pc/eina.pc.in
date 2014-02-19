@@ -9,4 +9,4 @@ Requires.private: @requirements_pc_eina@
 Version: @VERSION@
 Libs: -L${libdir} -leina @requirements_public_libs_eina@
 Libs.private: @requirements_libs_eina@
-Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina @EFL_PTHREAD_CFLAGS@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina

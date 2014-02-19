@@ -14,17 +14,14 @@ AC_DEFUN([EFL_CHECK_THREADS],
 
 dnl Generic thread detection
 
-dnl Use generic infrastructure for pthread detection (What a hell of a mess !)
-_efl_have_ax_threads="no"
-AX_PTHREAD([
-  EFL_PTHREAD_CFLAGS="${PTHREAD_CFLAGS}"
-  EFL_PTHREAD_LIBS="${PTHREAD_LIBS}"
-  CC="${PTHREAD_CC}"
-  _efl_have_ax_threads="yes"
-  ])
+EFL_PTHREAD_CFLAGS="-D_REENTRANT"
+EFL_PTHREAD_LIBS=""
 
 _efl_have_posix_threads="no"
 _efl_have_win32_threads="no"
+
+dnl Use generic infrastructure for pthread detection (What a hell of a mess !)
+gl_LOCK
 
 AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
 
@@ -35,18 +32,25 @@ case "$host_os" in
       AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
       ;;
    *)
-      _efl_have_posix_threads="${_efl_have_ax_threads}"
+      _efl_have_posix_threads="${gl_use_threads}"
       AC_DEFINE([EFL_HAVE_POSIX_THREADS], [1], [Define to mention that POSIX threads are supported])
       ;;
 esac
 
-dnl check if the compiler supports POSIX thread barrier and setaffinity
+dnl System specific CFLAGS
+if test "x${_efl_have_posix_threads}" = "xyes"; then
+   case "$host_os" in
+      osf*) EFL_PTHREAD_CFLAGS="-D_REENTRANT" ;;
+      aix* | freebsd*) EFL_PTHREAD_CFLAGS="-D_THREAD_SAFE" ;;
+      solaris*) EFL_PTHREAD_CFLAGS="-D_REENTRANT" ;;
+   esac
+fi
+
+dnl check if the compiler supports POSIX threads
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
 
    SAVE_LIBS=${LIBS}
-   SAVE_CFLAGS=${CFLAGS}
-   LIBS="${LIBS} ${PTHREAD_LIBS}"
-   CFLAGS="${CFLAGS} ${PTHREAD_CFLAGS}"
+   LIBS="${LIBS} ${LIBMULTITHREAD}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
@@ -69,7 +73,6 @@ pthread_attr_setaffinity_np(NULL, 0, NULL);
       [efl_have_setaffinity="yes"],
       [efl_have_setaffinity="no"])
    LIBS=${SAVE_LIBS}
-   CFLAGS=${SAVE_CFLAGS}
 fi
 
 AC_MSG_CHECKING([which threads API is used])
@@ -86,6 +89,8 @@ else
 fi
 AC_MSG_RESULT([${efl_have_threads}])
 
+EFL_PTHREAD_LIBS="${LTLIBMULTITHREAD}"
+
 AC_SUBST(EFL_PTHREAD_CFLAGS)
 AC_SUBST(EFL_PTHREAD_LIBS)
 
@@ -94,11 +99,8 @@ dnl check if the compiler supports pthreads spinlock
 efl_have_posix_threads_spinlock="no"
 
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
-
    SAVE_LIBS=${LIBS}
-   SAVE_CFLAGS=${CFLAGS}
-   LIBS="${LIBS} ${PTHREAD_LIBS}"
-   CFLAGS="${CFLAGS} ${PTHREAD_CFLAGS}"
+   LIBS="${LIBS} ${LIBMULTITHREAD}"
    AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
 #include <pthread.h>
@@ -113,7 +115,6 @@ sched_yield();
       [efl_have_posix_threads_spinlock="yes"],
       [efl_have_posix_threads_spinlock="no"])
    LIBS=${SAVE_LIBS}
-   CFLAGS=${SAVE_CFLAGS}
 
 fi
 
