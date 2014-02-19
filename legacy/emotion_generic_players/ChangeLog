@@ -3,3 +3,10 @@
 	* Created the project based on previous
 	emotion/src/generic_players, as it was removed when Emotion was
 	merged into EFL single-tree.
+
+
+OUT OF DATE NOTICE:
+-------------------
+With the start of the 1.9.x release cycle we now longer update the ChangeLog and rely on git log for
+this functionality. We keep however a NEWS files for a high level overview of changes in a new
+release which will be filled at the end of the release cycle.

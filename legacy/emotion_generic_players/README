@@ -31,7 +31,7 @@ conflicting licenses with GPL, LGPL or even proprietary code.
 REQUIREMENTS
 ------------
 
-  * vlc (libvlc)
+  * vlc (libvlc >= 2.0)
 
 
 COMPONENTS

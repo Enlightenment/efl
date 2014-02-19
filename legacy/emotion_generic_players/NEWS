@@ -1,0 +1,18 @@
+Emotion Generic Players 1.9.0
+
+Changes since Emotion Generic Players 1.8.0:
+--------------------------------------------
+
+Improvements:
+
+   * Emotion VLC player: debug++
+   * Emotion VLC: cleanup: only changed function order in file.
+   * Simplify player version dir fallback to match efl 1.9 simplification changes
+   * Emotion_generic_players - commented out unused func.
+
+Fixes:
+
+   * Emotion VLC backend: fix pause/stop to work again.
+     The EM_CMD_STOP command do not have any parameter so it must be
+     handled in the first call of the pipe.
+   * Check for libvlc >= 2.0 as a minimum as we use 2.x funcs
