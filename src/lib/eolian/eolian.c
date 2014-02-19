@@ -10,7 +10,6 @@ EAPI int eolian_init(void)
    const char *log_dom = "eolian";
    if (_eolian_init_counter > 0) return ++_eolian_init_counter;
 
-   INF("Init");
    eina_init();
    _eolian_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eolian_log_dom < 0)
@@ -23,6 +22,7 @@ EAPI int eolian_init(void)
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
 
+   INF("Init");
    database_init();
    eo_tokenizer_init();
    return ++_eolian_init_counter;
