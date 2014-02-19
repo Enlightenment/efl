@@ -277,6 +277,22 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(win);
 }
 
+static void
+_item_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+
+   printf("item,focused: %p\n", it);
+}
+
+static void
+_item_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+
+   printf("item,unfocused: %p\n", it);
+}
+
 void
 test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -308,6 +324,8 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
    elm_object_focus_set(hoversel, EINA_TRUE);
+   evas_object_smart_callback_add(hoversel, "item,focused", _item_focused_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "item,unfocused", _item_unfocused_cb, NULL);
 
    hoversel = elm_hoversel_add(win);
    elm_hoversel_horizontal_set(hoversel, EINA_TRUE);
@@ -321,6 +339,8 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
                          NULL);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
+   evas_object_smart_callback_add(hoversel, "item,focused", _item_focused_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "item,unfocused", _item_unfocused_cb, NULL);
 
    hoversel = elm_hoversel_add(win);
    elm_hoversel_hover_parent_set(hoversel, win);
@@ -335,6 +355,8 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
                          NULL);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
+   evas_object_smart_callback_add(hoversel, "item,focused", _item_focused_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "item,unfocused", _item_unfocused_cb, NULL);
 
    evas_object_resize(win, 320, 500);
    evas_object_show(win);

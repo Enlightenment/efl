@@ -27,6 +27,8 @@
  * - @c "dismissed" - the hover is dismissed
  * - @c "expanded" - This is called on clicking hoversel and elm_hoversel_hover_begin().
  * - @c "language,changed" - the program's language changed (since 1.9)
+ * - @c "item,focused" - When the hoversel item has received focus. (since 1.10)
+ * - @c "item,unfocused" - When the hoversel item has lost focus. (since 1.10)
  *
  * Default content parts of the hoversel widget that you can use for are:
  * @li "icon" - An icon of the hoversel

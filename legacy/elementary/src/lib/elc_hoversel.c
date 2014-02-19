@@ -16,10 +16,15 @@ EAPI Eo_Op ELM_OBJ_HOVERSEL_BASE_ID = EO_NOOP;
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_DISMISSED[] = "dismissed";
 static const char SIG_EXPANDED[] = "expanded";
+static const char SIG_ITEM_FOCUSED[] = "item,focused";
+static const char SIG_ITEM_UNFOCUSED[] = "item,unfocused";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
    {SIG_DISMISSED, ""},
    {SIG_EXPANDED, ""},
+   {SIG_ITEM_FOCUSED, ""},
+   {SIG_ITEM_UNFOCUSED, ""},
    {"clicked", ""}, /**< handled by parent button class */
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
@@ -102,6 +107,26 @@ _on_item_clicked(void *data,
 }
 
 static void
+_item_focused_cb(void *data,
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *it = data;
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_FOCUSED, it);
+}
+
+static void
+_item_unfocused_cb(void *data,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *it = data;
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_UNFOCUSED, it);
+}
+
+static void
 _activate(Evas_Object *obj)
 {
    Elm_Hoversel_Item *item;
@@ -174,6 +199,8 @@ _activate(Evas_Object *obj)
         elm_box_pack_end(bx, bt);
         evas_object_smart_callback_add(bt, "clicked", _on_item_clicked, item);
         evas_object_show(bt);
+        evas_object_smart_callback_add(bt, SIG_LAYOUT_FOCUSED, _item_focused_cb, item);
+        evas_object_smart_callback_add(bt, SIG_LAYOUT_UNFOCUSED, _item_unfocused_cb, item);
      }
 
    if (sd->horizontal)
