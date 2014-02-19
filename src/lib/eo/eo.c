@@ -763,6 +763,14 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    size_t extn_sz, mro_sz, mixins_sz;
    Eina_List *extn_list, *mro, *mixins;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
+
+   DBG("Started building class '%s'", desc->name);
+
+   if (!_eo_class_check_op_descs(desc))
+     return NULL;
+
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
 #ifndef HAVE_EO_ID
    if (parent && !EINA_MAGIC_CHECK((Eo_Base *) parent, EO_CLASS_EINA_MAGIC))
@@ -771,12 +779,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         return NULL;
      }
 #endif
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
-
-   if (!_eo_class_check_op_descs(desc))
-     return NULL;
 
    /* Check restrictions on Interface types. */
    if (desc->type == EO_CLASS_TYPE_INTERFACE)
@@ -1026,6 +1028,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    eina_spinlock_release(&_eo_class_creation_lock);
 
    _eo_class_constructor(klass);
+
+   DBG("Finished building class '%s'", klass->desc->name);
 
    return _eo_class_id_get(klass);
 }
