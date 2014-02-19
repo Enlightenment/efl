@@ -1612,12 +1612,13 @@ tests/evas/evas_tests_helpers.h \
 tests/evas/evas_suite.h
 
 tests_evas_evas_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/ecore_evas \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas\" \
 @CHECK_CFLAGS@ \
 @EVAS_CFLAGS@
 
-tests_evas_evas_suite_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@
+tests_evas_evas_suite_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@ @USE_ECORE_EVAS_LIBS@
 tests_evas_evas_suite_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 endif
 

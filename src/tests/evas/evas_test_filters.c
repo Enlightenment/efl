@@ -11,7 +11,7 @@
 
 #include "evas_suite.h"
 #include "Evas.h"
-#include "evas_tests_helpers.h"
+#include "Ecore_Evas.h"
 #include "../../lib/evas/include/evas_filter.h"
 
 #if !defined(EFL_EO_API_SUPPORT) || !defined(EFL_BETA_API_SUPPORT)
@@ -22,31 +22,48 @@
 
 #if BUILD_FILTER_TESTS
 
-/* These are the same as in evas_test_text.c */
-
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
 
 #define START_FILTER_TEST() \
-   Evas *evas; \
+   Ecore_Evas *ee; Evas *evas; \
    Evas_Object *to; \
-   evas = EVAS_TEST_INIT_EVAS(); \
+   evas_init(); \
+   ecore_evas_init(); \
+   ee = ecore_evas_buffer_new(1, 1); \
+   ecore_evas_show(ee); \
+   ecore_evas_manual_render_set(ee, EINA_TRUE); \
+   evas = ecore_evas_get(ee); \
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    to = evas_object_text_add(evas); \
+   evas_object_text_font_set(to, TEST_FONT_NAME, 20); \
+   evas_object_text_text_set(to, "Tests"); \
+   evas_object_show(to); \
    evas_object_text_font_source_set(to, TEST_FONT_SOURCE); \
-do \
-{ \
-} \
-while (0)
+   do {} while (0)
 
 #define END_FILTER_TEST() \
-do \
-{ \
    evas_object_del(to); \
-   evas_free(evas); \
+   ecore_evas_free(ee); \
+   ecore_evas_shutdown(); \
    evas_shutdown(); \
-} \
-while (0)
+   do {} while (0)
+
+#ifdef LITTLE_ENDIAN
+#define ALPHA 3
+#define RGB0 0
+#define RGB3 3
+#define RED 2
+#define GREEN 1
+#define BLUE 0
+#else
+#define ALPHA 0
+#define RGB0 1
+#define RGB3 4
+#define RED 0
+#define GREEN 1
+#define BLUE 2
+#endif
 
 
 START_TEST(evas_filter_parser)
@@ -210,54 +227,150 @@ START_TEST(evas_filter_parser)
 }
 END_TEST
 
+struct Filter_Test_Case {
+   int l, r, t, b;
+   const char *code;
+};
+
+static struct Filter_Test_Case _test_cases[] = {
+   // Single filters
+   // In some scripts, a first blend is used to make sure all buffers are valid
+   { 0, 0, 0, 0, "blend();" },
+   { 7, 0, 11, 0, "blend(ox = -7, oy = -11);" },
+   { 0, 7, 0, 11, "blend(ox = 7, oy = 11);" },
+   { 5, 5, 7, 7, "blur(rx = 5, ry = 7);" },
+   { 0, 0, 5, 5, "blur(rx = 0, ry = 5);" },
+   { 5, 5, 0, 0, "blur(rx = 5, ry = 0);" },
+   { 0, 15, 7, 0, "blur(rx = 5, ry = 0, ox = 10, oy = -7);" },
+   { 5, 5, 5, 5, "grow(5);" },
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,src=a,dst=a);blend(a);" },
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,dst=a);blend(a);" },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:0-255:255,src=a,channel=r);" },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:128-255:128,src=a,channel=g);" },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:255-255:0,src=a,channel=b);" },
+   { 0, 0, 0, 0, "fill(color=red);" },
+   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(a);" },
+   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a);" },
+   { 7, 7, 7, 7, "buffer:a(rgba);blend(dst=a);displace(a,7);" },
+   { 0, 0, 0, 40, "buffer:a(alpha);transform(a,vflip,oy=20);blend(src=a);" },
+   { 0, 0, 40, 0, "buffer:a(alpha);transform(a,vflip,oy=-20);blend(src=a);" },
+   { 0, 0, 0, 40, "buffer:a(alpha);blend(dst=a);transform(a,vflip,oy=20,src=a);blend(src=a);" },
+
+   // Filter combos. TODO: Add some more tricky cases :)
+   { 3, 5, 7, 11, "blend(ox = -3, oy = 11); blend(ox = 5, oy = -7);" },
+   { 15, 15, 15, 15, "buffer:a(rgba);grow(10,dst=a);blur(5,src=a);" },
+   { 10, 15, 10, 17, "buffer:a(alpha);blend(dst=a,ox=5,oy=7);blur(10,src=a);blend(ox=-6,oy=-9);" },
+   { 5, 5, 5, 5, "buffer:a(alpha);blur(5,dst=a);bump(a,azimuth=45.0,color=yellow);" }
+};
+
+static const int _test_cases_count = sizeof(_test_cases) / sizeof(_test_cases[0]);
+
 START_TEST(evas_filter_text_padding_test)
 {
    START_FILTER_TEST();
-   const char *buf = "Tests";
-   const char *font = TEST_FONT_NAME;
-   Evas_Font_Size size = 14;
    Evas_Coord x, y, w, h, W, H;
    int l, r, t, b;
 
-   evas_object_move(to, 0, 0);
-   evas_object_text_text_set(to, buf);
-   evas_object_text_font_set(to, font, size);
    evas_object_geometry_get(to, &x, &y, &w, &h);
    printf("Geometry: %dx%d+%d,%d\n", w, h, x, y);
 
-#define CHKPAD(_l, _r, _t, _b, _code) \
-   l = r = t = b = 0; \
-   eo_do(to, evas_obj_text_filter_program_set(_code)); \
-   evas_object_text_style_pad_get(to, &l, &r, &t, &b); \
-   evas_object_geometry_get(to, NULL, NULL, &W, &H); \
-   printf("Line %d: %dx%d for padding %d,%d,%d,%d\n", __LINE__, W, H, l, r, t, b); \
-   fail_if((l != _l) || (r != _r) || (t != _t) || (b != _b)); \
-   fail_if((W != (_l + _r + w)) || (H != (_t + _b + h)));
+   for (int k = 0; k < _test_cases_count; k++)
+     {
+        struct Filter_Test_Case *tc = &(_test_cases[k]);
+        l = r = t = b = 0;
 
-   // Single filters
-   // In some scripts, a first blend is used to make sure all buffers are valid
-   CHKPAD(0, 0, 0, 0, "blend();");
-   CHKPAD(7, 0, 11, 0, "blend(ox = -7, oy = -11);");
-   CHKPAD(0, 7, 0, 11, "blend(ox = 7, oy = 11);");
-   CHKPAD(5, 5, 7, 7, "blur(rx = 5, ry = 7);");
-   CHKPAD(0, 0, 5, 5, "blur(rx = 0, ry = 5);");
-   CHKPAD(5, 5, 0, 0, "blur(rx = 5, ry = 0);");
-   CHKPAD(0, 15, 7, 0, "blur(rx = 5, ry = 0, ox = 10, oy = -7);");
-   CHKPAD(5, 5, 5, 5, "grow(5);");
-   CHKPAD(0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,src=a,dst=a);");
-   CHKPAD(0, 0, 0, 0, "fill();");
-   CHKPAD(0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(a);");
-   CHKPAD(0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a);");
-   CHKPAD(7, 7, 7, 7, "buffer:a(rgba);blend(dst=a);displace(a,7);");
-   CHKPAD(0, 0, 0, 40, "buffer:a(alpha);blend(dst=a);transform(a,vflip,oy=20);blend(src=a);");
+        eo_do(to, evas_obj_text_filter_program_set(tc->code));
+        evas_object_text_style_pad_get(to, &l, &r, &t, &b);
+        evas_object_geometry_get(to, NULL, NULL, &W, &H);
+        printf("Case %d: %dx%d for padding %d,%d,%d,%d\n", k, W, H, l, r, t, b);
 
-   // Filter combos. TODO: Add some more tricky cases :)
-   CHKPAD(3, 5, 7, 11, "blend(ox = -3, oy = 11); blend(ox = 5, oy = -7);");
-   CHKPAD(15, 15, 15, 15, "buffer:a(rgba);grow(10,dst=a);blur(5,src=a);");
-   CHKPAD(10, 15, 10, 17, "buffer:a(alpha);blend(dst=a,ox=5,oy=7);blur(10,src=a);blend(ox=-6,oy=-9);");
-   CHKPAD(5, 5, 5, 5, "buffer:a(alpha);blur(5,dst=a);bump(a,azimuth=45.0,color=yellow);");
+        if ((l != tc->l) || (r != tc->r) || (t != tc->t) || (b != tc->b))
+          fail("Failed on invalid padding with '%s'\n", tc->code);
+        if ((W != (tc->l + tc->r + w)) || (H != (tc->t + tc->b + h)))
+          fail("Failed on invalid geometry with '%s'\n", tc->code);
+     }
 
    END_FILTER_TEST();
+}
+END_TEST
+
+/* This will only check that all pixels are valid premultiplied values
+ * and that they are not all zero.
+ */
+static Eina_Bool
+_ecore_evas_pixels_check(Ecore_Evas *ee)
+{
+   const DATA32 *pixels;
+   Eina_Bool nonzero = EINA_FALSE;
+   int w = 0, h = 0;
+
+   pixels = ecore_evas_buffer_pixels_get(ee);
+   if (!pixels) return EINA_FALSE;
+
+   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+   if (!w || !h) return EINA_FALSE;
+
+   for (int k = w * h; k; k--, pixels++)
+     {
+        DATA8 *rgba = (DATA8 *) pixels;
+
+        if (*pixels && (*pixels != 0xFF000000)) nonzero = EINA_TRUE;
+        if ((rgba[ALPHA] < rgba[RED])
+            || (rgba[ALPHA] < rgba[GREEN])
+            || (rgba[ALPHA] < rgba[BLUE]))
+          {
+             printf("Invalid RGBA values!\n");
+             return EINA_FALSE;
+          }
+     }
+
+   if (!nonzero) printf("All pixels are empty!\n");
+   return nonzero;
+}
+
+START_TEST(evas_filter_text_render_test)
+{
+   /* FIXME:
+    * START_FILTER_TEST should be here instead of in the for loop
+    * But there seems to be a problem with ecore_evas_buffer as the second
+    * call to pixels_get will return some garbage. Always.
+    */
+
+   for (int k = 0; k < _test_cases_count; k++)
+     {
+        START_FILTER_TEST();
+
+        Evas_Object *rect;
+        Evas_Coord w, h;
+
+        ecore_evas_alpha_set(ee, EINA_TRUE);
+        ecore_evas_transparent_set(ee, EINA_TRUE);
+
+        rect = evas_object_rectangle_add(evas);
+        evas_object_color_set(rect, 0, 0, 0, 0);
+        evas_object_move(rect, 0, 0);
+        evas_object_stack_below(rect, to);
+        evas_object_show(rect);
+
+        struct Filter_Test_Case *tc = &(_test_cases[k]);
+        w = h = 0;
+
+        eo_do(to,
+              evas_obj_color_set(255, 255, 255, 255),
+              evas_obj_text_filter_program_set(tc->code));
+
+        evas_object_geometry_get(to, NULL, NULL, &w, &h);
+        ecore_evas_resize(ee, w, h);
+        evas_object_resize(to, w, h);
+        evas_object_resize(rect, w, h);
+
+        ecore_evas_manual_render(ee);
+        if (!_ecore_evas_pixels_check(ee))
+          fail("Render test failed with: [%dx%d] '%s'", w, h, tc->code);
+
+        END_FILTER_TEST();
+     }
+
 }
 END_TEST
 
@@ -268,6 +381,7 @@ void evas_test_filters(TCase *tc)
 #if BUILD_FILTER_TESTS
    tcase_add_test(tc, evas_filter_parser);
    tcase_add_test(tc, evas_filter_text_padding_test);
+   tcase_add_test(tc, evas_filter_text_render_test);
 #else
    (void) tc;
 #endif
