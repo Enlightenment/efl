@@ -976,9 +976,10 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   @param dst Destination buffer for blending.
   @param ox  X offset. Moves the buffer to the right (ox > 0) or to the left (ox < 0) by N pixels.
   @param oy  Y offset. Moves the buffer to the bottom (oy > 0) or to the top (oy < 0) by N pixels.
-  @param color A color to use as multiplier. See @ref evasfilters_color "colors". <br>
+  @param color A color to use for alpha to RGBA conversion. See @ref evasfilters_color "colors". <br>
                  If the input is an alpha buffer and the output is RGBA, this will
-                 draw the buffer in this color.
+                 draw the buffer in this color. If both buffers are RGBA, this will
+                 have no effect.
   @param fillmode Map the input onto the whole surface of the output by stretching or
                  repeating it. See @ref evasfilter_fillmode "fillmodes".
 
@@ -1069,7 +1070,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   @param type  Blur type to apply. One of @c default, @c box or @c gaussian. @c default is an alias for @c gaussian.
   @param ox    X offset. Moves the buffer to the right (@a ox > 0) or to the left (@a ox < 0) by N pixels.
   @param oy    Y offset. Moves the buffer to the bottom (@a oy > 0) or to the top (@a oy < 0) by N pixels.
-  @param color A color to use as multiplier. See @ref evasfilters_color "colors". <br>
+  @param color A color to use for alpha to RGBA conversion. See @ref evasfilters_color "colors". <br>
                  If the input is an alpha buffer and the output is RGBA, this will
                  draw the buffer in this color.
   @param src   Source buffer to blur.
@@ -1478,7 +1479,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
 
   @subsection sec_commands_mask Mask
 
-  Blend two buffers into a destination.
+  Blend two input buffers into a third (target).
 
   @code
     mask (mask, src = input, dst = output, color = white, fillmode = none);
@@ -1487,7 +1488,8 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   @param mask     A mask or texture to blend with the input @a src into the target @a dst.
   @param src      Source buffer. This can also be thought of a mask if @a src is alpha and @a mask is RGBA.
   @param dst      Destination buffer for blending. This must be of same size and colorspace as @a src.
-  @param color    A color to use as multiplier for the blend operation. White means no change. See @ref evasfilters_color "colors".
+  @param color    A color to use for alpha to RGBA conversion for the blend operations. White means no change.
+                  See @ref evasfilters_color "colors". This will have no effect on RGBA sources.
   @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src. Should be set when masking with external textures. Default is none. See @ref evasfilter_fillmode "fillmodes".
 
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.
