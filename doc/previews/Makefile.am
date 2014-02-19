@@ -25,6 +25,13 @@ LDADD = \
 	-lecore \
 	-lecore_evas
 
+if HAVE_WIN32
+AM_CPPFLAGS += -I$(abs_top_srcdir)/src/lib/evil @EVIL_CFLAGS@
+LDADD += -L$(abs_top_builddir)/src/lib/evil/.libs \
+	-levil \
+	-ldl
+endif
+
 noinst_PROGRAMS = preview_text_filter
 
 DATADIR = ${abs_top_srcdir}/doc/previews/img
