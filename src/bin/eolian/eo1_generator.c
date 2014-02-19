@@ -569,12 +569,12 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         Eina_Strbuf *tmpl_impl = eina_strbuf_new();
         eina_strbuf_append(tmpl_impl, tmpl_eo_func_desc);
 
-        char tbuff[0xFF];
-        char *tp = tbuff;
-        strcpy(tbuff, classname);
+        char implname[0xFF];
+        char *tp = implname;
+        sprintf(implname, "%s_%s", classname, impl_class);
         eina_str_tolower(&tp);
 
-        eina_strbuf_replace_all(tmpl_impl, "@#class", tbuff);
+        eina_strbuf_replace_all(tmpl_impl, "@#class", implname);
         const char *tmpl_impl_str = eina_strbuf_string_get(tmpl_impl);
 
         Eolian_Function in_meth = NULL;
@@ -597,7 +597,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         if (in_meth)
           {
              _template_fill(str_func, tmpl_impl_str, impl_class, funcname, EINA_FALSE);
-             eo1_bind_func_generate(classname, in_meth, UNRESOLVED, str_bodyf);
+             eo1_bind_func_generate(implname, in_meth, UNRESOLVED, str_bodyf);
           }
 
         if (in_prop)
@@ -613,14 +613,14 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
                {
                   sprintf(tmpstr, "%s_get", funcname);
                   _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
-                  eo1_bind_func_generate(classname, in_prop, GET, str_bodyf);
+                  eo1_bind_func_generate(implname, in_prop, GET, str_bodyf);
                }
 
              if (prop_write)
                {
                   sprintf(tmpstr, "%s_set", funcname);
                   _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
-                 eo1_bind_func_generate(classname, in_prop, SET, str_bodyf);
+                 eo1_bind_func_generate(implname, in_prop, SET, str_bodyf);
                }
           }
           eina_strbuf_free(tmpl_impl);
