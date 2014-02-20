@@ -2,7 +2,6 @@
 #define EO1_GENERATOR_H
 
 #include<Eina.h>
-#include "eolian_database.h"
 
 /*
  * @brief Generate beginning of Eo1 source code for Eo class

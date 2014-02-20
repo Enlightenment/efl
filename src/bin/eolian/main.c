@@ -6,6 +6,7 @@
 #include "Eolian.h"
 #include "legacy_generator.h"
 #include "eo1_generator.h"
+#include "common_funcs.h"
 
 #define EO_SUFFIX ".eo"
 
@@ -146,6 +147,17 @@ end:
    return ret;
 }
 
+enum
+{
+   NO_WAY_GEN,
+   H_GEN,
+   C_GEN,
+   H_EO_APP,
+   H_LEG_APP,
+   H_LEG_EO_GEN
+};
+int gen_opt = NO_WAY_GEN;
+
 int main(int argc, char **argv)
 {
    int ret = 1;
@@ -153,14 +165,22 @@ int main(int argc, char **argv)
    Eina_List *included_files = NULL, *itr;
    Eina_List *files4gen = NULL;
    const char *classname;
-   char *h_filename = NULL, *c_filename = NULL,
-        *leg_filename = NULL, *eoleg_filename = NULL;
-
-   Eina_Bool happend = EINA_FALSE;
-   Eina_Bool lappend = EINA_FALSE;
+   char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
 
    eina_init();
    eolian_init();
+
+   const char *log_dom = "eolian_gen";
+   _eolian_gen_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_GREEN);
+   if (_eolian_gen_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: %s", log_dom);
+        goto end;
+     }
+
+   eina_log_timing(_eolian_gen_log_dom,
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
 
    static struct option long_options[] =
      {
@@ -169,12 +189,13 @@ int main(int argc, char **argv)
           {"eo2",        no_argument,         &eo_version, 2},
           {"verbose",    no_argument,         0, 'v'},
           {"help",       no_argument,         0, 'h'},
-          {"gh",         required_argument,   0, 1},
-          {"gc",         required_argument,   0, 2},
-          {"ah",         required_argument,   0, 3},
-          {"al",         required_argument,   0, 4},
-          {"gle",        required_argument,   0, 5},
-          {"legacy",     no_argument,         0, 6},
+          {"gh",         no_argument,         &gen_opt, H_GEN},
+          {"gc",         no_argument,         &gen_opt, C_GEN},
+          {"ah",         no_argument,         &gen_opt, H_EO_APP},
+          {"al",         no_argument,         &gen_opt, H_LEG_APP},
+          {"gle",        no_argument,         &gen_opt, H_LEG_EO_GEN},
+          {"output",     required_argument,   0, 'o'},
+          {"legacy",     no_argument,         (int *)&legacy_support, EINA_TRUE},
           {"include",    required_argument,   0, 'I'},
           {0, 0, 0, 0}
      };
@@ -183,12 +204,11 @@ int main(int argc, char **argv)
      {
         switch (opt) {
            case 0: break;
-           case 1: h_filename = optarg; break;
-           case 2: c_filename = optarg; break;
-           case 3: h_filename = optarg; happend = EINA_TRUE; break;
-           case 4: leg_filename = optarg; lappend = EINA_TRUE; break;
-           case 5: eoleg_filename = optarg; break;
-           case 6: legacy_support = EINA_TRUE; break;
+           case 'o':
+                   {
+                      output_filename = strdup(optarg);
+                      break;
+                   }
            case 'v': show = EINA_TRUE; break;
            case 'h': help = EINA_TRUE; break;
            case 'I':
@@ -223,7 +243,10 @@ int main(int argc, char **argv)
 
    if (help)
      {
-        printf("Usage: %s [-h/--help] [-v/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah filename] eo_file... \n", argv[0]);
+        printf("Usage: %s [-h/--help] [-v/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah] [--output/-o outfile] file.eo ... \n", argv[0]);
+        printf("       --help/-h Print that help\n");
+        printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
+        printf("       --output/-o Force output filename to 'outfile'\n");
         printf("       --eo1/--eo2 Set generator to eo1/eo2 mode. Must be specified\n");
         printf("       --gh Generate c header file [.h]\n");
         printf("       --gc Generate c source file [.c]\n");
@@ -277,33 +300,47 @@ int main(int argc, char **argv)
 
    classname = eolian_class_find_by_file(eina_list_data_get(files4gen));
 
-   if (h_filename)
+   if (gen_opt)
      {
-        printf("%s header file %s\n", (happend) ? "Appending" : "Generating", h_filename);
-        _generate_h_file(h_filename, classname, happend);
-     }
-
-   if (c_filename)
-     {
-        printf("Generating source file %s\n", c_filename);
-        const char *cname;
-        EINA_LIST_FOREACH(files4gen, itr, filename)
+        if (!output_filename)
           {
-             cname = eolian_class_find_by_file(filename);
-             _generate_c_file(c_filename, cname, (files4gen != itr));
+             output_filename = malloc(strlen(eina_list_data_get(files4gen)) + 5);
+             strcpy(output_filename, eina_list_data_get(files4gen));
+             if (C_GEN == gen_opt) strcat(output_filename, ".c");
+             else strcat(output_filename, ".h");
           }
-     }
-
-   if (leg_filename)
-     {
-        printf("%s legacy file %s\n", (lappend) ? "Appending" : "Generating", leg_filename);
-        _generate_legacy_header_file(leg_filename, classname, lappend);
-     }
-
-   if (eoleg_filename)
-     {
-        printf("Generating eo and legacy header file %s\n", eoleg_filename);
-        _generate_eo_and_legacy_h_file(eoleg_filename, classname);
+        switch (gen_opt)
+          {
+           case H_GEN: case H_EO_APP:
+                {
+                   INF("%s header file %s\n", (gen_opt == H_EO_APP) ? "Appending" : "Generating", output_filename);
+                   _generate_h_file(output_filename, classname, gen_opt == H_EO_APP);
+                   break;
+                }
+           case H_LEG_APP:
+                {
+                   INF("Appending legacy file %s\n", output_filename);
+                   _generate_legacy_header_file(output_filename, classname, EINA_TRUE);
+                   break;
+                }
+           case H_LEG_EO_GEN:
+                {
+                   INF("Generating eo and legacy header file %s\n", output_filename);
+                   _generate_eo_and_legacy_h_file(output_filename, classname);
+                   break;
+                }
+           case C_GEN:
+                {
+                   INF("Generating source file %s\n", output_filename);
+                   _generate_c_file(output_filename, classname, EINA_FALSE);
+                   break;
+                }
+           default:
+              free(output_filename);
+              printf("Bad generation option\n");
+              goto end;
+          }
+        free(output_filename);
      }
 
    ret = 0;
@@ -311,6 +348,13 @@ end:
    EINA_LIST_FREE(included_files, filename)
       free((char *)filename);
    eina_list_free(files4gen);
+
+   eina_log_timing(_eolian_gen_log_dom,
+         EINA_LOG_STATE_START,
+         EINA_LOG_STATE_SHUTDOWN);
+   eina_log_domain_unregister(_eolian_gen_log_dom);
+   _eolian_gen_log_dom = -1;
+
    eolian_shutdown();
    eina_shutdown();
    return ret;

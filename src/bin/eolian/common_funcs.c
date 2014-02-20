@@ -1,5 +1,7 @@
 #include "common_funcs.h"
 
+int _eolian_gen_log_dom = -1;
+
 void
 _template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const char *funcname, Eina_Bool reset)
 {
