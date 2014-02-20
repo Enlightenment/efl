@@ -109,7 +109,7 @@ tmpl_eo_pardesc[] =" * @param[%s] %s\n";
 static const char
 tmpl_eobind_body[] ="\
 \n\
-@#ret_type _@#class_@#func(Eo *obj, void *_pd@#full_params);\n\n\
+@#ret_type _@#class_@#func(Eo *obj, @#Class_Data *pd@#full_params);\n\n\
 static void\n\
 _eo_obj_@#class_@#func(Eo *obj, void *_pd, va_list *list@#list_unused)\n\
 {\n\
