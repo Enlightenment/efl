@@ -3999,7 +3999,7 @@ EAPI void                          evas_object_image_mmap_set(Evas_Object *obj, 
  * @note Use @c NULL pointers on the file components you're not
  * interested in: they'll be ignored by the function.
  */
-EAPI void                          evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1, 2);
+EAPI void                          evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1);
 
 /**
  * Set the dimensions for an image object's border, a region which @b
