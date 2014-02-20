@@ -36,6 +36,6 @@ char *_nextline(char *str, unsigned int lines);
 
 char *_startline(char *str, char *pos);
 
-char *_first_line_get(const char *str);
+char *_source_desc_get(const char *str);
 
 #endif

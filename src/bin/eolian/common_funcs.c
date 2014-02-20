@@ -99,17 +99,18 @@ _startline(char *str, char *pos)
 }
 
 char*
-_first_line_get(const char *str)
+_source_desc_get(const char *str)
 {
-   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Strbuf *part = eina_strbuf_new();
    if (str)
      {
         const char *p = strchr(str, '\n');
         size_t offs = (p) ? (size_t)(p - str) : strlen(str);
-        eina_strbuf_append_n(buf, str, offs);
+        eina_strbuf_append_n(part, str, offs);
+        eina_strbuf_replace_all(part, "\\", "\\\\");
+        eina_strbuf_replace_all(part, "\"", "\\\"");
      }
-   char *ret = eina_strbuf_string_steal(buf);
-   eina_strbuf_free(buf);
+   char *ret = eina_strbuf_string_steal(part);
    return ret;
 }
 
