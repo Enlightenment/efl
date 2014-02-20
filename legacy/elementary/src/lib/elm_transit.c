@@ -174,6 +174,7 @@ _transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *
         free(obj_data->state);
         free(obj_data);
      }
+   evas_object_data_del(obj, _transit_key);
    _remove_obj_from_list(transit, obj);
    if (!transit->objs && !transit->deleted) elm_transit_del(transit);
 }
