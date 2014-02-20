@@ -200,18 +200,18 @@ _tt_text_replace(void *data       EINA_UNUSED,
 }
 
 static void
-_tt_move_lock(void *data       EINA_UNUSED,
+_tt_move_freeze(void *data       EINA_UNUSED,
               Evas_Object     *obj,
               void *event_info EINA_UNUSED)
 {
-   if (!elm_tooltip_move_lock_get(obj))
+   if (elm_tooltip_move_freeze_get(obj) == 0)
      {
-        elm_tooltip_move_lock_set(obj, EINA_TRUE);
-        elm_object_tooltip_text_set(obj, "Locked");
+        elm_tooltip_move_freeze_push(obj);
+        elm_object_tooltip_text_set(obj, "Fronzen");
      }
    else
      {
-        elm_tooltip_move_lock_set(obj, EINA_FALSE);
+        elm_tooltip_move_freeze_pop(obj);
         elm_object_tooltip_text_set(obj, "Free");
      }
 }
@@ -506,9 +506,9 @@ test_tooltip(void *data       EINA_UNUSED,
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Movement Lock Tooltip, click to change");
+   elm_object_text_set(bt, "Movement Freeze Tooltip, click to change");
    elm_object_tooltip_text_set(bt, "Free");
-   evas_object_smart_callback_add(bt, "clicked", _tt_move_lock, NULL);
+   evas_object_smart_callback_add(bt, "clicked", _tt_move_freeze, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

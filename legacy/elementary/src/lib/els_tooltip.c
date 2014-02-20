@@ -57,8 +57,9 @@ struct _Elm_Tooltip
         double                x, y;
      } rel_pos;
    Elm_Tooltip_Orient       orient; /** orientation for tooltip */
+   int                      move_freeze;
+
    double                   hide_timeout; /* from theme */
-   Eina_Bool                move_lock : 1; /* set/reset tooltip movement with respect to mouse pointer*/
    Eina_Bool                visible_lock:1;
    Eina_Bool                changed_style:1;
    Eina_Bool                free_size : 1;
@@ -157,7 +158,8 @@ _elm_tooltip_show(Elm_Tooltip *tt)
      (tt->eventarea, EVAS_CALLBACK_MOVE, _elm_tooltip_obj_move_cb, tt);
    evas_object_event_callback_add
      (tt->eventarea, EVAS_CALLBACK_RESIZE, _elm_tooltip_obj_resize_cb, tt);
-   if (!tt->move_lock)
+
+   if (tt->move_freeze == 0)
      {
       //No movement of tooltip upon mouse move if orientation set
       if ((tt->orient <= ELM_TOOLTIP_ORIENT_NONE) || (tt->orient >= ELM_TOOLTIP_ORIENT_LAST))
@@ -726,19 +728,28 @@ _elm_tooltip_data_clean(Elm_Tooltip *tt)
 }
 
 EAPI void
-elm_tooltip_move_lock_set(Evas_Object *obj, Eina_Bool lock)
+elm_tooltip_move_freeze_push(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
 
-   tt->move_lock = lock;
+   tt->move_freeze++;
 }
 
-EAPI Eina_Bool
-elm_tooltip_move_lock_get(const Evas_Object *obj)
+EAPI void
+elm_tooltip_move_freeze_pop(Evas_Object *obj)
 {
-   ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
 
-   return tt->move_lock;
+   tt->move_freeze--;
+   if (tt->move_freeze < 0) tt->move_freeze = 0;
+}
+
+EAPI int
+elm_tooltip_move_freeze_get(const Evas_Object *obj)
+{
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj, 0);
+
+   return tt->move_freeze;
 }
 
 EAPI void

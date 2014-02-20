@@ -33,36 +33,42 @@ typedef enum
  } Elm_Tooltip_Orient;
 
 /**
- * @def elm_tooltip_move_lock_set
- * @since 1.9
+ * This increments the tooltip movement freeze count by one. If the count
+ * is more than 0, the tooltip position will be fixed.
  *
- * @brief Enable/Disable tooltip movement with respect to mouse pointer
- *
- * @param[in] obj The tooltip's anchor object
- * @param[in] lock If EINA_TRUE, tooltip movement with respect to mouse pointer is disabled
- *
- * This function allows to enable/disable a tooltip to move with respect to mouse pointer
+ * @param obj The tooltip's anchor object
  *
  * @ingroup Tooltips
- * @see elm_tooltip_move_lock_get
+ * @see elm_tooltip_move_freeze_pop()
+ * @see elm_tooltio_move_freeze_get()
+ * @since 1.9
  */
-EAPI void elm_tooltip_move_lock_set(Evas_Object *obj, Eina_Bool lock);
+EAPI void elm_tooltip_move_freeze_push(Evas_Object *obj);
 
 /**
- * @def elm_tooltip_move_lock_get
- * @since 1.9
+ * This decrements the tooltip freeze count by one.
  *
- * @brief Get the lock status of tooltip movement with respect to mouse pointer
- *
- * @param[in] obj The tooltip's anchor object
- * @return The lock status of tooltip movement with respect to mouse pointer
- *
- * This function returns the status of tooltip movement with respect to mouse pointer
+ * @param obj The tooltip's anchor object
  *
  * @ingroup Tooltips
- * @see elm_tooltip_move_lock_set
+ * @see elm_tooltip_move_freeze_push()
+ * @since 1.9
  */
-EAPI Eina_Bool elm_tooltip_move_lock_get(const Evas_Object *obj);
+EAPI void elm_tooltip_move_freeze_pop(Evas_Object *obj);
+
+/**
+ * Get the movement freeze by 1
+ *
+ * This gets the movement freeze count by one.
+ *
+ * @param obj The tooltip's anchor object
+ * @return The movement freeze count
+ *
+ * @ingroup Tooltips
+ * @see elm_tooltip_move_freeze_push()
+ * @since 1.9
+ */
+EAPI int elm_tooltip_move_freeze_get(const Evas_Object *obj);
 
 /**
  * @def elm_object_tooltip_orient_set
