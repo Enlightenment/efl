@@ -741,6 +741,21 @@ _items_fix(Evas_Object *obj)
                        edje_object_part_swallow
                           (VIEW(it), "elm.swallow.end", it->end);
                     }
+                  if (l == sd->items) //1st item
+                    {
+                       edje_object_signal_emit
+                           (VIEW(it), "elm,state,list,first", "elm");
+                    }
+                  else if (l == eina_list_last(sd->items))
+                    {
+                       edje_object_signal_emit
+                           (VIEW(it), "elm,state,list,last", "elm");
+                    }
+                  else
+                   {
+                       edje_object_signal_emit
+                           (VIEW(it), "elm,state,list,middle", "elm");
+                   }
                }
              if (!it->fixed)
                {
