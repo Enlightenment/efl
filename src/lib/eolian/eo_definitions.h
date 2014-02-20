@@ -132,19 +132,6 @@ typedef struct _eo_class_def
    Eina_List *methods;
 } Eo_Class_Def;
 
-void eo_definitions_ret_free(Eo_Ret_Def *ret);
-
-void eo_definitions_param_free(Eo_Param_Def *param);
-
-void eo_definitions_accessor_free(Eo_Accessor_Def *accessor);
-
-void eo_definitions_property_def_free(Eo_Property_Def *prop);
-
-void eo_definitions_method_def_free(Eo_Method_Def *prop);
-
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
 
-void eo_definitions_event_def_free(Eo_Event_Def *sgn);
-
-void eo_definitions_impl_def_free(Eo_Implement_Def *impl);
 #endif /* __EO_DEFINITIONS_H__ */

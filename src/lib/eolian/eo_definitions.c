@@ -3,7 +3,7 @@
 
 #include "eo_definitions.h"
 
-void
+static void
 eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
    if (ret->type) eina_stringshare_del(ret->type);
@@ -11,7 +11,7 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
    /* do not free */
 }
 
-void
+static void
 eo_definitions_param_free(Eo_Param_Def *param)
 {
    if (param->type) eina_stringshare_del(param->type);
@@ -20,7 +20,15 @@ eo_definitions_param_free(Eo_Param_Def *param)
    free(param);
 }
 
-void
+static void
+eo_definitions_accessor_param_free(Eo_Accessor_Param *param)
+{
+   if (param->name) eina_stringshare_del(param->name);
+   if (param->attrs) eina_stringshare_del(param->attrs);
+   free(param);
+}
+
+static void
 eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
 {
    if (accessor->comment)
@@ -29,12 +37,16 @@ eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
    if (accessor->legacy)
      eina_stringshare_del(accessor->legacy);
 
+   Eo_Accessor_Param *param;
+   EINA_LIST_FREE(accessor->params, param)
+      eo_definitions_accessor_param_free(param);
+
    eo_definitions_ret_free(&accessor->ret);
 
    free(accessor);
 }
 
-void
+static void
 eo_definitions_property_def_free(Eo_Property_Def *prop)
 {
    Eo_Param_Def *param;
@@ -55,7 +67,7 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    free(prop);
 }
 
-void
+static void
 eo_definitions_method_def_free(Eo_Method_Def *meth)
 {
    Eo_Param_Def *param;
@@ -75,7 +87,7 @@ eo_definitions_method_def_free(Eo_Method_Def *meth)
    free(meth);
 }
 
-void
+static void
 eo_definitions_event_def_free(Eo_Event_Def *sgn)
 {
    if (sgn->name)
@@ -86,7 +98,7 @@ eo_definitions_event_def_free(Eo_Event_Def *sgn)
    free(sgn);
 }
 
-void
+static void
 eo_definitions_impl_def_free(Eo_Implement_Def *impl)
 {
    if (impl->meth_name)

@@ -57,6 +57,7 @@ EAPI int eolian_shutdown(void)
 
 EAPI Eina_Bool eolian_eo_file_parse(const char *filename)
 {
+   if (eolian_class_find_by_file(filename)) return EINA_TRUE;
    return eo_tokenizer_database_fill(filename);
 }
 

@@ -101,13 +101,15 @@ _startline(char *str, char *pos)
 char*
 _first_line_get(const char *str)
 {
-   Eina_Strbuf *ret = eina_strbuf_new();
+   Eina_Strbuf *buf = eina_strbuf_new();
    if (str)
      {
         const char *p = strchr(str, '\n');
         size_t offs = (p) ? (size_t)(p - str) : strlen(str);
-        eina_strbuf_append_n(ret, str, offs);
+        eina_strbuf_append_n(buf, str, offs);
      }
-   return eina_strbuf_string_steal(ret);
+   char *ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
 }
 

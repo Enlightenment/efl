@@ -86,8 +86,10 @@ static void
 _fid_del(_Function_Id *fid)
 {
    _Parameter_Desc *param;
+   if (!fid) return;
    eina_stringshare_del(fid->name);
    eina_hash_free(fid->data);
+   EINA_LIST_FREE(fid->keys, param) _param_del(param);
    EINA_LIST_FREE(fid->params, param) _param_del(param);
    free(fid);
 }
@@ -100,12 +102,24 @@ _class_del(Class_desc *class)
    EINA_LIST_FREE(inherits, inherit_name)
       eina_stringshare_del(inherit_name);
 
+   _Implement_Desc *impl;
+   Eina_List *implements = class->implements;
+   EINA_LIST_FREE(implements, impl)
+     {
+        eina_stringshare_del(impl->class_name);
+        eina_stringshare_del(impl->func_name);
+        free(impl);
+     }
+
    _Function_Id *fid;
    Eolian_Event ev;
    EINA_LIST_FREE(class->constructors, fid) _fid_del(fid);
+   EINA_LIST_FREE(class->destructors, fid) _fid_del(fid);
    EINA_LIST_FREE(class->methods, fid) _fid_del(fid);
    EINA_LIST_FREE(class->properties, fid) _fid_del(fid);
    EINA_LIST_FREE(class->events, ev) database_event_free(ev);
+   _fid_del((_Function_Id *)class->dflt_ctor);
+   _fid_del((_Function_Id *)class->dflt_dtor);
 
    eina_stringshare_del(class->name);
    eina_stringshare_del(class->file);
