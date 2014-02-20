@@ -109,7 +109,7 @@ tmpl_eo_pardesc[] =" * @param[%s] %s\n";
 static const char
 tmpl_eobind_body[] ="\
 \n\
-@#ret_type _@#class_@#func(Eo *obj, @#Class_Data *pd@#full_params);\n\n\
+@#ret_type _@#class_@#func(Eo *obj, @#Datatype_Data *pd@#full_params);\n\n\
 static void\n\
 _eo_obj_@#class_@#func(Eo *obj, void *_pd, va_list *list@#list_unused)\n\
 {\n\
@@ -307,7 +307,7 @@ _varg_upgr(const char *stype)
 }
 
 Eina_Bool
-eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
+eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, const char *impl_name)
 {
    const char *suffix = "";
    const char *umpr = NULL;
@@ -349,7 +349,9 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
 
    char tmpstr[0xFF];
    sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
-   _template_fill(fbody, tmpl_eobind_body, classname, tmpstr, EINA_FALSE);
+   char tmpstr2[0xFF];
+   sprintf (tmpstr2, "%s_%s", classname, impl_name);
+   _template_fill(fbody, tmpl_eobind_body, impl_name?tmpstr2:classname, tmpstr, EINA_FALSE);
 
    const Eina_List *l;
    void *data;
@@ -420,6 +422,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    eina_strbuf_replace_all(fbody, "@#list_vars", eina_strbuf_string_get(va_args));
    eina_strbuf_replace_all(fbody, "@#full_params", eina_strbuf_string_get(full_params));
    eina_strbuf_replace_all(fbody, "@#list_params", eina_strbuf_string_get(params));
+   eina_strbuf_replace_all(fbody, "@#Datatype", classname);
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
 
    eina_strbuf_free(va_args);
@@ -546,14 +549,14 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    if (ctor_fn)
      {
         _template_fill(str_func, tmpl_eobase_func_desc, classname, "constructor", EINA_FALSE);
-        eo1_bind_func_generate(classname, ctor_fn, UNRESOLVED, str_bodyf);
+        eo1_bind_func_generate(classname, ctor_fn, UNRESOLVED, str_bodyf, NULL);
      }
    // default destructor
    Eolian_Function dtor_fn = eolian_class_default_destructor_get(classname);
    if (dtor_fn)
      {
         _template_fill(str_func, tmpl_eobase_func_desc, classname, "destructor", EINA_FALSE);
-        eo1_bind_func_generate(classname, dtor_fn, UNRESOLVED, str_bodyf);
+        eo1_bind_func_generate(classname, dtor_fn, UNRESOLVED, str_bodyf, NULL);
      }
 
    //Implements - TODO one generate func def for all
@@ -597,7 +600,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         if (in_meth)
           {
              _template_fill(str_func, tmpl_impl_str, impl_class, funcname, EINA_FALSE);
-             eo1_bind_func_generate(implname, in_meth, UNRESOLVED, str_bodyf);
+             eo1_bind_func_generate(classname, in_meth, UNRESOLVED, str_bodyf, impl_class);
           }
 
         if (in_prop)
@@ -613,14 +616,14 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
                {
                   sprintf(tmpstr, "%s_get", funcname);
                   _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
-                  eo1_bind_func_generate(implname, in_prop, GET, str_bodyf);
+                  eo1_bind_func_generate(classname, in_prop, GET, str_bodyf, impl_class);
                }
 
              if (prop_write)
                {
                   sprintf(tmpstr, "%s_set", funcname);
                   _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
-                 eo1_bind_func_generate(implname, in_prop, SET, str_bodyf);
+                 eo1_bind_func_generate(classname, in_prop, SET, str_bodyf, impl_class);
                }
           }
           eina_strbuf_free(tmpl_impl);
@@ -639,7 +642,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
         _template_fill(str_func, tmpl_eo_func_desc, classname, funcname, EINA_FALSE);
-        eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf);
+        eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL);
      }
 
    //Properties

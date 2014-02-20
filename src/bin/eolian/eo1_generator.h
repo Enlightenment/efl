@@ -41,13 +41,14 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf);
  * @param[in] classname class name
  * @param[in] funcid Function Id
  * @param[in] ftype type of the function (SET/GET/METHOD...)
+ * @param[in] impl_name name to append in case of implement.
  * @param[inout] buf buffer to fill
  *
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
 Eina_Bool
-eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf);
+eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf, const char *impl_name);
 
 /*
  * @brief Generate the header code for a specific Eo class.

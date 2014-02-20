@@ -421,12 +421,12 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version, 
 
         if (prop_read)
           {
-             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf)) return EINA_FALSE;
+             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) return EINA_FALSE;
              if (legacy) _eapi_func_generate(classname, fn, GET, str_bodyf);
           }
         if (prop_write)
           {
-             if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf)) return EINA_FALSE;
+             if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf, NULL)) return EINA_FALSE;
              if (legacy) _eapi_func_generate(classname, fn, SET, str_bodyf);
           }
      }
@@ -434,7 +434,7 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version, 
    //Methods
    EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, METHOD_FUNC), itr, fn)
      {
-        if (!eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf)) return EINA_FALSE;
+        if (!eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL)) return EINA_FALSE;
         if (legacy) _eapi_func_generate(classname, fn, UNRESOLVED, str_bodyf);
      }
 
