@@ -223,7 +223,6 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
          break;
       case libvlc_MediaPlayerPlaying:
          DBG("libvlc_MediaPlayerPlaying");
-         _send_resize(app, app->w, app->h);  // THIS IS WRONG BUT NEEDED...check in emotion why!
          _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
          break;
       case libvlc_MediaPlayerStopped:
@@ -268,8 +267,6 @@ _tmp_playing_event_cb(const struct libvlc_event_t *ev, void *data)
 
    /* ok, we are done! Now let emotion create the shmem for us */
    _send_cmd(app, EM_RESULT_FILE_SET);
-
-   ERR("libvlc_MediaPlayerPlaying  %d %d", app->w, app->h);
 }
 
 
