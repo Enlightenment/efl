@@ -29,32 +29,24 @@ static int _em_vlc_log_dom = -1;
 #define WRN(...) EINA_LOG_DOM_WARN(_em_vlc_log_dom, __VA_ARGS__)
 #define CRIT(...) EINA_LOG_DOM_CRIT(_em_vlc_log_dom, __VA_ARGS__)
 
-enum _Thread_Events {
-   EM_THREAD_POSITION_CHANGED,
-   EM_THREAD_PLAYBACK_STARTED,
-   EM_THREAD_PLAYBACK_STOPPED,
-   EM_THREAD_LAST
-};
 
 typedef struct _App App;
 struct _App {
    Emotion_Generic_Video_Shared *vs;
    Emotion_Generic_Video_Frame vf;
+
    libvlc_instance_t *libvlc;
    libvlc_media_t *m;
    libvlc_media_player_t *mp;
    libvlc_event_manager_t *event_mgr;
-   libvlc_event_manager_t *mevent_mgr;
+
    char *filename;
    char *subtitle_path;
    char *shmname;
-   void *tmpbuffer;
-   int w, h;
+   unsigned w, h;
    Ecore_Pipe *fd_read;  // read commands from emotion here
    Ecore_Pipe *fd_write; // write commands for emotion here
-   int size_sent;
    int opening;
-   int closing;
    int playing;
 
    int last_order;
@@ -94,8 +86,6 @@ _send_cmd_str(App *app, const char *str)
 static void
 _send_file_closed(App *app)
 {
-   app->closing = 0;
-   emotion_generic_shm_free(app->vs);
    _send_cmd(app, EM_RESULT_FILE_CLOSE);
 }
 
@@ -193,11 +183,11 @@ _send_all_meta_info(struct _App *app)
 }
 
 static void
-_send_length_changed(struct _App *app, const struct libvlc_event_t *ev)
+_send_length_changed(struct _App *app)
 {
-   float length = ev->u.media_player_length_changed.new_length;
-   length /= 1000;
+   float length = libvlc_media_player_get_length(app->mp);
 
+   length /= 1000;
    _send_cmd(app, EM_RESULT_LENGTH_CHANGED);
    SEND_CMD_PARAM(app, length);
 }
@@ -212,61 +202,6 @@ _send_seekable_changed(struct _App *app, const struct libvlc_event_t *ev)
 }
 
 static void
-_send_file_set(struct _App *app)
-{
-   if (app->opening)
-      _send_cmd(app, EM_RESULT_FILE_SET);
-
-   if (app->closing)
-     _send_file_closed(app);
-}
-
-
-/* libvlc */
-static Eina_Bool
-_loaded_idler(void *data)
-{
-   App *app = data;
-
-   if (app->mp)
-     libvlc_media_player_stop(app->mp);
-
-   return EINA_FALSE;
-}
-
-static void
-_position_changed(App *app)
-{
-   int r;
-   unsigned int w, h;
-
-   if (!app->opening)
-     return;
-
-   /* sending size info only once */
-   r = libvlc_video_get_size(app->mp, 0, &w, &h);
-   if (r < 0)
-     {
-        w = 1;
-        h = 1;
-     }
-
-   if (w > 0 || h > 0)
-     {
-        _send_resize(app, w, h);
-        app->size_sent = 1;
-     }
-
-   /* sending audio track info */
-   _send_all_track_info(app);
-
-   /* sending meta info */
-   _send_all_meta_info(app);
-
-   ecore_idler_add(_loaded_idler, app);
-}
-
-static void
 _event_cb(const struct libvlc_event_t *ev, void *data)
 {
    App *app = data;
@@ -278,13 +213,9 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
          DBG("libvlc_MediaPlayerTimeChanged"); 
          _send_time_changed(app, ev);
          break;
-      case libvlc_MediaPlayerPositionChanged:
-         DBG("libvlc_MediaPlayerPositionChanged");
-         _position_changed(app);
-         break;
       case libvlc_MediaPlayerLengthChanged:
          DBG("libvlc_MediaPlayerLengthChanged");
-         _send_length_changed(app, ev);
+         _send_length_changed(app);
          break;
       case libvlc_MediaPlayerSeekableChanged:
          DBG("libvlc_MediaPlayerSeekableChanged");
@@ -292,12 +223,12 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
          break;
       case libvlc_MediaPlayerPlaying:
          DBG("libvlc_MediaPlayerPlaying");
-         _send_resize(app, app->w, app->h);
+         _send_resize(app, app->w, app->h);  // THIS IS WRONG BUT NEEDED...check in emotion why!
          _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
          break;
       case libvlc_MediaPlayerStopped:
          DBG("libvlc_MediaPlayerStopped");
-         _send_file_set(app);
+         _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
          break;
       case libvlc_MediaPlayerEndReached:
          DBG("libvlc_MediaPlayerEndReached");
@@ -308,51 +239,39 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
    ecore_thread_main_loop_end();
 }
 
-static void *
-_tmp_lock(void *data, void **pixels)
+
+static void
+_tmp_playing_event_cb(const struct libvlc_event_t *ev, void *data)
 {
    App *app = data;
-   *pixels = app->tmpbuffer;
-   return NULL;
+
+   if (ev->type != libvlc_MediaPlayerPlaying)
+      return;
+
+   /* pause and stop listening the temporary event */
+   libvlc_event_detach(app->event_mgr,libvlc_MediaPlayerPlaying,
+                       _tmp_playing_event_cb, app);
+   libvlc_media_player_set_pause(app->mp, 1);
+
+   /* sending size info */
+   libvlc_video_get_size(app->mp, 0, &app->w, &app->h);
+   _send_resize(app, app->w, app->h);
+
+   /* sending total lenght */
+   _send_length_changed(app);
+
+   /* sending audio track info */
+   _send_all_track_info(app);
+
+   /* sending meta info */
+   _send_all_meta_info(app);
+
+   /* ok, we are done! Now let emotion create the shmem for us */
+   _send_cmd(app, EM_RESULT_FILE_SET);
+
+   ERR("libvlc_MediaPlayerPlaying  %d %d", app->w, app->h);
 }
 
-static void
-_tmp_unlock(void *data EINA_UNUSED, void *id EINA_UNUSED, void *const *pixels EINA_UNUSED)
-{
-}
-
-static void
-_tmp_display(void *data EINA_UNUSED, void *id EINA_UNUSED)
-{
-}
-
-static unsigned
-_tmp_format(void **opaque, char *chroma,
-            unsigned *width, unsigned *height,
-            unsigned *pitches, unsigned *lines)
-{
-   App *app = *opaque;
-
-   app->tmpbuffer = realloc(app->tmpbuffer,
-                            *width * *height * 4 * sizeof (char));
-   strcpy(chroma, "RV32");
-   pitches[0] = pitches[1] = pitches[2] = *width * 4;
-   lines[0] = lines[1] = lines[2] = *height;
-
-   _send_resize(app, *width, *height);
-   DBG("%d %d", *width, *height);
-   
-   return 1;
-}
-
-/*
-static void
-_tmp_play(void *data EINA_UNUSED,
-          const void *samples EINA_UNUSED, unsigned count EINA_UNUSED,
-          int64_t pts EINA_UNUSED)
-{
-}
-*/
 
 static void *
 _lock(void *data, void **pixels)
@@ -410,26 +329,14 @@ _file_set(App *app)
      }
 
    app->opening = 1;
-   libvlc_video_set_format(app->mp, "RV32", DEFAULTWIDTH, DEFAULTHEIGHT, DEFAULTWIDTH * 4); // needed??
-   libvlc_video_set_callbacks(app->mp, _tmp_lock, _tmp_unlock, _tmp_display, app);
-   libvlc_video_set_format_callbacks(app->mp, _tmp_format, NULL);
 
-   /* On my system the mute below is not working and I can't find a way
-      to make it work, so the following set should help, but then it has
-      other side effect...
-   */
-   /* libvlc_audio_set_callbacks(app->mp, _tmp_play, NULL, NULL, NULL, NULL, app); */
-
+   /* Here we start playing and connect a temporary callback to know when
+    * the file is parsed and ready to be played for real.
+    */
    app->event_mgr = libvlc_media_player_event_manager(app->mp);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
-                       _event_cb, app);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
-                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
+                       _tmp_playing_event_cb, app);
 
-   app->mevent_mgr = libvlc_media_event_manager(app->m); // needed??
-
-   app->tmpbuffer = malloc(sizeof(char) * DEFAULTWIDTH * DEFAULTHEIGHT * 4);
-   libvlc_audio_set_mute(app->mp, 1);
    libvlc_media_player_play(app->mp);
 }
 
@@ -450,27 +357,27 @@ _file_set_done(App *app)
         app->filename = NULL;
         app->m = NULL;
         app->mp = NULL;
-
-        _send_cmd(app, EM_RESULT_FILE_SET_DONE);
-        SEND_CMD_PARAM(app, r);
      }
-   app->w = app->vs->width;
-   app->h = app->vs->height;
-   libvlc_video_set_format(app->mp, "RV32", app->w, app->h, app->w * 4);
-   libvlc_video_set_callbacks(app->mp, _lock, _unlock, _display, app);
+   else
+     {
+        libvlc_video_set_format(app->mp, "RV32", app->w, app->h, app->w * 4);
+        libvlc_video_set_callbacks(app->mp, _lock, _unlock, _display, app);
 
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
-                      _event_cb, app);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerTimeChanged,
-                      _event_cb, app);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerLengthChanged,
-                      _event_cb, app);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
-                      _event_cb, app);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
-                       _event_cb, app);
-
-   libvlc_audio_set_mute(app->mp, 0);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
+                           _event_cb, app);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerTimeChanged,
+                           _event_cb, app);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerLengthChanged,
+                           _event_cb, app);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
+                           _event_cb, app);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
+                            _event_cb, app);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
+                            _event_cb, app);
+        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
+                            _event_cb, app);
+     }
 
    _send_cmd(app, EM_RESULT_FILE_SET_DONE);
    SEND_CMD_PARAM(app, r);
@@ -479,29 +386,24 @@ _file_set_done(App *app)
 static void
 _file_close(App *app)
 {
-   DBG("Path: %s", app->filename);
+   DBG("closing file");
+
+   if (!app->mp)
+     return;
+
    app->playing = 0;
-   if (app->opening)
-     goto release_resources;
-
-   if (libvlc_media_player_get_state(app->mp) != libvlc_Playing)
-     {
-        _send_file_closed(app);
-        return;
-     }
-
-   app->closing = 1;
-
-release_resources:
    libvlc_media_player_stop(app->mp);
-   if (app->filename)
-     free(app->filename);
+
+   free(app->filename);
+   free(app->subtitle_path);
    if (app->mp)
      {
         libvlc_media_release(app->m);
         libvlc_media_player_release(app->mp);
-        free(app->tmpbuffer);
      }
+   emotion_generic_shm_free(app->vs);
+
+   _send_file_closed(app);
 }
 
 static void
@@ -516,6 +418,7 @@ static void
 _play(App *app, float pos)
 {
    DBG("Play at %.3f", pos);
+
    if (!app->mp)
      return;
 
@@ -779,16 +682,16 @@ main(int argc, const char *argv[])
    app.subtitle_path = NULL;
    app.w = 0;
    app.h = 0;
-   app.size_sent = 0;
    app.opening = 0;
    app.playing = 0;
-   app.closing = 0;
    app.last_order = EM_CMD_LAST;
    app.inited = EINA_FALSE;
 
    ecore_main_loop_begin();
 
    libvlc_release(app.libvlc);
+   ecore_pipe_del(app.fd_read);
+   ecore_pipe_del(app.fd_write);
    ecore_event_handler_del(hld);
 
    ecore_shutdown();
