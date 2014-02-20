@@ -280,9 +280,6 @@ _player_frame_resize(Emotion_Generic_Video *ev)
    ev->h = h;
    ev->ratio = (float)w / h;
 
-   if (ev->opening)
-     return;
-
    _emotion_frame_resize(ev->obj, ev->w, ev->h, ev->ratio);
 }
 

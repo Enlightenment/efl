@@ -20,22 +20,22 @@ typedef struct _Emotion_Generic_Video_Shared Emotion_Generic_Video_Shared;
 
 enum _Emotion_Generic_Cmd
 {
-   EM_CMD_INIT = 0,        // param: shared memory identifier (string)
-   EM_CMD_PLAY,            // param: position (float)
-   EM_CMD_STOP,            // param: none
-   EM_CMD_FILE_SET,        // param: filename (string)
-   EM_CMD_FILE_SET_DONE,   // param: none
-   EM_CMD_FILE_CLOSE,      // param: none
-   EM_CMD_POSITION_SET,    // param: position (float)
-   EM_CMD_SPEED_SET,       // param: speed (float)
-   EM_CMD_AUDIO_MUTE_SET,  // param: muted (int)
-   EM_CMD_VIDEO_MUTE_SET,  // param: muted (int)
-   EM_CMD_SPU_MUTE_SET,    // param: muted (int)
-   EM_CMD_VOLUME_SET,      // param: volume (float)
-   EM_CMD_AUDIO_TRACK_SET, // param: track id (int)
-   EM_CMD_VIDEO_TRACK_SET, // param: track id (int)
-   EM_CMD_SPU_TRACK_SET,   // param: track id (int)
-   EM_CMD_SUBTITLE_SET,    // param: subtitle filename (string)
+   EM_CMD_INIT = 0,        // 0  param: shared memory identifier (string)
+   EM_CMD_PLAY,            // 1  param: position (float)
+   EM_CMD_STOP,            // 2  param: none
+   EM_CMD_FILE_SET,        // 3  param: filename (string)
+   EM_CMD_FILE_SET_DONE,   // 4  param: none
+   EM_CMD_FILE_CLOSE,      // 5  param: none
+   EM_CMD_POSITION_SET,    // 6  param: position (float)
+   EM_CMD_SPEED_SET,       // 7  param: speed (float)
+   EM_CMD_AUDIO_MUTE_SET,  // 8  param: muted (int)
+   EM_CMD_VIDEO_MUTE_SET,  // 9  param: muted (int)
+   EM_CMD_SPU_MUTE_SET,    // 10 param: muted (int)
+   EM_CMD_VOLUME_SET,      // 11 param: volume (float)
+   EM_CMD_AUDIO_TRACK_SET, // 12 param: track id (int)
+   EM_CMD_VIDEO_TRACK_SET, // 13 param: track id (int)
+   EM_CMD_SPU_TRACK_SET,   // 14 param: track id (int)
+   EM_CMD_SUBTITLE_SET,    // 15 param: subtitle filename (string)
    EM_CMD_LAST
 };
 
