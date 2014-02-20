@@ -283,6 +283,8 @@ AC_LANG(C)
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
+AM_CONDITIONAL([BUILD_EFL_NATIVE], [test "x${cross_compiling}" = "xno"])
+
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
 fi

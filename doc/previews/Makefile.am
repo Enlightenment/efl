@@ -39,7 +39,7 @@ DATADIR = ${abs_top_srcdir}/doc/previews/img
 HTMLDIR = ${abs_top_srcdir}/doc/html
 
 PREVIEWS = blend blur bump curve grow mask transform \
-	example_1
+example_1
 
 previews-data: preview_text_filter
 	$(MKDIR_P) $(DATADIR)
@@ -56,7 +56,10 @@ previews-data: preview_text_filter
 		cp "$(DATADIR)/filter_$${a}.png" "$(HTMLDIR)/" ; \
 	done
 
+if BUILD_EFL_NATIVE
 doc: Makefile previews-data
+endif
+
 
 endif
 
