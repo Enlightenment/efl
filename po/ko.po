@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-01 18:58+0900\n"
+"POT-Creation-Date: 2014-02-20 12:35+0900\n"
 "PO-Revision-Date: 2013-01-02 07:33+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -21,192 +21,224 @@ msgstr ""
 "Plural-Forms: nplurals=1;plural=0;\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: src/lib/ecore/ecore_getopt.c:87
+#: src/lib/ecore/ecore_getopt.c:93
 msgid "Version:"
 msgstr "버전:"
 
-#: src/lib/ecore/ecore_getopt.c:96
+#: src/lib/ecore/ecore_getopt.c:102
 msgid "Usage:"
 msgstr "사용법:"
 
-#: src/lib/ecore/ecore_getopt.c:101
-#, c-format
-msgid "%s [options]\n"
+#: src/lib/ecore/ecore_getopt.c:109
+#, fuzzy, c-format
+msgid "%s [options]"
 msgstr "%s <옵션>\n"
 
-#: src/lib/ecore/ecore_getopt.c:256
+#: src/lib/ecore/ecore_getopt.c:309
 msgid "Copyright:"
 msgstr "저작권 정보:"
 
-#: src/lib/ecore/ecore_getopt.c:268
+#: src/lib/ecore/ecore_getopt.c:321
 msgid "License:"
 msgstr "라이선스:"
 
-#: src/lib/ecore/ecore_getopt.c:449
+#: src/lib/ecore/ecore_getopt.c:507
 msgid "Type: "
 msgstr "형식: "
 
-#: src/lib/ecore/ecore_getopt.c:525
+#: src/lib/ecore/ecore_getopt.c:583
 msgid "Default: "
 msgstr "기본값: "
 
-#: src/lib/ecore/ecore_getopt.c:552
+#: src/lib/ecore/ecore_getopt.c:610
 msgid "Choices: "
 msgstr "선택: "
 
+#: src/lib/ecore/ecore_getopt.c:648 src/lib/ecore/ecore_getopt.c:649
+msgid "No categories available."
+msgstr ""
+
 #: src/lib/ecore/ecore_getopt.c:653
+#, fuzzy
+msgid "Categories: "
+msgstr "선택: "
+
+#: src/lib/ecore/ecore_getopt.c:775
 msgid "Options:\n"
 msgstr "옵션:\n"
 
-#: src/lib/ecore/ecore_getopt.c:787
+#: src/lib/ecore/ecore_getopt.c:784
+msgid "Positional arguments:\n"
+msgstr ""
+
+#: src/lib/ecore/ecore_getopt.c:870
+#, fuzzy, c-format
+msgid "ERROR: unknown category '%s'.\n"
+msgstr "오류: 알 수 없는 옵션 --%s 입니다.\n"
+
+#: src/lib/ecore/ecore_getopt.c:974
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "오류: 알 수 없는 옵션 --%s 입니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:789
+#: src/lib/ecore/ecore_getopt.c:976
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "오류: 알 수 없는 옵션 -%c 입니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:852
+#: src/lib/ecore/ecore_getopt.c:1039
 msgid "ERROR: "
 msgstr "오류: "
 
-#: src/lib/ecore/ecore_getopt.c:937 src/lib/ecore/ecore_getopt.c:1074
-#: src/lib/ecore/ecore_getopt.c:1090 src/lib/ecore/ecore_getopt.c:1105
-#: src/lib/ecore/ecore_getopt.c:1122 src/lib/ecore/ecore_getopt.c:1169
-#: src/lib/ecore/ecore_getopt.c:1289 src/lib/ecore/ecore_getopt.c:1330
+#: src/lib/ecore/ecore_getopt.c:1132 src/lib/ecore/ecore_getopt.c:1269
+#: src/lib/ecore/ecore_getopt.c:1285 src/lib/ecore/ecore_getopt.c:1300
+#: src/lib/ecore/ecore_getopt.c:1317 src/lib/ecore/ecore_getopt.c:1364
+#: src/lib/ecore/ecore_getopt.c:1484 src/lib/ecore/ecore_getopt.c:1525
 msgid "value has no pointer set.\n"
 msgstr "값에 포인터 집합이 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:969 src/lib/ecore/ecore_getopt.c:1189
+#: src/lib/ecore/ecore_getopt.c:1164 src/lib/ecore/ecore_getopt.c:1384
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "알 수 없는 부울린 값 %s 입니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1020 src/lib/ecore/ecore_getopt.c:1277
+#: src/lib/ecore/ecore_getopt.c:1215 src/lib/ecore/ecore_getopt.c:1472
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "%s 숫자 형식이 잘못되었습니다\n"
 
-#: src/lib/ecore/ecore_getopt.c:1135
+#: src/lib/ecore/ecore_getopt.c:1330
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "\"%s\" 선택이 잘못되었습니다. 유효한 값은 다음과 같습니다: "
 
-#: src/lib/ecore/ecore_getopt.c:1163
+#: src/lib/ecore/ecore_getopt.c:1358
 msgid "missing parameter to append.\n"
 msgstr "추가할 매개 변수가 빠졌습니다.\n"
 
-
-#: src/lib/ecore/ecore_getopt.c:1267
+#: src/lib/ecore/ecore_getopt.c:1462
 msgid "could not parse value.\n"
 msgstr "값을 해석할 수 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1324
+#: src/lib/ecore/ecore_getopt.c:1519
 msgid "missing parameter.\n"
 msgstr "매개 변수가 빠졌습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1337
+#: src/lib/ecore/ecore_getopt.c:1532
 msgid "missing callback function!\n"
 msgstr "콜백 함수가 빠졌습니다!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1366
+#: src/lib/ecore/ecore_getopt.c:1563
 msgid "no version was defined.\n"
 msgstr "정의한 버전이 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1383
+#: src/lib/ecore/ecore_getopt.c:1580
 msgid "no copyright was defined.\n"
 msgstr "정의한 저작권 정보가 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1400
+#: src/lib/ecore/ecore_getopt.c:1597
 msgid "no license was defined.\n"
 msgstr "정의한 라이선스가 없습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1490
+#: src/lib/ecore/ecore_getopt.c:1687
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "오류: 알 수 없는 --%s 옵션을 무시합니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1523
+#: src/lib/ecore/ecore_getopt.c:1720
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "오류: --%s 옵션에 인자가 필요합니다!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1565
+#: src/lib/ecore/ecore_getopt.c:1762
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "오류: 알 수 없는 -%c 옵션을 무시합니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1603
+#: src/lib/ecore/ecore_getopt.c:1800
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "오류: -%c 옵션에 인자가 필요합니다!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1814
+#: src/lib/ecore/ecore_getopt.c:1895
+#, fuzzy, c-format
+msgid "ERROR: missing required positional argument %s.\n"
+msgstr "오류: -%c 옵션에 인자가 필요합니다!\n"
+
+#: src/lib/ecore/ecore_getopt.c:1927
+#, c-format
+msgid "ERROR: unsupported action type %d for positional argument %s\n"
+msgstr ""
+
+#: src/lib/ecore/ecore_getopt.c:2116 src/lib/ecore/ecore_getopt.c:2233
 msgid "ERROR: no parser provided.\n"
 msgstr "오류: 해석 프로그램이 존재하지 않습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1819
+#: src/lib/ecore/ecore_getopt.c:2121 src/lib/ecore/ecore_getopt.c:2238
 msgid "ERROR: no values provided.\n"
 msgstr "오류: 값이 존재하지 않습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1828
+#: src/lib/ecore/ecore_getopt.c:2130 src/lib/ecore/ecore_getopt.c:2247
 msgid "ERROR: no arguments provided.\n"
 msgstr "인자가 존재하지 않습니다.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1854
+#: src/lib/ecore/ecore_getopt.c:2156
 msgid "ERROR: invalid options found."
 msgstr "오류: 잘못된 옵션이 있습니다."
 
-#: src/lib/ecore/ecore_getopt.c:1860
+#: src/lib/ecore/ecore_getopt.c:2162 src/lib/ecore/ecore_getopt.c:2279
 #, c-format
 msgid " See --%s.\n"
 msgstr " --%s 옵션을 참조하십시오.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1862
+#: src/lib/ecore/ecore_getopt.c:2164 src/lib/ecore/ecore_getopt.c:2281
 #, c-format
 msgid " See -%c.\n"
 msgstr " -%c 옵션을 참조하십시오.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1908
+#: src/lib/ecore/ecore_getopt.c:2273
+#, fuzzy
+msgid "ERROR: invalid positional arguments found."
+msgstr "오류: 잘못된 옵션이 있습니다."
+
+#: src/lib/ecore/ecore_getopt.c:2327
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "오류: '%s' 값의 좌표가 올바르지 않습니다\n"
 
-#: src/lib/ecore/ecore_getopt.c:1940
+#: src/lib/ecore/ecore_getopt.c:2359
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "오류: '%s' 값의 크기가 올바르지 않습니다\n"
 
-#: src/lib/efreet/efreet_base.c:119
+#: src/lib/efreet/efreet_base.c:121
 msgid "Desktop"
 msgstr "데스크톱"
 
-#: src/lib/efreet/efreet_base.c:127
+#: src/lib/efreet/efreet_base.c:129
 msgid "Downloads"
 msgstr "다운로드"
 
-#: src/lib/efreet/efreet_base.c:136
+#: src/lib/efreet/efreet_base.c:138
 msgid "Templates"
 msgstr "서식"
 
-#: src/lib/efreet/efreet_base.c:145
+#: src/lib/efreet/efreet_base.c:147
 msgid "Public"
 msgstr "공개"
 
-#: src/lib/efreet/efreet_base.c:154
+#: src/lib/efreet/efreet_base.c:156
 msgid "Documents"
 msgstr "문서"
 
-#: src/lib/efreet/efreet_base.c:162
+#: src/lib/efreet/efreet_base.c:164
 msgid "Music"
 msgstr "음악"
 
-#: src/lib/efreet/efreet_base.c:170
+#: src/lib/efreet/efreet_base.c:172
 msgid "Pictures"
 msgstr "사진"
 
-#: src/lib/efreet/efreet_base.c:178
+#: src/lib/efreet/efreet_base.c:180
 msgid "Videos"
 msgstr "영상"
