@@ -23,25 +23,33 @@ _generate_h_file(char *filename, const char *classname, Eina_Bool append)
         Eina_File *fn = eina_file_open(filename, EINA_FALSE);
         if (!fn)
           {
-            printf ("Cant open file \"%s\" for updating.\n", filename);
+            ERR ("Cant open file \"%s\" for updating.", filename);
             goto end;
           }
 
         eina_strbuf_append(hfile, (char*)eina_file_map_all(fn, EINA_FILE_SEQUENTIAL));
         eina_file_close(fn);
 
-        legacy_header_append(classname, eo_version, hfile);
+        if (!legacy_header_append(classname, eo_version, hfile))
+          {
+             ERR("Failed to generate header for %s", classname);
+             goto end;
+          }
      }
    else
      {
-        eo1_header_generate(classname, hfile);
+        if (!eo1_header_generate(classname, hfile))
+          {
+             ERR("Failed to generate header for %s", classname);
+             goto end;
+          }
      }
    const char *htext = eina_strbuf_string_get(hfile);
 
    FILE* fd = fopen(filename, "w");
    if (!fd)
      {
-        printf ("Couldn't open file %s for writing\n", filename);
+        ERR ("Couldn't open file %s for writing", filename);
         goto end;
      }
    if (htext) fputs(htext, fd);
@@ -60,12 +68,16 @@ _generate_c_file(char *filename, const char *classname, Eina_Bool append)
    Eina_Bool ret = EINA_FALSE;
 
    Eina_Strbuf *cfile = eina_strbuf_new();
-   legacy_source_generate(classname, legacy_support, eo_version, cfile);
+   if (!legacy_source_generate(classname, legacy_support, eo_version, cfile))
+     {
+        ERR("Failed to generate source for %s", classname);
+        goto end;
+     }
 
    FILE* fd = fopen(filename, (append) ? "a" : "w");
    if (!fd)
      {
-        printf ("Couldnt open file %s for writing\n", filename);
+        ERR("Couldnt open file %s for writing", filename);
         goto end;
      }
    const char *ctext = eina_strbuf_string_get(cfile);
@@ -91,23 +103,31 @@ _generate_legacy_header_file(char *filename, const char *classname, Eina_Bool ap
         Eina_File *fn = eina_file_open(filename, EINA_FALSE);
         if (!fn)
           {
-            printf ("Cant open file \"%s\" for updating.\n", filename);
+            ERR ("Cant open file \"%s\" for updating.", filename);
             goto end;
           }
         eina_strbuf_append(lfile, (char*)eina_file_map_all(fn, EINA_FILE_SEQUENTIAL));
         eina_file_close(fn);
 
-        legacy_header_append(classname, eo_version, lfile);
+        if (!legacy_header_append(classname, eo_version, lfile))
+          {
+             ERR("Failed to generate header for %s", classname);
+             goto end;
+          }
      }
    else
      {
-        legacy_header_generate(classname, eo_version, lfile);
+        if (!eo1_header_generate(classname, lfile))
+          {
+             ERR("Failed to generate header for %s", classname);
+             goto end;
+          }
      }
 
    FILE* fd = fopen(filename, "w");
    if (!fd)
      {
-        printf ("Couldnt open file %s for writing\n", filename);
+        ERR ("Couldnt open file %s for writing", filename);
         goto end;
      }
    const char *ltext = eina_strbuf_string_get(lfile);
@@ -127,16 +147,25 @@ _generate_eo_and_legacy_h_file(char *filename, const char *classname)
 
    Eina_Strbuf *hfile = eina_strbuf_new();
 
-   FILE* fd = fopen(filename, "w");
-   if (!fd)
+   if (!eo1_header_generate(classname, hfile))
      {
-        printf ("Couldnt open file %s for writing\n", filename);
+        ERR("Failed to generate header for %s", classname);
+        goto end;
+     }
+   if (!legacy_header_generate(classname, eo_version, hfile))
+     {
+        ERR("Failed to generate header for %s", classname);
         goto end;
      }
 
-   eo1_header_generate(classname, hfile);
-   legacy_header_generate(classname, eo_version, hfile);
    const char *htext = eina_strbuf_string_get(hfile);
+   FILE* fd = fopen(filename, "w");
+   if (!fd)
+     {
+        ERR ("Couldnt open file %s for writing", filename);
+        goto end;
+     }
+
    if (htext) fputs(htext, fd);
 
    fclose(fd);
@@ -260,7 +289,7 @@ int main(int argc, char **argv)
 
    if (!files4gen)
      {
-        printf("No input files specified.\nTerminating.\n");
+        ERR("No input files specified.\nTerminating.\n");
         goto end;
      }
 
@@ -269,7 +298,7 @@ int main(int argc, char **argv)
      {
         if (!eolian_eo_file_parse(filename))
           {
-             printf("Error during parsing file %s\n", filename);
+             ERR("Error during parsing file %s\n", filename);
              goto end;
           }
      }
@@ -278,7 +307,7 @@ int main(int argc, char **argv)
      {
         if (!eolian_eo_file_parse(filename))
           {
-             printf("Error during parsing file %s\n", filename);
+             ERR("Error during parsing file %s\n", filename);
              goto end;
           }
      }
@@ -294,7 +323,7 @@ int main(int argc, char **argv)
 
    if (!eo_version)
      {
-        printf("No eo version specified (use --eo1 or --eo2). Aborting eo generation.\n");
+        ERR("No eo version specified (use --eo1 or --eo2). Aborting eo generation.\n");
         goto end;
      }
 
@@ -314,36 +343,35 @@ int main(int argc, char **argv)
            case H_GEN: case H_EO_APP:
                 {
                    INF("%s header file %s\n", (gen_opt == H_EO_APP) ? "Appending" : "Generating", output_filename);
-                   _generate_h_file(output_filename, classname, gen_opt == H_EO_APP);
+                   ret = (_generate_h_file(output_filename, classname, gen_opt == H_EO_APP)?0:1);
                    break;
                 }
            case H_LEG_APP:
                 {
                    INF("Appending legacy file %s\n", output_filename);
-                   _generate_legacy_header_file(output_filename, classname, EINA_TRUE);
+                   ret = _generate_legacy_header_file(output_filename, classname, EINA_TRUE)?0:1;
                    break;
                 }
            case H_LEG_EO_GEN:
                 {
                    INF("Generating eo and legacy header file %s\n", output_filename);
-                   _generate_eo_and_legacy_h_file(output_filename, classname);
+                   ret = _generate_eo_and_legacy_h_file(output_filename, classname)?0:1;
                    break;
                 }
            case C_GEN:
                 {
                    INF("Generating source file %s\n", output_filename);
-                   _generate_c_file(output_filename, classname, EINA_FALSE);
+                   ret = _generate_c_file(output_filename, classname, EINA_FALSE)?0:1;
                    break;
                 }
            default:
-              free(output_filename);
-              printf("Bad generation option\n");
-              goto end;
+              ERR("Bad generation option\n");
+              break;
           }
         free(output_filename);
      }
+   else ret = 0;
 
-   ret = 0;
 end:
    EINA_LIST_FREE(included_files, filename)
       free((char *)filename);

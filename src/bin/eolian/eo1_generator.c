@@ -226,7 +226,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
 
    if (!eolian_class_exists(classname))
      {
-        printf ("Class \"%s\" not found in database\n", classname);
+        ERR ("Class \"%s\" not found in database", classname);
         return EINA_FALSE;
      }
 
@@ -508,7 +508,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
 
    if (!str_classtype)
      {
-        printf ("Unknown class type for class %s !\n", classname);
+        ERR ("Unknown class type for class %s !", classname);
         return EINA_FALSE;
      }
 
@@ -590,7 +590,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
 
         if (!in_meth && !in_prop)
           {
-             printf ("Failed to generate implementation of %s:%s - missing form super class\n", impl_class, funcname);
+             ERR ("Failed to generate implementation of %s:%s - missing form super class", impl_class, funcname);
              return EINA_FALSE;
           }
 
