@@ -50,7 +50,9 @@ typedef struct _Event_Desc* Eolian_Event;
 #define EOLIAN_METHOD_RETURN_TYPE "method_return_type"
 #define EOLIAN_PROP_GET_RETURN_TYPE "property_get_return_type"
 #define EOLIAN_PROP_SET_RETURN_TYPE "property_set_return_type"
-#define EOLIAN_RETURN_COMMENT "return_comment"
+#define EOLIAN_RETURN_COMMENT "method_return_comment"
+#define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
+#define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
 #define EOLIAN_LEGACY "legacy"
 #define EOLIAN_LEGACY_GET "legacy_get"
 #define EOLIAN_LEGACY_SET "legacy_set"
@@ -396,6 +398,20 @@ EAPI Eina_Bool eolian_parameter_get_const_attribute_get(Eolian_Function_Paramete
 EAPI const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
 
 /*
+ * @brief Indicates if a function return is warn-unused.
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return EINA_TRUE is warn-unused, EINA_FALSE otherwise.
+ *
+ * The type of the function is needed because a given function can represent a
+ * property, that can be set and get functions.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id, Eolian_Function_Type ftype);
+
+/*
  * @brief Indicates if a function object is const.
  *
  * @param[in] function_id id of the function
@@ -451,8 +467,26 @@ EAPI const Eina_List *eolian_class_events_list_get(const char *class_name);
  */
 EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_desc);
 
+/*
+ * @brief Indicates if the class constructor has to invoke
+ * a non-generated class constructor function.
+ *
+ * @param[in] class_name name of the class.
+ * @return EINA_TRUE if the invocation is needed, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
 EAPI Eina_Bool eolian_class_ctor_enable_get(const char *class_name);
 
+/*
+ * @brief Indicates if the class destructor has to invoke
+ * a non-generated class destructor function.
+ *
+ * @param[in] class_name name of the class.
+ * @return EINA_TRUE if the invocation is needed, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
 EAPI Eina_Bool eolian_class_dtor_enable_get(const char *class_name);
 
 #endif

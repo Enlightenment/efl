@@ -33,6 +33,8 @@ typedef struct
    Eina_Hash *data;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool virtual_pure :1;
+   Eina_Bool get_return_warn_unused :1; /* also used for methods */
+   Eina_Bool set_return_warn_unused :1;
 } _Function_Id;
 
 typedef struct
@@ -752,7 +754,7 @@ void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_T
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key= EOLIAN_PROP_SET_RETURN_TYPE; break;
+      case SET: key = EOLIAN_PROP_SET_RETURN_TYPE; break;
       case GET: key = EOLIAN_PROP_GET_RETURN_TYPE; break;
       case METHOD_FUNC: key = EOLIAN_METHOD_RETURN_TYPE; break;
       default: return;
@@ -765,7 +767,7 @@ EAPI const char *eolian_function_return_type_get(Eolian_Function foo_id, Eolian_
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key= EOLIAN_PROP_SET_RETURN_TYPE; break;
+      case SET: key = EOLIAN_PROP_SET_RETURN_TYPE; break;
       case GET: key = EOLIAN_PROP_GET_RETURN_TYPE; break;
       case UNRESOLVED: case METHOD_FUNC: key = EOLIAN_METHOD_RETURN_TYPE; break;
       default: return NULL;
@@ -773,6 +775,32 @@ EAPI const char *eolian_function_return_type_get(Eolian_Function foo_id, Eolian_
    const char *ret = eolian_function_data_get(foo_id, key);
    if (!ret) ret = "void";
    return ret;
+}
+
+void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
+      Eolian_Function_Type ftype, Eina_Bool warn_unused)
+{
+   _Function_Id *fid = (_Function_Id *)foo_id;
+   EINA_SAFETY_ON_NULL_RETURN(fid);
+   switch (ftype)
+     {
+      case METHOD_FUNC: case GET: fid->get_return_warn_unused = warn_unused; break;
+      case SET: fid->set_return_warn_unused = warn_unused; break;
+      default: return;
+     }
+}
+
+EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id,
+      Eolian_Function_Type ftype)
+{
+   _Function_Id *fid = (_Function_Id *)foo_id;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   switch (ftype)
+     {
+      case METHOD_FUNC: case GET: return fid->get_return_warn_unused;
+      case SET: return fid->set_return_warn_unused;
+      default: return EINA_FALSE;
+     }
 }
 
 void

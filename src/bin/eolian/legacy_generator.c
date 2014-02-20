@@ -15,7 +15,7 @@ tmpl_eapi_funcdef[] = "\n\
  *\n\
 @#list_desc_param\
  */\n\
-EAPI @#type_return @#class_@#func(@#is_constEvas_Object *obj@#params);\n\
+EAPI @#type_return @#class_@#func(@#is_constEvas_Object *obj@#params);@#flags\n\
 ";
 
 /*@#CLASS_CHECK(obj) @#check_ret;\n\*/
@@ -127,6 +127,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    eina_strbuf_replace_all(fbody, "@#list_desc_param", eina_strbuf_string_get(descparam));
    eina_strbuf_replace_all(fbody, "@#type_return", (rettype) ? rettype : "void");
    eina_strbuf_replace_all(fbody, "@#is_const", (ftype == GET || eolian_function_object_is_const(funcid)) ? "const " : "");
+   eina_strbuf_replace_all(fbody, "@#flags", (eolian_function_return_is_warn_unused(funcid, ftype)) ? " EINA_WARN_UNUSED_RESULT" : "");
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
 
    eina_strbuf_free(fbody);
@@ -288,7 +289,7 @@ legacy_header_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
 
            if (!prop_read && !prop_write)
              {
-                _eapi_decl_func_generate(classname, (Eolian_Function)data, UNRESOLVED, buf);
+                _eapi_decl_func_generate(classname, (Eolian_Function)data, METHOD_FUNC, buf);
              }
            if (prop_read)
              {

@@ -370,6 +370,11 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       INF("        %s", toknz->tmp.accessor->ret.comment);
    }
 
+   action end_accessor_rettype_unused_flag {
+      toknz->tmp.accessor->ret.warn_unused = EINA_TRUE;
+      INF("        WARN_UNUSED");
+   }
+
    action end_accessor_legacy {
       toknz->tmp.accessor->legacy = _eo_tokenizer_token_get(toknz, fpc);
    }
@@ -393,8 +398,9 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.accessor_param = NULL;
    }
 
+   rettype_flag = "@warn_unused" %end_accessor_rettype_unused_flag;
    rettype_comment = ws* eo_comment %end_accessor_rettype_comment;
-   rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+  %end_accessor_rettype end_statement rettype_comment?;
+   rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+ %end_accessor_rettype rettype_flag? end_statement rettype_comment?;
 
    legacy = 'legacy' ws+ ident %end_accessor_legacy end_statement;
 
@@ -571,6 +577,11 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       INF("        %s", toknz->tmp.meth->ret.comment);
    }
 
+   action end_method_rettype_unused_flag{
+      toknz->tmp.meth->ret.warn_unused = EINA_TRUE;
+      INF("        WARN_UNUSED");
+   }
+
    action end_method_legacy {
       toknz->tmp.meth->legacy = _eo_tokenizer_token_get(toknz, fpc);
    }
@@ -605,10 +616,14 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto tokenize_methods;
    }
 
+
    meth_params = 'params' ignore* begin_def;
    meth_legacy = 'legacy' ws+ ident %end_method_legacy end_statement;
+
+   meth_rettype_flag = "@warn_unused" %end_method_rettype_unused_flag;
    meth_rettype_comment = ws* eo_comment %end_method_rettype_comment;
-   meth_rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+  %end_method_rettype end_statement meth_rettype_comment?;
+   meth_rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+ %end_method_rettype meth_rettype_flag? end_statement meth_rettype_comment?;
+
    meth_obj_const = 'const' %end_method_obj_const end_statement;
 
    tokenize_method := |*
@@ -885,6 +900,7 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
    toknz->source = eina_stringshare_add(source);
 
    FILE *stream;
+   Eina_Bool ret = EINA_TRUE;
 
    int done = 0;
    int have = 0;
@@ -927,7 +943,8 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
 
         if ( toknz->cs == %%{ write error; }%% )
           {
-             ERR("wrong termination");
+             ERR("%s: wrong termination", source);
+             ret = EINA_FALSE;
              break;
           }
 
@@ -957,7 +974,7 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
 
    fclose(stream);
 
-   return EINA_TRUE;
+   return ret;
 }
 
 Eo_Tokenizer*
@@ -1107,7 +1124,7 @@ eo_tokenizer_database_fill(const char *filename)
         ERR("error accessing file %s : %s", filename, strerror(errno));
         return EINA_FALSE;
      }
-   eo_tokenizer_walk(toknz, filename);
+   if (!eo_tokenizer_walk(toknz, filename)) return EINA_FALSE;
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {
@@ -1158,9 +1175,15 @@ eo_tokenizer_database_fill(const char *filename)
                {
                   database_function_type_set(foo_id, (accessor->type == SETTER?SET:GET));
                   if (accessor->ret.type)
-                     database_function_data_set(foo_id,
-                           (accessor->type == SETTER?EOLIAN_PROP_SET_RETURN_TYPE:EOLIAN_PROP_GET_RETURN_TYPE),
-                           accessor->ret.type);
+                    {
+                       database_function_return_type_set(foo_id,
+                             accessor->type == SETTER?SET:GET, accessor->ret.type);
+                       database_function_data_set(foo_id,
+                             (accessor->type == SETTER?EOLIAN_PROP_SET_RETURN_COMMENT:EOLIAN_PROP_GET_RETURN_COMMENT),
+                             accessor->ret.comment);
+                       database_function_return_flag_set_as_warn_unused(foo_id,
+                             accessor->type == SETTER?SET:GET, accessor->ret.warn_unused);
+                    }
                   database_function_description_set(foo_id,
                         (accessor->type == SETTER?EOLIAN_COMMENT_SET:EOLIAN_COMMENT_GET),
                         accessor->comment);
@@ -1193,6 +1216,7 @@ eo_tokenizer_database_fill(const char *filename)
              database_class_function_add(kls->name, foo_id);
              database_function_data_set(foo_id, EOLIAN_METHOD_RETURN_TYPE, meth->ret.type);
              database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret.comment);
+             database_function_return_flag_set_as_warn_unused(foo_id, METHOD_FUNC, meth->ret.warn_unused);
              database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              database_function_object_set_as_const(foo_id, meth->obj_const);

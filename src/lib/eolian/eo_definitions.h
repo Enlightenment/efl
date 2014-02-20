@@ -10,6 +10,7 @@ typedef struct _eo_ret_def
 {
    const char *type;
    const char *comment;
+   Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
 
 /* PARAM */

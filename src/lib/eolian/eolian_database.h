@@ -82,6 +82,9 @@ void database_parameter_get_const_attribute_set(Eolian_Function_Parameter param_
 
 void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type);
 
+void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
+      Eolian_Function_Type ftype, Eina_Bool warn_unused);
+
 void database_function_object_set_as_const(Eolian_Function foo_id, Eina_Bool is_const);
 
 Eina_Bool
