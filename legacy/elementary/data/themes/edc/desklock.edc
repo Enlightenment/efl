@@ -32,7 +32,15 @@ group { name: "e/desklock/login_box";
    images.image: "knob_round_busy.png" COMP;
    images.image: "glow_round_corners.png" COMP;
    parts {
-      part { name: "logo";
+      part { name: "logo_clip"; type: RECT;
+         description { state: "default";
+            min: 9999 9999;
+         }
+         description { state: "hidden";
+            visible: 0;
+         }
+      }
+      part { name: "logo"; clip_to: "logo_clip";
          description { state: "default" 0.0;
             image.normal: "logo_blue_small.png";
             rel1.relative: 0.5 0.5;
@@ -40,7 +48,7 @@ group { name: "e/desklock/login_box";
             FIXED_SIZE(100, 127)
          }
       }
-      part { name: "logo_glow";
+      part { name: "logo_glow"; clip_to: "logo_clip";
          description { state: "default" 0.0;
             image.normal: "logo_blue_small_glow.png";
             rel1.to: "logo";
@@ -296,6 +304,14 @@ group { name: "e/desklock/login_box";
          signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "selection";
+      }
+      program { signal: "e,state,logo,hidden"; source: "e";
+         action: STATE_SET "hidden" 0.0;
+         target: "logo_clip";
+      }
+      program { signal: "e,state,logo,visible"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "logo_clip";
       }
    }
 }
