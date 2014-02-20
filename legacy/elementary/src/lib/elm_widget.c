@@ -6804,7 +6804,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_PARENT_HIGHLIGHT_SET, "Set highlighted value from itself to top parent object."),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISPLAY_MODE_SET, "Sets the widget and child widget's Evas_Display_Mode."),
-     EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET, "Returns the widget's Evas_Display_Mode"),
 
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_SET, "Sets the widget object and its children to be unfocusable"),
      EO_OP_DESCRIPTION(ELM_WIDGET_SUB_ID_TREE_UNFOCUSABLE_GET, "Returns true, if the object sub-tree is unfocusable"),
