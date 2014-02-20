@@ -195,8 +195,8 @@ _item_single_select_down(Elm_List_Smart_Data *sd)
 static Eina_Bool
 _elm_list_item_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir, Eina_Bool h_mode)
 {
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
    if (!it) return EINA_FALSE;
+   ELM_LIST_DATA_GET(WIDGET(it), sd);
 
    if (!sd->focus_on_selection_enabled) return EINA_FALSE;
 
@@ -254,6 +254,24 @@ _elm_list_item_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir, Eina_Bool h
    return EINA_TRUE;
 }
 
+static Elm_List_Item *
+_next_item_get(Elm_List_Smart_Data *sd, Elm_Focus_Direction dir)
+{
+   Eina_List *list = NULL;
+   Elm_List_Item *it = NULL;
+
+   list = eina_list_data_find_list(sd->items, sd->focused_item);
+   if (!list) return it;
+   if ((!sd->h_mode && (dir == ELM_FOCUS_UP)) ||
+       ((sd->h_mode) && (dir == ELM_FOCUS_LEFT)))
+     it = eina_list_data_get(eina_list_prev(list));
+   else if (((!sd->h_mode) && (dir == ELM_FOCUS_DOWN)) ||
+            ((sd->h_mode) && (dir == ELM_FOCUS_RIGHT)))
+     it = eina_list_data_get(eina_list_next(list));
+
+   return it;
+}
+
 static Eina_Bool
 _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
 {
@@ -261,60 +279,21 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
    Elm_List_Item *it = NULL;
 
    sd->prev_focused_item = sd->focused_item;
-   if (!sd->h_mode)
+   if (sd->focused_item)
+     it = _next_item_get(sd, dir);
+
+   while (it &&
+          elm_object_item_disabled_get((Elm_Object_Item *)it))
      {
-        if ((dir == ELM_FOCUS_UP) || (dir == ELM_FOCUS_DOWN))
-          {
-             Eina_List *l = eina_list_data_find_list(sd->items, sd->focused_item);
-             if (sd->focused_item)
-               {
-                  if (dir == ELM_FOCUS_DOWN)
-                    it = (Elm_List_Item *)eina_list_data_get(eina_list_next(l));
-                  else it = (Elm_List_Item *)eina_list_data_get(eina_list_prev(l));
-                  if (!it)
-                    return EINA_FALSE;
-               }
-             else
-               {
-                  if (dir == ELM_FOCUS_DOWN)
-                    it = (Elm_List_Item *)eina_list_data_get(sd->items);
-                  else it = (Elm_List_Item *)eina_list_data_get(eina_list_last(sd->items));
-               }
-             if (elm_object_item_disabled_get((Elm_Object_Item *)it))
-               return EINA_TRUE;
-             elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
-             return EINA_TRUE;
-          }
-        else if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT))
-          return EINA_FALSE;
+        it = _next_item_get(sd, dir);
      }
-   else
+
+   if (it)
      {
-        if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT))
-          {
-             Eina_List *l = eina_list_data_find_list(sd->items, sd->focused_item);
-             if (sd->focused_item)
-               {
-                  if (dir == ELM_FOCUS_RIGHT)
-                    it = (Elm_List_Item *)eina_list_data_get(eina_list_next(l));
-                  else it = (Elm_List_Item *)eina_list_data_get(eina_list_prev(l));
-                  if (!it)
-                    return EINA_FALSE;
-               }
-             else
-               {
-                  if (dir == ELM_FOCUS_RIGHT)
-                    it = (Elm_List_Item *)eina_list_data_get(sd->items);
-                  else it = (Elm_List_Item *)eina_list_data_get(eina_list_last(sd->items));
-               }
-             if (elm_object_item_disabled_get((Elm_Object_Item *)it))
-               return EINA_TRUE;
-             elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
-             return EINA_TRUE;
-          }
-        else if ((dir == ELM_FOCUS_UP) || (dir == ELM_FOCUS_DOWN))
-          return EINA_FALSE;
+        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+        return EINA_TRUE;
      }
+
    return EINA_FALSE;
 }
 
