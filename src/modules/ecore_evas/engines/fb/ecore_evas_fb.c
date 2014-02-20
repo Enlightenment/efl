@@ -184,7 +184,8 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
    Eina_Iterator *ls;
    Ecore_Fb_Input_Device *device;
    Ecore_Fb_Input_Device_Cap caps;
-   int mouse_handled = 0;
+   int mouse_handled = 0, always_ts;
+   const char *s;
 
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
@@ -233,7 +234,11 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
      }
    eina_iterator_free(ls);
 
-   if (!mouse_handled)
+   /* force to check for touchscreen via tslib even if mouse was detected */
+   s = getenv("ECORE_EVAS_FB_TS_ALWAYS");
+   always_ts = s ? atoi(s) : 0;
+
+   if ((!mouse_handled) || (always_ts))
      {
         if (ecore_fb_ts_init())
           {
