@@ -18,10 +18,16 @@ group { name: "e/gadman/popup";
             fill.smooth: 0;
          }
       }
-      part { name: "e.swallow.content"; type: SWALLOW;
+      part { name: "e.swallow.content"; type: SWALLOW; clip_to: "clip";
          description { state: "default" 0.0;
             rel1.offset: 3 3;
             rel2.offset: -4 -4;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default";
+            rel1.to: "e.swallow.content";
+            rel2.to: "e.swallow.content";
          }
       }
       part { name: "shine"; mouse_events: 0;
