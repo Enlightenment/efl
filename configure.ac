@@ -4128,6 +4128,12 @@ echo "  CPPFLAGS......: $CPPFLAGS"
 echo "  CFLAGS........: $CFLAGS"
 echo "  CXXFLAGS......: $CXXFLAGS"
 echo "  LDFLAGS.......: $LDFLAGS"
+
+if test "x${with_binary_edje_cc}" != "x"; then
+echo "  edje_cc.......: ${with_binary_edje_cc}"
+fi
+
+echo "  "
 echo "Installation....: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix........: $prefix"
 echo
