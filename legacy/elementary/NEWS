@@ -52,6 +52,10 @@ Additions:
    * Popup: Adding elm_popup_align_set and elm_popup_align_get api
    * fileselector: Add support to change the size of thumbnails in grid view.
    * tooltip: Adding elm_object_tooltip_orient_set API
+   * tooltip - renamed the new tooltip apis until 1.9 release.
+     elm_tooltip_move_freeze_push()
+     elm_tooltip_move_freeze_pop()
+     elm_tooltip_move_freeze_get()
 
 Improvements:
 
@@ -168,6 +172,8 @@ Improvements:
    * autotools: improve build system to be able to correctly pick outside and inside tools.
    * libtool: work around lack of communication between mingw and libtool to generate .dll.
    * elm_prefs_cc: use the right macro to allow cross compilation nicely.
+   * Elm list, like genlist, should emit 1st/middle/last signals to its items.
+   * spinner: it has to be recalculated when its style is changed
 
 Fixes:
 
@@ -271,8 +277,16 @@ Fixes:
    * elm_interface_scrollable.c: reset momentum_animator to null when return cancel from the animator.
    * theme - fix evrything theme elements for enlightenment (T596)
    * fix e border theme mouse events
+   * elementary_test glview: fixed segv on close
+   * naviframe: fix T1008 so promoting an overlap item would perform as documented
+   * transit - fix the double free obj_data case.
+   * Fix T966, sort order of child folders.
+   * calendar - fix unstable calc complaint (T951)
+   * Dnd: Fix double text insert issue in elm_entry, drop at disable, non-editable entry
 
 Removals:
+
+   * widget: remove OP_ID ELM_WIDGET_SUB_ID_DISPLAY_MODE_GET
 
 
 Changes since Elementary 1.7.0:
