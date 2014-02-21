@@ -1831,7 +1831,9 @@ _players_load(void)
    _players_all_from(buf);
 
    if (!_generic_players)
-     ERR("no generic players available");
+     {
+        WRN("no generic players available");
+     }
    else
      {
         const Eina_List *n;
