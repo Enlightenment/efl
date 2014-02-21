@@ -71,15 +71,12 @@ group { name: "e/modules/pager2/desk";
    images.image: "mini_blue_glow_arrow_2.png" COMP;
    images.image: "mini_blue_glow_arrow_3.png" COMP;
    parts {
-      part { name: "base";
+      part { name: "base"; type: SPACER;
          description { state: "default" 0.0;
-            image.normal: "vgrad_med_darker.png";
             rel1.to: "inset";
             rel1.offset: 1 1;
             rel2.to: "inset";
             rel2.offset: -2 -2;
-            fill.smooth: 0;
-            TILED_HORIZ(32)
          }
       }
       part { name: "bevel"; mouse_events: 0;
