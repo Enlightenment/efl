@@ -516,9 +516,7 @@ static void
 _del(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Animator *ani = evas_object_data_get(obj, "ani");
-   GLData *gld = evas_object_data_get(obj, "gld");
    ecore_animator_del(ani);
-   free(gld);
 }
 
 static void
