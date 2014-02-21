@@ -121,12 +121,12 @@ _folder_only_toggle(void            *data,
    printf("Folder only flag set to: %s\n", value ? "false" : "true");
    if (!value)
      {
-        elm_icon_standard_set(ic, "folder");
+        if (ic) elm_icon_standard_set(ic, "folder");
         elm_object_text_set(fs_en, "Select a folder");
      }
    else
      {
-        elm_icon_standard_set(ic, "file");
+        if (ic) elm_icon_standard_set(ic, "file");
         elm_object_text_set(fs_en, "Select a file");
      }
 }
