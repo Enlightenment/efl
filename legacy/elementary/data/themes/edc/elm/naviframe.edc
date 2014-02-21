@@ -653,5 +653,30 @@ group { name: "elm/naviframe/item/overlap/default";
          }
       }
    }
+   programs {
+      /* current page is being pushed: [previous]<----[current] */
+      program {
+         signal: "elm,state,cur,pushed"; source: "elm";
+         action: SIGNAL_EMIT "elm,action,pushed,finished" "elm";
+      }
+
+      /* current page is being popped: [current]---->[next] */
+      program {
+         signal: "elm,state,cur,popped"; source: "elm";
+         action: SIGNAL_EMIT "elm,action,popped,finished" "elm";
+      }
+
+      /* new page is being pushed: [current]<----[next] */
+      program {
+         signal: "elm,state,new,pushed"; source: "elm";
+         action: SIGNAL_EMIT "elm,action,show,finished" "elm";
+      }
+
+      /* previous page is being pushed: [previous]---->[current] */
+      program {
+         signal: "elm,state,prev,popped"; source: "elm";
+         action: SIGNAL_EMIT "elm,action,show,finished" "elm";
+      }
+   }
 }
 #undef BOTTOMMAX
