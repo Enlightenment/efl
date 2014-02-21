@@ -923,6 +923,8 @@ eina_file_open(const char *path, Eina_Bool shared)
    return n;
 
  on_error:
+   ERR("Could not open file [%s].", filename);
+
    free(filename);
    if (fd >= 0) close(fd);
    return NULL;
