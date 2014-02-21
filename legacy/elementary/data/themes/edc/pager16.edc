@@ -100,6 +100,7 @@ group { name: "e/modules/pager2/desk";
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
+            rel2.offset: -2 -1;
          }
       }
       part { name: "shadow"; mouse_events: 0;
