@@ -980,6 +980,11 @@ _elm_list_smart_theme(Eo *obj, void *_pd, va_list *list)
      }
 
    _items_fix(obj);
+
+   //focus highlight in_theme is set by list item theme.
+   _elm_widget_item_highlight_in_theme(
+         obj, elm_list_first_item_get(obj));
+
    elm_layout_sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -2522,6 +2527,12 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    Elm_List_Smart_Data *sd = _pd;
 
    it = _item_new(obj, label, icon, end, func, data);
+
+   if (!sd->in_theme_checked)
+     {
+        _elm_widget_item_highlight_in_theme(obj, (Elm_Object_Item *)it);
+        sd->in_theme_checked = EINA_TRUE;
+     }
 
    sd->items = eina_list_append(sd->items, it);
    it->node = eina_list_last(sd->items);

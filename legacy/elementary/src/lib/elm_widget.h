@@ -810,6 +810,7 @@ EAPI Evas_Object     *elm_widget_item_track(Elm_Widget_Item *item);
 EAPI void             elm_widget_item_untrack(Elm_Widget_Item *item);
 EAPI int              elm_widget_item_track_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_track_cancel(Elm_Widget_Item *item);
+void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.

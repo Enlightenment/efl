@@ -53,6 +53,7 @@ struct _Elm_List_Smart_Data
    Eina_Bool                             multi : 1;
    Eina_Bool                             swipe : 1;
    Eina_Bool                             delete_me : 1;
+   Eina_Bool                             in_theme_checked : 1; /**< flag for setting item highlight in theme. */
 };
 
 typedef struct _Elm_List_Item Elm_List_Item;

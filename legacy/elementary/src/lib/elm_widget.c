@@ -84,6 +84,19 @@ _elm_scrollable_is(const Evas_Object *obj)
 }
 
 void
+_elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it)
+{
+   const char *str;
+
+   if (!it) return;
+   str = edje_object_data_get(VIEW(it), "focus_highlight");
+   if ((str) && (!strcmp(str, "on")))
+     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+   else
+     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+}
+
+void
 _elm_widget_focus_highlight_start(const Evas_Object *obj)
 {
    Evas_Object *top = elm_widget_top_get(obj);
