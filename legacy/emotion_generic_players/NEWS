@@ -9,6 +9,7 @@ Improvements:
    * Emotion VLC: cleanup: only changed function order in file.
    * Simplify player version dir fallback to match efl 1.9 simplification changes
    * Emotion_generic_players - commented out unused func.
+   * Emotion VLC: no more need to send the size twice.
 
 Fixes:
 
@@ -16,3 +17,5 @@ Fixes:
      The EM_CMD_STOP command do not have any parameter so it must be
      handled in the first call of the pipe.
    * Check for libvlc >= 2.0 as a minimum as we use 2.x funcs
+   * Emotion VLC: remove quite all the old hacks from loading stage which fixes the problem that
+     audio was audible on start
