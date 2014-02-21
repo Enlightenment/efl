@@ -143,6 +143,7 @@ AC_ARG_WITH([dbus-services],
    [dbusservicedir=$withval])
 AC_SUBST(dbusservicedir)
 
+efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
 
 
@@ -4364,6 +4365,18 @@ if test "x$prefix" != "x/usr"; then
   echo ""
   echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
   echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
+  echo ""
+  echo "#-------------------------------------------------------------------#"
+fi
+
+if test "x${efl_deprecated_option}" = "xyes"; then
+  echo ""
+  echo "#-------------------------------------------------------------------#"
+  echo "##==--                          ALERT                          --==##"
+  echo "#-------------------------------------------------------------------#"
+  echo ""
+  echo "  Your build script is using a deprecated option. It will get b0rken"
+  echo "with the next release of EFL. You better update it now than later."
   echo ""
   echo "#-------------------------------------------------------------------#"
 fi
