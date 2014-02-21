@@ -35,7 +35,6 @@ Additions:
    * feature: pager16 module theme
    * entry: Add elm_entry_input_panel_show_on_demand_set/get API
    * atspi: accessible and component interface implementation.
-   * Adding elm_tooltip_movement_lock_set() and elm_tooltip_movement_lock_get()
    * entry - Add "rejected" smart callback in "elm_entry_filter_accept_set"
    * fileselector : Add elm_fileselector_custom_filter_append to support custom filter
    * hoversel: Added evas smart signal "expanded" in hoversel. This patch depends on D373.
@@ -52,10 +51,7 @@ Additions:
    * Popup: Adding elm_popup_align_set and elm_popup_align_get api
    * fileselector: Add support to change the size of thumbnails in grid view.
    * tooltip: Adding elm_object_tooltip_orient_set API
-   * tooltip - renamed the new tooltip apis until 1.9 release.
-     elm_tooltip_move_freeze_push()
-     elm_tooltip_move_freeze_pop()
-     elm_tooltip_move_freeze_get()
+   * tooltip: Added elm_object_tooltip_move_freeze_push/pop/get()
 
 Improvements:
 
