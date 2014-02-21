@@ -7,11 +7,15 @@ Changes since 1.8.0:
 
 Additions:
 
+    * Ecore X supports XPRESENT extension
+    * Edje Embryo has reset_timer()
+
 Improvements:
 
 Fixes:
 
     * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.
+    * edje freeze count can no longer become negative
 
 Removals:
 
