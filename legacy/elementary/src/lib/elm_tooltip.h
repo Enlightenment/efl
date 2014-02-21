@@ -39,11 +39,11 @@ typedef enum
  * @param obj The tooltip's anchor object
  *
  * @ingroup Tooltips
- * @see elm_tooltip_move_freeze_pop()
+ * @see elm_object_tooltip_move_freeze_pop()
  * @see elm_tooltio_move_freeze_get()
  * @since 1.9
  */
-EAPI void elm_tooltip_move_freeze_push(Evas_Object *obj);
+EAPI void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
 
 /**
  * This decrements the tooltip freeze count by one.
@@ -51,10 +51,10 @@ EAPI void elm_tooltip_move_freeze_push(Evas_Object *obj);
  * @param obj The tooltip's anchor object
  *
  * @ingroup Tooltips
- * @see elm_tooltip_move_freeze_push()
+ * @see elm_object_tooltip_move_freeze_push()
  * @since 1.9
  */
-EAPI void elm_tooltip_move_freeze_pop(Evas_Object *obj);
+EAPI void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
 
 /**
  * Get the movement freeze by 1
@@ -65,10 +65,10 @@ EAPI void elm_tooltip_move_freeze_pop(Evas_Object *obj);
  * @return The movement freeze count
  *
  * @ingroup Tooltips
- * @see elm_tooltip_move_freeze_push()
+ * @see elm_object_tooltip_move_freeze_push()
  * @since 1.9
  */
-EAPI int elm_tooltip_move_freeze_get(const Evas_Object *obj);
+EAPI int elm_object_tooltip_move_freeze_get(const Evas_Object *obj);
 
 /**
  * @def elm_object_tooltip_orient_set

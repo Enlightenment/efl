@@ -728,7 +728,7 @@ _elm_tooltip_data_clean(Elm_Tooltip *tt)
 }
 
 EAPI void
-elm_tooltip_move_freeze_push(Evas_Object *obj)
+elm_object_tooltip_move_freeze_push(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
 
@@ -736,7 +736,7 @@ elm_tooltip_move_freeze_push(Evas_Object *obj)
 }
 
 EAPI void
-elm_tooltip_move_freeze_pop(Evas_Object *obj)
+elm_object_tooltip_move_freeze_pop(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
 
@@ -745,7 +745,7 @@ elm_tooltip_move_freeze_pop(Evas_Object *obj)
 }
 
 EAPI int
-elm_tooltip_move_freeze_get(const Evas_Object *obj)
+elm_object_tooltip_move_freeze_get(const Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, 0);
 

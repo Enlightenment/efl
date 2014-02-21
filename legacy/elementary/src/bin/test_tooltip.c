@@ -204,14 +204,14 @@ _tt_move_freeze(void *data       EINA_UNUSED,
               Evas_Object     *obj,
               void *event_info EINA_UNUSED)
 {
-   if (elm_tooltip_move_freeze_get(obj) == 0)
+   if (elm_object_tooltip_move_freeze_get(obj) == 0)
      {
-        elm_tooltip_move_freeze_push(obj);
+        elm_object_tooltip_move_freeze_push(obj);
         elm_object_tooltip_text_set(obj, "Fronzen");
      }
    else
      {
-        elm_tooltip_move_freeze_pop(obj);
+        elm_object_tooltip_move_freeze_pop(obj);
         elm_object_tooltip_text_set(obj, "Free");
      }
 }
