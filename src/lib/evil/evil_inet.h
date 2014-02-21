@@ -18,7 +18,7 @@
 #define __EVIL_INET_H__
 
 
-#if ! (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
+#if ! (_WIN32_WINNT >= 0x600 /* _WIN32_WINNT_VISTA */)
 
 
 /**
