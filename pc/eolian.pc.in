@@ -1,11 +1,12 @@
-prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+eoincludedir=@datarootdir@/eolian/include
 
-Name: Eolian
+Name: eolian
 Description: EFL's .eo parser and code generator.
-Version: @LIB_VERSION@
+Version: @VERSION@
 Libs: -L${libdir} -leolian
-Libs.private:
-Cflags: -I${includedir}/eolian-1
+Libs.private: @requirements_libs_eolian@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eolian-@VMAJ@
