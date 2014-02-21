@@ -48,6 +48,8 @@ struct _App {
    Ecore_Pipe *fd_write; // write commands for emotion here
    int opening;
    int playing;
+   int volume;
+   Eina_Bool audio_muted;
 
    int last_order;
 
@@ -223,6 +225,8 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
          break;
       case libvlc_MediaPlayerPlaying:
          DBG("libvlc_MediaPlayerPlaying");
+         libvlc_audio_set_volume(app->mp, app->volume);
+         libvlc_audio_set_mute(app->mp, app->audio_muted);
          _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
          break;
       case libvlc_MediaPlayerStopped:
@@ -466,21 +470,19 @@ _mute_set(App *app, int mute)
    if (!app->mp)
      return;
 
+   app->audio_muted = mute;
    libvlc_audio_set_mute(app->mp, mute);
 }
 
 static void
 _volume_set(App *app, float volume)
 {
-   int vol;
-
    DBG("Volume set %.2f", volume);
    if (!app->mp)
      return;
 
-   vol = volume * 100;
-
-   libvlc_audio_set_volume(app->mp, vol);
+   app->volume = volume * 100;
+   libvlc_audio_set_volume(app->mp, app->volume);
 }
 
 static void
