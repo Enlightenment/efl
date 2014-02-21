@@ -181,7 +181,7 @@ _mapped_blend_cpu(void *data, void *drawctx,
      }
    else if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
      {
-        cols = 1;
+        cols = 0;
         dw = out->cache_entry.w;
         dx = 0;
      }
@@ -204,7 +204,7 @@ _mapped_blend_cpu(void *data, void *drawctx,
      }
    else if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
      {
-        rows = 1;
+        rows = 0;
         dh = out->cache_entry.h;
         dy = 0;
      }
