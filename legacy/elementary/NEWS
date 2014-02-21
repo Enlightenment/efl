@@ -27,12 +27,7 @@ Additions:
    * Colorselector: Item_signal_emit_hook added.
    * focus: Added "focus_part" support on elm widget.
    * add tests to window moves.
-   * add screensaver active edje signal for idle freezing
    * Introduce fileselector interface and applied to elm_fileselector.
-   * theme for the packagekit module IN
-   * feature: add PIN desklock theme
-   * feature: iconify/uniconify animations for windows
-   * feature: pager16 module theme
    * entry: Add elm_entry_input_panel_show_on_demand_set/get API
    * atspi: accessible and component interface implementation.
    * entry - Add "rejected" smart callback in "elm_entry_filter_accept_set"
@@ -67,7 +62,6 @@ Improvements:
    * theme: unify tags macro.
    * theme - default styles - make disabled all look properly disabled
    * Label: better speed/duration calculation.
-   * theme - use smaller shadow in deskmirror and simpler program for on/off
    * Add more tests to "Entry user style", to spot out lots of bug.
    * Elementary menu item: handling hidden icon
    * Elm entry: Set initial select mode for non desktop entries (T861)
@@ -82,16 +76,11 @@ Improvements:
    * focus: Added test cases for the existing issues/feature enhancement relate to focus
    * config: Change the value of THUMBSCROLL_SENSITIVITY_FRICTION in mobile config for an optimization.
    * datetime: Refactor to launch test_datetime little bit faster
-   * theme - efm icons - update/improve generic icons.
    * test: Removed size hint macros from reference codes.
-   * theme - packagekit - make theme match default for module
    * Updating hungarian translation
    * make iconify effects moe natural (faster to deiconify to make it feel snappy)
    * elementary - don't use __UNUSED__ anymore
    * elm: replace 0 or 1 with EINA_FALSE or EINA_TRUE
-   * theme - support icon provider message for e comp frames
-   * reduce iconify animation durations for fast comp effect groups (T860)
-   * Packagekit module: try a new icon.
    * elm: Unified the usage of strncmp.
    * test_web_ui: Added a button to test select tag and window.open()
    * naviframe: Better structure packing for naviframe item and added more description about item structure members.
@@ -101,7 +90,6 @@ Improvements:
    * elementary - send signal "language,changed" with one way in the widget.
    * elementary - use the focused/unfocused string in widget defined.
    * test_hoversel: Change the hoversel button text when an hoversel item is selected.
-   * theme - win shadow - stack under all so pulsing icon is not BELOW the shadow.
    * fileselector: Make fileselector focusable.  Ok on Enter key and Cancel on Escape key.
    * popup: Replace focus_direction_go with focus_cycle.
    * url: Added underscore(_) to elm internal functions, elm_url_xxx.
@@ -112,25 +100,18 @@ Improvements:
    * prefs should CRI on add/file_set if init has failed
    * entry: Add smart activate for accessbility.
    * entry: If the scrollable entry is set disable, send "*,disabled" signal to scr_edje too.
-   * theme - ibar - emit show doen signal for ibar menu
    * datetime: Delay elm_layout_theme_set until memebers are initialized in _smart_add
    * panel: Delay elm_layout_theme_set until memebers are initialized in _smart_add
    * elm_widget_xxx.h: Adopt EINA_UNLIKELY and fix indentation in FOO_DATA_GET macros.
    * fileselector_entry: Delay elm_layout_theme_set until memebers are initialized in _smart_add
-   * pager16 - match same theme look for popup as pager orig
-   * e19 - deskmirror - use proper scaling for mini frames
    * test_photocam: Support zoom in and out with more condition checks.
    * ctxpopup: set smart member relationship for objects in ctxpopup
    * naviframe: Replace naviframe title visible APIs to naviframe title enabled APIs
    * test_glview_simple: Close the window instead of exiting the program on close button.
-   * e menus now have their own shadows
-   * change theme animation for window frame icon urgency to be more in line with other e animations
-   * redo comp theme to match e19 signals
    * toolbar: Check whether icon is null before sending signal
    * elm: Build in an alphabetical order.
    * actionslider:enable the mouse event
    * elm cnp (dnd) - file:/ is the minimum, not file:// so work with other apps
-   * theme - make dark rounded square less transp. and add shadow to ibar menu
    * When the viewport is resized, the entry size will be recalculate.
    * setuid safeness - ensure if an app that is setuid doesn't do bad things
    * gengrid, genlist: Fallback into default item style if the required item style does not exist.
@@ -143,7 +124,6 @@ Improvements:
    * tests - add test for requesting sa massive window and seeing response
    * test_fileselector: Added edje custom filter example to show the real use case of fileselector custom filter.
    * entry: Show "Paste" option when called ctxpopup with selection
-   * set e init splash default version to 19
    * Multi button entry items now support custom parts on elm_object_item_text_[gs]et() calls.
    * Now multi button entry items will happily listen to_object_item_signal_emit() calls.
    * Give focus capabilities to elm_plug widget.
@@ -154,7 +134,6 @@ Improvements:
    * fileselector: enter key press in name entry acts like ok button click.
    * Update systray theme to have only one box
    * colorsel - allow widget to re-wrap smaller of resized down with palette on
-   * theme - focus out color should have been 255 all around. why 253?
    * elm_test: clean up some elm_object_focus_set() usage.
    * ctxpopup: disable content correctly on smart disable.
    * elementary/ctxpopup - disable the contents when they are exist.
@@ -198,14 +177,10 @@ Fixes:
    * Icon/Layout: Clean-up signal callbacks when signal is freed or layout is deleted. If not, dangling edje callback can be remained at some moment. (CID 1167968)
    * datetime: fix wrong condition for validation in _field_limit_get() (CID 1167969, 1167970)
    * test genlist: Fixed warning in genlist item styles.
-   * theme - menu - fix menu shadow to not overlap comp shadow
    * elm datetime module: Fix that registers clicked callback of diskselector multiple
-   * e shadows back into default comp frame (T885)
    * datetime: Correct the validation of parameter in _field_format_get/_field_limit_get
    * mapbuf - don't leave the dangling static map pointer that won't be freed.
    * test_flip_page: Revert wrong initialize routine.
-   * theme - packagekit - adjust text to be in right spot and subtle inset
-   * theme - e - remove wrong group from packagekit group
    * fileselector: Fixed that data of "done" signal may start with two slash
    * elm entry: Fix anchor bug finding wrong anchor geometry.
    * fileselector: Fixed that does not navigate / on path_entry
@@ -215,16 +190,13 @@ Fixes:
    * focus: Fixed focus issue that the highlight was not visible on first click.
    * naviframe - don't access item after del
    * naviframe: Fix to enable item deletion in pop_cb
-   * theme update to handle rename on/off in efm (T799)
    * elm filesel - scale button in filesel button.
    * elm filesel - fix theme layout for button+entry
    * inwin - the "greying out" fade looks just wrong - make it black.
    * entry: Fixed to emit "*enabled" signal to scr_edje when it is not disabled.
    * entry: NULL should be set to the correct position of tmpbuf.
    * conform: Fixed to get a geometry from *focus_region_get for show_region_job.
-   * tweak e menu shadow offsets (T793)
    * test_flipselector: Fixed that buttons use wrong flipselector which is not intended.
-   * fix comp theme fast popups to still have shadows
    * fileselector: Fix that folder only mode shows only files instead of only folders (T756)
    * scroller: Fixed wheel event callback
    * panes: Fixed panes smart callbak calls by fixing default theme.
@@ -264,15 +236,12 @@ Fixes:
    * config: comment out unused variable after commenting out some codes (CID 1139957, 1139958, and 1139959)
    * bugfix: unset genlist mincalcd flag when changing to/from having no item contents
    * Flip: Fix confusion with hitsize and direction
-   * bugfix: ensmallen efm event area and make it overlap with icon event area
    * example - prefs 03 - disallow animation time of 0 (just not valid/sensible) (T602)
    * DnD: Valgrind fixes
    * image/layout/toolbar: fixed documentations which use non-existing APIs. (T607)
    * elm_spinner.c: fix mouse spin never stop issue with mouse wheel with spinner widget.
    * elm_interface_scrollable.c: fix scroller page flick calculation roundup routine.
    * elm_interface_scrollable.c: reset momentum_animator to null when return cancel from the animator.
-   * theme - fix evrything theme elements for enlightenment (T596)
-   * fix e border theme mouse events
    * elementary_test glview: fixed segv on close
    * naviframe: fix T1008 so promoting an overlap item would perform as documented
    * transit - fix the double free obj_data case.
