@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-02-20 12:36+0900\n"
+"POT-Creation-Date: 2014-02-22 17:54+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -78,7 +78,7 @@ msgid "Clicked"
 msgstr "Нажато"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:224 src/lib/elm_gengrid.c:693
-#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1547 src/lib/elm_radio.c:267
+#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1562 src/lib/elm_radio.c:267
 #: src/lib/elm_segment_control.c:541 src/lib/elm_spinner.c:593
 #: src/lib/elm_toolbar.c:1980
 msgid "State: Disabled"
@@ -202,7 +202,7 @@ msgstr "Вставить"
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elm_entry.c:3352
+#: src/lib/elm_entry.c:3364
 msgid "Entry"
 msgstr "Запись"
 
