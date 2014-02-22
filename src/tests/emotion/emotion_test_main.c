@@ -18,7 +18,7 @@ static const Ecore_Getopt options = {
    "emotion_test",
    "%prog [options] <filename>",
    "1.0.0",
-   "(C) 2011 Enlightenment",
+   "(C) 2011-2014 Enlightenment",
    "BSD\nThis is a 3 clause bsd bla bla",
    "a simple test program for emotion.",
    1,
@@ -31,7 +31,9 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_STORE_STR('b', "backend", "backend to use"),
       ECORE_GETOPT_STORE_INT('v', "vis", "visualization type"),
       ECORE_GETOPT_STORE_TRUE('w', "webcams", "show all the available v4l streams"),
-      ECORE_GETOPT_STORE_TRUE('R', "reflex", "show video reflex effect"),
+      ECORE_GETOPT_STORE_TRUE('r', "reflex", "show video reflex effect"),
+      ECORE_GETOPT_STORE_TRUE('l', "loop", "restart the video when end reached"),
+      ECORE_GETOPT_STORE_TRUE('p', "position", "start the video from last know position"),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -68,6 +70,8 @@ static int          starth     = 600;
 static Eina_List   *video_objs = NULL;
 static Emotion_Vis  vis        = EMOTION_VIS_NONE;
 static unsigned char reflex    = 0;
+static unsigned char loop      = 0;
+static unsigned char last_position_load  = 0;
 static const char  *theme_file = NULL;
 
 static void
@@ -369,8 +373,11 @@ static void
 video_obj_stopped_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("video stopped!\n");
-   emotion_object_position_set(obj, 0.0);
-   emotion_object_play_set(obj, 1);
+   if (loop)
+     {
+        emotion_object_position_set(obj, 0.0);
+        emotion_object_play_set(obj, 1);
+     }
 }
 
 static void
@@ -417,7 +424,6 @@ video_obj_button_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info E
    printf("video selected spu button: %i\n",
           emotion_object_spu_button_get(obj));
 }
-
 
 
 static void
@@ -573,8 +579,9 @@ init_video_object(const char *module_filename, const char *filename)
      return;
    emotion_object_vis_set(o, vis);
    if (!emotion_object_file_set(o, filename))
-       return;
-   emotion_object_last_position_load(o);
+     return;
+   if (last_position_load)
+     emotion_object_last_position_load(o);
    emotion_object_play_set(o, 1);
    emotion_object_audio_volume_set(o, 0.5);
    evas_object_move(o, 0, 0);
@@ -659,6 +666,8 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_INT(visual),
       ECORE_GETOPT_VALUE_BOOL(webcams),
       ECORE_GETOPT_VALUE_BOOL(reflex),
+      ECORE_GETOPT_VALUE_BOOL(loop),
+      ECORE_GETOPT_VALUE_BOOL(last_position_load),
       ECORE_GETOPT_VALUE_NONE,
       ECORE_GETOPT_VALUE_NONE,
       ECORE_GETOPT_VALUE_NONE,
