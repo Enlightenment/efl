@@ -94,13 +94,15 @@ _send_file_closed(App *app)
 }
 
 static void
-_send_time_changed(App *app, const struct libvlc_event_t *ev)
+_send_time_changed(App *app)
 {
-   float new_time = ev->u.media_player_time_changed.new_time;
+   float new_time;
 
-   new_time /= 1000;
    if (app->vs->frame_drop > 1)
      return;
+
+   new_time = libvlc_media_player_get_time(app->mp);
+   new_time /= 1000;
    _send_cmd(app, EM_RESULT_POSITION_CHANGED);
    SEND_CMD_PARAM(app, new_time);
 }
@@ -215,7 +217,7 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
    {
       case libvlc_MediaPlayerTimeChanged:
          // DBG("libvlc_MediaPlayerTimeChanged"); 
-         _send_time_changed(app, ev);
+         _send_time_changed(app);
          break;
       case libvlc_MediaPlayerLengthChanged:
          DBG("libvlc_MediaPlayerLengthChanged");
@@ -460,12 +462,15 @@ _position_set(App *app, float position)
 {
    libvlc_time_t new_time;
 
-   DBG("Posistion set %.3f", position);
+   DBG("Position set %.3f", position);
    if (!app->mp)
      return;
 
    new_time = position * 1000;
    libvlc_media_player_set_time(app->mp, new_time);
+
+   if (libvlc_media_player_get_state(app->mp) == libvlc_Paused)
+      _send_time_changed(app);
 }
 
 static void
