@@ -93,7 +93,7 @@ _send_file_closed(App *app)
 }
 
 static void
-_send_time_changed(struct _App *app, const struct libvlc_event_t *ev)
+_send_time_changed(App *app, const struct libvlc_event_t *ev)
 {
    float new_time = ev->u.media_player_time_changed.new_time;
 
@@ -105,7 +105,7 @@ _send_time_changed(struct _App *app, const struct libvlc_event_t *ev)
 }
 
 static void
-_send_resize(struct _App *app, int width, int height)
+_send_resize(App *app, int width, int height)
 {
    _send_cmd(app, EM_RESULT_FRAME_SIZE);
    SEND_CMD_PARAM(app, width);
@@ -113,7 +113,7 @@ _send_resize(struct _App *app, int width, int height)
 }
 
 static void
-_send_track_info(struct _App *app, int cmd, int current, int count, libvlc_track_description_t *desc)
+_send_track_info(App *app, int cmd, int current, int count, libvlc_track_description_t *desc)
 {
    _send_cmd(app, cmd);
    SEND_CMD_PARAM(app, current);
@@ -129,7 +129,7 @@ _send_track_info(struct _App *app, int cmd, int current, int count, libvlc_track
 }
 
 static void
-_send_all_track_info(struct _App *app)
+_send_all_track_info(App *app)
 {
    int track_count, current;
    libvlc_track_description_t *desc;
@@ -157,7 +157,7 @@ _send_all_track_info(struct _App *app)
 }
 
 static void
-_send_all_meta_info(struct _App *app)
+_send_all_meta_info(App *app)
 {
    const char *meta;
 
@@ -186,7 +186,7 @@ _send_all_meta_info(struct _App *app)
 }
 
 static void
-_send_length_changed(struct _App *app)
+_send_length_changed(App *app)
 {
    float length = libvlc_media_player_get_length(app->mp);
 
@@ -196,7 +196,7 @@ _send_length_changed(struct _App *app)
 }
 
 static void
-_send_seekable_changed(struct _App *app, const struct libvlc_event_t *ev)
+_send_seekable_changed(App *app, const struct libvlc_event_t *ev)
 {
    int seekable = ev->u.media_player_seekable_changed.new_seekable;
 
@@ -451,7 +451,7 @@ _play(App *app, float pos)
 }
 
 static void
-_position_set(struct _App *app, float position)
+_position_set(App *app, float position)
 {
    libvlc_time_t new_time;
 
