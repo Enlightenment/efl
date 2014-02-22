@@ -1442,7 +1442,19 @@ static void
 _magnifier_proxy_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
-   _magnifier_move(data, sd->downx, sd->downy);
+   if ((sd->start_handler_down) || (sd->end_handler_down))
+     {
+        Evas_Coord ex, ey, cx, cy, ch;
+
+        evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+        edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                                  &cx, &cy, NULL, &ch);
+        _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
+     }
+   else
+     {
+        _magnifier_move(data, sd->downx, sd->downy);
+     }
 }
 
 static void
