@@ -309,13 +309,17 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
    len = emotion_object_play_length_get(obj);
    scale = (len > 0.0) ? pos / len : 0.0;
    edje_object_part_drag_value_set(edje, "video_progress", scale, 0.0);
+
    lh = len / 3600;
    lm = len / 60 - (lh * 60);
-   ls = len - (lm * 60);
+   ls = len - (lh * 3600) - (lm * 60);
+
    ph = pos / 3600;
    pm = pos / 60 - (ph * 60);
-   ps = pos - (pm * 60);
+   ps = pos - (ph * 3600) - (pm * 60);
+
    pf = pos * 100 - (ps * 100) - (pm * 60 * 100) - (ph * 60 * 60 * 100);
+
    snprintf(buf, sizeof(buf), "%i:%02i:%02i.%02i / %i:%02i:%02i",
             ph, pm, ps, pf, lh, lm, ls);
    edje_object_part_text_set(edje, "video_progress_txt", buf);
