@@ -47,6 +47,7 @@ struct _App {
    Ecore_Pipe *fd_read;  // read commands from emotion here
    Ecore_Pipe *fd_write; // write commands for emotion here
    int opening;
+   int closing;
    int playing;
    int volume;
    Eina_Bool audio_muted;
@@ -233,6 +234,21 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
       case libvlc_MediaPlayerStopped:
          DBG("libvlc_MediaPlayerStopped");
          _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
+         if (app->closing)
+           {
+              free(app->filename);
+              app->filename = NULL;
+              free(app->subtitle_path);
+              app->subtitle_path = NULL;
+              libvlc_media_release(app->m);
+              app->m = NULL;
+              libvlc_media_player_release(app->mp);
+              app->mp = NULL;
+              emotion_generic_shm_free(app->vs);
+              app->playing = 0;
+              app->closing = 0;
+              _send_file_closed(app);
+           }
          break;
       case libvlc_MediaPlayerEndReached:
          DBG("libvlc_MediaPlayerEndReached");
@@ -402,19 +418,8 @@ _file_close(App *app)
    if (!app->mp)
      return;
 
-   app->playing = 0;
+   app->closing = 1;
    libvlc_media_player_stop(app->mp);
-
-   free(app->filename);
-   free(app->subtitle_path);
-   if (app->mp)
-     {
-        libvlc_media_release(app->m);
-        libvlc_media_player_release(app->mp);
-     }
-   emotion_generic_shm_free(app->vs);
-
-   _send_file_closed(app);
 }
 
 static void
