@@ -51,15 +51,6 @@ static int _emotion_generic_log_domain = -1;
 static Eina_Bool _fork_and_exec(Emotion_Generic_Video *ev);
 static void em_partial_shutdown(Emotion_Generic_Video *ev);
 
-static Eina_Bool
-_player_restart(void *data)
-{
-   Emotion_Generic_Video *ev = data;
-
-   _fork_and_exec(ev);
-   ev->player_restart = NULL;
-   return EINA_FALSE;
-}
 
 static void
 _player_send_cmd(Emotion_Generic_Video *ev, int cmd)
@@ -299,7 +290,7 @@ _player_position_changed(Emotion_Generic_Video *ev)
 {
    float position = ev->cmd.param.f_num;
 
-   INF("received position changed: %0.3f", position);
+   // INF("received position changed: %0.3f", position);
 
    ev->pos = position;
    _emotion_video_pos_update(ev->obj, ev->pos, ev->len);
@@ -535,12 +526,9 @@ _player_cmd_process(Emotion_Generic_Video *ev)
          _emotion_playback_started(ev->obj);
          break;
       case EM_RESULT_PLAYBACK_STOPPED:
-         ev->pos = 0;
+         ev->play = 0;
          _emotion_playback_finished(ev->obj);
          _emotion_decode_stop(ev->obj);
-
-         em_partial_shutdown(ev);
-         ev->player_restart = ecore_idler_add(_player_restart, ev);
          break;
       case EM_RESULT_FRAME_SIZE:
          _player_frame_resize(ev);
@@ -1027,8 +1015,6 @@ em_partial_shutdown(Emotion_Generic_Video *ev)
    ev->player_data = NULL;
    if (ev->player_del) ecore_event_handler_del(ev->player_del);
    ev->player_del = NULL;
-   if (ev->player_restart) ecore_idler_del(ev->player_restart);
-   ev->player_restart = NULL;
 }
 
 
