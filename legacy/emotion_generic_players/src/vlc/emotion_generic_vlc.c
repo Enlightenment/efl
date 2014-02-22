@@ -56,6 +56,7 @@ struct _App {
    Eina_Bool inited;
 };
 
+static void _player_setup(App *app);
 
 /* Commands sent to the emotion pipe */
 #define SEND_CMD_PARAM(app, i)                                  \
@@ -212,7 +213,7 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
    switch (ev->type)
    {
       case libvlc_MediaPlayerTimeChanged:
-         DBG("libvlc_MediaPlayerTimeChanged"); 
+         // DBG("libvlc_MediaPlayerTimeChanged"); 
          _send_time_changed(app, ev);
          break;
       case libvlc_MediaPlayerLengthChanged:
@@ -236,12 +237,14 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
       case libvlc_MediaPlayerEndReached:
          DBG("libvlc_MediaPlayerEndReached");
          app->playing = 0;
+         /* vlc had released the media_playere here, we create a new one */
+         app->mp = libvlc_media_player_new_from_media(app->m);
+         _player_setup(app);
          _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
          break;
    }
    ecore_thread_main_loop_end();
 }
-
 
 static void
 _tmp_playing_event_cb(const struct libvlc_event_t *ev, void *data)
@@ -309,6 +312,29 @@ _display(void *data, void *id EINA_UNUSED)
    eina_semaphore_release(&app->vs->lock, 1);
 }
 
+static void
+_player_setup(App *app)
+{
+   
+   libvlc_video_set_format(app->mp, "RV32", app->w, app->h, app->w * 4);
+   libvlc_video_set_callbacks(app->mp, _lock, _unlock, _display, app);
+
+   app->event_mgr = libvlc_media_player_event_manager(app->mp);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
+                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerTimeChanged,
+                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerLengthChanged,
+                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
+                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
+                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
+                       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
+                       _event_cb, app);
+}
 
 /* Commands received from the emotion pipe */
 static void
@@ -361,23 +387,7 @@ _file_set_done(App *app)
      }
    else
      {
-        libvlc_video_set_format(app->mp, "RV32", app->w, app->h, app->w * 4);
-        libvlc_video_set_callbacks(app->mp, _lock, _unlock, _display, app);
-
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPlaying,
-                           _event_cb, app);
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerTimeChanged,
-                           _event_cb, app);
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerLengthChanged,
-                           _event_cb, app);
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
-                           _event_cb, app);
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
-                            _event_cb, app);
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
-                            _event_cb, app);
-        libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
-                            _event_cb, app);
+        _player_setup(app);
      }
 
    _send_cmd(app, EM_RESULT_FILE_SET_DONE);
