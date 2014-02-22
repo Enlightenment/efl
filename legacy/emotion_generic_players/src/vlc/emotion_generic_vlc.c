@@ -40,20 +40,20 @@ struct _App {
    libvlc_media_player_t *mp;
    libvlc_event_manager_t *event_mgr;
 
+   Ecore_Pipe *fd_read;  // read commands from emotion here
+   Ecore_Pipe *fd_write; // write commands for emotion here
+   int last_order;       // current command received from emotion
+
    char *filename;
    char *subtitle_path;
    char *shmname;
    unsigned w, h;
-   Ecore_Pipe *fd_read;  // read commands from emotion here
-   Ecore_Pipe *fd_write; // write commands for emotion here
-   int opening;
-   int closing;
-   int playing;
    int volume;
    Eina_Bool audio_muted;
 
-   int last_order;
-
+   Eina_Bool opening;
+   Eina_Bool closing;
+   Eina_Bool playing;
    Eina_Bool inited;
 };
 
@@ -245,14 +245,14 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
               libvlc_media_player_release(app->mp);
               app->mp = NULL;
               emotion_generic_shm_free(app->vs);
-              app->playing = 0;
-              app->closing = 0;
+              app->playing = EINA_FALSE;
+              app->closing = EINA_FALSE;
               _send_file_closed(app);
            }
          break;
       case libvlc_MediaPlayerEndReached:
          DBG("libvlc_MediaPlayerEndReached");
-         app->playing = 0;
+         app->playing = EINA_FALSE;
          /* vlc had released the media_playere here, we create a new one */
          app->mp = libvlc_media_player_new_from_media(app->m);
          _player_setup(app);
@@ -371,7 +371,7 @@ _file_set(App *app)
         return;
      }
 
-   app->opening = 1;
+   app->opening = EINA_TRUE;
 
    /* Here we start playing and connect a temporary callback to know when
     * the file is parsed and ready to be played for real.
@@ -389,7 +389,7 @@ _file_set_done(App *app)
    int r;
 
    DBG("Path: %s", app->filename);
-   app->opening = 0;
+   app->opening = EINA_FALSE;
 
    r = emotion_generic_shm_get(app->shmname, &app->vs, &app->vf);
    if (!r)
@@ -418,7 +418,7 @@ _file_close(App *app)
    if (!app->mp)
      return;
 
-   app->closing = 1;
+   app->closing = EINA_TRUE;
    libvlc_media_player_stop(app->mp);
 }
 
@@ -451,7 +451,7 @@ _play(App *app, float pos)
         if (app->subtitle_path)
           libvlc_video_set_subtitle_file(app->mp, app->subtitle_path);
 
-        app->playing = 1;
+        app->playing = EINA_TRUE;
      }
 }
 
@@ -559,7 +559,7 @@ _remote_command(void *data, void *buffer, unsigned int nbyte)
                    libvlc_media_release(app->m);
                    libvlc_media_player_release(app->mp);
                    free(app->filename);
-                   app->opening = 0;
+                   app->opening = EINA_FALSE;
                 }
               break;
            case EM_CMD_FILE_SET_DONE:
@@ -696,10 +696,10 @@ main(int argc, const char *argv[])
    app.subtitle_path = NULL;
    app.w = 0;
    app.h = 0;
-   app.opening = 0;
-   app.playing = 0;
-   app.last_order = EM_CMD_LAST;
+   app.opening = EINA_FALSE;
+   app.playing = EINA_FALSE;
    app.inited = EINA_FALSE;
+   app.last_order = EM_CMD_LAST;
 
    ecore_main_loop_begin();
 
