@@ -29,6 +29,7 @@ typedef struct _eo_param_def
    const char *type;
    const char *name;
    const char *comment;
+   Eina_Bool nonull:1;
 } Eo_Param_Def;
 
 /* ACCESSOR */

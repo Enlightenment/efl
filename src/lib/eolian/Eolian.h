@@ -384,6 +384,16 @@ EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter
 EAPI Eina_Bool eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter param_desc);
 
 /*
+ * @brief Indicates if a parameter cannot be NULL.
+ *
+ * @param[in] param_desc parameter handle
+ * @return EINA_TRUE if cannot be NULL, EINA_FALSE otherwise
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc);
+
+/*
  * @brief Get the return type of a function.
  *
  * @param[in] function_id id of the function

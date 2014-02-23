@@ -44,6 +44,7 @@ typedef struct
    Eina_Stringshare *description;
    Eolian_Parameter_Dir param_dir;
    Eina_Bool is_const :1; /* True if const in this function (e.g get) but not const in the opposite one (e.g set) */
+   Eina_Bool nonull :1; /* True if this argument cannot be NULL */
 } _Parameter_Desc;
 
 typedef struct
@@ -747,6 +748,22 @@ eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter param_desc)
    _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->is_const;
+}
+
+void
+database_parameter_nonull_set(Eolian_Function_Parameter param_desc, Eina_Bool nonull)
+{
+   _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
+   EINA_SAFETY_ON_NULL_RETURN(param);
+   param->nonull = nonull;
+}
+
+EAPI Eina_Bool
+eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc)
+{
+   _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
+   return param->nonull;
 }
 
 void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type)

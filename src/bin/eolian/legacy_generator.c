@@ -95,6 +95,8 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
 
    const Eina_List *l;
    void *data;
+   Eina_Strbuf *flags = NULL;
+   int leg_param_idx = 1; /* Index of the parameter inside the legacy function. It begins from 1 since obj is the first. */
 
    EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
      {
@@ -102,10 +104,21 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
         const char *pdesc;
         const char *ptype;
         eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &ptype, &pname, &pdesc);
+        leg_param_idx++;
         eina_strbuf_append_printf(fparam, ", %s%s %s",
               eolian_parameter_get_const_attribute_get(data)?"const":"",
               ptype, pname);
         eina_strbuf_append_printf(descparam, " * @param %s\n", pname);
+        if (eolian_parameter_is_nonull((Eolian_Function_Parameter)data))
+          {
+             if (!flags)
+               {
+                  flags = eina_strbuf_new();
+                  eina_strbuf_append_printf(flags, " EINA_ARG_NONNULL(%d", leg_param_idx);
+               }
+             else
+                eina_strbuf_append_printf(flags, ", %d", leg_param_idx);
+          }
      }
    if (!var_as_ret)
      {
@@ -116,20 +129,42 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
             const char *ptype;
             Eolian_Parameter_Dir pdir;
             eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, &pdesc);
+            leg_param_idx++;
             const char *ptrstr = (umpr) ? umpr : ( (pdir == EOLIAN_IN_PARAM) ? "" : "*" );
             eina_strbuf_append_printf(fparam, ", %s%s%s %s",
                   eolian_parameter_get_const_attribute_get(data)?"const":"",
                   ptype, ptrstr, pname);
             eina_strbuf_append_printf(descparam, " * @param %s\n", pname);
+            if (eolian_parameter_is_nonull((Eolian_Function_Parameter)data))
+              {
+                 if (!flags)
+                   {
+                      flags = eina_strbuf_new();
+                      eina_strbuf_append_printf(flags, " EINA_ARG_NONNULL(%d", leg_param_idx);
+                   }
+                 else
+                    eina_strbuf_append_printf(flags, ", %d", leg_param_idx);
+              }
          }
      }
+   if (flags) eina_strbuf_append_printf(flags, ")");
+
    eina_strbuf_replace_all(fbody, "@#params", eina_strbuf_string_get(fparam));
    eina_strbuf_replace_all(fbody, "@#list_desc_param", eina_strbuf_string_get(descparam));
    eina_strbuf_replace_all(fbody, "@#type_return", (rettype) ? rettype : "void");
    eina_strbuf_replace_all(fbody, "@#is_const", (ftype == GET || eolian_function_object_is_const(funcid)) ? "const " : "");
+   if (eolian_function_return_is_warn_unused(funcid, ftype))
+     {
+        Eina_Bool no_nonull = !flags;
+        if (no_nonull) flags = eina_strbuf_new();
+        eina_strbuf_prepend_printf(flags, " EINA_WARN_UNUSED_RESULT%s", !no_nonull?", ":"");
+     }
+   if (flags)
+      eina_strbuf_replace_all(fbody, "@#flags", eina_strbuf_string_get(flags));
    eina_strbuf_replace_all(fbody, "@#flags", (eolian_function_return_is_warn_unused(funcid, ftype)) ? " EINA_WARN_UNUSED_RESULT" : "");
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
 
+   eina_strbuf_free(flags);
    eina_strbuf_free(fbody);
    eina_strbuf_free(fparam);
    eina_strbuf_free(descparam);

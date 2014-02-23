@@ -80,6 +80,8 @@ Eolian_Function_Parameter database_method_parameter_add(Eolian_Function foo_id, 
 
 void database_parameter_get_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_const);
 
+void database_parameter_nonull_set(Eolian_Function_Parameter, Eina_Bool nonull);
+
 void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type);
 
 void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,

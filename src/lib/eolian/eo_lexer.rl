@@ -178,8 +178,23 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
    Eo_Param_Def *param = calloc(1, sizeof(Eo_Param_Def));
    if (param == NULL) ABORT(toknz, "calloc Eo_Param_Def failure");
 
-   s = p - 1; /* Don't look at ';' */
-   /* Remove any space between the param name and ';'
+   /* If @nonull is found, we set s as the end of the string and
+      update the boolean. Otherwise we set the end as the character
+      before the ';'.
+      We need to modify temporarily p because we want strstr to stop
+      at the ';' maximum. p represents the end of the string to search
+      inside.
+    */
+   *p = '\0';
+   s = strstr(toknz->saved.tok, "@nonull");
+   *p = ';';
+   if (s)
+     {
+        param->nonull = EINA_TRUE;
+        p = s;
+     }
+   s = p - 1; /* Don't look at the current character (';' or '@') */
+   /* Remove any space between the param name and ';'/@nonull
     * This loop fixes the case where "char *name ;" becomes the type of the param.
     */
    while (*s == ' ') s--;
@@ -449,7 +464,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    param_comment = ws* eo_comment %end_param_comment;
-   param = ('@'|alpha+) >save_fpc (alnum_u | '*' | ws )+  %end_param end_statement param_comment?;
+   param = ('@'|alpha+) >save_fpc (alnum_u | '*' | '@' | ws )+ %end_param end_statement param_comment?;
 
    tokenize_params := |*
       ignore+;    #=> show_ignore;
@@ -1168,9 +1183,17 @@ eo_tokenizer_database_fill(const char *filename)
           {
              Eolian_Function foo_id = database_function_new(prop->name, UNRESOLVED);
              EINA_LIST_FOREACH(prop->keys, m, param)
-                database_property_key_add(foo_id, param->type, param->name, param->comment);
+               {
+                  Eolian_Function_Parameter p = database_property_key_add(
+                        foo_id, param->type, param->name, param->comment);
+                  database_parameter_nonull_set(p, param->nonull);
+               }
              EINA_LIST_FOREACH(prop->values, m, param)
-                database_property_value_add(foo_id, param->type, param->name, param->comment);
+               {
+                  Eolian_Function_Parameter p = database_property_value_add(
+                        foo_id, param->type, param->name, param->comment);
+                  database_parameter_nonull_set(p, param->nonull);
+               }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
                   database_function_type_set(foo_id, (accessor->type == SETTER?SET:GET));
@@ -1221,7 +1244,11 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              database_function_object_set_as_const(foo_id, meth->obj_const);
              EINA_LIST_FOREACH(meth->params, m, param)
-                database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+               {
+                  Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
+                        (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  database_parameter_nonull_set(p, param->nonull);
+               }
           }
 
         EINA_LIST_FOREACH(kls->implements, l, impl)
