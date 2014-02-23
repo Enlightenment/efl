@@ -1839,11 +1839,11 @@ generic_module_init(void)
         return EINA_TRUE;
      }
 
-   _emotion_generic_log_domain = eina_log_domain_register("emotion-generic",
+   _emotion_generic_log_domain = eina_log_domain_register("emotion_generic",
                                                           EINA_COLOR_LIGHTCYAN);
    if (_emotion_generic_log_domain < 0)
      {
-        EINA_LOG_CRIT("Could not register log domain 'emotion-generic'");
+        EINA_LOG_CRIT("Could not register log domain 'emotion_generic'");
         return EINA_FALSE;
      }
 
