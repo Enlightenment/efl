@@ -58,7 +58,7 @@ struct _Evas_Object_Textgrid
       Eina_Array                  palette_extended;
    } cur, prev;
 
-   int                            max_ascent;
+   int                            ascent;
 
    Evas_Font_Set                 *font;
 
@@ -669,11 +669,11 @@ evas_object_textgrid_render(Evas_Object *eo_obj,
                        // merged into horizontal runs like bg rects above
                        if (cells->underline)
                          evas_object_textgrid_row_line_append(row, xp, w,
-                                                              o->max_ascent + 1,
+                                                              o->ascent + 1,
                                                               c->r, c->g, c->b, c->a);
                        if (cells->strikethrough)
                          evas_object_textgrid_row_line_append(row, xp, w,
-                                                              ((3 * o->max_ascent) / 4),
+                                                              ((3 * o->ascent) / 4),
                                                               c->r, c->g, c->b, c->a);
                     }
                }
@@ -750,7 +750,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj,
 
                   async_unref =
                     ENFN->multi_font_draw(output, context, surface,
-                                          o->font, xp, yp + o->max_ascent,
+                                          o->font, xp, yp + o->ascent,
                                           ww, hh, ww, hh, texts, do_async);
                   if (async_unref)
                     evas_unref_queue_texts_put(obj->layer->evas, texts);
@@ -769,7 +769,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj,
                        Evas_Text_Props *props;
                        unsigned int     r, g, b, a;
                        int              tx = xp + row->texts[xx].x;
-                       int              ty = yp + o->max_ascent;
+                       int              ty = yp + o->ascent;
 
                        props =
                          evas_object_textgrid_textprop_int_to
@@ -1273,7 +1273,7 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
                                   obj->cur->scale));
    if (o->font)
      {
-        Eina_Unicode W[2] = { 'W', 0 };
+        Eina_Unicode W[2] = { 'O', 0 };
         Evas_Font_Instance *script_fi = NULL;
         Evas_Font_Instance *cur_fi = NULL;
         Evas_Text_Props text_props;
@@ -1288,14 +1288,11 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
         ENFN->font_text_props_info_create(ENDT, script_fi, W, &text_props,
                                           NULL, 0, 1,
                                           EVAS_TEXT_PROPS_MODE_NONE);
-        ENFN->font_string_size_get(ENDT, o->font, &text_props,
-                                   &o->cur.char_width, &o->cur.char_height);
-        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
-//        inset = ENFN->font_inset_get(ENDT, o->font, &text_props);
         advance = ENFN->font_h_advance_get(ENDT, o->font, &text_props);
         vadvance = ENFN->font_v_advance_get(ENDT, o->font, &text_props);
-        if (advance > o->cur.char_width) o->cur.char_width = advance;
-        if (vadvance > o->cur.char_height) o->cur.char_height = vadvance;
+        o->cur.char_width = advance;
+        o->cur.char_height = vadvance;
+        o->ascent = ENFN->font_ascent_get(ENDT, o->font);;
         evas_common_text_props_content_unref(&text_props);
      }
    else
@@ -1307,7 +1304,7 @@ _font_set(Eo *eo_obj, void *_pd, va_list *list)
           }
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-        o->max_ascent = 0;
+        o->ascent = 0;
      }
 
    o->changed = 1;
