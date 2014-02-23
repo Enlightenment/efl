@@ -42,6 +42,7 @@ struct _App {
 
    Ecore_Pipe *fd_read;  // read commands from emotion here
    Ecore_Pipe *fd_write; // write commands for emotion here
+   Eina_Lock   cmd_mutex;// lock used to send just one command at a time
    int last_order;       // current command received from emotion
 
    char *filename;
@@ -59,7 +60,8 @@ struct _App {
 
 static void _player_setup(App *app);
 
-/* Commands sent to the emotion pipe */
+
+/* Utilities to send commands back to emotion */
 #define SEND_CMD_PARAM(app, i)                                  \
   if ((app)->fd_write)                                          \
     if (!ecore_pipe_write((app)->fd_write, &(i), sizeof((i))))  \
@@ -68,9 +70,13 @@ static void _player_setup(App *app);
 static void
 _send_cmd(App *app, int cmd)
 {
-   if (app->fd_write)
-     if (!ecore_pipe_write(app->fd_write, &cmd, sizeof(cmd)))
-       ecore_main_loop_quit();
+   if (!app->fd_write)
+     return;
+
+   eina_lock_take(&app->cmd_mutex); /* LOCK HERE */
+   
+   if (!ecore_pipe_write(app->fd_write, &cmd, sizeof(cmd)))
+     ecore_main_loop_quit();
 }
 
 static void
@@ -88,9 +94,17 @@ _send_cmd_str(App *app, const char *str)
 }
 
 static void
+_send_cmd_finish(App *app)
+{
+   eina_lock_release(&app->cmd_mutex); /* UNLOCK HERE */
+}
+
+/* Commands sent to the emotion pipe */
+static void
 _send_file_closed(App *app)
 {
    _send_cmd(app, EM_RESULT_FILE_CLOSE);
+   _send_cmd_finish(app);
 }
 
 static void
@@ -105,6 +119,7 @@ _send_time_changed(App *app)
    new_time /= 1000;
    _send_cmd(app, EM_RESULT_POSITION_CHANGED);
    SEND_CMD_PARAM(app, new_time);
+   _send_cmd_finish(app);
 }
 
 static void
@@ -113,6 +128,7 @@ _send_resize(App *app, int width, int height)
    _send_cmd(app, EM_RESULT_FRAME_SIZE);
    SEND_CMD_PARAM(app, width);
    SEND_CMD_PARAM(app, height);
+   _send_cmd_finish(app);
 }
 
 static void
@@ -129,6 +145,7 @@ _send_track_info(App *app, int cmd, int current, int count, libvlc_track_descrip
         _send_cmd_str(app, name);
         desc = desc->p_next;
      }
+   _send_cmd_finish(app);
 }
 
 static void
@@ -186,6 +203,8 @@ _send_all_meta_info(App *app)
    _send_cmd_str(app, meta);
    meta = libvlc_media_get_meta(app->m, libvlc_meta_TrackNumber);
    _send_cmd_str(app, meta);
+
+   _send_cmd_finish(app);
 }
 
 static void
@@ -196,6 +215,7 @@ _send_length_changed(App *app)
    length /= 1000;
    _send_cmd(app, EM_RESULT_LENGTH_CHANGED);
    SEND_CMD_PARAM(app, length);
+   _send_cmd_finish(app);
 }
 
 static void
@@ -205,8 +225,47 @@ _send_seekable_changed(App *app, const struct libvlc_event_t *ev)
 
    _send_cmd(app, EM_RESULT_SEEKABLE_CHANGED);
    SEND_CMD_PARAM(app, seekable);
+   _send_cmd_finish(app);
 }
 
+static void
+_send_playback_started(App *app)
+{
+   _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
+   _send_cmd_finish(app);
+}
+
+static void
+_send_playback_stopped(App *app)
+{
+   _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
+   _send_cmd_finish(app);
+}
+
+static void
+_send_init(App *app)
+{
+   _send_cmd(app, EM_RESULT_INIT);
+   _send_cmd_finish(app);
+}
+
+static void
+_send_file_set(App *app)
+{
+   _send_cmd(app, EM_RESULT_FILE_SET);
+   _send_cmd_finish(app);
+}
+
+static void
+_send_file_set_done(App *app, int success)
+{
+   _send_cmd(app, EM_RESULT_FILE_SET_DONE);
+   SEND_CMD_PARAM(app, success);
+   _send_cmd_finish(app);
+}
+
+
+/* VLC events and callbacks */
 static void
 _event_cb(const struct libvlc_event_t *ev, void *data)
 {
@@ -231,11 +290,11 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
          DBG("libvlc_MediaPlayerPlaying");
          libvlc_audio_set_volume(app->mp, app->volume);
          libvlc_audio_set_mute(app->mp, app->audio_muted);
-         _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
+         _send_playback_started(app);
          break;
       case libvlc_MediaPlayerStopped:
          DBG("libvlc_MediaPlayerStopped");
-         _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
+         _send_playback_stopped(app);
          if (app->closing)
            {
               free(app->filename);
@@ -258,7 +317,7 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
          /* vlc had released the media_playere here, we create a new one */
          app->mp = libvlc_media_player_new_from_media(app->m);
          _player_setup(app);
-         _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
+         _send_playback_stopped(app);
          break;
    }
    ecore_thread_main_loop_end();
@@ -291,9 +350,8 @@ _tmp_playing_event_cb(const struct libvlc_event_t *ev, void *data)
    _send_all_meta_info(app);
 
    /* ok, we are done! Now let emotion create the shmem for us */
-   _send_cmd(app, EM_RESULT_FILE_SET);
+   _send_file_set(app);
 }
-
 
 static void *
 _lock(void *data, void **pixels)
@@ -326,7 +384,10 @@ _display(void *data, void *id EINA_UNUSED)
    app->vs->frame.player = app->vs->frame.next;
    app->vs->frame.next = app->vs->frame.last;
    if (!app->vs->frame_drop++)
-     _send_cmd(app, EM_RESULT_FRAME_NEW);
+     {
+        _send_cmd(app, EM_RESULT_FRAME_NEW);
+        _send_cmd_finish(app);
+     }
    eina_semaphore_release(&app->vs->lock, 1);
 }
 
@@ -347,8 +408,6 @@ _player_setup(App *app)
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
                        _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
-                       _event_cb, app);
-   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerPositionChanged,
                        _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerStopped,
                        _event_cb, app);
@@ -408,8 +467,7 @@ _file_set_done(App *app)
         _player_setup(app);
      }
 
-   _send_cmd(app, EM_RESULT_FILE_SET_DONE);
-   SEND_CMD_PARAM(app, r);
+   _send_file_set_done(app, r);
 }
 
 static void
@@ -588,7 +646,7 @@ _remote_command(void *data, void *buffer, unsigned int nbyte)
            case EM_CMD_INIT:
               app->shmname = strdup(buffer);
               app->inited = EINA_TRUE;
-              _send_cmd(app, EM_RESULT_INIT);
+              _send_init(app);
               break;
            case EM_CMD_FILE_SET:
               app->filename = strdup(buffer);
@@ -688,6 +746,8 @@ main(int argc, const char *argv[])
 
    ecore_init();
 
+   eina_lock_new(&app.cmd_mutex);
+   
    app.fd_read = ecore_pipe_full_add(_remote_command, &app,
                                      atoi(argv[1]), -1, EINA_FALSE, EINA_FALSE);
    app.fd_write = ecore_pipe_full_add(_dummy, NULL,
@@ -712,6 +772,7 @@ main(int argc, const char *argv[])
    ecore_pipe_del(app.fd_read);
    ecore_pipe_del(app.fd_write);
    ecore_event_handler_del(hld);
+   eina_lock_free(&app.cmd_mutex);
 
    ecore_shutdown();
    eina_shutdown();
