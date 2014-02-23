@@ -915,13 +915,29 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
                {
                   Evas_Object_Textgrid_Row *r = &(o->cur.rows[i]);
                   if (r->ch1 >= 0)
-                    evas_add_rect(&obj->layer->evas->clip_changes,
-                                  obj->cur->geometry.x + 
-                                  (r->ch1 * o->cur.char_width),
-                                  obj->cur->geometry.y + 
-                                  (i * o->cur.char_height),
-                                  (r->ch2 - r->ch1 + 1) * o->cur.char_width,
-                                  o->cur.char_height);
+                    {
+                       Evas_Coord chx, chy, chw, chh;
+                       
+                       chx = r->ch1 * o->cur.char_width;
+                       chy = i * o->cur.char_height;
+                       chw = (r->ch2 - r->ch1 + 1) * o->cur.char_width;
+                       chh = o->cur.char_height;
+                       
+                       chx -= o->cur.char_width;
+                       chy -= o->cur.char_height;
+                       chw += o->cur.char_width * 2;
+                       chh += o->cur.char_height * 2;
+                       
+                       chx += obj->cur->geometry.x;
+                       chy += obj->cur->geometry.y;
+                       RECTS_CLIP_TO_RECT(chx, chy, chw, chh,
+                                          obj->cur->cache.clip.x,
+                                          obj->cur->cache.clip.y,
+                                          obj->cur->cache.clip.w,
+                                          obj->cur->cache.clip.h);
+                       evas_add_rect(&obj->layer->evas->clip_changes,
+                                     chx, chy, chw, chh);
+                    }
                }
           }
      }
