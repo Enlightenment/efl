@@ -965,7 +965,7 @@ _item_add(Eo *obj, void *_pd, va_list *list)
    Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
    const void *data = va_arg(*list, const void *);
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
+   if (ret) *ret = NULL;
 
    Elm_Menu_Item *it;
    Evas_Object *icon_obj;
@@ -1009,7 +1009,7 @@ _item_add(Eo *obj, void *_pd, va_list *list)
      it->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, (Elm_Object_Item *)it);
      it->dbus_menu = sd->dbus_menu;
    }
-   *ret = (Elm_Object_Item *)it;
+   if (ret) *ret = (Elm_Object_Item *)it;
 }
 
 EAPI unsigned int
