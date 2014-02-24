@@ -2,6 +2,9 @@
 #include "evas_filter_private.h"
 #include "evas_blend_private.h"
 
+// Use a better formula than R+G+B for rgba to alpha conversion (RGB to YCbCr)
+#define RGBA2ALPHA_WEIGHTED 1
+
 #if DIV_USING_BITSHIFT
 static int
 _smallest_pow2_larger_than(int val)
@@ -177,7 +180,16 @@ _image_draw_cpu_rgba2alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
    DATA32* srcdata = src->image.data;
    DATA8* dstdata = dst->mask.data;
    int x, y, sw, dw;
-   DEFINE_DIVIDER(3);
+#if RGBA2ALPHA_WEIGHTED
+   const int WR = 299;
+   const int WG = 587;
+   const int WB = 114;
+#else
+   const int WR = 1;
+   const int WG = 1;
+   const int WB = 1;
+#endif
+   DEFINE_DIVIDER(WR + WG + WB);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
 
@@ -191,10 +203,7 @@ _image_draw_cpu_rgba2alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
         DATA32 *s = srcdata + src_x;
         DATA8 *d = dstdata + dst_x;
         for (x = src_w; x; x--, d++, s++)
-          {
-             // TODO: Add weights like in YUV <--> RGB?
-             *d = DIVIDE(R_VAL(s) + G_VAL(s) + B_VAL(s));
-          }
+          *d = DIVIDE((R_VAL(s) * WR) + (G_VAL(s) * WG) + (B_VAL(s) * WB));
         srcdata += sw;
         dstdata += dw;
      }
