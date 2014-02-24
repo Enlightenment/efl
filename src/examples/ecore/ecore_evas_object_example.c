@@ -12,6 +12,24 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 
+static void
+_mouse_down_cb(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   static Eina_Bool flag = EINA_FALSE;
+
+   if (!flag)
+     ecore_evas_object_cursor_set(data, NULL, 0, 1, 1);
+   else
+     {
+        Evas_Object *cursor = evas_object_rectangle_add(ecore_evas_get(data));
+        evas_object_color_set(cursor, 0, 255, 0, 255);
+        evas_object_resize(cursor, 5, 10);
+        ecore_evas_object_cursor_set(data, cursor, 0, 1, 1);
+     }
+
+   flag = !flag;
+}
+
 int
 main(void)
 {
@@ -30,6 +48,7 @@ main(void)
    evas_object_resize(bg, 200, 200);
    evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, ee);
 
    if (bg == ecore_evas_object_associate_get(ee))
      printf("Association worked!\n");
