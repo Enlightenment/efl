@@ -4366,7 +4366,7 @@ if test "x$prefix" != "x/usr"; then
   echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
   echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
   echo ""
-  echo "or add $prefix to XDG_DATA_DIRS"
+  echo "or add \"$prefix/share\" to \$XDG_DATA_DIRS"
   echo ""
   echo "#-------------------------------------------------------------------#"
 fi
