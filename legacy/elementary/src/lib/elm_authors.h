@@ -57,7 +57,7 @@
  * @author Doyoun Kang <doyoun.kang@@samsung.com>
  * @author M.V.K. Sumanth <sumanth.m@@samsung.com> <mvksumanth@@gmail.com>
  * @author Jérôme Pinot <ngc891@@gmail.com>
- * @author Davide Andreoli (davemds) <dave@@gurumeditation.it>
+ * @author Davide Andreoli <dave@@gurumeditation.it>
  * @author Michal Pakula vel Rutka <m.pakula@@samsung.com>
  * @author Thiep Ha <thiep.ha@@samsung.com>
  * @author Artem Popov <artem.popov@@samsung.com>
