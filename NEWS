@@ -170,6 +170,12 @@ Improvements:
    * ecore_evas/wayland: Implement ecore_evas_withdrawn_set.
    * Update Korean translation for the efl1.8 release
    * NEON vectorization: added use of COLSAME define in map routine
+   * configure: add optional solution to alert
+   * ecore_evas_object_example: Added cursor unset example.
+   * Emotion generic: change the log domain name to be consistent with others domains.
+   * Emotion test: added --loop and --position args.
+   * Emotion generic: remove the player restart hack.
+   * eina: reduce log to warning when not found.
 
 Fixes:
 
@@ -419,7 +425,10 @@ Fixes:
    * ecore_evas/wayland_egl: Unset the surface on window hide.
    * evas/wayland_shm: Don't use a global var to store the sent buffer.
    * Revert "fix smart sma by allowing more recursion"
-   ** fix unchecked return value of stat in ecore_file_mv (CID 1039697)
+   * fix unchecked return value of stat in ecore_file_mv (CID 1039697)
+   * textgrid - with new fallback fonts we cant depend on glyph extents  anymore
+   * textgrid - out-of-bounds chars cause update artifacts - fix.
+   * Emotion test: fix calculation of the displayed time.
 
 Removals:
 
