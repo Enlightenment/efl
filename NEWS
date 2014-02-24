@@ -7,22 +7,421 @@ Changes since 1.8.0:
 
 Additions:
 
-    * Ecore X supports XPRESENT extension
-    * Edje Embryo has reset_timer()
+   * evas - Added eina_stringshare_ref call for fallbacks, lang in font description.
+   * evas gl: added partial rendering support for qcom extension
+   * Evas filters: Add a small utility to take some screenshots
+   * edje - feature - add channel types for sounds and ability to mute them
+   * ecore_evas: added window manager rotation to manage the rotation of windows by the WM.
+   * Add quadruple swap mode for partial rendering
+   * Evas filters: Implement advanced text effects
+   * Evas filters: Add transform filter
+   * Evas: Add support for Alpha buffers
+   * ecore_x: Add ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_OVER.
+   * ecore_x: Added API - ecore_x_e_illume_window_state_send
+   * Evas font: Added support for font fallback for eet/edje fonts.
+   * eina_tls: add eina_tls_cb_new(Eina_TLS *key, Eina_TLS_Delete_Cb delete_cb)
+   * edje: Support to set or retrieve selection of ecore_imf
+   * Add ecore_imf_context_selection_get API to allow Input Method to get the selected text.
+   * eina: add eina_{str,bin}buf_manage_read_only_new_length().
+   * eina: add eina_binbuf_append_buffer() and eina_strbuf_append_buffer().
+   * edje: use luajit by default, if you want lua use --enable-lua-old
+   * ecore-x now supports XPRESENT
+   * evas - fonts - move to using 4bit and rel 4 bit compressed font glyphs
+   * evas gl - prefer alpha4 format for font textures if possible (save memory)
+   * Edje: add edje_object_part_text_input_panel_show_on_demand_set/get()
+   * emotion: initial port of emotion to GStreamer 1.0
+   * edje: edje_edit - adding getter and setter for smooth parameter
+   * edje: edje_edit - adding API to move to the specified place in the parts stack
+   * edje: edje_edit - adding getter and setter for text source
+   * edje: edje_edit - adding getter and setter for text style
+   * edje: edje_edit - adding edje_edit_group_copy.
+   * Ecore_Avahi: initial commit.
+   * edje: adding Alias API into edje_edit module
+   * edje embryo now supports reset_timer()
+   * Ecore: add DnD abort from source
+   * ecore_evas/wayland: Add a function to cleanup the frame callback.
+   * Adding the cubic-bezier curve to edje transitions
+   * Eldbus: added function for getting bus unique name
+   * edje_edit: Add getters and setters for fixed param
 
 Improvements:
+
+   * evil: don't depend on the toolchain defined macro.
+   * emotion: lower severity of a simple warning.
+   * ecore_evas_fb: allow to force tslib even if mouse was handled.
+   * autotools: detect cross compilation.
+   * Evas filters: Improve test coverage of the filters
+   * Evas filters: Add render test cases with pixel verification
+   * Evas textblock tests: Improved textblock word start/end tests.
+   * configure - add warning for non /usr prefixes!
+   * Evas textblock tests: Add a wrapping test for complex cluster wrapping.
+   * ecore-evas - sdl module - limit to 1 window at a time
+   * Edje/entry: Add propagation handling in mouse_out for link anchors (T878)
+   * Emotion test: rename speed slider to alpha as it should be.
+   * Emotion test: New volume slider. More readable alpha text.
+   * distribution cleanup - remove os/arch from module dirs and simplify version
+   * eina: allow eina_time_get to fall back to other clocks if the first one fails
+   * configure - add big complaint section if you use off configure options
+   * Evas textblock: Added a test for rendering of spaces in some cases.
+   * evas: software_x11 - use evas_xlib_swapper_depth_get to get buffer stride.
+   * evas: add eglMakeCurrent in evas map create/free.
+   * evas/op_blend: rename LOOP_ALIGNED_U1_A48_SSE3 to LOOP_ALIGNED_U1_A48
+   * Edje entry: Enable allow_set for DEFAULT select mode.
+   * Edje entry: always finish selection when mouse is up.
+   * Evas textblock: Added tests for *_cursor_char_coord_set.
+   * Evas filters: Disable proxies with the GL engine
+   * Evas filters: Add support for proxies in Edje
+   * Evas filters: Implement basic Edje support
+   * Evas fonts: Pass RGBA_Image instead of DATA32 buffer
+   * Evas text utils: Check syntax in color parse
+   * autotools: use libevil libdl implementation.
+   * evas: gl backend - ensure eng_window_use in image_content_hint_set
+   * Evas font: Change font fallback to not depend on fontconfig >= 2.11.
+   * Evas textblock: Improved error messages when detecting errors in markup.
+   * evas: textblock - Added Null checking in evas_textblock_text_markup_to_utf8 before calling eina_strbuf_append_length API.
+   * Evas font: Renamed evas_load_fontconfig and added support for a base set.
+   * edje: call imf reset before selecting text area
+   * Updating hungarian and italian translations
+   * Evas font: Added support for the freetype spacing tag (T865)
+   * Evas font: Added support for weight/width/slant font tags.
+   * Evas textblock: Added a test for range geometry with bidi text.
+   * allow --without-tests in addition to --with-tests=no
+   * Registers a fallback handler for a given subsection of the object hierarchy.
+   * ecore_imf: Add selection_set callback type to allow Input Method to select a region of text
+   * Synced libunibreak local copy with upstream (T805)
+   * ecore_getopt: support for per-category help listing
+   * eina-inlist - handle prepend/append relative if list is null (empty)
+   * eet: reduce memory usage of Eet internal structure by removing useless structure.
+   * edje: Add changed signal emit in _edje_entry_imf_event_delete_surrounding_cb
+   * emotion: Use the GStreamer 1.x module instead of the 0.10 one in the border example application
+   * edje_entry: When preediting, cursor should not be moved.
+   * ecore_getopt: support for categories
+   * Textblock: Add test cases for style padding
+   * ecore_x: set cursor with xinput2
+   * ecore xcim module - don't printf every time you start to add stdout noise
+   * emotion gstreamer1: Set visualizations if the vis name is not NULL
+   * emotion gstreamer1: Also handle DATE_TIME tag
+   * emotion gstreamer1: Don't forget to allocate metadata struct
+   * emotion gstreamer1: Implement seekability check via seeking query
+   * emotion gstreamer1: Add support for selecting subtitle channels
+   * emotion gstreamer1: Volumes > 1.0 are valid too
+   * emotion gstreamer1: Add support for buffering and clock-lost handling
+   * emotion gstreamer1: Major cleanup of internal and GStreamer state handling
+   * emotion gstreamer1: Don't set pipeline to PAUSED during seeking
+   * emotion gstreamer1: Use GST_PLAY_FLAG_VIS instead of the corresponding integer
+   * emotion gstreamer1: Don't use the NATIVE_AUDIO/VIDEO flags
+   * emotion gstreamer1: Use refcounting instead of in/out variable counting
+   * emotion gstreamer1: Simplify pipeline creation
+   * emotion gstreamer1: Some code re-flow in the GStreamer bus handler
+   * emotion gstreamer1: Use GStreamer's path/URI handling functions instead of writing our own
+   * emotion gstreamer1: Rename functions and variables for clarity
+   * eina: add test case - eina_list_clone, eina_list_reverse_clone
+   * ecore: use WIN32 API to port readdir_r in ecore thread example
+   * autotools: really don't build Unix specific example on Windows
+   * ecore_x: Set data of selection event for XDND selection
+   * ecore: don't build Unix specific example on Windows.
+   * configure: correctly detect C99-capabilities for ecore_con_resolver
+   * win build - check for pause func and use only if its there
+   * setuid safeness - ensure if an app that is setuid doesn't do bad things
+   * evas - gl-x11 engine - put in guessed blacklist of yinvert extn for intel mesa
+   * efl - build - add warning about gnutls to configure and dropping privs
+   * evas: let's use HUGETLB when it makes sense.
+   * edje: be more informative when and where a file was not found.
+   * Use key instead of keyname for considering setxkbmap
+   * Major cleanup of the Emotion GStreamer 1.x video sink
+   * Updating serbian and italian translations
+   * evas: disable use of mmap on windows for allocating pixels buffer.
+   * eina: make eina_binbuf_free and eina_strbuff_free accept NULL.
+   * scimimmodule: support super key (between ctrl and alt key)
+   * scimimmodule: code refinement related to key modifier and lock
+   * ibusimmodule: support CAPS LOCK and NUM LOCK
+   * configure - add warning when enabling xcb
+   * Blending function rework and speedup
+   * emotion - generic - set play after setting mutes and play speed etc.
+   * evas: improve textblock rendering by walking even less in all case.
+   * ecore-x - add call to create a permanent window that is not deleted on exit
+   * Adding hungarian translation
+   * Evas test textblock: Added a test for a broken range_text_get case.
+   * edje: edje_decc - added -output flag (save to specified dir)
+   * evas - jpg loader - speed up header check for pgoressive jpgs
+   * Remove ecore_imf_context_reset in focus-in event handler
+   * autotools: Evil is actually needed on Windows add the correct line for Ecore_Avahi.
+   * getopt: add positional argument handling.
+   * Evas test textblock: Added a test for a broken range_delete case.
+   * Evas textblock: Added more range_delete tests.
+   * ibusimmodule: support preedit style
+   * emotion: make webcam initialization lazy and non blocking (T648)
+   * rebase dns.c from upstream
+   * autotools: detect systemd to warn user they are required to use --enable-systemd to turn it on.
+   * autotools: let's try this variant for detecting c++ compiler availability.
+   * Evas tests: Add invalid markup test
+   * ecore-evas - disable comp syncing by default (can be turned on though still)
+   * Evas textblock: Slightly improve paragraph items freeing.
+   * ecore evas - add animator update syncing to only render on animator ticks
+   * ecore loop + animator - add call to get if an animator cb has run this iter
+   * evas - Clip mark performance improvement
+   * efreet: propagate scan error to caller
+   * eina: this is actually a better way of improving Eina_Hash performance.
+   * eina: fuzze test the eina_hash_string_superfast to.
+   * eina: increase hash matching inside of Eina_Hash.
+   * eina: add fuzzy test of eina_hash.
+   * eina: add fuzzy testing of the red black tree.
+   * Implement withdrawn_set/unset on Wayland engines. (T155)
+   * ecore_evas/wayland: Implement ecore_evas_withdrawn_set.
+   * Update Korean translation for the efl1.8 release
+   * NEON vectorization: added use of COLSAME define in map routine
 
 Fixes:
 
     * Check ecore_x_window_prop_card32_get() return value correctly in ecore_x_e.
     * edje freeze count can no longer become negative
+   * Revert "Evas font: Change font fallback to not depend on fontconfig >= 2.11." (T1006)
+   * Evil: Fix parallel build for Windows
+   * Emotion Generic: receiving the size on opening is correct.
+   * edje: Edje_Edit - make sure we don't use an not initialized value (CID 1181885 and CID 1181888)
+   * Evas textblock: Fixed a few word start/end issues (T995)
+   * ethumb - fix clients going right to disk and getting half written thumbs
+   * edje: fix custom allocator with luajit
+   * Evas text utils: Fixed walking compound clusters.
+   * evas/image - update dirty region in the render time.
+   * Gif: Fix animated gifs when used as proxy sources
+   * Emotion test: no need for an animator to update the time string.
+   * Emotion test: no need to search for a folder that no more exists
+   * Emotion test: add the volume slider also to the Reflex group.
+   * Emotion test: Removed volume key bind. EINA_UNUSED--
+   * edje: fix Eo ids, to make Eolian keep silence
+   * evas/common: fix segfaults in evas_map_image_loop.c
+   * eina: fix in eina_rectangle_pool to make sorting effective
+   * eet - dump - if group type is not a handled type, assume unknown (CID 1039307)
+   * evas - table - fix theoretical leak that likely will never happen (CID 1039663)
+   * evas - gl - core - checke for wrong context in error check (CID 1135266)
+   * evas - gl x11 - fix glx texture from pixmap target rectangle mode check (CID 1135267)
+   * edje - edje_cc - remove logically dead code (CID 1135268)
+   * evas cserve2 - fix chekc of wrong return type (CID 1135269)
+   * evas - gl core - don't access null ptr on init (CID 1135270)
+   * edje - fix bunch of possible null return errors with checks (CID 1135274 CID 1135272 CID 1135275)
+   * evas filter - fix uninitialized pointer in evas (CID 1174077)
+   * evas - filter - don't use longs when DATA32 is the right type (CID 1174078)
+   * evas - filters - remove logically dead code (CID 1174084)
+   * evas - proxy source visible check not done on update del (T842)
+   * edje segv on file update - try and fix this. not sure if this caused it
+   * edje - fix probable leak by ensuring current prog is freed on real part free (T923)
+   * Evas textblock: Fixed colour setting for textblock formats (T926)
+   * Evas textblock: Fix rendering of spaces in some cases (T924)
+   * Evas filters: Check for EVAS_CSERVE2 when using cs2 APIs
+   * ecore_x_selection: fix selection data freeing
+   * in case font_instance is null in text_props... avoid using it
+   * Evas Textgrid: Don't leak an eina_stringshare when scale_update is called.
+   * evas - textblock ... fix valign handling to actually work as documented
+   * evas text filter - fix va_arg usage to not cause compiler internal errs
+   * ecore_x: fix wrong Atom name.
+   * Evas textblock: Fixed *_cursor_char_coord_set with some y values.
+   * ecore-x xpresent - fix build if you DONT have xpresent there.
+   * edje: edje_calc - fix deffect by find the part description when 'approximate' is EINA_FALSE
+   * eina: restore magic debug option for ABI compatibility purpose.
+   * edje embryo reset timer should probably call the reset function
+   * Patcna: fix wrong widgth and height in eina_rectangle computation logic.
+   * evas - fix tom's bold-killer from 2cb9db171ead5bc9920234e27c2e12b7c7b3883a
+   * Evas textblock: Fix selection with bidi text.
+   * fix evas_tiler bug (makes evas get stuck in an infinite loop there in certain scenarios)
+   * Edje entry: Fix memory corruption (of by one in allocation) (T867)
+   * Edje entry: Fix anchor href parsing.
+   * entry: clear selection before selecting new one
+   * checking for libmount newer than 2.19.0 means newer, not older
+   * configure: Add ecore-imf to ETHUMB_INTERNAL_LIBS
+   * eina: fix test suite for rwlock... hopefully.
+   * evas: textgrid - fix crash in terminology with rare characters.
+   * embryo: force the insertion of a '/' in the path to be sure that file path make sense.
+   * eina_tls: fix calls to TlsFree
+   * ecore_imf: fix to call function of immodule when the input method property is changed
+   * embryo_cc - remove trainling / from path for windows stat so it works
+   * Evas: Fix proxy rendering for animated objects (T832)
+   * eina: do not access dead pointer from within valgrind macro.
+   * ximimmodule: fix dereference after null check (CID 1162749)
+   * okay, bring back xrandr < 1.4 compat for ecore_x_randr_output_name_get
+   * nul terminate string from ecore_x_randr_output_name_get
+   * Evas: Fix MMX mask function _op_copy_p_mas_dp_mmx()
+   * _op_blend_c_dp_neon miscalculation fix
+   * eet_data: guarantee double-word alignment for temporary stack buffer.
+   * eina/mp/one_big: fix alignment issues.
+   * configure: include required NEON build flags.
+   * ecore_x: Fix to handle paste null data case.
+   * evas: Fixed to compare current render_op with previous render_op for textblock. If the render_op is changed, call evas_object_render_pre_prev_cur_add.
+   * Evas cserve2: Fix invalid memory access
+   * emotion gstreamer1: Call _emotion_frame_new() for audio-only streams without visualisations too (T767)
+   * Textblock: Relayout if needed in line geometry get
+   * Textblock: Fix padding with styles (part 2)
+   * Textblock: Fix padding computation (part 1)
+   * Evas/cserve2: Add some safety checks when reading socket messages (CID 1039571 and 1039572)
+   * Evas/cserve2: Remove dead code (CID 1039925)
+   * Evas/cserve2: Stop looking at those dirty pics!
+   * Evas/cserve2: Fix potential crash in image_free
+   * Eio monitor: Fix crash on invalid data access
+   * Evas/cserve2: Keep image_id when reopening a changed file
+   * Evas/cserve2: Clear up File_Data when opening a new image
+   * Evas/cserve2: Rename "invalid" field to "changed"
+   * Evas/cserve2: Add another load error check
+   * Evas/cserve2: Fix crash on image file change
+   * Evas/cserve2: Fix crash in server on file change
+   * Evas/cserve2: Fix memleak during shutdown
+   * Evas/cserve2: Use calloc instead of malloc
+   * Unbreak ecore_evas wayland engines
+   * evas - cserve2 - avoid segv accessing im->cache
+   * evas gl - fix egl/gles build after alpha4 change for fonts
+   * ecore_evas_x: Fix gl_sync_draw_done initialize routine to handle exceptional case.
+   * eina: fix memory leak of inserting the wrong value in the hash.
+   * evas cserv2 - remove logical dead code (CID 1113441)
+   * cserve2 - debug bin - fix theoretical leak of socket fd (CID 1039286)
+   * eina lock posix - remove dead code in eina_spinlock_take (CID 1106340)
+   * examples: fix pointer <-> int conversion (windows 64 bits) in ecore and evas examples.
+   * examples: do not do void* arithmetics in evas examples.
+   * example: fix uninitialized variable in ecore.
+   * evas - unbreak gl font rendering with dst pointer checks
+   * evas - sw render - protect against null pointer surface access
+   * Evas/cserve2: Fix valgrind warning about uninitialized memory
+   * Evas cserve2: Fix crash in cserve2 when slaves die
+   * eio - protect against posible segv on rename with eio
+   * eina: Eina_File - don't leak memory when file is not found.
+   * ecore_imf_example: remove wrong implementation code.
+   * eina: fix support for system requiring _XOPEN_SOURCE to use spinlock and barrier.
+   * eina: fix build break on systemd based system.
+   * ecore_evas: extn - restore missing symbol that resulted in a temporary ABI break.
+   * ecore_con - Fix binary buffer when using ECORE_CON_REMOTE_UDP.
+   * evas - sw render - map render neon broken for expedite 45/46 disable
+   * evas - fix neon scale code
+   * ibusimmodule: fix segmentation fault
+   * edje - fix edje lua usage for lua 5.2 to not go crazy on memory allocs (T323)
+   * evas - set clipees list to NULL on free to avoid access
+   * ecore-evas - x11 - call resize callback if wm denies resize request
+   * ethumbd - stop using an idler that spins at 100% cpu while generating queues
+   * ethumbd - if thumb gen takes too long don't just quit ethumbd, but skip thumb
+   * ethumbd - drop priority to 19 like efreetd so it lurks in bg as much as it can
+   * efreet - minor formatting and move set prirority to very start
+   * Evas textblock: Fixed range_text_get bug with multiple text nodes.
+   * emotion: don't duplicate storage of audio/video stream metadata in GStreamer 1.x backend.
+   * evas - gl engine - glerr should be off by default for performance
+   * emotion - broken module loading loagic fixed that fixes gst 0.10/1 deadlock
+   * eina: struct _Eina_Rbtree contains an enum bitfield, which is a GNU extension not specified by C99.
+   * emotion: remove (broken) X11 integration from the GStreamer 1.x backend.
+   * evas gl engine - ensure on texture delete we never leave a cur tex id dangling
+   * evas - gl-x11 engine - don't re-init engine window on rotate
+   * evas - protect against table cache being null and then used
+   * evas: limit how many times we walk over items.
+   * ecore: allow out-of-source build of ecore_xcb_keysym_table.h.
+   * evas: fix a segfault in _draw_thread_font_draw, caused by the missing initialisation of a struct field
+   * ecore: remove dead free (CID 1139955)
+   * ecore: fix shutdown when using system module.
+   * ecore: fix tests to avoid failure on successful initialization.
+   * ecore_audio: update test to not look at ecore_init return to much due to system module.
+   * eldbus: fix tests to properly take into account the presence of ecore system module.
+   * eldbus: don't do a double initialization due to ecore module using eldbus now.
+   * edje: edje_edit - fix .edc file generation
+   * evas - redraw the map surface if one of the children has been still changed map.
+   * emotion_generic: fix permissions, resource leaks and error handling.
+   * bugfix: free the entire ecore_con dns struct on info clear to prevent crashes later on
+   * extn: remove unused attribute am_server.
+   * extn: complete with NULL newly added functions.
+   * evas: no loader should ever close an Eina_File anymore (T674 and T668)
+   * evas: patched evas_map_image.c to use NEON code
+   * evas - render - clear out pending object array more aggressively
+   * Fix leak + possible segfault in edje_edit.
+   * edje: edje_edit - fix edje_edit_state_color_class_set to apply the colors to color_class.
+   * ibusimmodule: fix dereference after null check issue
+   * evas - tiler - fix missing clip of first rect to outbuf size
+   * ecore/ecore_x - show the window if the window should be visible.
+   * Evas textblock: Fixed range_deletion bug with multiple visible formats.
+   * bugfix: eldbus code generator struct members named "proxy" should not be passed to eina_value_free.
+   * edje_edit - fix mem leak of src strbuf on print status (CID 1039263)
+   * edje - edje_edit - don't access collection after it is freed (CID 1137855)
+   * emotion - webcam - don't access after free and ensure it is not in list (CID 1137853 and CID 1137854)
+   * evas - fb engine - fix mem leak if ioctl fails on fb mode (CID 1137852)
+   * ecore-file - fix mem leak in ecore_file_app_exe_get() on restart (CID 1039279)
+   * evas - software-x11 - fill in unused struct members to avoid uninitialized CID 1039548
+   * bugfix: make eldbus generated code not crash on every single generated event
+   * Evas textblock: Fixed deletion of ranges ending with visual formats.
+   * ecore_file - finding exe path - if HOME is not set a leak could happen (CID 1039279)
+   * eina - eina_file - fix leak of fd is fd is 0 (CID 1039181)
+   * fix fd leak in emotion webcam where fd of value 0 never closed (CID 1039175)
+   * ethumbd - fix possible out of bounds access to work table (CID 1039314)
+   * edje - epp - fix possible array access by negative (CID 1039357)
+   * ecore - utils - makekeys - fix uniitialized arrays (CID 1039547 and CID 1039546)
+   * eeze - fix uninitialised sigation struct content (CID 1039552)
+   * edje_decc - fix possible use of uninitialized string (CID 1039553)
+   * ethumb - ensure buf is nul terminated (CID 1039577  and CID 1039576)
+   * ecore-con - fix possible unterminated buffers (CID 1039725 and CID 1039724)
+   * Edje: Update anchor and item tags when text is deleted by _edje_entry_imf_event_delete_surrounding_cb.
+   * emotion: fix potential memory leak when webcam register fail.
+   * ecore_con - dns.c - re-fix coverty double-free. coverity was and is right (CID 1039909)
+   * evas - fix gif loader drop of image data sometimes (image dump/flush)
+   * embryo - embryo_cc - argv parsing MIGHT leave str buf not nul terminated (CID 1039726)
+   * evas - evas gl - fix realloc failure case to handle it properly
+   * evas - evas_gl - fix shader patch to not free static strings (CID 1039653)
+   * eet data encode - dont free data if its not separately allocated (CID 1039728)
+   * evas - font dir - remove from hash before free/del (CID 1039889)
+   * ethumb - client lib - fix access of async item in idler after free (CID 1039892)
+   * ephysics - fix real access-after-free issue on delete of constraint (CID 1039895)
+   * edje - edje_pick - fix coverty access-after-unref issue (CID 1039916)
+   * edje - edje_cc - fix coverty issue of not exiting loop for box items name (CID 1039918)
+   * evas - textblock - fix dbg_info_get to avoid leak if root is NULL (CID 1040007)
+   * evas - cserve2 - fix uninitialized member "image_id". (CID 1042303)
+   * evas - gl - use snprintf for safety (never likely anyway, so code was fine)
+   * edje - edje_cc - try and make coverty ignore the leak (invalid) (CID 1132627)
+   * evas gif loader - address animated always being true (CID 1135790)
+   * autotools: fix complain about using subdirs without the right option.
+   * autotools: make systemd dependency detection automatic.
+   * gif loader - handle theoretical NULL loader_data case
+   * ecore_x: ensure positive malloc size (CID 1135636)
+   * evas - fix gif loader cpu overuse - used too much cpu to decode anims
+   * ecore_x: remove double free (CID 1135637)
+   * Evas textblock: Fix crash with empty markups values
+   * ecore_imf/wayland: Only call hide_input_panel on im_context_hide() (T237)
+   * autotools: work around buggy macro to force C++ compiler detection.
+   * ecore_evas/wayland: Update withdrawn property, and inform state_changed.
+   * Evas/cserve2: Fix crash during shutdown
+   * Evas: Fix crash in GL engine(s) during preload cancel
+   * Fix opaque windows becoming transparent after hide() then show().
+   * ecore_x: Fix buffer overrun (CID 1039584)
+   * ecore_x: Fix bug in ecore_x_region_invert (CID 1039469)
+   * ecore_x: Remove NULL check (CID 1039648 and 1039649)
+   * ecore_x: supported isn't an optional argument (CID 1039430)
+   * ecore_x: Only use att if call succeeds. (CID 1039692)
+   * ecore_x: Only do memset if len < 20 (CID 1039311)
+   * ecore_x: always free data and return value
+   * ecore_x: Check if we have data (CID 1039264)
+   * ecore_x: '\0' terminate converted text (CID 1039310)
+   * ecore_x: Only send XdndEnter when we have types (CID 1039693)
+   * ecore_x: Also check for !prop here (CID 1039429)
+   * eldbus: Check return value of eina_value_pget (CID 1039685)
+   * eldbus: use alloca to allocate local mem (CID 1039179)
+   * eldbus: unref msg on error (CID 1039178)
+   * eldbus: on error unref msg (CID 1039177)
+   * eldbus: free allocated mem on error (CID 1039177)
+   * eldbus: print error when fwrite fails (CID  1039715)
+   * eldbus: Check return value of _type_size (CID 1039436)
+   * eldbus: create object when needed (CID 1039287)
+   * eina: Set it to NULL before next iteration (CID 1039913 and 1039914)
+   * evas - fix overdraw + too many rects problem found in some expedite tests
+   * efreet - fix recusrion checks need to pop as well as push.
+   * ximmodule: fix issue the cursor of preedit shows the in front of preedit string
+   * Fix raster bug report about elm window resize issue (content drawing outside the window).
+   * Update the engine resize edge before we call ecore_wl_window_resize
+   * efreet - protect efreetd from recursing too far to save overhead and mem
+   * eina: improve cmp function of eina_hash string related hash.
+   * Revert "eina: work around current strange behavior seen in eina_cow."
+   * Revert "eina: check if the complete hash match before checking if the key match during children walk."
+   * evas: fix loader to properly define _XOPEN_SOURCE for Solaris.
+   * efreet: Create stack at start of recursion (CID1132751 and CID1132752)
+   * efreet: Create stack at start of recursion
+   * eina: work around current strange behavior seen in eina_cow.
+   * evas/event - fix the inccorect event hit area.
+   * evas: bugfix in evas_render of not maintaining changed flags on object correctly.
+   * ximmodule: check whether pointer is NULL before accessing in xim_preedit_callback_set (CID 1135273)
+   * ecore_evas/wayland_egl: Unset the surface on window hide.
+   * evas/wayland_shm: Don't use a global var to store the sent buffer.
+   * Revert "fix smart sma by allowing more recursion"
+   ** fix unchecked return value of stat in ecore_file_mv (CID 1039697)
 
 Removals:
-
-
-=========
-EFL 1.8.0
-=========
 
 Changes since 1.7.0:
 --------------------
@@ -478,4 +877,3 @@ Fixes:
      - Fix memory leak in error case.
     * Eeze:
      - Fix sensors to not segv on shutdown.
-
