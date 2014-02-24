@@ -1139,7 +1139,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
 
   @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
 
-  Here is a full example for a size 100 font, of a very simple bevel effect:
+  Here is a full example of a very simple bevel effect:
   @include filter_bump.txt
 
   <center>
@@ -1446,9 +1446,8 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   Example:
   @include filter_grow.txt
 
-  This will first grow the letters in the buffer @c input by 4px, and then draw
-  this buffer in black in the background. Blending white on top of that will
-  give a simple impression of stroked text.
+  This will first grow the letters in the buffer @c input by a few pixels, and
+  then draw this buffer in black in the background.
 
   <center>
   @image html filter_grow.png
@@ -1497,7 +1496,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   Example:
   @include filter_mask.txt
 
-  This will create a simple cyan inner glow effect on black text.
+  This will create an inner shadow effect.
 
   <center>
   @image html filter_mask.png
