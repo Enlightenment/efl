@@ -1,4 +1,4 @@
 buffer : fat (alpha);
-grow (4, dst = fat);
+grow (8, dst = fat);
 blend (src = fat, color = black);
-blend (color = white);
+blend (color = #3399FF);
