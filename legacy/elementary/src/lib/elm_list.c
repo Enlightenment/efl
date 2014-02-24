@@ -741,7 +741,12 @@ _items_fix(Evas_Object *obj)
                        edje_object_part_swallow
                           (VIEW(it), "elm.swallow.end", it->end);
                     }
-                  if (l == sd->items) //1st item
+                  if (eina_list_count(sd->items) == 1)
+                    {
+                       edje_object_signal_emit
+                           (VIEW(it), "elm,state,list,single", "elm");
+                    }
+                  else if (l == sd->items) //1st item
                     {
                        edje_object_signal_emit
                            (VIEW(it), "elm,state,list,first", "elm");
