@@ -149,6 +149,12 @@ Improvements:
    * elm_prefs_cc: use the right macro to allow cross compilation nicely.
    * Elm list, like genlist, should emit 1st/middle/last signals to its items.
    * spinner: it has to be recalculated when its style is changed
+   * theme - fine tune pkgkit icon to be a little lighter
+   * theme - xkb module - make lettering more readable over flag
+   * allow battery reading to be bigger by minor overlap with + sign
+   * remove pager16 base image; this is never visible
+   * add clip for gadcon popups
+   * desklock logo visibility gets a clipper and visibility toggling (T613)
 
 Fixes:
 
@@ -248,6 +254,12 @@ Fixes:
    * Fix T966, sort order of child folders.
    * calendar - fix unstable calc complaint (T951)
    * Dnd: Fix double text insert issue in elm_entry, drop at disable, non-editable entry
+   * Elm_Entry: Fix bug: magnifier position is incorrect when mouse down on selection handler
+   * fix right side clipping of pager16 background (T771)
+   * fix deskmirror pixel borders (T1005)
+   * fix deskmirror client area sizing T991
+   * tooltip: Fixed wrong API names. elm_tooltip -> elm_object_tooltip.
+   * list: fixed list to emit elm,state,list,single signal when there is only one item.
 
 Removals:
 
