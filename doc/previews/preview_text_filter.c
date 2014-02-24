@@ -64,8 +64,8 @@ main(int argc, char **argv)
    const char *font = "Sans";
    const char *filter, *text;
    int fontsize = 32;
-   Evas_Object *o;
-   char *whole_filter;
+   Evas_Object *o, *rect;
+   Evas *e;
    int w, h;
 
    if (argc < 4)
@@ -90,8 +90,18 @@ main(int argc, char **argv)
 
    ecore_evas_show(wpd.ee);
    ecore_evas_manual_render_set(wpd.ee, EINA_TRUE);
+   ecore_evas_transparent_set(wpd.ee, EINA_TRUE);
+   ecore_evas_alpha_set(wpd.ee, EINA_TRUE);
+   e = ecore_evas_get(wpd.ee);
 
-   o = evas_object_text_add(ecore_evas_get(wpd.ee));
+   rect = evas_object_rectangle_add(e);
+   evas_object_move(rect, 0, 0);
+   evas_object_resize(rect, w, h);
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_show(rect);
+
+   o = evas_object_text_add(e);
+   evas_object_stack_above(o, rect);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, w, h);
    evas_object_text_font_set(o, font, fontsize);
@@ -99,10 +109,7 @@ main(int argc, char **argv)
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_show(o);
 
-   if (asprintf(&whole_filter, "fill(color = #404040); %s", filter) == -1)
-     return 2;
-   eo_do(o, evas_obj_text_filter_program_set(whole_filter));
-   free(whole_filter);
+   eo_do(o, evas_obj_text_filter_program_set(filter));
 
    ecore_evas_manual_render(wpd.ee);
    evas_object_geometry_get(o, NULL, NULL, &w, &h);
