@@ -10,6 +10,8 @@ Improvements:
    * Simplify player version dir fallback to match efl 1.9 simplification changes
    * Emotion_generic_players - commented out unused func.
    * Emotion VLC: no more need to send the size twice.
+   * Emotion VLC: use Eina_Bool instead of int for bools.
+   * Emotion VLC: defer the resource free until the video is actually stopped.
 
 Fixes:
 
@@ -19,3 +21,7 @@ Fixes:
    * Check for libvlc >= 2.0 as a minimum as we use 2.x funcs
    * Emotion VLC: remove quite all the old hacks from loading stage which fixes the problem that
      audio was audible on start
+   * Emotion VLC: fix the random-player-stop bug !!
+   * Emotion VLC: fix send position_change while paused.
+   * Emotion VLC: recreate the player when end reached.
+   * Emotion VLC: fix the volume/mute bug.
