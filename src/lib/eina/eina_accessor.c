@@ -167,6 +167,18 @@ eina_accessor_lock(Eina_Accessor *accessor)
    return EINA_TRUE;
 }
 
+EAPI Eina_Accessor*
+eina_accessor_clone(Eina_Accessor *accessor)
+{
+   EINA_MAGIC_CHECK_ACCESSOR(accessor);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(accessor, NULL);
+
+   if (accessor->clone)
+      return accessor->clone(accessor);
+
+   return NULL;
+}
+
 EAPI Eina_Bool
 eina_accessor_unlock(Eina_Accessor *accessor)
 {

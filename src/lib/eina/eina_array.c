@@ -172,6 +172,22 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
    MAGIC_FREE(it);
 }
 
+static EAPI Eina_Accessor *
+eina_array_accessor_clone(const Eina_Array *array)
+{
+   Eina_Accessor_Array *ac;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
+   EINA_MAGIC_CHECK_ARRAY(array);
+
+   ac = calloc(1, sizeof (Eina_Accessor_Array));
+   if (!ac) return NULL;
+
+   memcpy(ac, array, sizeof(Eina_Accessor_Array));
+
+   return &ac->accessor;
+}
+
 /* used from eina_inline_array.x, thus a needed symbol */
 EAPI Eina_Bool
 eina_array_grow(Eina_Array *array)
@@ -419,6 +435,8 @@ eina_array_accessor_new(const Eina_Array *array)
    ac->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
          eina_array_accessor_get_container);
    ac->accessor.free = FUNC_ACCESSOR_FREE(eina_array_accessor_free);
+   ac->accessor.clone = FUNC_ACCESSOR_CLONE(eina_array_accessor_clone);
 
    return &ac->accessor;
 }
+

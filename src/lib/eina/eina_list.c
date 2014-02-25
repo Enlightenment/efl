@@ -385,6 +385,23 @@ eina_list_accessor_free(Eina_Accessor_List *it)
    MAGIC_FREE(it);
 }
 
+static Eina_Accessor*
+eina_list_accessor_clone(Eina_Accessor_List *list)
+{
+   Eina_Accessor_List *ac;
+
+   EINA_MAGIC_CHECK_LIST_ACCESSOR(list, NULL);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
+
+   ac = calloc(1, sizeof (Eina_Accessor_List));
+   if (!ac) return NULL;
+
+   memcpy(ac, list, sizeof(Eina_Accessor_List));
+
+   return &ac->accessor;
+}
+
 static Eina_List *
 eina_list_sort_rebuild_prev(Eina_List *list)
 {
@@ -1547,6 +1564,7 @@ eina_list_accessor_new(const Eina_List *list)
    ac->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(
       eina_list_accessor_get_container);
    ac->accessor.free = FUNC_ACCESSOR_FREE(eina_list_accessor_free);
+   ac->accessor.clone = FUNC_ACCESSOR_CLONE(eina_list_accessor_clone);
 
    return &ac->accessor;
 }
