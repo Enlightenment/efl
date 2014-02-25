@@ -172,7 +172,7 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
    MAGIC_FREE(it);
 }
 
-static EAPI Eina_Accessor *
+static Eina_Accessor *
 eina_array_accessor_clone(const Eina_Array *array)
 {
    Eina_Accessor_Array *ac;
@@ -439,4 +439,3 @@ eina_array_accessor_new(const Eina_Array *array)
 
    return &ac->accessor;
 }
-
