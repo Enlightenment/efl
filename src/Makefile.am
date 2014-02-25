@@ -56,6 +56,8 @@ include Makefile_Emotion.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 
+include Makefile_Eina_Cxx.am
+
 .PHONY: benchmark examples
 
 BENCHMARK_SUBDIRS = \
@@ -71,6 +73,7 @@ benchmark: all-am
 
 EXAMPLES_SUBDIRS = \
 examples/eina \
+examples/eina_cxx \
 examples/eo \
 examples/eet \
 examples/evas \

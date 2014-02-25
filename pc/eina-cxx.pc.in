@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Eina C++
+Description: A C++ binding for the Eina library
+Requires.private: @requirements_pc_eina@
+Version: @VERSION@
+Libs: -L${libdir} -leina @requirements_public_libs_eina@
+Libs.private: @requirements_libs_eina@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-@VMAJ@/eina -I${includedir}/eina_cxx-@VMAJ@ -I${includedir}/eina_cxx-@VMAJ@/eina_cxx

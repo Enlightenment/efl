@@ -1,0 +1,61 @@
+
+### Library
+
+#lib_LTLIBRARIES += lib/eina/libeina.la
+
+installed_einacxxmainheadersdir = $(includedir)/eina_cxx-@VMAJ@
+dist_installed_einacxxmainheaders_DATA = \
+lib/eina_cxx/Eina.hh
+
+installed_einacxxheadersdir = $(includedir)/eina_cxx-@VMAJ@/eina_cxx
+dist_installed_einacxxheaders_DATA = \
+lib/eina_cxx/eina_accessor.hh       \
+lib/eina_cxx/eina_clone_allocators.hh       \
+lib/eina_cxx/eina_error.hh     \
+lib/eina_cxx/eina_inarray.hh  \
+lib/eina_cxx/eina_inlist.hh   \
+lib/eina_cxx/eina_iterator.hh \
+lib/eina_cxx/eina_lists_auxiliary.hh \
+lib/eina_cxx/eina_ptrarray.hh \
+lib/eina_cxx/eina_ptrlist.hh \
+lib/eina_cxx/eina_ref.hh \
+lib/eina_cxx/eina_stringshare.hh \
+lib/eina_cxx/eina_thread.hh \
+lib/eina_cxx/eina_type_traits.hh \
+lib/eina_cxx/eina_value.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+if HAVE_CXX11
+
+check_PROGRAMS += tests/eina_cxx/eina_cxx_suite
+TESTS += tests/eina_cxx/eina_cxx_suite
+
+tests_eina_cxx_eina_cxx_suite_SOURCES = \
+tests/eina_cxx/eina_cxx_suite.cc \
+tests/eina_cxx/eina_cxx_test_inlist.cc \
+tests/eina_cxx/eina_cxx_test_inarray.cc \
+tests/eina_cxx/eina_cxx_test_iterator.cc \
+tests/eina_cxx/eina_cxx_test_ptrarray.cc \
+tests/eina_cxx/eina_cxx_test_ptrlist.cc \
+tests/eina_cxx/eina_cxx_test_stringshare.cc \
+tests/eina_cxx/eina_cxx_test_error.cc \
+tests/eina_cxx/eina_cxx_test_accessor.cc \
+tests/eina_cxx/eina_cxx_test_thread.cc \
+tests/eina_cxx/eina_cxx_test_eina_value.cc
+
+tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/eina_cxx \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina_cxx\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+@CHECK_CFLAGS@ \
+@EINA_CFLAGS@
+tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
+tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+
+endif
+endif
+

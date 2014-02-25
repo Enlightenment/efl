@@ -890,6 +890,21 @@ EFL_LIB_END([Eina])
 #### End of Eina
 
 
+#### Eina CXX
+EFL_LIB_START([Eina_Cxx])
+
+AX_CXX_COMPILE_STDCXX_11([ext])
+if test "x${HAVE_CXX11}" -a "x1"; then
+  have_cxx11="yes"
+else
+  have_cxx11="no"
+fi
+
+AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" -a "xyes"])
+
+EFL_LIB_END([Eina_Cxx])
+#### End of Eina CXX
+
 #### Eet
 
 EFL_LIB_START([Eet])
@@ -3927,6 +3942,7 @@ src/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/examples/eina/Makefile
+src/examples/eina_cxx/Makefile
 src/examples/eet/Makefile
 src/examples/eo/Makefile
 src/examples/evas/Makefile
@@ -3945,6 +3961,7 @@ spec/efl.spec
 pc/evil.pc
 pc/escape.pc
 pc/eina.pc
+pc/eina-cxx.pc
 pc/eet.pc
 pc/eo.pc
 pc/evas-fb.pc
@@ -4075,6 +4092,7 @@ echo "  Threads.......: ${efl_have_threads} (${features_thread})"
 echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl}"
+echo "  C++11.........: ${have_cxx11}"
 echo "Evas............: yes (${features_evas})"
 echo "  Engines.......: ${features_evas_engine}"
 echo "  Image Loaders.: ${features_evas_loader}"
