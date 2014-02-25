@@ -2,7 +2,7 @@
 %bcond_with x
 
 Name:           efl
-Version:        1.8.5
+Version:        1.9.0
 Release:        0
 License:        LGPL-2.1
 Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
@@ -48,6 +48,7 @@ BuildRequires:  gnutls-devel
 BuildRequires:  curl-devel
 BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(xkbcommon)
+BuildRequires:  systemd-devel
 
 #eldbus
 BuildRequires:  dbus-devel
@@ -511,7 +512,9 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --enable-tile-rotate \
     --disable-rpath \
 %endif
-    --enable-always-build-examples
+    --enable-always-build-examples \
+    --enable-lua-old \
+    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa
 
 make %{?_smp_mflags}
 
@@ -668,6 +671,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %license COPYING
 %{_libdir}/libecore.so.*
 %{_libdir}/libecore_audio.so.*
+%{_libdir}/libecore_avahi.so.*
 %{_libdir}/libecore_con.so.*
 %{_libdir}/libecore_evas.so.*
 %{_libdir}/libecore_file.so.*
@@ -691,8 +695,8 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n ecore-examples
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_datadir}/ecore/examples/*
-%{_libdir}/ecore/examples/*
+%{_datadir}/ecore*/examples/*
+%{_libdir}/ecore*/examples/*
 
 %files -n ecore-devel
 %manifest %{name}.manifest
@@ -700,6 +704,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_includedir}/ecore*/*.h
 %{_libdir}/libecore.so
 %{_libdir}/libecore_audio.so
+%{_libdir}/libecore_avahi.so
 %{_libdir}/libecore_con.so
 %{_libdir}/libecore_evas.so
 %{_libdir}/libecore_file.so
@@ -865,6 +870,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_includedir}/emotion-1/*
 %{_libdir}/libemotion.so
 %{_libdir}/pkgconfig/emotion*.pc
+%{_libdir}/cmake/Emotion/*.cmake
 
 %files -n ethumb
 %manifest %{name}.manifest
