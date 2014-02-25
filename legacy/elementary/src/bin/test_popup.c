@@ -644,20 +644,32 @@ _subpopup_cb(void *data, Evas_Object *obj EINA_UNUSED,
    evas_object_show(popup);
 }
 
+static void
+_focus_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Eina_Bool check = elm_check_state_get(obj);
+   elm_win_focus_highlight_enabled_set(data, check);
+   elm_win_focus_highlight_animate_set(data, check);
+}
+
 void
 test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *list;
+   Evas_Object *win, *box, *list, *check;
 
    win = elm_win_util_standard_add("popup", "Popup");
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
 
-   list = elm_list_add(win);
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   list = elm_list_add(box);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, list);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, list);
    elm_list_mode_set(list, ELM_LIST_LIMIT);
    evas_object_smart_callback_add(list, "selected", _list_click, NULL);
 
@@ -700,6 +712,14 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         win);
    elm_list_go(list);
    evas_object_show(list);
+
+   check = elm_check_add(box);
+   elm_object_text_set(check, "Enable Focus");
+   evas_object_size_hint_weight_set(check, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(check, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, check);
+   evas_object_show(check);
+   evas_object_smart_callback_add(check, "changed", _focus_changed_cb, win);
 
    evas_object_resize(win, 480, 400);
    evas_object_show(win);
