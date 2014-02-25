@@ -152,7 +152,11 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
    if (eina_strbuf_length_get(linedesc))
      {
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");
-        eina_strbuf_prepend(linedesc," * ");
+        eina_strbuf_prepend(linedesc, " * ");
+     }
+   else
+     {
+        eina_strbuf_append(linedesc, " *");
      }
 
    eina_strbuf_replace_all(str_func, "@#desc", eina_strbuf_string_get(linedesc));

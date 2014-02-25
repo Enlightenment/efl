@@ -89,6 +89,10 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");
         eina_strbuf_prepend(linedesc," * ");
      }
+   else
+     {
+        eina_strbuf_append(linedesc," *");
+     }
 
    eina_strbuf_replace_all(fbody, "@#desc", eina_strbuf_string_get(linedesc));
    eina_strbuf_free(linedesc);
