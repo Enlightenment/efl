@@ -602,6 +602,16 @@ EAPI int eina_inarray_foreach_remove(Eina_Inarray *array,
                                      const void *user_data) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @brief Resize array to new size
+ * @param array array object
+ * @param new_size
+ * @return #EINA_TRUE if it successfully resized the array
+ *
+ * @since 1.10
+ */
+EAPI Eina_Bool eina_inarray_resize(Eina_Inarray *array, unsigned int new_size);
+
+/**
  * @brief number of members in array.
  * @param array array object
  * @return number of members in array.
