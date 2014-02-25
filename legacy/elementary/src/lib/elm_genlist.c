@@ -4501,7 +4501,9 @@ _item_block_recalc(Item_Block *itb,
         show_me |= it->item->show_me;
         if (!itb->realized)
           {
-             if (qadd)
+             if (qadd || (itb->sd->homogeneous &&
+                          ((it->group && (!itb->sd->group_item_height)) ||
+                          ((!it->group) && (!itb->sd->item_height)))))
                {
                   if (!it->item->mincalcd) changed = EINA_TRUE;
                   if (changed)
