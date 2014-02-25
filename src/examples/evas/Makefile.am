@@ -319,7 +319,9 @@ im1.png \
 cube1.png \
 Makefile.examples
 
-examples: $(EXTRA_PROGRAMS) $(EDJS)
+examplesdir = $(libdir)/evas/examples
+examples_PROGRAMS = $(EXTRA_PROGRAMS)
+examples_DATA = $(EDJS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS)
@@ -334,8 +336,3 @@ uninstall-local:
 	done
 
 EXTRA_DIST = $(EDCS) $(DATA_FILES)
-
-if ALWAYS_BUILD_EXAMPLES
-noinst_PROGRAMS = $(EXTRA_PROGRAMS)
-nodist_pkgdata_DATA = $(EDJS)
-endif

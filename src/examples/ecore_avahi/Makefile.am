@@ -32,6 +32,11 @@ $(top_builddir)/src/lib/eina/libeina.la \
 
 examples: $(EXTRA_PROGRAMS)
 
+EXTRA_DIST = ecore_avahi_example.c
+
+examplesdir = $(libdir)/ecore_avahi/examples
+examples_PROGRAMS = $(EXTRA_PROGRAMS)
+
 clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 

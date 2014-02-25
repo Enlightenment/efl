@@ -236,9 +236,6 @@ ecore_getopt_example_LDADD = $(ECORE_COMMON_LDADD)
 
 SRCS = \
 ecore_animator_example.c \
-ecore_audio_custom.c \
-ecore_audio_playback.c \
-ecore_audio_to_ogg.c \
 ecore_client_bench.c \
 ecore_compose_get_example.c \
 ecore_con_client_example.c \
@@ -278,11 +275,19 @@ ecore_time_functions_example.c \
 ecore_timer_example.c \
 ecore_getopt_example.c
 
+if HAVE_ECORE_AUDIO
+#SRCS += \
+#ecore_audio_custom.c \
+#ecore_audio_playback.c \
+#ecore_audio_to_ogg.c
+endif
+
 DATA_FILES = red.png Makefile.examples
 
 EXTRA_DIST = $(DATA_FILES)
 
-examples: $(EXTRA_PROGRAMS)
+examplesdir = $(libdir)/ecore/examples
+examples_PROGRAMS = $(EXTRA_PROGRAMS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS)
@@ -295,7 +300,3 @@ uninstall-local:
 	for f in $(SRCS) $(DATA_FILES); do \
 	  rm -f $(datadir)/ecore/examples/$$f ; \
 	done
-
-if ALWAYS_BUILD_EXAMPLES
-noinst_PROGRAMS = $(EXTRA_PROGRAMS)
-endif

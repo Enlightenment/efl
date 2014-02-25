@@ -75,7 +75,8 @@ EXTRA_DIST = $(SRCS)
 # test_slider.c \
 # test_velocity.c
 
-examples: $(EXTRA_PROGRAMS)
+examplesdir = $(libdir)/ephysics/examples
+examples_PROGRAMS = $(EXTRA_PROGRAMS)
 
 clean-local:
 	rm -f $(EXTRA_PROGRAMS)
@@ -88,7 +89,3 @@ uninstall-local:
 	for f in $(SRCS) ; do \
 	  rm -f $(datadir)/ephysics/examples/$$f ; \
 	done
-
-if ALWAYS_BUILD_EXAMPLES
-noinst_PROGRAMS = $(EXTRA_PROGRAMS)
-endif
