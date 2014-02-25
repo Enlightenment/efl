@@ -8,8 +8,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina_cxx \
 -I$(top_builddir)/src/lib/eina_cxx
 
-LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@ @USE_BOOST_SYSTEM_LIBS@ @USE_BOOST_SYSTEM_LDFLAGS@
-AM_CXXFLAGS = @USE_BOOST_CPPFLAGS@
+LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@
+AM_CXXFLAGS =
 
 SRCS = \
 eina_cxx_list_01.cc
