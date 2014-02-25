@@ -2680,7 +2680,7 @@ if test "x${have_avahi}" = "xyes"; then
    PKG_CHECK_MODULES([AVAHI_CLIENT], [avahi-client])
 fi
 
-EFL_EVAL_PKGS([Ecore_Avahi])
+EFL_EVAL_PKGS([ECORE_AVAHI])
 
 ### Checks for header files
 
