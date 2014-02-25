@@ -348,7 +348,7 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
    elm_image_file_set(icon1, buf, NULL);
-   for (i = 0; i < 10; i++)
+   for (i = 0; i < 20; i++)
      {
         snprintf(buf, sizeof(buf), "Item%u", i+1);
         if (i == 3)
