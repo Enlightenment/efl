@@ -46,7 +46,7 @@ struct view_clone_allocator
     return const_cast<T*>(&v);
   }
   template <typename T>
-  static void deallocate_clone(T* p)
+  static void deallocate_clone(T*)
   {
   }
 };

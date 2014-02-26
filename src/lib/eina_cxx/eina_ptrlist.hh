@@ -225,10 +225,10 @@ public:
   }
   void push_back(pointer p)
   {
-    std::auto_ptr<value_type> p1(p);
+    std::unique_ptr<value_type> p1(p);
     push_back(p1);
   }
-  void push_back(std::auto_ptr<T>& p)
+  void push_back(std::unique_ptr<T>& p)
   {
     Eina_List* new_list = eina_list_append(this->_impl._list, p.get());
     if(new_list)
@@ -245,10 +245,10 @@ public:
   }
   void push_front(pointer p)
   {
-    std::auto_ptr<value_type> p1(p);
+    std::unique_ptr<value_type> p1(p);
     push_front(p1);
   }
-  void push_front(std::auto_ptr<T>& p)
+  void push_front(std::unique_ptr<T>& p)
   {
     Eina_List* new_list = eina_list_prepend(this->_impl._list, p.get());
     if(new_list)
@@ -273,10 +273,10 @@ public:
   }  
   iterator insert(iterator i, pointer pv)
   {
-    std::auto_ptr<value_type> p(pv);
+    std::unique_ptr<value_type> p(pv);
     return insert(i, p);
   }
-  iterator insert(iterator i, std::auto_ptr<value_type>& p)
+  iterator insert(iterator i, std::unique_ptr<value_type>& p)
   {
     this->_impl._list = _eina_list_prepend_relative_list
       (this->_impl._list, p.get(), i.native_handle());

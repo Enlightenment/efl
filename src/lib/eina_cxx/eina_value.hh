@@ -232,6 +232,11 @@ struct _eina_value_traits<T[], typename eina::enable_if<eina::is_pod<T>::value>:
   }
 };
 
+class eina_value;
+
+template <typename T>
+T get(eina_value const& v);
+
 class eina_value
 {
   template <typename T>

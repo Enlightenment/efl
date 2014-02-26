@@ -167,6 +167,13 @@ struct thread_id
   }
 private:
   Eina_Thread _raw;
+
+  template <typename charT, typename Traits>
+  friend std::basic_ostream<charT, Traits>&
+  operator<<(std::basic_ostream<charT, Traits>& out, thread_id id)
+  {
+    return out << id._raw;
+  }
 };
 
 inline bool operator<=(thread_id lhs, thread_id rhs)
@@ -180,13 +187,6 @@ inline bool operator>(thread_id lhs, thread_id rhs)
 inline bool operator>=(thread_id lhs, thread_id rhs)
 {
   return !(lhs < rhs);
-}
-
-template <typename charT, typename Traits>
-std::basic_ostream<charT, Traits>&
-operator<<(std::basic_ostream<charT, Traits>& out, thread_id id)
-{
-  return out << id._raw;
 }
 
 namespace _detail {

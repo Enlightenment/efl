@@ -375,7 +375,8 @@ public:
           }
         for(size_type i = 0;i != n;++i)
           new (&*first++) T(t);
-        assert(last - first == _array->len - index - n);
+        std::size_t diff = last - first;
+        assert(diff == _array->len - index - n);
         while(first != last)
           {
             new (&*first++) T(*old_first);

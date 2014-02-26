@@ -233,10 +233,10 @@ public:
   }
   void push_back(pointer p)
   {
-    std::auto_ptr<value_type> p1(p);
+    std::unique_ptr<value_type> p1(p);
     push_back(p1);
   }
-  void push_back(std::auto_ptr<T>& p)
+  void push_back(std::unique_ptr<T>& p)
   {
     if(eina_array_push(this->_impl._array, p.get()))
       p.release();
@@ -253,10 +253,10 @@ public:
   }  
   iterator insert(iterator i, pointer pv)
   {
-    std::auto_ptr<value_type> p(pv);
+    std::unique_ptr<value_type> p(pv);
     return insert(i, p);
   }
-  iterator insert(iterator i, std::auto_ptr<value_type>& p)
+  iterator insert(iterator i, std::unique_ptr<value_type>& p)
   {
     std::size_t j
       = i.native_handle() - this->_impl._array->data
