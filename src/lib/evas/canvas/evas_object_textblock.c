@@ -6031,25 +6031,6 @@ evas_textblock_string_escape_get(const char *string, int *len_ret)
 
 /**
  * @internal
- * Appends the escaped char beteewn s and s_end to the curosr
- *
- *
- * @param s the start of the string
- * @param s_end the end of the string.
- */
-static inline void
-_append_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
-      const char *s_end)
-{
-   const char *escape;
-
-   escape = _escaped_char_get(s, s_end);
-   if (escape)
-     evas_textblock_cursor_text_append(cur, escape);
-}
-
-/**
- * @internal
  * prepends the escaped char beteewn s and s_end to the curosr
  *
  *
