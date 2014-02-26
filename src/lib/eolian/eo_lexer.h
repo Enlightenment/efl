@@ -35,6 +35,7 @@ typedef struct _eo_tokenizer
 
    Eina_List *classes;
    struct {
+      Eina_List **params;
       Eolian_Class_Type kls_type;
       Eo_Class_Def *kls;
       Eo_Property_Def *prop;

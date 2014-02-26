@@ -158,6 +158,20 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
         eina_strbuf_append_printf(str_typecheck, ", EO_TYPECHECK(%s*, ret)", rettype);
      }
 
+   EINA_LIST_FOREACH(eolian_property_keys_list_get(func), l, data)
+     {
+        const char *pname;
+        const char *ptype;
+        eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &ptype, &pname, NULL);
+
+        eina_strbuf_append_printf(str_pardesc, tmpl_eo_pardesc, "in", pname);
+
+        if (eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, ", ");
+        eina_strbuf_append(str_par, pname);
+
+        eina_strbuf_append_printf(str_typecheck, ", EO_TYPECHECK(%s, %s)", ptype, pname);
+     }
+
    EINA_LIST_FOREACH(eolian_parameters_list_get(func), l, data)
      {
         const char *pname;
@@ -329,6 +343,20 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    const Eina_List *l;
    void *data;
 
+   EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
+     {
+        const char *pname;
+        const char *ptype;
+        eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &ptype, &pname, NULL);
+        Eina_Bool is_const = eolian_parameter_get_const_attribute_get(data);
+        eina_strbuf_append_printf(va_args, "   %s%s %s = va_arg(*list, %s%s);\n",
+              ftype == GET && is_const?"const ":"", ptype, pname,
+              ftype == GET && is_const?"const ":"", _varg_upgr(ptype));
+        eina_strbuf_append_printf(params, ", %s", pname);
+        eina_strbuf_append_printf(full_params, ", %s%s %s",
+              ftype == GET && eolian_parameter_get_const_attribute_get(data)?"const ":"",
+              ptype, pname);
+     }
    if (!var_as_ret)
      {
         EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)
@@ -369,7 +397,8 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
         eina_strbuf_replace_all(fbody, "@#ret_type", "void");
      }
 
-   if (eina_list_count(eolian_parameters_list_get(funcid)) == 0)
+   if (eina_list_count(eolian_parameters_list_get(funcid)) == 0 &&
+         (eina_list_count(eolian_property_keys_list_get(funcid)) == 0))
      {
         eina_strbuf_replace_all(fbody, "@#list_unused", " EINA_UNUSED");
      }

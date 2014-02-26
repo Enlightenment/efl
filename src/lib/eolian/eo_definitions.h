@@ -59,7 +59,8 @@ typedef struct _eo_accessor_def
 typedef struct _eo_property_def
 {
    const char *name;
-   Eina_List *params;
+   Eina_List *keys;
+   Eina_List *values;
    Eina_List *accessors;
 } Eo_Property_Def;
 

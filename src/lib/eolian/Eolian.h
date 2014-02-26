@@ -296,10 +296,30 @@ EAPI const char *eolian_function_data_get(Eolian_Function function_id, const cha
 EAPI Eolian_Function_Parameter eolian_function_parameter_get(const Eolian_Function function_id, const char *param_name);
 
 /*
- * @brief Returns a list of parameter handles for a function pointed by its id.
+ * @brief Returns a list of keys params of a given function.
  *
  * @param[in] function_id Id of the function
- * @return a handle to this parameter.
+ * @return list of Eolian_Function_Parameter
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eina_List *eolian_property_keys_list_get(Eolian_Function foo_id);
+
+/*
+ * @brief Returns a list of values params of a given function.
+ *
+ * @param[in] function_id Id of the function
+ * @return list of Eolian_Function_Parameter
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eina_List *eolian_property_values_list_get(Eolian_Function foo_id);
+
+/*
+ * @brief Returns a list of parameter handles for a method/ctor/dtor.
+ *
+ * @param[in] function_id Id of the function
+ * @return list of Eolian_Function_Parameter
  *
  * @ingroup Eolian
  */

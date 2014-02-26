@@ -43,7 +43,10 @@ eo_definitions_property_def_free(Eo_Property_Def *prop)
    if (prop->name)
      eina_stringshare_del(prop->name);
 
-   EINA_LIST_FREE(prop->params, param)
+   EINA_LIST_FREE(prop->keys, param)
+      eo_definitions_param_free(param);
+
+   EINA_LIST_FREE(prop->values, param)
       eo_definitions_param_free(param);
 
    EINA_LIST_FREE(prop->accessors, accessor)

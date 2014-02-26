@@ -42,8 +42,14 @@ void database_function_data_set(Eolian_Function function_id, const char *key, co
 /* Add a description to a function */
 #define database_function_description_set(foo_id, key, desc) database_function_data_set((foo_id), (key), (desc))
 
-/* Add a parameter to a function */
-Eolian_Function_Parameter database_function_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, const char *type, const char *name, const char *description);
+/* Add a key to a property */
+Eolian_Function_Parameter database_property_key_add(Eolian_Function foo_id, const char *type, const char *name, const char *description);
+
+/* Add a value to a property */
+Eolian_Function_Parameter database_property_value_add(Eolian_Function foo_id, const char *type, const char *name, const char *description);
+
+/* Add a parameter to a method */
+Eolian_Function_Parameter database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, const char *type, const char *name, const char *description);
 
 void database_parameter_get_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_const);
 

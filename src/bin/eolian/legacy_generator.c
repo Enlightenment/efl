@@ -96,6 +96,17 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    const Eina_List *l;
    void *data;
 
+   EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
+     {
+        const char *pname;
+        const char *pdesc;
+        const char *ptype;
+        eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &ptype, &pname, &pdesc);
+        eina_strbuf_append_printf(fparam, ", %s%s %s",
+              eolian_parameter_get_const_attribute_get(data)?"const":"",
+              ptype, pname);
+        eina_strbuf_append_printf(descparam, " * @param %s\n", pname);
+     }
    if (!var_as_ret)
      {
        EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)
@@ -187,6 +198,17 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
 
    tmpstr[0] = '\0';
 
+   EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
+     {
+        const char *pname;
+        const char *ptype;
+        eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &ptype, &pname, NULL);
+        eina_strbuf_append_printf(fparam, ", %s%s %s",
+              ftype == GET && eolian_parameter_get_const_attribute_get(data)?"const ":"",
+              ptype, pname);
+        if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
+        eina_strbuf_append_printf(eoparam, "%s", pname);
+     }
    if (!var_as_ret)
    {
        EINA_LIST_FOREACH(eolian_parameters_list_get(funcid), l, data)

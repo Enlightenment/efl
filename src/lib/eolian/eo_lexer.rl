@@ -194,17 +194,17 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
    s++;
 
    param->way = PARAM_IN;
-   if (strncmp(toknz->saved.tok, "in ", 3) == 0)
+   if (strncmp(toknz->saved.tok, "@in ", 3) == 0)
      {
         toknz->saved.tok += 3;
         param->way = PARAM_IN;
      }
-   else if (strncmp(toknz->saved.tok, "out ", 4) == 0)
+   else if (strncmp(toknz->saved.tok, "@out ", 4) == 0)
      {
         toknz->saved.tok += 4;
         param->way = PARAM_OUT;
      }
-   else if (strncmp(toknz->saved.tok, "inout ", 6) == 0)
+   else if (strncmp(toknz->saved.tok, "@inout ", 6) == 0)
      {
         toknz->saved.tok += 6;
         param->way = PARAM_INOUT;
@@ -423,10 +423,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    action end_param {
       toknz->tmp.param = _eo_tokenizer_param_get(toknz, fpc);
-      if (toknz->tmp.prop)
-        toknz->tmp.prop->params = eina_list_append(toknz->tmp.prop->params, toknz->tmp.param);
-      else if (toknz->tmp.meth)
-        toknz->tmp.meth->params = eina_list_append(toknz->tmp.meth->params, toknz->tmp.param);
+      if (toknz->tmp.params)
+        *(toknz->tmp.params) = eina_list_append(*(toknz->tmp.params), toknz->tmp.param);
       else
         ABORT(toknz, "got a param but there is no property nor method waiting for it");
       INF("        %s : %s", toknz->tmp.param->name, toknz->tmp.param->type);
@@ -445,7 +443,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    param_comment = ws* eo_comment %end_param_comment;
-   param = alpha+ >save_fpc (alnum_u | '*' | ws )+  %end_param end_statement param_comment?;
+   param = ('@'|alpha+) >save_fpc (alnum_u | '*' | ws )+  %end_param end_statement param_comment?;
 
    tokenize_params := |*
       ignore+;    #=> show_ignore;
@@ -471,15 +469,23 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto tokenize_accessor;
    }
 
-   action begin_property_params {
-      INF("      params {");
+   action begin_property_keys {
+      INF("      keys {");
       toknz->current_nesting++;
+      toknz->tmp.params = &(toknz->tmp.prop->keys);
+      fgoto tokenize_params;
+   }
+
+   action begin_property_values {
+      INF("      values {");
+      toknz->current_nesting++;
+      toknz->tmp.params = &(toknz->tmp.prop->values);
       fgoto tokenize_params;
    }
 
    action end_property {
-      if (eina_list_count(toknz->tmp.prop->params) == 0)
-        WRN("property '%s' has no parameters.", toknz->tmp.prop->name);
+      if (eina_list_count(toknz->tmp.prop->values) == 0)
+        WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
         WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
       INF("    }");
@@ -491,14 +497,16 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    prop_get = 'get' ignore* begin_def;
    prop_set = 'set' ignore* begin_def;
-   prop_params = 'params' ignore* begin_def;
+   prop_keys = 'keys' ignore* begin_def;
+   prop_values = 'values' ignore* begin_def;
 
    tokenize_property := |*
       ignore+;    #=> show_ignore;
       comment     => show_comment;
       prop_get    => begin_property_get;
       prop_set    => begin_property_set;
-      prop_params => begin_property_params;
+      prop_keys   => begin_property_keys;
+      prop_values => begin_property_values;
       end_def     => end_property;
       any         => show_error;
       *|;
@@ -545,6 +553,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action begin_method_params {
       INF("      params {");
       toknz->current_nesting++;
+      toknz->tmp.params = &(toknz->tmp.meth->params);
       fgoto tokenize_params;
    }
 
@@ -600,7 +609,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    meth_legacy = 'legacy' ws+ ident %end_method_legacy end_statement;
    meth_rettype_comment = ws* eo_comment %end_method_rettype_comment;
    meth_rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+  %end_method_rettype end_statement meth_rettype_comment?;
-   meth_obj_const = 'object' ws* colon ws* 'const' %end_method_obj_const end_statement;
+   meth_obj_const = 'const' %end_method_obj_const end_statement;
 
    tokenize_method := |*
       ignore+;    #=> show_ignore;
@@ -1034,9 +1043,14 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         EINA_LIST_FOREACH(kls->properties, l, prop)
           {
              printf("  property: %s\n", prop->name);
-             EINA_LIST_FOREACH(prop->params, m, param)
+             EINA_LIST_FOREACH(prop->keys, m, param)
                {
-                  printf("    param: %s : %s (%s)\n",
+                  printf("    key: %s : %s (%s)\n",
+                         param->name, param->type, param->comment);
+               }
+             EINA_LIST_FOREACH(prop->values, m, param)
+               {
+                  printf("    value: %s : %s (%s)\n",
                          param->name, param->type, param->comment);
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
@@ -1117,7 +1131,7 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  database_function_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
                }
           }
 
@@ -1129,18 +1143,17 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  database_function_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
                }
           }
 
         EINA_LIST_FOREACH(kls->properties, l, prop)
           {
              Eolian_Function foo_id = database_function_new(prop->name, UNRESOLVED);
-             EINA_LIST_FOREACH(prop->params, m, param)
-               {
-                  /* IN_PARAM doesn't care */
-                  database_function_parameter_add(foo_id, EOLIAN_IN_PARAM, param->type, param->name, param->comment);
-               }
+             EINA_LIST_FOREACH(prop->keys, m, param)
+                database_property_key_add(foo_id, param->type, param->name, param->comment);
+             EINA_LIST_FOREACH(prop->values, m, param)
+                database_property_value_add(foo_id, param->type, param->name, param->comment);
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
                   database_function_type_set(foo_id, (accessor->type == SETTER?SET:GET));
@@ -1184,9 +1197,7 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              database_function_object_set_as_const(foo_id, meth->obj_const);
              EINA_LIST_FOREACH(meth->params, m, param)
-               {
-                  database_function_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
-               }
+                database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
           }
 
         EINA_LIST_FOREACH(kls->implements, l, impl)
