@@ -8,27 +8,14 @@
 
 namespace efl { namespace eina {
 
+template <typename T, typename Enable = void>
+struct _eina_value_traits;
+
 template <typename T>
 struct _eina_value_traits_base;
 
 template <typename T>
 struct _eina_value_traits_aux;
-
-// Indirection for uint64_t. uint64_t can be a typedef for unsigned
-// long, so we can't specialize on the same template
-template <>
-struct _eina_value_traits_aux<uint64_t>
-{
-  static ::Eina_Value_Type const* value_type()
-  {
-    return EINA_VALUE_TYPE_UINT64;
-  }
-};
-
-template <typename T, typename Enable = void>
-struct _eina_value_traits : _eina_value_traits_aux<T>
-{
-};
 
 template <typename T>
 struct _eina_value_traits_base
@@ -60,6 +47,23 @@ struct _eina_value_traits_base
     else
       throw eina::system_error(EINA_ERROR_VALUE_FAILED, eina::eina_error_category());
   }
+};
+
+// Indirection for uint64_t. uint64_t can be a typedef for unsigned
+// long, so we can't specialize on the same template
+template <>
+struct _eina_value_traits_aux<uint64_t>
+  : _eina_value_traits_base<uint64_t>
+{
+  static ::Eina_Value_Type const* value_type()
+  {
+    return EINA_VALUE_TYPE_UINT64;
+  }
+};
+
+template <typename T, typename Enable>
+struct _eina_value_traits : _eina_value_traits_aux<T>
+{
 };
 
 template <>
@@ -240,6 +244,11 @@ public:
   eina_value()
     : _raw(_eina_value_traits<char>::create())
   {
+  }
+  template <typename T>
+  eina_value(T v)
+  {
+    primitive_init(v);
   }
   eina_value(char v)
   {
