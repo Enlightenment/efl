@@ -413,6 +413,7 @@ typedef struct _Eina_Log_Domain Eina_Log_Domain;
 struct _Eina_Log_Domain
 {
    int         level; /**< Max level to log */
+   const char *color; /**< Color to use when printing in this domain */
    const char *domain_str; /**< Formatted string with color to print */
    const char *name; /**< Domain name */
    size_t      namelen; /**< strlen(name) */
