@@ -1,15 +1,14 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = \
+AM_CXXFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I. \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eina_cxx \
--I$(top_builddir)/src/lib/eina_cxx
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-I$(top_builddir)/src/bindings/eina_cxx
 
 LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@
-AM_CXXFLAGS =
 
 SRCS = \
 eina_cxx_list_01.cc
