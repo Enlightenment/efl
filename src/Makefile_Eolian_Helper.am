@@ -7,3 +7,16 @@ endif
 AM_V_EOL = $(am__v_EOL_@AM_V@)
 am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
 am__v_EOL_0 = @echo "  EOLIAN   " $@;
+
+#EOLIAN RELATED, THAT SHOULD BE PUT IN M4
+SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h
+
+.eo.eo.c:
+	$(AM_V_EOL)$(EOLIAN_GEN) --eo1 --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
+
+.eo.eo.h:
+	$(AM_V_EOL)$(EOLIAN_GEN) --eo1 $(EOLIAN_FLAGS) --gh -o $@ $<
+
+.eo.eo.legacy.h:
+	$(AM_V_EOL)$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gh -o $@ $<
+#END OF EOLIAN RELATED
