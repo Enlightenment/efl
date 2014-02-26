@@ -920,6 +920,7 @@ eina_log_domain_new(Eina_Log_Domain *d, Eina_Log_Timing *t,
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    d->level = EINA_LOG_LEVEL_UNKNOWN;
+   d->color = color;
    d->deleted = EINA_FALSE;
 
    if ((color) && (!_disable_color))
@@ -1581,7 +1582,24 @@ EAPI void
 eina_log_color_disable_set(Eina_Bool disabled)
 {
 #ifdef EINA_ENABLE_LOG
+   Eina_Log_Domain *domain;
+   unsigned int i;
+
    _disable_color = disabled;
+
+   for (i = 0; i < _log_domains_count; i++)
+     {
+        domain = &_log_domains[i];
+
+        if (domain->domain_str)
+          free((char *)domain->domain_str);
+
+        if ((domain->color) && (!_disable_color))
+          domain->domain_str = eina_log_domain_str_get(domain->name, domain->color);
+        else
+          domain->domain_str = eina_log_domain_str_get(domain->name, NULL);
+     }
+
 #else
    (void) disabled;
 #endif

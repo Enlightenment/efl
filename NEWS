@@ -429,6 +429,7 @@ Fixes:
    * textgrid - with new fallback fonts we cant depend on glyph extents  anymore
    * textgrid - out-of-bounds chars cause update artifacts - fix.
    * Emotion test: fix calculation of the displayed time.
+   * eina:  Update domain output if eina_log_color_disable_set is called after a domain is registered (T1029).
 
 Removals:
 
