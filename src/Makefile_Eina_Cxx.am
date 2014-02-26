@@ -1,28 +1,26 @@
 
 ### Library
 
-#lib_LTLIBRARIES += lib/eina/libeina.la
-
 installed_einacxxmainheadersdir = $(includedir)/eina_cxx-@VMAJ@
 dist_installed_einacxxmainheaders_DATA = \
-lib/eina_cxx/Eina.hh
+bindings/eina_cxx/Eina.hh
 
 installed_einacxxheadersdir = $(includedir)/eina_cxx-@VMAJ@/eina_cxx
 dist_installed_einacxxheaders_DATA = \
-lib/eina_cxx/eina_accessor.hh       \
-lib/eina_cxx/eina_clone_allocators.hh       \
-lib/eina_cxx/eina_error.hh     \
-lib/eina_cxx/eina_inarray.hh  \
-lib/eina_cxx/eina_inlist.hh   \
-lib/eina_cxx/eina_iterator.hh \
-lib/eina_cxx/eina_lists_auxiliary.hh \
-lib/eina_cxx/eina_ptrarray.hh \
-lib/eina_cxx/eina_ptrlist.hh \
-lib/eina_cxx/eina_ref.hh \
-lib/eina_cxx/eina_stringshare.hh \
-lib/eina_cxx/eina_thread.hh \
-lib/eina_cxx/eina_type_traits.hh \
-lib/eina_cxx/eina_value.hh
+bindings/eina_cxx/eina_accessor.hh       \
+bindings/eina_cxx/eina_clone_allocators.hh       \
+bindings/eina_cxx/eina_error.hh     \
+bindings/eina_cxx/eina_inarray.hh  \
+bindings/eina_cxx/eina_inlist.hh   \
+bindings/eina_cxx/eina_iterator.hh \
+bindings/eina_cxx/eina_lists_auxiliary.hh \
+bindings/eina_cxx/eina_ptrarray.hh \
+bindings/eina_cxx/eina_ptrlist.hh \
+bindings/eina_cxx/eina_ref.hh \
+bindings/eina_cxx/eina_stringshare.hh \
+bindings/eina_cxx/eina_thread.hh \
+bindings/eina_cxx/eina_type_traits.hh \
+bindings/eina_cxx/eina_value.hh
 
 ### Unit tests
 
@@ -46,8 +44,8 @@ tests/eina_cxx/eina_cxx_test_thread.cc \
 tests/eina_cxx/eina_cxx_test_eina_value.cc
 
 tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_builddir)/src/lib/eina_cxx \
--I$(top_srcdir)/src/lib/eina_cxx \
+-I$(top_builddir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina_cxx\" \
