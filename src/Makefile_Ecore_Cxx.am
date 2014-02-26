@@ -1,0 +1,36 @@
+
+### Library
+
+installed_ecorecxxmainheadersdir = $(includedir)/ecore_cxx-@VMAJ@
+dist_installed_ecorecxxmainheaders_DATA = \
+bindings/ecore_cxx/Ecore.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+if HAVE_CXX11
+
+check_PROGRAMS += tests/ecore_cxx/ecore_cxx_suite
+TESTS += tests/ecore_cxx/ecore_cxx_suite
+
+tests_ecore_cxx_ecore_cxx_suite_SOURCES = \
+tests/ecore_cxx/ecore_cxx_suite.cc \
+tests/ecore_cxx/ecore_cxx_test_safe_call.cc
+
+tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/bindings/ecore_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
+@CHECK_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@EINA_CFLAGS@
+
+tests_ecore_cxx_ecore_cxx_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ECORE_LIBS@
+tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = \
+@USE_ECORE_INTERNAL_LIBS@
+
+endif
+endif

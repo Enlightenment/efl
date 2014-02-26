@@ -27,6 +27,7 @@ include Makefile_Eo.am
 include Makefile_Eet.am
 include Makefile_Evas.am
 include Makefile_Ecore.am
+include Makefile_Ecore_Cxx.am
 include Makefile_Ecore_Con.am
 include Makefile_Ecore_Ipc.am
 include Makefile_Ecore_File.am
