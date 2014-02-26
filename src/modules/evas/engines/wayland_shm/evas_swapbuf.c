@@ -328,7 +328,7 @@ evas_swapbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    if (ob->rotation == 0)
      {
         RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.w, rect.h, 0, 0, ww, hh);
-        dst += (bpl * rect.y) + (rect.x + bpp);
+        dst += (bpl * rect.y) + (rect.x * bpp);
         w -= rx;
      }
    else if (ob->rotation == 180)
