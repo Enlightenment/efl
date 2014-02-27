@@ -3350,7 +3350,7 @@ loop_advance:
         it->x = x;
         x += it->adv;
 
-        if ((it->x + it->adv) > c->ln->w) c->ln->w = it->x + it->adv;
+        if ((it->w > 0) && ((it->x + it->w) > c->ln->w)) c->ln->w = it->x + it->w;
      }
 
    c->ln->y = c->y - c->par->y;
@@ -4595,7 +4595,7 @@ _layout_par(Ctxt *c)
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
         if ((c->w >= 0) &&
-              (((c->x + it->adv) >
+              (((c->x + it->w) >
                 (c->w - c->o->style_pad.l - c->o->style_pad.r -
                  c->marginl - c->marginr)) || (wrap > 0)))
           {
@@ -10304,7 +10304,7 @@ static void
 _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
       Evas_Coord *ascent, Evas_Coord *descent, Evas_Coord *w, Textblock_Position position)
 {
-   Evas_Object_Textblock_Item *it;
+   Evas_Object_Textblock_Item *it, *last_it = NULL;
    Eina_List *i;
 
    it = eina_list_data_get(items);
@@ -10358,7 +10358,13 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
 
 loop_advance:
         *w += it->adv;
+
+        if (!last_it || (it->visual_pos > last_it->visual_pos))
+           last_it = it;
      }
+
+   if (last_it)
+      *w += last_it->w - last_it->adv;
 }
 
 /* FIXME: doc */
