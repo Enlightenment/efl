@@ -450,15 +450,6 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
                                      runp->program->tween.v3,
                                      runp->program->tween.v4);
 
-                  if (rp->current)
-                    {
-		      eina_cow_free(_edje_calc_params_map_cow, (const Eina_Cow_Data **) &rp->current->map);
-#ifdef HAVE_EPHYSICS
-                       eina_cow_free(_edje_calc_params_physics_cow, (const Eina_Cow_Data **) &rp->current->physics);
-#endif
-                       free(rp->current);
-                       rp->current = NULL;
-                    }
                   rp->program = NULL;
                }
           }
@@ -586,7 +577,6 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
                                        free(rp->current);
                                     }
                                   rp->current = tmp;
-
                                }
                              else
                                {
