@@ -27,7 +27,7 @@
 
 static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
 
-static const char commands[] = \
+static const char *commands = \
   "commands are:\n"
   "\ta - change the box's alignment values\n"
   "\tp - change the box's padding values\n"
