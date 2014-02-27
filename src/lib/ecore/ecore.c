@@ -610,9 +610,8 @@ ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback,
    order->sync = EINA_TRUE;
    order->suspend = EINA_FALSE;
 
-   _ecore_main_loop_thread_safe_call(order);
-
    eina_lock_take(&order->m);
+   _ecore_main_loop_thread_safe_call(order);
    eina_condition_wait(&order->c);
    eina_lock_release(&order->m);
 
@@ -1023,7 +1022,9 @@ _ecore_main_call_flush(void)
         else if (call->sync)
           {
              call->data = call->cb.sync(call->data);
+             eina_lock_take(&call->m);
              eina_condition_broadcast(&call->c);
+             eina_lock_release(&call->m);
           }
         else
           {
