@@ -44,7 +44,7 @@ _ecore_avahi_events2ecore(AvahiWatchEvent events)
 {
    return (events & AVAHI_WATCH_IN ? ECORE_FD_READ : 0) |
      (events & AVAHI_WATCH_OUT ? ECORE_FD_WRITE : 0) |
-     (events & AVAHI_WATCH_ERR ? ECORE_FD_ERROR : 0);
+     ECORE_FD_ERROR;
 }
 
 static Eina_Bool
@@ -119,8 +119,17 @@ _ecore_avahi_watch_get_events(AvahiWatch *w)
 static double
 _ecore_avahi_timeval2double(const struct timeval *tv)
 {
+   struct timeval now;
+   double tm;
+
    if (!tv) return 3600;
-   return tv->tv_sec + (double) tv->tv_usec / 1000000;
+
+   gettimeofday(&now, NULL);
+
+   tm = tv->tv_sec - now.tv_sec + (double) (tv->tv_usec - now.tv_usec) / 1000000;
+   if (tm < 0) tm = 0.001;
+
+   return tm;
 }
 
 static Eina_Bool
@@ -144,8 +153,8 @@ _ecore_avahi_timeout_new(const AvahiPoll *api, const struct timeval *tv,
    ea = api->userdata;
    timeout = calloc(1, sizeof (Ecore_Avahi_Timeout));
    if (!timeout) return NULL;
-
-   timeout->timer = ecore_timer_add(_ecore_avahi_timeval2double(tv), _ecore_avahi_timeout_cb, timeout);
+   timeout->timer = ecore_timer_add(_ecore_avahi_timeval2double(tv),
+                                    _ecore_avahi_timeout_cb, timeout);
    if (!tv) ecore_timer_freeze(timeout->timer);
    timeout->callback = callback;
    timeout->callback_data = userdata;
