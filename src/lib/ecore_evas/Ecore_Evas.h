@@ -765,6 +765,75 @@ EAPI Eina_Bool   ecore_evas_wm_rotation_manual_rotation_done_get(const Ecore_Eva
  */
 EAPI void        ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee);
 /**
+ * @brief Get the list of supported auxiliary hint strings.
+ *
+ * @param ee The Ecore_Evas
+ * @return List of supported auxiliary hint strings.
+ * @note Do not change the returned list of its contents. Auxiliary hint
+ * strings are internal and should be considered constants, do not free or
+ * modify them.
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * The window auxiliary hint is the value which is used to decide which actions should
+ * be made available to the user by the window manager. If you want to set specific hint
+ * to your window, then you should check whether it exists in the supported auxiliary
+ * hints that are registered in the root window by the window manager. Once you've added
+ * an auxiliary hint, you can get a new ID which is used to change value and delete hint.
+ * The window manager sends the response message to the application on receiving auxiliary
+ * hint change event. A list of auxiliary hint within the Ecore_Evas has this format:
+ * ID:HINT:VALUE,ID:HINT:VALUE,...
+ *
+ * @since 1.9.0
+ */
+EAPI const Eina_List *ecore_evas_aux_hints_supported_get(const Ecore_Evas *ee);
+/**
+ * @brief Get the list of allowed auxiliary hint ID.
+ *
+ * @param ee The Ecore_Evas
+ * @return List of allowed auxiliary hint ID.
+ * @note This function is low level. Instead of using it directly, consider
+ * using the callback mechanism in Elementary such as "aux,hint,allowed".
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @since 1.9.0
+ */
+EAPI Eina_List       *ecore_evas_aux_hints_allowed_get(const Ecore_Evas *ee);
+/**
+ * @brief Create an auxiliary hint of the Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas
+ * @param hint The auxiliary hint string.
+ * @param val The value string.
+ * @return The ID of created auxiliary hint, or -1 on failure.
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @since 1.9.0
+ */
+EAPI int              ecore_evas_aux_hint_add(Ecore_Evas *ee, const char *hint, const char *val);
+/**
+ * @brief Delete an auxiliary hint of the Ecore_Evas.
+ *
+ * @param ee The Ecore_Evas
+ * @param id The ID of the auxiliary hint.
+ * @return EINA_TRUE if no error occurred, EINA_FALSE otherwise.
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @since 1.9.0
+ */
+EAPI Eina_Bool        ecore_evas_aux_hint_del(Ecore_Evas *ee, const int id);
+/**
+ * @brief Change a value of the auxiliary hint.
+ *
+ * @param ee The Ecore_Evas
+ * @param id The auxiliary hint ID.
+ * @param val The value string to be set.
+ * @return EINA_TRUE if no error occurred, EINA_FALSE otherwise.
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @since 1.9.0
+ */
+EAPI Eina_Bool        ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val);
+/**
  * @brief Send message to parent ecore
  *
  * @param ee The Ecore_Evas to set

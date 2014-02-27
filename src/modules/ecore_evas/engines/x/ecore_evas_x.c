@@ -118,6 +118,7 @@ static Ecore_Evas_Interface_Gl_X11 *_ecore_evas_x_interface_gl_x11_new(void);
 static void      _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize);
 static Eina_Bool _ecore_evas_x_wm_rot_manual_rotation_done_timeout(void *data);
 static void      _ecore_evas_x_wm_rot_manual_rotation_done_timeout_update(Ecore_Evas *ee);
+static void      _ecore_evas_x_aux_hints_set(Ecore_Evas *ee, const char *hints);
 
 static void _resize_shape_do(Ecore_Evas *);
 static void _shaped_do(Ecore_Evas *, int);
@@ -339,6 +340,55 @@ _ecore_evas_x_wm_rot_manual_rotation_done_job(void *data)
      (edata->win_root, ee->prop.window, ee->rotation, ee->w, ee->h);
 
    edata->wm_rot.done = 0;
+}
+
+static void
+_ecore_evas_x_aux_hints_supprted_update(Ecore_Evas *ee)
+{
+   Ecore_X_Window root = ecore_x_window_root_first_get();
+   unsigned char *data = NULL;
+   unsigned int num = 0, i = 0;
+   int res = 0, n = 0;
+   char **str;
+   const char *hint;
+
+   EINA_LIST_FREE(ee->prop.aux_hint.supported_list, hint)
+     {
+        eina_stringshare_del(hint);
+     }
+
+   res = ecore_x_window_prop_property_get
+     (root, ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORTED_LIST,
+      ECORE_X_ATOM_STRING, 0, &data, &n);
+
+   if ((res == 8) && (n >0))
+     {
+        str = eina_str_split_full((char *)data, ",", -1, &num);
+        for (i = 0; i < num; i++)
+          {
+             hint = eina_stringshare_add(str[i]);
+             ee->prop.aux_hint.supported_list = eina_list_append(ee->prop.aux_hint.supported_list, hint);
+          }
+
+        if (num > 0)
+          {
+             free(str[0]);
+             free(str);
+          }
+     }
+
+   free(data);
+}
+
+static void
+_ecore_evas_x_aux_hints_update(Ecore_Evas *ee)
+{
+   Eina_Strbuf *buf = _ecore_evas_aux_hints_string_get(ee);
+   if (buf)
+     {
+        _ecore_evas_x_aux_hints_set(ee, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
 }
 
 # ifdef BUILD_ECORE_EVAS_OPENGL_X11
@@ -1125,6 +1175,28 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
                          }
                        _ecore_evas_x_rotation_set(ee, ee->prop.wm_rot.angle, 1);
                     }
+               }
+          }
+     }
+   else if (e->message_type == ECORE_X_ATOM_E_WINDOW_AUX_HINT_ALLOWED)
+     {
+        ee = ecore_event_window_match(e->win);
+        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+
+        int id = e->data.l[1]; /* id of aux hint */
+        Eina_List *l;
+        Ecore_Evas_Aux_Hint *aux;
+        EINA_LIST_FOREACH(ee->prop.aux_hint.hints, l, aux)
+          {
+             if (id == aux->id)
+               {
+                  aux->allowed = 1;
+                  if (!aux->notified)
+                    {
+                       if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+                       aux->notified = 1;
+                    }
+                  break;
                }
           }
      }
@@ -2479,6 +2551,8 @@ _alpha_do(Ecore_Evas *ee, int alpha)
    _ecore_evas_x_protocols_set(ee);
    _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_wm_rotation_protocol_set(ee);
+   _ecore_evas_x_aux_hints_supprted_update(ee);
+   _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
    _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
@@ -2631,6 +2705,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_window_profile_protocol_set(ee);
         _ecore_evas_x_wm_rotation_protocol_set(ee);
+        _ecore_evas_x_aux_hints_supprted_update(ee);
+        _ecore_evas_x_aux_hints_update(ee);
         _ecore_evas_x_sync_set(ee);
         _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
@@ -3403,6 +3479,18 @@ _ecore_evas_x_wm_rot_manual_rotation_done_timeout_update(Ecore_Evas *ee)
      (4.0f, _ecore_evas_x_wm_rot_manual_rotation_done_timeout, ee);
 }
 
+static void
+_ecore_evas_x_aux_hints_set(Ecore_Evas *ee, const char *hints)
+{
+   if (hints)
+     ecore_x_window_prop_property_set
+       (ee->prop.window, ECORE_X_ATOM_E_WINDOW_AUX_HINT,
+        ECORE_X_ATOM_STRING, 8, (void *)hints, strlen(hints) + 1);
+   else
+     ecore_x_window_prop_property_del
+       (ee->prop.window, ECORE_X_ATOM_E_WINDOW_AUX_HINT);
+}
+
 static Ecore_Evas_Engine_Func _ecore_x_engine_func =
 {
    _ecore_evas_x_free,
@@ -3473,7 +3561,9 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
    _ecore_evas_x_wm_rot_preferred_rotation_set,
    _ecore_evas_x_wm_rot_available_rotations_set,
    _ecore_evas_x_wm_rot_manual_rotation_done_set,
-   _ecore_evas_x_wm_rot_manual_rotation_done
+   _ecore_evas_x_wm_rot_manual_rotation_done,
+
+   _ecore_evas_x_aux_hints_set
 };
 
 /*
@@ -3873,6 +3963,8 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_protocols_set(ee);
    _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_wm_rotation_protocol_set(ee);
+   _ecore_evas_x_aux_hints_supprted_update(ee);
+   _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
@@ -4321,6 +4413,8 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_protocols_set(ee);
    _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_wm_rotation_protocol_set(ee);
+   _ecore_evas_x_aux_hints_supprted_update(ee);
+   _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;

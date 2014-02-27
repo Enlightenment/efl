@@ -2093,6 +2093,167 @@ ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee)
    IFE;
 }
 
+EAPI const Eina_List *
+ecore_evas_aux_hints_supported_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hints_supported_get");
+        return NULL;
+     }
+   return ee->prop.aux_hint.supported_list;
+}
+
+EAPI Eina_List *
+ecore_evas_aux_hints_allowed_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hints_allowed_get");
+        return NULL;
+     }
+
+   Eina_List *list = NULL, *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if ((aux->allowed) && !(aux->notified))
+          {
+             list = eina_list_append(list, aux->id);
+          }
+     }
+
+   return list;
+}
+
+EAPI int
+ecore_evas_aux_hint_add(Ecore_Evas *ee, const char *hint, const char *val)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_add");
+        return -1;
+     }
+
+   Eina_List *ll;
+   char *supported_hint;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.supported_list, ll, supported_hint)
+     {
+        if (!strncmp(supported_hint, hint, strlen(hint)))
+          {
+             Ecore_Evas_Aux_Hint *aux= (Ecore_Evas_Aux_Hint *)calloc(1, sizeof(Ecore_Evas_Aux_Hint));
+             if (aux)
+               {
+                  aux->id = ee->prop.aux_hint.id;
+                  aux->hint = eina_stringshare_add(hint);
+                  aux->val = eina_stringshare_add(val);
+
+                  ee->prop.aux_hint.hints = eina_list_append(ee->prop.aux_hint.hints, aux);
+
+                  Eina_Strbuf *buf = _ecore_evas_aux_hints_string_get(ee);
+                  if (buf)
+                    {
+                       if (ee->engine.func->fn_aux_hints_set)
+                         ee->engine.func->fn_aux_hints_set(ee, eina_strbuf_string_get(buf));
+
+                       eina_strbuf_free(buf);
+
+                       ee->prop.aux_hint.id++;
+
+                       return aux->id;
+                    }
+
+                  eina_stringshare_del(aux->hint);
+                  eina_stringshare_del(aux->val);
+                  free(aux);
+               }
+             break;
+          }
+     }
+
+   return -1;
+}
+
+EAPI Eina_Bool
+ecore_evas_aux_hint_del(Ecore_Evas *ee, const int id)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_del");
+        return EINA_FALSE;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (id == aux->id)
+          {
+             ee->prop.aux_hint.hints = eina_list_remove(ee->prop.aux_hint.hints, aux);
+
+             eina_stringshare_del(aux->hint);
+             eina_stringshare_del(aux->val);
+             free(aux);
+
+             Eina_Strbuf *buf = _ecore_evas_aux_hints_string_get(ee);
+             if (buf)
+               {
+                  if (ee->engine.func->fn_aux_hints_set)
+                    ee->engine.func->fn_aux_hints_set(ee, eina_strbuf_string_get(buf));
+
+                  eina_strbuf_free(buf);
+
+                  return EINA_TRUE;
+               }
+             break;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_val_set");
+        return EINA_FALSE;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (id == aux->id)
+          {
+             eina_stringshare_del(aux->val);
+             aux->val = eina_stringshare_add(val);
+			 aux->allowed = 0;
+			 aux->notified = 0;
+
+             Eina_Strbuf *buf = _ecore_evas_aux_hints_string_get(ee);
+             if (buf)
+               {
+                  if (ee->engine.func->fn_aux_hints_set)
+                    ee->engine.func->fn_aux_hints_set(ee, eina_strbuf_string_get(buf));
+
+                  eina_strbuf_free(buf);
+
+                  return EINA_TRUE;
+               }
+             break;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI void
 ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
@@ -2854,6 +3015,7 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->prop.wm_rot.available_rots = NULL;
    if (ee->prop.wm_rot.manual_mode.timer)
      ecore_timer_del(ee->prop.wm_rot.manual_mode.timer);
+   _ecore_evas_aux_hint_free(ee);
    ee->prop.wm_rot.manual_mode.timer = NULL;
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
    ee->prop.cursor.object = NULL;
@@ -3155,6 +3317,48 @@ EAPI void
 ecore_evas_input_event_unregister(Ecore_Evas *ee)
 {
    ecore_event_window_unregister((Ecore_Window)ee);
+}
+
+EAPI Eina_Strbuf *
+_ecore_evas_aux_hints_string_get(Ecore_Evas *ee)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (buf)
+     {
+        if (eina_list_count(ee->prop.aux_hint.hints) > 0)
+          {
+             Eina_List *l;
+             Ecore_Evas_Aux_Hint *aux;
+             int i = 0;
+
+             EINA_LIST_FOREACH(ee->prop.aux_hint.hints, l, aux)
+               {
+                  /* add delimiter */
+                  if (i > 0) eina_strbuf_append_char(buf, ',');
+                  eina_strbuf_append_printf(buf, "%d:%s:%s", aux->id, aux->hint, aux->val);
+                  i++;
+               }
+          }
+     }
+   return buf;
+}
+
+void
+_ecore_evas_aux_hint_free(Ecore_Evas *ee)
+{
+   char *hint;
+   EINA_LIST_FREE(ee->prop.aux_hint.supported_list, hint)
+     {
+        eina_stringshare_del(hint);
+     }
+
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FREE(ee->prop.aux_hint.hints, aux)
+     {
+        eina_stringshare_del(aux->hint);
+        eina_stringshare_del(aux->val);
+        free(aux);
+     }
 }
 
 /**

@@ -706,7 +706,9 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      NULL,  // wm_rot_preferred_rotation_set
      NULL,  // wm_rot_available_rotations_set
      NULL, // wm_rot_manual_rotation_done_set
-     NULL  // wm_rot_manual_rotation_done
+     NULL, // wm_rot_manual_rotation_done
+
+     NULL  // aux_hints_set
 };
 
 void

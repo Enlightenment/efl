@@ -46,6 +46,7 @@ typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee);
 typedef struct _Ecore_Evas_Engine Ecore_Evas_Engine;
 typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 typedef struct _Ecore_Evas_Interface Ecore_Evas_Interface;
+typedef struct _Ecore_Evas_Aux_Hint Ecore_Evas_Aux_Hint;
 
 /* Engines interfaces */
 struct _Ecore_Evas_Engine_Func
@@ -120,6 +121,8 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_wm_rot_available_rotations_set) (Ecore_Evas *ee, const int *rots, unsigned int count);
    void (*fn_wm_rot_manual_rotation_done_set) (Ecore_Evas *ee, Eina_Bool set);
    void (*fn_wm_rot_manual_rotation_done) (Ecore_Evas *ee);
+
+   void (*fn_aux_hints_set) (Ecore_Evas *ee, const char *hints);
 };
 
 struct _Ecore_Evas_Interface
@@ -206,6 +209,11 @@ struct _Ecore_Evas
             Ecore_Timer *timer;
          } manual_mode;
       } wm_rot;
+      struct {
+         Eina_List      *supported_list;
+         Eina_List      *hints;
+         int             id;
+      } aux_hint;
       int             layer;
       Ecore_Window    window;
       unsigned char   avoid_damage;
@@ -298,6 +306,15 @@ struct _Ecore_Evas
    unsigned char can_async_render : 1;
 };
 
+struct _Ecore_Evas_Aux_Hint
+{
+   int           id;           // ID of aux hint
+   const char   *hint;         // hint string
+   const char   *val;          // value string
+   unsigned char allowed : 1;  // received allowed event from the window manager
+   unsigned char notified : 1; // let caller know ee has got response for this aux hint
+};
+
 EAPI void _ecore_evas_ref(Ecore_Evas *ee);
 EAPI void _ecore_evas_unref(Ecore_Evas *ee);
 EAPI int ecore_evas_buffer_render(Ecore_Evas *ee);
@@ -362,6 +379,9 @@ int _ecore_evas_ews_shutdown(void);
 
 void _ecore_evas_extn_init(void);
 void _ecore_evas_extn_shutdown(void);
+
+EAPI Eina_Strbuf *_ecore_evas_aux_hints_string_get(Ecore_Evas *ee);
+void              _ecore_evas_aux_hint_free(Ecore_Evas *ee);
 
 Eina_Module *_ecore_evas_engine_load(const char *engine);
 const Eina_List *_ecore_evas_available_engines_get(void);
