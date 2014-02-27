@@ -453,6 +453,7 @@ build_cpu_neon="no"
 
 SSE3_CFLAGS=""
 ALTIVEC_CFLAGS=""
+NEON_CFLAGS=""
 
 case $host_cpu in
   i*86|x86_64|amd64)
@@ -524,6 +525,7 @@ case $host_cpu in
         AC_MSG_RESULT([yes])
         AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
         build_cpu_neon="yes"
+        NEON_CFLAGS="-mfpu=neon"
        ],
        [
         AC_MSG_RESULT([no])
@@ -535,6 +537,7 @@ esac
 
 AC_SUBST([ALTIVEC_CFLAGS])
 AC_SUBST([SSE3_CFLAGS])
+AC_SUBST([NEON_CFLAGS])
 
 #### Checks for linker characteristics
 

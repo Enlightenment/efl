@@ -1,5 +1,8 @@
 #include "evas_common_private.h"
 #include "evas_convert_rgb_32.h"
+#ifdef BUILD_NEON
+#include <arm_neon.h>
+#endif
 
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x EINA_UNUSED, int dith_y EINA_UNUSED, DATA8 *pal EINA_UNUSED)
@@ -41,51 +44,143 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
 }
 
 #ifdef TILE_ROTATE
+#ifdef BUILD_NEON
+#define ROT90_QUAD_COPY_LOOP \
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON)) \
+   { \
+      if((w%4) == 0) \
+      { \
+        int klght = 4 * src_stride; \
+        for(y = 0; y < h; y++) \
+        { \
+          const pix_type *s = &(src[(h - y - 1)]); \
+          pix_type *d = &(dst[(dst_stride * y)]); \
+          pix_type *ptr1 = s; \
+          pix_type *ptr2 = ptr1 + src_stride; \
+          pix_type *ptr3 = ptr2 + src_stride; \
+          pix_type *ptr4 = ptr3 + src_stride; \
+          for(x = 0; x < w; x+=4) \
+          { \
+            pix_type s_array[4] = {*ptr1, *ptr2, *ptr3, *ptr4}; \
+            vst1q_s32(d, vld1q_s32(s_array)); \
+            d += 4; \
+            ptr1 += klght; \
+            ptr2 += klght; \
+            ptr3 += klght; \
+            ptr4 += klght; \
+          } \
+        } \
+      } \
+      else \
+      { \
+        for (y = 0; y < h; y++) \
+          { \
+             const pix_type *s = &(src[(h - y - 1)]); \
+             pix_type *d = &(dst[(dst_stride * y)]); \
+             for (x = 0; x < w; x++) \
+               { \
+                  *d++ = *s; \
+                  s += src_stride; \
+               } \
+          } \
+      } \
+   } \
+   else
+#define ROT270_QUAD_COPY_LOOP \
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON)) \
+      if((w%4) == 0) \
+      { \
+        int klght = 4 * src_stride; \
+        for(y = 0; y < h; y++) \
+        { \
+          const pix_type *s = &(src[(src_stride * (w - 1)) + y]); \
+          pix_type *d = &(dst[(dst_stride * y)]); \
+          pix_type *ptr1 = s; \
+          pix_type *ptr2 = ptr1 + src_stride; \
+          pix_type *ptr3 = ptr2 + src_stride; \
+          pix_type *ptr4 = ptr3 + src_stride; \
+          for(x = 0; x < w; x+=4) \
+          { \
+            pix_type s_array[4] = {*ptr1, *ptr2, *ptr3, *ptr4}; \
+            vst1q_s32(d, vld1q_s32(s_array)); \
+            d += 4; \
+            ptr1 += klght; \
+            ptr2 += klght; \
+            ptr3 += klght; \
+            ptr4 += klght; \
+          } \
+        } \
+      } \
+      else \
+      { \
+        for (y = 0; y < h; y++) \
+          { \
+             const pix_type *s = &(src[(src_stride * (w - 1)) + y]); \
+             pix_type *d = &(dst[(dst_stride * y)]); \
+             for (x = 0; x < w; x++) \
+               { \
+                  *d++ = *s; \
+                  s += src_stride; \
+               } \
+          } \
+      } \
+   } \
+   else
+#else
+#define ROT90_QUAD_COPY_LOOP
+#define ROT270_QUAD_COPY_LOOP
+#endif
 #define FAST_SIMPLE_ROTATE(suffix, pix_type) \
    static void \
-   blt_rotated_90_trivial_##suffix(pix_type       *dst, \
+   blt_rotated_90_trivial_##suffix(pix_type * restrict dst, \
                                    int             dst_stride, \
-                                   const pix_type *src, \
+                                   const pix_type * restrict src, \
                                    int             src_stride, \
                                    int             w, \
                                    int             h) \
    { \
       int x, y; \
-      for (y = 0; y < h; y++) \
-        { \
-           const pix_type *s = src + (h - y - 1); \
-           pix_type *d = dst + (dst_stride * y); \
-           for (x = 0; x < w; x++) \
-             { \
-                *d++ = *s; \
-                s += src_stride; \
-             } \
-        } \
+      ROT90_QUAD_COPY_LOOP \
+      { \
+        for (y = 0; y < h; y++) \
+          { \
+             const pix_type *s = &(src[(h - y - 1)]); \
+             pix_type *d = &(dst[(dst_stride * y)]); \
+             for (x = 0; x < w; x++) \
+               { \
+                  *d++ = *s; \
+                  s += src_stride; \
+               } \
+          } \
+      } \
    } \
    static void \
-   blt_rotated_270_trivial_##suffix(pix_type       *dst, \
+   blt_rotated_270_trivial_##suffix(pix_type * restrict dst, \
                                     int             dst_stride, \
-                                    const pix_type *src, \
+                                    const pix_type * restrict src, \
                                     int             src_stride, \
                                     int             w, \
                                     int             h) \
    { \
       int x, y; \
-      for (y = 0; y < h; y++) \
+      ROT270_QUAD_COPY_LOOP \
+      { \
+        for(y = 0; y < h; y++) \
         { \
-           const pix_type *s = src + (src_stride * (w - 1)) + y; \
-           pix_type *d = dst + (dst_stride * y); \
+           const pix_type *s = &(src[(src_stride * (w - 1)) + y]); \
+           pix_type *d = &(dst[(dst_stride * y)]); \
            for (x = 0; x < w; x++) \
-             { \
-                *d++ = *s; \
-                s -= src_stride; \
-             } \
+           { \
+              *d++ = *s; \
+              s -= src_stride; \
+           } \
         } \
+      } \
    } \
    static void \
-   blt_rotated_90_##suffix(pix_type       *dst, \
+   blt_rotated_90_##suffix(pix_type * restrict dst, \
                            int             dst_stride, \
-                           const pix_type *src, \
+                           const pix_type * restrict src, \
                            int             src_stride, \
                            int             w, \
                            int             h) \
@@ -120,7 +215,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
         { \
            blt_rotated_90_trivial_##suffix(dst + x, \
                                            dst_stride, \
-                                           src + (src_stride * x), \
+                                           &(src[(src_stride * x)]), \
                                            src_stride, \
                                            TILE_SIZE, \
                                            h); \
@@ -128,15 +223,15 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
       if (trailing_pixels) \
         blt_rotated_90_trivial_##suffix(dst + w, \
                                         dst_stride, \
-                                        src + (w * src_stride), \
+                                        &(src[(w * src_stride)]), \
                                         src_stride, \
                                         trailing_pixels, \
                                         h); \
    } \
    static void \
-   blt_rotated_270_##suffix(pix_type       *dst, \
+   blt_rotated_270_##suffix(pix_type * restrict dst, \
                             int             dst_stride, \
-                            const pix_type *src, \
+                            const pix_type * restrict src, \
                             int             src_stride, \
                             int             w, \
                             int             h) \
@@ -151,7 +246,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
              leading_pixels = w; \
            blt_rotated_270_trivial_##suffix(dst, \
                                             dst_stride, \
-                                            src + (src_stride * (w - leading_pixels)), \
+                                            &(src[(src_stride * (w - leading_pixels))]), \
                                             src_stride, \
                                             leading_pixels, \
                                             h); \
@@ -171,7 +266,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
         { \
            blt_rotated_270_trivial_##suffix(dst + x, \
                                             dst_stride, \
-                                            src + (src_stride * (w - x - TILE_SIZE)), \
+                                            &(src[(src_stride * (w - x - TILE_SIZE))]), \
                                             src_stride, \
                                             TILE_SIZE, \
                                             h); \
