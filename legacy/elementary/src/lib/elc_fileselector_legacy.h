@@ -17,7 +17,7 @@ EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
  *
  * @param obj The file selector object
  * @param is_save @c EINA_TRUE to make the file selector a "saving
- * dialog", @c EINA_FALSE otherwise
+ * dialog", @c EINA_FALSE otherwise. Default is @c EINA_TRUE.
  *
  * Having the entry editable is useful on file saving dialogs on
  * applications, where one gives a file name to save contents to,
