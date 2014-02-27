@@ -653,7 +653,7 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
         goto end;
      }
    evas_object_grabs_cleanup(eo_obj, obj);
-   EINA_LIST_FREE(obj->clip.clipees, tmp)
+   EINA_LIST_FOREACH_SAFE(obj->clip.clipees, l, l2, tmp)
      evas_object_clip_unset(tmp->object);
    while (obj->proxy->proxies)
      evas_object_image_source_unset(obj->proxy->proxies->data);
