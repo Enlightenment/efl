@@ -1003,7 +1003,8 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_HEX,             /**< Hexadecimal layout @since 1.2 */
    EDJE_INPUT_PANEL_LAYOUT_TERMINAL,        /**< Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization) @since 1.2 */
    EDJE_INPUT_PANEL_LAYOUT_PASSWORD,        /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
-   EDJE_INPUT_PANEL_LAYOUT_DATETIME         /**< Date and time layout @since 1.8 */
+   EDJE_INPUT_PANEL_LAYOUT_DATETIME,        /**< Date and time layout @since 1.8 */
+   EDJE_INPUT_PANEL_LAYOUT_EMOTICON         /**< Emoticon layout @since 1.10 */
 } Edje_Input_Panel_Layout;
 
 enum
