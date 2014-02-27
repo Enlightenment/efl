@@ -310,6 +310,35 @@ _edje_textblock_styles_del(Edje *ed)
      }
 }
 
+void
+_edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
+{
+   Eina_List *l, *ll;
+   Edje_Style *stl;
+
+   if (!ed->file) return;
+   if (!text_class) return;
+
+   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+     {
+        Edje_Style_Tag *tag;
+        Eina_Bool found = EINA_FALSE;
+
+        EINA_LIST_FOREACH(stl->tags, ll, tag)
+          {
+             if (!tag->text_class) continue;
+
+             if (!strcmp(tag->text_class, text_class))
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (found)
+          stl->cache = EINA_FALSE;
+     }
+}
+
 /* When we get to here the edje file had been read into memory
  * the name of the style is established as well as the name and
  * data for the tags.  This function will create the Evas_Style

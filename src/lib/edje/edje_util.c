@@ -962,6 +962,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
         ed = eina_list_data_get(members);
         ed->dirty = EINA_TRUE;
         ed->recalc_call = EINA_TRUE;
+        _edje_textblock_styles_cache_free(ed, text_class);
         _edje_textblock_style_all_update(ed);
 #ifdef EDJE_CALC_CACHE
         ed->text_part_change = EINA_TRUE;
@@ -995,6 +996,7 @@ edje_text_class_del(const char *text_class)
 
         ed = eina_list_data_get(members);
         ed->dirty = EINA_TRUE;
+        _edje_textblock_styles_cache_free(ed, text_class);
         _edje_textblock_style_all_update(ed);
 #ifdef EDJE_CALC_CACHE
         ed->text_part_change = EINA_TRUE;
@@ -1107,6 +1109,7 @@ _text_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 #ifdef EDJE_CALC_CACHE
    ed->text_part_change = EINA_TRUE;
 #endif
+   _edje_textblock_styles_cache_free(ed, text_class);
    _edje_textblock_style_all_update(ed);
    _edje_recalc(ed);
    if (ret) *ret = EINA_TRUE;
