@@ -311,19 +311,18 @@ _eo_op_internal(const char *file, int line, Eo_Base *eo_ptr, const _Eo_Class *cu
    /* Try composite objects */
    if (op_type == EO_OP_TYPE_REGULAR)
      {
-        const _Eo_Object **comp_itr = ((_Eo_Object *) eo_ptr)->composites;
-        if (!comp_itr) return EINA_FALSE;
-
-        for (unsigned int i = 0; i < ((_Eo_Object *) eo_ptr)->klass->composites_count; i++, comp_itr++)
-          if (*comp_itr)
-            {
-               if (_eo_op_internal(file, line, (Eo_Base *) (*comp_itr), (*comp_itr)->klass, op_type, op, p_list))
-                 {
-                    return EINA_TRUE;
-                 }
-            }
+        Eina_List *itr;
+        Eo *emb_obj_id;
+        EINA_LIST_FOREACH(((_Eo_Object *) eo_ptr)->composite_objects, itr, emb_obj_id)
+          {
+             /* FIXME: Clean this up a bit. */
+             EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
+             if (_eo_op_internal(file, line, (Eo_Base *) emb_obj, emb_obj->klass, op_type, op, p_list))
+               {
+                  return EINA_TRUE;
+               }
+          }
      }
-
    return EINA_FALSE;
 }
 
@@ -922,8 +921,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         EINA_LIST_FREE(extn_list, extn)
           {
              *(extn_itr++) = extn;
-             if (extn->desc->type == EO_CLASS_TYPE_REGULAR)
-               klass->composites_count += 1;
 
              DBG("Added '%s' extension", extn->desc->name);
           }
@@ -965,8 +962,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    klass->obj_size = _eo_sz + extn_data_off;
-   if (klass->composites_count > 0)
-     klass->obj_size += (klass->composites_count * sizeof(_Eo_Object *));
    if (getenv("EO_DEBUG"))
      {
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
@@ -1093,10 +1088,6 @@ eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent
 
    obj->refcount++;
    obj->klass = klass;
-   if (klass->composites_count == 0)
-     obj->composites = NULL;
-   else
-     obj->composites = (const _Eo_Object **) ((char *) obj + sizeof(_Eo_Object));
 
 #ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
@@ -1505,65 +1496,39 @@ eo_shutdown(void)
 EAPI Eina_Bool
 eo_composite_attach(Eo *comp_obj_id, Eo *parent_id)
 {
-   const _Eo_Object **comp_itr;
-   const _Eo_Object **comp_dst;
-
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
 
-   if (!parent->composites) return EINA_FALSE;
+   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass))) return EINA_FALSE;
 
-   if (comp_obj->klass->desc->type != EO_CLASS_TYPE_REGULAR)
-     return EINA_FALSE;
-   if (!eo_isa(parent_id, _eo_class_id_get(comp_obj->klass)))
-     return EINA_FALSE;
-
-   comp_dst = NULL;
-   comp_itr = parent->composites;
-   for (unsigned int i = 0; i < parent->klass->composites_count; i++, comp_itr++)
      {
-        if (*comp_itr)
+        Eina_List *itr;
+        Eo *emb_obj_id;
+        EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
           {
-             if ((*comp_itr)->klass == comp_obj->klass)
+             EO_OBJ_POINTER_RETURN_VAL(emb_obj_id, emb_obj, EINA_FALSE);
+             if(emb_obj->klass == comp_obj->klass)
                return EINA_FALSE;
           }
-        else if (!comp_dst)
-          comp_dst = comp_itr;
      }
 
-   if (!comp_dst)
-     return EINA_FALSE;
-
    comp_obj->composite = EINA_TRUE;
-   *comp_dst = comp_obj;
+   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
+
    eo_do(comp_obj_id, eo_parent_set(parent_id));
 
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EAPI void
 eo_composite_detach(Eo *comp_obj_id, Eo *parent_id)
 {
-   const _Eo_Object **comp_itr;
+   EO_OBJ_POINTER_RETURN(comp_obj_id, comp_obj);
+   EO_OBJ_POINTER_RETURN(parent_id, parent);
 
-   EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
-   EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, EINA_FALSE);
-
-   if (!parent->composites) return EINA_FALSE;
-
-   comp_itr = parent->composites;
-   for (unsigned int i = 0; i < parent->klass->composites_count; i++, comp_itr++)
-     {
-        if (*comp_itr == comp_obj)
-          {
-             comp_obj->composite = EINA_FALSE;
-             *comp_itr = NULL;
-             eo_do(comp_obj_id, eo_parent_set(NULL));
-             return EINA_TRUE;
-          }
-     }
-
-   return EINA_FALSE;
+   comp_obj->composite = EINA_FALSE;
+   parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
+   eo_do(comp_obj_id, eo_parent_set(NULL));
 }
 
 EAPI Eina_Bool
