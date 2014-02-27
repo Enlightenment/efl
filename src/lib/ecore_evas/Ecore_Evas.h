@@ -783,7 +783,7 @@ EAPI void        ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee);
  * hint change event. A list of auxiliary hint within the Ecore_Evas has this format:
  * ID:HINT:VALUE,ID:HINT:VALUE,...
  *
- * @since 1.9.0
+ * @since 1.10.0
  */
 EAPI const Eina_List *ecore_evas_aux_hints_supported_get(const Ecore_Evas *ee);
 /**
@@ -795,7 +795,7 @@ EAPI const Eina_List *ecore_evas_aux_hints_supported_get(const Ecore_Evas *ee);
  * using the callback mechanism in Elementary such as "aux,hint,allowed".
  * @warning Support for this depends on the underlying windowing system.
  *
- * @since 1.9.0
+ * @since 1.10.0
  */
 EAPI Eina_List       *ecore_evas_aux_hints_allowed_get(const Ecore_Evas *ee);
 /**
@@ -807,7 +807,7 @@ EAPI Eina_List       *ecore_evas_aux_hints_allowed_get(const Ecore_Evas *ee);
  * @return The ID of created auxiliary hint, or -1 on failure.
  * @warning Support for this depends on the underlying windowing system.
  *
- * @since 1.9.0
+ * @since 1.10.0
  */
 EAPI int              ecore_evas_aux_hint_add(Ecore_Evas *ee, const char *hint, const char *val);
 /**
@@ -818,7 +818,7 @@ EAPI int              ecore_evas_aux_hint_add(Ecore_Evas *ee, const char *hint, 
  * @return EINA_TRUE if no error occurred, EINA_FALSE otherwise.
  * @warning Support for this depends on the underlying windowing system.
  *
- * @since 1.9.0
+ * @since 1.10.0
  */
 EAPI Eina_Bool        ecore_evas_aux_hint_del(Ecore_Evas *ee, const int id);
 /**
@@ -830,7 +830,7 @@ EAPI Eina_Bool        ecore_evas_aux_hint_del(Ecore_Evas *ee, const int id);
  * @return EINA_TRUE if no error occurred, EINA_FALSE otherwise.
  * @warning Support for this depends on the underlying windowing system.
  *
- * @since 1.9.0
+ * @since 1.10.0
  */
 EAPI Eina_Bool        ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val);
 /**
