@@ -2468,7 +2468,7 @@ struct _Ctxt
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
 static void _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti);
-static void _layout_do_format(const Evas_Object *eo_obj, Ctxt *c, Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n, int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b, Eina_Bool create_item);
+static Evas_Object_Textblock_Format_Item *_layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c, Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n, int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b, Eina_Bool create_item);
 
 /**
  * @internal
@@ -3684,6 +3684,31 @@ _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
          c->par->logical_items, ti, rel);
 }
 
+static void
+_layout_text_append_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
+      Eina_List *rel)
+{
+   _text_item_update_sizes(c, ti);
+
+   if (rel)
+     {
+        c->par->logical_items = eina_list_prepend_relative_list(
+              c->par->logical_items, ti, rel);
+     }
+   else
+     {
+        c->par->logical_items = eina_list_append(
+              c->par->logical_items, ti);
+     }
+}
+
+typedef struct {
+     EINA_INLIST;
+     Evas_Object_Textblock_Format *format;
+     size_t start;
+     int off;
+} Layout_Text_Append_Queue;
+
 /**
  * @internal
  * Appends the text from node n starting at start ending at off to the layout.
@@ -3697,7 +3722,7 @@ _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
  * @param repch a replacement char to print instead of the original string, for example, * when working with passwords.
  */
 static void
-_layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch)
+_layout_text_append(Ctxt *c, Layout_Text_Append_Queue *queue, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch, Eina_List *rel)
 {
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
    const Eina_Unicode *tbase;
@@ -3736,7 +3761,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 
         /* If we work with a replacement char, create a string which is the same
          * but with replacement chars instead of regular chars. */
-        if ((fmt->password) && (repch) && (eina_ustrbuf_length_get(n->unicode)))
+        if ((queue->format->password) && (repch) && (eina_ustrbuf_length_get(n->unicode)))
           {
              int i, ind;
              Eina_Unicode *ptr;
@@ -3763,10 +3788,10 @@ skip:
    /* If there's no parent text node, only create an empty item */
    if (!n)
      {
-        ti = _layout_text_item_new(c, fmt);
+        ti = _layout_text_item_new(c, queue->format);
         ti->parent.text_node = NULL;
         ti->parent.text_pos = 0;
-        _layout_text_add_logical_item(c, ti, NULL);
+        _layout_text_append_add_logical_item(c, ti, rel);
 
         return;
      }
@@ -3793,10 +3818,11 @@ skip:
         while (script_len > 0)
           {
              Evas_Font_Instance *cur_fi = NULL;
+             size_t run_start;
              int run_len = script_len;
-             ti = _layout_text_item_new(c, fmt);
+             ti = _layout_text_item_new(c, queue->format);
              ti->parent.text_node = n;
-             ti->parent.text_pos = start + str - tbase;
+             ti->parent.text_pos = run_start = start + str - tbase;
 
              if (ti->parent.format->font.font)
                {
@@ -3815,10 +3841,36 @@ skip:
                         cur_fi, str, &ti->text_props, c->par->bidi_props,
                         ti->parent.text_pos, run_len, EVAS_TEXT_PROPS_MODE_SHAPE);
                }
+
+             while (queue &&
+                   ((queue->start + queue->off) < (run_start + run_len)))
+               {
+                  Evas_Object_Textblock_Text_Item *new_ti;
+
+                  /* There must be a next because of the test in the while. */
+                  queue = (Layout_Text_Append_Queue *) EINA_INLIST_GET(queue)->next;
+
+                  new_ti = _layout_text_item_new(c, queue->format);
+                  new_ti->parent.text_node = ti->parent.text_node;
+                  new_ti->parent.text_pos = queue->start;
+
+                  evas_common_text_props_split(&ti->text_props, &new_ti->text_props,
+                        new_ti->parent.text_pos - ti->parent.text_pos);
+
+                  if (ti)
+                    {
+                       _layout_text_append_add_logical_item(c, ti, rel);
+                       ti = new_ti;
+                    }
+               }
+
+             if (ti)
+               {
+                  _layout_text_append_add_logical_item(c, ti, rel);
+               }
+
              str += run_len;
              script_len -= run_len;
-
-             _layout_text_add_logical_item(c, ti, NULL);
           }
      }
 }
@@ -3926,13 +3978,16 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
  * @param style_pad_t the pad to update.
  * @param style_pad_b the pad to update.
  * @param create_item Create a new format item if true, only process otherwise.
+ *
+ * @return fi if created.
  */
-static void
+static Evas_Object_Textblock_Format_Item *
 _layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c,
       Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n,
       int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b,
       Eina_Bool create_item)
 {
+   Evas_Object_Textblock_Format_Item *fi = NULL;
    Evas_Object_Textblock_Format *fmt = *_fmt;
    /* FIXME: comment the algo */
 
@@ -3960,7 +4015,6 @@ _layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c,
         //   scale factor
         // href == name of item - to be found and matched later and used for
         //   positioning
-        Evas_Object_Textblock_Format_Item *fi;
         int w = 1, h = 1;
         int vsize = 0, size = 0;
         char *p;
@@ -4058,16 +4112,12 @@ _layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c,
                   if ((_IS_PARAGRAPH_SEPARATOR(c->o, item)) ||
                         (_IS_LINE_SEPARATOR(item)))
                     {
-                       Evas_Object_Textblock_Format_Item *fi;
-
                        fi = _layout_format_item_add(c, n, item, fmt);
 
                        fi->parent.w = fi->parent.adv = 0;
                     }
                   else if (_IS_TAB(item))
                     {
-                       Evas_Object_Textblock_Format_Item *fi;
-
                        fi = _layout_format_item_add(c, n, item, fmt);
                        fi->parent.w = fi->parent.adv = fmt->tabstops;
                        fi->formatme = 1;
@@ -4092,6 +4142,8 @@ _layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c,
    else if (fmt->underline || fmt->underline_dash)
      c->have_underline = 1;
    *_fmt = fmt;
+
+   return fi;
 }
 
 static void
@@ -4852,6 +4904,67 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
    eina_list_free(fstack);
 }
 
+static Layout_Text_Append_Queue *
+_layout_text_append_queue_item_append(Layout_Text_Append_Queue *queue,
+      Evas_Object_Textblock_Format *format, size_t start, int off)
+{
+   /* Don't add empty items. */
+   if (off == 0)
+      return (Layout_Text_Append_Queue *) queue;
+
+   Layout_Text_Append_Queue *item = calloc(1, sizeof(*item));
+   item->format = format;
+   item->start = start;
+   item->off = off;
+   item->format->ref++;
+
+   return (Layout_Text_Append_Queue *) eina_inlist_append(EINA_INLIST_GET(queue), EINA_INLIST_GET(item));
+}
+
+static void
+_layout_text_append_item_free(Ctxt *c, Layout_Text_Append_Queue *item)
+{
+   if (item->format)
+      _format_unref_free(c->obj, item->format);
+   free(item);
+}
+
+static void
+_layout_text_append_commit(Ctxt *c, Layout_Text_Append_Queue **_queue, Evas_Object_Textblock_Node_Text *n, Eina_List *rel)
+{
+   Layout_Text_Append_Queue *item, *queue = *_queue;
+
+   if (!queue)
+      return;
+
+     {
+        item = (Layout_Text_Append_Queue *) EINA_INLIST_GET(queue)->last;
+        int off = item->start - queue->start + item->off;
+        _layout_text_append(c, queue, n, queue->start, off, c->o->repch, rel);
+     }
+
+   while (queue)
+     {
+        item = queue;
+        queue = (Layout_Text_Append_Queue *) EINA_INLIST_GET(queue)->next;
+        _layout_text_append_item_free(c, item);
+     }
+
+   *_queue = NULL;
+}
+
+static Eina_Bool
+_layout_split_text_because_format(const Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Format *nfmt)
+{
+   if ((fmt->password != nfmt->password) ||
+         memcmp(&fmt->font, &nfmt->font, sizeof(fmt->font)))
+     {
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
 
 /** FIXME: Document */
 static void
@@ -4955,15 +5068,31 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
               * items this is the core algorithm of the layout mechanism.
               * Skip the unicode replacement chars when there are because
               * we don't want to print them. */
+             Layout_Text_Append_Queue *queue = NULL;
              fnode = n->format_node;
              start = off = 0;
              while (fnode && (fnode->text_node == n))
                {
+                  Evas_Object_Textblock_Format_Item *fi = NULL;
+                  Evas_Object_Textblock_Format *pfmt = c->fmt;
+
                   off += fnode->offset;
                   /* No need to skip on the first run, or a non-visible one */
-                  _layout_text_append(c, c->fmt, n, start, off, o->repch);
-                  _layout_do_format(eo_obj, c, &c->fmt, fnode, style_pad_l,
+                  queue = _layout_text_append_queue_item_append(queue, c->fmt, start, off);
+                  fi = _layout_do_format(eo_obj, c, &c->fmt, fnode, style_pad_l,
                         style_pad_r, style_pad_t, style_pad_b, EINA_TRUE);
+
+                  if (fi || _layout_split_text_because_format(pfmt, c->fmt))
+                    {
+                       Eina_List *rel = NULL;
+                       if (fi)
+                         {
+                            rel = eina_list_last(c->par->logical_items);
+                         }
+
+                       _layout_text_append_commit(c, &queue, n, rel);
+                    }
+
                   if ((c->have_underline2) || (c->have_underline))
                     {
                        if (*style_pad_b < c->underline_extend)
@@ -4985,7 +5114,9 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                   fnode->is_new = EINA_FALSE;
                   fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                }
-             _layout_text_append(c, c->fmt, n, start, -1, o->repch);
+             queue = _layout_text_append_queue_item_append(queue, c->fmt, start,
+                   eina_ustrbuf_length_get(n->unicode) - start);
+             _layout_text_append_commit(c, &queue, n, NULL);
 #ifdef BIDI_SUPPORT
              /* Clear the bidi props because we don't need them anymore. */
              if (c->par->bidi_props)
