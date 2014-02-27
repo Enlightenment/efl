@@ -249,6 +249,7 @@ struct _Elm_Config
    int           weekend_len;
    int           year_min;
    int           year_max;
+   Eina_List    *color_overlays;
    Eina_List    *color_palette;
    unsigned char softcursor_mode;
    unsigned char auto_norender_withdrawn;
@@ -406,6 +407,16 @@ void                 _elm_config_font_overlay_remove(const char *text_class);
 void                 _elm_config_font_overlay_apply(void);
 Eina_List           *_elm_config_text_classes_get(void);
 void                 _elm_config_text_classes_free(Eina_List *l);
+
+Eina_List           *_elm_config_color_classes_get(void);
+void                 _elm_config_color_classes_free(Eina_List *l);
+Eina_List           *_elm_config_color_overlays_list(void);
+void                 _elm_config_color_overlay_set(const char *color_class,
+                                                   int r, int g, int b, int a,
+                                                   int r2, int g2, int b2, int a2,
+                                                   int r3, int g3, int b3, int a3);
+void                 _elm_config_color_overlay_remove(const char *color_class);
+void                 _elm_config_color_overlay_apply(void);
 
 Eina_Bool            _elm_config_access_get(void);
 void                 _elm_config_access_set(Eina_Bool is_access);

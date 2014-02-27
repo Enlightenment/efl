@@ -1253,6 +1253,123 @@ EAPI double   elm_config_glayer_double_tap_timeout_get(void);
  */
 EAPI void   elm_config_glayer_double_tap_timeout_set(double double_tap_timeout);
 
+typedef struct _Elm_Color_Class
+{
+   const char *name;
+   const char *desc;
+} Elm_Color_Class;
+
+typedef struct _Elm_Color_Overlay
+{
+   const char *color_class;
+   struct {
+      unsigned char r, g, b, a;
+   } color, outline, shadow;
+} Elm_Color_Overlay;
+
+/**
+ * Get Elementary's list of supported color classes.
+ *
+ * @return The color classes list, with @c Elm_Color_Class blobs as data.
+ * @ingroup Colors
+ * @since 1.10
+ *
+ * Release the list with elm_color_classes_list_free().
+ */
+EAPI Eina_List *elm_config_color_classes_list_get(void);
+
+/**
+ * Free Elementary's list of supported color classes.
+ *
+ * @ingroup Colors
+ * @since 1.10
+ *
+ * @see elm_config_color_classes_list_get().
+ */
+EAPI void      elm_config_color_classes_list_free(Eina_List *list);
+
+/**
+ * Get Elementary's list of color overlays, set with
+ * elm_config_color_overlay_set().
+ *
+ * @return The color overlays list, with @c Elm_Color_Overlay blobs as
+ * data.
+ *
+ * @ingroup Colors
+ * @since 1.10
+ *
+ * For each color class, one can set a <b>color overlay</b> for it,
+ * overriding the default color properties for that class coming from
+ * the theme in use. There is no need to free this list.
+ *
+ * @see elm_config_color_overlay_set()
+ * @see elm_config_color_overlay_unset().
+ */
+EAPI const Eina_List *elm_config_color_overlay_list_get(void);
+
+/**
+ * Set a color overlay for a given Elementary color class.
+ *
+ * @param color_class Color class name
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * @ingroup Colors
+ * @since 1.10
+
+ * The first color is the object, the second is the text outline, and
+ * the third is the text shadow. (Note that the second two only apply
+ * to text parts).
+
+ * Setting color emits a signal "color_class,set" with source being
+ * the given color class in all edje objects.
+ *
+ * @see elm_config_color_overlay_list_get()
+ * @see elm_config_color_overlay_unset()
+ * @see edje_color_class_set()
+
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
+ */
+EAPI void      elm_config_color_overlay_set(const char *color_class,
+                                            int r, int g, int b, int a,
+                                            int r2, int g2, int b2, int a2,
+                                            int r3, int g3, int b3, int a3);
+
+/**
+ * Unset a color overlay for a given Elementary color class.
+ *
+ * @param color_class Color class name
+ *
+ * @ingroup Colors
+ * @since 1.10
+ *
+ * This will bring back color elements belonging to color class
+ * @p color_class back to their default color settings.
+ */
+EAPI void      elm_config_color_overlay_unset(const char *color_class);
+
+/**
+ * Apply the changes made with elm_config_color_overlay_set() and
+ * elm_config_color_overlay_unset() on the current Elementary window.
+ *
+ * @ingroup Colors
+ * @since 1.10
+ *
+ * This applies all color overlays set to all objects in the UI.
+ */
+EAPI void      elm_config_color_overlay_apply(void);
+
 /**
  * Get the magnifier enabled state for entries
  * 

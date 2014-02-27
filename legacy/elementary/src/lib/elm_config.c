@@ -18,8 +18,10 @@ static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_color_edd = NULL;
 static Eet_Data_Descriptor *_config_color_palette_edd = NULL;
+static Eet_Data_Descriptor *_config_color_overlay_edd = NULL;
 const char *_elm_preferred_engine = NULL;
 Eina_List  *_font_overlays_del = NULL;
+Eina_List  *_color_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
 
@@ -59,11 +61,57 @@ static const Elm_Text_Class _elm_text_classes[] = {
    {NULL, NULL}
 };
 
+/* whenever you want to add a new class class support into Elementary,
+   declare it both here and in the (default) theme */
+static const Elm_Color_Class _elm_color_classes[] = {
+   {"button_text", "Button Text"},
+   {"button_text_disabled", "Button Disabled Text"},
+   {"button_text_anchor", "Anchor Button Text"},
+   {"button_text_anchor_disabled", "Anchor Button Disabled Text"},
+   {"hoversel_item_active", "Hoversel Item Text"},
+   {"hoversel_text_disabled", "Hoversel Item Disabled Text"},
+   {"radio_text", "Radio Text"},
+   {"frame", "Frame Text"},
+   {"entry", "Entry Text"},
+   {"check_text", "Check Text"},
+   {"check_on_text", "Check On Text"},
+   {"check_off_text", "Check Off Text"},
+   {"list_item_base", "List Item Base"},
+   {"list_item_base_odd", "List Odd Item Base"},
+   {"list_item_disabled", "List Item Disabled Base"},
+   {"list_item_selected", "List Item Selected Base"},
+   {"grid_item", "Grid Item Text"},
+   {"grid_item_disabled", "Grid Item Disabled Text"},
+   {"grid_item_selected", "Grid Item Selected Text"},
+   {"toolbar_item", "Toolbar Item Text"},
+   {"toolbar_item_disabled", "Toolbar Item Disabled Text"},
+   {"toolbar_item_selected", "Toolbar Item Selected Text"},
+   {"toolbar_item_active", "Toolbar Item Active Text"},
+   {"slider_text", "Slider Text"},
+   {"slider_text_disabled", "Slider Disabled Text"},
+   {"slider_indicator", "Slider Indicator Text"},
+   {"progressbar_text", "Progressbar Text"},
+   {"progressbar_text_disabled", "Progressbar Disabled Text"},
+   {"progressbar_status", "Progressbar Status Text"},
+   {"bubble_text", "Bubble Text"},
+   {"bubble_info", "Bubble Info Text"},
+   {"menu_item_active", "Menu Item Text"},
+   {"menu_item_disabled", "Menu Item Disabled Text"},
+   {"border_title", "Border Title Text"},
+   {"border_title_active", "Border Title Active Text"},
+   {"datetime_text", "Datetime Text"},
+   {"multibuttonentry_label", "Multibuttonentry Text"},
+   {"spinner", "Spinner Text"},
+   {"spinner_disabled", "Spinner Disabled Text"},
+   {NULL, NULL}
+};
+
 static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
 static void        _config_sub_apply(void);
 static void        _config_update(void);
 static void        _env_get(void);
+static void        _color_overlays_cancel(void);
 
 #define ELM_CONFIG_VAL(edd, type, member, dtype) \
   EET_DATA_DESCRIPTOR_ADD_BASIC(edd, type, #member, member, dtype)
@@ -157,6 +205,7 @@ _prop_config_get(void)
     * cases or we only check for equality above? */
 
    _elm_config_font_overlays_cancel();
+   _color_overlays_cancel();
    _config_free(_elm_config);
    _elm_config = NULL;
    _elm_config = config_data;
@@ -164,6 +213,7 @@ _prop_config_get(void)
    _config_apply();
    _config_sub_apply();
    _elm_config_font_overlay_apply();
+   _elm_config_color_overlay_apply();
    _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
@@ -296,6 +346,19 @@ _desc_init(void)
         return;
      }
 
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Color_Overlay);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_color_overlay_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_color_overlay_edd)
+     {
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
+
 #define T_INT    EET_T_INT
 #define T_DOUBLE EET_T_DOUBLE
 #define T_STRING EET_T_STRING
@@ -322,6 +385,24 @@ _desc_init(void)
 #define D _config_color_palette_edd
    ELM_CONFIG_VAL(D, T, palette_name, EET_T_STRING);
    ELM_CONFIG_LIST(D, T, color_list, _config_color_edd);
+#undef T
+#undef D
+
+#define T Elm_Color_Overlay
+#define D _config_color_overlay_edd
+   ELM_CONFIG_VAL(D, T, color_class, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, color.r, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, color.g, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, color.b, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, color.a, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, outline.r, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, outline.g, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, outline.b, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, outline.a, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, shadow.r, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, shadow.g, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, shadow.b, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, shadow.a, EET_T_UCHAR);
 #undef T
 #undef D
 
@@ -404,6 +485,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, weekend_len, T_INT);
    ELM_CONFIG_VAL(D, T, year_min, T_INT);
    ELM_CONFIG_VAL(D, T, year_max, T_INT);
+   ELM_CONFIG_LIST(D, T, color_overlays, _config_color_overlay_edd);
    ELM_CONFIG_LIST(D, T, color_palette, _config_color_palette_edd);
    ELM_CONFIG_VAL(D, T, softcursor_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, auto_norender_withdrawn, T_UCHAR);
@@ -461,6 +543,12 @@ _desc_shutdown(void)
      {
         eet_data_descriptor_free(_config_color_palette_edd);
         _config_color_palette_edd = NULL;
+     }
+
+   if (_config_color_overlay_edd)
+     {
+        eet_data_descriptor_free(_config_color_overlay_edd);
+        _config_color_overlay_edd = NULL;
      }
 }
 
@@ -740,6 +828,162 @@ _elm_config_text_classes_free(Eina_List *l)
 }
 
 Eina_List *
+_elm_config_color_classes_get(void)
+{
+   Eina_List *ret = NULL;
+   int i;
+
+   for (i = 0; _elm_color_classes[i].desc; i++)
+     {
+        Elm_Color_Class *cc;
+        cc = malloc(sizeof(*cc));
+        if (!cc) continue;
+
+        *cc = _elm_color_classes[i];
+
+        ret = eina_list_append(ret, cc);
+     }
+
+   return ret;
+}
+
+void
+_elm_config_color_classes_free(Eina_List *l)
+{
+   Elm_Color_Class *cc;
+
+   EINA_LIST_FREE(l, cc)
+     free(cc);
+}
+
+static void
+_color_overlays_cancel(void)
+{
+   Elm_Color_Overlay *ecd;
+   Eina_List *l;
+   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
+     edje_color_class_del(ecd->color_class);
+}
+
+Eina_List *
+_elm_config_color_overlays_list(void)
+{
+   return _elm_config->color_overlays;
+}
+
+void
+_elm_config_color_overlay_set(const char *color_class,
+                              int r, int g, int b, int a,
+                              int r2, int g2, int b2, int a2,
+                              int r3, int g3, int b3, int a3)
+{
+   Elm_Color_Overlay *ecd;
+   Eina_List *l;
+
+#define CHECK_COLOR_VAL(v) v = (v > 255)? 255 : (v < 0)? 0: v
+   CHECK_COLOR_VAL(r);
+   CHECK_COLOR_VAL(g);
+   CHECK_COLOR_VAL(b);
+   CHECK_COLOR_VAL(a);
+   CHECK_COLOR_VAL(r2);
+   CHECK_COLOR_VAL(g2);
+   CHECK_COLOR_VAL(b2);
+   CHECK_COLOR_VAL(a2);
+   CHECK_COLOR_VAL(r3);
+   CHECK_COLOR_VAL(g3);
+   CHECK_COLOR_VAL(b3);
+   CHECK_COLOR_VAL(a3);
+#undef CHECK_COLOR_VAL
+
+   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
+     {
+        if (strcmp(ecd->color_class, color_class))
+          continue;
+
+        ecd->color.r = r;
+        ecd->color.g = g;
+        ecd->color.b = b;
+        ecd->color.a = a;
+        ecd->outline.r = r2;
+        ecd->outline.g = g2;
+        ecd->outline.b = b2;
+        ecd->outline.a = a2;
+        ecd->shadow.r = r3;
+        ecd->shadow.g = g3;
+        ecd->shadow.b = b3;
+        ecd->shadow.a = a3;
+
+        _elm_config->color_overlays =
+           eina_list_promote_list(_elm_config->color_overlays, l);
+        return;
+     }
+
+   /* the color class doesn't exist */
+   ecd = calloc(1, sizeof(Elm_Color_Overlay));
+   if (!ecd) return;
+
+   ecd->color_class = eina_stringshare_add(color_class);
+   ecd->color.r = r;
+   ecd->color.g = g;
+   ecd->color.b = b;
+   ecd->color.a = a;
+   ecd->outline.r = r2;
+   ecd->outline.g = g2;
+   ecd->outline.b = b2;
+   ecd->outline.a = a2;
+   ecd->shadow.r = r3;
+   ecd->shadow.g = g3;
+   ecd->shadow.b = b3;
+   ecd->shadow.a = a3;
+
+   _elm_config->color_overlays =
+      eina_list_prepend(_elm_config->color_overlays, ecd);
+}
+
+void
+_elm_config_color_overlay_remove(const char *color_class)
+{
+   Elm_Color_Overlay *ecd;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
+     {
+        if (!ecd->color_class) continue;
+        if (strcmp(ecd->color_class, color_class)) continue;
+
+        _color_overlays_del =
+           eina_list_append(_color_overlays_del,
+                            eina_stringshare_add(color_class));
+        _elm_config->color_overlays =
+          eina_list_remove_list(_elm_config->color_overlays, l);
+        eina_stringshare_del(ecd->color_class);
+        free(ecd);
+
+        return;
+     }
+}
+
+void
+_elm_config_color_overlay_apply(void)
+{
+   Elm_Color_Overlay *ecd;
+   Eina_List *l;
+   char *color_class;
+
+   EINA_LIST_FREE(_color_overlays_del, color_class)
+     {
+        edje_color_class_del(color_class);
+        eina_stringshare_del(color_class);
+     }
+
+   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
+     edje_color_class_set(ecd->color_class,
+                ecd->color.r, ecd->color.g, ecd->color.b, ecd->color.a,
+                ecd->outline.r, ecd->outline.g, ecd->outline.b, ecd->outline.a,
+                ecd->shadow.r, ecd->shadow.g, ecd->shadow.b, ecd->shadow.a);
+}
+
+Eina_List *
 _elm_config_color_list_get(const char *palette_name)
 {
     Eina_List *plist;
@@ -960,8 +1204,10 @@ _config_free(Elm_Config *cfg)
 {
    Elm_Font_Overlay *fo;
    const char *fontdir;
+   Elm_Color_Overlay *co;
    Elm_Custom_Palette *palette;
    Elm_Color_RGBA *color;
+   char *color_class;
 
    if (!cfg) return;
    EINA_LIST_FREE(cfg->font_dirs, fontdir)
@@ -974,6 +1220,13 @@ _config_free(Elm_Config *cfg)
         eina_stringshare_del(fo->text_class);
         eina_stringshare_del(fo->font);
         free(fo);
+     }
+   EINA_LIST_FREE(_color_overlays_del, color_class)
+     eina_stringshare_del(color_class);
+   EINA_LIST_FREE(cfg->color_overlays, co)
+     {
+        if (co->color_class) eina_stringshare_del(co->color_class);
+        free(co);
      }
    EINA_LIST_FREE(cfg->color_palette, palette)
      {
@@ -2005,6 +2258,50 @@ elm_config_font_overlay_apply(void)
    _elm_rescale();
 }
 
+EAPI Eina_List *
+elm_config_color_classes_list_get(void)
+{
+   return _elm_config_color_classes_get();
+}
+
+EAPI void
+elm_config_color_classes_list_free(Eina_List *list)
+{
+   _elm_config_color_classes_free(list);
+}
+
+EAPI const Eina_List *
+elm_config_color_overlay_list_get(void)
+{
+   return _elm_config_color_overlays_list();
+}
+
+EAPI void
+elm_config_color_overlay_set(const char *color_class,
+                             int r, int g, int b, int a,
+                             int r2, int g2, int b2, int a2,
+                             int r3, int g3, int b3, int a3)
+{
+   EINA_SAFETY_ON_NULL_RETURN(color_class);
+   _elm_config_color_overlay_set(color_class,
+                                 r, g, b, a,
+                                 r2, g2, b2, a2,
+                                 r3, g3, b3, a3);
+}
+
+EAPI void
+elm_config_color_overlay_unset(const char *color_class)
+{
+   EINA_SAFETY_ON_NULL_RETURN(color_class);
+   _elm_config_color_overlay_remove(color_class);
+}
+
+EAPI void
+elm_config_color_overlay_apply(void)
+{
+   _elm_config_color_overlay_apply();
+}
+
 EAPI Evas_Coord
 elm_config_finger_size_get(void)
 {
@@ -2584,6 +2881,7 @@ _elm_config_init(void)
    _translation_init();
    _config_apply();
    _elm_config_font_overlay_apply();
+   _elm_config_color_overlay_apply();
    _elm_recache();
    _elm_clouseau_reload();
 }
@@ -2685,6 +2983,7 @@ _elm_config_reload(void)
    _config_load();
    _config_apply();
    _elm_config_font_overlay_apply();
+   _elm_config_color_overlay_apply();
    _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
@@ -2750,11 +3049,13 @@ _elm_config_profile_set(const char *profile)
 
    _elm_profile = strdup(profile);
 
+   _color_overlays_cancel();
    _config_free(_elm_config);
    _elm_config = NULL;
    _config_load();
    _config_apply();
    _elm_config_font_overlay_apply();
+   _elm_config_color_overlay_apply();
    _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
@@ -2781,5 +3082,6 @@ _elm_config_shutdown(void)
 #ifdef HAVE_ELEMENTARY_X
    _elm_font_overlays_del_free();
 #endif
+
    _desc_shutdown();
 }
