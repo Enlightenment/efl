@@ -19,6 +19,7 @@ struct _Evas_Engine_Info_Drm
 
         unsigned int rotation, depth;
         Eina_Bool destination_alpha : 1;
+        Eina_Bool vsync : 1;
 
         int fd;
         Eina_Bool own_fd : 1;
