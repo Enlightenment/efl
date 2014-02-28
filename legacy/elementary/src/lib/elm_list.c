@@ -1050,6 +1050,8 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)
      sd->last_selected_item = eina_list_data_get(sd->selected);
 
+   if (!sd->items) return;
+
    if (elm_widget_focus_get(obj))
      {
         if (sd->last_focused_item)
@@ -1064,7 +1066,8 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
      {
         sd->prev_focused_item = sd->focused_item;
         sd->last_focused_item = sd->focused_item;
-        _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
+        if (sd->focused_item)
+            _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
      }
    if (ret) *ret = EINA_TRUE;
 }
