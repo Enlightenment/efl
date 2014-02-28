@@ -1,7 +1,7 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
 pkgname=('efl' 'efl_doc')
 [[ -d ../.git ]] && pkgname=('efl-git' 'efl_doc-git')
-pkgver=1.8.99.24136.8c094d1
+pkgver=1.9.99.24678.807f944
 pkgrel=1
 pkgdesc="Enlightenment Foundation Libraries - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
@@ -16,7 +16,7 @@ depends=('bullet' 'libpng' 'libjpeg-turbo'
          'libxdamage' 'libxdmcp' 'libxext' 'libxfixes' 'libxinerama'
          'libxi' 'libxrandr' 'libxrender' 'libxss' 'libxtst'
          'libxcursor' 'libxp' 'libgl' 'giflib' 'libwebp' 'harfbuzz'
-         'wayland' 'avahi' 'scim')
+         'wayland' 'avahi' 'scim' 'libdrm')
 [[ ! $(pacman -T "openjpeg") ]] && depends+=('openjpeg') #jpeg2k loader is autodetected at build time
 makedepends=('doxygen' 'check')
 [[ -d ../.git ]] && makedepends+=('git')
