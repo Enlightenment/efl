@@ -90,7 +90,6 @@ _browse_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
    assert(b);
 
    /* Called whenever a new services becomes available on the LAN or is removed from the LAN */
-
    switch (event) {
     case AVAHI_BROWSER_FAILURE:
 
@@ -127,13 +126,11 @@ _ecore_avahi_client_cb(AvahiClient *c, AvahiClientState state, void * userdata)
 {
   Ecore_Avahi_Example *example = userdata;
 
-  fprintf(stderr, "_ecore_avahi_client_cb: %i\n", state);
   switch (state)
     {
     case AVAHI_CLIENT_S_REGISTERING:
     case AVAHI_CLIENT_S_COLLISION:
     case AVAHI_CLIENT_S_RUNNING:
-      fprintf(stderr, "time to create sb\n");
       if (!example->sb)
         {
            example->sb = avahi_service_browser_new(c, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, "_ipp._tcp", NULL, 0, _browse_callback, c);
@@ -147,7 +144,6 @@ _ecore_avahi_client_cb(AvahiClient *c, AvahiClientState state, void * userdata)
       break;
 
     case AVAHI_CLIENT_FAILURE:
-       fprintf(stderr, "Server connection failure: %s.", avahi_strerror(avahi_client_errno(c)));
        if (avahi_client_errno(c) == AVAHI_ERR_DISCONNECTED)
          {
             FREE_CLEAN(example->sb, avahi_service_browser_free);
@@ -158,7 +154,6 @@ _ecore_avahi_client_cb(AvahiClient *c, AvahiClientState state, void * userdata)
             break;
          }
     case AVAHI_CLIENT_CONNECTING:
-       fprintf(stderr, "not connected yet\n");
        FREE_CLEAN(example->sb, avahi_service_browser_free);
        break;
     }
