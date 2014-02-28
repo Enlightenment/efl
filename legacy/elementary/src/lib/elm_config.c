@@ -19,11 +19,15 @@ static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_color_edd = NULL;
 static Eet_Data_Descriptor *_config_color_palette_edd = NULL;
 static Eet_Data_Descriptor *_config_color_overlay_edd = NULL;
+static Eet_Data_Descriptor *_config_bindings_widget_edd = NULL;
+static Eet_Data_Descriptor *_config_binding_key_edd = NULL;
 const char *_elm_preferred_engine = NULL;
 Eina_List  *_font_overlays_del = NULL;
 Eina_List  *_color_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
+
+Eina_Hash *_elm_key_bindings = NULL;
 
 const char *_elm_engines[] = {
    "software_x11",
@@ -359,6 +363,31 @@ _desc_init(void)
         return;
      }
 
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config_Bindings_Widget);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_bindings_widget_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_bindings_widget_edd)
+     {
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config_Binding_Key);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_binding_key_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_binding_key_edd)
+     {
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
+
 #define T_INT    EET_T_INT
 #define T_DOUBLE EET_T_DOUBLE
 #define T_STRING EET_T_STRING
@@ -403,6 +432,24 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, shadow.g, EET_T_UCHAR);
    ELM_CONFIG_VAL(D, T, shadow.b, EET_T_UCHAR);
    ELM_CONFIG_VAL(D, T, shadow.a, EET_T_UCHAR);
+#undef T
+#undef D
+
+#define T        Elm_Config_Bindings_Widget
+#define D        _config_bindings_widget_edd
+   ELM_CONFIG_VAL(D, T, name, EET_T_STRING);
+   ELM_CONFIG_LIST(D, T, key_bindings, _config_binding_key_edd);
+#undef T
+#undef D
+
+#define T        Elm_Config_Binding_Key
+#define D        _config_binding_key_edd
+   ELM_CONFIG_VAL(D, T, context, EET_T_INT);
+   ELM_CONFIG_VAL(D, T, modifiers, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, key, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, action, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, params, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, any_mod, EET_T_UCHAR);
 #undef T
 #undef D
 
@@ -510,6 +557,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, audio_mute_input, T_UCHAR);
    ELM_CONFIG_VAL(D, T, audio_mute_alert, T_UCHAR);
    ELM_CONFIG_VAL(D, T, audio_mute_all, T_UCHAR);
+   ELM_CONFIG_LIST(D, T, bindings, _config_bindings_widget_edd);
 #undef T
 #undef D
 #undef T_INT
@@ -549,6 +597,18 @@ _desc_shutdown(void)
      {
         eet_data_descriptor_free(_config_color_overlay_edd);
         _config_color_overlay_edd = NULL;
+     }
+
+   if (_config_bindings_widget_edd)
+     {
+        eet_data_descriptor_free(_config_bindings_widget_edd);
+        _config_bindings_widget_edd = NULL;
+     }
+
+   if (_config_binding_key_edd)
+     {
+        eet_data_descriptor_free(_config_binding_key_edd);
+        _config_binding_key_edd = NULL;
      }
 }
 
@@ -1208,6 +1268,8 @@ _config_free(Elm_Config *cfg)
    Elm_Custom_Palette *palette;
    Elm_Color_RGBA *color;
    char *color_class;
+   Elm_Config_Bindings_Widget *wb;
+   Elm_Config_Binding_Key *kb;
 
    if (!cfg) return;
    EINA_LIST_FREE(cfg->font_dirs, fontdir)
@@ -1233,6 +1295,19 @@ _config_free(Elm_Config *cfg)
         eina_stringshare_del(palette->palette_name);
         EINA_LIST_FREE(palette->color_list, color) free(color);
         free(palette);
+     }
+   EINA_LIST_FREE(cfg->bindings, wb)
+     {
+        eina_stringshare_del(wb->name);
+        EINA_LIST_FREE(wb->key_bindings, kb)
+          {
+             eina_stringshare_del(kb->modifiers);
+             eina_stringshare_del(kb->key);
+             eina_stringshare_del(kb->action);
+             eina_stringshare_del(kb->params);
+             free(kb);
+          }
+        free(wb);
      }
    eina_stringshare_del(cfg->theme);
    eina_stringshare_del(cfg->modules);
@@ -2039,6 +2114,58 @@ _env_get(void)
    if (s) _elm_config->magnifier_enable = !!atoi(s);
    s = getenv("ELM_MAGNIFIER_SCALE");
    if (s) _elm_config->magnifier_scale = _elm_atof(s);
+}
+
+void
+_elm_config_key_binding_hash(void)
+{
+   Elm_Config_Bindings_Widget *wb;
+   Eina_List *l;
+
+   if (_elm_key_bindings)
+     eina_hash_free(_elm_key_bindings);
+
+   _elm_key_bindings = eina_hash_string_superfast_new(NULL);
+   EINA_LIST_FOREACH(_elm_config->bindings, l, wb)
+     {
+        eina_hash_add(_elm_key_bindings, wb->name, wb->key_bindings);
+     }
+}
+
+Eina_Bool
+_elm_config_key_binding_call(Evas_Object *obj,
+                             const Evas_Event_Key_Down *ev,
+                             const Elm_Action *actions)
+{
+   Elm_Config_Binding_Key *binding;
+   Eina_List *binding_list, *l;
+   int i = 0;
+
+   binding_list = eina_hash_find(_elm_key_bindings, elm_widget_type_get(obj));
+
+   if (binding_list)
+     {
+        EINA_LIST_FOREACH(binding_list, l, binding)
+          {
+             if (binding->key && (!strcmp(binding->key, ev->keyname))
+                 && ((evas_key_modifier_is_set
+                      (ev->modifiers, binding->modifiers)
+                      || (binding->any_mod))))
+               {
+                  while (actions[i].name)
+                    {
+                       if (!strcmp(binding->action, actions[i].name))
+                         {
+                            actions[i].func(obj, binding->params);
+                            return EINA_TRUE;
+                         }
+                       i++;
+                    }
+                  break;
+               }
+          }
+     }
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -2884,6 +3011,7 @@ _elm_config_init(void)
    _elm_config_color_overlay_apply();
    _elm_recache();
    _elm_clouseau_reload();
+   _elm_config_key_binding_hash();
 }
 
 void
@@ -2987,6 +3115,7 @@ _elm_config_reload(void)
    _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
+   _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
 }
 
@@ -3059,6 +3188,7 @@ _elm_config_profile_set(const char *profile)
    _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
+   _elm_config_key_binding_hash();
 }
 
 void
@@ -3084,4 +3214,7 @@ _elm_config_shutdown(void)
 #endif
 
    _desc_shutdown();
+
+   if (_elm_key_bindings)
+     eina_hash_free(_elm_key_bindings);
 }

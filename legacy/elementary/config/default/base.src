@@ -244,4 +244,35 @@ group "Elm_Config" struct {
         }
      }
   }
+  group "bindings" list {
+     group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elm_Panel";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "modifiers" string: "None";
+              value "key" string: "Return";
+              value "action" string: "toggle";
+              value "params" string: "";
+              value "any_mod" uchar: 1;
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "modifiers" string: "None";
+              value "key" string: "KP_Enter";
+              value "action" string: "toggle";
+              value "params" string: "";
+              value "any_mod" uchar: 1;
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "modifiers" string: "None";
+              value "key" string: "space";
+              value "action" string: "toggle";
+              value "params" string: "";
+              value "any_mod" uchar: 1;
+           }
+        }
+     }
+  }
 }

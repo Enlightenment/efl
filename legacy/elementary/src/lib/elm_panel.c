@@ -20,6 +20,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+void _key_action_toggle(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"toggle", _key_action_toggle},
+   {NULL, NULL}
+};
+
 static void
 _mirrored_set(Evas_Object *obj,
               Eina_Bool rtl)
@@ -247,10 +254,14 @@ _panel_toggle(void *data EINA_UNUSED,
    edje_object_message_signal_process(wd->resize_obj);
 }
 
+void _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   _panel_toggle(NULL, obj, NULL, NULL);
+}
+
 static void
 _elm_panel_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-
    Evas_Object *src = va_arg(*list, Evas_Object *);
    Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
    Evas_Event_Key_Down *ev = va_arg(*list, void *);
@@ -263,12 +274,7 @@ _elm_panel_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (src != obj) return;
 
-   if ((strcmp(ev->key, "Return")) &&
-       (strcmp(ev->key, "KP_Enter")) &&
-       (strcmp(ev->key, "space")))
-     return;
-
-   _panel_toggle(NULL, obj, NULL, NULL);
+   _elm_config_key_binding_call(obj, ev, key_actions);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;

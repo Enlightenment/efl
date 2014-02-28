@@ -76,6 +76,8 @@
 typedef struct _Elm_Theme_Files          Elm_Theme_Files;
 typedef struct _Edje_Signal_Data         Edje_Signal_Data;
 typedef struct _Elm_Config               Elm_Config;
+typedef struct _Elm_Config_Bindings_Widget   Elm_Config_Bindings_Widget;
+typedef struct _Elm_Config_Binding_Key   Elm_Config_Binding_Key;
 typedef struct _Elm_Module               Elm_Module;
 typedef struct _Elm_Datetime_Module_Data Elm_Datetime_Module_Data;
 
@@ -275,10 +277,27 @@ struct _Elm_Config
    unsigned char audio_mute_input;
    unsigned char audio_mute_alert;
    unsigned char audio_mute_all;
+   Eina_List    *bindings;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
    Eina_Bool     translate : 1;
+};
+
+struct _Elm_Config_Bindings_Widget
+{
+   const char   *name;
+   Eina_List    *key_bindings;
+};
+
+struct _Elm_Config_Binding_Key
+{
+   int           context;
+   const char   *modifiers;
+   const char   *key;
+   const char   *action;
+   const char   *params;
+   unsigned char any_mod;
 };
 
 struct _Elm_Module
@@ -420,6 +439,10 @@ void                 _elm_config_color_overlay_apply(void);
 
 Eina_Bool            _elm_config_access_get(void);
 void                 _elm_config_access_set(Eina_Bool is_access);
+
+Eina_Bool            _elm_config_key_binding_call(Evas_Object *obj,
+                                                  const Evas_Event_Key_Down *ev,
+                                                  const Elm_Action *actions);
 
 Elm_Font_Properties *_elm_font_properties_get(Eina_Hash **font_hash,
                                               const char *font);

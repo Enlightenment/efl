@@ -456,6 +456,8 @@ typedef struct _Elm_Access_Info Elm_Access_Info;
 /**< accessibility info item */
 typedef struct _Elm_Access_Item Elm_Access_Item;
 
+typedef struct _Elm_Action Elm_Action;
+
 typedef void                  (*Elm_Widget_Text_Set_Cb)(void *data, const char *part, const char *text);
 typedef void                  (*Elm_Widget_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
 typedef const char           *(*Elm_Widget_Text_Get_Cb)(const void *data, const char *part);
@@ -501,6 +503,12 @@ struct _Elm_Access_Info
 
    Evas_Object               *next;
    Evas_Object               *prev;
+};
+
+struct _Elm_Action
+{
+   const char *name;
+   void (*func)(Evas_Object *obj, const char *params);
 };
 
 void                  _elm_access_shutdown();
