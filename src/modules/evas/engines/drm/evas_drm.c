@@ -190,6 +190,18 @@ _evas_drm_crtc_find(int fd, drmModeRes *res, drmModeConnector *conn)
    return crtc;
 }
 
+static unsigned int 
+_evas_drm_crtc_buffer_get(int fd, int crtc_id)
+{
+   drmModeCrtc *crtc;
+   unsigned int id;
+
+   if (!(crtc = drmModeGetCrtc(fd, crtc_id))) return 0;
+   id = crtc->buffer_id;
+   drmModeFreeCrtc(crtc);
+   return id;
+}
+
 static void 
 _evas_drm_tty_sigusr1(int x EINA_UNUSED, siginfo_t *info, void *data EINA_UNUSED)
 {
@@ -525,6 +537,9 @@ evas_drm_outbuf_setup(Outbuf *ob)
         /* record the crtc id */
         ob->priv.crtc = crtc;
 
+        /* record the current framebuffer */
+        ob->priv.fb = _evas_drm_crtc_buffer_get(ob->priv.fd, crtc);
+
         /* spew out connector properties for testing */
         /* drmModePropertyPtr props; */
         /* for (m = 0; m < conn->count_props; m++) */
@@ -536,14 +551,12 @@ evas_drm_outbuf_setup(Outbuf *ob)
 
         /* record the current mode */
         memcpy(&ob->priv.mode, &conn->modes[0], sizeof(ob->priv.mode));
-        DBG("Output Current Mode: %d: %d %d", ob->priv.conn, 
-            conn->modes[0].hdisplay, conn->modes[0].vdisplay);
 
         for (m = 0; m < conn->count_modes; m++)
           {
-             /* DBG("Output Available Mode: %d: %d %d %d", ob->priv.conn,  */
-             /*     conn->modes[m].hdisplay, conn->modes[m].vdisplay,  */
-             /*     conn->modes[m].vrefresh); */
+             DBG("Output Available Mode: %d: %d %d %d", ob->priv.conn, 
+                 conn->modes[m].hdisplay, conn->modes[m].vdisplay, 
+                 conn->modes[m].vrefresh);
 
              /* try to find a mode which matches the requested size */
              if ((conn->modes[m].hdisplay == ob->w) && 
@@ -553,6 +566,17 @@ evas_drm_outbuf_setup(Outbuf *ob)
                   memcpy(&ob->priv.mode, &conn->modes[m], 
                          sizeof(ob->priv.mode));
                }
+          }
+
+        DBG("Output Current Mode: %d: %d %d", ob->priv.conn, 
+            ob->priv.mode.hdisplay, ob->priv.mode.vdisplay);
+
+        if ((ob->priv.mode.hdisplay != conn->modes[0].hdisplay) || 
+            (ob->priv.mode.vdisplay != conn->modes[0].vdisplay))
+          {
+             /* set new crtc mode */
+             drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, ob->priv.fb, 0, 0, 
+                            &ob->priv.conn, 1, &ob->priv.mode);
           }
 
         /* free connector resources */
@@ -588,6 +612,8 @@ evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer)
    /* validate params */
    if ((!ob) || (!buffer)) return;
 
+   /* DBG("Drm Framebuffer Set: %d", buffer->fb); */
+
    buffer->valid = EINA_FALSE;
    ret = drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, buffer->fb, 0, 0, 
                         &ob->priv.conn, 1, &ob->priv.mode);
@@ -611,6 +637,7 @@ evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth)
    carg.width = buffer->w;
    carg.height = buffer->h;
    carg.bpp = depth;
+
    if (drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg) < 0)
      {
         ERR("Could not create dumb buffer: %m");
@@ -621,13 +648,13 @@ evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth)
    buffer->size = carg.size;
    buffer->handle = carg.handle;
 
-   /* DBG("Buffer: %d %d", buffer->w, buffer->h); */
-   /* DBG("Buffer Stride: %d", buffer->stride); */
-   /* DBG("Buffer Size: %d", buffer->size); */
+   DBG("Buffer: %d %d", buffer->w, buffer->h);
+   DBG("Buffer Stride: %d", buffer->stride);
+   DBG("Buffer Size: %d", buffer->size);
 
    /* try to create a framebuffer object */
    /* FIXME: Hardcoded bpp */
-   if (drmModeAddFB(fd, buffer->w, buffer->h, 32, depth, buffer->stride, 
+   if (drmModeAddFB(fd, buffer->w, buffer->h, 24, depth, buffer->stride, 
                     buffer->handle, &buffer->fb))
      {
         ERR("Could not create framebuffer object: %m");
@@ -648,7 +675,7 @@ evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth)
 
    /* do actual mmap of memory */
    buffer->data = 
-     mmap(0, buffer->size, (PROT_READ | PROT_WRITE), 
+     mmap(NULL, buffer->size, (PROT_READ | PROT_WRITE), 
           MAP_SHARED, fd, marg.offset);
    if (buffer->data == MAP_FAILED)
      {
@@ -695,56 +722,50 @@ evas_drm_framebuffer_destroy(int fd, Buffer *buffer)
 }
 
 Eina_Bool 
-evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsigned int count)
+evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
 {
    int ret;
-   unsigned int flags = 0;
 
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
 
    /* check for valid buffer */
-   if ((!buffer) || (!buffer->valid)) return EINA_FALSE;
+   if (!buffer) return EINA_FALSE;
 
-#ifdef DRM_MODE_FEATURE_DIRTYFB
-   drmModeClip *clip;
-   unsigned int i = 0;
-
-   /* WRN("drmModeDirtyFB is experimental"); */
-
-   /* NB: alloca automatically frees memory */
-   clip = alloca(count * sizeof(drmModeClip));
-   for (i = 0; i < count; i++)
+   if (ob->vsync)
      {
-        clip[i].x1 = rects[i].x;
-        clip[i].y1 = rects[i].y;
-        clip[i].x2 = rects[i].w;
-        clip[i].y2 = rects[i].h;
-     }
+        unsigned int flags = 0;
 
-   ret = drmModeDirtyFB(ob->priv.fd, buffer->fb, clip, count);
-   if (ret)
+        if (!buffer->valid) evas_drm_outbuf_framebuffer_set(ob, buffer);
+
+        flags = DRM_MODE_PAGE_FLIP_EVENT;
+        if (ob->priv.use_async_page_flip) flags |= DRM_MODE_PAGE_FLIP_ASYNC;
+
+        ret = drmModePageFlip(ob->priv.fd, ob->priv.crtc, 
+                              buffer->fb, flags, ob);
+        if (ret)
+          {
+             ERR("Cannot flip crtc for connector %u: %m", ob->priv.conn);
+             return EINA_FALSE;
+          }
+
+        ob->priv.pending_flip = EINA_TRUE;
+
+        while (ob->priv.pending_flip)
+          drmHandleEvent(ob->priv.fd, &ob->priv.ctx);
+     }
+   else
      {
-        if (ret == -EINVAL)
-          ERR("Could not set FB Dirty: %m");
+        /* NB: We don't actually need to do this if we are not vsync
+         * because we are drawing directly to the buffer anyway.
+         * If we enable the sending of buffer to crtc, it causes vsync */
+
+        /* send this buffer to the crtc */
+        /* evas_drm_outbuf_framebuffer_set(ob, buffer); */
+
+        /* increment buffer we are using */
+        ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
      }
-#endif
-
-   flags = DRM_MODE_PAGE_FLIP_EVENT;
-   if (ob->priv.use_async_page_flip) flags |= DRM_MODE_PAGE_FLIP_ASYNC;
-
-   ret = drmModePageFlip(ob->priv.fd, ob->priv.crtc, buffer->fb, flags, ob);
-   if (ret)
-     {
-        ERR("Cannot flip crtc for connector %u: %m", ob->priv.conn);
-        return EINA_FALSE;
-     }
-
-   /* ob->priv.sent = buffer; */
-   ob->priv.pending_flip = EINA_TRUE;
-
-   /* while (ob->priv.pending_flip) */
-   /*   drmHandleEvent(ob->priv.fd, &ob->priv.ctx); */
 
    return EINA_TRUE;
 }
