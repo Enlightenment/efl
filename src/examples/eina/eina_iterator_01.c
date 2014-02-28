@@ -48,13 +48,15 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
       }
 
    it = eina_array_iterator_new(array);
-   eina_iterator_next(it, (void **)&uninteresting);
+   if (!eina_iterator_next(it, (void **)&uninteresting))
+     return -1;
    print_eina_container(it);
    eina_array_free(eina_iterator_container_get(it));
    eina_iterator_free(it);
 
    it = eina_list_iterator_new(list);
-   eina_iterator_next(it, (void **)&uninteresting);
+   if (!eina_iterator_next(it, (void **)&uninteresting))
+     return -1;
    print_eina_container(it);
    eina_iterator_free(it);
 
