@@ -388,7 +388,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
         /* NB: Not sure this is entirely needed here as it's already done 
          * inside _merge_rects */
-        /* evas_common_tilebuf_clear(re->tb); */
+        evas_common_tilebuf_clear(re->tb);
         re->cur_rect = EINA_INLIST_GET(re->rects);
      }
 
@@ -431,8 +431,8 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                                         cx, cy, cw, ch);
         if (!re->cur_rect) 
           {
-             evas_common_tilebuf_free_render_rects(re->rects);
-             re->rects = NULL;
+             /* evas_common_tilebuf_free_render_rects(re->rects); */
+             /* re->rects = NULL; */
              re->end = EINA_TRUE;
           }
 
@@ -456,7 +456,7 @@ eng_output_redraws_next_update_push(void *data, void *img, int x, int y, int w, 
    evas_outbuf_update_region_push(re->ob, img, x, y, w, h);
 
    /* NB: No reason to free region here. That is done on flush anyway */
-   /* re->outbuf_update_region_free(re->ob, img); */
+   /* evas_outbuf_update_region_free(re->ob, img); */
 
    evas_common_cpu_end_opt();
 }
