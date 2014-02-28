@@ -88,7 +88,7 @@ _ecore_avahi_watch_new(const AvahiPoll *api,
 static void
 _ecore_avahi_watch_update(AvahiWatch *w, AvahiWatchEvent events)
 {
-  Ecore_Avahi_Watch *watch = (Ecore_Avahi_Watch *) w;
+   Ecore_Avahi_Watch *watch = (Ecore_Avahi_Watch *) w;
 
    ecore_main_fd_handler_active_set(watch->handler, _ecore_avahi_events2ecore(events));
 }
@@ -137,10 +137,10 @@ _ecore_avahi_timeout_cb(void *data)
 {
    Ecore_Avahi_Timeout *timeout = data;
 
-   ecore_timer_freeze(timeout->timer);
    timeout->callback((AvahiTimeout*) timeout, timeout->callback_data);
 
-   return ECORE_CALLBACK_RENEW;
+   timeout->timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static AvahiTimeout *
@@ -153,9 +153,8 @@ _ecore_avahi_timeout_new(const AvahiPoll *api, const struct timeval *tv,
    ea = api->userdata;
    timeout = calloc(1, sizeof (Ecore_Avahi_Timeout));
    if (!timeout) return NULL;
-   timeout->timer = ecore_timer_add(_ecore_avahi_timeval2double(tv),
-                                    _ecore_avahi_timeout_cb, timeout);
-   if (!tv) ecore_timer_freeze(timeout->timer);
+   if (tv) timeout->timer = ecore_timer_add(_ecore_avahi_timeval2double(tv),
+                                            _ecore_avahi_timeout_cb, timeout);
    timeout->callback = callback;
    timeout->callback_data = userdata;
    timeout->parent = ea;
@@ -170,16 +169,12 @@ _ecore_avahi_timeout_update(AvahiTimeout *t, const struct timeval *tv)
 {
    Ecore_Avahi_Timeout *timeout = (Ecore_Avahi_Timeout *) t;
 
+   if (timeout->timer) ecore_timer_del(timeout->timer);
+   timeout->timer = NULL;
+
    if (tv)
-     {
-        ecore_timer_interval_set(timeout->timer, _ecore_avahi_timeval2double(tv));
-        if (ecore_timer_freeze_get(timeout->timer))
-          ecore_timer_thaw(timeout->timer);
-     }
-   else
-     {
-        ecore_timer_freeze(timeout->timer);
-     }
+     timeout->timer = ecore_timer_add(_ecore_avahi_timeval2double(tv),
+                                      _ecore_avahi_timeout_cb, timeout);
 }
 
 static void
@@ -187,7 +182,7 @@ _ecore_avahi_timeout_free(AvahiTimeout *t)
 {
    Ecore_Avahi_Timeout *timeout = (Ecore_Avahi_Timeout *) t;
 
-   ecore_timer_del(timeout->timer);
+   if (timeout->timer) ecore_timer_del(timeout->timer);
    timeout->parent->timeouts = eina_list_remove(timeout->parent->timeouts, timeout);
    free(timeout);
 }
