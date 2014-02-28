@@ -5,13 +5,13 @@
 #include <Eina.h>
 
 static void
-_print_cb(const char *name, const char *path, void *data)
+_print_cb(const char *name, const char *path, void *data EINA_UNUSED)
 {
    printf("file %s in %s\n", name, path);
 }
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Eina_Iterator *it;
    const char *f_name;

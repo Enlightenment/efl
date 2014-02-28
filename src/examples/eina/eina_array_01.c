@@ -7,14 +7,14 @@
 #include <Eina.h>
 
 static Eina_Bool
-_print(const void *container, void *data, void *fdata)
+_print(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
   printf("%s\n", (char *)data);
    return EINA_TRUE;
 }
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    const char* strings[] = {
       "helo", "hera", "starbuck", "kat", "boomer",

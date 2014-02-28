@@ -12,13 +12,13 @@ _tz_setup(const Eina_Value_Type *type, void *mem)
 }
 
 static Eina_Bool
-_tz_flush(const Eina_Value_Type *type, void *mem)
+_tz_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_tz_copy(const Eina_Value_Type *type, const void *src, void * dst)
+_tz_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void * dst)
 {
    struct timezone *tzsrc = (struct timezone *)src;
    struct timezone *tzdst = dst;
@@ -27,7 +27,7 @@ _tz_copy(const Eina_Value_Type *type, const void *src, void * dst)
 }
 
 static Eina_Bool
-_tz_compare(const Eina_Value_Type *type, const void *a, const void *b)
+_tz_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
 {
    struct timezone tza = *(struct timezone*)a;
    struct timezone tzb = *(struct timezone*)b;
@@ -40,7 +40,7 @@ _tz_compare(const Eina_Value_Type *type, const void *a, const void *b)
 }
 
 static Eina_Bool
-_tz_pset(const Eina_Value_Type *type, void *mem, const void *ptr)
+_tz_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
 {
    *(struct timezone*)mem = *(struct timezone*)ptr;
    return EINA_TRUE;
@@ -61,7 +61,7 @@ _tz_pget(const Eina_Value_Type *type, const void *mem, void *ptr)
 }
 
 static Eina_Bool
-_tz_convert_to(const Eina_Value_Type *type, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+_tz_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
 {
    struct timezone v = *(struct timezone*)type_mem;
 
@@ -146,7 +146,7 @@ static Eina_Value_Type TZ_TYPE = {
    _tz_pget
 };
 
-int main(int argc, char **argv)
+int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Eina_Value vtv, vtz;
    struct timeval tv;

@@ -13,7 +13,7 @@
 #include <Ecore_Evas.h>
 
 static void
-_mouse_down_cb(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_mouse_down_cb(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    static Eina_Bool flag = EINA_FALSE;
 

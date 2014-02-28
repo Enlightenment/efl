@@ -8,7 +8,7 @@
 #include <Ecore.h>
 
 static Eina_Bool
-_filter_cb(void *data, Eio_File *handler, const char *file)
+_filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *file)
 {
    char *last_slash = strrchr(file, '/');
 
@@ -20,7 +20,7 @@ _filter_cb(void *data, Eio_File *handler, const char *file)
 }
 
 static void
-_main_cb(void *data, Eio_File *handler, const char *file)
+_main_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
 {
    int *number_of_listed_files = (int *)data;
 
@@ -30,7 +30,7 @@ _main_cb(void *data, Eio_File *handler, const char *file)
 }
 
 static void
-_done_cb(void *data, Eio_File *handler)
+_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    int *number_of_listed_files = (int *)data;
 
@@ -41,7 +41,7 @@ _done_cb(void *data, Eio_File *handler)
 }
 
 static void
-_error_cb(void *data, Eio_File *handler, int error)
+_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
    fprintf(stderr, "Something wrong has happend:%s\n", strerror(error));
    ecore_main_loop_quit();

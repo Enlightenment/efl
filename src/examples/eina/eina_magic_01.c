@@ -88,7 +88,7 @@ print_pilot(pilot *ptr)
 }
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    person *base;
    pilot *sub;

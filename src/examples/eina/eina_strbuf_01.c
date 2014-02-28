@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <Eina.h>
 
-int main(int argc, char **argv)
+int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Eina_Strbuf *buf;
 

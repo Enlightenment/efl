@@ -6,7 +6,7 @@
 #include <Eina.h>
 
 static Eina_Bool
-print_one(const void *container, void *data, void *fdata)
+print_one(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    printf("%s\n", (char*)data);
    return EINA_TRUE;
@@ -20,7 +20,7 @@ print_eina_container(Eina_Iterator *it)
 }
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    const char *strings[] = {
       "unintersting string", "husker", "starbuck", "husker"

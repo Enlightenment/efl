@@ -5,7 +5,7 @@
 #include <Eina.h>
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    const char *str, *str2;
    const char *prologe = "The Cylons were created by man. They rebelled. They "

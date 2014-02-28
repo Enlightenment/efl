@@ -17,7 +17,7 @@ struct _Data
 };
 
 void print_cb(const Eina_Log_Domain *domain,
-              Eina_Log_Level level,
+              Eina_Log_Level level EINA_UNUSED,
               const char *file,
               const char *fnc,
               int line,

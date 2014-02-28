@@ -59,7 +59,7 @@ main(void)
 
 static Eina_Bool
 _xml_tag_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-            unsigned offset, unsigned length)
+            unsigned offset EINA_UNUSED, unsigned length)
 {
    char buffer[length+1];
    Eina_Array *array = data;
@@ -119,7 +119,7 @@ _xml_attr_cb(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-_print(const void *container, void *data, void *fdata)
+_print(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    printf("%s\n", (char *)data);
 

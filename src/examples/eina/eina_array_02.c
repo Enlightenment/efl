@@ -6,7 +6,7 @@
 
 #include <Eina.h>
 
-Eina_Bool keep(void *data, void *gdata)
+Eina_Bool keep(void *data, void *gdata EINA_UNUSED)
 {
    if (strlen((const char*)data) <= 5)
       return EINA_TRUE;
@@ -14,7 +14,7 @@ Eina_Bool keep(void *data, void *gdata)
 }
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    const char* strs[] = {
       "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
