@@ -45,7 +45,7 @@ extern int _evas_engine_drm_log_dom;
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
 /* define a maximum number of 'buffers' (double-buff, triple-buff, etc) */
-# define NUM_BUFFERS 3
+# define NUM_BUFFERS 2
 
 typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
@@ -73,6 +73,7 @@ struct _Buffer
    int stride, size;
    int handle;
    unsigned int fb;
+
    void *data; // used for software framebuffers
 
 # ifdef HAVE_DRM_HW_ACCEL
@@ -102,25 +103,23 @@ struct _Outbuf
    int w, h;
    unsigned int rotation, depth;
    Eina_Bool destination_alpha : 1;
+   Eina_Bool vsync : 1;
 
    struct 
      {
-        RGBA_Image *onebuf;
-        Eina_Array onebuf_regions;
-
         int fd;
-        unsigned int conn, crtc;
+        unsigned int conn, crtc, fb;
 
-        Buffer buffer[NUM_BUFFERS], *sent;
+        Buffer buffer[NUM_BUFFERS];
         int curr, num;
 
         drmModeModeInfo mode;
         drmEventContext ctx;
         Eina_Bool pending_flip : 1;
+
         Eina_Bool use_async_page_flip : 1;
 
         Eina_List *pending_writes;
-        Eina_List *prev_pending_writes;
 
         Eina_List *planes;
 
@@ -136,6 +135,7 @@ void evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int 
 int evas_outbuf_buffer_state_get(Outbuf *ob);
 RGBA_Image *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
+void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void evas_outbuf_flush(Outbuf *ob);
 
 Eina_Bool evas_drm_init(Evas_Engine_Info_Drm *info, int card);
@@ -145,6 +145,6 @@ Eina_Bool evas_drm_outbuf_setup(Outbuf *ob);
 void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer);
 Eina_Bool evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth);
 void evas_drm_framebuffer_destroy(int fd, Buffer *buffer);
-Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsigned int count);
+Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer);
 
 #endif
