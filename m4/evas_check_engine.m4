@@ -622,11 +622,6 @@ if test "x${have_dep}" = "xyes" ; then
   fi
   AC_MSG_RESULT([${have_hw_dep}])
 
-  if test "x${have_hw_dep}" = "xyes" ; then
-    AC_DEFINE(HAVE_DRM_HW_ACCEL, 1, [Enabled drm hardware accelerated rendering])
-  fi
-  AM_CONDITIONAL([HAVE_DRM_HW_ACCEL], [test "x${have_hw_dep}" = "xyes"])
-
    if test "x$3" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
@@ -636,6 +631,12 @@ if test "x${have_dep}" = "xyes" ; then
       evas_engine_[]$1[]_libs="${DRM_LIBS}"
    fi
 fi
+
+if test "x${have_hw_dep}" = "xyes" ; then
+  AC_DEFINE(HAVE_DRM_HW_ACCEL, [1], 
+   [Enabled drm hardware accelerated rendering])
+fi
+
 
 AC_SUBST([evas_engine_$1_cflags])
 AC_SUBST([evas_engine_$1_libs])
