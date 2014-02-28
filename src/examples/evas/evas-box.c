@@ -108,7 +108,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        fprintf(stdout, "%s",  commands);
         return;
      }
 
@@ -361,7 +361,7 @@ main(void)
    evas_object_image_border_center_fill_set(d.border, EVAS_BORDER_FILL_NONE);
    evas_object_show(d.border);
 
-   fprintf(stdout, commands);
+   fprintf(stdout, "%s", commands);
 
    _canvas_resize_cb(d.ee);
    ecore_main_loop_begin();
