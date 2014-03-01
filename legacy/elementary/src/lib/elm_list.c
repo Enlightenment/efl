@@ -1005,7 +1005,6 @@ _elm_list_item_focused(Elm_List_Item *it)
    if ((x < sx) || (y < sy)|| ((x + w) > (sx + sw)) || ((y + h) > (sy + sh)))
      elm_list_item_bring_in((Elm_Object_Item *)it);
    sd->focused_item = (Elm_Object_Item *)it;
-   ((Elm_Widget_Item *)it)->focused = EINA_TRUE;
    if (elm_widget_focus_highlight_enabled_get(WIDGET(it)))
      {
         edje_object_signal_emit

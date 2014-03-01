@@ -603,7 +603,6 @@ struct _Elm_Widget_Item
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;
    Eina_Bool                      on_translate : 1;
-   Eina_Bool                      focused : 1;
 };
 
 struct _Elm_Object_Item
