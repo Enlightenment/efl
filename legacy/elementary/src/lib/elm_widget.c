@@ -237,18 +237,16 @@ _obj_mouse_move(void *data,
 {
    ELM_WIDGET_DATA_GET(data, sd);
    Evas_Event_Mouse_Move *ev = event_info;
-   if (sd->still_in)
+   if (!sd->still_in) return;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     sd->still_in = EINA_FALSE;
+   else
      {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+        Evas_Coord x, y, w, h;
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
+        if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y))
           sd->still_in = EINA_FALSE;
-        else
-          {
-             Evas_Coord x, y, w, h;
-             evas_object_geometry_get(obj, &x, &y, &w, &h);
-             if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
-                 (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
-               sd->still_in = EINA_FALSE;
-          }
      }
 }
 
