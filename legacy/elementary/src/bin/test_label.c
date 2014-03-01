@@ -258,12 +258,12 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(lb, "Test 2 label with the same speed:");
    elm_grid_pack(gd, lb, 5, 70, 90, 10);
    evas_object_show(lb);
-  
+
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_grid_pack(gd, rect, 5, 80, 90, 20);
    evas_object_color_set(rect, 255, 125, 125, 255);
    evas_object_show(rect);
-  
+
    lb1 = elm_label_add(win);
    elm_object_style_set(lb1, "slide_long");
    elm_object_text_set(lb1, "This is a label set to slide with a fixed speed,"

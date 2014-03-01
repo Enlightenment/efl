@@ -5782,7 +5782,7 @@ _item_sorted_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           {
              rel = it->parent;
 
-             // ignoring the comparison 
+             // ignoring the comparison
              it->parent->item->items = eina_list_prepend_relative_list
                  (it->parent->item->items, it, l);
              sd->items = eina_inlist_prepend_relative

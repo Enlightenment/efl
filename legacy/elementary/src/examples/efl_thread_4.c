@@ -103,7 +103,7 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("efl-thread-4", "EFL Thread 4");
    evas_object_smart_callback_add(win, "delete,request", del, NULL);
-   
+
    o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 50, 80, 180, 255);
    evas_object_resize(o, 100, 100);

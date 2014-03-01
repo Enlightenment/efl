@@ -648,7 +648,7 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    int x, y, w, h;
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
-   Eldbus_Message_Iter *iter, *iter_struct; 
+   Eldbus_Message_Iter *iter, *iter_struct;
    if (!eldbus_message_arguments_get(msg, "u", &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 

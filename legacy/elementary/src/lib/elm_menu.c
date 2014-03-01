@@ -671,7 +671,7 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
    Eina_List *l;
    Elm_Menu_Item *item;
    char style[1024];
-   
+
    ELM_MENU_DATA_GET_OR_RETURN(obj, sd);
 
    if (menu_bar == sd->menu_bar) return;

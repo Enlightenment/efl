@@ -67,7 +67,7 @@
  * are responsable of applying the correct tag to code blocks.
  * The default theme define the following tags:
  * @li \<code\>...\</code\>: Monospace font without shadows.
- * @li \<comment\>...\</comment\>: Code comments. 
+ * @li \<comment\>...\</comment\>: Code comments.
  * @li \<string\>...\</string\>: Strings of text.
  * @li \<number\>...\</number\>: Numeric expression (ex: 1, 2, 0.34, etc)
  * @li \<brace\>...\</brace\>: Braces used for code syntax.

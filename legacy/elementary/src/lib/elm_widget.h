@@ -2424,7 +2424,7 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @def elm_wdg_focus_highlight_style_set
  * @since 1.9
  *
- * This function set the widget focus highlight style. 
+ * This function set the widget focus highlight style.
  *
  * @param[in] style
  * @param[out] ret

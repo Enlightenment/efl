@@ -1071,7 +1071,7 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
         sd->prev_focused_item = sd->focused_item;
         sd->last_focused_item = sd->focused_item;
         if (sd->focused_item)
-            _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
+          _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
      }
    if (ret) *ret = EINA_TRUE;
 }

@@ -615,7 +615,7 @@ elm_hoversel_item_icon_get(const Elm_Object_Item *it,
    if (icon_type) *icon_type = item->icon_type;
 }
 
-static Elm_Hoversel_Item * 
+static Elm_Hoversel_Item *
 item_focused_get(Elm_Hoversel_Smart_Data *sd)
 {
    Elm_Hoversel_Item *item;

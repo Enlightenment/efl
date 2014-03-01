@@ -131,7 +131,7 @@ enum
  *
  * @param[in] idx
  * @param[in] r
- * @param[in] g 
+ * @param[in] g
  * @param[in] b
  * @param[in] a
  *
@@ -147,7 +147,7 @@ enum
  *
  * @param[in] idx
  * @param[out] r
- * @param[out] g 
+ * @param[out] g
  * @param[out] b
  * @param[out] a
  *

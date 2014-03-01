@@ -1372,7 +1372,7 @@ EAPI void      elm_config_color_overlay_apply(void);
 
 /**
  * Get the magnifier enabled state for entries
- * 
+ *
  * @return The enabled state for magnifier
  * @since 1.9
  */
@@ -1380,7 +1380,7 @@ EAPI Eina_Bool elm_config_magnifier_enable_get(void);
 
 /**
  * Set the magnifier enabled state for entires
- * 
+ *
  * @param enable The magnifier config state
  * @since 1.9
  */
@@ -1388,7 +1388,7 @@ EAPI void      elm_config_magnifier_enable_set(Eina_Bool enable);
 
 /**
  * Get the amount of scaling the magnifer does
- * 
+ *
  * @return The scaling amount (1.0 is none, 2.0 is twice as big etc.)
  * @since 1.9
  */
@@ -1396,7 +1396,7 @@ EAPI double    elm_config_magnifier_scale_get(void);
 
 /**
  * Set the amount of scaling the magnifier does
- * 
+ *
  * @param scale The scaling amount for magnifiers
  * @since 1.9
  */
@@ -1404,7 +1404,7 @@ EAPI void      elm_config_magnifier_scale_set(double scale);
 
 /**
  * Get the mute state of an audio channel for effects
- * 
+ *
  * @param channel The channel to get the mute state of
  * @return The mute state
  * @since 1.9
@@ -1413,7 +1413,7 @@ EAPI Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
 
 /**
  * Set the mute state of the specified channel
- * 
+ *
  * @param channel The channel to set the mute state of
  * @param mute The mute state to set
  * @since 1.9

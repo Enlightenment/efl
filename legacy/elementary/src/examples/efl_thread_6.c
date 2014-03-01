@@ -163,7 +163,7 @@ elm_main(int argc, char **argv)
 
    // if some threads are still running - cancel them
    EINA_LIST_FREE(threads, th) ecore_thread_cancel(th);
-   
+
    elm_shutdown();
 
    return 0;

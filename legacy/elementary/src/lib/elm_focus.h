@@ -292,7 +292,7 @@ EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj
  * @param style The name of the focus style to use on it.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
- * @note This overrides the style which is set 
+ * @note This overrides the style which is set
  * by elm_win_focus_highlight_style_set().
  *
  * @see elm_object_focus_highlight_style_get
@@ -305,7 +305,7 @@ EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const c
 
 /**
  * Get the focus highlight style to be used by a given widget.
- * 
+ *
  * @param obj The Elementary widget to query for its focus highlight style.
  * @return The focus highlight style name used by widget.
  *

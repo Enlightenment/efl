@@ -231,14 +231,14 @@ EAPI double            elm_clock_first_interval_get(const Evas_Object *obj);
 
 /**
  * Set whether the given clock widget should be paused or not.
- * 
+ *
  * @param obj The clock object
  * @param pause @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise
- * 
+ *
  * This function pauses or starts the clock widget.
- * 
+ *
  * @see elm_clock_pause_get()
- * 
+ *
  * @ingroup Clock
  * @since 1.9
  */
@@ -246,14 +246,14 @@ EAPI void              elm_clock_pause_set(Evas_Object *obj, Eina_Bool pause);
 
 /**
  * Get whether the given clock widget is paused.
- * 
+ *
  * @param obj The clock object
  * @return @c EINA_TRUE if it's paused @c EINA_FALSE otherwise
- * 
+ *
  * This function gets whether the clock is paused or not.
- * 
+ *
  * @see elm_clock_pause_set()
- * 
+ *
  * @ingroup Clock
  * @since 1.9
  */

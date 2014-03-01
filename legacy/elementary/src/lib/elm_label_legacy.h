@@ -137,7 +137,7 @@ EAPI Elm_Label_Slide_Mode        elm_label_slide_mode_get(const Evas_Object *obj
  * to slide end position
  *
  * @see elm_label_slide_speed_set()
- * 
+ *
  * @ingroup Label
  */
 EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, double duration);
@@ -151,7 +151,7 @@ EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, 
  * @note If you set the speed of the slide using elm_label_slide_speed_set()
  *       you cannot get the correct duration using this function until the label
  *       is actually rendered and resized.
- * 
+ *
  * @see elm_label_slide_duration_set()
  *
  * @ingroup Label
@@ -163,7 +163,7 @@ EAPI double                      elm_label_slide_duration_get(const Evas_Object 
  *
  * @param obj The label object
  * @param speed The speed of the slide animation in px per seconds
- * 
+ *
  * @see elm_label_slide_duration_set()
  *
  * @ingroup Label

@@ -1521,7 +1521,7 @@ _status_config_audio(Evas_Object *win,
    MUTE_CHECK("Mute Input", EDJE_CHANNEL_INPUT, mute_input_change);
    MUTE_CHECK("Mute Alert", EDJE_CHANNEL_ALERT, mute_alert_change);
    MUTE_CHECK("Mute Everything", EDJE_CHANNEL_ALL, mute_all_change);
-   
+
    evas_object_data_set(win, "audio", bx);
 
    elm_naviframe_item_simple_push(naviframe, bx);

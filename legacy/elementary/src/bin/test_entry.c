@@ -878,7 +878,7 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 
-static char *default_style_text = 
+static char *default_style_text =
    "<title>Elementary typography</title><br>"
    "<ps>"
    "<subtitle>Basic tags</subtitle><br>"
@@ -989,7 +989,7 @@ test_entry_style_default(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    evas_object_smart_callback_add(o, "changed", ent_bt_def_style_markup, en);
    elm_box_pack_end(vbx, o);
    evas_object_show(o);
-   
+
    o = elm_check_add(win);
    elm_object_text_set(o, "disabled");
    evas_object_smart_callback_add(o, "changed", ent_bt_def_style_disabled, en);

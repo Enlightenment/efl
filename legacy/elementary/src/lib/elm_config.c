@@ -712,7 +712,7 @@ _elm_config_user_dir_snprintf(char       *dst,
            ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #endif
      }
-#endif   
+#endif
 #endif
 
    off = user_dir_len + 1;

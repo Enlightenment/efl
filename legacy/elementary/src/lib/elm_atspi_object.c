@@ -134,10 +134,10 @@ EAPI Eo_Op ELM_ATSPI_OBJ_BASE_ID = EO_NOOP;
 EAPI const Eo_Event_Description _EV_ATSPI_OBJ_NAME_CHANGED =
         EO_EVENT_DESCRIPTION("name,changed", "Called when accessible object text has changed.");
 
-EAPI const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_ADD = 
+EAPI const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_ADD =
         EO_EVENT_DESCRIPTION("child,added", "Called when accessible object children was created.");
 
-EAPI const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_DEL = 
+EAPI const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_DEL =
         EO_EVENT_DESCRIPTION("child,removed", "Called when accessible object children was destroyed.");
 
 EAPI const Eo_Event_Description _EV_ATSPI_OBJ_STATE_CHANGED =
