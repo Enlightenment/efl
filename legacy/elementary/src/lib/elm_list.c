@@ -1023,15 +1023,19 @@ _elm_list_item_unfocused(Elm_List_Item *it)
 {
    ELM_LIST_DATA_GET(WIDGET(it), sd);
 
-   if (!sd->focused_item) return;
+   if (!sd->focused_item ||
+       (it != (Elm_List_Item *)sd->focused_item))
+     return;
+
    sd->prev_focused_item = (Elm_Object_Item *)it;
    if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      return;
+
    if (elm_widget_focus_highlight_enabled_get(WIDGET(sd->focused_item)))
      edje_object_signal_emit
         (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
-   if (it == (Elm_List_Item *)sd->focused_item)
-     sd->focused_item = NULL;
+
+   sd->focused_item = NULL;
    evas_object_smart_callback_call
       (WIDGET(it), SIG_ITEM_UNFOCUSED, it);
 }
@@ -1692,9 +1696,11 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
      {
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
-        if (sd->focused_item)
-          _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
-        if (it != sd->focused_item) _elm_list_item_focused((Elm_List_Item *)it);
+        if (it != sd->focused_item)
+          {
+             _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
+             _elm_list_item_focused((Elm_List_Item *)it);
+          }
      }
    else
      _elm_list_item_unfocused((Elm_List_Item *)it);
