@@ -520,6 +520,37 @@ _track_resize_cb(void *data,
 }
 
 static void
+_popup_add(Elm_Slider_Smart_Data *sd, Eo *obj)
+{
+   /* if theme has an overlayed slider mode, then lets support it */
+   if (!edje_object_part_exists(elm_layout_edje_get(obj), "elm.track.slider")) return;
+
+   // XXX popup needs to adapt to theme etc.
+   sd->popup = edje_object_add(evas_object_evas_get(obj));
+   if (sd->horizontal)
+     _elm_theme_set(NULL, sd->popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
+   else
+     _elm_theme_set(NULL, sd->popup, "slider", "vertical/popup", elm_widget_style_get(obj));
+   edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
+                         elm_config_scale_get());
+   edje_object_signal_callback_add(sd->popup, "popup,hide,done", "elm", // XXX: for compat
+                                   _popup_hide_done, obj);
+   edje_object_signal_callback_add(sd->popup, "elm,popup,hide,done", "elm",
+                                   _popup_hide_done, obj);
+
+   /* create a rectangle to track position+size of the dragable */
+   sd->track = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_event_callback_add
+     (sd->track, EVAS_CALLBACK_MOVE, _track_move_cb, obj);
+   evas_object_event_callback_add
+     (sd->track, EVAS_CALLBACK_RESIZE, _track_resize_cb, obj);
+
+   evas_object_color_set(sd->track, 0, 0, 0, 0);
+   evas_object_pass_events_set(sd->track, EINA_TRUE);
+   elm_layout_content_set(obj, "elm.track.slider", sd->track);
+}
+
+static void
 _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Slider_Smart_Data *sd = _pd;
@@ -552,6 +583,8 @@ _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->popup)
      edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
                            elm_config_scale_get());
+   else
+     _popup_add(sd, obj);
 
    if (sd->horizontal)
      evas_object_size_hint_min_set
@@ -855,32 +888,7 @@ _elm_slider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
    elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
 
-   /* if theme has an overlayed slider mode, then lets support it */
-   if (edje_object_part_exists(elm_layout_edje_get(obj),
-                               "elm.track.slider"))
-     {
-        // XXX popup needs to adapt to theme etc.
-        priv->popup = edje_object_add(evas_object_evas_get(obj));
-        _elm_theme_set(NULL, priv->popup, "slider", "horizontal/popup",
-                       elm_widget_style_get(obj));
-        edje_object_scale_set(priv->popup, elm_widget_scale_get(obj) *
-                              elm_config_scale_get());
-        edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm", // XXX: for compat
-                                        _popup_hide_done, obj);
-        edje_object_signal_callback_add(priv->popup, "elm,popup,hide,done", "elm",
-                                        _popup_hide_done, obj);
-
-        /* create a rectangle to track position+size of the dragable */
-        priv->track = evas_object_rectangle_add(evas_object_evas_get(obj));
-        evas_object_event_callback_add
-          (priv->track, EVAS_CALLBACK_MOVE, _track_move_cb, obj);
-        evas_object_event_callback_add
-          (priv->track, EVAS_CALLBACK_RESIZE, _track_resize_cb, obj);
-
-        evas_object_color_set(priv->track, 0, 0, 0, 0);
-        evas_object_pass_events_set(priv->track, EINA_TRUE);
-        elm_layout_content_set(obj, "elm.track.slider", priv->track);
-     }
+   _popup_add(priv, obj);
 
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
