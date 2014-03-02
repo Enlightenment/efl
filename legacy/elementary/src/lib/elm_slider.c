@@ -317,14 +317,10 @@ _popup_hide(void *data,
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
      {
-        if (!sd->popup_hiding)
+        if (!(elm_widget_focus_get(data) && sd->always_popup_show))
           {
-             if (!(elm_widget_focus_get(data) && sd->always_popup_show))
-               {
-                  edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
-                  edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
-                  sd->popup_hiding = EINA_TRUE;
-               }
+             edje_object_signal_emit(sd->popup, "popup,hide", "elm"); // XXX: for compat
+             edje_object_signal_emit(sd->popup, "elm,popup,hide", "elm");
           }
      }
 }
@@ -338,14 +334,8 @@ _popup_hide_done(void *data,
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
      {
-        if (sd->popup_hiding)
-          {
-             if (!(elm_widget_focus_get(data) && sd->always_popup_show))
-               {
-                  evas_object_hide(sd->popup);
-                  sd->popup_hiding = EINA_FALSE;
-               }
-          }
+        if (!(elm_widget_focus_get(data) && sd->always_popup_show))
+          evas_object_hide(sd->popup);
      }
 }
 
