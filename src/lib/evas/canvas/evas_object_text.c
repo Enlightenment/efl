@@ -2217,7 +2217,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         // Proxies
         evas_filter_context_proxy_render_all(filter, eo_obj, EINA_FALSE);
 
-        // Context: FIXME it should be a sw context only
+        // Draw Context
         filter_ctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
