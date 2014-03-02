@@ -60,7 +60,7 @@ _overflow_cb(void        *data,
    fprintf(stdout, "Overflow!\n");
 }
 
-static void
+static Eina_Bool
 _on_keydown(void              *data,
             Evas_Object       *object,
             Evas_Object       *src,
@@ -70,33 +70,25 @@ _on_keydown(void              *data,
    Evas_Object *fs = data;
    Evas_Event_Key_Down *ev = event_info;
 
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
 
    if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
         fprintf(stdout, "%s", commands);
-        return;
      }
-
-   if (strcmp(ev->keyname, "n") == 0) /* flip to next item */
+   else if (strcmp(ev->keyname, "n") == 0) /* flip to next item */
      {
         elm_flipselector_flip_next(fs);
 
         fprintf(stdout, "Flipping to next item\n");
-
-        return;
      }
-
-   if (strcmp(ev->keyname, "p") == 0) /* flip to previous item */
+   else if (strcmp(ev->keyname, "p") == 0) /* flip to previous item */
      {
         elm_flipselector_flip_prev(fs);
 
         fprintf(stdout, "Flipping to previous item\n");
-
-        return;
      }
-
-   if (strcmp(ev->keyname, "f") == 0) /* print first item's label */
+   else if (strcmp(ev->keyname, "f") == 0) /* print first item's label */
      {
         Elm_Object_Item *it;
 
@@ -104,11 +96,8 @@ _on_keydown(void              *data,
 
         fprintf(stdout, "Flip selector's first item is: %s\n", it ?
                 elm_object_item_text_get(it) : "none");
-
-        return;
      }
-
-   if (strcmp(ev->keyname, "l") == 0) /* print last item's label */
+   else if (strcmp(ev->keyname, "l") == 0) /* print last item's label */
      {
         Elm_Object_Item *it;
 
@@ -116,11 +105,8 @@ _on_keydown(void              *data,
 
         fprintf(stdout, "Flip selector's last item is: %s\n", it ?
                 elm_object_item_text_get(it) : "none");
-
-        return;
      }
-
-   if (strcmp(ev->keyname, "s") == 0) /* print selected item's label */
+   else if (strcmp(ev->keyname, "s") == 0) /* print selected item's label */
      {
         Elm_Object_Item *it;
 
@@ -128,9 +114,12 @@ _on_keydown(void              *data,
 
         fprintf(stdout, "Flip selector's selected item is: %s\n", it ?
                 elm_object_item_text_get(it) : "none");
-
-        return;
      }
+   else
+     return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
 }
 
 EAPI_MAIN int
@@ -181,7 +170,7 @@ elm_main(int argc, char **argv)
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   elm_object_event_callback_add(win, (Elm_Event_Cb)_on_keydown, fp);
+   elm_object_event_callback_add(win, _on_keydown, fp);
 
    evas_object_show(win);
 
