@@ -681,7 +681,8 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
    if (ctx->async)
      evas_unref_queue_image_put(ctx->evas, ie);
    else if (ctx->gl_engine)
-     ENFN->image_free(ENDT, stolen_buffer);
+     ctx->post_run.buffers_to_free =
+       eina_list_append(ctx->post_run.buffers_to_free, stolen_buffer);
    else
      _backing_free(ctx, ie);
 
@@ -1691,7 +1692,17 @@ static void
 _filter_thread_run_cb(void *data)
 {
    Evas_Filter_Context *ctx = data;
+   void *buffer;
+
+   // TODO: Add return value check and call error cb
    _filter_chain_run(ctx);
+
+   EINA_LIST_FREE(ctx->post_run.buffers_to_free, buffer)
+     {
+        if (ctx->gl_engine)
+          ENFN->image_free(ENDT, buffer);
+     }
+
    if (ctx->post_run.cb)
      ctx->post_run.cb(ctx, ctx->post_run.data);
 }
