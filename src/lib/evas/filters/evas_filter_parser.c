@@ -2348,6 +2348,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
              fb->proxy = pb->eo_proxy;
              fb->source = pb->eo_source;
              fb->source_name = eina_stringshare_ref(pb->name);
+             fb->ctx->has_proxies = EINA_TRUE;
           }
      }
 

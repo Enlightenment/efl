@@ -70,6 +70,7 @@ struct _Evas_Filter_Context
    Eina_Bool async : 1;
    Eina_Bool gl_engine : 1;
    Eina_Bool running : 1;
+   Eina_Bool has_proxies : 1;
 };
 
 struct _Evas_Filter_Command
