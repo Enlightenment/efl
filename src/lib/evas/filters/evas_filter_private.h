@@ -63,6 +63,8 @@ struct _Evas_Filter_Context
       int bufid;
       void *context;
       int x, y;
+      int cx, cy, cw, ch; // clip
+      Eina_Bool clip_use : 1;
    } target;
 
    Eina_Bool async : 1;

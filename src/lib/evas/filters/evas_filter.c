@@ -1421,25 +1421,20 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
-   if (!ctx->gl_engine)
-     {
-        ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
-        evas_filter_command_blend_add(ctx, draw_context,
-                                      EVAS_FILTER_BUFFER_OUTPUT_ID,
-                                      ctx->target.bufid,
-                                      x, y, EVAS_FILTER_FILL_MODE_NONE);
-     }
-   else
+   ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
+   ctx->target.x = x;
+   ctx->target.y = y;
+   ctx->target.clip_use = ENFN->context_clip_get
+         (ENDT, draw_context, &ctx->target.cx, &ctx->target.cy,
+          &ctx->target.cw, &ctx->target.ch);
+
+   if (ctx->gl_engine)
      {
         // Since GL has sync rendering, draw_context is safe to keep around
         Evas_Filter_Buffer *target, *image;
         RGBA_Image *im;
 
-        ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
         ctx->target.context = draw_context;
-        ctx->target.x = x;
-        ctx->target.y = y;
-
         target = _filter_buffer_get(ctx, ctx->target.bufid);
         target->glimage = target->backing;
         target->backing = NULL;
@@ -1457,32 +1452,52 @@ static Eina_Bool
 _filter_target_render(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Buffer *src, *dst;
-   Eina_Bool ok;
+   void *drawctx, *image, *surface;
+   int cx, cy, cw, ch;
+   Eina_Bool use_clip = EINA_FALSE;
 
-   /* FIXME: This is some hackish hook to send the final buffer on the screen
-    * Only used for OpenGL now, since evas_filter_target_set() adds a blend
-    * command in case of pure software rendering.
-    */
-
-   if (!ctx->gl_engine) return EINA_FALSE;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(ctx->target.bufid, EINA_FALSE);
 
    src = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
-   if (!src) return EINA_FALSE;
-
    dst = _filter_buffer_get(ctx, ctx->target.bufid);
-   if (!dst) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src->glimage, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst->glimage, EINA_FALSE);
+   if (!ctx->gl_engine)
+     {
+        drawctx = ENFN->context_new(ENDT);
+        surface = dst->backing;
+        image = src->backing;
+     }
+   else
+     {
+        drawctx = ctx->target.context;
+        surface = dst->glimage;
+        image = src->glimage;
+     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
 
-   ok = ENFN->image_draw(ENDT, ctx->target.context,
-                         dst->glimage, src->glimage,
-                         0, 0, src->w, src->h,
-                         ctx->target.x, ctx->target.y, src->w, src->h,
-                         EINA_TRUE, EINA_FALSE);
+   if (ctx->target.clip_use)
+     {
+        use_clip = ENFN->context_clip_get(ENDT, drawctx, &cx, &cy, &cw, &ch);
+        ENFN->context_clip_set(ENDT, drawctx, ctx->target.cx, ctx->target.cy,
+                               ctx->target.cw, ctx->target.ch);
+     }
 
-   return ok;
+   ENFN->image_draw(ENDT, drawctx, surface, image,
+                    0, 0, src->w, src->h,
+                    ctx->target.x, ctx->target.y, src->w, src->h,
+                    EINA_TRUE, EINA_FALSE);
+
+   if (!ctx->gl_engine)
+     ENFN->context_free(ENDT, drawctx);
+   else if (use_clip)
+     ENFN->context_clip_set(ENDT, drawctx, cx, cy, cw, ch);
+   else
+     ENFN->context_clip_unset(ENDT, drawctx);
+
+   return EINA_TRUE;
 }
 
 
