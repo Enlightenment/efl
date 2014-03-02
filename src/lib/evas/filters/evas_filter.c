@@ -223,10 +223,11 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
+   if (!ctx->has_proxies) return;
    if (ctx->gl_engine)
      {
         // FIXME: We need to call glReadPixels (yeah, no other way around...)
-        CRI("Proxy subrender is not supported in the GL engine (yet)");
+        ERR("Proxy subrender is not supported in the GL engine (yet)");
         return;
      }
 
