@@ -494,6 +494,32 @@ _visuals_refresh(Evas_Object *obj)
 }
 
 static void
+_track_move_cb(void *data,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj,
+               void *event_info EINA_UNUSED)
+{
+   Evas_Coord x, y;
+
+   ELM_SLIDER_DATA_GET(data, sd);
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(sd->popup, x, y);
+}
+
+static void
+_track_resize_cb(void *data,
+                 Evas *e EINA_UNUSED,
+                 Evas_Object *obj,
+                 void *event_info EINA_UNUSED)
+{
+   Evas_Coord w, h;
+
+   ELM_SLIDER_DATA_GET(data, sd);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(sd->popup, w, h);
+}
+
+static void
 _elm_slider_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Slider_Smart_Data *sd = _pd;
@@ -699,32 +725,6 @@ _spacer_up_cb(void *data,
         sd->frozen = EINA_FALSE;
      }
    elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
-}
-
-static void
-_track_move_cb(void *data,
-               Evas *e EINA_UNUSED,
-               Evas_Object *obj,
-               void *event_info EINA_UNUSED)
-{
-   Evas_Coord x, y;
-
-   ELM_SLIDER_DATA_GET(data, sd);
-   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-   evas_object_move(sd->popup, x, y);
-}
-
-static void
-_track_resize_cb(void *data,
-                 Evas *e EINA_UNUSED,
-                 Evas_Object *obj,
-                 void *event_info EINA_UNUSED)
-{
-   Evas_Coord w, h;
-
-   ELM_SLIDER_DATA_GET(data, sd);
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_resize(sd->popup, w, h);
 }
 
 static void
