@@ -927,6 +927,9 @@ EAPI void *
 eina_list_nth(const Eina_List *list, unsigned int n)
 {
    Eina_List *l;
+   if (!list) return NULL;
+
+   if (n == 0) return list->data;
 
    l = eina_list_nth_list(list, n);
    return l ? l->data : NULL;
