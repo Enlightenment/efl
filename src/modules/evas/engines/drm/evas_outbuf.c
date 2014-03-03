@@ -121,7 +121,7 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    evas_drm_outbuf_framebuffer_set(ob, &(ob->priv.buffer[0]));
 
    /* set back buffer as first one to draw into */
-   ob->priv.curr = (ob->priv.num - 1);
+   /* ob->priv.curr = (ob->priv.num - 1); */
 
    return ob;
 }
