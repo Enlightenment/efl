@@ -1011,7 +1011,6 @@ EFL_PLATFORM_DEPEND([EOLIAN], [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
-EFL_INTERNAL_DEPEND_PKG([EOLIAN], [ecore-file])
 
 ### Checks for header files
 

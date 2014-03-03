@@ -1,7 +1,6 @@
 #include <getopt.h>
 
 #include <Eina.h>
-#include <Ecore_File.h>
 
 #include "Eolian.h"
 #include "legacy_generator.h"
@@ -29,6 +28,17 @@ _include_guard_enclose(const char *fname, const char *fbody)
    eina_strbuf_replace_all(incguard, ".", "_");
    eina_strbuf_replace_all(incguard, "_code_", fbody);
    return eina_strbuf_string_steal(incguard);
+}
+
+static const char *
+_filename_get(const char *path)
+{
+   char *result = NULL;
+
+   if (!path) return NULL;
+   if ((result = strrchr(path, '/'))) result++;
+   else result = (char *)path;
+   return result;
 }
 
 static Eina_Bool
@@ -74,7 +84,7 @@ _generate_h_file(char *filename, const char *classname, Eina_Bool append)
 
    if (htext)
      {
-        char *fcontent = _include_guard_enclose(ecore_file_file_get(filename), htext);
+        char *fcontent = _include_guard_enclose(_filename_get(filename), htext);
         fputs(fcontent, fd);
         free(fcontent);
      }
@@ -161,7 +171,7 @@ _generate_legacy_header_file(char *filename, const char *classname, Eina_Bool ap
 
    if (ltext)
      {
-        char *fcontent = _include_guard_enclose(ecore_file_file_get(filename), ltext);
+        char *fcontent = _include_guard_enclose(_filename_get(filename), ltext);
         fputs(fcontent, fd);
         free(fcontent);
      }
@@ -276,25 +286,19 @@ int main(int argc, char **argv)
            case 'I':
                      {
                         const char *dir = optarg;
-                        if (ecore_file_is_dir(dir))
+                        Eina_Iterator *dir_files;
+                        char *file;
+                        /* Get all files from directory. Not recursively!!! */
+                        dir_files = eina_file_ls(dir);
+                        EINA_ITERATOR_FOREACH(dir_files, file)
                           {
-                             Eina_List *dir_files;
-                             char *file;
-                             /* Get all files from directory. Not recursively!!!*/
-                             dir_files = ecore_file_ls(dir);
-                             EINA_LIST_FREE(dir_files, file)
+                             if (eina_str_has_suffix(file, EO_SUFFIX))
                                {
-                                  char *filepath = malloc(strlen(dir) + 1 + strlen(file) + 1);
-                                  sprintf(filepath, "%s/%s", dir, file);
-                                  if ((!ecore_file_is_dir(filepath)) && eina_str_has_suffix(filepath, EO_SUFFIX))
-                                    {
-                                       /* Allocated string will be freed during deletion of "included_files" list. */
-                                       included_files = eina_list_append(included_files, strdup(filepath));
-                                    }
-                                  free(filepath);
-                                  free(file);
+                                  /* Allocated string will be freed during deletion of "included_files" list. */
+                                  included_files = eina_list_append(included_files, strdup(file));
                                }
                           }
+                        eina_iterator_free(dir_files);
                         break;
                      }
            default: help = EINA_TRUE;

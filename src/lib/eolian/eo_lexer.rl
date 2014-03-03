@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <Eina.h>
 
 #include "eo_lexer.h"
@@ -1134,11 +1133,6 @@ eo_tokenizer_database_fill(const char *filename)
         return EINA_FALSE;
      }
 
-   if (access(filename, F_OK) != 0)
-     {
-        ERR("error accessing file %s : %s", filename, strerror(errno));
-        return EINA_FALSE;
-     }
    if (!eo_tokenizer_walk(toknz, filename)) return EINA_FALSE;
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
