@@ -14,6 +14,14 @@
 static int counter = 3;
 
 static void
+_ds_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                void *event_info)
+{
+   Elm_Object_Item *it = event_info;
+   printf("Selected Item %s\n", elm_object_item_text_get(it));
+}
+
+static void
 _add_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *ds_it;
@@ -200,6 +208,7 @@ elm_main(int argc, char **argv)
    ds = elm_diskselector_add(win);
    evas_object_size_hint_weight_set(ds, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ds, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(ds, "selected", _ds_selected_cb, NULL);
    elm_box_pack_end(bx, ds);
    evas_object_show(ds);
 
