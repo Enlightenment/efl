@@ -27,7 +27,9 @@ _include_guard_enclose(const char *fname, const char *fbody)
          incname);
    eina_strbuf_replace_all(incguard, ".", "_");
    eina_strbuf_replace_all(incguard, "_code_", fbody);
-   return eina_strbuf_string_steal(incguard);
+   char *ret = eina_strbuf_string_steal(incguard);
+   eina_strbuf_free(incguard);
+   return ret;
 }
 
 static const char *

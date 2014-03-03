@@ -294,11 +294,13 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
    eina_strbuf_replace_all(str_hdr, "@#list_subid", eina_strbuf_string_get(str_subid));
    eina_strbuf_append(str_hdr, eina_strbuf_string_get(str_ev));
 
+   eina_strbuf_append(buf, eina_strbuf_string_get(str_hdr));
+
    eina_strbuf_free(str_subid);
    eina_strbuf_free(str_ev);
    eina_strbuf_free(tmpbuf);
+   eina_strbuf_free(str_hdr);
 
-   eina_strbuf_append(buf, eina_strbuf_string_get(str_hdr));
    return EINA_TRUE;
 }
 
