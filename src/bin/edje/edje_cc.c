@@ -21,6 +21,7 @@ char      *file_in = NULL;
 char      *tmp_dir = NULL;
 char      *file_out = NULL;
 char      *watchfile = NULL;
+char      *license = NULL;
 
 static const char *progname = NULL;
 
@@ -90,6 +91,7 @@ main_help(void)
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
       "-dd data/directory       Add a directory to look in for relative path data.file entries\n"
       "-td temp/directory       Directory to store temporary files\n"
+      "-l license               Specify the license of a theme\n"
       "-v                       Verbose output\n"
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be stored with lossless compression\n"
@@ -194,6 +196,12 @@ main(int argc, char **argv)
              if (!tmp_dir)
                tmp_dir = argv[i];
 	  }
+        else if ((!strcmp(argv[i], "-l") || !strcmp(argv[i], "--license")) && (i < (argc - 1)))
+          {
+             i++;
+             if (!license)
+               license = argv[i];
+          }
 	else if ((!strcmp(argv[i], "-min-quality")) && (i < (argc - 1)))
 	  {
 	     i++;

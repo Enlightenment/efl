@@ -227,6 +227,7 @@ extern char                  *file_in;
 extern char                  *tmp_dir;
 extern char                  *file_out;
 extern char                  *watchfile;
+extern char                  *license;
 extern int                    no_lossy;
 extern int                    no_comp;
 extern int                    no_raw;

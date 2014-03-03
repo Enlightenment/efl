@@ -1345,16 +1345,13 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
      }
    if (threads)
      {
-        pending_threads++;
         ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc);
      }
    else
      {
-        pending_threads++;
         data_thread_script(sc, NULL);
         data_thread_script_end(sc, NULL);
      }
-   pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1644,6 +1641,45 @@ data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
+data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Eet_File *ef = data;
+   Eina_File *f;
+   void *m;
+   int bytes;
+
+   f = eina_file_open(license, 0);
+   if (!f) return ;
+
+   m = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (!m) goto on_error;
+
+   bytes = eet_write(ef, "edje/license", m, eina_file_size_get(f), compress_mode);
+   if ((bytes <= 0) || eina_file_map_faulted(f, m))
+     {
+        ERR("Unable to write license part \"%s\".", license);
+     }
+   else
+     {
+        INF("Wrote %9i bytes (%4iKb) for \"%s\" license entry compress: [real: %2.1f%%]",
+            bytes, (bytes + 512) / 1024, license,
+            100 - (100 * (double)bytes) / ((double)(eina_file_size_get(f))));
+     }
+
+   eina_file_map_free(f, m);
+
+ on_error:
+   eina_file_close(f);
+}
+
+static void
+data_thread_license_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+{
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+}
+
+static void
 data_thread_fontmap(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Eet_File *ef = data;
@@ -1721,6 +1757,17 @@ data_write(void)
    INF("fonts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_sounds(ef, &sound_num);
    INF("sounds: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   if (license)
+     {
+        pending_threads++;
+        if (threads)
+          ecore_thread_run(data_thread_license, data_thread_license_end, NULL, ef);
+        else
+          {
+             data_thread_license(ef, NULL);
+             data_thread_license_end(ef, NULL);
+          }
+     }
    pending_threads--;
    if (pending_threads > 0) ecore_main_loop_begin();
    INF("THREADS: %3.5f", ecore_time_get() - t);
