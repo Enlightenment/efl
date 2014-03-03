@@ -1,6 +1,27 @@
 =========
-EFL 1.8.5
+EFL 1.8.6
 =========
+
+Changes since 1.8.5:
+--------------------
+
+   * examples/evas: Set a proper format string for fprintf
+   * ecore: @fix race condition when using ecore_main_loop_thread_safe_call_sync.
+   * Evas text utils: Fixed walking compound clusters.
+   * Evas textblock tests: Add a wrapping test for complex cluster wrapping.
+   * eina: allow eina_time_get to fall back to other clocks if the first one fails
+   * Evas textblock: Fix rendering of spaces in some cases (T924)
+   * Evas textblock: Added a test for rendering of spaces in some cases.
+   * Evas textblock: Fixed *_cursor_char_coord_set with some y values.
+   * Evas textblock: Added tests for *_cursor_char_coord_set.
+   * eina: restore magic debug option for ABI compatibility purpose.
+   * edje freeze count can no longer become negative
+   * evas: fix tiler bug (makes evas get stuck in an infinite loop there in certain scenarios)
+   * evas: textgrid - fix crash in terminology with rare characters.
+   * Evas textblock: Fix selection with bidi text.
+   * Evas textblock: Added a test for range geometry with bidi text.
+   * Edje entry: Fix memory corruption (of by one in allocation) (T867)
+   * Edje entry: Fix anchor href parsing.
 
 Changes since 1.8.4:
 --------------------
