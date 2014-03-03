@@ -113,8 +113,11 @@ _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 
    if (fb->stolen)
      {
-        fb->delete_me = EINA_TRUE;
-        return;
+        if (eina_list_data_find(fb->ctx->buffers, fb))
+          {
+             fb->delete_me = EINA_TRUE;
+             return;
+          }
      }
 
    INF("Free backing of buffer %d fb @ %p backing @ %p alloc %d", fb->id, fb, fb->backing, fb->allocated);
@@ -671,6 +674,7 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
              fb->stolen = EINA_FALSE;
              if (fb->delete_me)
                {
+                  ctx->buffers = eina_list_remove_list(ctx->buffers, li);
                   ENFN->image_free(ENDT, stolen_buffer);
                   free(fb);
                }
