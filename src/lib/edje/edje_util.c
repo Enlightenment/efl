@@ -23,7 +23,7 @@ static Eina_Rbtree *_edje_box_layout_registry = NULL;
 char *_edje_fontset_append = NULL;
 FLOAT_T _edje_scale = ZERO;
 Eina_Bool _edje_password_show_last = EINA_FALSE;
-FLOAT_T _edje_password_show_last_timeout = ZERO;
+double _edje_password_show_last_timeout = 0;
 int _edje_freeze_val = 0;
 int _edje_freeze_calc_count = 0;
 Eina_List *_edje_freeze_calc_list = NULL;
@@ -344,8 +344,8 @@ edje_password_show_last_set(Eina_Bool password_show_last)
 EAPI void
 edje_password_show_last_timeout_set(double password_show_last_timeout)
 {
-   if (_edje_password_show_last_timeout == FROM_DOUBLE(password_show_last_timeout)) return;
-   _edje_password_show_last_timeout = FROM_DOUBLE(password_show_last_timeout);
+   if (_edje_password_show_last_timeout == password_show_last_timeout) return;
+   _edje_password_show_last_timeout = password_show_last_timeout;
 }
 
 EAPI Eina_Bool

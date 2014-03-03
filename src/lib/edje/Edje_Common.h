@@ -1039,7 +1039,7 @@ EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
  * @param password_show_last_timeout The timeout value.
  *
  * This functions sets the time out value for which the last input entered in password
- * mode will be visible.
+ * mode will be visible. If the time out value is less than zero, the last input entered in password mode will be always visible.
  *
  * This value can be used only when last show mode is set in password mode.
  *

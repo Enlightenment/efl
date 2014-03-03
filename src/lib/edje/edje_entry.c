@@ -1856,8 +1856,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                             ecore_timer_del(en->pw_timer);
                             en->pw_timer = NULL;
                          }
-                       en->pw_timer = ecore_timer_add
-                         (TO_DOUBLE(_edje_password_show_last_timeout),
+                       if (_edje_password_show_last_timeout >= 0)
+                         en->pw_timer = ecore_timer_add
+                           (_edje_password_show_last_timeout,
                              _password_timer_cb, en);
                     }
                }
@@ -4013,8 +4014,9 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, 
                   ecore_timer_del(en->pw_timer);
                   en->pw_timer = NULL;
                }
-             en->pw_timer = ecore_timer_add
-               (TO_DOUBLE(_edje_password_show_last_timeout),
+             if (_edje_password_show_last_timeout >= 0)
+               en->pw_timer = ecore_timer_add
+                 (_edje_password_show_last_timeout,
                    _password_timer_cb, en);
           }
      }
@@ -4140,8 +4142,9 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
                        ecore_timer_del(en->pw_timer);
                        en->pw_timer = NULL;
                     }
-                  en->pw_timer = ecore_timer_add
-                    (TO_DOUBLE(_edje_password_show_last_timeout),
+                  if (_edje_password_show_last_timeout >= 0)
+                    en->pw_timer = ecore_timer_add
+                      (_edje_password_show_last_timeout,
                         _password_timer_cb, en);
                   free(info);
                }
