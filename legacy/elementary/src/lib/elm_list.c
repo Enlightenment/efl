@@ -1697,12 +1697,16 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
           elm_object_focus_set(obj, EINA_TRUE);
         if (it != sd->focused_item)
           {
-             _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
+             if (sd->focused_item)
+               _elm_list_item_unfocused((Elm_List_Item *)sd->focused_item);
              _elm_list_item_focused((Elm_List_Item *)it);
           }
      }
    else
-     _elm_list_item_unfocused((Elm_List_Item *)it);
+     {
+        if (it)
+          _elm_list_item_unfocused((Elm_List_Item *)it);
+     }
    _elm_widget_focus_highlight_start(obj);
 }
 
