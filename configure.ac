@@ -145,6 +145,7 @@ AC_SUBST(dbusservicedir)
 
 efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
+EFL_WITH_BIN([eolian], [eolian-gen])
 
 
 #### Default values
@@ -994,6 +995,40 @@ AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 
 EFL_LIB_END([Eo])
 #### End of Eo
+
+#### Eolian
+
+EFL_LIB_START([Eolian])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EOLIAN], [evil])
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
+EFL_INTERNAL_DEPEND_PKG([EOLIAN], [ecore-file])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Eolian])
+#### End of Eolian
 
 
 #### Evas
@@ -3981,6 +4016,7 @@ pc/eina.pc
 pc/eina-cxx.pc
 pc/eet.pc
 pc/eo.pc
+pc/eolian.pc
 pc/evas-fb.pc
 pc/evas-opengl-x11.pc
 pc/evas-opengl-sdl.pc
@@ -4117,6 +4153,7 @@ if test "x${have_pixman}" = "xyes" ; then
 echo "  Pixman........: ${features_evas_pixman}"
 fi
 echo "Eo..............: yes (${features_eo})"
+echo "Eolian..........: yes (${features_eolian})"
 echo "Eina............: yes (${features_eina})"
 echo "Ecore...........: yes (${features_ecore})"
 echo "Ecore_Con.......: yes (${features_ecore_con})"

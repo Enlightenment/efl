@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+eoincludedir=@datarootdir@/eolian/include
+
+Name: eolian
+Description: EFL's .eo parser and code generator.
+Version: @VERSION@
+Libs: -L${libdir} -leolian
+Libs.private: @requirements_libs_eolian@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eolian-@VMAJ@

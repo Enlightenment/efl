@@ -8,6 +8,8 @@
 # undef EAPI
 #endif
 
+#define EOLIAN
+
 #ifdef _WIN32
 # ifdef EFL_EO_BUILD
 #  ifdef DLL_EXPORT

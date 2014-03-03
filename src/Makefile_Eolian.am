@@ -1,0 +1,44 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/eolian/libeolian.la
+
+installed_eolianmainheadersdir = $(includedir)/eolian-@VMAJ@
+dist_installed_eolianmainheaders_DATA = lib/eolian/Eolian.h
+
+lib_eolian_libeolian_la_SOURCES = \
+                                  lib/eolian/eo_definitions.c \
+                                  lib/eolian/eo_definitions.h \
+                                  lib/eolian/eo_lexer.c \
+                                  lib/eolian/eo_lexer.h \
+                                  lib/eolian/eolian.c \
+                                  lib/eolian/eolian_database.c \
+                                  lib/eolian/eolian_database.h
+
+lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
+lib_eolian_libeolian_la_LIBADD = @EOLIAN_LIBS@
+lib_eolian_libeolian_la_DEPENDENCIES = @EOLIAN_INTERNAL_LIBS@
+lib_eolian_libeolian_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Binary
+
+bin_PROGRAMS += \
+                bin/eolian/eolian_gen
+
+bin_eolian_eolian_gen_SOURCES = \
+                bin/eolian/common_funcs.c \
+                bin/eolian/common_funcs.h \
+                bin/eolian/eo1_generator.c \
+                bin/eolian/eo1_generator.h \
+                bin/eolian/legacy_generator.c \
+                bin/eolian/legacy_generator.h \
+                bin/eolian/main.c
+
+bin_eolian_eolian_gen_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
+bin_eolian_eolian_gen_LDADD = @USE_EOLIAN_LIBS@
+bin_eolian_eolian_gen_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+### Helper for other modules using Eolian
+include Makefile_Eolian_Helper.am
+
+EXTRA_DIST += lib/eolian/eo_lexer.rl
