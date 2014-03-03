@@ -1837,6 +1837,7 @@ EAPI void elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb)
 
 EAPI void elm_object_item_del(Elm_Object_Item *it)
 {
+   if (!it) return;
    _elm_widget_item_del((Elm_Widget_Item *)it);
 }
 
