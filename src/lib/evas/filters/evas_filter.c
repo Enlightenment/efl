@@ -1687,7 +1687,7 @@ static Eina_Bool
 _filter_chain_run(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
-   Eina_Bool ok = EINA_TRUE;
+   Eina_Bool ok = EINA_FALSE;
 
    ctx->running = EINA_TRUE;
    EINA_INLIST_FOREACH(ctx->commands, cmd)

@@ -2130,7 +2130,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
     * remotely similar to its final form. You've been warned :)
     */
 
-   if (o->cur.filter.chain || (o->cur.filter.code && !o->cur.filter.invalid))
+   if (!o->cur.filter.invalid && (o->cur.filter.chain || o->cur.filter.invalid))
      {
         int X, Y, W, H;
         Evas_Filter_Context *filter;
@@ -2245,11 +2245,20 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
 
         // Add post-run callback and run filter
         evas_filter_context_autodestroy(filter);
-        evas_filter_run(filter);
+        ok = evas_filter_run(filter);
         o->cur.filter.changed = EINA_FALSE;
 
-        DBG("Effect rendering done.");
-        return;
+        if (ok)
+          {
+             DBG("Effect rendering done.");
+             return;
+          }
+        else
+          {
+             ERR("Rendering failed");
+             o->cur.filter.invalid = EINA_TRUE;
+             goto normal_render;
+          }
      }
 
    /* End of the EXPERIMENTAL code */
