@@ -359,13 +359,7 @@ _item_del_pre_hook(Elm_Object_Item *item)
      {
         if (sd->items)
           {
-             dit = (Elm_Diskselector_Item *)eina_list_nth(sd->items, 0);
-
-             if (dit != it)
-               sd->selected_item = dit;
-             else
-               sd->selected_item = eina_list_nth(sd->items, 1);
-
+             sd->selected_item = (Elm_Diskselector_Item *)eina_list_nth(sd->items, 0);
              _selected_item_indicate(sd->selected_item);
           }
         else
