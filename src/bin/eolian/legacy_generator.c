@@ -306,7 +306,7 @@ _class_h_find(const char *classname, Eina_Strbuf *buf)
 }
 
 Eina_Bool
-legacy_header_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
+legacy_header_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
 {
    const Eolian_Function_Type ftype_order[] = {PROPERTY_FUNC, METHOD_FUNC};
    const Eina_List *l;
@@ -343,7 +343,7 @@ legacy_header_generate(const char *classname, int eo_version, Eina_Strbuf *buf)
 }
 
 Eina_Bool
-legacy_header_append(const char *classname, int eo_version, Eina_Strbuf *header)
+legacy_header_append(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *header)
 {
    const Eolian_Function_Type ftype_order[] = {CONSTRUCTOR, PROPERTY_FUNC, METHOD_FUNC};
    char tmpstr[0xFF];
@@ -434,7 +434,7 @@ legacy_header_append(const char *classname, int eo_version, Eina_Strbuf *header)
 }
 
 Eina_Bool
-legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version, Eina_Strbuf *buf)
+legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
 {
    const Eina_List *itr;
 
