@@ -13,6 +13,16 @@
 #include <Ecore.h>
 #include <Ecore_Audio.h>
 
+static Eina_Bool _failed_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  Eina_Bool *pulse_context_failed = data;
+
+  if (pulse_context_failed) *pulse_context_failed = EINA_TRUE;
+  ecore_main_loop_quit();
+
+  return EINA_TRUE;
+}
+
 static Eina_Bool _finished_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
   ecore_main_loop_quit();
@@ -48,6 +58,7 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
 {
    Eo *in, *out;
    Eina_Bool ret;
+   Eina_Bool pulse_context_failed = EINA_FALSE;
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
@@ -62,11 +73,13 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    ecore_timer_add(0.3, _seek_vol, in);
 
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+   eo_do(out, eo_event_callback_add(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, _failed_cb, &pulse_context_failed));
 
    eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
    fail_if(!ret);
 
    ecore_main_loop_begin();
+   fail_if(pulse_context_failed);
 
    eo_del(out);
    eo_del(in);
