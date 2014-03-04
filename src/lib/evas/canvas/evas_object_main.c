@@ -657,7 +657,12 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    EINA_LIST_FOREACH_SAFE(obj->clip.clipees, l, l2, tmp)
      evas_object_clip_unset(tmp->object);
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
-     evas_object_image_source_unset(proxy);
+     {
+        if (eo_isa(proxy, EVAS_OBJ_IMAGE_CLASS))
+          evas_object_image_source_unset(proxy);
+        else if (eo_isa(proxy, EVAS_OBJ_TEXT_CLASS))
+          eo_do(proxy, evas_obj_text_filter_source_set(NULL, eo_obj));
+     }
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);

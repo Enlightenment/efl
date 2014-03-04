@@ -2808,6 +2808,14 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
    obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (eo_source) source = eo_data_scope_get(eo_source, EVAS_OBJ_CLASS);
 
+   if (!name)
+     {
+        if (!eo_source || !o->cur.filter.sources) return;
+        if (eina_hash_del_by_data(o->cur.filter.sources, eo_source))
+          goto update;
+        return;
+     }
+
    if (!o->cur.filter.sources)
      {
         o->cur.filter.sources = eina_hash_string_small_new
