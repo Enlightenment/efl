@@ -1719,10 +1719,10 @@ static void
 _filter_thread_run_cb(void *data)
 {
    Evas_Filter_Context *ctx = data;
+   Eina_Bool success;
    void *buffer;
 
-   // TODO: Add return value check and call error cb
-   _filter_chain_run(ctx);
+   success = _filter_chain_run(ctx);
 
    EINA_LIST_FREE(ctx->post_run.buffers_to_free, buffer)
      {
@@ -1731,7 +1731,7 @@ _filter_thread_run_cb(void *data)
      }
 
    if (ctx->post_run.cb)
-     ctx->post_run.cb(ctx, ctx->post_run.data);
+     ctx->post_run.cb(ctx, ctx->post_run.data, success);
 }
 
 Eina_Bool
@@ -1755,6 +1755,6 @@ evas_filter_run(Evas_Filter_Context *ctx)
 
    ret = _filter_chain_run(ctx);
    if (ctx->post_run.cb)
-     ctx->post_run.cb(ctx, ctx->post_run.data);
+     ctx->post_run.cb(ctx, ctx->post_run.data, ret);
    return ret;
 }

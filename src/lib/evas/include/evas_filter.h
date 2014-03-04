@@ -19,7 +19,7 @@ typedef enum _Evas_Filter_Fill_Mode Evas_Filter_Fill_Mode;
 typedef enum _Evas_Filter_Transform_Flags Evas_Filter_Transform_Flags;
 
 typedef Eina_Bool (* Evas_Filter_Apply_Func) (Evas_Filter_Command *cmd);
-typedef void (* Evas_Filter_Cb) (Evas_Filter_Context *ctx, void *data);
+typedef void (* Evas_Filter_Cb) (Evas_Filter_Context *ctx, void *data, Eina_Bool success);
 
 #define EVAS_FILTER_BUFFER_RGBA  EINA_FALSE
 #define EVAS_FILTER_BUFFER_ALPHA EINA_TRUE

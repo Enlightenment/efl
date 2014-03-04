@@ -2024,9 +2024,37 @@ evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
 }
 
 static void
-evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
-			Evas_Object_Protected_Data *obj,
-			void *type_private_data,
+_filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
+{
+   Eo *eo_obj = data;
+
+   // Destroy context as we won't reuse it.
+   evas_filter_context_destroy(ctx);
+
+   // Redraw text with normal styles in case of failure
+   if (!success)
+     {
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+        Evas_Object_Text *o = (Evas_Object_Text *) obj->private_data;
+
+        ERR("Filter failed at runtime!");
+        o->cur.filter.invalid = EINA_TRUE;
+
+        // Update object
+        _evas_object_text_items_clear(o);
+        o->changed = 1;
+        _evas_object_text_recalc(eo_obj, o->cur.text);
+        evas_object_change(eo_obj, obj);
+        evas_object_clip_dirty(eo_obj, obj);
+        evas_object_coords_recalc(eo_obj, obj);
+        evas_object_inform_call_resize(eo_obj);
+     }
+}
+
+static void
+evas_object_text_render(Evas_Object *eo_obj,
+                        Evas_Object_Protected_Data *obj,
+                        void *type_private_data,
                         void *output, void *context, void *surface,
                         int x, int y, Eina_Bool do_async)
 {
@@ -2244,7 +2272,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
         ENFN->context_free(ENDT, filter_ctx);
 
         // Add post-run callback and run filter
-        evas_filter_context_autodestroy(filter);
+        evas_filter_context_post_run_callback_set(filter, _filter_cb, eo_obj);
         ok = evas_filter_run(filter);
         o->cur.filter.changed = EINA_FALSE;
 
