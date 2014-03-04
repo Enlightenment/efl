@@ -36,8 +36,8 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
       case EVAS_COLORSPACE_GRY8:
         dst->cache_entry.w = w;
         dst->cache_entry.h = h;
-        dst->mask.data = (DATA8 *) image_data;
-        dst->mask.no_free = 1;
+        dst->image.data8 = (DATA8 *) image_data;
+        dst->image.no_free = 1;
         dst->cache_entry.flags.alpha = 1;
         break;
       default:
@@ -75,7 +75,7 @@ evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA3
       case EVAS_COLORSPACE_GRY8:
         dst->cache_entry.flags.alpha = 1;
         if (image_data)
-          memcpy(dst->mask.data, image_data, w * h * sizeof(DATA8));
+          memcpy(dst->image.data8, image_data, w * h * sizeof(DATA8));
         break;
       default:
          abort();

@@ -27,8 +27,8 @@ _vflip_cpu(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->output->h == h, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->output->alpha_only == cmd->input->alpha_only, EINA_FALSE);
 
-   in = ((RGBA_Image *) cmd->input->backing)->mask.data;
-   out = ((RGBA_Image *) cmd->output->backing)->mask.data;
+   in = ((RGBA_Image *) cmd->input->backing)->image.data8;
+   out = ((RGBA_Image *) cmd->output->backing)->image.data8;
    datasize = cmd->input->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
    stride = w * datasize;
 

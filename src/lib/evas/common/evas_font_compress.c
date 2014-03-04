@@ -495,7 +495,7 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
         // FIXME: Font draw not optimized for Alpha targets! SLOW!
         // This is not pretty :)
 
-        DATA8 *dst8 = dst_image->mask.data + x + (y * dst_pitch);
+        DATA8 *dst8 = dst_image->image.data8 + x + (y * dst_pitch);
         Alpha_Gfx_Func func;
         DATA8 *src8;
         int row;

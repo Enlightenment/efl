@@ -79,8 +79,8 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->mask.data;
-   dst = out->mask.data;
+   src = in->image.data8;
+   dst = out->image.data8;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
 
@@ -106,7 +106,7 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
         mask = fb->backing;
      }
 
-   msk = mask->mask.data;
+   msk = mask->image.data8;
 
    // First pass: copy to dest
    if (src != dst)
@@ -119,7 +119,7 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
         if (my >= mh)
           {
              my = 0;
-             msk = mask->mask.data;
+             msk = mask->image.data8;
           }
 
         for (step = 0; step < stepcount; step++, dst += stepsize)
@@ -189,7 +189,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->mask.data;
+   src = in->image.data8;
    dst = out->image.data;
 
    // Stretch if necessary.
@@ -286,7 +286,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->mask.data;
+   src = in->image.data8;
    dst = out->image.data;
    color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
 
@@ -311,7 +311,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
         mask = fb->backing;
      }
 
-   msk = mask->mask.data;
+   msk = mask->image.data8;
    stepsize  = MIN(mw, w);
    stepcount = w / stepsize;
    span = malloc(stepsize * sizeof(DATA8));
@@ -324,7 +324,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
         if (my >= mh)
           {
              my = 0;
-             msk = mask->mask.data;
+             msk = mask->image.data8;
           }
 
         for (step = 0; step < stepcount; step++, dst += stepsize, src += stepsize)

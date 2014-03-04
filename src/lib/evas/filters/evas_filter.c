@@ -1360,7 +1360,7 @@ _fill_cpu(Evas_Filter_Command *cmd)
    int step = fb->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
    int x = MAX(0, cmd->draw.clip.x);
    int y = MAX(0, cmd->draw.clip.y);
-   DATA8 *ptr = ((RGBA_Image *) fb->backing)->mask.data;
+   DATA8 *ptr = ((RGBA_Image *) fb->backing)->image.data8;
    int w, h, k, j;
 
    if (!cmd->draw.clip_mode_lrtb)

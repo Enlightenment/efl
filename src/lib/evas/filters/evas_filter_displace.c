@@ -206,9 +206,9 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask->backing, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
 
-   src = ((RGBA_Image *) cmd->input->backing)->mask.data;
+   src = ((RGBA_Image *) cmd->input->backing)->image.data8;
    map_start = ((RGBA_Image *) cmd->mask->backing)->image.data;
-   dst = ((RGBA_Image *) cmd->output->backing)->mask.data;
+   dst = ((RGBA_Image *) cmd->output->backing)->image.data8;
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(map_start, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);

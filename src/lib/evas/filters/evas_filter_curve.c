@@ -97,8 +97,8 @@ _filter_curve_cpu_alpha(Evas_Filter_Command *cmd)
    out = cmd->output->backing;
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
-   src = in->mask.data;
-   dst = out->mask.data;
+   src = in->image.data8;
+   dst = out->image.data8;
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
    curve = cmd->curve.data;

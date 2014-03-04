@@ -44,8 +44,8 @@ _image_draw_cpu_alpha2alpha(void *data EINA_UNUSED, void *context,
    struct Alpha_Blend_Draw_Context *dc = context;
    RGBA_Image *src = image;
    RGBA_Image *dst = surface;
-   DATA8* srcdata = src->mask.data;
-   DATA8* dstdata = dst->mask.data;
+   DATA8* srcdata = src->image.data8;
+   DATA8* dstdata = dst->image.data8;
    Alpha_Gfx_Func func;
    int y, sw, dw;
 
@@ -80,7 +80,7 @@ _image_draw_cpu_alpha2rgba(void *data EINA_UNUSED, void *context,
    struct Alpha_Blend_Draw_Context *dc = context;
    RGBA_Image *src = image;
    RGBA_Image *dst = surface;
-   DATA8* srcdata = src->mask.data;
+   DATA8* srcdata = src->image.data8;
    DATA32* dstdata = dst->image.data;
    RGBA_Gfx_Func func;
    int y, sw, dw;
@@ -118,8 +118,8 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd,
    out = cmd->output->backing;
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in->mask.data, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out->mask.data, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
 
    sx = 0;
    sy = 0;
@@ -178,7 +178,7 @@ _image_draw_cpu_rgba2alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
    RGBA_Image *src = image;
    RGBA_Image *dst = surface;
    DATA32* srcdata = src->image.data;
-   DATA8* dstdata = dst->mask.data;
+   DATA8* dstdata = dst->image.data8;
    int x, y, sw, dw;
 #if RGBA2ALPHA_WEIGHTED
    const int WR = 299;

@@ -118,9 +118,9 @@ _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd)
    h = cmd->input->h;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(w > 2 && h > 2, EINA_FALSE);
 
-   src = ((RGBA_Image *) cmd->input->backing)->mask.data;
-   map = ((RGBA_Image *) cmd->mask->backing)->mask.data;
-   dst = ((RGBA_Image *) cmd->output->backing)->mask.data;
+   src = ((RGBA_Image *) cmd->input->backing)->image.data8;
+   map = ((RGBA_Image *) cmd->mask->backing)->image.data8;
+   dst = ((RGBA_Image *) cmd->output->backing)->image.data8;
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(map, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
@@ -255,8 +255,8 @@ _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd)
    h = cmd->input->h;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(w > 2 && h > 2, EINA_FALSE);
 
-   src = ((RGBA_Image *) cmd->input->backing)->mask.data;
-   map = ((RGBA_Image *) cmd->mask->backing)->mask.data;
+   src = ((RGBA_Image *) cmd->input->backing)->image.data8;
+   map = ((RGBA_Image *) cmd->mask->backing)->image.data8;
    dst = ((RGBA_Image *) cmd->output->backing)->image.data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(map, EINA_FALSE);

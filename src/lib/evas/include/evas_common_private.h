@@ -801,20 +801,14 @@ struct _RGBA_Image
       Eina_Bool          dirty : 1;
    } cs;
 
-   union
-   {
-      /* RGBA stuff */
-      struct {
-         DATA32            *data;
-         Eina_Bool          no_free : 1;
-      } image;
-
-      /* Alpha Mask stuff */
-      struct {
-         DATA8             *data;
-         Eina_Bool          no_free : 1;
-      } mask;
-   };
+   /* RGBA stuff */
+   struct {
+      union {
+         DATA32         *data;    /* Normal image */
+         DATA8          *data8;   /* Alpha Mask stuff */
+      };
+      Eina_Bool          no_free : 1;
+   } image;
 
    struct {
       SLK(lock);
