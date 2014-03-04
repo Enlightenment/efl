@@ -1,8 +1,5 @@
 /* Implementation of some masking functions for the software engine */
 
-#include "evas_common_private.h"
-#include "evas_private.h"
-#include "evas_filter.h"
 #include "evas_filter_private.h"
 #include "evas_blend_private.h"
 

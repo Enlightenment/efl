@@ -1,17 +1,10 @@
 /* Simple bump map algorithms for the software engine */
 
-#include "evas_common_private.h"
-#include "evas_private.h"
-#include "evas_filter.h"
 #include "evas_filter_private.h"
 #include "evas_blend_private.h"
 
 #include <math.h>
 
-#undef ENFN
-#undef ENDT
-#define ENFN cmd->ctx->evas->engine.func
-#define ENDT cmd->ctx->evas->engine.data.output
 
 #ifdef CLAMP
 # undef CLAMP

@@ -846,7 +846,7 @@ static Buffer *
 _buffer_get(Evas_Filter_Program *pgm, const char *name)
 {
    Buffer *buf;
-   Eo *source;
+   Evas_Object *source;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
