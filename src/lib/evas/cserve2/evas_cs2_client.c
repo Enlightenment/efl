@@ -321,8 +321,6 @@ _shared_index_close(Shared_Index *si)
      }
    if (si->entries_by_hkey)
      eina_hash_free(si->entries_by_hkey);
-   si->f = NULL;
-   si->data = NULL;
    memset(si, 0, sizeof(Shared_Index));
 }
 
@@ -1589,7 +1587,9 @@ _font_entry_free(Font_Entry *fe)
      if (fe->fash[i])
        fash_gl_free(fe->fash[i]);
 
-   eina_hash_del_by_key(_index.fonts.entries_by_hkey, fe->hkey);
+   if (_index.fonts.entries_by_hkey)
+     eina_hash_del_by_key(_index.fonts.entries_by_hkey, fe->hkey);
+
    free(fe->hkey);
    eina_stringshare_del(fe->source);
    eina_stringshare_del(fe->name);
@@ -2894,16 +2894,7 @@ _shared_index_remap_check(Shared_Index *si, int elemsize)
 
    if (!si->path[0])
      {
-        if (si->f)
-          {
-             DBG("Closing index map");
-             eina_file_map_free(si->f, si->data);
-             eina_file_close(si->f);
-             eina_hash_free(si->entries_by_hkey);
-             si->f = NULL;
-             si->data = NULL;
-             memset(si, 0, sizeof(*si));
-          }
+        _shared_index_close(si);
         return EINA_FALSE;
      }
 
