@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <Eina.h>
 
+#include "Eolian.h"
+#
 #include "eo_lexer.h"
 #include "eolian_database.h"
 

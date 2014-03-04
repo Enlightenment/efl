@@ -252,7 +252,8 @@ eolian_class_names_list_get(void)
    return list;
 }
 
-EAPI Eina_Bool eolian_class_exists(const char *class_name)
+EAPI Eina_Bool
+eolian_class_exists(const char *class_name)
 {
    return !!_class_get(class_name);
 }
@@ -439,7 +440,7 @@ database_implement_legacy_param_add(Eolian_Implement_Legacy leg,
    return (Eolian_Implement_Legacy_Parameter) param;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 eolian_implement_legacy_param_info_get(Eolian_Implement_Legacy_Parameter param,
       Eina_Stringshare **eo_param, Eina_Stringshare **leg_param,
       Eina_Stringshare **comment)
@@ -463,7 +464,7 @@ database_implement_legacy_return_add(Eolian_Implement_Legacy leg, Eina_Stringsha
    return EINA_TRUE;
 }
 
-Eolian_Implement_Legacy
+EAPI Eolian_Implement_Legacy
 eolian_implement_legacy_desc_get(Eolian_Implement impl)
 {
    _Implement_Desc *_impl = (_Implement_Desc *)impl;
@@ -471,7 +472,7 @@ eolian_implement_legacy_desc_get(Eolian_Implement impl)
    return (Eolian_Implement_Legacy) (_impl->leg_desc);
 }
 
-Eina_Bool
+EAPI Eina_Bool
 eolian_implement_legacy_information_get(const Eolian_Implement_Legacy leg_desc,
       Eina_Stringshare **leg_func_name, Eina_List **params,
       Eina_Stringshare **ret_type, Eina_Stringshare **ret_value)
@@ -779,7 +780,8 @@ void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_T
    database_function_data_set(foo_id, key, ret_type);
 }
 
-EAPI const char *eolian_function_return_type_get(Eolian_Function foo_id, Eolian_Function_Type ftype)
+EAPI const char *
+eolian_function_return_type_get(Eolian_Function foo_id, Eolian_Function_Type ftype)
 {
    const char *key = NULL;
    switch (ftype)
@@ -807,7 +809,8 @@ void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
      }
 }
 
-EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id,
+EAPI Eina_Bool
+eolian_function_return_is_warn_unused(Eolian_Function foo_id,
       Eolian_Function_Type ftype)
 {
    _Function_Id *fid = (_Function_Id *)foo_id;
@@ -901,7 +904,7 @@ database_class_dtor_enable_set(const char *class_name, Eina_Bool enable)
    return EINA_TRUE;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 eolian_class_ctor_enable_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
@@ -909,7 +912,7 @@ eolian_class_ctor_enable_get(const char *class_name)
    return desc->class_ctor_enable;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 eolian_class_dtor_enable_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
@@ -1152,7 +1155,8 @@ static Eina_Bool _class_print(const Eina_Hash *hash EINA_UNUSED, const void *key
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool eolian_show(const char *class_name)
+EAPI Eina_Bool
+eolian_show(const char *class_name)
 {
    if (!class_name)
       eina_hash_foreach(_classes, _class_print, NULL);

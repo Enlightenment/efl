@@ -1,6 +1,5 @@
-#include "Eolian.h"
-#include "eolian_database.h"
 #include "eo_lexer.h"
+#include "eolian_database.h"
 
 static int _eolian_init_counter = 0;
 int _eolian_log_dom = -1;
