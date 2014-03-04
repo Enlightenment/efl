@@ -2130,7 +2130,7 @@ evas_object_text_render(Evas_Object *eo_obj EINA_UNUSED,
     * remotely similar to its final form. You've been warned :)
     */
 
-   if (!o->cur.filter.invalid && (o->cur.filter.chain || o->cur.filter.invalid))
+   if (!o->cur.filter.invalid && (o->cur.filter.chain || o->cur.filter.code))
      {
         int X, Y, W, H;
         Evas_Filter_Context *filter;
