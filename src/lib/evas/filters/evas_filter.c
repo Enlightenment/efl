@@ -1573,6 +1573,7 @@ _clip_to_target(int *sx /* OUT */, int *sy /* OUT */, int sw, int sh,
      }
    else
      {
+        (*sx) = 0;
         (*dx) = 0;
         (*cols) = sw;
         if ((*cols) > dw) (*cols) = dw;
@@ -1595,6 +1596,7 @@ _clip_to_target(int *sx /* OUT */, int *sy /* OUT */, int sw, int sh,
      }
    else
      {
+        (*sy) = 0;
         (*dy) = 0;
         (*rows) = sh;
         if ((*rows) > dh) (*rows) = dh;
