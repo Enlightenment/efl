@@ -17,7 +17,11 @@ static Eina_Bool _failed_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Desc
 {
   Eina_Bool *pulse_context_failed = data;
 
-  if (pulse_context_failed) *pulse_context_failed = EINA_TRUE;
+  if (pulse_context_failed)
+    {
+       int pa_check = system("pulseaudio --check");
+       *pulse_context_failed = (pa_check == 0);
+    }
   ecore_main_loop_quit();
 
   return EINA_TRUE;
