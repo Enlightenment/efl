@@ -51,6 +51,8 @@ _eio_monitor_free(Eio_Monitor *monitor)
           eio_monitor_fallback_del(monitor);
      }
 
+   INF("Stopping monitor on '%s'.", monitor->path);
+
    eina_stringshare_del(monitor->path);
    free(monitor);
 }
@@ -184,6 +186,25 @@ eio_monitor_shutdown(void)
    _monitor_pid = -1;
 }
 
+static const char *
+_eio_naming_event(int event_code)
+{
+#define EVENT_CHECK(Code, Ev) if (Code == Ev) return #Ev;
+
+   EVENT_CHECK(event_code, EIO_MONITOR_ERROR);
+   EVENT_CHECK(event_code, EIO_MONITOR_FILE_CREATED);
+   EVENT_CHECK(event_code, EIO_MONITOR_FILE_DELETED);
+   EVENT_CHECK(event_code, EIO_MONITOR_FILE_MODIFIED);
+   EVENT_CHECK(event_code, EIO_MONITOR_FILE_CLOSED);
+   EVENT_CHECK(event_code, EIO_MONITOR_DIRECTORY_CREATED);
+   EVENT_CHECK(event_code, EIO_MONITOR_DIRECTORY_DELETED);
+   EVENT_CHECK(event_code, EIO_MONITOR_DIRECTORY_MODIFIED);
+   EVENT_CHECK(event_code, EIO_MONITOR_DIRECTORY_CLOSED);
+   EVENT_CHECK(event_code, EIO_MONITOR_SELF_RENAME);
+   EVENT_CHECK(event_code, EIO_MONITOR_SELF_DELETED);
+   return "Unknown";
+}
+
 void
 _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
 {
@@ -191,6 +212,9 @@ _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
 
    if (monitor->delete_me)
      return;
+
+   INF("Event '%s' for monitored path '%s'.",
+       _eio_naming_event(event_code), filename);
 
    ev = calloc(1, sizeof (Eio_Monitor_Event));
    if (!ev) return;
@@ -224,6 +248,9 @@ _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
        else
          eio_monitor_fallback_del(monitor);
     }
+
+  INF("Renaming path '%s' to '%s'.",
+      monitor->path, newpath);
 
   /* rename */
   tmp = monitor->path;
@@ -308,7 +335,7 @@ eio_monitor_stringshared_add(const char *path)
 
    if (stat(path, &st) != 0)
      {
-        INF("monitored path not found");
+        ERR("monitored path not found");
         return NULL;
      }
 
@@ -352,6 +379,7 @@ eio_monitor_stringshared_add(const char *path)
      }
 
    eina_hash_direct_add(_eio_monitors, path, monitor);
+   INF("New monitor on '%s'.", path);
 
    return monitor;
 }
