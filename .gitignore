@@ -28,6 +28,9 @@ tags
 *.gcno
 *.gcda
 *.dirstamp
+*.eo.c
+*.eo.h
+*.eo.legacy.h
 /efl-*-doc.tar.bz2
 /ar-lib
 /stamp-h1

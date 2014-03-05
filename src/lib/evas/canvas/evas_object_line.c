@@ -3,17 +3,15 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID = EO_NOOP;
-
 #define MY_CLASS EVAS_OBJ_LINE_CLASS
 
 /* private magic number for line objects */
 static const char o_type[] = "line";
 
 /* private struct for line object internal data */
-typedef struct _Evas_Object_Line      Evas_Object_Line;
+typedef struct _Evas_Line_Data      Evas_Line_Data;
 
-struct _Evas_Object_Line
+struct _Evas_Line_Data
 {
    struct {
       struct {
@@ -105,21 +103,11 @@ evas_object_line_add(Evas *e)
    return eo_obj;
 }
 
-EAPI void
-evas_object_line_xy_set(Evas_Object *eo_obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
+EOLIAN static void
+_evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
 {
-   eo_do(eo_obj, evas_obj_line_xy_set(x1, y1, x2, y2));
-}
 
-static void
-_line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Coord x1 = va_arg(*list, Evas_Coord);
-   Evas_Coord y1 = va_arg(*list, Evas_Coord);
-   Evas_Coord x2 = va_arg(*list, Evas_Coord);
-   Evas_Coord y2 = va_arg(*list, Evas_Coord);
-
-   Evas_Object_Line *o = _pd;
+   Evas_Line_Data *o = _pd;
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
 
@@ -204,28 +192,11 @@ _line_xy_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_resize(eo_obj);
 }
 
-EAPI void
-evas_object_line_xy_get(const Evas_Object *eo_obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
+EOLIAN static void
+_evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (x1) *x1 = 0;
-   if (y1) *y1 = 0;
-   if (x2) *x2 = 0;
-   if (y2) *y2 = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_line_xy_get(x1, y1, x2, y2));
-}
+   const Evas_Line_Data *o = _pd;
 
-static void
-_line_xy_get(Eo *eo_obj, void *_pd, va_list *list)
-{
-   const Evas_Object_Line *o = _pd;
-
-   Evas_Coord *x1 = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y1 = va_arg(*list, Evas_Coord *);
-   Evas_Coord *x2 = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y2 = va_arg(*list, Evas_Coord *);
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    if (x1) *x1 = obj->cur->geometry.x + o->cur.x1;
@@ -245,11 +216,11 @@ evas_object_line_init(Evas_Object *eo_obj)
    obj->type = o_type;
 }
 
-static void
-_constructor(Eo *eo_obj, void *class_data, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_line_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
-   Evas_Object_Line *o;
+   Evas_Line_Data *o;
    Eo *parent;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
@@ -274,7 +245,7 @@ evas_object_line_render(Evas_Object *eo_obj EINA_UNUSED,
 			void *type_private_data,
 			void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Object_Line *o = type_private_data;
+   Evas_Line_Data *o = type_private_data;
 
    /* render object to surface with context, and offxet by x,y */
 
@@ -305,7 +276,7 @@ evas_object_line_render_pre(Evas_Object *eo_obj,
                             Evas_Object_Protected_Data *obj,
                             void *type_private_data)
 {
-   Evas_Object_Line *o = type_private_data;
+   Evas_Line_Data *o = type_private_data;
    int is_v, was_v;
    Eina_Bool changed_color = EINA_FALSE;
 
@@ -393,7 +364,7 @@ evas_object_line_render_post(Evas_Object *eo_obj,
                              Evas_Object_Protected_Data *obj EINA_UNUSED,
                              void *type_private_data)
 {
-   Evas_Object_Line *o = type_private_data;
+   Evas_Line_Data *o = type_private_data;
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
@@ -407,21 +378,21 @@ evas_object_line_render_post(Evas_Object *eo_obj,
 
 static unsigned int evas_object_line_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Line_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_LINE;
 }
 
 static unsigned int evas_object_line_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Line_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_line_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Line *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Line_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 
@@ -474,7 +445,7 @@ evas_object_line_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
                                Evas_Object_Protected_Data *obj,
                                void *type_private_data)
 {
-   Evas_Object_Line *o = type_private_data;
+   Evas_Line_Data *o = type_private_data;
 
    o->cur.cache.x1 = obj->cur->geometry.x + o->cur.x1;
    o->cur.cache.y1 = obj->cur->geometry.y + o->cur.y1;
@@ -484,35 +455,4 @@ evas_object_line_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
    o->cur.cache.object.h = obj->cur->geometry.h;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_SET), _line_xy_set),
-        EO_OP_FUNC(EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), _line_xy_get),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_LINE_SUB_ID_XY_SET, "Sets the coordinates of the end points of the given evas line object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_LINE_SUB_ID_XY_GET, "Retrieves the coordinates of the end points of the given evas line object."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Evas_Line",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_LINE_BASE_ID, op_desc, EVAS_OBJ_LINE_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Line),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_line_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
-
+#include "evas_line.eo.c"

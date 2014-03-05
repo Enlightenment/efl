@@ -3,7 +3,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES =
 BUILT_SOURCES =
-EOLIAN_FLAGS =
+
+EOLIAN_FLAGS = \
+	       -I$(srcdir)/lib/eo \
+	       -I$(srcdir)/lib/evas
 
 DIST_SUBDIRS =
 SUBDIRS =
@@ -15,6 +18,7 @@ noinst_PROGRAMS =
 check_PROGRAMS =
 TESTS =
 EXTRA_DIST =
+
 
 EFL_INSTALL_EXEC_HOOK=
 

@@ -2917,6 +2917,9 @@ enum
  *
  * @{
  */
+#include "evas_line.eo.h"
+
+#if 0
 #define EVAS_OBJ_LINE_CLASS evas_object_line_class_get()
 const Eo_Class *evas_object_line_class_get(void) EINA_CONST;
 
@@ -2961,6 +2964,7 @@ enum
  * @see evas_object_line_xy_get
  */
 #define evas_obj_line_xy_get(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), EO_TYPECHECK(Evas_Coord *, x1), EO_TYPECHECK(Evas_Coord *, y1), EO_TYPECHECK(Evas_Coord *, x2), EO_TYPECHECK(Evas_Coord *, y2)
+#endif
 
 /**
  * @}

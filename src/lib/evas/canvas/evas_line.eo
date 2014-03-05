@@ -1,0 +1,29 @@
+class Evas_Line (Evas_Object)
+{
+   legacy_prefix: evas_object_line;
+   properties {
+      xy {
+         set {
+            /*@
+            @since 1.8
+
+            Sets the coordinates of the end points of the given evas line object. */
+         }
+         get {
+            /*@
+            Retrieves the coordinates of the end points of the given evas line object.
+            second end point. */
+         }
+         values {
+            Evas_Coord x1; /*@ The X coordinate of the first point. */
+            Evas_Coord y1; /*@ The Y coordinate of the first point. */
+            Evas_Coord x2; /*@ The X coordinate of the second point. */
+            Evas_Coord y2; /*@ The Y coordinate of the second point. */
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+   }
+
+}
