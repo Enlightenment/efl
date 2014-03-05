@@ -335,7 +335,7 @@ eio_monitor_stringshared_add(const char *path)
 
    if (stat(path, &st) != 0)
      {
-        ERR("monitored path not found");
+        ERR("monitored path '%s' not found.", path);
         return NULL;
      }
 
