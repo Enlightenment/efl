@@ -49,8 +49,7 @@
             relative: 1.0 1.0; \
             to: "field"#_after; \
          } \
-         color: 255 255 255 255; \
-         color3: 0 0 0 128; \
+         color: FN_COL_DEFAULT; \
          color_class: "datetime_text"; \
          text { \
             font: "Sans"; size: 10; \
@@ -74,8 +73,7 @@
          visible: 0; \
          rel1.to: "separator"#_pos; \
          rel2.to: "separator"#_pos; \
-         color: 21 21 21 255; \
-         color3: 255 255 255 25; \
+         color: FN_COL_DISABLE; \
          color_class: "datetime_text"; \
          text { \
             text_source: "separator"#_pos; \

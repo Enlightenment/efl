@@ -50,8 +50,7 @@ group { name: "e/widgets/radio";
             rel1.to_x: "inset";
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "radio_text";
             text { font: FN; size: 10;
                min: 1 1;
@@ -61,8 +60,7 @@ group { name: "e/widgets/radio";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
          }
       }
       part { name: "event"; type: RECT;
@@ -133,8 +131,7 @@ group { name: "e/widgets/radio_icon";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
          }
       }
    }

@@ -128,14 +128,14 @@ group { name: "elm/diskselector/item/default";
          }
          description { state: "left_side" 0.0;
             inherit: "default" 0.0;
-            color: 127 127 127 255;
+            color: FN_COL_GREY_152;
             text.size: 8;
             visible: 1;
             text.align: 0.2 0.5;
          }
          description { state: "right_side" 0.0;
             inherit: "default" 0.0;
-            color: 127 127 127 255;
+            color: FN_COL_GREY_152;
             visible: 1;
             text.size: 8;
             text.align: 0.8 0.5;
@@ -265,7 +265,7 @@ group { name: "elm/diskselector/item/datetime/default";
         description { state: "default" 0.0;
            min: 10 10;
            align: 0.0 0.0;
-           color: 172 172 172 255;
+           color: FN_COL_GREY_172;
            visible: 1;
            text {
               font: "Sans,Edje-Vera";
@@ -275,26 +275,26 @@ group { name: "elm/diskselector/item/datetime/default";
         }
         description { state: "center_sel" 0.0;
            inherit: "default" 0.0;
-           color: 255 255 255 255;
+           color: FN_COL_WHITE;
         }
         description { state: "left_side" 0.0;
            inherit: "default" 0.0;
-           color: 152 152 152 255;
+           color: FN_COL_GREY_152;
            text.align: 0.2 0.5;
         }
         description { state: "left_side_sel" 0.0;
            inherit: "default" 0.0;
-           color: 255 255 255 255;
+           color: FN_COL_WHITE;
            text.align: 0.2 0.5;
         }
         description { state: "right_side" 0.0;
            inherit: "default" 0.0;
-           color: 152 152 152 255;
+           color: FN_COL_GREY_152;
            text.align: 0.8 0.5;
         }
         description { state: "right_side_sel" 0.0;
            inherit: "default" 0.0;
-           color: 255 255 255 255;
+           color: FN_COL_WHITE;
            text.align: 0.8 0.5;
         }
      }

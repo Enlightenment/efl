@@ -39,8 +39,7 @@ group { name: "e/modules/appmenu/item";
             state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             text {
                font: FN;
                size: 10;
@@ -52,9 +51,7 @@ group { name: "e/modules/appmenu/item";
          description {
             state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
-            color2: 51 153 255 24;
-            color3: 51 153 255 18;
+            color: FN_COL_HIGHLIGHT;
          }
       }
    }

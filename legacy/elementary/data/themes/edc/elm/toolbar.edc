@@ -608,8 +608,7 @@ group { name: "elm/toolbar/item/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "noicon" 0.0;
@@ -620,8 +619,7 @@ group { name: "elm/toolbar/item/default";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;
@@ -702,8 +700,7 @@ group { name: "elm/toolbar/item/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "noicon" 0.0;
@@ -714,8 +711,7 @@ group { name: "elm/toolbar/item/default";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;
@@ -1043,8 +1039,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel1.to_x: "elm.swallow.icon";
             rel2.offset: -5 -3;
             align: 0.0 0.5;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "toolbar_item";
             text { font: FN; size: 10;
                min: 1 1;
@@ -1059,8 +1054,7 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "noicon" 0.0;
@@ -1072,8 +1066,7 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;
@@ -1107,8 +1100,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel1.to_x: "elm.swallow.icon";
             rel2.offset: -5 -3;
             align: 0.0 0.5;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "toolbar_item";
             text { font: FN; size: 10;
                min: 1 1;
@@ -1123,8 +1115,7 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "noicon" 0.0;
@@ -1136,8 +1127,7 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;

@@ -195,8 +195,7 @@
       description { state: "default" 0.0; \
          rel1.to: "ch_"#_pos".base"; \
          rel2.to: "ch_"#_pos".base"; \
-         color: 21 21 21 255;\
-         color3: 255 255 255 25;\
+         color: FN_COL_DISABLE;\
          text { font: FN; size: 8; \
             min: 1 1; \
          } \

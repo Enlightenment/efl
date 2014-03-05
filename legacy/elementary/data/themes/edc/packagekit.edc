@@ -110,8 +110,7 @@ group { name: "e/modules/packagekit/main";
          description { state: "default" 0.0;
             rel1.relative: (36/160) (60/160);
             rel2.relative: ((36+88)/160) ((60+88)/160);
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
             text { font: FN; size: 10;
             }
          }

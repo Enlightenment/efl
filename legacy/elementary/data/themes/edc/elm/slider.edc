@@ -262,8 +262,7 @@ group { name: "elm/slider/horizontal/default";
             rel2.to_x: "elm.swallow.icon";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "slider_text";
             text { font: FN; size: 10;
                text_class: "slider";
@@ -283,8 +282,7 @@ group { name: "elm/slider/horizontal/default";
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
             color_class: "slider_text_disabled";
-            color: 21 21 21 255;
-            color3: 255 255 255 15;
+            color: FN_COL_DISABLE;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
@@ -356,8 +354,7 @@ group { name: "elm/slider/horizontal/default";
             fixed: 1 1;
             rel1.to_x: "limits";
             rel2.to_x: "limits";
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "slider_text";
             text { font: FN; size: 10;
                text_class: "slider";
@@ -371,8 +368,7 @@ group { name: "elm/slider/horizontal/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 15;
+            color: FN_COL_DISABLE_LIGHTER_SHADOW;
             color_class: "slider_text_disabled";
          }
       }
@@ -672,8 +668,7 @@ group { name: "elm/slider/horizontal/indicator/default";
             rel2.relative: 1.0 -0.1;
             rel2.offset: -1 -12;
             color_class: "slider_indicator";
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             text { font: FNBD; size: 10;
                min: 1 1;
                align: 0.5 1.0;
@@ -974,8 +969,7 @@ group { name: "elm/slider/vertical/default";
             rel2.to_y: "elm.swallow.icon";
             rel2.relative: 1.0 1.0;
             rel2.offset: -3 -1;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "slider_text";
             text { font: FN; size: 10;
                text_class: "slider";
@@ -994,8 +988,7 @@ group { name: "elm/slider/vertical/default";
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
             color_class: "slider_text_disabled";
-            color: 21 21 21 255;
-            color3: 255 255 255 15;
+            color: FN_COL_DISABLE_LIGHTER_SHADOW;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
@@ -1067,8 +1060,7 @@ group { name: "elm/slider/vertical/default";
             fixed: 1 1;
             rel1.to_y: "limits";
             rel2.to_y: "limits";
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "slider_text";
             text { font: FN; size: 10;
                text_class: "slider";
@@ -1083,8 +1075,7 @@ group { name: "elm/slider/vertical/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 15;
+            color: FN_COL_DISABLE_LIGHTER_SHADOW;
             color_class: "slider_text_disabled";
          }
       }
@@ -1384,8 +1375,7 @@ group { name: "elm/slider/vertical/indicator/default";
             rel2.relative: 1.1 1.0;
             rel2.offset: 11 -1;
             color_class: "slider_indicator";
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             text { font: FNBD; size: 10;
                min: 1 1;
                align: 0.0 0.5;

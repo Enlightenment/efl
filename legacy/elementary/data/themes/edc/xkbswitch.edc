@@ -28,9 +28,7 @@ group { name: "e/modules/xkbswitch/main";
             rel1.relative: 0.0 0.5;
             rel2.to: "e.swallow.flag";
             rel2.relative: 1.0 0.5;
-            color: 255 255 255 0;
-            color2: 0 0 0 0;
-            color3: 0 0 0 0;
+            color: FN_COL_OUTLINE_TRANSPARENT;
             text { font: FN; size: 9;
                min: 0 1;
                text_class: "module_small";
@@ -39,9 +37,7 @@ group { name: "e/modules/xkbswitch/main";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color2: 0 0 0 128;
-            color3: 0 0 0 24;
+            color: FN_COL_OUTLINE_DEFAULT;
          }
       }
       part { name: "bevel"; mouse_events: 0;
@@ -126,8 +122,7 @@ group { name: "e/modules/xkbswitch/noflag";
             rel1.relative: 0.0 0.5;
             rel2.to: "base";
             rel2.relative: 1.0 0.5;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             text { font: FNBD; size: 9;
                min: 0 1;
                text_class: "module_small";

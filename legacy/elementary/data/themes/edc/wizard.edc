@@ -99,8 +99,7 @@ group { name: "e/wizard/main";
             rel1.offset: 4 -5;
             rel2.relative: 0.5  0.99;
             rel2.offset: -5 -5;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             text { font: FN; size: 10;
                text: "Next"; 
                min: 1 1;
@@ -108,8 +107,7 @@ group { name: "e/wizard/main";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
          }
       }
       part { name: "shadow"; mouse_events: 0;
@@ -137,9 +135,7 @@ group { name: "e/wizard/main";
             rel2.relative: 0.95 0.01;
             rel2.offset: -5 4;
             align: 0.5 0.0;
-            color: 51 153 255 255;
-            color2: 51 153 255 24;
-            color3: 51 153 255 18;
+            color: FN_COL_HIGHLIGHT;
             text { font: FNBD; size: 10;
                min: 0 1;
                text_class: "init_title";

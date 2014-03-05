@@ -15,10 +15,43 @@
 #define FNIT   "Sans:style=Oblique"
 #define FNBDIT "Sans:style=Bold Italic"
 
+#define FN_COL_DEFAULT_BASIC 255 255 255 255
+/* fonts.edc not sure if this one is neccesary */
 #define FN_COL_DEFAULT 255 255 255 255; color3: 0 0 0 128
+#define FN_COL_DEFAULT_SOFT_SHADOW 255 255 255 255; color3: 0 0 0 18
 #define FN_COL_HIGHLIGHT 51 153 255 255; color2: 51 153 255 24; color3: 51 153 255 18
+#define FN_COL_HIGHLIGHT_CLICKED 255 255 255 255; color2: 51 153 255 64; color3: 51 153 255 32
+#define FN_COL_HIGHLIGHT_DISABLE 51 153 255 64; color2: 51 153 255 16; color3: 51 153 255 8
+#define FN_COL_MID_GREY 128 128 128 255
 #define FN_COL_DISABLE 21 21 21 255; color3: 255 255 255 25;
+#define FN_COL_DISABLE_SHADOW 21 21 21 255; color3: 255 255 255 192
+#define FN_COL_TRANSPARENT 255 255 255 0; color3: 0 0 0 0
+#define FN_COL_WHITE_GLOW 255 255 255 255; color2: 255 255 255 24; color3: 255 255 255 18
 
+/* e/module/conf_colors/preview/text */
+#define FN_COL_SHADOW 255 255 255 32
+#define FN_COL_OUTLINE_SHADOW 255 255 255 255; color2: 255 255 255 255; color3: 255 255 255 255
+
+/* temperature.edc */
+#define FN_COL_SHADOW_BOTTOM 255 255 255 0; color2: 0 0 0 255; color3: 0 0 0 0
+
+/* elm/diskselector */
+#define FN_COL_WHITE 255 255 255 255
+#define FN_COL_GREY_152 152 152 152 255
+#define FN_COL_GREY_172 172 172 172 255
+
+/* elm/flipselector */
+#define FN_COL_GREY_192 192 192 192 255; color3: 0 0 0 128
+/* TBD: This could probably just be disabled */
+#define FN_COL_GREY_16 16 16 16 255; color3: 255 255 255 25
+
+/* elm/various */
+/*  TBD: should this just be the normal disabled */
+#define FN_COL_DISABLE_LIGHTER_SHADOW 21 21 21 255; color3: 255 255 255 15
+
+/* elm/segment_control.edc */
+/* TBD: Is this the same as DEFAULT_BASIC */
+#define FN_COL_DEFAULT_BASIC2  255 255 255 255; color3: 255 255 255 0
 
 #define ENABLED_TEXTBLOCK_TAGS                                             \
    tag: "em" "+ font_style=Oblique";                                       \

@@ -73,9 +73,7 @@ group { name:"e/modules/tasks/item";
             rel1.to: "e.text.label";
             rel2.offset: 3 1;
             rel2.to: "e.text.label";
-            color: 51 153 255 255;
-            color2: 51 153 255 24;
-            color3: 51 153 255 18;
+            color: FN_COL_HIGHLIGHT;
             color_class: "ilist_item_selected";
             text { font: FN; size: 10;
                text_source: "e.text.label";
@@ -85,9 +83,7 @@ group { name:"e/modules/tasks/item";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color2: 51 153 255 64;
-            color3: 51 153 255 32;
+            color: FN_COL_HIGHLIGHT_CLICKED;
          }
       }
       part { name: "base";
@@ -119,8 +115,7 @@ group { name:"e/modules/tasks/item";
             rel1.to_y: "sel_base";
             rel2.offset: -5 -5;
             rel2.to: "sel_base";
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "tasks_text";
             text { font: FN; size: 10;
                min: 0 1;
@@ -130,8 +125,7 @@ group { name:"e/modules/tasks/item";
          }
          description { state: "iconic" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
          }
       }
       part { name: "icon"; type: SPACER;

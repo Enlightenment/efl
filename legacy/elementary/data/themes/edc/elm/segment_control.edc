@@ -192,8 +192,7 @@ group { name: "elm/segment_control/item/default";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color3: 255 255 255 0;
+            color: FN_COL_DEFAULT_BASIC2;
             visible: 1;
          }
          description { state: "disabled" 0.0;
@@ -221,9 +220,7 @@ group { name: "elm/segment_control/item/default";
                text_source: "elm.text";
                text_class: "button";
             }
-            color: 255 255 255 255;
-            color2: 255 255 255 24;
-            color3: 255 255 255 18;
+            color: FN_COL_WHITE_GLOW;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;

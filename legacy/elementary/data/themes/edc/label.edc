@@ -6,8 +6,7 @@ group { name: "e/widgets/label";
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
-            color: 255 255 255 255;
-            color3: 0 0 0 128;
+            color: FN_COL_DEFAULT;
             color_class: "label_text";
             text { font: FN; size: 10;
                min: 1 1;
@@ -17,8 +16,7 @@ group { name: "e/widgets/label";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 21 21 21 255;
-            color3: 255 255 255 25;
+            color: FN_COL_DISABLE;
          }
       }
    }
