@@ -767,6 +767,33 @@ EAPI int eio_init(void);
 EAPI int eio_shutdown(void);
 
 /**
+ * @brief Set the limit to the maximum amount of memory used
+ * @param limit The actual limit to set.
+ *
+ * Eio work by burst, allocating memory in a thread and moving it
+ * back to the main loop. This result in quite some huge memory
+ * usage if the main loop is to slow to cope with the speed of the
+ * thread. By setting this limit, the thread will block until
+ * enough memory has been freed to be below the limit again.
+ *
+ * By default no limit is set and any value < 0 will mean no limit.
+ *
+ * @note You should give at least a reasonable amount of memory or
+ * the thread might stall.
+ * @since 1.10
+ */
+EAPI void eio_memory_burst_limit_set(size_t limit);
+
+/**
+ * @brief Get the actual limit to the maximum amount of memory used
+ * @return The current limit being set.
+ *
+ * @since 1.10
+ * @see eio_memory_burst_limit_set
+ */
+EAPI size_t eio_memory_burst_limit_get(void);
+
+/**
  * @brief Return the container during EIO operation
  * @param ls The asynchronous I/O operation to retrieve container from.
  * @return NULL if not available, a DIRP if it is.

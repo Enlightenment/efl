@@ -35,10 +35,11 @@ typedef struct _Eio_Alloc_Pool Eio_Alloc_Pool;
 
 struct _Eio_Alloc_Pool
 {
-   int count;
-   Eina_Trash *trash;
-
    Eina_Lock lock;
+
+   Eina_Trash *trash;
+   size_t mem_size;
+   int count;
 };
 
 static int _eio_init_count = 0;
@@ -49,8 +50,15 @@ static Eio_Alloc_Pool direct_info_pool;
 static Eio_Alloc_Pool char_pool;
 static Eio_Alloc_Pool associate_pool;
 
+static size_t memory_pool_limit = -1;
+static size_t memory_pool_usage = 0;
+static Eina_Spinlock memory_pool_lock;
+static Eina_Lock memory_pool_mutex;
+static Eina_Condition memory_pool_cond;
+static Eina_Bool memory_pool_suspended = 1;
+
 static void *
-_eio_pool_malloc(Eio_Alloc_Pool *pool, size_t sz)
+_eio_pool_malloc(Eio_Alloc_Pool *pool)
 {
    void *result = NULL;
 
@@ -62,7 +70,13 @@ _eio_pool_malloc(Eio_Alloc_Pool *pool, size_t sz)
         eina_lock_release(&(pool->lock));
      }
 
-   if (!result) result = malloc(sz);
+   if (!result)
+     {
+        result = malloc(pool->mem_size);
+        eina_spinlock_take(&memory_pool_lock);
+        if (result) memory_pool_usage += pool->mem_size;
+        eina_spinlock_release(&memory_pool_lock);
+     }
    return result;
 }
 
@@ -71,7 +85,19 @@ _eio_pool_free(Eio_Alloc_Pool *pool, void *data)
 {
    if (pool->count >= EIO_PROGRESS_LIMIT)
      {
+        eina_spinlock_take(&memory_pool_lock);
+        memory_pool_usage -= pool->mem_size;
+        eina_spinlock_release(&memory_pool_lock);
         free(data);
+
+        if (memory_pool_limit > 0 &&
+            memory_pool_usage < memory_pool_limit)
+          {
+             eina_lock_take(&(memory_pool_mutex));
+             if (memory_pool_suspended)
+               eina_condition_broadcast(&(memory_pool_cond));
+             eina_lock_release(&(memory_pool_mutex));
+          }
      }
    else
      {
@@ -97,7 +123,7 @@ _eio_pool_free(Eio_Alloc_Pool *pool, void *data)
 Eio_Progress *
 eio_progress_malloc(void)
 {
-   return _eio_pool_malloc(&progress_pool, sizeof (Eio_Progress));
+   return _eio_pool_malloc(&progress_pool);
 }
 
 void
@@ -133,7 +159,7 @@ eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, long long current
 Eio_File_Direct_Info *
 eio_direct_info_malloc(void)
 {
-   return _eio_pool_malloc(&direct_info_pool, sizeof (Eio_File_Direct_Info));
+   return _eio_pool_malloc(&direct_info_pool);
 }
 
 void
@@ -145,7 +171,7 @@ eio_direct_info_free(Eio_File_Direct_Info *data)
 Eio_File_Char *
 eio_char_malloc(void)
 {
-  return _eio_pool_malloc(&char_pool, sizeof (Eio_File_Char));
+  return _eio_pool_malloc(&char_pool);
 }
 
 void
@@ -159,7 +185,7 @@ eio_associate_malloc(const void *data, Eina_Free_Cb free_cb)
 {
   Eio_File_Associate *tmp;
 
-  tmp = _eio_pool_malloc(&associate_pool, sizeof (Eio_File_Associate));
+  tmp = _eio_pool_malloc(&associate_pool);
   if (!tmp) return tmp;
 
   tmp->data = (void*) data;
@@ -192,6 +218,16 @@ eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
         *start = current;
         ecore_thread_feedback(thread, pack);
         return NULL;
+     }
+
+   if (memory_pool_limit > 0 &&
+       memory_pool_usage > memory_pool_limit)
+     {
+        eina_lock_take(&(memory_pool_mutex));
+        memory_pool_suspended = EINA_TRUE;
+        eina_condition_wait(&(memory_pool_cond));
+        memory_pool_suspended = EINA_FALSE;
+        eina_lock_release(&(memory_pool_mutex));
      }
 
    return pack;
@@ -237,9 +273,17 @@ eio_init(void)
    memset(&associate_pool, 0, sizeof(associate_pool));
 
    eina_lock_new(&(progress_pool.lock));
+   progress_pool.mem_size = sizeof (Eio_Progress);
    eina_lock_new(&(direct_info_pool.lock));
+   direct_info_pool.mem_size = sizeof (Eio_File_Direct_Info);
    eina_lock_new(&(char_pool.lock));
+   char_pool.mem_size = sizeof (Eio_File_Char);
    eina_lock_new(&(associate_pool.lock));
+   associate_pool.mem_size = sizeof (Eio_File_Associate);
+
+   eina_spinlock_new(&(memory_pool_lock));
+   eina_lock_new(&(memory_pool_mutex));
+   eina_condition_new(&(memory_pool_cond), &(memory_pool_mutex));
 
    eio_monitor_init();
 
@@ -279,6 +323,10 @@ eio_shutdown(void)
 
    eio_monitor_shutdown();
 
+   eina_condition_free(&(memory_pool_cond));
+   eina_lock_free(&(memory_pool_mutex));
+   eina_spinlock_free(&(memory_pool_lock));
+
    eina_lock_free(&(direct_info_pool.lock));
    eina_lock_free(&(progress_pool.lock));
    eina_lock_free(&(char_pool.lock));
@@ -307,4 +355,16 @@ eio_shutdown(void)
    eina_shutdown();
 
    return _eio_init_count;
+}
+
+EAPI void
+eio_memory_burst_limit_set(size_t limit)
+{
+   memory_pool_limit = limit;
+}
+
+EAPI size_t
+eio_memory_burst_limit_get(void)
+{
+   return memory_pool_limit;
 }
