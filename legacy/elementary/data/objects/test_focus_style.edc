@@ -434,8 +434,11 @@ collections {
       }
    } //group ends
 
-// to customize check default style
 #include "../../data/themes/macros.edc"
+#include "../../data/themes/colorclasses.edc"
+#include "../../data/themes/fonts.edc"
+
+// to customize check default style
 #include "../../data/themes/edc/elm/check.edc"
    group { name: "elm/check/base/focus_text";
       data.item: "focus_part" "elm.text";
