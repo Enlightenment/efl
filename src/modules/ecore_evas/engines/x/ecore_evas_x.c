@@ -361,13 +361,14 @@ _ecore_evas_x_aux_hints_supprted_update(Ecore_Evas *ee)
      (root, ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORTED_LIST,
       ECORE_X_ATOM_STRING, 0, &data, &n);
 
-   if ((res == 8) && (n >0))
+   if ((res == 8) && (n > 0))
      {
         str = eina_str_split_full((char *)data, ",", -1, &num);
         for (i = 0; i < num; i++)
           {
              hint = eina_stringshare_add(str[i]);
-             ee->prop.aux_hint.supported_list = eina_list_append(ee->prop.aux_hint.supported_list, hint);
+             ee->prop.aux_hint.supported_list = 
+               eina_list_append(ee->prop.aux_hint.supported_list, hint);
           }
 
         if (num > 0)
