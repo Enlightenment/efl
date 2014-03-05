@@ -37,7 +37,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
    Eina_Iterator *ls;
    const char *file;
    Eina_List *pack = NULL;
-   double start, current;
+   double start;
 
    ls = eina_file_ls(async->ls.directory);
    if (!ls)
@@ -128,7 +128,7 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 {
    const Eina_File_Direct_Info *info;
    Eina_List *pack = NULL;
-   double start, current;
+   double start;
 
    if (!ls)
      {

@@ -674,7 +674,6 @@ _eio_dir_stat_find_forward(Eio_File_Dir_Ls *async,
                            Eina_File_Direct_Info *info)
 {
    Eina_Bool filter = EINA_TRUE;
-   double current;
 
    if (async->filter_cb)
      {
