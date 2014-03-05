@@ -507,6 +507,19 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
      }
 }
 
+static void
+_ecore_evas_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
+{
+    int fbw, fbh;
+
+    ecore_fb_size_get(&fbw, &fbh);
+
+    if (x) *x = 0;
+    if (y) *y = 0;
+    if (w) *w = fbw;
+    if (h) *h = fbh;
+}
+
 static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
 {
    _ecore_evas_fb_free,
@@ -566,7 +579,7 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
 
      NULL, // render
-     NULL, // screen_geometry_get
+     _ecore_evas_screen_geometry_get,
      NULL, // screen_dpi_get
      NULL,
      NULL, // msg_send
