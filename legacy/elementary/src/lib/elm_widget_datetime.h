@@ -65,6 +65,8 @@ struct _Elm_Datetime_Smart_Data
    Eina_Bool                 user_format : 1;  /* whether user set
                                                 * format or default
                                                 * format. */
+   Eina_Bool                 freeze_sizing : 1; /* freeze sizing_eval to
+                                                 * reduce unnecessary sizing */
 };
 
 struct _Format_Map

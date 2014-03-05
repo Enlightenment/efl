@@ -217,9 +217,12 @@ _field_list_arrange(Evas_Object *obj)
    Datetime_Field *field;
    char buf[BUFFER_SIZE];
    int idx;
+   Eina_Bool freeze;
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
+   freeze = sd->freeze_sizing;
+   sd->freeze_sizing = EINA_TRUE;
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
@@ -233,6 +236,7 @@ _field_list_arrange(Evas_Object *obj)
         else
           evas_object_hide(elm_layout_content_unset(obj, buf));
      }
+   sd->freeze_sizing = freeze;
 
    elm_layout_sizing_eval(obj);
    _field_list_display(obj);
@@ -502,6 +506,8 @@ _elm_datetime_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Evas_Coord minw = -1, minh = -1;
 
    Elm_Datetime_Smart_Data *sd = _pd;
+   if (sd->freeze_sizing) return;
+
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->enabled_field_count)
@@ -829,6 +835,7 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
           }
      }
 
+   priv->freeze_sizing = EINA_TRUE;
    if (!elm_layout_theme_set(obj, "datetime", "base",
                              elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -838,6 +845,7 @@ _elm_datetime_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
+   priv->freeze_sizing = EINA_FALSE;
    elm_layout_sizing_eval(obj);
 
    // ACCESS
@@ -992,6 +1000,7 @@ _field_visible_set(Eo *obj, void *_pd, va_list *list)
 
    field->visible = visible;
 
+   sd->freeze_sizing = EINA_TRUE;
    if (visible)
      {
         sd->enabled_field_count++;
@@ -1025,6 +1034,7 @@ _field_visible_set(Eo *obj, void *_pd, va_list *list)
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
         evas_object_hide(elm_layout_content_unset(obj, buf));
      }
+   sd->freeze_sizing = EINA_FALSE;
 
    elm_layout_sizing_eval(obj);
 
