@@ -181,6 +181,21 @@ eio_associate_free(void *data)
   _eio_pool_free(&associate_pool, tmp);
 }
 
+Eina_List *
+eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
+{
+   double current;
+
+   current = ecore_time_get();
+   if (current - *start > EIO_PACKED_TIME)
+     {
+        *start = current;
+        ecore_thread_feedback(thread, pack);
+        return NULL;
+     }
+
+   return pack;
+}
 
 /**
  * @endcond

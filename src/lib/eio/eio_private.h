@@ -495,4 +495,6 @@ void _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath);
 void eio_async_end(void *data, Ecore_Thread *thread);
 void eio_async_error(void *data, Ecore_Thread *thread);
 
+Eina_List *eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start);
+
 #endif

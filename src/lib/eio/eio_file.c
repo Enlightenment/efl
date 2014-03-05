@@ -84,13 +84,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
                }
           }
 
-	current = ecore_time_get();
-	if (current - start > EIO_PACKED_TIME)
-	  {
-             start = current;
-             ecore_thread_feedback(thread, pack);
-             pack = NULL;
-          }
+        pack = eio_pack_send(thread, pack, &start);
 
 	if (ecore_thread_check(thread))
 	  break;
@@ -174,13 +168,7 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
              async->ls.common.worker.associated = NULL;
 	  }
 
-        current = ecore_time_get();
-        if (current - start > EIO_PACKED_TIME)
-          {
-             start = current;
-             ecore_thread_feedback(thread, pack);
-             pack = NULL;
-          }
+        pack = eio_pack_send(thread, pack, &start);
 
 	if (ecore_thread_check(thread))
 	  break;

@@ -700,13 +700,7 @@ _eio_dir_stat_find_forward(Eio_File_Dir_Ls *async,
         async->ls.common.worker.associated = NULL;
      }
 
-   current = ecore_time_get();
-   if (current - async->start > EIO_PACKED_TIME)
-     {
-        async->start = current;
-        ecore_thread_feedback(handler->thread, async->pack);
-        async->pack = NULL;
-     }
+   async->pack = eio_pack_send(handler->thread, async->pack, &async->start);
 
    return filter;
 }
