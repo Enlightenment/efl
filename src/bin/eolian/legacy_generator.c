@@ -87,6 +87,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    if (eina_strbuf_length_get(linedesc))
      {
         eina_strbuf_replace_all(linedesc, "\n", "\n * ");
+        eina_strbuf_replace_all(linedesc, " * \n", " *\n");
         eina_strbuf_prepend(linedesc," * ");
      }
    else
