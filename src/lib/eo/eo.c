@@ -940,8 +940,9 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         *(mro_itr) = NULL;
      }
 
-   size_t extn_data_off = klass->data_offset +
-      EO_ALIGN_SIZE(klass->desc->data_size);
+   size_t extn_data_off = klass->data_offset;
+   if (klass->desc->type != EO_CLASS_TYPE_MIXIN)
+      extn_data_off += EO_ALIGN_SIZE(klass->desc->data_size);
 
    /* Feed the mixins data offsets and free the mixins list. */
      {
