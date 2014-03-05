@@ -19,6 +19,7 @@ group { name: "e/widgets/frame";
             rel1.offset: 2 0;
             rel1.to_y: "top";
             rel2.offset: -3 -3;
+            color_class: "frame_base";
             color: 64 64 64 255;
          }
       }
@@ -30,6 +31,7 @@ group { name: "e/widgets/frame";
             rel2.offset: -3 -1;
             fill.smooth: 0;
             TILED_HORIZ(120)
+            color_class: "frame_base";
          }
       }
       part { name: "edge1";

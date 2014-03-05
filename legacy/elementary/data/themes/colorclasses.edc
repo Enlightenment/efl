@@ -65,67 +65,86 @@ color_classes {
    color_class { name: "fileman_base";
       color: FN_COL_DEFAULT_BASIC;
    }
-#if 0
-//// XXX: usless classes   
-//   color_class { name: "error_text"
-//   }
-//   color_class { name: "menu_title_active"
-//   }
-#endif
 
 // widgets
-#if 0
-   color_class { name: "focus"
+   color_class { name: "button_text";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "button_text"
+   color_class { name: "button_text_disabled";
+      color: FN_COL_DISABLE;
    }
-   color_class { name: "button_text_disabled"
+   color_class { name: "check_text";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "check_text"
+   color_class { name: "check_text_disabled";
+      color: FN_COL_DISABLE;
    }
-   color_class { name: "check_text_disabled"
+   color_class { name: "entry_text";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "entry_text"
+   color_class { name: "entry_text_disabled";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "entry_text_disabled"
+   color_class { name: "label_text";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "label_text"
+   color_class { name: "label_text_disabled";
+      color: FN_COL_DISABLE;
    }
-   color_class { name: "ilist_item_selected"
+   color_class { name: "frame_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "ilist_item"
+   color_class { name: "scrollframe_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "ilist_item_base"
+   color_class { name: "radio_text";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "ilist_item_odd"
+   color_class { name: "radio_text_disabled";
+      color: FN_COL_DISABLE;
    }
-   color_class { name: "ilist_item_odd_base"
+   color_class { name: "slider_text";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "ilist_item_header"
+   color_class { name: "slider_text_disabled";
+      color: FN_COL_DISABLE;
    }
-   color_class { name: "ilist_item_header_base"
+   color_class { name: "ilist_item_selected";
+      color: FN_COL_HIGHLIGHT;
    }
-   color_class { name: "ilist_item_header_odd"
+   color_class { name: "ilist_item";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "ilist_item_header_odd_base"
+   color_class { name: "ilist_item_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "radio_text"
+   color_class { name: "ilist_item_odd";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "radio_text_disabled"
+   color_class { name: "ilist_item_odd_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "slider_text"
+   color_class { name: "ilist_item_header";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "slider_text_disabled"
+   color_class { name: "ilist_item_header_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
-   color_class { name: "frame_base"
+   color_class { name: "ilist_item_header_odd";
+      color: FN_COL_DEFAULT;
    }
-   color_class { name: "scrollframe_base"
+   color_class { name: "ilist_item_header_odd_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
-#endif
 
 // modules
-#if 0
    color_class { name: "module_label";
+      color: FN_COL_DEFAULT;
    }
-#endif
+   color_class { name: "module_label_invisible";
+      color: FN_COL_TRANSPARENT;
+   }
+   color_class { name: "module_label_plain";
+      color: FN_COL_DEFAULT_BASIC;
+   }
 }

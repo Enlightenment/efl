@@ -73,8 +73,8 @@ group { name: "e/widgets/check";
             rel1.to_x: "inset";
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
             color_class: "check_text";
+            color3: 255 255 255 255;
             text { font: FN; size: 10;
                min: 1 1;
                align: 0.0 0.5;
@@ -83,7 +83,8 @@ group { name: "e/widgets/check";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
+            color_class: "check_text_disabled";
+            color3: 255 255 255 255;
          }
       }
       part { name: "event"; type: RECT;
@@ -153,10 +154,6 @@ group { name: "e/widgets/check_icon";
       part { name: "e.text.label";
          description { state: "default" 0.0;
             rel1.to_x: "e.swallow.icon";
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
          }
       }
    }

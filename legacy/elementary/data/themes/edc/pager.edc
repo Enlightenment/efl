@@ -150,10 +150,10 @@ group { name: "e/modules/pager/desk";
          scale: 1;
          effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "module_label";
             rel1.to: "base";
             rel2.to: "base";
-            color: FN_COL_DEFAULT;
+            color_class: "module_label_invisible";
+            color3: 255 255 255 255;
             text { font: FN; size: 10;
                text_class: "module_small";
                align: 0.5 0.5;
@@ -162,6 +162,8 @@ group { name: "e/modules/pager/desk";
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
+            color_class: "module_label";
+            color3: 255 255 255 255;
             visible: 1;
          }
       }

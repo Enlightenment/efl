@@ -71,7 +71,6 @@ group { name: "e/widgets/entry/text";
             color_class: "entry_text";
             align: 0.0 0.5;
             text {
-               text: "";
                style: "entry_textblock_style";
                min: 1 1;
                align: 0.0 0.5;

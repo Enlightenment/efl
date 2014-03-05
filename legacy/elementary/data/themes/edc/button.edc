@@ -67,8 +67,8 @@
             rel1.to_y: "base";
             rel2.offset: -7 -7;
             rel2.to: "base";
-            color: FN_COL_DEFAULT;
             color_class: "button_text";
+            color3: 255 255 255 255;
             text { font: FN; size: 10;
                min: 1 1;
                align: 0.5 0.5;
@@ -77,8 +77,8 @@
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
             color_class: "button_text_disabled";
+            color3: 255 255 255 255;
          }
          description { state: "combo" 0.0;
             inherit: "default" 0.0;
@@ -97,8 +97,8 @@
          description { state: "default" 0.0;
             rel1.to: "e.text.label";
             rel2.to: "e.text.label";
-            color: FN_COL_DISABLE;
             color_class: "button_text_disabled";
+            color3: 255 255 255 255;
             text { font: FN; size: 10;
                text_source: "e.text.label";
                align: 0.5 0.5;

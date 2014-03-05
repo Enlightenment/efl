@@ -479,8 +479,8 @@ group { name: "e/modules/ibox/icon_overlay";
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 1.0;
-            color: FN_COL_TRANSPARENT;
-            color_class: "module_label";
+            color_class: "module_label_invisible";
+            color3: 255 255 255 255;
             text { font: FN; size: 10;
                min: 1 1;
                align: 0.5 0.5;
@@ -491,7 +491,8 @@ group { name: "e/modules/ibox/icon_overlay";
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.5;
             rel2.relative: 1.0 0.5;
-            color: FN_COL_DEFAULT;
+            color_class: "module_label";
+            color3: 255 255 255 255;
          }
       }
    }
