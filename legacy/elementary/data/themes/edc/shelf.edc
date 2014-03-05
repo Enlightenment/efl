@@ -24,11 +24,13 @@ group { name: "e/shelf/default/base";
             image.normal: "vgrad_med.png";
             fill.smooth: 0;
             TILED_HORIZ(120)
+            color_class: "shelf_base";
          }
          description { state: "vert" 0.0;
             image.normal: "vgrad_tall.png";
             fill.smooth: 0;
             TILED_HORIZ(40)
+            color_class: "shelf_base";
          }
       }
       part { name: "bevel"; mouse_events: 0;

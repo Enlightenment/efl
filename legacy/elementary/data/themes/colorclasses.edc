@@ -9,59 +9,68 @@ color_classes {
 
 // wm
    color_class { name: "border_title";
-      color: 21 21 21 255;
-      color3: 255 255 255 25;
+      color: FN_COL_DISABLE;
    }
    color_class { name: "border_title_active";
-      color: 255 255 255 255;
-      color3: 0 0 0 18;
+      color: FN_COL_DEFAULT_SOFT_SHADOW;
    }
    color_class { name: "border_frame";
-      color: 255 255 255 255;
+      color: FN_COL_DEFAULT_BASIC;
    }
    color_class { name: "border_frame_active";
-      color: 255 255 255 255;
+      color: FN_COL_DEFAULT_BASIC;
    }
    color_class { name: "border_bottom";
-      color: 64 64 64 255;
+      color: FN_COL_DEFAULT_BASIC;
    }
    color_class { name: "move_text";
-      color: 255 255 255 255;
-      color3: 0 0 0 128;
+      color: FN_COL_DEFAULT;
    }
    color_class { name: "resize_text";
-      color: 255 255 255 255;
-      color3: 0 0 0 128;
+      color: FN_COL_DEFAULT;
+   }
+   color_class { name: "menu_base";
+      color: FN_COL_DEFAULT_BASIC;
+   }
+   color_class { name: "menu_title";
+      color: FN_COL_DISABLE;
+   }
+   color_class { name: "menu_item";
+      color: FN_COL_DEFAULT;
+   }
+   color_class { name: "menu_item_active";
+      color: FN_COL_HIGHLIGHT;
+   }
+   color_class { name: "menu_item_disabled";
+      color: FN_COL_DISABLE;
+   }
+   color_class { name: "winlist_item";
+      color: FN_COL_DEFAULT;
+   }
+   color_class { name: "winlist_item_active";
+      color: FN_COL_HIGHLIGHT;
+   }
+   color_class { name: "winlist_label";
+      color: FN_COL_DEFAULT;
+   }
+   color_class { name: "winlist_title";
+      color: FN_COL_DISABLE;
+   }
+   color_class { name: "dialog_base";
+      color: FN_COL_DEFAULT_BASIC;
+   }
+   color_class { name: "shelf_base";
+      color: FN_COL_DEFAULT_BASIC;
+   }
+   color_class { name: "fileman_base";
+      color: FN_COL_DEFAULT_BASIC;
    }
 #if 0
-   color_class { name: "error_text"
-   }
-   color_class { name: "menu_base"
-   }
-   color_class { name: "menu_title"
-   }
-   color_class { name: "menu_title_active"
-   }
-   color_class { name: "menu_item"
-   }
-   color_class { name: "menu_item_active"
-   }
-   color_class { name: "menu_item_disabled"
-   }
-   color_class { name: "winlist_item"
-   }
-   color_class { name: "winlist_item_active"
-   }
-   color_class { name: "winlist_label"
-   }
-   color_class { name: "winlist_title"
-   }
-   color_class { name: "dialog_base"
-   }
-   color_class { name: "shelf_base"
-   }
-   color_class { name: "fileman_base"
-   }
+//// XXX: usless classes   
+//   color_class { name: "error_text"
+//   }
+//   color_class { name: "menu_title_active"
+//   }
 #endif
 
 // widgets

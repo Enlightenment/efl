@@ -435,8 +435,8 @@ collections {
    } //group ends
 
 #include "../../data/themes/macros.edc"
-#include "../../data/themes/colorclasses.edc"
 #include "../../data/themes/fonts.edc"
+#include "../../data/themes/colorclasses.edc"
 
 // to customize check default style
 #include "../../data/themes/edc/elm/check.edc"

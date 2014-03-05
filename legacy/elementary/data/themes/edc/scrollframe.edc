@@ -338,7 +338,7 @@ group { name: "e/widgets/scrollframe";
          description { state: "default" 0.0;
             rel1.to: "e.swallow.content";
             rel2.to: "e.swallow.content";
-            color: 64 64 64 200;
+            color: 64 64 64 255;
             color_class: "scrollframe_base";
          }
       }

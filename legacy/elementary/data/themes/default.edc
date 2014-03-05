@@ -3,8 +3,8 @@
 externals.external: "elm";
 
 collections {
-#include "colorclasses.edc"
 #include "fonts.edc"
+#include "colorclasses.edc"
 
 // elm
 #include "edc/elm/bg.edc"

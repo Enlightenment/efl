@@ -936,6 +936,11 @@ group { name: "e/fileman/desktop/icon/fixed";
 group { name: "e/fileman/default/scrollframe";
    inherit: "e/widgets/scrollframe";
    parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            color_class: "fileman_base";
+         }
+      }
       part { name: "e.swallow.bg"; type: SWALLOW;
          insert_before: "clipper";
          clip_to: "clipper";
