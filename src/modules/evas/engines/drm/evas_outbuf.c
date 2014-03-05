@@ -241,7 +241,7 @@ evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, i
              return NULL;
           }
 
-        img->cache_entry.flags.alpha |= ob->destination_alpha ? 1 : 0;
+        img->cache_entry.flags.alpha = ob->destination_alpha;
 
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
