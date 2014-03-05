@@ -342,7 +342,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    event            = alpha+ >save_fpc (alnum | '_' | ',' )+;
    class_meth        = alpha+ >save_fpc (alnum | '_' | '::' )+;
 
-   eo_comment        = "/*@" ignore* alnum_u >save_fpc ( any | cr @inc_line )* :>> "*/";
+   eo_comment        = "/*@" ignore* ('@' | alnum_u) >save_fpc ( any | cr @inc_line )* :>> "*/";
    c_comment         = "/*" ( any | cr @inc_line )* :>> "*/";
    cpp_comment       = "//" (any - cr )* newline;
    comment           = ( c_comment | cpp_comment ) > save_line;
