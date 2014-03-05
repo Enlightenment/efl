@@ -1559,6 +1559,9 @@ _part_text_escaped_set(Eo *obj, void *_pd, va_list *list)
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK &&
+       rp->part->type != EDJE_PART_TYPE_TEXT)
+     return;
    if ((rp->part->type == EDJE_PART_TYPE_TEXT) && (text))
      {
         Eina_Strbuf *sbuf;
@@ -1615,7 +1618,6 @@ _part_text_escaped_set(Eo *obj, void *_pd, va_list *list)
         if (ret) *ret = int_ret;
         return;
      }
-   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
    int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
    _edje_user_define_string(ed, part, rp->typedata.text->text);
    if (ret) *ret = int_ret;
