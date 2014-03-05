@@ -1553,6 +1553,9 @@ _item_push(Eo *obj, void *_pd, va_list *list)
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
 
+   if (!prev_it)
+     elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
+
    elm_layout_sizing_eval(obj);
 
    *ret = (Elm_Object_Item *)it;
