@@ -53,7 +53,7 @@ read_watch_file(const char *file)
           }
         else
           {
-             path = eina_stringshare_add_length(ln->start, ln->length);
+             path = eina_stringshare_add_length(ln->start, ln->length - 1);
           }
         if (do_append)
 	  r = eina_list_append(r, eio_monitor_add(path));
