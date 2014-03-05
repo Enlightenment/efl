@@ -2167,7 +2167,7 @@ evas_object_text_render(Evas_Object *eo_obj,
         void *filter_ctx;
         Eina_Bool ok;
         int ox = 0, oy = 0;
-        Image_Entry *previous = o->cur.filter.output;
+        void *previous = o->cur.filter.output;
 
         /* NOTE: Font effect rendering is now done ENTIRELY on CPU.
          * So we rely on cache/cache2 to allocate a real image buffer,
