@@ -58,6 +58,9 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 
    buff = &(ob->priv.buffer[ob->priv.curr]);
 
+   /* if this buffer is not valid, we need to set it */
+   if (!buff->valid) evas_drm_outbuf_framebuffer_set(ob, buff);
+
    /* mark the fb as dirty */
    _evas_outbuf_buffer_put(ob, buff, rects, count);
 
