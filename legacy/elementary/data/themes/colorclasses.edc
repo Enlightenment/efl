@@ -1,7 +1,122 @@
 color_classes {
-   color_class {
-      name: "comp_focus-out_color";
+// comp
+   color_class { name: "comp_focus-out_color";
       color: 255 255 255 255;
-      color3: 0 0 0 0;
    }
+   color_class { name: "comp_focus_color";
+      color: 255 255 255 255;
+   }
+
+// wm
+   color_class { name: "border_title";
+      color: 21 21 21 255;
+      color3: 255 255 255 25;
+   }
+   color_class { name: "border_title_active";
+      color: 255 255 255 255;
+      color3: 0 0 0 18;
+   }
+   color_class { name: "border_frame";
+      color: 255 255 255 255;
+   }
+   color_class { name: "border_frame_active";
+      color: 255 255 255 255;
+   }
+   color_class { name: "border_bottom";
+      color: 64 64 64 255;
+   }
+   color_class { name: "move_text";
+      color: 255 255 255 255;
+      color3: 0 0 0 128;
+   }
+   color_class { name: "resize_text";
+      color: 255 255 255 255;
+      color3: 0 0 0 128;
+   }
+#if 0
+   color_class { name: "error_text"
+   }
+   color_class { name: "menu_base"
+   }
+   color_class { name: "menu_title"
+   }
+   color_class { name: "menu_title_active"
+   }
+   color_class { name: "menu_item"
+   }
+   color_class { name: "menu_item_active"
+   }
+   color_class { name: "menu_item_disabled"
+   }
+   color_class { name: "winlist_item"
+   }
+   color_class { name: "winlist_item_active"
+   }
+   color_class { name: "winlist_label"
+   }
+   color_class { name: "winlist_title"
+   }
+   color_class { name: "dialog_base"
+   }
+   color_class { name: "shelf_base"
+   }
+   color_class { name: "fileman_base"
+   }
+#endif
+
+// widgets
+#if 0
+   color_class { name: "focus"
+   }
+   color_class { name: "button_text"
+   }
+   color_class { name: "button_text_disabled"
+   }
+   color_class { name: "check_text"
+   }
+   color_class { name: "check_text_disabled"
+   }
+   color_class { name: "entry_text"
+   }
+   color_class { name: "entry_text_disabled"
+   }
+   color_class { name: "label_text"
+   }
+   color_class { name: "ilist_item_selected"
+   }
+   color_class { name: "ilist_item"
+   }
+   color_class { name: "ilist_item_base"
+   }
+   color_class { name: "ilist_item_odd"
+   }
+   color_class { name: "ilist_item_odd_base"
+   }
+   color_class { name: "ilist_item_header"
+   }
+   color_class { name: "ilist_item_header_base"
+   }
+   color_class { name: "ilist_item_header_odd"
+   }
+   color_class { name: "ilist_item_header_odd_base"
+   }
+   color_class { name: "radio_text"
+   }
+   color_class { name: "radio_text_disabled"
+   }
+   color_class { name: "slider_text"
+   }
+   color_class { name: "slider_text_disabled"
+   }
+   color_class { name: "frame_base"
+   }
+   color_class { name: "scrollframe_base"
+   }
+#endif
+
+// modules
+#if 0
+   color_class { name: "module_label";
+   }
+#endif
 }

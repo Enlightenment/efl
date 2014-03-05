@@ -192,7 +192,6 @@ group { name: "elm/segment_control/item/default";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DEFAULT_BASIC2;
             visible: 1;
          }
          description { state: "disabled" 0.0;
