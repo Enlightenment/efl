@@ -278,17 +278,17 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
                 _template_fill(str_subid, tmpl_eo_subid, classname, funcname, EINA_FALSE);
                 eo1_fundef_generate(classname, (Eolian_Function)data, UNRESOLVED, str_hdr);
              }
-           if (prop_read)
-             {
-                sprintf(tmpstr, "%s_get", funcname);
-                _template_fill(str_subid, tmpl_eo_subid, classname, tmpstr, EINA_FALSE);
-                eo1_fundef_generate(classname, (Eolian_Function)data, GET, str_hdr);
-             }
            if (prop_write)
              {
                 sprintf(tmpstr, "%s_set", funcname);
                 _template_fill(str_subid, tmpl_eo_subid, classname, tmpstr, EINA_FALSE);
                 eo1_fundef_generate(classname, (Eolian_Function)data, SET, str_hdr);
+             }
+           if (prop_read)
+             {
+                sprintf(tmpstr, "%s_get", funcname);
+                _template_fill(str_subid, tmpl_eo_subid, classname, tmpstr, EINA_FALSE);
+                eo1_fundef_generate(classname, (Eolian_Function)data, GET, str_hdr);
              }
         }
 
@@ -621,18 +621,18 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              Eina_Bool prop_read = ( ftype == SET ) ? EINA_FALSE : EINA_TRUE;
              Eina_Bool prop_write = ( ftype == GET ) ? EINA_FALSE : EINA_TRUE;
 
-             if (prop_read)
-               {
-                  sprintf(tmpstr, "%s_get", funcname);
-                  _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
-                  eo1_bind_func_generate(classname, in_prop, GET, str_bodyf, impl_class);
-               }
-
              if (prop_write)
                {
                   sprintf(tmpstr, "%s_set", funcname);
                   _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
                  eo1_bind_func_generate(classname, in_prop, SET, str_bodyf, impl_class);
+               }
+
+             if (prop_read)
+               {
+                  sprintf(tmpstr, "%s_get", funcname);
+                  _template_fill(str_func, tmpl_impl_str, impl_class, tmpstr, EINA_FALSE);
+                  eo1_bind_func_generate(classname, in_prop, GET, str_bodyf, impl_class);
                }
           }
           eina_strbuf_free(tmpl_impl);
@@ -664,22 +664,6 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         Eina_Bool prop_read = ( ftype == SET ) ? EINA_FALSE : EINA_TRUE;
         Eina_Bool prop_write = ( ftype == GET ) ? EINA_FALSE : EINA_TRUE;
 
-        if (prop_read)
-          {
-             char *desc = _source_desc_get(eolian_function_description_get(fn, "comment_get"));
-
-             sprintf(tmpstr, "%s_get", funcname);
-             eo1_eo_op_desc_generate(classname, tmpstr, tmpbuf);
-             eina_strbuf_replace_all(tmpbuf, "@#desc", desc);
-             free(desc);
-             eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
-
-             if (!eolian_function_is_virtual_pure(fn))
-                eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);
-             else
-                eina_strbuf_reset(tmpbuf);
-             eina_strbuf_append(str_func, eina_strbuf_string_get(tmpbuf));
-          }
         if (prop_write)
           {
              char *desc = _source_desc_get(eolian_function_description_get(fn, "comment_set"));
@@ -689,6 +673,22 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              eina_strbuf_replace_all(tmpbuf, "@#desc", desc);
              eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
              free(desc);
+
+             if (!eolian_function_is_virtual_pure(fn))
+                eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);
+             else
+                eina_strbuf_reset(tmpbuf);
+             eina_strbuf_append(str_func, eina_strbuf_string_get(tmpbuf));
+          }
+        if (prop_read)
+          {
+             char *desc = _source_desc_get(eolian_function_description_get(fn, "comment_get"));
+
+             sprintf(tmpstr, "%s_get", funcname);
+             eo1_eo_op_desc_generate(classname, tmpstr, tmpbuf);
+             eina_strbuf_replace_all(tmpbuf, "@#desc", desc);
+             free(desc);
+             eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
              if (!eolian_function_is_virtual_pure(fn))
                 eo1_eo_func_desc_generate(classname, tmpstr, tmpbuf);

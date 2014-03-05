@@ -331,13 +331,13 @@ legacy_header_generate(const char *classname, int eo_version EINA_UNUSED, Eina_S
              {
                 _eapi_decl_func_generate(classname, (Eolian_Function)data, METHOD_FUNC, buf);
              }
-           if (prop_read)
-             {
-                _eapi_decl_func_generate(classname, (Eolian_Function)data, GET, buf);
-             }
            if (prop_write)
              {
                 _eapi_decl_func_generate(classname, (Eolian_Function)data, SET, buf);
+             }
+           if (prop_read)
+             {
+                _eapi_decl_func_generate(classname, (Eolian_Function)data, GET, buf);
              }
         }
    return EINA_TRUE;
@@ -400,16 +400,6 @@ legacy_header_append(const char *classname, int eo_version EINA_UNUSED, Eina_Str
                      if (!eo1_fundef_generate(classname, (Eolian_Function)data, UNRESOLVED, str_funcdef)) return EINA_FALSE;
                   }
              }
-           if (prop_read)
-             {
-                sprintf(tmpstr, "%s_get", funcname);
-                if (!strstr(eina_strbuf_string_get(header), tmpstr))
-                  {
-                     printf ("Appending eo function %s\n", tmpstr);
-                     eo1_enum_append(classname, tmpstr, str_subid);
-                     if (!eo1_fundef_generate(classname, (Eolian_Function)data, GET, str_funcdef)) return EINA_FALSE;
-                  }
-             }
            if (prop_write)
              {
                 sprintf(tmpstr, "%s_set", funcname);
@@ -418,6 +408,16 @@ legacy_header_append(const char *classname, int eo_version EINA_UNUSED, Eina_Str
                      printf ("Appending eo function %s\n", tmpstr);
                      eo1_enum_append(classname, tmpstr, str_subid);
                      if (!eo1_fundef_generate(classname, (Eolian_Function)data, SET, str_funcdef)) return EINA_FALSE;
+                  }
+             }
+           if (prop_read)
+             {
+                sprintf(tmpstr, "%s_get", funcname);
+                if (!strstr(eina_strbuf_string_get(header), tmpstr))
+                  {
+                     printf ("Appending eo function %s\n", tmpstr);
+                     eo1_enum_append(classname, tmpstr, str_subid);
+                     if (!eo1_fundef_generate(classname, (Eolian_Function)data, GET, str_funcdef)) return EINA_FALSE;
                   }
              }
         }
@@ -459,15 +459,15 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version E
         Eina_Bool prop_read = ( ftype == SET ) ? EINA_FALSE : EINA_TRUE;
         Eina_Bool prop_write = ( ftype == GET ) ? EINA_FALSE : EINA_TRUE;
 
-        if (prop_read)
-          {
-             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) return EINA_FALSE;
-             if (legacy) _eapi_func_generate(classname, fn, GET, str_bodyf);
-          }
         if (prop_write)
           {
              if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf, NULL)) return EINA_FALSE;
              if (legacy) _eapi_func_generate(classname, fn, SET, str_bodyf);
+          }
+        if (prop_read)
+          {
+             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) return EINA_FALSE;
+             if (legacy) _eapi_func_generate(classname, fn, GET, str_bodyf);
           }
      }
 
