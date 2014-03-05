@@ -736,8 +736,6 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
      {
         unsigned int flags = 0;
 
-        if (!buffer->valid) evas_drm_outbuf_framebuffer_set(ob, buffer);
-
         flags = DRM_MODE_PAGE_FLIP_EVENT;
         if (ob->priv.use_async_page_flip) flags |= DRM_MODE_PAGE_FLIP_ASYNC;
 
