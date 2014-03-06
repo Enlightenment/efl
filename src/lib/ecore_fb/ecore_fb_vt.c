@@ -114,6 +114,7 @@ _ecore_fb_vt_setup(void)
    ioctl(_ecore_fb_vt_tty_fd, KDGKBMODE, &_ecore_fb_tty_prev_mode);
 
    /* support of switching */
+   memset(&new_vtmode, 0, sizeof(new_vtmode));
    new_vtmode.mode = VT_PROCESS;
    new_vtmode.waitv = 0;
    new_vtmode.relsig = SIGUSR1;
