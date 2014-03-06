@@ -3371,6 +3371,65 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
    re->func.get_pixels_data = get_pixels_data;
    re->func.obj = (Evas_Object*)obj;
 }
+
+static Eina_Bool
+eng_gl_surface_lock(void *data, void *surface)
+{
+   Render_Engine *re = data;
+   Evas_GL_Image *im = surface;
+
+   EVGLINIT(re, EINA_FALSE);
+   if (!im->tex || !im->tex->pt)
+     {
+        ERR("Can not lock image that is not a surface!");
+        return EINA_FALSE;
+     }
+
+   evas_gl_common_context_flush(im->gc);
+   im->locked = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eng_gl_surface_unlock(void *data, void *surface)
+{
+   Render_Engine *re = data;
+   Evas_GL_Image *im = surface;
+
+   EVGLINIT(re, EINA_FALSE);
+   im->locked = EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eng_gl_surface_read_pixels(void *data, void *surface,
+                           int x, int y, int w, int h,
+                           Evas_Colorspace cspace, void *pixels)
+{
+   Render_Engine *re = data;
+   Evas_GL_Image *im = surface;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pixels, EINA_FALSE);
+
+   EVGLINIT(re, EINA_FALSE);
+   if (!im->locked)
+     {
+        // For now, this is useless, but let's force clients to lock :)
+        CRI("The surface must be locked before reading its pixels!");
+        return EINA_FALSE;
+     }
+
+   if (cspace != EVAS_COLORSPACE_ARGB8888)
+     {
+        ERR("Conversion to colorspace %d is not supported!", (int) cspace);
+        return EINA_FALSE;
+     }
+
+   glsym_glBindFramebuffer(GL_READ_FRAMEBUFFER, im->tex->pt->fb);
+   glsym_glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+   glsym_glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+   return EINA_TRUE;
+}
 //--------------------------------//
 
 static int
@@ -3696,6 +3755,9 @@ module_open(Evas_Module *em)
    ORD(gl_api_get);
    ORD(gl_direct_override_get);
    ORD(gl_get_pixels_set);
+   ORD(gl_surface_lock);
+   ORD(gl_surface_read_pixels);
+   ORD(gl_surface_unlock);
 
    ORD(image_load_error_get);
 

@@ -628,6 +628,7 @@ struct _Evas_GL_Image
    unsigned char    cached : 1;
    unsigned char    alpha : 1;
    unsigned char    tex_only : 1;
+   unsigned char    locked : 1; // gl_surface_lock/unlock
 };
 
 struct _Evas_GL_Font_Texture
@@ -837,6 +838,8 @@ extern void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
 extern void       (*glsym_glReleaseShaderCompiler)(void);
 extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
 extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
+
+extern void       (*glsym_glReadPixels)           (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *data);
 
 #ifdef GL_GLES
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);

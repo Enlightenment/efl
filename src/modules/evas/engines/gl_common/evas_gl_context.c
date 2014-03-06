@@ -29,6 +29,7 @@ void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
 GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
 void       (*glsym_glEndTiling)            (GLuint a) = NULL;
+void       (*glsym_glReadPixels)           (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *data) = NULL;
 
 #ifdef GL_GLES
 // just used for finding symbols :)
@@ -211,6 +212,8 @@ gl_symbols(void)
 
    FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", secsym_func_uint);
 #endif
+
+   FINDSYM(glsym_glReadPixels, "glReadPixels", glsym_func_void);
 }
 
 static void shader_array_flush(Evas_Engine_GL_Context *gc);

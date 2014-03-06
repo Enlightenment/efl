@@ -2692,6 +2692,9 @@ static Evas_Func func =
      NULL, // need software mesa for gl rendering <- gl_api_get
      NULL, // need software mesa for gl rendering <- gl_direct_override
      NULL, // need software mesa for gl rendering <- gl_get_pixels_set
+     NULL, // need software mesa for gl rendering <- gl_surface_lock
+     NULL, // need software mesa for gl rendering <- gl_surface_read_pixels
+     NULL, // need software mesa for gl rendering <- gl_surface_unlock
      eng_image_load_error_get,
      eng_font_run_font_end_get,
      eng_image_animated_get,
