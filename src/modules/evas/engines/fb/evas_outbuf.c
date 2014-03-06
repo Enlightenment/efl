@@ -11,10 +11,10 @@ evas_fb_outbuf_fb_init(void)
 void
 evas_fb_outbuf_fb_free(Outbuf *buf)
 {
-   /* FIXME: implement */
-   WRN("destroying fb info.. not implemented!!!! WARNING. LEAK!");
    if (buf->priv.back_buf)
      evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
+   fb_freemode(buf->priv.fb.fb);
+   fb_cleanup();
    free(buf);
 }
 
@@ -53,6 +53,7 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
    fb_fd = fb_postinit(buf->priv.fb.fb);
    if (fb_fd < 1)
      {
+        fb_freemode(buf->priv.fb.fb);
         free(buf);
         return NULL;
      }
@@ -104,6 +105,8 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 				       buf->rot);
        if (!conv_func)
 	  {
+             fb_freemode(buf->priv.fb.fb);
+             fb_cleanup();
 	     free(buf);
 	     return NULL;
 	  }

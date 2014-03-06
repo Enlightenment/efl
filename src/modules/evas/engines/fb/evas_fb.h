@@ -41,6 +41,8 @@ struct _fb_mode
 /* init a framebuffer (and switch to) vt number vt. If vt == 0 use current   */
 /* vt                                                                        */
 void fb_init(int vt, int device);
+/* finishes whatever was done at fb_init() */
+void fb_cleanup(void);
 /* call this afetr setting or getting the fb mode (whichever) to complete    */
 /* the dsetup                                                                */
 int  fb_postinit(FB_Mode *mode);
@@ -64,6 +66,8 @@ FB_Mode *fb_list_modes(unsigned int *num_return);
 FB_Mode *fb_setmode(unsigned int width, unsigned int height, unsigned int depth, unsigned int refresh);
 /* returns the current fb mode being used in FB_Mode                         */
 FB_Mode *fb_getmode(void);
+/* free the FB_Mode struct returned by fb_getmode() */
+void fb_freemode(FB_Mode *mode);
 /* changes the bit depth of the current fb mode to depth and returns a new   */
 /* handle to a new fb mode with updated parameters. frees cur_mode for you.  */
 FB_Mode *fb_changedepth(FB_Mode *cur_mode, unsigned int depth);

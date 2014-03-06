@@ -36,7 +36,6 @@ static struct fb_cmap            cmap  = { 0, 256, red,  green,  blue, NULL };
 /* -------------------------------------------------------------------- */
 /* internal function prototypes                                         */
 
-static void fb_cleanup(void);
 //static void fb_cleanup_fork(void);
 //static void fb_setvt(int vtno);
 static void fb_init_palette_332(FB_Mode *mode);
@@ -388,6 +387,12 @@ fb_getmode(void)
    return mode;
 }
 
+void
+fb_freemode(FB_Mode *mode)
+{
+   free(mode);
+}
+
 /* XXX: unused
 static void
 fb_setvt(int vtno)
@@ -583,7 +588,7 @@ fb_postinit(FB_Mode *mode)
   return fb;
 }
 
-static void
+void
 fb_cleanup(void)
 {
    if (fb < 0) return;
