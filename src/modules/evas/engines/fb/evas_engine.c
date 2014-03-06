@@ -62,8 +62,16 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
 
    evas_fb_outbuf_fb_init();
 
-   /* get any stored performance metrics from device (xserver) */
+   /* get any stored performance metrics from device */
    re->ob = evas_fb_outbuf_fb_setup_fb(w, h, rot, OUTBUF_DEPTH_INHERIT, vt, dev, refresh);
+   if (!re->ob)
+     {
+        free(re);
+        evas_common_font_shutdown();
+        evas_common_image_shutdown();
+        return NULL;
+     }
+
    re->tb = evas_common_tilebuf_new(evas_fb_outbuf_fb_get_width(re->ob), evas_fb_outbuf_fb_get_height(re->ob));
    /* no backbuf! */
    evas_fb_outbuf_fb_set_have_backbuf(re->ob, 0);
