@@ -51,6 +51,11 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 	return NULL;
      }
    fb_fd = fb_postinit(buf->priv.fb.fb);
+   DBG("fd=%d, mode=%ux%u, refresh=%u, depth=%u, bpp=%u, mem=%p (+%u)",
+       fb_fd, buf->priv.fb.fb->width, buf->priv.fb.fb->height,
+       buf->priv.fb.fb->refresh, buf->priv.fb.fb->depth,
+       buf->priv.fb.fb->bpp, buf->priv.fb.fb->mem,
+       buf->priv.fb.fb->mem_offset);
    if (fb_fd < 1)
      {
         fb_freemode(buf->priv.fb.fb);
@@ -103,6 +108,22 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 				       buf->priv.mask.b,
 				       PAL_MODE_NONE,
 				       buf->rot);
+       DBG("size=%ux%u rot=%u depth=%u bitdepth=%u fb{"
+           "width=%u, height=%u, refresh=%u, depth=%u, bpp=%u, fd=%d, "
+           "mem=%p, mem_offset=%u} "
+           "mask{r=%#010x, g=%#010x, b=%#010x} conv_func=%p",
+           buf->w, buf->h, buf->rot, buf->depth,
+           buf->priv.fb.fb->fb_var.bits_per_pixel,
+           buf->priv.fb.fb->width,
+           buf->priv.fb.fb->height,
+           buf->priv.fb.fb->refresh,
+           buf->priv.fb.fb->depth,
+           buf->priv.fb.fb->bpp,
+           buf->priv.fb.fb->fb_fd,
+           buf->priv.fb.fb->mem,
+           buf->priv.fb.fb->mem_offset,
+           buf->priv.mask.r, buf->priv.mask.g, buf->priv.mask.b,
+           conv_func);
        if (!conv_func)
 	  {
              fb_freemode(buf->priv.fb.fb);
@@ -343,6 +364,7 @@ evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth d
      }
    if (buf->priv.fb.fb)
      {
+        ERR("implement fb reconfigure");
 	/* FIXME: implement this */
      }
    /* if backbuf delet it */

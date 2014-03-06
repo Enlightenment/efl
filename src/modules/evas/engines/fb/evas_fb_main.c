@@ -13,6 +13,36 @@
 #include <linux/vt.h>
 #include <sys/user.h>
 
+extern int _evas_engine_fb_log_dom;
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_engine_fb_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_engine_fb_log_dom, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_evas_engine_fb_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_fb_log_dom, __VA_ARGS__)
+
+#ifdef CRI
+# undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_fb_log_dom, __VA_ARGS__)
+
+#define WILL_LOG(_level) \
+  (eina_log_domain_registered_level_get(_evas_engine_fb_log_dom) >= _level)
+
+
 #define FB_ACTIVE    0
 #define FB_REL_REQ   1
 #define FB_INACTIVE  2
@@ -41,6 +71,191 @@ static struct fb_cmap            cmap  = { 0, 256, red,  green,  blue, NULL };
 static void fb_init_palette_332(FB_Mode *mode);
 static void fb_init_palette_linear(FB_Mode *mode);
 
+static char *
+fb_cmap_str_convert(const struct fb_cmap *fb_cmap)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+   unsigned int i;
+   char *ret;
+
+   eina_strbuf_append_printf(buf, "start=%u, len=%u, red={",
+                             fb_cmap->start, fb_cmap->len);
+
+   for (i = 0; i < fb_cmap->len; i++)
+     {
+        if (i == 0)
+          eina_strbuf_append_printf(buf, "%hd", fb_cmap->red[i]);
+        else
+          eina_strbuf_append_printf(buf, ",%hd", fb_cmap->red[i]);
+     }
+
+   eina_strbuf_append(buf, "}, green={");
+   for (i = 0; i < fb_cmap->len; i++)
+     {
+        if (i == 0)
+          eina_strbuf_append_printf(buf, "%hd", fb_cmap->green[i]);
+        else
+          eina_strbuf_append_printf(buf, ",%hd", fb_cmap->green[i]);
+     }
+   eina_strbuf_append(buf, "}, blue={");
+   for (i = 0; i < fb_cmap->len; i++)
+     {
+        if (i == 0)
+          eina_strbuf_append_printf(buf, "%hd", fb_cmap->blue[i]);
+        else
+          eina_strbuf_append_printf(buf, ",%hd", fb_cmap->blue[i]);
+     }
+   eina_strbuf_append(buf, "}, transp={");
+   if (fb_cmap->transp)
+     {
+        for (i = 0; i < fb_cmap->len; i++)
+          {
+             if (i == 0)
+               eina_strbuf_append_printf(buf, "%hd", fb_cmap->transp[i]);
+             else
+               eina_strbuf_append_printf(buf, ",%hd", fb_cmap->transp[i]);
+          }
+     }
+   eina_strbuf_append(buf, "}");
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+
+   return ret;
+}
+
+static unsigned int
+fb_bitfield_mask_get(const struct fb_bitfield *fbb)
+{
+   unsigned int i, mask = 0;
+   for (i = 0; i < fbb->length; i++)
+     mask |= (1 << (fbb->offset + i));
+   return mask;
+}
+
+static char *
+fb_var_str_convert(const struct fb_var_screeninfo *fbv)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+   char *ret;
+
+   eina_strbuf_append_printf(buf,
+                             "xres=%u, yres=%u, "
+                             "xres_virtual=%u, yres_virtual=%u, "
+                             "xoffset=%u, yoffset=%u, "
+                             "bits_per_pixel=%u, "
+                             "grayscale=%u ",
+                             fbv->xres, fbv->yres,
+                             fbv->xres_virtual, fbv->yres_virtual,
+                             fbv->xoffset, fbv->yoffset,
+                             fbv->bits_per_pixel,
+                             fbv->grayscale);
+
+   if (fbv->grayscale == 0) eina_strbuf_append(buf, "color");
+   else if (fbv->grayscale == 1) eina_strbuf_append(buf, "grayscale");
+   else eina_strbuf_append_n(buf, (const char *)&(fbv->grayscale), 4);
+
+   eina_strbuf_append_printf(buf,
+                             ", "
+                             "red={"
+                             "offset=%u, length=%u, msb_right=%u, %#010x}, "
+                             "green={"
+                             "offset=%u, length=%u, msb_right=%u, %#010x}, "
+                             "blue={"
+                             "offset=%u, length=%u, msb_right=%u, %#010x}, "
+                             "transp={"
+                             "offset=%u, length=%u, msb_right=%u, %#010x}, "
+                             "nonstd=%u, "
+                             "activate=%u",
+                             fbv->red.offset,
+                             fbv->red.length,
+                             fbv->red.msb_right,
+                             fb_bitfield_mask_get(&(fbv->red)),
+                             fbv->green.offset,
+                             fbv->green.length,
+                             fbv->green.msb_right,
+                             fb_bitfield_mask_get(&(fbv->green)),
+                             fbv->blue.offset,
+                             fbv->blue.length,
+                             fbv->blue.msb_right,
+                             fb_bitfield_mask_get(&(fbv->blue)),
+                             fbv->transp.offset,
+                             fbv->transp.length,
+                             fbv->transp.msb_right,
+                             fb_bitfield_mask_get(&(fbv->transp)),
+                             fbv->nonstd,
+                             fbv->activate);
+
+#define F2S(f, s) \
+   if (fbv->activate & f) eina_strbuf_append(buf, " "#s)
+   F2S(FB_ACTIVATE_NOW, "now");
+   F2S(FB_ACTIVATE_NXTOPEN, "next-open");
+   F2S(FB_ACTIVATE_TEST, "test");
+   F2S(FB_ACTIVATE_VBL, "vbl");
+   F2S(FB_ACTIVATE_ALL, "all");
+   F2S(FB_ACTIVATE_FORCE, "force");
+   F2S(FB_ACTIVATE_INV_MODE, "inv-mode");
+#undef F2S
+
+   eina_strbuf_append_printf(buf,
+                             ", "
+                             "height=%u, width=%u, "
+                             "accel_flags=%#x, "
+                             "pixclock=%u, "
+                             "left_margin=%u, right_margin=%u, "
+                             "upper_margin=%u, lower_margin=%u, "
+                             "hsync_len=%u, vsync_len=%u, "
+                             "sync=%u",
+                             fbv->height, fbv->width,
+                             fbv->accel_flags,
+                             fbv->pixclock,
+                             fbv->left_margin, fbv->right_margin,
+                             fbv->upper_margin, fbv->lower_margin,
+                             fbv->hsync_len, fbv->vsync_len,
+                             fbv->sync);
+
+#define F2S(f, s) \
+   if (fbv->sync & f) eina_strbuf_append(buf, " "#s)
+   F2S(FB_SYNC_HOR_HIGH_ACT, "hor-high");
+   F2S(FB_SYNC_VERT_HIGH_ACT, "vert-high");
+   F2S(FB_SYNC_EXT, "external");
+   F2S(FB_SYNC_COMP_HIGH_ACT, "comp-high");
+   F2S(FB_SYNC_BROADCAST, "broadcast");
+   F2S(FB_SYNC_ON_GREEN, "on-green");
+#undef F2S
+
+   eina_strbuf_append_printf(buf,
+                             ", "
+                             "vmode=%u",
+                             fbv->vmode);
+
+#define F2S(f, s) \
+   if (fbv->vmode & f) eina_strbuf_append(buf, " "#s)
+   F2S(FB_VMODE_NONINTERLACED, "non-interlaced");
+   F2S(FB_VMODE_INTERLACED, "interlaced");
+   F2S(FB_VMODE_DOUBLE, "double");
+   F2S(FB_VMODE_ODD_FLD_FIRST, "interlaced-top-first");
+   F2S(FB_VMODE_YWRAP, "yrwap");
+   F2S(FB_VMODE_SMOOTH_XPAN, "smooth-xpan");
+   F2S(FB_VMODE_CONUPDATE, "conupdate");
+#undef F2S
+
+   eina_strbuf_append_printf(buf,
+                             ", "
+                             "rotate=%u, "
+                             "colorspace=%u",
+                             fbv->rotate,
+                             fbv->colorspace);
+
+   if (fbv->colorspace)
+     eina_strbuf_append_n(buf, (const char *)&(fbv->colorspace), 4);
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+
 /* -------------------------------------------------------------------- */
 /* palette setting                                                      */
 
@@ -54,7 +269,8 @@ fb_init_palette_332(FB_Mode *mode)
    i = 0;
    
    if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
-      perror("ioctl FBIOGETCMAP");
+     ERR("could not get colormap: ioctl(%d, FBIOGETCMAP) = %s",
+         fb, strerror(errno));
    
    /* generate the palette */
    for (r = 0; r < 8; r++)
@@ -78,7 +294,13 @@ fb_init_palette_332(FB_Mode *mode)
    
    /* set colormap */
    if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
-      perror("ioctl FBIOPUTCMAP");
+     {
+        const char *errmsg = strerror(errno);
+        char *cmap_str = fb_cmap_str_convert(&cmap);
+        ERR("could not set colormap: ioctl(%d, FBIOPUTCMAP, {%s}) = %s",
+            fb, cmap_str, errmsg);
+        free(cmap_str);
+     }
 }
 
 static void
@@ -90,7 +312,8 @@ fb_init_palette_linear(FB_Mode *mode)
       return;
    
    if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
-      perror("ioctl FBIOGETCMAP");
+     ERR("could not get colormap: ioctl(%d, FBIOGETCMAP) = %s",
+         fb, strerror(errno));
    
    /* generate the palette */
    for (i = 0; i < 256; i++)
@@ -206,44 +429,72 @@ fb_list_modes(unsigned int *num_return)
    return modes;
 }
 
+static Eina_Bool
+_fb_vscreeninfo_put(const struct fb_var_screeninfo *fb_var)
+{
+   if (ioctl(fb, FBIOPUT_VSCREENINFO, fb_var) == -1)
+     {
+        const char *errmsg = strerror(errno);
+        char *var_str = fb_var_str_convert(fb_var);
+        ERR("could not set screeninfo: "
+            "ioctl(%d, FBIOPUT_VSCREENINFO, {%s}) = %s",
+            fb, var_str, errmsg);
+        free(var_str);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 FB_Mode *
 fb_setmode(unsigned int width, unsigned int height, unsigned int pdepth, unsigned int refresh)
 {
-   FB_Mode *modes, *mode = NULL;
+   FB_Mode *modes;
    unsigned int i, num_modes;
    
    modes = fb_list_modes(&num_modes);
+   DBG("want %ux%u, bitdepth=%u, refresh=%u, modes=%p, num_modes=%u",
+       width, height, pdepth, refresh, modes, num_modes);
    if (modes)
      {
         for (i = 0; i < num_modes; i++)
           {
+             DBG("match modes[%d] %ux%u, bitdepth=%u, refresh=%u",
+                 i, modes[i].width, modes[i].height,
+                 modes[i].fb_var.bits_per_pixel,
+                 modes[i].refresh);
              if ((modes[i].width == width) &&
                  (modes[i].height == height) &&
                  (!pdepth || modes[i].fb_var.bits_per_pixel == pdepth) &&
                  (modes[i].refresh == refresh))
                {
+                  INF("use modes[%d] %ux%u, bitdepth=%u, refresh=%u",
+                      i, width, height, modes[i].fb_var.bits_per_pixel,
+                      refresh);
+
                   if (pdepth) modes[i].fb_var.bits_per_pixel = pdepth;
-                  
-                  if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
-                     perror("ioctl FBIOPUT_VSCREENINFO");
-                  
+
+                  _fb_vscreeninfo_put(&modes[i].fb_var);
+
                   free(modes);
                   return fb_getmode();
                }
           }
         free(modes);
      }
-   return mode;
+
+   INF("no /etc/fb.modes (%u entries) match %ux%u, bitdepth=%u, refresh=%u",
+       num_modes, width, height, pdepth, refresh);
+   return NULL;
 }
 
 FB_Mode *
 fb_changedepth(FB_Mode *cur_mode, unsigned int pdepth)
 {
    cur_mode->fb_var.bits_per_pixel = pdepth;
-   
-   if (ioctl(fb, FBIOPUT_VSCREENINFO, &cur_mode->fb_var) == -1)
-      perror("ioctl FBIOPUT_VSCREENINFO");
-   
+
+   _fb_vscreeninfo_put(&cur_mode->fb_var);
+
    free(cur_mode);
    return fb_getmode();
 }
@@ -255,19 +506,29 @@ fb_changeres(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigne
    unsigned int i, num_modes;
    
    modes = fb_list_modes(&num_modes);
+   DBG("want %ux%u, bitdepth=%u, refresh=%u, modes=%p, num_modes=%u",
+       width, height, cur_mode->depth, refresh, modes, num_modes);
    if (modes)
      {
         for (i = 0; i < num_modes; i++)
           {
+             DBG("match modes[%d] %ux%u, bitdepth=%u, refresh=%u",
+                 i, modes[i].width, modes[i].height,
+                 modes[i].fb_var.bits_per_pixel,
+                 modes[i].refresh);
+
              if ((modes[i].width == width) &&
                  (modes[i].height == height) &&
                  (modes[i].refresh == refresh))
                {
                   modes[i].fb_var.bits_per_pixel = cur_mode->depth;
-                  
-                  if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
-                     perror("ioctl FBIOPUT_VSCREENINFO");
-                  
+
+                  INF("use modes[%d] %ux%u, bitdepth=%u, refresh=%u",
+                      i, width, height, modes[i].fb_var.bits_per_pixel,
+                      refresh);
+
+                  _fb_vscreeninfo_put(&modes[i].fb_var);
+
                   free(modes);
                   free(cur_mode);
                   return fb_getmode();
@@ -275,6 +536,12 @@ fb_changeres(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsigne
           }
         free(modes);
      }
+
+   INF("no /etc/fb.modes (%u entries) match %ux%u, bitdepth=%u, refresh=%u. "
+       "Keep current mode %ux%u, bitdepth=%u, refresh=%u.",
+       num_modes, width, height, cur_mode->depth, refresh,
+       cur_mode->width, cur_mode->height, cur_mode->fb_var.bits_per_pixel,
+       cur_mode->refresh);
    return cur_mode;
 }
 
@@ -285,20 +552,29 @@ fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsign
    unsigned int i, num_modes;
    
    modes = fb_list_modes(&num_modes);
+   DBG("want %ux%u, bitdepth=%u, refresh=%u, modes=%p, num_modes=%u",
+       width, height, pdepth, refresh, modes, num_modes);
    if (modes)
      {
         for (i = 0; i < num_modes; i++)
           {
+             DBG("match modes[%d] %ux%u, bitdepth=%u, refresh=%u",
+                 i, modes[i].width, modes[i].height,
+                 modes[i].fb_var.bits_per_pixel,
+                 modes[i].refresh);
              if ((modes[i].width == width) &&
                  (modes[i].height == height) &&
                  (!pdepth || modes[i].fb_var.bits_per_pixel == pdepth) &&
                  (modes[i].refresh == refresh))
                {
                   if (pdepth) modes[i].fb_var.bits_per_pixel = pdepth;
-                  
-                  if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
-                     perror("ioctl FBIOPUT_VSCREENINFO");
-                  
+
+                  INF("use modes[%d] %ux%u, bitdepth=%u, refresh=%u",
+                      i, width, height, modes[i].fb_var.bits_per_pixel,
+                      refresh);
+
+                  _fb_vscreeninfo_put(&modes[i].fb_var);
+
                   free(modes);
                   free(cur_mode);
                   return fb_getmode();
@@ -306,6 +582,13 @@ fb_changemode(FB_Mode *cur_mode, unsigned int width, unsigned int height, unsign
           }
         free(modes);
      }
+
+
+   INF("no /etc/fb.modes (%u entries) match %ux%u, bitdepth=%u, refresh=%u. "
+       "Keep current mode %ux%u, bitdepth=%u, refresh=%u.",
+       num_modes, width, height, pdepth, refresh,
+       cur_mode->width, cur_mode->height, cur_mode->fb_var.bits_per_pixel,
+       cur_mode->refresh);
    return cur_mode;
 }
 
@@ -320,11 +603,18 @@ fb_getmode(void)
    
    if (ioctl(fb, FBIOGET_VSCREENINFO, &mode->fb_var) == -1)
      {
-        perror("ioctl FBIOGET_VSCREENINFO");
+        ERR("could not get screeninfo: ioctl(%d, FBIOGET_VSCREENINFO) = %s",
+            fb, strerror(errno));
         free(mode);
         return NULL;
      }
-   
+   if (WILL_LOG(EINA_LOG_LEVEL_DBG))
+     {
+        char *var_str = fb_var_str_convert(&mode->fb_var);
+        DBG("FBIOGET_VSCREENINFO: %s", var_str);
+        free(var_str);
+     }
+
    mode->width = mode->fb_var.xres_virtual;
    mode->height = mode->fb_var.yres_virtual;
    hpix =
@@ -384,6 +674,10 @@ fb_getmode(void)
    mode->bpp = bpp;
    if (mode->depth == 8) fb_init_palette_332(mode);
    else fb_init_palette_linear(mode);
+
+   INF("%ux%u, bitdepth=%u (%u bits), depth=%u, refresh=%u",
+       mode->width, mode->height, mode->bpp,
+       mode->fb_var.bits_per_pixel, mode->depth, mode->refresh);
    return mode;
 }
 
@@ -456,6 +750,8 @@ fb_init(int vt EINA_UNUSED, int device)
 {
    char dev[PATH_MAX];
    
+
+   DBG("device=%d, $EVAS_FB_DEV=%s", device, getenv("EVAS_FB_DEV"));
    tty = -1;
 #if 0
    if (vt != 0) fb_setvt(vt);
@@ -486,15 +782,18 @@ fb_init(int vt EINA_UNUSED, int device)
 	fb_cleanup();
         return;
      }
+   DBG("opened fb=%d (%s)", fb, dev);
    
    if (ioctl(fb, FBIOGET_VSCREENINFO, &fb_ovar) == -1)
      {
-	perror("ioctl FBIOGET_VSCREENINFO");
+        ERR("could not get screeninfo: ioctl(%d, FBIOGET_VSCREENINFO) = %s",
+            fb, strerror(errno));
         return;
      }
    if (ioctl(fb, FBIOGET_FSCREENINFO, &fb_fix) == -1)
      {
-	perror("ioctl FBIOGET_FSCREENINFO");
+        ERR("could not get fix screeninfo: ioctl(%d, FBIOGET_FSCREENINFO) = %s",
+            fb, strerror(errno));
         return;
      }
 
@@ -503,7 +802,8 @@ fb_init(int vt EINA_UNUSED, int device)
      {
 	if (ioctl(fb,FBIOGETCMAP , &ocmap) == -1)
 	  {
-	     perror("ioctl FBIOGETCMAP");
+             ERR("could not get colormap: ioctl(%d, FBIOGETCMAP) = %s",
+                 fb, strerror(errno));
              return;
 	  }
      }
@@ -512,23 +812,32 @@ fb_init(int vt EINA_UNUSED, int device)
       tty = 0;
    else if ((tty = open("/dev/tty",O_RDWR)) == -1)
      {
-	CITICAL("open %s: %s", "/dev/tty", strerror(errno));
+	CRI("open %s: %s", "/dev/tty", strerror(errno));
         return;
      }
    if (tty >= 0)
      {
 	if (ioctl(tty, KDGETMODE, &kd_mode) == -1)
 	  {
-	     perror("ioctl KDGETMODE");
+             ERR("could not get KD mode: ioctl(%d, KDGETMODE) = %s",
+                 tty, strerror(errno));
              return;
 	  }
 	if (ioctl(tty, VT_GETMODE, &vt_omode) == -1)
 	  {
-	     perror("ioctl VT_GETMODE");
+             ERR("could not get VT mode: ioctl(%d, VT_GETMODE) = %s",
+                 tty, strerror(errno));
              return;
 	  }
      }
 #endif
+
+   if (WILL_LOG(EINA_LOG_LEVEL_INFO))
+     {
+        char *var_str = fb_var_str_convert(&fb_ovar);
+        INF("fb=%d, FBIOGET_VSCREENINFO: %s", fb, var_str);
+        free(var_str);
+     }
 }
 
 int
@@ -536,18 +845,28 @@ fb_postinit(FB_Mode *mode)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(mode, -1);
    if (fb < 0)
-     return -1;
+     {
+        ERR("could no set mode %ux%u: no working fb",
+            mode->width, mode->height);
+        return -1;
+     }
+
+   DBG("%ux%u, bitdepth=%u (%u bits), depth=%u, refresh=%u, fb=%d",
+       mode->width, mode->height, mode->bpp,
+       mode->fb_var.bits_per_pixel, mode->depth, mode->refresh, fb);
 
    if (ioctl(fb,FBIOGET_FSCREENINFO, &fb_fix) == -1)
      {
-        perror("ioctl FBIOGET_FSCREENINFO");
+        CRI("could not get fix screeninfo: ioctl(%d, FBIOGET_FSCREENINFO) = %s",
+            fb, strerror(errno));
         fb_cleanup();
         return -1;
      }
    
    if (fb_fix.type != FB_TYPE_PACKED_PIXELS)
      {
-        CRI("can handle only packed pixel frame buffers");
+        CRI("can handle only packed pixel frame buffers (want %#x, got %#x)",
+            FB_TYPE_PACKED_PIXELS, fb_fix.type);
         fb_cleanup();
         return -1;
      }
@@ -556,7 +875,10 @@ fb_postinit(FB_Mode *mode)
                                      PROT_WRITE | PROT_READ, MAP_SHARED, fb, 0);
    if (mode->mem == MAP_FAILED)
      {
-        perror("mmap");
+        const char *errmsg = strerror(errno);
+        CRI("could not mmap(NULL, %u + %u, PROT_WRITE | PROT_READ, MAP_SHARED, "
+            "%d, 0) = %s",
+            fb_fix.smem_len, mode->mem_offset, fb, errmsg);
         fb_cleanup();
         return -1;
      }
@@ -568,7 +890,11 @@ fb_postinit(FB_Mode *mode)
         
         if (ioctl(fb, FBIOPAN_DISPLAY, &(mode->fb_var)) == -1)
           {
-             perror("ioctl FBIOPAN_DISPLAY");
+             const char *errmsg = strerror(errno);
+             char *var_str = fb_var_str_convert(&(mode->fb_var));
+             CRI("could not pan display: ioctl(%d, FBIOPAN_DISPLAY, {%s}) = %s",
+                 fb, var_str, errmsg);
+             free(var_str);
              fb_cleanup();
              return -1;
           }
@@ -578,42 +904,72 @@ fb_postinit(FB_Mode *mode)
      {
 	if (ioctl(tty,KDSETMODE, KD_GRAPHICS) == -1)
 	  {
-	     perror("ioctl KDSETMODE");
+             const char *errmsg = strerror(errno);
+             CRI("could not set KD mode: ioctl(%d, KDSETMODE, KD_GRAPHICS) = %s",
+                 tty, errmsg);
 	     fb_cleanup();
              return -1;
 	  }
      }
 #endif
   mode->fb_fd = fb;
+
+  INF("%ux%u, bitdepth=%u (%u bits), depth=%u, refresh=%u, fb=%d, mem=%p, "
+      "mem_offset=%u, xoffset=%u, yoffset=%u",
+       mode->width, mode->height, mode->bpp,
+      mode->fb_var.bits_per_pixel, mode->depth, mode->refresh, fb,
+      mode->mem, mode->mem_offset,
+      mode->fb_var.xoffset, mode->fb_var.yoffset);
+
   return fb;
 }
 
 void
 fb_cleanup(void)
 {
-   if (fb < 0) return;
+   DBG("fb=%d", fb);
    /* restore console */
-   if (ioctl(fb, FBIOPUT_VSCREENINFO, &fb_ovar) == -1)
-      perror("ioctl FBIOPUT_VSCREENINFO");
+   if (fb < 0) return;
+
+   if (WILL_LOG(EINA_LOG_LEVEL_INFO))
+     {
+        char *var_str = fb_var_str_convert(&fb_ovar);
+        INF("fb=%d, FBIOSET_VSCREENINFO: %s", fb, var_str);
+        free(var_str);
+     }
+   _fb_vscreeninfo_put(&fb_ovar);
    if (ioctl(fb, FBIOGET_FSCREENINFO, &fb_fix) == -1)
-      perror("ioctl FBIOGET_FSCREENINFO");
+     ERR("could not get fix screeninfo: ioctl(%d, FBIOGET_FSCREENINFO) = %s",
+         fb, strerror(errno));
    if ((fb_ovar.bits_per_pixel == 8) ||
        (fb_fix.visual == FB_VISUAL_DIRECTCOLOR))
      {
         if (ioctl(fb, FBIOPUTCMAP, &ocmap) == -1)
-           perror("ioctl FBIOPUTCMAP");
+          {
+             const char *errmsg = strerror(errno);
+             char *cmap_str = fb_cmap_str_convert(&cmap);
+             ERR("could not set colormap: ioctl(%d, FBIOPUTCMAP, {%s}) = %s",
+                 fb, cmap_str, errmsg);
+             free(cmap_str);
+          }
      }
    close(fb);
    fb = -1;
    if (tty >= 0)
      {
 	if (ioctl(tty, KDSETMODE, kd_mode) == -1)
-           perror("ioctl KDSETMODE");
+          ERR("could not set KD mode: ioctl(%d, KDSETMODE, %d) = %s",
+              tty, kd_mode, strerror(errno));
+
 	if (ioctl(tty, VT_SETMODE, &vt_omode) == -1)
-           perror("ioctl VT_SETMODE");
+          ERR("could not set VT mode: ioctl(%d, VT_SETMODE, {"
+              "mode=%hhd, waitv=%hhd, relsig=%hd, acqsig=%hd, frsig=%hd}) = %s",
+              tty, vt_omode.mode, vt_omode.waitv, vt_omode.relsig,
+              vt_omode.acqsig, vt_omode.frsig, strerror(errno));
 #if 0        
 	if ((ioctl(tty, VT_ACTIVATE, orig_vt_no) == -1) && (orig_vt_no))
-           perror("ioctl VT_ACTIVATE");
+          ERR("could not activate: ioctl(%d, VT_ACTIVATE, %d) = %s",
+              tty, orig_vt_no, strerror(errno));
 #endif        
         if (tty > 0) /* don't close if got from isatty(0) */
           close(tty);
