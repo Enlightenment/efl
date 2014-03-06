@@ -15,6 +15,14 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
    srcdata = evas_filter_buffer_backing_get(ctx, src->id);
    EINA_SAFETY_ON_NULL_RETURN_VAL(srcdata, NULL);
 
+   if (src->alpha_only)
+     {
+        // There is no supporting function in Evas for alpha scaling...
+        // but guess what? There is also no use case in the filters :)
+        CRI("Alpha buffer scaling is not supported");
+        return NULL;
+     }
+
    fb = evas_filter_temporary_buffer_get(ctx, w, h, src->alpha_only);
    if (!fb) return NULL;
 
@@ -32,26 +40,34 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
         return NULL;
      }
 
-   // FIXME: Not supported on GL engine.
-   // Yeah, we need to call the CPU scaling functions and not the engine.
    if (ctx->gl_engine)
      {
+        RGBA_Image *s = (RGBA_Image *) srcdata;
+        RGBA_Image *d = (RGBA_Image *) dstdata;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(s->image.data, NULL);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(d->image.data, NULL);
+
         if (src->w == (int) w && src->h == (int) h)
-          {
-             RGBA_Image *s = (RGBA_Image *) srcdata;
-             RGBA_Image *d = (RGBA_Image *) dstdata;
-             EINA_SAFETY_ON_NULL_RETURN_VAL(s->image.data, NULL);
-             EINA_SAFETY_ON_NULL_RETURN_VAL(d->image.data, NULL);
-             memcpy(d->image.data, s->image.data,
-                    w * h * (src->alpha_only ? 1 : 4));
-          }
+          memcpy(d->image.data, s->image.data, w * h * 4);
         else
           {
-             CRI("Support for stretching not implemened yet for GL.");
-             return NULL;
+             Eina_Bool ok;
+             RGBA_Draw_Context dc;
+
+             memset(&dc, 0, sizeof(dc));
+             dc.sli.h = 1;
+             dc.render_op = EVAS_RENDER_COPY;
+
+             ok = evas_common_scale_rgba_in_to_out_clip_sample
+                   (s, d, &dc, 0, 0, src->w, src->h, 0, 0, w, h);
+             if (!ok)
+               {
+                  ERR("RGBA Image scaling failed.");
+                  return NULL;
+               }
           }
      }
-   else if (!src->alpha_only)
+   else
      {
         drawctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
@@ -62,13 +78,6 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
                          EINA_TRUE, // smooth
                          EINA_FALSE); // Not async
         ENFN->context_free(ENDT, drawctx);
-     }
-   else
-     {
-        // FIXME: How to scale alpha buffer?
-        // For now, we could draw to RGBA, scale from there, draw back to alpha
-        CRI("Alpha buffer scaling is not supported");
-        return NULL;
      }
 
    return fb;
