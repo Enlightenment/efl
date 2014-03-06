@@ -435,6 +435,30 @@ if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "x
     AC_MSG_ERROR([ecore-wayland support requested, but ecore-wayland was not found by pkg-config.])
 fi
 
+have_elementary_drm="no"
+want_elementary_drm="auto"
+AC_ARG_ENABLE([ecore-drm],
+   [AC_HELP_STRING([--disable-ecore-drm], [disable ecore-drm support. @<:@default=detect@:>@])],
+   [want_elementary_drm=$enableval], [])
+
+if test "x$want_elementary_drm" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_DRM],
+      [ecore-drm >= efl_version],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_DRM, 1, [DRM support for Elementary])
+       have_elementary_drm="yes"
+       requirement_elm="ecore-drm >= efl_version ${requirement_elm}"
+      ],
+      [have_elementary_drm="no"]
+   )
+else
+    have_elementary_drm="no"
+fi
+if test "x$want_elementary_drm" = "xyes" -a "x$have_elementary_drm" = "xno"; then
+    AC_MSG_ERROR([ecore-drm support requested, but ecore-drm was not found by pkg-config.])
+fi
+
+
 ELM_ELOCATION_DEF="#undef"
 have_elementary_elocation="no"
 want_elementary_elocation="auto"
@@ -733,6 +757,7 @@ echo
 echo "  Engines:"
 echo "    X11....................: ${have_elementary_x}"
 echo "    Framebuffer............: ${have_elementary_fb}"
+echo "    DRM....................: ${have_elementary_drm}"
 echo "    PSL1GHT................: ${have_elementary_psl1ght}"
 echo "    SDL....................: ${have_elementary_sdl}"
 echo "    Cocoa..................: ${have_elementary_cocoa}"
