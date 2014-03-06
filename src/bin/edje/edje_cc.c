@@ -21,7 +21,9 @@ char      *file_in = NULL;
 char      *tmp_dir = NULL;
 char      *file_out = NULL;
 char      *watchfile = NULL;
+char      *authors = NULL;
 char      *license = NULL;
+Eina_List *licenses = NULL;
 
 static const char *progname = NULL;
 
@@ -92,6 +94,7 @@ main_help(void)
       "-dd data/directory       Add a directory to look in for relative path data.file entries\n"
       "-td temp/directory       Directory to store temporary files\n"
       "-l license               Specify the license of a theme\n"
+      "-a authors               Specify AUTHORS\n"
       "-v                       Verbose output\n"
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be stored with lossless compression\n"
@@ -201,6 +204,14 @@ main(int argc, char **argv)
              i++;
              if (!license)
                license = argv[i];
+             else
+               licenses = eina_list_append(licenses, argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-a") || !strcmp(argv[i], "--authors")) && (i < (argc - 1)))
+          {
+             i++;
+             if (!authors)
+               authors = argv[i];
           }
 	else if ((!strcmp(argv[i], "-min-quality")) && (i < (argc - 1)))
 	  {

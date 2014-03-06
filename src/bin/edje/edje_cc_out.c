@@ -123,6 +123,7 @@ typedef struct _Fonts_Write Fonts_Write;
 typedef struct _Image_Write Image_Write;
 typedef struct _Sound_Write Sound_Write;
 typedef struct _Group_Write Group_Write;
+typedef struct _License_Write License_Write;
 
 struct _Script_Write
 {
@@ -173,6 +174,13 @@ struct _Group_Write
    Eet_File *ef;
    Edje_Part_Collection *pc;
    char *errstr;
+};
+
+struct _License_Write
+{
+   Eet_File *ef;
+   const char *file;
+   Eina_Bool master;
 };
 
 struct _Image_Unused_Ids
@@ -1643,21 +1651,35 @@ data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 static void
 data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
-   Eet_File *ef = data;
+   License_Write *lw = data;
+   Eet_File *ef = lw->ef;
    Eina_File *f;
    void *m;
    int bytes;
 
-   f = eina_file_open(license, 0);
+   f = eina_file_open(lw->file, 0);
    if (!f) return ;
 
    m = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!m) goto on_error;
 
-   bytes = eet_write(ef, "edje/license", m, eina_file_size_get(f), compress_mode);
+   if (lw->master)
+     {
+        bytes = eet_write(ef, "edje/license", m, eina_file_size_get(f), compress_mode);
+     }
+   else
+     {
+        char *s = alloca(strlen(lw->file) + 1 + 13);
+
+        strcpy(s, lw->file);
+        sprintf(s, "edje/license/%s", basename(s));
+
+        bytes = eet_write(ef, s, m, eina_file_size_get(f), compress_mode);
+     }
+
    if ((bytes <= 0) || eina_file_map_faulted(f, m))
      {
-        ERR("Unable to write license part \"%s\".", license);
+        ERR("Unable to write license part \"%s\".", lw->file);
      }
    else
      {
@@ -1673,7 +1695,92 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
 }
 
 static void
-data_thread_license_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+data_thread_license_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   free(data);
+}
+
+static void
+data_write_license(Eet_File *ef)
+{
+   License_Write *lw;
+   Eina_List *l;
+   const char *file;
+
+   if (!license) return ;
+
+   lw = calloc(1, sizeof (License_Write));
+   if (!lw) return ;
+
+   lw->ef = ef;
+   lw->file = license;
+   lw->master = EINA_TRUE;
+
+   pending_threads++;
+   if (threads)
+     ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw);
+   else
+     {
+        data_thread_license(lw, NULL);
+        data_thread_license_end(lw, NULL);
+     }
+
+   EINA_LIST_FOREACH(licenses, l, file)
+     {
+        lw = calloc(1, sizeof (License_Write));
+        if (!lw) return ;
+
+        lw->ef = ef;
+        lw->file = file;
+        lw->master = EINA_FALSE;
+
+        pending_threads++;
+        if (threads)
+          ecore_thread_run(data_thread_license, data_thread_license_end, NULL, lw);
+        else
+          {
+             data_thread_license(lw, NULL);
+             data_thread_license_end(lw, NULL);
+          }
+     }
+}
+
+static void
+data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Eet_File *ef = data;
+   Eina_File *f;
+   void *m;
+   int bytes;
+
+   f = eina_file_open(authors, 0);
+   if (!f) return ;
+
+   m = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (!m) goto on_error;
+
+   bytes = eet_write(ef, "edje/authors", m, eina_file_size_get(f), compress_mode);
+   if ((bytes <= 0) || eina_file_map_faulted(f, m))
+     {
+        ERR("Unable to write license part \"%s\".", authors);
+     }
+   else
+     {
+        INF("Wrote %9i bytes (%4iKb) for \"%s\" license entry compress: [real: %2.1f%%]",
+            bytes, (bytes + 512) / 1024, license,
+            100 - (100 * (double)bytes) / ((double)(eina_file_size_get(f))));
+     }
+
+   eina_file_map_free(f, m);
+
+ on_error:
+   eina_file_close(f);
+}
+
+static void
+data_thread_authors_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
    pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
@@ -1757,15 +1864,17 @@ data_write(void)
    INF("fonts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_sounds(ef, &sound_num);
    INF("sounds: %3.5f", ecore_time_get() - t); t = ecore_time_get();
-   if (license)
+   data_write_license(ef);
+   INF("license: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   if (authors)
      {
         pending_threads++;
         if (threads)
-          ecore_thread_run(data_thread_license, data_thread_license_end, NULL, ef);
+          ecore_thread_run(data_thread_authors, data_thread_authors_end, NULL, ef);
         else
           {
-             data_thread_license(ef, NULL);
-             data_thread_license_end(ef, NULL);
+             data_thread_authors(ef, NULL);
+             data_thread_authors_end(ef, NULL);
           }
      }
    pending_threads--;

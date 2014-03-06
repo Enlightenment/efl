@@ -228,6 +228,8 @@ extern char                  *tmp_dir;
 extern char                  *file_out;
 extern char                  *watchfile;
 extern char                  *license;
+extern char                  *authors;
+extern Eina_List             *licenses;
 extern int                    no_lossy;
 extern int                    no_comp;
 extern int                    no_raw;
