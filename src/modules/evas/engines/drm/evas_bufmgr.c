@@ -1,6 +1,16 @@
 #include "evas_engine.h"
 #include <dlfcn.h>
 
+#ifdef HAVE_DRM_HW_ACCEL
+# define EGL_EGLEXT_PROTOTYPES
+# define GL_GLEXT_PROTOTYPES
+
+# include <GLES2/gl2.h>
+# include <GLES2/gl2ext.h>
+# include <EGL/egl.h>
+# include <EGL/eglext.h>
+#endif
+
 /* NB: This union is the same in GBM and TBM so we can use it 
  * to return 'handles' */
 union _ebi_bo_handle
