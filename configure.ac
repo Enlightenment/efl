@@ -3419,6 +3419,9 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [eina])
 ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
+ECORE_EVAS_MODULE([drm], [${want_drm}], 
+  [ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm]) ]
+)
 ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
@@ -3437,9 +3440,6 @@ AM_CONDITIONAL([BUILD_ECORE_EVAS_SDL],
 
 ECORE_EVAS_MODULE([wayland-shm], [${want_wayland}])
 ECORE_EVAS_MODULE([wayland-egl], [${want_ecore_evas_wayland_egl}])
-ECORE_EVAS_MODULE([drm], [${want_drm}], 
-  [ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [ecore-drm]) ]
-)
 
 build_ecore_evas_wayland="no"
 if test "x${have_ecore_evas_wayland_shm}" = "xyes" || \
