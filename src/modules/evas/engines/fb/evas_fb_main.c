@@ -22,7 +22,7 @@
 /* internal variables                                                   */
 
 static struct fb_fix_screeninfo  fb_fix;
-static int                       fb, tty;
+static int                       fb = -1, tty = -1;
 static int                       bpp, depth;
 //static int                       orig_vt_no = 0;
 static int                       kd_mode;
@@ -449,9 +449,9 @@ fb_setvt(int vtno)
 void
 fb_init(int vt EINA_UNUSED, int device)
 {
-   char dev[32];
+   char dev[PATH_MAX];
    
-   tty = 0;
+   tty = -1;
 #if 0
    if (vt != 0) fb_setvt(vt);
 #endif
@@ -461,7 +461,10 @@ fb_init(int vt EINA_UNUSED, int device)
        (getuid() == geteuid()) &&
 #endif
        (getenv("EVAS_FB_DEV")))
-     fb = open(getenv("EVAS_FB_DEV"), O_RDWR);
+     {
+        eina_strlcpy(dev, getenv("EVAS_FB_DEV"), sizeof(dev));
+        fb = open(dev, O_RDWR);
+     }
    else
      {
         sprintf(dev, "/dev/fb/%i", device);
@@ -507,7 +510,7 @@ fb_init(int vt EINA_UNUSED, int device)
 	CITICAL("open %s: %s", "/dev/tty", strerror(errno));
         return;
      }
-   if (tty)
+   if (tty >= 0)
      {
 	if (ioctl(tty, KDGETMODE, &kd_mode) == -1)
 	  {
@@ -526,18 +529,22 @@ fb_init(int vt EINA_UNUSED, int device)
 int
 fb_postinit(FB_Mode *mode)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mode, -1);
+   if (fb < 0)
+     return -1;
+
    if (ioctl(fb,FBIOGET_FSCREENINFO, &fb_fix) == -1)
      {
         perror("ioctl FBIOGET_FSCREENINFO");
         fb_cleanup();
-        return 0;
+        return -1;
      }
    
    if (fb_fix.type != FB_TYPE_PACKED_PIXELS)
      {
         CRI("can handle only packed pixel frame buffers");
         fb_cleanup();
-        return 0;
+        return -1;
      }
    mode->mem_offset = (unsigned)(fb_fix.smem_start) & (getpagesize()-1);
    mode->mem = (unsigned char *)mmap(NULL, fb_fix.smem_len + mode->mem_offset,
@@ -546,6 +553,7 @@ fb_postinit(FB_Mode *mode)
      {
         perror("mmap");
         fb_cleanup();
+        return -1;
      }
    /* move viewport to upper left corner */
    if ((mode->fb_var.xoffset != 0) || (mode->fb_var.yoffset != 0))
@@ -557,15 +565,17 @@ fb_postinit(FB_Mode *mode)
           {
              perror("ioctl FBIOPAN_DISPLAY");
              fb_cleanup();
+             return -1;
           }
      }
 #if 0
-   if (tty)
+   if (tty >= 0)
      {
 	if (ioctl(tty,KDSETMODE, KD_GRAPHICS) == -1)
 	  {
 	     perror("ioctl KDSETMODE");
 	     fb_cleanup();
+             return -1;
 	  }
      }
 #endif
@@ -576,6 +586,7 @@ fb_postinit(FB_Mode *mode)
 static void
 fb_cleanup(void)
 {
+   if (fb < 0) return;
    /* restore console */
    if (ioctl(fb, FBIOPUT_VSCREENINFO, &fb_ovar) == -1)
       perror("ioctl FBIOPUT_VSCREENINFO");
@@ -588,7 +599,8 @@ fb_cleanup(void)
            perror("ioctl FBIOPUTCMAP");
      }
    close(fb);
-   if (tty)
+   fb = -1;
+   if (tty >= 0)
      {
 	if (ioctl(tty, KDSETMODE, kd_mode) == -1)
            perror("ioctl KDSETMODE");
@@ -598,6 +610,8 @@ fb_cleanup(void)
 	if ((ioctl(tty, VT_ACTIVATE, orig_vt_no) == -1) && (orig_vt_no))
            perror("ioctl VT_ACTIVATE");
 #endif        
+        if (tty > 0) /* don't close if got from isatty(0) */
+          close(tty);
      }
-   close(tty);
+   tty = -1;
 }
