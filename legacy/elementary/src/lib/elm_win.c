@@ -746,8 +746,9 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Smart_Data *sd,
 }
 
 static void
-_elm_win_focus_highlight_reconfigure(Elm_Win_Smart_Data *sd)
+_elm_win_focus_highlight_reconfigure_job(void *data)
 {
+   ELM_WIN_DATA_GET(data, sd);
    Evas_Object *target = sd->focus_highlight.cur.target;
    Evas_Object *previous = sd->focus_highlight.prev.target;
    Evas_Object *fobj = sd->focus_highlight.fobj;
@@ -830,13 +831,6 @@ the_end:
    _elm_win_focus_highlight_visible_set(sd, common_visible);
    sd->focus_highlight.geometry_changed = EINA_FALSE;
    sd->focus_highlight.prev = sd->focus_highlight.cur;
-}
-
-static void
-_elm_win_focus_highlight_reconfigure_job(void *data)
-{
-   ELM_WIN_DATA_GET(data, sd);
-   _elm_win_focus_highlight_reconfigure(sd);
 }
 
 static void
@@ -5831,7 +5825,7 @@ _elm_win_focus_highlight_start(Evas_Object *obj)
    if (!elm_win_focus_highlight_enabled_get(obj)) return;
    sd->focus_highlight.cur.visible = EINA_TRUE;
    sd->focus_highlight.geometry_changed = EINA_TRUE;
-   _elm_win_focus_highlight_reconfigure(sd);
+   _elm_win_focus_highlight_reconfigure_job(sd);
 }
 
 EAPI Ecore_Window
