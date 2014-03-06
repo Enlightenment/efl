@@ -386,7 +386,19 @@ group { name: "e/conf/randr/main/frame";
             align: 0.0 0.0;
          }
       }
+      part { name: "arrowclip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "e.event.arrow.show";
+            rel2.to: "e.event.arrow.show";
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "arrow1clip"; type: RECT;
+         clip_to: "arrowclip";
          description { state: "default" 0.0;
             rel1.to: "e.event.arrow.show";
             rel2.to: "e.event.arrow.show";
@@ -397,6 +409,7 @@ group { name: "e/conf/randr/main/frame";
          }
       }
       part { name: "arrow2clip"; type: RECT;
+         clip_to: "arrowclip";
          description { state: "default" 0.0;
             rel1.to: "e.event.arrow.show";
             rel2.to: "e.event.arrow.show";
@@ -434,6 +447,7 @@ group { name: "e/conf/randr/main/frame";
          }
       }
       part { name: "e.event.arrow.show"; type: RECT;
+         clip_to: "arrowclip";
          description { state: "default" 0.0;
             color: 0 0 0 0;
             max: 21 21;
@@ -519,6 +533,16 @@ group { name: "e/conf/randr/main/frame";
          action: STATE_SET "default" 0.0;
          transition: ACCELERATE 0.5;
          target: "e.swallow.refresh";
+      }
+      program {
+         signal: "e,state,refresh,enabled"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "arrowclip";
+      }
+      program {
+         signal: "e,state,refresh,disabled"; source: "e";
+         action: STATE_SET "disabled" 0.0;
+         target: "arrowclip";
       }
       program { name: "rrpulse1";
          signal: "show"; source: "";
