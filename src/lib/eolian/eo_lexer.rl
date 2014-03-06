@@ -993,6 +993,43 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
    return ret;
 }
 
+static Eina_Bool
+eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, unsigned int len)
+{
+   INF("tokenize %s...", source);
+   toknz->source = eina_stringshare_add(source);
+
+   Eina_Bool ret = EINA_TRUE;
+
+   if (!len)
+     {
+        ERR("%s: given size is 0", source);
+        return EINA_FALSE;
+     }
+
+   if (len > BUFSIZE)
+     {
+        ERR("%s: buffer not enough big. Required size: %d", source, len);
+        return EINA_FALSE;
+     }
+
+   %% write init;
+
+   toknz->p = buffer;
+
+   toknz->pe = toknz->p + len;
+
+   %% write exec;
+
+   if ( toknz->cs == %%{ write error; }%% )
+     {
+        ERR("%s: wrong termination", source);
+        ret = EINA_FALSE;
+     }
+
+   return ret;
+}
+
 Eo_Tokenizer*
 eo_tokenizer_get(void)
 {
@@ -1135,7 +1172,16 @@ eo_tokenizer_database_fill(const char *filename)
         return EINA_FALSE;
      }
 
-   if (!eo_tokenizer_walk(toknz, filename)) return EINA_FALSE;
+   FILE *stream = fopen(filename, "rb");
+   char *buffer = malloc(BUFSIZE);
+   unsigned int len = fread(buffer, 1, BUFSIZE, stream);
+   if (!stream)
+     {
+        ERR("unable to read in %s", filename);
+        return EINA_FALSE;
+     }
+
+   if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) return EINA_FALSE;
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {

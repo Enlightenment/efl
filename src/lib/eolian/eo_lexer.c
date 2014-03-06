@@ -2625,6 +2625,1373 @@ _again:
    return ret;
 }
 
+static Eina_Bool
+eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, unsigned int len)
+{
+   INF("tokenize %s...", source);
+   toknz->source = eina_stringshare_add(source);
+
+   Eina_Bool ret = EINA_TRUE;
+
+   if (!len)
+     {
+        ERR("%s: given size is 0", source);
+        return EINA_FALSE;
+     }
+
+   if (len > BUFSIZE)
+     {
+        ERR("%s: buffer not enough big. Required size: %d", source, len);
+        return EINA_FALSE;
+     }
+
+   
+#line 2650 "eo_lexer.c"
+	{
+	 toknz->cs = eo_tokenizer_start;
+	 toknz->ts = 0;
+	 toknz->te = 0;
+	 toknz->act = 0;
+	}
+
+#line 1017 "eo_lexer.rl"
+
+   toknz->p = buffer;
+
+   toknz->pe = toknz->p + len;
+
+   
+#line 2665 "eo_lexer.c"
+	{
+	int _klen;
+	unsigned int _trans;
+	const char *_acts;
+	unsigned int _nacts;
+	const char *_keys;
+
+	if ( ( toknz->p) == ( toknz->pe) )
+		goto _test_eof;
+_resume:
+	_acts = _eo_tokenizer_actions + _eo_tokenizer_from_state_actions[ toknz->cs];
+	_nacts = (unsigned int) *_acts++;
+	while ( _nacts-- > 0 ) {
+		switch ( *_acts++ ) {
+	case 37:
+#line 1 "NONE"
+	{ toknz->ts = ( toknz->p);}
+	break;
+#line 2684 "eo_lexer.c"
+		}
+	}
+
+	_keys = _eo_tokenizer_trans_keys + _eo_tokenizer_key_offsets[ toknz->cs];
+	_trans = _eo_tokenizer_index_offsets[ toknz->cs];
+
+	_klen = _eo_tokenizer_single_lengths[ toknz->cs];
+	if ( _klen > 0 ) {
+		const char *_lower = _keys;
+		const char *_mid;
+		const char *_upper = _keys + _klen - 1;
+		while (1) {
+			if ( _upper < _lower )
+				break;
+
+			_mid = _lower + ((_upper-_lower) >> 1);
+			if ( (*( toknz->p)) < *_mid )
+				_upper = _mid - 1;
+			else if ( (*( toknz->p)) > *_mid )
+				_lower = _mid + 1;
+			else {
+				_trans += (unsigned int)(_mid - _keys);
+				goto _match;
+			}
+		}
+		_keys += _klen;
+		_trans += _klen;
+	}
+
+	_klen = _eo_tokenizer_range_lengths[ toknz->cs];
+	if ( _klen > 0 ) {
+		const char *_lower = _keys;
+		const char *_mid;
+		const char *_upper = _keys + (_klen<<1) - 2;
+		while (1) {
+			if ( _upper < _lower )
+				break;
+
+			_mid = _lower + (((_upper-_lower) >> 1) & ~1);
+			if ( (*( toknz->p)) < _mid[0] )
+				_upper = _mid - 2;
+			else if ( (*( toknz->p)) > _mid[1] )
+				_lower = _mid + 2;
+			else {
+				_trans += (unsigned int)((_mid - _keys)>>1);
+				goto _match;
+			}
+		}
+		_trans += _klen;
+	}
+
+_match:
+	_trans = _eo_tokenizer_indicies[_trans];
+_eof_trans:
+	 toknz->cs = _eo_tokenizer_trans_targs[_trans];
+
+	if ( _eo_tokenizer_trans_actions[_trans] == 0 )
+		goto _again;
+
+	_acts = _eo_tokenizer_actions + _eo_tokenizer_trans_actions[_trans];
+	_nacts = (unsigned int) *_acts++;
+	while ( _nacts-- > 0 )
+	{
+		switch ( *_acts++ )
+		{
+	case 0:
+#line 292 "eo_lexer.rl"
+	{
+      toknz->current_line += 1;
+      DBG("inc[%d] %d", toknz->cs, toknz->current_line);
+   }
+	break;
+	case 1:
+#line 297 "eo_lexer.rl"
+	{
+      toknz->saved.line = toknz->current_line;
+      DBG("save line[%d] %d", toknz->cs, toknz->current_line);
+   }
+	break;
+	case 2:
+#line 302 "eo_lexer.rl"
+	{
+      toknz->saved.tok = ( toknz->p);
+      DBG("save token[%d] %p %c", toknz->cs, ( toknz->p), *( toknz->p));
+   }
+	break;
+	case 3:
+#line 375 "eo_lexer.rl"
+	{
+      if (toknz->tmp.accessor->ret.type != NULL)
+        ABORT(toknz, "accessor has already a return type");
+      toknz->tmp.accessor->ret.type = _eo_tokenizer_token_get(toknz, ( toknz->p));
+      INF("        %s", toknz->tmp.accessor->ret.type);
+   }
+	break;
+	case 4:
+#line 382 "eo_lexer.rl"
+	{
+      if (toknz->tmp.accessor->ret.comment != NULL)
+        ABORT(toknz, "accessor return type has already a comment");
+      toknz->tmp.accessor->ret.comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
+      INF("        %s", toknz->tmp.accessor->ret.comment);
+   }
+	break;
+	case 5:
+#line 389 "eo_lexer.rl"
+	{
+      toknz->tmp.accessor->ret.warn_unused = EINA_TRUE;
+      INF("        WARN_UNUSED");
+   }
+	break;
+	case 6:
+#line 394 "eo_lexer.rl"
+	{
+      toknz->tmp.accessor->legacy = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 7:
+#line 406 "eo_lexer.rl"
+	{
+      toknz->tmp.accessor_param = _eo_tokenizer_accessor_param_get(toknz, ( toknz->p));
+   }
+	break;
+	case 8:
+#line 410 "eo_lexer.rl"
+	{
+      toknz->tmp.accessor_param->attrs = _eo_tokenizer_token_get(toknz, ( toknz->p));
+      toknz->tmp.accessor->params =
+         eina_list_append(toknz->tmp.accessor->params, toknz->tmp.accessor_param);
+      toknz->tmp.accessor_param = NULL;
+   }
+	break;
+	case 9:
+#line 438 "eo_lexer.rl"
+	{
+      const char *c = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
+      if (toknz->tmp.param == NULL)
+        ABORT(toknz, "no parameter set to associate this comment to: %s", c);
+      toknz->tmp.param->comment = c;
+      toknz->tmp.param = NULL;
+   }
+	break;
+	case 10:
+#line 446 "eo_lexer.rl"
+	{
+      toknz->tmp.param = _eo_tokenizer_param_get(toknz, ( toknz->p));
+      if (toknz->tmp.params)
+        *(toknz->tmp.params) = eina_list_append(*(toknz->tmp.params), toknz->tmp.param);
+      else
+        ABORT(toknz, "got a param but there is no property nor method waiting for it");
+      INF("        %s : %s", toknz->tmp.param->name, toknz->tmp.param->type);
+   }
+	break;
+	case 11:
+#line 544 "eo_lexer.rl"
+	{
+      if (toknz->tmp.prop != NULL)
+        ABORT(toknz, "there is a pending property definition %s", toknz->tmp.prop->name);
+      toknz->tmp.prop = _eo_tokenizer_property_get(toknz, ( toknz->p));
+   }
+	break;
+	case 12:
+#line 582 "eo_lexer.rl"
+	{
+      if (toknz->tmp.meth->ret.type != NULL)
+        ABORT(toknz, "method '%s' has already a return type", toknz->tmp.meth->name);
+      toknz->tmp.meth->ret.type = _eo_tokenizer_token_get(toknz, ( toknz->p));
+      INF("        %s", toknz->tmp.meth->ret.type);
+   }
+	break;
+	case 13:
+#line 589 "eo_lexer.rl"
+	{
+      if (toknz->tmp.meth->ret.comment != NULL)
+        ABORT(toknz, "method '%s' return type has already a comment", toknz->tmp.meth->name);
+      toknz->tmp.meth->ret.comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
+      INF("        %s", toknz->tmp.meth->ret.comment);
+   }
+	break;
+	case 14:
+#line 596 "eo_lexer.rl"
+	{
+      toknz->tmp.meth->ret.warn_unused = EINA_TRUE;
+      INF("        WARN_UNUSED");
+   }
+	break;
+	case 15:
+#line 601 "eo_lexer.rl"
+	{
+      toknz->tmp.meth->legacy = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 16:
+#line 605 "eo_lexer.rl"
+	{
+      toknz->tmp.meth->obj_const = EINA_TRUE;
+      INF("        obj const");
+   }
+	break;
+	case 17:
+#line 665 "eo_lexer.rl"
+	{
+      if (toknz->tmp.meth != NULL)
+        ABORT(toknz, "there is a pending method definition %s", toknz->tmp.meth->name);
+      toknz->tmp.meth = _eo_tokenizer_method_get(toknz, ( toknz->p));
+   }
+	break;
+	case 18:
+#line 696 "eo_lexer.rl"
+	{
+      const char *base = _eo_tokenizer_token_get(toknz, ( toknz->p));
+      toknz->tmp.str_items = eina_list_append(toknz->tmp.str_items, base);
+   }
+	break;
+	case 19:
+#line 701 "eo_lexer.rl"
+	{
+      toknz->tmp.kls->inherits = toknz->tmp.str_items;
+      toknz->tmp.str_items = NULL;
+   }
+	break;
+	case 20:
+#line 747 "eo_lexer.rl"
+	{
+      toknz->tmp.event = _eo_tokenizer_event_get(toknz, ( toknz->p));
+      toknz->tmp.kls->events = eina_list_append(toknz->tmp.kls->events, toknz->tmp.event);
+   }
+	break;
+	case 21:
+#line 752 "eo_lexer.rl"
+	{
+      if (toknz->tmp.event->comment != NULL)
+        ABORT(toknz, "event %s has already a comment", toknz->tmp.event->name);
+      toknz->tmp.event->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
+      toknz->tmp.event = NULL;
+   }
+	break;
+	case 22:
+#line 759 "eo_lexer.rl"
+	{
+      if (toknz->tmp.kls->legacy_prefix != NULL)
+        ABORT(toknz, "A legacy prefix has already been given");
+      toknz->tmp.kls->legacy_prefix = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 23:
+#line 771 "eo_lexer.rl"
+	{
+        toknz->tmp.impl = _eo_tokenizer_implement_get(toknz, ( toknz->p));
+        toknz->tmp.kls->implements = eina_list_append(toknz->tmp.kls->implements, toknz->tmp.impl);
+   }
+	break;
+	case 24:
+#line 776 "eo_lexer.rl"
+	{
+        if (toknz->tmp.impl->legacy)
+           ABORT(toknz, "Legacy section already allocated for implement item");
+        toknz->tmp.impl->legacy = calloc(1, sizeof(Eo_Implement_Legacy_Def));
+   }
+	break;
+	case 25:
+#line 782 "eo_lexer.rl"
+	{
+        if (!toknz->tmp.impl->legacy)
+           ABORT(toknz, "No legacy section");
+        toknz->tmp.impl->legacy->function_name = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 26:
+#line 788 "eo_lexer.rl"
+	{
+        toknz->tmp.impl_leg_param = calloc(1, sizeof(Eo_Implement_Legacy_Param_Def));
+        toknz->tmp.impl->legacy->params = eina_list_append(
+              toknz->tmp.impl->legacy->params, toknz->tmp.impl_leg_param);
+
+        toknz->tmp.impl_leg_param->eo_name = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 27:
+#line 796 "eo_lexer.rl"
+	{
+        toknz->tmp.impl_leg_param->legacy_name = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 28:
+#line 800 "eo_lexer.rl"
+	{
+        toknz->tmp.impl_leg_param->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
+   }
+	break;
+	case 29:
+#line 804 "eo_lexer.rl"
+	{
+        if (!toknz->tmp.impl->legacy)
+           ABORT(toknz, "No legacy section");
+        toknz->tmp.impl->legacy->ret_type= _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 30:
+#line 810 "eo_lexer.rl"
+	{
+        if (!toknz->tmp.impl->legacy)
+           ABORT(toknz, "No legacy section");
+        toknz->tmp.impl->legacy->ret_value = _eo_tokenizer_token_get(toknz, ( toknz->p));
+   }
+	break;
+	case 31:
+#line 876 "eo_lexer.rl"
+	{
+      toknz->tmp.kls_type = EOLIAN_CLASS_REGULAR;
+   }
+	break;
+	case 32:
+#line 879 "eo_lexer.rl"
+	{
+      toknz->tmp.kls_type = EOLIAN_CLASS_ABSTRACT;
+   }
+	break;
+	case 33:
+#line 882 "eo_lexer.rl"
+	{
+      toknz->tmp.kls_type = EOLIAN_CLASS_MIXIN;
+   }
+	break;
+	case 34:
+#line 885 "eo_lexer.rl"
+	{
+      toknz->tmp.kls_type = EOLIAN_CLASS_INTERFACE;
+   }
+	break;
+	case 35:
+#line 889 "eo_lexer.rl"
+	{
+      if (toknz->tmp.kls != NULL)
+        ABORT(toknz, "there is a pending class definition %s", toknz->tmp.kls->name);
+      toknz->tmp.kls = _eo_tokenizer_class_get(toknz, ( toknz->p));
+      toknz->tmp.kls->type = toknz->tmp.kls_type;
+   }
+	break;
+	case 38:
+#line 1 "NONE"
+	{ toknz->te = ( toknz->p)+1;}
+	break;
+	case 39:
+#line 368 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      if (toknz->tmp.accessor->comment != NULL)
+        ABORT(toknz, "accessor has already a comment");
+      toknz->tmp.accessor->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-1);
+      INF("        %s", toknz->tmp.accessor->comment);
+   }}
+	break;
+	case 40:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 41:
+#line 430 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;}
+	break;
+	case 42:
+#line 431 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;}
+	break;
+	case 43:
+#line 398 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      }");
+      toknz->tmp.prop->accessors = eina_list_append(toknz->tmp.prop->accessors, toknz->tmp.accessor);
+      toknz->tmp.accessor = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 332; goto _again;}
+   }}
+	break;
+	case 44:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 45:
+#line 426 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 46:
+#line 429 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 47:
+#line 398 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      INF("      }");
+      toknz->tmp.prop->accessors = eina_list_append(toknz->tmp.prop->accessors, toknz->tmp.accessor);
+      toknz->tmp.accessor = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 332; goto _again;}
+   }}
+	break;
+	case 48:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 49:
+#line 429 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}}
+	break;
+	case 50:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 51:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 52:
+#line 455 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      }");
+      toknz->tmp.param = NULL;
+      toknz->current_nesting--;
+      if (toknz->tmp.prop)
+        { toknz->cs = 332; goto _again;}
+      else if (toknz->tmp.meth)
+        { toknz->cs = 345; goto _again;}
+      else
+        ABORT(toknz, "leaving tokenize_params but there is no property nor method pending");
+   }}
+	break;
+	case 53:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 54:
+#line 471 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 55:
+#line 473 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 56:
+#line 455 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      INF("      }");
+      toknz->tmp.param = NULL;
+      toknz->current_nesting--;
+      if (toknz->tmp.prop)
+        { toknz->cs = 332; goto _again;}
+      else if (toknz->tmp.meth)
+        { toknz->cs = 345; goto _again;}
+      else
+        ABORT(toknz, "leaving tokenize_params but there is no property nor method pending");
+   }}
+	break;
+	case 57:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 58:
+#line 473 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}}
+	break;
+	case 59:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 60:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 61:
+#line 480 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      get {");
+      toknz->tmp.accessor = _eo_tokenizer_accessor_get(toknz, GETTER);
+      toknz->current_nesting++;
+      { toknz->cs = 316; goto _again;}
+   }}
+	break;
+	case 62:
+#line 487 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      set {");
+      toknz->tmp.accessor = _eo_tokenizer_accessor_get(toknz, SETTER);
+      toknz->current_nesting++;
+      { toknz->cs = 316; goto _again;}
+   }}
+	break;
+	case 63:
+#line 494 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      keys {");
+      toknz->current_nesting++;
+      toknz->tmp.params = &(toknz->tmp.prop->keys);
+      { toknz->cs = 325; goto _again;}
+   }}
+	break;
+	case 64:
+#line 501 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      values {");
+      toknz->current_nesting++;
+      toknz->tmp.params = &(toknz->tmp.prop->values);
+      { toknz->cs = 325; goto _again;}
+   }}
+	break;
+	case 65:
+#line 508 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      if (eina_list_count(toknz->tmp.prop->values) == 0)
+        WRN("property '%s' has no values.", toknz->tmp.prop->name);
+      if (eina_list_count(toknz->tmp.prop->accessors) == 0)
+        WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
+      INF("    }");
+      toknz->tmp.kls->properties = eina_list_append(toknz->tmp.kls->properties, toknz->tmp.prop);
+      toknz->tmp.prop = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 340; goto _again;}
+   }}
+	break;
+	case 66:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 67:
+#line 526 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 68:
+#line 508 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      if (eina_list_count(toknz->tmp.prop->values) == 0)
+        WRN("property '%s' has no values.", toknz->tmp.prop->name);
+      if (eina_list_count(toknz->tmp.prop->accessors) == 0)
+        WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
+      INF("    }");
+      toknz->tmp.kls->properties = eina_list_append(toknz->tmp.kls->properties, toknz->tmp.prop);
+      toknz->tmp.prop = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 340; goto _again;}
+   }}
+	break;
+	case 69:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 70:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 71:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 72:
+#line 538 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("    %s {", toknz->tmp.prop->name);
+      toknz->current_nesting++;
+      { toknz->cs = 332; goto _again;}
+   }}
+	break;
+	case 73:
+#line 550 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("  }");
+      toknz->current_nesting--;
+      { toknz->cs = 360; goto _again;}
+   }}
+	break;
+	case 74:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 75:
+#line 559 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 76:
+#line 550 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      INF("  }");
+      toknz->current_nesting--;
+      { toknz->cs = 360; goto _again;}
+   }}
+	break;
+	case 77:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 78:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 79:
+#line 568 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      if (toknz->tmp.meth->comment != NULL)
+        ABORT(toknz, "method has already a comment");
+      toknz->tmp.meth->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-1);
+      INF("        %s", toknz->tmp.meth->comment);
+   }}
+	break;
+	case 80:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 81:
+#line 575 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("      params {");
+      toknz->current_nesting++;
+      toknz->tmp.params = &(toknz->tmp.meth->params);
+      { toknz->cs = 325; goto _again;}
+   }}
+	break;
+	case 82:
+#line 651 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;}
+	break;
+	case 83:
+#line 652 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;}
+	break;
+	case 84:
+#line 610 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      Eina_List **l;
+      if (eina_list_count(toknz->tmp.meth->params) == 0)
+        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
+      INF("    }");
+      switch (toknz->current_methods_type) {
+        case METH_CONSTRUCTOR:
+          l = &toknz->tmp.kls->constructors;
+          break;
+        case METH_DESTRUCTOR:
+          l = &toknz->tmp.kls->destructors;
+          break;
+        case METH_REGULAR:
+          l = &toknz->tmp.kls->methods;
+          break;
+        default:
+          ABORT(toknz, "unknown method type %d", toknz->current_methods_type);
+      }
+      toknz->tmp.meth->type = toknz->current_methods_type;
+      *l = eina_list_append(*l, toknz->tmp.meth);
+      toknz->tmp.meth = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 355; goto _again;}
+   }}
+	break;
+	case 85:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 86:
+#line 646 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 87:
+#line 650 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 88:
+#line 610 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      Eina_List **l;
+      if (eina_list_count(toknz->tmp.meth->params) == 0)
+        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
+      INF("    }");
+      switch (toknz->current_methods_type) {
+        case METH_CONSTRUCTOR:
+          l = &toknz->tmp.kls->constructors;
+          break;
+        case METH_DESTRUCTOR:
+          l = &toknz->tmp.kls->destructors;
+          break;
+        case METH_REGULAR:
+          l = &toknz->tmp.kls->methods;
+          break;
+        default:
+          ABORT(toknz, "unknown method type %d", toknz->current_methods_type);
+      }
+      toknz->tmp.meth->type = toknz->current_methods_type;
+      *l = eina_list_append(*l, toknz->tmp.meth);
+      toknz->tmp.meth = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 355; goto _again;}
+   }}
+	break;
+	case 89:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 90:
+#line 650 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}}
+	break;
+	case 91:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 92:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 93:
+#line 659 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("    %s {", toknz->tmp.meth->name);
+      toknz->current_nesting++;
+      { toknz->cs = 345; goto _again;}
+   }}
+	break;
+	case 94:
+#line 671 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("  }");
+      toknz->current_methods_type = METH_TYPE_LAST;
+      toknz->current_nesting--;
+      { toknz->cs = 360; goto _again;}
+   }}
+	break;
+	case 95:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 96:
+#line 681 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 97:
+#line 671 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      INF("  }");
+      toknz->current_methods_type = METH_TYPE_LAST;
+      toknz->current_nesting--;
+      { toknz->cs = 360; goto _again;}
+   }}
+	break;
+	case 98:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 99:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 100:
+#line 690 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      if (toknz->tmp.kls->comment != NULL)
+        ABORT(toknz, "class %s has already a comment", toknz->tmp.kls->name);
+      toknz->tmp.kls->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-1);
+   }}
+	break;
+	case 101:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 102:
+#line 706 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+   }}
+	break;
+	case 103:
+#line 709 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+   }}
+	break;
+	case 104:
+#line 712 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("  constructors {");
+      toknz->current_methods_type = METH_CONSTRUCTOR;
+      toknz->current_nesting++;
+      { toknz->cs = 355; goto _again;}
+   }}
+	break;
+	case 105:
+#line 719 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("  destructors {");
+      toknz->current_methods_type = METH_DESTRUCTOR;
+      toknz->current_nesting++;
+      { toknz->cs = 355; goto _again;}
+   }}
+	break;
+	case 106:
+#line 726 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("  properties {");
+      toknz->current_nesting++;
+      { toknz->cs = 340; goto _again;}
+   }}
+	break;
+	case 107:
+#line 732 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("  begin methods");
+      toknz->current_methods_type = METH_REGULAR;
+      toknz->current_nesting++;
+      { toknz->cs = 355; goto _again;}
+   }}
+	break;
+	case 108:
+#line 739 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("end class: %s", toknz->tmp.kls->name);
+      toknz->classes = eina_list_append(toknz->classes, toknz->tmp.kls);
+      toknz->tmp.kls = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 309; goto _again;}
+   }}
+	break;
+	case 109:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 110:
+#line 854 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 111:
+#line 857 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 112:
+#line 706 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+   }}
+	break;
+	case 113:
+#line 709 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+   }}
+	break;
+	case 114:
+#line 739 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      INF("end class: %s", toknz->tmp.kls->name);
+      toknz->classes = eina_list_append(toknz->classes, toknz->tmp.kls);
+      toknz->tmp.kls = NULL;
+      toknz->current_nesting--;
+      { toknz->cs = 309; goto _again;}
+   }}
+	break;
+	case 115:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 116:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 117:
+#line 307 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("comment[%d] line%03d:%03d", toknz->cs,
+          toknz->saved.line, toknz->current_line);
+   }}
+	break;
+	case 118:
+#line 870 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      INF("begin class: %s", toknz->tmp.kls->name);
+      toknz->current_nesting++;
+      { toknz->cs = 360; goto _again;}
+   }}
+	break;
+	case 119:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p)+1;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 120:
+#line 904 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
+	case 121:
+#line 316 "eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+	case 122:
+#line 316 "eo_lexer.rl"
+	{{( toknz->p) = (( toknz->te))-1;}{
+      DBG("error[%d]", toknz->cs);
+      char *s, *d;
+      char buf[BUFSIZE];
+      for (s = ( toknz->p), d = buf; (s <= toknz->pe); s++)
+        {
+           if ((*s == '\r') || (*s == '\n'))
+             break;
+           *d++ = *s;
+        }
+      *d = '\0';
+      ERR("error n:%d l:%d c:'%c': %s",
+          toknz->current_nesting, toknz->current_line, *( toknz->p), buf);
+      toknz->cs = eo_tokenizer_error;
+      {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
+   }}
+	break;
+#line 3950 "eo_lexer.c"
+		}
+	}
+
+_again:
+	_acts = _eo_tokenizer_actions + _eo_tokenizer_to_state_actions[ toknz->cs];
+	_nacts = (unsigned int) *_acts++;
+	while ( _nacts-- > 0 ) {
+		switch ( *_acts++ ) {
+	case 36:
+#line 1 "NONE"
+	{ toknz->ts = 0;}
+	break;
+#line 3963 "eo_lexer.c"
+		}
+	}
+
+	if ( ++( toknz->p) != ( toknz->pe) )
+		goto _resume;
+	_test_eof: {}
+	if ( ( toknz->p) == ( toknz->eof) )
+	{
+	if ( _eo_tokenizer_eof_trans[ toknz->cs] > 0 ) {
+		_trans = _eo_tokenizer_eof_trans[ toknz->cs] - 1;
+		goto _eof_trans;
+	}
+	}
+
+	_out: {}
+	}
+
+#line 1023 "eo_lexer.rl"
+
+   if ( toknz->cs == 
+#line 3984 "eo_lexer.c"
+-1
+#line 1024 "eo_lexer.rl"
+ )
+     {
+        ERR("%s: wrong termination", source);
+        ret = EINA_FALSE;
+     }
+
+   return ret;
+}
+
 Eo_Tokenizer*
 eo_tokenizer_get(void)
 {
@@ -2767,7 +4134,16 @@ eo_tokenizer_database_fill(const char *filename)
         return EINA_FALSE;
      }
 
-   if (!eo_tokenizer_walk(toknz, filename)) return EINA_FALSE;
+   FILE *stream = fopen(filename, "rb");
+   char *buffer = malloc(BUFSIZE);
+   unsigned int len = fread(buffer, 1, BUFSIZE, stream);
+   if (!stream)
+     {
+        ERR("unable to read in %s", filename);
+        return EINA_FALSE;
+     }
+
+   if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) return EINA_FALSE;
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {
