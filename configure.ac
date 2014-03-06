@@ -4425,6 +4425,20 @@ if test -n "$CFOPT_WARNING"; then
 fi
 
 if test "x$prefix" != "x/usr"; then
+  old=
+  path=$dbusservicedir
+  while test "x$old" != "x$path"; do
+    old=$path
+    eval path="\"$path\""
+  done
+  resolved_dbusservicedir=$path
+  old=
+  path=$datadir
+  while test "x$old" != "x$path"; do
+    old=$path
+    eval path="\"$path\""
+  done
+  resolved_datadir=$path
   echo ""
   echo "#-------------------------------------------------------------------#"
   echo "##==--                          ALERT                          --==##"
@@ -4434,10 +4448,10 @@ if test "x$prefix" != "x/usr"; then
   echo "to ensure some files are visible to dbus otherwise services cannot"
   echo "be started when needed. You will need to do the following:"
   echo ""
-  echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
-  echo "  ln -s $prefix/share/dbus-1/services/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
+  echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
+  echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
   echo ""
-  echo "or add \"$prefix/share\" to \$XDG_DATA_DIRS"
+  echo "or add \"${resolved_datadir}\" to \$XDG_DATA_DIRS"
   echo ""
   echo "#-------------------------------------------------------------------#"
 fi
