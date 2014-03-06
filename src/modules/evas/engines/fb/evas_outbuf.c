@@ -18,6 +18,80 @@ evas_fb_outbuf_fb_free(Outbuf *buf)
    free(buf);
 }
 
+static int
+_outbuf_depth_convert(const Outbuf_Depth depth)
+{
+   if (depth == OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED) return 16;
+   else if (depth == OUTBUF_DEPTH_RGB_16BPP_555_555_DITHERED) return 15;
+   else if (depth == OUTBUF_DEPTH_RGB_16BPP_565_444_DITHERED) return 16;
+   else if (depth == OUTBUF_DEPTH_RGB_16BPP_444_444_DITHERED) return 12;
+   else if (depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) return 32;
+   else if (depth == OUTBUF_DEPTH_INHERIT) return 0;
+   return -1;
+}
+
+static unsigned int
+fb_bitfield_mask_get(const struct fb_bitfield *fbb)
+{
+   unsigned int i, mask = 0;
+   for (i = 0; i < fbb->length; i++)
+     mask |= (1 << (fbb->offset + i));
+   return mask;
+}
+
+static Eina_Bool
+_outbuf_reset(Outbuf *buf, int rot, Outbuf_Depth depth)
+{
+   Gfx_Func_Convert conv_func = NULL;
+
+   if (rot == 0 || rot == 180)
+     {
+        buf->w = buf->priv.fb.fb->width;
+        buf->h = buf->priv.fb.fb->height;
+     }
+   else if (rot == 90 || rot == 270)
+     {
+        buf->w = buf->priv.fb.fb->height;
+        buf->h = buf->priv.fb.fb->width;
+     }
+
+   buf->depth = depth;
+   buf->rot = rot;
+
+   buf->priv.mask.r = fb_bitfield_mask_get(&(buf->priv.fb.fb->fb_var.red));
+   buf->priv.mask.g = fb_bitfield_mask_get(&(buf->priv.fb.fb->fb_var.green));
+   buf->priv.mask.b = fb_bitfield_mask_get(&(buf->priv.fb.fb->fb_var.blue));
+
+   conv_func = evas_common_convert_func_get(0,
+                                            buf->priv.fb.fb->width,
+                                            buf->priv.fb.fb->height,
+                                            buf->priv.fb.fb->fb_var.bits_per_pixel,
+                                            buf->priv.mask.r,
+                                            buf->priv.mask.g,
+                                            buf->priv.mask.b,
+                                            PAL_MODE_NONE,
+                                            buf->rot);
+
+   DBG("size=%ux%u rot=%u depth=%u bitdepth=%u fb{"
+       "width=%u, height=%u, refresh=%u, depth=%u, bpp=%u, fd=%d, "
+       "mem=%p, mem_offset=%u} "
+       "mask{r=%#010x, g=%#010x, b=%#010x} conv_func=%p",
+       buf->w, buf->h, buf->rot, buf->depth,
+       buf->priv.fb.fb->fb_var.bits_per_pixel,
+       buf->priv.fb.fb->width,
+       buf->priv.fb.fb->height,
+       buf->priv.fb.fb->refresh,
+       buf->priv.fb.fb->depth,
+       buf->priv.fb.fb->bpp,
+       buf->priv.fb.fb->fb_fd,
+       buf->priv.fb.fb->mem,
+       buf->priv.fb.fb->mem_offset,
+       buf->priv.mask.r, buf->priv.mask.g, buf->priv.mask.b,
+       conv_func);
+
+   return !!conv_func;
+}
+
 Outbuf *
 evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev_no, int refresh)
 {
@@ -26,15 +100,8 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
    /* if (dithered) create backbuf */
    Outbuf *buf;
    int fb_fd;
-   int fb_depth;
+   int fb_depth = _outbuf_depth_convert(depth);
 
-   fb_depth = -1;
-   if (depth == OUTBUF_DEPTH_RGB_16BPP_565_565_DITHERED) fb_depth = 16;
-   else if (depth == OUTBUF_DEPTH_RGB_16BPP_555_555_DITHERED) fb_depth = 15;
-   else if (depth == OUTBUF_DEPTH_RGB_16BPP_565_444_DITHERED) fb_depth = 16;
-   else if (depth == OUTBUF_DEPTH_RGB_16BPP_444_444_DITHERED) fb_depth = 12;
-   else if (depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) fb_depth = 32;
-   else if (depth == OUTBUF_DEPTH_INHERIT) fb_depth = 0;
    buf = calloc(1, sizeof(Outbuf));
    if (!buf)
      return NULL;
@@ -63,75 +130,14 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
         return NULL;
      }
 
-   if (rot == 0 || rot == 180)
+   if (!_outbuf_reset(buf, rot, depth))
      {
- 	buf->w = buf->priv.fb.fb->width;
-	buf->h = buf->priv.fb.fb->height;
-     }
-   else if (rot == 90 || rot == 270)
-     {
- 	buf->w = buf->priv.fb.fb->height;
-	buf->h = buf->priv.fb.fb->width;
+        fb_freemode(buf->priv.fb.fb);
+        fb_cleanup();
+        free(buf);
+        return NULL;
      }
 
-   buf->depth = depth;
-   buf->rot = rot;
-
-     {
-	Gfx_Func_Convert conv_func;
-	int i;
-
-	buf->priv.mask.r = 0;
-	for (i = 0; i < (int)buf->priv.fb.fb->fb_var.red.length; i++)
-	  buf->priv.mask.r |= (1 << (buf->priv.fb.fb->fb_var.red.offset + i));
-	buf->priv.mask.g = 0;
-	for (i = 0; i < (int)buf->priv.fb.fb->fb_var.green.length; i++)
-	  buf->priv.mask.g |= (1 << (buf->priv.fb.fb->fb_var.green.offset + i));
-	buf->priv.mask.b = 0;
-	for (i = 0; i < (int)buf->priv.fb.fb->fb_var.blue.length; i++)
-	  buf->priv.mask.b |= (1 << (buf->priv.fb.fb->fb_var.blue.offset + i));
-
-	conv_func = NULL;
-	if (buf->rot == 0 || buf->rot == 180)
-	  conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-				       buf->priv.fb.fb->fb_var.bits_per_pixel,
-				       buf->priv.mask.r,
-				       buf->priv.mask.g,
-				       buf->priv.mask.b,
-				       PAL_MODE_NONE,
-				       buf->rot);
-	else if (buf->rot == 90 || buf->rot == 270)
-	  conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-				       buf->priv.fb.fb->fb_var.bits_per_pixel,
-				       buf->priv.mask.r,
-				       buf->priv.mask.g,
-				       buf->priv.mask.b,
-				       PAL_MODE_NONE,
-				       buf->rot);
-       DBG("size=%ux%u rot=%u depth=%u bitdepth=%u fb{"
-           "width=%u, height=%u, refresh=%u, depth=%u, bpp=%u, fd=%d, "
-           "mem=%p, mem_offset=%u} "
-           "mask{r=%#010x, g=%#010x, b=%#010x} conv_func=%p",
-           buf->w, buf->h, buf->rot, buf->depth,
-           buf->priv.fb.fb->fb_var.bits_per_pixel,
-           buf->priv.fb.fb->width,
-           buf->priv.fb.fb->height,
-           buf->priv.fb.fb->refresh,
-           buf->priv.fb.fb->depth,
-           buf->priv.fb.fb->bpp,
-           buf->priv.fb.fb->fb_fd,
-           buf->priv.fb.fb->mem,
-           buf->priv.fb.fb->mem_offset,
-           buf->priv.mask.r, buf->priv.mask.g, buf->priv.mask.b,
-           conv_func);
-       if (!conv_func)
-	  {
-             fb_freemode(buf->priv.fb.fb);
-             fb_cleanup();
-	     free(buf);
-	     return NULL;
-	  }
-     }
 //   if (buf->priv.fb.fb->fb_var.bits_per_pixel < 24)
 //     buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
 
@@ -354,19 +360,47 @@ evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, in
 void
 evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
 {
+   int have_backbuf = 0;
+   int fb_w, fb_h, fb_depth, refresh;
+
    if ((w == buf->w) && (h == buf->h) &&
        (rot == buf->rot) && (depth == buf->depth))
      return;
    if (buf->priv.back_buf)
      {
-	evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
-	buf->priv.back_buf = NULL;
+        evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
+        buf->priv.back_buf = NULL;
+        have_backbuf = 1;
      }
-   if (buf->priv.fb.fb)
+
+   fb_depth = _outbuf_depth_convert(depth);
+   refresh = buf->priv.fb.fb->refresh;
+
+   if (rot == 0 || rot == 180)
      {
-        ERR("implement fb reconfigure");
-	/* FIXME: implement this */
+        fb_w = w;
+        fb_h = h;
      }
+   else
+     {
+        fb_w = h;
+        fb_h = w;
+     }
+
+   if (buf->priv.fb.fb)
+     buf->priv.fb.fb = fb_changemode(buf->priv.fb.fb, fb_w, fb_h,
+                                        fb_depth, refresh);
+   else
+     buf->priv.fb.fb = fb_setmode(fb_w, fb_h, fb_depth, refresh);
+
+   if (!buf->priv.fb.fb) buf->priv.fb.fb = fb_getmode();
+   EINA_SAFETY_ON_NULL_RETURN(buf->priv.fb.fb);
+
+   if (!_outbuf_reset(buf, rot, depth))
+     return;
+
+   evas_fb_outbuf_fb_set_have_backbuf(buf, have_backbuf);
+
    /* if backbuf delet it */
    /* resize window or reset fb mode */
    /* if (dithered) create new backbuf */
