@@ -616,7 +616,7 @@ if test "x${have_dep}" = "xyes" ; then
     PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
      [
       have_hw_dep="yes"
-      requirement +="egl >= 7.10 ${gl_library}"
+      requirement="libdrm egl >= 7.10 ${gl_library}"
      ],
      [have_hw_dep="no"])
   fi
