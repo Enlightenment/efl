@@ -2917,7 +2917,7 @@ enum
  *
  * @{
  */
-#include "evas_line.eo.h"
+#include "canvas/evas_line.eo.h"
 
 #if 0
 #define EVAS_OBJ_LINE_CLASS evas_object_line_class_get()

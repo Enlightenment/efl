@@ -18,8 +18,11 @@ lib/evas/Evas_Common.h \
 lib/evas/Evas_Eo.h \
 lib/evas/Evas_Legacy.h \
 lib/evas/Evas_GL.h \
-lib/evas/Evas_Loader.h \
-lib/evas/canvas/evas_line.eo.h
+lib/evas/Evas_Loader.h
+
+installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
+dist_installed_evascanvasheaders_DATA = \
+                                        lib/evas/canvas/evas_line.eo.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \
@@ -212,7 +215,6 @@ lib/evas/common/evas_font_ot.h
 
 lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/common \
--I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/evas/file \
 -I$(top_srcdir)/src/lib/evas/include \
