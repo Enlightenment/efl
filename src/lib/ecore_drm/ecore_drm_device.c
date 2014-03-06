@@ -268,7 +268,8 @@ ecore_drm_device_find(const char *name, const char *seat)
 
              dev->seat = eina_stringshare_add(seat);
 
-             dev->format = GBM_FORMAT_XRGB8888;
+             /* dev->format = GBM_FORMAT_XRGB8888; */
+             dev->format = 0;
              dev->use_hw_accel = EINA_FALSE;
           }
      }
