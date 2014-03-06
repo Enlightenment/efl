@@ -2121,7 +2121,7 @@ ecore_evas_aux_hints_allowed_get(const Ecore_Evas *ee)
      {
         if ((aux->allowed) && !(aux->notified))
           {
-             list = eina_list_append(list, aux->id);
+             list = eina_list_append(list, (void*)(uintptr_t)aux->id);
           }
      }
 
