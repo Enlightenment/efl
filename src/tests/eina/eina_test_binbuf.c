@@ -134,12 +134,12 @@ START_TEST(binbuf_manage_read_only_simple)
 
    eina_init();
 
-   buf = eina_binbuf_manage_read_only_new_length(_cbuf, size);
+   buf = eina_binbuf_manage_read_only_new_length(cbuf, size);
    fail_if(!buf);
 
    eina_binbuf_free(buf);
 
-   buf = eina_binbuf_manage_read_only_new_length(_cbuf, size);
+   buf = eina_binbuf_manage_read_only_new_length(cbuf, size);
    fail_if(!buf);
 
    fail_if(eina_binbuf_string_get(buf) != cbuf);

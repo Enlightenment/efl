@@ -320,12 +320,12 @@ START_TEST(eina_file_map_new_test)
    
    fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
    fail_if(fd == 0);   
-   write(fd, eina_map_test_string, strlen(eina_map_test_string));
+   fail_if(write(fd, eina_map_test_string, strlen(eina_map_test_string)) != (ssize_t) strlen(eina_map_test_string));
    close(fd);
 
    fd = open(test_file2_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
-   fail_if(fd == 0);   
-   write(fd, big_buffer, big_buffer_size - file_min_offset);
+   fail_if(fd == 0);
+   fail_if(write(fd, big_buffer, big_buffer_size - file_min_offset) != big_buffer_size - file_min_offset);
    close(fd);
 
    e_file = eina_file_open(test_file_path, EINA_FALSE);
