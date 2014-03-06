@@ -156,7 +156,7 @@ _device_handle(Ecore_Drm_Evdev *edev)
 }
 
 static void 
-_device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+_device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp EINA_UNUSED)
 {
    DBG("Key Event");
    DBG("\tCode: %d", event->code);
@@ -173,7 +173,7 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
 }
 
 static void 
-_device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
+_device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp EINA_UNUSED)
 {
    switch (dev->pending_event)
      {
