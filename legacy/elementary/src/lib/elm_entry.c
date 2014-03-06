@@ -1622,7 +1622,6 @@ _mouse_down_cb(void *data,
          ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
          sd->longpress_timer = ecore_timer_add
            (_elm_config->longpress_timeout, _long_press_cb, data);
-         sd->long_pressed = EINA_FALSE;
       }
    else if (ev->button == 3)
      {
@@ -3072,6 +3071,8 @@ _start_handler_mouse_down_cb(void *data,
    sd->ox = ev->canvas.x - (ex + cx + (cw / 2));
    sd->oy = ev->canvas.y - (ey + cy + (ch / 2));
 
+   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      {
         _magnifier_create(data);
@@ -3091,7 +3092,7 @@ _start_handler_mouse_up_cb(void *data,
    sd->start_handler_down = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_hide(data);
-   if (!_elm_config->desktop_entry)
+   if ((!_elm_config->desktop_entry) && (sd->long_pressed))
      _menu_call(data);
 }
 
@@ -3123,6 +3124,8 @@ _start_handler_mouse_move_cb(void *data,
    edje_object_part_text_cursor_geometry_get(sd->entry_edje,
                                              "elm.text",
                                              &cx, &cy, NULL, &ch);
+   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
 }
@@ -3167,6 +3170,8 @@ _end_handler_mouse_down_cb(void *data,
    sd->ox = ev->canvas.x - (ex + cx + (cw / 2));
    sd->oy = ev->canvas.y - (ey + cy + (ch / 2));
 
+   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      {
         _magnifier_create(data);
@@ -3186,7 +3191,7 @@ _end_handler_mouse_up_cb(void *data,
    sd->end_handler_down = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_hide(data);
-   if (!_elm_config->desktop_entry)
+   if ((!_elm_config->desktop_entry) && (sd->long_pressed))
      _menu_call(data);
 }
 
@@ -3218,6 +3223,8 @@ _end_handler_mouse_move_cb(void *data,
    edje_object_part_text_cursor_geometry_get(sd->entry_edje,
                                              "elm.text",
                                              &cx, &cy, NULL, &ch);
+   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
 }
