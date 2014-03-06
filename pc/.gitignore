@@ -4,6 +4,7 @@
 /ecore-con.pc
 /ecore-evas.pc
 /ecore-fb.pc
+/ecore-drm.pc
 /ecore-file.pc
 /ecore-imf-evas.pc
 /ecore-imf.pc
