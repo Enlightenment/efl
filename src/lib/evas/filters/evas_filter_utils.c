@@ -35,9 +35,23 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
    // FIXME: Not supported on GL engine.
    // Yeah, we need to call the CPU scaling functions and not the engine.
    if (ctx->gl_engine)
-     CRI("Support for stretching not implemened yet for GL.");
-
-   if (!src->alpha_only)
+     {
+        if (src->w == (int) w && src->h == (int) h)
+          {
+             RGBA_Image *s = (RGBA_Image *) srcdata;
+             RGBA_Image *d = (RGBA_Image *) dstdata;
+             EINA_SAFETY_ON_NULL_RETURN_VAL(s->image.data, NULL);
+             EINA_SAFETY_ON_NULL_RETURN_VAL(d->image.data, NULL);
+             memcpy(d->image.data, s->image.data,
+                    w * h * (src->alpha_only ? 1 : 4));
+          }
+        else
+          {
+             CRI("Support for stretching not implemened yet for GL.");
+             return NULL;
+          }
+     }
+   else if (!src->alpha_only)
      {
         drawctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
