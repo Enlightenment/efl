@@ -16,6 +16,7 @@
 
 #ifdef BUILD_ECORE_EVAS_DRM
 # include <Evas_Engine_Drm.h>
+# include <Ecore_Drm.h>
 #endif
 
 /* local structures */
