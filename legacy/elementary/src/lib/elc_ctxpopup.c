@@ -778,8 +778,6 @@ _elm_ctxpopup_smart_theme(Eo *obj, void *_pd, va_list *list)
 static void
 _elm_ctxpopup_smart_content_set(Eo *obj, void *_pd, va_list *list)
 {
-   Evas_Coord min_w = -1, min_h = -1;
-
    Elm_Ctxpopup_Smart_Data *sd = _pd;
    const char *part = va_arg(*list, const char *);
    Evas_Object *content = va_arg(*list, Evas_Object *);
