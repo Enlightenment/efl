@@ -361,6 +361,7 @@ fb_list_modes(unsigned int *num_return)
                   
                   num++;
                   modes = realloc(modes, num * sizeof(FB_Mode));
+                  memset(modes + (num - 1), 0, sizeof(FB_Mode));
                   modes[num - 1].width = atoi(f1);
                   modes[num - 1].height = atoi(f2);
                   if (f3[0])
