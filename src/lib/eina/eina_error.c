@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -36,6 +37,7 @@
 #include "eina_safety_checks.h"
 #include "eina_error.h"
 #include "eina_stringshare.h"
+#include "eina_lock.h"
 
 /* TODO
  * + add a wrapper for assert?
@@ -62,7 +64,9 @@ struct _Eina_Error_Message
 static Eina_Error_Message *_eina_errors = NULL;
 static size_t _eina_errors_count = 0;
 static size_t _eina_errors_allocated = 0;
+
 static Eina_Error _eina_last_error;
+static Eina_TLS _eina_last_key;
 
 static Eina_Error_Message *
 _eina_error_msg_alloc(void)
@@ -132,6 +136,7 @@ eina_error_init(void)
    /* TODO register the eina's basic errors */
    EINA_ERROR_OUT_OF_MEMORY = eina_error_msg_static_register(
          EINA_ERROR_OUT_OF_MEMORY_STR);
+   eina_tls_new(&_eina_last_key);
    return EINA_TRUE;
 }
 
@@ -158,10 +163,13 @@ eina_error_shutdown(void)
       if (eem->string_allocated)
          eina_stringshare_del(eem->string);
 
-         free(_eina_errors);
+   free(_eina_errors);
    _eina_errors = NULL;
    _eina_errors_count = 0;
    _eina_errors_allocated = 0;
+
+   eina_tls_free(_eina_last_key);
+   _eina_last_error = 0;
 
    return EINA_TRUE;
 }
@@ -249,13 +257,19 @@ eina_error_msg_get(Eina_Error error)
 EAPI Eina_Error
 eina_error_get(void)
 {
-   return _eina_last_error;
+   if (eina_main_loop_is())
+     return _eina_last_error;
+
+   return (Eina_Error)(uintptr_t) eina_tls_get(_eina_last_key);
 }
 
 EAPI void
 eina_error_set(Eina_Error err)
 {
-   _eina_last_error = err;
+   if (eina_main_loop_is())
+     _eina_last_error = err;
+   else
+     eina_tls_set(_eina_last_key, (void*)(uintptr_t) err);
 }
 
 EAPI Eina_Error

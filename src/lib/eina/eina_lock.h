@@ -22,7 +22,7 @@
 #include "eina_config.h"
 #include "eina_types.h"
 #include "eina_error.h"
-
+#include "eina_main.h"
 /**
  * @addtogroup Eina_Tools_Group Tools
  *

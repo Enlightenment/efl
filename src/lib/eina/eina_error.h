@@ -150,6 +150,8 @@ EAPI Eina_Bool   eina_error_msg_modify(Eina_Error  error,
  *
  * This function returns the last error set by eina_error_set(). The
  * description of the message is returned by eina_error_msg_get().
+ *
+ * This function is thread safe @since 1.10, but slower to use.
  */
 EAPI Eina_Error  eina_error_get(void);
 
@@ -163,6 +165,8 @@ EAPI Eina_Error  eina_error_get(void);
  *
  * @note This is also used to clear previous errors, in that case @p err should
  * be @c 0.
+ *
+ * This function is thread safe @since 1.10, but slower to use.
  */
 EAPI void        eina_error_set(Eina_Error err);
 
