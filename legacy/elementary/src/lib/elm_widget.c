@@ -2934,9 +2934,9 @@ _elm_widget_focus_list_next_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                }
              else
                {
-                  Evas_Object *n;
+                  Evas_Object *n = NULL;
                   double degree;
-                  double weight;
+                  double weight = 0.0;
 
                   if (dir == ELM_FOCUS_UP) degree = 0.0;
                   else if (dir == ELM_FOCUS_DOWN) degree = 180.0;
