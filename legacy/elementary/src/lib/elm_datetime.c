@@ -583,14 +583,14 @@ _max_days_get(int year,
    localtime_r(&t, &time1);
    time1.tm_year = year;
    time1.tm_mon = month;
-   /* To restrict month wrapping because of summer time in some locales,
-    * disable day light saving mode.*/
-   time1.tm_isdst = 0;
    for (day = MIN_DAYS_IN_MONTH; day <= mapping[ELM_DATETIME_DATE].def_max;
         day++)
      {
         time1.tm_mday = day;
         mktime(&time1);
+        /* To restrict month wrapping because of summer time in some locales,
+        * ignore day light saving mode in mktime(). */
+        time1.tm_isdst = -1;
         if (time1.tm_mday == 1) break;
      }
    day--;
