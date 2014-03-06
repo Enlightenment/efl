@@ -2193,7 +2193,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    if (_edje_real_part_get(ed, name))
      return EINA_FALSE;
 
-   if (ed->file) return EINA_FALSE;
+   if (!ed->file) return EINA_FALSE;
 
    ce = eina_hash_find(ed->file->collection, ed->group);
 
