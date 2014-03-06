@@ -808,12 +808,8 @@ _elm_ctxpopup_smart_content_set(Eo *obj, void *_pd, va_list *list)
    evas_object_size_hint_fill_set
      (content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   /* since it's going to be a box content, not a layout's... */
-   evas_object_show(content);
-
-   evas_object_size_hint_min_get(content, &min_w, &min_h);
-   evas_object_size_hint_min_set(sd->box, min_w, min_h);
    elm_box_pack_end(sd->box, content);
+   evas_object_show(content);
 
    sd->content = content;
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
