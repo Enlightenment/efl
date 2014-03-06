@@ -433,7 +433,10 @@ fb_list_modes(unsigned int *num_return)
 static Eina_Bool
 _fb_vscreeninfo_put(const struct fb_var_screeninfo *fb_var)
 {
-   if (ioctl(fb, FBIOPUT_VSCREENINFO, fb_var) == -1)
+   struct fb_var_screeninfo v;
+
+   memcpy(&v, fb_var, sizeof(v));
+   if (ioctl(fb, FBIOPUT_VSCREENINFO, &v) == -1)
      {
         const char *errmsg = strerror(errno);
         char *var_str = fb_var_str_convert(fb_var);
