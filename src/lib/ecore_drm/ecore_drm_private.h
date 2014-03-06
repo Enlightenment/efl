@@ -31,6 +31,8 @@
 
 # include <Ecore_Drm.h>
 
+# define NUM_FRAME_BUFFERS 2
+
 # ifndef DRM_MAJOR
 #  define DRM_MAJOR 226
 # endif
