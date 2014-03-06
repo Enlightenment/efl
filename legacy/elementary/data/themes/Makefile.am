@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 include ../../Makefile_Elm_Helpers.am
 
-EDJE_CC_FLAGS += -id $(top_srcdir)/data/themes/img -fd $(top_srcdir)/data/themes/fnt -sd $(top_srcdir)/data/themes/snd -l $(top_srcdir)/COPYING
+EDJE_CC_FLAGS += -id $(top_srcdir)/data/themes/img -fd $(top_srcdir)/data/themes/fnt -sd $(top_srcdir)/data/themes/snd  -l $(top_srcdir)/COPYING -a $(top_srcdir)/AUTHORS
 
 filesdir = $(datadir)/elementary/themes
 files_DATA = default.edj
