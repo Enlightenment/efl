@@ -1342,37 +1342,16 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    if (en->imf_context)
      {
         Ecore_IMF_Event_Key_Down ecore_ev;
-        Eina_Bool filter_ret;
         ecore_imf_evas_event_key_down_wrap(ev, &ecore_ev);
         if (!en->composing)
           {
-             filter_ret = ecore_imf_context_filter_event(en->imf_context,
-                                                         ECORE_IMF_EVENT_KEY_DOWN,
-                                                         (Ecore_IMF_Event *)&ecore_ev);
-
-             if (en->have_preedit)
+             if (ecore_imf_context_filter_event(en->imf_context,
+                                                ECORE_IMF_EVENT_KEY_DOWN,
+                                                (Ecore_IMF_Event *)&ecore_ev))
                {
-                  if (!strcmp(ev->key, "Down") ||
-                      (!strcmp(ev->key, "KP_Down") && !ev->string) ||
-                      !strcmp(ev->key, "Up") ||
-                      (!strcmp(ev->key, "KP_Up") && !ev->string) ||
-                      !strcmp(ev->key, "Left") ||
-                      (!strcmp(ev->key, "KP_Left") && !ev->string) ||
-                      !strcmp(ev->key, "Right") ||
-                      (!strcmp(ev->key, "KP_Right") && !ev->string) ||
-                      !strcmp(ev->key, "Next") ||
-                      (!strcmp(ev->key, "KP_Next") && !ev->string) ||
-                      !strcmp(ev->key, "Prior") ||
-                      (!strcmp(ev->key, "KP_Prior") && !ev->string) ||
-                      !strcmp(ev->key, "Home") ||
-                      (!strcmp(ev->key, "KP_Home") && !ev->string) ||
-                      !strcmp(ev->key, "End") ||
-                      (!strcmp(ev->key, "KP_End") && !ev->string))
-                    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                  return;
                }
-
-             if (filter_ret)
-               return;
           }
      }
 #endif
