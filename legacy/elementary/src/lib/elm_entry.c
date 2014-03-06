@@ -393,10 +393,10 @@ _update_selection_handler(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
-   Evas_Coord sx, sy, sw, sh;
+   Evas_Coord sx, sy, sh;
    Evas_Coord ent_x, ent_y;
-   Evas_Coord ex, ey, ew, eh;
-   int start_pos, end_pos;
+   Evas_Coord ex, ey, eh;
+   int start_pos, end_pos, last_pos;
 
    if (!sd->sel_handler_disabled)
      {
@@ -406,31 +406,39 @@ _update_selection_handler(Evas_Object *obj)
            (sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_END);
 
         evas_object_geometry_get(sd->entry_edje, &ent_x, &ent_y, NULL, NULL);
+        last_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                                            EDJE_CURSOR_MAIN);
         edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                              EDJE_CURSOR_MAIN, start_pos);
         edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                                  &sx, &sy, &sw, &sh);
+                                                  &sx, &sy, NULL, &sh);
         edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                              EDJE_CURSOR_MAIN, end_pos);
         edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                                  &ex, &ey, &ew, &eh);
-        if (sd->start_handler_down)
-          edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-                                               EDJE_CURSOR_MAIN, start_pos);
+                                                  &ex, &ey, NULL, &eh);
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                             EDJE_CURSOR_MAIN, last_pos);
         if (!sd->start_handler_shown)
           {
              edje_object_signal_emit(sd->start_handler,
                                      "elm,handler,show", "elm");
              sd->start_handler_shown = EINA_TRUE;
           }
-        evas_object_move(sd->start_handler, ent_x + sx, ent_y + sy + sh);
+        if (start_pos < end_pos)
+          evas_object_move(sd->start_handler, ent_x + sx, ent_y + sy + sh);
+        else
+          evas_object_move(sd->start_handler, ent_x + ex, ent_y + ey + eh);
+
         if (!sd->end_handler_shown)
           {
              edje_object_signal_emit(sd->end_handler,
                                      "elm,handler,show", "elm");
              sd->end_handler_shown = EINA_TRUE;
           }
-        evas_object_move(sd->end_handler, ent_x + ex, ent_y + ey + eh);
+        if (start_pos < end_pos)
+          evas_object_move(sd->end_handler, ent_x + ex, ent_y + ey + eh);
+        else
+          evas_object_move(sd->end_handler, ent_x + sx, ent_y + sy + sh);
      }
    else
      {
@@ -3025,7 +3033,6 @@ _resize_cb(void *data,
    _elm_entry_resize_internal(data);
 }
 
-Evas_Coord ox, oy;
 static void
 _start_handler_mouse_down_cb(void *data,
                              Evas *e EINA_UNUSED,
@@ -3037,21 +3044,33 @@ _start_handler_mouse_down_cb(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord ex, ey;
    Evas_Coord cx, cy, cw, ch;
-   int pos, main_pos;
+   int start_pos, end_pos, main_pos, pos;
 
    sd->start_handler_down = EINA_TRUE;
-   pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+   start_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
                                               EDJE_CURSOR_SELECTION_BEGIN);
+   end_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                              EDJE_CURSOR_SELECTION_END);
    main_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
                                                    EDJE_CURSOR_MAIN);
+   if (start_pos <= end_pos)
+     {
+        pos = start_pos;
+        sd->sel_handler_cursor = EDJE_CURSOR_SELECTION_BEGIN;
+     }
+   else
+     {
+        pos = end_pos;
+        sd->sel_handler_cursor = EDJE_CURSOR_SELECTION_END;
+     }
    if (pos != main_pos)
      edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                           EDJE_CURSOR_MAIN, pos);
    edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
                                              &cx, &cy, &cw, &ch);
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   ox = ev->canvas.x - (ex + cx + (cw / 2));
-   oy = ev->canvas.y - (ey + cy + (ch / 2));
+   sd->ox = ev->canvas.x - (ex + cx + (cw / 2));
+   sd->oy = ev->canvas.y - (ey + cy + (ch / 2));
 
    if (_elm_config->magnifier_enable)
      {
@@ -3088,22 +3107,19 @@ _start_handler_mouse_move_cb(void *data,
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
    Evas_Coord cx, cy, ch;
-   int spos, epos;
+   int pos;
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   cx = ev->cur.canvas.x - ox - ex;
-   cy = ev->cur.canvas.y - oy - ey;
+   cx = ev->cur.canvas.x - sd->ox - ex;
+   cy = ev->cur.canvas.y - sd->oy - ey;
    if (cx <= 0) cx = 1;
+
    edje_object_part_text_cursor_coord_set(sd->entry_edje, "elm.text",
-                                          EDJE_CURSOR_SELECTION_BEGIN, cx, cy);
-   spos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
-                                               EDJE_CURSOR_SELECTION_BEGIN);
-   epos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
-                                               EDJE_CURSOR_SELECTION_END);
-   if (spos >= epos)
-     edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-                                          EDJE_CURSOR_SELECTION_BEGIN,
-                                          epos - 1);
+                                        sd->sel_handler_cursor, cx, cy);
+   pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                               sd->sel_handler_cursor);
+   edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                        EDJE_CURSOR_MAIN, pos);
    edje_object_part_text_cursor_geometry_get(sd->entry_edje,
                                              "elm.text",
                                              &cx, &cy, NULL, &ch);
@@ -3122,11 +3138,23 @@ _end_handler_mouse_down_cb(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord ex, ey;
    Evas_Coord cx, cy, cw, ch;
-   int pos, main_pos;
+   int pos, start_pos, end_pos, main_pos;
 
    sd->end_handler_down = EINA_TRUE;
-   pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+   start_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                              EDJE_CURSOR_SELECTION_BEGIN);
+   end_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
                                               EDJE_CURSOR_SELECTION_END);
+   if (start_pos < end_pos)
+     {
+        pos = end_pos;
+        sd->sel_handler_cursor = EDJE_CURSOR_SELECTION_END;
+     }
+   else
+     {
+        pos = start_pos;
+        sd->sel_handler_cursor = EDJE_CURSOR_SELECTION_BEGIN;
+     }
    main_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
                                                    EDJE_CURSOR_MAIN);
    if (pos != main_pos)
@@ -3136,8 +3164,8 @@ _end_handler_mouse_down_cb(void *data,
    edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
                                              &cx, &cy, &cw, &ch);
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   ox = ev->canvas.x - (ex + cx + (cw / 2));
-   oy = ev->canvas.y - (ey + cy + (ch / 2));
+   sd->ox = ev->canvas.x - (ex + cx + (cw / 2));
+   sd->oy = ev->canvas.y - (ey + cy + (ch / 2));
 
    if (_elm_config->magnifier_enable)
      {
@@ -3174,22 +3202,19 @@ _end_handler_mouse_move_cb(void *data,
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
    Evas_Coord cx, cy, ch;
-   int spos, epos;
+   int pos;
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   cx = ev->cur.canvas.x - ox - ex;
-   cy = ev->cur.canvas.y - oy - ey;
+   cx = ev->cur.canvas.x - sd->ox - ex;
+   cy = ev->cur.canvas.y - sd->oy - ey;
    if (cx <= 0) cx = 1;
-   edje_object_part_text_cursor_coord_set(sd->entry_edje, "elm.text",
-                                          EDJE_CURSOR_SELECTION_END, cx, cy);
-   spos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
-                                               EDJE_CURSOR_SELECTION_BEGIN);
-   epos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
-                                               EDJE_CURSOR_SELECTION_END);
-   if (epos <= spos)
-     edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-                                          EDJE_CURSOR_SELECTION_END, spos + 1);
 
+   edje_object_part_text_cursor_coord_set(sd->entry_edje, "elm.text",
+                                          sd->sel_handler_cursor, cx, cy);
+   pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
+                                              sd->sel_handler_cursor);
+   edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                                        EDJE_CURSOR_MAIN, pos);
    edje_object_part_text_cursor_geometry_get(sd->entry_edje,
                                              "elm.text",
                                              &cx, &cy, NULL, &ch);

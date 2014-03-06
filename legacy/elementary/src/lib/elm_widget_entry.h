@@ -48,6 +48,7 @@ struct _Elm_Entry_Smart_Data
    Elm_Text_Format                       format;
    Evas_Coord                            last_w, ent_mw, ent_mh;
    Evas_Coord                            downx, downy;
+   Evas_Coord                            ox, oy;
    Eina_List                            *items; /** context menu item list */
    Eina_List                            *item_providers;
    Eina_List                            *markup_filters;
@@ -60,6 +61,7 @@ struct _Elm_Entry_Smart_Data
    Elm_Autocapital_Type                  autocapital_type;
    Elm_Input_Panel_Lang                  input_panel_lang;
    Elm_Input_Panel_Return_Key_Type       input_panel_return_key_type;
+   Edje_Cursor                           sel_handler_cursor;
    void                                 *input_panel_imdata;
    int                                   input_panel_imdata_len;
    int                                   input_panel_layout_variation;
