@@ -200,6 +200,10 @@ if HAVE_ECORE_FB
 pkgconfig_DATA += pc/ecore-fb.pc
 endif
 
+if HAVE_ECORE_DRM
+pkgconfig_DATA += pc/ecore-drm.pc
+endif
+
 if HAVE_PS3
 pkgconfig_DATA += pc/ecore-psl1ght.pc
 endif
