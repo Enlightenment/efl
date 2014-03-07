@@ -193,7 +193,8 @@ _item_single_select_down(Elm_List_Smart_Data *sd)
 }
 
 static Eina_Bool
-_elm_list_item_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir, Eina_Bool h_mode)
+_elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
+                                 Eina_Bool h_mode)
 {
    if (!it) return EINA_FALSE;
    ELM_LIST_DATA_GET(WIDGET(it), sd);
@@ -335,7 +336,8 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
        ((!strcmp(ev->key, "KP_Left")) && !ev->string))
      {
         it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_focus_set(it, ELM_FOCUS_LEFT, sd->h_mode);
+        Eina_Bool focused = _elm_list_item_content_focus_set(
+           it, ELM_FOCUS_LEFT, sd->h_mode);
 
         if ((sd->h_mode && !focused))
           {
@@ -359,7 +361,8 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_Right")) && !ev->string))
      {
         it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_focus_set(it, ELM_FOCUS_RIGHT, sd->h_mode);
+        Eina_Bool focused = _elm_list_item_content_focus_set(
+           it, ELM_FOCUS_RIGHT, sd->h_mode);
 
         if (sd->h_mode && !focused)
           {
@@ -383,7 +386,8 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_Up")) && !ev->string))
      {
         it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_focus_set(it, ELM_FOCUS_UP, sd->h_mode);
+        Eina_Bool focused = _elm_list_item_content_focus_set(
+           it, ELM_FOCUS_UP, sd->h_mode);
 
         if (!sd->h_mode && !focused)
           {
@@ -407,7 +411,8 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_Down")) && !ev->string))
      {
         it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_focus_set(it, ELM_FOCUS_DOWN, sd->h_mode);
+        Eina_Bool focused = _elm_list_item_content_focus_set(
+           it, ELM_FOCUS_DOWN, sd->h_mode);
 
         if (!sd->h_mode && !focused)
           {
@@ -1161,7 +1166,7 @@ _item_select(Elm_List_Item *it)
         return;
      }
 
-   _elm_list_item_focus_set(it, ELM_FOCUS_PREVIOUS, sd->h_mode);
+   _elm_list_item_content_focus_set(it, ELM_FOCUS_PREVIOUS, sd->h_mode);
 
    it->selected = EINA_TRUE;
    sd->selected = eina_list_append(sd->selected, it);

@@ -2427,7 +2427,7 @@ _item_single_select_down(Elm_Genlist_Smart_Data *sd)
 }
 
 static void
-_elm_genlist_item_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
+_elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
 {
    Evas_Object *focused_obj = NULL;
    Eina_List *l;
@@ -2510,7 +2510,7 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
         x -= step_x;
 
         Elm_Gen_Item *gt = (Elm_Gen_Item*)elm_genlist_selected_item_get(obj);
-        _elm_genlist_item_focus_set(gt, ELM_FOCUS_LEFT);
+        _elm_genlist_item_content_focus_set(gt, ELM_FOCUS_LEFT);
      }
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
@@ -2518,7 +2518,7 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
         x += step_x;
 
         Elm_Gen_Item *gt = (Elm_Gen_Item*)elm_genlist_selected_item_get(obj);
-        _elm_genlist_item_focus_set(gt, ELM_FOCUS_RIGHT);
+        _elm_genlist_item_content_focus_set(gt, ELM_FOCUS_RIGHT);
      }
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
@@ -5191,7 +5191,7 @@ _item_select(Elm_Gen_Item *it)
    if (it->generation == sd->generation)
      evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
 
-   _elm_genlist_item_focus_set(it, ELM_FOCUS_PREVIOUS);
+   _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
 
    it->walking--;
    sd->walking--;
