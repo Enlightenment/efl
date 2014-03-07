@@ -5825,7 +5825,7 @@ _elm_win_focus_highlight_start(Evas_Object *obj)
    if (!elm_win_focus_highlight_enabled_get(obj)) return;
    sd->focus_highlight.cur.visible = EINA_TRUE;
    sd->focus_highlight.geometry_changed = EINA_TRUE;
-   _elm_win_focus_highlight_reconfigure_job(sd);
+   _elm_win_focus_highlight_reconfigure_job(obj);
 }
 
 EAPI Ecore_Window
