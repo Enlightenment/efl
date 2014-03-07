@@ -41,7 +41,7 @@ tests/eina_cxx/eina_cxx_test_stringshare.cc \
 tests/eina_cxx/eina_cxx_test_error.cc \
 tests/eina_cxx/eina_cxx_test_accessor.cc \
 tests/eina_cxx/eina_cxx_test_thread.cc \
-tests/eina_cxx/eina_cxx_test_eina_value.cc
+tests/eina_cxx/eina_cxx_test_value.cc
 
 tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/bindings/eina_cxx \

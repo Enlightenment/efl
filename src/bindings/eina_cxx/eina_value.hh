@@ -232,12 +232,12 @@ struct _eina_value_traits<T[], typename eina::enable_if<eina::is_pod<T>::value>:
   }
 };
 
-class eina_value;
+class value;
 
 template <typename T>
-T get(eina_value const& v);
+T get(value const& v);
 
-class eina_value
+class value
 {
   template <typename T>
   void primitive_init(T v)
@@ -246,68 +246,68 @@ class eina_value
     _eina_value_traits<T>::set(_raw, v);
   }
 public:
-  eina_value()
+  value()
     : _raw(_eina_value_traits<char>::create())
   {
   }
   template <typename T>
-  eina_value(T v)
+  value(T v)
   {
     primitive_init(v);
   }
-  eina_value(char v)
+  value(char v)
   {
     primitive_init(v);
   }
-  eina_value(short v)
+  value(short v)
   {
     primitive_init(v);
   }
-  eina_value(int v)
+  value(int v)
   {
     primitive_init(v);
   }
-  eina_value(long v)
+  value(long v)
   {
     primitive_init(v);
   }
-  eina_value(unsigned char v)
+  value(unsigned char v)
   {
     primitive_init(v);
   }
-  eina_value(unsigned short v)
+  value(unsigned short v)
   {
     primitive_init(v);
   }
-  eina_value(unsigned int v)
+  value(unsigned int v)
   {
     primitive_init(v);
   }
-  eina_value(unsigned long v)
+  value(unsigned long v)
   {
     primitive_init(v);
   }
-  eina_value(float v)
+  value(float v)
   {
     primitive_init(v);
   }
-  eina_value(double v)
+  value(double v)
   {
     primitive_init(v);
   }
 
-  ~eina_value()
+  ~value()
   {
     eina_value_free(_raw);
   }
 
-  eina_value(eina_value const& other)
+  value(value const& other)
     : _raw(_eina_value_traits<char>::create())
   {
     if(!eina_value_copy(const_cast<Eina_Value const*>(other._raw), _raw))
       throw eina::system_error(eina::get_error_code());
   }
-  eina_value& operator=(eina_value const& other)
+  value& operator=(value const& other)
   {
     eina_value_flush(_raw);
     if(!eina_value_copy(const_cast<Eina_Value const*>(other._raw), _raw))
@@ -315,7 +315,7 @@ public:
     return *this;
   }
 
-  void swap(eina_value& other)
+  void swap(value& other)
   {
     std::swap(_raw, other._raw);
   }
@@ -334,48 +334,48 @@ private:
   ::Eina_Value* _raw;
 
   template <typename T>
-  friend T get(eina_value const& v)
+  friend T get(value const& v)
   {
     return _eina_value_traits<T>::get(v._raw);
   }
 };
 
-inline void swap(eina_value& lhs, eina_value& rhs)
+inline void swap(value& lhs, value& rhs)
 {
   lhs.swap(rhs);
 }
 
-inline bool operator==(eina_value const& lhs, eina_value const& rhs)
+inline bool operator==(value const& lhs, value const& rhs)
 {
   return lhs.type_info() == rhs.type_info()
     && eina_value_compare(lhs.native_handle(), rhs.native_handle()) == 0;
 }
 
-inline bool operator<(eina_value const& lhs, eina_value const& rhs)
+inline bool operator<(value const& lhs, value const& rhs)
 {
   return std::less<Eina_Value_Type const*>()(lhs.type_info(), rhs.type_info())
     || (lhs.type_info() == rhs.type_info()
         && eina_value_compare(lhs.native_handle(), rhs.native_handle()) < 0);
 }
 
-inline bool operator>(eina_value const& lhs, eina_value const& rhs)
+inline bool operator>(value const& lhs, value const& rhs)
 {
   return std::less<Eina_Value_Type const*>()(rhs.type_info(), lhs.type_info())
     || (rhs.type_info() == lhs.type_info()
         && eina_value_compare(lhs.native_handle(), rhs.native_handle()) > 0);
 }
 
-inline bool operator<=(eina_value const& lhs, eina_value const& rhs)
+inline bool operator<=(value const& lhs, value const& rhs)
 {
   return !(lhs > rhs);
 }
 
-inline bool operator>=(eina_value const& lhs, eina_value const& rhs)
+inline bool operator>=(value const& lhs, value const& rhs)
 {
   return !(lhs < rhs);
 }
 
-inline bool operator!=(eina_value const& lhs, eina_value const& rhs)
+inline bool operator!=(value const& lhs, value const& rhs)
 {
   return !(lhs == rhs);
 }

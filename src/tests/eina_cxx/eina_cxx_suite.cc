@@ -15,7 +15,7 @@ void eina_test_stringshare(TCase* tc);
 void eina_test_error(TCase* tc);
 void eina_test_accessor(TCase* tc);
 void eina_test_thread(TCase* tc);
-void eina_test_eina_value(TCase* tc);
+void eina_test_value(TCase* tc);
 
 typedef struct _Eina_Test_Case Eina_Test_Case;
 struct _Eina_Test_Case
@@ -34,7 +34,7 @@ static const Eina_Test_Case etc[] = {
    { "Error", eina_test_error },
    { "Accessor", eina_test_accessor },
    { "Thread", eina_test_thread },
-   { "EinaValue", eina_test_eina_value },
+   { "Value", eina_test_value },
    { NULL, NULL }
 };
 

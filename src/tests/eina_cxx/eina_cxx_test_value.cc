@@ -3,89 +3,89 @@
 
 #include <check.h>
 
-START_TEST(eina_cxx_eina_value_constructors)
+START_TEST(eina_cxx_value_constructors)
 {
   efl::eina::eina_init init;
 
-  efl::eina::eina_value v;
+  efl::eina::value v;
 
   char c = 'c';
-  efl::eina::eina_value vchar(c);
+  efl::eina::value vchar(c);
 
   short s = 5;
-  efl::eina::eina_value vshort(s);
+  efl::eina::value vshort(s);
 
-  efl::eina::eina_value vint(5);
+  efl::eina::value vint(5);
 
-  efl::eina::eina_value vlong(5l);
+  efl::eina::value vlong(5l);
 
   unsigned char uc = 'b';
-  efl::eina::eina_value vuchar(uc);
+  efl::eina::value vuchar(uc);
 
   unsigned short us = 5;
-  efl::eina::eina_value vushort(us);
+  efl::eina::value vushort(us);
 
-  efl::eina::eina_value vuint(5u);
+  efl::eina::value vuint(5u);
 
-  efl::eina::eina_value vulong(5ul);
+  efl::eina::value vulong(5ul);
 
-  efl::eina::eina_value vu64(uint64_t(5ul));
+  efl::eina::value vu64(uint64_t(5ul));
 
-  efl::eina::eina_value vfloat(5.0f);
+  efl::eina::value vfloat(5.0f);
 
-  efl::eina::eina_value vdouble(5.0);
+  efl::eina::value vdouble(5.0);
 }
 END_TEST
 
-START_TEST(eina_cxx_eina_value_get)
+START_TEST(eina_cxx_value_get)
 {
   efl::eina::eina_init init;
 
   char c = 'c';
-  efl::eina::eina_value vchar(c);
+  efl::eina::value vchar(c);
   ck_assert(efl::eina::get<char>(vchar) == 'c');
 
   short s = 5;
-  efl::eina::eina_value vshort(s);
+  efl::eina::value vshort(s);
   ck_assert(efl::eina::get<short>(vshort) == 5);
 
-  efl::eina::eina_value vint(6);
+  efl::eina::value vint(6);
   ck_assert(efl::eina::get<int>(vint) == 6);
 
-  efl::eina::eina_value vlong(7l);
+  efl::eina::value vlong(7l);
   ck_assert(efl::eina::get<long>(vlong) == 7l);
 
   unsigned char uc = 'b';
-  efl::eina::eina_value vuchar(uc);
+  efl::eina::value vuchar(uc);
   ck_assert(efl::eina::get<unsigned char>(vuchar) == 'b');
 
   unsigned short us = 8;
-  efl::eina::eina_value vushort(us);
+  efl::eina::value vushort(us);
   ck_assert(efl::eina::get<unsigned short>(vushort) == 8);
 
-  efl::eina::eina_value vuint(9u);
+  efl::eina::value vuint(9u);
   ck_assert(efl::eina::get<unsigned int>(vuint) == 9u);
 
-  efl::eina::eina_value vulong(10ul);
+  efl::eina::value vulong(10ul);
   ck_assert(efl::eina::get<unsigned long>(vulong) == 10ul);
 
-  efl::eina::eina_value vu64((uint64_t)10ul);
+  efl::eina::value vu64((uint64_t)10ul);
   ck_assert(efl::eina::get<uint64_t>(vu64) == 10ul);
 
-  efl::eina::eina_value vfloat(11.0f);
+  efl::eina::value vfloat(11.0f);
   ck_assert(efl::eina::get<float>(vfloat) == 11.0f);
 
-  efl::eina::eina_value vdouble(12.0);
+  efl::eina::value vdouble(12.0);
   ck_assert(efl::eina::get<double>(vdouble) == 12.0f);
 }
 END_TEST
 
-START_TEST(eina_cxx_eina_value_wrong_get)
+START_TEST(eina_cxx_value_wrong_get)
 {
   efl::eina::eina_init init;
 
   char c = 'c';
-  efl::eina::eina_value vchar(c);
+  efl::eina::value vchar(c);
   try
   {
     efl::eina::get<int>(vchar);
@@ -97,37 +97,37 @@ START_TEST(eina_cxx_eina_value_wrong_get)
 }
 END_TEST
 
-START_TEST(eina_cxx_eina_value_comparison_operators)
+START_TEST(eina_cxx_value_comparison_operators)
 {
   efl::eina::eina_init init;
 
-  efl::eina::eina_value v;
+  efl::eina::value v;
 
   char c = 5;
-  efl::eina::eina_value vchar(c);
+  efl::eina::value vchar(c);
 
   short s = 5;
-  efl::eina::eina_value vshort(s);
+  efl::eina::value vshort(s);
 
-  efl::eina::eina_value vint(5);
+  efl::eina::value vint(5);
 
-  efl::eina::eina_value vlong(5l);
+  efl::eina::value vlong(5l);
 
   unsigned char uc = 5;
-  efl::eina::eina_value vuchar(uc);
+  efl::eina::value vuchar(uc);
 
   unsigned short us = 5;
-  efl::eina::eina_value vushort(us);
+  efl::eina::value vushort(us);
 
-  efl::eina::eina_value vuint(5u);
+  efl::eina::value vuint(5u);
 
-  efl::eina::eina_value vulong(5ul);
+  efl::eina::value vulong(5ul);
 
-  efl::eina::eina_value vu64((uint64_t)5ul);
+  efl::eina::value vu64((uint64_t)5ul);
 
-  efl::eina::eina_value vfloat(5.0f);
+  efl::eina::value vfloat(5.0f);
 
-  efl::eina::eina_value vdouble(5.0);
+  efl::eina::value vdouble(5.0);
 
   ck_assert(vchar == vchar);
   ck_assert(vshort == vshort);
@@ -161,17 +161,17 @@ START_TEST(eina_cxx_eina_value_comparison_operators)
 }
 END_TEST
 
-START_TEST(eina_cxx_eina_value_copying)
+START_TEST(eina_cxx_value_copying)
 {
   char c = 5;
 
-  efl::eina::eina_value vchar(c);
-  efl::eina::eina_value vchar2(vchar);
+  efl::eina::value vchar(c);
+  efl::eina::value vchar2(vchar);
   ck_assert(vchar == vchar2);
   ck_assert(efl::eina::get<char>(vchar) == 5);
   ck_assert(efl::eina::get<char>(vchar2) == 5);
 
-  efl::eina::eina_value vint(10);
+  efl::eina::value vint(10);
   vchar = vint;
   ck_assert(vchar != vchar2);
   ck_assert(vint == vchar);
@@ -181,11 +181,11 @@ START_TEST(eina_cxx_eina_value_copying)
 END_TEST
 
 void
-eina_test_eina_value(TCase* tc)
+eina_test_value(TCase* tc)
 {
-  tcase_add_test(tc, eina_cxx_eina_value_constructors);
-  tcase_add_test(tc, eina_cxx_eina_value_get);
-  tcase_add_test(tc, eina_cxx_eina_value_wrong_get);
-  tcase_add_test(tc, eina_cxx_eina_value_comparison_operators);
-  tcase_add_test(tc, eina_cxx_eina_value_copying);
+  tcase_add_test(tc, eina_cxx_value_constructors);
+  tcase_add_test(tc, eina_cxx_value_get);
+  tcase_add_test(tc, eina_cxx_value_wrong_get);
+  tcase_add_test(tc, eina_cxx_value_comparison_operators);
+  tcase_add_test(tc, eina_cxx_value_copying);
 }
