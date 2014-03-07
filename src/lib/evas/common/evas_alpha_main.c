@@ -65,21 +65,12 @@ EVAS_RENDER_MUL = 11, /**< d = d*s */
 Alpha_Gfx_Func
 evas_common_alpha_func_get(int op)
 {
-   INF("Requesting alpha function with OP %d", op);
    switch (op)
      {
       case EVAS_RENDER_BLEND:
         return _alpha_func_blend;
-//      case EVAS_RENDER_BLEND_REL:
       case EVAS_RENDER_COPY:
         return _alpha_func_copy;
-//      case EVAS_RENDER_COPY_REL:
-//      case EVAS_RENDER_ADD:
-//      case EVAS_RENDER_ADD_REL:
-//      case EVAS_RENDER_SUB:
-//      case EVAS_RENDER_SUB_REL:
-//      case EVAS_RENDER_TINT:
-//      case EVAS_RENDER_TINT_REL:
       case EVAS_RENDER_MASK:
       case EVAS_RENDER_MUL:
         return _alpha_func_mul;
