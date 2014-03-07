@@ -1,0 +1,59 @@
+#!/bin/sh
+
+function cleanup() {
+    if [ ! -z "$TFILE" ]; then
+        rm "$TFILE"
+    fi
+}
+
+function die() {
+    echo "$@"
+    echo "Aborting"
+    cleanup
+    exit 1
+}
+
+function usage() {
+    die "Usage: vieet <eet file> <section>"
+}
+
+if [ $# -ne 2 ]; then
+    usage
+fi
+
+if [[ -z "$EDITOR" ]]; then
+    die "EDITOR env var must be set."
+fi
+
+EETFILE="$1"
+SECTION="$2"
+TFILE=$(mktemp)
+
+if [ $? -ne 0 ]; then
+    die "Failed creating tempfile."
+fi
+
+# Decode the file
+eet -d "$EETFILE" "$SECTION" "$TFILE"
+
+if [ $? -ne 0 ]; then
+    die "Failed decoding eet file."
+fi
+
+DONE=0
+
+while [ $DONE -ne 1 ]
+do
+    $EDITOR $TFILE
+
+    eet -e "$EETFILE" "$SECTION" "$TFILE" 1
+    if [ $? -ne 0 ]; then
+        echo "Failed compiling eet file."
+        echo "Press 'Return' to reopen the editor, or ^C to abort."
+        read
+    else
+        DONE=1
+    fi
+done
+
+cleanup

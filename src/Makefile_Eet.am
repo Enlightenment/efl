@@ -37,6 +37,7 @@ EXTRA_DIST += static_libs/lz4/README
 ### Binary
 
 bin_PROGRAMS += bin/eet/eet
+bin_SCRIPTS += bin/eet/vieet
 
 bin_eet_eet_SOURCES = bin/eet/eet_main.c
 
