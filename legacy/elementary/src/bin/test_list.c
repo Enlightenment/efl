@@ -1286,19 +1286,17 @@ test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event
 }
 
 static void
-_item_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_item_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Elm_Object_Item *it = event_info;
-
-   printf("item,focused: %p\n", it);
+   printf("%s: %p\n", (char *)data, event_info);
 }
 
 static void
-_item_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_list_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Elm_Object_Item *it = event_info;
-
-   printf("item,unfocused: %p\n", it);
+   Evas_Event_Key_Down *ev = event_info;
+   printf("\n=== Key Down : %s ===\n", ev->keyname);
 }
 
 void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
@@ -1322,10 +1320,17 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_list_horizontal_set(li, horiz);
+   elm_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_box_pack_end(bxx, li);
    evas_object_show(li);
-   evas_object_smart_callback_add(li, "item,focused", _item_focused_cb, NULL);
-   evas_object_smart_callback_add(li, "item,unfocused", _item_unfocused_cb, NULL);
+   evas_object_smart_callback_add(li, "item,focused", _item_cb, "item,focused");
+   evas_object_smart_callback_add(li, "item,unfocused", _item_cb, "item,unfocused");
+   evas_object_smart_callback_add(li, "selected", _item_cb, "selected");
+   evas_object_smart_callback_add(li, "unselected", _item_cb, "unselected");
+   evas_object_smart_callback_add(li, "activated", _item_cb, "activated");
+   evas_object_smart_callback_add(li, "highlighted", _item_cb, "highlighted");
+   evas_object_smart_callback_add(li, "unhighlighted", _item_cb, "unhighlighted");
+   evas_object_event_callback_add(li, EVAS_CALLBACK_KEY_DOWN, _list_key_down_cb, NULL);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
