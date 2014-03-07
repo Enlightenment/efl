@@ -18,7 +18,7 @@ SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h
 %.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo1 $(EOLIAN_FLAGS) --gh -o $@ $<
 
-.eo.eo.legacy.h: ${_EOLIAN_GEN_DEP}
+%.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL)$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gh -o $@ $<
 
 CLEANFILES += $(BUILT_SOURCES)
