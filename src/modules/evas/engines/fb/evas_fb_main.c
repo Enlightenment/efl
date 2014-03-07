@@ -679,7 +679,7 @@ fb_getmode(void)
    if (mode->depth == 8) fb_init_palette_332(mode);
    else fb_init_palette_linear(mode);
 
-   INF("%ux%u, bitdepth=%u (%u bits), depth=%u, refresh=%u",
+   INF("%ux%u, bpp=%u (%u bits), depth=%u, refresh=%u",
        mode->width, mode->height, mode->bpp,
        mode->fb_var.bits_per_pixel, mode->depth, mode->refresh);
    return mode;
@@ -855,7 +855,7 @@ fb_postinit(FB_Mode *mode)
         return -1;
      }
 
-   DBG("%ux%u, bitdepth=%u (%u bits), depth=%u, refresh=%u, fb=%d",
+   DBG("%ux%u, bpp=%u (%u bits), depth=%u, refresh=%u, fb=%d",
        mode->width, mode->height, mode->bpp,
        mode->fb_var.bits_per_pixel, mode->depth, mode->refresh, fb);
 
@@ -886,6 +886,22 @@ fb_postinit(FB_Mode *mode)
         fb_cleanup();
         return -1;
      }
+
+   mode->stride = fb_fix.line_length / mode->bpp;
+   if (mode->stride < mode->width)
+     {
+        CRI("stride=%u < width=%u", mode->stride, mode->width);
+        fb_cleanup();
+        return -1;
+     }
+   if (mode->stride * mode->bpp != fb_fix.line_length)
+     {
+        CRI("FSCREENINFO line_length=%u is not multiple of bpp=%u",
+            fb_fix.line_length, mode->bpp);
+        fb_cleanup();
+        return -1;
+     }
+
    /* move viewport to upper left corner */
    if ((mode->fb_var.xoffset != 0) || (mode->fb_var.yoffset != 0))
      {
@@ -918,11 +934,11 @@ fb_postinit(FB_Mode *mode)
 #endif
   mode->fb_fd = fb;
 
-  INF("%ux%u, bitdepth=%u (%u bits), depth=%u, refresh=%u, fb=%d, mem=%p, "
-      "mem_offset=%u, xoffset=%u, yoffset=%u",
+  INF("%ux%u, bpp=%u (%u bits), depth=%u, refresh=%u, fb=%d, mem=%p, "
+      "mem_offset=%u, stride=%u pixels, offset=%u, yoffset=%u",
        mode->width, mode->height, mode->bpp,
       mode->fb_var.bits_per_pixel, mode->depth, mode->refresh, fb,
-      mode->mem, mode->mem_offset,
+      mode->mem, mode->mem_offset, mode->stride,
       mode->fb_var.xoffset, mode->fb_var.yoffset);
 
   return fb;

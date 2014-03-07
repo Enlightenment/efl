@@ -35,6 +35,7 @@ struct _fb_mode
   int             fb_fd;
   void           *mem;
   unsigned int    mem_offset;
+  unsigned int   stride; /* in pixels */
   struct fb_var_screeninfo fb_var;
 };
 
