@@ -80,7 +80,8 @@ _generate_h_file(char *filename, const char *classname, Eina_Bool append)
    FILE* fd = fopen(filename, "w");
    if (!fd)
      {
-        ERR ("Couldn't open file %s for writing", filename);
+        const char *err = strerror(errno);
+        ERR ("Couldn't open file %s for writing. Reason: '%s'", filename, err);
         goto end;
      }
 
