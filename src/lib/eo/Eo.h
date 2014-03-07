@@ -1534,14 +1534,15 @@ EAPI extern const Eo_Event_Description _EO_EV_DEL;
  * @}
  */
 
+
+#endif
+
 /**
  * @}
  */
 
-#endif
-
 #ifdef __cplusplus
-}
+} 
 #endif
 
 #endif
