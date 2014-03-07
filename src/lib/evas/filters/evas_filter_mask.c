@@ -352,6 +352,7 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    Evas_Filter_Command fake_cmd;
    Evas_Filter_Apply_Func blend;
    Evas_Filter_Buffer *fb;
+   Eina_Bool ret;
    int w, h;
 
    fake_cmd = *cmd;
@@ -379,7 +380,8 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    fake_cmd.draw.render_op = EVAS_RENDER_MUL;
    blend = evas_filter_blend_cpu_func_get(&fake_cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
-   blend(&fake_cmd);
+   ret = blend(&fake_cmd);
+   if (!ret) goto finish;
 
    // Temp --> Output
    fake_cmd.draw.render_op = EVAS_RENDER_BLEND;
@@ -387,8 +389,9 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    fake_cmd.output = cmd->output;
    blend = evas_filter_blend_cpu_func_get(&fake_cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
-   blend(&fake_cmd);
+   ret = blend(&fake_cmd);
 
+finish:
    fb->locked = EINA_FALSE;
-   return EINA_TRUE;
+   return ret;
 }

@@ -107,7 +107,7 @@ void                     evas_filter_context_post_run_callback_set(Evas_Filter_C
 Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx, unsigned w, unsigned h);
 
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only);
-int                      evas_filter_buffer_image_new(Evas_Filter_Context *ctx, RGBA_Image *image);
+int                      evas_filter_buffer_image_new(Evas_Filter_Context *ctx, void *image);
 void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid);
 void                    *evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid);
 Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer);

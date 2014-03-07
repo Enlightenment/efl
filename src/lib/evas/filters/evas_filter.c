@@ -24,6 +24,7 @@
 
 static void _buffer_free(Evas_Filter_Buffer *fb);
 static void _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd);
+static RGBA_Image *_rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data);
 
 #ifdef CLAMP
 # undef CLAMP
@@ -85,55 +86,102 @@ evas_filter_context_clear(Evas_Filter_Context *ctx)
 }
 
 static void
-_backing_free(Evas_Filter_Context *ctx, Image_Entry *ie)
+_backing_free(Evas_Filter_Context *ctx, RGBA_Image *im)
 {
-   if (!ie) return;
+   if (!im) return;
 
    if (!ctx->gl_engine)
      {
         if (!ctx->async)
-          ENFN->image_free(ENDT, ie);
+          ENFN->image_free(ENDT, im);
      }
    else
      {
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
-          evas_cache2_image_close(ie);
+          evas_cache2_image_close(&im->cache_entry);
         else
 #endif
-          evas_cache_image_drop(ie);
+          evas_cache_image_drop(&im->cache_entry);
      }
 }
 
 static void
 _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 {
-   void *backing;
    if (!fb) return;
 
-   if (fb->stolen)
+   if (!fb->stolen)
      {
-        if (eina_list_data_find(fb->ctx->buffers, fb))
+        if (fb->allocated)
+          _backing_free(fb->ctx, fb->backing);
+        if (fb->glimage && fb->allocated_gl)
+          fb->ENFN->image_free(fb->ENDT, fb->glimage);
+        fb->backing = NULL;
+        fb->glimage = NULL;
+     }
+   else
+     {
+        if (!fb->ctx->gl_engine)
           {
-             fb->delete_me = EINA_TRUE;
-             return;
+             fb->delete_me = fb->allocated;
+          }
+        else if (fb->glimage && fb->allocated)
+          {
+             _backing_free(fb->ctx, fb->backing);
+             fb->backing = NULL;
           }
      }
+}
 
-   INF("Free backing of buffer %d fb @ %p backing @ %p alloc %d", fb->id, fb, fb->backing, fb->allocated);
-   backing = fb->backing;
-   fb->backing = NULL;
+/* GL engine stuff: read-back from texture */
+static Eina_Bool
+_filter_buffer_glimage_pixels_read(Evas_Filter_Buffer *fb)
+{
+   Eina_Bool ok;
 
-   if (!fb->allocated) return;
-   _backing_free(fb->ctx, backing);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(fb->ctx->gl_engine, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->glimage, EINA_FALSE);
+
+   if (fb->backing)
+     return EINA_TRUE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->ENFN->gl_surface_lock, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->ENFN->gl_surface_read_pixels, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->ENFN->gl_surface_unlock, EINA_FALSE);
+
+   fb->backing = _rgba_image_alloc(fb, NULL);
+   fb->allocated = EINA_TRUE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->backing, EINA_FALSE);
+
+   ok = fb->ENFN->gl_surface_lock(fb->ENDT, fb->glimage);
+   if (!ok)
+     {
+        ERR("Failed to lock the image pixels");
+        return EINA_FALSE;
+     }
+
+   ok = fb->ENFN->gl_surface_read_pixels(fb->ENDT, fb->glimage,
+                                         0, 0, fb->w, fb->h, fb->alpha_only
+                                         ? EVAS_COLORSPACE_GRY8
+                                         : EVAS_COLORSPACE_ARGB8888,
+                                         fb->backing->image.data);
+   if (!ok)
+     ERR("Could not read the image pixels!");
+
+   ok &= fb->ENFN->gl_surface_unlock(fb->ENDT, fb->glimage);
+   return ok;
 }
 
 
 /**
+ * @internal
  * Render the source object when a proxy is set.
  *
  * Used to force a draw if necessary, else just makes sure it's available.
- * @note This comes direcly from evas_object_image.c. A common function is desirable here :)
+ * @note This comes direcly from evas_object_image.c.
+ * A common function is desirable here :)
  */
 static void
 _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
@@ -151,7 +199,8 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
    w = source->cur->geometry.w;
    h = source->cur->geometry.h;
 
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, proxy_write)
+   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
+                        Evas_Object_Proxy_Data, proxy_write)
      {
         proxy_write->redraw = EINA_FALSE;
 
@@ -227,13 +276,6 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
    obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
    if (!ctx->has_proxies) return;
-   if (ctx->gl_engine)
-     {
-        // FIXME: We need to call glReadPixels (yeah, no other way around...)
-        ERR("Proxy subrender is not supported in the GL engine (yet)");
-        return;
-     }
-
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      if (fb->source)
        {
@@ -243,10 +285,19 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             {
                INF("Source already rendered");
                _filter_buffer_backing_free(fb);
-               fb->backing = source->proxy->surface;
                fb->w = source->cur->geometry.w;
                fb->h = source->cur->geometry.h;
-               fb->allocated = EINA_FALSE;
+               if (!ctx->gl_engine)
+                 {
+                    fb->backing = source->proxy->surface;
+                    fb->allocated = EINA_FALSE;
+                 }
+               else
+                 {
+                    fb->glimage = source->proxy->surface;
+                    fb->allocated_gl = EINA_FALSE;
+                    _filter_buffer_glimage_pixels_read(fb);
+                 }
                fb->alpha_only = EINA_FALSE;
             }
           else
@@ -254,10 +305,19 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                INF("Source needs to be rendered");
                _proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
                _filter_buffer_backing_free(fb);
-               fb->backing = source->proxy->surface;
                fb->w = source->cur->geometry.w;
                fb->h = source->cur->geometry.h;
-               fb->allocated = EINA_FALSE;
+               if (!ctx->gl_engine)
+                 {
+                    fb->backing = source->proxy->surface;
+                    fb->allocated = EINA_FALSE;
+                 }
+               else
+                 {
+                    fb->glimage = source->proxy->surface;
+                    fb->allocated_gl = EINA_FALSE;
+                    _filter_buffer_glimage_pixels_read(fb);
+                 }
                fb->alpha_only = EINA_FALSE;
             }
           DBG("Source has dimensions %dx%d (buffer %d)", fb->w, fb->h, fb->id);
@@ -373,7 +433,6 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *fb;
-   Image_Entry *ie;
    Eina_List *li;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
@@ -452,13 +511,14 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      {
-        ie = fb->backing;
-        if (ie)
+        RGBA_Image *im;
+        im = fb->backing;
+        if (im)
           {
              if (ctx->async)
                {
-                  ie->references++;
-                  evas_unref_queue_image_put(ctx->evas, ie);
+                  im->cache_entry.references++;
+                  evas_unref_queue_image_put(ctx->evas, &im->cache_entry);
                }
              continue;
           }
@@ -471,22 +531,22 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 
         if (!fb->w && !fb->h)
           {
-             ERR("Size should be known at this point. Is this a dangling buffer?");
+             ERR("Size of buffer %d should be known at this point. Is this a dangling buffer?", fb->id);
              continue;
           }
 
         //DBG("Allocating buffer of size %ux%u alpha %d", fb->w, fb->h, fb->alpha_only);
-        ie = (Image_Entry *) _rgba_image_alloc(fb, NULL);
-        if (!ie)
+        im = _rgba_image_alloc(fb, NULL);
+        if (!im)
           {
              ERR("Buffer %d allocation failed!", fb->id);
              return EINA_FALSE;
           }
 
-        fb->backing = ie;
-        fb->allocated = (ie != NULL);
+        fb->backing = im;
+        fb->allocated = (im != NULL);
         if (ctx->async && fb->allocated)
-          evas_unref_queue_image_put(ctx->evas, ie);
+          evas_unref_queue_image_put(ctx->evas, &im->cache_entry);
      }
 
    return EINA_TRUE;
@@ -536,7 +596,7 @@ _filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
 }
 
 int
-evas_filter_buffer_image_new(Evas_Filter_Context *ctx, RGBA_Image *image)
+evas_filter_buffer_image_new(Evas_Filter_Context *ctx, void *image)
 {
    Evas_Filter_Buffer *fb;
 
@@ -548,10 +608,19 @@ evas_filter_buffer_image_new(Evas_Filter_Context *ctx, RGBA_Image *image)
 
    fb->id = ++(ctx->last_buffer_id);
    fb->ctx = ctx;
-   fb->backing = image;
-   fb->w = image->cache_entry.w;
-   fb->h = image->cache_entry.h;
-   fb->alpha_only = (image->cache_entry.space == EVAS_COLORSPACE_GRY8);
+   if (!fb->ctx->gl_engine)
+     {
+        fb->backing = image;
+        fb->allocated = EINA_FALSE;
+     }
+   else
+     {
+        fb->glimage = image;
+        fb->allocated_gl = EINA_FALSE;
+     }
+   ENFN->image_size_get(ENDT, image, &fb->w, &fb->h);
+   fb->alpha_only = (ENFN->image_colorspace_get(ENDT, image)
+                     == EVAS_COLORSPACE_GRY8);
 
    ctx->buffers = eina_list_append(ctx->buffers, fb);
    return fb->id;
@@ -626,23 +695,20 @@ evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid)
    if (!buffer) return NULL;
 
    buffer->stolen = EINA_TRUE;
-   if (buffer->glimage)
+
+   if (ctx->gl_engine)
      return buffer->glimage;
-   else
-     {
-        if (ctx->async)
-          {
-             Image_Entry *ie = buffer->backing;
-             if (ie) ie->references++;
-          }
-        return buffer->backing;
-     }
+
+   if (ctx->async && buffer->backing)
+     buffer->backing->cache_entry.references++;
+
+   return buffer->backing;
 }
 
 Eina_Bool
-evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer)
+evas_filter_buffer_backing_release(Evas_Filter_Context *ctx,
+                                   void *stolen_buffer)
 {
-   Image_Entry *ie = stolen_buffer;
    Evas_Filter_Buffer *fb;
    Eina_List *li;
 
@@ -651,7 +717,7 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
 
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      {
-        if (fb->backing == ie)
+        if (fb->backing == stolen_buffer)
           {
              fb->stolen = EINA_FALSE;
              if (fb->delete_me)
@@ -660,7 +726,7 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
                   if (ctx->async)
                     {
                        if (fb->allocated)
-                         evas_unref_queue_image_put(ctx->evas, ie);
+                         evas_unref_queue_image_put(ctx->evas, stolen_buffer);
                        free(fb);
                     }
                   else
@@ -675,20 +741,19 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer
              if (fb->delete_me)
                {
                   ctx->buffers = eina_list_remove_list(ctx->buffers, li);
-                  ENFN->image_free(ENDT, stolen_buffer);
-                  free(fb);
+                  _buffer_free(fb);
                }
              return EINA_TRUE;
           }
      }
 
    if (ctx->async)
-     evas_unref_queue_image_put(ctx->evas, ie);
+     evas_unref_queue_image_put(ctx->evas, stolen_buffer);
    else if (ctx->gl_engine)
      ctx->post_run.buffers_to_free =
        eina_list_append(ctx->post_run.buffers_to_free, stolen_buffer);
    else
-     _backing_free(ctx, ie);
+     _backing_free(ctx, stolen_buffer);
 
    return EINA_TRUE;
 }
@@ -1435,18 +1500,19 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
    if (ctx->gl_engine)
      {
         // Since GL has sync rendering, draw_context is safe to keep around
-        Evas_Filter_Buffer *target, *image;
-        RGBA_Image *im;
+        Evas_Filter_Buffer *fb;
 
         ctx->target.context = draw_context;
-        target = _filter_buffer_get(ctx, ctx->target.bufid);
-        target->glimage = target->backing;
-        target->backing = NULL;
 
-        image = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
-        im = image->backing;
-        image->glimage = ENFN->image_new_from_data
-          (ENDT, image->w, image->h, im->image.data, EINA_TRUE, im->cache_entry.space);
+        fb = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+
+        fb->glimage = ENFN->image_new_from_data
+          (ENDT, fb->w, fb->h, fb->backing->image.data, EINA_TRUE,
+           fb->backing->cache_entry.space);
+
+        DBG("Set target as #%d (%p) and output #%d (%p, gl %p)",
+            ctx->target.bufid, surface, fb->id, fb->backing, fb->glimage);
      }
 
    return EINA_TRUE;
@@ -1477,6 +1543,21 @@ _filter_target_render(Evas_Filter_Context *ctx)
      {
         drawctx = ctx->target.context;
         surface = dst->glimage;
+        if (src->glimage)
+          {
+             DBG("Using glimage from output buffer.");
+             if (src->backing)
+               ENFN->image_data_put(ENDT, src->glimage, src->backing->image.data);
+          }
+        else
+          {
+             RGBA_Image *im = src->backing;
+
+             DBG("Creating glimage from output buffer.");
+             src->glimage = ENFN->image_new_from_data(ENDT, src->w, src->h,
+                                               im->image.data, EINA_TRUE,
+                                               EVAS_COLORSPACE_ARGB8888);
+          }
         image = src->glimage;
      }
    EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
