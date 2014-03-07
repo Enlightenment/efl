@@ -157,14 +157,13 @@ eina_convert_itoa(int n, char *s)
 
    if (n < 0)
      {
-        n = -n;
         *s++ = '-';
         r = 1;
      }
 
    do {
-        s[i++] = n % 10 + '0';
-   } while ((n /= 10) > 0);
+        s[i++] = abs(n % 10) + '0';
+   } while (n /= 10);
 
    s[i] = '\0';
 

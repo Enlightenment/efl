@@ -24,6 +24,7 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+#include <limits.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
@@ -31,6 +32,7 @@
 START_TEST(eina_convert_simple)
 {
    char tmp[128];
+   char ref[128];
 
    fail_if(eina_convert_itoa(0, tmp) != 1);
    fail_if(strcmp(tmp, "0") != 0);
@@ -46,6 +48,10 @@ START_TEST(eina_convert_simple)
 
    fail_if(eina_convert_itoa(10000000, tmp) != 8);
    fail_if(strcmp(tmp, "10000000") != 0);
+
+   snprintf(ref, sizeof (ref), "%d", INT_MIN);
+   fail_if(eina_convert_itoa(INT_MIN, tmp) != (int) strlen(ref));
+   fail_if(strcmp(tmp, ref) != 0);
 
    fail_if(eina_convert_xtoa(0, tmp) != 1);
    fail_if(strcmp(tmp, "0") != 0);
