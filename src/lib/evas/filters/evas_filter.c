@@ -296,7 +296,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
           source = eo_data_scope_get(fb->source, EVAS_OBJ_CLASS);
           if (source->proxy->surface && !source->proxy->redraw)
             {
-               INF("Source already rendered");
+               DBG("Source already rendered");
                _filter_buffer_backing_free(fb);
                fb->w = source->cur->geometry.w;
                fb->h = source->cur->geometry.h;
@@ -315,7 +315,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             }
           else
             {
-               INF("Source needs to be rendered");
+               DBG("Source needs to be rendered");
                _proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
                _filter_buffer_backing_free(fb);
                fb->w = source->cur->geometry.w;
@@ -846,7 +846,7 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
 
    buf = _buffer_new(ctx, w, h, alpha_only);
    buf->locked = EINA_TRUE;
-   INF("Created temporary buffer: %d", buf->id);
+   DBG("Created temporary buffer: %d", buf->id);
    return buf;
 }
 
@@ -944,7 +944,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
      }
    else if (in->alpha_only && !out->alpha_only)
      {
-        INF("Adding extra blending step (Alpha --> RGBA)");
+        DBG("Adding extra blending step (Alpha --> RGBA)");
         blur_out = evas_filter_temporary_buffer_get(ctx, 0, 0, EINA_TRUE);
         if (!blur_out) goto fail;
         convert = EINA_TRUE;
@@ -1020,7 +1020,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (dx)
      {
-        INF("Add horizontal blur %d -> %d (%dpx)", in->id, out_dx->id, dx);
+        DBG("Add horizontal blur %d -> %d (%dpx)", in->id, out_dx->id, dx);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in, NULL, out_dx);
         if (!cmd) goto fail;
         cmd->blur.type = type;
@@ -1032,7 +1032,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (dy)
      {
-        INF("Add vertical blur %d -> %d (%dpx)", in_dy->id, out_dy->id, dy);
+        DBG("Add vertical blur %d -> %d (%dpx)", in_dy->id, out_dy->id, dy);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in_dy, NULL, out_dy);
         if (!cmd) goto fail;
         cmd->blur.type = type;
@@ -1046,7 +1046,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
      {
         if (!cmd) goto fail;
         if (!copybuf) goto fail;
-        INF("Add copy %d -> %d", copybuf->id, blur_out->id);
+        DBG("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
         id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, R, G, B, A);
@@ -1056,7 +1056,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (convert)
      {
-        INF("Add convert %d -> %d", blur_out->id, out->id);
+        DBG("Add convert %d -> %d", blur_out->id, out->id);
         id = evas_filter_command_blend_add(ctx, drawctx, blur_out->id, out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         if (id < 0) goto fail;
      }
@@ -1723,7 +1723,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, EINA_FALSE);
 
-   INF("Running filter command %d (%s): %d [%d] --> %d",
+   DBG("Command %d (%s): %d [%d] --> %d",
        cmd->id, _filter_name_get(cmd->mode),
        cmd->input->id, cmd->mask ? cmd->mask->id : 0, cmd->output->id);
 
@@ -1839,7 +1839,7 @@ evas_filter_run(Evas_Filter_Context *ctx)
      return EINA_TRUE;
 
    if (ctx->gl_engine)
-     WRN("EXPERIMENTAL OpenGL support! Might very well crash or not render anything.");
+     INF("EXPERIMENTAL OpenGL support! The text filters will be very slow!");
 
    if (ctx->async)
      {
