@@ -21,7 +21,7 @@ lib/evas/Evas_GL.h \
 lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
-dist_installed_evascanvasheaders_DATA = \
+nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_line.eo.h
 
 noinst_HEADERS = \
