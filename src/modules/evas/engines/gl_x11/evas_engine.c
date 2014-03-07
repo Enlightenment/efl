@@ -3425,9 +3425,19 @@ eng_gl_surface_read_pixels(void *data, void *surface,
         return EINA_FALSE;
      }
 
-   glsym_glBindFramebuffer(GL_READ_FRAMEBUFFER, im->tex->pt->fb);
+#ifdef GL_GLES
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
+# endif
+#else
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
+# endif
+#endif
+
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
    glsym_glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-   glsym_glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
    return EINA_TRUE;
 }
 //--------------------------------//
