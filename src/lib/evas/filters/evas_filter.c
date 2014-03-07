@@ -58,7 +58,20 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
 
    ctx->evas = evas;
    ctx->async = async;
-   ctx->gl_engine = !!strstr(evas->engine.module->definition->name, "gl");
+
+   /* Note:
+    * For now, we need to detect whether the engine is full SW or GL.
+    * In case of GL, we will have two buffers in parallel:
+    * RGBA_Image backing and a GL texture (glimage). We can't just leave it
+    * to the engine to handle the image data since it will try to discard the
+    * original buffer as early as possible to save memory, but we still need
+    * it for filtering.
+    * In the future, Evas_Engine functions need to be added to abstract this
+    * better and implement filters direcly with shaders.
+    */
+   ctx->gl_engine = (evas->engine.func->gl_surface_read_pixels != NULL);
+   if (ctx->gl_engine)
+     DBG("Detected GL engine. All filters will still run in software (SLOW).");
 
    return ctx;
 }
