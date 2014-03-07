@@ -40,9 +40,9 @@ START_TEST(eina_rectangle_pool)
    fail_if(pool == NULL);
 
    eina_rectangle_pool_data_set(pool, rects);
-           fail_if(eina_rectangle_pool_data_get(pool) != rects);
+   fail_if(eina_rectangle_pool_data_get(pool) != rects);
 
-           fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
+   fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
 
    for (x = 0; x < 8; x++)
       for (y = 0; y < 8; y++)
@@ -51,18 +51,18 @@ START_TEST(eina_rectangle_pool)
            fail_if(rects[x][y] == NULL);
         }
 
-           fail_if(eina_rectangle_pool_count(pool) != 64);
+   fail_if(eina_rectangle_pool_count(pool) != 64);
 
-           fail_if(eina_rectangle_pool_get(rects[0][0]) != pool);
+   fail_if(eina_rectangle_pool_get(rects[0][0]) != pool);
 
-           fail_if(eina_rectangle_pool_geometry_get(pool, &w, &h) != EINA_TRUE);
-           fail_if(w != 256 || h != 256);
+   fail_if(eina_rectangle_pool_geometry_get(pool, &w, &h) != EINA_TRUE);
+   fail_if(w != 256 || h != 256);
 
-           fail_if(eina_rectangle_pool_request(pool, 32, 32) != NULL);
-           fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
+   fail_if(eina_rectangle_pool_request(pool, 32, 32) != NULL);
+   fail_if(eina_rectangle_pool_request(pool, 1024, 1024) != NULL);
 
    for (x = 0; x < 8; x++)
-           eina_rectangle_pool_release(rects[0][x]);
+     eina_rectangle_pool_release(rects[0][x]);
 
    fail_if(eina_rectangle_pool_request(pool, 16, 16) == NULL);
 
