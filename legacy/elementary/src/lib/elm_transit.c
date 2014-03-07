@@ -483,6 +483,8 @@ elm_transit_add(void)
 EAPI void
 elm_transit_del(Elm_Transit *transit)
 {
+   if (!transit) return;
+
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
    transit->deleted = EINA_TRUE;
