@@ -455,4 +455,4 @@ evas_object_line_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
    o->cur.cache.object.h = obj->cur->geometry.h;
 }
 
-#include "evas_line.eo.c"
+#include "canvas/evas_line.eo.c"
