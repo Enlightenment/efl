@@ -4059,6 +4059,9 @@ _select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
             (sd->entry_edje, "elm.text", EINA_FALSE);
         edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
      }
+   if (sd->have_selection)
+     evas_object_smart_callback_call(obj, SIG_SELECTION_CLEARED, NULL);
+
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");
 
