@@ -1201,6 +1201,9 @@ eo_tokenizer_database_fill(const char *filename)
    Eo_Event_Def *event;
    Eo_Implement_Def *impl;
 
+   FILE *stream = NULL;
+   char *buffer = NULL;
+
    Eo_Tokenizer *toknz = eo_tokenizer_get();
    if (!toknz)
      {
@@ -1208,14 +1211,14 @@ eo_tokenizer_database_fill(const char *filename)
         goto end;
      }
 
-   FILE *stream = fopen(filename, "rb");
+   stream = fopen(filename, "rb");
    if (!stream)
      {
         ERR("unable to read in %s", filename);
         goto end;
      }
 
-   char *buffer = malloc(BUFSIZE);
+   buffer = malloc(BUFSIZE);
    unsigned int len = fread(buffer, 1, BUFSIZE, stream);
 
    if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
