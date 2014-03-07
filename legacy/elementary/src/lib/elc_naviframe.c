@@ -1406,6 +1406,17 @@ _elm_naviframe_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
+//Show only the top item view
+static void
+_elm_naviframe_smart_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   Elm_Naviframe_Item *top;
+
+   top = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
+   if (top && !top->delete_me)
+     evas_object_show(VIEW(top));
+}
+
 static void
 _elm_naviframe_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -2136,6 +2147,7 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_naviframe_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_naviframe_smart_del),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_naviframe_smart_show),
 
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_naviframe_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_naviframe_smart_focus_next),
