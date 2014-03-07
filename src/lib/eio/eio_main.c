@@ -360,7 +360,14 @@ eio_shutdown(void)
 EAPI void
 eio_memory_burst_limit_set(size_t limit)
 {
+   eina_lock_take(&(memory_pool_mutex));
    memory_pool_limit = limit;
+   if (memory_pool_suspended)
+     {
+        if (memory_pool_usage < memory_pool_limit)
+          eina_condition_broadcast(&(memory_pool_cond));
+     }
+   eina_lock_release(&(memory_pool_mutex));
 }
 
 EAPI size_t
