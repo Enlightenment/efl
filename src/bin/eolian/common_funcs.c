@@ -21,13 +21,13 @@ _template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const
    if (strcmp(classname, normclass))
      {
         //Fill cache
-        strcpy(normclass, classname);
+        strncpy(normclass, classname, sizeof(normclass) - 1);
 
-        strcpy(capclass, classname);
+        strncpy(capclass, classname, sizeof(capclass) - 1);
         p = capclass;
         eina_str_toupper(&p);
 
-        strcpy(lowclass, classname);
+        strncpy(lowclass, classname, sizeof(lowclass) - 1);
         p = lowclass;
         eina_str_tolower(&p);
 
@@ -44,23 +44,25 @@ _template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const
             eina_strbuf_append(classobj, "Evas_Obj");
           }
 
-        strcpy(capobjclass, eina_strbuf_string_get(classobj));
+        strncpy(capobjclass, eina_strbuf_string_get(classobj),
+              sizeof(capobjclass) - 1);
         p = capobjclass;
         eina_str_toupper(&p);
 
-        strcpy(lowobjclass, eina_strbuf_string_get(classobj));
+        strncpy(lowobjclass, eina_strbuf_string_get(classobj),
+              sizeof(lowobjclass) - 1);
         p = lowobjclass;
         eina_str_tolower(&p);
 
-        strcpy(eoprefix, lowobjclass);
+        strncpy(eoprefix, lowobjclass, sizeof(eoprefix) - 1);
 
         if (!strcmp(classname, "Elm_Widget"))
-          strcpy(eoprefix, "elm_wdg");
+          strncpy(eoprefix, "elm_wdg", sizeof(eoprefix) - 1);
 
         eina_strbuf_free(classobj);
      }
 
-   strcpy(capfunc, funcname);
+   strncpy(capfunc, funcname, sizeof(capfunc) - 1);
    p = capfunc; eina_str_toupper(&p);
 
    eina_strbuf_replace_all(buf, "@#func", funcname);
@@ -79,10 +81,11 @@ _nextline(char *str, unsigned int lines)
    if (!str) return NULL;
 
    char *ret = str;
-   while ((lines--) && *ret)
+   while (lines--)
      {
         ret= strchr(ret, '\n');
         if (ret) ret++;
+        else return NULL;
      }
    return ret;
 }
@@ -111,6 +114,7 @@ _source_desc_get(const char *str)
         eina_strbuf_replace_all(part, "\"", "\\\"");
      }
    char *ret = eina_strbuf_string_steal(part);
+   eina_strbuf_free(part);
    return ret;
 }
 

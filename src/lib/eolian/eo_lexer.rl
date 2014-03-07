@@ -366,6 +366,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 ###### TOKENIZE ACCESSOR
 
    action end_accessor_comment {
+      if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->comment != NULL)
         ABORT(toknz, "accessor has already a comment");
       toknz->tmp.accessor->comment = _eo_tokenizer_token_get(toknz, fpc-1);
@@ -373,6 +374,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_accessor_rettype {
+      if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->ret.type != NULL)
         ABORT(toknz, "accessor has already a return type");
       toknz->tmp.accessor->ret.type = _eo_tokenizer_token_get(toknz, fpc);
@@ -380,6 +382,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_accessor_rettype_comment {
+      if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->ret.comment != NULL)
         ABORT(toknz, "accessor return type has already a comment");
       toknz->tmp.accessor->ret.comment = _eo_tokenizer_token_get(toknz, fpc-2);
@@ -387,16 +390,19 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_accessor_rettype_unused_flag {
+      if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       toknz->tmp.accessor->ret.warn_unused = EINA_TRUE;
       INF("        WARN_UNUSED");
    }
 
    action end_accessor_legacy {
+      if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       toknz->tmp.accessor->legacy = _eo_tokenizer_token_get(toknz, fpc);
    }
 
    action end_accessor {
       INF("      }");
+      if (!toknz->tmp.prop) ABORT(toknz, "No prop!!!");
       toknz->tmp.prop->accessors = eina_list_append(toknz->tmp.prop->accessors, toknz->tmp.accessor);
       toknz->tmp.accessor = NULL;
       toknz->current_nesting--;
@@ -408,6 +414,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_param_desc {
+      if (!toknz->tmp.accessor_param)
+         ABORT(toknz, "No accessor param!!!");
       toknz->tmp.accessor_param->attrs = _eo_tokenizer_token_get(toknz, fpc);
       toknz->tmp.accessor->params =
          eina_list_append(toknz->tmp.accessor->params, toknz->tmp.accessor_param);
@@ -506,6 +514,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_property {
+      if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
       if (eina_list_count(toknz->tmp.prop->values) == 0)
         WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
@@ -536,6 +545,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 ###### TOKENIZE PROPERTIES
 
    action begin_property {
+      if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
       INF("    %s {", toknz->tmp.prop->name);
       toknz->current_nesting++;
       fgoto tokenize_property;
@@ -566,6 +576,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 ###### TOKENIZE METHOD
 
    action end_method_comment {
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (toknz->tmp.meth->comment != NULL)
         ABORT(toknz, "method has already a comment");
       toknz->tmp.meth->comment = _eo_tokenizer_token_get(toknz, fpc-1);
@@ -573,6 +584,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action begin_method_params {
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       INF("      params {");
       toknz->current_nesting++;
       toknz->tmp.params = &(toknz->tmp.meth->params);
@@ -580,6 +592,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_method_rettype {
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (toknz->tmp.meth->ret.type != NULL)
         ABORT(toknz, "method '%s' has already a return type", toknz->tmp.meth->name);
       toknz->tmp.meth->ret.type = _eo_tokenizer_token_get(toknz, fpc);
@@ -587,6 +600,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_method_rettype_comment {
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (toknz->tmp.meth->ret.comment != NULL)
         ABORT(toknz, "method '%s' return type has already a comment", toknz->tmp.meth->name);
       toknz->tmp.meth->ret.comment = _eo_tokenizer_token_get(toknz, fpc-2);
@@ -594,21 +608,25 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_method_rettype_unused_flag{
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       toknz->tmp.meth->ret.warn_unused = EINA_TRUE;
       INF("        WARN_UNUSED");
    }
 
    action end_method_legacy {
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       toknz->tmp.meth->legacy = _eo_tokenizer_token_get(toknz, fpc);
    }
 
    action end_method_obj_const{
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       toknz->tmp.meth->obj_const = EINA_TRUE;
       INF("        obj const");
    }
 
    action end_method {
       Eina_List **l;
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (eina_list_count(toknz->tmp.meth->params) == 0)
         WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
       INF("    }");
@@ -657,6 +675,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 ###### TOKENIZE METHODS
 
    action begin_method {
+      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       INF("    %s {", toknz->tmp.meth->name);
       toknz->current_nesting++;
       fgoto tokenize_method;
@@ -688,6 +707,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 ###### TOKENIZE CLASS
 
    action end_class_comment {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->comment != NULL)
         ABORT(toknz, "class %s has already a comment", toknz->tmp.kls->name);
       toknz->tmp.kls->comment = _eo_tokenizer_token_get(toknz, fpc-1);
@@ -699,6 +719,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_inherits {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       toknz->tmp.kls->inherits = toknz->tmp.str_items;
       toknz->tmp.str_items = NULL;
    }
@@ -737,6 +758,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_class {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("end class: %s", toknz->tmp.kls->name);
       toknz->classes = eina_list_append(toknz->classes, toknz->tmp.kls);
       toknz->tmp.kls = NULL;
@@ -745,11 +767,13 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_event_name {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       toknz->tmp.event = _eo_tokenizer_event_get(toknz, fpc);
       toknz->tmp.kls->events = eina_list_append(toknz->tmp.kls->events, toknz->tmp.event);
    }
 
    action end_event_comment {
+      if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
       if (toknz->tmp.event->comment != NULL)
         ABORT(toknz, "event %s has already a comment", toknz->tmp.event->name);
       toknz->tmp.event->comment = _eo_tokenizer_token_get(toknz, fpc-2);
@@ -757,6 +781,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_legacy_prefix {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->legacy_prefix != NULL)
         ABORT(toknz, "A legacy prefix has already been given");
       toknz->tmp.kls->legacy_prefix = _eo_tokenizer_token_get(toknz, fpc);
@@ -769,23 +794,27 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    inherits = begin_list (class_it class_it_next*)? end_list %end_inherits;
 
    action impl_meth_store {
+        if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
         toknz->tmp.impl = _eo_tokenizer_implement_get(toknz, fpc);
         toknz->tmp.kls->implements = eina_list_append(toknz->tmp.kls->implements, toknz->tmp.impl);
    }
 
    action impl_legacy_create {
+        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (toknz->tmp.impl->legacy)
            ABORT(toknz, "Legacy section already allocated for implement item");
         toknz->tmp.impl->legacy = calloc(1, sizeof(Eo_Implement_Legacy_Def));
    }
 
    action impl_legacy_function_name_store {
+        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
            ABORT(toknz, "No legacy section");
         toknz->tmp.impl->legacy->function_name = _eo_tokenizer_token_get(toknz, fpc);
    }
 
    action impl_legacy_eo_param_store {
+        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         toknz->tmp.impl_leg_param = calloc(1, sizeof(Eo_Implement_Legacy_Param_Def));
         toknz->tmp.impl->legacy->params = eina_list_append(
               toknz->tmp.impl->legacy->params, toknz->tmp.impl_leg_param);
@@ -794,20 +823,26 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action impl_legacy_leg_param_store {
+        if (!toknz->tmp.impl_leg_param)
+           ABORT(toknz, "No implement legacy param!!!");
         toknz->tmp.impl_leg_param->legacy_name = _eo_tokenizer_token_get(toknz, fpc);
    }
 
    action impl_legacy_param_comment_store {
+        if (!toknz->tmp.impl_leg_param)
+           ABORT(toknz, "No implement legacy param!!!");
         toknz->tmp.impl_leg_param->comment = _eo_tokenizer_token_get(toknz, fpc-2);
    }
 
    action impl_legacy_return_type_store {
+        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
            ABORT(toknz, "No legacy section");
         toknz->tmp.impl->legacy->ret_type= _eo_tokenizer_token_get(toknz, fpc);
    }
 
    action impl_legacy_return_val_store {
+        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
            ABORT(toknz, "No legacy section");
         toknz->tmp.impl->legacy->ret_value = _eo_tokenizer_token_get(toknz, fpc);
@@ -868,6 +903,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 ###### TOP LEVEL
 
    action begin_class {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("begin class: %s", toknz->tmp.kls->name);
       toknz->current_nesting++;
       fgoto tokenize_class;
@@ -1153,6 +1189,7 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
 Eina_Bool
 eo_tokenizer_database_fill(const char *filename)
 {
+   Eina_Bool ret = EINA_FALSE;
    const char *s;
    Eina_List *k, *l, *m;
 
@@ -1163,25 +1200,25 @@ eo_tokenizer_database_fill(const char *filename)
    Eo_Accessor_Def *accessor;
    Eo_Event_Def *event;
    Eo_Implement_Def *impl;
-   /* Eo_Ret_Def *ret; */
 
    Eo_Tokenizer *toknz = eo_tokenizer_get();
    if (!toknz)
      {
         ERR("can't create eo_tokenizer");
-        return EINA_FALSE;
+        goto end;
      }
 
    FILE *stream = fopen(filename, "rb");
-   char *buffer = malloc(BUFSIZE);
-   unsigned int len = fread(buffer, 1, BUFSIZE, stream);
    if (!stream)
      {
         ERR("unable to read in %s", filename);
-        return EINA_FALSE;
+        goto end;
      }
 
-   if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) return EINA_FALSE;
+   char *buffer = malloc(BUFSIZE);
+   unsigned int len = fread(buffer, 1, BUFSIZE, stream);
+
+   if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {
@@ -1263,12 +1300,12 @@ eo_tokenizer_database_fill(const char *filename)
                             if (!desc)
                               {
                                  printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
-                                 return EINA_FALSE;
                               }
-                            if (strstr(acc_param->attrs, "const"))
-                              {
-                                 database_parameter_get_const_attribute_set(desc, EINA_TRUE);
-                              }
+                            else
+                               if (strstr(acc_param->attrs, "const"))
+                                 {
+                                    database_parameter_get_const_attribute_set(desc, EINA_TRUE);
+                                 }
                          }
                     }
                }
@@ -1338,8 +1375,8 @@ eo_tokenizer_database_fill(const char *filename)
                         kls->name, func, ftype);
                   if (!foo_id)
                     {
-                       printf("Error - %s not known in class %s\n", class + 9, kls->name);
-                       return EINA_FALSE;
+                       ERR("Error - %s not known in class %s", class + 9, kls->name);
+                       goto end;
                     }
                   database_function_set_as_virtual_pure(foo_id);
                   continue;
@@ -1371,8 +1408,12 @@ eo_tokenizer_database_fill(const char *filename)
 
      }
 
-   eo_tokenizer_free(toknz);
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+end:
+   if (buffer) free(buffer);
+   if (stream) fclose(stream);
+   if (toknz) eo_tokenizer_free(toknz);
+   return ret;
 }
 
 void

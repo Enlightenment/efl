@@ -496,6 +496,7 @@ eo1_source_beginning_generate(const char *classname, Eina_Strbuf *buf)
 Eina_Bool
 eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
 {
+   Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
    Eolian_Function fn;
 
@@ -530,6 +531,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    Eina_Strbuf *str_func = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
    Eina_Strbuf *str_ev = eina_strbuf_new();
+   Eina_Strbuf *tmpl_impl = eina_strbuf_new();
 
    _template_fill(str_end, tmpl_eo_src_end, classname, "", EINA_TRUE);
 
@@ -578,7 +580,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
 
         eolian_implement_information_get(impl_desc, &impl_class, &funcname, &ftype);
 
-        Eina_Strbuf *tmpl_impl = eina_strbuf_new();
+        eina_strbuf_reset(tmpl_impl);
         eina_strbuf_append(tmpl_impl, tmpl_eo_func_desc);
 
         char implname[0xFF];
@@ -603,7 +605,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         if (!in_meth && !in_prop)
           {
              ERR ("Failed to generate implementation of %s:%s - missing form super class", impl_class, funcname);
-             return EINA_FALSE;
+             goto end;
           }
 
         if (in_meth)
@@ -635,7 +637,6 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
                   eo1_bind_func_generate(classname, in_prop, GET, str_bodyf, impl_class);
                }
           }
-          eina_strbuf_free(tmpl_impl);
      }
 
    //Constructors
@@ -749,13 +750,16 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_end));
 
+   ret = EINA_TRUE;
+end:
    eina_strbuf_free(tmpbuf);
    eina_strbuf_free(str_op);
    eina_strbuf_free(str_func);
    eina_strbuf_free(str_bodyf);
    eina_strbuf_free(str_end);
    eina_strbuf_free(str_ev);
+   eina_strbuf_free(tmpl_impl);
 
-   return EINA_TRUE;
+   return ret;
 }
 

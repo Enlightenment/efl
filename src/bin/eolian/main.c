@@ -15,8 +15,9 @@ static Eina_Bool legacy_support = EINA_FALSE;
 static char*
 _include_guard_enclose(const char *fname, const char *fbody)
 {
-   char incname[0xFF];
-   strcpy (incname, fname);
+   char incname[255];
+   memset(incname, 0, sizeof(incname));
+   strncpy (incname, fname, sizeof(incname) - 1);
    char *p = incname;
    eina_str_toupper(&p);
 

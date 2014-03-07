@@ -227,7 +227,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
 
    if (!func_lpref)
      {
-        strcpy(tmpstr, classname);
+        strncpy(tmpstr, classname, sizeof(tmpstr) - 1);
         char *p = tmpstr;
         eina_str_tolower(&p);
         func_lpref = tmpstr;
@@ -437,6 +437,7 @@ legacy_header_append(const char *classname, int eo_version EINA_UNUSED, Eina_Str
 Eina_Bool
 legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
 {
+   Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
 
    if (!eolian_class_exists(classname))
@@ -448,7 +449,7 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version E
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 
-   if (!eo1_source_beginning_generate(classname, buf)) return EINA_FALSE;
+   if (!eo1_source_beginning_generate(classname, buf)) goto end;
 
    //Properties
    Eolian_Function fn;
@@ -461,12 +462,12 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version E
 
         if (prop_write)
           {
-             if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf, NULL)) return EINA_FALSE;
+             if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf, NULL)) goto end;
              if (legacy) _eapi_func_generate(classname, fn, SET, str_bodyf);
           }
         if (prop_read)
           {
-             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) return EINA_FALSE;
+             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) goto end;
              if (legacy) _eapi_func_generate(classname, fn, GET, str_bodyf);
           }
      }
@@ -474,16 +475,18 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version E
    //Methods
    EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, METHOD_FUNC), itr, fn)
      {
-        if (!eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL)) return EINA_FALSE;
+        if (!eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL)) goto end;
         if (legacy) _eapi_func_generate(classname, fn, UNRESOLVED, str_bodyf);
      }
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_bodyf));
 
-   if (!eo1_source_end_generate(classname, buf)) return EINA_FALSE;
+   if (!eo1_source_end_generate(classname, buf)) goto end;
 
+   ret = EINA_TRUE;
+end:
    eina_strbuf_free(tmpbuf);
    eina_strbuf_free(str_bodyf);
 
-   return EINA_TRUE;
+   return ret;
 }
