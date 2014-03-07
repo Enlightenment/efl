@@ -8,19 +8,28 @@
 
 #include <check.h>
 
-void call_async(efl::eina::mutex& mutex, efl::eina::condition_variable& cond, bool& done)
+void call_async(efl::eina::mutex& mutex, efl::eina::condition_variable& cond, int& done)
 {
   efl::ecore::main_loop_thread_safe_call_async
     (
      [&mutex,&cond,&done]
      {
        std::cout << "yeah" << std::endl;
-       ecore_main_loop_quit();
        efl::eina::unique_lock<efl::eina::mutex> l(mutex);
-       std::cout << "mutex locked" << std::endl;
-       done = true;
+       ++done;
+     }
+    );
+
+  efl::ecore::main_loop_thread_safe_call_async
+    (
+     [&mutex,&cond,&done]
+     {
+       std::cout << "yeah2" << std::endl;
+       efl::eina::unique_lock<efl::eina::mutex> l(mutex);
+       ++done;
        cond.notify_one();
-       std::cout << "exiting" << std::endl;
+       ecore_main_loop_quit();
+       throw std::bad_alloc();
      }
     );
 }
@@ -31,7 +40,7 @@ START_TEST(ecore_cxx_safe_call_async)
 
   efl::eina::mutex mutex;
   efl::eina::condition_variable cond;
-  bool done = false;
+  int done = 0;
   efl::eina::thread thread(&call_async, std::ref(mutex), std::ref(cond), std::ref(done));
 
   ecore_main_loop_begin();
@@ -43,13 +52,15 @@ START_TEST(ecore_cxx_safe_call_async)
   std::cout << "joined" << std::endl;
 
   efl::eina::unique_lock<efl::eina::mutex> l(mutex);
-  while(!done)
+  while(done != 2)
     {
-      std::cout << "waiting" << std::endl;
+      std::cout << "wait" << std::endl;
       cond.wait(l);
       std::cout << "waited" << std::endl;
     }
 
+  ck_assert( ::eina_error_get() == ::EINA_ERROR_OUT_OF_MEMORY);
+  ::eina_error_set(0);
   std::cout << "end of ecore_cxx_safe_call_async" << std::endl;
 }
 END_TEST
@@ -111,7 +122,14 @@ struct big_nonpod : big_pod
 
 void call_sync_int()
 {
-  std::cout << "call_sync_init" << std::endl;
+  efl::ecore::main_loop_thread_safe_call_sync
+    (
+     [] () -> void
+     {
+       ck_assert( ::eina_error_get() == 0);
+     }
+    );
+
   int r1 =
   efl::ecore::main_loop_thread_safe_call_sync
     (
@@ -121,6 +139,37 @@ void call_sync_int()
      }
     );
   ck_assert(r1 == 1);
+
+  try
+    {
+      efl::ecore::main_loop_thread_safe_call_sync
+        (
+         [] () -> int
+         {
+           throw std::bad_alloc();
+         }
+         );
+      ck_assert(false);
+    }
+  catch(std::bad_alloc const& e)
+    {
+    }
+
+  try
+    {
+      efl::ecore::main_loop_thread_safe_call_sync
+        (
+         [] () -> int
+         {
+           ::eina_error_set( ::EINA_ERROR_OUT_OF_MEMORY);
+           return 0;
+         }
+         );
+      ck_assert(false);
+    }
+  catch(std::system_error const& e)
+    {
+    }
 
   std::cout << "big_pod" << std::endl;
 
@@ -160,11 +209,33 @@ void call_sync_int()
        [] () -> big_nonpod
        {
          std::cout << "before quit" << std::endl;
-         ecore_main_loop_quit();
          std::cout << "are we calling here" << std::endl;
          return big_nonpod();
        }
        );
+  }
+  std::cout << "constructor_called: " << constructor_called << std::endl;
+  std::cout << "destructor_called: " << destructor_called << std::endl;
+  ck_assert(constructor_called == destructor_called);
+
+  {
+    try
+      {
+        efl::ecore::main_loop_thread_safe_call_sync
+          (
+           [] () -> big_nonpod
+           {
+             std::cout << "before quit" << std::endl;
+             ecore_main_loop_quit();
+             std::cout << "are we calling here" << std::endl;
+             throw std::bad_alloc();
+           }
+           );
+        ck_assert(false);
+      }
+    catch(std::bad_alloc const& e)
+      {
+      }
   }
   std::cout << "constructor_called: " << constructor_called << std::endl;
   std::cout << "destructor_called: " << destructor_called << std::endl;

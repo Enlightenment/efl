@@ -13,6 +13,12 @@ using std::error_code;
 using std::error_condition;
 typedef std::error_category system_error_category;
 
+inline Eina_Error unknown_error()
+{
+  static Eina_Error error = eina_error_msg_static_register("Error from C++ from another value category error");
+  return error;
+}
+
 inline system_error_category const& get_generic_category()
 {
   return ::std::generic_category();
@@ -64,6 +70,14 @@ inline eina::error_code get_error_code()
     }
   else
     return eina::error_code();
+}
+
+inline void set_error_code(eina::error_code const& e)
+{
+  if(e.category() == eina_error_category())
+    eina_error_set(e.value());
+  else
+    eina_error_set(unknown_error());
 }
 
 inline eina::error_condition get_error_condition()
