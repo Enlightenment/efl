@@ -4336,17 +4336,21 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 	eina_stringshare_del(sname);
      }
 
-   if (!found && p && external->external_params)
-     external->external_params = eina_list_append(external->external_params, p);
+     if (!found)
+       {
+          if (external)
+            external->external_params = eina_list_append(external->external_params, p);
+          else
+            free(p);
+       }
 
    if (rp->typedata.swallow && rp->param1.external_params)
-      _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object,
-				     rp->param1.external_params);
+     _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object,
+                                       rp->param1.external_params);
    if (rp->typedata.swallow && external->external_params)
       rp->param1.external_params = \
-			        _edje_external_params_parse(rp->typedata.swallow->swallowed_object,
-							    external->external_params);
-
+        _edje_external_params_parse(rp->typedata.swallow->swallowed_object,
+                                    external->external_params);
 
    return EINA_TRUE;
 }
