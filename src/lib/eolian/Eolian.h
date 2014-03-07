@@ -434,6 +434,21 @@ EAPI Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc);
 EAPI const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
 
 /*
+ * @brief Get the return comment of a function.
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return the return comment of the function
+ *
+ * The type of the function is needed because a given function can represent a
+ * property, that can be set and get functions.
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *
+eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
+
+/*
  * @brief Indicates if a function return is warn-unused.
  *
  * @param[in] function_id id of the function

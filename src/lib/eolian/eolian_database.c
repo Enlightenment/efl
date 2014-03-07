@@ -796,6 +796,20 @@ eolian_function_return_type_get(Eolian_Function foo_id, Eolian_Function_Type fty
    return ret;
 }
 
+EAPI const char *
+eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type ftype)
+{
+   const char *key = NULL;
+   switch (ftype)
+     {
+      case SET: key = EOLIAN_PROP_SET_RETURN_COMMENT; break;
+      case GET: key = EOLIAN_PROP_GET_RETURN_COMMENT; break;
+      case UNRESOLVED: case METHOD_FUNC: key = EOLIAN_RETURN_COMMENT; break;
+      default: return NULL;
+     }
+   return eolian_function_data_get(foo_id, key);
+}
+
 void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
       Eolian_Function_Type ftype, Eina_Bool warn_unused)
 {
