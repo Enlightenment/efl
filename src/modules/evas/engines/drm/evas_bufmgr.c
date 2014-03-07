@@ -332,6 +332,7 @@ evas_bufmgr_shutdown(void)
    _ebi = NULL;
 }
 
+#ifdef HAVE_DRM_HW_ACCEL
 void *
 evas_bufmgr_window_create(void *surface)
 {
@@ -534,3 +535,4 @@ evas_bufmgr_texture_create(void *image)
 
    return tex;
 }
+#endif
