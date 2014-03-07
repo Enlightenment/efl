@@ -1275,12 +1275,12 @@ _edje_entry_hide_visible_password(Edje *ed, Edje_Real_Part *rp)
                {
                   evas_textblock_node_format_remove_pair(rp->object,
                                                          (Evas_Object_Textblock_Node_Format *) node);
+                  _edje_emit(ed, "entry,changed", rp->part->name);
                   break;
                }
           }
      }
    _edje_entry_real_part_configure(ed, rp);
-   _edje_emit(ed, "entry,changed", rp->part->name);
 }
 
 static Eina_Bool
