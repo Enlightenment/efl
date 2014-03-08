@@ -2471,7 +2471,7 @@ _elm_genlist_item_unfocused(Elm_Gen_Item *it)
      return;
 
    if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)) 
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
 
    if ((!sd->focused_item) ||
@@ -4404,7 +4404,7 @@ _item_mouse_up_cb(void *data,
      return;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   
+
    if (sd->focused_item != (Elm_Object_Item *)it)
      elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
 
