@@ -1760,6 +1760,8 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
      {
         return ecore_evas_gl_x11_window_get(ee);
      }
+#else
+   (void)ee;
 #endif
    return 0;
 }
