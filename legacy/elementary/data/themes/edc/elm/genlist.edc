@@ -260,6 +260,7 @@ group { name: "elm/genlist/item_compress/group_index/default";
 
 group { name: "elm/genlist/item/default/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -634,6 +635,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/default/default", "elm/genlist/item/
 
 group { name: "elm/genlist/item/default_style/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -874,6 +876,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/default_style/default", "elm/genlist
 
 group { name: "elm/genlist/item/one_icon/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
@@ -1074,6 +1077,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/one_icon/default", "elm/genlist/item
 
 group { name: "elm/genlist/item/end_icon/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
@@ -1273,6 +1277,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/end_icon/default", "elm/genlist/item
 
 group { name: "elm/genlist/item/no_icon/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -1445,6 +1450,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/no_icon/default", "elm/genlist/item/
 
 group { name: "elm/genlist/item/full/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "contents" "elm.swallow.content";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -1887,6 +1893,7 @@ group { name: "elm/genlist/tree_compress_odd/full/default";
 
 group { name: "elm/genlist/tree/tree_effect/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -1982,6 +1989,7 @@ group { name: "elm/genlist/item/tree_effect/default";
 
 group { name: "elm/genlist/item/icon_top_text_bottom/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
@@ -2412,6 +2420,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
    }
 group { name: "elm/genlist/item/double_label/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.text.sub";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -3036,6 +3045,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
    }
 group { name: "elm/genlist/item/message/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.title.1 elm.title.2";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
@@ -3431,6 +3441,7 @@ COMPRESS_T1T2_ODD("elm/genlist/item_compress_odd/message/default", "elm/genlist/
 
 group { name: "elm/genlist/item/media/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text.title elm.text.album-artist";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -3900,6 +3911,7 @@ COMPRESS_MEDIA_ODD("elm/genlist/item_compress_odd/media/default", "elm/genlist/i
       
 group { name: "elm/genlist/item/media-album/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text.title elm.text.trackno elm.text.length";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
@@ -4492,6 +4504,7 @@ group { name: "elm/genlist/item_compress_odd/media-album/default";
 
 group { name: "elm/genlist/item/media-preview/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.text.artist";
    data.item: "contents" "elm.swallow.preview";
    data.item: "treesize" TREEPAD;
@@ -5081,6 +5094,7 @@ group { name: "elm/genlist/item_odd_compress/media-preview/default";
    }
 group { name: "elm/genlist/item/mode/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text.mode";
    data.item: "mode_part" "elm.swallow.original";
    data.item: "treesize" TREEPAD;
@@ -5413,6 +5427,7 @@ COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tre
 group { name: "elm/genlist/item/edit/default";
    data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shadow_horiz.png" COMP;

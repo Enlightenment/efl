@@ -377,6 +377,8 @@
  *   was unhighlighted.
  * - @c "focused" - When the genlist has received focus. (since 1.8)
  * - @c "unfocused" - When the genlist has lost focus. (since 1.8)
+ * - @c "item,focused" - When the genlist item has recieved focus. (since 1.10)
+ * - @c "item,unfocused" - When the genlist item has lost focus. (since 1.10)
  *
  *
  * Supported elm_object_item common APIs
