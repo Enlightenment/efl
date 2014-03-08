@@ -3227,6 +3227,12 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
 
    if (it->selected)
      sd->selected = eina_list_remove(sd->selected, it);
+   if (sd->last_focused_item == (Elm_Object_Item *)it)
+     sd->last_focused_item = NULL;
+   if (sd->focused_item == (Elm_Object_Item *)it)
+     sd->focused_item = NULL;
+   if (sd->last_selected_item == (Elm_Object_Item *)it)
+     sd->last_selected_item = NULL;
 
    if (it->itc->func.del)
      it->itc->func.del((void *)it->base.data, WIDGET(it));
@@ -3251,8 +3257,6 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
 
-   if (sd->last_selected_item == (Elm_Object_Item *)it)
-     sd->last_selected_item = NULL;
    sd->item_count--;
 
    ELM_SAFE_FREE(it->item, free);

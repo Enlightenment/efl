@@ -1670,6 +1670,13 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    sd->items = eina_list_remove_list(sd->items, item->node);
 
+   if (sd->focused_item == (Elm_Object_Item *)it)
+     sd->focused_item = NULL;
+   if (sd->last_focused_item == (Elm_Object_Item *)it)
+     sd->last_focused_item = NULL;
+   if (sd->last_selected_item == (Elm_Object_Item *)it)
+     sd->last_selected_item = NULL;
+
    evas_object_ref(obj);
    _elm_list_walk(sd);
 
