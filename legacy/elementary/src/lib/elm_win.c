@@ -2844,7 +2844,8 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    Evas_Object *parent;
    Evas *e;
    const Eina_List *l;
-   const char *fontpath, *fallback = NULL;
+   const char *fontpath, *engine = NULL, *enginelist[32], *disp;
+   int i;
 
    Elm_Win_Smart_Data tmp_sd;
 
@@ -2852,17 +2853,6 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Elm_Win_Smart_Data));
-
-#define FALLBACK_TRY(engine)                                      \
-  if (!tmp_sd.ee) {                                               \
-     CRI(engine " engine creation failed. Trying default."); \
-  } while (0)
-#define FALLBACK_STORE(engine)                               \
-   if (tmp_sd.ee)                                            \
-   {                                                         \
-      CRI(engine "Fallback to %s successful.", engine); \
-      fallback = engine;                                     \
-   }
 
    switch (type)
      {
@@ -2893,140 +2883,128 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
         break;
 
       default:
-        if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
+        disp = getenv("ELM_DISPLAY");
+        if ((disp) && (!strcmp(disp, "x11")))
           {
-             tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("Software X11");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                  FALLBACK_STORE("Software FB");
-               }
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_SOFTWARE_X11;
+             enginelist[2] = ELM_OPENGL_X11;
+             enginelist[3] = NULL;
           }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
+        else if ((disp) && (!strcmp(disp, "wl")))
           {
-             tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-             FALLBACK_TRY("Software FB");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-               }
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_WAYLAND_SHM;
+             enginelist[2] = ELM_WAYLAND_EGL;
+             enginelist[3] = NULL;
           }
-        else if (ENGINE_COMPARE(ELM_OPENGL_X11))
+        else if ((disp) && (!strcmp(disp, "win")))
           {
-             int opt[10];
-             int opt_i = 0;
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_SOFTWARE_WIN32;
+             enginelist[2] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "sdl")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_SOFTWARE_SDL;
+             enginelist[2] = ELM_OPENGL_SDL;
+             enginelist[3] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "mac")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_OPENGL_COCOA;
+             enginelist[2] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "ews")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_EWS;
+             enginelist[2] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "fb")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_SOFTWARE_FB;
+             enginelist[2] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "buffer")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_BUFFER;
+             enginelist[2] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "ps3")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_SOFTWARE_PSL1GHT;
+             enginelist[2] = NULL;
+          }
+        else if ((disp) && (!strcmp(disp, "shot")))
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = NULL;
+          }
+        else
+          {
+             enginelist[0] = ENGINE_GET();
+             enginelist[1] = ELM_SOFTWARE_X11;
+             enginelist[2] = ELM_WAYLAND_SHM;
+             enginelist[3] = ELM_SOFTWARE_FB;
+             enginelist[4] = ELM_OPENGL_COCOA;
+             enginelist[5] = ELM_SOFTWARE_SDL;
+             enginelist[6] = NULL;
+          }
+        for (i = 0; i < 30; i++)
+          {
+             if ((i > 0) && (!enginelist[i])) break;
+             if (!strcmp(enginelist[i], ELM_SOFTWARE_X11))
+               tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_OPENGL_X11))
+               {
+                  int opt[10], opt_i = 0;
 
-             if (_elm_config->vsync)
-               {
-                  opt[opt_i] = ECORE_EVAS_GL_X11_OPT_VSYNC;
-                  opt_i++;
-                  opt[opt_i] = 1;
-                  opt_i++;
-                  opt[opt_i] = 0;
-               }
-             if (opt_i > 0)
-               tmp_sd.ee = ecore_evas_gl_x11_options_new
-                   (NULL, 0, 0, 0, 1, 1, opt);
-             else
-               tmp_sd.ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("OpenGL");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
+                  if (_elm_config->vsync)
                     {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
+                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_VSYNC;
+                       opt[opt_i++] = 1;
+                       opt[opt_i++] = 0;
                     }
+                  if (opt_i > 0)
+                    tmp_sd.ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 1, 1, opt);
+                  else
+                    tmp_sd.ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
                }
-          }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
-          {
-             tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
-             FALLBACK_TRY("Software Win32");
-          }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_PSL1GHT))
-          {
-             tmp_sd.ee = ecore_evas_psl1ght_new(NULL, 1, 1);
-             FALLBACK_TRY("PSL1GHT");
-          }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_SDL))
-          {
-             tmp_sd.ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
-             FALLBACK_TRY("Software SDL");
-             if (!tmp_sd.ee)
+             else if (!strcmp(enginelist[i], ELM_WAYLAND_SHM))
+               tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
+             else if (!strcmp(enginelist[i], ELM_WAYLAND_EGL))
+               tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
+             else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
+               tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_SOFTWARE_SDL))
+               tmp_sd.ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
+             else if (!strcmp(enginelist[i], ELM_OPENGL_SDL))
+               tmp_sd.ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
+             else if (!strcmp(enginelist[i], ELM_OPENGL_COCOA))
+               tmp_sd.ee = ecore_evas_cocoa_new(NULL, 1, 1, 0, 0);
+             else if (!strcmp(enginelist[i], ELM_EWS))
+               tmp_sd.ee = ecore_evas_ews_new(0, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_SOFTWARE_FB))
+               tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_BUFFER))
+               tmp_sd.ee = ecore_evas_buffer_new(1, 1);
+             else if (!strcmp(enginelist[i], ELM_SOFTWARE_PSL1GHT))
+               tmp_sd.ee = ecore_evas_psl1ght_new(NULL, 1, 1);
+             else if (!strncmp(enginelist[i], "shot:", 5))
                {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
-                    {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
-                    }
+                  tmp_sd.ee = ecore_evas_buffer_new(1, 1);
+                  ecore_evas_manual_render_set(tmp_sd.ee, EINA_TRUE);
+                  tmp_sd.shot.info = eina_stringshare_add(ENGINE_GET() + 5);
                }
+             engine = enginelist[i];
+             if (tmp_sd.ee) break;
           }
-        else if (ENGINE_COMPARE(ELM_SOFTWARE_16_SDL))
-          {
-             tmp_sd.ee = ecore_evas_sdl16_new(NULL, 0, 0, 0, 0, 0, 1);
-             FALLBACK_TRY("Software-16-SDL");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
-                    {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
-                    }
-               }
-          }
-        else if (ENGINE_COMPARE(ELM_OPENGL_SDL))
-          {
-             tmp_sd.ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
-             FALLBACK_TRY("OpenGL SDL");
-             if (!tmp_sd.ee)
-               {
-                  tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Software X11");
-                  if (!tmp_sd.ee)
-                    {
-                       tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Software FB");
-                    }
-               }
-          }
-        else if (ENGINE_COMPARE(ELM_OPENGL_COCOA))
-          {
-             tmp_sd.ee = ecore_evas_cocoa_new(NULL, 1, 1, 0, 0);
-             FALLBACK_TRY("OpenGL Cocoa");
-          }
-        else if (ENGINE_COMPARE(ELM_BUFFER))
-          {
-             tmp_sd.ee = ecore_evas_buffer_new(1, 1);
-          }
-        else if (ENGINE_COMPARE(ELM_EWS))
-          {
-             tmp_sd.ee = ecore_evas_ews_new(0, 0, 1, 1);
-          }
-        else if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
-          {
-             tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
-          }
-        else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
-          {
-             tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
-          }
-        else if (!strncmp(ENGINE_GET(), "shot:", 5))
-          {
-             tmp_sd.ee = ecore_evas_buffer_new(1, 1);
-             ecore_evas_manual_render_set(tmp_sd.ee, EINA_TRUE);
-             tmp_sd.shot.info = eina_stringshare_add
-                 (ENGINE_GET() + 5);
-          }
-#undef FALLBACK_TRY
         break;
      }
 
@@ -3069,8 +3047,6 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
 #ifdef HAVE_ELEMENTARY_X
    else if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_8_X11) ||
             ENGINE_COMPARE(ELM_OPENGL_X11))
      {
         sd->x.client_message_handler = ecore_event_handler_add
@@ -3079,7 +3055,6 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
             (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_win_property_change, obj);
      }
 #endif
-
    else if (!strncmp(ENGINE_GET(), "shot:", 5))
      _shot_init(sd);
 
@@ -3181,14 +3156,13 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    _elm_win_list = eina_list_append(_elm_win_list, obj);
    _elm_win_count++;
 
-   if (((fallback) && (!strcmp(fallback, "Software FB"))) ||
-       ((!fallback) && (ENGINE_COMPARE(ELM_SOFTWARE_FB))))
+   if (!strcmp(engine, ELM_SOFTWARE_FB))
      {
         TRAP(sd, fullscreen_set, 1);
      }
    else if ((type != ELM_WIN_INLINED_IMAGE) &&
-            (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
-             ENGINE_COMPARE(ELM_WAYLAND_EGL)))
+            (!strcmp(engine, ELM_WAYLAND_SHM) ||
+            (!strcmp(engine, ELM_WAYLAND_EGL))))
      _elm_win_frame_add(sd, "default");
 
    if (_elm_config->focus_highlight_enable)
@@ -3209,8 +3183,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
        ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
-           (((fallback) && (!strcmp(fallback, "Software FB"))) ||
-               ((!fallback) && (ENGINE_COMPARE(ELM_SOFTWARE_FB))))))
+        (!strcmp(engine, ELM_SOFTWARE_FB))))
      {
         Evas_Object *o;
         Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
