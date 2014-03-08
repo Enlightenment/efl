@@ -22,6 +22,7 @@ static Eet_Data_Descriptor *_config_color_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_bindings_widget_edd = NULL;
 static Eet_Data_Descriptor *_config_binding_key_edd = NULL;
 const char *_elm_preferred_engine = NULL;
+const char *_elm_accel_preference = NULL;
 Eina_List  *_font_overlays_del = NULL;
 Eina_List  *_color_overlays_del = NULL;
 
@@ -3005,6 +3006,7 @@ _elm_config_init(void)
    _config_load();
    _env_get();
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
+   ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    _translation_init();
    _config_apply();
    _elm_config_font_overlay_apply();
@@ -3146,6 +3148,23 @@ elm_config_preferred_engine_set(const char *engine)
 }
 
 EAPI const char *
+elm_config_accel_preference_get(void)
+{
+   return _elm_accel_preference;
+}
+
+EAPI void
+elm_config_accel_preference_set(const char *pref)
+{
+   if (pref)
+     eina_stringshare_replace(&(_elm_accel_preference), pref);
+   else
+     {
+        ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
+     }
+}
+
+EAPI const char *
 elm_config_indicator_service_get(int rotation)
 {
    switch (rotation)
@@ -3207,6 +3226,7 @@ _elm_config_shutdown(void)
      }
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
+   ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_profile, free);
 
 #ifdef HAVE_ELEMENTARY_X

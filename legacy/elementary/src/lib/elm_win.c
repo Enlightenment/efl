@@ -2886,17 +2886,49 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
         disp = getenv("ELM_DISPLAY");
         if ((disp) && (!strcmp(disp, "x11")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_SOFTWARE_X11;
-             enginelist[2] = ELM_OPENGL_X11;
-             enginelist[3] = NULL;
+             if ((_elm_accel_preference) &&
+                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
+                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
+                  (!strcasecmp(_elm_accel_preference, "3d")) ||
+                  (!strcasecmp(_elm_accel_preference, "hw")) ||
+                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
+                  (!strcasecmp(_elm_accel_preference, "accel"))
+                 ))
+               {
+                  enginelist[0] = ELM_OPENGL_X11;
+                  enginelist[1] = ELM_SOFTWARE_X11;
+                  enginelist[2] = NULL;
+               }
+             else
+               {
+                  enginelist[0] = ENGINE_GET();
+                  enginelist[1] = ELM_SOFTWARE_X11;
+                  enginelist[2] = ELM_OPENGL_X11;
+                  enginelist[3] = NULL;
+               }
           }
         else if ((disp) && (!strcmp(disp, "wl")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_WAYLAND_SHM;
-             enginelist[2] = ELM_WAYLAND_EGL;
-             enginelist[3] = NULL;
+             if ((_elm_accel_preference) &&
+                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
+                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
+                  (!strcasecmp(_elm_accel_preference, "3d")) ||
+                  (!strcasecmp(_elm_accel_preference, "hw")) ||
+                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
+                  (!strcasecmp(_elm_accel_preference, "accel"))
+                 ))
+               {
+                  enginelist[0] = ELM_WAYLAND_EGL;
+                  enginelist[1] = ELM_WAYLAND_SHM;
+                  enginelist[2] = NULL;
+               }
+             else
+               {
+                  enginelist[0] = ENGINE_GET();
+                  enginelist[1] = ELM_WAYLAND_SHM;
+                  enginelist[2] = ELM_WAYLAND_EGL;
+                  enginelist[3] = NULL;
+               }
           }
         else if ((disp) && (!strcmp(disp, "win")))
           {
@@ -2906,10 +2938,26 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           }
         else if ((disp) && (!strcmp(disp, "sdl")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_SOFTWARE_SDL;
-             enginelist[2] = ELM_OPENGL_SDL;
-             enginelist[3] = NULL;
+             if ((_elm_accel_preference) &&
+                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
+                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
+                  (!strcasecmp(_elm_accel_preference, "3d")) ||
+                  (!strcasecmp(_elm_accel_preference, "hw")) ||
+                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
+                  (!strcasecmp(_elm_accel_preference, "accel"))
+                 ))
+               {
+                  enginelist[0] = ELM_OPENGL_SDL;
+                  enginelist[1] = ELM_SOFTWARE_SDL;
+                  enginelist[2] = NULL;
+               }
+             else
+               {
+                  enginelist[0] = ENGINE_GET();
+                  enginelist[1] = ELM_SOFTWARE_SDL;
+                  enginelist[2] = ELM_OPENGL_SDL;
+                  enginelist[3] = NULL;
+               }
           }
         else if ((disp) && (!strcmp(disp, "mac")))
           {
@@ -2948,13 +2996,33 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           }
         else
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_SOFTWARE_X11;
-             enginelist[2] = ELM_WAYLAND_SHM;
-             enginelist[3] = ELM_SOFTWARE_FB;
-             enginelist[4] = ELM_OPENGL_COCOA;
-             enginelist[5] = ELM_SOFTWARE_SDL;
-             enginelist[6] = NULL;
+             if ((_elm_accel_preference) &&
+                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
+                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
+                  (!strcasecmp(_elm_accel_preference, "3d")) ||
+                  (!strcasecmp(_elm_accel_preference, "hw")) ||
+                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
+                  (!strcasecmp(_elm_accel_preference, "accel"))
+                 ))
+               {
+                  enginelist[0] = ENGINE_GET();
+                  enginelist[1] = ELM_OPENGL_X11;
+                  enginelist[2] = ELM_WAYLAND_EGL;
+                  enginelist[3] = ELM_SOFTWARE_FB;
+                  enginelist[4] = ELM_OPENGL_COCOA;
+                  enginelist[5] = ELM_OPENGL_SDL;
+                  enginelist[6] = NULL;
+               }
+             else
+               {
+                  enginelist[0] = ENGINE_GET();
+                  enginelist[1] = ELM_SOFTWARE_X11;
+                  enginelist[2] = ELM_WAYLAND_SHM;
+                  enginelist[3] = ELM_SOFTWARE_FB;
+                  enginelist[4] = ELM_OPENGL_COCOA;
+                  enginelist[5] = ELM_SOFTWARE_SDL;
+                  enginelist[6] = NULL;
+               }
           }
         for (i = 0; i < 30; i++)
           {

@@ -806,6 +806,41 @@ EAPI const char *elm_config_preferred_engine_get(void);
  */
 EAPI void        elm_config_preferred_engine_set(const char *engine);
 
+/**
+ * @brief Get Elementary's preferred engine to use.
+ *
+ * @return The acceleration preference hint string
+ * @note there's no need to free the returned string, here.
+ *
+ * See elm_config_accel_preference_set() for more information, but this simply
+ * returns what was set by this call, nothing more.
+ * 
+ * @see elm_config_accel_preference_set()
+ */
+EAPI const char *elm_config_accel_preference_get(void);
+
+/**
+ * @brief Set Elementary's acceleration preferences for new windows.
+ *
+ * @param pref The preference desired as a normal C string
+ *
+ * Note that it will take effect only to Elementary windows created after
+ * this is called. The @p pref string is a freeform C string that indicates
+ * what kind of acceleration is preferred. This may or may not be honored,
+ * but a best attempt will be made. Known strings are as follows:
+ * 
+ * "gl", "opengl" - try use opengl.
+ * "3d" - try and use a 3d acceleration unit.
+ * "hw", "hardware", "accel" - try any acceleration unit (best possible)
+ * 
+ * This takes precedence over engine preferences set with
+ * elm_config_preferred_engine_set().
+ * 
+ * @see elm_win_add()
+ */
+EAPI void        elm_config_accel_preference_set(const char *pref);
+
+
 typedef struct _Elm_Text_Class
 {
    const char *name;

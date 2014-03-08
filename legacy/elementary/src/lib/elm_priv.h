@@ -532,6 +532,7 @@ extern int _elm_log_dom;
 extern Eina_List *_elm_win_list;
 extern int _elm_win_deferred_free;
 extern const char *_elm_preferred_engine;
+extern const char *_elm_accel_preference;
 extern const char SIG_WIDGET_FOCUSED[];
 extern const char SIG_WIDGET_UNFOCUSED[];
 extern const char SIG_WIDGET_LANG_CHANGED[];
