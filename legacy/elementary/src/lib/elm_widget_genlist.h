@@ -126,10 +126,7 @@ struct _Elm_Genlist_Smart_Data
    /* a scrollto type which remembers where to scroll ex) in, top,
     * middle */
    Elm_Genlist_Item_Scrollto_Type        scroll_to_type;
-   Evas_Object                          *alpha_bg; /* not to receive
-                                                    * event when tree
-                                                    * effect is not
-                                                    * finished */
+   Evas_Object                          *event_block_rect; /**< This object blocks the event in some cases. For example, when the tree effect is running and not finished, this object blocks events to the genlist. */
    Eina_List                            *move_items; /* items move for
                                                       * tree effect */
    Elm_Gen_Item                         *expanded_next_item;

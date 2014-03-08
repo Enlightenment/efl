@@ -797,8 +797,8 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
      }
 
    _item_auto_scroll(sd);
-   evas_object_lower(sd->alpha_bg);
-   evas_object_hide(sd->alpha_bg);
+   evas_object_lower(sd->event_block_rect);
+   evas_object_hide(sd->event_block_rect);
    sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
    sd->move_items = eina_list_free(sd->move_items);
 
@@ -2221,9 +2221,9 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
         if (!sd->tree_effect_animator)
           {
              _item_tree_effect_before(sd->expanded_item);
-             evas_object_raise(sd->alpha_bg);
-             evas_object_stack_below(sd->alpha_bg, sd->stack[1]);
-             evas_object_show(sd->alpha_bg);
+             evas_object_raise(sd->event_block_rect);
+             evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
+             evas_object_show(sd->event_block_rect);
              sd->start_time = ecore_time_get();
              sd->tree_effect_animator =
                ecore_animator_add(_tree_effect_animator_cb, sd->obj);
@@ -5328,7 +5328,7 @@ _elm_genlist_clear(Evas_Object *obj,
    sd->minw = 0;
    sd->minh = 0;
 
-   ELM_SAFE_FREE(sd->alpha_bg, evas_object_del);
+   ELM_SAFE_FREE(sd->event_block_rect, evas_object_del);
 
    if (sd->pan_obj)
      {
@@ -6414,8 +6414,8 @@ elm_genlist_item_subitems_clear(Elm_Object_Item *item)
           {
              sd->expanded_item = it;
              _item_tree_effect_before(it);
-             evas_object_stack_below(sd->alpha_bg, sd->stack[1]);
-             evas_object_show(sd->alpha_bg);
+             evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
+             evas_object_show(sd->event_block_rect);
              sd->start_time = ecore_time_get();
              sd->tree_effect_animator =
                ecore_animator_add(_tree_effect_animator_cb, sd->obj);
@@ -6524,23 +6524,24 @@ _elm_genlist_move_items_set(Elm_Gen_Item *it)
      }
 }
 
-static Evas_Object *
-_tray_alpha_bg_create(const Evas_Object *obj)
+static void
+_event_block_rect_update(const Evas_Object *obj)
 {
-   Evas_Object *bg = NULL;
    Evas_Coord ox, oy, ow, oh;
 
-   ELM_GENLIST_CHECK(obj) NULL;
+   ELM_GENLIST_CHECK(obj);
    ELM_GENLIST_DATA_GET(obj, sd);
 
-   evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
-   bg = evas_object_rectangle_add
-       (evas_object_evas_get(sd->obj));
-   evas_object_color_set(bg, 0, 0, 0, 0);
-   evas_object_resize(bg, ow, oh);
-   evas_object_move(bg, ox, oy);
+   if (!sd->event_block_rect)
+     {
+        sd->event_block_rect = evas_object_rectangle_add(
+           evas_object_evas_get(sd->obj));
+     }
 
-   return bg;
+   evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
+   evas_object_color_set(sd->event_block_rect, 0, 0, 0, 0);
+   evas_object_resize(sd->event_block_rect, ow, oh);
+   evas_object_move(sd->event_block_rect, ox, oy);
 }
 
 EAPI void
@@ -6559,8 +6560,8 @@ elm_genlist_item_expanded_set(Elm_Object_Item *item,
    sd->expanded_item = it;
    _elm_genlist_move_items_set(it);
 
-   if (sd->tree_effect_enabled && !sd->alpha_bg)
-     sd->alpha_bg = _tray_alpha_bg_create(WIDGET(it));
+   if (sd->tree_effect_enabled)
+     _event_block_rect_update(WIDGET(it));
 
    if (it->item->expanded)
      {
