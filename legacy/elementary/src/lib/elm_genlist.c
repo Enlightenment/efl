@@ -123,12 +123,13 @@ _elm_genlist_pan_smart_pos_set(Eo *obj, void *_pd, va_list *list)
    Item_Block *itb;
 
    Elm_Genlist_Pan_Smart_Data *psd = _pd;
+   Elm_Genlist_Smart_Data *sd = psd->wsd;
 
-   if ((x == psd->wsd->pan_x) && (y == psd->wsd->pan_y)) return;
-   psd->wsd->pan_x = x;
-   psd->wsd->pan_y = y;
+   if ((x == sd->pan_x) && (y == sd->pan_y)) return;
+   sd->pan_x = x;
+   sd->pan_y = y;
 
-   EINA_INLIST_FOREACH(psd->wsd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         if ((itb->y + itb->h) > y)
           {
@@ -139,15 +140,15 @@ _elm_genlist_pan_smart_pos_set(Eo *obj, void *_pd, va_list *list)
                {
                   if ((itb->y + it->y) >= y)
                     {
-                       psd->wsd->anchor_item = it;
-                       psd->wsd->anchor_y = -(itb->y + it->y - y);
+                       sd->anchor_item = it;
+                       sd->anchor_y = -(itb->y + it->y - y);
                        goto done;
                     }
                }
           }
      }
 done:
-   if (!psd->wsd->reorder_move_animator) evas_object_smart_changed(obj);
+   if (!sd->reorder_move_animator) evas_object_smart_changed(obj);
 }
 
 static void
@@ -238,26 +239,27 @@ _elm_genlist_pan_smart_resize(Eo *obj, void *_pd, va_list *list)
    Evas_Coord h = va_arg(*list, Evas_Coord);
 
    Elm_Genlist_Pan_Smart_Data *psd = _pd;
+   Elm_Genlist_Smart_Data *sd = psd->wsd;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
-   if ((psd->wsd->mode == ELM_LIST_COMPRESS) && (ow != w))
+   if ((sd->mode == ELM_LIST_COMPRESS) && (ow != w))
      {
         /* fix me later */
         ecore_job_del(psd->resize_job);
         psd->resize_job =
           ecore_job_add(_elm_genlist_pan_smart_resize_job, obj);
      }
-   psd->wsd->pan_changed = EINA_TRUE;
+   sd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
-   ecore_job_del(psd->wsd->calc_job);
+   ecore_job_del(sd->calc_job);
    // if the width changed we may have to resize content if scrollbar went
    // away or appeared to queue a job to deal with it. it should settle in
    // the end to a steady-state
    if (ow != w)
-     psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
+     sd->calc_job = ecore_job_add(_calc_job, psd->wobj);
    else
-     psd->wsd->calc_job = NULL;
+     sd->calc_job = NULL;
 }
 
 static void
@@ -2194,44 +2196,45 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
    int in = 0;
 
    Elm_Genlist_Pan_Smart_Data *psd = _pd;
+   Elm_Genlist_Smart_Data *sd = psd->wsd;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   if (psd->wsd->pan_changed)
+   if (sd->pan_changed)
      {
-        ecore_job_del(psd->wsd->calc_job);
-        psd->wsd->calc_job = NULL;
-        _calc_job(psd->wsd->obj);
-        psd->wsd->pan_changed = EINA_FALSE;
+        ecore_job_del(sd->calc_job);
+        sd->calc_job = NULL;
+        _calc_job(sd->obj);
+        sd->pan_changed = EINA_FALSE;
      }
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(obj), &cvx, &cvy, &cvw, &cvh);
-   EINA_LIST_FOREACH(psd->wsd->group_items, l, git)
+   EINA_LIST_FOREACH(sd->group_items, l, git)
      {
         git->item->want_realize = EINA_FALSE;
      }
 
-   if (psd->wsd->tree_effect_enabled &&
-       (psd->wsd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
+   if (sd->tree_effect_enabled &&
+       (sd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
      {
-        if (!psd->wsd->tree_effect_animator)
+        if (!sd->tree_effect_animator)
           {
-             _item_tree_effect_before(psd->wsd->expanded_item);
-             evas_object_raise(psd->wsd->alpha_bg);
-             evas_object_stack_below(psd->wsd->alpha_bg, psd->wsd->stack[1]);
-             evas_object_show(psd->wsd->alpha_bg);
-             psd->wsd->start_time = ecore_time_get();
-             psd->wsd->tree_effect_animator =
-               ecore_animator_add(_tree_effect_animator_cb, psd->wsd->obj);
+             _item_tree_effect_before(sd->expanded_item);
+             evas_object_raise(sd->alpha_bg);
+             evas_object_stack_below(sd->alpha_bg, sd->stack[1]);
+             evas_object_show(sd->alpha_bg);
+             sd->start_time = ecore_time_get();
+             sd->tree_effect_animator =
+               ecore_animator_add(_tree_effect_animator_cb, sd->obj);
           }
      }
 
-   EINA_INLIST_FOREACH(psd->wsd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
-        itb->w = psd->wsd->minw;
-        if (ELM_RECTS_INTERSECT(itb->x - psd->wsd->pan_x + ox,
-                                itb->y - psd->wsd->pan_y + oy,
+        itb->w = sd->minw;
+        if (ELM_RECTS_INTERSECT(itb->x - sd->pan_x + ox,
+                                itb->y - sd->pan_y + oy,
                                 itb->w, itb->h,
                                 cvx, cvy, cvw, cvh))
           {
@@ -2245,34 +2248,34 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
           }
         in += itb->count;
      }
-   if ((!psd->wsd->reorder_it) || (psd->wsd->reorder_pan_move))
-     _group_items_recalc(psd->wsd);
-   if ((psd->wsd->reorder_mode) && (psd->wsd->reorder_it))
+   if ((!sd->reorder_it) || (sd->reorder_pan_move))
+     _group_items_recalc(sd);
+   if ((sd->reorder_mode) && (sd->reorder_it))
      {
-        if (psd->wsd->pan_y != psd->wsd->reorder_old_pan_y)
-          psd->wsd->reorder_pan_move = EINA_TRUE;
-        else psd->wsd->reorder_pan_move = EINA_FALSE;
+        if (sd->pan_y != sd->reorder_old_pan_y)
+          sd->reorder_pan_move = EINA_TRUE;
+        else sd->reorder_pan_move = EINA_FALSE;
 
-        evas_object_raise(psd->wsd->VIEW(reorder_it));
-        evas_object_stack_below(psd->wsd->VIEW(reorder_it), psd->wsd->stack[1]);
-        psd->wsd->reorder_old_pan_y = psd->wsd->pan_y;
-        psd->wsd->start_time = ecore_loop_time_get();
+        evas_object_raise(sd->VIEW(reorder_it));
+        evas_object_stack_below(sd->VIEW(reorder_it), sd->stack[1]);
+        sd->reorder_old_pan_y = sd->pan_y;
+        sd->start_time = ecore_loop_time_get();
      }
 
-   if (!psd->wsd->tree_effect_enabled ||
-       (psd->wsd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_NONE))
-     _item_auto_scroll(psd->wsd);
+   if (!sd->tree_effect_enabled ||
+       (sd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_NONE))
+     _item_auto_scroll(sd);
 
-   eo_do((psd->wsd)->obj,
+   eo_do((sd)->obj,
          elm_scrollable_interface_content_pos_get(&vx, &vy),
          elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
 
-   if (psd->wsd->reorder_fast == 1)
-      eo_do((psd->wsd)->obj, elm_scrollable_interface_content_region_show(vx, vy - 10, vw, vh));
-   else if (psd->wsd->reorder_fast == -1)
-      eo_do((psd->wsd)->obj, elm_scrollable_interface_content_region_show(vx, vy + 10, vw, vh));
+   if (sd->reorder_fast == 1)
+      eo_do((sd)->obj, elm_scrollable_interface_content_region_show(vx, vy - 10, vw, vh));
+   else if (sd->reorder_fast == -1)
+      eo_do((sd)->obj, elm_scrollable_interface_content_region_show(vx, vy + 10, vw, vh));
 
-   if (psd->wsd->focused_item)
+   if (sd->focused_item)
      _elm_widget_focus_highlight_start(psd->wobj);
 
    evas_event_thaw(evas_object_evas_get(obj));
