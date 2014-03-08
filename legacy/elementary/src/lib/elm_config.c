@@ -503,6 +503,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, cursor_engine_only, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_highlight_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_highlight_animate, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, focus_highlight_clip_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, fileselector_double_tap_navigation_enable, T_UCHAR);
@@ -1501,6 +1502,7 @@ _config_load(void)
    _elm_config->cursor_engine_only = EINA_TRUE;
    _elm_config->focus_highlight_enable = EINA_FALSE;
    _elm_config->focus_highlight_animate = EINA_TRUE;
+   _elm_config->focus_highlight_clip_disable = EINA_FALSE;
    _elm_config->toolbar_shrink_mode = 2;
    _elm_config->fileselector_expand_enable = EINA_FALSE;
    _elm_config->fileselector_double_tap_navigation_enable = EINA_FALSE;
@@ -2054,6 +2056,9 @@ _env_get(void)
    s = getenv("ELM_FOCUS_HIGHLIGHT_ANIMATE");
    if (s) _elm_config->focus_highlight_animate = !!atoi(s);
 
+   s = getenv("ELM_FOCUS_HIGHLIGHT_CLIP_DISABLE");
+   if (s) _elm_config->focus_highlight_clip_disable = !!atoi(s);
+
    s = getenv("ELM_TOOLBAR_SHRINK_MODE");
    if (s) _elm_config->toolbar_shrink_mode = atoi(s);
 
@@ -2563,6 +2568,19 @@ elm_config_focus_highlight_animate_set(Eina_Bool animate)
 {
    _elm_config->focus_highlight_animate = !!animate;
 }
+
+EAPI Eina_Bool
+elm_config_focus_highlight_clip_disabled_get(void)
+{
+   return _elm_config->focus_highlight_clip_disable;
+}
+
+EAPI void
+elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable)
+{
+   _elm_config->focus_highlight_clip_disable = !!disable;
+}
+
 
 EAPI Eina_Bool
 elm_config_scroll_bounce_enabled_get(void)

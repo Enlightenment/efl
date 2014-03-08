@@ -222,6 +222,7 @@ struct _Elm_Config
    unsigned char cursor_engine_only;
    unsigned char focus_highlight_enable;
    unsigned char focus_highlight_animate;
+   unsigned char focus_highlight_clip_disable; /**< This shows disabled status of focus highlight clip feature. This value is false by default so the focus highlight is clipped. */
    int           toolbar_shrink_mode;
    unsigned char fileselector_expand_enable;
    unsigned char fileselector_double_tap_navigation_enable;

@@ -1207,6 +1207,33 @@ EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
 EAPI void                 elm_config_focus_highlight_animate_set(Eina_Bool animate);
 
 /**
+ * Get the disable status of the focus highlight clip feature.
+ *
+ * @return The focus highlight clip disable status
+ *
+ * Get whether the focus highlight clip feature is disabled. If disabled return
+ * @c EINA_TRUE, else return @c EINA_FALSE. If the return is @c EINA_TRUE, focus
+ * highlight clip feature is not disabled so the focus highlight can be clipped.
+ *
+ * @see elm_config_focus_highlight_clip_disabled_set()
+ * @since 1.10
+ * @ingroup Focus
+ */
+EAPI Eina_Bool elm_config_focus_highlight_clip_disabled_get(void);
+
+/**
+ * Set the disable status of the focus highlight clip feature.
+ *
+ * @param disable Disable focus highlight clip feature if @c EINA_TRUE, enable
+ * it otherwise.
+ *
+ * @see elm_config_focus_highlight_clip_disabled_get()
+ * @since 1.10
+ * @ingroup Focus
+ */
+EAPI void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
+
+/**
  * Get the system mirrored mode. This determines the default mirrored mode
  * of widgets.
  *

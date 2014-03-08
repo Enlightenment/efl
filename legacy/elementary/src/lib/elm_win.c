@@ -715,7 +715,9 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
    elm_widget_focus_highlight_geometry_get(previous, &px, &py, &pw, &ph, EINA_FALSE);
    evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
-   evas_object_clip_unset(obj);
+
+   if (!_elm_config->focus_highlight_clip_disable)
+     evas_object_clip_unset(obj);
 
    m = alloca(sizeof(*m) + (sizeof(int) * 8));
    m->count = 8;
@@ -737,12 +739,16 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Smart_Data *sd,
    Evas_Object *clip, *target = sd->focus_highlight.cur.target;
    Evas_Coord x, y, w, h;
 
-   clip = evas_object_clip_get(target);
    elm_widget_focus_highlight_geometry_get(target, &x, &y, &w, &h, EINA_TRUE);
 
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
-   if (clip) evas_object_clip_set(obj, clip);
+
+   if (!_elm_config->focus_highlight_clip_disable)
+     {
+        clip = evas_object_clip_get(target);
+        if (clip) evas_object_clip_set(obj, clip);
+     }
 }
 
 static void

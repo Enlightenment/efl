@@ -44,6 +44,7 @@ group "Elm_Config" struct {
   value "cursor_engine_only" uchar: 1;
   value "focus_highlight_enable" uchar: 0;
   value "focus_highlight_animate" uchar: 0;
+  value "focus_highlight_clip_disable" uchar: 1;
   value "toolbar_shrink_mode" int: 3;
   value "fileselector_expand_enable" uchar: 1;
   value "fileselector_double_tap_navigation_enable" uchar: 1;
