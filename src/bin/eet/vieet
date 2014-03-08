@@ -1,19 +1,19 @@
 #!/bin/sh
 
-function cleanup() {
+cleanup() {
     if [ ! -z "$TFILE" ]; then
         rm "$TFILE"
     fi
 }
 
-function die() {
+die() {
     echo "$@"
     echo "Aborting"
     cleanup
     exit 1
 }
 
-function usage() {
+usage() {
     die "Usage: vieet <eet file> <section>"
 }
 
@@ -21,7 +21,7 @@ if [ $# -ne 2 ]; then
     usage
 fi
 
-if [[ -z "$EDITOR" ]]; then
+if [ -z "$EDITOR" ]; then
     die "EDITOR env var must be set."
 fi
 
