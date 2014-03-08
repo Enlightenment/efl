@@ -678,10 +678,17 @@ create_button(Evas_Object *parent, const char *text, Eina_Bool expand)
    return btn;
 }
 
+static void
+_focus_highlight_clip_disable_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
+{
+   Eina_Bool disable = elm_check_state_get(obj);
+   elm_config_focus_highlight_clip_disabled_set(disable);
+}
+
 void
 test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box, *sc, *btn_top, *btn_down, *btn[20], *box_btn, *lb, *fr;
+   Evas_Object *win, *box, *sc, *btn_top, *btn_down, *btn[20], *box_btn, *lb, *fr, *ck;
 
    char win_focus_theme[PATH_MAX] = { 0 };
    char item_name[PATH_MAX];
@@ -745,6 +752,14 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    btn_down = create_button(box, "down", EINA_FALSE);
    evas_object_show(btn_down);
    elm_box_pack_end(box, btn_down);
+
+   ck = elm_check_add(box);
+   elm_object_text_set(ck, "Focus Highlight Clip Disable");
+   elm_box_pack_end(box, ck);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _focus_highlight_clip_disable_changed_cb,
+                                  NULL);
 
    evas_object_show(win);
 }
