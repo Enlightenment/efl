@@ -1156,6 +1156,9 @@ EAPI void       elm_config_cache_edje_collection_cache_size_set(int size);
  *
  * This gets whether the highlight on focused objects is enabled or not
  *
+ * @return enable @c EINA_TRUE if the focus highlight is enabled, @c EINA_FALSE
+ * otherwise.
+ *
  * @see elm_config_focus_highlight_enabled_set()
  * @ingroup Focus
  */
@@ -1171,20 +1174,21 @@ EAPI Eina_Bool            elm_config_focus_highlight_enabled_get(void);
  * Note that it will take effect only to Elementary windows created after
  * this is called.
  *
- * @see elm_win_add()
- *
+ * @see elm_config_focus_highlight_enabled_get()
  * @ingroup Focus
  */
 EAPI void                 elm_config_focus_highlight_enabled_set(Eina_Bool enable);
 
 /**
- * Get the enable status of the highlight animation
+ * Get the enable status of the focus highlight animation
  *
- * @return The focus highlight mode set
+ * @return animate @c EINA_TRUE if the focus highlight animation is enabled, @c
+ * EINA_FALSE otherwise.
  *
  * Get whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
  *
+ * @see elm_config_focus_highlight_animate_set()
  * @ingroup Focus
  */
 EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
@@ -1200,8 +1204,7 @@ EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
  * Note that it will take effect only to Elementary windows created after
  * this is called.
  *
- * @see elm_win_add()
- *
+ * @see elm_config_focus_highlight_animate_get()
  * @ingroup Focus
  */
 EAPI void                 elm_config_focus_highlight_animate_set(Eina_Bool animate);
