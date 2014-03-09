@@ -2325,6 +2325,9 @@ enum
  * @{
  */
 
+#include "canvas/evas_textblock.eo.h"
+
+#if 0
 #define EVAS_OBJ_TEXTBLOCK_CLASS evas_object_textblock_class_get()
 
 const Eo_Class *evas_object_textblock_class_get(void) EINA_CONST;
@@ -2690,6 +2693,7 @@ enum
  * @see evas_object_textblock_style_insets_get
  */
 #define evas_obj_textblock_style_insets_get(l, r, t, b) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_INSETS_GET), EO_TYPECHECK(Evas_Coord *, l), EO_TYPECHECK(Evas_Coord *, r), EO_TYPECHECK(Evas_Coord *, t), EO_TYPECHECK(Evas_Coord *, b)
+#endif
 /**
  * @}
  */
