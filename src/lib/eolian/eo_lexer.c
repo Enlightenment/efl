@@ -4229,6 +4229,12 @@ eo_tokenizer_database_fill(const char *filename)
 
    if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
 
+   if (!toknz->classes)
+     {
+        ERR("No classes for file %s", filename);
+        goto end;
+     }
+
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {
         database_class_add(kls->name, kls->type);
