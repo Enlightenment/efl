@@ -7853,10 +7853,10 @@ _elm_genlist_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_lis
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
    Eina_Bool *is_next = va_arg(*list, Eina_Bool *);
-   Evas_Coord ox, oy, oh, ow, item_x, item_y, item_w, item_h;
+   Evas_Coord ox, oy, oh, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
    Elm_Genlist_Smart_Data *sd = _pd;
-   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(obj, &ox, &oy, NULL, &oh);
 
    if (is_next && *is_next)
      {
