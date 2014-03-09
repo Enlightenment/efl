@@ -374,11 +374,19 @@ _new_window_test_cb(void *data, Evas_Object *obj, void *event_info)
    const char *selected = elm_object_item_text_get(event_info);
    const char new_window_html[] = "<!doctype html><body>"
        "<script>"
-       "var open = function() {"
-       "  window.open('http://www.enlightenment.org','','width=400,height=300');"
-       "};"
+       "var h = null;"
+       "var test = function() {"
+       "  if (!h) {"
+       "    h = window.open('http://www.enlightenment.org','','width=400,height=300');"
+       "    document.getElementById('btn').value='close window';"
+       "  } else {"
+       "    h.close();"
+       "    h = null;"
+       "    document.getElementById('btn').value='open new window';"
+       "  }"
+       "}"
        "</script>"
-       "<input type='button' onclick='open();' value='click to open new window'>"
+       "<input type='button' id='btn' onclick='test();' value='open new window'>"
        "</body>";
 
    printf("selected test : %s\n", selected);

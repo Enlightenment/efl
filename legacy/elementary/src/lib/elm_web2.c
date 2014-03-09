@@ -48,6 +48,35 @@ _view_smart_del(Evas_Object *obj)
    _ewk_view_parent_sc.sc.del(obj);
 }
 
+static Evas_Object *
+_view_smart_window_create(Ewk_View_Smart_Data *vsd,
+                          const Ewk_Window_Features *window_features)
+{
+   Evas_Object *new;
+   Evas_Object *obj = evas_object_smart_parent_get(vsd->self);
+
+   ELM_WEB_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   if (!sd->hook.window_create) return NULL;
+
+   new = sd->hook.window_create
+       (sd->hook.window_create_data, obj, EINA_TRUE,
+       (const Elm_Web_Window_Features *)window_features);
+   if (new) return elm_web_webkit_view_get(new);
+
+   return NULL;
+}
+
+static void
+_view_smart_window_close(Ewk_View_Smart_Data *sd)
+{
+   Evas_Object *obj = evas_object_smart_parent_get(sd->self);
+
+   ELM_WEB_CHECK(obj);
+
+   evas_object_smart_callback_call(obj, "windows,close,request", NULL);
+}
+
 /**
  * Creates a new view object given the parent.
  *
@@ -78,6 +107,8 @@ _view_add(Evas_Object *parent)
         // TODO: by default, but user could override it to show as inwin.
         api.sc.add = _view_smart_add;
         api.sc.del = _view_smart_del;
+        api.window_create = _view_smart_window_create;
+        api.window_close = _view_smart_window_close;
 
         smart = evas_smart_class_new(&api.sc);
         if (!smart)
@@ -210,13 +241,11 @@ _window_create_hook_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *lis
 {
    Elm_Web_Window_Open func = va_arg(*list, Elm_Web_Window_Open);
    void *data = va_arg(*list, void *);
-#ifdef HAVE_ELEMENTARY_WEB
-  (void)func;
-  (void)data;
-#else
-  (void)func;
-  (void)data;
-#endif
+
+   Elm_Web_Smart_Data *sd = _pd;
+
+   sd->hook.window_create = func;
+   sd->hook.window_create_data = data;
 }
 
 EAPI void
@@ -1292,24 +1321,41 @@ _inwin_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 EAPI void
 elm_web_window_features_ref(Elm_Web_Window_Features *wf)
 {
-   // FIXME : need to implement
-   (void)wf;
+   ewk_object_ref((Ewk_Object *)wf);
 }
 
 EAPI void
 elm_web_window_features_unref(Elm_Web_Window_Features *wf)
 {
-   // FIXME : need to implement
-   (void)wf;
+   ewk_object_unref((Ewk_Object *)wf);
 }
 
 EAPI Eina_Bool
 elm_web_window_features_property_get(const Elm_Web_Window_Features *wf,
                                      Elm_Web_Window_Feature_Flag flag)
 {
-   // FIXME : need to implement
-   (void)wf;
-   (void)flag;
+   const Ewk_Window_Features *ewf = (const Ewk_Window_Features *)wf;
+   switch (flag)
+     {
+      case ELM_WEB_WINDOW_FEATURE_TOOLBAR:
+        return ewk_window_features_toolbar_visible_get(ewf);
+
+      case ELM_WEB_WINDOW_FEATURE_STATUSBAR:
+        return ewk_window_features_statusbar_visible_get(ewf);
+
+      case ELM_WEB_WINDOW_FEATURE_SCROLLBARS:
+        return ewk_window_features_scrollbars_visible_get(ewf);
+
+      case ELM_WEB_WINDOW_FEATURE_MENUBAR:
+        return ewk_window_features_menubar_visible_get(ewf);
+
+      case ELM_WEB_WINDOW_FEATURE_LOCATIONBAR:
+        return ewk_window_features_locationbar_visible_get(ewf);
+
+      case ELM_WEB_WINDOW_FEATURE_FULLSCREEN:
+        return ewk_window_features_fullscreen_get(ewf);
+     }
+
    return EINA_FALSE;
 }
 
@@ -1320,17 +1366,10 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
                                    Evas_Coord *w,
                                    Evas_Coord *h)
 {
-   // FIXME : need to implement
-   (void)wf;
-   (void)x;
-   (void)y;
-   (void)w;
-   (void)h;
-   return;
+   ewk_window_features_geometry_get
+     ((const Ewk_Window_Features *)wf, x, y, w, h);
 }
-#endif
 
-#if defined(HAVE_ELEMENTARY_WEB) && defined(USE_WEBKIT2)
 static void
 _class_constructor(Eo_Class *klass)
 {
