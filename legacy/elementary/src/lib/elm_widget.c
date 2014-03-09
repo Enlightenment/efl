@@ -4890,6 +4890,23 @@ _elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
    return;
 }
 
+/*
+ * @internal
+ *
+ * Get the focus highlight geometry of an widget.
+ *
+ * @param obj Widget object for the focus highlight
+ * @param x Focus highlight x coordinate
+ * @param y Focus highlight y coordinate
+ * @param w Focus highlight object width
+ * @param h Focus highlight object height
+ * @param is_next @c EINA_TRUE if this request is for the new focused object,
+ * @c EINA_FALSE if this request is for the previously focused object. This
+ * information becomes important when the focus highlight is changed inside one
+ * widget.
+ *
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
 {
@@ -4897,6 +4914,27 @@ elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, E
    eo_do(obj, elm_wdg_focus_highlight_geometry_get(x, y, w, h, &is_next));
 }
 
+/*
+ * @internal
+ *
+ * Get the 'focus_part' geometry if there is any
+ *
+ * This queries if there is a 'focus_part' request from the edc style. If edc
+ * style offers 'focus_part' edje data item, this function requests for the
+ * geometry of a specific part which is described in 'focus_part' edje data.
+ *
+ * @param obj Widget object for the focus highlight
+ * @param x Focus highlight x coordinate
+ * @param y Focus highlight y coordinate
+ * @param w Focus highlight object width
+ * @param h Focus highlight object height
+ *
+ * x, y, w, h already contain the object's geometry. If there is a 'focus_part'
+ * support, these values will be updated accordingly or the values will be
+ * remained as they were.
+ *
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
                                                    Evas_Coord *x,
