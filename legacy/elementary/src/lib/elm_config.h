@@ -816,6 +816,7 @@ EAPI void        elm_config_preferred_engine_set(const char *engine);
  * returns what was set by this call, nothing more.
  * 
  * @see elm_config_accel_preference_set()
+ * @since 1.10
  */
 EAPI const char *elm_config_accel_preference_get(void);
 
@@ -837,6 +838,7 @@ EAPI const char *elm_config_accel_preference_get(void);
  * elm_config_preferred_engine_set().
  * 
  * @see elm_win_add()
+ * @since 1.10
  */
 EAPI void        elm_config_accel_preference_set(const char *pref);
 
