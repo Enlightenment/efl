@@ -1224,7 +1224,7 @@ static const char *_list_focus_names[] = {"None", "Square", "Button", "Check", "
 static const int _list_focus_combo[] = { 1, 0, 2, 33, 43, 44, 10, 30, 22, 11, 10, -1 };
 
 static Evas_Object *
-test_list8_content_get(Evas_Object *obj, unsigned type, Eina_Bool horiz)
+test_list_focus_content_get(Evas_Object *obj, unsigned type, Eina_Bool horiz)
 {
    Evas_Object *cnt = NULL;
 
@@ -1245,9 +1245,9 @@ test_list8_content_get(Evas_Object *obj, unsigned type, Eina_Bool horiz)
          cnt = elm_box_add(obj);
          elm_box_horizontal_set(cnt, !horiz);
          evas_object_size_hint_align_set(cnt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-         elm_box_pack_end(cnt, test_list8_content_get(obj, 2, horiz));
-         elm_box_pack_end(cnt, test_list8_content_get(obj, 3, horiz));
-         elm_box_pack_end(cnt, test_list8_content_get(obj, 2, horiz));
+         elm_box_pack_end(cnt, test_list_focus_content_get(obj, 2, horiz));
+         elm_box_pack_end(cnt, test_list_focus_content_get(obj, 3, horiz));
+         elm_box_pack_end(cnt, test_list_focus_content_get(obj, 2, horiz));
          break;
       default:
          break;
@@ -1264,7 +1264,8 @@ test_list8_content_get(Evas_Object *obj, unsigned type, Eina_Bool horiz)
 }
 
 static void
-test_list8_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
+test_list_focus_focus_on_selection_set(Evas_Object *gl,
+                                       Evas_Object *chk, Eina_Bool focus)
 {
     elm_list_focus_on_selection_set(gl, focus);
     elm_check_state_set(chk, focus);
@@ -1272,14 +1273,16 @@ test_list8_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool f
 }
 
 static void
-test_list8_focus_check_changed(void *data, Evas_Object *obj, void *event_info  EINA_UNUSED)
+test_list_focus_focus_check_changed(void *data, Evas_Object *obj,
+                                    void *event_info  EINA_UNUSED)
 {
    Eina_Bool nextstate = !elm_list_focus_on_selection_get(data);
-   test_list8_focus_on_selection_set(data, obj, nextstate);
+   test_list_focus_focus_on_selection_set(data, obj, nextstate);
 }
 
 static void
-test_list8_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+test_list_focus_focus_animate_check_changed(void *data, Evas_Object *obj,
+                                            void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_animate_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
@@ -1299,9 +1302,10 @@ _list_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
    printf("\n=== Key Down : %s ===\n", ev->keyname);
 }
 
-void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
+static void
+_test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
-   Evas_Object *win, *li, *bx, *bxx, *chk;
+   Evas_Object *win, *li, *btn, *bx, *bx2, *bx_opt, *chk;
    unsigned int lhand, rhand, idx;
    char buf[256];
 
@@ -1311,17 +1315,34 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
 
-   bxx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bxx);
-   evas_object_show(bxx);
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Up");
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   bx2 = elm_box_add(bx);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   btn = elm_button_add(bx2);
+   elm_object_text_set(btn, "Left");
+   elm_box_pack_end(bx2, btn);
+   evas_object_show(btn);
 
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_list_horizontal_set(li, horiz);
    elm_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   elm_box_pack_end(bxx, li);
+   elm_box_pack_end(bx2, li);
    evas_object_show(li);
    evas_object_smart_callback_add(li, "item,focused", _item_cb, "item,focused");
    evas_object_smart_callback_add(li, "item,unfocused", _item_cb, "item,unfocused");
@@ -1332,31 +1353,43 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    evas_object_smart_callback_add(li, "unhighlighted", _item_cb, "unhighlighted");
    evas_object_event_callback_add(li, EVAS_CALLBACK_KEY_DOWN, _list_key_down_cb, NULL);
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_horizontal_set(bx, EINA_TRUE);
-   evas_object_show(bx);
+   btn = elm_button_add(bx2);
+   elm_object_text_set(btn, "Right");
+   elm_box_pack_end(bx2, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Down");
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   bx_opt = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx_opt, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(bx_opt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(bx_opt, EINA_TRUE);
+   evas_object_show(bx_opt);
 
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus Animation");
    elm_check_state_set(chk, EINA_TRUE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_list8_focus_animate_check_changed, win);
-   elm_box_pack_end(bx, chk);
+                                  test_list_focus_focus_animate_check_changed,
+                                  win);
+   elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 
    chk = elm_check_add(win);
    elm_object_text_set(chk, "Focus on selection");
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed", test_list8_focus_check_changed, li);
-   elm_box_pack_end(bx, chk);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_list_focus_focus_check_changed, li);
+   elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 
-   test_list8_focus_on_selection_set(li, chk, EINA_FALSE);
+   test_list_focus_focus_on_selection_set(li, chk, EINA_FALSE);
 
-   elm_box_pack_end(bxx, bx);
+   elm_box_pack_end(bx, bx_opt);
 
    for (idx = 0; _list_focus_combo[idx] >= 0; idx++)
      {
@@ -1370,32 +1403,32 @@ void test_list_focus(const char *name, const char *title, Eina_Bool horiz)
             _list_focus_names[rhand]);
 
         elm_list_item_append(li, buf,
-                test_list8_content_get(li, lhand, horiz),
-                test_list8_content_get(li, rhand, horiz),
+                test_list_focus_content_get(li, lhand, horiz),
+                test_list_focus_content_get(li, rhand, horiz),
                 NULL, NULL);
      }
 
    elm_list_go(li);
    evas_object_show(li);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 420, 450);
    evas_object_show(win);
 }
 
 void
-test_list8(void        *data EINA_UNUSED,
-           Evas_Object *obj EINA_UNUSED,
-           void        *event_info EINA_UNUSED)
+test_list_focus(void        *data EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void        *event_info EINA_UNUSED)
 {
-    test_list_focus("list-focus", "List Focus", EINA_FALSE);
+   _test_list_focus("list-focus", "List Focus", EINA_FALSE);
 }
 
 void
-test_list9(void        *data EINA_UNUSED,
-           Evas_Object *obj EINA_UNUSED,
-           void        *event_info EINA_UNUSED)
+test_list_horiz_focus(void        *data EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED,
+                      void        *event_info EINA_UNUSED)
 {
-    test_list_focus("list-focus-horizontal", "List Focus Horizontal", EINA_TRUE);
+   _test_list_focus("list-focus-horizontal", "List Focus Horizontal", EINA_TRUE);
 }
 
 void

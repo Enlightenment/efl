@@ -82,8 +82,8 @@ void test_list4(void *data, Evas_Object *obj, void *event_info);
 void test_list5(void *data, Evas_Object *obj, void *event_info);
 void test_list6(void *data, Evas_Object *obj, void *event_info);
 void test_list7(void *data, Evas_Object *obj, void *event_info);
-void test_list8(void *data, Evas_Object *obj, void *event_info);
-void test_list9(void *data, Evas_Object *obj, void *event_info);
+void test_list_focus(void *data, Evas_Object *obj, void *event_info);
+void test_list_horiz_focus(void *data, Evas_Object *obj, void *event_info);
 void test_list_separator(void *data, Evas_Object *obj, void *event_info);
 void test_list_multi_select(void *data, Evas_Object *obj, void *event_info);
 void test_inwin(void *data, Evas_Object *obj, void *event_info);
@@ -618,8 +618,8 @@ add_tests:
    ADD_TEST(NULL, "Lists - List", "List 5", test_list5);
    ADD_TEST(NULL, "Lists - List", "List 6", test_list6);
    ADD_TEST(NULL, "Lists - List", "List 7", test_list7);
-   ADD_TEST(NULL, "Lists - List", "List Focus", test_list8);
-   ADD_TEST(NULL, "Lists - List", "List Focus Horizontal", test_list9);
+   ADD_TEST(NULL, "Lists - List", "List Focus", test_list_focus);
+   ADD_TEST(NULL, "Lists - List", "List Focus Horizontal", test_list_horiz_focus);
    ADD_TEST(NULL, "Lists - List", "List Separator", test_list_separator);
    ADD_TEST(NULL, "Lists - List", "List Multi Select", test_list_multi_select);
 
