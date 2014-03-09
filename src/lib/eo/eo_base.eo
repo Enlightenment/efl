@@ -1,0 +1,170 @@
+abstract Eo_Base ()
+{
+   constructors {
+      constructor {
+         /*@ Call the object's constructor.
+Should not be used with #eo_do. Only use it with #eo_do_super. */
+      }
+   }
+   properties {
+      parent {
+         set {
+            /*@ Set the parent of an object
+Parents keep references to their children so in order to delete objects that have parents you need to set parent to NULL or use eo_del() that does that for you (and also unrefs the object). */
+         }
+         get {
+            /*@ Get the parent of an object */
+         }
+         values {
+            Eo* parent; /*@ the new parent */
+         }
+      }
+      event_global_freeze {
+         get {
+            /*@ return freeze events of object.
+Return event freeze count. */
+         }
+         values {
+            int fcount; /*@ The event freeze count of the object */
+         }
+      }
+      event_freeze {
+         get {
+            /*@ return freeze events of object.
+Return event freeze count. */
+         }
+         values {
+            int fcount; /*@ The event freeze count of the object */
+         }
+      }
+   }
+   methods {
+      event_callback_forwarder_del {
+         /*@ Remove an event callback forwarder for an event and an object. */
+         params {
+            @in const Eo_Event_Description* desc; /*@ The description of the event to listen to */
+            @in Eo* new_obj; /*@ The object to emit events from */
+         }
+      }
+      event_thaw {
+         /*@ thaw events of object.
+Lets event callbacks be called for the object. */
+      }
+      event_freeze {
+         /*@ freeze events of object.
+Prevents event callbacks from being called for the object. */
+      }
+      event_global_freeze {
+         /*@ freeze events of object.
+Prevents event callbacks from being called for the object. */
+      }
+      event_callback_array_del {
+         /*@ Del a callback array with a specific data associated to it for an event. */
+         params {
+            @in const Eo_Callback_Array_Item* array; /*@ an #Eo_Callback_Array_Item of events to listen to */
+            @in const void* user_data; /*@ The data to compare */
+         }
+      }
+      wref_del {
+         /*@ Delete the weak reference passed. */
+         params {
+            @inout Eo** wref;
+         }
+      }
+      destructor {
+         /*@ Call the object's destructor.
+Should not be used with #eo_do. Only use it with #eo_do_super. */
+      }
+      data_set {
+         /*@ Set generic data to object. */
+         params {
+            @in const char* key; /*@ the key associated with the data */
+            @in const void* data; /*@ the data to set */
+            @in eo_base_data_free_func free_func; /*@ the func to free data with (NULL means */
+         }
+      }
+      data_get {
+         /*@ Get generic data from object. */
+         params {
+            @in const char* key; /*@ the key associated with the data */
+            @out void* data; /*@ the data for the key */
+         }
+      }
+      event_callback_del {
+         /*@ Del a callback with a specific data associated to it for an event. */
+         params {
+            @in const Eo_Event_Description* desc; /*@ The description of the event to listen to */
+            @in Eo_Event_Cb func; /*@ the callback to delete */
+            @in const void* user_data; /*@ The data to compare */
+         }
+      }
+      event_global_thaw {
+         /*@ thaw events of object.
+Lets event callbacks be called for the object. */
+      }
+      data_del {
+         /*@ Del generic data from object. */
+         params {
+            @in const char* key; /*@ the key associated with the data */
+         }
+      }
+      event_callback_array_priority_add {
+         /*@ Add a callback array for an event with a specific priority.
+callbacks of the same priority are called in reverse order of creation. */
+         params {
+            @in const Eo_Callback_Array_Item* array; /*@ an #Eo_Callback_Array_Item of events to listen to */
+            @in Eo_Callback_Priority priority; /*@ The priority of the callback */
+            @in const void* data; /*@ additional data to pass to the callback */
+         }
+      }
+      wref_add {
+         /*@ Add a new weak reference to obj.
+This function registers the object handle pointed by wref to obj so when obj is deleted it'll be updated to NULL. This functions should be used when you want to keep track of an object in a safe way, but you don't want to prevent it from being freed. */
+         params {
+            @inout Eo** wref;
+         }
+      }
+      dbg_info_get {
+         /*@ Get dbg information from the object. */
+         params {
+            @in Eo_Dbg_Info* root_node; /*@ node of the tree */
+         }
+      }
+      event_callback_forwarder_add {
+         /*@ Add an event callback forwarder for an event and an object. */
+         params {
+            @in const Eo_Event_Description* desc; /*@ The description of the event to listen to */
+            @in Eo* new_obj; /*@ The object to emit events from */
+         }
+      }
+      event_callback_call {
+         /*@ Call the callbacks for an event of an object. */
+         params {
+            @in const Eo_Event_Description* desc; /*@ The description of the event to call */
+            @in const void* event_info; /*@ Extra event info to pass to the callbacks */
+            @out Eina_Bool aborted; /*@ @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
+         }
+      }
+      event_callback_priority_add {
+         /*@ Add a callback for an event with a specific priority.
+callbacks of the same priority are called in reverse order of creation. */
+         params {
+            @in const Eo_Event_Description* desc; /*@ The description of the event to listen to */
+            @in Eo_Callback_Priority priority; /*@ The priority of the callback */
+            @in Eo_Event_Cb cb; /*@ the callback to call */
+            @in const void* data; /*@ additional data to pass to the callback */
+         }
+      }
+      children_iterator_new {
+         /*@ Get an iterator on all childrens */
+         params {
+            @inout Eina_Iterator** it;
+         }
+      }
+   }
+   events {
+      callback,add; /*@ A callback was added. */
+      callback,del; /*@ A callback was deleted. */
+      del; /*@ Obj is being deleted. */
+   }
+}

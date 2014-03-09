@@ -1809,6 +1809,9 @@ enum
  *
  * @{
  */
+#include "canvas/evas_text.eo.h"
+
+#if 0
 
 #define EVAS_OBJ_TEXT_CLASS evas_object_text_class_get()
 
@@ -2311,6 +2314,7 @@ enum
  */
 #define evas_obj_text_filter_source_set(name, obj) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET), EO_TYPECHECK(const char *, name), EO_TYPECHECK(Eo *, obj)
 
+#endif
 /**
  * @}
  */

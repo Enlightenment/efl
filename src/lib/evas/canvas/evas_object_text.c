@@ -4,8 +4,6 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID = EO_NOOP;
-
 #define MY_CLASS EVAS_OBJ_TEXT_CLASS
 
 #define MY_CLASS_NAME "Evas_Text"
@@ -22,10 +20,10 @@ EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID = EO_NOOP;
 static const char o_type[] = "text";
 
 /* private struct for text object internal data */
-typedef struct _Evas_Object_Text Evas_Object_Text;
+typedef struct _Evas_Text_Data Evas_Text_Data;
 typedef struct _Evas_Object_Text_Item Evas_Object_Text_Item;
 
-struct _Evas_Object_Text
+struct _Evas_Text_Data
 {
    DATA32               magic;
 
@@ -150,7 +148,7 @@ static const Evas_Object_Func object_func =
 
 static int
 _evas_object_text_char_coords_get(const Evas_Object *eo_obj,
-      const Evas_Object_Text *o,
+      const Evas_Text_Data *o,
       size_t pos, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
@@ -178,7 +176,7 @@ _evas_object_text_item_clean(Evas_Object_Text_Item *it)
 }
 
 static void
-_evas_object_text_item_del(Evas_Object_Text *o, Evas_Object_Text_Item *it)
+_evas_object_text_item_del(Evas_Text_Data *o, Evas_Object_Text_Item *it)
 {
    if (o->last_computed.ellipsis_start == it)
      o->last_computed.ellipsis_start = NULL;
@@ -195,7 +193,7 @@ _evas_object_text_item_del(Evas_Object_Text *o, Evas_Object_Text_Item *it)
 }
 
 static void
-_evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
+_evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Text_Data *o)
 {
    /* FIXME: also preserve item */
    if ((o->cur.font == o->prev.font) &&
@@ -235,7 +233,7 @@ _evas_object_text_items_clean(Evas_Object_Protected_Data *obj, Evas_Object_Text 
 }
 
 static void
-_evas_object_text_items_clear(Evas_Object_Text *o)
+_evas_object_text_items_clear(Evas_Text_Data *o)
 {
    if ((o->last_computed.ellipsis_start) &&
        (o->last_computed.ellipsis_start != o->items))
@@ -272,7 +270,7 @@ _evas_object_text_it_compare_logical(const void *_it1, const void *_it2)
 
 static int
 _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
-      const Evas_Object_Text *o, Evas_Coord cx, Evas_Coord cy)
+      const Evas_Text_Data *o, Evas_Coord cx, Evas_Coord cy)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Text_Item *it;
@@ -326,7 +324,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
 
 static int
 _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
-      const Evas_Object_Text *o, Evas_Coord cx, Evas_Coord cy,
+      const Evas_Text_Data *o, Evas_Coord cx, Evas_Coord cy,
       Evas_Coord *rx, Evas_Coord *ry, Evas_Coord *rw, Evas_Coord *rh)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
@@ -349,14 +347,14 @@ _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
 }
 
 static Evas_Coord
-_evas_object_text_horiz_advance_get(const Evas_Object_Text *o)
+_evas_object_text_horiz_advance_get(const Evas_Text_Data *o)
 {
    return o->last_computed.advance;
 }
 
 static Evas_Coord
 _evas_object_text_vert_advance_get(const Evas_Object *obj EINA_UNUSED,
-      const Evas_Object_Text *o)
+      const Evas_Text_Data *o)
 {
    return o->max_ascent + o->max_descent;
 }
@@ -372,8 +370,8 @@ evas_object_text_add(Evas *e)
    return eo_obj;
 }
 
-static void
-_constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_text_constructor(Eo *eo_obj, Evas_Text_Data *class_data EINA_UNUSED)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_text_init(eo_obj);
@@ -384,21 +382,9 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 }
 
-EAPI void
-evas_object_text_font_source_set(Evas_Object *eo_obj, const char *font_source)
+EOLIAN static void
+_evas_text_font_source_set(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char *font_source)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_font_source_set(font_source));
-}
-
-static void
-_text_font_source_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Text *o = _pd;
-
-   const char *font_source = va_arg(*list, const char *);
    if ((o->cur.source) && (font_source) &&
        (!strcmp(o->cur.source, font_source)))
      return;
@@ -410,46 +396,21 @@ _text_font_source_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    eina_stringshare_replace(&o->cur.source, font_source);
 }
 
-EAPI const char *
-evas_object_text_font_source_get(const Evas_Object *eo_obj)
+EOLIAN static const char*
+_evas_text_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const char *font_source = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_text_font_source_get(&font_source));
-   return font_source;
+
+   return o->cur.source;
 }
 
-static void
-_text_font_source_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_Size size)
 {
-   const Evas_Object_Text *o = _pd;
-
-   const char ** font_source = va_arg(*list, const char **);
-   *font_source = o->cur.source;
-}
-
-EAPI void
-evas_object_text_font_set(Evas_Object *eo_obj, const char *font, Evas_Font_Size size)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_font_set(font, size));
-}
-
-static void
-_text_font_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Text *o = _pd;
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
    Evas_Font_Description *fdesc;
 
-   const char *font = va_arg(*list, const char*);
-   Evas_Font_Size size = va_arg(*list, Evas_Font_Size);
 
    if ((!font) || (size <= 0)) return;
 
@@ -462,7 +423,7 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
      {
         fdesc = evas_font_desc_ref(o->cur.fdesc);
      }
-   
+
    if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
        (size == o->cur.size))
      {
@@ -530,30 +491,15 @@ _text_font_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_resize(eo_obj);
 }
 
-EAPI void
-evas_object_text_font_get(const Evas_Object *eo_obj, const char **font, Evas_Font_Size *size)
+EOLIAN static void
+_evas_text_font_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char **font, Evas_Font_Size *size)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (font) *font = "";
-   if (size) *size = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_text_font_get(font, size));
-}
-
-static void
-_text_font_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Text *o = _pd;
-   const char **font = va_arg(*list, const char **);
-   Evas_Font_Size *size = va_arg(*list, Evas_Font_Size *);
-
    if (font) *font = o->cur.font;
    if (size) *size = o->cur.size;
 }
 
 static void
-_evas_object_text_item_update_sizes(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Evas_Object_Text_Item *it)
+_evas_object_text_item_update_sizes(Evas_Object_Protected_Data *obj, Evas_Text_Data *o, Evas_Object_Text_Item *it)
 {
    ENFN->font_string_size_get(ENDT,
          o->font,
@@ -573,7 +519,7 @@ _evas_object_text_item_update_sizes(Evas_Object_Protected_Data *obj, Evas_Object
  */
 static Evas_Object_Text_Item *
 _evas_object_text_item_new(Evas_Object_Protected_Data *obj,
-                           Evas_Object_Text *o,
+                           Evas_Text_Data *o,
                            Evas_Font_Instance *fi, const Eina_Unicode *str,
                            Evas_Script_Type script,
                            size_t pos, size_t visual_pos, size_t len)
@@ -607,7 +553,7 @@ _evas_object_text_item_new(Evas_Object_Protected_Data *obj,
  * @param o the text object
  */
 static void
-_evas_object_text_item_order(Evas_Object *eo_obj, Evas_Object_Text *o)
+_evas_object_text_item_order(Evas_Object *eo_obj, Evas_Text_Data *o)
 {
    (void) eo_obj;
 #ifdef BIDI_SUPPORT
@@ -659,7 +605,7 @@ static const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' };
 
 /* FIXME: We currently leak ellipsis items. */
 static Evas_Object_Text_Item *
-_layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
+_layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Text_Data *o)
 {
    Evas_Object_Text_Item *ellip_ti = NULL;
    Evas_Script_Type script;
@@ -682,7 +628,7 @@ _layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Object_Text *o)
 /* EINA_TRUE if this item is ok and should be included, false if should be
  * discarded. */
 static Eina_Bool
-_layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Evas_Object_Text_Item *ti, int idx, Eina_Bool want_start)
+_layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Text_Data *o, Evas_Object_Text_Item *ti, int idx, Eina_Bool want_start)
 {
    Evas_Text_Props new_text_props;
    if (idx >= (int) ti->text_props.len)
@@ -717,7 +663,7 @@ _layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Object_Text *o, Eva
  * @param text the text to layout
  */
 static void
-_evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode *text)
+_evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *text)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    EvasBiDiStrIndex *v_to_l = NULL;
@@ -877,7 +823,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
                         0);
                   if (cut > 0)
                     {
-                       
+
                        start_ellip_it->text_pos = itr->text_pos;
                        start_ellip_it->visual_pos = itr->visual_pos;
                        if (!_layout_text_item_trim(obj, o, itr, cut, EINA_FALSE))
@@ -960,23 +906,10 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Object_Text *o, Eina_Unicode 
    if (v_to_l) free(v_to_l);
 }
 
-EAPI void
-evas_object_text_ellipsis_set(Evas_Object *obj, double ellipsis)
-{
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(obj, evas_obj_text_ellipsis_set(ellipsis));
-}
-
-static void
-_size_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_evas_object_size_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Text *o = _pd;
-
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
@@ -988,12 +921,10 @@ _size_set(Eo *eo_obj, void *_pd, va_list *list)
    _evas_object_text_recalc(eo_obj, o->cur.text);
 }
 
-static void
-_text_ellipsis_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_ellipsis_set(Eo *eo_obj, Evas_Text_Data *o, double ellipsis)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Text *o = _pd;
-   double ellipsis = va_arg(*list, double);
 
    if (o->cur.ellipsis == ellipsis) return;
 
@@ -1004,32 +935,15 @@ _text_ellipsis_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_clip_dirty(eo_obj, obj);
 }
 
-EAPI double
-evas_object_text_ellipsis_get(const Evas_Object *obj)
+EOLIAN static double
+_evas_text_ellipsis_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   double r = 0;
-
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-
-   eo_do((Eo*) obj, evas_obj_text_ellipsis_get(&r));
-   return r;
+   return o->cur.ellipsis;
 }
 
-static void
-_text_ellipsis_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_eo_base_dbg_info_get(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED, Eo_Dbg_Info *root)
 {
-   const Evas_Object_Text *o = _pd;
-   double *r = va_arg(*list, double *);
-
-   *r = o->cur.ellipsis;
-}
-
-static void
-_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
@@ -1046,23 +960,11 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
    EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, text);
 }
 
-EAPI void
-evas_object_text_text_set(Evas_Object *eo_obj, const char *_text)
+EOLIAN static void
+_evas_text_text_set(Eo *eo_obj, Evas_Text_Data *o, const char *_text)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_text_set(_text));
-}
-
-static void
-_text_text_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Text *o = _pd;
    int is, was, len;
    Eina_Unicode *text;
-
-   const char *_text = va_arg(*list, const char *);
 
    if ((o->cur.utf8_text) && (_text) && (!strcmp(o->cur.utf8_text, _text)))
       return;
@@ -1101,257 +1003,104 @@ _text_text_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_resize(eo_obj);
 }
 
-EAPI void
-evas_object_text_bidi_delimiters_set(Evas_Object *eo_obj, const char *delim)
+EOLIAN static void
+_evas_text_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, const char *delim)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_bidi_delimiters_set(delim));
-}
-
-static void
-_text_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Text *o = _pd;
-
-   const char *delim = va_arg(*list, const char *);
-
    eina_stringshare_replace(&o->bidi_delimiters, delim);
 }
 
-EAPI const char *
-evas_object_text_bidi_delimiters_get(const Evas_Object *eo_obj)
+EOLIAN static const char*
+_evas_text_bidi_delimiters_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const char *delim = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_text_bidi_delimiters_get(&delim));
-   return delim;
+   return o->bidi_delimiters;
 }
 
-static void
-_text_bidi_delimiters_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static const char*
+_evas_text_text_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   const Evas_Object_Text *o = _pd;
-   const char **delim = va_arg(*list, const char **);
-   *delim = o->bidi_delimiters;
+   return o->cur.utf8_text;
 }
 
-EAPI const char *
-evas_object_text_text_get(const Evas_Object *eo_obj)
+EOLIAN static Evas_BiDi_Direction
+_evas_text_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const char *text = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_text_text_get(&text));
-   return text;
+   return o->bidi_dir;
 }
 
-static void
-_text_text_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Coord
+_evas_text_ascent_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   const char **text = va_arg(*list, const char **);
-   const Evas_Object_Text *o = _pd;
-   *text = o->cur.utf8_text;
+   return o->ascent;
 }
 
-EAPI Evas_BiDi_Direction
-evas_object_text_direction_get(const Evas_Object *eo_obj)
+EOLIAN static Evas_Coord
+_evas_text_descent_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EVAS_BIDI_DIRECTION_NEUTRAL;
-   MAGIC_CHECK_END();
-   Evas_BiDi_Direction bidi_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
-   eo_do((Eo *)eo_obj, evas_obj_text_direction_get(&bidi_dir));
-   return bidi_dir;
+   return o->descent;
 }
 
-static void
-_text_direction_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Coord
+_evas_text_max_ascent_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   Evas_BiDi_Direction *bidi_dir = va_arg(*list, Evas_BiDi_Direction *);
-   const Evas_Object_Text *o = _pd;
-   *bidi_dir = o->bidi_dir;
+   return o->max_ascent;
 }
 
-EAPI Evas_Coord
-evas_object_text_ascent_get(const Evas_Object *eo_obj)
+EOLIAN static Evas_Coord
+_evas_text_max_descent_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Evas_Coord ascent = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_ascent_get(&ascent));
-   return ascent;
+   return o->max_descent;
 }
 
-static void
-_text_ascent_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Coord
+_evas_text_inset_get(Eo *eo_obj, Evas_Text_Data *o)
 {
-   Evas_Coord *ascent = va_arg(*list, Evas_Coord *);
-   const Evas_Object_Text *o = _pd;
-   *ascent = o->ascent;
-}
-
-EAPI Evas_Coord
-evas_object_text_descent_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Evas_Coord descent = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_descent_get(&descent));
-   return descent;
-}
-
-static void
-_text_descent_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *descent = va_arg(*list, Evas_Coord *);
-   const Evas_Object_Text *o = _pd;
-   *descent = o->descent;
-}
-
-EAPI Evas_Coord
-evas_object_text_max_ascent_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Evas_Coord max_ascent = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_max_ascent_get(&max_ascent));
-   return max_ascent;
-}
-
-static void
-_text_max_ascent_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *max_ascent = va_arg(*list, Evas_Coord *);
-   const Evas_Object_Text *o = _pd;
-   *max_ascent = o->max_ascent;
-}
-
-EAPI Evas_Coord
-evas_object_text_max_descent_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Evas_Coord max_descent = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_max_descent_get(&max_descent));
-   return max_descent;
-}
-
-static void
-_text_max_descent_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *max_descent = va_arg(*list, Evas_Coord *);
-   const Evas_Object_Text *o = _pd;
-   *max_descent = o->max_descent;
-}
-
-EAPI Evas_Coord
-evas_object_text_inset_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Coord inset = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_inset_get(&inset));
+   if (!o->font) return inset;
+   if (!o->items) return inset;
+   inset = ENFN->font_inset_get(ENDT, o->font, &o->items->text_props);
+
    return inset;
 }
 
-static void
-_text_inset_get(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static Evas_Coord
+_evas_text_horiz_advance_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Coord *inset = va_arg(*list, Evas_Coord *);
-   *inset = 0;
-   const Evas_Object_Text *o = _pd;
-   if (!o->font) return;
-   if (!o->items) return;
-   *inset = ENFN->font_inset_get(ENDT, o->font, &o->items->text_props);
-}
-
-EAPI Evas_Coord
-evas_object_text_horiz_advance_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
    Evas_Coord horiz = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_horiz_advance_get(&horiz));
+   if (!o->font) return horiz;
+   if (!o->items) return horiz;
+   horiz = _evas_object_text_horiz_advance_get(o);
+
    return horiz;
 }
 
-static void
-_text_horiz_advance_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Coord
+_evas_text_vert_advance_get(Eo *eo_obj, Evas_Text_Data *o)
 {
-   Evas_Coord *horiz = va_arg(*list, Evas_Coord *);
-   *horiz = 0;
-   const Evas_Object_Text *o = _pd;
-   if (!o->font) return;
-   if (!o->items) return;
-   *horiz = _evas_object_text_horiz_advance_get(o);
-}
+   Evas_Coord vert;
+   vert = 0;
+   if (!o->font) return vert;
+   if (!o->items)
+     {
+        vert = o->ascent + o->descent;
+        return vert;
+     }
+   vert = _evas_object_text_vert_advance_get(eo_obj, o);
 
-EAPI Evas_Coord
-evas_object_text_vert_advance_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Evas_Coord vert = 0;
-   eo_do((Eo *)eo_obj, evas_obj_text_vert_advance_get(&vert));
    return vert;
 }
 
-static void
-_text_vert_advance_get(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_evas_text_char_pos_get(Eo *eo_obj, Evas_Text_Data *o, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   Evas_Coord *vert = va_arg(*list, Evas_Coord *);
-   *vert = 0;
-   const Evas_Object_Text *o = _pd;
-   if (!o->font) return;
-   if (!o->items)
-     {
-        *vert = o->ascent + o->descent;
-        return;
-     }
-   *vert = _evas_object_text_vert_advance_get(eo_obj, o);
-}
+   Eina_Bool ret;
+   ret = EINA_FALSE;
 
-EAPI Eina_Bool
-evas_object_text_char_pos_get(const Evas_Object *eo_obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_text_char_pos_get(pos, cx, cy, cw, ch, &ret));
-   return ret;
-}
-
-static void
-_text_char_pos_get(Eo *eo_obj, void *_pd, va_list *list)
-{
-   int pos = va_arg(*list, int);
-   Evas_Coord *cx = va_arg(*list, Evas_Coord *);
-   Evas_Coord *cy = va_arg(*list, Evas_Coord *);
-   Evas_Coord *cw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *ch = va_arg(*list, Evas_Coord *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   const Evas_Object_Text *o = _pd;
    int l = 0, r = 0, t = 0, b = 0;
    int x = 0, y = 0, w = 0, h = 0;
 
-   if (!o->font) return;
-   if (!o->items || (pos < 0)) return;
+   if (!o->font) return ret;
+   if (!o->items || (pos < 0)) return ret;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
@@ -1381,66 +1130,36 @@ _text_char_pos_get(Eo *eo_obj, void *_pd, va_list *list)
    if (cy) *cy = y;
    if (cw) *cw = w + l + r;
    if (ch) *ch = h + t + b;
-   if (ret) *ret = int_ret;
+   ret = int_ret;
+
+   return ret;
 }
 
-
-EAPI int
-evas_object_text_last_up_to_pos(const Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
+EOLIAN static int
+_evas_text_last_up_to_pos(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coord y)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return -1;
-   MAGIC_CHECK_END();
-   int res = -1;
-   eo_do((Eo *)eo_obj, evas_obj_text_last_up_to_pos(x, y, &res));
-   return res;
-}
+   int ret;
+   ret = -1;
 
-static void
-_text_last_up_to_pos(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   int *ret = va_arg(*list, int *);
-   *ret = -1;
-
-   const Evas_Object_Text *o = _pd;
-
-   if (!o->font) return;
-   if (!o->items) return;
+   if (!o->font) return ret;
+   if (!o->items) return ret;
    int int_ret = _evas_object_text_last_up_to_pos(eo_obj, o, x, y - o->max_ascent);
-   if (ret) *ret = int_ret;
+   ret = int_ret;
+
+   return ret;
 }
 
-EAPI int
-evas_object_text_char_coords_get(const Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+EOLIAN static int
+_evas_text_char_coords_get(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return -1;
-   MAGIC_CHECK_END();
-   int res = -1;
-   eo_do((Eo *)eo_obj, evas_obj_text_char_coords_get(x, y, cx, cy, cw, ch, &res));
-   return res;
-}
+   int ret;
+   ret = -1;
 
-static void
-_text_char_coords_get(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Evas_Coord *cx = va_arg(*list, Evas_Coord *);
-   Evas_Coord *cy = va_arg(*list, Evas_Coord *);
-   Evas_Coord *cw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *ch = va_arg(*list, Evas_Coord *);
-   int *ret = va_arg(*list, int *);
-   if (ret) *ret = -1;
-
-   const Evas_Object_Text *o = _pd;
    int l = 0, r = 0, t = 0, b = 0;
    int rx = 0, ry = 0, rw = 0, rh = 0;
 
-   if (!o->font) return;
-   if (!o->items) return;
+   if (!o->font) return ret;
+   if (!o->items) return ret;
 
    int int_ret = _evas_object_text_char_at_coords(eo_obj, o, x, y - o->max_ascent,
          &rx, &ry, &rw, &rh);
@@ -1469,23 +1188,14 @@ _text_char_coords_get(Eo *eo_obj, void *_pd, va_list *list)
    if (cy) *cy = ry;
    if (cw) *cw = rw + l + r;
    if (ch) *ch = rh + t + b;
-   if (ret) *ret = int_ret;
+   ret = int_ret;
+
+   return ret;
 }
 
-EAPI void
-evas_object_text_style_set(Evas_Object *eo_obj, Evas_Text_Style_Type style)
+EOLIAN static void
+_evas_text_style_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Text_Style_Type style)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_style_set(style));
-}
-
-static void
-_text_style_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Text_Style_Type style = va_arg(*list, Evas_Text_Style_Type);
-   Evas_Object_Text *o = _pd;
    int pl = 0, pr = 0, pt = 0, pb = 0, l = 0, r = 0, t = 0, b = 0;
    int w = 0, h = 0;
 
@@ -1503,43 +1213,15 @@ _text_style_set(Eo *eo_obj, void *_pd, va_list *list)
                evas_obj_size_set(w, h));
 }
 
-EAPI Evas_Text_Style_Type
-evas_object_text_style_get(const Evas_Object *eo_obj)
+EOLIAN static Evas_Text_Style_Type
+_evas_text_style_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EVAS_TEXT_STYLE_PLAIN;
-   MAGIC_CHECK_END();
-   Evas_Text_Style_Type style = EVAS_TEXT_STYLE_PLAIN;
-   eo_do((Eo *)eo_obj, evas_obj_text_style_get(&style));
-   return style;
+   return o->cur.style;
 }
 
-static void
-_text_style_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_shadow_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, int a)
 {
-   Evas_Text_Style_Type *style = va_arg(*list, Evas_Text_Style_Type *);
-   const Evas_Object_Text *o = _pd;
-   *style = o->cur.style;
-}
-
-EAPI void
-evas_object_text_shadow_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_shadow_color_set(r, g, b, a));
-}
-
-static void
-_text_shadow_color_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
-   Evas_Object_Text *o = _pd;
-
    if ((o->cur.shadow.r == r) && (o->cur.shadow.g == g) &&
        (o->cur.shadow.b == b) && (o->cur.shadow.a == a))
      return;
@@ -1552,48 +1234,18 @@ _text_shadow_color_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_text_shadow_color_get(const Evas_Object *eo_obj, int *r, int *g, int *b, int *a)
+EOLIAN static void
+_evas_text_shadow_color_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, int *r, int *g, int *b, int *a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_text_shadow_color_get(r, g, b, a));
-}
-
-static void
-_text_shadow_color_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *r = va_arg(*list, int *);
-   int *g = va_arg(*list, int *);
-   int *b = va_arg(*list, int *);
-   int *a = va_arg(*list, int *);
-   const Evas_Object_Text *o = _pd;
-
    if (r) *r = o->cur.shadow.r;
    if (g) *g = o->cur.shadow.g;
    if (b) *b = o->cur.shadow.b;
    if (a) *a = o->cur.shadow.a;
 }
 
-EAPI void
-evas_object_text_glow_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
+EOLIAN static void
+_evas_text_glow_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, int a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_glow_color_set(r, g, b, a));
-}
-
-static void
-_text_glow_color_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
-   Evas_Object_Text *o = _pd;
-
    if ((o->cur.glow.r == r) && (o->cur.glow.g == g) &&
        (o->cur.glow.b == b) && (o->cur.glow.a == a))
      return;
@@ -1606,51 +1258,18 @@ _text_glow_color_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_text_glow_color_get(const Evas_Object *eo_obj, int *r, int *g, int *b, int *a)
+EOLIAN static void
+_evas_text_glow_color_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, int *r, int *g, int *b, int *a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (r) *r = 0;
-   if (g) *g = 0;
-   if (b) *b = 0;
-   if (a) *a = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_text_glow_color_get(r, g, b, a));
-}
-
-static void
-_text_glow_color_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *r = va_arg(*list, int *);
-   int *g = va_arg(*list, int *);
-   int *b = va_arg(*list, int *);
-   int *a = va_arg(*list, int *);
-   const Evas_Object_Text *o = _pd;
    if (r) *r = o->cur.glow.r;
    if (g) *g = o->cur.glow.g;
    if (b) *b = o->cur.glow.b;
    if (a) *a = o->cur.glow.a;
 }
 
-EAPI void
-evas_object_text_glow2_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
+EOLIAN static void
+_evas_text_glow2_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, int a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_glow2_color_set(r, g, b, a));
-}
-
-static void
-_text_glow2_color_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
-   Evas_Object_Text *o = _pd;
-
    if ((o->cur.glow2.r == r) && (o->cur.glow2.g == g) &&
        (o->cur.glow2.b == b) && (o->cur.glow2.a == a))
      return;
@@ -1663,50 +1282,18 @@ _text_glow2_color_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_text_glow2_color_get(const Evas_Object *eo_obj, int *r, int *g, int *b, int *a)
+EOLIAN static void
+_evas_text_glow2_color_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, int *r, int *g, int *b, int *a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (r) *r = 0;
-   if (g) *g = 0;
-   if (b) *b = 0;
-   if (a) *a = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_text_glow2_color_get(r, g, b, a));
-}
-
-static void
-_text_glow2_color_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *r = va_arg(*list, int *);
-   int *g = va_arg(*list, int *);
-   int *b = va_arg(*list, int *);
-   int *a = va_arg(*list, int *);
-   const Evas_Object_Text *o = _pd;
    if (r) *r = o->cur.glow2.r;
    if (g) *g = o->cur.glow2.g;
    if (b) *b = o->cur.glow2.b;
    if (a) *a = o->cur.glow2.a;
 }
 
-EAPI void
-evas_object_text_outline_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
+EOLIAN static void
+_evas_text_outline_color_set(Eo *eo_obj, Evas_Text_Data *o, int r, int g, int b, int a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_text_outline_color_set(r, g, b, a));
-}
-
-static void
-_text_outline_color_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
-   Evas_Object_Text *o = _pd;
    if ((o->cur.outline.r == r) && (o->cur.outline.g == g) &&
        (o->cur.outline.b == b) && (o->cur.outline.a == a))
      return;
@@ -1719,55 +1306,19 @@ _text_outline_color_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_text_outline_color_get(const Evas_Object *eo_obj, int *r, int *g, int *b, int *a)
+EOLIAN static void
+_evas_text_outline_color_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, int *r, int *g, int *b, int *a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ)
-   if (r) *r = 0;
-   if (g) *g = 0;
-   if (b) *b = 0;
-   if (a) *a = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_text_outline_color_get(r, g, b, a));
-}
-
-static void
-_text_outline_color_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *r = va_arg(*list, int *);
-   int *g = va_arg(*list, int *);
-   int *b = va_arg(*list, int *);
-   int *a = va_arg(*list, int *);
-   const Evas_Object_Text *o = _pd;
    if (r) *r = o->cur.outline.r;
    if (g) *g = o->cur.outline.g;
    if (b) *b = o->cur.outline.b;
    if (a) *a = o->cur.outline.a;
 }
 
-EAPI void
-evas_object_text_style_pad_get(const Evas_Object *eo_obj, int *l, int *r, int *t, int *b)
+EOLIAN static void
+_evas_text_style_pad_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o, int *l, int *r, int *t, int *b)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (l) *l = 0;
-   if (r) *r = 0;
-   if (t) *t = 0;
-   if (b) *b = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_text_style_pad_get(l, r, t, b));
-}
-
-static void
-_text_style_pad_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *l = va_arg(*list, int *);
-   int *r = va_arg(*list, int *);
-   int *t = va_arg(*list, int *);
-   int *b = va_arg(*list, int *);
    int sl = 0, sr = 0, st = 0, sb = 0;
-   const Evas_Object_Text *o = _pd;
    /* use temps to be certain we have initialized values */
    if (!o->cur.filter.chain)
      evas_text_style_pad_get(o->cur.style, &sl, &sr, &st, &sb);
@@ -1778,9 +1329,6 @@ _text_style_pad_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (t) *t = st;
    if (b) *b = sb;
 }
-
-
-
 
 EAPI int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
@@ -1955,7 +1503,7 @@ evas_object_text_init(Evas_Object *eo_obj)
    obj->private_data = eo_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 
-   Evas_Object_Text *o = obj->private_data;
+   Evas_Text_Data *o = obj->private_data;
    /* alloc obj private data */
    o->cur.ellipsis = -1.0;
    o->prev = o->cur;
@@ -1964,8 +1512,8 @@ evas_object_text_init(Evas_Object *eo_obj)
 #endif
 }
 
-static void
-_destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_text_destructor(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_text_free(eo_obj, obj);
@@ -1975,7 +1523,7 @@ _destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 static void
 evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    /* free filter output */
    if (o->cur.filter.output)
@@ -2035,7 +1583,7 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    if (!success)
      {
         Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-        Evas_Object_Text *o = (Evas_Object_Text *) obj->private_data;
+        Evas_Text_Data *o = (Evas_Text_Data *) obj->private_data;
 
         ERR("Filter failed at runtime!");
         o->cur.filter.invalid = EINA_TRUE;
@@ -2059,7 +1607,7 @@ evas_object_text_render(Evas_Object *eo_obj,
                         int x, int y, Eina_Bool do_async)
 {
    int i, j;
-   Evas_Object_Text *o = type_private_data;
+   Evas_Text_Data *o = type_private_data;
    Evas_Object_Text_Item *it;
    const char vals[5][5] =
      {
@@ -2450,15 +1998,15 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
 			    Evas_Object_Protected_Data *obj,
 			    void *type_private_data)
 {
-   Evas_Object_Text *o = type_private_data;
+   Evas_Text_Data *o = type_private_data;
    int is_v = 0, was_v = 0;
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
    /* pre-render phase. this does anything an object needs to do just before
-    rendering. This could mean loading the image data, retrieving it from 
+    rendering. This could mean loading the image data, retrieving it from
     elsewhere, decoding video etc.
-    Then when this is done the object needs to figure if it changed and 
+    Then when this is done the object needs to figure if it changed and
     if so what and where and add the appropriate redraw rectangles */
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur->clipper)
@@ -2487,13 +2035,13 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
    was_v = evas_object_was_visible(eo_obj, obj);
    if (is_v != was_v)
      {
-	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, 
+	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes,
 					      eo_obj, is_v, was_v);
 	goto done;
      }
    if (obj->changed_map || obj->changed_src_visible)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
         goto done;
      }
@@ -2504,7 +2052,7 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
    /* if we restacked (layer or just within a layer) and dont clip anyone */
    if (obj->restack)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
 	goto done;
      }
@@ -2514,7 +2062,7 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
        (obj->cur->color.b != obj->prev->color.b) ||
        (obj->cur->color.a != obj->prev->color.a))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
 	goto done;
      }
@@ -2526,24 +2074,24 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
        (obj->cur->geometry.w != obj->prev->geometry.w) ||
        (obj->cur->geometry.h != obj->prev->geometry.h))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
 	goto done;
      }
    if (obj->cur->render_op != obj->prev->render_op)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
 					    eo_obj, obj);
 	goto done;
      }
    if (o->changed)
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
         goto done;
      }
    done:
-   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, 
+   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes,
 					 eo_obj, is_v, was_v);
 }
 
@@ -2561,18 +2109,18 @@ evas_object_text_render_post(Evas_Object *eo_obj,
    evas_object_cur_prev(eo_obj);
 }
 
-static unsigned int 
+static unsigned int
 evas_object_text_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_TEXT;
 }
 
-static unsigned int 
+static unsigned int
 evas_object_text_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
@@ -2580,7 +2128,7 @@ evas_object_text_visual_id_get(Evas_Object *eo_obj)
 static void *
 evas_object_text_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return NULL;
    return o->font;
 }
@@ -2590,7 +2138,7 @@ evas_object_text_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
                            Evas_Object_Protected_Data *obj EINA_UNUSED,
                            void *type_private_data EINA_UNUSED)
 {
-   /* this returns 1 if the internal object data implies that the object is 
+   /* this returns 1 if the internal object data implies that the object is
     currently fully opaque over the entire gradient it occupies */
    return 0;
 }
@@ -2610,7 +2158,7 @@ evas_object_text_scale_update(Evas_Object *eo_obj,
                               Evas_Object_Protected_Data *pd EINA_UNUSED,
                               void *type_private_data)
 {
-   Evas_Object_Text *o = type_private_data;
+   Evas_Text_Data *o = type_private_data;
    int size;
    const char *font;
 
@@ -2628,7 +2176,7 @@ void
 _evas_object_text_rehint(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    int is, was;
 
    if (!o->font) return;
@@ -2660,7 +2208,7 @@ static void
 _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Text *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
 
@@ -2745,11 +2293,9 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 
 /* EXPERIMENTAL CODE BEGIN */
 
-static void
-_filter_program_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
 {
-   Evas_Object_Text *o = _pd;
-   const char *arg = va_arg(*list, const char *);
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Program *pgm = NULL;
 
@@ -2791,7 +2337,7 @@ _filter_source_hash_free_cb(void *data)
 {
    Evas_Filter_Proxy_Binding *pb = data;
    Evas_Object_Protected_Data *proxy, *source;
-   Evas_Object_Text *o;
+   Evas_Text_Data *o;
 
    proxy = eo_data_scope_get(pb->eo_proxy, EVAS_OBJ_CLASS);
    source = eo_data_scope_get(pb->eo_source, EVAS_OBJ_CLASS);
@@ -2822,14 +2368,11 @@ _filter_source_hash_free_cb(void *data)
    free(pb);
 }
 
-static void
-_filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Evas_Object *eo_source)
 {
-   Evas_Object_Text *o = _pd;
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Program *pgm = o->cur.filter.chain;
-   const char *name = va_arg(*list, const char *);
-   Evas_Object *eo_source = va_arg(*list, Evas_Object *);
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
    Evas_Object_Protected_Data *source = NULL;
 
@@ -2903,99 +2446,4 @@ update:
 
 /* EXPERIMENTAL CODE END */
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
-	EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_SET), _text_font_source_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_GET), _text_font_source_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SET), _text_font_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_GET), _text_font_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_TEXT_SET), _text_text_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_SET), _text_bidi_delimiters_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_GET), _text_bidi_delimiters_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_TEXT_GET), _text_text_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_DIRECTION_GET), _text_direction_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ASCENT_GET), _text_ascent_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_DESCENT_GET), _text_descent_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_MAX_ASCENT_GET), _text_max_ascent_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_MAX_DESCENT_GET), _text_max_descent_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_INSET_GET), _text_inset_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_HORIZ_ADVANCE_GET), _text_horiz_advance_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_VERT_ADVANCE_GET), _text_vert_advance_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_CHAR_POS_GET), _text_char_pos_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_LAST_UP_TO_POS), _text_last_up_to_pos),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_CHAR_COORDS_GET), _text_char_coords_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_SET), _text_style_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_GET), _text_style_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_SET), _text_shadow_color_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_GET), _text_shadow_color_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_SET), _text_glow_color_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_GET), _text_glow_color_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_SET), _text_glow2_color_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_GET), _text_glow2_color_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET), _text_outline_color_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET), _text_outline_color_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET), _text_style_pad_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET), _text_ellipsis_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET), _text_ellipsis_get),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET), _filter_program_set),
-        EO_OP_FUNC(EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET), _filter_source_set),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_SET, "Set the font (source) file to be used on a given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_GET, "Get the font file's path which is being used on a given text"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FONT_SET, "Set the font family and size on a given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FONT_GET, "Retrieve the font family and size in use on a given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_TEXT_SET, "Sets the text string to be displayed by the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_SET, "Sets the BiDi delimiters used in the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_GET, "Gets the BiDi delimiters used in the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_TEXT_GET, "Retrieves the text string currently being displayed by the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_DIRECTION_GET, "Retrieves the direction of the text currently being displayed in the text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ASCENT_GET, "Get the ascent of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_DESCENT_GET, "Get the descent of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_MAX_ASCENT_GET, "Get the max ascent of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_MAX_DESCENT_GET, "Get the max descent of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_INSET_GET, "Get the inset of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_HORIZ_ADVANCE_GET, "Get the horizontal advance of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_VERT_ADVANCE_GET, "Get the vertical advance of the text."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_CHAR_POS_GET, "Retrieve position and dimension information of a character within a text Evas_Object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_LAST_UP_TO_POS, "Retrieves the logical position of the last char in the text up to the pos given."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_CHAR_COORDS_GET, "? evas_object_text_char_coords_get"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_STYLE_SET, "Sets the style to apply on the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_STYLE_GET, "Retrieves the style on use on the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_SET, "Sets the shadow color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_GET, "Retrieves the shadow color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_SET, "Sets the glow color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_GET, "Retrieves the glow color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_SET, "Sets the 'glow 2' color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_GET, "Retrieves the 'glow 2' color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET, "Sets the outline color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET, "Retrieves the outline color for the given text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET, "Gets the text style pad of a text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_SET, "Gets the ellipsis of a text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_ELLIPSIS_GET, "Sets the ellipsis of a text object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FILTER_PROGRAM_SET, "Text special effects: Set the style program (string)."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_TEXT_SUB_ID_FILTER_SOURCE_SET, "Text special effects: Bind an Evas_Object to a name for proxy rendering."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_TEXT_BASE_ID, op_desc, EVAS_OBJ_TEXT_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Text),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_text_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
-
+#include "canvas/evas_text.eo.c"
