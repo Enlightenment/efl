@@ -1782,6 +1782,9 @@ enum
  *
  * @{
  */
+#include "canvas/evas_rectangle.eo.h"
+
+#if 0
 
 #define EVAS_OBJ_RECTANGLE_CLASS evas_object_rectangle_class_get()
 
@@ -1796,6 +1799,7 @@ enum
 
 #define EVAS_OBJ_RECTANGLE_ID(sub_id) (EVAS_OBJ_RECTANGLE_BASE_ID + sub_id)
 
+#endif
 /**
  * @}
  */

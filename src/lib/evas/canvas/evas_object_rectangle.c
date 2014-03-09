@@ -3,8 +3,6 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op EVAS_OBJ_RECTANGLE_BASE_ID = EO_NOOP;
-
 #define MY_CLASS EVAS_OBJ_RECTANGLE_CLASS
 
 /* private magic number for rectangle objects */
@@ -13,9 +11,9 @@ static const char o_type[] = "rectangle";
 const char *o_rect_type = o_type;
 
 /* private struct for rectangle object internal data */
-typedef struct _Evas_Object_Rectangle      Evas_Object_Rectangle;
+typedef struct _Evas_Rectangle_Data      Evas_Rectangle_Data;
 
-struct _Evas_Object_Rectangle
+struct _Evas_Rectangle_Data
 {
    void             *engine_data;
 };
@@ -94,8 +92,8 @@ evas_object_rectangle_add(Evas *e)
    return eo_obj;
 }
 
-static void
-_constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_rectangle_constructor(Eo *eo_obj, Evas_Rectangle_Data *class_data EINA_UNUSED)
 {
    Eo *parent;
 
@@ -304,52 +302,23 @@ evas_object_rectangle_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 
 static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Rectangle_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_RECTANGLE;
 }
 
 static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Rectangle_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Rectangle_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Evas_Rectangle",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_RECTANGLE_BASE_ID, op_desc, EVAS_OBJ_RECTANGLE_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Rectangle),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_rectangle_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
-
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
 static void
@@ -401,3 +370,5 @@ evas_object_rectangle_was_inside(Evas_Object *eo_obj, double x, double y)
    return 1;
 }
 #endif
+
+#include "canvas/evas_rectangle.eo.c"
