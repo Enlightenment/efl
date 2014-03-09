@@ -3121,10 +3121,10 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
     * pointer */
    if (type == ELM_WIN_INLINED_IMAGE)
      _win_inlined_image_set(sd);
-
 #ifdef HAVE_ELEMENTARY_X
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
-            ENGINE_COMPARE(ELM_OPENGL_X11))
+   else if ((engine) &&
+            ((!strcmp(engine, ELM_SOFTWARE_X11)) ||
+             (!strcmp(engine, ELM_OPENGL_X11))))
      {
         sd->x.client_message_handler = ecore_event_handler_add
             (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, obj);
@@ -3132,7 +3132,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
             (ECORE_X_EVENT_WINDOW_PROPERTY, _elm_win_property_change, obj);
      }
 #endif
-   else if (!strncmp(ENGINE_GET(), "shot:", 5))
+   else if ((engine) && (!strncmp(engine, "shot:", 5)))
      _shot_init(sd);
 
    sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
@@ -3233,13 +3233,14 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
    _elm_win_list = eina_list_append(_elm_win_list, obj);
    _elm_win_count++;
 
-   if (!strcmp(engine, ELM_SOFTWARE_FB))
+   if ((engine) && (!strcmp(engine, ELM_SOFTWARE_FB)))
      {
         TRAP(sd, fullscreen_set, 1);
      }
    else if ((type != ELM_WIN_INLINED_IMAGE) &&
-            (!strcmp(engine, ELM_WAYLAND_SHM) ||
-            (!strcmp(engine, ELM_WAYLAND_EGL))))
+            ((engine) &&
+             ((!strcmp(engine, ELM_WAYLAND_SHM) ||
+              (!strcmp(engine, ELM_WAYLAND_EGL))))))
      _elm_win_frame_add(sd, "default");
 
    if (_elm_config->focus_highlight_enable)
@@ -3260,7 +3261,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
 
    if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
        ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
-        (!strcmp(engine, ELM_SOFTWARE_FB))))
+        ((engine) && (!strcmp(engine, ELM_SOFTWARE_FB)))))
      {
         Evas_Object *o;
         Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
