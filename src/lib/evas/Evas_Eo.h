@@ -2704,6 +2704,9 @@ enum
  * @{
  */
 
+#include "canvas/evas_textgrid.eo.h"
+
+#if 0
 #define EVAS_OBJ_TEXTGRID_CLASS evas_object_textgrid_class_get()
 
 const Eo_Class *evas_object_textgrid_class_get(void) EINA_CONST;
@@ -2920,6 +2923,7 @@ enum
  */
 #define evas_obj_textgrid_update_add(x, y, w, h) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_UPDATE_ADD), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
 
+#endif
 /**
  * @}
  */
