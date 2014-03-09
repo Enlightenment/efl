@@ -102,7 +102,7 @@ tmpl_eo_funcdef[] = "\n\
 @#list_desc_param\
  *\n\
  */\n\
-#define @#eoprefix_@#func(@#list_param) @#OBJCLASS_ID(@#OBJCLASS_SUB_ID_@#FUNC) @#list_typecheck\n\
+#define @#eoprefix_@#func(@#list_param) @#OBJCLASS_ID(@#OBJCLASS_SUB_ID_@#FUNC)@#list_typecheck\n\
 ";
 
 static const char
@@ -195,6 +195,7 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
              pdir = EOLIAN_OUT_PARAM;
         }
         if (ftype == SET) pdir = EOLIAN_IN_PARAM;
+        if (ftype == UNRESOLVED || ftype == METHOD_FUNC) add_star = (pdir == EOLIAN_OUT_PARAM);
         Eina_Bool had_star = !!strchr(ptype, '*');
 
         const char *dir_str = str_dir[(int)pdir];
@@ -212,7 +213,8 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
      {
         const char *ret_desc = eolian_function_return_comment_get(func, ftype);
         eina_strbuf_append_printf(str_pardesc, tmpl_eo_pardesc, "out", "ret", ret_desc);
-        eina_strbuf_append(str_par, ", ret");
+        if (eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, ", ");
+        eina_strbuf_append(str_par, "ret");
         Eina_Bool had_star = !!strchr(rettype, '*');
         eina_strbuf_append_printf(str_typecheck, ", EO_TYPECHECK(%s%s*, ret)", rettype, had_star?"":" ");
      }
@@ -396,6 +398,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
              eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, NULL);
              Eina_Bool is_const = eolian_parameter_get_const_attribute_get(data);
              Eina_Bool had_star = !!strchr(ptype, '*');
+             if (ftype == UNRESOLVED || ftype == METHOD_FUNC) add_star = (pdir == EOLIAN_OUT_PARAM);
              eina_strbuf_append_printf(va_args, "   %s%s%s%s%s = va_arg(*list, %s%s%s%s);\n",
                    ftype == GET && is_const?"const ":"", ptype, had_star?"":" ", add_star?"*":"", pname,
                    ftype == GET && is_const?"const ":"", add_star ? ptype : _varg_upgr(ptype), !had_star && add_star?" ":"", add_star?"*":"");

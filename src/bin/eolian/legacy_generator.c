@@ -136,6 +136,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
             const char *str_dir[] = {"in", "out", "inout"};
             eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, &pdesc);
             Eina_Bool had_star = !!strchr(ptype, '*');
+            if (ftype == UNRESOLVED || ftype == METHOD_FUNC) add_star = (pdir == EOLIAN_OUT_PARAM);
             if (ftype == GET) pdir = EOLIAN_OUT_PARAM;
             if (ftype == SET) pdir = EOLIAN_IN_PARAM;
             leg_param_idx++;
@@ -272,6 +273,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
             Eolian_Parameter_Dir pdir;
             eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, NULL);
             Eina_Bool had_star = !!strchr(ptype, '*');
+            if (ftype == UNRESOLVED || ftype == METHOD_FUNC) add_star = (pdir == EOLIAN_OUT_PARAM);
             eina_strbuf_append_printf(fparam, ", %s%s%s%s%s",
                   ftype == GET && eolian_parameter_get_const_attribute_get(data)?"const ":"",
                   ptype, had_star?"":" ", add_star?"*":"", pname);
