@@ -3005,7 +3005,6 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           }
         else
           {
-             printf("... %s\n", _elm_accel_preference);
              if ((_elm_accel_preference) &&
                  ((!strcasecmp(_elm_accel_preference, "gl")) ||
                   (!strcasecmp(_elm_accel_preference, "opengl")) ||
