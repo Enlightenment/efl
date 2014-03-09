@@ -62,10 +62,10 @@ _template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const
         eina_strbuf_free(classobj);
      }
 
-   strncpy(capfunc, funcname, sizeof(capfunc) - 1);
+   if (funcname) strncpy(capfunc, funcname, sizeof(capfunc) - 1);
    p = capfunc; eina_str_toupper(&p);
 
-   eina_strbuf_replace_all(buf, "@#func", funcname);
+   if (funcname) eina_strbuf_replace_all(buf, "@#func", funcname);
    eina_strbuf_replace_all(buf, "@#FUNC", capfunc);
    eina_strbuf_replace_all(buf, "@#Class", classname);
    eina_strbuf_replace_all(buf, "@#class", lowclass);

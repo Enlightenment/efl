@@ -194,6 +194,7 @@ static void
 _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
 {
    //TODO return value
+   char tmpstr[0xFF];
    const char *suffix = "";
    const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
@@ -201,6 +202,10 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
    const char *retname = NULL;
    Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
+
+   Eina_Strbuf *fbody = eina_strbuf_new();
+   Eina_Strbuf *fparam = eina_strbuf_new();
+   Eina_Strbuf *eoparam = eina_strbuf_new();
 
    rettype = eolian_function_return_type_get(funcid, ftype);
    if (rettype && !strcmp(rettype, "void")) rettype = NULL;
@@ -229,24 +234,22 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
      }
 
    func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
-   func_lpref = (func_lpref) ? func_lpref : eolian_class_legacy_prefix_get(classname);
+   _template_fill(fbody, tmpl_eapi_body, classname, NULL, EINA_FALSE);
 
-   Eina_Strbuf *fbody = eina_strbuf_new();
-   Eina_Strbuf *fparam = eina_strbuf_new();
-   Eina_Strbuf *eoparam = eina_strbuf_new();
-
-   char tmpstr[0xFF];
-   sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
-   _template_fill(fbody, tmpl_eapi_body, classname, tmpstr, EINA_FALSE);
-
-   if (!func_lpref)
+   if (func_lpref)
+      eina_strbuf_replace_all(fbody, "@#eapi_prefix_@#func", func_lpref);
+   else
      {
+        func_lpref = eolian_class_legacy_prefix_get(classname);
+        eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
+
         strncpy(tmpstr, classname, sizeof(tmpstr) - 1);
         char *p = tmpstr;
         eina_str_tolower(&p);
-        func_lpref = tmpstr;
      }
-   eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
+
+   sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
+   eina_strbuf_replace_all(fbody, "@#func", tmpstr);
 
    const Eina_List *l;
    void *data;
