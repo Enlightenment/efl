@@ -3,18 +3,16 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op EVAS_OBJ_POLYGON_BASE_ID = EO_NOOP;
-
 #define MY_CLASS EVAS_OBJ_POLYGON_CLASS
 
 /* private magic number for polygon objects */
 static const char o_type[] = "polygon";
 
 /* private struct for line object internal data */
-typedef struct _Evas_Object_Polygon      Evas_Object_Polygon;
+typedef struct _Evas_Polygon_Data      Evas_Polygon_Data;
 typedef struct _Evas_Polygon_Point       Evas_Polygon_Point;
 
-struct _Evas_Object_Polygon
+struct _Evas_Polygon_Data
 {
    Eina_List           *points;
    void                *engine_data;
@@ -106,8 +104,8 @@ evas_object_polygon_add(Evas *e)
    return eo_obj;
 }
 
-static void
-_constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_polygon_constructor(Eo *eo_obj, Evas_Polygon_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
    Eo *parent;
@@ -120,26 +118,15 @@ _constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 }
 
-EAPI void
-evas_object_polygon_point_add(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_polygon_point_add(x, y));
-}
-
-static void
-_polygon_point_add(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Polygon *o = _pd;
+   Evas_Polygon_Data *o = _pd;
    Evas_Polygon_Point *p;
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
 
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
 
    if (!obj->layer->evas->is_frozen)
      {
@@ -238,20 +225,11 @@ _polygon_point_add(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_resize(eo_obj);
 }
 
-EAPI void
-evas_object_polygon_points_clear(Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_polygon_points_clear());
-}
-
-static void
-_polygon_points_clear(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_polygon_points_clear(Eo *eo_obj, Evas_Polygon_Data *_pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Polygon *o = _pd;
+   Evas_Polygon_Data *o = _pd;
    void *list_data;
    int is, was;
 
@@ -301,8 +279,8 @@ evas_object_polygon_init(Evas_Object *eo_obj)
    obj->type = o_type;
 }
 
-static void
-_destructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_polygon_destructor(Eo *eo_obj, Evas_Polygon_Data *_pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
@@ -315,7 +293,7 @@ evas_object_polygon_free(Evas_Object *eo_obj EINA_UNUSED,
                          Evas_Object_Protected_Data *obj,
                          void *type_private_data)
 {
-   Evas_Object_Polygon *o = type_private_data;
+   Evas_Polygon_Data *o = type_private_data;
    void *list_data;
    /* free obj */
    EINA_LIST_FREE(o->points, list_data)
@@ -333,7 +311,7 @@ evas_object_polygon_render(Evas_Object *eo_obj EINA_UNUSED,
 			   void *type_private_data,
 			   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
-   Evas_Object_Polygon *o = type_private_data;
+   Evas_Polygon_Data *o = type_private_data;
    Eina_List *l;
    Evas_Polygon_Point *p;
 
@@ -378,7 +356,7 @@ evas_object_polygon_render_pre(Evas_Object *eo_obj,
 			       Evas_Object_Protected_Data *obj,
 			       void *type_private_data)
 {
-   Evas_Object_Polygon *o = type_private_data;
+   Evas_Polygon_Data *o = type_private_data;
    int is_v, was_v;
 
    /* dont pre-render the obj twice! */
@@ -483,21 +461,21 @@ evas_object_polygon_render_post(Evas_Object *eo_obj,
 
 static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_POLYGON;
 }
 
 static unsigned int evas_object_polygon_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Polygon *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Polygon_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 
@@ -530,7 +508,7 @@ evas_object_polygon_is_inside(Evas_Object *eo_obj EINA_UNUSED,
 			      void *type_private_data,
 			      Evas_Coord x, Evas_Coord y)
 {
-   Evas_Object_Polygon *o = type_private_data;
+   Evas_Polygon_Data *o = type_private_data;
    int num_edges = 0; /* Number of edges we crossed */
    Eina_List *itr;
    Evas_Polygon_Point *p;
@@ -592,36 +570,4 @@ evas_object_polygon_was_inside(Evas_Object *eo_obj EINA_UNUSED,
    return 1;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(EVAS_OBJ_POLYGON_ID(EVAS_OBJ_POLYGON_SUB_ID_POINT_ADD), _polygon_point_add),
-        EO_OP_FUNC(EVAS_OBJ_POLYGON_ID(EVAS_OBJ_POLYGON_SUB_ID_POINTS_CLEAR), _polygon_points_clear),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_POLYGON_SUB_ID_POINT_ADD, "Adds the given point to the given evas polygon object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_POLYGON_SUB_ID_POINTS_CLEAR, "Removes all of the points from the given evas polygon object."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Evas_Polygon",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_POLYGON_BASE_ID, op_desc, EVAS_OBJ_POLYGON_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Polygon),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_polygon_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
-
+#include "canvas/evas_polygon.eo.c"

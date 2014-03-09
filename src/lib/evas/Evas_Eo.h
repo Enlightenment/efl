@@ -2975,6 +2975,9 @@ enum
  *
  * @{
  */
+#include "canvas/evas_polygon.eo.h"
+
+#if 0
 #define EVAS_OBJ_POLYGON_CLASS evas_object_polygon_class_get()
 const Eo_Class *evas_object_polygon_class_get(void) EINA_CONST;
 
@@ -3013,6 +3016,8 @@ enum
  * @see evas_object_polygon_points_clear
  */
 #define evas_obj_polygon_points_clear() EVAS_OBJ_POLYGON_ID(EVAS_OBJ_POLYGON_SUB_ID_POINTS_CLEAR)
+
+#endif
 
 /**
  * @}

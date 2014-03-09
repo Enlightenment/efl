@@ -3,10 +3,13 @@
 
 BUILT_SOURCES += \
                  lib/evas/canvas/evas_line.eo.c \
-                 lib/evas/canvas/evas_line.eo.h
+                 lib/evas/canvas/evas_line.eo.h \
+                 lib/evas/canvas/evas_polygon.eo.c \
+                 lib/evas/canvas/evas_polygon.eo.h
 
 EXTRA_DIST += \
-              lib/evas/canvas/evas_line.eo
+              lib/evas/canvas/evas_line.eo \
+              lib/evas/canvas/evas_polygon.eo
 
 lib_LTLIBRARIES += lib/evas/libevas.la
 noinst_LTLIBRARIES =
@@ -22,7 +25,8 @@ lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
 nodist_installed_evascanvasheaders_DATA = \
-                                        lib/evas/canvas/evas_line.eo.h
+                                        lib/evas/canvas/evas_line.eo.h \
+                                        lib/evas/canvas/evas_polygon.eo.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \
