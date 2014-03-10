@@ -1,0 +1,19 @@
+class Evas_Smart_Clipped (Evas_Smart)
+{
+   legacy_prefix: evas_object_smart_clipped;
+   eo_prefix: evas_obj_smart_clipped;
+   data: Evas_Object_Smart_Clipped_Data;
+   implements {
+      Eo_Base::constructor;
+      Evas_Smart::hide;
+      Evas_Smart::clip::set;
+      Evas_Smart::clip_unset;
+      Evas_Smart::show;
+      Evas_Smart::color::set;
+      Evas_Smart::move;
+      Evas_Smart::member_del;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::member_add;
+   }
+}

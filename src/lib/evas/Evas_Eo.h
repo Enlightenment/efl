@@ -3415,6 +3415,9 @@ enum
  *
  * @{
  */
+#include "canvas/evas_smart_clipped.eo.h"
+
+#if 0
 
 #define EVAS_OBJ_SMART_CLIPPED_CLASS evas_object_smart_clipped_eo_class_get()
 
@@ -3426,6 +3429,7 @@ enum
 {
    EVAS_OBJ_SMART_CLIPPED_SUB_ID_LAST
 };
+#endif
 
 /**
  * @}

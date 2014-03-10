@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-EAPI Eo_Op EVAS_OBJ_SMART_CLIPPED_BASE_ID = EO_NOOP;
-
 #define MY_CLASS EVAS_OBJ_SMART_CLIPPED_CLASS
 
 #define CSO_DATA_GET(eo_obj, ptr)                                           \
@@ -88,8 +86,8 @@ evas_object_smart_clipped_smart_add(Evas_Object *eo_obj)
    evas_object_smart_data_set(eo_obj, cso);
 }
 
-static void
-_smart_add(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_add(eo_obj);
 }
@@ -115,8 +113,8 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
    evas_object_smart_data_set(eo_obj, NULL);
 }
 
-static void
-_smart_del(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_del(eo_obj);
 }
@@ -130,11 +128,9 @@ evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coo
    evas_object_smart_move_children_relative(eo_obj, x - orig_x, y - orig_y);
 }
 
-static void
-_smart_move(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_move(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
    evas_object_smart_clipped_smart_move(eo_obj, x, y);
 }
 
@@ -146,8 +142,8 @@ evas_object_smart_clipped_smart_show(Evas_Object *eo_obj)
      evas_object_show(cso->clipper); /* just show if clipper being used */
 }
 
-static void
-_smart_show(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_show(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_show(eo_obj);
 }
@@ -159,8 +155,8 @@ evas_object_smart_clipped_smart_hide(Evas_Object *eo_obj)
    evas_object_hide(cso->clipper);
 }
 
-static void
-_smart_hide(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_hide(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_hide(eo_obj);
 }
@@ -172,13 +168,9 @@ evas_object_smart_clipped_smart_color_set(Evas_Object *eo_obj, int r, int g, int
    evas_object_color_set(cso->clipper, r, g, b, a);
 }
 
-static void
-_smart_color_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_color_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
    evas_object_smart_clipped_smart_color_set(eo_obj, r, g, b, a);
 }
 
@@ -189,10 +181,9 @@ evas_object_smart_clipped_smart_clip_set(Evas_Object *eo_obj, Evas_Object *clip)
    evas_object_clip_set(cso->clipper, clip);
 }
 
-static void
-_smart_clip_set(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_clip_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED, Evas_Object *clip)
 {
-   Evas_Object *clip = va_arg(*list, Evas_Object *);
    evas_object_smart_clipped_smart_clip_set(eo_obj, clip);
 }
 
@@ -203,8 +194,8 @@ evas_object_smart_clipped_smart_clip_unset(Evas_Object *eo_obj)
    evas_object_clip_unset(cso->clipper);
 }
 
-static void
-_smart_clip_unset(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_clip_unset(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_clip_unset(eo_obj);
 }
@@ -220,10 +211,9 @@ evas_object_smart_clipped_smart_member_add(Evas_Object *eo_obj, Evas_Object *mem
      evas_object_show(cso->clipper);
 }
 
-static void
-_smart_member_add(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_member_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED, Evas_Object *member)
 {
-   Evas_Object *member = va_arg(*list, Evas_Object *);
    eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_member_add(member));
    evas_object_smart_clipped_smart_member_add(eo_obj, member);
 }
@@ -239,10 +229,9 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
      evas_object_hide(cso->clipper);
 }
 
-static void
-_smart_member_del(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_evas_smart_clipped_evas_smart_member_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *_pd EINA_UNUSED, Evas_Object *member)
 {
-   Evas_Object *member = va_arg(*list, Evas_Object *);
    evas_object_smart_clipped_smart_member_del(eo_obj, member);
    eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_member_del(member));
 }
@@ -280,47 +269,10 @@ evas_object_smart_clipped_class_get(void)
    return class;
 }
 
-static void
-_constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_smart_clipped_constructor(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *class_data EINA_UNUSED)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _smart_del),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _smart_move),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _smart_show),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _smart_hide),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_COLOR_SET), _smart_color_set),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_SET), _smart_clip_set),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET), _smart_clip_unset),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _smart_member_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL), _smart_member_del),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Evas_Smart_Clipped",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_SMART_CLIPPED_BASE_ID, op_desc, EVAS_OBJ_SMART_CLIPPED_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Smart_Clipped_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_smart_clipped_eo_class_get, &class_desc, EVAS_OBJ_SMART_CLASS, NULL);
-
+#include "canvas/evas_smart_clipped.eo.c"
