@@ -16,6 +16,7 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_textgrid.eo.h
 
 EXTRA_DIST += \
+              lib/evas/canvas/evas_object.eo \
               lib/evas/canvas/evas_line.eo \
               lib/evas/canvas/evas_polygon.eo \
               lib/evas/canvas/evas_rectangle.eo \
