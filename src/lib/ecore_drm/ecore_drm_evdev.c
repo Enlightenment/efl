@@ -254,12 +254,15 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
    char key[256], keyname[256], compose[256];
    Ecore_Event_Key *e;
+   Ecore_Drm_Input *input;
+
+   if (!(input = dev->seat->input)) return;
 
    /* FIXME: This will probably need to handle modifiers also */
 
-   DBG("Key Event");
-   DBG("\tCode: %d", event->code);
-   DBG("\tValue: %d", event->value);
+   /* DBG("Key Event"); */
+   /* DBG("\tCode: %d", event->code); */
+   /* DBG("\tValue: %d", event->value); */
 
    /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = event->code + 8;
@@ -304,9 +307,11 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    strcpy((char *)e->key, key);
    if (strlen(compose)) strcpy((char *)e->compose, compose);
 
-   /* e->window = win->id; */
-   /* e->event_window = win->id; */
+   e->window = (Ecore_Window)input->dev->window;
+   e->event_window = (Ecore_Window)input->dev->window;
+   e->root_window = (Ecore_Window)input->dev->window;
    e->timestamp = timestamp;
+   /* e->same_screen = 1; */
 
    e->modifiers = dev->xkb.modifiers;
 
@@ -394,7 +399,7 @@ _device_process(Ecore_Drm_Evdev *dev, struct input_event *event, int count)
    struct input_event *ev, *end;
    unsigned int timestamp = 0;
 
-   DBG("Evdev Device Process");
+   /* DBG("Evdev Device Process"); */
 
    ev = event;
    end = ev + count;
