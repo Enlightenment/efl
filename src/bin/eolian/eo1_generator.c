@@ -331,8 +331,10 @@ _varg_upgr(const char *stype)
 {
    if (!strcmp(stype, "Eina_Bool") ||
      !strcmp(stype, "char") ||
-     !strcmp(stype, "short"))
+     !strcmp(stype, "short") ||
+     !strcmp(stype, "unsigned short"))
      return "int";
+
    return stype;
 }
 
