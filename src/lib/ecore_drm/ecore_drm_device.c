@@ -592,3 +592,17 @@ ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
    if (!dev) return -1;
    return dev->drm.fd;
 }
+
+/**
+ * TODO: Doxy
+ * 
+ * @since 1.10
+ */
+EAPI void 
+ecore_drm_device_window_set(Ecore_Drm_Device *dev, void *window)
+{
+   /* check for valid device */
+   if ((!dev) || (dev->drm.fd < 0)) return;
+
+   dev->window = window;
+}
