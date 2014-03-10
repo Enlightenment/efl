@@ -330,6 +330,11 @@ fi
 
 AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
 
+# ragel
+
+AC_CHECK_PROG([have_ragel], [ragel], [yes], [no])
+AM_CONDITIONAL([EFL_HAVE_RAGEL], [test "${have_ragel}" = "yes"])
+
 #### Checks for libraries
 
 # check unit testing library

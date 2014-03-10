@@ -42,3 +42,16 @@ bin_eolian_eolian_gen_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 include Makefile_Eolian_Helper.am
 
 EXTRA_DIST += lib/eolian/eo_lexer.rl
+
+if EFL_HAVE_RAGEL
+SUFFIXES += .rl
+
+AM_V_RAGEL = $(am__v_RAGEL_@AM_V@)
+am__v_RAGEL_ = $(am__v_RAGEL_@AM_DEFAULT_V@)
+am__v_RAGEL_0 = @echo "  RAGEL   " $@;
+
+.rl.c:
+	$(AM_V_RAGEL) ragel -o $@ $<
+
+lib/eolian/eo_lexer.c: lib/eolian/eo_lexer.rl
+endif
