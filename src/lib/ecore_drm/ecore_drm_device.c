@@ -423,6 +423,13 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 /* #endif */
 /*      } */
 
+   /* try to create xkb context */
+   if (!(dev->xkb_ctx = xkb_context_new(0)))
+     {
+        ERR("Failed to create xkb context: %m");
+        return EINA_FALSE;
+     }
+
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
@@ -465,6 +472,9 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 /*         dev->gbm = NULL; */
 /*      } */
 /* #endif */
+
+   /* close xkb context */
+   if (dev->xkb_ctx) xkb_context_unref(dev->xkb_ctx);
 
    if (dev->drm.hdlr) ecore_main_fd_handler_del(dev->drm.hdlr);
    dev->drm.hdlr = NULL;
