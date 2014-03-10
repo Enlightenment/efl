@@ -242,13 +242,18 @@ fb_var_str_convert(const struct fb_var_screeninfo *fbv)
 
    eina_strbuf_append_printf(buf,
                              ", "
-                             "rotate=%u, "
-                             "colorspace=%u",
-                             fbv->rotate,
-                             fbv->colorspace);
+                             "rotate=%u, ",
+                             fbv->rotate);
 
-   if (fbv->colorspace)
-     eina_strbuf_append_n(buf, (const char *)&(fbv->colorspace), 4);
+   /* eina_strbuf_append_printf(buf, */
+   /*                           ", " */
+   /*                           "rotate=%u, " */
+   /*                           "colorspace=%u", */
+   /*                           fbv->rotate, */
+   /*                           fbv->colorspace); */
+
+   /* if (fbv->colorspace) */
+   /*   eina_strbuf_append_n(buf, (const char *)&(fbv->colorspace), 4); */
 
    ret = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
