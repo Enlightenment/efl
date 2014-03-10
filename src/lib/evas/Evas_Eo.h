@@ -3986,6 +3986,8 @@ enum
  *
  * @{
  */
+#include "canvas/evas_table.eo.h"
+# if 0
 #define EVAS_OBJ_TABLE_CLASS evas_object_table_class_get()
 
 const Eo_Class *evas_object_table_class_get(void) EINA_CONST;
@@ -4237,7 +4239,7 @@ enum
  */
 #define evas_obj_table_mirrored_set(mirrored) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, mirrored)
 
-
+#endif
 /**
  * @}
  */
