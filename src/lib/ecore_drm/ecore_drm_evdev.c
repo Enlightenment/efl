@@ -42,9 +42,6 @@ _device_keyboard_setup(Ecore_Drm_Evdev *edev)
         return;
      }
 
-   /* FIXME: setup modifiers ? */
-   edev->xkb.modifiers = 0;
-
    edev->xkb.ctrl_mask = 
      1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_CTRL);
    edev->xkb.alt_mask = 
@@ -250,6 +247,8 @@ static void
 _device_modifiers_update(Ecore_Drm_Evdev *edev)
 {
    xkb_mod_mask_t mask;
+
+   edev->xkb.modifiers = 0;
 
    edev->xkb.depressed = 
      xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_DEPRESSED);
