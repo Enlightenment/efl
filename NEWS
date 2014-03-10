@@ -11,6 +11,9 @@ Improvements:
 
 Fixes:
 
+   * evas: Replace EINA_LIST_FOREACH_SAFE to while statement.
+   * Eina Log: Fixed ABI break introduce by the addition of 'color'.
+   * Evas font: Don't add canvas specific path to the global fontconfig path list.
    * edje - allow lager clipper space.
    * eina_log: Update domain colouring when color_disable_set is called (T1029)
    * edje/entry: fix to not emit "changed" signal in unnecessary cases of password mode.
