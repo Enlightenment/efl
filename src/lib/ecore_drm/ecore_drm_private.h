@@ -185,6 +185,21 @@ struct _Ecore_Drm_Evdev
         int x, y;
      } abs;
 
+   struct 
+     {
+        struct xkb_keymap *keymap;
+        struct xkb_state *state;
+        xkb_mod_mask_t ctrl_mask;
+        xkb_mod_mask_t alt_mask;
+        xkb_mod_mask_t shift_mask;
+        xkb_mod_mask_t win_mask;
+        xkb_mod_mask_t scroll_mask;
+        xkb_mod_mask_t num_mask;
+        xkb_mod_mask_t caps_mask;
+        xkb_mod_mask_t altgr_mask;
+        unsigned int modifiers;
+     } xkb;
+
    Ecore_Drm_Evdev_Event_Type pending_event;
    Ecore_Drm_Evdev_Capabilities caps;
    Ecore_Drm_Seat_Capabilities seat_caps;
