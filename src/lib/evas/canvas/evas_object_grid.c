@@ -4,11 +4,9 @@
 
 #include <Eo.h>
 
-EAPI Eo_Op EVAS_OBJ_GRID_BASE_ID = EO_NOOP;
-
 #define MY_CLASS EVAS_OBJ_GRID_CLASS
 
-typedef struct _Evas_Object_Grid_Data       Evas_Object_Grid_Data;
+typedef struct _Evas_Grid_Data              Evas_Grid_Data;
 typedef struct _Evas_Object_Grid_Option     Evas_Object_Grid_Option;
 typedef struct _Evas_Object_Grid_Iterator   Evas_Object_Grid_Iterator;
 typedef struct _Evas_Object_Grid_Accessor   Evas_Object_Grid_Accessor;
@@ -20,7 +18,7 @@ struct _Evas_Object_Grid_Option
    int x, y, w, h;
 };
 
-struct _Evas_Object_Grid_Data
+struct _Evas_Grid_Data
 {
    Evas_Object_Smart_Clipped_Data base;
    Eina_List *children;
@@ -47,7 +45,7 @@ struct _Evas_Object_Grid_Accessor
 };
 
 #define EVAS_OBJECT_GRID_DATA_GET(o, ptr)			\
-  Evas_Object_Grid_Data *ptr = eo_data_scope_get(o, MY_CLASS)
+  Evas_Grid_Data *ptr = eo_data_scope_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, ptr)			\
   EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
@@ -165,7 +163,7 @@ EVAS_SMART_SUBCLASS_NEW("Evas_Object_Grid", _evas_object_grid,
 static void
 _evas_object_grid_smart_add(Evas_Object *o)
 {
-   Evas_Object_Grid_Data *priv;
+   Evas_Grid_Data *priv;
 
    priv = evas_object_smart_data_get(o);
    if (!priv)
@@ -257,8 +255,8 @@ evas_object_grid_add(Evas *evas)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_grid_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_smart_attach(_evas_object_grid_smart_class_new()));
@@ -266,82 +264,39 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 //   return evas_object_smart_add(evas, _evas_object_grid_smart_class_new());
 }
 
-EAPI Evas_Object *
-evas_object_grid_add_to(Evas_Object *parent)
-{
-   Evas_Object *o = NULL;
-   eo_do(parent, evas_obj_grid_add_to(&o));
-   return o;
-}
-
-static void
-_add_to(Eo *parent, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Evas_Object*
+_evas_grid_add_to(Eo *parent, Evas_Grid_Data *_pd EINA_UNUSED)
 {
    Evas *evas;
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   Evas_Object *ret;
    evas = evas_object_evas_get(parent);
-   *ret = evas_object_grid_add(evas);
-   evas_object_smart_member_add(*ret, parent);
+   ret = evas_object_grid_add(evas);
+   evas_object_smart_member_add(ret, parent);
+
+   return ret;
 }
 
-EAPI void
-evas_object_grid_size_set(Evas_Object *o, int w, int h)
+EOLIAN static void
+_evas_grid_size_set(Eo *o, Evas_Grid_Data *priv, int w, int h)
 {
-   eo_do(o, evas_obj_grid_size_set(w, h));
-}
-
-static void
-_size_set(Eo *o, void *_pd, va_list *list)
-{
-   Evas_Object_Grid_Data *priv = _pd;
-   int w = va_arg(*list, int);
-   int h = va_arg(*list, int);
-
    if ((priv->size.w == w) && (priv->size.h == h)) return;
    priv->size.w = w;
    priv->size.h = h;
    evas_object_smart_changed(o);
 }
 
-EAPI void
-evas_object_grid_size_get(const Evas_Object *o, int *w, int *h)
+EOLIAN static void
+_evas_grid_size_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, int *w, int *h)
 {
-   eo_do((Eo *)o, evas_obj_grid_size_get(w, h));
-}
-
-static void
-_size_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Grid_Data *priv = _pd;
-   int *w = va_arg(*list, int *);
-   int *h = va_arg(*list, int *);
    if (w) *w = priv->size.w;
    if (h) *h = priv->size.h;
 }
 
-EAPI Eina_Bool
-evas_object_grid_pack(Evas_Object *o, Evas_Object *child, int x, int y, int w, int h)
-{
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(o, evas_obj_grid_pack(child, x, y, w, h, &ret));
-   return ret;
-}
-
-static void
-_pack(Eo *o, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_evas_grid_pack(Eo *o, Evas_Grid_Data *priv, Evas_Object *child, int x, int y, int w, int h)
 {
    Evas_Object_Grid_Option *opt;
    Eina_Bool newobj = EINA_FALSE;
-
-   Evas_Object_Grid_Data *priv = _pd;
-
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   int w = va_arg(*list, int);
-   int h = va_arg(*list, int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
 
    opt = _evas_object_grid_option_get(child);
    if (!opt)
@@ -350,7 +305,7 @@ _pack(Eo *o, void *_pd, va_list *list)
         if (!opt)
           {
              ERR("could not allocate grid option data.");
-             return;
+             return EINA_FALSE;
           }
         newobj = EINA_TRUE;
      }
@@ -371,68 +326,47 @@ _pack(Eo *o, void *_pd, va_list *list)
      }
    // FIXME: we could keep a changed list
    evas_object_smart_changed(o);
-   if (ret) *ret = EINA_TRUE;
+  
+   return EINA_TRUE;
 }
 
 static void
-_evas_object_grid_remove_opt(Evas_Object_Grid_Data *priv, Evas_Object_Grid_Option *opt)
+_evas_object_grid_remove_opt(Evas_Grid_Data *priv, Evas_Object_Grid_Option *opt)
 {
    priv->children = eina_list_remove_list(priv->children, opt->l);
    opt->l = NULL;
 }
 
-EAPI Eina_Bool
-evas_object_grid_unpack(Evas_Object *o, Evas_Object *child)
-{
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(o, evas_obj_grid_unpack(child, &ret));
-   return ret;
-}
-
-static void
-_unpack(Eo *o, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_evas_grid_unpack(Eo *o, Evas_Grid_Data *priv, Evas_Object *child)
 {
    Evas_Object_Grid_Option *opt;
-
-   Evas_Object_Grid_Data *priv = _pd;
-
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
 
    if (o != evas_object_smart_parent_get(child))
      {
 	ERR("cannot unpack child from incorrect grid!");
-        return;
+        return EINA_FALSE;
      }
 
    opt = _evas_object_grid_option_del(child);
    if (!opt)
      {
 	ERR("cannot unpack child with no packing option!");
-        return;
+        return EINA_FALSE;
      }
 
    _evas_object_grid_child_disconnect(o, child);
    _evas_object_grid_remove_opt(priv, opt);
    evas_object_smart_member_del(child);
    free(opt);
-   if (ret) *ret = EINA_TRUE;
+  
+   return EINA_TRUE;
 }
 
-EAPI void
-evas_object_grid_clear(Evas_Object *o, Eina_Bool clear)
-{
-   eo_do(o, evas_obj_grid_clear(clear));
-}
-
-static void
-_clear(Eo *o, void *_pd, va_list *list)
+EOLIAN static void
+_evas_grid_clear(Eo *o, Evas_Grid_Data *priv, Eina_Bool clear)
 {
    Evas_Object_Grid_Option *opt;
-
-   Evas_Object_Grid_Data *priv = _pd;
-   Eina_Bool clear = va_arg(*list, int);
 
    EINA_LIST_FREE(priv->children, opt)
      {
@@ -445,24 +379,9 @@ _clear(Eo *o, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-evas_object_grid_pack_get(const Evas_Object *o, Evas_Object *child, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Bool
+_evas_grid_pack_get(Eo *o EINA_UNUSED, Evas_Grid_Data *_pd EINA_UNUSED, Evas_Object *child, int *x, int *y, int *w, int *h)
 {
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)o, evas_obj_grid_pack_get(child, x, y, w, h, &ret));
-   return ret;
-}
-
-static void
-_pack_get(Eo *o EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   int *x = va_arg(*list, int *);
-   int *y = va_arg(*list, int *);
-   int *w = va_arg(*list, int *);
-   int *h = va_arg(*list, int *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
    Evas_Object_Grid_Option *opt;
 
    if (x) *x = 0;
@@ -470,46 +389,24 @@ _pack_get(Eo *o EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
    if (w) *w = 0;
    if (h) *h = 0;
    opt = _evas_object_grid_option_get(child);
-   if (!opt)
-     {
-        *ret = 0;
-        return;
-     }
+   if (!opt) return 0;
    if (x) *x = opt->x;
    if (y) *y = opt->y;
    if (w) *w = opt->w;
    if (h) *h = opt->h;
-   *ret = 1;
+
+   return 1;
 }
 
-EAPI Eina_Iterator *
-evas_object_grid_iterator_new(const Evas_Object *o)
+EOLIAN static Eina_Iterator*
+_evas_grid_iterator_new(Eo *o, Evas_Grid_Data *priv)
 {
-   Eina_Iterator *ret = NULL;
-   eo_do((Eo *)o, evas_obj_grid_iterator_new(&ret));
-   return ret;
-}
-
-static void
-_iterator_new(Eo *o, void *_pd, va_list *list)
-{
-   Eina_Iterator **ret = va_arg(*list, Eina_Iterator **);
    Evas_Object_Grid_Iterator *it;
 
-   const Evas_Object_Grid_Data *priv = _pd;
-
-   if (!priv->children)
-     {
-        *ret = NULL;
-        return;
-     }
+   if (!priv->children) return NULL;
 
    it = calloc(1, sizeof(Evas_Object_Grid_Iterator));
-   if (!it)
-     {
-        *ret = NULL;
-        return;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
@@ -520,37 +417,18 @@ _iterator_new(Eo *o, void *_pd, va_list *list)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_grid_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_grid_iterator_free);
 
-   *ret = &it->iterator;
+   return &it->iterator;
 }
 
-EAPI Eina_Accessor *
-evas_object_grid_accessor_new(const Evas_Object *o)
+EOLIAN static Eina_Accessor*
+_evas_grid_accessor_new(Eo *o, Evas_Grid_Data *priv)
 {
-   Eina_Accessor *ret = NULL;
-   eo_do((Eo *)o, evas_obj_grid_accessor_new(&ret));
-   return ret;
-}
-
-static void
-_accessor_new(Eo *o, void *_pd, va_list *list)
-{
-   Eina_Accessor **ret = va_arg(*list, Eina_Accessor **);
    Evas_Object_Grid_Accessor *it;
 
-   const Evas_Object_Grid_Data *priv = _pd;
-
-   if (!priv->children)
-     {
-        *ret = NULL;
-        return;
-     }
+   if (!priv->children) return NULL;
 
    it = calloc(1, sizeof(Evas_Object_Grid_Accessor));
-   if (!it)
-     {
-        *ret = NULL;
-        return;
-     }
+   if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
 
@@ -561,61 +439,30 @@ _accessor_new(Eo *o, void *_pd, va_list *list)
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(_evas_object_grid_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(_evas_object_grid_accessor_free);
 
-   *ret = &it->accessor;
+   return &it->accessor;
 }
 
-EAPI Eina_List *
-evas_object_grid_children_get(const Evas_Object *o)
+EOLIAN static Eina_List*
+_evas_grid_children_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
-   Eina_List *ret = NULL;
-   eo_do((Eo *)o, evas_obj_grid_children_get(&ret));
-   return ret;
-}
-
-static void
-_children_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_List **ret = va_arg(*list, Eina_List **);
-
    Eina_List *new_list = NULL, *l;
    Evas_Object_Grid_Option *opt;
-
-   const Evas_Object_Grid_Data *priv = _pd;
 
    EINA_LIST_FOREACH(priv->children, l, opt)
       new_list = eina_list_append(new_list, opt->obj);
 
-   *ret = new_list;
+   return new_list;
 }
 
-EAPI Eina_Bool
-evas_object_grid_mirrored_get(const Evas_Object *o)
+EOLIAN static Eina_Bool
+_evas_grid_mirrored_get(Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)o, evas_obj_grid_mirrored_get(&ret));
-   return ret;
+   return priv->is_mirrored;
 }
 
-static void
-_mirrored_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_grid_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Grid_Data *priv = _pd;
-   *ret = priv->is_mirrored;
-}
-
-EAPI void
-evas_object_grid_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
-{
-   eo_do(obj, evas_obj_grid_mirrored_set(mirrored));
-}
-
-static void
-_mirrored_set(Eo *o EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool mirrored = va_arg(*list, int);
-
-   Evas_Object_Grid_Data *priv = _pd;
    mirrored = !!mirrored;
    if (priv->is_mirrored != mirrored)
      {
@@ -624,54 +471,4 @@ _mirrored_set(Eo *o EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ADD_TO), _add_to),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_SIZE_SET), _size_set),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_SIZE_GET), _size_get),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_PACK), _pack),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_UNPACK), _unpack),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_CLEAR), _clear),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_PACK_GET), _pack_get),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ITERATOR_NEW), _iterator_new),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ACCESSOR_NEW), _accessor_new),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_CHILDREN_GET), _children_get),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_MIRRORED_GET), _mirrored_get),
-        EO_OP_FUNC(EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_MIRRORED_SET), _mirrored_set),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_ADD_TO, "Create a grid that is child of a given element parent."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_SIZE_SET, "Set the virtual resolution for the grid."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_SIZE_GET, "Get the current virtual resolution."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_PACK, "Add a new child to a grid object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_UNPACK, "Remove child from grid."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_CLEAR, "Faster way to remove all child objects from a grid object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_PACK_GET, "Get the pack options for a grid child."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_ITERATOR_NEW, "Get an iterator to walk the list of children for the grid."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_ACCESSOR_NEW, "Get an accessor to get random access to the list of children for the grid."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_CHILDREN_GET, "Get the list of children for the grid."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_MIRRORED_GET, "Gets the mirrored mode of the grid."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_GRID_SUB_ID_MIRRORED_SET, "Sets the mirrored mode of the grid."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Evas_Grid",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_GRID_BASE_ID, op_desc, EVAS_OBJ_GRID_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Grid_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_grid_class_get, &class_desc, EVAS_OBJ_SMART_CLIPPED_CLASS, NULL);
-
+#include "canvas/evas_grid.eo.c"

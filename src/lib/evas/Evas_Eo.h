@@ -4256,6 +4256,8 @@ enum
  *
  * @{
  */
+#include "canvas/evas_grid.eo.h"
+#if 0
 #define EVAS_OBJ_GRID_CLASS evas_object_grid_class_get()
 
 const Eo_Class *evas_object_grid_class_get(void) EINA_CONST;
@@ -4451,6 +4453,7 @@ enum
  */
 #define evas_obj_grid_mirrored_set(mirrored) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, mirrored)
 
+#endif
 /**
  * @}
  */
