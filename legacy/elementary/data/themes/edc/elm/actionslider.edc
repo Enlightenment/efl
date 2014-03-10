@@ -207,7 +207,7 @@ group { name: "elm/actionslider/base/default";
    programs {
       program {
          signal: "mouse,up,1"; source: "elm.drag_button";
-         action: SIGNAL_EMIT "elm.drag_button,mouse,up" "elm";
+         action: SIGNAL_EMIT "elm,action,up,drag_button" "elm";
          after: "button_unclick_anim";
       }
       program { name: "button_unclick_anim";
@@ -217,7 +217,7 @@ group { name: "elm/actionslider/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "elm.drag_button";
-         action: SIGNAL_EMIT "elm.drag_button,mouse,down" "elm";
+         action: SIGNAL_EMIT "elm,action,down,drag_button" "elm";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
@@ -227,7 +227,7 @@ group { name: "elm/actionslider/base/default";
       }
       program {
          signal: "mouse,move"; source: "elm.drag_button_base";
-         action: SIGNAL_EMIT "elm.drag_button,mouse,move" "elm";
+         action: SIGNAL_EMIT "elm,action,move,drag_button" "elm";
       }
       program {
          signal: "mouse,down,1*"; source: "elm.text.right";

@@ -475,6 +475,7 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->drag_button_base, 0, 0, 0, 0);
 
+   // dirty support for the backward compatibility
    edje_object_signal_callback_add
      (wd->resize_obj, "elm.drag_button,mouse,up", "*",
      _drag_button_up_cb, obj);
@@ -483,6 +484,16 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      _drag_button_down_cb, obj);
    edje_object_signal_callback_add
      (wd->resize_obj, "elm.drag_button,mouse,move", "*",
+     _drag_button_move_cb, obj);
+
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,up,drag_button", "elm",
+     _drag_button_up_cb, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,down,drag_button", "elm",
+     _drag_button_down_cb, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,move,drag_button", "elm",
      _drag_button_move_cb, obj);
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,down,right", "*",
