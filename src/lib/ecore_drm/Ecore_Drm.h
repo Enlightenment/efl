@@ -147,6 +147,7 @@ EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
 EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_tty_release(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_tty_acquire(Ecore_Drm_Device *dev);
+EAPI int ecore_drm_tty_get(Ecore_Drm_Device *dev);
 
 EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);

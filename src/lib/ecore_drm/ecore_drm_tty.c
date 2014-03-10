@@ -295,3 +295,23 @@ ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
 
    return EINA_TRUE;
 }
+
+/**
+ * Get the opened virtual terminal file descriptor
+ * 
+ * @param dev The Ecore_Drm_Device which owns this tty.
+ * 
+ * @return    The tty fd opened from previous call to ecore_drm_tty_open
+ * 
+ * @ingroup Ecore_Drm_Tty_Group
+ * 
+ * @since 1.10
+ */
+EAPI int 
+ecore_drm_tty_get(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (!dev->drm.name) || (dev->tty.fd < 0)) return -1;
+
+   return dev->tty.fd;
+}
