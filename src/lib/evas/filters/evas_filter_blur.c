@@ -520,12 +520,16 @@ _gaussian_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
+   DEBUG_TIME_BEGIN();
+
    for (k = h; k; k--)
      {
         _gaussian_blur_step_alpha(src, dst, radius, w, 1, weights, pow2_div);
         dst += w;
         src += w;
      }
+
+   DEBUG_TIME_END();
 }
 
 static void
@@ -537,12 +541,16 @@ _gaussian_blur_vert_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
+   DEBUG_TIME_BEGIN();
+
    for (k = w; k; k--)
      {
         _gaussian_blur_step_alpha(src, dst, radius, h, w, weights, pow2_div);
         dst += 1;
         src += 1;
      }
+
+   DEBUG_TIME_END();
 }
 
 static void
@@ -554,12 +562,16 @@ _gaussian_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
+   DEBUG_TIME_BEGIN();
+
    for (k = h; k; k--)
      {
         _gaussian_blur_step_rgba(src, dst, radius, w, 1, weights, pow2_div);
         dst += w;
         src += w;
      }
+
+   DEBUG_TIME_END();
 }
 
 static void
@@ -571,12 +583,16 @@ _gaussian_blur_vert_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
+   DEBUG_TIME_BEGIN();
+
    for (k = w; k; k--)
      {
         _gaussian_blur_step_rgba(src, dst, radius, h, w, weights, pow2_div);
         dst += 1;
         src += 1;
      }
+
+   DEBUG_TIME_END();
 }
 
 static Eina_Bool
