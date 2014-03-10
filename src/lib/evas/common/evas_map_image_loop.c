@@ -34,37 +34,37 @@
 # ifdef COLBLACK
         *d = 0xff000000; // col
 # else
-        FPc u1, v1, u2, v2;
+        FPc uu1, vv1, uu2, vv2;
         FPc rv, ru;
         DATA32 val1, val2, val3, val4;
 
-        u1 = u;
-        if (u1 < 0) u1 = 0;
-        else if (u1 >= swp) u1 = swp - 1;
+        uu1 = u;
+        if (uu1 < 0) uu1 = 0;
+        else if (uu1 >= swp) uu1 = swp - 1;
 
-        v1 = v;
-        if (v1 < 0) v1 = 0;
-        else if (v1 >= shp) v1 = shp - 1;
+        vv1 = v;
+        if (vv1 < 0) vv1 = 0;
+        else if (vv1 >= shp) vv1 = shp - 1;
 
-        u2 = u1 + FPFPI1;      // next u point
-        if (u2 >= swp) u2 = swp - 1;
+        uu2 = uu1 + FPFPI1;      // next u point
+        if (uu2 >= swp) uu2 = swp - 1;
 
-        v2 = v1 + FPFPI1;      // next v point
-        if (v2 >= shp) v2 = shp - 1;
+        vv2 = vv1 + FPFPI1;      // next v point
+        if (vv2 >= shp) vv2 = shp - 1;
 
         ru = (u >> (FP + FPI - 8)) & 0xff;
         rv = (v >> (FP + FPI - 8)) & 0xff;
 
-        s = sp + ((v1 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
+        s = sp + ((vv1 >> (FP + FPI)) * sw) + (uu1 >> (FP + FPI));
         val1 = *s;             // current pixel
 
-        s = sp + ((v1 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
+        s = sp + ((vv1 >> (FP + FPI)) * sw) + (uu2 >> (FP + FPI));
         val2 = *s;             // right pixel
 
-        s = sp + ((v2 >> (FP + FPI)) * sw) + (u1 >> (FP + FPI));
+        s = sp + ((vv2 >> (FP + FPI)) * sw) + (uu1 >> (FP + FPI));
         val3 = *s;             // bottom pixel
 
-        s = sp + ((v2 >> (FP + FPI)) * sw) + (u2 >> (FP + FPI));
+        s = sp + ((vv2 >> (FP + FPI)) * sw) + (uu2 >> (FP + FPI));
         val4 = *s;             // right bottom pixel
 
 #  ifdef SCALE_USING_MMX
