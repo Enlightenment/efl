@@ -213,6 +213,11 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
 
    _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
+   ecore_drm_device_window_set(dev, ee);
+   evas_event_feed_mouse_in(ee->evas, 
+                            (unsigned int)((unsigned long long)
+                                           (ecore_time_get() * 1000.0) & 
+                                           0xffffffff), NULL);
 
    return ee;
 
@@ -266,12 +271,14 @@ _ecore_evas_drm_init(void)
         goto sprite_err;
      }
 
+   /* NB: We don't need to create outputs here. Evas will create the 
+    * framebuffers it needs */
    /* try to create outputs */
-   if (!ecore_drm_outputs_create(dev))
-     {
-        ERR("Could not create outputs: %m");
-        goto output_err;
-     }
+   /* if (!ecore_drm_outputs_create(dev)) */
+   /*   { */
+   /*      ERR("Could not create outputs: %m"); */
+   /*      goto output_err; */
+   /*   } */
 
    /* try to create inputs */
    if (!ecore_drm_inputs_create(dev))
