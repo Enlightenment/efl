@@ -269,6 +269,8 @@ struct _Ecore_Drm_Device
 
    struct xkb_context *xkb_ctx;
 
+   void *window;
+
 /* #ifdef HAVE_GBM */
 /*    struct gbm_device *gbm; */
 /*    struct */
