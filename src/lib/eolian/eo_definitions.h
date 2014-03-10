@@ -125,6 +125,8 @@ typedef struct _eo_class_def
    Eolian_Class_Type type;
    const char *comment;
    const char *legacy_prefix;
+   const char *eo_prefix;
+   const char *data_type;
    Eina_List *inherits;
    Eina_List *implements;
    Eina_List *events;

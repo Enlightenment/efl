@@ -218,6 +218,27 @@ EAPI const char *eolian_class_description_get(const char *class_name);
 EAPI const char *eolian_class_legacy_prefix_get(const char *class_name);
 
 /*
+ * @brief Returns the eo prefix of a class
+ *
+ * @param[in] class_name name of the class
+ * @return the eo prefix
+ *
+ * @ingroup Eolian
+ */
+EAPI const char* eolian_class_eo_prefix_get(const char *class_name);
+
+/*
+ * @brief Returns the data type of a class
+ *
+ * @param[in] class_name name of the class
+ * @return the data type
+ *
+ * @ingroup Eolian
+ */
+EAPI const char*
+eolian_class_data_type_get(const char *class_name);
+
+/*
  * @brief Returns the names list of the inherit classes of a class
  *
  * @param[in] class_name name of the class

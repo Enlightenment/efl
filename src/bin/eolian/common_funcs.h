@@ -38,4 +38,7 @@ char *_startline(char *str, char *pos);
 
 char *_source_desc_get(const char *str);
 
+char current_eo_prefix_lower[256];
+
+char current_eo_prefix_upper[256];
 #endif

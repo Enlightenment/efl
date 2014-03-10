@@ -51,6 +51,14 @@ database_class_description_set(const char *class_name, const char *description);
 void
 database_class_legacy_prefix_set(const char *class_name, const char *legacy_prefix);
 
+/* Set eo prefix of class. */
+void
+database_class_eo_prefix_set(const char *class_name, const char *eo_prefix);
+
+/* Set data of class. */
+void
+database_class_data_type_set(const char *class_name, const char *data_type);
+
 /* Set file of class */
 Eina_Bool
 database_class_file_set(const char *class_name, const char *file_name);

@@ -8,7 +8,7 @@
 static const char
 tmpl_eo_src_begin[] = "\
 \n\
-EAPI Eo_Op @#OBJCLASS_BASE_ID = EO_NOOP;\n\
+EAPI Eo_Op @#EOPREFIX_BASE_ID = EO_NOOP;\n\
 \n\
 @#list_events\n\
 \n\
@@ -51,58 +51,58 @@ static const Eo_Class_Description _@#class_class_desc = {\n\
      EO_VERSION,\n\
      \"@#Class\",\n\
      @#type_class,\n\
-     EO_CLASS_DESCRIPTION_OPS(&@#OBJCLASS_BASE_ID, _@#class_op_desc, @#OBJCLASS_SUB_ID_LAST),\n\
+     EO_CLASS_DESCRIPTION_OPS(&@#EOPREFIX_BASE_ID, _@#class_op_desc, @#EOPREFIX_SUB_ID_LAST),\n\
      _@#class_event_desc,\n\
-     sizeof(@#Class_Data),\n\
+     @#SizeOfData,\n\
      _gen_@#class_class_constructor,\n\
      @#dtor_name\n\
 };\n\
 \n\
-EO_DEFINE_CLASS(@#objclass_class_get, &_@#class_class_desc, @#list_inheritNULL);\
+EO_DEFINE_CLASS(@#eoprefix_class_get, &_@#class_class_desc, @#list_inheritNULL);\
 ";
 
 static const char
-tmpl_eo_op_desc[] = "\n     EO_OP_DESCRIPTION(@#OBJCLASS_SUB_ID_@#FUNC, \"@#desc\"),";
+tmpl_eo_op_desc[] = "\n     EO_OP_DESCRIPTION(@#EOPREFIX_SUB_ID_@#FUNC, \"@#desc\"),";
 
 static const char
-tmpl_eo_func_desc[] = "\n        EO_OP_FUNC(@#OBJCLASS_ID(@#OBJCLASS_SUB_ID_@#FUNC), _eo_obj_@#class_@#func),";
+tmpl_eo_func_desc[] = "\n        EO_OP_FUNC(@#EOPREFIX_ID(@#EOPREFIX_SUB_ID_@#FUNC), _eo_obj_@#class_@#func),";
 
 static const char
 tmpl_eobase_func_desc[] = "\n        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_@#FUNC), _eo_obj_@#class_@#func),";
 
 static const char
-tmpl_eo_header[] = "\
-#define @#OBJCLASS_CLASS @#objclass_class_get()\n\
+tmpl_eo_obj_header[] = "\
+#define @#EOPREFIX_CLASS @#eoprefix_class_get()\n\
 \n\
-const Eo_Class *@#objclass_class_get(void) EINA_CONST;\n\
+const Eo_Class *@#eoprefix_class_get(void) EINA_CONST;\n\
 \n\
-extern EAPI Eo_Op @#OBJCLASS_BASE_ID;\n\
+extern EAPI Eo_Op @#EOPREFIX_BASE_ID;\n\
 \n\
 enum\n\
 {@#list_subid\n\
-   @#OBJCLASS_SUB_ID_LAST\n\
+   @#EOPREFIX_SUB_ID_LAST\n\
 };\n\
 \n\
-#define @#OBJCLASS_ID(sub_id) (@#OBJCLASS_BASE_ID + sub_id)\n\
+#define @#EOPREFIX_ID(sub_id) (@#EOPREFIX_BASE_ID + sub_id)\n\
 ";
 
 static const char
-tmpl_eo_subid[] = "\n   @#OBJCLASS_SUB_ID_@#FUNC,";
+tmpl_eo_subid[] = "\n   @#EOPREFIX_SUB_ID_@#FUNC,";
 
 static const char
-tmpl_eo_subid_apnd[] = "   @#OBJCLASS_SUB_ID_@#FUNC,\n";
+tmpl_eo_subid_apnd[] = "   @#EOPREFIX_SUB_ID_@#FUNC,\n";
 
 static const char
 tmpl_eo_funcdef[] = "\n\
 /**\n\
- * @def @#objclass_@#func\n\
+ * @def @#eoprefix_@#func\n\
  *\n\
 @#desc\n\
  *\n\
 @#list_desc_param\
  *\n\
  */\n\
-#define @#eoprefix_@#func(@#list_param) @#OBJCLASS_ID(@#OBJCLASS_SUB_ID_@#FUNC)@#list_typecheck\n\
+#define @#eoprefix_@#func(@#list_param) @#EOPREFIX_ID(@#EOPREFIX_SUB_ID_@#FUNC)@#list_typecheck\n\
 ";
 
 static const char
@@ -135,6 +135,7 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
    void *data;
    char funcname[0xFF];
    char descname[0xFF];
+   char *tmpstr = malloc(0x1FF);
 
    char *fsuffix = "";
    if (ftype == GET) fsuffix = "_get";
@@ -146,6 +147,9 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
 
    Eina_Strbuf *str_func = eina_strbuf_new();
    _template_fill(str_func, tmpl_eo_funcdef, classname, funcname, EINA_TRUE);
+
+   eina_strbuf_replace_all(str_func, "@#EOPREFIX", current_eo_prefix_upper);
+   eina_strbuf_replace_all(str_func, "@#eoprefix", current_eo_prefix_lower);
 
    Eina_Strbuf *linedesc = eina_strbuf_new();
    eina_strbuf_append(linedesc, funcdesc ? funcdesc : "No description supplied.");
@@ -223,6 +227,7 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
    eina_strbuf_replace_all(str_func, "@#list_desc_param", eina_strbuf_string_get(str_pardesc));
    eina_strbuf_replace_all(str_func, "@#list_typecheck", eina_strbuf_string_get(str_typecheck));
 
+   free(tmpstr);
    eina_strbuf_free(str_par);
    eina_strbuf_free(str_pardesc);
    eina_strbuf_free(str_typecheck);
@@ -239,7 +244,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
    const Eolian_Function_Type ftype_order[] = {CONSTRUCTOR, PROPERTY_FUNC, METHOD_FUNC};
    const Eina_List *l;
    void *data;
-   char tmpstr[0x1FF];
+   char *tmpstr = malloc(0x1FF);
 
    if (!eolian_class_exists(classname))
      {
@@ -248,7 +253,10 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
      }
 
    Eina_Strbuf * str_hdr = eina_strbuf_new();
-   _template_fill(str_hdr, tmpl_eo_header, classname, "", EINA_TRUE);
+   _template_fill(str_hdr, tmpl_eo_obj_header, classname, "", EINA_TRUE);
+
+   eina_strbuf_replace_all(str_hdr, "@#EOPREFIX", current_eo_prefix_upper);
+   eina_strbuf_replace_all(str_hdr, "@#eoprefix", current_eo_prefix_lower);
 
    Eina_Strbuf *str_subid = eina_strbuf_new();
    Eina_Strbuf *str_ev = eina_strbuf_new();
@@ -300,6 +308,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
                 _template_fill(str_subid, tmpl_eo_subid, classname, tmpstr, EINA_FALSE);
                 eo1_fundef_generate(classname, (Eolian_Function)data, GET, str_hdr);
              }
+           eina_strbuf_replace_all(str_subid, "@#EOPREFIX", current_eo_prefix_upper);
         }
 
    eina_strbuf_replace_all(str_hdr, "@#list_subid", eina_strbuf_string_get(str_subid));
@@ -307,6 +316,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_hdr));
 
+   free(tmpstr);
    eina_strbuf_free(str_subid);
    eina_strbuf_free(str_ev);
    eina_strbuf_free(tmpbuf);
@@ -442,7 +452,19 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    eina_strbuf_replace_all(fbody, "@#list_vars", eina_strbuf_string_get(va_args));
    eina_strbuf_replace_all(fbody, "@#full_params", eina_strbuf_string_get(full_params));
    eina_strbuf_replace_all(fbody, "@#list_params", eina_strbuf_string_get(params));
-   eina_strbuf_replace_all(fbody, "@#Datatype", classname);
+   const char *data_type = eolian_class_data_type_get(classname);
+   if (data_type && !strcmp(data_type, "null"))
+      eina_strbuf_replace_all(fbody, "@#Datatype_Data", "void *");
+   else
+     {
+        if (data_type) eina_strbuf_replace_all(fbody, "@#Datatype_Data", data_type);
+        else eina_strbuf_replace_all(fbody, "@#Datatype", classname);
+     }
+
+   if (!data_type || !strcmp(data_type, "null"))
+      eina_strbuf_replace_all(fbody, "@#Datatype", classname);
+   else
+      eina_strbuf_replace_all(fbody, "@#Datatype_Data", data_type);
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
 
    eina_strbuf_free(va_args);
@@ -456,6 +478,7 @@ Eina_Bool
 eo1_eo_func_desc_generate(const char *classname, const char *funcname, Eina_Strbuf *buf)
 {
    _template_fill(buf, tmpl_eo_func_desc, classname, funcname, EINA_TRUE);
+   eina_strbuf_replace_all(buf, "@#EOPREFIX", current_eo_prefix_upper);
    return EINA_TRUE;
 }
 
@@ -463,6 +486,8 @@ Eina_Bool
 eo1_eo_op_desc_generate(const char *classname, const char *funcname, Eina_Strbuf *buf)
 {
    _template_fill(buf, tmpl_eo_op_desc, classname, funcname, EINA_TRUE);
+   eina_strbuf_replace_all(buf, "@#EOPREFIX", current_eo_prefix_upper);
+
    return EINA_TRUE;
 }
 
@@ -476,6 +501,7 @@ eo1_source_beginning_generate(const char *classname, Eina_Strbuf *buf)
    Eina_Strbuf *str_ev = eina_strbuf_new();
 
    _template_fill(str_begin, tmpl_eo_src_begin, classname, "", EINA_TRUE);
+   eina_strbuf_replace_all(str_begin, "@#EOPREFIX", current_eo_prefix_upper);
 
    Eolian_Event event;
    EINA_LIST_FOREACH(eolian_class_events_list_get(classname), itr, event)
@@ -547,6 +573,8 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    _template_fill(str_end, tmpl_eo_src_end, classname, "", EINA_TRUE);
 
    eina_strbuf_replace_all(str_end, "@#type_class", str_classtype);
+   eina_strbuf_replace_all(str_end, "@#EOPREFIX", current_eo_prefix_upper);
+   eina_strbuf_replace_all(str_end, "@#eoprefix", current_eo_prefix_lower);
 
    if (eolian_class_dtor_enable_get(classname))
      {
@@ -592,7 +620,9 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         eolian_implement_information_get(impl_desc, &impl_class, &funcname, &ftype);
 
         eina_strbuf_reset(tmpl_impl);
+        _template_fill(str_func, NULL, impl_class, NULL, EINA_FALSE); /* Invoked to set the variables */
         eina_strbuf_append(tmpl_impl, tmpl_eo_func_desc);
+        eina_strbuf_replace_all(tmpl_impl, "@#EOPREFIX", current_eo_prefix_upper);
 
         char implname[0xFF];
         char *tp = implname;
@@ -657,12 +687,15 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         char *desc = _source_desc_get(eolian_function_description_get(fn, "comment"));
 
         _template_fill(tmpbuf, tmpl_eo_op_desc, classname, funcname, EINA_TRUE);
+        eina_strbuf_replace_all(tmpbuf, "@#EOPREFIX", current_eo_prefix_upper);
+
         eina_strbuf_replace_all(tmpbuf, "@#desc", desc);
         free(desc);
 
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
         _template_fill(str_func, tmpl_eo_func_desc, classname, funcname, EINA_FALSE);
+        eina_strbuf_replace_all(str_func, "@#EOPREFIX", current_eo_prefix_upper);
         eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL);
      }
 
@@ -744,21 +777,29 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    eina_strbuf_reset(tmpbuf);
    EINA_LIST_FOREACH(eolian_class_inherits_list_get(classname), itr, inherit_name)
      {
-        if (!strcmp(inherit_name, "Elm_Widget"))
-          eina_strbuf_append(tmpbuf, "ELM_OBJ_WIDGET_CLASS, ");
-        else if (!strcmp(inherit_name, "Elm_Interface_Scrollable"))
-          eina_strbuf_append(tmpbuf, "ELM_SCROLLABLE_INTERFACE, ");
-        else
-          _template_fill(tmpbuf, "@#OBJCLASS_CLASS, ", inherit_name, "", EINA_FALSE);
+        _template_fill(tmpbuf, "@#EOPREFIX_CLASS, ", inherit_name, "", EINA_FALSE);
+        eina_strbuf_replace_all(tmpbuf, "@#EOPREFIX", current_eo_prefix_upper);
      }
 
-   if (eina_strbuf_length_get(tmpbuf) == 0) eina_strbuf_append(tmpbuf,"EO_BASE_CLASS, ");
+   if (eina_strbuf_length_get(tmpbuf) == 0) eina_strbuf_append(tmpbuf, "NULL, ");
    eina_strbuf_replace_all(str_end, "@#list_inherit", eina_strbuf_string_get(tmpbuf));
 
    eina_strbuf_replace_all(str_end, "@#list_func", eina_strbuf_string_get(str_func));
    eina_strbuf_replace_all(str_end, "@#list_op", eina_strbuf_string_get(str_op));
    eina_strbuf_replace_all(str_end, "@#list_ctors_body", eina_strbuf_string_get(str_bodyf));
 
+   const char *data_type = eolian_class_data_type_get(classname);
+   if (data_type && !strcmp(data_type, "null"))
+      eina_strbuf_replace_all(str_end, "@#SizeOfData", "0");
+   else
+     {
+        Eina_Strbuf *sizeofbuf = eina_strbuf_new();
+        eina_strbuf_append_printf(sizeofbuf, "sizeof(%s%s)",
+              data_type?data_type:classname,
+              data_type?"":"_Data");
+        eina_strbuf_replace_all(str_end, "@#SizeOfData", eina_strbuf_string_get(sizeofbuf));
+        eina_strbuf_free(sizeofbuf);
+     }
    eina_strbuf_append(buf, eina_strbuf_string_get(str_end));
 
    ret = EINA_TRUE;

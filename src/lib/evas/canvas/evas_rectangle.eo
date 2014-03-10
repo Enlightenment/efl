@@ -1,6 +1,7 @@
 class Evas_Rectangle (Evas_Object)
 {
    legacy_prefix: evas_object_rectangle;
+   eo_prefix: evas_obj_rectangle;
    implements {
       Eo_Base::constructor;
    }

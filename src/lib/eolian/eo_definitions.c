@@ -125,6 +125,10 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
      eina_stringshare_del(kls->comment);
    if (kls->legacy_prefix)
      eina_stringshare_del(kls->legacy_prefix);
+   if (kls->eo_prefix)
+     eina_stringshare_del(kls->eo_prefix);
+   if (kls->data_type)
+     eina_stringshare_del(kls->data_type);
 
    EINA_LIST_FOREACH(kls->inherits, l, s)
       if (s) eina_stringshare_del(s);

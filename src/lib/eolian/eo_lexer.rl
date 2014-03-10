@@ -789,6 +789,24 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    legacy_prefix = 'legacy_prefix' ignore* colon ignore* ident %end_legacy_prefix end_statement ignore*;
 
+   action end_eo_prefix {
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
+      if (toknz->tmp.kls->eo_prefix != NULL)
+        ABORT(toknz, "An Eo prefix has already been given");
+      toknz->tmp.kls->eo_prefix = _eo_tokenizer_token_get(toknz, fpc);
+   }
+
+   eo_prefix = 'eo_prefix' ignore* colon ignore* ident %end_eo_prefix end_statement ignore*;
+
+   action end_data_type{
+      if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
+      if (toknz->tmp.kls->data_type != NULL)
+        ABORT(toknz, "A data type has already been given");
+      toknz->tmp.kls->data_type = _eo_tokenizer_token_get(toknz, fpc);
+   }
+
+   data_type = 'data' ignore* colon ignore* ident %end_data_type end_statement ignore*;
+
    class_it = ident %end_str_item ignore*;
    class_it_next = list_separator ignore* class_it;
    inherits = begin_list (class_it class_it_next*)? end_list %end_inherits;
@@ -890,6 +908,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       eo_comment     => end_class_comment;
       comment        => show_comment;
       legacy_prefix;
+      eo_prefix;
+      data_type;
       implements     => end_implements;
       events        => end_events;
       constructors   => begin_constructors;
@@ -1242,6 +1262,14 @@ eo_tokenizer_database_fill(const char *filename)
         if (kls->legacy_prefix)
           {
              database_class_legacy_prefix_set(kls->name, kls->legacy_prefix);
+          }
+        if (kls->eo_prefix)
+          {
+             database_class_eo_prefix_set(kls->name, kls->eo_prefix);
+          }
+        if (kls->data_type)
+          {
+             database_class_data_type_set(kls->name, kls->data_type);
           }
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {

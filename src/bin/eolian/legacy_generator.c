@@ -234,18 +234,25 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
      }
 
    func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
+   if (func_lpref && !strcmp(func_lpref, "null")) goto end;
+
    _template_fill(fbody, tmpl_eapi_body, classname, NULL, EINA_FALSE);
+   eina_strbuf_replace_all(fbody, "@#eoprefix", current_eo_prefix_lower);
 
    if (func_lpref)
       eina_strbuf_replace_all(fbody, "@#eapi_prefix_@#func", func_lpref);
    else
      {
         func_lpref = eolian_class_legacy_prefix_get(classname);
-        eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
 
-        strncpy(tmpstr, classname, sizeof(tmpstr) - 1);
-        char *p = tmpstr;
-        eina_str_tolower(&p);
+        if (func_lpref) eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
+        else
+          {
+             strncpy(tmpstr, classname, sizeof(tmpstr) - 1);
+             char *p = tmpstr;
+             eina_str_tolower(&p);
+             eina_strbuf_replace_all(fbody, "@#eapi_prefix", tmpstr);
+          }
      }
 
    sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
@@ -308,6 +315,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
 
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
 
+end:
    eina_strbuf_free(fbody);
    eina_strbuf_free(fparam);
    eina_strbuf_free(eoparam);

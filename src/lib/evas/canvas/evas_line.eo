@@ -1,6 +1,7 @@
 class Evas_Line (Evas_Object)
 {
    legacy_prefix: evas_object_line;
+   eo_prefix: evas_obj_line;
    properties {
       xy {
          set {

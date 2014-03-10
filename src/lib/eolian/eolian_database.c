@@ -11,6 +11,8 @@ typedef struct
    Eolian_Class_Type type;
    Eina_Stringshare *description;
    Eina_Stringshare *legacy_prefix;
+   Eina_Stringshare *eo_prefix;
+   Eina_Stringshare *data_type;
    Eolian_Function dflt_ctor;
    Eolian_Function dflt_dtor;
    Eina_List *inherits; /* List Eina_Stringshare * */
@@ -128,6 +130,8 @@ _class_del(Class_desc *class)
    eina_stringshare_del(class->file);
    eina_stringshare_del(class->description);
    eina_stringshare_del(class->legacy_prefix);
+   eina_stringshare_del(class->eo_prefix);
+   eina_stringshare_del(class->data_type);
    free(class);
 }
 
@@ -297,6 +301,38 @@ database_class_legacy_prefix_set(const char *class_name, const char *legacy_pref
    Class_desc *desc = _class_get(class_name);
    EINA_SAFETY_ON_NULL_RETURN(desc);
    desc->legacy_prefix = eina_stringshare_add(legacy_prefix);
+}
+
+EAPI const char*
+eolian_class_eo_prefix_get(const char *class_name)
+{
+   Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   return desc->eo_prefix;
+}
+
+void
+database_class_eo_prefix_set(const char *class_name, const char *eo_prefix)
+{
+   Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN(desc);
+   desc->eo_prefix = eina_stringshare_add(eo_prefix);
+}
+
+EAPI const char*
+eolian_class_data_type_get(const char *class_name)
+{
+   Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   return desc->data_type;
+}
+
+void
+database_class_data_type_set(const char *class_name, const char *data_type)
+{
+   Class_desc *desc = _class_get(class_name);
+   EINA_SAFETY_ON_NULL_RETURN(desc);
+   desc->data_type= eina_stringshare_add(data_type);
 }
 
 EAPI const Eina_List *
@@ -1114,6 +1150,18 @@ static Eina_Bool _class_print(const Eina_Hash *hash EINA_UNUSED, const void *key
    if (desc->legacy_prefix)
      {
         printf("  legacy prefix: <%s>\n", desc->legacy_prefix);
+     }
+
+   // Eo prefix
+   if (desc->eo_prefix)
+     {
+        printf("  Eo prefix: <%s>\n", desc->eo_prefix);
+     }
+
+   // Data type
+   if (desc->data_type)
+     {
+        printf("  Data type: <%s>\n", desc->data_type);
      }
 
    // Default constructor
