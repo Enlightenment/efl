@@ -275,8 +275,17 @@ ecore_drm_init(void)
    /* try to init eina */
    if (!eina_init()) return --_ecore_drm_init_count;
 
+   /* try to init ecore */
    if (!ecore_init()) 
      {
+        eina_shutdown();
+        return --_ecore_drm_init_count;
+     }
+
+   /* try to init ecore_event */
+   if (!ecore_event_init())
+     {
+        ecore_shutdown();
         eina_shutdown();
         return --_ecore_drm_init_count;
      }
@@ -377,6 +386,10 @@ ecore_drm_shutdown(void)
    close(_ecore_drm_sockets[0]);
    close(_ecore_drm_sockets[1]);
 
+   /* shutdown ecore_event */
+   ecore_event_shutdown();
+
+   /* shutdown ecore */
    ecore_shutdown();
 
    /* unregsiter log domain */
