@@ -39,13 +39,6 @@ _smallest_pow2_larger_than(int val)
 # define DIVIDE_BY_DIAMETER(val) ((val) / diameter)
 #endif
 
-// Switch from Pascal Triangle based gaussian to Sine.
-// Gaussian is now disabled (because gauss and sine are too different)
-#define MAX_GAUSSIAN_RADIUS 0
-#if MAX_GAUSSIAN_RADIUS > 12
-# error Impossible value
-#endif
-
 #if DEBUG_TIME
 # define DEBUG_TIME_BEGIN() \
    struct timespec ts1, ts2; \
@@ -350,51 +343,6 @@ _box_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
 /* Gaussian blur */
 
 static void
-_gaussian_blur_weights_get(int *weights, int *pow2_divider, int radius)
-{
-   int even[radius + 1];
-   int odd[radius + 1];
-   int k, j;
-
-   EINA_SAFETY_ON_FALSE_RETURN(radius >= 0 && radius <= 12);
-
-   /* Uses Pascal's Triangle to compute the integer gaussian weights:
-    *
-    * 0            1             / 1     [1]
-    *            1   1                   [1 1]
-    * 1        1   2   1         / 4     [1 2]
-    *        1   3   3   1               [1 3 3]
-    * 2    1   4   6   4   1     / 16    [1 4 6]
-    *    1 ..................1
-    *
-    * Limitation: max radius is 12 when using 32 bits integers:
-    *  pow2_divider = 24, leaving exactly 8 bits for the data
-    */
-
-   if (pow2_divider)
-     *pow2_divider = radius * 2;
-
-   memset(odd, 0, sizeof(odd));
-   memset(even, 0, sizeof(even));
-   odd[0] = 1;
-   even[0] = 1;
-   for (k = 1; k <= radius; k++)
-     {
-        for (j = 1; j <= k; j++)
-          odd[j] = even[j] + even[j - 1];
-        odd[k] = 2 * even[k - 1];
-
-        for (j = 1; j <= k; j++)
-          even[j] = odd[j] + odd[j - 1];
-     }
-
-   for (k = 0; k <= radius; k++)
-     weights[k] = odd[k];
-   for (k = 0; k <= radius; k++)
-     weights[k + radius] = weights[radius - k];
-}
-
-static void
 _sin_blur_weights_get(int *weights, int *pow2_divider, int radius)
 {
    const int diameter = 2 * radius + 1;
@@ -570,11 +518,7 @@ _gaussian_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
    int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
-
-   if (radius <= MAX_GAUSSIAN_RADIUS)
-     _gaussian_blur_weights_get(weights, &pow2_div, radius);
-   else
-     _sin_blur_weights_get(weights, &pow2_div, radius);
+   _sin_blur_weights_get(weights, &pow2_div, radius);
 
    for (k = h; k; k--)
      {
@@ -591,11 +535,7 @@ _gaussian_blur_vert_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
    int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
-
-   if (radius <= MAX_GAUSSIAN_RADIUS)
-     _gaussian_blur_weights_get(weights, &pow2_div, radius);
-   else
-     _sin_blur_weights_get(weights, &pow2_div, radius);
+   _sin_blur_weights_get(weights, &pow2_div, radius);
 
    for (k = w; k; k--)
      {
@@ -612,11 +552,7 @@ _gaussian_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
    int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
-
-   if (radius <= MAX_GAUSSIAN_RADIUS)
-     _gaussian_blur_weights_get(weights, &pow2_div, radius);
-   else
-     _sin_blur_weights_get(weights, &pow2_div, radius);
+   _sin_blur_weights_get(weights, &pow2_div, radius);
 
    for (k = h; k; k--)
      {
@@ -633,11 +569,7 @@ _gaussian_blur_vert_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
    int k, pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
-
-   if (radius <= MAX_GAUSSIAN_RADIUS)
-     _gaussian_blur_weights_get(weights, &pow2_div, radius);
-   else
-     _sin_blur_weights_get(weights, &pow2_div, radius);
+   _sin_blur_weights_get(weights, &pow2_div, radius);
 
    for (k = w; k; k--)
      {
