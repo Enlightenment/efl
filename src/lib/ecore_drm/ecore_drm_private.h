@@ -198,6 +198,7 @@ struct _Ecore_Drm_Evdev
         xkb_mod_mask_t caps_mask;
         xkb_mod_mask_t altgr_mask;
         unsigned int modifiers;
+        unsigned int depressed, latched, locked, group;
      } xkb;
 
    Ecore_Drm_Evdev_Event_Type pending_event;
