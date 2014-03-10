@@ -32,6 +32,7 @@ m4/ltsugar.m4 \
 m4/ltversion.m4
 
 EXTRA_DIST =  \
+m4/pkg_var.m4 \
 m4/ac_path_generic.m4 \
 m4/ecore_check_c_extension.m4 \
 m4/ecore_check_module.m4 \
@@ -309,6 +310,13 @@ service_DATA = \
 dbus-services/org.enlightenment.Efreet.service \
 dbus-services/org.enlightenment.Ethumb.service
 
+if HAVE_SYSTEMD_USER_SESSION
+systemdunitsdir = @USER_SESSION_DIR@
+systemdunits_DATA = \
+systemd-services/efreet.service \
+systemd-services/ethumb.service
+endif
+EXTRA_DIST += $(systemdunits_DATA)
 
 
 .PHONY: doc benchmark examples install-examples

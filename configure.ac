@@ -587,6 +587,35 @@ AC_ARG_ENABLE([systemd],
     want_systemd="no"
    ])
 
+systemd_dbus_prefix="# "
+if test "${want_systemd}" = "yes"; then
+   systemd_dbus_prefix=""
+fi
+AC_SUBST(systemd_dbus_prefix)
+
+AC_ARG_WITH([systemdunitdir],
+         AC_HELP_STRING([--with-systemdunitdir=DIR],
+                [path to systemd user services directory]),
+         [USER_SESSION_DIR=${withval}])
+if test "$want_systemd" == "no"; then
+  have_systemd_user_session="no"
+elif test -n "${USER_SESSION_DIR}"; then
+  have_systemd_user_session="yes"
+  AC_MSG_NOTICE([Using systemd user services directory as ${USER_SESSION_DIR}])
+else
+  # Detect systemd user session directory properly
+  EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd >= 192], [systemduserunitdir],
+	[have_systemd_user_session="yes"], [have_systemd_user_session="no"])
+
+  if test "$want_systemd" = "yes" -a "$have_systemd_user_session" = "no"; then
+     AC_MSG_ERROR([systemd support wanted, but systemd was not found.])
+  fi
+fi
+
+AM_CONDITIONAL([HAVE_SYSTEMD_USER_SESSION], [test "x${have_systemd_user_session}" = "xyes"])
+AC_SUBST([USER_SESSION_DIR])
+
+
 if test "x${have_systemd_pkg}" = "xauto" -o "x${have_systemd_pkg}" = "xyes"; then
    PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
    [have_systemd_pkg="yes"],
@@ -4105,6 +4134,8 @@ pc/ethumb.pc
 pc/ethumb_client.pc
 dbus-services/org.enlightenment.Efreet.service
 dbus-services/org.enlightenment.Ethumb.service
+systemd-services/efreet.service
+systemd-services/ethumb.service
 $po_makefile_in
 cmakeconfig/EinaConfig.cmake
 cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
@@ -4250,6 +4281,10 @@ fi
 echo "  "
 echo "Installation....: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix........: $prefix"
+echo "  dbus units....: $dbusservicedir"
+if test "${have_systemd_user_session}" = "yes"; then
+echo "  systemd units.: $USER_SESSION_DIR"
+fi
 echo
 
 if test "x${have_systemd_pkg}" = "xyes" -a "x${want_systemd}" = "xno"; then

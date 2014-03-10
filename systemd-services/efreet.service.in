@@ -1,0 +1,7 @@
+[Unit]
+Description=Efreet Enlightenment FreeDesktop.Org Daemon
+
+[Service]
+Type=dbus
+BusName=org.enlightenment.Efreet
+ExecStart=@prefix@/bin/efreetd

@@ -1,0 +1,7 @@
+[Unit]
+Description=Enlightenment Thumbnailer
+
+[Service]
+Type=dbus
+BusName=org.enlightenment.Ethumb
+ExecStart=@prefix@/bin/ethumbd
