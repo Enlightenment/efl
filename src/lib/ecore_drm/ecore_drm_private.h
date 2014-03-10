@@ -252,6 +252,8 @@ struct _Ecore_Drm_Device
    Eina_Bool use_hw_accel : 1;
    Eina_Bool cursors_broken : 1;
 
+   struct xkb_context *xkb_ctx;
+
 /* #ifdef HAVE_GBM */
 /*    struct gbm_device *gbm; */
 /*    struct */
