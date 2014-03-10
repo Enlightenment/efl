@@ -231,15 +231,15 @@ group { name: "elm/actionslider/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "elm.text.right";
-         action: SIGNAL_EMIT "elm,right,mouse,down" "elm";
+         action: SIGNAL_EMIT "elm,action,down,right" "elm";
       }
      program {
          signal: "mouse,down,1*"; source: "elm.text.left";
-         action: SIGNAL_EMIT "elm,left,mouse,down" "elm";
+         action: SIGNAL_EMIT "elm,action,down,left" "elm";
       }
      program {
          signal: "mouse,down,1*"; source: "elm.text.center";
-         action: SIGNAL_EMIT "elm,center,mouse,down" "elm";
+         action: SIGNAL_EMIT "elm,action,down,center" "elm";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";

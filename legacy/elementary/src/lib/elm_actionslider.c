@@ -361,7 +361,7 @@ _track_move_cb(void *data,
    ELM_ACTIONSLIDER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (!strcmp(emission, "elm.right,mouse,down"))
+   if (!strcmp(emission, "elm,action,down,right"))
      {
         if (sd->final_position == 0.0)
           {
@@ -383,7 +383,7 @@ _track_move_cb(void *data,
              sd->final_position = 1.0;
           }
      }
-   else if (!strcmp(emission, "elm.center,mouse,down"))
+   else if (!strcmp(emission, "elm,action,down,center"))
      {
         if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
           {
@@ -485,13 +485,13 @@ _elm_actionslider_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (wd->resize_obj, "elm.drag_button,mouse,move", "*",
      _drag_button_move_cb, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,right,mouse,down", "*",
+     (wd->resize_obj, "elm,action,down,right", "*",
      _track_move_cb, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,left,mouse,down", "*",
+     (wd->resize_obj, "elm,action,down,left", "*",
      _track_move_cb, obj);
    edje_object_signal_callback_add
-     (wd->resize_obj, "elm,center,mouse,down", "*",
+     (wd->resize_obj, "elm,action,down,center", "*",
      _track_move_cb, obj);
 
    if (!elm_layout_theme_set
