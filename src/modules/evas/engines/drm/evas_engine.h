@@ -108,7 +108,7 @@ struct _Outbuf
    struct 
      {
         int fd;
-        unsigned int conn, crtc, fb;
+        unsigned int conn, crtc;
 
         Buffer buffer[NUM_BUFFERS];
         int curr, num;
