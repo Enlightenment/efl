@@ -292,8 +292,6 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
 
    if (!(input = dev->seat->input)) return;
 
-   /* FIXME: This will probably need to handle modifiers also */
-
    /* DBG("Key Event"); */
    /* DBG("\tCode: %d", event->code); */
    /* DBG("\tValue: %d", event->value); */
