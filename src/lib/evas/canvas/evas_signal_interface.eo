@@ -1,0 +1,8 @@
+interface Evas_Signal_Interface ()
+{
+   data: null;
+   implements {
+        class::constructor;
+        class::destructor;
+   }
+}

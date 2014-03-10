@@ -2,6 +2,8 @@
 # error You shall not include this header directly
 #endif
 
+#include "canvas/evas_signal_interface.eo.h"
+
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_IN;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_OUT;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_DOWN;
@@ -3044,6 +3046,9 @@ enum
  *
  * @{
  */
+#include "canvas/evas_smart.eo.h"
+
+#if 0
 #define EVAS_OBJ_SMART_CLASS evas_object_smart_class_get()
 
 const Eo_Class *evas_object_smart_class_get(void) EINA_CONST;
@@ -3400,6 +3405,7 @@ enum
  */
 #define evas_obj_smart_clip_unset() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET)
 
+#endif
 /**
  * @}
  */

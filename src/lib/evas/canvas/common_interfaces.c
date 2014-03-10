@@ -173,7 +173,7 @@ _signal_interface_del(void *data)
 }
 
 static void
-_signal_interface_constructor(Eo_Class *klass EINA_UNUSED)
+_evas_signal_interface_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    signals_hash_table = eina_hash_string_superfast_new(_signal_interface_del);
    ADD_INTERFACE_SIGNALS(_clickable_events_desc);
@@ -186,23 +186,10 @@ _signal_interface_constructor(Eo_Class *klass EINA_UNUSED)
 #undef ADD_SIGNAL
 
 static void
-_signal_interface_destructor(Eo_Class *klass EINA_UNUSED)
+_evas_signal_interface_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    eina_hash_free(signals_hash_table);
 }
-
-static const Eo_Class_Description signal_interface_desc = {
-     EO_VERSION,
-     "Evas_Signal_Interface",
-     EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     _signal_interface_constructor,
-     _signal_interface_destructor
-};
-
-EO_DEFINE_CLASS(evas_smart_signal_interface_get, &signal_interface_desc, NULL, NULL);
 
 static const Eo_Class_Description clickable_interface_desc = {
      EO_VERSION,
@@ -215,7 +202,7 @@ static const Eo_Class_Description clickable_interface_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(evas_smart_clickable_interface_get, &clickable_interface_desc, EVAS_SMART_SIGNAL_INTERFACE, NULL);
+EO_DEFINE_CLASS(evas_smart_clickable_interface_get, &clickable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
 static const Eo_Class_Description scrollable_interface_desc = {
      EO_VERSION,
@@ -228,7 +215,7 @@ static const Eo_Class_Description scrollable_interface_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(evas_smart_scrollable_interface_get, &scrollable_interface_desc, EVAS_SMART_SIGNAL_INTERFACE, NULL);
+EO_DEFINE_CLASS(evas_smart_scrollable_interface_get, &scrollable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
 static const Eo_Class_Description zoomable_interface_desc = {
      EO_VERSION,
@@ -241,7 +228,7 @@ static const Eo_Class_Description zoomable_interface_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(evas_smart_zoomable_interface_get, &zoomable_interface_desc, EVAS_SMART_SIGNAL_INTERFACE, NULL);
+EO_DEFINE_CLASS(evas_smart_zoomable_interface_get, &zoomable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
 static const Eo_Class_Description selectable_interface_desc = {
      EO_VERSION,
@@ -254,7 +241,7 @@ static const Eo_Class_Description selectable_interface_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(evas_smart_selectable_interface_get, &selectable_interface_desc, EVAS_SMART_SIGNAL_INTERFACE, NULL);
+EO_DEFINE_CLASS(evas_smart_selectable_interface_get, &selectable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
 static const Eo_Class_Description draggable_interface_desc = {
      EO_VERSION,
@@ -267,5 +254,6 @@ static const Eo_Class_Description draggable_interface_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(evas_smart_draggable_interface_get, &draggable_interface_desc, EVAS_SMART_SIGNAL_INTERFACE, NULL);
+EO_DEFINE_CLASS(evas_smart_draggable_interface_get, &draggable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
+#include "canvas/evas_signal_interface.eo.c"

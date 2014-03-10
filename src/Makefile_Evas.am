@@ -13,7 +13,11 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_textblock.eo.c \
                  lib/evas/canvas/evas_textblock.eo.h \
                  lib/evas/canvas/evas_textgrid.eo.c \
-                 lib/evas/canvas/evas_textgrid.eo.h
+                 lib/evas/canvas/evas_textgrid.eo.h \
+                 lib/evas/canvas/evas_signal_interface.eo.c \
+                 lib/evas/canvas/evas_signal_interface.eo.h \
+                 lib/evas/canvas/evas_smart.eo.c \
+                 lib/evas/canvas/evas_smart.eo.h
 
 EXTRA_DIST += \
               lib/evas/canvas/evas_object.eo \
@@ -22,7 +26,9 @@ EXTRA_DIST += \
               lib/evas/canvas/evas_rectangle.eo \
               lib/evas/canvas/evas_text.eo \
               lib/evas/canvas/evas_textblock.eo \
-              lib/evas/canvas/evas_textgrid.eo
+              lib/evas/canvas/evas_textgrid.eo \
+              lib/evas/canvas/evas_signal_interface.eo \
+              lib/evas/canvas/evas_smart.eo
 
 lib_LTLIBRARIES += lib/evas/libevas.la
 noinst_LTLIBRARIES =
@@ -43,7 +49,9 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_rectangle.eo.h \
                                         lib/evas/canvas/evas_text.eo.h \
                                         lib/evas/canvas/evas_textblock.eo.h \
-                                        lib/evas/canvas/evas_textgrid.eo.h
+                                        lib/evas/canvas/evas_textgrid.eo.h \
+                                        lib/evas/canvas/evas_signal_interface.eo.h \
+                                        lib/evas/canvas/evas_smart.eo.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \
