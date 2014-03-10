@@ -1,6 +1,34 @@
 =========
-EFL 1.9.0
+EFL 1.9.1
 =========
+
+Changes since 1.9.0:
+--------------------
+
+Additions:
+
+Improvements:
+
+Fixes:
+
+   * edje - allow lager clipper space.
+   * eina_log: Update domain colouring when color_disable_set is called (T1029)
+   * edje/entry: fix to not emit "changed" signal in unnecessary cases of password mode.
+   * Edje entry: fix bug preedit text is committed in the next entry when Tab key is pressed.
+   * Evas filters: Avoid CRI message when using the GL engine
+   * Evas filters: fix clip to target calculation
+   * Evas filters: fix random cases of 'dancing text'
+   * Evas filters: fix black squares with the GL engine
+   * ecore_avahi: @fix timeout to avoid pitfall of forever frozen timer.
+   * examples/evas: Set a proper format string for fprintf
+   * ecore_avahi: fix timeout to be relative from now.
+   * ecore: @fix race condition when using ecore_main_loop_thread_safe_call_sync.
+   * edje: Fix CURRENT option works.
+   * evas: replace EINA_LIST_FREE to EINA_LIST_FOREACH_SAFE.
+   * Fix Wayland Shm engine destination calculation typo
+
+Removals:
+
 
 Changes since 1.8.0:
 --------------------
