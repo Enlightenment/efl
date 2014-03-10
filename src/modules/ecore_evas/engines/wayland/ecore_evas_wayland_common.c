@@ -36,7 +36,6 @@ EVAS_SMART_SUBCLASS_NEW(_smart_frame_type, _ecore_evas_wl_frame,
 static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[5];
 
-static void _ecore_evas_wayland_resize_edge_set(Ecore_Evas *ee, int edge);
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
 /* local function prototypes */
@@ -1519,24 +1518,6 @@ _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi
    dpi = ecore_wl_dpi_get();
    if (xdpi) *xdpi = dpi;
    if (ydpi) *ydpi = dpi;
-}
-
-static void 
-_ecore_evas_wayland_resize_edge_set(Ecore_Evas *ee, int edge)
-{
-   if (!ee) return;
-   if (!strcmp(ee->driver, "wayland_shm"))
-     {
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-        _ecore_evas_wayland_shm_resize_edge_set(ee, edge);
-#endif
-     }
-   else if (!strcmp(ee->driver, "wayland_egl"))
-     {
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-        _ecore_evas_wayland_egl_resize_edge_set(ee, edge);
-#endif
-     }
 }
 
 static void
