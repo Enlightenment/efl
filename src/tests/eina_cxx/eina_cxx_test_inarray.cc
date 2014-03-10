@@ -15,7 +15,9 @@ START_TEST(eina_cxx_inarray_pod_push_back)
   efl::eina::inarray<int> array;
 
   array.push_back(5);
+  std::cout << "array size: " << array.size() << std::endl;
   array.push_back(10);
+  std::cout << "array size: " << array.size() << std::endl;
   array.push_back(15);
 
   int result[] = {5, 10, 15};
@@ -372,6 +374,35 @@ START_TEST(eina_cxx_inarray_nonpod_erase)
 }
 END_TEST
 
+START_TEST(eina_cxx_range_inarray)
+{
+  efl::eina::eina_init eina_init;
+
+  efl::eina::inarray<int> array;
+  array.push_back(5);
+  array.push_back(10);
+  array.push_back(15);
+
+  int result[] = {5, 10, 15};
+
+  efl::eina::range_inarray<int> range_array(array);
+
+  ck_assert(range_array.size() == 3);
+  ck_assert(std::equal(range_array.begin(), range_array.end(), result));
+
+  ck_assert(range_array[0] == 5);
+
+  *range_array.begin() = 0;
+
+  int result1[] = {0, 10, 15};
+
+  ck_assert(range_array.size() == 3);
+  ck_assert(std::equal(range_array.begin(), range_array.end(), result1));
+
+  ck_assert(range_array[0] == 0);
+}
+END_TEST
+
 void
 eina_test_inarray(TCase *tc)
 {
@@ -385,4 +416,5 @@ eina_test_inarray(TCase *tc)
   tcase_add_test(tc, eina_cxx_inarray_nonpod_insert);
   tcase_add_test(tc, eina_cxx_inarray_nonpod_erase);
   tcase_add_test(tc, eina_cxx_inarray_nonpod_constructors);
+  tcase_add_test(tc, eina_cxx_range_inarray);
 }

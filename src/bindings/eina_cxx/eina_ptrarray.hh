@@ -3,8 +3,8 @@
 
 #include <Eina.h>
 #include <eina_clone_allocators.hh>
-#include <eina_lists_auxiliary.hh>
 #include <eina_type_traits.hh>
+#include <eina_range_types.hh>
 
 #include <memory>
 #include <iterator>
@@ -13,18 +13,8 @@
 
 namespace efl { namespace eina {
 
-struct _ptr_array_iterator_base
-{
-  _ptr_array_iterator_base() : _ptr(0) {}
-  _ptr_array_iterator_base(void** ptr)
-    : _ptr(ptr)
-  {}
-
-  void** _ptr;
-};
-
 template <typename T>
-struct _ptr_array_iterator : protected _ptr_array_iterator_base
+struct _ptr_array_iterator
 {
   typedef T value_type;
   typedef value_type* pointer;
@@ -32,17 +22,16 @@ struct _ptr_array_iterator : protected _ptr_array_iterator_base
   typedef std::ptrdiff_t difference_type;
   typedef std::bidirectional_iterator_tag iterator_category;
 
-  _ptr_array_iterator() {}
+  _ptr_array_iterator() : _ptr(0) {}
   explicit _ptr_array_iterator(void** ptr)
-    : _ptr_array_iterator_base(ptr)
+    : _ptr(ptr)
 
   {
   }
   _ptr_array_iterator(_ptr_array_iterator<typename remove_cv<value_type>::type> const& other)
-    : _ptr_array_iterator_base(static_cast<_ptr_array_iterator_base const&>(other))
+    : _ptr(other._ptr)
   {
   }
-
   _ptr_array_iterator<T>& operator++()
   {
     ++_ptr;
@@ -77,6 +66,9 @@ struct _ptr_array_iterator : protected _ptr_array_iterator_base
   {
     return _ptr;
   }
+private:
+  template <typename U>
+  friend struct _ptr_array_iterator;
   friend inline bool operator==(_ptr_array_iterator<T> lhs, _ptr_array_iterator<T> rhs)
   {
     return lhs._ptr == rhs._ptr;
@@ -101,6 +93,190 @@ struct _ptr_array_iterator : protected _ptr_array_iterator_base
                                           , _ptr_array_iterator<T> rhs)
   {
     return lhs._ptr - rhs._ptr;
+  }
+
+  void** _ptr;
+};
+
+struct _ptr_array_access_traits {
+
+template <typename T>
+
+struct iterator
+{
+  typedef _ptr_array_iterator<T> type;
+};
+template <typename T>
+struct const_iterator : iterator<T const>
+{
+};
+template <typename T>
+struct native_handle
+{
+  typedef Eina_Array* type;
+};
+template <typename T>
+struct const_native_handle
+{
+  typedef Eina_Array const* type;
+};
+template <typename T>
+static Eina_Array* native_handle_from_const(Eina_Array const* array)
+{
+  return const_cast<Eina_Array*>(array);
+}
+template <typename T>
+static T& back(Eina_Array* array)
+{
+  return *static_cast<T*>(array->data[size<T>(array)-1]);
+}
+template <typename T>
+static T const& back(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::back<T>(const_cast<Eina_Array*>(array));
+}
+template <typename T>
+static T& front(Eina_Array* array)
+{
+  return *static_cast<T*>(array->data[0]);
+}
+template <typename T>
+static T const& front(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::front<T>(const_cast<Eina_Array*>(array));
+}
+template <typename T>
+static T& index(Eina_Array* array, std::size_t index)
+{
+  return *static_cast<T*>(array->data[index]);
+}
+template <typename T>
+static T const& index(Eina_Array const* array, std::size_t index)
+{
+  return _ptr_array_access_traits::index<T>(const_cast<Eina_Array*>(array), index);
+}
+template <typename T>
+static _ptr_array_iterator<T> begin(Eina_Array* array)
+{
+  return _ptr_array_iterator<T>(array->data);
+}
+template <typename T>
+static _ptr_array_iterator<T> end(Eina_Array* array)
+{
+  return _ptr_array_iterator<T>(array->data + size<T>(array));
+}
+template <typename T>
+static _ptr_array_iterator<T> begin(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::begin<T>(const_cast<Eina_Array*>(array));
+}
+template <typename T>
+static _ptr_array_iterator<T> end(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::end<T>(const_cast<Eina_Array*>(array));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_array_iterator<T> > rbegin(Eina_Array* array)
+{
+  return std::reverse_iterator<_ptr_array_iterator<T> >(_ptr_array_access_traits::begin<T>(array));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_array_iterator<T> > rend(Eina_Array* array)
+{
+  return std::reverse_iterator<_ptr_array_iterator<T> >(_ptr_array_access_traits::end<T>(array));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_array_iterator<T const> > rbegin(Eina_Array const* array)
+{
+  return std::reverse_iterator<_ptr_array_iterator<T const> >(_ptr_array_access_traits::begin<T>(const_cast<Eina_Array*>(array)));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_array_iterator<T const> > rend(Eina_Array const* array)
+{
+  return std::reverse_iterator<_ptr_array_iterator<T const> >(_ptr_array_access_traits::end<T>(const_cast<Eina_Array*>(array)));
+}
+template <typename T>
+static _ptr_array_iterator<T const> cbegin(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::begin<T>(array);
+}
+template <typename T>
+static _ptr_array_iterator<T const> cend(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::end<T>(array);
+}
+template <typename T>
+static std::reverse_iterator<_ptr_array_iterator<T const> > crbegin(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::rbegin<T>(array);
+}
+template <typename T>
+static std::reverse_iterator<_ptr_array_iterator<T const> > crend(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::rend<T>(array);
+}
+template <typename T>
+static eina::iterator<T> ibegin(Eina_Array* array)
+{
+  return eina::iterator<T>( ::eina_array_iterator_new(array) );
+}
+template <typename T>
+static eina::iterator<T> iend(Eina_Array* array)
+{
+  return eina::iterator<T>();
+}
+template <typename T>
+static eina::iterator<T const> ibegin(Eina_Array const* array)
+{
+  return eina::iterator<T const>( ::eina_array_iterator_new(array) );
+}
+template <typename T>
+static eina::iterator<T const> iend(Eina_Array const* array)
+{
+  return eina::iterator<T const>();
+}
+template <typename T>
+static eina::iterator<T const> cibegin(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::ibegin<T>(array);
+}
+template <typename T>
+static eina::iterator<T const> ciend(Eina_Array const* array)
+{
+  return _ptr_array_access_traits::iend<T>(array);
+}
+template <typename T>
+static std::size_t size(Eina_Array const* array)
+{
+  return eina_array_count(array);
+}
+template <typename T>
+static bool empty(Eina_Array const* array)
+{
+  return size<T>(array) == 0u;
+}
+
+};
+
+template <typename T, typename Allocator>
+struct ptr_array;
+
+template <typename T>
+struct range_ptr_array : _range_template<T, _ptr_array_access_traits>
+{
+  typedef _range_template<T, _ptr_array_access_traits> _base_type;
+  typedef typename _base_type::value_type value_type;
+
+  range_ptr_array(Eina_Array* array)
+    : _base_type(array)
+  {}
+  template <typename Allocator>
+  range_ptr_array(ptr_array<value_type, Allocator>& array)
+    : _base_type(array.native_handle())
+  {}
+  value_type& operator[](std::size_t index) const
+  {
+    return _ptr_array_access_traits::index<T>(this->native_handle(), index);
   }
 };
 
@@ -344,107 +520,101 @@ public:
     clear();
     insert(end(), n, t);
   }
-
   value_type& back()
   {
-    return *static_cast<pointer>(this->_impl._array->data[size()-1]);
+    return _ptr_array_access_traits::back<T>(this->_impl._array);
   }
   value_type const& back() const
   {
-    return const_cast<ptr_array<T, CloneAllocator>&>(*this).back();
+    return _ptr_array_access_traits::back<T>(this->_impl._array);
   }
   value_type& front()
   {
-    return *static_cast<pointer>(this->_impl._array->data[0]);
+    return _ptr_array_access_traits::front<T>(this->_impl._array);
   }
   value_type const& front() const
   {
-    return const_cast<ptr_array<T, CloneAllocator>&>(*this).front();
+    return _ptr_array_access_traits::front<T>(this->_impl._array);
   }
-
   const_reference operator[](size_type index) const
   {
-    pointer data = static_cast<pointer>
-      (this->_impl._array->data[index]);
-    return *data;
+    return _ptr_array_access_traits::index<T>(this->_impl._array, index);
   }
   reference operator[](size_type index)
   {
-    return const_cast<reference>
-      (const_cast<ptr_array<T, CloneAllocator>const&>(*this)[index]);
+    return _ptr_array_access_traits::index<T>(this->_impl._array, index);
   }
-
   const_iterator begin() const
   {
-    return const_iterator(this->_impl._array->data);
+    return _ptr_array_access_traits::begin<T>(this->_impl._array);
   }
   const_iterator end() const
   {
-    return const_iterator(this->_impl._array->data + size());
+    return _ptr_array_access_traits::end<T>(this->_impl._array);
   }
   iterator begin()
   {
-    return iterator(this->_impl._array->data);
+    return _ptr_array_access_traits::begin<T>(this->_impl._array);
   }
   iterator end()
   {
-    return iterator(this->_impl._array->data + size());
+    return _ptr_array_access_traits::end<T>(this->_impl._array);
   }
   const_reverse_iterator rbegin() const
   {
-    return const_reverse_iterator(begin());
+    return _ptr_array_access_traits::rbegin<T>(this->_impl._array);
   }
   const_reverse_iterator rend() const
   {
-    return const_reverse_iterator(end());
+    return _ptr_array_access_traits::rend<T>(this->_impl._array);
   }
   reverse_iterator rbegin()
   {
-    return reverse_iterator(begin());
+    return _ptr_array_access_traits::rbegin<T>(this->_impl._array);
   }
   reverse_iterator rend()
   {
-    return reverse_iterator(end());
+    return _ptr_array_access_traits::rend<T>(this->_impl._array);
   }
   const_iterator cbegin() const
   {
-    return begin();
+    return _ptr_array_access_traits::cbegin<T>(this->_impl._array);
   }
   const_iterator cend() const
   {
-    return end();
+    return _ptr_array_access_traits::cend<T>(this->_impl._array);
   }
   const_reverse_iterator crbegin() const
   {
-    return rbegin();
+    return _ptr_array_access_traits::crbegin<T>(this->_impl._array);
   }
   const_reverse_iterator crend() const
   {
-    return rend();
+    return _ptr_array_access_traits::crend<T>(this->_impl._array);
   }
   eina::iterator<T> ibegin()
   {
-    return eina::iterator<T>( ::eina_array_iterator_new(this->_impl._array) );
+    return _ptr_array_access_traits::ibegin<T>(this->_impl._array);
   }
   eina::iterator<T> iend()
   {
-    return eina::iterator<T>();
+    return _ptr_array_access_traits::iend<T>(this->_impl._array);
   }
   eina::iterator<T const> ibegin() const
   {
-    return eina::iterator<T const>( ::eina_array_iterator_new(this->_impl._array) );
+    return _ptr_array_access_traits::ibegin<T>(this->_impl._array);
   }
   eina::iterator<T const> iend() const
   {
-    return eina::iterator<T const>();
+    return _ptr_array_access_traits::iend<T>(this->_impl._array);
   }
   eina::iterator<T const> cibegin() const
   {
-    return ibegin();
+    return _ptr_array_access_traits::cibegin<T>(this->_impl._array);
   }
   eina::iterator<T const> ciend() const
   {
-    return iend();
+    return _ptr_array_access_traits::ciend<T>(this->_impl._array);
   }
   void swap(ptr_array<T, CloneAllocator>& other)
   {

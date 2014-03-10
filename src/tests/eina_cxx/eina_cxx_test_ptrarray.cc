@@ -169,6 +169,36 @@ START_TEST(eina_cxx_ptrarray_erase)
 }
 END_TEST
 
+START_TEST(eina_cxx_ptrarray_range)
+{
+  efl::eina::eina_init eina_init;
+
+  efl::eina::ptr_array<int> array;
+  array.push_back(new int(5));
+  array.push_back(new int(10));
+  array.push_back(new int(15));
+  array.push_back(new int(20));
+  array.push_back(new int(25));
+  array.push_back(new int(30));
+
+  efl::eina::range_ptr_array<int> range_array(array);
+  
+  ck_assert(range_array.size() == 6u);
+
+  int result[] = {5, 10, 15, 20, 25, 30};
+  ck_assert(std::equal(range_array.begin(), range_array.end(), result));
+
+  efl::eina::range_ptr_array<int const> const_range_array(array);
+
+  ck_assert(const_range_array.size() == 6u);
+  ck_assert(std::equal(range_array.begin(), range_array.end(), result));
+
+  *range_array.begin() = 0;
+  ck_assert(*const_range_array.begin() == 0);
+  ck_assert(*array.begin() == 0);
+}
+END_TEST
+
 void
 eina_test_ptrarray(TCase* tc)
 {
@@ -177,4 +207,5 @@ eina_test_ptrarray(TCase* tc)
   tcase_add_test(tc, eina_cxx_ptrarray_insert);
   tcase_add_test(tc, eina_cxx_ptrarray_constructors);
   tcase_add_test(tc, eina_cxx_ptrarray_erase);
+  tcase_add_test(tc, eina_cxx_ptrarray_range);
 }

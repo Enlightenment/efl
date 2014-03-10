@@ -199,6 +199,36 @@ START_TEST(eina_cxx_inlist_erase)
 }
 END_TEST
 
+START_TEST(eina_cxx_inlist_range)
+{
+  efl::eina::eina_init eina_init;
+
+  efl::eina::inlist<int> list;
+  list.push_back(5);
+  list.push_back(10);
+  list.push_back(15);
+  list.push_back(20);
+  list.push_back(25);
+  list.push_back(30);
+
+  efl::eina::range_inlist<int> range_list(list);
+  
+  ck_assert(range_list.size() == 6u);
+
+  int result[] = {5, 10, 15, 20, 25, 30};
+  ck_assert(std::equal(range_list.begin(), range_list.end(), result));
+
+  efl::eina::range_inlist<int const> const_range_list(list);
+
+  ck_assert(const_range_list.size() == 6u);
+  ck_assert(std::equal(range_list.begin(), range_list.end(), result));
+
+  *range_list.begin() = 0;
+  ck_assert(*const_range_list.begin() == 0);
+  ck_assert(*list.begin() == 0);
+}
+END_TEST
+
 void
 eina_test_inlist(TCase *tc)
 {
@@ -209,4 +239,5 @@ eina_test_inlist(TCase *tc)
   tcase_add_test(tc, eina_cxx_inlist_insert);
   tcase_add_test(tc, eina_cxx_inlist_erase);
   tcase_add_test(tc, eina_cxx_inlist_constructors);
+  tcase_add_test(tc, eina_cxx_inlist_range);
 }

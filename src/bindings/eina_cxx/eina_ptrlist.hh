@@ -29,7 +29,7 @@ protected:
 template <typename T>
 struct _ptr_list_iterator : _ptr_list_iterator_base
 {
-  typedef T value_type;
+  typedef typename remove_cv<T>::type value_type;
   typedef value_type* pointer;
   typedef value_type& reference;
 
@@ -38,7 +38,7 @@ struct _ptr_list_iterator : _ptr_list_iterator_base
     : _ptr_list_iterator_base(list, node)
   {
   }
-  _ptr_list_iterator(_ptr_list_iterator<typename remove_cv<value_type>::type> const& other)
+  _ptr_list_iterator(_ptr_list_iterator<value_type> const& other)
     : _ptr_list_iterator_base(static_cast<_ptr_list_iterator_base const&>(other))
   {
   }
@@ -93,6 +93,308 @@ struct _ptr_list_iterator : _ptr_list_iterator_base
   {
     return !(lhs == rhs);
   }
+};
+
+struct _ptr_list_access_traits {
+
+template <typename T>
+struct iterator
+{
+  typedef _ptr_list_iterator<T> type;
+};
+template <typename T>
+struct const_iterator : iterator<T const> {};
+template <typename T>
+struct native_handle
+{
+  typedef Eina_List* type;
+};
+template <typename T>
+struct const_native_handle
+{
+  typedef Eina_List const* type;
+};
+template <typename T>
+static Eina_List* native_handle_from_const(Eina_List const* list)
+{
+  return const_cast<Eina_List*>(list);
+}
+template <typename T>
+static T& back(Eina_List* list)
+{
+  return *static_cast<T*>(eina_list_data_get(eina_list_last(list)));
+}
+template <typename T>
+static T const& back(Eina_List const* list)
+{
+  return _ptr_list_access_traits::back<T>(const_cast<Eina_List*>(list));
+}
+template <typename T>
+static T& front(Eina_List* list)
+{
+  return *static_cast<T*>(eina_list_data_get(list));
+}
+template <typename T>
+static T const& front(Eina_List const* list)
+{
+  return _ptr_list_access_traits::front<T>(const_cast<Eina_List*>(list));
+}
+template <typename T>
+static _ptr_list_iterator<T> begin(Eina_List* list)
+{
+  return _ptr_list_iterator<T>(list, list);
+}
+template <typename T>
+static _ptr_list_iterator<T> end(Eina_List* list)
+{
+  return _ptr_list_iterator<T>(list, 0);
+}
+template <typename T>
+static _ptr_list_iterator<T const> begin(Eina_List const* list)
+{
+  return _ptr_list_access_traits::begin<T>(const_cast<Eina_List*>(list));
+}
+template <typename T>
+static _ptr_list_iterator<T const> end(Eina_List const* list)
+{
+  return _ptr_list_access_traits::end<T>(const_cast<Eina_List*>(list));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_list_iterator<T> > rbegin(Eina_List* list)
+{
+  return std::reverse_iterator<_ptr_list_iterator<T> >(_ptr_list_access_traits::begin<T>(list));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_list_iterator<T> > rend(Eina_List* list)
+{
+  return std::reverse_iterator<_ptr_list_iterator<T> >(_ptr_list_access_traits::end<T>(list));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_list_iterator<T const> > rbegin(Eina_List const* list)
+{
+  return _ptr_list_access_traits::rbegin<T>(const_cast<Eina_List*>(list));
+}
+template <typename T>
+static std::reverse_iterator<_ptr_list_iterator<T const> > rend(Eina_List const* list)
+{
+  return _ptr_list_access_traits::rend<T>(const_cast<Eina_List*>(list));
+}
+template <typename T>
+static _ptr_list_iterator<T const> cbegin(Eina_List const* list)
+{
+  return _ptr_list_access_traits::begin<T>(list);
+}
+template <typename T>
+static _ptr_list_iterator<T const> cend(Eina_List const* list)
+{
+  return _ptr_list_access_traits::end<T>(list);
+}
+template <typename T>
+static std::reverse_iterator<_ptr_list_iterator<T const> > crbegin(Eina_List const* list)
+{
+  return _ptr_list_access_traits::rbegin<T>(list);
+}
+template <typename T>
+static std::reverse_iterator<_ptr_list_iterator<T const> > crend(Eina_List const* list)
+{
+  return _ptr_list_access_traits::rend<T>(list);
+}
+template <typename T>
+static eina::iterator<T> ibegin(Eina_List* list)
+{
+  return eina::iterator<T>( ::eina_list_iterator_new(list) );
+}
+template <typename T>
+static eina::iterator<T> iend(Eina_List*)
+{
+  return eina::iterator<T>();
+}
+template <typename T>
+static eina::iterator<T const> ibegin(Eina_List const* list)
+{
+  return eina::iterator<T const>( ::eina_list_iterator_new(list) );
+}
+template <typename T>
+static eina::iterator<T const> iend(Eina_List const* list)
+{
+  return eina::iterator<T const>();
+}
+template <typename T>
+static eina::iterator<T const> cibegin(Eina_List const* list)
+{
+  return _ptr_list_access_traits::ibegin<T>(list);
+}
+template <typename T>
+static eina::iterator<T const> ciend(Eina_List const* list)
+{
+  return _ptr_list_access_traits::iend<T>(list);
+}
+template <typename T>
+static std::size_t size(Eina_List const* list)
+{
+  return eina_list_count(list);
+}
+template <typename T>
+static bool empty(Eina_List const* list)
+{
+  return _ptr_list_access_traits::size<T>(list) == 0u;
+}
+
+};
+
+template <typename T>
+struct _const_range_ptr_list
+{
+  typedef _ptr_list_iterator<T const> const_iterator;
+  typedef const_iterator iterator;
+  typedef T value_type;
+  typedef T& reference;
+  typedef T const& const_reference;
+  typedef T* pointer;
+  typedef T const* const_pointer;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  typedef const_reverse_iterator reverse_iterator;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+
+  typedef Eina_List const* native_handle_type;
+  typedef _const_range_ptr_list<T> _self_type;
+
+  _const_range_ptr_list(native_handle_type list)
+    : _list(list) {}
+
+  native_handle_type native_handle() const { return _list; }
+  value_type const& back() const
+  {
+    return _ptr_list_access_traits::back<value_type>(_list);
+  }
+  value_type const& front() const
+  {
+    return _ptr_list_access_traits::front<value_type>(_list);
+  }
+  const_iterator begin() const
+  {
+    return _ptr_list_access_traits::begin<value_type>(_list);
+  }
+  const_iterator end() const
+  {
+    return _ptr_list_access_traits::end<value_type>(_list);
+  }
+  const_reverse_iterator rbegin() const
+  {
+    return _ptr_list_access_traits::rbegin<value_type>(_list);
+  }
+  const_reverse_iterator rend() const
+  {
+    return _ptr_list_access_traits::rend<value_type>(_list);
+  }
+  const_iterator cbegin() const
+  {
+    return _ptr_list_access_traits::cbegin<value_type>(_list);
+  }
+  const_iterator cend() const
+  {
+    return _ptr_list_access_traits::cend<value_type>(_list);
+  }
+  const_reverse_iterator crbegin() const
+  {
+    return _ptr_list_access_traits::crbegin<value_type>(_list);
+  }
+  const_reverse_iterator crend() const
+  {
+    return _ptr_list_access_traits::crend<value_type>(_list);
+  }
+  void swap(_self_type& other)
+  {
+    std::swap(_list, other._list);
+  }
+  bool empty() const
+  {
+    return _ptr_list_access_traits::empty<T>(_list);
+  }
+  size_type size() const
+  {
+    return _ptr_list_access_traits::size<T>(_list);
+  }
+
+  native_handle_type _list;
+};
+
+template <typename T>
+void swap(_const_range_ptr_list<T>& lhs, _const_range_ptr_list<T>& rhs)
+{
+  lhs.swap(rhs);
+}
+
+template <typename T>
+struct _mutable_range_ptr_list : _const_range_ptr_list<T>
+{
+  typedef _const_range_ptr_list<T> _base_type;
+  typedef T value_type;
+  typedef _ptr_list_iterator<T> iterator;
+  typedef T& reference;
+  typedef T* pointer;
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef typename _base_type::const_iterator const_iterator;
+  typedef typename _base_type::const_reference const_reference;
+  typedef typename _base_type::const_pointer const_pointer;
+  typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+
+  typedef Eina_List* native_handle_type;
+  typedef _mutable_range_ptr_list<T> _self_type;
+
+  _mutable_range_ptr_list(native_handle_type list)
+    : _base_type(list) {}
+
+  native_handle_type native_handle() const
+  {
+    return const_cast<native_handle_type>(_base_type::native_handle()); 
+  }
+  value_type& back() const
+  {
+    return _ptr_list_access_traits::back<value_type>(native_handle());
+  }
+  value_type& front() const
+  {
+    return _ptr_list_access_traits::front<value_type>(native_handle());
+  }
+  iterator begin() const
+  {
+    return _ptr_list_access_traits::begin<value_type>(native_handle());
+  }
+  iterator end() const
+  {
+    return _ptr_list_access_traits::end<value_type>(native_handle());
+  }
+  reverse_iterator rbegin() const
+  {
+    return _ptr_list_access_traits::rbegin<value_type>(native_handle());
+  }
+  reverse_iterator rend() const
+  {
+    return _ptr_list_access_traits::rend<value_type>(native_handle());
+  }
+};
+
+template <typename T, typename Allocator>
+struct ptr_list;
+
+template <typename T>
+struct range_ptr_list : _range_template<T, _ptr_list_access_traits>
+{
+  typedef _range_template<T, _ptr_list_access_traits> _base_type;
+  typedef typename _base_type::value_type value_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
+
+  range_ptr_list(native_handle_type list)
+    : _base_type(list)
+  {}
+  template <typename Allocator>
+  range_ptr_list(ptr_list<value_type, Allocator>& list)
+    : _base_type(list.native_handle())
+  {}
 };
 
 template <typename T, typename CloneAllocator>
@@ -209,11 +511,11 @@ public:
   }
   std::size_t size() const
   {
-    return eina_list_count(this->_impl._list);
+    return _ptr_list_access_traits::size<T>(this->_impl._list);
   }
   bool empty() const
   {
-    return size() == 0u;
+    return _ptr_list_access_traits::empty<T>(this->_impl._list);
   }
   clone_allocator_type get_clone_allocator() const
   {
@@ -357,95 +659,93 @@ public:
     clear();
     insert(end(), n, t);
   }
-
   value_type& back()
   {
-    return *static_cast<pointer>(eina_list_data_get(eina_list_last(this->_impl._list)));
+    return _ptr_list_access_traits::back<T>(this->_impl._list);
   }
   value_type const& back() const
   {
-    return const_cast<ptr_list<T, CloneAllocator>&>(*this).back();
+    return _ptr_list_access_traits::back<T>(this->_impl._list);
   }
   value_type& front()
   {
-    return *static_cast<pointer>(eina_list_data_get(this->_impl._list));
+    return _ptr_list_access_traits::front<T>(this->_impl._list);
   }
   value_type const& front() const
   {
-    return const_cast<ptr_list<T, CloneAllocator>&>(*this).front();
+    return _ptr_list_access_traits::front<T>(this->_impl._list);
   }
-
   const_iterator begin() const
   {
-    return const_iterator(this->_impl._list, this->_impl._list);
+    return _ptr_list_access_traits::cbegin<T>(this->_impl._list);
   }
   const_iterator end() const
   {
-    return const_iterator(this->_impl._list, 0);
+    return _ptr_list_access_traits::cend<T>(this->_impl._list);
   }
   iterator begin()
   {
-    return iterator(this->_impl._list, this->_impl._list);
+    return _ptr_list_access_traits::begin<T>(this->_impl._list);
   }
   iterator end()
   {
-    return iterator(this->_impl._list, 0);
+    return _ptr_list_access_traits::end<T>(this->_impl._list);
   }
   const_reverse_iterator rbegin() const
   {
-    return const_reverse_iterator(begin());
+    return _ptr_list_access_traits::rbegin<T>(this->_impl._list);
   }
   const_reverse_iterator rend() const
   {
-    return const_reverse_iterator(end());
+    return _ptr_list_access_traits::rend<T>(this->_impl._list);
   }
   reverse_iterator rbegin()
   {
-    return reverse_iterator(begin());
+    return _ptr_list_access_traits::rbegin<T>(this->_impl._list);
   }
   reverse_iterator rend()
   {
-    return reverse_iterator(end());
+    return _ptr_list_access_traits::rend<T>(this->_impl._list);
   }
   const_iterator cbegin() const
   {
-    return begin();
+    return _ptr_list_access_traits::cbegin<T>(this->_impl._list);
   }
   const_iterator cend() const
   {
-    return end();
+    return _ptr_list_access_traits::cend<T>(this->_impl._list);
   }
   const_reverse_iterator crbegin() const
   {
-    return rbegin();
+    return _ptr_list_access_traits::crbegin<T>(this->_impl._list);
   }
   const_reverse_iterator crend() const
   {
-    return rend();
+    return _ptr_list_access_traits::crend<T>(this->_impl._list);
   }
   eina::iterator<T> ibegin()
   {
-    return eina::iterator<T>( ::eina_list_iterator_new(this->_impl._list) );
+    return _ptr_list_access_traits::ibegin<T>(this->_impl._list);
   }
   eina::iterator<T> iend()
   {
-    return eina::iterator<T>();
+    return _ptr_list_access_traits::iend<T>(this->_impl._list);
   }
   eina::iterator<T const> ibegin() const
   {
-    return eina::iterator<T const>( ::eina_list_iterator_new(this->_impl._list) );
+    return _ptr_list_access_traits::ibegin<T>(this->_impl._list);
   }
   eina::iterator<T const> iend() const
   {
-    return eina::iterator<T const>();
+    return _ptr_list_access_traits::iend<T>(this->_impl._list);
   }
   eina::iterator<T const> cibegin() const
   {
-    return ibegin();
+    return _ptr_list_access_traits::cibegin<T>(this->_impl._list);
   }
   eina::iterator<T const> ciend() const
   {
-    return iend();
+    return _ptr_list_access_traits::ciend<T>(this->_impl._list);
   }
   void swap(ptr_list<T, CloneAllocator>& other)
   {

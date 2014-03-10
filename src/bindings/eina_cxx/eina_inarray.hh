@@ -3,6 +3,7 @@
 
 #include <Eina.h>
 #include <eina_type_traits.hh>
+#include <eina_range_types.hh>
 
 #include <iterator>
 #include <cstring>
@@ -10,10 +11,170 @@
 
 namespace efl { namespace eina {
 
+struct _inarray_access_traits {
+
+  template <typename T>
+  struct const_iterator
+  {
+    typedef T const* type;
+  };
+  template <typename T>
+  struct iterator
+  {
+    typedef T* type;
+  };
+  template <typename T>
+  struct const_native_handle
+  {
+    typedef Eina_Inarray const* type;
+  };
+  template <typename T>
+  struct native_handle
+  {
+    typedef Eina_Inarray* type;
+  };
+
+  template <typename T>
+  static Eina_Inarray* native_handle_from_const(Eina_Inarray const* array)
+  {
+    return const_cast<Eina_Inarray*>(array);
+  }
+template <typename T>
+static T& back(Eina_Inarray* raw)
+{
+  assert(!_inarray_access_traits::empty<T>(raw));
+  return *static_cast<T*>( ::eina_inarray_nth(raw, _inarray_access_traits::size<T>(raw)-1u));
+}
+template <typename T>
+static T const& back(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::back<T>(const_cast<Eina_Inarray*>(raw));
+}
+template <typename T>
+static T& front(Eina_Inarray* raw)
+{
+  assert(!empty<T>(raw));
+  return *static_cast<T*>( ::eina_inarray_nth(raw, 0u));
+}
+template <typename T>
+static T const& front(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::front<T>(const_cast<Eina_Inarray*>(raw));
+}
+template <typename T>
+static T* begin(Eina_Inarray* raw)
+{
+  return !raw->members ? 0 : static_cast<T*>( ::eina_inarray_nth(raw, 0u));
+}
+template <typename T>
+static T* end(Eina_Inarray* raw)
+{
+  return !raw->members ? 0
+    : static_cast<T*>( ::eina_inarray_nth(raw, _inarray_access_traits::size<T>(raw) -1)) + 1;
+}
+template <typename T>
+static T const* begin(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::begin<T>(const_cast<Eina_Inarray*>(raw));
+}
+template <typename T>
+static T const* end(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::end<T>(const_cast<Eina_Inarray*>(raw));
+}
+template <typename T>
+static std::reverse_iterator<T const*> rbegin(Eina_Inarray const* raw)
+{
+  return std::reverse_iterator<T const*>(_inarray_access_traits::begin<T>(raw));
+}
+template <typename T>
+static std::reverse_iterator<T const*> rend(Eina_Inarray const* raw)
+{
+  return std::reverse_iterator<T const*>(_inarray_access_traits::end<T>(raw));
+}
+template <typename T>
+static std::reverse_iterator<T*> rbegin(Eina_Inarray* raw)
+{
+  return std::reverse_iterator<T*>(_inarray_access_traits::begin<T>(raw));
+}
+template <typename T>
+static std::reverse_iterator<T*> rend(Eina_Inarray* raw)
+{
+  return std::reverse_iterator<T*>(_inarray_access_traits::end<T>(raw));
+}
+template <typename T>
+static T const* cbegin(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::begin<T>(raw);
+}
+template <typename T>
+static T const* cend(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::end<T>(raw);
+}
+template <typename T>
+static std::reverse_iterator<T const*> crbegin(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::rbegin<T const*>(raw);
+}
+template <typename T>
+static std::reverse_iterator<T const*> crend(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::rend<T const*>(raw);
+}
+template <typename T>
+static inline bool empty(Eina_Inarray const* raw)
+{
+  return _inarray_access_traits::size<T>(raw) == 0;
+}
+template <typename T>
+static inline std::size_t size(Eina_Inarray const* raw)
+{
+  return ::eina_inarray_count(raw);
+}
+template <typename T>
+static T const& index(Eina_Inarray const* raw, std::size_t i)
+{
+  return *(_inarray_access_traits::begin<T>(raw) + i);
+}
+template <typename T>
+static T& index(Eina_Inarray* raw, std::size_t i)
+{
+  return *(_inarray_access_traits::begin<T>(raw) + i);
+}
+
+};
+
+template <typename T>
+struct inarray;
+
+template <typename T>
+struct range_inarray : _range_template<T, _inarray_access_traits>
+{
+  typedef _range_template<T, _inarray_access_traits> _base_type;
+  typedef typename std::remove_const<T>::type value_type;
+
+  range_inarray(Eina_Inarray* array)
+    : _base_type(array)
+  {}
+  range_inarray(inarray<T>& array)
+    : _base_type(array.native_handle())
+  {}
+
+  value_type& operator[](std::size_t index) const
+  {
+    return _inarray_access_traits::index<T>(this->native_handle(), index);
+  }
+};
+
 struct _inarray_common_base
 {
   typedef std::size_t size_type;
+  typedef Eina_Inarray* native_handle_type;
+  typedef Eina_Inarray const* const_native_handle_type;
 
+  explicit _inarray_common_base(Eina_Inarray* array)
+    : _array(array) {}
   explicit _inarray_common_base(size_type member_size)
     : _array( ::eina_inarray_new(member_size, 0) )
   {
@@ -25,12 +186,14 @@ struct _inarray_common_base
   
   size_type size() const
   {
-    return ::eina_inarray_count(_array);
+    return _inarray_access_traits::size<void>(_array);
   }
   bool empty() const
   {
-    return size() == 0u;
+    return _inarray_access_traits::empty<void>(_array);
   }
+  native_handle_type native_handle() { return _array; }
+  const_native_handle_type native_handle() const { return _array; }
 
   Eina_Inarray* _array;
 private:
@@ -52,13 +215,18 @@ public:
   typedef const_pointer const_iterator;
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
+  typedef _base_type::native_handle_type native_handle_type;
+  typedef _base_type::const_native_handle_type const_native_handle_type;
 
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   using _base_type::size;
   using _base_type::empty;
+  using _base_type::native_handle;
 
+  _pod_inarray(Eina_Inarray* array)
+    : _base_type(array) {}
   _pod_inarray() : _base_type(sizeof(T))
   {
   }
@@ -98,7 +266,10 @@ public:
   }
   void push_back(T const& value)
   {
+    size_type s = size();
     eina_inarray_push(_array, &value);
+    assert(size() != s);
+    assert(size() == s + 1u);
   }
   void pop_back()
   {
@@ -166,71 +337,77 @@ public:
   void assign(InputIterator i, InputIterator j
               , typename eina::enable_if<!eina::is_integral<InputIterator>::value>::type* = 0);
   void assign(size_type n, value_type const& t);
+  value_type& operator[](size_type i)
+  {
+    return *(begin() + i);
+  }
+  value_type const& operator[](size_type i) const
+  {
+    return const_cast<inarray<T>&>(*this)[i];
+  }
   value_type& back()
   {
-    assert(!empty());
-    return *static_cast<value_type*>(eina_inarray_nth(_array, size()-1u));
+    return _inarray_access_traits::back<value_type>(_array);
   }
   value_type const& back() const
   {
-    return const_cast<_pod_inarray<T>&>(*this).back();
+    return _inarray_access_traits::back<value_type>(_array);
   }
   value_type& front()
   {
-    assert(!empty());
-    return *static_cast<value_type*>(eina_inarray_nth(_array, 0u));
+    return _inarray_access_traits::front<value_type>(_array);
   }
   value_type const& front() const
   {
-    return const_cast<_pod_inarray<T>&>(*this).front();
+    return _inarray_access_traits::front<value_type>(_array);
   }
   iterator begin()
   {
-    return !_array->members ? 0 : static_cast<iterator>(::eina_inarray_nth(_array, 0u));
+    return _inarray_access_traits::begin<value_type>(_array);
   }
   iterator end()
   {
-    return !_array->members ? 0 : static_cast<iterator>(::eina_inarray_nth(_array, size()-1)) + 1;
+    return _inarray_access_traits::end<value_type>(_array);
   }
   const_iterator begin() const
   {
-    return const_cast< _pod_inarray<T>&>(*this).begin();
+    return _inarray_access_traits::begin<value_type>(_array);
   }
   const_iterator end() const
   {
-    return const_cast< _pod_inarray<T>&>(*this).end();
+    return _inarray_access_traits::end<value_type>(_array);
   }
   const_reverse_iterator rbegin() const
   {
-    return const_reverse_iterator(begin());
+    return _inarray_access_traits::rbegin<value_type>(_array);
   }
   const_reverse_iterator rend() const
   {
-    return const_reverse_iterator(end());
+    return _inarray_access_traits::rend<value_type>(_array);
   }
   reverse_iterator rbegin()
   {
-    return reverse_iterator(begin());
+    return _inarray_access_traits::rbegin<value_type>(_array);
   }
   reverse_iterator rend()
   {
-    return reverse_iterator(end());
+    return _inarray_access_traits::rend<value_type>(_array);
   }
   const_iterator cbegin() const
   {
-    return begin();
+    return _inarray_access_traits::cbegin<value_type>(_array);
   }
   const_iterator cend() const
   {
-    return end();
+    return _inarray_access_traits::cend<value_type>(_array);
   }
   const_reverse_iterator crbegin() const
   {
-    return rbegin();
+    return _inarray_access_traits::crbegin<value_type>(_array);
   }
   const_reverse_iterator crend() const
   {
-    return rend();
+    return _inarray_access_traits::crend<value_type>(_array);
   }
   void swap(_pod_inarray<T>& other)
   {
@@ -269,6 +446,8 @@ public:
   using _base_type::size;
   using _base_type::empty;
 
+  _nonpod_inarray(Eina_Inarray* array)
+    : _base_type(array) {}
   _nonpod_inarray() : _base_type(sizeof(T))
   {
   }
@@ -419,71 +598,77 @@ public:
   void assign(InputIterator i, InputIterator j
               , typename eina::enable_if<!eina::is_integral<InputIterator>::value>::type* = 0);
   void assign(size_type n, value_type const& t);
+  value_type& operator[](size_type i)
+  {
+    return *(begin() + i);
+  }
+  value_type const& operator[](size_type i) const
+  {
+    return const_cast<inarray<T>&>(*this)[i];
+  }
   value_type& back()
   {
-    assert(!empty());
-    return *static_cast<value_type*>(eina_inarray_nth(_array, size()-1u));
+    return _inarray_access_traits::back<value_type>(_array);
   }
   value_type const& back() const
   {
-    return const_cast<_nonpod_inarray<T>&>(*this).back();
+    return _inarray_access_traits::back<value_type>(_array);
   }
   value_type& front()
   {
-    assert(!empty());
-    return *static_cast<value_type*>(eina_inarray_nth(_array, 0u));
+    return _inarray_access_traits::front<value_type>(_array);
   }
   value_type const& front() const
   {
-    return const_cast<_nonpod_inarray<T>&>(*this).front();
+    return _inarray_access_traits::front<value_type>(_array);
   }
   iterator begin()
   {
-    return static_cast<iterator>(_array->members);
+    return _inarray_access_traits::begin<value_type>(_array);
   }
   iterator end()
   {
-    return static_cast<iterator>(_array->members) + _array->len;
+    return _inarray_access_traits::end<value_type>(_array);
   }
   const_iterator begin() const
   {
-    return const_cast< _nonpod_inarray<T>&>(*this).begin();
+    return _inarray_access_traits::begin<value_type>(_array);
   }
   const_iterator end() const
   {
-    return const_cast< _nonpod_inarray<T>&>(*this).end();
+    return _inarray_access_traits::end<value_type>(_array);
   }
   const_reverse_iterator rbegin() const
   {
-    return const_reverse_iterator(begin());
+    return _inarray_access_traits::rbegin<value_type>(_array);
   }
   const_reverse_iterator rend() const
   {
-    return const_reverse_iterator(end());
+    return _inarray_access_traits::rend<value_type>(_array);
   }
   reverse_iterator rbegin()
   {
-    return reverse_iterator(begin());
+    return _inarray_access_traits::rbegin<value_type>(_array);
   }
   reverse_iterator rend()
   {
-    return reverse_iterator(end());
+    return _inarray_access_traits::rend<value_type>(_array);
   }
   const_iterator cbegin() const
   {
-    return begin();
+    return _inarray_access_traits::cbegin<value_type>(_array);
   }
   const_iterator cend() const
   {
-    return end();
+    return _inarray_access_traits::cend<value_type>(_array);
   }
   const_reverse_iterator crbegin() const
   {
-    return rbegin();
+    return _inarray_access_traits::crbegin<value_type>(_array);
   }
   const_reverse_iterator crend() const
   {
-    return rend();
+    return _inarray_access_traits::crend<value_type>(_array);
   }
   void swap(_nonpod_inarray<T>& other)
   {
@@ -508,6 +693,8 @@ class inarray : public eina::if_<eina::is_pod<T>, _pod_inarray<T>
   typedef typename eina::if_<eina::is_pod<T>, _pod_inarray<T>
                              , _nonpod_inarray<T> >::type _base_type;
 public:
+  inarray(Eina_Inarray* array)
+    : _base_type(array) {}
   inarray() : _base_type() {}
   inarray(typename _base_type::size_type n, typename _base_type::value_type const& t)
     : _base_type(n, t) {}
@@ -537,7 +724,6 @@ void swap(inarray<T>& lhs, inarray<T>& rhs)
 {
   lhs.swap(rhs);
 }
-
 
 
 } }
