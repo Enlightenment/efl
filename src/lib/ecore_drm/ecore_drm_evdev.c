@@ -247,6 +247,40 @@ _device_keysym_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buff
 }
 
 static void 
+_device_modifiers_update(Ecore_Drm_Evdev *edev)
+{
+   xkb_mod_mask_t mask;
+
+   edev->xkb.depressed = 
+     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_DEPRESSED);
+   edev->xkb.latched = 
+     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_LATCHED);
+   edev->xkb.locked = 
+     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_LOCKED);
+   edev->xkb.group = 
+     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_EFFECTIVE);
+
+   mask = (edev->xkb.depressed | edev->xkb.latched);
+
+   if (mask & edev->xkb.ctrl_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if (mask & edev->xkb.alt_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_ALT;
+   if (mask & edev->xkb.shift_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if (mask & edev->xkb.win_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (mask & edev->xkb.scroll_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_LOCK_SCROLL;
+   if (mask & edev->xkb.num_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_LOCK_NUM;
+   if (mask & edev->xkb.caps_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_LOCK_CAPS;
+   if (mask & edev->xkb.altgr_mask)
+     edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
+}
+
+static void 
 _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
 {
    unsigned int code, nsyms;
@@ -266,6 +300,9 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
 
    /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = event->code + 8;
+
+   xkb_state_update_key(dev->xkb.state, code, 
+                        (event->value ? XKB_KEY_DOWN : XKB_KEY_UP));
 
    /* get the keysym for this code */
    nsyms = xkb_key_get_syms(dev->xkb.state, code, &syms);
@@ -313,6 +350,7 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    e->timestamp = timestamp;
    /* e->same_screen = 1; */
 
+   _device_modifiers_update(dev);
    e->modifiers = dev->xkb.modifiers;
 
    if (event->value)
