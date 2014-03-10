@@ -29,6 +29,11 @@
 #define GREEN_OF(a) (((a) >> 8) & 0xff)
 #define BLUE_OF(a)  ((a) & 0xff)
 
+// The 'restrict' keyword is part of C99
+#if __STDC_VERSION__ < 199901L
+# define restrict
+#endif
+
 // Helpers
 #define ENFN ctx->evas->engine.func
 #define ENDT ctx->evas->engine.data.output

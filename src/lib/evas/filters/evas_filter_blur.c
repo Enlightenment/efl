@@ -380,62 +380,6 @@ _sin_blur_weights_get(int *weights, int *pow2_divider, int radius)
 }
 
 static void
-_gaussian_blur_step_alpha(DATA8 *src, DATA8 *dst, int radius, int len, int step,
-                          int *weights, int pow2_divider)
-{
-   int j, k, acc, divider;
-   DATA8 *s = src;
-   const int diameter = 2 * radius + 1;
-   int left = MIN(radius, len);
-   int right = MIN(radius, (len - radius));
-
-   // left
-   for (k = 0; k < left; k++, dst += step)
-     {
-        acc = 0;
-        divider = 0;
-        s = src;
-        for (j = 0; j <= k + radius; j++, s += step)
-          {
-             acc += (*s) * weights[j + radius - k];
-             divider += weights[j + radius - k];
-          }
-        if (!divider) goto div_zero;
-        *dst = acc / divider;
-     }
-
-   // middle
-   for (k = radius; k < (len - radius); k++, src += step, dst += step)
-     {
-        acc = 0;
-        s = src;
-        for (j = 0; j < diameter; j++, s += step)
-          acc += (*s) * weights[j];
-        *dst = acc >> pow2_divider;
-     }
-
-   // right
-   for (k = 0; k < right; k++, dst += step, src += step)
-     {
-        acc = 0;
-        divider = 0;
-        s = src;
-        for (j = 0; j < 2 * radius - k; j++, s += step)
-          {
-             acc += (*s) * weights[j];
-             divider += weights[j];
-          }
-        if (!divider) goto div_zero;
-        *dst = acc / divider;
-     }
-
-   return;
-
-div_zero:
-   CRI("Division by zero avoided! Something is very wrong here!");
-}
-
-static void
 _gaussian_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step,
                          int *weights, int pow2_divider)
 {
@@ -511,45 +455,40 @@ div_zero:
    CRI("Division by zero avoided! Something is very wrong here!");
 }
 
+#define FUNCTION_NAME _gaussian_blur_horiz_alpha_step
+#define STEP 1
+#include "./blur/blur_gaussian_alpha_.c"
+
 static void
-_gaussian_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
+_gaussian_blur_horiz_alpha(const DATA8 *src, DATA8 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div = 0;
+   int pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
    DEBUG_TIME_BEGIN();
-
-   for (k = h; k; k--)
-     {
-        _gaussian_blur_step_alpha(src, dst, radius, w, 1, weights, pow2_div);
-        dst += w;
-        src += w;
-     }
-
+   _gaussian_blur_horiz_alpha_step(src, dst, radius, w, h, w, weights, pow2_div);
    DEBUG_TIME_END();
 }
 
+// w steps, loops = w --> STEP = loops
+#define FUNCTION_NAME _gaussian_blur_vert_alpha_step
+#define STEP loops
+#include "./blur/blur_gaussian_alpha_.c"
+
 static void
-_gaussian_blur_vert_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
+_gaussian_blur_vert_alpha(const DATA8 *src, DATA8 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div = 0;
+   int pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
    DEBUG_TIME_BEGIN();
-
-   for (k = w; k; k--)
-     {
-        _gaussian_blur_step_alpha(src, dst, radius, h, w, weights, pow2_div);
-        dst += 1;
-        src += 1;
-     }
-
+   _gaussian_blur_vert_alpha_step(src, dst, radius, h, w, 1, weights, pow2_div);
    DEBUG_TIME_END();
 }
 

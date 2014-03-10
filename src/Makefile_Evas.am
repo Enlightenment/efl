@@ -441,6 +441,8 @@ lib/evas/filters/evas_filter_transform.c \
 lib/evas/filters/evas_filter_utils.c \
 lib/evas/filters/evas_filter_private.h
 
+EXTRA_DIST += \
+lib/evas/filters/blur/blur_gaussian_alpha_.c
 
 ### Engines
 
