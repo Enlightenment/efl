@@ -1837,6 +1837,20 @@ eina_log_domain_registered_level_get(int domain)
 #endif
 }
 
+EAPI void
+eina_log_domain_registered_level_set(int domain, int level)
+{
+#ifdef EINA_ENABLE_LOG
+   EINA_SAFETY_ON_FALSE_RETURN(domain >= 0);
+   EINA_SAFETY_ON_FALSE_RETURN((unsigned int)domain < _log_domains_count);
+   EINA_SAFETY_ON_TRUE_RETURN(_log_domains[domain].deleted);
+   _log_domains[domain].level = level;
+#else
+   (void) domain;
+   (void) level;
+#endif
+}
+
 #ifdef EINA_LOG_BACKTRACE
 # define DISPLAY_BACKTRACE(File, Level)			\
   if (EINA_UNLIKELY(Level < _backtrace_level))		\

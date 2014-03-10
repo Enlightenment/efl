@@ -695,6 +695,18 @@ EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_
  */
 EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * Set the domain level given its identifier.
+ *
+ * @param domain identifier, so it must be previously registered with
+ *        eina_log_domain_register(). It's a much faster version of
+ *        eina_log_domain_level_get(), but relies on domain being
+ *        present.
+ * @param level level to use to limit eina_log_print() for given domain.
+ * @since 1.10
+ */
+EAPI void                eina_log_domain_registered_level_set(int domain, int level);
+
 static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
 
 /*

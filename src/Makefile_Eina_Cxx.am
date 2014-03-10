@@ -33,6 +33,7 @@ TESTS += tests/eina_cxx/eina_cxx_suite
 tests_eina_cxx_eina_cxx_suite_SOURCES = \
 tests/eina_cxx/eina_cxx_suite.cc \
 tests/eina_cxx/eina_cxx_test_inlist.cc \
+tests/eina_cxx/eina_cxx_test_log.cc \
 tests/eina_cxx/eina_cxx_test_inarray.cc \
 tests/eina_cxx/eina_cxx_test_iterator.cc \
 tests/eina_cxx/eina_cxx_test_ptrarray.cc \

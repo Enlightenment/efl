@@ -12,6 +12,7 @@
 #include <eina_thread.hh>
 #include <eina_value.hh>
 #include <eina_ref.hh>
+#include <eina_log.hh>
 
 namespace efl { namespace eina {
 
