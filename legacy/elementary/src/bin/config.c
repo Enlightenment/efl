@@ -2522,7 +2522,6 @@ _profiles_list_selected_cb(void            *data,
         else prof_name = cur_profile;
      }
 #endif
-   prof_name = cur_profile;
 
    if (!pdir)
      elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
@@ -2582,7 +2581,6 @@ _profiles_list_fill(Evas_Object *l_widget,
 
         pdir = elm_config_profile_dir_get(profile, EINA_TRUE);
         if (!pdir) pdir = elm_config_profile_dir_get(profile, EINA_FALSE);
-        label = profile;
 
 #ifdef ELM_EFREET
         snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
