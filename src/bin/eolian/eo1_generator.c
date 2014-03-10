@@ -117,6 +117,7 @@ _eo_obj_@#class_@#func(Eo *obj, void *_pd, va_list *list@#list_unused)\n\
 {\n\
 @#list_vars\
    @#ret_param_@#class_@#func(obj, _pd@#list_params);\n\
+@#return_ret\
 }\n\
 ";
 
@@ -428,16 +429,19 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
               ret_const?"const ":"",
               rettype, had_star?"":" ");
         Eina_Strbuf *ret_param = eina_strbuf_new();
-        eina_strbuf_append_printf(ret_param, "*%s = ", retname);
+        if (rettype) eina_strbuf_append_printf(ret_param, "%s _%s = ", rettype, retname);
         eina_strbuf_replace_all(fbody, "@#ret_param", eina_strbuf_string_get(ret_param));
         sprintf(tmpstr, "%s%s", ret_const?"const ":"", rettype);
         eina_strbuf_replace_all(fbody, "@#ret_type", tmpstr);
+        sprintf(tmpstr, "   if (%s) *%s = _%s;\n", retname, retname, retname);
+        eina_strbuf_replace_all(fbody, "@#return_ret", tmpstr);
         eina_strbuf_free(ret_param);
      }
    else
      {
         eina_strbuf_replace_all(fbody, "@#ret_param", "");
         eina_strbuf_replace_all(fbody, "@#ret_type", "void");
+        eina_strbuf_replace_all(fbody, "@#return_ret", "");
      }
 
    if (eina_list_count(eolian_parameters_list_get(funcid)) == 0 &&
