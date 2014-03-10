@@ -296,7 +296,8 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
           source = eo_data_scope_get(fb->source, EVAS_OBJ_CLASS);
           if (source->proxy->surface && !source->proxy->redraw)
             {
-               DBG("Source already rendered");
+               DBG("Source already rendered: '%s' of type '%s'",
+                   fb->source_name, eo_class_name_get(eo_class_get(fb->source)));
                _filter_buffer_backing_free(fb);
                fb->w = source->cur->geometry.w;
                fb->h = source->cur->geometry.h;
@@ -315,7 +316,9 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             }
           else
             {
-               DBG("Source needs to be rendered");
+               DBG("Source needs to be rendered: '%s' of type '%s' (%s)",
+                   fb->source_name, eo_class_name_get(eo_class_get(fb->source)),
+                   source->proxy->redraw ? "redraw" : "no surface");
                _proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
                _filter_buffer_backing_free(fb);
                fb->w = source->cur->geometry.w;
