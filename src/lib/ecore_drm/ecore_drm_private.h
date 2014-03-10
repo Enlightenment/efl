@@ -16,6 +16,7 @@
 # include <libudev.h>
 # include <linux/input.h>
 //# include <libinput.h>
+# include <xkbcommon/xkbcommon.h>
 
 # include <xf86drm.h>
 # include <xf86drmMode.h>
