@@ -128,6 +128,19 @@ START_TEST(eina_cxx_ptrlist_insert)
 }
 END_TEST
 
+
+START_TEST(eina_cxx_ptrlist_malloc_clone_allocator)
+{
+  efl::eina::eina_init eina_init;
+
+  efl::eina::ptr_list<int, efl::eina::malloc_clone_allocator> list1;
+  list1.push_back(5);
+  list1.push_back(10);
+
+  efl::eina::ptr_list<int, efl::eina::malloc_clone_allocator> list2 = list1;
+}
+END_TEST
+
 START_TEST(eina_cxx_ptrlist_constructors)
 {
   efl::eina::eina_init eina_init;
@@ -240,4 +253,5 @@ eina_test_ptrlist(TCase* tc)
   tcase_add_test(tc, eina_cxx_ptrlist_constructors);
   tcase_add_test(tc, eina_cxx_ptrlist_erase);
   tcase_add_test(tc, eina_cxx_ptrlist_range);
+  tcase_add_test(tc, eina_cxx_ptrlist_malloc_clone_allocator);
 }
