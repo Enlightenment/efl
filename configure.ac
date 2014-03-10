@@ -4509,6 +4509,16 @@ if test "x$prefix" != "x/usr"; then
     eval path="\"$path\""
   done
   resolved_dbusservicedir=$path
+
+  old=
+  path=$USER_SESSION_DIR
+  while test "x$old" != "x$path"; do
+    old=$path
+    eval path="\"$path\""
+  done
+  resolved_USER_SESSION_DIR=$path
+  base_USER_SESSION_DIR=`echo "$resolved_USER_SESSION_DIR" | sed -e 's:^\(.*\)/systemd/user/*$:\1:g'`
+
   old=
   path=$datadir
   while test "x$old" != "x$path"; do
@@ -4516,21 +4526,77 @@ if test "x$prefix" != "x/usr"; then
     eval path="\"$path\""
   done
   resolved_datadir=$path
-  echo ""
-  echo "#-------------------------------------------------------------------#"
-  echo "##==--                          ALERT                          --==##"
-  echo "#-------------------------------------------------------------------#"
-  echo ""
-  echo "  Your installation prefix is *NOT* /usr so this means you need"
-  echo "to ensure some files are visible to dbus otherwise services cannot"
-  echo "be started when needed. You will need to do the following:"
-  echo ""
-  echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
-  echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
-  echo ""
-  echo "or add \"${resolved_datadir}\" to \$XDG_DATA_DIRS"
-  echo ""
-  echo "#-------------------------------------------------------------------#"
+
+  needs_alert_dbus=0
+  if test "$resolved_dbusservicedir" = "${HOME}/.local/share/dbus-1/services"; then
+    AC_MSG_NOTICE([installing DBus services in user local "$resolved_dbusservicedir". Only accessible to user $USER])
+  elif echo "$XDG_DATA_DIRS" | grep -e "$resolved_datadir" >/dev/null 2>/dev/null; then
+    AC_MSG_NOTICE([installing DBus services in "$resolved_datadir" set in \$XDG_DATA_DIRS. Every user must have \$XDG_DATA_DIRS containing "$resolved_datadir".])
+  elif echo "$resolved_dbusservicedir" | grep -e '^/usr' >/dev/null 2>/dev/null; then
+    AC_MSG_NOTICE([installing DBus serivces in $resolved_dbusservicedir])
+  else
+    needs_alert_dbus=1
+  fi
+
+  needs_alert_systemd=0
+  if test "$have_systemd_user_session" = "yes"; then
+    if test "$resolved_USER_SESSION_DIR" = "${HOME}/.config/systemd/user"; then
+      AC_MSG_NOTICE([installing systemd services in user local "$resolved_USER_SESSION_DIR". Only accessible to user $USER])
+    elif echo "$XDG_DATA_DIRS" | grep -e "$base_USER_SESSION_DIR" >/dev/null 2>/dev/null; then
+      AC_MSG_NOTICE([installing systemd services in "$base_USER_SESSION_DIR" set in \$XDG_DATA_DIRS. Every user must have \$XDG_DATA_DIRS containing "$base_USER_SESSION_DIR".])
+    elif echo "$XDG_CONFIG_DIRS" | grep -e "$base_USER_SESSION_DIR" >/dev/null 2>/dev/null; then
+      AC_MSG_NOTICE([installing systemd services in "$base_USER_SESSION_DIR" set in \$XDG_CONFIG_DIRS. Every user must have \$XDG_CONFIG_DIRS containing "$base_USER_SESSION_DIR".])
+    elif echo "$resolved_USER_SESSION_DIR" | grep -e '^/usr' >/dev/null 2>/dev/null; then
+      AC_MSG_NOTICE([installing systemd serivces in $resolved_USER_SESSION_DIR])
+    else
+       needs_alert_systemd=1
+    fi
+  fi
+
+  if test $needs_alert_dbus -eq 1 -o $needs_alert_systemd -eq 1; then
+    if test $needs_alert_dbus -eq 1 -a $needs_alert_systemd -eq 1; then
+      what_alert="dbus and systemd"
+    elif test $needs_alert_dbus -eq 1; then
+      what_alert="dbus"
+    else
+      what_alert="systemd"
+    fi
+
+    echo ""
+    echo "#-------------------------------------------------------------------#"
+    echo "##==--                          ALERT                          --==##"
+    echo "#-------------------------------------------------------------------#"
+    echo ""
+    echo "  Your installation prefix is *NOT* /usr so this means you need"
+    echo "to ensure some files are visible to $what_alert otherwise services cannot"
+    echo "be started when needed. You will need to do the following:"
+    if test $needs_alert_dbus -eq 1; then
+      echo ""
+      echo "System-wide installation:"
+      echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
+      echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
+      echo ""
+      echo "  or add \"${resolved_datadir}\" to \$XDG_DATA_DIRS"
+      echo ""
+      echo "User installation:"
+      echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Ethumb.service ~/.local/share/dbus-1/services/org.enlightenment.Ethumb.service"
+      echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Efreet.service ~/.local/share/dbus-1/services/org.enlightenment.Efreet.service"
+    fi
+    if test $needs_alert_systemd -eq 1; then
+      echo ""
+      echo "System-wide installation:"
+      echo "  ln -s ${resolved_USER_SESSION_DIR}/ethumb.service /usr/lib/systemd/user/ethumb.service"
+      echo "  ln -s ${resolved_USER_SESSION_DIR}/efreet.service /usr/lib/systemd/user/efreet.service"
+      echo ""
+      echo "  or add \"${base_USER_SESSION_DIR}\" to \$XDG_DATA_DIRS or \$XDG_CONFIG_DIRS"
+      echo ""
+      echo "User installation:"
+      echo "  ln -s ${resolved_USER_SESSION_DIR}/ethumb.service ~/.config/systemd/user/ethumb.service"
+      echo "  ln -s ${resolved_USER_SESSION_DIR}/efreet.service ~/.config/systemd/user/efreet.service"
+    fi
+    echo ""
+    echo "#-------------------------------------------------------------------#"
+  fi
 fi
 
 if test "x${efl_deprecated_option}" = "xyes"; then
