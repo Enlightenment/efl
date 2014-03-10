@@ -15,8 +15,54 @@
 #include "ecore_drm_private.h"
 #include <sys/ioctl.h>
 #include <linux/input.h>
+#include <ctype.h>
 
 /* local functions */
+static void 
+_device_keyboard_setup(Ecore_Drm_Evdev *edev)
+{
+   Ecore_Drm_Input *input;
+
+   if ((!edev) || (!edev->seat)) return;
+   if (!(input = edev->seat->input)) return;
+   if (!input->dev->xkb_ctx) return;
+
+   /* create keymap from xkb context */
+   edev->xkb.keymap = xkb_map_new_from_names(input->dev->xkb_ctx, NULL, 0);
+   if (!edev->xkb.keymap)
+     {
+        ERR("Failed to create keymap: %m");
+        return;
+     }
+
+   /* create xkb state */
+   if (!(edev->xkb.state = xkb_state_new(edev->xkb.keymap)))
+     {
+        ERR("Failed to create xkb state: %m");
+        return;
+     }
+
+   /* FIXME: setup modifiers ? */
+   edev->xkb.modifiers = 0;
+
+   edev->xkb.ctrl_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_CTRL);
+   edev->xkb.alt_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_ALT);
+   edev->xkb.shift_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_SHIFT);
+   edev->xkb.win_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_LOGO);
+   edev->xkb.scroll_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_LED_NAME_SCROLL);
+   edev->xkb.num_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_LED_NAME_NUM);
+   edev->xkb.caps_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, XKB_MOD_NAME_CAPS);
+   edev->xkb.altgr_mask = 
+     1 << xkb_map_mod_get_index(edev->xkb.keymap, "ISO_Level3_Shift");
+}
+
 static Eina_Bool 
 _device_configure(Ecore_Drm_Evdev *edev)
 {
@@ -36,6 +82,7 @@ _device_configure(Ecore_Drm_Evdev *edev)
      {
         DBG("Input device %s is a keyboard", edev->name);
         edev->seat_caps |= EVDEV_SEAT_KEYBOARD;
+        _device_keyboard_setup(edev);
         ret = EINA_TRUE;
      }
 
@@ -155,12 +202,118 @@ _device_handle(Ecore_Drm_Evdev *edev)
    return EINA_TRUE;
 }
 
-static void 
-_device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp EINA_UNUSED)
+static int 
+_device_keysym_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buffer, int bytes)
 {
+   unsigned long hbytes = 0;
+   unsigned char c;
+
+   if (!keysym) return 0;
+   hbytes = (keysym >> 8);
+
+   if (!(bytes &&
+         ((hbytes == 0) ||
+          ((hbytes == 0xFF) &&
+           (((keysym >= XKB_KEY_BackSpace) && (keysym <= XKB_KEY_Clear)) ||
+            (keysym == XKB_KEY_Return) || (keysym == XKB_KEY_Escape) ||
+            (keysym == XKB_KEY_KP_Space) || (keysym == XKB_KEY_KP_Tab) ||
+            (keysym == XKB_KEY_KP_Enter) ||
+            ((keysym >= XKB_KEY_KP_Multiply) && (keysym <= XKB_KEY_KP_9)) ||
+            (keysym == XKB_KEY_KP_Equal) || (keysym == XKB_KEY_Delete))))))
+     return 0;
+
+   if (keysym == XKB_KEY_KP_Space)
+     c = (XKB_KEY_space & 0x7F);
+   else if (hbytes == 0xFF)
+     c = (keysym & 0x7F);
+   else
+     c = (keysym & 0xFF);
+
+   if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
+     {
+        if (((c >= '@') && (c < '\177')) || c == ' ')
+          c &= 0x1F;
+        else if (c == '2')
+          c = '\000';
+        else if ((c >= '3') && (c <= '7'))
+          c -= ('3' - '\033');
+        else if (c == '8')
+          c = '\177';
+        else if (c == '/')
+          c = '_' & 0x1F;
+     }
+   buffer[0] = c;
+   return 1;
+}
+
+static void 
+_device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+{
+   unsigned int code, nsyms;
+   const xkb_keysym_t *syms;
+   xkb_keysym_t sym = XKB_KEY_NoSymbol;
+   char key[256], keyname[256], compose[256];
+   Ecore_Event_Key *e;
+
+   /* FIXME: This will probably need to handle modifiers also */
+
    DBG("Key Event");
    DBG("\tCode: %d", event->code);
    DBG("\tValue: %d", event->value);
+
+   /* xkb rules reflect X broken keycodes, so offset by 8 */
+   code = event->code + 8;
+
+   /* get the keysym for this code */
+   nsyms = xkb_key_get_syms(dev->xkb.state, code, &syms);
+   if (nsyms == 1) sym = syms[0];
+
+   /* get the keyname for this sym */
+   memset(key, 0, sizeof(key));
+   xkb_keysym_get_name(sym, key, sizeof(key));
+
+   memset(keyname, 0, sizeof(keyname));
+   memcpy(keyname, key, sizeof(keyname));
+
+   if (keyname[0] == '\0')
+     snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
+
+   /* if shift is active, we need to transform the key to lower */
+   if (xkb_state_mod_index_is_active(dev->xkb.state, 
+                                     xkb_map_mod_get_index(dev->xkb.keymap, 
+                                                           XKB_MOD_NAME_SHIFT),
+                                     XKB_STATE_MODS_EFFECTIVE))
+     {
+        if (keyname[0] != '\0')
+          keyname[0] = tolower(keyname[0]);
+     }
+
+   memset(compose, 0, sizeof(compose));
+   _device_keysym_translate(sym, dev->xkb.modifiers, compose, sizeof(compose));
+
+   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+              ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
+   if (!e) return;
+
+   e->keyname = (char *)(e + 1);
+   e->key = e->keyname + strlen(keyname) + 1;
+   e->compose = strlen(compose) ? e->key + strlen(key) + 1 : NULL;
+   e->string = e->compose;
+
+   strcpy((char *)e->keyname, keyname);
+   strcpy((char *)e->key, key);
+   if (strlen(compose)) strcpy((char *)e->compose, compose);
+
+   /* e->window = win->id; */
+   /* e->event_window = win->id; */
+   e->timestamp = timestamp;
+
+   e->modifiers = dev->xkb.modifiers;
+
+   if (event->value)
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
+   else
+     ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
    if ((event->code >= KEY_ESC) && (event->code <= KEY_COMPOSE))
      {
@@ -351,6 +504,9 @@ void
 _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *dev)
 {
    if (!dev) return;
+
+   if (dev->xkb.state) xkb_state_unref(dev->xkb.state);
+   if (dev->xkb.keymap) xkb_map_unref(dev->xkb.keymap);
 
    if (dev->path) eina_stringshare_del(dev->path);
    if (dev->name) eina_stringshare_del(dev->name);
