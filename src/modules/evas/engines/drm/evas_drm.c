@@ -469,6 +469,7 @@ evas_drm_outbuf_setup(Outbuf *ob)
    drmModePlaneResPtr pres;
    int i = 0;
    uint64_t dumb;
+   unsigned int fb;
 
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
@@ -537,8 +538,8 @@ evas_drm_outbuf_setup(Outbuf *ob)
         /* record the crtc id */
         ob->priv.crtc = crtc;
 
-        /* record the current framebuffer */
-        ob->priv.fb = _evas_drm_crtc_buffer_get(ob->priv.fd, crtc);
+        /* get the current framebuffer */
+        fb = _evas_drm_crtc_buffer_get(ob->priv.fd, crtc);
 
         /* spew out connector properties for testing */
         /* drmModePropertyPtr props; */
@@ -575,7 +576,7 @@ evas_drm_outbuf_setup(Outbuf *ob)
             (ob->priv.mode.vdisplay != conn->modes[0].vdisplay))
           {
              /* set new crtc mode */
-             drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, ob->priv.fb, 0, 0, 
+             drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, fb, 0, 0, 
                             &ob->priv.conn, 1, &ob->priv.mode);
           }
 
