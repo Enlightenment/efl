@@ -431,7 +431,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
               ret_const?"const ":"",
               rettype, had_star?"":" ");
         Eina_Strbuf *ret_param = eina_strbuf_new();
-        if (rettype) eina_strbuf_append_printf(ret_param, "%s _%s = ", rettype, retname);
+        if (rettype) eina_strbuf_append_printf(ret_param, "%s%s%s_%s = ", ret_const?"const ":"", rettype, had_star?"":" ", retname);
         eina_strbuf_replace_all(fbody, "@#ret_param", eina_strbuf_string_get(ret_param));
         sprintf(tmpstr, "%s%s", ret_const?"const ":"", rettype);
         eina_strbuf_replace_all(fbody, "@#ret_type", tmpstr);
