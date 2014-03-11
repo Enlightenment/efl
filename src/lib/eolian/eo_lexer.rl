@@ -1075,6 +1075,8 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
 
    toknz->pe = toknz->p + len;
 
+   toknz->eof = toknz->pe;
+
    %% write exec;
 
    if ( toknz->cs == %%{ write error; }%% )
