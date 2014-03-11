@@ -39,8 +39,6 @@ static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
 #define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
 
 
-#define OP_CLASS_OFFSET_GET(x) (((x) >> EO_OP_CLASS_OFFSET) & 0xffff)
-
 /* We are substracting the mask here instead of "AND"ing because it's a hot path,
  * it should be a valid class at this point, and this lets the compiler do 1
  * substraction at compile time. */
