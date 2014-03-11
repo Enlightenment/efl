@@ -64,6 +64,9 @@ static const struct ext_loader_s loaders[] =
    MATCHING(".cur", "ico"),
    
    MATCHING(".psd", "psd"),
+
+   MATCHING(".tgv", "tgv"),
+
    /* xcf - gefenric */
    MATCHING(".xcf", "generic"),
    MATCHING(".xcf.gz", "generic"),

@@ -1712,6 +1712,58 @@ modules_evas_loaders_xpm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
+if BUILD_LOADER_TGV
+if EVAS_STATIC_BUILD_TGV
+lib_evas_libevas_la_SOURCES += \
+modules/evas/loaders/tgv/evas_image_load_tgv.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h
+lib_evas_libevas_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4 \
+-I$(top_srcdir)/src/static_libs/rg_etc \
+@evas_image_loader_tgv_cflags@
+lib_evas_libevas_la_LIBADD += @evas_image_loader_tgv_libs@
+if EVAS_CSERVE2
+bin_evas_evas_cserve2_slave_SOURCES += \
+modules/evas/loaders/tgv/evas_image_load_tgv.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h
+bin_evas_evas_cserve2_slave_CPPFLAGS +=  \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/static_libs/lz4 \
+-I$(top_srcdir)/src/static_libs/rg_etc \
+-I$(top_srcdir)/src/lib/evas/ \
+@evas_image_loader_tgv_cflags@
+bin_evas_evas_cserve2_slave_LDADD += @evas_image_loader_tgv_libs@
+endif
+else
+loadertgvpkgdir = $(libdir)/evas/modules/loaders/tgv/$(MODULE_ARCH)
+loadertgvpkg_LTLIBRARIES = modules/evas/loaders/tgv/module.la
+modules_evas_loaders_tgv_module_la_SOURCES = \
+modules/evas/loaders/tgv/evas_image_load_tgv.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h
+modules_evas_loaders_tgv_module_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/static_libs/lz4 \
+-I$(top_srcdir)/src/static_libs/rg_etc \
+-I$(top_srcdir)/src/lib/evas/ \
+@EVAS_CFLAGS@ \
+@evas_image_loader_tgv_cflags@
+modules_evas_loaders_tgv_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_image_loader_tgv_libs@
+modules_evas_loaders_tgv_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_loaders_tgv_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_loaders_tgv_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
 
 ### Unit tests
 

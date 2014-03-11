@@ -1419,6 +1419,7 @@ ARG_ENABLE_EVAS_IMAGE_LOADER(Tiff, yes)
 ARG_ENABLE_EVAS_IMAGE_LOADER(WBMP, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(WEBP, no)
 ARG_ENABLE_EVAS_IMAGE_LOADER(XPM, static)
+ARG_ENABLE_EVAS_IMAGE_LOADER(TGV, static)
 
 ### Default values
 
@@ -1700,6 +1701,7 @@ EVAS_CHECK_IMAGE_LOADER([Tiff],    [${want_evas_image_loader_tiff}])
 EVAS_CHECK_IMAGE_LOADER([WBMP],    [${want_evas_image_loader_wbmp}])
 EVAS_CHECK_IMAGE_LOADER([WEBP],    [${want_evas_image_loader_webp}])
 EVAS_CHECK_IMAGE_LOADER([XPM],     [${want_evas_image_loader_xpm}])
+EVAS_CHECK_IMAGE_LOADER([TGV],     [${want_evas_image_loader_tgv}])
 
 dnl Windows has no sigsetjmp function, nor equivalent.
 dnl So we disable the jpeg saver.
