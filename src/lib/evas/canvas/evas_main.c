@@ -106,6 +106,7 @@ evas_shutdown(void)
      evas_cserve2_shutdown();
 #endif
 
+   evas_font_path_global_clear();
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);
    eina_cow_del(evas_object_state_cow);
