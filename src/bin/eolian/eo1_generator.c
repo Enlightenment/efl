@@ -460,7 +460,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    eina_strbuf_replace_all(fbody, "@#list_params", eina_strbuf_string_get(params));
    const char *data_type = eolian_class_data_type_get(classname);
    if (data_type && !strcmp(data_type, "null"))
-      eina_strbuf_replace_all(fbody, "@#Datatype_Data", "void *");
+      eina_strbuf_replace_all(fbody, "@#Datatype_Data", "void");
    else
      {
         if (data_type) eina_strbuf_replace_all(fbody, "@#Datatype_Data", data_type);
