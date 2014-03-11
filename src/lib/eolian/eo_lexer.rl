@@ -1328,6 +1328,12 @@ eo_tokenizer_database_fill(const char *filename)
                        database_function_return_flag_set_as_warn_unused(foo_id,
                              accessor->type == SETTER?SET:GET, accessor->ret.warn_unused);
                     }
+                  if (accessor->legacy)
+                    {
+                       database_function_data_set(foo_id,
+                             (accessor->type == SETTER?EOLIAN_LEGACY_SET:EOLIAN_LEGACY_GET),
+                             accessor->legacy);
+                    }
                   database_function_description_set(foo_id,
                         (accessor->type == SETTER?EOLIAN_COMMENT_SET:EOLIAN_COMMENT_GET),
                         accessor->comment);
