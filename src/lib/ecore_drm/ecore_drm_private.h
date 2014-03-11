@@ -70,7 +70,7 @@
 extern int _ecore_drm_log_dom;
 
 /* undef this for non-testing builds */
-# define LOG_TO_FILE
+//# define LOG_TO_FILE
 
 # ifdef LOG_TO_FILE
 extern FILE *lg;
@@ -184,6 +184,16 @@ struct _Ecore_Drm_Evdev
         int max_x, max_y;
         int x, y;
      } abs;
+
+   struct 
+     {
+        int x, y;
+        unsigned int last, prev;
+        double threshold;
+        Eina_Bool did_double : 1;
+        Eina_Bool did_triple : 1;
+        int prev_button, last_button;
+     } mouse;
 
    struct 
      {
