@@ -2204,7 +2204,7 @@ _eof_trans:
 	case 86:
 #line 627 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
-      Eina_List **l;
+      Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (eina_list_count(toknz->tmp.meth->params) == 0)
         WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
@@ -2259,7 +2259,7 @@ _eof_trans:
 	case 90:
 #line 627 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
-      Eina_List **l;
+      Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (eina_list_count(toknz->tmp.meth->params) == 0)
         WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
@@ -3666,7 +3666,7 @@ _eof_trans:
 	case 86:
 #line 627 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
-      Eina_List **l;
+      Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (eina_list_count(toknz->tmp.meth->params) == 0)
         WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
@@ -3721,7 +3721,7 @@ _eof_trans:
 	case 90:
 #line 627 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
-      Eina_List **l;
+      Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (eina_list_count(toknz->tmp.meth->params) == 0)
         WRN("method '%s' has no parameters.", toknz->tmp.meth->name);

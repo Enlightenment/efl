@@ -625,7 +625,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    action end_method {
-      Eina_List **l;
+      Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       if (eina_list_count(toknz->tmp.meth->params) == 0)
         WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
