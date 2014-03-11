@@ -1764,3 +1764,9 @@
 2013-12-01  Carsten Haitzler (The Rasterman)
 
         * 1.8 release
+
+OUT OF DATE NOTICE:
+ -------------------
+With the start of the 1.9.x release cycle we now longer update the ChangeLog and rely on git log for
+this functionality. We keep however a NEWS files for a high level overview of changes in a new
+release which will be filled at the end of the release cycle.
