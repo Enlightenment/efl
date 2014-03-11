@@ -72,6 +72,10 @@ _device_configure(Ecore_Drm_Evdev *edev)
      {
         DBG("Input device %s is a pointer", edev->name);
         edev->seat_caps |= EVDEV_SEAT_POINTER;
+
+        /* FIXME: make this configurable */
+        edev->mouse.threshold = 0.25;
+
         ret = EINA_TRUE;
      }
 
@@ -345,7 +349,7 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    e->event_window = (Ecore_Window)input->dev->window;
    e->root_window = (Ecore_Window)input->dev->window;
    e->timestamp = timestamp;
-   /* e->same_screen = 1; */
+   e->same_screen = 1;
 
    _device_modifiers_update(dev);
    e->modifiers = dev->xkb.modifiers;
@@ -354,25 +358,149 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
-
-   if ((event->code >= KEY_ESC) && (event->code <= KEY_COMPOSE))
-     {
-        /* ignore key repeat */
-        if (event->value == 2)
-          {
-             DBG("\tKey Repeat");
-          }
-     }
 }
 
 static void 
-_device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp EINA_UNUSED)
+_device_notify_motion(Ecore_Drm_Evdev *dev, unsigned int timestamp)
+{
+   Ecore_Drm_Input *input;
+   Ecore_Event_Mouse_Move *ev;
+
+   if (!(input = dev->seat->input)) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
+
+   ev->window = (Ecore_Window)input->dev->window;
+   ev->event_window = (Ecore_Window)input->dev->window;
+   ev->root_window = (Ecore_Window)input->dev->window;
+   ev->timestamp = timestamp;
+   ev->same_screen = 1;
+
+   /* NB: Commented out. This borks mouse movement if no key has been 
+    * pressed yet due to 'state' not being set */
+//   _device_modifiers_update(dev);
+   ev->modifiers = dev->xkb.modifiers;
+
+   ev->x = dev->mouse.x;
+   ev->y = dev->mouse.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+static void 
+_device_notify_wheel(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+{
+   Ecore_Drm_Input *input;
+   Ecore_Event_Mouse_Wheel *ev;
+
+   if (!(input = dev->seat->input)) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
+
+   ev->window = (Ecore_Window)input->dev->window;
+   ev->event_window = (Ecore_Window)input->dev->window;
+   ev->root_window = (Ecore_Window)input->dev->window;
+   ev->timestamp = timestamp;
+   ev->same_screen = 1;
+
+   /* NB: Commented out. This borks mouse wheel if no key has been 
+    * pressed yet due to 'state' not being set */
+//   _device_modifiers_update(dev);
+   ev->modifiers = dev->xkb.modifiers;
+
+   ev->x = dev->mouse.x;
+   ev->y = dev->mouse.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+   if (event->value == REL_HWHEEL) ev->direction = 1;
+   ev->z = event->value;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+}
+
+static void 
+_device_notify_button(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+{
+   Ecore_Drm_Input *input;
+   Ecore_Event_Mouse_Button *ev;
+   int button;
+
+   if (!(input = dev->seat->input)) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Button)))) return;
+
+   ev->window = (Ecore_Window)input->dev->window;
+   ev->event_window = (Ecore_Window)input->dev->window;
+   ev->root_window = (Ecore_Window)input->dev->window;
+   ev->timestamp = timestamp;
+   ev->same_screen = 1;
+
+   /* NB: Commented out. This borks mouse button if no key has been 
+    * pressed yet due to 'state' not being set */
+//   _device_modifiers_update(dev);
+   ev->modifiers = dev->xkb.modifiers;
+
+   ev->x = dev->mouse.x;
+   ev->y = dev->mouse.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+
+   button = ((event->code & 0x00F) + 1);
+
+   /* swap buttons 2 & 3 so behaviour is like X */
+   if (button == 3) button = 2;
+   else if (button == 2) button = 3;
+
+   if (event->value)
+     {
+        unsigned int current;
+
+        current = timestamp;
+        dev->mouse.did_double = EINA_FALSE;
+        dev->mouse.did_triple = EINA_FALSE;
+
+        if (((current - dev->mouse.prev) <= dev->mouse.threshold) &&
+            (button == dev->mouse.prev_button))
+          {
+             dev->mouse.did_double = EINA_TRUE;
+             if (((current - dev->mouse.last) <= (2 * dev->mouse.threshold)) && 
+                 (button == dev->mouse.last_button))
+               {
+                  dev->mouse.did_triple = EINA_TRUE;
+                  dev->mouse.prev = 0;
+                  dev->mouse.last = 0;
+                  current = 0;
+               }
+          }
+
+        dev->mouse.last = dev->mouse.prev;
+        dev->mouse.prev = current;
+        dev->mouse.last_button = dev->mouse.prev_button;
+        dev->mouse.prev_button = button;
+     }
+
+   ev->buttons = button;
+   if (dev->mouse.did_double)
+     ev->double_click = 1;
+   if (dev->mouse.did_triple)
+     ev->triple_click = 1;
+
+   if (event->value)
+     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+   else
+     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+}
+
+static void 
+_device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
 {
    switch (dev->pending_event)
      {
       case EVDEV_NONE:
         return;
       case EVDEV_RELATIVE_MOTION:
+        _device_notify_motion(dev, timestamp);
+        /* dev->mouse.x = 0; */
+        /* dev->mouse.y = 0; */
         goto out;
         break;
       case EVDEV_ABSOLUTE_MT_DOWN:
@@ -402,6 +530,13 @@ out:
 static void 
 _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
 {
+   /* ignore key repeat */
+   if (event->value == 2)
+     {
+        DBG("\tKey Repeat");
+        return;
+     }
+
    if (event->code == BTN_TOUCH)
      {
         /* TODO: check for mt device */
@@ -420,10 +555,35 @@ _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned in
       case BTN_FORWARD:
       case BTN_BACK:
       case BTN_TASK:
-        /* TODO: notify button */
+        _device_notify_button(dev, event, timestamp);
         break;
       default:
         _device_notify_key(dev, event, timestamp);
+        break;
+     }
+}
+
+static void 
+_device_process_relative(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+{
+   switch (event->code)
+     {
+      case REL_X:
+        if (dev->pending_event != EVDEV_RELATIVE_MOTION)
+          _device_process_flush(dev, timestamp);
+        dev->mouse.x += event->value;
+        dev->pending_event = EVDEV_RELATIVE_MOTION;
+        break;
+      case REL_Y:
+        if (dev->pending_event != EVDEV_RELATIVE_MOTION)
+          _device_process_flush(dev, timestamp);
+        dev->mouse.y += event->value;
+        dev->pending_event = EVDEV_RELATIVE_MOTION;
+        break;
+      case REL_WHEEL:
+      case REL_HWHEEL:
+        _device_process_flush(dev, timestamp);
+        _device_notify_wheel(dev, event, timestamp);
         break;
      }
 }
@@ -433,8 +593,6 @@ _device_process(Ecore_Drm_Evdev *dev, struct input_event *event, int count)
 {
    struct input_event *ev, *end;
    unsigned int timestamp = 0;
-
-   /* DBG("Evdev Device Process"); */
 
    ev = event;
    end = ev + count;
@@ -448,7 +606,7 @@ _device_process(Ecore_Drm_Evdev *dev, struct input_event *event, int count)
              _device_process_key(dev, ev, timestamp);
              break;
            case EV_REL:
-             DBG("\tRelative Event");
+             _device_process_relative(dev, ev, timestamp);
              break;
            case EV_ABS:
              DBG("\tAbsolute Event");
