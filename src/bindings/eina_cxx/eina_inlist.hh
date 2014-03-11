@@ -240,7 +240,7 @@ struct _inlist_access_traits {
 };
 
 template <typename T, typename Allocator>
-struct inlist;
+class inlist;
 
 template <typename T>
 struct range_inlist : _range_template<T, _inlist_access_traits>

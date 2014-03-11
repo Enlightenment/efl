@@ -146,7 +146,7 @@ static T& index(Eina_Inarray* raw, std::size_t i)
 };
 
 template <typename T>
-struct inarray;
+class inarray;
 
 template <typename T>
 struct range_inarray : _range_template<T, _inarray_access_traits>

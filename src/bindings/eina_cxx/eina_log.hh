@@ -43,15 +43,19 @@ struct _domain_base
   }
 };
 
-const struct global_domain : _domain_base<global_domain>
+struct global_domain : _domain_base<global_domain>
 {
   int domain_raw() const { return EINA_LOG_DOMAIN_GLOBAL; }
-} global_domain;
+};
 
-const struct default_domain : _domain_base<default_domain>
+struct global_domain const global_domain = {};
+
+struct default_domain : _domain_base<default_domain>
 {
   int domain_raw() const { return EINA_LOG_DOMAIN_DEFAULT; }
-} default_domain;
+};
+
+struct default_domain const default_domain = {};
 
 struct log_domain : _domain_base<log_domain>
 {

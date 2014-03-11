@@ -14,8 +14,10 @@ bindings/eina_cxx/eina_inarray.hh  \
 bindings/eina_cxx/eina_inlist.hh   \
 bindings/eina_cxx/eina_iterator.hh \
 bindings/eina_cxx/eina_lists_auxiliary.hh \
+bindings/eina_cxx/eina_log.hh \
 bindings/eina_cxx/eina_ptrarray.hh \
 bindings/eina_cxx/eina_ptrlist.hh \
+bindings/eina_cxx/eina_range_types.hh \
 bindings/eina_cxx/eina_ref.hh \
 bindings/eina_cxx/eina_stringshare.hh \
 bindings/eina_cxx/eina_thread.hh \

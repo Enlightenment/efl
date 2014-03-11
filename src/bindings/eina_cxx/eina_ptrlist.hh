@@ -215,7 +215,7 @@ static eina::iterator<T const> ibegin(Eina_List const* list)
   return eina::iterator<T const>( ::eina_list_iterator_new(list) );
 }
 template <typename T>
-static eina::iterator<T const> iend(Eina_List const* list)
+static eina::iterator<T const> iend(Eina_List const*)
 {
   return eina::iterator<T const>();
 }
@@ -379,7 +379,7 @@ struct _mutable_range_ptr_list : _const_range_ptr_list<T>
 };
 
 template <typename T, typename Allocator>
-struct ptr_list;
+class ptr_list;
 
 template <typename T>
 struct range_ptr_list : _range_template<T, _ptr_list_access_traits>

@@ -221,7 +221,7 @@ static eina::iterator<T> ibegin(Eina_Array* array)
   return eina::iterator<T>( ::eina_array_iterator_new(array) );
 }
 template <typename T>
-static eina::iterator<T> iend(Eina_Array* array)
+static eina::iterator<T> iend(Eina_Array*)
 {
   return eina::iterator<T>();
 }
@@ -231,7 +231,7 @@ static eina::iterator<T const> ibegin(Eina_Array const* array)
   return eina::iterator<T const>( ::eina_array_iterator_new(array) );
 }
 template <typename T>
-static eina::iterator<T const> iend(Eina_Array const* array)
+static eina::iterator<T const> iend(Eina_Array const*)
 {
   return eina::iterator<T const>();
 }
@@ -259,7 +259,7 @@ static bool empty(Eina_Array const* array)
 };
 
 template <typename T, typename Allocator>
-struct ptr_array;
+class ptr_array;
 
 template <typename T>
 struct range_ptr_array : _range_template<T, _ptr_array_access_traits>
