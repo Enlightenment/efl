@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
+include ../../Makefile_Eolian_Helper.am
+
 AM_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -DMODULES_PATH=\"$(libdir)/elementary/modules\" \

@@ -1,0 +1,24 @@
+if HAVE_EOLIAN_GEN
+EOLIAN_GEN = @eolian_gen@
+_EOLIAN_GEN_DEP =
+else
+EOLIAN_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
+_EOLIAN_GEN_DEP = bin/eolian/eolian_gen${EXEEXT}
+endif
+
+AM_V_EOL = $(am__v_EOL_@AM_V@)
+am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
+am__v_EOL_0 = @echo "  EOLIAN   " $@;
+
+SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h
+
+%.eo.c: %.eo ${_EOLIAN_GEN_DEP}
+	$(AM_V_EOL)$(EOLIAN_GEN) --eo1 --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
+
+%.eo.h: %.eo ${_EOLIAN_GEN_DEP}
+	$(AM_V_EOL)$(EOLIAN_GEN) --eo1 $(EOLIAN_FLAGS) --gh -o $@ $<
+
+%.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
+	$(AM_V_EOL)$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gh -o $@ $<
+
+CLEANFILES += $(BUILT_SOURCES)
