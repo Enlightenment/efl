@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
+CLEANFILES=
+
 include ../../Makefile_Eolian_Helper.am
 
 AM_CPPFLAGS = \
