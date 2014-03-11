@@ -1820,40 +1820,16 @@ _env_get(void)
                  (!strcasecmp(s, "opengl-x11")) ||
                  (!strcasecmp(s, "opengl_x11")))
           eina_stringshare_replace(&_elm_config->engine, ELM_OPENGL_X11);
-        else if ((!strcasecmp(s, "x11-8")) ||
-                 (!strcasecmp(s, "x8")) ||
-                 (!strcasecmp(s, "software-8-x11")) ||
-                 (!strcasecmp(s, "software_8_x11")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_8_X11);
-        else if ((!strcasecmp(s, "x11-16")) ||
-                 (!strcasecmp(s, "x16")) ||
-                 (!strcasecmp(s, "software-16-x11")) ||
-                 (!strcasecmp(s, "software_16_x11")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_X11);
-/*
-        else if ((!strcasecmp(s, "xrender")) ||
-                 (!strcasecmp(s, "xr")) ||
-                 (!strcasecmp(s, "xrender-x11")) ||
-                 (!strcasecmp(s, "xrender_x11")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_XRENDER_X11);
- */
         else if ((!strcasecmp(s, "fb")) ||
                  (!strcasecmp(s, "software-fb")) ||
                  (!strcasecmp(s, "software_fb")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_FB);
-        else if ((!strcasecmp(s, "directfb")) ||
-                 (!strcasecmp(s, "dfb")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_DIRECTFB);
         else if ((!strcasecmp(s, "psl1ght")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_PSL1GHT);
         else if ((!strcasecmp(s, "sdl")) ||
                  (!strcasecmp(s, "software-sdl")) ||
                  (!strcasecmp(s, "software_sdl")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_SDL);
-        else if ((!strcasecmp(s, "sdl-16")) ||
-                 (!strcasecmp(s, "software-16-sdl")) ||
-                 (!strcasecmp(s, "software_16_sdl")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_SDL);
         else if ((!strcasecmp(s, "opengl-sdl")) ||
                  (!strcasecmp(s, "opengl_sdl")) ||
                  (!strcasecmp(s, "gl-sdl")) ||
@@ -1868,10 +1844,6 @@ _env_get(void)
                  (!strcasecmp(s, "software-gdi")) ||
                  (!strcasecmp(s, "software_gdi")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_WIN32);
-        else if ((!strcasecmp(s, "wince-gdi")) ||
-                 (!strcasecmp(s, "software-16-wince-gdi")) ||
-                 (!strcasecmp(s, "software_16_wince_gdi")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_WINCE);
         else if (!strcasecmp(s, "buffer"))
           eina_stringshare_replace(&_elm_config->engine, ELM_BUFFER);
         else if ((!strncmp(s, "shot:", 5)))
