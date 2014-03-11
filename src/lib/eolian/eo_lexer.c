@@ -2745,20 +2745,8 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
 
    Eina_Bool ret = EINA_TRUE;
 
-   if (!len)
-     {
-        ERR("%s: given size is 0", source);
-        return EINA_FALSE;
-     }
-
-   if (len > BUFSIZE)
-     {
-        ERR("%s: buffer not enough big. Required size: %d", source, len);
-        return EINA_FALSE;
-     }
-
    
-#line 2762 "lib/eolian/eo_lexer.c"
+#line 2750 "lib/eolian/eo_lexer.c"
 	{
 	 toknz->cs = eo_tokenizer_start;
 	 toknz->ts = 0;
@@ -2766,7 +2754,7 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
 	 toknz->act = 0;
 	}
 
-#line 1073 "lib/eolian/eo_lexer.rl"
+#line 1061 "lib/eolian/eo_lexer.rl"
 
    toknz->p = buffer;
 
@@ -2775,7 +2763,7 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
    toknz->eof = toknz->pe;
 
    
-#line 2779 "lib/eolian/eo_lexer.c"
+#line 2767 "lib/eolian/eo_lexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -2794,7 +2782,7 @@ _resume:
 #line 1 "NONE"
 	{ toknz->ts = ( toknz->p);}
 	break;
-#line 2798 "lib/eolian/eo_lexer.c"
+#line 2786 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -4126,7 +4114,7 @@ _eof_trans:
       {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
    }}
 	break;
-#line 4130 "lib/eolian/eo_lexer.c"
+#line 4118 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -4139,7 +4127,7 @@ _again:
 #line 1 "NONE"
 	{ toknz->ts = 0;}
 	break;
-#line 4143 "lib/eolian/eo_lexer.c"
+#line 4131 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -4157,12 +4145,12 @@ _again:
 	_out: {}
 	}
 
-#line 1081 "lib/eolian/eo_lexer.rl"
+#line 1069 "lib/eolian/eo_lexer.rl"
 
    if ( toknz->cs == 
-#line 4164 "lib/eolian/eo_lexer.c"
+#line 4152 "lib/eolian/eo_lexer.c"
 -1
-#line 1082 "lib/eolian/eo_lexer.rl"
+#line 1070 "lib/eolian/eo_lexer.rl"
  )
      {
         ERR("%s: wrong termination", source);
@@ -4325,7 +4313,22 @@ eo_tokenizer_database_fill(const char *filename)
      }
 
    buffer = malloc(BUFSIZE);
+   if (!buffer)
+     {
+        ERR("unable to allocate read buffer");
+        goto end;
+     }
+
    unsigned int len = fread(buffer, 1, BUFSIZE, stream);
+
+   if (!len)
+     {
+        ERR("%s: is an empty file", filename);
+        goto end;
+     }
+
+   if (len == BUFSIZE)
+      WRN("%s: buffer(%d) is full, might not be big enough.", filename, len);
 
    if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
 

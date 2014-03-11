@@ -1057,18 +1057,6 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
 
    Eina_Bool ret = EINA_TRUE;
 
-   if (!len)
-     {
-        ERR("%s: given size is 0", source);
-        return EINA_FALSE;
-     }
-
-   if (len > BUFSIZE)
-     {
-        ERR("%s: buffer not enough big. Required size: %d", source, len);
-        return EINA_FALSE;
-     }
-
    %% write init;
 
    toknz->p = buffer;
@@ -1241,7 +1229,22 @@ eo_tokenizer_database_fill(const char *filename)
      }
 
    buffer = malloc(BUFSIZE);
+   if (!buffer)
+     {
+        ERR("unable to allocate read buffer");
+        goto end;
+     }
+
    unsigned int len = fread(buffer, 1, BUFSIZE, stream);
+
+   if (!len)
+     {
+        ERR("%s: is an empty file", filename);
+        goto end;
+     }
+
+   if (len == BUFSIZE)
+      WRN("%s: buffer(%d) is full, might not be big enough.", filename, len);
 
    if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
 
