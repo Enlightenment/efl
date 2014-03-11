@@ -348,7 +348,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
 
-   if (eolian_function_is_virtual_pure(funcid)) return EINA_TRUE;
+   if (!impl_name && eolian_function_is_virtual_pure(funcid)) return EINA_TRUE;
    Eina_Strbuf *fbody = eina_strbuf_new();
    Eina_Strbuf *va_args = eina_strbuf_new();
    Eina_Strbuf *params = eina_strbuf_new(); /* only variables names */
