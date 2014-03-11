@@ -101,6 +101,11 @@ typedef uint32_t Generation_Counter;
 #define MASK_ENTRY_ID         ((1 << BITS_ENTRY_ID) - 1)
 #define MASK_GENERATIONS      (MAX_GENERATIONS - 1)
 
+/* This only applies to classes. Used to artificially enlarge the class ids
+ * to reduce the likelihood of a clash with normal integers. */
+#define CLASS_TAG_SHIFT       (REF_TAG_SHIFT - 1)
+#define MASK_CLASS_TAG        (((Eo_Id) 1) << (CLASS_TAG_SHIFT))
+
 #define MEM_HEADER_SIZE       16
 #define MEM_PAGE_SIZE         4096
 #define MEM_MAGIC             0x3f61ec8a

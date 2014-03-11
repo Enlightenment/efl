@@ -8,7 +8,6 @@
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 
-/* The last id that should be reserved for statically allocated classes. */
 #define EO_CLASS_IDS_FIRST 1
 #define EO_OP_IDS_FIRST 1
 
@@ -42,9 +41,13 @@ static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
 
 #define OP_CLASS_OFFSET_GET(x) (((x) >> EO_OP_CLASS_OFFSET) & 0xffff)
 
+/* We are substracting the mask here instead of "AND"ing because it's a hot path,
+ * it should be a valid class at this point, and this lets the compiler do 1
+ * substraction at compile time. */
+#define _UNMASK_ID(id) ((id) - MASK_CLASS_TAG)
 #define ID_CLASS_GET(id) ({ \
-      (_Eo_Class *) (((id <= _eo_classes_last_id) && (id > 0)) ? \
-      (_eo_classes[id - 1]) : NULL); \
+      (_Eo_Class *) (((_UNMASK_ID(id) <= _eo_classes_last_id) && (_UNMASK_ID(id) > 0)) ? \
+      (_eo_classes[_UNMASK_ID(id) - 1]) : NULL); \
       })
 
 static inline void
@@ -1012,7 +1015,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    eina_spinlock_take(&_eo_class_creation_lock);
-   klass->header.id = ++_eo_classes_last_id;
+   klass->header.id = ++_eo_classes_last_id | MASK_CLASS_TAG;
      {
         /* FIXME: Handle errors. */
         size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
