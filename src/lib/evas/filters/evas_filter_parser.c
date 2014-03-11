@@ -1017,7 +1017,7 @@ static void
 _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
                      int *padl, int *padr, int *padt, int *padb)
 {
-   Eina_Bool yset;
+   Eina_Bool yset = EINA_FALSE;
    int rx, ry, ox, oy, l, r, t, b;
    const char *inbuf, *outbuf;
    Buffer *in, *out;
