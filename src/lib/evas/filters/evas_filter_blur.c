@@ -4,15 +4,6 @@
 #include <math.h>
 #include <time.h>
 
-// Enable debug if you're working on optimizations
-#define DEBUG_TIME 1
-
-// Windows build will break if CLOCK_MONOTONIC is used
-#if !defined(_POSIX_MONOTONIC_CLOCK) || (_POSIX_MONOTONIC_CLOCK < 0)
-# undef DEBUG_TIME
-# define DEBUG_TIME 0
-#endif
-
 #if DIV_USING_BITSHIFT
 static int
 _smallest_pow2_larger_than(int val)
@@ -37,20 +28,6 @@ _smallest_pow2_larger_than(int val)
 #else
 # define DEFINE_DIAMETER(rad) const int diameter = radius * 2 + 1;
 # define DIVIDE_BY_DIAMETER(val) ((val) / diameter)
-#endif
-
-#if DEBUG_TIME
-# define DEBUG_TIME_BEGIN() \
-   struct timespec ts1, ts2; \
-   clock_gettime(CLOCK_MONOTONIC, &ts1);
-# define DEBUG_TIME_END() \
-   clock_gettime(CLOCK_MONOTONIC, &ts2); \
-   long long int t = 1000000LL * (ts2.tv_sec - ts1.tv_sec) \
-   + (ts2.tv_nsec - ts1.tv_nsec) / 1000LL; \
-   INF("TIME SPENT: %lldus", t);
-#else
-# define DEBUG_TIME_BEGIN() do {} while(0)
-# define DEBUG_TIME_END() do {} while(0)
 #endif
 
 /* RGBA functions */

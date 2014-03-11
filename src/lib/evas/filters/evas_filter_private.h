@@ -29,6 +29,15 @@
 #define GREEN_OF(a) (((a) >> 8) & 0xff)
 #define BLUE_OF(a)  ((a) & 0xff)
 
+// Enable debug if you're working on optimizations
+#define DEBUG_TIME 1
+
+// Windows build will break if CLOCK_MONOTONIC is used
+#if !defined(_POSIX_MONOTONIC_CLOCK) || (_POSIX_MONOTONIC_CLOCK < 0)
+# undef DEBUG_TIME
+# define DEBUG_TIME 0
+#endif
+
 // The 'restrict' keyword is part of C99
 #if __STDC_VERSION__ < 199901L
 # define restrict
@@ -40,6 +49,20 @@
 
 #define BUFFERS_LOCK() do { if (cmd->input) cmd->input->locked = 1; if (cmd->output) cmd->output->locked = 1; if (cmd->mask) cmd->mask->locked = 1; } while (0)
 #define BUFFERS_UNLOCK() do { if (cmd->input) cmd->input->locked = 0; if (cmd->output) cmd->output->locked = 0; if (cmd->mask) cmd->mask->locked = 0; } while (0)
+
+#if DEBUG_TIME
+# define DEBUG_TIME_BEGIN() \
+   struct timespec ts1, ts2; \
+   clock_gettime(CLOCK_MONOTONIC, &ts1);
+# define DEBUG_TIME_END() \
+   clock_gettime(CLOCK_MONOTONIC, &ts2); \
+   long long int t = 1000000LL * (ts2.tv_sec - ts1.tv_sec) \
+   + (ts2.tv_nsec - ts1.tv_nsec) / 1000LL; \
+   INF("TIME SPENT: %lldus", t);
+#else
+# define DEBUG_TIME_BEGIN() do {} while(0)
+# define DEBUG_TIME_END() do {} while(0)
+#endif
 
 typedef enum _Evas_Filter_Interpolation_Mode Evas_Filter_Interpolation_Mode;
 
