@@ -191,23 +191,10 @@ evas_object_mapped_clip_across_mark(Evas_Object *eo_obj, Evas_Object_Protected_D
 /* public functions */
 extern const char *o_rect_type;
 
-EAPI void
-evas_object_clip_set(
-      Evas_Object *eo_obj,
-      Evas_Object *clip)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_clip_set(clip));
-}
-
-void
-_clip_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
    Evas_Object_Protected_Data *clip;
-   Evas_Object *eo_clip = va_arg(*list, Evas_Object *);
-   Evas_Object_Protected_Data *obj = _pd;
    Evas_Public_Data *e;
 
    if (!eo_clip)
@@ -348,43 +335,17 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_clip_across_check(eo_obj, obj);
 }
 
-EAPI Evas_Object *
-evas_object_clip_get(const Evas_Object *eo_obj)
+EOLIAN Evas_Object *
+_evas_object_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *clip = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_clip_get(&clip));
-   return clip;
-}
-
-void
-_clip_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object **clip = va_arg(*list, Evas_Object **);
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   *clip = NULL;
-
    if (obj->cur->clipper)
-     *clip = obj->cur->clipper->object;
+     return obj->cur->clipper->object;
+   return NULL;
 }
 
-EAPI void
-evas_object_clip_unset(Evas_Object *eo_obj)
+EOLIAN void
+_evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_clip_unset());
-}
-
-void
-_clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
    if (!obj->cur->clipper) return;
 
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
@@ -445,22 +406,9 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_clip_across_check(eo_obj, obj);
 }
 
-EAPI const Eina_List *
-evas_object_clipees_get(const Evas_Object *eo_obj)
+EOLIAN Eina_List *
+_evas_object_clipees_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const Eina_List *clipees = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_clipees_get(&clipees));
-   return clipees;
-}
-
-void
-_clipees_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Eina_List **clipees = va_arg(*list, const Eina_List **);
-   Evas_Object_Protected_Data *obj = _pd;
    const Evas_Object_Protected_Data *tmp;
    Eina_List *l;
    Eina_List *answer = NULL;
@@ -470,24 +418,13 @@ _clipees_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    EINA_LIST_FOREACH(obj->clip.clipees, l, tmp)
      answer = eina_list_append(answer, tmp);
 
-   *clipees = answer;
    obj->clip.cache_clipees_answer = answer;
+   return answer;
 }
 
-EAPI Eina_Bool
-evas_object_clipees_has(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_clipees_has(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   Eina_Bool r;
-
-   eo_do((Eo *)eo_obj, evas_obj_clipees_has(&r));
-   return r;
+   return (obj->clip.clipees ? EINA_TRUE : EINA_FALSE);
 }
 
-void
-_clipees_has(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *r = va_arg(*list, Eina_Bool *);
-   Evas_Object_Protected_Data *obj = _pd;
-
-   *r = obj->clip.clipees ? EINA_TRUE : EINA_FALSE;
-}

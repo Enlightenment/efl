@@ -1,21 +1,9 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-EAPI void
-evas_object_name_set(Evas_Object *eo_obj, const char *name)
+EOLIAN void
+_evas_object_name_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *name)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_name_set(name));
-}
-
-void
-_name_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-
-   Evas_Object_Protected_Data *obj = _pd;
    if (obj->name)
      {
         if (obj->layer && obj->layer->evas && obj->layer->evas->name_hash)
@@ -30,23 +18,10 @@ _name_set(Eo *eo_obj, void *_pd, va_list *list)
      }
 }
 
-EAPI const char *
-evas_object_name_get(const Evas_Object *eo_obj)
+EOLIAN const char *
+_evas_object_name_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const char *name = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_name_get(&name));
-   return name;
-}
-
-void
-_name_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char **name = va_arg(*list, const char **);
-   const Evas_Object_Protected_Data *obj = _pd;
-   *name = obj->name;
+   return obj->name;
 }
 
 EAPI Evas_Object *
@@ -71,7 +46,7 @@ _canvas_object_name_find(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static Evas_Object *
-_evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int recurse)
+_priv_evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int recurse)
 {
    const Eina_Inlist *lst;
    Evas_Object_Protected_Data *child;
@@ -85,29 +60,16 @@ _evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int re
         if (!strcmp(name, child->name)) return child->object;
         if (recurse != 0)
           {
-             if ((eo_obj = _evas_object_name_child_find(child->object, name, recurse - 1)))
+             if ((eo_obj = _priv_evas_object_name_child_find(child->object, name, recurse - 1)))
                return (Evas_Object *)eo_obj;
           }
      }
    return NULL;
 }
 
-EAPI Evas_Object *
-evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int recurse)
+EOLIAN Evas_Object *
+_evas_object_name_child_find(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *name, int recurse)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *child = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_name_child_find(name, recurse, &child));
-   return child;
+   return (!name ?  NULL : _priv_evas_object_name_child_find(eo_obj, name, recurse));
 }
 
-void
-_name_child_find(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   int recurse = va_arg(*list, int);
-   Evas_Object **child = va_arg(*list, Evas_Object **);
-   *child = (!name ?  NULL : _evas_object_name_child_find(eo_obj, name, recurse));
-}

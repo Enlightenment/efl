@@ -1,6 +1,7 @@
 abstract Evas_Object (Eo_Base, Evas_Common_Interface)
 {
    eo_prefix: evas_obj;
+   data: Evas_Object_Protected_Data;
    properties {
       size_hint_max {
          set {
@@ -76,9 +77,11 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       visibility {
          set {
             /*@ Makes the given Evas object visible or invisible. */
+            legacy null;
          }
          get {
             /*@ Retrieves whether or not the given Evas object is visible. */
+            legacy evas_object_visible_get;
          }
          values {
             Eina_Bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
@@ -117,7 +120,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             See the full @ref Example_Evas_Object_Manipulation "example". */
          }
          values {
-            const char* type; /*@ in */
+            const char *type; /*@ in */
          }
       }
       size_hint_min {
@@ -304,7 +307,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             @see evas_object_map_set() */
          }
          values {
-            const Evas_Map* map; /*@ new map to use */
+            const Evas_Map *map; /*@ new map to use */
          }
       }
       size_hint_aspect {
@@ -480,7 +483,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             See the full @ref Example_Evas_Object_Manipulation "example". */
          }
          values {
-            Evas_Object* clip; /*@ The object to clip @p obj by */
+            Evas_Object *clip @nonull; /*@ The object to clip @p obj by */
          }
       }
       size_hint_padding {
@@ -656,7 +659,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             See the full @ref Example_Evas_Events "example". */
          }
          values {
-            const char* name; /*@ The given name. */
+            const char *name; /*@ The given name. */
          }
       }
       scale {
@@ -725,6 +728,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       size {
          set {
             /*@ Changes the size of the given Evas object. */
+            legacy evas_object_resize;
          }
          get {
             /*@ Retrieves the (rectangular) size of the given Evas object. */
@@ -786,8 +790,10 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       }
       is_frame_object {
          set {
+            /*@             @since 1.2 */
          }
          get {
+            /*@             @since 1.2 */
          }
          values {
             Eina_Bool is_frame; /*@ in */
@@ -1007,6 +1013,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       position {
          set {
             /*@ Move the given Evas object to the given location inside its canvas' viewport. */
+            legacy evas_object_move;
          }
          get {
             /*@ Retrieves the position of the given Evas object. */
@@ -1093,7 +1100,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             @see evas_object_smart_data_set()
 
             @ingroup Evas_Smart_Object_Group */
-            return void*;
+            return void * @warn_unused;
          }
       }
       smart_clipped_clipper {
@@ -1107,7 +1114,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             properties, like colors.
 
             @see evas_object_smart_clipped_smart_add() */
-            return Evas_Object*;
+            return Evas_Object * @warn_unused;
          }
       }
       below {
@@ -1124,7 +1131,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             @see evas_object_layer_get()
             @see evas_object_layer_set()
             @see evas_object_below_get() */
-            return Evas_Object*;
+            return Evas_Object * @warn_unused;
          }
       }
       clipees {
@@ -1166,7 +1173,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             evas_object_show(obj_tmp);
             }
             @endcode */
-            return const Eina_List*;
+            return const Eina_List * @warn_unused;
          }
       }
       smart_parent {
@@ -1178,7 +1185,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             obj is not a smart member of any
 
             @ingroup Evas_Smart_Object_Group */
-            return Evas_Object*;
+            return Evas_Object * @warn_unused;
          }
       }
       above {
@@ -1195,7 +1202,28 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
             @see evas_object_layer_get()
             @see evas_object_layer_set()
             @see evas_object_below_get() */
-            return Evas_Object*;
+            return Evas_Object * @warn_unused;
+         }
+      }
+      size_hint_display_mode {
+         get {
+            /*@
+            Retrieves the hints for an object's display mode
+
+            These are hints on the display mode @p obj. This is
+            not a size enforcement in any way, it's just a hint that can be
+            used whenever appropriate.
+            This mode can be used object's display mode like commpress or expand */
+         }
+         set {
+            /*@
+            Sets the hints for an object's disply mode
+
+            This is not a size enforcement in any way, it's just a hint that
+            can be used whenever appropriate.*/
+         }
+         values {
+            Evas_Display_Mode dispmode; /*@ display mode hint */
          }
       }
    }
@@ -1206,8 +1234,9 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
 
          @return EINA_TRUE if @p obj clip any object.
          @since 1.8 */
+
          const;
-         return Eina_Bool;
+         return Eina_Bool @warn_unused;
       }
       key_grab {
          /*@
@@ -1249,9 +1278,10 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_object_focus_get
          @see evas_focus_get
          @see evas_key_modifier_add */
-         return Eina_Bool;
+
+         return Eina_Bool @warn_unused;
          params {
-            @in const char* keyname; /*@ the key to request events for. */
+            @in const char *keyname @nonull; /*@ the key to request events for. */
             @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
             trigger the event. */
             @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must @b not be present
@@ -1283,8 +1313,9 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_object_layer_get()
          @see evas_object_layer_set()
          @see evas_object_stack_below() */
+
          params {
-            @in Evas_Object* below; /*@ the object below which to stack */
+            @in Evas_Object *below @nonull; /*@ the object below which to stack */
          }
       }
       raise {
@@ -1297,6 +1328,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_object_stack_above()
          @see evas_object_stack_below()
          @see evas_object_lower() */
+
       }
       stack_above {
          /*@
@@ -1321,8 +1353,9 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_object_layer_get()
          @see evas_object_layer_set()
          @see evas_object_stack_below() */
+
          params {
-            @in Evas_Object* above; /*@ the object above which to stack */
+            @in Evas_Object *above @nonull; /*@ the object above which to stack */
          }
       }
       smart_type_check {
@@ -1349,10 +1382,11 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see eo_isa
 
          @ingroup Evas_Smart_Object_Group */
+
          const;
-         return Eina_Bool;
+         return Eina_Bool @warn_unused;
          params {
-            @in const char* type; /*@ The @b name (type) of the smart class to check for */
+            @in const char *type @nonull; /*@ The @b name (type) of the smart class to check for */
          }
       }
       name_child_find {
@@ -1371,10 +1405,11 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @since 1.2
 
          @ingroup Evas_Object_Group_Find */
+
          const;
-         return Evas_Object*;
+         return Evas_Object * @warn_unused;
          params {
-            @in const char* name; /*@ The given name. */
+            @in const char *name; /*@ The given name. */
             @in int recurse; /*@ Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.). */
          }
       }
@@ -1396,8 +1431,9 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_object_focus_set
          @see evas_object_focus_get
          @see evas_focus_get */
+
          params {
-            @in const char* keyname; /*@ the key the grab is set for. */
+            @in const char *keyname @nonull; /*@ the key the grab is set for. */
             @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
             trigger the event. */
             @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must not not be
@@ -1414,6 +1450,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see evas_object_stack_above()
          @see evas_object_stack_below()
          @see evas_object_raise() */
+
       }
       clip_unset {
          /*@
@@ -1426,6 +1463,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
 
          See also evas_object_clip_set() (for an example),
          evas_object_clipees_get() and evas_object_clip_get(). */
+
       }
       smart_move_children_relative {
          /*@
@@ -1439,6 +1477,7 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
 
          @note Clipped smart objects already make use of this function on
          their @c move() smart function definition. */
+
          params {
             @in Evas_Coord dx; /*@ horizontal offset (delta). */
             @in Evas_Coord dy; /*@ vertical offset (delta). */
@@ -1456,10 +1495,11 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
          @see eo_isa
 
          @ingroup Evas_Smart_Object_Group */
+
          const;
-         return Eina_Bool;
+         return Eina_Bool @warn_unused;
          params {
-            @in const char* type; /*@ The type (name string) to check for. Must be the name */
+            @in const char *type @nonull; /*@ The type (name string) to check for. Must be the name */
          }
       }
    }
@@ -1469,4 +1509,5 @@ abstract Evas_Object (Eo_Base, Evas_Common_Interface)
       Eo_Base::dbg_info_get;
       Evas_Common_Interface::evas::get;
    }
+
 }

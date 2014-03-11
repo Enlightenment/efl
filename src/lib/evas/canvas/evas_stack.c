@@ -37,20 +37,9 @@ evas_object_below_get_internal(const Evas_Object_Protected_Data *obj)
    return NULL;
 }
 
-EAPI void
-evas_object_raise(Evas_Object *eo_obj)
+EOLIAN void
+_evas_object_raise(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_raise());
-}
-
-void
-_raise(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
    if (evas_object_intercept_call_raise(eo_obj, obj)) return;
 
    if (!((EINA_INLIST_GET(obj))->next))
@@ -94,20 +83,9 @@ _raise(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
      }
 }
 
-EAPI void
-evas_object_lower(Evas_Object *eo_obj)
+EOLIAN void
+_evas_object_lower(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_lower());
-}
-
-void
-_lower(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
    if (evas_object_intercept_call_lower(eo_obj, obj)) return;
 
    if (!((EINA_INLIST_GET(obj))->prev))
@@ -152,21 +130,9 @@ _lower(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
      }
 }
 
-EAPI void
-evas_object_stack_above(Evas_Object *eo_obj, Evas_Object *above)
+EOLIAN void
+_evas_object_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_above)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_stack_above(above));
-}
-
-void
-_stack_above(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-   Evas_Object *eo_above = va_arg(*list, Evas_Object *);
-
    if (!eo_above) return;
    if (eo_obj == eo_above) return;
    if (evas_object_intercept_call_stack_above(eo_obj, obj, eo_above)) return;
@@ -240,21 +206,9 @@ _stack_above(Eo *eo_obj, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-evas_object_stack_below(Evas_Object *eo_obj, Evas_Object *eo_below)
+EOLIAN void
+_evas_object_stack_below(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_below)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_stack_below(eo_below));
-}
-
-void
-_stack_below(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object *eo_below = va_arg(*list, Evas_Object *);
-   Evas_Object_Protected_Data *obj = _pd;
-
    if (!eo_below) return;
    if (eo_obj == eo_below) return;
    if (evas_object_intercept_call_stack_below(eo_obj, obj, eo_below)) return;
@@ -328,95 +282,49 @@ _stack_below(Eo *eo_obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Evas_Object *
-evas_object_above_get(const Evas_Object *eo_obj)
+EOLIAN Evas_Object *
+_evas_object_above_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_above_get(&ret));
-   return ret;
-}
-
-void
-_above_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-
    if (obj->smart.parent)
      {
         do
           {
              obj = (Evas_Object_Protected_Data *)((EINA_INLIST_GET(obj))->next);
-             if ((obj) && (!obj->delete_me))
-               {
-                  *ret = obj->object;
-                  return;
-               }
+             if ((obj) && (!obj->delete_me)) return obj->object;
           }
         while (obj);
-        *ret = NULL;
-        return;
+        return NULL;
      }
    obj = evas_object_above_get_internal(obj);
    while (obj)
      {
-        if (!obj->delete_me)
-          {
-             *ret = obj->object;
-             return;
-          }
+        if (!obj->delete_me) return obj->object;
         obj = evas_object_above_get_internal(obj);
      }
-   *ret = NULL;
-}
-
-EAPI Evas_Object *
-evas_object_below_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_below_get(&ret));
-   return ret;
 }
 
-void
-_below_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Evas_Object *
+_evas_object_below_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   *ret = NULL;
    if (obj->smart.parent)
      {
         do
           {
              obj = (Evas_Object_Protected_Data *)((EINA_INLIST_GET(obj))->prev);
-             if ((obj) && (!obj->delete_me))
-               {
-                  *ret = obj->object;
-                  return;
-               }
+             if ((obj) && (!obj->delete_me)) return obj->object;
           }
         while (obj);
-        return;
+        return NULL;
      }
    obj = evas_object_below_get_internal(obj);
    while (obj)
      {
-        if (!obj->delete_me)
-          {
-             *ret = obj->object;
-             return;
-          }
+        if (!obj->delete_me) return obj->object;
         obj = evas_object_below_get_internal(obj);
      }
+   return NULL;
 }
-
-
 
 EAPI Evas_Object *
 evas_object_bottom_get(const Evas *e)
@@ -497,3 +405,4 @@ _canvas_object_top_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *params_list)
 
    *ret = obj->object;
 }
+

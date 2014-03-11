@@ -3062,15 +3062,6 @@ _canvas_event_feed_hold(Eo *eo_e, void *_pd, va_list *list)
    _evas_object_event_new();
 }
 
-EAPI void
-evas_object_freeze_events_set(Evas_Object *eo_obj, Eina_Bool freeze)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_freeze_events_set(freeze));
-}
-
 static void
 _feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
@@ -3089,11 +3080,9 @@ _feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                                 NULL);
 }
 
-void
-_freeze_events_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_freeze_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool freeze)
 {
-   Eina_Bool freeze = va_arg(*list, int);
-   Evas_Object_Protected_Data *obj = _pd;
    freeze = !!freeze;
    if (obj->freeze_events == freeze) return;
    obj->freeze_events = freeze;
@@ -3103,39 +3092,15 @@ _freeze_events_set(Eo *eo_obj, void *_pd, va_list *list)
    _feed_mouse_move_eval_internal(eo_obj, obj);
 }
 
-EAPI Eina_Bool
-evas_object_freeze_events_get(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_freeze_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool freeze_events = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_freeze_events_get(&freeze_events));
-   return freeze_events;
+   return obj->freeze_events;
 }
 
-void
-_freeze_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_pass_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool pass)
 {
-   Eina_Bool *freeze_events = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (freeze_events) *freeze_events = obj->freeze_events;
-}
-
-EAPI void
-evas_object_pass_events_set(Evas_Object *eo_obj, Eina_Bool pass)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_pass_events_set(pass));
-}
-
-void
-_pass_events_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Eina_Bool pass = va_arg(*list, int);
-   Evas_Object_Protected_Data *obj = _pd;
    pass = !!pass;
    if (obj->pass_events == pass) return;
    obj->pass_events = pass;
@@ -3143,134 +3108,49 @@ _pass_events_set(Eo *eo_obj, void *_pd, va_list *list)
    _feed_mouse_move_eval_internal(eo_obj, obj);
 }
 
-EAPI Eina_Bool
-evas_object_pass_events_get(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_pass_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool pass_events = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_pass_events_get(&pass_events));
-   return pass_events;
+   return obj->pass_events;
 }
 
-void
-_pass_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_repeat_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool repeat)
 {
-   Eina_Bool *pass_events = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (pass_events) *pass_events = obj->pass_events;
-}
-
-EAPI void
-evas_object_repeat_events_set(Evas_Object *eo_obj, Eina_Bool repeat)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_repeat_events_set(repeat));
-}
-
-void
-_repeat_events_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Eina_Bool repeat = va_arg(*list, int);
-   Evas_Object_Protected_Data *obj = _pd;
    repeat = !!repeat;
    if (obj->repeat_events == repeat) return;
    obj->repeat_events = repeat;
    _feed_mouse_move_eval_internal(eo_obj, obj);
 }
 
-EAPI Eina_Bool
-evas_object_repeat_events_get(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_repeat_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool repeat_events = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_repeat_events_get(&repeat_events));
-   return repeat_events;
+   return obj->repeat_events;
 }
 
-void
-_repeat_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_propagate_events_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool prop)
 {
-   Eina_Bool *repeat_events = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (repeat_events) *repeat_events = obj->repeat_events;
-}
-
-EAPI void
-evas_object_propagate_events_set(Evas_Object *eo_obj, Eina_Bool prop)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_propagate_events_set(prop));
-}
-
-void
-_propagate_events_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool prop = va_arg(*list, int);
-   Evas_Object_Protected_Data *obj = _pd;
    obj->no_propagate = !prop;
 }
 
-EAPI Eina_Bool
-evas_object_propagate_events_get(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_propagate_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool no_propagate = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_propagate_events_get(&no_propagate));
-   return no_propagate;
+   return !(obj->no_propagate);
 }
 
-void
-_propagate_events_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_pointer_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Object_Pointer_Mode setting)
 {
-   Eina_Bool *no_propagate = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (no_propagate) *no_propagate = !(obj->no_propagate);
-}
-
-EAPI void
-evas_object_pointer_mode_set(Evas_Object *eo_obj, Evas_Object_Pointer_Mode setting)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_pointer_mode_set(setting));
-}
-
-void
-_pointer_mode_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Pointer_Mode setting = va_arg(*list, Evas_Object_Pointer_Mode);
-   Evas_Object_Protected_Data *obj = _pd;
    obj->pointer_mode = setting;
 }
 
-EAPI Evas_Object_Pointer_Mode
-evas_object_pointer_mode_get(const Evas_Object *eo_obj)
+EOLIAN Evas_Object_Pointer_Mode
+_evas_object_pointer_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
-   MAGIC_CHECK_END();
-   Evas_Object_Pointer_Mode setting = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
-   eo_do((Eo *)eo_obj, evas_obj_pointer_mode_get(&setting));
-   return setting;
-}
-
-void
-_pointer_mode_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Pointer_Mode *setting = va_arg(*list, Evas_Object_Pointer_Mode *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (setting) *setting = obj->pointer_mode;
+   return obj->pointer_mode;
 }
 
 EAPI void
@@ -3378,3 +3258,4 @@ _canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    const Evas_Public_Data *e = _pd;
    *ret = e->pointer.downs;
 }
+

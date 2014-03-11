@@ -1213,6 +1213,7 @@ enum
  */
 #define evas_canvas_object_name_find(name, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECT_NAME_FIND),EO_TYPECHECK(const char *, name),  EO_TYPECHECK(Evas_Object **, ret)
 
+#if 0
 /**
  * @def evas_obj_name_child_find
  * @since 1.8
@@ -1225,6 +1226,7 @@ enum
  * @see evas_object_name_child_find
  */
 #define evas_obj_name_child_find(name, recurse, child) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_CHILD_FIND), EO_TYPECHECK(const char *, name), EO_TYPECHECK(int, recurse), EO_TYPECHECK(Evas_Object **, child)
+#endif
 
 /**
  * @def evas_canvas_object_top_at_xy_get
@@ -4448,6 +4450,8 @@ enum
  * @}
  */
 
+#include "canvas/evas_common_interface.eo.h"
+#if 0
 #define EVAS_COMMON_INTERFACE evas_common_class_get()
 
 const Eo_Class *evas_common_class_get(void) EINA_CONST;
@@ -4475,6 +4479,10 @@ enum
  */
 #define evas_common_evas_get(ret) EVAS_COMMON_ID(EVAS_COMMON_SUB_ID_EVAS_GET), EO_TYPECHECK(Evas **, ret)
 
+#endif
+
+#include "canvas/evas_object.eo.h"
+#if 0
 extern EAPI Eo_Op EVAS_OBJ_BASE_ID;
 
 enum
@@ -5623,6 +5631,7 @@ enum
 #define EVAS_OBJ_CLASS evas_object_class_get()
 
 const Eo_Class *evas_object_class_get(void) EINA_CONST;
+#endif
 
 #define EVAS_OBJ_IMAGE_CLASS evas_object_image_class_get()
 const Eo_Class *evas_object_image_class_get(void) EINA_CONST;

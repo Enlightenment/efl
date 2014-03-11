@@ -174,22 +174,10 @@ _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
 
 /* public functions */
 
-EAPI void
-evas_object_layer_set(Evas_Object *eo_obj, short l)
+EOLIAN void
+_evas_object_layer_set(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, short l)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_layer_set(l));
-}
-
-void
-_layer_set(Eo *eo_obj, void *_obj, va_list *list)
-{
-   short l = va_arg(*list, int);
-
    Evas *eo_e;
-   Evas_Object_Protected_Data *obj = _obj;
 
    if (obj->delete_me) return;
    if (evas_object_intercept_call_layer_set(eo_obj, obj, l)) return;
@@ -243,26 +231,14 @@ _layer_set(Eo *eo_obj, void *_obj, va_list *list)
    evas_object_inform_call_restack(eo_obj);
 }
 
-EAPI short
-evas_object_layer_get(const Evas_Object *eo_obj)
+EOLIAN short
+_evas_object_layer_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   short layer = 0;
-   eo_do((Eo *)eo_obj, evas_obj_layer_get(&layer));
-   return layer;
-}
-
-void
-_layer_get(Eo *eo_obj EINA_UNUSED, void *_obj, va_list *list)
-{
-   short *layer = va_arg(*list, short *);
-   const Evas_Object_Protected_Data *obj = _obj;
    if (obj->smart.parent)
      {
         Evas_Object_Protected_Data *smart_parent_obj = eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);
-        *layer = smart_parent_obj->cur->layer;
+        return smart_parent_obj->cur->layer;
      }
-   *layer = obj->cur->layer;
+   return obj->cur->layer;
 }
+

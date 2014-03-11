@@ -7,22 +7,14 @@
 
 /* public calls */
 
-EAPI void
-evas_object_focus_set(Evas_Object *eo_obj, Eina_Bool focus)
+EOLIAN void
+_evas_object_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool focus)
 {
-   eo_do(eo_obj, evas_obj_focus_set(focus));
-}
-
-void
-_focus_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Eina_Bool focus = va_arg(*list, int);
 
    int event_id = 0;
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = _pd;
 
    _evas_object_event_new();
 
@@ -54,24 +46,10 @@ _focus_set(Eo *eo_obj, void *_pd, va_list *list)
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
 }
 
-EAPI Eina_Bool
-evas_object_focus_get(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Eina_Bool focus = 0;
-   eo_do((Eo *)eo_obj, evas_obj_focus_get(&focus));
-   return focus;
-}
-
-void
-_focus_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *focus = va_arg(*list, Eina_Bool *);
-
-   const Evas_Object_Protected_Data *obj = _pd;
-   *focus = obj->focused;
+   return obj->focused;
 }
 
 EAPI Evas_Object *

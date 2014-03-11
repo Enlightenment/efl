@@ -122,18 +122,7 @@ _evas_smart_data_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o, void *data)
    eo_data_ref(eo_obj, NULL);
 }
 
-EAPI void *
-evas_object_smart_data_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   void *data = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_smart_data_get(&data));
-   return data;
-}
-
-EOLIAN static void*
+EOLIAN static void *
 _evas_smart_evas_object_smart_data_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->data;
@@ -320,28 +309,6 @@ _evas_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Obj
    evas_object_mapped_clip_across_mark(eo_obj, obj);
 }
 
-EAPI Evas_Object *
-evas_object_smart_parent_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *smart_parent = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_smart_parent_get(&smart_parent));
-   return smart_parent;
-}
-
-EAPI Eina_Bool
-evas_object_smart_type_check(const Evas_Object *eo_obj, const char *type)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool type_check = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_smart_type_check(type, &type_check));
-   return type_check;
-}
-
 EOLIAN static Eina_Bool
 _evas_smart_evas_object_smart_type_check(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char *type)
 {
@@ -370,17 +337,6 @@ _evas_smart_evas_object_smart_type_check(Eo *eo_obj, Evas_Smart_Data *o EINA_UNU
      }
 
    return type_check;
-}
-
-EAPI Eina_Bool
-evas_object_smart_type_check_ptr(const Evas_Object *eo_obj, const char *type)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool type_check_ptr = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_smart_type_check_ptr(type, &type_check_ptr));
-   return type_check_ptr;
 }
 
 EOLIAN static Eina_Bool

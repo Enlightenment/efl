@@ -427,21 +427,9 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
    return EINA_TRUE;
 }
 
-EAPI void
-evas_object_map_enable_set(Evas_Object *eo_obj, Eina_Bool enabled)
+EOLIAN void
+_evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool enabled)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_map_enable_set(enabled));
-}
-
-void
-_map_enable_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Eina_Bool enabled = va_arg(*list, int);
-
-   Evas_Object_Protected_Data *obj = _pd;
    Eina_Bool pchange = EINA_FALSE;
 
    enabled = !!enabled;
@@ -507,40 +495,15 @@ _map_enable_set(Eo *eo_obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-evas_object_map_enable_get(const Evas_Object *eo_obj)
+EOLIAN Eina_Bool
+_evas_object_map_enable_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool enabled = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_map_enable_get(&enabled));
-   return enabled;
+   return obj->map->cur.usemap;
 }
 
-void
-_map_enable_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_evas_object_map_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const Evas_Map *map)
 {
-   Eina_Bool *enabled = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   *enabled = obj->map->cur.usemap;
-}
-
-EAPI void
-evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_map_set(map));
-}
-
-void
-_map_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   const Evas_Map *map = va_arg(*list, const Evas_Map *);
-   Evas_Object_Protected_Data *obj = _pd;
-
    if ((!map) || (map->count < 4))
      {
         if (obj->map->surface)
@@ -629,24 +592,10 @@ _map_set(Eo *eo_obj, void *_pd, va_list *list)
    _evas_map_calc_map_geometry(eo_obj);
 }
 
-EAPI const Evas_Map *
-evas_object_map_get(const Evas_Object *eo_obj)
+EOLIAN Evas_Map *
+_evas_object_map_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const Evas_Map *map = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_map_get(&map));
-   return map;
-}
-
-void
-_map_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Map **map = va_arg(*list, const Evas_Map **);
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   *map = obj->map->cur.map;
+   return obj->map->cur.map;
 }
 
 EAPI Evas_Map *
@@ -1328,3 +1277,4 @@ evas_object_map_update(Evas_Object *eo_obj,
 
    return obj->changed_pchange;
 }
+

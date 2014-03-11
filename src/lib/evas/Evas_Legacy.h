@@ -6255,7 +6255,7 @@ EAPI void         evas_object_polygon_points_clear(Evas_Object *obj) EINA_ARG_NO
 EAPI void         evas_object_is_frame_object_set(Evas_Object *obj, Eina_Bool is_frame);
 
 /* @since 1.2 */
-EAPI Eina_Bool    evas_object_is_frame_object_get(Evas_Object *obj);
+EAPI Eina_Bool    evas_object_is_frame_object_get(const Evas_Object *obj);
 
 /**
  * @}
@@ -6853,7 +6853,7 @@ EAPI void         evas_object_smart_move_children_relative(Evas_Object *obj, Eva
  *
  * @see evas_object_smart_clipped_smart_add()
  */
-EAPI Evas_Object            *evas_object_smart_clipped_clipper_get(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Evas_Object            *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @}

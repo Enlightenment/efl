@@ -9,8 +9,6 @@ EVAS_MEMPOOL(_mp_sh);
 
 #define MY_CLASS_NAME "Evas_Object"
 
-EAPI Eo_Op EVAS_OBJ_BASE_ID = EO_NOOP;
-
 static void
 _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 static void
@@ -64,16 +62,13 @@ _init_cow(void)
    return EINA_TRUE;
 }
 
-static void
-_constructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj;
-
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
-   obj = _pd;
    if (!obj || !_init_cow())
      {
         eo_error_set(eo_obj);
@@ -614,13 +609,12 @@ evas_object_del(Evas_Object *eo_obj)
 //   eo_del(eo_obj);
 }
 
-static void
-_destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_evas_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = _pd;
    Evas_Object *proxy;
    Eina_List *l, *l2;
 
@@ -696,22 +690,9 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
          evas_obj_size_set(w, h));
 }
 
-EAPI void
-evas_object_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
+EOLIAN static void
+_evas_object_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_position_set(x, y));
-}
-
-static void
-_position_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
 
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
@@ -783,22 +764,9 @@ _position_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_move(eo_obj, obj);
 }
 
-EAPI void
-evas_object_resize(Evas_Object *eo_obj, Evas_Coord w, Evas_Coord h)
+EOLIAN static void
+_evas_object_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_set(w, h));
-}
-
-static void
-_size_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
    Eina_Bool is, was = EINA_FALSE;
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
@@ -883,14 +851,9 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
    eo_do((Eo *)eo_obj, evas_obj_position_get(x, y), evas_obj_size_get(w, h));
 }
 
-static void
-_position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_position_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *x, Evas_Coord *y)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-
    if ((obj->delete_me) || (!obj->layer))
      {
         if (x) *x = 0; if (y) *y = 0;
@@ -901,14 +864,9 @@ _position_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (y) *y = obj->cur->geometry.y;
 }
 
-static void
-_size_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_size_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-
    if (obj->delete_me)
      {
         if (w) *w = 0; if (h) *h = 0;
@@ -935,26 +893,18 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
    obj->size_hints->dispmode = EVAS_DISPLAY_MODE_NONE;
 }
 
-EAPI Evas_Display_Mode
-evas_object_size_hint_display_mode_get(const Evas_Object *eo_obj)
+EOLIAN static Evas_Display_Mode
+_evas_object_size_hint_display_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return EVAS_DISPLAY_MODE_NONE;
-   MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return EVAS_DISPLAY_MODE_NONE;
    if ((!obj->size_hints) || obj->delete_me)
      return EVAS_DISPLAY_MODE_NONE;
    return obj->size_hints->dispmode;
 }
 
-EAPI void
-evas_object_size_hint_display_mode_set(Evas_Object *eo_obj, Evas_Display_Mode dispmode)
+EOLIAN static void
+_evas_object_size_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Display_Mode dispmode)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
    if (!obj) return;
    if (obj->delete_me) return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -964,24 +914,9 @@ evas_object_size_hint_display_mode_set(Evas_Object *eo_obj, Evas_Display_Mode di
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_min_get(const Evas_Object *eo_obj, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static void
+_evas_object_size_hint_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (w) *w = 0; if (h) *h = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_min_get(w, h));
-}
-
-static void
-_size_hint_min_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (w) *w = 0; if (h) *h = 0;
@@ -991,23 +926,9 @@ _size_hint_min_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (h) *h = obj->size_hints->min.h;
 }
 
-EAPI void
-evas_object_size_hint_min_set(Evas_Object *eo_obj, Evas_Coord w, Evas_Coord h)
+EOLIAN static void
+_evas_object_size_hint_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_min_set(w, h));
-}
-
-static void
-_size_hint_min_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1018,24 +939,9 @@ _size_hint_min_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_max_get(const Evas_Object *eo_obj, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static void
+_evas_object_size_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (w) *w = -1; if (h) *h = -1;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_max_get(w, h));
-}
-
-static void
-_size_hint_max_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (w) *w = -1; if (h) *h = -1;
@@ -1045,23 +951,9 @@ _size_hint_max_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (h) *h = obj->size_hints->max.h;
 }
 
-EAPI void
-evas_object_size_hint_max_set(Evas_Object *eo_obj, Evas_Coord w, Evas_Coord h)
+EOLIAN static void
+_evas_object_size_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_max_set(w, h));
-}
-
-static void
-_size_hint_max_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1072,24 +964,9 @@ _size_hint_max_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_request_get(const Evas_Object *eo_obj, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static void
+_evas_object_size_hint_request_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (w) *w = 0; if (h) *h = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_request_get(w, h));
-}
-
-static void
-_size_hint_request_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (w) *w = 0; if (h) *h = 0;
@@ -1099,23 +976,9 @@ _size_hint_request_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (h) *h = obj->size_hints->request.h;
 }
 
-EAPI void
-evas_object_size_hint_request_set(Evas_Object *eo_obj, Evas_Coord w, Evas_Coord h)
+EOLIAN static void
+_evas_object_size_hint_request_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_request_set(w, h));
-}
-
-static void
-_size_hint_request_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1126,26 +989,9 @@ _size_hint_request_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_aspect_get(const Evas_Object *eo_obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static void
+_evas_object_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
-   if (w) *w = 0; if (h) *h = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_aspect_get(aspect, w, h));
-}
-
-static void
-_size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Aspect_Control *aspect = va_arg(*list, Evas_Aspect_Control*);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
@@ -1157,24 +1003,9 @@ _size_hint_aspect_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (h) *h = obj->size_hints->aspect.size.h;
 }
 
-EAPI void
-evas_object_size_hint_aspect_set(Evas_Object *eo_obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
+EOLIAN static void
+_evas_object_size_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_aspect_set(aspect, w, h));
-}
-
-static void
-_size_hint_aspect_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Aspect_Control aspect = va_arg(*list, Evas_Aspect_Control);
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1186,24 +1017,9 @@ _size_hint_aspect_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_align_get(const Evas_Object *eo_obj, double *x, double *y)
+EOLIAN static void
+_evas_object_size_hint_align_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (x) *x = 0.5; if (y) *y = 0.5;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_align_get(x, y));
-}
-
-static void
-_size_hint_align_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   double *x = va_arg(*list, double *);
-   double *y = va_arg(*list, double *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (x) *x = 0.5; if (y) *y = 0.5;
@@ -1213,23 +1029,9 @@ _size_hint_align_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (y) *y = obj->size_hints->align.y;
 }
 
-EAPI void
-evas_object_size_hint_align_set(Evas_Object *eo_obj, double x, double y)
+EOLIAN static void
+_evas_object_size_hint_align_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_align_set(x, y));
-}
-
-static void
-_size_hint_align_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   double x = va_arg(*list, double);
-   double y = va_arg(*list, double);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1240,24 +1042,9 @@ _size_hint_align_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_weight_get(const Evas_Object *eo_obj, double *x, double *y)
+EOLIAN static void
+_evas_object_size_hint_weight_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, double *x, double *y)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (x) *x = 0.0; if (y) *y = 0.0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_weight_get(x, y));
-}
-
-static void
-_size_hint_weight_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   double *x = va_arg(*list, double *);
-   double *y = va_arg(*list, double *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (x) *x = 0.0; if (y) *y = 0.0;
@@ -1267,23 +1054,9 @@ _size_hint_weight_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (y) *y = obj->size_hints->weight.y;
 }
 
-EAPI void
-evas_object_size_hint_weight_set(Evas_Object *eo_obj, double x, double y)
+EOLIAN static void
+_evas_object_size_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_weight_set(x, y));
-}
-
-static void
-_size_hint_weight_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   double x = va_arg(*list, double);
-   double y = va_arg(*list, double);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1294,27 +1067,9 @@ _size_hint_weight_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EAPI void
-evas_object_size_hint_padding_get(const Evas_Object *eo_obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
+EOLIAN static void
+_evas_object_size_hint_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (l) *l = 0; if (r) *r = 0;
-   if (t) *t = 0; if (b) *b = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_size_hint_padding_get(l, r, t, b));
-}
-
-static void
-_size_hint_padding_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord *l = va_arg(*list, Evas_Coord *);
-   Evas_Coord *r = va_arg(*list, Evas_Coord *);
-   Evas_Coord *t = va_arg(*list, Evas_Coord *);
-   Evas_Coord *b = va_arg(*list, Evas_Coord *);
-
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (l) *l = 0; if (r) *r = 0;
@@ -1327,25 +1082,9 @@ _size_hint_padding_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (b) *b = obj->size_hints->padding.b;
 }
 
-EAPI void
-evas_object_size_hint_padding_set(Evas_Object *eo_obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
+EOLIAN static void
+_evas_object_size_hint_padding_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_size_hint_padding_set(l, r, t, b));
-}
-
-static void
-_size_hint_padding_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Coord l = va_arg(*list, Evas_Coord);
-   Evas_Coord r = va_arg(*list, Evas_Coord);
-   Evas_Coord t = va_arg(*list, Evas_Coord);
-   Evas_Coord b = va_arg(*list, Evas_Coord);
-
    if (obj->delete_me)
      return;
    _evas_object_size_hint_alloc(eo_obj, obj);
@@ -1375,10 +1114,8 @@ evas_object_hide(Evas_Object *eo_obj)
 }
 
 static void
-_visible_set(Eo *eo_obj, void *_pd, va_list *list)
+_evas_object_visibility_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool visible)
 {
-   Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool visible = va_arg(*list, int);
    if (visible) _show(eo_obj, obj);
    else _hide(eo_obj, obj);
 }
@@ -1530,50 +1267,16 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    evas_object_inform_call_hide(eo_obj);
 }
 
-EAPI Eina_Bool
-evas_object_visible_get(const Evas_Object *eo_obj)
+static Eina_Bool
+_evas_object_visibility_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Eina_Bool visible = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_visibility_get(&visible));
-   return visible;
+   if (obj->delete_me) return EINA_FALSE;
+   return obj->cur->visible;
 }
 
-static void
-_visible_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, int r, int g, int b, int a)
 {
-   Eina_Bool* visible = va_arg(*list, Eina_Bool *);
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (obj->delete_me)
-     {
-        if (visible) *visible = EINA_FALSE;
-        return;
-     }
-
-   if (visible) *visible = obj->cur->visible;
-}
-
-EAPI void
-evas_object_color_set(Evas_Object *eo_obj, int r, int g, int b, int a)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_color_set(r, g, b, a));
-}
-
-static void
-_color_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
-
    if (obj->delete_me) return;
    if (r > 255) r = 255; if (r < 0) r = 0;
    if (g > 255) g = 255; if (g < 0) g = 0;
@@ -1626,25 +1329,9 @@ _color_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_color_get(const Evas_Object *eo_obj, int *r, int *g, int *b, int *a)
+EOLIAN static void
+_evas_object_color_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, int *r, int *g, int *b, int *a)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (r) *r = 0; if (g) *g = 0; if (b) *b = 0; if (a) *a = 0;
-   return;
-   MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, evas_obj_color_get(r, g, b, a));
-}
-
-static void
-_color_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   int* r = va_arg(*list, int *);
-   int* g = va_arg(*list, int *);
-   int* b = va_arg(*list, int *);
-   int* a = va_arg(*list, int *);
    if (obj->delete_me)
      {
         if (r) *r = 0; if (g) *g = 0; if (b) *b = 0; if (a) *a = 0;
@@ -1656,21 +1343,9 @@ _color_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
    if (a) *a = obj->cur->color.a;
 }
 
-EAPI void
-evas_object_anti_alias_set(Evas_Object *eo_obj, Eina_Bool anti_alias)
+EOLIAN static void
+_evas_object_anti_alias_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool anti_alias)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_anti_alias_set(anti_alias));
-}
-
-static void
-_anti_alias_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool anti_alias = va_arg(*list, int);
-
    if (obj->delete_me) return;
    anti_alias = !!anti_alias;
    if (obj->cur->anti_alias == anti_alias)return;
@@ -1684,47 +1359,16 @@ _anti_alias_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI Eina_Bool
-evas_object_anti_alias_get(const Evas_Object *eo_obj)
+EOLIAN static Eina_Bool
+_evas_object_anti_alias_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Eina_Bool anti_alias = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_anti_alias_get(&anti_alias));
-   return anti_alias;
+   if (obj->delete_me) return EINA_FALSE;
+   return obj->cur->anti_alias;
 }
 
-static void
-_anti_alias_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
 {
-   Eina_Bool* anti_alias = va_arg(*list, Eina_Bool *);
-
-   const Evas_Object_Protected_Data *obj = _pd;
-   if (obj->delete_me)
-     {
-        if (anti_alias) *anti_alias = EINA_FALSE;
-        return;
-     }
-
-   if (anti_alias) *anti_alias = obj->cur->anti_alias;
-}
-
-EAPI void
-evas_object_scale_set(Evas_Object *eo_obj, double scale)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_scale_set(scale));
-}
-
-static void
-_scale_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   double scale = va_arg(*list, double);
    if (obj->delete_me) return;
    if (obj->cur->scale == scale) return;
 
@@ -1738,46 +1382,16 @@ _scale_set(Eo *eo_obj, void *_pd, va_list *list)
    if (obj->func->scale_update) obj->func->scale_update(eo_obj, obj, obj->private_data);
 }
 
-EAPI double
-evas_object_scale_get(const Evas_Object *eo_obj)
+EOLIAN static double
+_evas_object_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   double scale = 1.0;
-   eo_do((Eo *)eo_obj, evas_obj_scale_get(&scale));
-   return scale;
+   if (obj->delete_me) return 1.0;
+   return obj->cur->scale;
 }
 
-static void
-_scale_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_render_op_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Render_Op render_op)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-
-   double* scale = va_arg(*list, double*);
-   if (obj->delete_me)
-     {
-        if (scale) *scale = 1.0;
-        return;
-     }
-   if (scale) *scale = obj->cur->scale;
-}
-
-EAPI void
-evas_object_render_op_set(Evas_Object *eo_obj, Evas_Render_Op render_op)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_render_op_set(render_op));
-}
-
-static void
-_render_op_set(Eo *eo_obj, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-
-   Evas_Render_Op render_op = va_arg(*list, Evas_Render_Op);
    if (obj->delete_me) return;
    if (obj->cur->render_op == render_op) return;
 
@@ -1790,29 +1404,11 @@ _render_op_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI Evas_Render_Op
-evas_object_render_op_get(const Evas_Object *eo_obj)
+EOLIAN static Evas_Render_Op
+_evas_object_render_op_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Evas_Render_Op render_op = EVAS_RENDER_BLEND;
-   eo_do((Eo *)eo_obj, evas_obj_render_op_get(&render_op));
-   return render_op;
-}
-
-static void
-_render_op_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-   Evas_Render_Op* render_op = va_arg(*list, Evas_Render_Op *);
-
-   if (obj->delete_me)
-     {
-        if (render_op) *render_op = EVAS_RENDER_BLEND;
-        return;
-     }
-   if (render_op) *render_op = obj->cur->render_op;
+   if (obj->delete_me) return EVAS_RENDER_BLEND;
+   return obj->cur->render_op;
 }
 
 EAPI Evas *
@@ -1826,10 +1422,9 @@ evas_object_evas_get(const Evas_Object *eo_obj)
    return eo_evas;
 }
 
-static void
-_dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Eo_Dbg_Info *root)
 {
-   Eo_Dbg_Info *root = (Eo_Dbg_Info *) va_arg(*list, Eo_Dbg_Info *);
    eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
@@ -1977,18 +1572,11 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
      }
 }
 
-static void
-_evas_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+static Evas *
+_evas_object_evas_common_interface_evas_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-   Evas **evas = va_arg(*list, Evas **);
-
-   if ((obj->delete_me) || (!obj->layer))
-     {
-        *evas = NULL;
-        return;
-     }
-   *evas = obj->layer->evas->evas;
+   if ((obj->delete_me) || (!obj->layer)) return NULL;
+   return obj->layer->evas->evas;
 }
 
 EAPI Evas_Object *
@@ -2240,117 +1828,41 @@ _canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    *ret = in;
 }
 
-EAPI const char *
-evas_object_type_get(const Evas_Object *eo_obj)
+EOLIAN static const char *
+_evas_object_type_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   const char *type = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_type_get(&type));
-   return type;
+   if (obj->delete_me) return "";
+   return obj->type;
 }
 
-static void
-_type_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_type_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const char *type)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-   const char **type = va_arg(*list, const char **);
-   if (obj->delete_me)
-     {
-        *type = "";
-        return;
-     }
-   *type = obj->type;
-}
-
-static void
-_type_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-   const char *type = va_arg(*list, const char *);
    obj->type = type; // Store it as the top type of this class
 }
 
-EAPI void
-evas_object_precise_is_inside_set(Evas_Object *eo_obj, Eina_Bool precise)
+EOLIAN static void
+_evas_object_precise_is_inside_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool precise)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_precise_is_inside_set(precise));
-}
-
-static void
-_precise_is_inside_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool precise = va_arg(*list, int);
    obj->precise_is_inside = precise;
 }
 
-EAPI Eina_Bool
-evas_object_precise_is_inside_get(const Evas_Object *eo_obj)
+EOLIAN static Eina_Bool
+_evas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Eina_Bool precise = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_precise_is_inside_get(&precise));
-   return precise;
+   return obj->precise_is_inside;
 }
 
-static void
-_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_static_clip_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool is_static_clip)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool *precise = va_arg(*list, Eina_Bool *);
-   if (precise) *precise = obj->precise_is_inside;
-}
-
-EAPI void
-evas_object_static_clip_set(Evas_Object *eo_obj, Eina_Bool is_static_clip)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_static_clip_set(is_static_clip));
-}
-
-static void
-_static_clip_set(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool is_static_clip = va_arg(*list, int);
    obj->is_static_clip = is_static_clip;
 }
 
-EAPI Eina_Bool
-evas_object_static_clip_get(const Evas_Object *eo_obj)
+EOLIAN static Eina_Bool
+_evas_object_static_clip_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   Eina_Bool is_static_clip = EINA_FALSE;
-   eo_do((Eo *)eo_obj, evas_obj_static_clip_get(&is_static_clip));
-   return is_static_clip;
-}
-
-static void
-_static_clip_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool *is_static_clip = va_arg(*list, Eina_Bool *);
-   if (is_static_clip) *is_static_clip = obj->is_static_clip;
-}
-
-EAPI void
-evas_object_is_frame_object_set(Evas_Object *eo_obj, Eina_Bool is_frame)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_obj, evas_obj_is_frame_object_set(is_frame));
+   return obj->is_static_clip;
 }
 
 static void
@@ -2367,11 +1879,9 @@ _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
      _is_frame_flag_set(child, is_frame);
 }
 
-static void
-_is_frame_object_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_evas_object_is_frame_object_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 {
-   Eina_Bool is_frame = va_arg(*list, int);
-   Evas_Object_Protected_Data *obj = _pd;
    Evas_Coord x, y;
 
    evas_object_geometry_get(eo_obj, &x, &y, NULL, NULL);
@@ -2381,239 +1891,35 @@ _is_frame_object_set(Eo *eo_obj, void *_pd, va_list *list)
    evas_object_move(eo_obj, x, y);
 }
 
-EAPI Eina_Bool
-evas_object_is_frame_object_get(Evas_Object *eo_obj)
+EOLIAN static Eina_Bool
+_evas_object_is_frame_object_get(Eo *eo_obj  EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return obj->is_frame;
+}
+
+EOLIAN static Evas_Object *
+_evas_object_smart_parent_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   if (!obj) return NULL;
+   return obj->smart.parent;
+}
+
+EOLIAN static void *
+_evas_object_smart_data_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+{
+   return NULL;
+}
+
+EOLIAN static Eina_Bool
+_evas_object_smart_type_check(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *type EINA_UNUSED)
+{
    return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool is_frame = EINA_FALSE;
-   eo_do(eo_obj, evas_obj_is_frame_object_get(&is_frame));
-   return is_frame;
 }
 
-static void
-_is_frame_object_get(Eo *eo_obj  EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_evas_object_smart_type_check_ptr(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, const char *type EINA_UNUSED)
 {
-   const Evas_Object_Protected_Data *obj = _pd;
-   Eina_Bool *is_frame = va_arg(*list, Eina_Bool *);
-   if (is_frame) *is_frame = obj->is_frame;
+   return EINA_FALSE;
 }
 
-static void
-_smart_parent_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   if (!obj) return;
-   Evas_Object **smart_parent = va_arg(*list, Evas_Object **);
-   if (smart_parent) *smart_parent = obj->smart.parent;
-}
-
-static void
-_smart_data_get(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   void **data = va_arg(*list, void **);
-   *data = NULL;
-}
-
-static void
-_smart_type_check(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   va_arg(*list, const char *);
-   Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-   *type_check = EINA_FALSE;
-   return;
-}
-
-static void
-_smart_type_check_ptr(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   va_arg(*list, const char *);
-   Eina_Bool *type_check = va_arg(*list, Eina_Bool *);
-   *type_check = EINA_FALSE;
-   return;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
-        EO_OP_FUNC(EVAS_COMMON_ID(EVAS_COMMON_SUB_ID_EVAS_GET), _evas_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_GET), _position_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_GET), _size_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_SET), _size_hint_min_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_GET), _size_hint_min_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_SET), _size_hint_max_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_GET), _size_hint_max_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_SET), _size_hint_request_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_GET), _size_hint_request_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_SET), _size_hint_aspect_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_GET), _size_hint_aspect_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_SET), _size_hint_align_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_GET), _size_hint_align_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_SET), _size_hint_weight_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_GET), _size_hint_weight_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_SET), _size_hint_padding_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_GET), _size_hint_padding_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_SET), _visible_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_GET), _visible_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_SET), _color_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ANTI_ALIAS_SET), _anti_alias_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ANTI_ALIAS_GET), _anti_alias_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SCALE_SET), _scale_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SCALE_GET), _scale_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_RENDER_OP_SET), _render_op_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_RENDER_OP_GET), _render_op_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_SET), _type_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_GET), _type_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_SET), _precise_is_inside_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_GET), _precise_is_inside_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STATIC_CLIP_SET), _static_clip_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STATIC_CLIP_GET), _static_clip_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_SET), _is_frame_object_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_GET), _is_frame_object_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FREEZE_EVENTS_SET), _freeze_events_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FREEZE_EVENTS_GET), _freeze_events_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PASS_EVENTS_SET), _pass_events_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PASS_EVENTS_GET), _pass_events_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_REPEAT_EVENTS_SET), _repeat_events_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_REPEAT_EVENTS_GET), _repeat_events_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_SET), _propagate_events_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_GET), _propagate_events_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POINTER_MODE_SET), _pointer_mode_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POINTER_MODE_GET), _pointer_mode_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_KEY_GRAB), _key_grab),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_KEY_UNGRAB), _key_ungrab),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FOCUS_SET), _focus_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FOCUS_GET), _focus_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_SET), _name_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_GET), _name_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_CHILD_FIND), _name_child_find),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LAYER_SET), _layer_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LAYER_GET), _layer_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_SET), _clip_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_GET), _clip_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_UNSET), _clip_unset),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_GET), _clipees_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_HAS), _clipees_has),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_ENABLE_SET), _map_enable_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_ENABLE_GET), _map_enable_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_SET), _map_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_GET), _map_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_PARENT_GET), _smart_parent_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_DATA_GET), _smart_data_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK), _smart_type_check),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK_PTR), _smart_type_check_ptr),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_MOVE_CHILDREN_RELATIVE), _smart_move_children_relative),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_CLIPPED_CLIPPER_GET), _smart_clipped_clipper_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_RAISE), _raise),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LOWER), _lower),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STACK_ABOVE), _stack_above),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STACK_BELOW), _stack_below),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ABOVE_GET), _above_get),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_BELOW_GET), _below_get),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "Set the position of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_GET, "Get the position of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "Set the size of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_GET, "Get the size of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_SET, "Sets the hints for an object's minimum size."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_GET, "Retrieves the hints for an object's minimum size."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_SET, "Sets the hints for an object's maximum size."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_GET, "Retrieves the hints for an object's maximum size."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_SET, "Sets the hints for an object's optimum size."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_GET, "Retrieves the hints for an object's optimum size."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_SET, "Sets the hints for an object's aspect ratio."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_GET, "Retrieves the hints for an object's aspect ratio."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_SET, "Sets the hints for an object's alignment."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_GET, "Retrieves the hints for on object's alignment."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_SET, "Sets the hints for an object's weight."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_GET, "Retrieves the hints for an object's weight."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_SET, "Sets the hints for an object's padding space."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_GET, "Retrieves the hints for an object's padding space."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "Makes the given Evas object visible/invisible."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_GET, "Retrieves whether or not the given Evas object is visible."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "Sets the general/main color of the given Evas object to the given"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_GET, "Retrieves the general/main color of the given Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_ANTI_ALIAS_SET, "Sets whether or not the given Evas object is to be drawn anti-aliased."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_ANTI_ALIAS_GET, "Retrieves whether or not the given Evas object is to be drawn anti_aliased."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SCALE_SET, "Sets the scaling factor for an Evas object. Does not affect all"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SCALE_GET, "Retrieves the scaling factor for the given Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_RENDER_OP_SET, "Sets the render_op to be used for rendering the Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_RENDER_OP_GET, "Retrieves the current value of the operation used for rendering the Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_TYPE_SET, "Sets the type of the given Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_TYPE_GET, "Retrieves the type of the given Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_SET, "Set whether to use precise (usually expensive) point collision"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_GET, "Determine whether an object is set to use precise point collision"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_STATIC_CLIP_SET, "Set a hint flag on the given Evas object that it's used as a static clipper."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_STATIC_CLIP_GET, "Get the static clipper hint flag for a given Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_SET, "Set whether an object is a frame object"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_GET, "Determine whether an object is a frame object"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_FREEZE_EVENTS_SET, "Set whether an Evas object is to freeze (discard) events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_FREEZE_EVENTS_GET, "Determine whether an object is set to freeze (discard) events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_PASS_EVENTS_SET, "Set whether an Evas object is to pass (ignore) events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_PASS_EVENTS_GET, "Determine whether an object is set to pass (ignore) events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_REPEAT_EVENTS_SET, "Set whether an Evas object is to repeat events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_REPEAT_EVENTS_GET, "Determine whether an object is set to repeat events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_SET, "Set whether events on a smart object's member should get propagated"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_GET, "Retrieve whether an Evas object is set to propagate events."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POINTER_MODE_SET, "Set pointer behavior."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POINTER_MODE_GET, "Determine how pointer will behave."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_KEY_GRAB, "Requests keyname key events be directed to obj."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_KEY_UNGRAB, "Removes the grab on @p keyname key events by obj."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_FOCUS_SET, "Sets or unsets a given object as the currently focused one on its"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_FOCUS_GET, "Retrieve whether an object has the focus."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_NAME_SET, "Sets the name of the given Evas object to the given name."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_NAME_GET, "Retrieves the name of the given Evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_NAME_CHILD_FIND, "Retrieves the object from children of the given object with the given name."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_LAYER_SET, "Sets the layer of its canvas that the given object will be part of."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_LAYER_GET, "Retrieves the layer of its canvas that the given object is part of."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIP_SET, "Clip one object to another."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIP_GET, "Get the object clipping obj (if any)."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIP_UNSET, "Disable/cease clipping on a clipped obj object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIPEES_GET, "Return a list of objects currently clipped by obj."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CLIPEES_HAS, "Return EINA_TRUE if there is any object is clipped by obj."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_ENABLE_SET, "Enable or disable the map that is set."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_ENABLE_GET, "Get the map enabled state"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_SET, "Set current object transformation map."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_MAP_GET, "Get current object transformation map."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SMART_PARENT_GET, "Get the smart parent"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SMART_DATA_GET, "Get the smart data of obj"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK, "Checks whether a given smart object or any of its smart object"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK_PTR, "Checks whether a given smart object or any of its smart object"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SMART_MOVE_CHILDREN_RELATIVE, "Moves all children objects of a given smart object relative to a given offset"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SMART_CLIPPED_CLIPPER_GET, "Get the clipper object for the given clipped smart object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_RAISE, "Raise obj to the top of its layer."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_LOWER, "Lower obj to the bottom of its layer."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_STACK_ABOVE, "Stack obj immediately above above"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_STACK_BELOW, "Stack obj immediately below below"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_ABOVE_GET, "Get the Evas object stacked right above obj"),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_BELOW_GET, "Get the Evas object stacked right below obj"),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR_NO_INSTANT,
-     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_BASE_ID, op_desc, EVAS_OBJ_SUB_ID_LAST),
-     NULL,
-     sizeof(Evas_Object_Protected_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_object_class_get, &class_desc, EO_BASE_CLASS, EVAS_COMMON_INTERFACE, NULL)
-
+#include "canvas/evas_object.eo.c"

@@ -1,0 +1,18 @@
+interface Evas_Common_Interface ()
+{
+   eo_prefix: evas_common;
+   properties {
+      evas {
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Evas *ret;
+         }
+      }
+   }
+   implements {
+      virtual::evas::get;
+   }
+
+}
