@@ -64,6 +64,14 @@
 # define DEBUG_TIME_END() do {} while(0)
 #endif
 
+#if DIV_USING_BITSHIFT
+# define DEFINE_DIVIDER(div) const int pow2 = evas_filter_smallest_pow2_larger_than((div) << 10); const int numerator = (1 << pow2) / (div);
+# define DIVIDE(val) (((val) * numerator) >> pow2)
+#else
+# define DEFINE_DIVIDER(div) const int divider = (div);
+# define DIVIDE(val) ((val) / divider)
+#endif
+
 typedef enum _Evas_Filter_Interpolation_Mode Evas_Filter_Interpolation_Mode;
 
 struct _Evas_Filter_Context
@@ -226,5 +234,6 @@ Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, i
 Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, unsigned w, unsigned h);
 Eina_Bool evas_filter_interpolate(DATA8* output /* 256 values */, DATA8* points /* pairs x + y */, int point_count, Evas_Filter_Interpolation_Mode mode);
 Evas_Filter_Command *_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdid);
+int evas_filter_smallest_pow2_larger_than(int val);
 
 #endif // EVAS_FILTER_PRIVATE_H

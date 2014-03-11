@@ -500,6 +500,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 
                   //DBG("Allocating temporary buffer of size %ux%u", sw, sh);
                   fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
+                  if (!fb) goto alloc_fail;
                   fb->transient = EINA_TRUE;
                }
           }
@@ -514,6 +515,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 
              //DBG("Allocating temporary buffer of size %ux%u", sw, sh);
              fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
+             if (!fb) goto alloc_fail;
              fb->transient = EINA_TRUE;
           }
 
@@ -553,11 +555,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
 
         //DBG("Allocating buffer of size %ux%u alpha %d", fb->w, fb->h, fb->alpha_only);
         im = _rgba_image_alloc(fb, NULL);
-        if (!im)
-          {
-             ERR("Buffer %d allocation failed!", fb->id);
-             return EINA_FALSE;
-          }
+        if (!im) goto alloc_fail;
 
         fb->backing = im;
         fb->allocated = (im != NULL);
@@ -566,6 +564,10 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
      }
 
    return EINA_TRUE;
+
+alloc_fail:
+   ERR("Buffer allocation failed! Context size: %dx%d", w, h);
+   return EINA_FALSE;
 }
 
 int
@@ -841,7 +843,7 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
           }
      }
 
-   if (ctx->running && ctx->async)
+   if (ctx->running) // && ctx->async)
      {
         ERR("Can not create a new buffer from this thread!");
         return NULL;

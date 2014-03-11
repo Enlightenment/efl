@@ -5,25 +5,6 @@
 // Use a better formula than R+G+B for rgba to alpha conversion (RGB to YCbCr)
 #define RGBA2ALPHA_WEIGHTED 1
 
-#if DIV_USING_BITSHIFT
-static int
-_smallest_pow2_larger_than(int val)
-{
-   int n;
-
-   for (n = 0; n < 32; n++)
-     if (val <= (1 << n)) return n;
-
-   ERR("Value %d is too damn high!", val);
-   return 32;
-}
-# define DEFINE_DIVIDER(div) const int pow2 = _smallest_pow2_larger_than((div) << 10); const int numerator = (1 << pow2) / (div);
-# define DIVIDE(val) (((val) * numerator) >> pow2)
-#else
-# define DEFINE_DIAMETER(div) const int divider = (div);
-# define DIVIDE(val) ((val) / divider)
-#endif
-
 typedef Eina_Bool (*image_draw_func) (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
 static Eina_Bool _mapped_blend(void *data, void *drawctx, void *in, void *out, Evas_Filter_Fill_Mode fillmode, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, image_draw_func image_draw);
 
@@ -136,9 +117,9 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd,
 
    // Stretch if necessary.
 
-   /* NOTE: As of 2014/02/21, this case is impossible. An alpha buffer will
-    * always be of the context buffer size, since only proxy buffers have
-    * different sizes... and proxies are all RGBA (never alpha only).
+   /* NOTE: As of 2014/03/11, this will happen only with RGBA buffers, since
+    * only proxy sources may be scaled. So, we don't need an alpha scaling
+    * algorithm just now.
     */
 
    if ((sw != dw || sh != dh) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))

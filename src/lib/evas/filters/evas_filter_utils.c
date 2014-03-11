@@ -140,3 +140,15 @@ evas_filter_interpolate(DATA8 *output, DATA8 *points, int point_count,
         return _interpolate_linear(output, points, point_count);
      }
 }
+
+int
+evas_filter_smallest_pow2_larger_than(int val)
+{
+   int n;
+
+   for (n = 0; n < 32; n++)
+     if (val <= (1 << n)) return n;
+
+   ERR("Value %d is too damn high!", val);
+   return 32;
+}

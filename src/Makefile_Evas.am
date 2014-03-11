@@ -442,7 +442,10 @@ lib/evas/filters/evas_filter_utils.c \
 lib/evas/filters/evas_filter_private.h
 
 EXTRA_DIST += \
-lib/evas/filters/blur/blur_gaussian_alpha_.c
+lib/evas/filters/blur/blur_gaussian_alpha_.c \
+lib/evas/filters/blur/blur_gaussian_rgba_.c \
+lib/evas/filters/blur/blur_box_alpha_.c \
+lib/evas/filters/blur/blur_box_rgba_.c
 
 ### Engines
 
