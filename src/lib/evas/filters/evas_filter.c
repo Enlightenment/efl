@@ -962,12 +962,17 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (copy_back)
      {
+        int render_op;
+
         if (!cmd) goto fail;
         if (!copybuf) goto fail;
         INF("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
+        render_op = cmd->ENFN->context_render_op_get(cmd->ENDT, drawctx);
+        cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, EVAS_RENDER_COPY);
         id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, R, G, B, A);
+        cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, render_op);
         if (id < 0) goto fail;
         ox = oy = 0;
      }
