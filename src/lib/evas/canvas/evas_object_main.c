@@ -621,7 +621,6 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
    return;
    MAGIC_CHECK_END();
    Evas_Object_Protected_Data *obj = _pd;
-   Evas_Object_Protected_Data *tmp;
    Evas_Object *proxy;
    Eina_List *l, *l2;
 
@@ -654,8 +653,14 @@ _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
         goto end;
      }
    evas_object_grabs_cleanup(eo_obj, obj);
-   EINA_LIST_FOREACH_SAFE(obj->clip.clipees, l, l2, tmp)
-     evas_object_clip_unset(tmp->object);
+   /* "while" should be used for null check of obj->clip.clipees,
+      because evas_objct_clip_unset can set null to obj->clip.clipees */
+   while (obj->clip.clipees)
+     {
+        Evas_Object_Protected_Data *tmp;
+        tmp = eina_list_data_get(obj->clip.clipees);
+        evas_object_clip_unset(tmp->object);
+     }
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
      {
         if (eo_isa(proxy, EVAS_OBJ_IMAGE_CLASS))
