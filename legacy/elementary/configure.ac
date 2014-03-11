@@ -649,7 +649,7 @@ AC_SUBST(requirement_elm)
 
 EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
-EFL_WITH_BIN([eolian], [eolian-codegen], [eolian_codegen])
+EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
 EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
 EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
 
@@ -775,6 +775,7 @@ echo "    Elocation..............: ${have_elementary_elocation}"
 echo
 echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
+echo "  eolian_gen...............: ${eolian_gen}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
 echo "  Build elementary_codegen.: ${have_elementary_codegen}"
