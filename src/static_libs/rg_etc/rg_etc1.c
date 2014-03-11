@@ -12,8 +12,9 @@
 
 #include <stdlib.h>
 #include <memory.h>
-#include <assert.h>
 #include <math.h>
+
+#include "Eina.h"
 
 #include "rg_etc1.h"
 
@@ -27,10 +28,6 @@ typedef unsigned short uint16;
 typedef unsigned int uint;
 typedef unsigned int uint32;
 typedef unsigned char DATA8;
-
-#define false 0
-#define true 1
-#define RG_ETC1_ASSERT  assert
 
 #define MIN(A, B) ((A < B) ? A : B)
 #define MAX(A, B) ((A > B) ? A : B)
@@ -125,9 +122,6 @@ enum RG_Etc_Constants
 #define BA_VAL(p) ((DATA16 *)(p)[0])
 #define RG_VAL(p) ((DATA16 *)(p)[1])
 #endif
-
-//#define ARGB_JOIN(a,r,g,b) \
-//       (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
 #define ARGB_JOIN(a,r,g,b)                              \
   (((a) << 24) + ((b) << 16) + ((g) << 8) + (r))
@@ -579,7 +573,7 @@ rg_etc1_color_quad_clamp(unsigned int color, unsigned int low, unsigned high)
    unsigned int i;
 
    for (i = 0; i < 4; i++)
-     c[i] = clamp(c[i], l[i], h[i]);
+     c[i] = CLAMP(c[i], l[i], h[i]);
 
    return color;
 }
@@ -591,7 +585,7 @@ rg_etc1_color_quad_component_clamp(unsigned int color, unsigned int low, unsigne
    unsigned int i;
 
    for (i = 0; i < 4; i++)
-     c[i] = clamp(c[i], low, high);
+     c[i] = CLAMP(c[i], low, high);
 
    return color;
 }
@@ -659,7 +653,7 @@ rg_etc1_color_quad_add(unsigned int color1, unsigned int color2)
         unsigned short t;
 
         t = c1[i] + c2[i];
-        c1[i] = (unsigned char) (CLAMP(t, 0, 255));
+        c1[i] = (unsigned char) (MIN(t, 255));
      }
 
    return color1;
@@ -769,7 +763,7 @@ rg_etc1_block_diff_bit_set(unsigned char bytes[8], unsigned char diff)
 static inline void
 rg_etc1_block_clear(unsigned char bytes[8])
 {
-   memset(bytes, 0, sizeof (bytes));
+   memset(bytes, 0, sizeof (unsigned char) * 8);
 }
 
 // Returns intensity modifier table (0-7) used by subblock subblock_id.
@@ -778,7 +772,7 @@ static inline unsigned char
 rg_etc1_block_inten_table_get(const unsigned char bytes[8], unsigned char subblock_id)
 {
    const unsigned char offset = subblock_id ? 2 : 5;
-   assert(subblock_id < 2);
+   if (!(subblock_id < 2)) return 0; // ERROR CASE NO ASSERT IN EVAS CODE
    return (bytes[3] >> offset) & 7;
 }
 
@@ -787,8 +781,8 @@ static inline void
 rg_etc1_block_inten_table_set(unsigned char bytes[8], unsigned char subblock_id, unsigned char t)
 {
    const unsigned char offset = subblock_id ? 2 : 5;
-   assert(subblock_id < 2);
-   assert(t < 8);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(subblock_id < 2) || !(t < 8)) return ;
    bytes[3] &= ~(7 << offset);
    bytes[3] |= (t << offset);
 }
@@ -797,7 +791,8 @@ rg_etc1_block_inten_table_set(unsigned char bytes[8], unsigned char subblock_id,
 static inline unsigned char
 rg_etc1_block_selector_get(const unsigned char bytes[8], unsigned char x, unsigned char y)
 {
-   assert((x | y) < 4);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!((x | y) < 4)) return 0;
 
    const unsigned char bit_index = x * 4 + y;
    const unsigned char byte_bit_offset = bit_index & 7;
@@ -813,7 +808,8 @@ rg_etc1_block_selector_get(const unsigned char bytes[8], unsigned char x, unsign
 static inline void
 rg_etc1_block_selector_set(unsigned char bytes[8], unsigned char x, unsigned char y, unsigned char val)
 {
-   assert((x | y) < 4);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!((x | y) < 4)) return ;
 
    const unsigned char bit_index = x * 4 + y;
 
@@ -968,9 +964,10 @@ rg_etc1_block_color5_unpack(unsigned short packed_color5, unsigned char scaled, 
 static inline unsigned int
 rg_etc1_block_delta3_pack(char r, char g, char b)
 {
-   assert((r >= cETC1ColorDeltaMin) && (r <= cETC1ColorDeltaMax));
-   assert((g >= cETC1ColorDeltaMin) && (g <= cETC1ColorDeltaMax));
-   assert((b >= cETC1ColorDeltaMin) && (b <= cETC1ColorDeltaMax));
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!((r >= cETC1ColorDeltaMin) && (r <= cETC1ColorDeltaMax))) return 0;
+   if (!((g >= cETC1ColorDeltaMin) && (g <= cETC1ColorDeltaMax))) return 0;
+   if (!((b >= cETC1ColorDeltaMin) && (b <= cETC1ColorDeltaMax))) return 0;
 
    if (r < 0) r += 8;
    if (g < 0) g += 8;
@@ -1042,7 +1039,7 @@ rg_etc1_block_color4_unpack(unsigned short packed_color4, unsigned char scaled, 
 
    rg_etc1_block_color4_component_unpack(&r, &g, &b, packed_color4, scaled);
 
-   return rg_etc1_color_quad_init(r, g, b, 255);
+   return rg_etc1_color_quad_init(r, g, b, alpha);
 }
 
 
@@ -1062,9 +1059,9 @@ rg_etc1_block_color5_delta3_component_unpack(unsigned char *r, unsigned char *g,
    if ((*r | *g | *b) > 31)
      {
         success = 0;
-        *r = CLAMP(*r, 0, 31);
-        *g = CLAMP(*g, 0, 31);
-        *b = CLAMP(*b, 0, 31);
+        *r = MIN(*r, 31);
+        *g = MIN(*g, 31);
+        *b = MIN(*b, 31);
      }
 
    if (scaled)
@@ -1115,7 +1112,8 @@ rg_etc1_block_subblock_color5_diff_get(unsigned int dst[4], unsigned short packe
    const int *pInten_modifer_table;
    unsigned char r, g, b;
 
-   assert(table_idx < cETC1IntenModifierValues);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(table_idx < cETC1IntenModifierValues)) return ;
 
    rg_etc1_block_color5_component_unpack(&r, &g, &b, packed_color5, 1);
 
@@ -1132,7 +1130,12 @@ rg_etc1_block_subblock_color5_delta3_diff_get(unsigned int dst[4],
    unsigned char r, g, b;
    unsigned char success;
 
-   assert(table_idx < cETC1IntenModifierValues);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(table_idx < cETC1IntenModifierValues))
+     {
+        fprintf(stderr, "table_idx %i < %i\n", table_idx, cETC1IntenModifierValues);
+ return 0;
+     }
 
    success = rg_etc1_block_color5_delta3_component_unpack(&r, &g, &b, packed_color5, packed_delta3, 1);
 
@@ -1148,7 +1151,8 @@ rg_etc1_block_subblock_color4_abs_get(unsigned int dst[4], unsigned short packed
    const int *pInten_modifer_table;
    unsigned char r, g, b;
 
-   assert(table_idx < cETC1IntenModifierValues);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(table_idx < cETC1IntenModifierValues)) return ;
 
    rg_etc1_block_color4_component_unpack(&r, &g, &b, packed_color4, 1);
 
@@ -1161,8 +1165,8 @@ bool
 rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pixels, bool preserve_alpha)
 {
    unsigned char diff_flag, flip_flag, table_index0, table_index1;
-   unsigned int subblock_colors0[4];
-   unsigned int subblock_colors1[4];
+   unsigned int subblock_colors0[4] = { 0 };
+   unsigned int subblock_colors1[4] = { 0 };
    unsigned char x, y;
    unsigned char success = 1;
 
@@ -1262,8 +1266,9 @@ rg_etc1_indirect_radix_sort(unsigned int num_indices, unsigned int pIndices0[8],
    unsigned int key;
    unsigned int pass;
 
-   assert((key_ofs >= 0) && (key_ofs < sizeof(pIndices0)));
-   assert((key_size >= 1) && (key_size <= 4));
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(key_ofs < sizeof(pIndices0))) return NULL;
+   if (!((key_size >= 1) && (key_size <= 4))) return NULL;
 
    if (init_indices)
      {
@@ -1455,7 +1460,7 @@ static inline void
 rg_etc1_pack_params_clear(rg_etc1_pack_params *params)
 {
    params->m_quality = rg_etc1_high_quality;
-   params->m_dithering = false;
+   params->m_dithering = EINA_FALSE;
 }
 
 static const int rg_etc1_default_scan_delta[] = { 0 };
@@ -1481,12 +1486,12 @@ rg_etc1_optimizer_params_clean(rg_etc1_optimizer_params *params)
    params->m_num_src_pixels = 0;
    params->m_pSrc_pixels = 0;
 
-   params->m_use_color4 = false;
+   params->m_use_color4 = EINA_FALSE;
    params->m_pScan_deltas = rg_etc1_default_scan_delta;
    params->m_scan_delta_size = 1;
 
    rg_etc1_color_quad_u8_clear(&params->m_base_color5);
-   params->m_constrain_against_base_color5 = false;
+   params->m_constrain_against_base_color5 = EINA_FALSE;
 }
 
 static inline void
@@ -1513,7 +1518,8 @@ rg_etc1_optimizer_results_duplicate(rg_etc1_optimizer_results *dst, const rg_etc
    dst->m_block_color4 = src->m_block_color4;
    dst->m_block_inten_table = src->m_block_inten_table;
    dst->m_error = src->m_error;
-   RG_ETC1_ASSERT(dst->m_n == src->m_n);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(dst->m_n == src->m_n)) return ;
    memcpy(dst->m_pSelectors, src->m_pSelectors, src->m_n);
 }
 
@@ -1530,7 +1536,7 @@ rg_etc1_potential_solution_clear(rg_etc1_potential_solution *solution)
 {
    rg_etc1_solution_coordinates_clear(&solution->m_coords);
    solution->m_error = cUINT64_MAX;
-   solution->m_valid = false;
+   solution->m_valid = EINA_FALSE;
 }
 
 typedef struct
@@ -1672,16 +1678,16 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
                                          0, optimizer->m_limit);
                        bb1 = (uint)CLAMP(((optimizer->m_avg_color[2] - avg_delta_b_f) * optimizer->m_limit / 255.0f + .5f),
                                          0, optimizer->m_limit);
-                       skip = false;
+                       skip = EINA_FALSE;
 
                        if ((mbr == br1) && (mbg == bg1) && (mbb == bb1)) {
-                          skip = true;
+                          skip = EINA_TRUE;
                        } else if ((br1 == optimizer->m_best_solution.m_coords.m_unscaled_color.comp.r) &&
                                   (bg1 == optimizer->m_best_solution.m_coords.m_unscaled_color.comp.g) &&
                                   (bb1 == optimizer->m_best_solution.m_coords.m_unscaled_color.comp.b)) {
-                          skip = true;
+                          skip = EINA_TRUE;
                        } else if ((optimizer->m_br == br1) && (optimizer->m_bg == bg1) && (optimizer->m_bb == bb1)) {
-                          skip = true;
+                          skip = EINA_TRUE;
                        }
 
                        if (skip)
@@ -1708,7 +1714,7 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
    if (!optimizer->m_best_solution.m_valid)
      {
         optimizer->m_pResult->m_error = cUINT32_MAX;
-        return false;
+        return EINA_FALSE;
      }
 
 #ifdef RG_ETC1_BUILD_DEBUG
@@ -1724,7 +1730,9 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
       for (i = 0; i < n; i++)
         actual_error += rg_etc1_color_quad_u8_rgb_squared_distance(pSrc_pixels[i], block_colors[pSelectors[i]]);
 
-      RG_ETC1_ASSERT(actual_error == optimizer->m_best_solution.m_error);
+      // ERROR CASE NO ASSERT IN EVAS CODE
+      if (actual_error != optimizer->m_best_solution.m_error)
+        return EINA_FALSE;
    }
 #endif
 
@@ -1735,7 +1743,7 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
    memcpy(optimizer->m_pResult->m_pSelectors, optimizer->m_best_solution.m_selectors, n);
    optimizer->m_pResult->m_n = n;
 
-   return true;
+   return EINA_TRUE;
 }
 
 void
@@ -1743,7 +1751,8 @@ rg_etc1_optimizer_init(rg_etc1_optimizer *optimizer, const rg_etc1_optimizer_par
                        rg_etc1_optimizer_results *result)
 {
    // This version is hardcoded for 8 pixel subblocks.
-   RG_ETC1_ASSERT(params->m_num_src_pixels == 8);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (params->m_num_src_pixels != 8) return ;
 
    const uint n = 8;
    uint i;
@@ -1769,15 +1778,15 @@ rg_etc1_optimizer_init(rg_etc1_optimizer *optimizer, const rg_etc1_optimizer_par
    rg_etc1_vec_scale(avg_color, (1.0f/(float)(n)));
    rg_etc1_vec_copy(optimizer->m_avg_color,avg_color);
 
-   optimizer->m_br = CLAMP((uint)(optimizer->m_avg_color[0] * optimizer->m_limit / 255.0f + .5f), 0, optimizer->m_limit);
-   optimizer->m_bg = CLAMP((uint)(optimizer->m_avg_color[1] * optimizer->m_limit / 255.0f + .5f), 0, optimizer->m_limit);
-   optimizer->m_bb = CLAMP((uint)(optimizer->m_avg_color[2] * optimizer->m_limit / 255.0f + .5f), 0, optimizer->m_limit);
+   optimizer->m_br = MIN((int)(optimizer->m_avg_color[0] * optimizer->m_limit / 255.0f + .5f), optimizer->m_limit);
+   optimizer->m_bg = MIN((int)(optimizer->m_avg_color[1] * optimizer->m_limit / 255.0f + .5f), optimizer->m_limit);
+   optimizer->m_bb = MIN((int)(optimizer->m_avg_color[2] * optimizer->m_limit / 255.0f + .5f), optimizer->m_limit);
 
    if (optimizer->m_pParams->base_params->m_quality <= rg_etc1_medium_quality)
      {
         optimizer->m_pSorted_luma_indices = rg_etc1_indirect_radix_sort(n, optimizer->m_sorted_luma[0],
                                                                         optimizer->m_sorted_luma[1], optimizer->m_luma,
-                                                                        0, sizeof(optimizer->m_luma[0]), false);
+                                                                        0, sizeof(optimizer->m_luma[0]), EINA_FALSE);
         optimizer->m_pSorted_luma = optimizer->m_sorted_luma[0];
 
         if (optimizer->m_pSorted_luma_indices == optimizer->m_sorted_luma[0])
@@ -1788,7 +1797,7 @@ rg_etc1_optimizer_init(rg_etc1_optimizer *optimizer, const rg_etc1_optimizer_par
      }
 
    rg_etc1_solution_coordinates_clear(&optimizer->m_best_solution.m_coords);
-   optimizer->m_best_solution.m_valid = false;
+   optimizer->m_best_solution.m_valid = EINA_FALSE;
    optimizer->m_best_solution.m_error = cUINT64_MAX;
 }
 
@@ -1799,9 +1808,9 @@ rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Sol
    color_quad_u8 base_color;
    const uint n = 8;
    uint inten_table;
-   bool success = false;
+   bool success = EINA_FALSE;
 
-   trial_solution->m_valid = false;
+   trial_solution->m_valid = EINA_FALSE;
 
    if (optimizer->m_pParams->m_constrain_against_base_color5)
      {
@@ -1811,7 +1820,7 @@ rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Sol
         db = coords->m_unscaled_color.comp.b - optimizer->m_pParams->m_base_color5.comp.b;
 
         if ((MIN(MIN(dr,dg),db) < cETC1ColorDeltaMin) || (MAX(MAX(dr,dg),db) > cETC1ColorDeltaMax))
-          return false;
+          return EINA_FALSE;
      }
 
    rg_etc1_solution_coordinates_get_scaled_color(&base_color, coords);
@@ -1878,7 +1887,7 @@ rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Sol
              trial_solution->m_error = total_error;
              trial_solution->m_coords.m_inten_table = inten_table;
              memcpy(trial_solution->m_selectors, optimizer->m_temp_selectors, 8);
-             trial_solution->m_valid = true;
+             trial_solution->m_valid = EINA_TRUE;
           }
      }
    rg_etc1_color_quad_u8_copy(&trial_solution->m_coords.m_unscaled_color,&coords->m_unscaled_color);
@@ -1889,7 +1898,7 @@ rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Sol
         if (trial_solution->m_error < pBest_solution->m_error)
           {
              memcpy(pBest_solution,trial_solution,sizeof(rg_etc1_potential_solution));
-             success = true;
+             success = EINA_TRUE;
           }
      }
 
@@ -1903,7 +1912,7 @@ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc
    color_quad_u8 base_color;
    const uint n = 8;
    int inten_table;
-   bool success = false;
+   bool success = EINA_FALSE;
 
    if (optimizer->m_pParams->m_constrain_against_base_color5)
      {
@@ -1915,8 +1924,8 @@ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc
 
         if ((MIN(MIN(dr,dg),db) < cETC1ColorDeltaMin) || (MAX(MAX(dr,dg),db) > cETC1ColorDeltaMax))
           {
-             trial_solution->m_valid = false;
-             return false;
+             trial_solution->m_valid = EINA_FALSE;
+             return EINA_FALSE;
           }
      }
 
@@ -2007,7 +2016,7 @@ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc
              trial_solution->m_error = total_error;
              trial_solution->m_coords.m_inten_table = inten_table;
              memcpy(trial_solution->m_selectors, optimizer->m_temp_selectors, n);
-             trial_solution->m_valid = true;
+             trial_solution->m_valid = EINA_TRUE;
              if (!total_error)
                break;
           }
@@ -2020,7 +2029,7 @@ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc
         if (trial_solution->m_error < pBest_solution->m_error)
           {
              memcpy(pBest_solution,trial_solution,sizeof(rg_etc1_potential_solution));
-             success = true;
+             success = EINA_TRUE;
           }
      }
 
@@ -2031,7 +2040,9 @@ static uint
 etc1_decode_value(uint diff, uint inten, uint selector, uint packed_c)
 {
    const uint limit = diff ? 32 : 16;
-   RG_ETC1_ASSERT((diff < 2) && (inten < 8) && (selector < 4) && (packed_c < limit));
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!((diff < 2) && (inten < 8) && (selector < 4) && (packed_c < limit)))
+     return 0;
    int c;
    if (diff)
      c = (packed_c >> 2) | (packed_c << 3);
@@ -2077,7 +2088,8 @@ void rg_etc1_pack_block_init()
                                    break;
                               }
                          }
-                       RG_ETC1_ASSERT(best_error <= 255);
+                       // ERROR CASE NO ASSERT IN EVAS CODE
+                       if (!(best_error <= 255)) return ;
                        rg_etc1_inverse_lookup[inverse_table_index][color] = (uint16)(best_packed_c | (best_error << 8));
                     }
                }
@@ -2097,9 +2109,10 @@ void rg_etc1_pack_block_init()
 // Packs solid color blocks efficiently using a set of small precomputed tables.
 // For random 888 inputs, MSE results are better than Erricson's ETC1 packer in "slow" mode ~9.5% of the time, is slightly worse only ~.01% of the time, and is equal the rest of the time.
 static uint64
-rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc1_pack_params *pack_params)
+rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED)
 {
-   RG_ETC1_ASSERT(rg_etc1_inverse_lookup[0][255]);
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!rg_etc1_inverse_lookup[0][255]) return 0;
 
    static uint s_next_comp[4] = { 1, 2, 0, 1 };
 
@@ -2139,7 +2152,8 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
                   const uint inten = (x >> 1) & 7;
                   const uint selector = (x >> 4) & 3;
                   const uint p0 = (x >> 8) & 255;
-                  RG_ETC1_ASSERT(etc1_decode_value(diff, inten, selector, p0) == (uint)c_plus_delta);
+                  // ERROR CASE NO ASSERT IN EVAS CODE
+                  if (etc1_decode_value(diff, inten, selector, p0) != (uint)c_plus_delta) return 0;
 #endif
 
                   pInverse_table = rg_etc1_inverse_lookup[x & 0xFF];
@@ -2194,14 +2208,16 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
 
 static uint
 rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,uint num_colors,
-                                           const uint8* pColor, rg_etc1_pack_params *pack_params,
+                                           const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED,
                                            bool use_diff, const color_quad_u8* pBase_color5_unscaled)
 {
-   RG_ETC1_ASSERT(rg_etc1_inverse_lookup[0][255]);
    static uint s_next_comp[4] = { 1, 2, 0, 1 };
    uint best_error = cUINT32_MAX, best_i = 0;
    int best_x = 0, best_packed_c1 = 0, best_packed_c2 = 0;
    uint i;
+
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!rg_etc1_inverse_lookup[0][255]) return 0;
 
    // For each possible 8-bit value, there is a precomputed list of diff/inten/selector configurations
    // that allow that 8-bit value to be encoded with no error.
@@ -2251,7 +2267,8 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
                      const uint inten = (x >> 1) & 7;
                      const uint selector = (x >> 4) & 3;
                      const uint p0 = (x >> 8) & 255;
-                     RG_ETC1_ASSERT(etc1_decode_value(diff, inten, selector, p0) == (uint)c_plus_delta);
+                     // ERROR CASE NO ASSERT IN EVAS CODE
+                     if (etc1_decode_value(diff, inten, selector, p0) != (uint)c_plus_delta) return 0;
                   }
 #endif
 
@@ -2368,11 +2385,11 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
    int r;
    color_quad_u8 dithered_pixels[16], subblock_pixels[8];
    uint64 best_error = cUINT64_MAX;
-   uint best_use_color4=false;
-   uint best_flip=false;
+   uint best_use_color4=EINA_FALSE;
+   uint best_flip=EINA_FALSE;
    uint8 best_selectors[2][8];
    rg_etc1_optimizer optimizer;
-   rg_etc1_optimizer_results best_results[2];
+   rg_etc1_optimizer_results best_results[2] = { { 0 } };
    rg_etc1_optimizer_results results[3];
    rg_etc1_optimizer_params params;
    uint i, flip;
@@ -2382,13 +2399,14 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
    static const int s_scan_delta_0_to_4[] = { -4, -3, -2, -1, 0, 1, 2, 3, 4 };
    static const int s_scan_delta_0_to_1[] = { -1, 0, 1 };
    static const int s_scan_delta_0[] = { 0 };
-   first_pixel_u32= pSrc_pixels->m_u32;
+   first_pixel_u32 = *pSrc_pixels_rgba;
 
 #ifdef RG_ETC1_BUILD_DEBUG
    // Ensure all alpha values are 0xFF.
    for (i = 0; i < 16; i++)
      {
-        RG_ETC1_ASSERT(pSrc_pixels[i].comp.a == 255);
+        // ERROR CASE NO ASSERT IN EVAS CODE
+        if (pSrc_pixels[i].comp.a != 255) return 0;
      }
 #endif
    rg_etc1_optimizer_clear(&optimizer);
@@ -2463,11 +2481,11 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
                     }
 
                   params.m_use_color4 = (use_color4 != 0);
-                  params.m_constrain_against_base_color5 = false;
+                  params.m_constrain_against_base_color5 = EINA_FALSE;
 
                   if ((!use_color4) && (subblock))
                     {
-                       params.m_constrain_against_base_color5 = true;
+                       params.m_constrain_against_base_color5 = EINA_TRUE;
                        rg_etc1_color_quad_u8_copy(&params.m_base_color5,&results[0].m_block_color_unscaled);
                     }
 
@@ -2547,7 +2565,8 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
    dr = best_results[1].m_block_color_unscaled.comp.r - best_results[0].m_block_color_unscaled.comp.r;
    dg = best_results[1].m_block_color_unscaled.comp.g - best_results[0].m_block_color_unscaled.comp.g;
    db = best_results[1].m_block_color_unscaled.comp.b - best_results[0].m_block_color_unscaled.comp.b;
-   RG_ETC1_ASSERT(best_use_color4 || (MIN(MIN(dr, dg), db) >= cETC1ColorDeltaMin) && (MAX(MAX(dr, dg), db) <= cETC1ColorDeltaMax));
+   // ERROR CASE NO ASSERT IN EVAS CODE
+   if (!(best_use_color4 || ((MIN(MIN(dr, dg), db) >= cETC1ColorDeltaMin) && (MAX(MAX(dr, dg), db) <= cETC1ColorDeltaMax)))) return 0;
 
    if (best_use_color4)
      {
