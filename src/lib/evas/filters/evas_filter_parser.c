@@ -1018,8 +1018,9 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
                      int *padl, int *padr, int *padt, int *padb)
 {
    Eina_Bool yset = EINA_FALSE;
-   int rx, ry, ox, oy, l, r, t, b;
-   const char *inbuf, *outbuf;
+   int rx, ry, ox, oy, l, r, t, b, count;
+   const char *inbuf, *outbuf, *typestr;
+   Evas_Filter_Blur_Type type = EVAS_FILTER_BLUR_DEFAULT;
    Buffer *in, *out;
 
    rx = _instruction_param_geti(instr, "rx", NULL);
@@ -1028,6 +1029,11 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    oy = _instruction_param_geti(instr, "oy", NULL);
    inbuf = _instruction_param_gets(instr, "src", NULL);
    outbuf = _instruction_param_gets(instr, "dst", NULL);
+   count = _instruction_param_geti(instr, "count", NULL);
+   typestr = _instruction_param_gets(instr, "type", NULL);
+
+   if (typestr && !strcasecmp(typestr, "box"))
+     type = EVAS_FILTER_BLUR_BOX;
 
    in = _buffer_get(pgm, inbuf);
    out = _buffer_get(pgm, outbuf);
@@ -1037,6 +1043,17 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    if (!yset) ry = rx;
    if (rx < 0) rx = 0;
    if (ry < 0) ry = 0;
+
+   if (type == EVAS_FILTER_BLUR_BOX)
+     {
+        if (count < 1) count = 1;
+        if (count > 6) count = 3;
+     }
+   else
+     count = 1;
+
+   rx *= count;
+   ry *= count;
 
    l = rx + in->pad.l + ((ox < 0) ? (-ox) : 0);
    r = rx + in->pad.r + ((ox > 0) ? ox : 0);
@@ -1067,7 +1084,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
   @param rx    X radius. Specifies the radius of the blurring kernel (X direction).
   @param ry    Y radius. Specifies the radius of the blurring kernel (Y direction). If -1 is used, then @a ry = @a rx.
-  @param type  Blur type to apply. One of @c default, @c box or @c gaussian. @c default is an alias for @c gaussian.
+  @param type  Blur type to apply. One of @c default, @c box or @c gaussian. See below for details about @c default.
   @param ox    X offset. Moves the buffer to the right (@a ox > 0) or to the left (@a ox < 0) by N pixels.
   @param oy    Y offset. Moves the buffer to the bottom (@a oy > 0) or to the top (@a oy < 0) by N pixels.
   @param color A color to use for alpha to RGBA conversion. See @ref evasfilters_color "colors". <br>
@@ -1075,6 +1092,15 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
                  draw the buffer in this color.
   @param src   Source buffer to blur.
   @param dst   Destination buffer for blending.
+  @param count Number of times to repeat the blur. Only valid with @c box blur. Valid range is: 1 to 6.
+
+  The blur type @c default is <b>recommended in all situations</b> as it will select the smoothest
+  and fastest operation possible depending on the kernel size. Instead of running a real
+  gaussian blur, 2 or 3 box blurs may be chained to produce a similar effect at a much
+  higher speed. The value @a count can be set to a value from 1 to 6 if blur type @c box
+  has been specified.
+
+  The speedups of @c box over @c gaussian are of orders of 4x to more than 20x faster.
 
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the color option should be set.
 
@@ -1105,6 +1131,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
    _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "count", VT_INT, 0);
 
    return EINA_TRUE;
 }
@@ -1947,12 +1974,12 @@ static int
 _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
                 Evas_Filter_Instruction *instr, void *dc)
 {
-   Eina_Bool isset = EINA_FALSE, yset = EINA_FALSE;
+   Eina_Bool colorset = EINA_FALSE, yset = EINA_FALSE, cntset = EINA_FALSE;
    Evas_Filter_Blur_Type type = EVAS_FILTER_BLUR_DEFAULT;
    const char *src, *dst, *typestr;
    DATA32 color;
    Buffer *in, *out;
-   int cmdid, ox, oy, rx, ry, A, R, G, B;
+   int cmdid, ox, oy, rx, ry, A, R, G, B, count;
 
    src = _instruction_param_gets(instr, "src", NULL);
    dst = _instruction_param_gets(instr, "dst", NULL);
@@ -1960,8 +1987,9 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    oy = _instruction_param_geti(instr, "oy", NULL);
    rx = _instruction_param_geti(instr, "rx", NULL);
    ry = _instruction_param_geti(instr, "ry", &yset);
-   color = _instruction_param_getc(instr, "color", &isset);
+   color = _instruction_param_getc(instr, "color", &colorset);
    typestr = _instruction_param_gets(instr, "type", NULL);
+   count = _instruction_param_geti(instr, "count", &cntset);
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
 
@@ -1977,11 +2005,26 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
           ERR("Unknown blur type '%s'. Using default blur.", typestr);
      }
 
+   if (type == EVAS_FILTER_BLUR_BOX)
+     {
+        if (count < 1) count = 1;
+        if (count > 6)
+          {
+             WRN("Box blur count should be below 6, defaults to 3.");
+             count = 3;
+          }
+     }
+   else
+     {
+        if (cntset) WRN("Blur count can only be used with BOX blur.");
+        count = 1;
+     }
+
    if (!yset) ry = rx;
-   if (isset) SETCOLOR(color);
+   if (colorset) SETCOLOR(color);
    cmdid = evas_filter_command_blur_add(ctx, dc, in->cid, out->cid, type,
-                                        rx, ry, ox, oy);
-   if (isset) RESETCOLOR();
+                                        rx, ry, ox, oy, count);
+   if (colorset) RESETCOLOR();
 
    return cmdid;
 }

@@ -898,7 +898,7 @@ evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context,
 int
 evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                              int inbuf, int outbuf, Evas_Filter_Blur_Type type,
-                             int dx, int dy, int ox, int oy)
+                             int dx, int dy, int ox, int oy, int count)
 {
    Evas_Filter_Command *cmd = NULL;
    Evas_Filter_Buffer *in = NULL, *out = NULL, *tmp = NULL, *in_dy = NULL;
@@ -911,18 +911,79 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(drawctx, -1);
 
+   if (dx < 0) dx = 0;
+   if (dy < 0) dy = 0;
+   if (!dx && !dy) goto fail;
+
    switch (type)
      {
-      case EVAS_FILTER_BLUR_BOX:
-        if (dx < 0) dx = 0;
-        if (dy < 0) dy = 0;
-        if (!dx && !dy) goto fail;
-        break;
       case EVAS_FILTER_BLUR_GAUSSIAN:
-        if (dx < 0) dx = 0;
-        if (dy < 0) dy = 0;
-        if (!dx && !dy) goto fail;
+        count = 1;
         break;
+
+      case EVAS_FILTER_BLUR_BOX:
+        count = MIN(MAX(1, count), 6);
+        break;
+
+      case EVAS_FILTER_BLUR_DEFAULT:
+        count = 1;
+
+        /* In DEFAULT mode we cheat, depending on the size of the kernel:
+         * For 1px to 2px, use true Gaussian blur.
+         * For 3px to 6px, use two Box blurs.
+         * For more than 6px, use three Box blurs.
+         * This will give both nicer and MUCH faster results than Gaussian.
+         *
+         * NOTE: When implementing blur with GL shaders, other tricks will be
+         * needed, of course!
+         */
+        {
+           int tmp_out = outbuf;
+           int tmp_in = inbuf;
+           int tmp_ox = ox;
+           int tmp_oy = oy;
+
+           id = -1;
+           if (dx && dy)
+             {
+                tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, EINA_TRUE);
+                if (!tmp) goto fail;
+                tmp_in = tmp_out = tmp->id;
+                tmp_ox = tmp_oy = 0;
+             }
+
+           if (dx)
+             {
+                if (dx <= 2)
+                  type = EVAS_FILTER_BLUR_GAUSSIAN;
+                else
+                  type = EVAS_FILTER_BLUR_BOX;
+
+                id = evas_filter_command_blur_add(ctx, drawctx, inbuf, tmp_out,
+                                                  type, dx, 0, tmp_ox, tmp_oy, 0);
+                if (id < 0) goto fail;
+                cmd = _evas_filter_command_get(ctx, id);
+                cmd->blur.auto_count = EINA_TRUE;
+             }
+
+           if (dy)
+             {
+                if (dy <= 2)
+                  type = EVAS_FILTER_BLUR_GAUSSIAN;
+                else
+                  type = EVAS_FILTER_BLUR_BOX;
+
+                id = evas_filter_command_blur_add(ctx, drawctx, inbuf, tmp_in,
+                                                  type, 0, dy, ox, oy, 0);
+                if (id < 0) goto fail;
+                cmd = _evas_filter_command_get(ctx, id);
+                cmd->blur.auto_count = EINA_TRUE;
+             }
+
+           return id;
+        }
+        break;
+
       default:
         CRI("Not implemented yet!");
         goto fail;
@@ -1031,6 +1092,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         cmd->blur.type = type;
         cmd->blur.dx = dx;
         cmd->blur.dy = 0;
+        cmd->blur.count = count;
         DRAW_COLOR_SET(R, G, B, A);
         ret = cmd->id;
      }
@@ -1043,6 +1105,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         cmd->blur.type = type;
         cmd->blur.dx = 0;
         cmd->blur.dy = dy;
+        cmd->blur.count = count;
         DRAW_COLOR_SET(R, G, B, A);
         if (ret <= 0) ret = cmd->id;
      }
@@ -1157,7 +1220,7 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
 
    blurcmd = evas_filter_command_blur_add(ctx, draw_context, inbuf, growbuf,
                                           EVAS_FILTER_BLUR_DEFAULT,
-                                          abs(radius), abs(radius), 0, 0);
+                                          abs(radius), abs(radius), 0, 0, 0);
    if (blurcmd < 0) return -1;
 
    if (diam > 255) diam = 255;

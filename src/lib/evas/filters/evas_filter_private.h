@@ -126,7 +126,9 @@ struct _Evas_Filter_Command
       struct
       {
          int dx, dy;
+         int count;
          Evas_Filter_Blur_Type type;
+         Eina_Bool auto_count : 1; // If true, BOX blur will be smooth using
       } blur;
 
       struct

@@ -42,10 +42,10 @@ enum _Evas_Filter_Mode
 
 enum _Evas_Filter_Blur_Type
 {
-   EVAS_FILTER_BLUR_GAUSSIAN = 0x0, // Gaussian or sine curve. O(nm)
+   EVAS_FILTER_BLUR_DEFAULT  = 0x0, // Default blur (GAUSSIAN or series of BOX)
    EVAS_FILTER_BLUR_BOX      = 0x1, // Optimizable on CPU. But, UGLY. O(n)
+   EVAS_FILTER_BLUR_GAUSSIAN = 0x2, // Gaussian blur (using sine curve)
    EVAS_FILTER_BLUR_LAST,
-   EVAS_FILTER_BLUR_DEFAULT  = EVAS_FILTER_BLUR_GAUSSIAN
 };
 
 enum _Evas_Filter_Channel
@@ -141,9 +141,10 @@ int                      evas_filter_command_blend_add(Evas_Filter_Context *ctx,
  * @param dy             Y radius of blur. Can be negative ONLY for MOTION blur
  * @param ox             X offset in the destination buffer
  * @param oy             Y offset in the destination buffer
+ * @param count          Number of times to repeat the operation (used for smooth fast blurs with box blur)
  * @return               Filter command ID or -1 in case of error
  */
-int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy);
+int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy, int count);
 
 /**
  * @brief Fill a buffer with the current color
