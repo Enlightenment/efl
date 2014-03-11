@@ -5,7 +5,7 @@
 #include <time.h>
 
 // Enable debug if you're working on optimizations
-#define DEBUG_TIME 0
+#define DEBUG_TIME 1
 
 // Windows build will break if CLOCK_MONOTONIC is used
 #if !defined(_POSIX_MONOTONIC_CLOCK) || (_POSIX_MONOTONIC_CLOCK < 0)
@@ -379,82 +379,6 @@ _sin_blur_weights_get(int *weights, int *pow2_divider, int radius)
      *pow2_divider = nextpow2;
 }
 
-static void
-_gaussian_blur_step_rgba(DATA32 *src, DATA32 *dst, int radius, int len, int step,
-                         int *weights, int pow2_divider)
-{
-   const int diameter = 2 * radius + 1;
-   int left = MIN(radius, len);
-   int right = MIN(radius, (len - radius));
-   int j, k;
-
-   // left
-   for (k = 0; k < left; k++, dst += step)
-     {
-        int acc[4] = {0};
-        int divider = 0;
-        DATA32 *s = src;
-        for (j = 0; j <= k + radius; j++, s += step)
-          {
-             const int weightidx = j + radius - k;
-             acc[ALPHA] += A_VAL(s) * weights[weightidx];
-             acc[RED]   += R_VAL(s) * weights[weightidx];
-             acc[GREEN] += G_VAL(s) * weights[weightidx];
-             acc[BLUE]  += B_VAL(s) * weights[weightidx];
-             divider += weights[weightidx];
-          }
-        if (!divider) goto div_zero;
-        A_VAL(dst) = acc[ALPHA] / divider;
-        R_VAL(dst) = acc[RED]   / divider;
-        G_VAL(dst) = acc[GREEN] / divider;
-        B_VAL(dst) = acc[BLUE]  / divider;
-     }
-
-   // middle
-   for (k = len - (2 * radius); k > 0; k--, src += step, dst += step)
-     {
-        int acc[4] = {0};
-        DATA32 *s = src;
-        for (j = 0; j < diameter; j++, s += step)
-          {
-             acc[ALPHA] += A_VAL(s) * weights[j];
-             acc[RED]   += R_VAL(s) * weights[j];
-             acc[GREEN] += G_VAL(s) * weights[j];
-             acc[BLUE]  += B_VAL(s) * weights[j];
-          }
-        A_VAL(dst) = acc[ALPHA] >> pow2_divider;
-        R_VAL(dst) = acc[RED]   >> pow2_divider;
-        G_VAL(dst) = acc[GREEN] >> pow2_divider;
-        B_VAL(dst) = acc[BLUE]  >> pow2_divider;
-     }
-
-   // right
-   for (k = 0; k < right; k++, dst += step, src += step)
-     {
-        int acc[4] = {0};
-        int divider = 0;
-        DATA32 *s = src;
-        for (j = 0; j < 2 * radius - k; j++, s += step)
-          {
-             acc[ALPHA] += A_VAL(s) * weights[j];
-             acc[RED]   += R_VAL(s) * weights[j];
-             acc[GREEN] += G_VAL(s) * weights[j];
-             acc[BLUE]  += B_VAL(s) * weights[j];
-             divider += weights[j];
-          }
-        if (!divider) goto div_zero;
-        A_VAL(dst) = acc[ALPHA] / divider;
-        R_VAL(dst) = acc[RED]   / divider;
-        G_VAL(dst) = acc[GREEN] / divider;
-        B_VAL(dst) = acc[BLUE]  / divider;
-     }
-
-   return;
-
-div_zero:
-   CRI("Division by zero avoided! Something is very wrong here!");
-}
-
 #define FUNCTION_NAME _gaussian_blur_horiz_alpha_step
 #define STEP 1
 #include "./blur/blur_gaussian_alpha_.c"
@@ -473,7 +397,7 @@ _gaussian_blur_horiz_alpha(const DATA8 *src, DATA8 *dst, int radius, int w, int 
    DEBUG_TIME_END();
 }
 
-// w steps, loops = w --> STEP = loops
+// Step size is w (row by row), loops = w, so STEP = 'loops'
 #define FUNCTION_NAME _gaussian_blur_vert_alpha_step
 #define STEP loops
 #include "./blur/blur_gaussian_alpha_.c"
@@ -492,45 +416,39 @@ _gaussian_blur_vert_alpha(const DATA8 *src, DATA8 *dst, int radius, int w, int h
    DEBUG_TIME_END();
 }
 
+#define FUNCTION_NAME _gaussian_blur_horiz_rgba_step
+#define STEP 1
+#include "./blur/blur_gaussian_rgba_.c"
+
 static void
 _gaussian_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div = 0;
+   int pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
    DEBUG_TIME_BEGIN();
-
-   for (k = h; k; k--)
-     {
-        _gaussian_blur_step_rgba(src, dst, radius, w, 1, weights, pow2_div);
-        dst += w;
-        src += w;
-     }
-
+   _gaussian_blur_horiz_rgba_step(src, dst, radius, w, h, w, weights, pow2_div);
    DEBUG_TIME_END();
 }
+
+#define FUNCTION_NAME _gaussian_blur_vert_rgba_step
+#define STEP loops
+#include "./blur/blur_gaussian_rgba_.c"
 
 static void
 _gaussian_blur_vert_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
 {
    int *weights;
-   int k, pow2_div = 0;
+   int pow2_div = 0;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
    _sin_blur_weights_get(weights, &pow2_div, radius);
 
    DEBUG_TIME_BEGIN();
-
-   for (k = w; k; k--)
-     {
-        _gaussian_blur_step_rgba(src, dst, radius, h, w, weights, pow2_div);
-        dst += 1;
-        src += 1;
-     }
-
+   _gaussian_blur_vert_rgba_step(src, dst, radius, h, w, 1, weights, pow2_div);
    DEBUG_TIME_END();
 }
 

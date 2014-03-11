@@ -1,3 +1,9 @@
+/* @file blur_gaussian_alpha_.c
+ * Should define the functions:
+ * - _gaussian_blur_horiz_alpha_step
+ * - _gaussian_blur_vert_alpha_step
+ */
+
 /* Datatypes and MIN macro */
 #include "evas_common_private.h"
 #include "../evas_filter_private.h"
