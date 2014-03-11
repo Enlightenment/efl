@@ -16,13 +16,14 @@ BuildRequires:  zlib-devel
 BuildRequires:  gettext-tools
 
 %if %{with wayland}
+BuildRequires:  pkgconfig(gles20)
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
-BuildRequires:  pkgconfig(glesv2)
 %endif
 
 %if %{with x}
+BuildRequires:  pkgconfig(glesv2)
 BuildRequires:  pkgconfig(libdri2)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xcursor)
@@ -37,7 +38,6 @@ BuildRequires:  pkgconfig(xrender)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  libXtst-devel
 BuildRequires:  pkgconfig(xi)
-BuildRequires:  pkgconfig(gles20)
 BuildRequires:  pkgconfig(ice)
 BuildRequires:  pkgconfig(sm)
 %endif
@@ -49,6 +49,7 @@ BuildRequires:  curl-devel
 BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  systemd-devel
+BuildRequires:  pkgconfig(ibus-1.0)
 
 #eldbus
 BuildRequires:  dbus-devel
@@ -497,15 +498,15 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --disable-scim \
     --disable-gesture \
     --with-tests=regular \
-    --with-opengl=es \
 %if %{with wayland}
     --enable-wayland \
     --enable-egl \
+    --with-opengl=es \
     --enable-tile-rotate \
     --disable-rpath \
 %endif
 %if %{with x}
-    --with-x11=xlib \
+    --with-opengl=es \
     --disable-gesture \
 %else
     --with-x11=none \
@@ -513,8 +514,10 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --disable-rpath \
 %endif
     --enable-always-build-examples \
+    --enable-systemd \
     --enable-lua-old \
-    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa
+    --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aaa \
+    #eol
 
 make %{?_smp_mflags}
 
@@ -670,6 +673,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %defattr(-,root,root,-)
 %license COPYING
 %{_libdir}/libecore.so.*
+%{_libdir}/libecore_avahi.so.*
 %{_libdir}/libecore_audio.so.*
 %{_libdir}/libecore_avahi.so.*
 %{_libdir}/libecore_con.so.*
@@ -689,6 +693,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_libdir}/ecore_evas/engines/*/*/module.so
 %{_libdir}/ecore_imf/modules/*/*/module.so
 %{_libdir}/ecore/system/tizen/*/module.so
+%{_libdir}/ecore/system/systemd/v-*/module.so
 %{_datadir}/ecore/checkme
 %{_datadir}/ecore_imf/checkme
 
@@ -697,6 +702,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %defattr(-,root,root,-)
 %{_datadir}/ecore*/examples/*
 %{_libdir}/ecore*/examples/*
+
 
 %files -n ecore-devel
 %manifest %{name}.manifest
