@@ -6678,7 +6678,9 @@ enum
 /**
  * @}
  */
+#include "canvas/evas_out.eo.h"
 
+#if 0
 #define EVAS_OUT_CLASS evas_out_class_get()
 const Eo_Class *evas_out_class_get(void) EINA_CONST;
 extern EAPI Eo_Op EVAS_OUT_BASE_ID;
@@ -6776,3 +6778,5 @@ EO_TYPECHECK(Eina_Bool *, ret)
 #define evas_out_engine_info_get(ret) \
    EVAS_OUT_ID(EVAS_OUT_SUB_ID_ENGINE_INFO_GET), \
 EO_TYPECHECK(Evas_Engine_Info **, ret)
+
+#endif
