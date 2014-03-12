@@ -606,3 +606,17 @@ ecore_drm_device_window_set(Ecore_Drm_Device *dev, void *window)
 
    dev->window = window;
 }
+
+/**
+ * TODO: Doxy
+ * 
+ * @since 1.10
+ */
+EAPI const char *
+ecore_drm_device_name_get(Ecore_Drm_Device *dev)
+{
+   /* check for valid device */
+   if ((!dev) || (dev->drm.fd < 0)) return NULL;
+
+   return dev->drm.name;
+}
