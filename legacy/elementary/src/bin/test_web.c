@@ -394,6 +394,33 @@ _new_window_test_cb(void *data, Evas_Object *obj, void *event_info)
 
    elm_web_html_string_load(wt->web, new_window_html, NULL, NULL);
 }
+
+static void
+_fullscreen_test_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Web_Test *wt = data;
+   const char *selected = elm_object_item_text_get(event_info);
+   const char fullscreen_html[] = "<!doctype html><body>"
+       "<script>"
+       "var launch = function(obj) {"
+       "  var f = document.webkitFullscreenElement;"
+       "  if (f) document.webkitExitFullscreen();"
+       "  if (f != obj) obj.webkitRequestFullscreen();"
+       "}\n"
+       "var test_full = function() { launch(document.documentElement); }\n"
+       "var test_small = function() { launch(document.getElementById('box')); }\n"
+       "</script>"
+       "<input type='button' onclick='test_full();' value='request fullscreen'>"
+       "<div id='box' style='width:100px;height:100px;background-color:blue;' onclick='test_small();'>small box</div>"
+       "<input type='button' onclick='test_small();' value='request fullscreen of box'>"
+       "</body>";
+
+   printf("selected test : %s\n", selected);
+   elm_object_text_set(obj, selected);
+
+   elm_web_html_string_load(wt->web, fullscreen_html, NULL, NULL);
+}
+
 static void
 _main_web_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -586,6 +613,8 @@ test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                          _select_tag_test_cb, wt);
    elm_hoversel_item_add(hoversel, "new window", NULL, ELM_ICON_NONE,
                          _new_window_test_cb, wt);
+   elm_hoversel_item_add(hoversel, "fullscreen", NULL, ELM_ICON_NONE,
+                         _fullscreen_test_cb, wt);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 

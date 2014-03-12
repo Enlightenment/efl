@@ -77,6 +77,72 @@ _view_smart_window_close(Ewk_View_Smart_Data *sd)
    evas_object_smart_callback_call(obj, "windows,close,request", NULL);
 }
 
+static void
+_fullscreen_accept(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Evas_Object *ewk = data;
+   evas_object_del(evas_object_data_get(ewk, "_fullscreen_permission_popup"));
+}
+
+static void
+_fullscreen_deny(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Evas_Object *ewk = data;
+   ewk_view_fullscreen_exit(ewk);
+   evas_object_del(evas_object_data_get(ewk, "_fullscreen_permission_popup"));
+}
+
+static Eina_Bool
+_view_smart_fullscreen_enter(Ewk_View_Smart_Data *sd, Ewk_Security_Origin *origin)
+{
+   Evas_Object *btn, *popup, *top;
+   const char *host;
+   char buffer[2048];
+
+   Evas_Object *obj = evas_object_smart_parent_get(sd->self);
+
+   ELM_WEB_CHECK(obj) EINA_FALSE;
+
+   top = elm_widget_top_get(obj);
+   elm_win_fullscreen_set(top, EINA_TRUE);
+
+   popup = elm_popup_add(top);
+   elm_popup_orient_set(popup, ELM_POPUP_ORIENT_TOP);
+   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   host = ewk_security_origin_host_get(origin);
+   snprintf(buffer, sizeof(buffer), "%s is now fullscreen.<br>Press ESC at any time to exit fullscreen,<br>Allow fullscreen?<br>", host);
+   elm_object_text_set(popup, buffer);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Accept");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _fullscreen_accept, sd->self);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Deny");
+   elm_object_part_content_set(popup, "button2", btn);
+   evas_object_smart_callback_add(btn, "clicked", _fullscreen_deny, sd->self);
+
+   evas_object_data_set(sd->self, "_fullscreen_permission_popup", popup);
+   evas_object_show(popup);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_view_smart_fullscreen_exit(Ewk_View_Smart_Data *sd)
+{
+   Evas_Object *obj = evas_object_smart_parent_get(sd->self);
+
+   ELM_WEB_CHECK(obj) EINA_FALSE;
+
+   Evas_Object *top = elm_widget_top_get(obj);
+   elm_win_fullscreen_set(top, EINA_FALSE);
+
+   return EINA_TRUE;
+}
+
 /**
  * Creates a new view object given the parent.
  *
@@ -109,6 +175,8 @@ _view_add(Evas_Object *parent)
         api.sc.del = _view_smart_del;
         api.window_create = _view_smart_window_create;
         api.window_close = _view_smart_window_close;
+        api.fullscreen_enter = _view_smart_fullscreen_enter;
+        api.fullscreen_exit = _view_smart_fullscreen_exit;
 
         smart = evas_smart_class_new(&api.sc);
         if (!smart)
