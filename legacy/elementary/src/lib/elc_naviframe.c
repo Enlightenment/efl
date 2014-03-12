@@ -1480,6 +1480,50 @@ _push_transition_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static void
+_item_push_helper(Elm_Naviframe_Item *item)
+{
+   Elm_Naviframe_Item *top_item;
+   Evas_Object *obj = WIDGET(item);
+   ELM_NAVIFRAME_DATA_GET(obj, sd);
+   top_item = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
+   evas_object_show(VIEW(item));
+
+   if (top_item) elm_widget_focused_object_clear(VIEW(top_item));
+   _resize_object_reset(obj, item);
+   if (top_item)
+     {
+        if (sd->freeze_events)
+          {
+             evas_object_freeze_events_set(VIEW(item), EINA_TRUE);
+             evas_object_freeze_events_set(VIEW(top_item), EINA_TRUE);
+          }
+        elm_object_signal_emit(VIEW(top_item), "elm,state,cur,pushed", "elm");
+        elm_object_signal_emit(VIEW(item), "elm,state,new,pushed", "elm");
+        edje_object_message_signal_process(elm_layout_edje_get(VIEW(top_item)));
+        edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
+
+        elm_widget_tree_unfocusable_set(VIEW(top_item), EINA_TRUE);
+
+        ecore_animator_del(item->animator);
+        item->animator = ecore_animator_add(_push_transition_cb, item);
+     }
+   else
+     {
+        if (elm_object_focus_allow_get(VIEW(item)))
+          elm_object_focus_set(VIEW(item), EINA_TRUE);
+        else
+          elm_object_focus_set(WIDGET(item), EINA_TRUE);
+     }
+
+   sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(item));
+
+   if (!top_item)
+     elm_object_signal_emit(VIEW(item), "elm,state,visible", "elm");
+
+   elm_layout_sizing_eval(obj);
+}
+
 EAPI Evas_Object *
 elm_naviframe_add(Evas_Object *parent)
 {
@@ -1513,11 +1557,9 @@ elm_naviframe_item_push(Evas_Object *obj,
 }
 
 static void
-_item_push(Eo *obj, void *_pd, va_list *list)
+_item_push(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
-   Elm_Naviframe_Item *prev_it, *it;
-
-   Elm_Naviframe_Smart_Data *sd = _pd;
+   Elm_Naviframe_Item *top_item, *item;
 
    const char *title_label = va_arg(*list, const char *);
    Evas_Object *prev_btn = va_arg(*list, Evas_Object *);
@@ -1526,50 +1568,12 @@ _item_push(Eo *obj, void *_pd, va_list *list)
    const char *item_style = va_arg(*list, const char *);
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    *ret = NULL;
-
-   prev_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
-   it = _item_new(obj, prev_it,
+   top_item = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
+   item = _item_new(obj, top_item,
                   title_label, prev_btn, next_btn, content, item_style);
-   if (!it) return;
-
-   evas_object_show(VIEW(it));
-
-   if (prev_it) elm_widget_focused_object_clear(VIEW(prev_it));
-   _resize_object_reset(obj, it);
-   if (prev_it)
-     {
-        if (sd->freeze_events)
-          {
-             evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
-             evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
-          }
-
-        elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed", "elm");
-        elm_object_signal_emit(VIEW(it), "elm,state,new,pushed", "elm");
-        edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
-        edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
-
-        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_TRUE);
-
-        ecore_animator_del(it->animator);
-        it->animator = ecore_animator_add(_push_transition_cb, it);
-     }
-   else
-     {
-        if (elm_object_focus_allow_get(VIEW(it)))
-          elm_object_focus_set(VIEW(it), EINA_TRUE);
-        else
-          elm_object_focus_set(WIDGET(it), EINA_TRUE);
-     }
-
-   sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
-
-   if (!prev_it)
-     elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
-
-   elm_layout_sizing_eval(obj);
-
-   *ret = (Elm_Object_Item *)it;
+   if (!item) return;
+   _item_push_helper(item);
+   *ret = (Elm_Object_Item *)item;
 }
 
 EAPI Elm_Object_Item *
@@ -1813,45 +1817,17 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 {
    Elm_Object_Item *prev_top;
    Elm_Naviframe_Item *nit;
-   Elm_Naviframe_Item *prev_it;
 
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(it);
 
    nit = (Elm_Naviframe_Item *)it;
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
-   prev_top = elm_naviframe_top_item_get(nit->base.widget);
+   prev_top = elm_naviframe_top_item_get(WIDGET(nit));
    if (it == prev_top) return;
 
-   /* remember, last is 1st on the naviframe, push it to last pos. */
-   sd->stack = eina_inlist_demote(sd->stack, EINA_INLIST_GET(nit));
-
-   /* this was the previous top one */
-   prev_it = EINA_INLIST_CONTAINER_GET
-       (sd->stack->last->prev, Elm_Naviframe_Item);
-
-   elm_widget_focused_object_clear(VIEW(nit));
-   _resize_object_reset(WIDGET(it), nit);
-
-   elm_widget_tree_unfocusable_set(VIEW(nit), EINA_FALSE);
-   elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_TRUE);
-
-   if (sd->freeze_events)
-     {
-        evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
-        evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
-     }
-
-   elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed", "elm");
-
-   evas_object_show(VIEW(nit));
-
-   elm_object_signal_emit(VIEW(nit), "elm,state,new,pushed", "elm");
-
-   edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
-   edje_object_message_signal_process(elm_layout_edje_get(VIEW(nit)));
-   ecore_animator_del(nit->animator);
-   nit->animator = ecore_animator_add(_push_transition_cb, nit);
+   sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(nit));
+   _item_push_helper(nit);
 }
 
 EAPI void
