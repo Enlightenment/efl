@@ -9,7 +9,7 @@
  */
 typedef enum
 {
-   ELM_WIN_UNKNOWN, /**< Unknown window type. */
+   ELM_WIN_UNKNOWN = -1, /**< Unknown window type. */
    ELM_WIN_BASIC, /**< A normal window. Indicates a normal, top-level
                      window. Almost every window will be created with this
                      type. */
