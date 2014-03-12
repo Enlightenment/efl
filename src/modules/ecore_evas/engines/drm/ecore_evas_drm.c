@@ -267,8 +267,6 @@ _ecore_evas_drm_init(const char *device)
         goto tty_open_err;
      }
 
-   /* FIXME: Init egl/software renderer here ?? */
-
    /* try to create sprites */
    if (!ecore_drm_sprites_create(dev))
      {
