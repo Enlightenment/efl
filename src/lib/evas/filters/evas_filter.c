@@ -915,6 +915,20 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    if (dy < 0) dy = 0;
    if (!dx && !dy) goto fail;
 
+   in = _filter_buffer_get(ctx, inbuf);
+   if (!in)
+     {
+        ERR("Buffer %d does not exist [input].", inbuf);
+        goto fail;
+     }
+
+   out = _filter_buffer_get(ctx, outbuf);
+   if (!out)
+     {
+        ERR("Buffer %d does not exist [output].", outbuf);
+        goto fail;
+     }
+
    switch (type)
      {
       case EVAS_FILTER_BLUR_GAUSSIAN:
@@ -926,7 +940,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         break;
 
       case EVAS_FILTER_BLUR_DEFAULT:
-        count = 1;
 
         /* In DEFAULT mode we cheat, depending on the size of the kernel:
          * For 1px to 2px, use true Gaussian blur.
@@ -938,6 +951,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
          * needed, of course!
          */
         {
+           const Eina_Bool alpha = in->alpha_only;
            int tmp_out = outbuf;
            int tmp_in = inbuf;
            int tmp_ox = ox;
@@ -946,7 +960,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
            id = -1;
            if (dx && dy)
              {
-                tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, EINA_TRUE);
+                tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, alpha);
                 if (!tmp) goto fail;
                 tmp_in = tmp_out = tmp->id;
                 tmp_ox = tmp_oy = 0;
@@ -986,20 +1000,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
       default:
         CRI("Not implemented yet!");
-        goto fail;
-     }
-
-   in = _filter_buffer_get(ctx, inbuf);
-   if (!in)
-     {
-        ERR("Buffer %d does not exist [input].", inbuf);
-        goto fail;
-     }
-
-   out = _filter_buffer_get(ctx, outbuf);
-   if (!out)
-     {
-        ERR("Buffer %d does not exist [output].", outbuf);
         goto fail;
      }
 

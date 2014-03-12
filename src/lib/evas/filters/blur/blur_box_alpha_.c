@@ -1,6 +1,7 @@
 /* @file blur_box_alpha_.c
- * Defines the following function:
- * _box_blur_alpha_step
+ * Defines the following functions:
+ * _box_blur_alpha_horiz_step
+ * _box_blur_alpha_vert_step
  */
 
 #include "evas_common_private.h"

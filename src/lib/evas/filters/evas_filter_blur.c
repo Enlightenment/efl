@@ -33,27 +33,21 @@ _box_blur_auto_radius(int *radii, int r)
      }
 }
 
-#define FUNCTION_NAME _box_blur_horiz_rgba_step
-#define STEP (sizeof(DATA32))
 #include "./blur/blur_box_rgba_.c"
 
 static void
-_box_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
+_box_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
-   _box_blur_horiz_rgba_step(src, dst, radius, w, h, w);
+   _box_blur_horiz_rgba_step(src, dst, radii, w, h);
    DEBUG_TIME_END();
 }
 
-#define FUNCTION_NAME _box_blur_vert_rgba_step
-#define STEP (loops * sizeof(DATA32))
-#include "./blur/blur_box_rgba_.c"
-
 static void
-_box_blur_vert_rgba(DATA32 *src, DATA32 *dst, int radius, int w, int h)
+_box_blur_vert_rgba(DATA32 *src, DATA32 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
-   _box_blur_vert_rgba_step(src, dst, radius, h, w, 1);
+   _box_blur_vert_rgba_step(src, dst, radii, h, w);
    DEBUG_TIME_END();
 }
 
@@ -61,6 +55,7 @@ static Eina_Bool
 _box_blur_horiz_apply_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   int radii[7] = {0};
    unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
@@ -71,11 +66,16 @@ _box_blur_horiz_apply_rgba(Evas_Filter_Command *cmd)
    in = cmd->input->backing;
    out = cmd->output->backing;
 
+   if (cmd->blur.auto_count)
+     _box_blur_auto_radius(radii, r);
+   else for (int k = 0; k < cmd->blur.count; k++)
+     radii[k] = r;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_horiz_rgba(in->image.data, out->image.data, r,
+   _box_blur_horiz_rgba(in->image.data, out->image.data, radii,
                         in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -85,6 +85,7 @@ static Eina_Bool
 _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   int radii[7] = {0};
    unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
@@ -95,11 +96,16 @@ _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
    in = cmd->input->backing;
    out = cmd->output->backing;
 
+   if (cmd->blur.auto_count)
+     _box_blur_auto_radius(radii, r);
+   else for (int k = 0; k < cmd->blur.count; k++)
+     radii[k] = r;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_vert_rgba(in->image.data, out->image.data, r,
+   _box_blur_vert_rgba(in->image.data, out->image.data, radii,
                        in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
