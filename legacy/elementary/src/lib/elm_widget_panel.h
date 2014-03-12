@@ -2,7 +2,6 @@
 #define ELM_WIDGET_PANEL_H
 
 #include "elm_widget_layout.h"
-#include "els_box.h"
 
 /**
  * @addtogroup Widget

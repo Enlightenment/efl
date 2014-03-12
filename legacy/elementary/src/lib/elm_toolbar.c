@@ -6,6 +6,7 @@
 
 #include "elm_priv.h"
 #include "elm_widget_toolbar.h"
+#include "els_box.h"
 
 EAPI Eo_Op ELM_OBJ_TOOLBAR_BASE_ID = EO_NOOP;
 

@@ -2,7 +2,6 @@
 #define ELM_WIDGET_TOOLBAR_H
 
 #include "elm_interface_scrollable.h"
-#include "els_box.h"
 
 /**
  * @addtogroup Widget

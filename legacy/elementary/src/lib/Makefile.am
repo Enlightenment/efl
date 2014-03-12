@@ -43,6 +43,7 @@ Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
+elm_gen_common.h \
 elm_interface_fileselector.h \
 elm_interface_scrollable.h \
 elm_widget.h \
@@ -392,7 +393,6 @@ elm_win_legacy.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
-elm_gen_common.h \
 elm_priv.h \
 els_box.h \
 elc_ctxpopup.c \

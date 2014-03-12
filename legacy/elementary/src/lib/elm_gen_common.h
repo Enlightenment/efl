@@ -3,7 +3,6 @@
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
-#include "elm_priv.h"
 
 #define ELM_GEN_ITEM_FROM_INLIST(it) \
   ((it) ? EINA_INLIST_CONTAINER_GET(it, Elm_Gen_Item) : NULL)
