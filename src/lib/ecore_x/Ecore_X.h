@@ -77,6 +77,12 @@ typedef unsigned int   Ecore_X_ID;
 #ifndef _ECORE_X_WINDOW_PREDEF
 typedef Ecore_X_ID     Ecore_X_Window;
 typedef Ecore_X_ID     Ecore_X_Pixmap;
+typedef Ecore_X_ID     Ecore_X_Atom;
+typedef struct _Ecore_X_Icon
+{
+   unsigned int  width, height;
+   unsigned int *data;
+} Ecore_X_Icon;
 #endif // ifndef _ECORE_X_WINDOW_PREDEF
 typedef void          *Ecore_X_Visual;
 typedef Ecore_X_ID     Ecore_X_Drawable;
@@ -85,7 +91,6 @@ typedef Ecore_X_ID     Ecore_X_GC;
 #else // ifdef HAVE_ECORE_X_XCB
 typedef void          *Ecore_X_GC;
 #endif /* HAVE_ECORE_X_XCB */
-typedef Ecore_X_ID     Ecore_X_Atom;
 typedef Ecore_X_ID     Ecore_X_Colormap;
 typedef Ecore_X_ID     Ecore_X_Time;
 typedef Ecore_X_ID     Ecore_X_Cursor;
@@ -114,12 +119,6 @@ typedef struct _Ecore_X_Rectangle
    int          x, y;
    unsigned int width, height;
 } Ecore_X_Rectangle;
-
-typedef struct _Ecore_X_Icon
-{
-   unsigned int  width, height;
-   unsigned int *data;
-} Ecore_X_Icon;
 
 typedef enum _Ecore_X_GC_Value_Mask
 {
