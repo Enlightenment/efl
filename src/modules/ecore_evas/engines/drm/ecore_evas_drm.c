@@ -246,7 +246,7 @@ _ecore_evas_drm_init(const char *device)
    /* try to find the device */
    if (!(dev = ecore_drm_device_find(device, NULL)))
      {
-        ERR("Could not find drm device with name: %s");
+        ERR("Could not find drm device with name: %s", device);
 
         /* try getting the default drm device */
         if (!(dev = ecore_drm_device_find(NULL, NULL)))
