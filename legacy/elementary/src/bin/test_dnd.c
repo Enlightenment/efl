@@ -46,7 +46,7 @@ static Ecore_Timer *_5s_timeout = NULL;
 static int
 _item_ptr_cmp(const void *d1, const void *d2)
 {
-   return (d1 - d2);
+   return ((const char *) d1 - (const char *) d2);
 }
 
 static Elm_Genlist_Item_Class *itc1;
