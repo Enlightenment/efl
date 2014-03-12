@@ -11,6 +11,12 @@
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
 typedef unsigned int Ecore_X_Pixmap;
+typedef unsigned int Ecore_X_Atom;
+typedef struct _Ecore_X_Icon 
+{
+   unsigned int width, height;
+   unsigned int *data;
+} Ecore_X_Icon;
 #endif
 
 #ifndef _ECORE_DIRECTFB_H
