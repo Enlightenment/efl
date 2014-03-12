@@ -414,13 +414,13 @@ _ecore_drm_output_repaint_start(Ecore_Drm_Output *output)
 {
    unsigned int fb;
 
-   DBG("Output Repaint Start");
+   /* DBG("Output Repaint Start"); */
 
    if (!output) return;
 
    if (!output->current)
      {
-        DBG("\tNo Current FB");
+        /* DBG("\tNo Current FB"); */
         goto finish;
      }
 
@@ -615,7 +615,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
 
    if (!output) return;
 
-   DBG("Output Repaint: %d %d", output->crtc_id, output->conn_id);
+   /* DBG("Output Repaint: %d %d", output->crtc_id, output->conn_id); */
 
    /* TODO: assign planes ? */
 
@@ -635,7 +635,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
 
    if (!output->next)
      {
-        DBG("\tNo Next Fb");
+        /* DBG("\tNo Next Fb"); */
         return;
      }
 
@@ -652,7 +652,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
                              &mode->info);
         if (ret)
           {
-             ERR("Setting output mode failed");
+             /* ERR("Setting output mode failed"); */
              goto err;
           }
      }
@@ -660,7 +660,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, output->next->id,
                        DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
      {
-        ERR("Scheduling pageflip failed");
+        /* ERR("Scheduling pageflip failed"); */
         goto err;
      }
 
