@@ -4,6 +4,35 @@
 #include <math.h>
 #include <time.h>
 
+static int
+_box_blur_auto_radius(int *radii, int r)
+{
+   if (r <= 2)
+     {
+        radii[0] = r;
+        radii[1] = 0;
+        WRN("Radius is too small for auto box blur: %d", r);
+        return 1;
+     }
+   else if (r <= 6)
+     {
+        radii[0] = r / 2;
+        radii[1] = r - radii[0] - 1;
+        radii[2] = 0;
+        DBG("Using auto radius for %d: %d %d", r, radii[0], radii[1]);
+        return 2;
+     }
+   else
+     {
+        radii[0] = (r + 3) / 3;
+        radii[1] = (r + 2) / 3;
+        radii[2] = r - radii[0] - radii[1];
+        radii[3] = 0;
+        DBG("Using auto radius for %d: %d %d %d", r, radii[0], radii[1], radii[2]);
+        return 3;
+     }
+}
+
 #define FUNCTION_NAME _box_blur_horiz_rgba_step
 #define STEP (sizeof(DATA32))
 #include "./blur/blur_box_rgba_.c"
@@ -76,27 +105,21 @@ _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
    return EINA_TRUE;
 }
 
-#define FUNCTION_NAME _box_blur_horiz_alpha_step
-#define STEP 1
 #include "./blur/blur_box_alpha_.c"
 
 static void
-_box_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
+_box_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
-   _box_blur_horiz_alpha_step(src, dst, radius, w, h, w);
+   _box_blur_alpha_horiz_step(src, dst, radii, w, h);
    DEBUG_TIME_END();
 }
 
-#define FUNCTION_NAME _box_blur_vert_alpha_step
-#define STEP loops
-#include "./blur/blur_box_alpha_.c"
-
 static void
-_box_blur_vert_alpha(DATA8 *src, DATA8 *dst, int radius, int w, int h)
+_box_blur_vert_alpha(DATA8 *src, DATA8 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
-   _box_blur_vert_alpha_step(src, dst, radius, h, w, 1);
+   _box_blur_alpha_vert_step(src, dst, radii, h, w);
    DEBUG_TIME_END();
 }
 
@@ -104,6 +127,7 @@ static Eina_Bool
 _box_blur_horiz_apply_alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   int radii[7] = {0};
    unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
@@ -114,11 +138,16 @@ _box_blur_horiz_apply_alpha(Evas_Filter_Command *cmd)
    in = cmd->input->backing;
    out = cmd->output->backing;
 
+   if (cmd->blur.auto_count)
+     _box_blur_auto_radius(radii, r);
+   else for (int k = 0; k < cmd->blur.count; k++)
+     radii[k] = r;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_horiz_alpha(in->image.data8, out->image.data8, r,
+   _box_blur_horiz_alpha(in->image.data8, out->image.data8, radii,
                          in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;
@@ -128,6 +157,7 @@ static Eina_Bool
 _box_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
 {
    RGBA_Image *in, *out;
+   int radii[7] = {0};
    unsigned int r;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
@@ -138,11 +168,16 @@ _box_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
    in = cmd->input->backing;
    out = cmd->output->backing;
 
+   if (cmd->blur.auto_count)
+     _box_blur_auto_radius(radii, r);
+   else for (int k = 0; k < cmd->blur.count; k++)
+     radii[k] = r;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
-   _box_blur_vert_alpha(in->image.data8, out->image.data8, r,
+   _box_blur_vert_alpha(in->image.data8, out->image.data8, radii,
                         in->cache_entry.w, in->cache_entry.h);
 
    return EINA_TRUE;

@@ -973,7 +973,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                 else
                   type = EVAS_FILTER_BLUR_BOX;
 
-                id = evas_filter_command_blur_add(ctx, drawctx, inbuf, tmp_in,
+                id = evas_filter_command_blur_add(ctx, drawctx, tmp_in, outbuf,
                                                   type, 0, dy, ox, oy, 0);
                 if (id < 0) goto fail;
                 cmd = _evas_filter_command_get(ctx, id);
