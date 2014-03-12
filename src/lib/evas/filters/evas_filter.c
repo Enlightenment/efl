@@ -1863,6 +1863,7 @@ _filter_chain_run(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
    Eina_Bool ok = EINA_FALSE;
+   void *buffer;
 
    DEBUG_TIME_BEGIN();
 
@@ -1882,6 +1883,13 @@ _filter_chain_run(Evas_Filter_Context *ctx)
 end:
    ctx->running = EINA_FALSE;
    DEBUG_TIME_END();
+
+   EINA_LIST_FREE(ctx->post_run.buffers_to_free, buffer)
+     {
+        if (ctx->gl_engine)
+          ENFN->image_free(ENDT, buffer);
+     }
+
    return ok;
 }
 
@@ -1890,15 +1898,8 @@ _filter_thread_run_cb(void *data)
 {
    Evas_Filter_Context *ctx = data;
    Eina_Bool success;
-   void *buffer;
 
    success = _filter_chain_run(ctx);
-
-   EINA_LIST_FREE(ctx->post_run.buffers_to_free, buffer)
-     {
-        if (ctx->gl_engine)
-          ENFN->image_free(ENDT, buffer);
-     }
 
    if (ctx->post_run.cb)
      ctx->post_run.cb(ctx, ctx->post_run.data, success);
@@ -1924,6 +1925,7 @@ evas_filter_run(Evas_Filter_Context *ctx)
      }
 
    ret = _filter_chain_run(ctx);
+
    if (ctx->post_run.cb)
      ctx->post_run.cb(ctx, ctx->post_run.data, ret);
    return ret;
