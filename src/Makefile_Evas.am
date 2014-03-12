@@ -25,7 +25,9 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_common_interface.eo.c \
                  lib/evas/canvas/evas_common_interface.eo.h \
                  lib/evas/canvas/evas_object.eo.c \
-                 lib/evas/canvas/evas_object.eo.h
+                 lib/evas/canvas/evas_object.eo.h \
+                 lib/evas/canvas/evas.eo.c \
+                 lib/evas/canvas/evas.eo.h
 
 EXTRA_DIST += \
               lib/evas/canvas/evas_object.eo \
@@ -39,7 +41,8 @@ EXTRA_DIST += \
               lib/evas/canvas/evas_smart.eo \
               lib/evas/canvas/evas_smart_clipped.eo \
               lib/evas/canvas/evas_table.eo \
-              lib/evas/canvas/evas_common_interface.eo
+              lib/evas/canvas/evas_common_interface.eo \
+              lib/evas/canvas/evas.eo
 
 lib_LTLIBRARIES += lib/evas/libevas.la
 noinst_LTLIBRARIES =
@@ -66,7 +69,8 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_smart_clipped.eo.h \
                                         lib/evas/canvas/evas_table.eo.h \
                                         lib/evas/canvas/evas_common_interface.eo.h \
-                                        lib/evas/canvas/evas_object.eo.h
+                                        lib/evas/canvas/evas_object.eo.h \
+                                        lib/evas/canvas/evas.eo.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \

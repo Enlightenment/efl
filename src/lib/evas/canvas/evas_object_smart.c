@@ -912,35 +912,16 @@ _evas_smart_calculate(Eo *eo_obj, Evas_Smart_Data *o)
    obj->smart.smart->smart_class->calculate(eo_obj);
 }
 
-EAPI void
-evas_smart_objects_calculate(Evas *eo_e)
-{
-   eo_do(eo_e, evas_canvas_smart_objects_calculate());
-}
-
-void
-_canvas_smart_objects_calculate(Eo *eo_e, void *o EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN void
+_evas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
 {
    evas_call_smarts_calculate(eo_e);
 }
 
-EAPI int
-evas_smart_objects_calculate_count_get(const Evas *eo_e)
+EOLIAN int
+_evas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return 0;
-   MAGIC_CHECK_END();
-   int ret = 0;
-   eo_do((Eo *)eo_e, evas_canvas_smart_objects_calculate_count_get(&ret));
-   return ret;
-}
-
-void
-_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *ret = va_arg(*list, int *);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->smart_calc_count;
+   return e->smart_calc_count;
 }
 
 /**

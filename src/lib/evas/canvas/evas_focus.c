@@ -52,22 +52,8 @@ _evas_object_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
    return obj->focused;
 }
 
-EAPI Evas_Object *
-evas_focus_get(const Evas *e)
+EOLIAN Evas_Object*
+_evas_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)e, evas_canvas_focus_get(&ret));
-   return ret;
+   return e->focused;
 }
-
-void
-_canvas_focus_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->focused;
-}
-

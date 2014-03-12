@@ -3024,33 +3024,16 @@ _image_animated_frame_set(Eo *eo_obj, void *_pd, va_list *list)
 
 }
 
-EAPI void
-evas_image_cache_flush(Evas *eo_e)
+EOLIAN void
+_evas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_image_cache_flush());
-}
-
-void
-_canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *e = _pd;
    evas_render_rendering_wait(e);
    e->engine.func->image_cache_flush(e->engine.data.output);
 }
 
-EAPI void
-evas_image_cache_reload(Evas *eo_e)
+EOLIAN void
+_evas_image_cache_reload(Eo *eo_e, Evas_Public_Data *e)
 {
-   eo_do(eo_e, evas_canvas_image_cache_reload());
-}
-
-void
-_canvas_image_cache_reload(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *e = _pd;
    Evas_Layer *layer;
 
    evas_image_cache_flush(eo_e);
@@ -3086,72 +3069,32 @@ _canvas_image_cache_reload(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
    evas_image_cache_flush(eo_e);
 }
 
-EAPI void
-evas_image_cache_set(Evas *eo_e, int size)
+EOLIAN void
+_evas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_image_cache_set(size));
-}
-
-void
-_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int size = va_arg(*list, int);
-   Evas_Public_Data *e = _pd;
    if (size < 0) size = 0;
    evas_render_rendering_wait(e);
    e->engine.func->image_cache_set(e->engine.data.output, size);
 }
 
-EAPI int
-evas_image_cache_get(const Evas *eo_e)
+EOLIAN int
+_evas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return 0;
-   MAGIC_CHECK_END();
-   int ret = 0;
-   eo_do((Eo *)eo_e, evas_canvas_image_cache_get(&ret));
-   return ret;
+   return e->engine.func->image_cache_get(e->engine.data.output);
 }
 
-void
-_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_evas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *maxw, int *maxh)
 {
-   int *ret = va_arg(*list, int *);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->engine.func->image_cache_get(e->engine.data.output);
-}
-
-EAPI Eina_Bool
-evas_image_max_size_get(const Evas *eo_e, int *maxw, int *maxh)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)eo_e, evas_canvas_image_max_size_get(maxw, maxh, &ret));
-   return ret;
-}
-
-void
-_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *maxw = va_arg(*list, int *);
-   int *maxh = va_arg(*list, int *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    int w = 0, h = 0;
 
-   const Evas_Public_Data *e = _pd;
    if (maxw) *maxw = 0xffff;
    if (maxh) *maxh = 0xffff;
-   if (!e->engine.func->image_max_size_get) return;
+   if (!e->engine.func->image_max_size_get) return EINA_FALSE;
    e->engine.func->image_max_size_get(e->engine.data.output, &w, &h);
    if (maxw) *maxw = w;
    if (maxh) *maxh = h;
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* all nice and private */

@@ -154,72 +154,32 @@ _accumulate_time(double before, struct accumulator *acc)
 }
 #endif
 
-EAPI void
-evas_damage_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
+EOLIAN void
+_evas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_damage_rectangle_add(x, y, w, h));
-}
-
-void
-_canvas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   int w = va_arg(*list, int);
-   int h = va_arg(*list, int);
-
    Eina_Rectangle *r;
 
-   Evas_Public_Data *e = _pd;
    NEW_RECT(r, x, y, w, h);
    if (!r) return;
    e->damages = eina_list_append(e->damages, r);
    e->changed = EINA_TRUE;
 }
 
-EAPI void
-evas_obscured_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
+EOLIAN void
+_evas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_obscured_rectangle_add(x, y, w, h));
-}
-
-void
-_canvas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   int w = va_arg(*list, int);
-   int h = va_arg(*list, int);
-
    Eina_Rectangle *r;
 
-   Evas_Public_Data *e = _pd;
    NEW_RECT(r, x, y, w, h);
    if (!r) return;
    e->obscures = eina_list_append(e->obscures, r);
 }
 
-EAPI void
-evas_obscured_clear(Evas *eo_e)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_obscured_clear());
-}
-
-void
-_canvas_obscured_clear(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN void
+_evas_obscured_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
 
-   Evas_Public_Data *e = _pd;
    EINA_LIST_FREE(e->obscures, r)
      {
         eina_rectangle_free(r);
@@ -2276,22 +2236,9 @@ evas_render_updates_free(Eina_List *updates)
       eina_rectangle_free(r);
 }
 
-EAPI Eina_Bool
-evas_render_async(Evas *eo_e)
+EOLIAN Eina_Bool
+_evas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(eo_e, evas_canvas_render_async(&ret));
-   return ret;
-}
-
-void
-_canvas_render_async(Eo *eo_e, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Evas_Public_Data *e = _pd;
    static int render_2 = -1;
 
    if (render_2 == -1)
@@ -2300,21 +2247,10 @@ _canvas_render_async(Eo *eo_e, void *_pd, va_list *list)
         else render_2 = 0;
      }
    if (render_2)
-     *ret = _evas_render2_begin(eo_e, EINA_TRUE, EINA_TRUE, EINA_TRUE);
+     return _evas_render2_begin(eo_e, EINA_TRUE, EINA_TRUE, EINA_TRUE);
    else
-     *ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
+     return evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
                                          e, EINA_TRUE);
-}
-
-EAPI Eina_List *
-evas_render_updates(Evas *eo_e)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Eina_List *ret = NULL;
-   eo_do(eo_e, evas_canvas_render_updates(&ret));
-   return ret;
 }
 
 static Eina_List *
@@ -2348,67 +2284,29 @@ evas_render_updates_internal_wait(Evas *eo_e,
 
    return ret;
 }
-
-void
-_canvas_render_updates(Eo *eo_e, void *_pd, va_list *list)
+EOLIAN Eina_List*
+_evas_render_updates(Eo *eo_e, Evas_Public_Data *e)
 {
-   Eina_List **ret = va_arg(*list, Eina_List **);
-
-   Evas_Public_Data *e = _pd;
-
-   if (!e->changed)
-     {
-        *ret = NULL;
-        return;
-     }
-   *ret = evas_render_updates_internal_wait(eo_e, 1, 1);
+   if (!e->changed) return NULL;
+   return evas_render_updates_internal_wait(eo_e, 1, 1);
 }
 
-EAPI void
-evas_render(Evas *eo_e)
+EOLIAN void
+_evas_render(Eo *eo_e, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_render());
-}
-
-void
-_canvas_render(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *e = _pd;
-
    if (!e->changed) return;
    evas_render_updates_internal_wait(eo_e, 0, 1);
 }
 
-EAPI void
-evas_norender(Evas *eo_e)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_norender());
-}
-
-void
-_canvas_norender(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN void
+_evas_norender(Eo *eo_e, Evas_Public_Data *_pd EINA_UNUSED)
 {
    //   if (!e->changed) return;
    evas_render_updates_internal_wait(eo_e, 0, 0);
 }
 
-EAPI void
-evas_render_idle_flush(Evas *eo_e)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_render_idle_flush());
-}
-
-void
-_canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN void
+_evas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
@@ -2423,7 +2321,6 @@ _canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
      }
    else
      {
-        Evas_Public_Data *e = _pd;
 
         evas_render_rendering_wait(e);
         
@@ -2446,16 +2343,9 @@ _canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
      }
 }
 
-EAPI void
-evas_sync(Evas *eo_e)
+EOLIAN void
+_evas_sync(Eo *eo_e, Evas_Public_Data *e)
 {
-   eo_do(eo_e, evas_canvas_sync());
-}
-
-void
-_canvas_sync(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    static int render_2 = -1;
 
    if (render_2 == -1)
@@ -2491,19 +2381,9 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
      }
 }
 
-EAPI void
-evas_render_dump(Evas *eo_e)
+EOLIAN void
+_evas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_render_dump());
-}
-
-void
-_canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *e = _pd;
    static int render_2 = -1;
 
    if (render_2 == -1)
@@ -2640,3 +2520,4 @@ evas_unref_queue_texts_put(Evas_Public_Data *pd, void *texts)
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+

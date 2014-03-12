@@ -24,25 +24,11 @@ _evas_object_name_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
    return obj->name;
 }
 
-EAPI Evas_Object *
-evas_object_name_find(const Evas *e, const char *name)
+EOLIAN Evas_Object*
+_evas_object_name_find(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)e, evas_canvas_object_name_find(name, &ret));
-   return ret;
-}
-
-void
-_canvas_object_name_find(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   const Evas_Public_Data *e = _pd;
-   if (!name) *ret = NULL;
-   else *ret = (Evas_Object *)eina_hash_find(e->name_hash, name);
+   if (!name) return NULL;
+   else return (Evas_Object *)eina_hash_find(e->name_hash, name);
 }
 
 static Evas_Object *

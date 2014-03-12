@@ -1579,29 +1579,11 @@ _evas_object_evas_common_interface_evas_get(Eo *eo_obj EINA_UNUSED, Evas_Object_
    return obj->layer->evas->evas;
 }
 
-EAPI Evas_Object *
-evas_object_top_at_xy_get(const Evas *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+EOLIAN Evas_Object*
+_evas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_object_top_at_xy_get(x, y, include_pass_events_objects, include_hidden_objects, &ret));
-   return ret;
-}
-
-void
-_canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Eina_Bool include_pass_events_objects = va_arg(*list, int);
-   Eina_Bool include_hidden_objects = va_arg(*list, int);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-
    Evas_Layer *lay;
    int xx, yy;
-   const Evas_Public_Data *e = _pd;
 
    xx = x;
    yy = y;
@@ -1622,14 +1604,10 @@ _canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
              if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
-                 (!obj->clip.clipees))
-               {
-                  *ret = eo_obj;
-                  return;
-               }
+                 (!obj->clip.clipees)) return eo_obj;
           }
      }
-   *ret = NULL;
+   return NULL;
 }
 
 EAPI Evas_Object *
@@ -1643,29 +1621,9 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
    return ret;
 }
 
-EAPI Evas_Object *
-evas_object_top_in_rectangle_get(const Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+EOLIAN Evas_Object*
+_evas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_object_top_in_rectangle_get(x, y, w, h, include_pass_events_objects, include_hidden_objects, &ret));
-   return ret;
-}
-
-void
-_canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Eina_Bool include_pass_events_objects = va_arg(*list, int);
-   Eina_Bool include_hidden_objects = va_arg(*list, int);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-
-   const Evas_Public_Data *e = _pd;
    Evas_Layer *lay;
    int xx, yy, ww, hh;
 
@@ -1694,41 +1652,19 @@ _canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *li
              if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
-                 (!obj->clip.clipees))
-               {
-                  *ret = eo_obj;
-                  return;
-               }
+                 (!obj->clip.clipees)) return eo_obj;
           }
      }
-   *ret = NULL;
-}
-
-EAPI Eina_List *
-evas_objects_at_xy_get(const Evas *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
-   MAGIC_CHECK_END();
-   Eina_List *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_objects_at_xy_get(x, y, include_pass_events_objects, include_hidden_objects, &ret));
-   return ret;
 }
 
-void
-_canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_List*
+_evas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Eina_Bool include_pass_events_objects = va_arg(*list, int);
-   Eina_Bool include_hidden_objects = va_arg(*list, int);
-   Eina_List **ret = va_arg(*list, Eina_List **);
-
    Eina_List *in = NULL;
    Evas_Layer *lay;
    int xx, yy;
 
-   const Evas_Public_Data *e = _pd;
    xx = x;
    yy = y;
 ////   xx = evas_coord_world_x_to_screen(eo_e, x);
@@ -1753,7 +1689,7 @@ _canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
                in = eina_list_prepend(in, eo_obj);
           }
      }
-   *ret = in;
+   return in;
 }
 
 /**
@@ -1768,33 +1704,13 @@ _canvas_objects_at_xy_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
  * @return  The list of evas object in the rectangle region.
  *
  */
-EAPI Eina_List *
-evas_objects_in_rectangle_get(const Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+EOLIAN Eina_List*
+_evas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Eina_List *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_objects_in_rectangle_get(x, y, w, h, include_pass_events_objects, include_hidden_objects, &ret));
-   return ret;
-}
-
-void
-_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Eina_Bool include_pass_events_objects = va_arg(*list, int);
-   Eina_Bool include_hidden_objects = va_arg(*list, int);
-   Eina_List **ret = va_arg(*list, Eina_List **);
-
    Eina_List *in = NULL;
    Evas_Layer *lay;
    int xx, yy, ww, hh;
 
-   const Evas_Public_Data *e = _pd;
    xx = x;
    yy = y;
    ww = w;
@@ -1825,7 +1741,7 @@ _canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
                in = eina_list_prepend(in, eo_obj);
           }
      }
-   *ret = in;
+   return in;
 }
 
 EOLIAN static const char *
@@ -1923,3 +1839,4 @@ _evas_object_smart_type_check_ptr(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
 }
 
 #include "canvas/evas_object.eo.c"
+

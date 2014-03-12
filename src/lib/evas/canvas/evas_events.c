@@ -881,26 +881,10 @@ _evas_event_objects_event_list_no_frozen_check(Evas *eo_e, Evas_Object *stop, in
    return in;
 }
 
-EAPI Eina_List *
-evas_tree_objects_at_xy_get(Evas *eo_e, Evas_Object *stop, int x, int y)
+EOLIAN Eina_List*
+_evas_tree_objects_at_xy_get(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED, Evas_Object *stop, int x, int y)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Eina_List *list = NULL;
-   eo_do(eo_e, evas_canvas_tree_objects_at_xy_get(stop, x, y, &list));
-   return list;
-}
-
-void
-_canvas_tree_objects_at_xy_get(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list)
-{
-   Evas_Object *stop = va_arg(*list, Evas_Object *);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   Eina_List **in = va_arg(*list, Eina_List **);
-
-   *in = _evas_event_objects_event_list_no_frozen_check(eo_e, stop, x, y);
+   return _evas_event_objects_event_list_no_frozen_check(eo_e, stop, x, y);
 }
 
 Eina_List *
@@ -924,40 +908,16 @@ evas_event_list_copy(Eina_List *list)
 }
 /* public functions */
 
-EAPI void
-evas_event_default_flags_set(Evas *eo_e, Evas_Event_Flags flags)
+EOLIAN void
+_evas_event_default_flags_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Event_Flags flags)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_event_default_flags_set(flags));
-}
-
-void
-_canvas_event_default_flags_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Event_Flags flags = va_arg(*list, Evas_Event_Flags);
-   Evas_Public_Data *e = _pd;
    e->default_event_flags = flags;
 }
 
-EAPI Evas_Event_Flags
-evas_event_default_flags_get(const Evas *eo_e)
+EOLIAN Evas_Event_Flags
+_evas_event_default_flags_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return EVAS_EVENT_FLAG_ON_HOLD;
-   MAGIC_CHECK_END();
-   Evas_Event_Flags flags = EVAS_EVENT_FLAG_ON_HOLD;
-   eo_do((Eo *)eo_e, evas_canvas_event_default_flags_get(&flags));
-   return flags;
-}
-
-void
-_canvas_event_default_flags_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Event_Flags *ret = va_arg(*list, Evas_Event_Flags *);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->default_event_flags;
+   return e->default_event_flags;
 }
 
 static inline void
@@ -1045,24 +1005,9 @@ evas_event_thaw_eval(Evas *eo_e)
      }
 }
 
-EAPI void
-evas_event_feed_mouse_down(Evas *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_mouse_down(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_event_feed_mouse_down(b, flags, timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_down(Eo *eo_e, void *_pd, va_list *list)
-{
-   int b = va_arg(*list, int);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
    Evas_Event_Mouse_Down ev;
    Evas_Object *eo_obj;
@@ -1282,25 +1227,9 @@ _post_up_handle(Evas *eo_e, unsigned int timestamp, const void *data)
    return post_called;
 }
 
-EAPI void
-evas_event_feed_mouse_up(Evas *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_mouse_up(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_mouse_up(b, flags, timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_up(Eo *eo_e, void *_pd, va_list *list)
-{
-   int b = va_arg(*list, int);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
 
    INF("ButtonEvent:up time=%u x=%d y=%d button=%d downs=%d", timestamp, e->pointer.x, e->pointer.y, b, e->pointer.downs);
@@ -1395,23 +1324,9 @@ _canvas_event_feed_mouse_up(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_mouse_cancel(Evas *eo_e, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_mouse_cancel(Eo *eo_e, Evas_Public_Data *e, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_mouse_cancel(timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_cancel(Eo *eo_e, void *_pd, va_list *list)
-{
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Evas_Coord_Touch_Point *point;
    Eina_List *l, *ll;
    int i;
@@ -1434,25 +1349,9 @@ _canvas_event_feed_mouse_cancel(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_mouse_wheel(Evas *eo_e, int direction, int z, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_mouse_wheel(Eo *eo_e, Evas_Public_Data *e, int direction, int z, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_mouse_wheel(direction, z, timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_wheel(Eo *eo_e, void *_pd, va_list *list)
-{
-   int direction = va_arg(*list, int);
-   int z = va_arg(*list, int);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
    Evas_Event_Mouse_Wheel ev;
    Evas_Object *eo_obj;
@@ -2000,66 +1899,22 @@ nogrep:
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_input_mouse_move(Evas *eo_e, int x, int y, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_input_mouse_move(Eo *eo_e, Evas_Public_Data *e, int x, int y, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_input_mouse_move(x, y, timestamp, data));
+   _canvas_event_feed_mouse_move_internal(eo_e, e, x - e->framespace.x, y - e->framespace.y, timestamp, data);
 }
 
-void
-_canvas_event_input_mouse_move(Eo *eo_e, void *_pd, va_list *list)
+EOLIAN void
+_evas_event_feed_mouse_move(Eo *eo_e, Evas_Public_Data *e, int x, int y, unsigned int timestamp, const void *data)
 {
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-   Evas_Public_Data *e = _pd;
-
-   _canvas_event_feed_mouse_move_internal(eo_e, _pd, x - e->framespace.x, y - e->framespace.y, timestamp, data);
+   _canvas_event_feed_mouse_move_internal(eo_e, e, x, y, timestamp, data);
 }
 
-EAPI void
-evas_event_feed_mouse_move(Evas *eo_e, int x, int y, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_mouse_in(Eo *eo_e, Evas_Public_Data *e, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_feed_mouse_move(x, y, timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_move(Eo *eo_e, void *_pd, va_list *list)
-{
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   _canvas_event_feed_mouse_move_internal(eo_e, _pd, x, y, timestamp, data);
-}
-
-EAPI void
-evas_event_feed_mouse_in(Evas *eo_e, unsigned int timestamp, const void *data)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   eo_do(eo_e, evas_canvas_event_feed_mouse_in(timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_in(Eo *eo_e, void *_pd, va_list *list)
-{
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Eina_List *ins;
    Eina_List *l;
    Evas_Event_Mouse_In ev;
@@ -2121,23 +1976,10 @@ _canvas_event_feed_mouse_in(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_mouse_out(Evas *eo_e, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_mouse_out(Eo *eo_e, Evas_Public_Data *e, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_feed_mouse_out(timestamp, data));
-}
-
-void
-_canvas_event_feed_mouse_out(Eo *eo_e, void *_pd, va_list *list)
-{
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Evas_Event_Mouse_Out ev;
    int event_id = 0;
 
@@ -2289,83 +2131,22 @@ _canvas_event_feed_multi_down_internal(Evas *eo_e, void *_pd,
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_input_multi_down(Evas *eo_e,
-                           int d, int x, int y,
-                           double rad, double radx, double rady,
-                           double pres, double ang,
-                           double fx, double fy,
-                           Evas_Button_Flags flags, unsigned int timestamp,
-                           const void *data)
+EOLIAN void
+_evas_event_input_multi_down(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_input_multi_down(d, x, y, rad, radx, rady,
-                                                  pres, ang, fx, fy, flags,
-                                                  timestamp, data));
-}
-
-void
-_canvas_event_input_multi_down(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-   Evas_Public_Data *e = _pd;
-
-   _canvas_event_feed_multi_down_internal(eo_e, _pd, d,
+   _canvas_event_feed_multi_down_internal(eo_e, e, d,
                                           x - e->framespace.x,
                                           y - e->framespace.y,
                                           rad, radx, rady, pres, ang,
                                           fx, fy, flags, timestamp, data);
 }
 
-EAPI void
-evas_event_feed_multi_down(Evas *eo_e,
-                           int d, int x, int y,
-                           double rad, double radx, double rady,
-                           double pres, double ang,
-                           double fx, double fy,
-                           Evas_Button_Flags flags, unsigned int timestamp,
-                           const void *data)
+EOLIAN void
+_evas_event_feed_multi_down(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_feed_multi_down(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data));
-}
-
-void
-_canvas_event_feed_multi_down(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   _canvas_event_feed_multi_down_internal(eo_e, _pd,
+   _canvas_event_feed_multi_down_internal(eo_e, e,
                                           d, x, y, rad, radx, rady, pres, ang,
                                           fx, fy, flags, timestamp, data);
 }
@@ -2453,43 +2234,11 @@ _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_input_multi_up(Evas *eo_e,
-                         int d, int x, int y,
-                         double rad, double radx, double rady,
-                         double pres, double ang,
-                         double fx, double fy,
-                         Evas_Button_Flags flags, unsigned int timestamp,
-                         const void *data)
+EOLIAN void
+_evas_event_input_multi_up(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_input_multi_up(d, x, y, rad, radx, rady, pres,
-                                                ang, fx, fy, flags, timestamp,
-                                                data));
-}
-
-void
-_canvas_event_input_multi_up(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-   Evas_Public_Data *e = _pd;
-
-   _canvas_event_feed_multi_up_internal(eo_e, _pd, d,
+   _canvas_event_feed_multi_up_internal(eo_e, e, d,
                                         x - e->framespace.x,
                                         y - e->framespace.y,
                                         rad, radx, rady,
@@ -2497,40 +2246,11 @@ _canvas_event_input_multi_up(Eo *eo_e, void *_pd, va_list *list)
                                         data);
 }
 
-EAPI void
-evas_event_feed_multi_up(Evas *eo_e,
-                         int d, int x, int y,
-                         double rad, double radx, double rady,
-                         double pres, double ang,
-                         double fx, double fy,
-                         Evas_Button_Flags flags, unsigned int timestamp,
-                         const void *data)
+EOLIAN void
+_evas_event_feed_multi_up(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_feed_multi_up(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data));
-}
-
-void
-_canvas_event_feed_multi_up(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   Evas_Button_Flags flags = va_arg(*list, Evas_Button_Flags);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   _canvas_event_feed_multi_up_internal(eo_e, _pd, d, x, y, rad, radx, rady,
+   _canvas_event_feed_multi_up_internal(eo_e, e, d, x, y, rad, radx, rady,
                                         pres, ang, fx, fy, flags, timestamp, data);
 }
 
@@ -2706,104 +2426,29 @@ _canvas_event_feed_multi_move_internal(Eo *eo_e, void *_pd, int d, int x,
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_input_multi_move(Evas *eo_e,
-                           int d, int x, int y,
-                           double rad, double radx, double rady,
-                           double pres, double ang,
-                           double fx, double fy,
-                           unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_input_multi_move(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_input_multi_move(d, x, y, rad, radx, rady,
-                                                  pres, ang, fx, fy, timestamp,
-                                                  data));
-}
-
-void
-_canvas_event_input_multi_move(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-   Evas_Public_Data *e = _pd;
-
-   _canvas_event_feed_multi_move_internal(eo_e, _pd, d,
+   _canvas_event_feed_multi_move_internal(eo_e, e, d,
                                           x - e->framespace.x, y - e->framespace.y,
                                           rad, radx, rady,
                                           pres, ang, fx, fy, timestamp, data);
 }
 
-EAPI void
-evas_event_feed_multi_move(Evas *eo_e,
-                           int d, int x, int y,
-                           double rad, double radx, double rady,
-                           double pres, double ang,
-                           double fx, double fy,
-                           unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_multi_move(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
 
-   eo_do(eo_e, evas_canvas_event_feed_multi_move(d, x, y, rad, radx, rady,
-                                                 pres, ang, fx, fy, timestamp,
-                                                 data));
-}
-
-void
-_canvas_event_feed_multi_move(Eo *eo_e, void *_pd, va_list *list)
-{
-   int d = va_arg(*list, int);
-   int x = va_arg(*list, int);
-   int y = va_arg(*list, int);
-   double rad = va_arg(*list, double);
-   double radx = va_arg(*list, double);
-   double rady = va_arg(*list, double);
-   double pres = va_arg(*list, double);
-   double ang = va_arg(*list, double);
-   double fx = va_arg(*list, double);
-   double fy = va_arg(*list, double);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   _canvas_event_feed_multi_move_internal(eo_e, _pd, d, x, y, rad, radx, rady,
+   _canvas_event_feed_multi_move_internal(eo_e, e, d, x, y, rad, radx, rady,
                                           pres, ang, fx, fy, timestamp, data);
 }
 
-EAPI void
-evas_event_feed_key_down(Evas *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_key_down(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_event_feed_key_down(keyname, key, string, compose, timestamp, data));
-}
-
-void
-_canvas_event_feed_key_down(Eo *eo_e, void *_pd, va_list *list)
-{
-   const char *keyname = va_arg(*list, const char *);
-   const char *key = va_arg(*list, const char *);
-   const char *string = va_arg(*list, const char *);
-   const char *compose = va_arg(*list, const char *);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
 
    int event_id = 0;
-   Evas_Public_Data *e = _pd;
 
    if (!keyname) return;
    if (e->is_frozen) return;
@@ -2896,27 +2541,11 @@ _canvas_event_feed_key_down(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_key_up(Evas *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_key_up(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_event_feed_key_up(keyname, key, string, compose, timestamp, data));
-}
-
-void
-_canvas_event_feed_key_up(Eo *eo_e, void *_pd, va_list *list)
-{
-   const char *keyname = va_arg(*list, const char *);
-   const char *key = va_arg(*list, const char *);
-   const char *string = va_arg(*list, const char *);
-   const char *compose = va_arg(*list, const char *);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
 
    int event_id = 0;
-   Evas_Public_Data *e = _pd;
    if (!keyname) return;
    if (e->is_frozen) return;
    e->last_timestamp = timestamp;
@@ -3009,20 +2638,10 @@ _canvas_event_feed_key_up(Eo *eo_e, void *_pd, va_list *list)
    _evas_unwalk(e);
 }
 
-EAPI void
-evas_event_feed_hold(Evas *eo_e, int hold, unsigned int timestamp, const void *data)
+EOLIAN void
+_evas_event_feed_hold(Eo *eo_e, Evas_Public_Data *e, int hold, unsigned int timestamp, const void *data)
 {
-   eo_do(eo_e, evas_canvas_event_feed_hold(hold, timestamp, data));
-}
 
-void
-_canvas_event_feed_hold(Eo *eo_e, void *_pd, va_list *list)
-{
-   int hold = va_arg(*list, int);
-   unsigned int timestamp = va_arg(*list, unsigned int);
-   const void *data = va_arg(*list, const void *);
-
-   Evas_Public_Data *e = _pd;
    Eina_List *l, *copy;
    Evas_Event_Hold ev;
    Evas_Object *eo_obj;
@@ -3153,17 +2772,9 @@ _evas_object_pointer_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data
    return obj->pointer_mode;
 }
 
-EAPI void
-evas_event_refeed_event(Evas *eo_e, void *event_copy, Evas_Callback_Type event_type)
+EOLIAN void
+_evas_event_refeed_event(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED, void *event_copy, Evas_Callback_Type event_type)
 {
-   eo_do(eo_e, evas_canvas_event_refeed_event(event_copy, event_type));
-}
-
-void
-_canvas_event_refeed_event(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list)
-{
-   void *event_copy = va_arg(*list, void *);
-   Evas_Callback_Type event_type = va_arg(*list, Evas_Callback_Type);
 
    if (!event_copy) return;
 
@@ -3240,22 +2851,9 @@ _canvas_event_refeed_event(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list)
      }
 }
 
-EAPI int
-evas_event_down_count_get(const Evas *eo_e)
+EOLIAN int
+_evas_event_down_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return 0;
-   MAGIC_CHECK_END();
-   int ret = 0;
-   eo_do((Eo *)eo_e, evas_canvas_event_down_count_get(&ret));
-   return ret;
-}
-
-void
-_canvas_event_down_count_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *ret = va_arg(*list, int *);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->pointer.downs;
+   return e->pointer.downs;
 }
 

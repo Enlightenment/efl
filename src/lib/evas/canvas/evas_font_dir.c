@@ -1317,19 +1317,9 @@ evas_object_text_font_string_parse(char *buffer, char dest[14][256])
    return n;
 }
 
-EAPI void
-evas_font_path_clear(Evas *eo_e)
+EOLIAN void
+_evas_font_path_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *evas)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_font_path_clear());
-}
-
-void
-_canvas_font_path_clear(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *evas = _pd;
    while (evas->font_path)
      {
 	eina_stringshare_del(evas->font_path->data);
@@ -1337,63 +1327,28 @@ _canvas_font_path_clear(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUS
      }
 }
 
-EAPI void
-evas_font_path_append(Evas *eo_e, const char *path)
+EOLIAN void
+_evas_font_path_append(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_font_path_append(path));
-}
-
-void
-_canvas_font_path_append(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *path = va_arg(*list, const char *);
-   Evas_Public_Data *e = _pd;
    if (!path) return;
    e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
 
    evas_font_init();
 }
 
-EAPI void
-evas_font_path_prepend(Evas *eo_e, const char *path)
+EOLIAN void
+_evas_font_path_prepend(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_font_path_prepend(path));
-}
-
-void
-_canvas_font_path_prepend(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *path = va_arg(*list, const char *);
-   Evas_Public_Data *e = _pd;
    if (!path) return;
    e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
 
    evas_font_init();
 }
 
-EAPI const Eina_List *
-evas_font_path_list(const Evas *eo_e)
+EOLIAN const Eina_List*
+_evas_font_path_list(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   const Eina_List *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_font_path_list(&ret));
-   return ret;
-}
-
-void
-_canvas_font_path_list(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->font_path;
+   return e->font_path;
 }
 
 EAPI void
@@ -1456,22 +1411,11 @@ evas_font_object_rehint(Evas_Object *eo_obj)
      }
 }
 
-EAPI void
-evas_font_hinting_set(Evas *eo_e, Evas_Font_Hinting_Flags hinting)
+EOLIAN void
+_evas_font_hinting_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Font_Hinting_Flags hinting)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_font_hinting_set(hinting));
-}
-
-void
-_canvas_font_hinting_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Font_Hinting_Flags hinting = va_arg(*list, Evas_Font_Hinting_Flags);
    Evas_Layer *lay;
 
-   Evas_Public_Data *e = _pd;
    if (e->hinting == hinting) return;
    e->hinting = hinting;
 
@@ -1484,119 +1428,47 @@ _canvas_font_hinting_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Evas_Font_Hinting_Flags
-evas_font_hinting_get(const Evas *eo_e)
+EOLIAN Evas_Font_Hinting_Flags
+_evas_font_hinting_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return EVAS_FONT_HINTING_BYTECODE;
-   MAGIC_CHECK_END();
-   Evas_Font_Hinting_Flags ret = EVAS_FONT_HINTING_BYTECODE;
-   eo_do((Eo *)eo_e, evas_canvas_font_hinting_get(&ret));
-   return ret;
+   return e->hinting;
 }
 
-void
-_canvas_font_hinting_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_evas_font_hinting_can_hint(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Font_Hinting_Flags hinting)
 {
-   Evas_Font_Hinting_Flags *ret = va_arg(*list, Evas_Font_Hinting_Flags *);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->hinting;
-}
-
-EAPI Eina_Bool
-evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return 0;
-   MAGIC_CHECK_END();
-   Eina_Bool ret = 0;
-   eo_do((Eo *)eo_e, evas_canvas_font_hinting_can_hint(hinting, &ret));
-   return ret;
-}
-
-void
-_canvas_font_hinting_can_hint(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Font_Hinting_Flags hinting = va_arg(*list, Evas_Font_Hinting_Flags);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Evas_Public_Data *e = _pd;
    if (e->engine.func->font_hinting_can_hint)
-     *ret = e->engine.func->font_hinting_can_hint(e->engine.data.output,
+     return e->engine.func->font_hinting_can_hint(e->engine.data.output,
 						  hinting);
-   else *ret = EINA_FALSE;
+   else return EINA_FALSE;
 }
 
-EAPI void
-evas_font_cache_flush(Evas *eo_e)
+EOLIAN void
+_evas_font_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_font_cache_flush());
-}
-
-void
-_canvas_font_cache_flush(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Evas_Public_Data *e = _pd;
    evas_render_rendering_wait(e);
    e->engine.func->font_cache_flush(e->engine.data.output);
 }
 
-EAPI void
-evas_font_cache_set(Evas *eo_e, int size)
+EOLIAN void
+_evas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-   eo_do(eo_e, evas_canvas_font_cache_set(size));
-}
-
-void
-_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   int size = va_arg(*list, int);
-   Evas_Public_Data *e = _pd;
    if (size < 0) size = 0;
    evas_render_rendering_wait(e);
    e->engine.func->font_cache_set(e->engine.data.output, size);
 }
 
-EAPI int
-evas_font_cache_get(const Evas *eo_e)
+EOLIAN int
+_evas_font_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return 0;
-   MAGIC_CHECK_END();
-   int ret = 0;
-   eo_do((Eo *)eo_e, evas_canvas_font_cache_get(&ret));
-   return ret;
+   return e->engine.func->font_cache_get(e->engine.data.output);
+
 }
 
-void
-_canvas_font_cache_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_List*
+_evas_font_available_list(Eo *eo_e, Evas_Public_Data *_pd EINA_UNUSED)
 {
-   int *ret = va_arg(*list, int *);
-   const Evas_Public_Data *e = _pd;
-   *ret = e->engine.func->font_cache_get(e->engine.data.output);
-}
-
-EAPI Eina_List *
-evas_font_available_list(const Evas *eo_e)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Eina_List *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_font_available_list(&ret));
-   return ret;
-}
-
-void
-_canvas_font_available_list(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_List **ret = va_arg(*list, Eina_List **);
-   *ret = evas_font_dir_available_list(eo_e);
+   return evas_font_dir_available_list(eo_e);
 }
 
 EAPI void

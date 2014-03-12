@@ -154,6 +154,10 @@ const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
 #define EVAS_SMART_SELECTABLE_INTERFACE evas_smart_selectable_interface_get()
 #define EVAS_SMART_DRAGGABLE_INTERFACE evas_smart_draggable_interface_get()
 
+#include "canvas/evas.eo.h"
+#define EVAS_CLASS EVAS_CANVAS_CLASS
+
+#if 0
 #define EVAS_CLASS evas_class_get()
 
 const Eo_Class *evas_class_get(void) EINA_CONST;
@@ -1781,6 +1785,7 @@ enum
  * @}
  */
 
+#endif
 /**
  * @ingroup Evas_Object_Rectangle
  *

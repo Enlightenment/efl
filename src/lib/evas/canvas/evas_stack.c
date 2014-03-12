@@ -326,22 +326,9 @@ _evas_object_below_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
    return NULL;
 }
 
-EAPI Evas_Object *
-evas_object_bottom_get(const Evas *e)
+EOLIAN Evas_Object*
+_evas_object_bottom_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)e, evas_canvas_object_bottom_get(&ret));
-   return ret;
-}
-
-void
-_canvas_object_bottom_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   const Evas_Public_Data *e = _pd;
    if (e->layers)
      {
         Evas_Object_Protected_Data *obj;
@@ -349,60 +336,38 @@ _canvas_object_bottom_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
         obj = e->layers->objects;
         while (obj)
           {
-             if (!obj->delete_me)
-               {
-                  *ret = obj->object;
-                  return;
-               }
+             if (!obj->delete_me) return obj->object;
              obj = evas_object_above_get_internal(obj);
           }
      }
-   *ret = NULL;
-}
-
-EAPI Evas_Object *
-evas_object_top_get(const Evas *eo_e)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
-   MAGIC_CHECK_END();
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)eo_e, evas_canvas_object_top_get(&ret));
-   return ret;
 }
 
-void
-_canvas_object_top_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *params_list)
+EOLIAN Evas_Object*
+_evas_object_top_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   Evas_Object **ret = va_arg(*params_list, Evas_Object **);
-   *ret = NULL;
    Evas_Object_Protected_Data *obj = NULL;
    Eina_Inlist *list;
    Evas_Layer *layer;
 
-   const Evas_Public_Data *e = _pd;
    list = EINA_INLIST_GET(e->layers);
-   if (!list) return;
+   if (!list) return NULL;
 
    layer = (Evas_Layer *) list->last;
-   if (!layer) return;
+   if (!layer) return NULL;
 
    list = EINA_INLIST_GET(layer->objects);
-   if (!list) return;
+   if (!list) return NULL;
 
    obj = (Evas_Object_Protected_Data *) list->last;
-   if (!obj) return;
+   if (!obj) return NULL;
 
    while (obj)
      {
-        if (!obj->delete_me)
-          {
-             *ret = obj->object;
-             return;
-          }
+        if (!obj->delete_me) return obj->object;
         obj = evas_object_below_get_internal(obj);
      }
 
-   *ret = obj->object;
+   return obj->object;
 }
 
