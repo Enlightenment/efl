@@ -1716,6 +1716,7 @@ if BUILD_LOADER_TGV
 if EVAS_STATIC_BUILD_TGV
 lib_evas_libevas_la_SOURCES += \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
+modules/evas/savers/tgv/evas_image_save_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc1.h \
 static_libs/lz4/lz4.c \
@@ -1762,6 +1763,28 @@ modules_evas_loaders_tgv_module_la_LIBADD = \
 modules_evas_loaders_tgv_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_loaders_tgv_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_loaders_tgv_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+savertgvpkgdir = $(libdir)/evas/modules/savers/tgv/$(MODULE_ARCH)
+savertgvpkg_LTLIBRARIES = modules/evas/savers/tgv/module.la
+modules_evas_savers_tgv_module_la_SOURCES = \
+modules/evas/savers/tgv/evas_image_load_tgv.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h
+modules_evas_savers_tgv_module_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/static_libs/lz4 \
+-I$(top_srcdir)/src/static_libs/rg_etc \
+-I$(top_srcdir)/src/lib/evas/ \
+@EVAS_CFLAGS@ \
+@evas_image_saver_tgv_cflags@
+modules_evas_savers_tgv_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_image_saver_tgv_libs@
+modules_evas_savers_tgv_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_savers_tgv_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_savers_tgv_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
