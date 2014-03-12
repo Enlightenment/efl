@@ -5641,6 +5641,9 @@ enum
 const Eo_Class *evas_object_class_get(void) EINA_CONST;
 #endif
 
+#include"canvas/evas_image.eo.h"
+
+#if 0
 #define EVAS_OBJ_IMAGE_CLASS evas_object_image_class_get()
 const Eo_Class *evas_object_image_class_get(void) EINA_CONST;
 
@@ -6671,6 +6674,7 @@ enum
  */
 #define evas_obj_image_animated_frame_set(frame_index) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET), EO_TYPECHECK(int, frame_index)
 
+#endif
 /**
  * @}
  */
