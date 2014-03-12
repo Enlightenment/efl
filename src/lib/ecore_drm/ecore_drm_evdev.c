@@ -531,11 +531,7 @@ static void
 _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
 {
    /* ignore key repeat */
-   if (event->value == 2)
-     {
-        DBG("\tKey Repeat");
-        return;
-     }
+   if (event->value == 2) return;
 
    if (event->code == BTN_TOUCH)
      {
