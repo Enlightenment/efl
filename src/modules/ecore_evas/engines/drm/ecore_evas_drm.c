@@ -156,6 +156,8 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
    /* set some engine properties */
    ee->driver = "drm";
    if (device) ee->name = strdup(device);
+   else
+     ee->name = strdup(ecore_drm_device_name_get(dev));
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
