@@ -28,7 +28,7 @@ struct _Ecore_Evas_Engine_Data_Drm
 };
 
 /* local function prototypes */
-static int _ecore_evas_drm_init(void);
+static int _ecore_evas_drm_init(const char *device);
 static int _ecore_evas_drm_shutdown(void);
 static Ecore_Evas_Interface_Drm *_ecore_evas_drm_interface_new(void);
 
@@ -137,7 +137,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
      }
 
    /* try to init drm */
-   if (_ecore_evas_drm_init() < 1) return NULL;
+   if (_ecore_evas_drm_init(device) < 1) return NULL;
 
    /* try to allocate space for new ecore_evas */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
@@ -232,7 +232,7 @@ ee_err:
 
 /* local functions */
 static int 
-_ecore_evas_drm_init(void)
+_ecore_evas_drm_init(const char *device)
 {
    if (++_ecore_evas_init_count != 1) return _ecore_evas_init_count;
 
@@ -244,10 +244,13 @@ _ecore_evas_drm_init(void)
      }
 
    /* try to find the device */
-   if (!(dev = ecore_drm_device_find(NULL, NULL)))
+   if (!(dev = ecore_drm_device_find(device, NULL)))
      {
-        ERR("Could not find default drm device");
-        goto dev_err;
+        ERR("Could not find drm device with name: %s");
+
+        /* try getting the default drm device */
+        if (!(dev = ecore_drm_device_find(NULL, NULL)))
+          goto dev_err;
      }
 
    /* try to open the graphics card */
