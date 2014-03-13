@@ -1,0 +1,9 @@
+interface Evas_Zoomable_Interface (Evas_Signal_Interface)
+{
+   data: null;
+   events {
+      zoom,start;
+      zoom,stop;
+      zoom,changed;
+   }
+}

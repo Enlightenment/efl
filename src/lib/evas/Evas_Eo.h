@@ -86,9 +86,9 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
 //EAPI extern const Eo_Event_Description _SCROLL_ANIM_STOP_EVENT;
 //EAPI extern const Eo_Event_Description _SCROLL_DRAG_START_EVENT;
 //EAPI extern const Eo_Event_Description _SCROLL_DRAG_STOP_EVENT;
-EAPI extern const Eo_Event_Description _ZOOM_START_EVENT;
-EAPI extern const Eo_Event_Description _ZOOM_STOP_EVENT;
-EAPI extern const Eo_Event_Description _ZOOM_CHANGE_EVENT;
+//EAPI extern const Eo_Event_Description _ZOOM_START_EVENT;
+//EAPI extern const Eo_Event_Description _ZOOM_STOP_EVENT;
+//EAPI extern const Eo_Event_Description _ZOOM_CHANGE_EVENT;
 //EAPI extern const Eo_Event_Description _SELECTED_EVENT;
 //EAPI extern const Eo_Event_Description _UNSELECTED_EVENT;
 //EAPI extern const Eo_Event_Description _SELECTION_PASTE_EVENT;
@@ -118,9 +118,9 @@ EAPI extern const Eo_Event_Description _ZOOM_CHANGE_EVENT;
 //#define EVAS_SMART_SCROLL_ANIM_STOP_EVENT (&(_SCROLL_ANIM_STOP_EVENT))
 //#define EVAS_SMART_SCROLL_DRAG_START_EVENT (&(_SCROLL_DRAG_START_EVENT))
 //#define EVAS_SMART_SCROLL_DRAG_STOP_EVENT (&(_SCROLL_DRAG_STOP_EVENT))
-#define EVAS_SMART_ZOOM_START_EVENT (&(_ZOOM_START_EVENT))
-#define EVAS_SMART_ZOOM_STOP_EVENT (&(_ZOOM_STOP_EVENT))
-#define EVAS_SMART_ZOOM_CHANGE_EVENT (&(_ZOOM_CHANGE_EVENT))
+//#define EVAS_SMART_ZOOM_START_EVENT (&(_ZOOM_START_EVENT))
+//#define EVAS_SMART_ZOOM_STOP_EVENT (&(_ZOOM_STOP_EVENT))
+//#define EVAS_SMART_ZOOM_CHANGE_EVENT (&(_ZOOM_CHANGE_EVENT))
 //#define EVAS_SMART_SELECTED_EVENT (&(_SELECTED_EVENT))
 //#define EVAS_SMART_UNSELECTED_EVENT (&(_UNSELECTED_EVENT))
 //#define EVAS_SMART_SELECTION_PASTE_EVENT (&(_SELECTION_PASTE_EVENT))
@@ -138,18 +138,17 @@ EAPI extern const Eo_Event_Description _ZOOM_CHANGE_EVENT;
 //#define EVAS_SMART_DRAG_START_RIGHT_EVENT (&(_DRAG_START_RIGHT_EVENT))
 //#define EVAS_SMART_DRAG_START_LEFT_EVENT (&(_DRAG_START_LEFT_EVENT))
 
-
 //const Eo_Class *evas_smart_signal_interface_get(void) EINA_CONST;
 //const Eo_Class *evas_smart_clickable_interface_get(void) EINA_CONST;
 //const Eo_Class *evas_smart_scrollable_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
+//const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
 //const Eo_Class *evas_smart_selectable_interface_get(void) EINA_CONST;
 //const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
 
 //#define EVAS_SMART_SIGNAL_INTERFACE evas_smart_signal_interface_get()
 //#define EVAS_SMART_CLICKABLE_INTERFACE evas_smart_clickable_interface_get()
 //#define EVAS_SMART_SCROLLABLE_INTERFACE evas_smart_scrollable_interface_get()
-#define EVAS_SMART_ZOOMABLE_INTERFACE evas_smart_zoomable_interface_get()
+//#define EVAS_SMART_ZOOMABLE_INTERFACE evas_smart_zoomable_interface_get()
 //#define EVAS_SMART_SELECTABLE_INTERFACE evas_smart_selectable_interface_get()
 //#define EVAS_SMART_DRAGGABLE_INTERFACE evas_smart_draggable_interface_get()
 
@@ -158,6 +157,7 @@ const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
 #include "canvas/evas_clickable_interface.eo.h"
 #include "canvas/evas_scrollable_interface.eo.h"
 #include "canvas/evas_selectable_interface.eo.h"
+#include "canvas/evas_zoomable_interface.eo.h"
 
 // Interface classes links
 #define EVAS_SMART_SIGNAL_INTERFACE     EVAS_SIGNAL_INTERFACE_CLASS
@@ -165,6 +165,7 @@ const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
 #define EVAS_SMART_SCROLLABLE_INTERFACE EVAS_SCROLLABLE_INTERFACE_CLASS
 #define EVAS_SMART_DRAGGABLE_INTERFACE  EVAS_DRAGGABLE_INTERFACE_CLASS
 #define EVAS_SMART_SELECTABLE_INTERFACE EVAS_SELECTABLE_INTERFACE_CLASS
+#define EVAS_SMART_ZOOMABLE_INTERFACE   EVAS_ZOOMABLE_INTERFACE_CLASS
 
 #include "canvas/evas.eo.h"
 #define EVAS_CLASS EVAS_CANVAS_CLASS
