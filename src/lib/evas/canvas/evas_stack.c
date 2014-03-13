@@ -366,6 +366,6 @@ _evas_object_top_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
         obj = evas_object_below_get_internal(obj);
      }
 
-   return obj->object;
+   return NULL;
 }
 
