@@ -63,7 +63,7 @@ _evas_object_raise(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
    evas_object_inform_call_restack(eo_obj);
-   if (obj->layer->evas->is_frozen) return;
+   if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
        (!evas_object_is_source_invisible(eo_obj, obj)))
@@ -110,7 +110,7 @@ _evas_object_lower(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
    evas_object_inform_call_restack(eo_obj);
-   if (obj->layer->evas->is_frozen) return;
+   if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
        (!evas_object_is_source_invisible(eo_obj, obj)))
@@ -185,7 +185,7 @@ _evas_object_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Objec
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
    evas_object_inform_call_restack(eo_obj);
-   if (obj->layer->evas->is_frozen) return;
+   if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
        (!evas_object_is_source_invisible(eo_obj, obj)))
@@ -260,7 +260,7 @@ _evas_object_stack_below(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Objec
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
    evas_object_inform_call_restack(eo_obj);
-   if (obj->layer->evas->is_frozen) return;
+   if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
        (!evas_object_is_source_invisible(eo_obj, obj)))
