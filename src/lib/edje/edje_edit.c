@@ -4365,10 +4365,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 
      if (!found)
        {
-          if (external)
-            external->external_params = eina_list_append(external->external_params, p);
-          else
-            free(p);
+          external->external_params = eina_list_append(external->external_params, p);
        }
 
    if (rp->typedata.swallow && rp->param1.external_params)
