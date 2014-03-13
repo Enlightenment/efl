@@ -40,6 +40,11 @@ fi
 AC_SUBST(MODULE_EDJE)
 AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 
+# Needs to be moved into a macro, and also, needs a way to automatically fetch
+# from all the dependencies using the Requires.
+DEPS_EOLIAN_FLAGS=`pkg-config --variable=eolian_flags eo evas edje ecore`
+AC_SUBST(DEPS_EOLIAN_FLAGS)
+
 lt_enable_auto_import=""
 ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
