@@ -40,6 +40,7 @@ ecore_drm_sprites_create(Ecore_Drm_Device *dev)
              continue;
           }
 
+        sprite->output = NULL;
         sprite->drm_fd = dev->drm.fd;
         sprite->crtcs = p->possible_crtcs;
         sprite->plane_id = p->plane_id;
