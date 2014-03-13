@@ -1,6 +1,7 @@
 interface Evas_Common_Interface ()
 {
    eo_prefix: evas_common;
+   data: null;
    properties {
       evas {
          get {
