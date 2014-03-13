@@ -5,21 +5,6 @@
 
 Eina_Hash* signals_hash_table = NULL;
 
-EAPI const Eo_Event_Description _SCROLL_EVENT =
-   EO_EVENT_DESCRIPTION("scroll", "");
-
-EAPI const Eo_Event_Description _SCROLL_ANIM_START_EVENT =
-   EO_EVENT_DESCRIPTION("scroll,anim,start", "");
-
-EAPI const Eo_Event_Description _SCROLL_ANIM_STOP_EVENT =
-   EO_EVENT_DESCRIPTION("scroll,anim,stop", "");
-
-EAPI const Eo_Event_Description _SCROLL_DRAG_START_EVENT =
-   EO_EVENT_DESCRIPTION("scroll,drag,start", "");
-
-EAPI const Eo_Event_Description _SCROLL_DRAG_STOP_EVENT =
-   EO_EVENT_DESCRIPTION("scroll,drag,stop", "");
-
 EAPI const Eo_Event_Description _ZOOM_START_EVENT =
    EO_EVENT_DESCRIPTION("zoom,start", "");
 
@@ -54,15 +39,6 @@ EAPI const Eo_Event_Description _SELECTION_CLEARED_EVENT =
    EO_EVENT_DESCRIPTION("selection,cleared", "");
 
 
-static const Eo_Event_Description *_scrollable_events_desc[] = {
-     EVAS_SMART_SCROLL_EVENT,
-     EVAS_SMART_SCROLL_ANIM_START_EVENT,
-     EVAS_SMART_SCROLL_ANIM_STOP_EVENT,
-     EVAS_SMART_SCROLL_DRAG_START_EVENT,
-     EVAS_SMART_SCROLL_DRAG_STOP_EVENT,
-     NULL
-};
-
 static const Eo_Event_Description *_zoomable_events_desc[] = {
      EVAS_SMART_ZOOM_START_EVENT,
      EVAS_SMART_ZOOM_STOP_EVENT,
@@ -84,6 +60,7 @@ static const Eo_Event_Description *_selectable_events_desc[] = {
 
 static const Eo_Event_Description *_evas_clickable_interface_event_desc[]; 
 static const Eo_Event_Description *_evas_draggable_interface_event_desc[];
+static const Eo_Event_Description *_evas_scrollable_interface_event_desc[];
 
 #define ADD_SIGNAL(name, event) eina_hash_add(signals_hash_table, name, event)
 #define ADD_INTERFACE_SIGNALS(events_desc) \
@@ -113,7 +90,7 @@ _evas_signal_interface_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    signals_hash_table = eina_hash_string_superfast_new(_signal_interface_del);
    ADD_INTERFACE_SIGNALS(_evas_draggable_interface_event_desc);
-   ADD_INTERFACE_SIGNALS(_scrollable_events_desc);
+   ADD_INTERFACE_SIGNALS(_evas_scrollable_interface_event_desc);
    ADD_INTERFACE_SIGNALS(_zoomable_events_desc);
    ADD_INTERFACE_SIGNALS(_selectable_events_desc);
    ADD_INTERFACE_SIGNALS(_evas_draggable_interface_event_desc);
@@ -127,18 +104,6 @@ _evas_signal_interface_class_destructor(Eo_Class *klass EINA_UNUSED)
    eina_hash_free(signals_hash_table);
 }
 
-static const Eo_Class_Description scrollable_interface_desc = {
-     EO_VERSION,
-     "Evas_Scrollable_Interface",
-     EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     _scrollable_events_desc,
-     0,
-     NULL,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_smart_scrollable_interface_get, &scrollable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
 static const Eo_Class_Description zoomable_interface_desc = {
      EO_VERSION,
@@ -169,3 +134,4 @@ EO_DEFINE_CLASS(evas_smart_selectable_interface_get, &selectable_interface_desc,
 #include "canvas/evas_signal_interface.eo.c"
 #include "canvas/evas_draggable_interface.eo.c"
 #include "canvas/evas_clickable_interface.eo.c"
+#include "canvas/evas_scrollable_interface.eo.c"
