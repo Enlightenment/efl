@@ -3435,9 +3435,31 @@ eng_gl_surface_read_pixels(void *data, void *surface,
 # endif
 #endif
 
+   /* Since this is an FBO, the pixels are already in the right Y order.
+    * But some devices don't support GL_BGRA, so we still need to convert.
+    */
+
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
-   glsym_glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+   if (im->tex->pt->format == GL_BGRA)
+     glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+   else
+     {
+        DATA32 *ptr = pixels;
+        int k;
+
+        glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        for (k = w * h; k; --k)
+          {
+             const DATA32 v = *ptr;
+             *ptr++ = (v & 0xFF00FF00)
+                   | ((v & 0x00FF0000) >> 16)
+                   | ((v & 0x000000FF) << 16);
+          }
+     }
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+   evas_common_convert_argb_premul(pixels, w * h);
+
    return EINA_TRUE;
 }
 //--------------------------------//

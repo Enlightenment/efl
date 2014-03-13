@@ -839,8 +839,6 @@ extern void       (*glsym_glReleaseShaderCompiler)(void);
 extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
 extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
 
-extern void       (*glsym_glReadPixels)           (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *data);
-
 #ifdef GL_GLES
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
 extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
