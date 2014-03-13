@@ -235,6 +235,11 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
         CRI("Setting object %p from Evas (%p) to another Evas (%p)", obj, obj->layer->evas, clip->layer->evas);
         return;
      }
+   if (!obj->layer || !clip->layer)
+     {
+        CRI("Object %p or clip %p layer is not set !", obj, clip);
+        return;
+     }
 
    if (evas_object_intercept_call_clip_set(eo_obj, obj, eo_clip)) return;
    // illegal to set anything but a rect as a clip
