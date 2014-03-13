@@ -2,8 +2,6 @@
 # error You shall not include this header directly
 #endif
 
-#include "canvas/evas_signal_interface.eo.h"
-
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_IN;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_OUT;
 EAPI extern const Eo_Event_Description _EVAS_OBJECT_EVENT_MOUSE_DOWN;
@@ -99,14 +97,14 @@ EAPI extern const Eo_Event_Description _SELECTION_CUT_EVENT;
 EAPI extern const Eo_Event_Description _SELECTION_START_EVENT;
 EAPI extern const Eo_Event_Description _SELECTION_CHANGED_EVENT;
 EAPI extern const Eo_Event_Description _SELECTION_CLEARED_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_START_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_STOP_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_END_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_START_UP_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_START_DOWN_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_START_RIGHT_EVENT;
-EAPI extern const Eo_Event_Description _DRAG_START_LEFT_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_START_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_STOP_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_END_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_START_UP_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_START_DOWN_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_START_RIGHT_EVENT;
+//EAPI extern const Eo_Event_Description _DRAG_START_LEFT_EVENT;
 
 #define EVAS_SMART_CLICKED_EVENT (&(_CLICKED_EVENT))
 #define EVAS_SMART_CLICKED_DOUBLE_EVENT (&(_CLICKED_DOUBLE_EVENT))
@@ -131,28 +129,32 @@ EAPI extern const Eo_Event_Description _DRAG_START_LEFT_EVENT;
 #define EVAS_SMART_SELECTION_START_EVENT (&(_SELECTION_START_EVENT))
 #define EVAS_SMART_SELECTION_CHANGED_EVENT (&(_SELECTION_CHANGED_EVENT))
 #define EVAS_SMART_SELECTION_CLEARED_EVENT (&(_SELECTION_CLEARED_EVENT))
-#define EVAS_SMART_DRAG_EVENT (&(_DRAG_EVENT))
-#define EVAS_SMART_DRAG_START_EVENT (&(_DRAG_START_EVENT))
-#define EVAS_SMART_DRAG_STOP_EVENT (&(_DRAG_STOP_EVENT))
-#define EVAS_SMART_DRAG_END_EVENT (&(_DRAG_END_EVENT))
-#define EVAS_SMART_DRAG_START_UP_EVENT (&(_DRAG_START_UP_EVENT))
-#define EVAS_SMART_DRAG_START_DOWN_EVENT (&(_DRAG_START_DOWN_EVENT))
-#define EVAS_SMART_DRAG_START_RIGHT_EVENT (&(_DRAG_START_RIGHT_EVENT))
-#define EVAS_SMART_DRAG_START_LEFT_EVENT (&(_DRAG_START_LEFT_EVENT))
+//#define EVAS_SMART_DRAG_EVENT (&(_DRAG_EVENT))
+//#define EVAS_SMART_DRAG_START_EVENT (&(_DRAG_START_EVENT))
+//#define EVAS_SMART_DRAG_STOP_EVENT (&(_DRAG_STOP_EVENT))
+//#define EVAS_SMART_DRAG_END_EVENT (&(_DRAG_END_EVENT))
+//#define EVAS_SMART_DRAG_START_UP_EVENT (&(_DRAG_START_UP_EVENT))
+//#define EVAS_SMART_DRAG_START_DOWN_EVENT (&(_DRAG_START_DOWN_EVENT))
+//#define EVAS_SMART_DRAG_START_RIGHT_EVENT (&(_DRAG_START_RIGHT_EVENT))
+//#define EVAS_SMART_DRAG_START_LEFT_EVENT (&(_DRAG_START_LEFT_EVENT))
 
-const Eo_Class *evas_smart_signal_interface_get(void) EINA_CONST;
+
+//const Eo_Class *evas_smart_signal_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_clickable_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_scrollable_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_selectable_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
+//const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
 
-#define EVAS_SMART_SIGNAL_INTERFACE evas_smart_signal_interface_get()
+//#define EVAS_SMART_SIGNAL_INTERFACE evas_smart_signal_interface_get()
 #define EVAS_SMART_CLICKABLE_INTERFACE evas_smart_clickable_interface_get()
 #define EVAS_SMART_SCROLLABLE_INTERFACE evas_smart_scrollable_interface_get()
 #define EVAS_SMART_ZOOMABLE_INTERFACE evas_smart_zoomable_interface_get()
 #define EVAS_SMART_SELECTABLE_INTERFACE evas_smart_selectable_interface_get()
-#define EVAS_SMART_DRAGGABLE_INTERFACE evas_smart_draggable_interface_get()
+//#define EVAS_SMART_DRAGGABLE_INTERFACE evas_smart_draggable_interface_get()
+
+#include "canvas/evas_signal_interface.eo.h"
+#include "canvas/evas_draggable_interface.eo.h"
 
 #include "canvas/evas.eo.h"
 #define EVAS_CLASS EVAS_CANVAS_CLASS

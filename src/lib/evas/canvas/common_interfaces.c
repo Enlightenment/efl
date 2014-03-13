@@ -74,30 +74,6 @@ EAPI const Eo_Event_Description _SELECTION_CHANGED_EVENT =
 EAPI const Eo_Event_Description _SELECTION_CLEARED_EVENT =
    EO_EVENT_DESCRIPTION("selection,cleared", "");
 
-EAPI const Eo_Event_Description _DRAG_EVENT =
-   EO_EVENT_DESCRIPTION("drag", "");
-
-EAPI const Eo_Event_Description _DRAG_START_EVENT =
-   EO_EVENT_DESCRIPTION("drag,start", "");
-
-EAPI const Eo_Event_Description _DRAG_STOP_EVENT =
-   EO_EVENT_DESCRIPTION("drag,stop", "");
-
-EAPI const Eo_Event_Description _DRAG_END_EVENT =
-   EO_EVENT_DESCRIPTION("drag,end", "");
-
-EAPI const Eo_Event_Description _DRAG_START_UP_EVENT =
-   EO_EVENT_DESCRIPTION("drag,start,up", "");
-
-EAPI const Eo_Event_Description _DRAG_START_DOWN_EVENT =
-   EO_EVENT_DESCRIPTION("drag,start,down", "");
-
-EAPI const Eo_Event_Description _DRAG_START_RIGHT_EVENT =
-   EO_EVENT_DESCRIPTION("drag,start,right", "");
-
-EAPI const Eo_Event_Description _DRAG_START_LEFT_EVENT =
-   EO_EVENT_DESCRIPTION("drag,start,left", "");
-
 static const Eo_Event_Description *_clickable_events_desc[] = {
      EVAS_SMART_CLICKED_EVENT,
      EVAS_SMART_CLICKED_DOUBLE_EVENT,
@@ -137,17 +113,7 @@ static const Eo_Event_Description *_selectable_events_desc[] = {
      NULL
 };
 
-static const Eo_Event_Description *_draggable_events_desc[] = {
-     EVAS_SMART_DRAG_EVENT,
-     EVAS_SMART_DRAG_START_EVENT,
-     EVAS_SMART_DRAG_STOP_EVENT,
-     EVAS_SMART_DRAG_END_EVENT,
-     EVAS_SMART_DRAG_START_UP_EVENT,
-     EVAS_SMART_DRAG_START_DOWN_EVENT,
-     EVAS_SMART_DRAG_START_RIGHT_EVENT,
-     EVAS_SMART_DRAG_START_LEFT_EVENT,
-     NULL
-};
+static const Eo_Event_Description *_evas_draggable_interface_event_desc[];
 
 #define ADD_SIGNAL(name, event) eina_hash_add(signals_hash_table, name, event)
 #define ADD_INTERFACE_SIGNALS(events_desc) \
@@ -180,7 +146,7 @@ _evas_signal_interface_class_constructor(Eo_Class *klass EINA_UNUSED)
    ADD_INTERFACE_SIGNALS(_scrollable_events_desc);
    ADD_INTERFACE_SIGNALS(_zoomable_events_desc);
    ADD_INTERFACE_SIGNALS(_selectable_events_desc);
-   ADD_INTERFACE_SIGNALS(_draggable_events_desc);
+   ADD_INTERFACE_SIGNALS(_evas_draggable_interface_event_desc);
 }
 #undef ADD_INTERFACE_SIGNALS
 #undef ADD_SIGNAL
@@ -243,17 +209,5 @@ static const Eo_Class_Description selectable_interface_desc = {
 
 EO_DEFINE_CLASS(evas_smart_selectable_interface_get, &selectable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
-static const Eo_Class_Description draggable_interface_desc = {
-     EO_VERSION,
-     "Evas_Draggable_Interface",
-     EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     _draggable_events_desc,
-     0,
-     NULL,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_smart_draggable_interface_get, &draggable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
-
 #include "canvas/evas_signal_interface.eo.c"
+#include "canvas/evas_draggable_interface.eo.c"
