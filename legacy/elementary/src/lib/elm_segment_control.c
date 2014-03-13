@@ -577,8 +577,7 @@ _item_new(Evas_Object *obj,
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-   edje_object_scale_set
-     (VIEW(it), elm_widget_scale_get(VIEW(it)) * elm_config_scale_get());
+   edje_object_scale_set(VIEW(it), elm_config_scale_get());
    evas_object_smart_member_add(VIEW(it), obj);
 
    elm_widget_sub_object_add(obj, VIEW(it));

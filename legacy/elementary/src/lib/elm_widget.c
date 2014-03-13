@@ -3403,15 +3403,18 @@ _elm_widget_focus_steal(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         sd = eo_data_scope_get(parent, MY_CLASS);
         if (sd)
           {
-             if ((sd->resize_obj) && (elm_widget_focus_get(sd->resize_obj)))
-               eo_do(sd->resize_obj, elm_wdg_focused_object_clear());
+             if (sd->resize_obj && elm_widget_is(sd->resize_obj) &&
+                   elm_widget_focus_get(sd->resize_obj))
+               {
+                  eo_do(sd->resize_obj, elm_wdg_focused_object_clear());
+               }
              else
                {
                   const Eina_List *l;
                   Evas_Object *child;
                   EINA_LIST_FOREACH(sd->subobjs, l, child)
                     {
-                       if (elm_widget_focus_get(child))
+                       if (elm_widget_is(child) && elm_widget_focus_get(child))
                          {
                             eo_do(child, elm_wdg_focused_object_clear());
                             break;
