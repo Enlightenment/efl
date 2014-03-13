@@ -236,6 +236,7 @@ void test_dnd_genlist_default_anim(void *data, Evas_Object *obj, void *event_inf
 void test_dnd_genlist_user_anim(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_genlist_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_multi_features(void *data, Evas_Object *obj, void *event_info);
+void test_dnd_types(void *data, Evas_Object *obj, void *event_info);
 void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_message(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_phone(void *data, Evas_Object *obj, void *event_info);
@@ -796,6 +797,7 @@ add_tests:
    ADD_TEST(NULL, "Drag & Drop", "Genlist DnD User Anim", test_dnd_genlist_user_anim);
    ADD_TEST(NULL, "Drag & Drop", "Genlist-Gengrid DnD", test_dnd_genlist_gengrid);
    ADD_TEST(NULL, "Drag & Drop", "Features DnD", test_dnd_multi_features);
+   ADD_TEST(NULL, "Drag & Drop", "Types DnD", test_dnd_types);
 
    //------------------------------//
    ADD_TEST(NULL, "Miscellaneous", "Copy And Paste", test_cnp);

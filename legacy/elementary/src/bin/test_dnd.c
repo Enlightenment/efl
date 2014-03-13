@@ -1107,3 +1107,206 @@ test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_resize(win, 680, 800);
    evas_object_show(win);
 }
+
+static void
+_enter_cb(void *data EINA_UNUSED, Evas_Object *obj)
+{
+   printf("%s: obj: %s %p enter\n", __func__,
+          evas_object_type_get(obj), obj);
+}
+
+static void
+_leave_cb(void *data EINA_UNUSED, Evas_Object *obj)
+{
+   printf("%s: obj: %s %p leave\n", __func__,
+          evas_object_type_get(obj), obj);
+}
+
+static void
+_pos_cb(void *data EINA_UNUSED, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
+{
+   printf("%s: obj: %s %p pos: %d %d, action: %d\n", __func__,
+          evas_object_type_get(obj), obj, x, y, action);
+}
+
+static Eina_Bool
+_label_drop_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+   const char *text = ev->data;
+   printf("%s: obj: %s %p drop data: %s\n", __func__,
+          evas_object_type_get(obj), obj, text);
+   elm_object_text_set(obj, text);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_image_drop_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+   const char *f = ev->data;
+   printf("%s: obj: %s %p drop data: %s\n", __func__,
+          evas_object_type_get(obj), obj, f);
+   elm_image_file_set(obj, f, NULL);
+   return EINA_TRUE;
+}
+
+static Evas_Object *
+_label_create_icon(void *data, Evas_Object *parent, Evas_Coord *xoff, Evas_Coord *yoff)
+{
+   Evas_Object *lb = data;
+   Evas_Object *icon;
+   const char *text;
+   Evas_Coord x, y, w, h;
+   int xm, ym;
+
+   icon = elm_label_add(parent);
+   text = elm_object_text_get(lb);
+   elm_object_text_set(icon, text);
+
+   evas_object_geometry_get(lb, &x, &y, &w, &h);
+   evas_object_move(icon, x, y);
+   evas_object_resize(icon, w, h);
+   evas_object_show(icon);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(lb), &xm, &ym);
+   if (xoff) *xoff = xm - (w / 2);
+   if (yoff) *yoff = ym - (h / 2);
+
+   return icon;
+}
+
+static void
+_label_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *lb = data;
+   const char *text = elm_object_text_get(lb);
+
+   elm_drag_start(lb, ELM_SEL_FORMAT_TEXT, text, ELM_XDND_ACTION_COPY,
+                  _label_create_icon, lb,
+                  NULL, NULL, NULL, NULL, NULL, NULL);
+}
+
+static Evas_Object *
+_image_create_icon(void *data, Evas_Object *parent, Evas_Coord *xoff, Evas_Coord *yoff)
+{
+   Evas_Object *ic;
+   Evas_Object *io = data;
+   const char *f, *g;
+   Evas_Coord x, y, w, h, xm, ym;
+
+   elm_image_file_get(io, &f, &g);
+   ic = elm_image_add(parent);
+   elm_image_file_set(ic, f, g);
+   evas_object_geometry_get(io, &x, &y, &w, &h);
+   evas_object_move(ic, x, y);
+   evas_object_resize(ic, 60, 60);
+   evas_object_show(ic);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(io), &xm, &ym);
+   if (xoff) *xoff = xm - 30;
+   if (yoff) *yoff = ym - 30;
+
+   return ic;
+}
+
+static void
+_image_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *io = data;
+   const char *f;
+   char dd[PATH_MAX];
+
+   elm_image_file_get(io, &f, NULL);
+   snprintf(dd, sizeof(dd), "file://%s", f);
+
+   elm_drag_start(io, ELM_SEL_FORMAT_IMAGE, dd, ELM_XDND_ACTION_COPY,
+                  _image_create_icon, io,
+                  NULL, NULL, NULL, NULL, NULL, NULL);
+}
+
+void
+test_dnd_types(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bx1, *lb, *io, *en;
+   int i;
+
+   win = elm_win_util_standard_add("dnd-types", "DnD types");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   for(i = 0; i < 2; i++)
+     {
+        char buf[PATH_MAX];
+        bx1 = elm_box_add(win);
+        evas_object_size_hint_weight_set(bx1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bx1, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(bx, bx1);
+        evas_object_show(bx1);
+
+        lb = elm_label_add(win);
+        if (i == 0)
+          elm_object_text_set(lb, "This is an label.<br/>You can drag or drop text here.<br/>"
+                              "This is a larger label with newlines<br/>"
+                              "to make it bigger, bit it won't expand or wrap<br/>"
+                              "just be a block of text that can't change its<br/>"
+                              "formatting as it's fixed based on text<br/>");
+        else
+          elm_object_text_set(lb, "Another label for drag and drop test.<br/>"
+                              "A small label. You can drag or drop text.<br/><br/><br/>");
+        elm_drop_target_add(lb, ELM_SEL_FORMAT_TEXT,
+                            _enter_cb, NULL,
+                            _leave_cb, NULL,
+                            _pos_cb, NULL,
+                            _label_drop_cb, NULL);
+        evas_object_event_callback_add(lb, EVAS_CALLBACK_MOUSE_DOWN, _label_mouse_down_cb, lb);
+        elm_box_pack_end(bx1, lb);
+        evas_object_show(lb);
+
+        en = elm_entry_add(win);
+        if (i == 0)
+          {
+             elm_object_text_set(en,
+                                 "Entry:<br/>You can only drop <b>text</> here.<br/>"
+                                 "This is an entry widget in this window that<br/>"
+                                 "uses markup <b>like this</> for styling.");
+             elm_entry_cnp_mode_set(en, ELM_CNP_MODE_PLAINTEXT);
+          }
+        else
+          {
+             elm_object_text_set(en,
+                                 "Entry:<br/>You can drop <b>text or image</> here.<br/>"
+                                 "This is an entry widget in this window that<br/>"
+                                 "uses markup <b>like this</> for styling.");
+
+          }
+        evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(bx1, en);
+        evas_object_show(en);
+
+        if (i == 0)
+          snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+        else
+          snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
+        io = elm_image_add(win);
+        elm_image_file_set(io, buf, NULL);
+        evas_object_size_hint_weight_set(io, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(io, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_min_set(io, 100, 100);
+        elm_drop_target_add(io, ELM_SEL_FORMAT_IMAGE,
+                            _enter_cb, NULL,
+                            _leave_cb, NULL,
+                            _pos_cb, NULL,
+                            _image_drop_cb, NULL);
+        evas_object_event_callback_add(io, EVAS_CALLBACK_MOUSE_DOWN, _image_mouse_down_cb, io);
+        elm_box_pack_end(bx1, io);
+        evas_object_show(io);
+     }
+
+   evas_object_show(win);
+   evas_object_resize(win, 400, 400);
+}
