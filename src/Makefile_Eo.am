@@ -19,9 +19,13 @@ lib_eo_libeo_la_LIBADD = @EO_LIBS@
 lib_eo_libeo_la_DEPENDENCIES = @EO_INTERNAL_LIBS@
 lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-EXTRA_DIST += \
+eoeolianfilesdir = $(datadir)/eolian/include/eo-@VMAJ@
+eoeolianfiles_DATA = \
               lib/eo/eo_base.eo \
               lib/eo/eo_abstract_class.eo
+
+EXTRA_DIST += \
+              ${eoeolianfiles_DATA}
 
 ### Unit tests
 

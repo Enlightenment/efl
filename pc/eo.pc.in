@@ -2,6 +2,8 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+eoincludedir=@datarootdir@/eolian/include
+eolian_flags=-I${eoincludedir}/eo-@VMAJ@
 
 Name: Eo
 Description: EFL's generic object system library.

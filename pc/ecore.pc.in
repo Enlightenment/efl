@@ -4,6 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 modules=@libdir@/ecore
 module_arch=@MODULE_ARCH@
+eoincludedir=@datarootdir@/eolian/include
+eolian_flags=-I${eoincludedir}/ecore-@VMAJ@
 
 Name: ecore
 Description: Ecore event abstraction library

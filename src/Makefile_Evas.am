@@ -35,7 +35,8 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_out.eo.c \
                  lib/evas/canvas/evas_out.eo.h
 
-EXTRA_DIST += \
+evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
+evaseolianfiles_DATA = \
               lib/evas/canvas/evas_object.eo \
               lib/evas/canvas/evas_line.eo \
               lib/evas/canvas/evas_polygon.eo \
@@ -52,6 +53,9 @@ EXTRA_DIST += \
               lib/evas/canvas/evas_grid.eo \
               lib/evas/canvas/evas_image.eo \
               lib/evas/canvas/evas_out.eo 
+
+EXTRA_DIST += \
+              ${evaseolianfiles_DATA}
 
 lib_LTLIBRARIES += lib/evas/libevas.la
 noinst_LTLIBRARIES =
