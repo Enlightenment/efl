@@ -150,7 +150,7 @@ _evas_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *key
    int n;
 
    n = (Evas_Modifier_Mask)evas_key_modifier_number(&(e->modifiers), keyname);
-   if (n < 0) return;
+   if (n < 0 || n > 63) return;
    num = (Evas_Modifier_Mask)n;
    num = 1 << num;
    e->modifiers.mask |= num;
@@ -163,7 +163,7 @@ _evas_key_modifier_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *ke
    int n;
 
    n = evas_key_modifier_number(&(e->modifiers), keyname);
-   if (n < 0) return;
+   if (n < 0 || n > 63) return;
    num = (Evas_Modifier_Mask)n;
    num = 1 << num;
    e->modifiers.mask &= ~num;
@@ -176,7 +176,7 @@ _evas_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname
    int n;
 
    n = evas_key_lock_number(&(e->locks), keyname);
-   if (n < 0) return;
+   if (n < 0 || n > 63) return;
    num = (Evas_Modifier_Mask)n;
    num = 1 << num;
    e->locks.mask |= num;
@@ -189,7 +189,7 @@ _evas_key_lock_off(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keynam
    int n;
 
    n = evas_key_lock_number(&(e->locks), keyname);
-   if (n < 0) return;
+   if (n < 0 || n > 63) return;
    num = (Evas_Modifier_Mask)n;
    num = 1 << num;
    e->locks.mask &= ~num;
@@ -206,7 +206,7 @@ _evas_key_modifier_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const cha
 
    if (!keyname) return 0;
    n = evas_key_modifier_number(&(e->modifiers), keyname);
-   if (n < 0) return 0;
+   if (n < 0 || n > 63) return 0;
    num = (Evas_Modifier_Mask)n;
    return 1 << num;
 }
