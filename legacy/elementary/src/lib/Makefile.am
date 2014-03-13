@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CLEANFILES=
 
-include ../../Makefile_Eolian_Helper.am
+include $(top_srcdir)/Makefile_Eolian_Helper.am
 
 AM_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \

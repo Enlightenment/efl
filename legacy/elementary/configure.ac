@@ -649,9 +649,11 @@ AC_SUBST(requirement_elm)
 
 EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
-EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
 EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
 EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
+EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
+# Force the helper to try external eolian-gen
+AM_CONDITIONAL(HAVE_EOLIAN_GEN, [true])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
