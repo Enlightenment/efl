@@ -1,0 +1,14 @@
+interface Evas_Selectable_Interface (Evas_Signal_Interface)
+{
+   data: null;
+   events {
+      selected;
+      unselected;
+      selection,paste;
+      selection,copy;
+      selection,cut;
+      selection,start;
+      selection,changed;
+      selection,cleared;
+   }
+}

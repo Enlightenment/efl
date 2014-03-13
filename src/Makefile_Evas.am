@@ -39,7 +39,9 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_clickable_interface.eo.c \
                  lib/evas/canvas/evas_clickable_interface.eo.h \
                  lib/evas/canvas/evas_scrollable_interface.eo.c \
-                 lib/evas/canvas/evas_scrollable_interface.eo.h
+                 lib/evas/canvas/evas_scrollable_interface.eo.h \
+                 lib/evas/canvas/evas_selectable_interface.eo.c \
+                 lib/evas/canvas/evas_selectable_interface.eo.h
 
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = \
@@ -61,7 +63,8 @@ evaseolianfiles_DATA = \
               lib/evas/canvas/evas_out.eo \
               lib/evas/canvas/evas_draggable_interface.eo \
               lib/evas/canvas/evas_clickable_interface.eo \
-              lib/evas/canvas/evas_scrollable_interface.eo
+              lib/evas/canvas/evas_scrollable_interface.eo \
+              lib/evas/canvas/evas_selectable_interface.eo
 
 EXTRA_DIST += \
               ${evaseolianfiles_DATA}
@@ -98,7 +101,8 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_out.eo.h \
                                         lib/evas/canvas/evas_draggable_interface.eo.h \
                                         lib/evas/canvas/evas_clickable_interface.eo.h \
-                                        lib/evas/canvas/evas_scrollable_interface.eo.h
+                                        lib/evas/canvas/evas_scrollable_interface.eo.h \
+                                        lib/evas/canvas/evas_selectable_interface.eo.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \
