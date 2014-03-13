@@ -14,7 +14,8 @@ _evas_object_name_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *n
    else
      {
         obj->name = strdup(name);
-        eina_hash_add(obj->layer->evas->name_hash, obj->name, eo_obj);
+        if (obj->layer && obj->layer->evas && obj->layer->evas->name_hash)
+          eina_hash_add(obj->layer->evas->name_hash, obj->name, eo_obj);
      }
 }
 
