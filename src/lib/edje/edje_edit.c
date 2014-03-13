@@ -4013,6 +4013,12 @@ edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *
    if ((!obj) || (!part) || (!state)) return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
+   if (!color_class) 
+     {
+           pd->color_class = NULL;
+           return EINA_FALSE;
+     }
+
    if (!ed->file->color_classes) return EINA_FALSE;
    EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
      {
@@ -4070,6 +4076,9 @@ edje_edit_state_external_param_get(Evas_Object *obj, const char *part, const cha
    if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
      return EINA_FALSE;
 
+   if (!param)
+     return EINA_FALSE;
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -4114,6 +4123,9 @@ edje_edit_state_external_param_int_get(Evas_Object *obj, const char *part, const
         return EINA_FALSE;
      }
 
+   if (!param)
+     return EINA_FALSE;
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -4143,6 +4155,9 @@ edje_edit_state_external_param_bool_get(Evas_Object *obj, const char *part, cons
         if (val) *val = 0;
         return EINA_FALSE;
      }
+
+   if (!param)
+     return EINA_FALSE;
 
    external = (Edje_Part_Description_External *) pd;
 
@@ -4174,6 +4189,9 @@ edje_edit_state_external_param_double_get(Evas_Object *obj, const char *part, co
         return EINA_FALSE;
      }
 
+   if (!param)
+     return EINA_FALSE;
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -4203,6 +4221,9 @@ edje_edit_state_external_param_string_get(Evas_Object *obj, const char *part, co
         if (val) *val = NULL;
         return EINA_FALSE;
      }
+
+   if (!param)
+     return EINA_FALSE;
 
    external = (Edje_Part_Description_External *) pd;
 
@@ -4234,6 +4255,9 @@ edje_edit_state_external_param_choice_get(Evas_Object *obj, const char *part, co
         return EINA_FALSE;
      }
 
+   if (!param)
+     return EINA_FALSE;
+
    external = (Edje_Part_Description_External *) pd;
 
    EINA_LIST_FOREACH(external->external_params, l, p)
@@ -4261,6 +4285,9 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
    GET_PD_OR_RETURN(EINA_FALSE);
 
    if (rp->part->type != EDJE_PART_TYPE_EXTERNAL)
+     return EINA_FALSE;
+
+   if (!param)
      return EINA_FALSE;
 
    external = (Edje_Part_Description_External *) pd;
