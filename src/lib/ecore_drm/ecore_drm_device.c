@@ -484,8 +484,6 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
    /* reset device fd */
    dev->drm.fd = -1;
 
-   /* free(data); */
-
    return EINA_TRUE;
 }
 
