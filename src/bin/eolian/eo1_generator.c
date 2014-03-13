@@ -83,7 +83,7 @@ enum\n\
    @#EOPREFIX_SUB_ID_LAST\n\
 };\n\
 \n\
-#define @#EOPREFIX_ID(sub_id) (@#EOPREFIX_BASE_ID + sub_id)\n\
+#define @#EOPREFIX_ID(sub_id) (@#EOPREFIX_BASE_ID + sub_id)\n\n\
 ";
 
 static const char
@@ -264,6 +264,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
 
    Eina_Strbuf *str_subid = eina_strbuf_new();
    Eina_Strbuf *str_ev = eina_strbuf_new();
+   Eina_Strbuf *str_extrn_ev = eina_strbuf_new();
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
 
    Eolian_Event event;
@@ -284,6 +285,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
         eina_strbuf_replace_all(tmpbuf, ",", "_");
         const char* s = eina_strbuf_string_get(tmpbuf);
         eina_strbuf_append_printf(str_ev, "#define %s (&(_%s))\n", s, s);
+        eina_strbuf_append_printf(str_extrn_ev, "EAPI extern const Eo_Event_Description _%s;\n", s);
      }
 
    int i;
@@ -316,6 +318,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
         }
 
    eina_strbuf_replace_all(str_hdr, "@#list_subid", eina_strbuf_string_get(str_subid));
+   eina_strbuf_append(str_hdr, eina_strbuf_string_get(str_extrn_ev));
    eina_strbuf_append(str_hdr, eina_strbuf_string_get(str_ev));
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_hdr));
@@ -323,6 +326,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
    free(tmpstr);
    eina_strbuf_free(str_subid);
    eina_strbuf_free(str_ev);
+   eina_strbuf_free(str_extrn_ev);
    eina_strbuf_free(tmpbuf);
    eina_strbuf_free(str_hdr);
 
@@ -525,7 +529,7 @@ eo1_source_beginning_generate(const char *classname, Eina_Strbuf *buf)
         eina_strbuf_replace_all(str_ev, ",", "_");
 
         eina_strbuf_append_printf(tmpbuf,
-                                  "EAPI const Eo_Event_Description _%s = EO_EVENT_DESCRIPTION(\"%s\", \"%s\");\n",
+                                  "EAPI const Eo_Event_Description _%s =\n   EO_EVENT_DESCRIPTION(\"%s\", \"%s\");\n",
                                   eina_strbuf_string_get(str_ev), evname, evdesc_line1);
         free(evdesc_line1);
      }
