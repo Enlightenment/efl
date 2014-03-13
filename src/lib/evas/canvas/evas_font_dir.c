@@ -633,7 +633,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 				 int fsize = 0;
 
 				 fdata = eet_read(ef, nm, &fsize);
-				 if ((fdata) && (fsize > 0))
+				 if (fdata)
 				   {
 				      font = evas->engine.func->font_memory_load(evas->engine.data.output, source, nm, size, fdata, fsize, wanted_rend);
 				      free(fdata);
