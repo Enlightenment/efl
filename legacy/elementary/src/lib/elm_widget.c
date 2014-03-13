@@ -1087,17 +1087,6 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 
-   /* NOTE: In the following two lines, 'sobj' is correct. Do not change it.
-    * Due to elementary's scale policy, scale and pscale can be different in
-    * some cases. This happens when sobj's previous parent and new parent have
-    * different scale value.
-    * For example, if sobj's previous parent's scale is 5 and new parent's scale
-    * is 2 while sobj's scale is 0. Then 'pscale' is 5 and 'scale' is 2. So we
-    * need to reset sobj's scale to 5.
-    * Note that each widget's scale is 0 by default.
-    */
-   double scale, pscale = elm_widget_scale_get(sobj);
-   Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
    Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
 
    Elm_Widget_Smart_Data *sd = _pd;
@@ -1163,6 +1152,18 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
      {
         ELM_WIDGET_DATA_GET(sobj, sdc);
 
+        /* NOTE: In the following two lines, 'sobj' is correct. Do not change it.
+         * Due to elementary's scale policy, scale and pscale can be different in
+         * some cases. This happens when sobj's previous parent and new parent have
+         * different scale value.
+         * For example, if sobj's previous parent's scale is 5 and new parent's scale
+         * is 2 while sobj's scale is 0. Then 'pscale' is 5 and 'scale' is 2. So we
+         * need to reset sobj's scale to 5.
+         * Note that each widget's scale is 0 by default.
+         */
+        double scale, pscale = elm_widget_scale_get(sobj);
+        Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
+
         evas_object_event_callback_add
           (sobj, EVAS_CALLBACK_HIDE, _on_sub_obj_hide, NULL);
 
@@ -1177,10 +1178,11 @@ _elm_widget_sub_object_add(Eo *obj, void *_pd, va_list *list)
           }
 
         if (elm_widget_focus_get(sobj)) _parents_focus(obj);
+
+        elm_widget_display_mode_set(sobj,
+              evas_object_size_hint_display_mode_get(obj));
      }
 
-   elm_widget_display_mode_set(sobj,
-                               evas_object_size_hint_display_mode_get(obj));
 end:
    if (ret) *ret = EINA_TRUE;
 }
@@ -1690,7 +1692,6 @@ _elm_widget_access_highlight_in_theme_get(Eo *obj EINA_UNUSED, void *_pd, va_lis
 EAPI Eina_Bool
 elm_widget_focus_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
    eo_do((Eo *) obj, elm_wdg_focus_get(&ret));
    return ret;
@@ -3342,15 +3343,18 @@ _elm_widget_focused_object_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    Elm_Widget_Smart_Data *sd = _pd;
 
    if (!sd->focused) return;
-   if (sd->resize_obj && elm_widget_focus_get(sd->resize_obj))
-     eo_do(sd->resize_obj, elm_wdg_focused_object_clear());
+   if (sd->resize_obj && elm_widget_is(sd->resize_obj) &&
+         elm_widget_focus_get(sd->resize_obj))
+     {
+        eo_do(sd->resize_obj, elm_wdg_focused_object_clear());
+     }
    else
      {
         const Eina_List *l;
         Evas_Object *child;
         EINA_LIST_FOREACH(sd->subobjs, l, child)
           {
-             if (elm_widget_focus_get(child))
+             if (elm_widget_is(child) && elm_widget_focus_get(child))
                {
                   eo_do(child, elm_wdg_focused_object_clear());
                   break;
@@ -3907,7 +3911,6 @@ _elm_widget_scale_set(Eo *obj, void *_pd, va_list *list)
 EAPI double
 elm_widget_scale_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_CHECK(obj) 1.0;
    double ret = 1.0;
    eo_do((Eo *) obj, elm_wdg_scale_get(&ret));
    return ret;
@@ -3922,7 +3925,7 @@ _elm_widget_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    // FIXME: save walking up the tree by storing/caching parent scale
    if (sd->scale == 0.0)
      {
-        if (sd->parent_obj)
+        if (sd->parent_obj && elm_widget_is(sd->parent_obj))
           {
              *ret = elm_widget_scale_get(sd->parent_obj);
              return;
@@ -4305,7 +4308,6 @@ _elm_widget_access_info_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 EAPI Elm_Theme *
 elm_widget_theme_get(const Evas_Object *obj)
 {
-   ELM_WIDGET_CHECK(obj) NULL;
    Elm_Theme *ret = NULL;
    eo_do((Eo *) obj, elm_wdg_theme_get(&ret));
    return ret;
@@ -4320,7 +4322,7 @@ _elm_widget_theme_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    if (!sd->theme)
      {
-        if (sd->parent_obj)
+        if (sd->parent_obj && elm_widget_is(sd->parent_obj))
           {
              *ret = elm_widget_theme_get(sd->parent_obj);
              return;
@@ -4847,7 +4849,6 @@ elm_widget_newest_focus_order_get(const Evas_Object *obj,
                                   unsigned int *newest_focus_order,
                                   Eina_Bool can_focus_only)
 {
-   ELM_WIDGET_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
    eo_do((Eo *) obj, elm_wdg_newest_focus_order_get(newest_focus_order, can_focus_only, &ret));
    return ret;
@@ -4881,10 +4882,13 @@ _elm_widget_newest_focus_order_get(Eo *obj, void *_pd, va_list *list)
      }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
-        cur = elm_widget_newest_focus_order_get
-           (child, newest_focus_order, can_focus_only);
-        if (!cur) continue;
-        best = cur;
+        if (elm_widget_is(child))
+          {
+             cur = elm_widget_newest_focus_order_get
+                (child, newest_focus_order, can_focus_only);
+             if (!cur) continue;
+             best = cur;
+          }
      }
    *ret = best;
    return;
@@ -5041,7 +5045,6 @@ elm_widget_activate(Evas_Object *obj, Elm_Activate act)
 EAPI void
 elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 {
-   ELM_WIDGET_CHECK(obj);
    eo_do((Eo *) obj, elm_wdg_display_mode_set(dispmode));
 }
 
@@ -5063,7 +5066,12 @@ _elm_widget_display_mode_set(Eo *obj, void *_pd, va_list *list)
    evas_object_size_hint_display_mode_set(obj, dispmode);
 
    EINA_LIST_FOREACH (sd->subobjs, l, child)
-     elm_widget_display_mode_set(child, dispmode);
+     {
+        if (elm_widget_is(child))
+          {
+             elm_widget_display_mode_set(child, dispmode);
+          }
+     }
 }
 
 EAPI void
