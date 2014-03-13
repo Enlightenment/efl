@@ -5,27 +5,6 @@
 
 Eina_Hash* signals_hash_table = NULL;
 
-EAPI const Eo_Event_Description _CLICKED_EVENT =
-   EO_EVENT_DESCRIPTION("clicked", "");
-
-EAPI const Eo_Event_Description _CLICKED_DOUBLE_EVENT =
-   EO_EVENT_DESCRIPTION("clicked,double", "");
-
-EAPI const Eo_Event_Description _CLICKED_TRIPLE_EVENT =
-   EO_EVENT_DESCRIPTION("clicked,triple", "");
-
-EAPI const Eo_Event_Description _PRESSED_EVENT =
-   EO_EVENT_DESCRIPTION("pressed", "");
-
-EAPI const Eo_Event_Description _UNPRESSED_EVENT =
-   EO_EVENT_DESCRIPTION("unpressed", "");
-
-EAPI const Eo_Event_Description _LONGPRESSED_EVENT =
-   EO_EVENT_DESCRIPTION("longpressed", "");
-
-EAPI const Eo_Event_Description _REPEATED_EVENT =
-   EO_EVENT_DESCRIPTION("repeated", "");
-
 EAPI const Eo_Event_Description _SCROLL_EVENT =
    EO_EVENT_DESCRIPTION("scroll", "");
 
@@ -74,16 +53,6 @@ EAPI const Eo_Event_Description _SELECTION_CHANGED_EVENT =
 EAPI const Eo_Event_Description _SELECTION_CLEARED_EVENT =
    EO_EVENT_DESCRIPTION("selection,cleared", "");
 
-static const Eo_Event_Description *_clickable_events_desc[] = {
-     EVAS_SMART_CLICKED_EVENT,
-     EVAS_SMART_CLICKED_DOUBLE_EVENT,
-     EVAS_SMART_CLICKED_TRIPLE_EVENT,
-     EVAS_SMART_PRESSED_EVENT,
-     EVAS_SMART_UNPRESSED_EVENT,
-     EVAS_SMART_LONGPRESSED_EVENT,
-     EVAS_SMART_REPEATED_EVENT,
-     NULL
-};
 
 static const Eo_Event_Description *_scrollable_events_desc[] = {
      EVAS_SMART_SCROLL_EVENT,
@@ -113,6 +82,7 @@ static const Eo_Event_Description *_selectable_events_desc[] = {
      NULL
 };
 
+static const Eo_Event_Description *_evas_clickable_interface_event_desc[]; 
 static const Eo_Event_Description *_evas_draggable_interface_event_desc[];
 
 #define ADD_SIGNAL(name, event) eina_hash_add(signals_hash_table, name, event)
@@ -142,7 +112,7 @@ static void
 _evas_signal_interface_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    signals_hash_table = eina_hash_string_superfast_new(_signal_interface_del);
-   ADD_INTERFACE_SIGNALS(_clickable_events_desc);
+   ADD_INTERFACE_SIGNALS(_evas_draggable_interface_event_desc);
    ADD_INTERFACE_SIGNALS(_scrollable_events_desc);
    ADD_INTERFACE_SIGNALS(_zoomable_events_desc);
    ADD_INTERFACE_SIGNALS(_selectable_events_desc);
@@ -156,19 +126,6 @@ _evas_signal_interface_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    eina_hash_free(signals_hash_table);
 }
-
-static const Eo_Class_Description clickable_interface_desc = {
-     EO_VERSION,
-     "Evas_Clickable_Interface",
-     EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     _clickable_events_desc,
-     0,
-     NULL,
-     NULL
-};
-
-EO_DEFINE_CLASS(evas_smart_clickable_interface_get, &clickable_interface_desc, EVAS_SIGNAL_INTERFACE_CLASS, NULL);
 
 static const Eo_Class_Description scrollable_interface_desc = {
      EO_VERSION,
@@ -211,3 +168,4 @@ EO_DEFINE_CLASS(evas_smart_selectable_interface_get, &selectable_interface_desc,
 
 #include "canvas/evas_signal_interface.eo.c"
 #include "canvas/evas_draggable_interface.eo.c"
+#include "canvas/evas_clickable_interface.eo.c"

@@ -74,13 +74,13 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
 #define EVAS_CANVAS_EVENT_RENDER_PRE (&(_EVAS_CANVAS_EVENT_RENDER_PRE))
 #define EVAS_CANVAS_EVENT_RENDER_POST (&(_EVAS_CANVAS_EVENT_RENDER_POST))
 
-EAPI extern const Eo_Event_Description _CLICKED_EVENT;
-EAPI extern const Eo_Event_Description _CLICKED_DOUBLE_EVENT;
-EAPI extern const Eo_Event_Description _CLICKED_TRIPLE_EVENT;
-EAPI extern const Eo_Event_Description _PRESSED_EVENT;
-EAPI extern const Eo_Event_Description _UNPRESSED_EVENT;
-EAPI extern const Eo_Event_Description _LONGPRESSED_EVENT;
-EAPI extern const Eo_Event_Description _REPEATED_EVENT;
+//EAPI extern const Eo_Event_Description _CLICKED_EVENT;
+//EAPI extern const Eo_Event_Description _CLICKED_DOUBLE_EVENT;
+//EAPI extern const Eo_Event_Description _CLICKED_TRIPLE_EVENT;
+//EAPI extern const Eo_Event_Description _PRESSED_EVENT;
+//EAPI extern const Eo_Event_Description _UNPRESSED_EVENT;
+//EAPI extern const Eo_Event_Description _LONGPRESSED_EVENT;
+//EAPI extern const Eo_Event_Description _REPEATED_EVENT;
 EAPI extern const Eo_Event_Description _SCROLL_EVENT;
 EAPI extern const Eo_Event_Description _SCROLL_ANIM_START_EVENT;
 EAPI extern const Eo_Event_Description _SCROLL_ANIM_STOP_EVENT;
@@ -106,13 +106,13 @@ EAPI extern const Eo_Event_Description _SELECTION_CLEARED_EVENT;
 //EAPI extern const Eo_Event_Description _DRAG_START_RIGHT_EVENT;
 //EAPI extern const Eo_Event_Description _DRAG_START_LEFT_EVENT;
 
-#define EVAS_SMART_CLICKED_EVENT (&(_CLICKED_EVENT))
-#define EVAS_SMART_CLICKED_DOUBLE_EVENT (&(_CLICKED_DOUBLE_EVENT))
-#define EVAS_SMART_CLICKED_TRIPLE_EVENT (&(_CLICKED_TRIPLE_EVENT))
-#define EVAS_SMART_PRESSED_EVENT (&(_PRESSED_EVENT))
-#define EVAS_SMART_UNPRESSED_EVENT (&(_UNPRESSED_EVENT))
-#define EVAS_SMART_LONGPRESSED_EVENT (&(_LONGPRESSED_EVENT))
-#define EVAS_SMART_REPEATED_EVENT (&(_REPEATED_EVENT))
+//#define EVAS_SMART_CLICKED_EVENT (&(_CLICKED_EVENT))
+//#define EVAS_SMART_CLICKED_DOUBLE_EVENT (&(_CLICKED_DOUBLE_EVENT))
+//#define EVAS_SMART_CLICKED_TRIPLE_EVENT (&(_CLICKED_TRIPLE_EVENT))
+//#define EVAS_SMART_PRESSED_EVENT (&(_PRESSED_EVENT))
+//#define EVAS_SMART_UNPRESSED_EVENT (&(_UNPRESSED_EVENT))
+//#define EVAS_SMART_LONGPRESSED_EVENT (&(_LONGPRESSED_EVENT))
+//#define EVAS_SMART_REPEATED_EVENT (&(_REPEATED_EVENT))
 #define EVAS_SMART_SCROLL_EVENT (&(_SCROLL_EVENT))
 #define EVAS_SMART_SCROLL_ANIM_START_EVENT (&(_SCROLL_ANIM_START_EVENT))
 #define EVAS_SMART_SCROLL_ANIM_STOP_EVENT (&(_SCROLL_ANIM_STOP_EVENT))
@@ -140,14 +140,14 @@ EAPI extern const Eo_Event_Description _SELECTION_CLEARED_EVENT;
 
 
 //const Eo_Class *evas_smart_signal_interface_get(void) EINA_CONST;
-const Eo_Class *evas_smart_clickable_interface_get(void) EINA_CONST;
+//const Eo_Class *evas_smart_clickable_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_scrollable_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
 const Eo_Class *evas_smart_selectable_interface_get(void) EINA_CONST;
 //const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
 
 //#define EVAS_SMART_SIGNAL_INTERFACE evas_smart_signal_interface_get()
-#define EVAS_SMART_CLICKABLE_INTERFACE evas_smart_clickable_interface_get()
+//#define EVAS_SMART_CLICKABLE_INTERFACE evas_smart_clickable_interface_get()
 #define EVAS_SMART_SCROLLABLE_INTERFACE evas_smart_scrollable_interface_get()
 #define EVAS_SMART_ZOOMABLE_INTERFACE evas_smart_zoomable_interface_get()
 #define EVAS_SMART_SELECTABLE_INTERFACE evas_smart_selectable_interface_get()
@@ -155,6 +155,7 @@ const Eo_Class *evas_smart_selectable_interface_get(void) EINA_CONST;
 
 #include "canvas/evas_signal_interface.eo.h"
 #include "canvas/evas_draggable_interface.eo.h"
+#include "canvas/evas_clickable_interface.eo.h"
 
 #include "canvas/evas.eo.h"
 #define EVAS_CLASS EVAS_CANVAS_CLASS

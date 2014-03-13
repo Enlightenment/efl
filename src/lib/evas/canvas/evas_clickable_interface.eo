@@ -1,0 +1,13 @@
+interface Evas_Clickable_Interface (Evas_Signal_Interface)
+{
+   data: null;
+   events {
+      clicked;
+      clicked,double;
+      clicked,triple;
+      pressed;
+      unpressed;
+      longpressed;
+      repeated;
+   }
+}
