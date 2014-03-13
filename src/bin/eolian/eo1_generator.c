@@ -195,6 +195,7 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
         Eina_Bool add_star = EINA_FALSE;
         Eolian_Parameter_Dir pdir;
         eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, &pdesc);
+        Eina_Bool is_const = eolian_parameter_get_const_attribute_get(data);
         if (ftype == GET) {
              add_star = EINA_TRUE;
              pdir = EOLIAN_OUT_PARAM;
@@ -210,7 +211,9 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
         if (eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, ", ");
         eina_strbuf_append(str_par, pname);
 
-        eina_strbuf_append_printf(str_typecheck, ", EO_TYPECHECK(%s%s%s, %s)", ptype, had_star?"":" ", add_star?"*":"", pname);
+        eina_strbuf_append_printf(str_typecheck, ", EO_TYPECHECK(%s%s%s%s, %s)",
+              is_const?"const ":"",
+              ptype, had_star?"":" ", add_star?"*":"", pname);
      }
 
    const char* rettype = eolian_function_return_type_get(func, ftype);
