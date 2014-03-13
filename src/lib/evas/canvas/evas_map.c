@@ -484,8 +484,8 @@ _evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
         for (eo_parents = obj->smart.parent; eo_parents; eo_parents = parents->smart.parent)
           {
              parents = eo_data_scope_get(eo_parents, EVAS_OBJ_CLASS);
-             if (parents)
-               parents->child_has_map = EINA_TRUE;
+             if (!parents) break;
+             parents->child_has_map = EINA_TRUE;
           }
      }
    else
