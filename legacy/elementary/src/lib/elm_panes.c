@@ -63,7 +63,7 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
    if (!int_ret) return;
 
    size = elm_panes_content_left_size_get(obj);
@@ -390,7 +390,7 @@ _elm_panes_smart_horizontal_set(Eo *obj, void *_pd, va_list *list)
    Elm_Panes_Smart_Data *sd = _pd;
 
    sd->horizontal = horizontal;
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 
    elm_panes_content_left_size_set(obj, 0.5);
 }
@@ -483,9 +483,9 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_panes_smart_add),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_panes_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_panes_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_panes_smart_focus_next),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_panes_smart_theme),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_panes_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_panes_smart_focus_next),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_panes_smart_content_aliases_get),
 

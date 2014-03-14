@@ -698,7 +698,7 @@ EAPI void             elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x,
 EAPI void             elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI Eina_Bool        elm_widget_focus_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI void             elm_widget_focus_region_show(const Evas_Object *obj);
-EAPI void             elm_widget_parents_bounce_get(Evas_Object *obj, Eina_Bool *horiz, Eina_Bool *vert);
+EAPI void             elm_widget_parents_bounce_get(const Evas_Object *obj, Eina_Bool *horiz, Eina_Bool *vert);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_hold_get(const Evas_Object *obj);
@@ -823,7 +823,7 @@ void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_
  * Function to operate on a given widget's scrollabe children when necessary.
  * @warning free the returned list with eina_list_free().
  */
-EAPI Eina_List       *elm_widget_scrollable_children_get(Evas_Object *obj);
+EAPI Eina_List       *elm_widget_scrollable_children_get(const Evas_Object *obj);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
@@ -1174,6 +1174,12 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 
+#include "elm_widget.eo.h"
+
+typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
+typedef void * (*list_data_get_func_type)(const Eina_List * l);
+
+#if 0
 #define ELM_OBJ_WIDGET_CLASS elm_widget_class_get()
 
 const Eo_Class *elm_widget_class_get(void) EINA_CONST;
@@ -1336,8 +1342,6 @@ enum
    ELM_WIDGET_SUB_ID_LAST
 };
 
-typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
-typedef void * (*list_data_get_func_type)(const Eina_List * l);
 #define ELM_WIDGET_ID(sub_id) (ELM_WIDGET_BASE_ID + sub_id)
 
 
@@ -2747,4 +2751,5 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  *
  */
 #define elm_wdg_focused_item_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUSED_ITEM_GET), EO_TYPECHECK(Elm_Object_Item **, ret)
+#endif
 #endif

@@ -169,7 +169,7 @@ _elm_player_smart_theme(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret;
 
    Elm_Player_Smart_Data *sd = _pd;
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
    if (!int_ret) return;
    _update_theme_button(obj, sd->forward, "forward");
    _update_theme_button(obj, sd->info, "info");
@@ -724,8 +724,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_player_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_player_smart_del),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_player_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_player_smart_event),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_player_smart_theme),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_player_smart_event),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_player_smart_content_set),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_player_smart_sizing_eval),

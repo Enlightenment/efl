@@ -3772,7 +3772,7 @@ _elm_map_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
    if (!int_ret) return;
 
    if (elm_widget_focus_get(obj))
@@ -3840,7 +3840,7 @@ _elm_map_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
    if (!int_ret) return;
 
    _sizing_eval(obj);
@@ -5984,9 +5984,9 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_map_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_map_smart_move),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_map_smart_on_focus),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_map_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_map_smart_event),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_map_smart_on_focus),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_map_smart_theme),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_map_smart_event),
 
         EO_OP_FUNC(ELM_OBJ_MAP_ID(ELM_OBJ_MAP_SUB_ID_ZOOM_SET), _zoom_set),
         EO_OP_FUNC(ELM_OBJ_MAP_ID(ELM_OBJ_MAP_SUB_ID_ZOOM_GET), _zoom_get),

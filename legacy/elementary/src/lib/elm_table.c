@@ -125,7 +125,7 @@ _elm_table_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
 
    Eina_Bool super_ret;
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&super_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&super_ret));
    if (super_ret == EINA_FALSE)
       return;
 
@@ -173,7 +173,7 @@ _elm_table_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(child, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(child, &int_ret));
    if (!int_ret) return;
 
    _sizing_eval(obj);
@@ -199,7 +199,7 @@ _elm_table_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_FALSE);
 
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 static void
@@ -512,12 +512,12 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_table_smart_add),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_table_smart_del),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_table_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_table_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT), _elm_table_smart_focus_next),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_table_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_table_smart_focus_direction),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_table_sub_object_del),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_table_smart_theme),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_table_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_table_smart_focus_next),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_table_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_table_smart_focus_direction),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_table_sub_object_del),
 
         EO_OP_FUNC(ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_HOMOGENEOUS_SET), _homogeneous_set),
         EO_OP_FUNC(ELM_OBJ_TABLE_ID(ELM_OBJ_TABLE_SUB_ID_HOMOGENEOUS_GET), _homogeneous_get),

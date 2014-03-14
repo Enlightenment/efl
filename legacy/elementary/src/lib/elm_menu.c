@@ -205,7 +205,7 @@ _elm_menu_smart_theme(Eo *obj, void *_pd, va_list *list)
    const char *s;
    char style[1024];
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
    if (!int_ret) return;
 
    if (sd->menu_bar)
@@ -707,7 +707,7 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
           }
      }
 
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI Evas_Object *
@@ -745,7 +745,7 @@ elm_menu_parent_set(Evas_Object *obj,
                     Evas_Object *parent)
 {
    ELM_MENU_CHECK(obj);
-   eo_do(obj, elm_wdg_parent_set(parent));
+   eo_do(obj, elm_obj_widget_parent_set(parent));
 }
 
 static void
@@ -797,7 +797,7 @@ elm_menu_parent_get(const Evas_Object *obj)
 {
    ELM_MENU_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_wdg_parent_get(&ret));
+   eo_do((Eo *) obj, elm_obj_widget_parent_get(&ret));
    return ret;
 }
 
@@ -1328,10 +1328,10 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_menu_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_menu_smart_show),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_menu_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_menu_smart_translate),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _parent_set),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_GET), _parent_get),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_menu_smart_theme),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_TRANSLATE), _elm_menu_smart_translate),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_SET), _parent_set),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_GET), _parent_get),
 
         EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_MOVE), _move),
         EO_OP_FUNC(ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_CLOSE), _menu_close),

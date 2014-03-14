@@ -42,7 +42,7 @@ _elm_hoversel_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -70,7 +70,7 @@ _elm_hoversel_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    /* hoversel's style has an extra bit: orientation */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
    if (!int_ret) return;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -288,7 +288,7 @@ _elm_hoversel_smart_add(Eo *obj, void *_pd EINA_UNUSED,
    evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
 
    //What are you doing here?
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 static void
@@ -416,7 +416,7 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
 
    sd->horizontal = !!horizontal;
 
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -642,7 +642,7 @@ _elm_hoversel_smart_event(Eo *obj, void *_pd, va_list *list)
 
    Elm_Hoversel_Item  *litem, *fitem;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_event(src, type, event_info, &int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_event(src, type, event_info, &int_ret));
    if (int_ret) return;
 
    if (!sd || !sd->hover) return;
@@ -716,10 +716,10 @@ _class_constructor(Eo_Class *klass)
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_hoversel_smart_show),
            EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_hoversel_smart_hide),
 
-           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_hoversel_smart_theme),
-           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_TRANSLATE), _elm_hoversel_smart_translate),
-           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_PARENT_SET), _elm_hoversel_smart_parent_set),
-           EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_EVENT), _elm_hoversel_smart_event),
+           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_hoversel_smart_theme),
+           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_TRANSLATE), _elm_hoversel_smart_translate),
+           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_SET), _elm_hoversel_smart_parent_set),
+           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_hoversel_smart_event),
 
            EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_hoversel_smart_admits_autorepeat_get),
 

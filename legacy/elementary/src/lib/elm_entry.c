@@ -607,7 +607,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_wdg_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
    if (!int_ret) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -1052,7 +1052,7 @@ _elm_entry_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
      }
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_sub_object_del(sobj, ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, ret));
    if (!ret) return;
 
    if (ret) *ret = EINA_TRUE;
@@ -3588,7 +3588,7 @@ _text_style_user_push(Eo *obj, void *_pd, va_list *list)
    Elm_Entry_Smart_Data *sd = _pd;
 
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI void
@@ -3605,7 +3605,7 @@ _text_style_user_pop(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
 
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI const char *
@@ -3646,7 +3646,7 @@ _single_line_set(Eo *obj, void *_pd, va_list *list)
    sd->line_wrap = ELM_WRAP_NONE;
    if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
      elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 
    if (sd->scroll)
      {
@@ -3720,7 +3720,7 @@ _password_set(Eo *obj, void *_pd, va_list *list)
         _entry_selection_callbacks_register(obj);
      }
 
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -3967,7 +3967,7 @@ _line_wrap_set(Eo *obj, void *_pd, va_list *list)
    sd->line_wrap = wrap;
    if (wrap == ELM_WRAP_NONE)
      ELM_SAFE_FREE(sd->deferred_recalc_job, ecore_job_del);
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI Elm_Wrap_Type
@@ -4004,7 +4004,7 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->editable == editable) return;
    sd->editable = editable;
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 
    elm_drop_target_del(obj, sd->drop_format,
                        NULL, NULL,
@@ -5203,7 +5203,7 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
         elm_widget_on_show_region_hook_set(obj, NULL, NULL);
      }
    sd->last_w = -1;
-   eo_do(obj, elm_wdg_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
 EAPI Eina_Bool
@@ -5947,14 +5947,14 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_entry_smart_resize),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _elm_entry_smart_member_add),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_entry_smart_on_focus),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DISABLE), _elm_entry_smart_disable),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_THEME_APPLY), _elm_entry_smart_theme),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS_REGION), _elm_entry_smart_on_focus_region),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_entry_smart_sub_object_del),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ACTIVATE), _elm_entry_smart_activate),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_entry_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_entry_smart_focus_direction_manager_is),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_entry_smart_on_focus),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_DISABLE), _elm_entry_smart_disable),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_entry_smart_theme),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS_REGION), _elm_entry_smart_on_focus_region),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_entry_smart_sub_object_del),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACTIVATE), _elm_entry_smart_activate),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_entry_smart_focus_next_manager_is),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_entry_smart_focus_direction_manager_is),
 
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_entry_smart_content_set),
         EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_entry_smart_content_unset),

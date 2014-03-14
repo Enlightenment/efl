@@ -35,7 +35,7 @@ _elm_glview_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_wdg_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
    if (!int_ret) return;
 
    if (elm_widget_focus_get(obj))
@@ -567,7 +567,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_glview_smart_del),
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_glview_smart_resize),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ON_FOCUS), _elm_glview_smart_on_focus),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_glview_smart_on_focus),
 
         EO_OP_FUNC(ELM_OBJ_GLVIEW_ID(ELM_OBJ_GLVIEW_SUB_ID_GL_API_GET), _gl_api_get),
         EO_OP_FUNC(ELM_OBJ_GLVIEW_ID(ELM_OBJ_GLVIEW_SUB_ID_MODE_SET), _mode_set),

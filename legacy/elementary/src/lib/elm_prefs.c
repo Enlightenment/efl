@@ -2183,7 +2183,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL),
                    _elm_prefs_smart_del),
 
-        EO_OP_FUNC(ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_FOCUS_NEXT),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT),
                    _elm_prefs_smart_focus_next),
 
         EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_FILE_SET),

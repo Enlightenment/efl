@@ -1,0 +1,820 @@
+abstract Elm_Widget (Evas_Smart)
+{
+   eo_prefix: elm_obj_widget;
+   data: Elm_Widget_Smart_Data;
+   properties {
+      focus {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool focus;
+         }
+      }
+      drag_lock_y {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool lock;
+         }
+      }
+      focus_highlight_style {
+         set {
+            /*@ This function set the widget focus highlight style. */
+            return Eina_Bool;
+         }
+         get {
+            /*@ This function returns the widget focus highlight style. */
+         }
+         values {
+            const char *style;
+         }
+      }
+      tree_unfocusable {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool tree_unfocusable;
+         }
+      }
+      mirrored {
+         set {
+            /*@ Sets the widget's mirrored mode. */
+         }
+         get {
+            /*@ Returns the widget's mirrored mode. */
+         }
+         values {
+            Eina_Bool mirrored;
+         }
+      }
+      theme {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Elm_Theme *th;
+         }
+      }
+      disabled {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool disabled;
+         }
+      }
+      highlight_ignore {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool ignore;
+         }
+      }
+      mirrored_automatic {
+         set {
+            /*@ Sets the widget's mirrored mode setting. */
+         }
+         get {
+            /*@ Returns the widget's mirrored mode setting. */
+         }
+         values {
+            Eina_Bool automatic;
+         }
+      }
+      orientation_mode_disabled {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool disabled;
+         }
+      }
+      style {
+         set {
+            /*@ No description supplied by the EAPI. */
+            return Eina_Bool;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            const char *style;
+         }
+      }
+      scale {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            double scale;
+         }
+      }
+      focus_custom_chain {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            objs: const;
+         }
+         values {
+            Eina_List *objs;
+         }
+      }
+      can_focus {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool can_focus;
+         }
+      }
+      highlight_in_theme {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool highlight;
+         }
+      }
+      parent {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Evas_Object *parent;
+         }
+      }
+      access_info {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            const char *txt;
+         }
+      }
+      drag_lock_x {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool lock;
+         }
+      }
+      access_highlight_in_theme {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool highlight; /*@ highlight */
+         }
+      }
+      parent_highlight {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool highlighted;
+         }
+      }
+      theme_object {
+         set {
+            /*@ No description supplied by the EAPI. */
+            return Eina_Bool;
+         }
+         values {
+            Evas_Object *edj;
+            const char *wname;
+            const char *welement;
+            const char *wstyle;
+         }
+      }
+      hover_object {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Evas_Object *sobj;
+         }
+      }
+      display_mode {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Evas_Display_Mode dispmode;
+         }
+      }
+      on_show_region_hook {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            region_hook_func_type func;
+            void *data;
+         }
+      }
+      domain_part_text_translatable {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            const char *part;
+            const char *domain;
+            Eina_Bool translatable;
+         }
+      }
+      orientation {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            int rotation;
+         }
+      }
+      resize_object {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Evas_Object *sobj;
+            Eina_Bool sub_obj;
+         }
+      }
+      domain_translatable_part_text {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            const char *part;
+            const char *domain;
+            const char *label;
+         }
+      }
+      scrollable_children {
+         get {
+            /*@
+            Function to operate on a given widget's scrollabe children when necessary.
+            @warning free the returned list with eina_list_free(). */
+            return Eina_List *;
+         }
+      }
+      scroll_hold {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return int;
+         }
+      }
+      drag_child_locked_y {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return int;
+         }
+      }
+      child_can_focus {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Eina_Bool;
+         }
+      }
+      scroll_freeze {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return int;
+         }
+      }
+      focus_region {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Eina_Bool;
+         }
+         values {
+            Evas_Coord x;
+            Evas_Coord y;
+            Evas_Coord w;
+            Evas_Coord h;
+         }
+      }
+      top {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Evas_Object *;
+         }
+      }
+      focus_order {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return unsigned int;
+         }
+      }
+      drag_child_locked_x {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return int;
+         }
+      }
+      can_focus_child_list {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Eina_List *;
+         }
+      }
+      focused_item {
+         get {
+            /*@ Get the focused widget item. */
+            return Elm_Object_Item *;
+         }
+      }
+      parents_bounce {
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Eina_Bool horiz;
+            Eina_Bool vert;
+         }
+      }
+      parent_widget {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Evas_Object *;
+            legacy null;
+         }
+      }
+      highlight {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Eina_Bool;
+         }
+      }
+      focused_object {
+         get {
+            /*@ No description supplied by the EAPI. */
+            return Evas_Object *;
+         }
+      }
+      parent2 {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            Evas_Object *parent;
+         }
+      }
+   }
+   methods {
+      newest_focus_order_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Evas_Object *;
+         params {
+            @out unsigned int newest_focus_order;
+            @in Eina_Bool can_focus_only;
+         }
+      }
+      scroll_hold_push {
+         /*@ No description supplied by the EAPI. */
+      }
+      cursor_add {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Cursor *cur;
+         }
+      }
+      focus_next_object_set {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Evas_Object *next;
+            @in Elm_Focus_Direction dir;
+         }
+      }
+      focus_next_object_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Evas_Object *;
+         params {
+            @in Elm_Focus_Direction dir;
+         }
+      }
+      focus_tree_unfocusable_handle {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_custom_chain_prepend {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Evas_Object *child;
+            @in Evas_Object *relative_child;
+         }
+      }
+      part_text_translate {
+         /*@ No description supplied by the EAPI. */
+         return const char *;
+         params {
+            @in const char *part;
+            @in const char *text;
+         }
+      }
+      focus_highlight_geometry_get {
+         /*@ Get the focus highlight geometry of widget. */
+         const;
+         params {
+            @in Evas_Coord *x;
+            @in Evas_Coord *y;
+            @in Evas_Coord *w;
+            @in Evas_Coord *h;
+            @in Eina_Bool is_next;
+         }
+      }
+      activate {
+         /*@ 'Virtual' function to activate widget. */
+         params {
+            @in Elm_Activate act;
+         }
+         return Eina_Bool;
+         legacy null; /* the legacy API has not the same number of parameter to we don't generate it. */
+      }
+      sub_object_add {
+         /*@ 'Virtual' function handling sub objects being added. */
+         return Eina_Bool;
+         params {
+            @in Evas_Object *sobj;
+         }
+      }
+      focus_direction_manager_is {
+         /*@ 'Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget. */
+         return Eina_Bool;
+         legacy null;
+      }
+      event {
+         /*@ 'Virtual' function handling input events on the widget. */
+         params {
+            @in Evas_Object *source;
+            @in Evas_Callback_Type type;
+            @in void *event_info;
+         }
+         return Eina_Bool;
+      }
+      event_callback_add {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Event_Cb func;
+            @in const void *data;
+         }
+      }
+      access {
+         /*@ 'Virtual' function on the widget being set access. */
+         params {
+            @in Eina_Bool access;
+         }
+         legacy null;
+      }
+      cursor_del {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Cursor *cur;
+         }
+      }
+      event_callback_del {
+         /*@ No description supplied by the EAPI. */
+         return void *;
+         params {
+            @in Elm_Event_Cb func;
+            @in const void *data;
+         }
+      }
+      on_focus {
+         /*@ 'Virtual' function handling focus in/out events on the widget.
+         return EINA_TRUE if this widget can handle focus, EINA_FALSE otherwise */
+         return Eina_Bool;
+      }
+      on_focus_region {
+         /*@ 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. */
+         params {
+            @out Evas_Coord x;
+            @out Evas_Coord y;
+            @out Evas_Coord w;
+            @out Evas_Coord h;
+         }
+         return Eina_Bool;
+      }
+      focus_cycle {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Focus_Direction dir;
+         }
+      }
+      focus_direction {
+         /*@ 'Virtual' function handling passing focus to sub-objects given a direction, in degrees. */
+         params {
+            @in const Evas_Object *base;
+            @in double degree;
+            @out Evas_Object *direction;
+            @out double weight;
+         }
+         return Eina_Bool;
+      }
+      event_propagate {
+         /*@ No description supplied by the EAPI. */
+         return Eina_Bool;
+         params {
+            @in Evas_Callback_Type type;
+            @in void *event_info;
+            @in Evas_Event_Flags *event_flags;
+         }
+      }
+      signal_callback_add {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *emission;
+            @in const char *source;
+            @in Edje_Signal_Cb func;
+            @in void *data;
+         }
+      }
+      focus_next_manager_is {
+         /*@ 'Virtual' function which checks if handling of passing focus to sub-objects is supported by widget. */
+         return Eina_Bool;
+      }
+      name_find {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Evas_Object *;
+         params {
+            @in const char *name;
+            @in int recurse;
+         }
+      }
+      focus_list_direction_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Eina_Bool;
+         params {
+            @in const Evas_Object *base;
+            @in const Eina_List *items;
+            @in list_data_get_func_type list_data_get;
+            @in double degree;
+            @out Evas_Object *direction;
+            @out double weight;
+         }
+      }
+      focused_object_clear {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_direction_go {
+         /*@ No description supplied by the EAPI. */
+         return Eina_Bool;
+         params {
+            @in double degree;
+         }
+      }
+      show_region_set {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Evas_Coord x;
+            @in Evas_Coord y;
+            @in Evas_Coord w;
+            @in Evas_Coord h;
+            @in Eina_Bool forceshow;
+         }
+      }
+      show_region_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         params {
+            @out Evas_Coord x;
+            @out Evas_Coord y;
+            @out Evas_Coord w;
+            @out Evas_Coord h;
+         }
+      }
+      scroll_freeze_pop {
+         /*@ No description supplied by the EAPI. */
+      }
+      tooltip_del {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Tooltip *tt;
+         }
+      }
+      focus_next_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Eina_Bool;
+         params {
+            @in Elm_Focus_Direction dir;
+            @out Evas_Object *next;
+         }
+      }
+      translatable_part_text_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return const char *;
+         params {
+            @in const char *part;
+         }
+      }
+      focus_restore {
+         /*@
+         @internal
+
+         Restore the focus state of the sub-tree.
+
+         This API will restore the focus state of the sub-tree to the latest
+         state. If a sub-tree is unfocused and wants to get back to the latest
+         focus state, this API will be helpful.
+
+         @ingroup Widget */
+
+      }
+      scroll_hold_pop {
+         /*@ No description supplied by the EAPI. */
+      }
+      translate {
+         /*@ 'Virtual' function handling language changes on Elementary. */
+         return Eina_Bool;
+         legacy null;
+      }
+      scroll_freeze_push {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_custom_chain_unset {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_steal {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_hide_handle {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_next {
+         /*@ 'Virtual' function handling passing focus to sub-objects. */
+         params {
+            @in Elm_Focus_Direction dir;
+            @out Evas_Object *next;
+         }
+         return Eina_Bool;
+      }
+      focus_list_next_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Eina_Bool;
+         params {
+            @in const Eina_List *items;
+            @in list_data_get_func_type list_data_get;
+            @in Elm_Focus_Direction dir;
+            @out Evas_Object *next;
+         }
+      }
+      focus_mouse_up_handle {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+      }
+      part_text_set {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *part;
+            @in const char *label;
+         }
+      }
+      part_text_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return const char *;
+         params {
+            @in const char *part;
+         }
+      }
+      theme_apply {
+         /*@ 'Virtual' function on the widget being re-themed. */
+         return Eina_Bool;
+      }
+      focus_direction_get {
+         /*@ No description supplied by the EAPI. */
+         const;
+         return Eina_Bool;
+         params {
+            @in const Evas_Object *base;
+            @in double degree;
+            @out Evas_Object *direction;
+            @out double weight;
+         }
+      }
+      signal_callback_del {
+         /*@ No description supplied by the EAPI. */
+         return void *;
+         params {
+            @in const char *emission;
+            @in const char *source;
+            @in Edje_Signal_Cb func;
+         }
+      }
+      signal_emit {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *emission;
+            @in const char *source;
+         }
+      }
+      disable {
+         /*@ 'Virtual' function on the widget being disabled. */
+         return Eina_Bool;
+      }
+      sub_object_del {
+         /*@ 'Virtual' function handling sub objects being removed. */
+         return Eina_Bool;
+         params {
+            @in Evas_Object *sobj;
+         }
+      }
+      tooltip_add {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Elm_Tooltip *tt;
+         }
+      }
+      focus_region_show {
+         /*@ No description supplied by the EAPI. */
+         const;
+      }
+      focus_disabled_handle {
+         /*@ No description supplied by the EAPI. */
+      }
+      focus_custom_chain_append {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in Evas_Object *child;
+            @in Evas_Object *relative_child;
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Eo_Base::dbg_info_get;
+      Evas_Smart::hide;
+      Evas_Smart::calculate;
+      Evas_Smart::clip_unset;
+      Evas_Smart::show;
+      Evas_Smart::color::set;
+      Evas_Smart::move;
+      Evas_Smart::member_del;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::clip::set;
+      Evas_Smart::member_add;
+      Evas_Smart::resize;
+      virtual::focus_direction;
+      virtual::focus_next;
+      virtual::parent_widget::get;
+   }
+
+}
