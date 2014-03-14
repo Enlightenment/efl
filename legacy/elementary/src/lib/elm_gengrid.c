@@ -2223,6 +2223,7 @@ _elm_gengrid_clear(Evas_Object *obj,
    Eina_Inlist *next, *l;
 
    ELM_GENGRID_DATA_GET(obj, sd);
+   if (!sd->items) return;
 
    if (!standby) sd->generation++;
 
