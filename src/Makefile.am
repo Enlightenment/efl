@@ -73,7 +73,8 @@ include Makefile_Eina_Cxx.am
 
 BENCHMARK_SUBDIRS = \
 benchmarks/eina \
-benchmarks/eo
+benchmarks/eo \
+benchmarks/evas
 DIST_SUBDIRS += $(BENCHMARK_SUBDIRS)
 
 benchmark: all-am

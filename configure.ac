@@ -4080,6 +4080,7 @@ doc/previews/Makefile
 src/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
+src/benchmarks/evas/Makefile
 src/examples/eina/Makefile
 src/examples/eina_cxx/Makefile
 src/examples/eet/Makefile
