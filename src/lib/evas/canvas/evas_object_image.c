@@ -598,7 +598,12 @@ _evas_image_source_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Object *eo_src)
           }
         if (!src->layer)
           {
-             CRI("No evas surface associated with source object (%p)", eo_obj);
+             CRI("No evas surface associated with source object (%p)", eo_src);
+             return EINA_FALSE;
+          }
+        if (!obj->layer)
+          {
+             CRI("No evas surface associated with destination object (%p)", eo_obj);
              return EINA_FALSE;
           }
         if ((obj->layer && src->layer) &&
