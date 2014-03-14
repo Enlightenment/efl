@@ -2775,6 +2775,7 @@ _eet_data_dump_token_get(const char *src,
    char *tok = NULL;
    int in_token = 0;
    int in_quote = 0;
+   int in_escape = 0;
    int tlen = 0, tsize = 0;
 
 #define TOK_ADD(x)                     \
@@ -2792,25 +2793,32 @@ _eet_data_dump_token_get(const char *src,
      {
         if (in_token)
           {
-             if (in_quote)
+             if (in_escape)
                {
-                  if ((p[0] == '\"') && (p > src) && (p[-1] != '\\'))
+                  switch (p[0]) {
+                   case 'n':
+                      TOK_ADD('\n');
+                      break;
+                   case '"':
+                   case '\'':
+                   case '\\':
+                      TOK_ADD(p[0]);
+                      break;
+                   default:
+                      ERR("Unknow escape character %#x (%c). Append as is",
+                          p[0], p[0]);
+                      TOK_ADD(p[0]);
+                  }
+                  in_escape = 0;
+               }
+             else if (p[0] == '\\')
+               {
+                  in_escape = 1;
+               }
+             else if (in_quote)
+               {
+                  if (p[0] == '\"')
                     in_quote = 0;
-                  else if ((p[0] == '\\') && (*len > 1) &&
-                           (p[1] == '\"'))
-                    {
-/* skip */
-                    }
-                  else if ((p[0] == '\\') && (p > src) && (p[-1] == '\\'))
-                    {
-/* skip */
-                    }
-                  else if ((p[0] == '\\') && (*len > 1) && (p[1] == 'n'))
-                    {
-/* skip */
-                    }
-                  else if ((p[0] == 'n') && (p > src) && (p[-1] == '\\'))
-                    TOK_ADD('\n');
                   else
                     TOK_ADD(p[0]);
                }

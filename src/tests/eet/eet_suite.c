@@ -920,6 +920,47 @@ START_TEST(eet_test_data_type_dump_undump)
    eet_shutdown();
 }
 END_TEST
+
+static void
+append_strbuf_string(void *data, const char *string)
+{
+   Eina_Strbuf *strbuf = data;
+   eina_strbuf_append(strbuf, string);
+}
+
+START_TEST(eet_test_data_type_escape_dump_undump)
+{
+   void *blob;
+   int blob_len;
+   int ret = 0;
+   const char *outputstr;
+   Eina_Strbuf *strbuf;
+   const char inputstr[] = ""
+     "group \"\\\\My\\\"Group\\\\\" struct {\n"
+     "    value \"\\\\My\\\\BackSlash\\\\\" string: \"\\\\\";\n"
+     "    value \"\\\\My\\\\DoubleQuote\\\\\" string: \"\\\"\";\n"
+     "    value \"\\\\My\\\\NewLine\\\\\" string: \"\\n\";\n"
+     "}\n";
+
+   eet_init();
+
+   blob = eet_data_text_undump(inputstr, strlen(inputstr), &blob_len);
+   fail_if(!blob);
+
+   strbuf = eina_strbuf_new();
+   ret = eet_data_text_dump(blob, blob_len, append_strbuf_string, strbuf);
+   ck_assert_int_eq(ret, 1);
+
+   outputstr = eina_strbuf_string_get(strbuf);
+   fail_if(!outputstr);
+   ck_assert_str_eq(inputstr, outputstr);
+
+   eina_strbuf_free(strbuf);
+   free(blob);
+
+   eet_shutdown();
+}
+END_TEST
 START_TEST(eet_file_simple_write)
 {
    const char *buffer = "Here is a string of data to save !";
@@ -2724,6 +2765,7 @@ eet_suite(void)
    tcase_add_test(tc, eet_test_basic_data_type_encoding_decoding);
    tcase_add_test(tc, eet_test_data_type_encoding_decoding);
    tcase_add_test(tc, eet_test_data_type_dump_undump);
+   tcase_add_test(tc, eet_test_data_type_escape_dump_undump);
    tcase_add_test(tc, eet_fp);
    tcase_add_test(tc, eet_test_union);
    tcase_add_test(tc, eet_test_variant);
