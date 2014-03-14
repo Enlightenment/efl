@@ -59,14 +59,12 @@ _evas_out_destructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 
    eo_do(eo_obj, eo_parent_get(&eo_parent));
    e = eo_data_scope_get(eo_parent, EVAS_CLASS);
-   // XXX: need to free output and context one they get allocated one day   
+   if (!e) return ;
+   // XXX: need to free output and context one they get allocated one day
    // e->engine.func->context_free(eo_dat->output, eo_dat->context);
    // e->engine.func->output_free(eo_dat->output);
    e->engine.func->info_free(eo_parent, eo_dat->info);
-   if (e)
-     {
-        e->outputs = eina_list_remove(e->outputs, eo_obj);
-     }
+   e->outputs = eina_list_remove(e->outputs, eo_obj);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
