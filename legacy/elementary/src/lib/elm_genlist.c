@@ -2841,7 +2841,8 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        else
          {
            it = elm_genlist_first_item_get(obj);
-           elm_object_item_focus_set(it, EINA_TRUE);
+           if (it)
+             elm_object_item_focus_set(it, EINA_TRUE);
          }
      }
    else
