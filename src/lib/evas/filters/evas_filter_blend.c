@@ -324,12 +324,12 @@ _mapped_blend(void *data, void *drawctx,
         DBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d (from %dx%d to %dx%d +%d,%d)",
             0, 0, sw, sh, dx, dy, cols, rows, sw, sh, dw, dh, dx, dy);
 
-        ret = image_draw(data, drawctx, out, in,
-                         sx, sy, cols, rows, // src
-                         dx, dy, cols, rows, // dst
-                         EINA_TRUE, // smooth
-                         EINA_FALSE); // Not async
-        return ret;
+        image_draw(data, drawctx, out, in,
+                   sx, sy, cols, rows, // src
+                   dx, dy, cols, rows, // dst
+                   EINA_TRUE, // smooth
+                   EINA_FALSE); // Not async
+        return EINA_TRUE;
      }
 
    if (fillmode & EVAS_FILTER_FILL_MODE_REPEAT_X)
@@ -462,11 +462,10 @@ _mapped_blend(void *data, void *drawctx,
                  col, row, src_x, src_y, src_w, src_h,
                  dst_x, dst_y, dst_w, dst_h,
                  sw, sh, dw, dh);
-             ret = image_draw(data, drawctx, out, in,
-                              src_x, src_y, src_w, src_h,
-                              dst_x, dst_y, dst_w, dst_h,
-                              EINA_TRUE, EINA_FALSE);
-             if (!ret) return EINA_FALSE;
+             image_draw(data, drawctx, out, in,
+                        src_x, src_y, src_w, src_h,
+                        dst_x, dst_y, dst_w, dst_h,
+                        EINA_TRUE, EINA_FALSE);
           }
      }
    return ret;
