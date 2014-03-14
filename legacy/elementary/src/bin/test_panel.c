@@ -5,6 +5,8 @@
 
 #define LIST_ITEM_MAX 20
 
+static const char *img1 = PACKAGE_DATA_DIR "/images/plant_01.jpg";
+
 static Elm_Genlist_Item_Class itc;
 
 static void _bstatus(void *data, Evas_Object *obj, void *event_info);
@@ -156,7 +158,7 @@ _dir_has_subs(const char *path)
 void
 test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *panel, *bx, *vbx, *toolbar;
+   Evas_Object *win, *panel, *tb, *vbx, *toolbar, *photo;
    Evas_Object *list;
 
    win = elm_win_util_standard_add("panel", "Panel");
@@ -167,11 +169,10 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_win_resize_object_add(win, vbx);
    evas_object_show(vbx);
 
-   bx = elm_box_add(win);
-   elm_box_horizontal_set(bx, EINA_TRUE);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(bx);
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(tb);
 
    panel = elm_panel_add(vbx);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_TOP);
@@ -191,7 +192,16 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(vbx, panel);
    evas_object_show(panel);
 
-   panel = elm_panel_add(bx);
+   photo = elm_photo_add(tb);
+   elm_photo_file_set(photo, img1);
+   elm_photo_fill_inside_set(photo, EINA_TRUE);
+   elm_object_style_set(photo, "shadow");
+   evas_object_size_hint_weight_set(photo, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(photo, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, photo, 0, 0, 4, 5);
+   evas_object_show(photo);
+
+   panel = elm_panel_add(tb);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //   evas_object_size_hint_align_set(panel, 0, EVAS_HINT_FILL);
@@ -210,13 +220,12 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(list);
 
    elm_object_content_set(panel, list);
-
-   elm_box_pack_end(bx, panel);
+   elm_table_pack(tb, panel, 0, 0, 2, 4);
    evas_object_show(panel);
 
    _fill_list(list);
 
-   panel = elm_panel_add(bx);
+   panel = elm_panel_add(tb);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_RIGHT);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //   evas_object_size_hint_align_set(panel, 1, EVAS_HINT_FILL);
@@ -230,8 +239,7 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(list);
 
    elm_object_content_set(panel, list);
-
-   elm_box_pack_end(bx, panel);
+   elm_table_pack(tb, panel, 2, 0, 2, 4);
    evas_object_show(panel);
 
    _fill_list(list);
@@ -241,7 +249,7 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
         free(dir);
    }
 
-   elm_box_pack_end(vbx, bx);
+   elm_box_pack_end(vbx, tb);
 
    panel = elm_panel_add(vbx);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_BOTTOM);
@@ -259,7 +267,7 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_toolbar_item_append(toolbar, "home", "Hello", _bstatus, panel);
 
    elm_object_content_set(panel, toolbar);
-   elm_box_pack_end(vbx, panel);
+   elm_table_pack(tb, panel, 0, 4, 4, 1);
    evas_object_show(panel);
 
    evas_object_resize(win, 320, 400);
