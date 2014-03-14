@@ -37,6 +37,8 @@ typedef struct
    Eina_Bool virtual_pure :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
+   Eina_Bool get_return_own :1; /* also used for methods */
+   Eina_Bool set_return_own :1;
 } _Function_Id;
 
 typedef struct
@@ -47,6 +49,7 @@ typedef struct
    Eolian_Parameter_Dir param_dir;
    Eina_Bool is_const :1; /* True if const in this function (e.g get) but not const in the opposite one (e.g set) */
    Eina_Bool nonull :1; /* True if this argument cannot be NULL */
+   Eina_Bool own :1; /* True if the ownership of this argument passes to the caller/callee */
 } _Parameter_Desc;
 
 typedef struct
@@ -803,6 +806,22 @@ eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc)
    return param->nonull;
 }
 
+void
+database_parameter_own_set(Eolian_Function_Parameter param_desc, Eina_Bool own)
+{
+   _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
+   EINA_SAFETY_ON_NULL_RETURN(param);
+   param->own = own;
+}
+
+EAPI Eina_Bool
+eolian_parameter_is_own(Eolian_Function_Parameter param_desc)
+{
+   _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
+   return param->own;
+}
+
 void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type)
 {
    const char *key = NULL;
@@ -869,6 +888,33 @@ eolian_function_return_is_warn_unused(Eolian_Function foo_id,
      {
       case METHOD_FUNC: case GET: return fid->get_return_warn_unused;
       case SET: return fid->set_return_warn_unused;
+      default: return EINA_FALSE;
+     }
+}
+
+void database_function_return_flag_set_own(Eolian_Function foo_id,
+      Eolian_Function_Type ftype, Eina_Bool own)
+{
+   _Function_Id *fid = (_Function_Id *)foo_id;
+   EINA_SAFETY_ON_NULL_RETURN(fid);
+   switch (ftype)
+     {
+      case METHOD_FUNC: case GET: fid->get_return_own = own; break;
+      case SET: fid->set_return_own = own; break;
+      default: return;
+     }
+}
+
+EAPI Eina_Bool
+eolian_function_return_own_get(Eolian_Function foo_id,
+      Eolian_Function_Type ftype)
+{
+   _Function_Id *fid = (_Function_Id *)foo_id;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   switch (ftype)
+     {
+      case METHOD_FUNC: case GET: return fid->get_return_own;
+      case SET: return fid->set_return_own;
       default: return EINA_FALSE;
      }
 }

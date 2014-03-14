@@ -8,7 +8,7 @@ eo_definitions_ret_free(Eo_Ret_Def *ret)
 {
    if (ret->type) eina_stringshare_del(ret->type);
    if (ret->comment) eina_stringshare_del(ret->comment);
-   /* do not free */
+   free(ret);
 }
 
 static void
@@ -41,7 +41,8 @@ eo_definitions_accessor_free(Eo_Accessor_Def *accessor)
    EINA_LIST_FREE(accessor->params, param)
       eo_definitions_accessor_param_free(param);
 
-   eo_definitions_ret_free(&accessor->ret);
+   if (accessor->ret)
+      eo_definitions_ret_free(accessor->ret);
 
    free(accessor);
 }
@@ -72,7 +73,8 @@ eo_definitions_method_def_free(Eo_Method_Def *meth)
 {
    Eo_Param_Def *param;
 
-   eo_definitions_ret_free(&meth->ret);
+   if (meth->ret)
+      eo_definitions_ret_free(meth->ret);
 
    if (meth->name)
      eina_stringshare_del(meth->name);

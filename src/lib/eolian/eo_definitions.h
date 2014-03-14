@@ -11,6 +11,7 @@ typedef struct _eo_ret_def
    const char *type;
    const char *comment;
    Eina_Bool warn_unused:1;
+   Eina_Bool own:1;
 } Eo_Ret_Def;
 
 /* PARAM */
@@ -30,6 +31,7 @@ typedef struct _eo_param_def
    const char *name;
    const char *comment;
    Eina_Bool nonull:1;
+   Eina_Bool own:1;
 } Eo_Param_Def;
 
 /* ACCESSOR */
@@ -50,7 +52,7 @@ typedef struct _eo_accessor_param
 typedef struct _eo_accessor_def
 {
    Eo_Accessor_Type type;
-   Eo_Ret_Def ret;
+   Eo_Ret_Def *ret;
    const char *comment;
    const char* legacy;
    Eina_List *params; /* List of Eo_Accessor_Param */
@@ -77,7 +79,7 @@ typedef enum _eo_method_type {
 
 typedef struct _eo_method_def
 {
-   Eo_Ret_Def ret;
+   Eo_Ret_Def *ret;
    Eo_Method_Type type;
    const char *name;
    const char *comment;

@@ -441,6 +441,16 @@ EAPI Eina_Bool eolian_parameter_get_const_attribute_get(Eolian_Function_Paramete
 EAPI Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc);
 
 /*
+ * @brief Indicates if the ownership of tha parameter passes to the caller/callee..
+ *
+ * @param[in] param_desc parameter handle
+ * @return EINA_TRUE if cannot be NULL, EINA_FALSE otherwise
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_parameter_is_own(Eolian_Function_Parameter param_desc);
+
+/*
  * @brief Get the return type of a function.
  *
  * @param[in] function_id id of the function
@@ -482,6 +492,21 @@ eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type 
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id, Eolian_Function_Type ftype);
+
+/*
+ * @brief returns the own flag of a function
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return the own flag.
+ *
+ * The type of the function is needed because a given function can represent a
+ * property, that can be set and get functions.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool
+eolian_function_return_own_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.

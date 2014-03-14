@@ -179,22 +179,30 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
    Eo_Param_Def *param = calloc(1, sizeof(Eo_Param_Def));
    if (param == NULL) ABORT(toknz, "calloc Eo_Param_Def failure");
 
-   /* If @nonull is found, we set s as the end of the string and
-      update the boolean. Otherwise we set the end as the character
-      before the ';'.
-      We need to modify temporarily p because we want strstr to stop
-      at the ';' maximum. p represents the end of the string to search
-      inside.
+   /* The next code part tries to identify the different tags of the
+      parameter.
+      First, we set the ';' to '\0', to search only inside this section.
+      We then strstr the different tags and if found, we update the internal
+      flag and clear the zone of the text. In this way, during the
+      determination of the type/variable, we will not be disturbed by the
+      flags.
+      We have to put back the ';' at the end.
     */
    *p = '\0';
    s = strstr(toknz->saved.tok, "@nonull");
-   *p = ';';
    if (s)
      {
         param->nonull = EINA_TRUE;
-        p = s;
+        memset(s, ' ', 7);
      }
-   s = p - 1; /* Don't look at the current character (';' or '@') */
+   s = strstr(toknz->saved.tok, "@own");
+   if (s)
+     {
+        param->own = EINA_TRUE;
+        memset(s, ' ', 4);
+     }
+   *p = ';';
+   s = p - 1; /* Don't look at the character ';' */
    /* Remove any space between the param name and ';'/@nonull
     * This loop fixes the case where "char *name ;" becomes the type of the param.
     */
@@ -232,6 +240,43 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
    param->name = _eo_tokenizer_token_get(toknz, p);
 
    return param;
+}
+
+static Eo_Ret_Def*
+_eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
+{
+   char *s;
+
+   Eo_Ret_Def *ret = calloc(1, sizeof(Eo_Ret_Def));
+   if (ret == NULL) ABORT(toknz, "calloc Eo_Ret_Def failure");
+
+   *p = '\0';
+   s = strstr(toknz->saved.tok, "@warn_unused");
+   if (s)
+     {
+        ret->warn_unused = EINA_TRUE;
+        memset(s, ' ', 12);
+     }
+   s = strstr(toknz->saved.tok, "@own");
+   if (s)
+     {
+        ret->own = EINA_TRUE;
+        memset(s, ' ', 4);
+     }
+   *p = ';';
+   s = p - 1; /* Don't look at the character ';' */
+   /* Remove any space between the param name and ';'
+    * This loop fixes the case where "char *name ;" becomes the type of the param.
+    */
+   while (*s == ' ') s--;
+
+   if (s == toknz->saved.tok)
+     ABORT(toknz, "wrong parameter: %s", _eo_tokenizer_token_get(toknz, p));
+   s++;
+
+   ret->type = _eo_tokenizer_token_get(toknz, s);
+
+   return ret;
 }
 
 static Eo_Accessor_Param*
@@ -373,26 +418,20 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       INF("        %s", toknz->tmp.accessor->comment);
    }
 
-   action end_accessor_rettype {
+   action end_accessor_return {
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
-      if (toknz->tmp.accessor->ret.type != NULL)
+      if (toknz->tmp.accessor->ret != NULL)
         ABORT(toknz, "accessor has already a return type");
-      toknz->tmp.accessor->ret.type = _eo_tokenizer_token_get(toknz, fpc);
-      INF("        %s", toknz->tmp.accessor->ret.type);
+      toknz->tmp.accessor->ret = _eo_tokenizer_return_get(toknz, fpc);
    }
 
    action end_accessor_rettype_comment {
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
-      if (toknz->tmp.accessor->ret.comment != NULL)
+      if (!toknz->tmp.accessor->ret) ABORT(toknz, "No ret!!!");
+      if (toknz->tmp.accessor->ret->comment != NULL)
         ABORT(toknz, "accessor return type has already a comment");
-      toknz->tmp.accessor->ret.comment = _eo_tokenizer_token_get(toknz, fpc-2);
-      INF("        %s", toknz->tmp.accessor->ret.comment);
-   }
-
-   action end_accessor_rettype_unused_flag {
-      if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
-      toknz->tmp.accessor->ret.warn_unused = EINA_TRUE;
-      INF("        WARN_UNUSED");
+      toknz->tmp.accessor->ret->comment = _eo_tokenizer_token_get(toknz, fpc-2);
+      INF("        %s", toknz->tmp.accessor->ret->comment);
    }
 
    action end_accessor_legacy {
@@ -422,9 +461,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.accessor_param = NULL;
    }
 
-   rettype_flag = "@warn_unused" %end_accessor_rettype_unused_flag;
    rettype_comment = ws* eo_comment %end_accessor_rettype_comment;
-   rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+ %end_accessor_rettype rettype_flag? end_statement rettype_comment?;
+   rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws | '@')+ %end_accessor_return end_statement rettype_comment?;
 
    legacy = 'legacy' ws+ ident %end_accessor_legacy end_statement;
 
@@ -593,24 +631,18 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    action end_method_rettype {
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (toknz->tmp.meth->ret.type != NULL)
+      if (toknz->tmp.meth->ret != NULL)
         ABORT(toknz, "method '%s' has already a return type", toknz->tmp.meth->name);
-      toknz->tmp.meth->ret.type = _eo_tokenizer_token_get(toknz, fpc);
-      INF("        %s", toknz->tmp.meth->ret.type);
+      toknz->tmp.meth->ret = _eo_tokenizer_return_get(toknz, fpc);
    }
 
    action end_method_rettype_comment {
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (toknz->tmp.meth->ret.comment != NULL)
+      if (toknz->tmp.meth->ret != NULL) ABORT(toknz, "No ret!!!");
+      if (toknz->tmp.meth->ret->comment != NULL)
         ABORT(toknz, "method '%s' return type has already a comment", toknz->tmp.meth->name);
-      toknz->tmp.meth->ret.comment = _eo_tokenizer_token_get(toknz, fpc-2);
-      INF("        %s", toknz->tmp.meth->ret.comment);
-   }
-
-   action end_method_rettype_unused_flag{
-      if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      toknz->tmp.meth->ret.warn_unused = EINA_TRUE;
-      INF("        WARN_UNUSED");
+      toknz->tmp.meth->ret->comment = _eo_tokenizer_token_get(toknz, fpc-2);
+      INF("        %s", toknz->tmp.meth->ret->comment);
    }
 
    action end_method_legacy {
@@ -654,9 +686,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    meth_params = 'params' ignore* begin_def;
    meth_legacy = 'legacy' ws+ ident %end_method_legacy end_statement;
 
-   meth_rettype_flag = "@warn_unused" %end_method_rettype_unused_flag;
    meth_rettype_comment = ws* eo_comment %end_method_rettype_comment;
-   meth_rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws )+ %end_method_rettype meth_rettype_flag? end_statement meth_rettype_comment?;
+   meth_rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws | '@')+ %end_method_rettype end_statement meth_rettype_comment?;
 
    meth_obj_const = 'const' %end_method_obj_const end_statement;
 
@@ -1133,7 +1164,8 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
              printf("  constructors: %s\n", meth->name);
-             printf("    return: %s (%s)\n", meth->ret.type, meth->ret.comment);
+             if (meth->ret)
+                printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
              printf("    legacy : %s\n", meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
@@ -1146,7 +1178,8 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         EINA_LIST_FOREACH(kls->destructors, l, meth)
           {
              printf("  destructors: %s\n", meth->name);
-             printf("    return: %s (%s)\n", meth->ret.type, meth->ret.comment);
+             if (meth->ret)
+                printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
              printf("    legacy : %s\n", meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
@@ -1172,7 +1205,8 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
                   printf("    accessor: %s : %s (%s)\n",
-                         accessor->ret.type, _accessor_type_str[accessor->type],
+                         (accessor->ret?accessor->ret->type:""),
+                         _accessor_type_str[accessor->type],
                          accessor->comment);
                   printf("      legacy : %s\n", accessor->legacy);
                }
@@ -1181,7 +1215,8 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         EINA_LIST_FOREACH(kls->methods, l, meth)
           {
              printf("  method: %s\n", meth->name);
-             printf("    return: %s (%s)\n", meth->ret.type, meth->ret.comment);
+             if (meth->ret)
+                printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
              printf("    legacy : %s\n", meth->legacy);
              printf("    obj_const : %s\n", meth->obj_const?"true":"false");
              EINA_LIST_FOREACH(meth->params, m, param)
@@ -1280,7 +1315,7 @@ eo_tokenizer_database_fill(const char *filename)
           {
              Eolian_Function foo_id = database_function_new(meth->name, CONSTRUCTOR);
              database_class_function_add(kls->name, foo_id);
-             database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret.comment);
+             if (meth->ret) database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
@@ -1292,7 +1327,7 @@ eo_tokenizer_database_fill(const char *filename)
           {
              Eolian_Function foo_id = database_function_new(meth->name, DESTRUCTOR);
              database_class_function_add(kls->name, foo_id);
-             database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret.comment);
+             if (meth->ret) database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
@@ -1308,25 +1343,29 @@ eo_tokenizer_database_fill(const char *filename)
                   Eolian_Function_Parameter p = database_property_key_add(
                         foo_id, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
+                  database_parameter_own_set(p, param->own);
                }
              EINA_LIST_FOREACH(prop->values, m, param)
                {
                   Eolian_Function_Parameter p = database_property_value_add(
                         foo_id, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
+                  database_parameter_own_set(p, param->own);
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
                   database_function_type_set(foo_id, (accessor->type == SETTER?SET:GET));
-                  if (accessor->ret.type)
+                  if (accessor->ret && accessor->ret->type)
                     {
                        database_function_return_type_set(foo_id,
-                             accessor->type == SETTER?SET:GET, accessor->ret.type);
+                             accessor->type == SETTER?SET:GET, accessor->ret->type);
                        database_function_data_set(foo_id,
                              (accessor->type == SETTER?EOLIAN_PROP_SET_RETURN_COMMENT:EOLIAN_PROP_GET_RETURN_COMMENT),
-                             accessor->ret.comment);
+                             accessor->ret->comment);
                        database_function_return_flag_set_as_warn_unused(foo_id,
-                             accessor->type == SETTER?SET:GET, accessor->ret.warn_unused);
+                             accessor->type == SETTER?SET:GET, accessor->ret->warn_unused);
+                       database_function_return_flag_set_own(foo_id,
+                             accessor->type == SETTER?SET:GET, accessor->ret->own);
                     }
                   if (accessor->legacy)
                     {
@@ -1364,9 +1403,13 @@ eo_tokenizer_database_fill(const char *filename)
           {
              Eolian_Function foo_id = database_function_new(meth->name, METHOD_FUNC);
              database_class_function_add(kls->name, foo_id);
-             database_function_data_set(foo_id, EOLIAN_METHOD_RETURN_TYPE, meth->ret.type);
-             database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret.comment);
-             database_function_return_flag_set_as_warn_unused(foo_id, METHOD_FUNC, meth->ret.warn_unused);
+             if (meth->ret)
+               {
+                  database_function_data_set(foo_id, EOLIAN_METHOD_RETURN_TYPE, meth->ret->type);
+                  database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
+                  database_function_return_flag_set_as_warn_unused(foo_id, METHOD_FUNC, meth->ret->warn_unused);
+                  database_function_return_flag_set_own(foo_id, METHOD_FUNC, meth->ret->own);
+               }
              database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              database_function_object_set_as_const(foo_id, meth->obj_const);
@@ -1375,6 +1418,7 @@ eo_tokenizer_database_fill(const char *filename)
                   Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
                         (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
+                  database_parameter_own_set(p, param->own);
                }
           }
 
