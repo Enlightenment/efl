@@ -1493,6 +1493,9 @@ _item_push_helper(Elm_Naviframe_Item *item)
    _resize_object_reset(obj, item);
    if (top_item)
      {
+        elm_widget_tree_unfocusable_set(VIEW(item), EINA_FALSE);
+        elm_widget_tree_unfocusable_set(VIEW(top_item), EINA_TRUE);
+
         if (sd->freeze_events)
           {
              evas_object_freeze_events_set(VIEW(item), EINA_TRUE);
@@ -1502,8 +1505,6 @@ _item_push_helper(Elm_Naviframe_Item *item)
         elm_object_signal_emit(VIEW(item), "elm,state,new,pushed", "elm");
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(top_item)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
-
-        elm_widget_tree_unfocusable_set(VIEW(top_item), EINA_TRUE);
 
         ecore_animator_del(item->animator);
         item->animator = ecore_animator_add(_push_transition_cb, item);
