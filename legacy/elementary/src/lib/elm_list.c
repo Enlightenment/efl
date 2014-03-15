@@ -1674,6 +1674,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
      sd->focused_item = NULL;
    if (sd->last_focused_item == (Elm_Object_Item *)it)
      sd->last_focused_item = NULL;
+   if (sd->prev_focused_item == (Elm_Object_Item *)it)
+     sd->prev_focused_item = NULL;
    if (sd->last_selected_item == (Elm_Object_Item *)it)
      sd->last_selected_item = NULL;
 
