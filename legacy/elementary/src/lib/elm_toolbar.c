@@ -1181,6 +1181,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
    else sd->icon_size = sd->theme_icon_size;
 
+   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
    EINA_INLIST_FOREACH(sd->items, it)
      _item_theme_hook(obj, it, scale, sd->icon_size);
 
