@@ -10,7 +10,7 @@
  *
  * This header provides functions ported from Unix in stdio.h.
  *
- * @{
+ * 
  */
 
 #define EVIL_PATH_SEP_SWAP(p, s1, s2) \

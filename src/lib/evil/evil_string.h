@@ -10,7 +10,7 @@
  *
  * This header provides functions ported from Unix in string.h.
  *
- * @{
+ *
  */
 
 
