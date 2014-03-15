@@ -30,7 +30,7 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
                          const char *item,
                          Eina_File *f)
 {
-   if (!f) return ;
+   if (!f) return;
 
    files->items = eina_list_append(files->items,
                                    eina_stringshare_add(item));
@@ -552,7 +552,7 @@ elm_theme_overlay_add(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_overlay_del(Elm_Theme *th, const char *item)
 {
-   if (!item) return ;
+   if (!item) return;
    if (!th) th = &(theme_default);
    _elm_theme_file_item_del(&th->overlay, item);
    elm_theme_flush(th);
@@ -571,7 +571,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
 EAPI void
 elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f)
 {
-   if (!f) return ;
+   if (!f) return;
    if (!th) th = &(theme_default);
    _elm_theme_file_mmap_del(&th->overlay, f);
    elm_theme_flush(th);
@@ -587,7 +587,7 @@ elm_theme_overlay_list_get(const Elm_Theme *th)
 EAPI void
 elm_theme_extension_add(Elm_Theme *th, const char *item)
 {
-   if (!item) return ;
+   if (!item) return;
    if (!th) th = &(theme_default);
    _elm_theme_file_item_add(&th->extension, item);
    elm_theme_flush(th);
@@ -596,7 +596,7 @@ elm_theme_extension_add(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_extension_del(Elm_Theme *th, const char *item)
 {
-   if (!item) return ;
+   if (!item) return;
    if (!th) th = &(theme_default);
    _elm_theme_file_item_del(&th->extension, item);
    elm_theme_flush(th);
@@ -607,7 +607,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 {
    Eina_File *file = eina_file_dup(f);
 
-   if (!f) return ;
+   if (!f) return;
    if (!th) th = &(theme_default);
    _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file);
    elm_theme_flush(th);
@@ -616,7 +616,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 EAPI void
 elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f)
 {
-   if (!f) return ;
+   if (!f) return;
    if (!th) th = &(theme_default);
    _elm_theme_file_mmap_del(&th->extension, f);
    elm_theme_flush(th);
