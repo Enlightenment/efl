@@ -2059,6 +2059,11 @@ sys/prctl.h \
 sys/resource.h \
 sys/timerfd.h \
 sys/un.h \
+],[],[],
+[
+ #ifdef HAVE_SYS_SOCKET_H
+ # include <sys/socket.h>
+ #endif
 ])
 
 ### Checks for types
