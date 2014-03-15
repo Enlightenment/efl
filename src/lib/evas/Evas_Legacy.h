@@ -2677,6 +2677,10 @@ EAPI Eina_Bool evas_object_propagate_events_get(const Evas_Object *obj) EINA_WAR
  * If @p freeze is @c EINA_FALSE, events will be processed on that
  * object as normal.
  *
+ * @warning If you block only key/mouse up events with this API, we won't
+ *          guarantee the state of the object, that only had key/mouse down
+ *          events, will be.
+ *
  * @see evas_object_freeze_events_get()
  * @see evas_object_pass_events_set()
  * @see evas_object_repeat_events_set()
