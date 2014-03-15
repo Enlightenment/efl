@@ -264,14 +264,19 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                   state_write->have_clipees = 0;
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
-
-             e = obj->cur->clipper->layer->evas;
-             if (obj->cur->clipper->cur->visible)
-               evas_damage_rectangle_add(e->evas,
-                                         obj->cur->clipper->cur->geometry.x + e->framespace.x,
-                                         obj->cur->clipper->cur->geometry.y + e->framespace.y,
-                                         obj->cur->clipper->cur->geometry.w,
-                                         obj->cur->clipper->cur->geometry.h);
+             
+             if ((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible))
+               {
+                  if (obj->cur->clipper->layer)
+                    {
+                       e = obj->cur->clipper->layer->evas;
+                       evas_damage_rectangle_add(e->evas,
+                                                 obj->cur->clipper->cur->geometry.x + e->framespace.x,
+                                                 obj->cur->clipper->cur->geometry.y + e->framespace.y,
+                                                 obj->cur->clipper->cur->geometry.w,
+                                                 obj->cur->clipper->cur->geometry.h);
+                    }
+               }
           }
         evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
         evas_object_change(eo_obj, obj);
