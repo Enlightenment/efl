@@ -1002,7 +1002,7 @@ _elm_list_item_focused(Elm_List_Item *it)
    Evas_Coord x, y, w, h, sx, sy, sw, sh;
    const char *focus_raise;
 
-   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+   if ((!sd) || (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
        (it == (Elm_List_Item *)sd->focused_item))
      return;
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
@@ -1027,7 +1027,7 @@ _elm_list_item_unfocused(Elm_List_Item *it)
 {
    ELM_LIST_DATA_GET(WIDGET(it), sd);
 
-   if (!sd->focused_item ||
+   if ((!sd) || (!sd->focused_item) ||
        (it != (Elm_List_Item *)sd->focused_item))
      return;
 
