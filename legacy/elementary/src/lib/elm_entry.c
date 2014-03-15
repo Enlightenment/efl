@@ -3966,10 +3966,7 @@ _line_wrap_set(Eo *obj, void *_pd, va_list *list)
    sd->last_w = -1;
    sd->line_wrap = wrap;
    if (wrap == ELM_WRAP_NONE)
-      {
-         ecore_job_del(sd->deferred_recalc_job);
-         sd->deferred_recalc_job = NULL;
-      }
+     ELM_SAFE_FREE(sd->deferred_recalc_job, ecore_job_del);
    eo_do(obj, elm_wdg_theme_apply(NULL));
 }
 
