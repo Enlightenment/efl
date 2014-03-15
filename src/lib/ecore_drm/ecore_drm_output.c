@@ -440,7 +440,9 @@ finish:
 }
 
 /**
- * @defgroup Ecore_Drm_Output_Group
+ * @defgroup Ecore_Drm_Output_Group Ecore DRM Output
+ * 
+ * Functions to manage DRM outputs.
  * 
  */
 

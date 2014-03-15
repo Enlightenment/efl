@@ -5,7 +5,9 @@
 #include "ecore_drm_private.h"
 
 /**
- * @defgroup Ecore_Drm_Sprite_Group
+ * @defgroup Ecore_Drm_Sprites_Group Ecore DRM Sprites
+ * 
+ * Functions for managing DRM sprites.
  * 
  */
 

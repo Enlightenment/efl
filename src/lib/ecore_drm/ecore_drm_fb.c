@@ -5,7 +5,10 @@
 #include "ecore_drm_private.h"
 
 /**
- * @defgroup Ecore_Drm_Fb_Group
+ * @defgroup Ecore_Drm_Fb_Group Frame buffer manipulation
+ * 
+ * Functions that deal with frame buffers.
+ * 
  * 
  */
 
