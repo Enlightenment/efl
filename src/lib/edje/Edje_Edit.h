@@ -763,6 +763,9 @@ EAPI Eina_Bool edje_edit_external_del(Evas_Object *obj, const char *external);
  * @param obj Object being edited.
  *
  * @return List of strings, each being the name for a part in the open group.
+ *         The return value should be freed with edje_edit_string_list_free().
+ * 
+ * @see edje_edit_string_list_free()
  */
 EAPI Eina_List * edje_edit_parts_list_get(Evas_Object *obj);
 
