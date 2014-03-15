@@ -28,17 +28,27 @@ _elm_theme_find_try(Elm_Theme *th, Eina_File *f, const char *group)
 static inline void
 _elm_theme_item_finalize(Elm_Theme_Files *files,
                          const char *item,
-                         Eina_File *f)
+                         Eina_File *f,
+                         Eina_Bool prepend)
 {
    if (!f) return;
 
-   files->items = eina_list_append(files->items,
-                                   eina_stringshare_add(item));
-   files->handles = eina_list_append(files->handles, f);
+   if (prepend)
+     {
+        files->items = eina_list_prepend(files->items,
+                                         eina_stringshare_add(item));
+        files->handles = eina_list_prepend(files->handles, f);
+     }
+   else
+     {
+        files->items = eina_list_append(files->items,
+                                        eina_stringshare_add(item));
+        files->handles = eina_list_append(files->handles, f);
+     }
 }
 
 static void
-_elm_theme_file_item_add(Elm_Theme_Files *files, const char *item)
+_elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool prepend)
 {
    Eina_Strbuf *buf = NULL;
    Eina_File *f = NULL;
@@ -68,7 +78,7 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item)
                                   "%s/"ELEMENTARY_BASE_DIR"/themes/%s.edj",
                                   home, item);
         f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
-        _elm_theme_item_finalize(files, item, f);
+        _elm_theme_item_finalize(files, item, f, prepend);
 
         eina_strbuf_reset(buf);
         eina_strbuf_append_printf(buf,
@@ -78,7 +88,7 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item)
         /* Finalize will be done by the common one */
      }
 
-   _elm_theme_item_finalize(files, item, f);
+   _elm_theme_item_finalize(files, item, f, prepend);
 
  on_error:
    if (buf) eina_strbuf_free(buf);
@@ -435,7 +445,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
    EINA_LIST_FREE(th->themes.handles, f) eina_file_close(f);
 
    EINA_LIST_FREE(names, p)
-     _elm_theme_file_item_add(&th->themes, p);
+     _elm_theme_file_item_add(&th->themes, p, EINA_FALSE);
    return EINA_TRUE;
 }
 
@@ -457,7 +467,7 @@ elm_theme_new(void)
    Elm_Theme *th = calloc(1, sizeof(Elm_Theme));
    if (!th) return NULL;
    th->ref = 1;
-   _elm_theme_file_item_add(&th->themes, "default");
+   _elm_theme_file_item_add(&th->themes, "default", EINA_FALSE);
    themes = eina_list_append(themes, th);
    return th;
 }
@@ -545,7 +555,7 @@ elm_theme_overlay_add(Elm_Theme *th, const char *item)
 {
    if (!item) return;
    if (!th) th = &(theme_default);
-   _elm_theme_file_item_add(&th->overlay, item);
+   _elm_theme_file_item_add(&th->overlay, item, EINA_TRUE);
    elm_theme_flush(th);
 }
 
@@ -564,7 +574,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
    Eina_File *file = eina_file_dup(f);
 
    if (!th) th = &(theme_default);
-   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file);
+   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_TRUE);
    elm_theme_flush(th);
 }
 
@@ -589,7 +599,7 @@ elm_theme_extension_add(Elm_Theme *th, const char *item)
 {
    if (!item) return;
    if (!th) th = &(theme_default);
-   _elm_theme_file_item_add(&th->extension, item);
+   _elm_theme_file_item_add(&th->extension, item, EINA_FALSE);
    elm_theme_flush(th);
 }
 
@@ -609,7 +619,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 
    if (!f) return;
    if (!th) th = &(theme_default);
-   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file);
+   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_FALSE);
    elm_theme_flush(th);
 }
 
