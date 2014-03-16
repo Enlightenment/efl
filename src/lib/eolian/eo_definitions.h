@@ -10,7 +10,7 @@ typedef struct _eo_ret_def
 {
    const char *type;
    const char *comment;
-   const char *dflt_ret_val;
+   char *dflt_ret_val;
    Eina_Bool warn_unused:1;
    Eina_Bool own:1;
 } Eo_Ret_Def;
