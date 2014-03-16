@@ -266,6 +266,7 @@ _eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
    s = strchr(toknz->saved.tok, '(');
    if (s)
      {
+        char *ret_val;
         char *end = strchr(s, ')');
         if (!end)
            ABORT(toknz, "wrong syntax (missing ')'): %s",
@@ -278,7 +279,10 @@ _eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
         if (end < s)
            ABORT(toknz, "empty default return value: %s",
                  _eo_tokenizer_token_get(toknz, p));
-        ret->dflt_ret_val = strndup(s, end - s + 1);
+        ret_val = malloc(end - s + 2); /* string + '\0' */
+        memcpy(ret_val, s, end - s + 1);
+        ret_val[end - s + 1] = '\0';
+        ret->dflt_ret_val = ret_val;
         memset(s, ' ', end - s + 1);
      }
    *p = ';';
