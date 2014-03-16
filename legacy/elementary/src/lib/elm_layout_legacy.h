@@ -548,7 +548,7 @@ EAPI Eina_Bool                    elm_layout_edje_object_can_access_set(Evas_Obj
 *
 * @ingroup Layout
 */
-EAPI Eina_Bool                    elm_layout_edje_object_can_access_get(Evas_Object *obj);
+EAPI Eina_Bool                    elm_layout_edje_object_can_access_get(const Evas_Object *obj);
 
 /**
  * Get a specific cursor engine_only for an edje part.

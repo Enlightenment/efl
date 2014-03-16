@@ -3,6 +3,9 @@
  *
  * @{
  */
+#include "elm_layout.eo.h"
+
+#if 0
 #define ELM_OBJ_LAYOUT_CLASS elm_obj_layout_class_get()
 
  const Eo_Class *elm_obj_layout_class_get(void) EINA_CONST;
@@ -515,6 +518,8 @@
  * @see elm_layout_thaw
  */
 #define elm_obj_layout_thaw(ret) ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_THAW), EO_TYPECHECK(int *, ret)
+
+#endif
 
 /**
  * @}
