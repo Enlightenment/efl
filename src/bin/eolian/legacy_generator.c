@@ -298,8 +298,11 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
      {
         if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
         Eina_Bool had_star = !!strchr(rettype, '*');
-        sprintf (tmpstr, "   %s%s%s%s = 0;\n",
-              ret_const?"const ":"", rettype, had_star?"":" ", retname);
+        const char *dflt_ret_val =
+           eolian_function_return_dflt_value_get(funcid, ftype);
+        sprintf (tmpstr, "   %s%s%s%s = %s;\n",
+              ret_const?"const ":"", rettype, had_star?"":" ", retname,
+              dflt_ret_val?dflt_ret_val:"0");
         eina_strbuf_append_printf(eoparam, "&%s", retname);
      }
 

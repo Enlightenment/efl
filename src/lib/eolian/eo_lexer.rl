@@ -263,6 +263,24 @@ _eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
         ret->own = EINA_TRUE;
         memset(s, ' ', 4);
      }
+   s = strchr(toknz->saved.tok, '(');
+   if (s)
+     {
+        char *end = strchr(s, ')');
+        if (!end)
+           ABORT(toknz, "wrong syntax (missing ')'): %s",
+                 _eo_tokenizer_token_get(toknz, p));
+        /* Current values in s and end have to be changed to ' ' to not disturb the next steps (type extraction) */
+        *s++ = ' ';
+        while (*s == ' ') s++;
+        *end-- = ' ';
+        while (end > s && *end == ' ') end--;
+        if (end < s)
+           ABORT(toknz, "empty default return value: %s",
+                 _eo_tokenizer_token_get(toknz, p));
+        ret->dflt_ret_val = strndup(s, end - s + 1);
+        memset(s, ' ', end - s + 1);
+     }
    *p = ';';
    s = p - 1; /* Don't look at the character ';' */
    /* Remove any space between the param name and ';'
@@ -400,6 +418,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    list_separator    = ',';
    colon             = ':';
 
+   # chars allowed on the return line.
+   return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-');
 }%%
 
 %%{
@@ -462,7 +482,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    rettype_comment = ws* eo_comment %end_accessor_rettype_comment;
-   rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws | '@')+ %end_accessor_return end_statement rettype_comment?;
+   rettype = 'return' ws+ alpha+ >save_fpc return_char+ %end_accessor_return end_statement rettype_comment?;
 
    legacy = 'legacy' ws+ ident %end_accessor_legacy end_statement;
 
@@ -687,7 +707,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    meth_legacy = 'legacy' ws+ ident %end_method_legacy end_statement;
 
    meth_rettype_comment = ws* eo_comment %end_method_rettype_comment;
-   meth_rettype = 'return' ws+ alpha+ >save_fpc (alnum_u | '*' | ws | '@')+ %end_method_rettype end_statement meth_rettype_comment?;
+   meth_rettype = 'return' ws+ alpha+ >save_fpc return_char+ %end_method_rettype end_statement meth_rettype_comment?;
 
    meth_obj_const = 'const' %end_method_obj_const end_statement;
 
@@ -1366,6 +1386,8 @@ eo_tokenizer_database_fill(const char *filename)
                              accessor->type == SETTER?SET:GET, accessor->ret->warn_unused);
                        database_function_return_flag_set_own(foo_id,
                              accessor->type == SETTER?SET:GET, accessor->ret->own);
+                       database_function_return_dflt_val_set(foo_id,
+                             accessor->type == SETTER?SET:GET, accessor->ret->dflt_ret_val);
                     }
                   if (accessor->legacy)
                     {
@@ -1407,8 +1429,11 @@ eo_tokenizer_database_fill(const char *filename)
                {
                   database_function_data_set(foo_id, EOLIAN_METHOD_RETURN_TYPE, meth->ret->type);
                   database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
-                  database_function_return_flag_set_as_warn_unused(foo_id, METHOD_FUNC, meth->ret->warn_unused);
+                  database_function_return_flag_set_as_warn_unused(foo_id,
+                        METHOD_FUNC, meth->ret->warn_unused);
                   database_function_return_flag_set_own(foo_id, METHOD_FUNC, meth->ret->own);
+                  database_function_return_dflt_val_set(foo_id,
+                        METHOD_FUNC, meth->ret->dflt_ret_val);
                }
              database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);

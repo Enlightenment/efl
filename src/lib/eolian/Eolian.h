@@ -465,6 +465,22 @@ EAPI Eina_Bool eolian_parameter_is_own(Eolian_Function_Parameter param_desc);
 EAPI const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
 
 /*
+ * @brief Get the return default value of a function.
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return the return default value of the function
+ *
+ * The return default value is needed to return an appropriate
+ * value if an error occurs (eo_do failure...).
+ * The default value is not mandatory, so NULL can be returned.
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *
+eolian_function_return_dflt_value_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
+
+/*
  * @brief Get the return comment of a function.
  *
  * @param[in] function_id id of the function

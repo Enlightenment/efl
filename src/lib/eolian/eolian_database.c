@@ -1,6 +1,10 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
+#define PROP_GET_RETURN_DFLT_VAL "property_get_return_dflt_val"
+#define PROP_SET_RETURN_DFLT_VAL "property_set_return_dflt_val"
+#define METHOD_RETURN_DFLT_VAL "method_return_dflt_val"
+
 static Eina_Hash *_classes = NULL;
 static int _database_init_count = 0;
 
@@ -849,6 +853,33 @@ eolian_function_return_type_get(Eolian_Function foo_id, Eolian_Function_Type fty
    const char *ret = eolian_function_data_get(foo_id, key);
    if (!ret) ret = "void";
    return ret;
+}
+
+void database_function_return_dflt_val_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_dflt_value)
+{
+   const char *key = NULL;
+   switch (ftype)
+     {
+      case SET: key = PROP_SET_RETURN_DFLT_VAL; break;
+      case GET: key = PROP_GET_RETURN_DFLT_VAL; break;
+      case METHOD_FUNC: key = METHOD_RETURN_DFLT_VAL; break;
+      default: return;
+     }
+   database_function_data_set(foo_id, key, ret_dflt_value);
+}
+
+EAPI const char *
+eolian_function_return_dflt_value_get(Eolian_Function foo_id, Eolian_Function_Type ftype)
+{
+   const char *key = NULL;
+   switch (ftype)
+     {
+      case SET: key = PROP_SET_RETURN_DFLT_VAL; break;
+      case GET: key = PROP_GET_RETURN_DFLT_VAL; break;
+      case UNRESOLVED: case METHOD_FUNC: key = METHOD_RETURN_DFLT_VAL; break;
+      default: return NULL;
+     }
+   return eolian_function_data_get(foo_id, key);
 }
 
 EAPI const char *
