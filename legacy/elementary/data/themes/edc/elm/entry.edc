@@ -442,8 +442,16 @@ group { name: "elm/entry/base/default";
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry color_class=entry left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
+      style { name: "entry_nowrap_style";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=entry color_class=entry left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
       style { name: "entry_disabled_style";
          base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
+         DISABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "entry_nowrap_disabled_style";
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
@@ -671,14 +679,14 @@ group { name: "elm/entry/base-nowrap/default";
       }
       part { name: "elm.text";
          description { state: "default" 0.0;
-            text { style: "entry_style";
+            text { style: "entry_nowrap_style";
                min: 1 1;
                align: 0.0 0.0;
             }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            text { style: "entry_disabled_style";
+            text { style: "entry_nowrap_disabled_style";
                min: 0 1;
             }
          }
