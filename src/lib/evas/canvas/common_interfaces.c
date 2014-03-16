@@ -5,7 +5,7 @@
 
 Eina_Hash* signals_hash_table = NULL;
 
-static const Eo_Event_Description *_evas_clickable_interface_event_desc[]; 
+static const Eo_Event_Description *_evas_clickable_interface_event_desc[];
 static const Eo_Event_Description *_evas_draggable_interface_event_desc[];
 static const Eo_Event_Description *_evas_scrollable_interface_event_desc[];
 static const Eo_Event_Description *_evas_selectable_interface_event_desc[];
@@ -38,7 +38,7 @@ static void
 _evas_signal_interface_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    signals_hash_table = eina_hash_string_superfast_new(_signal_interface_del);
-   ADD_INTERFACE_SIGNALS(_evas_draggable_interface_event_desc);
+   ADD_INTERFACE_SIGNALS(_evas_clickable_interface_event_desc);
    ADD_INTERFACE_SIGNALS(_evas_scrollable_interface_event_desc);
    ADD_INTERFACE_SIGNALS(_evas_zoomable_interface_event_desc);
    ADD_INTERFACE_SIGNALS(_evas_selectable_interface_event_desc);
