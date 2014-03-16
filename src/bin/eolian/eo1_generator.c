@@ -790,7 +790,9 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
    eina_strbuf_reset(tmpbuf);
    EINA_LIST_FOREACH(eolian_class_inherits_list_get(classname), itr, inherit_name)
      {
-        _template_fill(tmpbuf, "@#EOPREFIX_CLASS, ", inherit_name, "", EINA_FALSE);
+        const char *eo_prefix = eolian_class_eo_prefix_get(inherit_name);
+        if (!eo_prefix) eo_prefix = inherit_name;
+        _template_fill(tmpbuf, "@#EOPREFIX_CLASS, ", eo_prefix, "", EINA_FALSE);
         eina_strbuf_replace_all(tmpbuf, "@#EOPREFIX", current_eo_prefix_upper);
      }
 
