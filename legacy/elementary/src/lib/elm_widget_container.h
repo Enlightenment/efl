@@ -30,6 +30,9 @@
  * - elm_object_part_content_unset()
  */
 
+#include "elm_container.eo.h"
+
+#if 0
 #define ELM_OBJ_CONTAINER_CLASS elm_obj_container_class_get()
 
 const Eo_Class *elm_obj_container_class_get(void) EINA_CONST;
@@ -98,5 +101,7 @@ enum
  *
  */
 #define elm_obj_container_content_swallow_list_get(ret) ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SWALLOW_LIST_GET), EO_TYPECHECK(Eina_List **,ret)
+
+#endif
 
 #endif

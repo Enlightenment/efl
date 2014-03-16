@@ -3,7 +3,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CLEANFILES=
 
-EOLIAN_FLAGS = @DEPS_EOLIAN_FLAGS@
+EOLIAN_FLAGS = @DEPS_EOLIAN_FLAGS@ \
+	       -I$(top_srcdir)/src/lib
 
 include $(top_srcdir)/Makefile_Eolian_Helper.am
 
@@ -524,11 +525,15 @@ elm_intro.h.in
 
 BUILT_SOURCES = \
 		elm_widget.eo.c \
-		elm_widget.eo.h
+		elm_widget.eo.h \
+		elm_container.eo.c \
+		elm_container.eo.h
 
 EXTRA_DIST += \
-	     elm_widget.eo
+	     elm_widget.eo \
+	     elm_container.eo
 
 nodist_includesunstable_HEADERS = \
-				  elm_widget.eo.h
+				  elm_widget.eo.h \
+				  elm_container.eo.h
 

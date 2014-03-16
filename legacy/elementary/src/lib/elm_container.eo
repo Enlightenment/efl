@@ -1,0 +1,50 @@
+class Elm_Container (Elm_Widget)
+{
+   eo_prefix: elm_obj_container;
+   data: null;
+   properties {
+      content_swallow_list {
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_List *ret; /*@ Eina_List */
+         }
+      }
+   }
+   methods {
+      content_set {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *name;
+            @in Evas_Object *content;
+         }
+         return Eina_Bool;
+         legacy null;
+      }
+      content_get {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *name;
+         }
+         return Evas_Object *;
+         legacy null;
+      }
+      content_unset {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *name;
+         }
+         return Evas_Object *;
+         legacy null;
+      }
+   }
+   implements {
+      virtual::content_set;
+      virtual::content_unset;
+      virtual::content_get;
+      virtual::content_swallow_list::get;
+   }
+
+}
