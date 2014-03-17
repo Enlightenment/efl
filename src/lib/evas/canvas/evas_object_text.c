@@ -60,6 +60,7 @@ struct _Evas_Text_Data
       Evas_Object_Text_Item    *ellipsis_end;
       Evas_Coord                w, h;
       int                       advance;
+      int                       advance_without_ellipsis;
       Eina_Bool                 ellipsis;
    } last_computed;
 
@@ -344,6 +345,12 @@ _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
           }
      }
    return -1;
+}
+
+static Evas_Coord
+_evas_object_text_horiz_advance_without_ellipsis_get(const Evas_Text_Data *o)
+{
+   return o->last_computed.advance_without_ellipsis;
 }
 
 static Evas_Coord
@@ -748,6 +755,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
              len -= run_len;
           }
      }
+   o->last_computed.advance_without_ellipsis = advance;
 
    if (!o->cur.filter.chain)
      evas_text_style_pad_get(o->cur.style, &l, &r, NULL, NULL);
@@ -2252,7 +2260,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
         int w, h;
         int l = 0, r = 0, t = 0, b = 0;
 
-        w = _evas_object_text_horiz_advance_get(o);
+        w = _evas_object_text_horiz_advance_without_ellipsis_get(o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
         if (!o->cur.filter.chain)
           evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
