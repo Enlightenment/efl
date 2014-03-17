@@ -1272,3 +1272,39 @@ test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    evas_object_show(win);
 }
+
+void
+test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *fr, *bx;
+   api_data *api = calloc(1, sizeof(api_data));
+
+   win = elm_win_util_standard_add("gengrid", "Gengrid");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   api->box = bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_frame_autocollapse_set(fr, EINA_TRUE);
+   elm_object_text_set(fr, "Collapse me!");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   api->grid = create_gengrid(win, 5000);
+   evas_object_size_hint_min_set(api->grid, 600, 600);
+   elm_gengrid_item_size_set(api->grid,
+                          elm_config_scale_get() * 30,
+                          elm_config_scale_get() * 36);
+   elm_object_content_set(fr, api->grid);
+   evas_object_show(api->grid);
+
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
+}
