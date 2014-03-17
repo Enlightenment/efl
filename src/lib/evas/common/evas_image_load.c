@@ -402,7 +402,6 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    if (!ie->info.module) return EVAS_LOAD_ERROR_GENERIC;
 
 //   printf("load data [%p] %s %s\n", ie, ie->file, ie->key);
-           
    evas_image_load_func = ie->info.loader;
    evas_module_use(ie->info.module);
 

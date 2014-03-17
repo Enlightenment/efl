@@ -454,7 +454,7 @@ typedef enum _RGBA_Image_Flags
 /*    RGBA_IMAGE_HAS_ALPHA     = (1 << 0), */
    RGBA_IMAGE_IS_DIRTY      = (1 << 1),
    RGBA_IMAGE_INDEXED       = (1 << 2),
-   RGBA_IMAGE_ALPHA_ONLY    = (1 << 3),
+   /* RGBA_IMAGE_ALPHA_ONLY    = (1 << 3), */
    RGBA_IMAGE_ALPHA_TILES   = (1 << 4),
 /*    RGBA_IMAGE_ALPHA_SPARSE  = (1 << 5), */
 /*    RGBA_IMAGE_LOADED        = (1 << 6), */

@@ -110,7 +110,7 @@ static const Evas_Cache2_Image_Func      _evas_common_image_func2 =
 #endif
 
 static inline size_t
-_evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Eina_Bool alpha_only)
+_evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
 #define PAGE_SIZE (4 * 1024)
 #define HUGE_PAGE_SIZE (2 * 1024 * 1024)
@@ -121,10 +121,13 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Eina_Bool a
 #endif
    size_t siz;
 
-   if (alpha_only)
-     siz = w * h * sizeof(DATA8);
-   else
-     siz = w * h * sizeof(DATA32);
+   switch (cspace)
+     {
+      case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
+      case EVAS_COLORSPACE_ARGB8888: siz = w * h * sizeof(DATA32); break;
+      default:
+         return -1;
+     }
 
    if (siz < PAGE_SIZE) return siz;
 
@@ -134,14 +137,14 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Eina_Bool a
 }
 
 static void *
-_evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool alpha_only)
+_evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
    size_t siz;
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    void *r = MAP_FAILED;
 #endif
 
-   siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
+   siz = _evas_common_rgba_image_surface_size(w, h, cspace);
 
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
 #ifndef MAP_HUGETLB
@@ -165,12 +168,12 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Eina_Bool a
 }
 
 static void
-_evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Eina_Bool alpha_only)
+_evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    size_t siz;
 
-   siz = _evas_common_rgba_image_surface_size(w, h, alpha_only);
+   siz = _evas_common_rgba_image_surface_size(w, h, cspace);
    if (siz < PAGE_SIZE)
      free(data);
    else
@@ -373,7 +376,7 @@ evas_common_rgba_image_unload(Image_Entry *ie)
      {
         _evas_common_rgba_image_surface_munmap(im->image.data,
                                                ie->allocated.w, ie->allocated.h,
-                                               (im->flags & RGBA_IMAGE_ALPHA_ONLY));
+                                               ie->space);
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif        
@@ -445,21 +448,21 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
      {
         _evas_common_rgba_image_surface_munmap(im->image.data,
                                                ie->allocated.w, ie->allocated.h,
-                                               (im->flags & RGBA_IMAGE_ALPHA_ONLY));
+                                               ie->space);
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
-#endif        
+#endif
      }
-   im->image.data = _evas_common_rgba_image_surface_mmap(w, h, (im->flags & RGBA_IMAGE_ALPHA_ONLY));
+   im->image.data = _evas_common_rgba_image_surface_mmap(w, h, ie->space);
    if (!im->image.data) return -1;
    ie->allocated.w = w;
    ie->allocated.h = h;
 #ifdef SURFDBG
    surfs = eina_list_append(surfs, ie);
-#endif   
+#endif
 #ifdef HAVE_VALGRIND
    size_t        siz = 0;
-   siz = _evas_common_rgba_image_surface_size(w, h, (im->flags & RGBA_IMAGE_ALPHA_ONLY));
+   siz = _evas_common_rgba_image_surface_size(w, h, ie->space);
 # ifdef VALGRIND_MAKE_READABLE
    VALGRIND_MAKE_READABLE(im->image.data, siz);
 # else
@@ -508,7 +511,7 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
      {
         _evas_common_rgba_image_surface_munmap(im->image.data,
                                                ie->allocated.w, ie->allocated.h,
-                                               (im->flags & RGBA_IMAGE_ALPHA_ONLY));
+                                               ie->space);
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif
@@ -626,7 +629,7 @@ evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
    if (is->spans) return;
    if (!is->im->cache_entry.flags.alpha) return;
    /* FIXME: dont handle alpha only images yet */
-   if ((is->im->flags & RGBA_IMAGE_ALPHA_ONLY)) return;
+   if (is->im->space != EVAS_COLORSPACE_GRY8) return;
    if (tsize < 0) tsize = 0;
    is->spans = calloc(1, sizeof(RGBA_Image_Span *) * is->h);
    if (!is->spans) return;
@@ -745,6 +748,7 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_GRY8:
 	if (im->image.data != im->cs.data)
 	  {
 #ifdef EVAS_CSERVE2
@@ -756,7 +760,7 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
                   _evas_common_rgba_image_surface_munmap(im->image.data,
                                                          im->cache_entry.allocated.w,
                                                          im->cache_entry.allocated.h,
-                                                         (im->flags & RGBA_IMAGE_ALPHA_ONLY));
+                                                         im->cache_entry.space);
 #ifdef SURFDBG
                   surfs = eina_list_remove(surfs, im);
 #endif                  
