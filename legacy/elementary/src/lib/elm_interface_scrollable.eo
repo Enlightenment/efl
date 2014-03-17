@@ -1,0 +1,591 @@
+mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface)
+{
+   eo_prefix: elm_interface_scrollable;
+   data: Elm_Scrollable_Smart_Interface_Data; 
+   properties {
+      gravity {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            double x;
+            double y;
+         }
+      }
+      bounce_allow {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool horiz;
+            Eina_Bool vert;
+         }
+      }
+      wheel_disabled {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool disabled;
+         }
+      }
+      movement_block {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Scroller_Movement_Block block;
+         }
+      }
+      momentum_animator_disabled {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool disabled;
+         }
+      }
+      policy {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Scroller_Policy hbar;
+            Elm_Scroller_Policy vbar;
+         }
+      }
+      content_region {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Coord x;
+            Evas_Coord y;
+            Evas_Coord w;
+            Evas_Coord h;
+         }
+      }
+      repeat_events {
+         set {
+            /*@ It decides whether the scrollable object propagates the events to content object or not. */
+            legacy null;
+         }
+         get {
+            /*@ It gets whether the scrollable object propagates the events to content object or not. */
+            legacy null;
+         }
+         values {
+            Eina_Bool repeat_events;
+         }
+      }
+      page_size {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Coord x;
+            Evas_Coord y;
+         }
+      }
+      bounce_animator_disabled {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool disabled;
+         }
+      }
+      page_scroll_limit {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            int page_limit_h;
+            int page_limit_v;
+         }
+      }
+      page_snap_allow {
+         set {
+            /*@ Enable/disable page bouncing, for paged scrollers, on each axis. */
+            legacy null;
+         }
+         get {
+            /*@ Get wether page bouncing is enabled, for paged scrollers, on each axis. */
+            legacy null;
+         }
+         values {
+            Eina_Bool horiz;
+            Eina_Bool vert;
+         }
+      }
+      paging {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            double pagerel_h;
+            double pagerel_v;
+            Evas_Coord pagesize_h;
+            Evas_Coord pagesize_v;
+         }
+      }
+      single_direction {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Scroller_Single_Direction single_dir;
+         }
+      }
+      step_size {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Coord x;
+            Evas_Coord y;
+         }
+      }
+      scroll_up_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb scroll_up_cb;
+         }
+      }
+      hbar_drag_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb hbar_drag_cb;
+         }
+      }
+      drag_start_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb drag_start_cb;
+         }
+      }
+      freeze {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool freeze;
+         }
+      }
+      content_viewport_resize_cb {
+         set {
+            /*@ When the viewport is resized, the callback is called. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Resize_Cb viewport_resize_cb;
+         }
+      }
+      scroll_left_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb scroll_left_cb;
+         }
+      }
+      vbar_press_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb vbar_press_cb;
+         }
+      }
+      hbar_press_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb hbar_press_cb;
+         }
+      }
+      hbar_unpress_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb hbar_unpress_cb;
+         }
+      }
+      drag_stop_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb drag_stop_cb;
+         }
+      }
+      extern_pan {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Object *pan;
+         }
+      }
+      page_change_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb page_change_cb;
+         }
+      }
+      hold {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool hold;
+         }
+      }
+      animate_start_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb animate_start_cb;
+         }
+      }
+      scroll_down_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb scroll_down_cb;
+         }
+      }
+      page_relative {
+         set {
+            /*@ Set scroll page size relative to viewport size. */
+            legacy null;
+         }
+         values {
+            double h_pagerel;
+            double v_pagerel;
+         }
+      }
+      scroll_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb scroll_cb;
+         }
+      }
+      animate_stop_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb animate_stop_cb;
+         }
+      }
+      mirrored {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Eina_Bool mirrored;
+         }
+      }
+      content_min_limit_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Min_Limit_Cb min_limit_cb;
+         }
+      }
+      scroll_right_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb scroll_right_cb;
+         }
+      }
+      content {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Object *content;
+         }
+      }
+      edge_left_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb edge_left_cb;
+         }
+      }
+      vbar_drag_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb vbar_drag_cb;
+         }
+      }
+      vbar_unpress_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb vbar_unpress_cb;
+         }
+      }
+      edge_bottom_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb edge_bottom_cb;
+         }
+      }
+      edge_right_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb edge_right_cb;
+         }
+      }
+      edge_top_cb {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Elm_Interface_Scrollable_Cb edge_top_cb;
+         }
+      }
+      objects {
+         set {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Object *edje_object;
+            Evas_Object *hit_rectangle;
+         }
+      }
+      last_page {
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            int pagenumber_h;
+            int pagenumber_v;
+         }
+      }
+      current_page {
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            int pagenumber_h;
+            int pagenumber_v;
+         }
+      }
+      content_viewport_size {
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Coord w;
+            Evas_Coord h;
+         }
+      }
+      content_size {
+         get {
+            /*@ No description supplied by the EAPI. */
+            legacy null;
+         }
+         values {
+            Evas_Coord w;
+            Evas_Coord h;
+         }
+      }
+   }
+   methods {
+      content_pos_set {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @in Evas_Coord x;
+            @in Evas_Coord y;
+            @in Eina_Bool sig;
+         }
+      }
+      content_pos_get {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @out Evas_Coord x;
+            @out Evas_Coord y;
+         }
+      }
+      page_show {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @in int pagenumber_h;
+            @in int pagenumber_v;
+         }
+      }
+      region_bring_in {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @in Evas_Coord x;
+            @in Evas_Coord y;
+            @in Evas_Coord w;
+            @in Evas_Coord h;
+         }
+      }
+      page_bring_in {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @in int pagenumber_h;
+            @in int pagenumber_v;
+         }
+      }
+      content_region_show {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @in Evas_Coord x;
+            @in Evas_Coord y;
+            @in Evas_Coord w;
+            @in Evas_Coord h;
+         }
+      }
+      content_min_limit {
+         /*@ No description supplied by the EAPI. */
+         legacy null;
+         params {
+            @in Eina_Bool w;
+            @in Eina_Bool h;
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      class::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+   }
+   events {
+      changed;
+   }
+
+}

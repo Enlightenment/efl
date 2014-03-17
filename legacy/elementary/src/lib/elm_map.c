@@ -487,8 +487,8 @@ _viewport_coord_get(Elm_Map_Smart_Data *sd,
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   eo_do(sd->obj, elm_scrollable_interface_content_pos_get(&x, &y));
-   eo_do(sd->obj, elm_scrollable_interface_content_viewport_size_get(&w, &h));
+   eo_do(sd->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+   eo_do(sd->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
 
    if (w > sd->size.w) x -= ((w - sd->size.w) / 2);
    if (h > sd->size.h) y -= ((h - sd->size.h) / 2);
@@ -1104,7 +1104,7 @@ _zoom_do(Elm_Map_Smart_Data *sd,
         if (y < 0) y = 0;
         else if (y > (sd->size.h - vh))
           y = sd->size.h - vh;
-        eo_do(sd->obj, elm_scrollable_interface_content_region_show
+        eo_do(sd->obj, elm_interface_scrollable_content_region_show
               (x, y, vw, vh));
      }
 
@@ -3621,8 +3621,8 @@ _region_show_bring_in(Elm_Map_Smart_Data *wsd, double lon, double lat, Eina_Bool
    x = x - (w / 2);
    y = y - (h / 2);
 
-   if (bring_in) eo_do(wsd->obj, elm_scrollable_interface_region_bring_in(x, y, w, h));
-   else eo_do(wsd->obj, elm_scrollable_interface_content_region_show(x, y, w, h));
+   if (bring_in) eo_do(wsd->obj, elm_interface_scrollable_region_bring_in(x, y, w, h));
+   else eo_do(wsd->obj, elm_interface_scrollable_content_region_show(x, y, w, h));
 }
 
 static void
@@ -3869,10 +3869,10 @@ _elm_map_smart_event(Eo *obj, void *_pd, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    eo_do(obj,
-         elm_scrollable_interface_content_pos_get(&x, &y),
-         elm_scrollable_interface_step_size_get(&step_x, &step_y),
-         elm_scrollable_interface_page_size_get(&page_x, &page_y),
-         elm_scrollable_interface_content_viewport_size_get(NULL, &vh));
+         elm_interface_scrollable_content_pos_get(&x, &y),
+         elm_interface_scrollable_step_size_get(&step_x, &step_y),
+         elm_interface_scrollable_page_size_get(&page_x, &page_y),
+         elm_interface_scrollable_content_viewport_size_get(NULL, &vh));
 
    if ((!strcmp(ev->key, "Left")) ||
        ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
@@ -3925,7 +3925,7 @@ _elm_map_smart_event(Eo *obj, void *_pd, va_list *list)
    else return;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   eo_do(obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
+   eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -3968,9 +3968,9 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
 
    eo_do(obj,
-         elm_scrollable_interface_objects_set(edje, priv->hit_rect),
-         elm_scrollable_interface_wheel_disabled_set(EINA_TRUE),
-         elm_scrollable_interface_bounce_allow_set(
+         elm_interface_scrollable_objects_set(edje, priv->hit_rect),
+         elm_interface_scrollable_wheel_disabled_set(EINA_TRUE),
+         elm_interface_scrollable_bounce_allow_set(
             _elm_config->thumbscroll_bounce_enable,
             _elm_config->thumbscroll_bounce_enable));
 
@@ -3978,9 +3978,9 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
                                   _changed_size_hints_cb, obj);
 
    eo_do(obj,
-         elm_scrollable_interface_animate_start_cb_set(_scroll_animate_start_cb),
-         elm_scrollable_interface_animate_stop_cb_set(_scroll_animate_stop_cb),
-         elm_scrollable_interface_scroll_cb_set(_scroll_cb));
+         elm_interface_scrollable_animate_start_cb_set(_scroll_animate_start_cb),
+         elm_interface_scrollable_animate_stop_cb_set(_scroll_animate_stop_cb),
+         elm_interface_scrollable_scroll_cb_set(_scroll_cb));
 
    priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
@@ -3988,7 +3988,7 @@ _elm_map_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 
-   eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
+   eo_do(obj, elm_interface_scrollable_extern_pan_set(priv->pan_obj));
 
    edje_object_size_min_calc(edje, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -6086,4 +6086,4 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_obj_map_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_SCROLLABLE_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_obj_map_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_INTERFACE_SCROLLABLE_CLASS, NULL);

@@ -78,7 +78,7 @@ _elm_scrollable_is(const Evas_Object *obj)
 {
    INTERNAL_ENTRY EINA_FALSE;
    return
-      eo_isa(obj, ELM_SCROLLABLE_INTERFACE);
+      eo_isa(obj, ELM_INTERFACE_SCROLLABLE_CLASS);
 }
 
 void
@@ -629,7 +629,7 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 
         if (_elm_scrollable_is(o) && !elm_widget_disabled_get(o))
           {
-             eo_do(o, elm_scrollable_interface_content_region_show(x, y, w, h));
+             eo_do(o, elm_interface_scrollable_content_region_show(x, y, w, h));
 
              if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
                {
@@ -2759,7 +2759,7 @@ _elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord x, Ev
 
         if (_elm_scrollable_is(obj))
           {
-             eo_do(obj, elm_scrollable_interface_content_pos_get(&nx, &ny));
+             eo_do(obj, elm_interface_scrollable_content_pos_get(&nx, &ny));
              x -= nx;
              y -= ny;
           }
@@ -2846,7 +2846,7 @@ _elm_widget_parents_bounce_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, 
 
         if (_elm_scrollable_is(parent_obj))
           {
-             eo_do(parent_obj, elm_scrollable_interface_bounce_allow_get(&h, &v));
+             eo_do(parent_obj, elm_interface_scrollable_bounce_allow_get(&h, &v));
              if (h) *horiz = EINA_TRUE;
              if (v) *vert = EINA_TRUE;
           }
@@ -2880,7 +2880,7 @@ _elm_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->scroll_hold == 1)
      {
         if (_elm_scrollable_is(obj))
-           eo_do(obj, elm_scrollable_interface_hold_set(EINA_TRUE));
+           eo_do(obj, elm_interface_scrollable_hold_set(EINA_TRUE));
         else
           {
              Eina_List *scr_children, *l;
@@ -2889,7 +2889,7 @@ _elm_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
              scr_children = elm_widget_scrollable_children_get(obj);
              EINA_LIST_FOREACH(scr_children, l, child)
                {
-                  eo_do(child, elm_scrollable_interface_hold_set(EINA_TRUE));
+                  eo_do(child, elm_interface_scrollable_hold_set(EINA_TRUE));
                }
              eina_list_free(scr_children);
           }
@@ -2905,7 +2905,7 @@ _elm_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (!sd->scroll_hold)
      {
         if (_elm_scrollable_is(obj))
-           eo_do(obj, elm_scrollable_interface_hold_set(EINA_FALSE));
+           eo_do(obj, elm_interface_scrollable_hold_set(EINA_FALSE));
         else
           {
              Eina_List *scr_children, *l;
@@ -2914,7 +2914,7 @@ _elm_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
              scr_children = elm_widget_scrollable_children_get(obj);
              EINA_LIST_FOREACH(scr_children, l, child)
                {
-                  eo_do(child, elm_scrollable_interface_hold_set(EINA_FALSE));
+                  eo_do(child, elm_interface_scrollable_hold_set(EINA_FALSE));
                }
              eina_list_free(scr_children);
           }
@@ -2936,7 +2936,7 @@ _elm_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->scroll_freeze == 1)
      {
         if (_elm_scrollable_is(obj))
-           eo_do(obj, elm_scrollable_interface_freeze_set(EINA_TRUE));
+           eo_do(obj, elm_interface_scrollable_freeze_set(EINA_TRUE));
         else
           {
              Eina_List *scr_children, *l;
@@ -2945,7 +2945,7 @@ _elm_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
              scr_children = elm_widget_scrollable_children_get(obj);
              EINA_LIST_FOREACH(scr_children, l, child)
                {
-                  eo_do(child, elm_scrollable_interface_freeze_set(EINA_TRUE));
+                  eo_do(child, elm_interface_scrollable_freeze_set(EINA_TRUE));
                }
              eina_list_free(scr_children);
           }
@@ -2961,7 +2961,7 @@ _elm_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (!sd->scroll_freeze)
      {
         if (_elm_scrollable_is(obj))
-           eo_do(obj, elm_scrollable_interface_freeze_set(EINA_FALSE));
+           eo_do(obj, elm_interface_scrollable_freeze_set(EINA_FALSE));
         else
           {
              Eina_List *scr_children, *l;
@@ -2970,7 +2970,7 @@ _elm_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
              scr_children = elm_widget_scrollable_children_get(obj);
              EINA_LIST_FOREACH(scr_children, l, child)
                {
-                  eo_do(child, elm_scrollable_interface_freeze_set(EINA_FALSE));
+                  eo_do(child, elm_interface_scrollable_freeze_set(EINA_FALSE));
                }
              eina_list_free(scr_children);
           }

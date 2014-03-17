@@ -199,7 +199,7 @@ _item_show(Elm_Toolbar_Item *it)
 
    evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
-   eo_do(WIDGET(it), elm_scrollable_interface_content_region_show
+   eo_do(WIDGET(it), elm_interface_scrollable_content_region_show
          (x - bx, y - by, w, h));
 }
 
@@ -292,7 +292,7 @@ _elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item *item,
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    eo_do(WIDGET(item),
-         elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+         elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
    evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(VIEW(item), &ix, &iy, &iw, &ih);
 
@@ -345,7 +345,7 @@ _resize_job(void *data)
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    sd->resize_job = NULL;
-   eo_do(obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
    evas_object_size_hint_min_get(sd->bx, &mw, &mh);
    evas_object_geometry_get(sd->bx, NULL, NULL, &w, &h);
 
@@ -506,14 +506,14 @@ _resize_job(void *data)
           {
              if (h > vh) _items_size_fit(obj, &h, vh);
              if (sd->item_count - sd->separator_count > 0)
-               eo_do(obj, elm_scrollable_interface_paging_set
+               eo_do(obj, elm_interface_scrollable_paging_set
                      (0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count))));
           }
         else
           {
              if (w > vw) _items_size_fit(obj, &w, vw);
              if (sd->item_count - sd->separator_count > 0)
-               eo_do(obj, elm_scrollable_interface_paging_set
+               eo_do(obj, elm_interface_scrollable_paging_set
                      (0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0));
           }
      }
@@ -714,7 +714,7 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
 
    if (_elm_toolbar_item_coordinates_calc(
          sd->highlighted_item, ELM_TOOLBAR_ITEM_SCROLLTO_IN, &x, &y, &w, &h))
-     eo_do(obj, elm_scrollable_interface_region_bring_in(x, y, w, h));
+     eo_do(obj, elm_interface_scrollable_region_bring_in(x, y, w, h));
 
 success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1086,7 +1086,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(wd->resize_obj, w, h);
 
    evas_object_size_hint_min_get(sd->bx, &minw_bx, &minh_bx);
-   eo_do(obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
 
    if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE)
      {
@@ -1759,7 +1759,7 @@ _mouse_up_reorder(Elm_Toolbar_Item *it,
         ELM_SAFE_FREE(it->proxy, evas_object_del);
      }
 
-   eo_do(obj, elm_scrollable_interface_hold_set(EINA_FALSE));
+   eo_do(obj, elm_interface_scrollable_hold_set(EINA_FALSE));
 }
 
 static void
@@ -1807,7 +1807,7 @@ _item_reorder_start(Elm_Toolbar_Item *item)
    evas_object_move(item->proxy, x, y);
    evas_object_show(item->proxy);
 
-   eo_do(WIDGET(item), elm_scrollable_interface_hold_set(EINA_TRUE));
+   eo_do(WIDGET(item), elm_interface_scrollable_hold_set(EINA_TRUE));
 }
 
 static Eina_Bool
@@ -2498,20 +2498,20 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_scrollable_interface_objects_set(edje, priv->hit_rect));
+   eo_do(obj, elm_interface_scrollable_objects_set(edje, priv->hit_rect));
 
    priv->standard_priority = -99999;
 
    eo_do(obj,
-         elm_scrollable_interface_bounce_allow_set
+         elm_interface_scrollable_bounce_allow_set
          (_elm_config->thumbscroll_bounce_enable, EINA_FALSE),
-         elm_scrollable_interface_policy_set
+         elm_interface_scrollable_policy_set
          (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF),
-         elm_scrollable_interface_scroll_cb_set(_scroll_cb),
-         elm_scrollable_interface_animate_start_cb_set(_scroll_anim_start_cb),
-         elm_scrollable_interface_animate_stop_cb_set(_scroll_anim_stop_cb),
-         elm_scrollable_interface_drag_start_cb_set(_scroll_drag_start_cb),
-         elm_scrollable_interface_drag_stop_cb_set(_scroll_drag_stop_cb));
+         elm_interface_scrollable_scroll_cb_set(_scroll_cb),
+         elm_interface_scrollable_animate_start_cb_set(_scroll_anim_start_cb),
+         elm_interface_scrollable_animate_stop_cb_set(_scroll_anim_stop_cb),
+         elm_interface_scrollable_drag_start_cb_set(_scroll_drag_start_cb),
+         elm_interface_scrollable_drag_stop_cb_set(_scroll_drag_stop_cb));
 
    edje_object_signal_callback_add
      (edje, "elm,action,left", "elm", _elm_toolbar_action_left_cb, obj);
@@ -2533,7 +2533,7 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_object_size_hint_align_set(priv->bx, priv->align, 0.5);
    evas_object_box_layout_set(priv->bx, _layout, obj, NULL);
    elm_widget_sub_object_add(obj, priv->bx);
-   eo_do(obj, elm_scrollable_interface_content_set(priv->bx));
+   eo_do(obj, elm_interface_scrollable_content_set(priv->bx));
    evas_object_show(priv->bx);
 
    priv->more = elm_layout_add(obj);
@@ -3293,7 +3293,7 @@ _shrink_mode_set(Eo *obj, void *_pd, va_list *list)
    sd->shrink_mode = shrink_mode;
    bounce = (_elm_config->thumbscroll_bounce_enable) &&
      (shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL);
-   eo_do(obj, elm_scrollable_interface_bounce_allow_set(bounce, EINA_FALSE));
+   eo_do(obj, elm_interface_scrollable_bounce_allow_set(bounce, EINA_FALSE));
 
    if (sd->more_item)
      {
@@ -3304,25 +3304,25 @@ _shrink_mode_set(Eo *obj, void *_pd, va_list *list)
    if (shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
-        eo_do(obj, elm_scrollable_interface_policy_set
+        eo_do(obj, elm_interface_scrollable_policy_set
               (ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF));
         sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
      {
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
-        eo_do(obj, elm_scrollable_interface_policy_set
+        eo_do(obj, elm_interface_scrollable_policy_set
               (ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF));
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
-        eo_do(obj, elm_scrollable_interface_policy_set
+        eo_do(obj, elm_interface_scrollable_policy_set
               (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
         sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
      }
    else
-      eo_do(obj, elm_scrollable_interface_policy_set
+      eo_do(obj, elm_interface_scrollable_policy_set
             (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
 
    _sizing_eval(obj);
@@ -3933,7 +3933,7 @@ elm_toolbar_item_show(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type type)
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
 
    if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
-     eo_do(WIDGET(item), elm_scrollable_interface_content_region_show
+     eo_do(WIDGET(item), elm_interface_scrollable_content_region_show
      (x, y, w, h));
 }
 
@@ -3946,7 +3946,7 @@ elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type ty
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it);
 
    if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
-     eo_do(WIDGET(item), elm_scrollable_interface_region_bring_in
+     eo_do(WIDGET(item), elm_interface_scrollable_region_bring_in
      (x, y, w, h));
 }
 
@@ -4048,4 +4048,4 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_obj_toolbar_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_SCROLLABLE_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_obj_toolbar_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_INTERFACE_SCROLLABLE_CLASS, NULL);

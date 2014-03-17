@@ -313,9 +313,9 @@ _item_scroll(Elm_Genlist_Smart_Data *sd)
         break;
      }
    if (sd->bring_in)
-      eo_do(sd->obj, elm_scrollable_interface_region_bring_in(dx, dy, dw, dh));
+      eo_do(sd->obj, elm_interface_scrollable_region_bring_in(dx, dy, dw, dh));
    else
-      eo_do(sd->obj, elm_scrollable_interface_content_region_show
+      eo_do(sd->obj, elm_interface_scrollable_content_region_show
             (dx, dy, dw, dh));
 
    it->item->show_me = EINA_FALSE;
@@ -421,7 +421,7 @@ _calc_job(void *data)
 
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &ow, &sd->h);
    if (sd->mode == ELM_LIST_COMPRESS)
-      eo_do(sd->obj, elm_scrollable_interface_content_viewport_size_get
+      eo_do(sd->obj, elm_interface_scrollable_content_viewport_size_get
             (&vw, NULL));
 
    if (sd->w != ow) sd->w = ow;
@@ -513,7 +513,7 @@ _calc_job(void *data)
 
              it = sd->anchor_item;
              it_y = sd->anchor_y;
-             eo_do(sd->obj, elm_scrollable_interface_content_pos_set
+             eo_do(sd->obj, elm_interface_scrollable_content_pos_set
                (sd->pan_x, it->item->block->y
                + it->y + it_y, EINA_TRUE));
              sd->anchor_item = it;
@@ -583,7 +583,7 @@ _elm_genlist_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      {
         Evas_Coord vw = 0, vh = 0;
 
-        eo_do(obj, elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+        eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
         if ((vw != 0) && (vw != sd->prev_viewport_w))
           {
              Item_Block *itb;
@@ -2267,13 +2267,13 @@ _elm_genlist_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
      _item_auto_scroll(sd);
 
    eo_do((sd)->obj,
-         elm_scrollable_interface_content_pos_get(&vx, &vy),
-         elm_scrollable_interface_content_viewport_size_get(&vw, &vh));
+         elm_interface_scrollable_content_pos_get(&vx, &vy),
+         elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
 
    if (sd->reorder_fast == 1)
-      eo_do((sd)->obj, elm_scrollable_interface_content_region_show(vx, vy - 10, vw, vh));
+      eo_do((sd)->obj, elm_interface_scrollable_content_region_show(vx, vy - 10, vw, vh));
    else if (sd->reorder_fast == -1)
-      eo_do((sd)->obj, elm_scrollable_interface_content_region_show(vx, vy + 10, vw, vh));
+      eo_do((sd)->obj, elm_interface_scrollable_content_region_show(vx, vy + 10, vw, vh));
 
    if (sd->focused_item)
      _elm_widget_focus_highlight_start(psd->wobj);
@@ -2617,10 +2617,10 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
    if (!sd->items) return;
 
    eo_do(obj,
-         elm_scrollable_interface_content_pos_get(&x, &y),
-         elm_scrollable_interface_step_size_get(&step_x, &step_y),
-         elm_scrollable_interface_page_size_get(&page_x, &page_y),
-         elm_scrollable_interface_content_viewport_size_get(&v_w, &v_h));
+         elm_interface_scrollable_content_pos_get(&x, &y),
+         elm_interface_scrollable_step_size_get(&step_x, &step_y),
+         elm_interface_scrollable_page_size_get(&page_x, &page_y),
+         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
 
    if ((!strcmp(ev->key, "Left")) ||
        ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
@@ -2757,7 +2757,7 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
    if (y < 0) y = 0;
    if (y > pan_max_y) y = pan_max_y;
 
-   eo_do(obj, elm_scrollable_interface_content_pos_set(x, y, EINA_TRUE));
+   eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
 
    if (ret) *ret = EINA_TRUE;
 }
@@ -2938,7 +2938,7 @@ _mirrored_set(Evas_Object *obj,
    ELM_GENLIST_DATA_GET(obj, sd);
 
    _item_cache_zero(sd);
-   eo_do(obj, elm_scrollable_interface_mirrored_set(rtl));
+   eo_do(obj, elm_interface_scrollable_mirrored_set(rtl));
 }
 
 static void
@@ -2994,7 +2994,7 @@ _show_region_hook(void *data EINA_UNUSED,
    //x & y are screen coordinates, Add with pan coordinates
    x += sd->pan_x;
    y += sd->pan_y;
-   eo_do(obj, elm_scrollable_interface_content_region_show(x, y, w, h));
+   eo_do(obj, elm_interface_scrollable_content_region_show(x, y, w, h));
 }
 
 static void
@@ -3516,8 +3516,8 @@ _long_press_cb(void *data)
         else
           evas_object_stack_below(VIEW(it), sd->stack[1]);
 
-        eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_TRUE));
-        eo_do(sd->obj, elm_scrollable_interface_bounce_allow_set
+        eo_do(sd->obj, elm_interface_scrollable_hold_set(EINA_TRUE));
+        eo_do(sd->obj, elm_interface_scrollable_bounce_allow_set
               (EINA_FALSE, EINA_FALSE));
 
         list = elm_genlist_realized_items_get
@@ -4103,16 +4103,16 @@ _item_process_post(Elm_Genlist_Smart_Data *sd,
 
         it2 = sd->selected->data;
         if (!it2->item->block) return;
-        eo_do(sd->obj, elm_scrollable_interface_content_pos_get(NULL, &y));
+        eo_do(sd->obj, elm_interface_scrollable_content_pos_get(NULL, &y));
         evas_object_geometry_get(sd->pan_obj, NULL, NULL, NULL, &h);
         if ((it->y + it->item->block->y > y + h) ||
             (it->y + it->item->block->y + it->item->h < y))
           /* offscreen, just update */
-           eo_do(sd->obj, elm_scrollable_interface_content_region_show
+           eo_do(sd->obj, elm_interface_scrollable_content_region_show
             (it2->x + it2->item->block->x, y,
             it2->item->block->w, h));
         else
-           eo_do(sd->obj, elm_scrollable_interface_content_region_show
+           eo_do(sd->obj, elm_interface_scrollable_content_region_show
             (it->x + it->item->block->x,
             y + it->item->h, it->item->block->w, h));
      }
@@ -4388,8 +4388,8 @@ _item_mouse_up_cb(void *data,
           }
         edje_object_signal_emit(VIEW(it), "elm,state,reorder,disabled", "elm");
         sd->reorder_it = sd->reorder_rel = NULL;
-        eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_FALSE));
-        eo_do(sd->obj, elm_scrollable_interface_bounce_allow_set
+        eo_do(sd->obj, elm_interface_scrollable_hold_set(EINA_FALSE));
+        eo_do(sd->obj, elm_interface_scrollable_bounce_allow_set
               (sd->h_bounce, sd->v_bounce));
      }
    if (sd->longpressed)
@@ -4496,7 +4496,7 @@ _scroll_hold_timer_cb(void *data)
 
    if (!data) return ECORE_CALLBACK_CANCEL;
 
-   eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_FALSE));
+   eo_do(sd->obj, elm_interface_scrollable_hold_set(EINA_FALSE));
    sd->scr_hold_timer = NULL;
 
    return ECORE_CALLBACK_CANCEL;
@@ -5033,7 +5033,7 @@ _decorate_item_set(Elm_Gen_Item *it)
    it->item->nocache_once = EINA_TRUE;
 
    ELM_SAFE_FREE(sd->scr_hold_timer, ecore_timer_del);
-   eo_do(sd->obj, elm_scrollable_interface_hold_set(EINA_TRUE));
+   eo_do(sd->obj, elm_interface_scrollable_hold_set(EINA_TRUE));
    sd->scr_hold_timer = ecore_timer_add(SCR_HOLD_TIME, _scroll_hold_timer_cb, sd->obj);
 
    evas_event_freeze(evas_object_evas_get(sd->obj));
@@ -5100,27 +5100,27 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
        (obj, "genlist", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
-   eo_do(obj, elm_scrollable_interface_objects_set(wd->resize_obj, priv->hit_rect));
+   eo_do(obj, elm_interface_scrollable_objects_set(wd->resize_obj, priv->hit_rect));
 
-   eo_do(obj, elm_scrollable_interface_bounce_allow_set
+   eo_do(obj, elm_interface_scrollable_bounce_allow_set
          (EINA_FALSE, _elm_config->thumbscroll_bounce_enable));
    priv->v_bounce = _elm_config->thumbscroll_bounce_enable;
 
    eo_do(obj,
-         elm_scrollable_interface_animate_start_cb_set(_scroll_animate_start_cb),
-         elm_scrollable_interface_animate_stop_cb_set(_scroll_animate_stop_cb),
-         elm_scrollable_interface_drag_start_cb_set(_scroll_drag_start_cb),
-         elm_scrollable_interface_drag_stop_cb_set(_scroll_drag_stop_cb),
-         elm_scrollable_interface_edge_left_cb_set(_edge_left_cb),
-         elm_scrollable_interface_edge_right_cb_set(_edge_right_cb),
-         elm_scrollable_interface_edge_top_cb_set(_edge_top_cb),
-         elm_scrollable_interface_edge_bottom_cb_set(_edge_bottom_cb),
-         elm_scrollable_interface_vbar_drag_cb_set(_vbar_drag_cb),
-         elm_scrollable_interface_vbar_press_cb_set(_vbar_press_cb),
-         elm_scrollable_interface_vbar_unpress_cb_set(_vbar_unpress_cb),
-         elm_scrollable_interface_hbar_drag_cb_set(_hbar_drag_cb),
-         elm_scrollable_interface_hbar_press_cb_set(_hbar_press_cb),
-         elm_scrollable_interface_hbar_unpress_cb_set(_hbar_unpress_cb));
+         elm_interface_scrollable_animate_start_cb_set(_scroll_animate_start_cb),
+         elm_interface_scrollable_animate_stop_cb_set(_scroll_animate_stop_cb),
+         elm_interface_scrollable_drag_start_cb_set(_scroll_drag_start_cb),
+         elm_interface_scrollable_drag_stop_cb_set(_scroll_drag_stop_cb),
+         elm_interface_scrollable_edge_left_cb_set(_edge_left_cb),
+         elm_interface_scrollable_edge_right_cb_set(_edge_right_cb),
+         elm_interface_scrollable_edge_top_cb_set(_edge_top_cb),
+         elm_interface_scrollable_edge_bottom_cb_set(_edge_bottom_cb),
+         elm_interface_scrollable_vbar_drag_cb_set(_vbar_drag_cb),
+         elm_interface_scrollable_vbar_press_cb_set(_vbar_press_cb),
+         elm_interface_scrollable_vbar_unpress_cb_set(_vbar_unpress_cb),
+         elm_interface_scrollable_hbar_drag_cb_set(_hbar_drag_cb),
+         elm_interface_scrollable_hbar_press_cb_set(_hbar_press_cb),
+         elm_interface_scrollable_hbar_unpress_cb_set(_hbar_unpress_cb));
 
    priv->mode = ELM_LIST_SCROLL;
    priv->max_items_per_block = MAX_ITEMS_PER_BLOCK;
@@ -5140,7 +5140,7 @@ _elm_genlist_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         evas_object_smart_member_add(priv->stack[i], priv->pan_obj);
      }
 
-   eo_do(obj, elm_scrollable_interface_extern_pan_set(priv->pan_obj));
+   eo_do(obj, elm_interface_scrollable_extern_pan_set(priv->pan_obj));
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -5339,7 +5339,7 @@ _elm_genlist_clear(Evas_Object *obj,
         evas_object_smart_callback_call(sd->pan_obj, "changed", NULL);
      }
    elm_layout_sizing_eval(sd->obj);
-   eo_do(obj, elm_scrollable_interface_content_region_show(0, 0, 0, 0));
+   eo_do(obj, elm_interface_scrollable_content_region_show(0, 0, 0, 0));
    evas_event_thaw(evas_object_evas_get(sd->obj));
    evas_event_thaw_eval(evas_object_evas_get(sd->obj));
 }
@@ -6695,7 +6695,7 @@ elm_genlist_item_show(Elm_Object_Item *item,
 
    if (_elm_genlist_item_coordinates_calc
          (item, type, EINA_FALSE, &x, &y, &w, &h))
-      eo_do(WIDGET(item), elm_scrollable_interface_content_region_show
+      eo_do(WIDGET(item), elm_interface_scrollable_content_region_show
             (x, y, w, h));
 }
 
@@ -6709,7 +6709,7 @@ elm_genlist_item_bring_in(Elm_Object_Item *item,
 
    if (_elm_genlist_item_coordinates_calc
          (item, type, EINA_TRUE, &x, &y, &w, &h))
-      eo_do(WIDGET(item), elm_scrollable_interface_region_bring_in(x, y, w, h));
+      eo_do(WIDGET(item), elm_interface_scrollable_region_bring_in(x, y, w, h));
 }
 
 EAPI void
@@ -7116,7 +7116,7 @@ elm_genlist_bounce_set(Evas_Object *obj,
                        Eina_Bool v_bounce)
 {
    ELM_GENLIST_CHECK(obj);
-   eo_do(obj, elm_scrollable_interface_bounce_allow_set(h_bounce, v_bounce));
+   eo_do(obj, elm_interface_scrollable_bounce_allow_set(h_bounce, v_bounce));
 }
 
 static void
@@ -7128,7 +7128,7 @@ _bounce_set(Eo *obj, void *_pd, va_list *list)
 
    sd->h_bounce = !!h_bounce;
    sd->v_bounce = !!v_bounce;
-   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_bounce_allow_set
+   eo_do_super(obj, MY_CLASS, elm_interface_scrollable_bounce_allow_set
          (sd->h_bounce, sd->v_bounce));
 }
 
@@ -7138,7 +7138,7 @@ elm_genlist_bounce_get(const Evas_Object *obj,
                        Eina_Bool *v_bounce)
 {
    ELM_GENLIST_CHECK(obj);
-   eo_do((Eo *) obj, elm_scrollable_interface_bounce_allow_get
+   eo_do((Eo *) obj, elm_interface_scrollable_bounce_allow_get
          (h_bounce, v_bounce));
 }
 
@@ -7267,7 +7267,7 @@ elm_genlist_scroller_policy_set(Evas_Object *obj,
                                 Elm_Scroller_Policy policy_v)
 {
    ELM_GENLIST_CHECK(obj);
-   eo_do(obj, elm_scrollable_interface_policy_set(policy_h, policy_v));
+   eo_do(obj, elm_interface_scrollable_policy_set(policy_h, policy_v));
 }
 
 static void
@@ -7280,7 +7280,7 @@ _scroller_policy_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        (policy_v >= ELM_SCROLLER_POLICY_LAST))
      return;
 
-   eo_do_super(obj, MY_CLASS, elm_scrollable_interface_policy_set(policy_h, policy_v));
+   eo_do_super(obj, MY_CLASS, elm_interface_scrollable_policy_set(policy_h, policy_v));
 }
 
 EAPI void
@@ -7289,7 +7289,7 @@ elm_genlist_scroller_policy_get(const Evas_Object *obj,
                                 Elm_Scroller_Policy *policy_v)
 {
    ELM_GENLIST_CHECK(obj);
-   eo_do((Eo *) obj, elm_scrollable_interface_policy_get(policy_h, policy_v));
+   eo_do((Eo *) obj, elm_interface_scrollable_policy_get(policy_h, policy_v));
 }
 
 static void
@@ -7300,7 +7300,7 @@ _scroller_policy_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Scroller_Policy *policy_h = va_arg(*list, Elm_Scroller_Policy *);
    Elm_Scroller_Policy *policy_v = va_arg(*list, Elm_Scroller_Policy *);
 
-   eo_do_super((Eo *)obj, MY_CLASS, elm_scrollable_interface_policy_get
+   eo_do_super((Eo *)obj, MY_CLASS, elm_interface_scrollable_policy_get
          (&s_policy_h, &s_policy_v));
    if (policy_h) *policy_h = (Elm_Scroller_Policy)s_policy_h;
    if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
@@ -7937,10 +7937,10 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_genlist_smart_sizing_eval),
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SUB_OBJECT_ADD_ENABLE), _elm_genlist_smart_layout_sub_object_add_enable),
 
-        EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_SET), _bounce_set),
-        EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_BOUNCE_ALLOW_GET), _bounce_get),
-        EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_SET), _scroller_policy_set),
-        EO_OP_FUNC(ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_POLICY_GET), _scroller_policy_get),
+        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_BOUNCE_ALLOW_SET), _bounce_set),
+        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_BOUNCE_ALLOW_GET), _bounce_get),
+        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_SET), _scroller_policy_set),
+        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_GET), _scroller_policy_get),
 
         EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_ITEMS_COUNT), _items_count),
         EO_OP_FUNC(ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_ITEM_APPEND), _item_append),
@@ -8045,4 +8045,4 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_obj_genlist_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_SCROLLABLE_INTERFACE, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_obj_genlist_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_INTERFACE_SCROLLABLE_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);

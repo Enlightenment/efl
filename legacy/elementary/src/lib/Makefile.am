@@ -529,15 +529,19 @@ BUILT_SOURCES = \
 		elm_container.eo.c \
 		elm_container.eo.h \
 		elm_layout.eo.c \
-		elm_layout.eo.h
+		elm_layout.eo.h \
+		elm_interface_scrollable.eo.c \
+		elm_interface_scrollable.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
 	     elm_container.eo \
-	     elm_layout.eo
+	     elm_layout.eo \
+	     elm_interface_scrollable.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
 				  elm_container.eo.h \
-				  elm_layout.eo.h
+				  elm_layout.eo.h \
+				  elm_interface_scrollable.eo.h
 

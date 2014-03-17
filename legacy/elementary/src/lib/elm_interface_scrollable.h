@@ -141,6 +141,9 @@ enum
  */
 #define elm_obj_pan_gravity_get(x, y) ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_GRAVITY_GET), EO_TYPECHECK(double *, x), EO_TYPECHECK(double *, y)
 
+#include "elm_interface_scrollable.eo.h"
+
+#if 0
 #define ELM_SCROLLABLE_INTERFACE elm_scrollable_interface_get()
 
 const Eo_Class *elm_scrollable_interface_get(void) EINA_CONST;
@@ -1042,6 +1045,7 @@ enum
  */
 #define elm_scrollable_interface_page_change_cb_set(page_change_cb) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_PAGE_CHANGE_CB_SET), EO_TYPECHECK(Elm_Interface_Scrollable_Cb, page_change_cb)
 
+#endif
 
 /**
  * Elementary scroller panning base smart data.
@@ -1224,7 +1228,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
 #define ELM_SCROLLABLE_CHECK(obj, ...)                                       \
                                                                              \
-  if (!eo_isa(obj, ELM_SCROLLABLE_INTERFACE))                    \
+  if (!eo_isa(obj, ELM_INTERFACE_SCROLLABLE_CLASS))                    \
     {                                                                        \
        ERR("The object (%p) doesn't implement the Elementary scrollable"     \
             " interface", obj);                                              \
