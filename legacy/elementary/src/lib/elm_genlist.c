@@ -2405,6 +2405,7 @@ _item_single_select_up(Elm_Genlist_Smart_Data *sd)
    _all_items_deselect(sd);
 
    elm_genlist_item_selected_set((Elm_Object_Item *)prev, EINA_TRUE);
+   elm_genlist_item_show((Elm_Object_Item*)prev, ELM_GENLIST_ITEM_SCROLLTO_IN);
    return EINA_TRUE;
 }
 
@@ -2428,6 +2429,7 @@ _item_single_select_down(Elm_Genlist_Smart_Data *sd)
    _all_items_deselect(sd);
 
    elm_genlist_item_selected_set((Elm_Object_Item *)next, EINA_TRUE);
+   elm_genlist_item_show((Elm_Object_Item*)next, ELM_GENLIST_ITEM_SCROLLTO_IN);
 
    return EINA_TRUE;
 }
@@ -2698,8 +2700,8 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
      {
         it = elm_genlist_first_item_get(obj);
-        elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
         elm_genlist_item_selected_set(it, EINA_TRUE);
+        elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (ret) *ret = EINA_TRUE;
         return;
@@ -2708,8 +2710,8 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      {
         it = elm_genlist_last_item_get(obj);
-        elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
         elm_genlist_item_selected_set(it, EINA_TRUE);
+        elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (ret) *ret = EINA_TRUE;
         return;
