@@ -171,6 +171,7 @@ _edje_class_member_add(Edje *ed, Eina_Hash **ehash, Eina_Hash **ghash, const cha
    if (!lookup) return;
    EINA_REFCOUNT_INIT(lookup);
 
+   ed->all_part_change = EINA_TRUE;
    /* Get members list */
    members = eina_hash_find(*ghash, class);
 
