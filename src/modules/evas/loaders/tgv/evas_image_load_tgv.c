@@ -58,6 +58,10 @@ struct _Evas_Loader_Internal
    Eina_Bool compress;
 };
 
+static const Evas_Colorspace cspaces[2] = {
+  EVAS_COLORSPACE_ETC1,
+  EVAS_COLORSPACE_ARGB8888
+};
 
 static void *
 evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
@@ -162,6 +166,7 @@ evas_image_load_file_head_tgv(void *loader_data,
      {
         loader->region.w = loader->size.width;
         loader->region.h = loader->size.height;
+        prop->cspaces = cspaces; // ETC1 colorspace doesn't work with region
      }
    else
      {
@@ -218,6 +223,7 @@ evas_image_load_file_data_tgv(void *loader_data,
    unsigned int length, offset;
    unsigned int x, y;
    unsigned int block_count;
+   unsigned int etc1_width = 0;
    Eina_Bool r = EINA_FALSE;
 
    length = eina_file_size_get(loader->f);
@@ -232,6 +238,15 @@ evas_image_load_file_data_tgv(void *loader_data,
    EINA_RECTANGLE_SET(&master,
                       loader->region.x, loader->region.y,
                       prop->w, prop->h);
+
+   if (prop->cspace == EVAS_COLORSPACE_ETC1)
+     {
+        if (master.x % 4 ||
+            master.y % 4)
+          abort();
+
+        etc1_width = (prop->w / 4 + (prop->w % 4 ? 1 : 0)) * 8;
+     }
 
    // Allocate space for each ETC1 block (64bytes per 4 * 4 pixels group)
    block_count = loader->block.width * loader->block.height / (4 * 4);
@@ -291,20 +306,32 @@ evas_image_load_file_data_tgv(void *loader_data,
                  if (!eina_rectangle_intersection(&current_etc, &current))
                    continue ;
 
-                 if (!rg_etc1_unpack_block(it, temporary, 0))
+                 switch (prop->cspace)
                    {
-                      fprintf(stderr, "HOUSTON WE HAVE A PROBLEM ! Block starting at {%i, %i} is corrupted !\n", x + j, y + i);
-                      continue ;
-                   }
+                    case EVAS_COLORSPACE_ARGB8888:
+                       if (!rg_etc1_unpack_block(it, temporary, 0))
+                         {
+                            fprintf(stderr, "HOUSTON WE HAVE A PROBLEM ! Block starting at {%i, %i} is corrupted !\n", x + j, y + i);
+                            continue ;
+                         }
 
-                 offset_x = current_etc.x - x - j;
-                 offset_y = current_etc.y - y - i;
-                 for (k = 0; k < current_etc.h; k++)
-                   {
-                      memcpy(&p[current_etc.x +
-                                (current_etc.y + k) * loader->region.w],
-                             &temporary[offset_x + (offset_y + k) * 4],
-                             current_etc.w * sizeof (unsigned int));
+                       offset_x = current_etc.x - x - j;
+                       offset_y = current_etc.y - y - i;
+                       for (k = 0; k < current_etc.h; k++)
+                         {
+                            memcpy(&p[current_etc.x +
+                                      (current_etc.y + k) * master.w],
+                                   &temporary[offset_x + (offset_y + k) * 4],
+                                   current_etc.w * sizeof (unsigned int));
+                         }
+                       break;
+                    case EVAS_COLORSPACE_ETC1:
+                       memcpy(&p[current_etc.x +
+                                 current_etc.y * etc1_width],
+                              it, 8);
+                       break;
+                    default:
+                       abort();
                    }
               }
        }
