@@ -1,4 +1,17 @@
 /**
+ * Add a new web object to the parent.
+ *
+ * @param parent The parent object.
+ * @return The new object or @c NULL if it cannot be created.
+ *
+ * @see elm_web_url_set()
+ * @see elm_web_webkit_view_get()
+ *
+ * @ingroup Web
+ */
+EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
+
+/**
  * Get internal ewk_view object from web object.
  *
  * Elementary may not provide some low level features of EWebKit,
@@ -595,6 +608,39 @@ EAPI void              elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool e
  * @ingroup Web
  */
 EAPI void              elm_web_zoom_set(Evas_Object *obj, double zoom);
+
+/**
+ * Sets the zoom mode to use
+ *
+ * The modes can be any of those defined in ::Elm_Web_Zoom_Mode, except
+ * ::ELM_WEB_ZOOM_MODE_LAST. The default is ::ELM_WEB_ZOOM_MODE_MANUAL.
+ *
+ * ::ELM_WEB_ZOOM_MODE_MANUAL means the zoom level will be controlled
+ * with the elm_web_zoom_set() function.
+ * ::ELM_WEB_ZOOM_MODE_AUTO_FIT will calculate the needed zoom level to
+ * make sure the entirety of the web object's contents are shown.
+ * ::ELM_WEB_ZOOM_MODE_AUTO_FILL will calculate the needed zoom level to
+ * fit the contents in the web object's size, without leaving any space
+ * unused.
+ *
+ * @param obj The web object
+ * @param mode The mode to set
+ *
+ * @ingroup Web
+ */
+EAPI void              elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
+
+/**
+ * Get the currently set zoom mode
+ *
+ * @param obj The web object
+ *
+ * @return The current zoom mode set for the object,
+ * or ::ELM_WEB_ZOOM_MODE_LAST on error
+ *
+ * @ingroup Web
+ */
+EAPI Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
 
 /**
  * Get the current zoom level set on the web object
