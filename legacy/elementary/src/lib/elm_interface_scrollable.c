@@ -7,8 +7,6 @@
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
 
-EAPI Eo_Op ELM_OBJ_PAN_BASE_ID = EO_NOOP;
-
 #define MY_PAN_CLASS ELM_OBJ_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Pan"
@@ -83,44 +81,34 @@ _elm_pan_update(Elm_Pan_Smart_Data *psd)
    psd->py = psd->delta_posy * psd->gravity_y;
 }
 
-static void
-_elm_pan_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_pan_evas_smart_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 {
-   Elm_Pan_Smart_Data *priv = _pd;
-
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_add());
 
    priv->self = obj;
 }
 
-static void
-_elm_pan_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_pan_evas_smart_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_pan_content_set(obj, NULL);
 
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_pan_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_evas_smart_move(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Elm_Pan_Smart_Data *psd = _pd;
-
    psd->x = x;
    psd->y = y;
 
    _elm_pan_update(psd);
 }
 
-static void
-_elm_pan_smart_resize(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_evas_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord w, Evas_Coord h)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-
    psd->w = w;
    psd->h = h;
 
@@ -128,35 +116,27 @@ _elm_pan_smart_resize(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
-static void
-_elm_pan_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_pan_evas_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_show());
 
    if (psd->content)
      evas_object_show(psd->content);
 }
 
-static void
-_elm_pan_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_pan_evas_smart_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-
    eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_hide());
 
    if (psd->content)
      evas_object_hide(psd->content);
 }
 
-static void
-_elm_pan_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_pos_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Evas_Coord y)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-
    if ((x == psd->px) && (y == psd->py)) return;
    psd->px = x;
    psd->py = y;
@@ -165,24 +145,16 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
-static void
-_elm_pan_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_pos_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-
    if (x) *x = psd->px;
    if (y) *y = psd->py;
 }
 
-static void
-_elm_pan_pos_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_pos_max_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-
    if (x)
      {
         if (psd->w < psd->content_w) *x = psd->content_w - psd->w;
@@ -195,35 +167,25 @@ _elm_pan_pos_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-static void
-_elm_pan_pos_min_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_pan_pos_min_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
 {
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
    if (x)
      *x = 0;
    if (y)
      *y = 0;
 }
 
-static void
-_elm_pan_content_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord *w, Evas_Coord *h)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-
    if (w) *w = psd->content_w;
    if (h) *h = psd->content_h;
 }
 
-static void
-_elm_pan_gravity_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_gravity_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, double x, double y)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-
-   double x = va_arg(*list, double);
-   double y = va_arg(*list, double);
    psd->gravity_x = x;
    psd->gravity_y = y;
    psd->prev_cw = psd->content_w;
@@ -232,13 +194,9 @@ _elm_pan_gravity_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    psd->delta_posy = 0;
 }
 
-static void
-_elm_pan_gravity_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_pan_gravity_get(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, double *x, double *y)
 {
-   Elm_Pan_Smart_Data *psd = _pd;
-   double *x = va_arg(*list, double *);
-   double *y = va_arg(*list, double *);
-
    if (x) *x = psd->gravity_x;
    if (y) *y = psd->gravity_y;
 }
@@ -251,8 +209,8 @@ _elm_pan_add(Evas *evas)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_pan_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_PAN_CLASS, eo_constructor());
    eo_do(obj,
@@ -337,54 +295,11 @@ end:
    evas_object_smart_callback_call(psd->self, SIG_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _elm_pan_class_constructor(Eo_Class *klass)
 {
-      const Eo_Op_Func_Description func_desc[] = {
-           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_pan_smart_add),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_pan_smart_del),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_pan_smart_resize),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_pan_smart_move),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_pan_smart_show),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_pan_smart_hide),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_SET), _elm_pan_pos_set),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_GET), _elm_pan_pos_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_MAX_GET), _elm_pan_pos_max_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_MIN_GET), _elm_pan_pos_min_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_CONTENT_SIZE_GET), _elm_pan_content_size_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_GRAVITY_SET), _elm_pan_gravity_set),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_GRAVITY_GET), _elm_pan_gravity_get),
-           EO_OP_FUNC_SENTINEL
-      };
-      eo_class_funcs_set(klass, func_desc);
-
       evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
-
-static const Eo_Op_Description _elm_pan_op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_POS_SET, "description here"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_POS_GET, "description here"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_POS_MAX_GET, "description here"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_POS_MIN_GET, "description here"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_CONTENT_SIZE_GET, "description here"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_GRAVITY_SET, "description here"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PAN_SUB_ID_GRAVITY_GET, "description here"),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description _elm_pan_class_desc = {
-     EO_VERSION,
-     MY_PAN_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_PAN_BASE_ID, _elm_pan_op_desc, ELM_OBJ_PAN_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Pan_Smart_Data),
-     _elm_pan_class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_pan_eo_class_get, &_elm_pan_class_desc, EVAS_OBJ_SMART_CLIPPED_CLASS, NULL);
 
 /* pan smart object on top, scroller interface on bottom */
 /* ============================================================ */
@@ -4425,3 +4340,4 @@ _elm_interface_scrollable_class_constructor(Eo_Class *klass)
 }
 
 #include "elm_interface_scrollable.eo.c"
+#include "elm_pan.eo.c"

@@ -31,6 +31,9 @@
  * Elm_Scrollable_Smart_Interface::extern_pan_set.
  */
 
+#include "elm_pan.eo.h"
+
+#if 0
 #define ELM_OBJ_PAN_CLASS elm_obj_pan_eo_class_get()
 const Eo_Class *elm_obj_pan_eo_class_get(void) EINA_CONST;
 
@@ -140,6 +143,7 @@ enum
  * @see elm_pan_gravity_get
  */
 #define elm_obj_pan_gravity_get(x, y) ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_GRAVITY_GET), EO_TYPECHECK(double *, x), EO_TYPECHECK(double *, y)
+#endif
 
 #include "elm_interface_scrollable.eo.h"
 
