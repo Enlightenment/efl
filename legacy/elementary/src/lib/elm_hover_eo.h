@@ -1,3 +1,6 @@
+#include "elm_hover.eo.h"
+
+#if 0
 #define ELM_OBJ_HOVER_CLASS elm_obj_hover_class_get()
 
 const Eo_Class *elm_obj_hover_class_get(void) EINA_CONST;
@@ -69,3 +72,6 @@ const Eo_Class *elm_obj_hover_class_get(void) EINA_CONST;
  * @see elm_hover_dismiss
  */
 #define elm_obj_hover_dismiss() ELM_OBJ_HOVER_ID(ELM_OBJ_HOVER_SUB_ID_DISMISS)
+
+#endif
+

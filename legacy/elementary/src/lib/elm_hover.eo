@@ -1,0 +1,97 @@
+class Elm_Hover (Elm_Layout, Evas_Clickable_Interface)
+{
+   eo_prefix: elm_obj_hover;
+   properties {
+      target {
+         set {
+            /*@
+            @brief Sets the target object for the hover.
+
+            This function will cause the hover to be centered on the target object.
+
+            @ingroup Hover */
+         }
+         get {
+            /*@
+            @brief Get the target object for the hover.
+
+            @return The target object for the hover.
+
+            @see elm_hover_target_set()
+
+            @ingroup Hover */
+         }
+         values {
+            Evas_Object *target; /*@ The object to center the hover onto. */
+         }
+      }
+   }
+   methods {
+      best_content_location_get {
+         /*@
+         @brief Returns the best swallow location for content in the hover.
+
+         @return The edje location to place content into the hover or @c
+         NULL, on errors.
+
+         Best is defined here as the location at which there is the most available
+         space.
+
+         @p pref_axis may be one of
+         - @c ELM_HOVER_AXIS_NONE -- no preferred orientation
+         - @c ELM_HOVER_AXIS_HORIZONTAL -- horizontal
+         - @c ELM_HOVER_AXIS_VERTICAL -- vertical
+         - @c ELM_HOVER_AXIS_BOTH -- both
+
+         If ELM_HOVER_AXIS_HORIZONTAL is chosen the returned position will
+         necessarily be along the horizontal axis("left" or "right"). If
+         ELM_HOVER_AXIS_VERTICAL is chosen the returned position will necessarily
+         be along the vertical axis("top" or "bottom"). Choosing
+         ELM_HOVER_AXIS_BOTH or ELM_HOVER_AXIS_NONE has the same effect and the
+         returned position may be in either axis.
+
+         @see elm_object_part_content_set()
+
+         @ingroup Hover */
+
+         const;
+         return const char *;
+         params {
+            @in Elm_Hover_Axis pref_axis; /*@ The preferred orientation axis for the hover object to use */
+         }
+      }
+      dismiss {
+         /*@
+         @brief Dismiss a hover object
+
+         @ingroup Hover */
+
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::del;
+      Evas_Smart::hide;
+      Evas_Smart::show;
+      Evas_Smart::move;
+      Evas_Smart::add;
+      Evas_Smart::resize;
+      Elm_Widget::theme_apply;
+      Elm_Widget::sub_object_add;
+      Elm_Widget::parent;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::sub_object_del;
+      Elm_Container::content_get;
+      Elm_Container::content_set;
+      Elm_Container::content_unset;
+      Elm_Layout::sizing_eval;
+      Elm_Layout::content_aliases::get;
+   }
+   events {
+      focused;
+      unfocused;
+   }
+
+}

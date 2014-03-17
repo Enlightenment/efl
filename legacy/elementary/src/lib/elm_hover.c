@@ -7,8 +7,6 @@
 #include "elm_priv.h"
 #include "elm_widget_hover.h"
 
-EAPI Eo_Op ELM_OBJ_HOVER_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_HOVER_CLASS
 
 #define MY_CLASS_NAME "Elm_Hover"
@@ -122,7 +120,7 @@ _elm_hover_parent_detach(Evas_Object *obj)
 }
 
 static void
-_elm_hover_left_space_calc(Elm_Hover_Smart_Data *sd,
+_elm_hover_left_space_calc(Elm_Hover_Data *sd,
                            Evas_Coord *spc_l,
                            Evas_Coord *spc_t,
                            Evas_Coord *spc_r,
@@ -145,7 +143,7 @@ _elm_hover_left_space_calc(Elm_Hover_Smart_Data *sd,
 }
 
 static Content_Info *
-_elm_hover_smart_content_location_get(Elm_Hover_Smart_Data *sd,
+_elm_hover_smart_content_location_get(Elm_Hover_Data *sd,
                                       Evas_Coord spc_l,
                                       Evas_Coord spc_t,
                                       Evas_Coord spc_r,
@@ -279,16 +277,12 @@ _hov_show_do(Evas_Object *obj)
    }
 }
 
-static void
-_elm_hover_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_hover_elm_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Hover_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
 
@@ -296,16 +290,15 @@ _elm_hover_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    if (evas_object_visible_get(obj)) _hov_show_do(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_hover_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
 {
    Evas_Coord ofs_x, x = 0, y = 0, w = 0, h = 0, x2 = 0,
               y2 = 0, w2 = 0, h2 = 0;
 
-   Elm_Hover_Smart_Data *sd = _pd;
 
    if (sd->on_del) return;
 
@@ -331,40 +324,30 @@ _on_smt_sub_changed(void *data,
    _elm_hover_smt_sub_re_eval(data);
 }
 
-static void
-_elm_hover_smart_sub_object_add(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_hover_elm_widget_sub_object_add(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Hover_Smart_Data *sd = _pd;
 
-   if (evas_object_data_get(sobj, "elm-parent") == obj)
-     goto end;
+   if (evas_object_data_get(sobj, "elm-parent") == obj) return EINA_TRUE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_add(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (sd->smt_sub && sd->smt_sub->obj == sobj)
      evas_object_event_callback_add
        (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_smt_sub_changed, obj);
 
-end:
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_hover_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_hover_elm_widget_sub_object_del(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Hover_Smart_Data *sd = _pd;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (sd->smt_sub && sd->smt_sub->obj == sobj)
      {
@@ -387,27 +370,22 @@ _elm_hover_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
         }
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
-_elm_hover_subs_del(Elm_Hover_Smart_Data *sd)
+_elm_hover_subs_del(Elm_Hover_Data *sd)
 {
    ELM_HOVER_PARTS_FOREACH
      ELM_SAFE_FREE(sd->subs[i].obj, evas_object_del);
 }
 
-static void
-_elm_hover_smart_content_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_hover_elm_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Object *content)
 {
-   const char *swallow= va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Hover_Smart_Data *sd = _pd;
 
-   if (!swallow) return;
+   if (!swallow) return EINA_FALSE;
 
    if (!strcmp(swallow, "smart"))
      {
@@ -442,7 +420,7 @@ _elm_hover_smart_content_set(Eo *obj, void *_pd, va_list *list)
      }
 
    eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(swallow, content, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (strstr(swallow, "elm.swallow.slot."))
      swallow += sizeof("elm.swallow.slot.");
@@ -458,35 +436,31 @@ _elm_hover_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
 end:
    elm_layout_sizing_eval(obj);
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_hover_smart_content_get(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_hover_elm_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
-   const char *swallow = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Hover_Smart_Data *sd = _pd;
-   *ret = NULL;
+   Evas_Object *ret;
+   ret = NULL;
 
-   if (!swallow) return;
+   if (!swallow) return ret;
 
    if (!strcmp(swallow, "smart"))
-      eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(sd->smt_sub->swallow, ret));
+      eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(sd->smt_sub->swallow, &ret));
    else
-      eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(swallow, ret));
+      eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(swallow, &ret));
+
+   return ret;
 }
 
-static void
-_elm_hover_smart_content_unset(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_hover_elm_container_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
-   const char *swallow = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   if (ret) *ret = NULL;
    Evas_Object *int_ret;
-   Elm_Hover_Smart_Data *sd = _pd;
 
-   if (!swallow) return;
+   if (!swallow) return NULL;
 
    if (!strcmp(swallow, "smart"))
       eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset
@@ -494,7 +468,7 @@ _elm_hover_smart_content_unset(Eo *obj, void *_pd, va_list *list)
    else
       eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset
             (swallow, &int_ret));
-   if (ret) *ret = int_ret;
+   return int_ret;
 }
 
 static void
@@ -529,10 +503,9 @@ _hov_dismiss_cb(void *data,
    evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
 }
 
-static void
-_elm_hover_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_evas_smart_add(Eo *obj, Elm_Hover_Data *priv)
 {
-   Elm_Hover_Smart_Data *priv = _pd;
    unsigned int i;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -561,10 +534,9 @@ _elm_hover_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 }
 
-static void
-_elm_hover_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_evas_smart_del(Eo *obj, Elm_Hover_Data *sd)
 {
-   Elm_Hover_Smart_Data *sd = _pd;
 
    sd->on_del = EINA_TRUE;
 
@@ -582,38 +554,33 @@ _elm_hover_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_hover_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_hover_evas_smart_move(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    elm_layout_sizing_eval(obj);
 }
 
-static void
-_elm_hover_smart_resize(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_hover_evas_smart_resize(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    elm_layout_sizing_eval(obj);
 }
 
-static void
-_elm_hover_smart_show(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_evas_smart_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    _hov_show_do(obj);
 }
 
-static void
-_elm_hover_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_evas_smart_hide(Eo *obj, Elm_Hover_Data *sd)
 {
-   Elm_Hover_Smart_Data *sd = _pd;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    elm_layout_signal_emit(obj, "elm,action,hide", "elm");
@@ -631,11 +598,10 @@ _elm_hover_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    }
 }
 
-static void
-_elm_hover_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_hover_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
+   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -647,8 +613,8 @@ elm_hover_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -656,19 +622,9 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_hover_target_set(Evas_Object *obj,
-                     Evas_Object *target)
+EOLIAN static void
+_elm_hover_target_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *target)
 {
-   ELM_HOVER_CHECK(obj);
-   eo_do(obj, elm_obj_hover_target_set(target));
-}
-
-static void
-_elm_hover_target_set(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Object *target = va_arg(*list, Evas_Object *);
-   Elm_Hover_Smart_Data *sd = _pd;
 
    if (sd->target)
      {
@@ -699,12 +655,9 @@ elm_hover_parent_set(Evas_Object *obj,
    eo_do(obj, elm_obj_widget_parent_set(parent));
 }
 
-static void
-_elm_hover_smart_parent_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_hover_elm_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
 {
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
-   Elm_Hover_Smart_Data *sd = _pd;
-
    _elm_hover_parent_detach(obj);
 
    sd->parent = parent;
@@ -725,21 +678,10 @@ _elm_hover_smart_parent_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
-elm_hover_target_get(const Evas_Object *obj)
+EOLIAN static Evas_Object*
+_elm_hover_target_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
-   ELM_HOVER_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_hover_target_get(&ret));
-   return ret;
-}
-
-static void
-_elm_hover_target_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Hover_Smart_Data *sd = _pd;
-   *ret = sd->target;
+   return sd->target;
 }
 
 EAPI Evas_Object *
@@ -751,151 +693,74 @@ elm_hover_parent_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_elm_hover_smart_parent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_hover_elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Hover_Smart_Data *sd = _pd;
-   *ret = sd->parent;
+   return sd->parent;
 }
 
-EAPI const char *
-elm_hover_best_content_location_get(const Evas_Object *obj,
-                                    Elm_Hover_Axis pref_axis)
-{
-   ELM_HOVER_CHECK(obj) NULL;
-   const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_hover_best_content_location_get(pref_axis, &ret));
-   return ret;
-}
-
-static void
-_elm_hover_best_content_location_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static const char*
+_elm_hover_best_content_location_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd, Elm_Hover_Axis pref_axis)
 {
    Evas_Coord spc_l, spc_r, spc_t, spc_b;
-
-   Elm_Hover_Axis pref_axis = va_arg(*list, Elm_Hover_Axis);
-   const char **ret = va_arg(*list, const char **);
-   Elm_Hover_Smart_Data *sd = _pd;
 
    _elm_hover_left_space_calc(sd, &spc_l, &spc_t, &spc_r, &spc_b);
 
    if (pref_axis == ELM_HOVER_AXIS_HORIZONTAL)
      {
-        if (spc_l < spc_r) *ret = (_HOV_RIGHT)->swallow;
-        else *ret = (_HOV_LEFT)->swallow;
-        return;
+        if (spc_l < spc_r) return (_HOV_RIGHT)->swallow;
+        else return (_HOV_LEFT)->swallow;
      }
    else if (pref_axis == ELM_HOVER_AXIS_VERTICAL)
      {
-        if (spc_t < spc_b) *ret = (_HOV_BOTTOM)->swallow;
-        else *ret = (_HOV_TOP)->swallow;
-        return;
+        if (spc_t < spc_b) return (_HOV_BOTTOM)->swallow;
+        else return (_HOV_TOP)->swallow;
      }
 
    if (spc_l < spc_r)
      {
         if (spc_t > spc_r)
-           *ret = (_HOV_TOP)->swallow;
+           return (_HOV_TOP)->swallow;
         else if (spc_b > spc_r)
-           *ret = (_HOV_BOTTOM)->swallow;
+           return (_HOV_BOTTOM)->swallow;
         else
-           *ret = (_HOV_RIGHT)->swallow;
-        return;
+           return (_HOV_RIGHT)->swallow;
      }
 
    if (spc_t > spc_r)
-      *ret = (_HOV_TOP)->swallow;
+      return (_HOV_TOP)->swallow;
    else if (spc_b > spc_r)
-      *ret = (_HOV_BOTTOM)->swallow;
+      return (_HOV_BOTTOM)->swallow;
    else
-      *ret = (_HOV_LEFT)->swallow;
+      return (_HOV_LEFT)->swallow;
+
+   return NULL;
 }
 
-EAPI void
-elm_hover_dismiss(Evas_Object *obj)
-{
-   ELM_HOVER_CHECK(obj);
-   eo_do(obj, elm_obj_hover_dismiss());
-}
-
-static void
-_elm_hover_dismiss(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_hover_dismiss(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    elm_layout_signal_emit(obj, "elm,action,dismiss", ""); // XXX: for compat
    elm_layout_signal_emit(obj, "elm,action,dismiss", "elm");
 }
 
-static void
-_elm_hover_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_hover_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_hover_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_hover_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
+
+EOLIAN static void
+_elm_hover_class_constructor(Eo_Class *klass)
 {
-      const Eo_Op_Func_Description func_desc[] = {
-           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_hover_smart_add),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_hover_smart_del),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_hover_smart_resize),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_hover_smart_move),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_hover_smart_show),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_hover_smart_hide),
-
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_hover_smart_theme),
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_ADD), _elm_hover_smart_sub_object_add),
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_hover_smart_sub_object_del),
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_SET), _elm_hover_smart_parent_set),
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_GET), _elm_hover_smart_parent_get),
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_hover_smart_focus_next_manager_is),
-           EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_hover_smart_focus_direction_manager_is),
-
-           EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_hover_smart_content_set),
-           EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_hover_smart_content_get),
-           EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_hover_smart_content_unset),
-
-           EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_hover_smart_sizing_eval),
-           EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_hover_smart_content_aliases_get),
-
-           EO_OP_FUNC(ELM_OBJ_HOVER_ID(ELM_OBJ_HOVER_SUB_ID_TARGET_SET), _elm_hover_target_set),
-           EO_OP_FUNC(ELM_OBJ_HOVER_ID(ELM_OBJ_HOVER_SUB_ID_TARGET_GET), _elm_hover_target_get),
-           EO_OP_FUNC(ELM_OBJ_HOVER_ID(ELM_OBJ_HOVER_SUB_ID_BEST_CONTENT_LOCATION_GET), _elm_hover_best_content_location_get),
-           EO_OP_FUNC(ELM_OBJ_HOVER_ID(ELM_OBJ_HOVER_SUB_ID_DISMISS), _elm_hover_dismiss),
-           EO_OP_FUNC_SENTINEL
-      };
-      eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_TARGET_SET, "Sets the target object for the hover."),
-     EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_TARGET_GET, "Get the target object for the hover."),
-     EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_BEST_CONTENT_LOCATION_GET, "Returns the best swallow location for content in the hover."),
-     EO_OP_DESCRIPTION(ELM_OBJ_HOVER_SUB_ID_DISMISS, "Dismiss a hover object."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_HOVER_BASE_ID, op_desc, ELM_OBJ_HOVER_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Hover_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_hover_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+#include "elm_hover.eo.c"

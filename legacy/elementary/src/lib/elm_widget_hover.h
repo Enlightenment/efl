@@ -18,7 +18,7 @@
 /**
  * Base widget smart data extended with hover instance data.
  */
-typedef struct _Elm_Hover_Smart_Data Elm_Hover_Smart_Data;
+typedef struct _Elm_Hover_Data       Elm_Hover_Data;
 typedef struct _Content_Info         Content_Info;
 
 struct _Content_Info
@@ -30,7 +30,7 @@ struct _Content_Info
 /* WARNING: sync size with actual declaration, always */
 extern const Elm_Layout_Part_Alias_Description _content_aliases[10];
 
-struct _Elm_Hover_Smart_Data
+struct _Elm_Hover_Data
 {
    Evas_Object          *offset, *size;
    Evas_Object          *parent, *target;
@@ -47,7 +47,7 @@ struct _Elm_Hover_Smart_Data
  */
 
 #define ELM_HOVER_DATA_GET(o, sd) \
-  Elm_Hover_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_HOVER_CLASS)
+  Elm_Hover_Data * sd = eo_data_scope_get(o, ELM_OBJ_HOVER_CLASS)
 
 #define ELM_HOVER_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_HOVER_DATA_GET(o, ptr);                        \
