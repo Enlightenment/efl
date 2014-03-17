@@ -1062,12 +1062,15 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 
    if (elm_widget_focus_get(obj))
      {
-        if (sd->last_focused_item)
-          _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
-        else if (sd->last_selected_item)
-          _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
-        else
-          _elm_list_item_focused((Elm_List_Item *)eina_list_data_get(sd->items));
+        if (!sd->highlighted_item)
+          {
+             if (sd->last_focused_item)
+                _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
+             else if (sd->last_selected_item)
+                _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
+             else
+                _elm_list_item_focused((Elm_List_Item *)eina_list_data_get(sd->items));
+          }
         _elm_widget_focus_highlight_start(obj);
      }
    else
@@ -1144,7 +1147,7 @@ _item_highlight(Elm_List_Item *it)
    if ((select_raise) && (!strcmp(select_raise, "on")))
      evas_object_raise(VIEW(it));
    it->highlighted = EINA_TRUE;
-
+   sd->highlighted_item = it;
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
 }
@@ -1211,6 +1214,7 @@ _item_unhighlight(Elm_List_Item *it)
      }
    it->highlighted = EINA_FALSE;
 
+   sd->highlighted_item = NULL;
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
 }
