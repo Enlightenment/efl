@@ -125,6 +125,12 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
      {
       case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
       case EVAS_COLORSPACE_ARGB8888: siz = w * h * sizeof(DATA32); break;
+      case EVAS_COLORSPACE_ETC1:
+         // Need to round width and height independently
+         w += 2; h += 2; // We do duplicate border in ETC1 to have better rendering on GPU.
+         siz = (w / 4 + (w % 4 ? 1 : 0)) *
+           (h / 4 + (h % 4 ? 1 : 0)) * 8;
+         break;
       default:
          return -1;
      }
