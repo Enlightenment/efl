@@ -139,7 +139,7 @@ EAPI void                     evas_cache_image_surface_alloc(Image_Entry *im, un
 EAPI DATA32*                  evas_cache_image_pixels(Image_Entry *im);
 EAPI Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
 EAPI Image_Entry*             evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
-EAPI void                     evas_cache_image_colorspace(Image_Entry *im, int cspace);
+EAPI void                     evas_cache_image_colorspace(Image_Entry *im, Evas_Colorspace cspace);
 EAPI Image_Entry*             evas_cache_image_empty(Evas_Cache_Image *cache);
 EAPI Image_Entry*             evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h);
 

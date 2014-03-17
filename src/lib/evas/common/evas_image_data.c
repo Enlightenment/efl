@@ -113,7 +113,7 @@ evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, u
 }
 
 int
-evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, int cspace)
+evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, Evas_Colorspace cspace)
 {
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
    Eina_Bool change = (dst->cache_entry.space != cspace);

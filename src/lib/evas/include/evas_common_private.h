@@ -593,7 +593,8 @@ struct _Image_Entry
 #endif
 
    Evas_Image_Load_Opts   load_opts;
-   int                    space;
+   Evas_Colorspace        space;
+   const Evas_Colorspace *cspaces; // owned by the loader, live as long as the loader
 
    unsigned int           w;
    unsigned int           h;

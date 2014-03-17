@@ -225,6 +225,8 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              ie->h = property.h;
              ie->scale = property.scale;
              ie->flags.alpha = property.alpha;
+             if (property.cspaces)
+               ie->cspaces = property.cspaces;
 	     if (ie->load_opts.orientation &&
 		 ie->load_opts.degree != 0)
 	       ie->flags.rotated = EINA_TRUE;
@@ -413,6 +415,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    property.rotated = ie->flags.rotated;
    property.premul = EINA_FALSE;
    property.alpha_sparse = EINA_FALSE;
+   property.cspace = ie->space;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
 

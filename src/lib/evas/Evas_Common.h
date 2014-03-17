@@ -178,23 +178,6 @@ typedef enum _Evas_Font_Hinting_Flags
 } Evas_Font_Hinting_Flags; /**< Flags for Font Hinting */
 
 /**
- * Colorspaces for pixel data supported by Evas
- * @ingroup Evas_Object_Image
- */
-typedef enum _Evas_Colorspace
-{
-   EVAS_COLORSPACE_ARGB8888, /**< ARGB 32 bits per pixel, high-byte is Alpha, accessed 1 32bit word at a time */
-   /* these are not currently supported - but planned for the future */
-   EVAS_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
-   EVAS_COLORSPACE_YCBCR422P709_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
-   EVAS_COLORSPACE_RGB565_A5P, /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
-   EVAS_COLORSPACE_GRY8, /**< 8bit grayscale */
-   EVAS_COLORSPACE_YCBCR422601_PL, /**<  YCbCr 4:2:2, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to line of Y,Cb,Y,Cr bytes */
-   EVAS_COLORSPACE_YCBCR420NV12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb,Cr rows. */
-   EVAS_COLORSPACE_YCBCR420TM12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of tiled row pointer, pointing to the Y rows, then the Cb,Cr rows. */
-} Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
-
-/**
  * How to pack items into cells in a table.
  * @ingroup Evas_Object_Table
  *

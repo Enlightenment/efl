@@ -1368,7 +1368,7 @@ evas_cache_image_empty(Evas_Cache_Image *cache)
 }
 
 EAPI void
-evas_cache_image_colorspace(Image_Entry *im, int cspace)
+evas_cache_image_colorspace(Image_Entry *im, Evas_Colorspace cspace)
 {
    if (im->space == cspace) return;
    im->space = cspace;
