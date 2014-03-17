@@ -3460,6 +3460,9 @@ enum
  *
  * @{
  */
+#include "canvas/evas_box.eo.h"
+
+#if 0
 #define EVAS_OBJ_BOX_CLASS evas_object_box_class_get()
 
 const Eo_Class *evas_object_box_class_get(void) EINA_CONST;
@@ -3997,6 +4000,7 @@ enum
  */
 #define evas_obj_box_option_property_vget(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VGET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list *, args), EO_TYPECHECK(Eina_Bool *, ret)
 
+#endif
 /**
  * @}
  */
