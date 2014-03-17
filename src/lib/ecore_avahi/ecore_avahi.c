@@ -245,6 +245,7 @@ ecore_avahi_poll_get(Ecore_Avahi *handler)
    if (!handler) return NULL;
    return &handler->api;
 #else
+   (void)handler;
    return NULL;
 #endif
 }
