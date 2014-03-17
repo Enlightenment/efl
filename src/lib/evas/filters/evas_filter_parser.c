@@ -2094,14 +2094,14 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
 /** Create an empty filter program for style parsing */
 
 EAPI Evas_Filter_Program *
-evas_filter_program_new(const char *name)
+evas_filter_program_new(const char *name, Eina_Bool input_alpha)
 {
    Evas_Filter_Program *pgm;
 
    pgm = calloc(1, sizeof(Evas_Filter_Program));
    if (!pgm) return NULL;
    pgm->name = eina_stringshare_add(name);
-   _buffer_add(pgm, "input", EINA_TRUE, NULL);
+   _buffer_add(pgm, "input", input_alpha, NULL);
    _buffer_add(pgm, "output", EINA_FALSE, NULL);
 
    return pgm;

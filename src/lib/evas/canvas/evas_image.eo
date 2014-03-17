@@ -1023,6 +1023,46 @@ class Evas_Image (Evas_Object)
             Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
          }
       }
+      filter_program {
+         set {
+            /*@ Set an Evas filter program on this Text Object.
+
+            If the program fails to compile (syntax error, invalid
+            buffer name, etc...), the standard text effects will be
+            applied instead (SHADOW, etc...). switch back to the
+            standard text effects.
+
+            @since 1.9
+            @note EXPERIMENTAL FEATURE. This is an unstable API,
+            please use only for testing purposes.
+            @see @ref evasfiltersref "Evas filters reference"
+            */
+         }
+         values {
+            const char* program; /*@ The program code, as defined
+              by the @ref evasfiltersref "Evas filters script language".
+              Pass NULL to remove the former program and switch back
+              to the standard text effect
+
+              @since 1.9
+              @note EXPERIMENTAL FEATURE. This is an unstable API,
+              please use only for testing purposes.
+              @see @ref evasfiltersref "Evas filters reference"
+              */
+         }
+      }
+      filter_source {
+         set {
+            /*@ Bind an object to use as a mask or texture with Evas Filters.
+
+            This will create automatically a new RGBA buffer containing
+            the source object's pixels (as it is rendered). */
+         }
+         values {
+            const char* name; /*@ Object name as used in the program code */
+            Eo* eobj; /*@ Eo object to use through proxy rendering */
+         }
+      }
    }
    methods {
       preload_begin {

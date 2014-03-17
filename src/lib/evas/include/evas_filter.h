@@ -92,7 +92,7 @@ enum _Evas_Filter_Transform_Flags
 };
 
 /* Parser stuff (high level API) */
-EAPI Evas_Filter_Program *evas_filter_program_new(const char *name);
+EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool input_alpha);
 EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
@@ -116,6 +116,7 @@ Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context 
 Eina_Bool                evas_filter_run(Evas_Filter_Context *ctx);
 
 Eina_Bool                evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, Evas_Font_Set *font, int x, int y, Evas_Text_Props *text_props, Eina_Bool do_async);
+Eina_Bool                evas_filter_image_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, void *image, Eina_Bool do_async);
 Eina_Bool                evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context, void *surface, int x, int y);
 
 /**

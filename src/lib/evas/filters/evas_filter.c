@@ -1753,6 +1753,64 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
 }
 
 
+/* Image draw: glReadPixels or just use SW buffer */
+Eina_Bool
+evas_filter_image_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
+                       void *image, Eina_Bool do_async)
+{
+   int w = 0, h = 0;
+
+   ENFN->image_size_get(ENDT, image, &w, &h);
+   if (!w || !h) return EINA_FALSE;
+
+   if (!ctx->gl_engine)
+     {
+        Eina_Bool async_unref;
+        int dw = 0, dh = 0;
+
+        // Copy the image into our input buffer. We could optimize by reusing the buffer.
+
+        void *surface = evas_filter_buffer_backing_get(ctx, bufid);
+        if (!surface) return EINA_FALSE;
+
+        ENFN->image_size_get(ENDT, image, &dw, &dh);
+        if (!dw || !dh) return EINA_FALSE;
+
+        if (w != dw || h != dh)
+          WRN("Target surface size differs from the image to draw");
+
+        async_unref = ENFN->image_draw(ENDT, draw_context, surface, image,
+                                       0, 0, w, h,
+                                       0, 0, dw, dh,
+                                       EINA_TRUE, do_async);
+        if (do_async && async_unref)
+          {
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_ref((Image_Entry *)image);
+             else
+#endif
+               evas_cache_image_ref((Image_Entry *)image);
+
+             evas_unref_queue_image_put(ctx->evas, image);
+          }
+     }
+   else
+     {
+        Evas_Filter_Buffer *fb;
+
+        fb = _filter_buffer_get(ctx, bufid);
+        _filter_buffer_backing_free(fb);
+        fb->glimage = image;
+        fb->allocated_gl = EINA_FALSE;
+        _filter_buffer_glimage_pixels_read(fb);
+        fb->glimage = NULL;
+     }
+
+   return EINA_TRUE;
+}
+
+
 /* Clip full input rect (0, 0, sw, sh) to target (dx, dy, dw, dh)
  * and get source's clipped sx, sy as well as destination x, y, cols and rows */
 void

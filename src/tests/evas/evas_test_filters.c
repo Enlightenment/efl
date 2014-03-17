@@ -71,7 +71,7 @@ START_TEST(evas_filter_parser)
    Evas_Filter_Program *pgm;
 
 #define CHECK_FILTER(_a, _v) do { \
-   pgm = evas_filter_program_new("evas_suite"); \
+   pgm = evas_filter_program_new("evas_suite", EINA_TRUE); \
    fail_if(evas_filter_program_parse(pgm, _a) != _v); \
    evas_filter_program_del(pgm); \
    } while (0)

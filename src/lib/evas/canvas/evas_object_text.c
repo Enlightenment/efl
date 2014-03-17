@@ -1740,7 +1740,7 @@ evas_object_text_render(Evas_Object *eo_obj,
         if (!o->cur.filter.chain)
           {
              Evas_Filter_Program *pgm;
-             pgm = evas_filter_program_new("Evas_Text");
+             pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
              evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
              if (!evas_filter_program_parse(pgm, o->cur.filter.code))
                {
@@ -2315,7 +2315,7 @@ _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
    evas_filter_program_del(o->cur.filter.chain);
    if (arg)
      {
-        pgm = evas_filter_program_new("Evas_Text: Filter Program");
+        pgm = evas_filter_program_new("Evas_Text: Filter Program", EINA_TRUE);
         evas_filter_program_source_set_all(pgm, o->cur.filter.sources);
         if (!evas_filter_program_parse(pgm, arg))
           {
