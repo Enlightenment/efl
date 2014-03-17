@@ -1537,9 +1537,10 @@ struct _Edje_Real_Part_Text
       Evas_Coord          in_w, in_h; // 8
       const char         *in_str; // 4
       const char         *out_str; // 4
+      const char         *in_font; // 4
       FLOAT_T             align_x, align_y; // 16
    } cache;
-}; // 76
+}; // 88
 // FIXME make text a potiner to struct and alloc at end
 // if part type is TEXT move common members textblock +
 // text to front and have smaller struct for textblock

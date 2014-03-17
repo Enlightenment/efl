@@ -256,7 +256,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->typedata.text->cache.align_y == params->type.text.align.y) &&
        (ep->typedata.text->cache.elipsis == params->type.text.elipsis) &&
        (ep->typedata.text->cache.fit_x == chosen_desc->text.fit_x) &&
-       (ep->typedata.text->cache.fit_y == chosen_desc->text.fit_y))
+       (ep->typedata.text->cache.fit_y == chosen_desc->text.fit_y) &&
+       (ep->typedata.text->cache.in_font == font))
      {
         text = ep->typedata.text->cache.out_str;
         size = ep->typedata.text->cache.out_size;
@@ -404,6 +405,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
    ep->typedata.text->cache.in_w = sw;
    ep->typedata.text->cache.in_h = sh;
+   ep->typedata.text->cache.in_font = font;
    ep->typedata.text->cache.out_size = size;
    ep->typedata.text->cache.align_x = params->type.text.align.x;
    ep->typedata.text->cache.align_y = params->type.text.align.y;
