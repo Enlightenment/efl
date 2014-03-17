@@ -689,14 +689,6 @@ eng_image_size_set(void *data, void *image, int w, int h)
    	im = evas_gl_common_image_new(re->win->gl_context, w, h,
    				      eng_image_alpha_get(data, image),
    				      eng_image_colorspace_get(data, image));
-/*
-	evas_common_load_image_data_from_file(im_old->im);
-	if (im_old->im->image->data)
-	  {
-	     evas_common_blit_rectangle(im_old->im, im->im, 0, 0, w, h, 0, 0);
-	     evas_common_cpu_end_opt();
-	  }
- */
         evas_gl_common_image_free(im_old);
      }
    else
