@@ -297,15 +297,37 @@ class Evas_Text (Evas_Object)
       }
       filter_program {
          set {
-            /*@ Set an Evas filter program on this Text Object. If the program fails to compile (syntax error, invalid buffer name, etc...), the standard text effects will be applied instead (SHADOW, etc...). switch back to the standard text effects. */
+            /*@ Set an Evas filter program on this Text Object.
+
+            If the program fails to compile (syntax error, invalid
+            buffer name, etc...), the standard text effects will be
+            applied instead (SHADOW, etc...). switch back to the
+            standard text effects.
+
+            @since 1.9
+            @note EXPERIMENTAL FEATURE. This is an unstable API,
+            please use only for testing purposes.
+            @see @ref evasfiltersref "Evas filters reference"
+            */
          }
          values {
-            const char* program; /*@ The program code, as defined by the @ref evasfiltersref */
+            const char* program; /*@ The program code, as defined
+              by the @ref evasfiltersref "Evas filters script language".
+              Pass NULL to remove the former program and switch back
+              to the standard text effect */
          }
       }
       filter_source {
          set {
-            /*@ Bind an object to use as a mask or texture with Evas Filters. This will create automatically a new RGBA buffer containing the source object's pixels (as it is rendered). */
+            /*@ Bind an object to use as a mask or texture with Evas Filters.
+
+            This will create automatically a new RGBA buffer containing
+            the source object's pixels (as it is rendered).
+
+            @since 1.9
+            @note EXPERIMENTAL FEATURE. This is an unstable API,
+            please use only for testing purposes.
+            @see @ref evasfiltersref "Evas filters reference" */
          }
          values {
             const char* name; /*@ Object name as used in the program code */
