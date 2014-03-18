@@ -210,10 +210,14 @@ ecore_wl_init(const char *name)
    _ecore_wl_window_init();
    _ecore_wl_events_init();
 
-   _ecore_wl_disp->init_done = EINA_FALSE;
-   callback = wl_display_sync(_ecore_wl_disp->wl.display);
-   wl_callback_add_listener(callback, &_ecore_wl_init_sync_listener,
-                            _ecore_wl_disp);
+   _ecore_wl_disp->init_done = EINA_TRUE;
+   if (!_ecore_wl_server_mode)
+     {
+        _ecore_wl_disp->init_done = EINA_FALSE;
+        callback = wl_display_sync(_ecore_wl_disp->wl.display);
+        wl_callback_add_listener(callback, &_ecore_wl_init_sync_listener,
+                                 _ecore_wl_disp);
+     }
 
    return _ecore_wl_init_count;
 }
