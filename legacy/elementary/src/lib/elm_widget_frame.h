@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with frame instance data.
  */
-typedef struct _Elm_Frame_Smart_Data Elm_Frame_Smart_Data;
-struct _Elm_Frame_Smart_Data
+typedef struct _Elm_Frame_Data Elm_Frame_Data;
+struct _Elm_Frame_Data
 {
    Eina_Bool             collapsed : 1;
    Eina_Bool             collapsible : 1;
@@ -30,7 +30,7 @@ struct _Elm_Frame_Smart_Data
  */
 
 #define ELM_FRAME_DATA_GET(o, sd) \
-  Elm_Frame_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_FRAME_CLASS)
+  Elm_Frame_Data * sd = eo_data_scope_get(o, ELM_OBJ_FRAME_CLASS)
 
 #define ELM_FRAME_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_FRAME_DATA_GET(o, ptr);                        \

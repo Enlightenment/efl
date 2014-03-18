@@ -1,3 +1,6 @@
+#include "elm_frame.eo.h"
+
+#if 0
 #define ELM_OBJ_FRAME_CLASS elm_obj_frame_class_get()
 
 const Eo_Class *elm_obj_frame_class_get(void) EINA_CONST;
@@ -84,3 +87,5 @@ enum
  * @ingroup Frame
  */
 #define elm_obj_frame_collapse_get(ret) ELM_OBJ_FRAME_ID(ELM_OBJ_FRAME_SUB_ID_COLLAPSE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
+

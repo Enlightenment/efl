@@ -1,0 +1,83 @@
+class Elm_Frame (Elm_Layout, Evas_Clickable_Interface)
+{
+   eo_prefix: elm_obj_frame;
+   properties {
+      collapse {
+         set {
+            /*@
+            @brief Manually collapse a frame without animations
+            Use this to toggle the collapsed state of a frame, bypassing animations.
+
+            @ingroup Frame */
+         }
+         get {
+            /*@
+            @brief Determine the collapse state of a frame
+            @return true if collapsed, false otherwise
+
+            Use this to determine the collapse state of a frame.
+
+            @ingroup Frame */
+         }
+         values {
+            Eina_Bool collapse; /*@ true to collapse, false to expand */
+         }
+      }
+      autocollapse {
+         set {
+            /*@
+            @brief Toggle autocollapsing of a frame
+            When @p enable is EINA_TRUE, clicking a frame's label will collapse the frame
+            vertically, shrinking it to the height of the label.
+            By default, this is DISABLED.
+
+            @ingroup Frame */
+         }
+         get {
+            /*@
+            @brief Determine autocollapsing of a frame
+            @return Whether autocollapse is enabled
+
+            When this returns EINA_TRUE, clicking a frame's label will collapse the frame
+            vertically, shrinking it to the height of the label.
+            By default, this is DISABLED.
+
+            @ingroup Frame */
+         }
+         values {
+            Eina_Bool autocollapse; /*@ Whether to enable autocollapse */
+         }
+      }
+   }
+   methods {
+      collapse_go {
+         /*@
+         @brief Manually collapse a frame with animations
+         Use this to toggle the collapsed state of a frame, triggering animations.
+
+         @ingroup Frame */
+
+         params {
+            @in Eina_Bool collapse; /*@ true to collapse, false to expand */
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      class::constructor;
+      Evas_Smart::calculate;
+      Evas_Smart::add;
+      Elm_Widget::focus_direction;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Layout::text_aliases::get;
+      Elm_Layout::content_aliases::get;
+   }
+   events {
+      clicked;
+      language,changed;
+      access,changed;
+   }
+
+}
