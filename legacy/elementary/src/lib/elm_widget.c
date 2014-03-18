@@ -731,7 +731,10 @@ elm_widget_access(Evas_Object *obj,
 
    API_ENTRY return EINA_FALSE;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     ret &= elm_widget_access(child, is_access);
+     {
+        if (elm_widget_is(child))
+          ret &= elm_widget_access(child, is_access);
+     }
 
    eo_do(obj, elm_obj_widget_access(is_access));
    evas_object_smart_callback_call(obj, SIG_WIDGET_ACCESS_CHANGED, NULL);
@@ -756,7 +759,9 @@ elm_widget_theme(Evas_Object *obj)
    API_ENTRY return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     if (_elm_widget_is(child)) ret &= elm_widget_theme(child);
+     if (_elm_widget_is(child))
+       ret &= elm_widget_theme(child);
+
    if (sd->hover_obj) ret &= elm_widget_theme(sd->hover_obj);
 
    EINA_LIST_FOREACH(sd->tooltips, l, tt)
@@ -804,7 +809,10 @@ elm_widget_theme_specific(Evas_Object *obj,
      }
    if (!force) return;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     elm_widget_theme_specific(child, th, force);
+     {
+        if (elm_widget_is(child))
+          elm_widget_theme_specific(child, th, force);
+     }
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt)
      elm_tooltip_theme(tt);
@@ -1313,11 +1321,12 @@ _elm_widget_can_focus_child_list_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
      {
         EINA_LIST_FOREACH(sd->subobjs, l, child)
           {
+             if (!_elm_widget_is(child)) continue;
              if ((elm_widget_can_focus_get(child)) &&
                  (evas_object_visible_get(child)) &&
                  (!elm_widget_disabled_get(child)))
                child_list = eina_list_append(child_list, child);
-             else if (elm_widget_is(child))
+             else
                {
                   Eina_List *can_focus_list;
                   can_focus_list = elm_widget_can_focus_child_list_get(child);
@@ -1388,6 +1397,7 @@ _elm_widget_focused_object_get(Eo *obj, Elm_Widget_Smart_Data *sd)
    EINA_LIST_FOREACH(sd->subobjs, l, subobj)
      {
         Evas_Object *fobj;
+        if (!_elm_widget_is(subobj)) continue;
         fobj = elm_widget_focused_object_get(subobj);
         if (fobj) return fobj;
      }
@@ -2573,6 +2583,7 @@ _elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
 
              EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
+                  if (!_elm_widget_is(child)) continue;
                   if ((_is_focusable(child)) &&
                       (!elm_widget_disabled_get(child)))
                     {
@@ -2589,6 +2600,7 @@ _elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
 
         EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
           {
+             if (!_elm_widget_is(child)) continue;
              if ((_is_focusable(child)) &&
                  (!elm_widget_disabled_get(child)))
                {
@@ -2620,7 +2632,7 @@ _elm_widget_focused_object_clear(Eo *obj, Elm_Widget_Smart_Data *sd)
         Evas_Object *child;
         EINA_LIST_FOREACH(sd->subobjs, l, child)
           {
-             if (elm_widget_is(child) && elm_widget_focus_get(child))
+             if (_elm_widget_is(child) && elm_widget_focus_get(child))
                {
                   eo_do(child, elm_obj_widget_focused_object_clear());
                   break;
@@ -2672,7 +2684,7 @@ _elm_widget_focus_steal(Eo *obj, Elm_Widget_Smart_Data *sd)
                   Evas_Object *child;
                   EINA_LIST_FOREACH(sd->subobjs, l, child)
                     {
-                       if (elm_widget_is(child) && elm_widget_focus_get(child))
+                       if (_elm_widget_is(child) && elm_widget_focus_get(child))
                          {
                             eo_do(child, elm_obj_widget_focused_object_clear());
                             break;
@@ -2709,7 +2721,10 @@ _elm_widget_top_win_focused_set(Evas_Object *obj,
 
    if (sd->top_win_focused == top_win_focused) return;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     _elm_widget_top_win_focused_set(child, top_win_focused);
+     {
+        if (elm_widget_is(child))
+          _elm_widget_top_win_focused_set(child, top_win_focused);
+     }
    sd->top_win_focused = top_win_focused;
 }
 
@@ -2866,7 +2881,7 @@ _elm_widget_scrollable_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
-        if (_elm_scrollable_is(child))
+        if (elm_widget_is(child) && _elm_scrollable_is(child))
           ret = eina_list_append(ret, child);
      }
 
@@ -3210,7 +3225,11 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSE
    API_ENTRY return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     elm_widget_translate(child);
+     {
+        if (elm_widget_is(child))
+          elm_widget_translate(child);
+     }
+
    if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
 
 #ifdef HAVE_GETTEXT
@@ -3616,13 +3635,12 @@ _elm_widget_newest_focus_order_get(Eo *obj, Elm_Widget_Smart_Data *sd, unsigned 
      }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
-        if (elm_widget_is(child))
-          {
-             cur = elm_widget_newest_focus_order_get
-                (child, newest_focus_order, can_focus_only);
-             if (!cur) continue;
-             best = cur;
-          }
+        if (!_elm_widget_is(child)) continue;
+
+        cur = elm_widget_newest_focus_order_get
+           (child, newest_focus_order, can_focus_only);
+        if (!cur) continue;
+        best = cur;
      }
    return best;
 }
@@ -3767,9 +3785,7 @@ _elm_widget_display_mode_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Display_Mo
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      {
         if (elm_widget_is(child))
-          {
-             elm_widget_display_mode_set(child, dispmode);
-          }
+          elm_widget_display_mode_set(child, dispmode);
      }
 }
 
@@ -3805,7 +3821,10 @@ _elm_widget_orientation_set(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
    sd->orient_mode = orient_mode;
 
    EINA_LIST_FOREACH (sd->subobjs, l, child)
-     elm_widget_orientation_set(child, orient_mode);
+     {
+        if (elm_widget_is(child))
+          elm_widget_orientation_set(child, orient_mode);
+     }
 
    if (orient_mode != -1)
      {
