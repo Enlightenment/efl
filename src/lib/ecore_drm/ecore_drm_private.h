@@ -280,7 +280,7 @@ struct _Ecore_Drm_Device
 
    struct xkb_context *xkb_ctx;
 
-   void *window;
+   unsigned int window;
 
 /* #ifdef HAVE_GBM */
 /*    struct gbm_device *gbm; */

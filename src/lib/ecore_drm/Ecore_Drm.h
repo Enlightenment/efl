@@ -142,7 +142,7 @@ EAPI Eina_Bool ecore_drm_device_master_get(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_master_set(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
 EAPI int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
-EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, void *window);
+EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window);
 EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
 
 EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);

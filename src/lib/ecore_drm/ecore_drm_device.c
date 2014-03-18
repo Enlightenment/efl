@@ -597,7 +597,7 @@ ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
  * @since 1.10
  */
 EAPI void 
-ecore_drm_device_window_set(Ecore_Drm_Device *dev, void *window)
+ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window)
 {
    /* check for valid device */
    if ((!dev) || (dev->drm.fd < 0)) return;
