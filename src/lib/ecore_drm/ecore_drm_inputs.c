@@ -51,6 +51,11 @@ _device_add(Ecore_Drm_Input *input, struct udev_device *device)
    node = udev_device_get_devnode(device);
    strcpy(n, node);
    fd = open(n, O_RDWR | O_NONBLOCK);
+   if (fd == -1)
+     {
+        ERR("FAILED TO OPEN %s: %m", n);
+        return EINA_FALSE;
+     }
    /* _ecore_drm_message_send(ECORE_DRM_OP_DEVICE_OPEN, -1, n, strlen(n)); */
    /* _ecore_drm_message_receive(ECORE_DRM_OP_DEVICE_OPEN, &fd, NULL, 0); */
    /* DBG("Opened Restricted Input: %s %d", node, fd); */
