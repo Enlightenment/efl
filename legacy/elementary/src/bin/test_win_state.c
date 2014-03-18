@@ -180,10 +180,23 @@ _move_0_0(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED
 {
    evas_object_move(data, 0, 0);
 }
+
 static void
 my_win_print(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("WIN: %s\n", (char *)data);
+}
+
+static void
+_win_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("win: show\n");
+}
+
+static void
+_win_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("win: hide\n");
 }
 
 void
@@ -197,6 +210,8 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _win_resize, NULL);
    evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_CANVAS_FOCUS_IN, _win_foc_in, NULL);
    evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _win_foc_out, NULL);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_SHOW, _win_show, NULL);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_HIDE, _win_hide, NULL);
    evas_object_smart_callback_add(win, "withdrawn", my_win_print, "withdrawn");
    evas_object_smart_callback_add(win, "iconified", my_win_print, "iconified");
    evas_object_smart_callback_add(win, "normal", my_win_print, "normal");
