@@ -1147,7 +1147,7 @@ _item_highlight(Elm_List_Item *it)
    if ((select_raise) && (!strcmp(select_raise, "on")))
      evas_object_raise(VIEW(it));
    it->highlighted = EINA_TRUE;
-   sd->highlighted_item = it;
+   sd->highlighted_item = (Elm_Object_Item *)it;
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
 }
