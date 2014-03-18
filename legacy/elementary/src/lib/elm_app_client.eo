@@ -1,0 +1,70 @@
+class Elm_App_Client (Eo_Base)
+{
+   eo_prefix: elm_app_client;
+   constructors {
+      constructor {
+         /*@ Class constructor of elm_app_client. */
+         params {
+            @in const char *package; /*@ Package of application */
+         }
+      }
+   }
+   properties {
+      views {
+         get {
+            /*@ Return a iterator with all views of application. */
+            legacy null;
+         }
+         values {
+            Eina_Iterator *ret; /*@ the iterator with all views, must be freed after use */
+         }
+      }
+      package {
+         get {
+            /*@ Return the application package. */
+            legacy null;
+         }
+         values {
+            const char *ret; /*@ application package */
+         }
+      }
+   }
+   methods {
+      view_all_close {
+         /*@ Close all views of application. */
+         legacy null;
+      }
+      terminate {
+         /*@ Terminate application. */
+         legacy null;
+      }
+      view_open {
+         /*@ Open a application view. */
+         params {
+            @in Eina_Value *args; /*@ an array of */
+            @in Elm_App_Client_Open_View_Cb view_open_cb; /*@ callback to be called when view open */
+            @in const void *data; /*@ calback user data */
+         }
+         return Elm_App_Client_Pending *; /* handler to cancel the view opening if it takes to long */
+         legacy null;
+      }
+      view_open_cancel {
+         /*@ Cancel a pending elm_app_client_view_open(). */
+         params {
+            @in Elm_App_Client_Pending *pending; /*@ the view open handler */
+         }
+         legacy null;
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+   }
+   events {
+      view,created; /*@ Called when a view of this application is created. */
+      view,deleted; /*@ Called when a view of this application is deleted. */
+      view_list,loaded; /*@ Called when list of view is loaded. */
+      application,terminated; /*@ Called when application is terminated. */
+   }
+
+}

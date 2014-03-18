@@ -5,27 +5,9 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-EAPI Eo_Op ELM_APP_CLIENT_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_APP_CLIENT_CLASS
 
 #define MY_CLASS_NAME "Elm_App_Client"
-
-EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_CREATED =
-         EO_EVENT_DESCRIPTION("view,created",
-                              "Called when a view of this application is created.");
-
-EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_DELETED =
-         EO_EVENT_DESCRIPTION("view,deleted",
-                              "Called when a view of this application is deleted.");
-
-EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_LIST_LOADED =
-         EO_EVENT_DESCRIPTION("view_list,loaded",
-                              "Called when list of view is loaded.");
-
-EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_TERMINATED =
-         EO_EVENT_DESCRIPTION("application,terminated",
-                              "Called when application is terminated.");
 
 typedef struct
 {
@@ -59,7 +41,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
                              elm_app_client_view_constructor(obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
-          eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EV_VIEW_CREATED, view, NULL));
+          eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED, view, NULL));
      }
 }
 
@@ -78,7 +60,7 @@ _objects_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA
    while (eldbus_message_iter_get_and_next(array_path, '{', &path))
      _sub_path_process(eo, path, cdata, EINA_TRUE);
 
-   eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EV_VIEW_LIST_LOADED,
+   eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED,
                                     NULL, NULL));
 }
 
@@ -123,7 +105,7 @@ _iface_del(void *data, const Eldbus_Message *msg)
           }
 
         eina_hash_del(cdata->views, path, NULL);
-        eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EV_VIEW_DELETED,
+        eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_DELETED,
                                          view, NULL));
         eo_del(view);
      }
@@ -165,17 +147,15 @@ _pkg_name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
           }
 
         eina_hash_del(cdata->views, path, NULL);
-        eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EV_VIEW_DELETED,
+        eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_DELETED,
                                          view, NULL));
         eo_del(view);
      }
 }
 
-static void
-_app_client_constructor(Eo *eo, void *_pd, va_list *list)
+EOLIAN static void
+_elm_app_client_constructor(Eo *eo, Elm_App_Client_Data *data, const char *pkg)
 {
-   Elm_App_Client_Data *data = _pd;
-   const char *pkg = va_arg(*list, const char *);
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
    char *path;
@@ -244,7 +224,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
         view = eo_add_custom(ELM_APP_CLIENT_VIEW_CLASS, eo,
                              elm_app_client_view_constructor(view_path));
         eina_hash_add(cdata->views, view_path, view);
-        eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EV_VIEW_CREATED,
+        eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED,
                                          view, NULL));
      }
 
@@ -258,14 +238,9 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
      cb(user_data, view, NULL, NULL);
 }
 
-static void
-_view_open(Eo *eo, void *_pd, va_list *list)
+EOLIAN static Elm_App_Client_Pending *
+_elm_app_client_view_open(Eo *eo, Elm_App_Client_Data *data, Eina_Value *args, Elm_App_Client_Open_View_Cb cb, const void *user_data)
 {
-   Elm_App_Client_Data *data = _pd;
-   Eina_Value *args = va_arg(*list, Eina_Value *);
-   Elm_App_Client_Open_View_Cb cb = va_arg(*list, Elm_App_Client_Open_View_Cb);
-   const void *user_data = va_arg(*list, const void *);
-   Elm_App_Client_Pending **view_open_pending = va_arg(*list, Elm_App_Client_Pending**);
    Eldbus_Message *msg;
    Eldbus_Pending *pending;
 
@@ -278,7 +253,7 @@ _view_open(Eo *eo, void *_pd, va_list *list)
              eldbus_message_unref(msg);
              //TODO test to find out what type eina_value must be
              ERR("Eina_Value of args don't have a structure of a{sv}");
-             return;
+             return NULL;
           }
      }
    else
@@ -296,62 +271,52 @@ _view_open(Eo *eo, void *_pd, va_list *list)
    if (cb)
      eldbus_pending_data_set(pending, "user_cb", cb);
 
-   if (view_open_pending)
-     *view_open_pending = pending;
+   return pending;
+}
+
+EOLIAN static Eina_Iterator*
+_elm_app_client_views_get(Eo *eo EINA_UNUSED, Elm_App_Client_Data *data)
+{
+   return eina_hash_iterator_data_new(data->views);
 }
 
 static void
-_views_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+_elm_app_client_view_all_close(Eo *obj EINA_UNUSED, Elm_App_Client_Data *data)
 {
-   Elm_App_Client_Data *data = _pd;
-   Eina_Iterator **view_iter = va_arg(*list, Eina_Iterator **);
-
-   *view_iter = eina_hash_iterator_data_new(data->views);
-}
-
-static void
-_all_close(Eo *eo EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_App_Client_Data *data = _pd;
    eldbus_proxy_call(data->app_proxy, "CloseAllViews", NULL, NULL, -1, "");
 }
 
-static void
-_terminate(Eo *eo EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_client_terminate(Eo *eo EINA_UNUSED, Elm_App_Client_Data *data)
 {
-   Elm_App_Client_Data *data = _pd;
    eldbus_proxy_call(data->app_proxy, "Terminate", NULL, NULL, -1, "");
 }
 
-static void
-_package_get(Eo *eo EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static const char*
+_elm_app_client_package_get(Eo *eo EINA_UNUSED, Elm_App_Client_Data *data)
 {
-   Elm_App_Client_Data *data = _pd;
    Eldbus_Object *obj;
-   const char **package = va_arg(*list, const char **);
 
    obj = eldbus_proxy_object_get(data->app_proxy);
-   *package = eldbus_object_bus_name_get(obj);
+   return eldbus_object_bus_name_get(obj);
 }
 
-static void
-_view_open_cancel(Eo *eo EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_app_client_view_open_cancel(Eo *eo EINA_UNUSED, Elm_App_Client_Data *_pd EINA_UNUSED, Elm_App_Client_Pending *pending)
 {
-   Elm_App_Client_Pending *pending = va_arg(*list, Elm_App_Client_Pending *);
    eldbus_pending_cancel(pending);
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_client_eo_base_constructor(Eo *obj, Elm_App_Client_Data *_pd EINA_UNUSED)
 {
    eo_error_set(obj);
    ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-static void
-_destructor(Eo *eo, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_client_eo_base_destructor(Eo *eo, Elm_App_Client_Data *data)
 {
-   Elm_App_Client_Data *data = _pd;
    Eldbus_Object *obj;
    Eldbus_Connection *conn;
    Eina_Iterator *iter;
@@ -375,58 +340,4 @@ _destructor(Eo *eo, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(eo, MY_CLASS, eo_destructor());
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_CONSTRUCTOR), _app_client_constructor),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_VIEW_OPEN), _view_open),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_VIEWS_GET), _views_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_VIEWS_ALL_CLOSE), _all_close),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_TERMINATE), _terminate),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_PACKAGE_GET), _package_get),
-      EO_OP_FUNC(ELM_APP_CLIENT_ID(ELM_APP_CLIENT_SUB_ID_VIEW_OPEN_CANCEL), _view_open_cancel),
-      EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_CONSTRUCTOR,
-                       "Constructor of elm_app_client."),
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_VIEW_OPEN, "Open a view."),
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_VIEWS_GET,
-                       "Return a iterator with all views of application."),
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_VIEWS_ALL_CLOSE,
-                       "Close all views of application."),
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_TERMINATE,
-                       "Terminate applicaiton"),
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_PACKAGE_GET,
-                       "Return the package name of application"),
-     EO_OP_DESCRIPTION(ELM_APP_CLIENT_SUB_ID_VIEW_OPEN_CANCEL,
-                       "Cancel view opening."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Event_Description *event_desc[] = {
-     ELM_APP_CLIENT_EV_VIEW_CREATED,
-     ELM_APP_CLIENT_EV_VIEW_DELETED,
-     ELM_APP_CLIENT_EV_VIEW_LIST_LOADED,
-     ELM_APP_CLIENT_EV_TERMINATED,
-     NULL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_APP_CLIENT_BASE_ID, op_desc, ELM_APP_CLIENT_SUB_ID_LAST),
-     event_desc,
-     sizeof(Elm_App_Client_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_app_client_class_get, &class_desc, EO_BASE_CLASS, NULL);
+#include "elm_app_client.eo.c"

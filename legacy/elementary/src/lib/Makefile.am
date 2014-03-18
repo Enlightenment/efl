@@ -541,7 +541,9 @@ BUILT_SOURCES = \
 		elm_access.eo.c \
 		elm_access.eo.h \
 		elm_actionslider.eo.c \
-		elm_actionslider.eo.h
+		elm_actionslider.eo.h \
+		elm_app_client.eo.c \
+		elm_app_client.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -552,7 +554,8 @@ EXTRA_DIST += \
 	     elm_frame.eo \
 	     elm_hover.eo \
 	     elm_access.eo \
-	     elm_actionslider.eo
+	     elm_actionslider.eo \
+	     elm_app_client.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -563,5 +566,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_frame.eo.h \
 				  elm_access.eo.h \
 				  elm_hover.eo.h \
-				  elm_actionslider.eo.h
+				  elm_actionslider.eo.h \
+				  elm_app_client.eo.h
 

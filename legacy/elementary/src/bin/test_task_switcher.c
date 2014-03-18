@@ -307,11 +307,11 @@ _app_open(const char *package)
    app = eo_add_custom(ELM_APP_CLIENT_CLASS, NULL,
                        elm_app_client_constructor(package));
    eo_do(app,
-         eo_event_callback_add(ELM_APP_CLIENT_EV_VIEW_LIST_LOADED,
+         eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED,
                                _view_list_update_cb, table),
-         eo_event_callback_add(ELM_APP_CLIENT_EV_VIEW_CREATED,
+         eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_CREATED,
                                _view_list_update_cb, table),
-         eo_event_callback_add(ELM_APP_CLIENT_EV_VIEW_DELETED,
+         eo_event_callback_add(ELM_APP_CLIENT_EVENT_VIEW_DELETED,
                                _view_list_update_cb, table));
    apps_list = eina_list_append(apps_list, app);
 }

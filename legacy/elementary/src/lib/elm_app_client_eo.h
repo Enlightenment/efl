@@ -1,3 +1,13 @@
+typedef Eo Elm_App_Client;
+typedef Eo Elm_App_Client_View;
+
+typedef Eldbus_Pending Elm_App_Client_Pending;
+
+typedef void (*Elm_App_Client_Open_View_Cb)(void *data, Elm_App_Client_View *view, const char *error, const char *error_message);
+
+#include "elm_app_client.eo.h"
+
+#if 0
 #define ELM_APP_CLIENT_CLASS elm_app_client_class_get()
 
 const Eo_Class *elm_app_client_class_get(void) EINA_CONST;
@@ -15,13 +25,6 @@ enum
    ELM_APP_CLIENT_SUB_ID_VIEW_OPEN_CANCEL,
    ELM_APP_CLIENT_SUB_ID_LAST
 };
-
-typedef Eo Elm_App_Client;
-typedef Eo Elm_App_Client_View;
-
-typedef Eldbus_Pending Elm_App_Client_Pending;
-
-typedef void (*Elm_App_Client_Open_View_Cb)(void *data, Elm_App_Client_View *view, const char *error, const char *error_message);
 
 #define ELM_APP_CLIENT_ID(sub_id) (ELM_APP_CLIENT_BASE_ID + sub_id)
 
@@ -109,3 +112,4 @@ extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_VIEW_LIST_LOADED;
 
 extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_EV_TERMINATED;
 #define ELM_APP_CLIENT_EV_TERMINATED (&(_ELM_APP_CLIENT_EV_TERMINATED))
+#endif
