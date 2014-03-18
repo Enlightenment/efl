@@ -2822,6 +2822,52 @@ _elm_genlist_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_TRUE;
 }
 
+/*
+ * This function searches the nearest visible item based on the given item.
+ * If the given item is in the genlist viewport, this returns the give item.
+ * Or this searches the realied items and checks the nearest fully visible item
+ * according to the given item's position.
+ */
+static Elm_Object_Item *
+_elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
+{
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0; // genlist viewport geometry
+   Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0; // candidate item geometry
+   Eina_List *item_list = NULL, *l = NULL;
+   Elm_Object_Item *item = NULL;
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   if (!it) return NULL;
+
+   evas_object_geometry_get(sd->pan_obj, &vx, &vy, &vw, &vh);
+   evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih); // FIXME: check if the item is realized or not
+
+   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+     return it;
+
+   item_list = elm_genlist_realized_items_get(obj);
+   if (iy < vy)
+     {
+        EINA_LIST_FOREACH(item_list, l, item)
+          {
+             evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+               return item;
+          }
+     }
+   else
+     {
+        EINA_LIST_REVERSE_FOREACH(item_list, l, item)
+          {
+             evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+               return item;
+          }
+     }
+   return NULL;
+}
+
 static void
 _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
@@ -2840,16 +2886,19 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (elm_widget_focus_get(obj))
      {
-       if (sd->last_focused_item)
-         elm_object_item_focus_set(sd->last_focused_item, EINA_TRUE);
-       else if (sd->last_selected_item)
-         elm_object_item_focus_set(sd->last_selected_item, EINA_TRUE);
-       else
-         {
-           it = elm_genlist_first_item_get(obj);
-           if (it)
-             elm_object_item_focus_set(it, EINA_TRUE);
-         }
+        if (sd->last_focused_item)
+          it = sd->last_focused_item;
+        else if (sd->last_selected_item)
+          it = sd->last_selected_item;
+        else
+          it = elm_genlist_first_item_get(obj);
+
+        if (it)
+          {
+             it = _elm_genlist_nearest_visible_item_get(obj, it);
+             if (it)
+               elm_object_item_focus_set(it, EINA_TRUE);
+          }
      }
    else
      {
