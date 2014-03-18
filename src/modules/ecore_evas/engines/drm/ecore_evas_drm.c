@@ -54,6 +54,7 @@ static void _ecore_evas_drm_withdrawn_set(Ecore_Evas *ee, Eina_Bool on);
 static void _ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore);
 static void _ecore_evas_drm_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent);
+static void _ecore_evas_drm_aspect_set(Ecore_Evas *ee, double aspect);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -114,7 +115,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_profile_set) (Ecore_Evas *ee, const char *profile);
    
    NULL, //void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
-   NULL, //void (*fn_aspect_set) (Ecore_Evas *ee, double aspect);
+   _ecore_evas_drm_aspect_set,
    NULL, //void (*fn_urgent_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_modal_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_demands_attention_set) (Ecore_Evas *ee, Eina_Bool on);
@@ -662,6 +663,13 @@ _ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent)
      }
 
    /* FIXME: TODO: Finish */
+}
+
+static void 
+_ecore_evas_drm_aspect_set(Ecore_Evas *ee, double aspect)
+{
+   if (ee->prop.aspect == aspect) return;
+   ee->prop.aspect = aspect;
 }
 
 static int 
