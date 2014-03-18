@@ -35,6 +35,7 @@ static void _ecore_evas_drm_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_
 static void _ecore_evas_drm_move(Ecore_Evas *ee, int x, int y);
 static void _ecore_evas_drm_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
+static void _ecore_evas_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize);
 static void _ecore_evas_drm_show(Ecore_Evas *ee);
 static void _ecore_evas_drm_hide(Ecore_Evas *ee);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
@@ -66,7 +67,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
    _ecore_evas_drm_resize,
    _ecore_evas_drm_move_resize,
-   NULL, //void (*fn_rotation_set) (Ecore_Evas *ee, int rot, int resize);
+   _ecore_evas_drm_rotation_set,
    NULL, //void (*fn_shaped_set) (Ecore_Evas *ee, int shaped);
    _ecore_evas_drm_show,
    _ecore_evas_drm_hide,
@@ -433,6 +434,19 @@ _ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
      _ecore_evas_drm_move(ee, x, y);
    if ((ee->w != w) || (ee->h != h))
      _ecore_evas_drm_resize(ee, w, h);
+}
+
+static void 
+_ecore_evas_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
+{
+   Evas_Engine_Info_Drm *einfo;
+
+   if (ee->rotation == rotation) return;
+   einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
+   if (!einfo) return;
+   einfo->info.rotation = rotation;
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 }
 
 static void 
