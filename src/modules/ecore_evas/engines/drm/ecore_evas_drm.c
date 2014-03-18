@@ -52,6 +52,8 @@ static void _ecore_evas_drm_maximized_set(Ecore_Evas *ee, Eina_Bool on);
 static void _ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
 static void _ecore_evas_drm_withdrawn_set(Ecore_Evas *ee, Eina_Bool on);
 static void _ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore);
+static void _ecore_evas_drm_alpha_set(Ecore_Evas *ee, int alpha);
+static void _ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -106,8 +108,8 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_withdrawn_set,
    NULL, //void (*fn_sticky_set) (Ecore_Evas *ee, Eina_Bool on);
    _ecore_evas_drm_ignore_events_set,
-   NULL, //void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
-   NULL, //void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
+   _ecore_evas_drm_alpha_set,
+   _ecore_evas_drm_transparent_set,
    NULL, //void (*fn_profiles_set) (Ecore_Evas *ee, const char **profiles, int count);
    NULL, //void (*fn_profile_set) (Ecore_Evas *ee, const char *profile);
    
@@ -634,6 +636,32 @@ _ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore)
 {
    if (ee->ignore_events == ignore) return;
    ee->ignore_events = ignore;
+}
+
+static void 
+_ecore_evas_drm_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.alpha = alpha;
+        ee->delayed.alpha_changed = EINA_TRUE;
+        return;
+     }
+
+   /* FIXME: TODO: Finish */
+}
+
+static void 
+_ecore_evas_drm_transparent_set(Ecore_Evas *ee, int transparent)
+{
+   if (ee->in_async_render)
+     {
+        ee->delayed.transparent = transparent;
+        ee->delayed.transparent_changed = EINA_TRUE;
+        return;
+     }
+
+   /* FIXME: TODO: Finish */
 }
 
 static int 
