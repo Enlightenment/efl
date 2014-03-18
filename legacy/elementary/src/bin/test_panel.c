@@ -5,17 +5,13 @@
 
 #define LIST_ITEM_MAX 20
 
-static const char *img1 = PACKAGE_DATA_DIR "/images/plant_01.jpg";
-
-static Elm_Genlist_Item_Class itc;
-
 static void _bstatus(void *data, Evas_Object *obj, void *event_info);
 static void _tstatus(void *data, Evas_Object *obj, void *event_info);
 static char *_text_get(void *data, Evas_Object *obj, const char *source);
 static Evas_Object *_content_get(void *data, Evas_Object *obj, const char *source);
 static Eina_Bool _state_get(void *data, Evas_Object *obj, const char *source);
 static void _item_del(void *data, Evas_Object *obj);
-static void _fill_list(Evas_Object *obj);
+static void _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc);
 static Eina_Bool _dir_has_subs(const char *path);
 
 static Eina_List *dirs = NULL;
@@ -88,7 +84,7 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
-_fill_list(Evas_Object *obj)
+_fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
 {
    DIR *d;
    struct dirent *de;
@@ -121,10 +117,10 @@ _fill_list(Evas_Object *obj)
 
         result = _dir_has_subs(real);
         if (!result)
-          elm_genlist_item_append(obj, &itc, eina_stringshare_add(real),
+          elm_genlist_item_append(obj, itc, eina_stringshare_add(real),
                                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
         else
-          elm_genlist_item_append(obj, &itc, eina_stringshare_add(real),
+          elm_genlist_item_append(obj, itc, eina_stringshare_add(real),
                                   NULL, ELM_GENLIST_ITEM_TREE,
                                   NULL, NULL);
      }
@@ -155,11 +151,21 @@ _dir_has_subs(const char *path)
    return result;
 }
 
+static void
+_free_dirs(void)
+{
+   char *dir;
+   EINA_LIST_FREE(dirs, dir)
+     free(dir);
+}
+
 void
 test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *panel, *tb, *vbx, *toolbar, *photo;
    Evas_Object *list;
+   Elm_Genlist_Item_Class *itc = NULL;
+   char buf[PATH_MAX] = { 0 };
 
    win = elm_win_util_standard_add("panel", "Panel");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -169,31 +175,30 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_win_resize_object_add(win, vbx);
    evas_object_show(vbx);
 
-   tb = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(tb);
-
+   // top panel
    panel = elm_panel_add(vbx);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_TOP);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbx, panel);
+   evas_object_show(panel);
 
    toolbar = elm_toolbar_add(panel);
    elm_toolbar_homogeneous_set(toolbar, EINA_FALSE);
    elm_toolbar_shrink_mode_set(toolbar, ELM_TOOLBAR_SHRINK_NONE);
-   evas_object_size_hint_weight_set(toolbar, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_toolbar_item_append(toolbar, "home", "Hello", _tstatus, panel);
+   elm_object_content_set(panel, toolbar);
    evas_object_show(toolbar);
 
-   elm_toolbar_item_append(toolbar, "home", "Hello", _tstatus, panel);
-
-   elm_object_content_set(panel, toolbar);
-   elm_box_pack_end(vbx, panel);
-   evas_object_show(panel);
+   tb = elm_table_add(win);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(vbx, tb);
+   evas_object_show(tb);
 
    photo = elm_photo_add(tb);
-   elm_photo_file_set(photo, img1);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   elm_photo_file_set(photo, buf);
    elm_photo_fill_inside_set(photo, EINA_TRUE);
    elm_object_style_set(photo, "shadow");
    evas_object_size_hint_weight_set(photo, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -201,74 +206,66 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_table_pack(tb, photo, 0, 0, 4, 5);
    evas_object_show(photo);
 
+   // left panel
    panel = elm_panel_add(tb);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   //   evas_object_size_hint_align_set(panel, 0, EVAS_HINT_FILL);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   itc.item_style = "default";
-   itc.func.text_get = _text_get;
-   itc.func.content_get = _content_get;
-   itc.func.state_get = _state_get;
-   itc.func.del = _item_del;
-
-   list = elm_genlist_add(panel);
-   evas_object_size_hint_min_set(list, 100, -1);
-   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(list);
-
-   elm_object_content_set(panel, list);
    elm_table_pack(tb, panel, 0, 0, 2, 4);
    evas_object_show(panel);
 
-   _fill_list(list);
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _text_get;
+   itc->func.content_get = _content_get;
+   itc->func.state_get = _state_get;
+   itc->func.del = _item_del;
 
+   list = elm_genlist_add(panel);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(panel, list);
+   evas_object_show(list);
+
+   _fill_list(list, itc);
+
+   // right panel
    panel = elm_panel_add(tb);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_RIGHT);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   //   evas_object_size_hint_align_set(panel, 1, EVAS_HINT_FILL);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_panel_hidden_set(panel, EINA_TRUE);
-
-   list = elm_genlist_add(panel);
-   evas_object_size_hint_min_set(list, 100, -1);
-   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(list);
-
-   elm_object_content_set(panel, list);
    elm_table_pack(tb, panel, 2, 0, 2, 4);
    evas_object_show(panel);
 
-   _fill_list(list);
-   {
-      char *dir;
-      EINA_LIST_FREE(dirs, dir)
-        free(dir);
-   }
+   list = elm_genlist_add(panel);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(panel, list);
+   evas_object_show(list);
 
-   elm_box_pack_end(vbx, tb);
+   _fill_list(list, itc);
+   elm_genlist_item_class_free(itc);
 
+   _free_dirs();
+
+   // bottom panel
    panel = elm_panel_add(vbx);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_BOTTOM);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_panel_hidden_set(panel, EINA_TRUE);
+   elm_table_pack(tb, panel, 0, 4, 4, 1);
+   evas_object_show(panel);
 
    toolbar = elm_toolbar_add(panel);
    elm_toolbar_homogeneous_set(toolbar, EINA_FALSE);
    elm_toolbar_shrink_mode_set(toolbar, ELM_TOOLBAR_SHRINK_NONE);
    evas_object_size_hint_weight_set(toolbar, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(toolbar);
-
    elm_toolbar_item_append(toolbar, "home", "Hello", _bstatus, panel);
-
    elm_object_content_set(panel, toolbar);
-   elm_table_pack(tb, panel, 0, 4, 4, 1);
-   evas_object_show(panel);
+   evas_object_show(toolbar);
 
    evas_object_resize(win, 320, 400);
    evas_object_show(win);
