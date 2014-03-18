@@ -44,6 +44,7 @@ static void _ecore_evas_drm_size_min_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_size_max_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -86,7 +87,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_size_max_set,
    _ecore_evas_drm_size_base_set,
    _ecore_evas_drm_size_step_set,
-   NULL, //void (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+   _ecore_evas_drm_object_cursor_set,
    NULL, //void (*fn_layer_set) (Ecore_Evas *ee, int layer);
    NULL, //void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);
@@ -531,6 +532,48 @@ _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.step.w == w) && (ee->prop.step.h == h)) return;
    ee->prop.step.w = w;
    ee->prop.step.h = h;
+}
+
+static void 
+_ecore_evas_drm_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Ecore_Evas *ee;
+
+   if ((ee = data)) ee->prop.cursor.object = NULL;
+}
+
+static void 
+_ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
+{
+   int x, y;
+
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
+
+   if (!obj)
+     {
+        ee->prop.cursor.object = NULL;
+        ee->prop.cursor.layer = 0;
+        ee->prop.cursor.hot.x = 0;
+        ee->prop.cursor.hot.y = 0;
+        return;
+     }
+
+   ee->prop.cursor.object = obj;
+   ee->prop.cursor.layer = layer;
+   ee->prop.cursor.hot.x = hot_x;
+   ee->prop.cursor.hot.y = hot_y;
+
+   evas_pointer_output_xy_get(ee->evas, &x, &y);
+   evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
+   evas_object_move(ee->prop.cursor.object,
+                    x - ee->prop.cursor.hot.x,
+                    y - ee->prop.cursor.hot.y);
+   evas_object_pass_events_set(ee->prop.cursor.object, 1);
+   if (evas_pointer_inside_get(ee->evas))
+     evas_object_show(ee->prop.cursor.object);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, 
+                                  _ecore_evas_drm_object_cursor_del, ee);
 }
 
 static int 
