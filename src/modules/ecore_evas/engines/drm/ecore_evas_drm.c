@@ -46,6 +46,7 @@ static void _ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
 static void _ecore_evas_drm_layer_set(Ecore_Evas *ee, int layer);
+static void _ecore_evas_drm_iconified_set(Ecore_Evas *ee, Eina_Bool on);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -91,7 +92,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_object_cursor_set,
    _ecore_evas_drm_layer_set,
    NULL, //void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
-   NULL, //void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);
+   _ecore_evas_drm_iconified_set,
    NULL, //void (*fn_borderless_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_override_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_maximized_set) (Ecore_Evas *ee, Eina_Bool on);
@@ -584,6 +585,13 @@ _ecore_evas_drm_layer_set(Ecore_Evas *ee, int layer)
    else if (layer > 255) layer = 255;
    if (ee->prop.layer == layer) return;
    ee->prop.layer = layer;
+}
+
+static void 
+_ecore_evas_drm_iconified_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   if (ee->prop.iconified == on) return;
+   ee->prop.iconified = on;
 }
 
 static int 
