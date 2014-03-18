@@ -38,6 +38,7 @@ static void _ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int
 static void _ecore_evas_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize);
 static void _ecore_evas_drm_show(Ecore_Evas *ee);
 static void _ecore_evas_drm_hide(Ecore_Evas *ee);
+static void _ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -74,7 +75,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_raise) (Ecore_Evas *ee);
    NULL, //void (*fn_lower) (Ecore_Evas *ee);
    NULL, //void (*fn_activate) (Ecore_Evas *ee);
-   NULL, //void (*fn_title_set) (Ecore_Evas *ee, const char *t);
+   _ecore_evas_drm_title_set,
    NULL, //void (*fn_name_class_set) (Ecore_Evas *ee, const char *n, const char *c);
    NULL, //void (*fn_size_min_set) (Ecore_Evas *ee, int w, int h);
    NULL, //void (*fn_size_max_set) (Ecore_Evas *ee, int w, int h);
@@ -466,6 +467,14 @@ _ecore_evas_drm_hide(Ecore_Evas *ee)
    ee->visible = 0;
    ee->should_be_visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
+}
+
+static void 
+_ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title)
+{
+   if (ee->prop.title) free(ee->prop.title);
+   ee->prop.title = NULL;
+   if (title) ee->prop.title = strdup(title);
 }
 
 static int 
