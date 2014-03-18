@@ -131,6 +131,8 @@ _device_handle(Ecore_Drm_Evdev *edev)
              ioctl(edev->fd, EVIOCGABS(ABS_X), &absinfo);
              edev->abs.min_x = absinfo.minimum;
              edev->abs.max_x = absinfo.maximum;
+             edev->abs.x[0] = edev->abs.x[1] = edev->abs.min_x - 1;
+             edev->mouse.x = -1;
              edev->caps |= EVDEV_MOTION_ABS;
           }
 
@@ -139,6 +141,8 @@ _device_handle(Ecore_Drm_Evdev *edev)
              ioctl(edev->fd, EVIOCGABS(ABS_Y), &absinfo);
              edev->abs.min_y = absinfo.minimum;
              edev->abs.max_y = absinfo.maximum;
+             edev->abs.y[0] = edev->abs.y[1] = edev->abs.min_y - 1;
+             edev->mouse.y = -1;
              edev->caps |= EVDEV_MOTION_ABS;
           }
 
@@ -516,7 +520,21 @@ _device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
         goto out;
         break;
       case EVDEV_ABSOLUTE_MOTION:
-        goto out;
+        /* FIXME what the actual fuck */
+        if ((dev->mouse.x == -1) && (dev->mouse.y == -1))
+          {
+             /* start first motion as centered I guess? */
+             dev->mouse.x = (dev->abs.min_x + dev->abs.max_x) / 2;
+             dev->mouse.y = (dev->abs.max_x + dev->abs.max_y) / 2;
+          }
+
+        dev->mouse.x += (dev->abs.x[0] - dev->abs.x[1]);
+        dev->mouse.y += (dev->abs.y[0] - dev->abs.y[1]);
+        dev->mouse.x = MAX(dev->abs.min_x, dev->mouse.x);
+        dev->mouse.y = MAX(dev->abs.min_y, dev->mouse.y);
+        dev->mouse.x = MIN(dev->abs.max_x, dev->mouse.x);
+        dev->mouse.y = MIN(dev->abs.max_y, dev->mouse.y);
+        _device_notify_motion(dev, timestamp);
         break;
       case EVDEV_ABSOLUTE_TOUCH_UP:
         goto out;
@@ -533,21 +551,50 @@ _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned in
    /* ignore key repeat */
    if (event->value == 2) return;
 
-   if (event->code == BTN_TOUCH)
-     {
-        /* TODO: check for mt device */
-        return;
-     }
-
    _device_process_flush(dev, timestamp);
 
    if ((event->code >= BTN_LEFT) && (event->code <= BTN_TASK))
      _device_notify_button(dev, event, timestamp);
    else if ((event->code >= KEY_ESC) && (event->code <= KEY_MICMUTE))
      _device_notify_key(dev, event, timestamp);
+   else if ((event->code == BTN_TOUCH) && (dev->caps & EVDEV_MOTION_ABS))
+     {
+        dev->abs.down = event->value;
+        if (!dev->abs.down)
+          {
+             dev->abs.x[0] = dev->abs.x[1] = dev->abs.min_x - 1;
+             dev->abs.y[0] = dev->abs.y[1] = dev->abs.min_y - 1;
+          }
+     }
 }
 
 static void 
+_device_process_absolute(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
+{
+   switch (event->code)
+     {
+      case ABS_X:
+        if (dev->pending_event != EVDEV_ABSOLUTE_MOTION)
+          _device_process_flush(dev, timestamp);
+        dev->abs.x[1] = dev->abs.x[0];
+        dev->abs.x[0] = event->value;
+        if (dev->abs.x[1] == dev->abs.min_x - 1)
+          dev->abs.x[1] = dev->abs.x[0];
+        dev->pending_event = EVDEV_ABSOLUTE_MOTION;
+        break;
+      case ABS_Y:
+        if (dev->pending_event != EVDEV_ABSOLUTE_MOTION)
+          _device_process_flush(dev, timestamp);
+        dev->abs.y[1] = dev->abs.y[0];
+        dev->abs.y[0] = event->value;
+        if (dev->abs.y[1] == dev->abs.min_y - 1)
+          dev->abs.y[1] = dev->abs.y[0];
+        dev->pending_event = EVDEV_ABSOLUTE_MOTION;
+        break;
+     }
+}
+
+static void
 _device_process_relative(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
 {
    switch (event->code)
@@ -593,7 +640,7 @@ _device_process(Ecore_Drm_Evdev *dev, struct input_event *event, int count)
              _device_process_relative(dev, ev, timestamp);
              break;
            case EV_ABS:
-             DBG("\tAbsolute Event");
+             _device_process_absolute(dev, ev, timestamp);
              break;
            case EV_SYN:
              _device_process_flush(dev, timestamp);

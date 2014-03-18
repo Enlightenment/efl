@@ -182,7 +182,8 @@ struct _Ecore_Drm_Evdev
      {
         int min_x, min_y;
         int max_x, max_y;
-        int x, y;
+        int x[2], y[2];
+        Eina_Bool down : 1;
      } abs;
 
    struct 
