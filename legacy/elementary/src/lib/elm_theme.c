@@ -9,7 +9,7 @@
 static Elm_Theme theme_default =
 {
   { NULL, NULL }, { NULL, NULL }, { NULL, NULL },
-  NULL, NULL, NULL, NULL, NULL, 1
+  NULL, NULL, NULL, NULL, NULL, 1, NULL
 };
 
 static Eina_List *themes = NULL;
@@ -169,6 +169,7 @@ _elm_theme_clear(Elm_Theme *th)
 
    ELM_SAFE_FREE(th->cache, eina_hash_free);
    ELM_SAFE_FREE(th->cache_data, eina_hash_free);
+   ELM_SAFE_FREE(th->cache_style_load_failed, eina_hash_free);
    ELM_SAFE_FREE(th->theme, eina_stringshare_del);
    if (th->ref_theme)
      {
@@ -328,29 +329,43 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    if (!th) th = &(theme_default);
 
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
-   file = _elm_theme_group_file_find(th, buf2);
-   if (file)
+   if (!eina_hash_find(th->cache_style_load_failed, buf2))
      {
-        if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
-        else
+        file = _elm_theme_group_file_find(th, buf2);
+        if (file)
           {
-             DBG("could not set theme group '%s' from file '%s': %s",
-                 buf2,
-                 eina_file_filename_get(file),
-                 edje_load_error_str(edje_object_load_error_get(o)));
+             if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
+             else
+               {
+                  DBG("could not set theme group '%s' from file '%s': %s",
+                      buf2,
+                      eina_file_filename_get(file),
+                      edje_load_error_str(edje_object_load_error_get(o)));
+               }
           }
+        //style not found, add to the not found list
+        eina_hash_add(th->cache_style_load_failed, buf2, (void *)1);
      }
 
    //Use the elementary default theme.
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/default", clas, group);
-   file = _elm_theme_group_file_find(th, buf2);
-   if (!file) return EINA_FALSE;
-   if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
-   DBG("could not set theme group '%s' from file '%s': %s",
-       buf2,
-       eina_file_filename_get(file),
-       edje_load_error_str(edje_object_load_error_get(o)));
-
+   if (!eina_hash_find(th->cache_style_load_failed, buf2))
+     {
+        file = _elm_theme_group_file_find(th, buf2);
+        if (file)
+          {
+             if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
+             else
+               {
+                  DBG("could not set theme group '%s' from file '%s': %s",
+                      buf2,
+                      eina_file_filename_get(file),
+                      edje_load_error_str(edje_object_load_error_get(o)));
+               }
+          }
+        //style not found, add to the not found list
+        eina_hash_add(th->cache_style_load_failed, buf2, (void *)1);
+     }
    return EINA_FALSE;
 }
 
@@ -440,7 +455,8 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
    th->cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_file_close));
    if (th->cache_data) eina_hash_free(th->cache_data);
    th->cache_data = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
-
+   if (th->cache_style_load_failed) eina_hash_free(th->cache_style_load_failed);
+   th->cache_style_load_failed = eina_hash_string_superfast_new(NULL);
    EINA_LIST_FREE(th->themes.items, p) eina_stringshare_del(p);
    EINA_LIST_FREE(th->themes.handles, f) eina_file_close(f);
 
@@ -743,6 +759,8 @@ elm_theme_flush(Elm_Theme *th)
    th->cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_file_close));
    if (th->cache_data) eina_hash_free(th->cache_data);
    th->cache_data = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+   if (th->cache_style_load_failed) eina_hash_free(th->cache_style_load_failed);
+   th->cache_style_load_failed = eina_hash_string_superfast_new(NULL);
    _elm_win_rescale(th, EINA_TRUE);
    _elm_ews_wm_rescale(th, EINA_TRUE);
    if (th->referrers)

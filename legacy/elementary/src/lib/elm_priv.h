@@ -112,6 +112,7 @@ struct _Elm_Theme
    Eina_List  *referrers;
    const char *theme;
    int         ref;
+   Eina_Hash  *cache_style_load_failed;
 };
 
 /* increment this whenever we change config enough that you need new
