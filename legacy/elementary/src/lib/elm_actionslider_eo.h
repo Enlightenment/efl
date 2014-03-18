@@ -1,3 +1,6 @@
+#include "elm_actionslider.eo.h"
+
+#if 0
 #define ELM_OBJ_ACTIONSLIDER_CLASS elm_obj_actionslider_class_get()
 
 const Eo_Class *elm_obj_actionslider_class_get(void) EINA_CONST;
@@ -118,3 +121,4 @@ enum
  * @ingroup Actionslider
  */
 #define elm_obj_actionslider_selected_label_get(ret) ELM_OBJ_ACTIONSLIDER_ID(ELM_OBJ_ACTIONSLIDER_SUB_ID_SELECTED_LABEL_GET), EO_TYPECHECK(const char **, ret)
+#endif

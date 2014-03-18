@@ -1,0 +1,95 @@
+class Elm_Actionslider (Elm_Layout)
+{
+   eo_prefix: elm_obj_actionslider;
+   properties {
+      indicator_pos {
+         set {
+            /*@
+            Set actionslider indicator position.
+
+            @ingroup Actionslider */
+         }
+         get {
+            /*@
+            Get actionslider indicator position.
+
+            @return The position of the indicator.
+
+            @ingroup Actionslider */
+         }
+         values {
+            Elm_Actionslider_Pos pos; /*@ The position of the indicator. */
+         }
+      }
+      magnet_pos {
+         set {
+            /*@
+            Set actionslider magnet position. To make multiple positions magnets @c or
+            them together(e.g.: ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
+
+            @ingroup Actionslider */
+         }
+         get {
+            /*@
+            Get actionslider magnet position.
+
+            @return The positions with magnet property.
+
+            @ingroup Actionslider */
+         }
+         values {
+            Elm_Actionslider_Pos pos; /*@ Bit mask indicating the magnet positions. */
+         }
+      }
+      enabled_pos {
+         set {
+            /*@
+            Set actionslider enabled position. To set multiple positions as enabled @c or
+            them together(e.g.: ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT).
+
+            @note All the positions are enabled by default.
+
+            @ingroup Actionslider */
+         }
+         get {
+            /*@
+            Get actionslider enabled position.
+
+            @return The enabled positions.
+
+            @ingroup Actionslider */
+         }
+         values {
+            Elm_Actionslider_Pos pos; /*@ Bit mask indicating the enabled positions. */
+         }
+      }
+      selected_label {
+         get {
+            /*@
+            Get actionslider selected label.
+
+            @return The selected label
+
+            @ingroup Actionslider */
+            return const char *;
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::theme_apply;
+      Elm_Layout::text_set;
+      Elm_Layout::text_get;
+      Elm_Layout::text_aliases::get;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      language,changed;
+      access,changed;
+   }
+
+}
