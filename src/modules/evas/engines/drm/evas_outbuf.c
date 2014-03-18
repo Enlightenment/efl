@@ -97,6 +97,8 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
         return NULL;
      }
 
+   info->info.output = ob->priv.fb;
+
    ob->priv.num = NUM_BUFFERS;
 
    /* check for buffer override */
