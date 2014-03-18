@@ -1231,7 +1231,6 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         if (swap_buffer_debug)
           {
              char fname[100];
-             char suffix[100];
              int ret = 0;
              sprintf(fname, "%p", (void*)re->win);
 
@@ -1239,7 +1238,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
                                               (const char*)dname,
                                               (const char*)fname,
                                               re->frame_cnt,
-                                              suffix);
+                                              NULL);
              if (!ret) swap_buffer_debug_mode = 0;
           }
      }

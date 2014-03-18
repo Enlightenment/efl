@@ -3246,7 +3246,11 @@ evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const 
    char fname[100];
    int ok = 0;
 
-   sprintf(fname, "./%s/win_%s-fc_%03d_%s.png", dname, buf_name, frame, suffix);
+   if (suffix)
+     snprintf(fname, sizeof(fname), "./%s/win_%s-fc_%03d_%s.png", dname, buf_name, frame, suffix);
+   else
+     snprintf(fname, sizeof(fname), "./%s/win_%s-fc_%03d.png", dname, buf_name, frame);
+   fname[sizeof(fname) - 1] = '\0';
 
    data1 = (DATA32 *)malloc(gc->w * gc->h * sizeof(DATA32));
    data2 = (DATA32 *)malloc(gc->w * gc->h * sizeof(DATA32));
