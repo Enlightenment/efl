@@ -1712,6 +1712,7 @@ _file_changed_cb(const char *path EINA_UNUSED, Eina_Bool deleted EINA_UNUSED, vo
         if (fd)
           {
              fd->changed = EINA_TRUE;
+             fd->valid = EINA_FALSE;
              _file_id_free(fd);
              eina_hash_set(file_entries, &fd->id, NULL);
           }
