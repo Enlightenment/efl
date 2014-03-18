@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-02-26 00:59+0900\n"
+"POT-Creation-Date: 2014-03-18 13:54+0900\n"
 "PO-Revision-Date: 2012-12-22 03:55+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -24,8 +24,8 @@ msgstr "向上"
 msgid "Home"
 msgstr "主目录"
 
-#: src/lib/elc_fileselector.c:1607 src/lib/elm_entry.c:1388
-#: src/lib/elm_entry.c:1413
+#: src/lib/elc_fileselector.c:1607 src/lib/elm_entry.c:1396
+#: src/lib/elm_entry.c:1421
 msgid "Cancel"
 msgstr "取消"
 
@@ -57,11 +57,11 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: src/lib/elc_popup.c:280 src/lib/elc_popup.c:901
+#: src/lib/elc_popup.c:284 src/lib/elc_popup.c:928
 msgid "Popup Title"
 msgstr ""
 
-#: src/lib/elc_popup.c:290 src/lib/elc_popup.c:969
+#: src/lib/elc_popup.c:294 src/lib/elc_popup.c:996
 msgid "Popup Body Text"
 msgstr ""
 
@@ -74,9 +74,9 @@ msgid "Clicked"
 msgstr "点击"
 
 #: src/lib/elm_button.c:279 src/lib/elm_check.c:224 src/lib/elm_gengrid.c:693
-#: src/lib/elm_genlist.c:1463 src/lib/elm_list.c:1567 src/lib/elm_radio.c:267
+#: src/lib/elm_genlist.c:1469 src/lib/elm_list.c:1764 src/lib/elm_radio.c:267
 #: src/lib/elm_segment_control.c:541 src/lib/elm_spinner.c:593
-#: src/lib/elm_toolbar.c:1980
+#: src/lib/elm_toolbar.c:1982
 msgid "State: Disabled"
 msgstr "状态：已禁用"
 
@@ -167,7 +167,7 @@ msgid "color selector palette item"
 msgstr "色彩选择器项目"
 
 # Don't change it!
-#: src/lib/elm_config.c:2568
+#: src/lib/elm_config.c:2983
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -176,27 +176,27 @@ msgstr "default:LTR"
 msgid "day selector item"
 msgstr "磁盘选择器项目"
 
-#: src/lib/elm_diskselector.c:669
+#: src/lib/elm_diskselector.c:668
 msgid "diskselector item"
 msgstr "磁盘选择器项目"
 
-#: src/lib/elm_entry.c:1375
+#: src/lib/elm_entry.c:1383
 msgid "Copy"
 msgstr "复制"
 
-#: src/lib/elm_entry.c:1380
+#: src/lib/elm_entry.c:1388
 msgid "Cut"
 msgstr "粘贴"
 
-#: src/lib/elm_entry.c:1384 src/lib/elm_entry.c:1407
+#: src/lib/elm_entry.c:1392 src/lib/elm_entry.c:1415
 msgid "Paste"
 msgstr "粘贴"
 
-#: src/lib/elm_entry.c:1400
+#: src/lib/elm_entry.c:1408
 msgid "Select"
 msgstr "选择"
 
-#: src/lib/elm_entry.c:3364
+#: src/lib/elm_entry.c:3396
 msgid "Entry"
 msgstr "条目"
 
@@ -216,15 +216,15 @@ msgstr "索引条目"
 msgid "Label"
 msgstr "标签"
 
-#: src/lib/elm_panel.c:54
+#: src/lib/elm_panel.c:63
 msgid "state: opened"
 msgstr "状态：已打开"
 
-#: src/lib/elm_panel.c:55
+#: src/lib/elm_panel.c:64
 msgid "state: closed"
 msgstr "状态：已关闭"
 
-#: src/lib/elm_panel.c:118
+#: src/lib/elm_panel.c:127
 msgid "panel button"
 msgstr "面板按钮"
 
@@ -236,7 +236,7 @@ msgstr "进度条"
 msgid "Radio"
 msgstr "无线电"
 
-#: src/lib/elm_segment_control.c:544 src/lib/elm_toolbar.c:1982
+#: src/lib/elm_segment_control.c:544 src/lib/elm_toolbar.c:1984
 msgid "State: Selected"
 msgstr "状态：已选择"
 
@@ -249,7 +249,7 @@ msgstr "状态：已选择"
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:896
+#: src/lib/elm_slider.c:895
 msgid "slider"
 msgstr "滑块"
 
@@ -265,23 +265,23 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1451 src/lib/elm_toolbar.c:2041
+#: src/lib/elm_toolbar.c:1453 src/lib/elm_toolbar.c:2043
 msgid "Selected"
 msgstr "已选择"
 
-#: src/lib/elm_toolbar.c:1978
+#: src/lib/elm_toolbar.c:1980
 msgid "Separator"
 msgstr "分隔符"
 
-#: src/lib/elm_toolbar.c:1984
+#: src/lib/elm_toolbar.c:1986
 msgid "Has menu"
 msgstr "有菜单"
 
-#: src/lib/elm_toolbar.c:2036
+#: src/lib/elm_toolbar.c:2038
 msgid "Unselected"
 msgstr "未选择"
 
-#: src/lib/elm_toolbar.c:2053
+#: src/lib/elm_toolbar.c:2055
 msgid "Toolbar Item"
 msgstr "工具栏项目"
 
