@@ -2700,21 +2700,27 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
      {
         it = elm_genlist_first_item_get(obj);
-        elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
-        elm_genlist_item_selected_set(it, EINA_TRUE);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        if (it)
+          {
+             elm_genlist_item_selected_set(it, EINA_TRUE);
+             elm_object_item_focus_set(it, EINA_TRUE);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "End")) ||
             ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      {
         it = elm_genlist_last_item_get(obj);
-        elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
-        elm_genlist_item_selected_set(it, EINA_TRUE);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        if (it)
+          {
+             elm_genlist_item_selected_set(it, EINA_TRUE);
+             elm_object_item_focus_set(it, EINA_TRUE);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "Prior")) ||
             ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))

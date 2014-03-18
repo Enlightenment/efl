@@ -436,19 +436,27 @@ _elm_list_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_Home")) && !ev->string))
      {
         it = eina_list_data_get(sd->items);
-        elm_list_item_bring_in((Elm_Object_Item *)it);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        if (it)
+          {
+             elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+             elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "End")) ||
             ((!strcmp(ev->key, "KP_End")) && !ev->string))
      {
         it = eina_list_data_get(eina_list_last(sd->items));
-        elm_list_item_bring_in((Elm_Object_Item *)it);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        if (it)
+          {
+             elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+             elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "Prior")) ||
             ((!strcmp(ev->key, "KP_Prior")) && !ev->string))
