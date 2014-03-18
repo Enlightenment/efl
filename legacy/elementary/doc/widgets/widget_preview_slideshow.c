@@ -1,3 +1,6 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #include <Elementary.h>
 
 /* get our images to make slideshow items */

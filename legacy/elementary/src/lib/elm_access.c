@@ -34,8 +34,8 @@ static Evas_Object * _elm_access_add(Evas_Object *parent);
 
 static void _access_object_unregister(Evas_Object *obj);
 
-static void
-_elm_access_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_access_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -73,13 +73,9 @@ _access_action_callback_call(Evas_Object *obj,
    return ret;
 }
 
-static void
-_elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_access_elm_widget_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act)
 {
-   Elm_Activate act = va_arg(*list, Elm_Activate);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
    int type = ELM_ACCESS_ACTION_FIRST;
 
    Action_Info *a;
@@ -113,7 +109,7 @@ _elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         break;
      }
 
-   if (type == ELM_ACCESS_ACTION_FIRST) return;
+   if (type == ELM_ACCESS_ACTION_FIRST) return EINA_FALSE;
 
    /* if an access object has a callback, it would have the intention to do
       something. so, check here and return EINA_TRUE. */
@@ -122,30 +118,28 @@ _elm_access_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
               (a->fn[type].cb))
      {
         _access_action_callback_call(obj, type, NULL);
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 
    /* TODO: deprecate below? */
-   if (act != ELM_ACTIVATE_DEFAULT) return;
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    Elm_Access_Info *ac = evas_object_data_get(obj, "_elm_access");
-   if (!ac) return;
+   if (!ac) return EINA_FALSE;
 
    if (ac->activate)
      ac->activate(ac->activate_data, ac->part_object,
                   (Elm_Object_Item *)ac->widget_item);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_access_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_access_elm_widget_on_focus(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    evas_object_focus_set(obj, elm_widget_focus_get(obj));
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 typedef struct _Mod_Api Mod_Api;
@@ -1246,8 +1240,8 @@ _elm_access_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_access_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1450,33 +1444,10 @@ elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Eva
       ERR("Not supported focus direction for access highlight [%d]", dir);
 }
 
-static void
-_class_constructor(Eo_Class *klass)
+EOLIAN static void
+_elm_access_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_access_smart_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_access_smart_on_focus),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACTIVATE), _elm_access_smart_activate),
-
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_access_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
+#include "elm_access.eo.c"

@@ -1,9 +1,9 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #else
 # define EINA_UNUSED
 #endif
+#include <Elementary.h>
 
 static char *
 _text_get(void        *data EINA_UNUSED,
