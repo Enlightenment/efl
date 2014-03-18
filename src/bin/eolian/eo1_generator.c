@@ -281,7 +281,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
         eina_strbuf_prepend(tmpbuf," * ");
         eina_strbuf_append_printf(str_ev, "\n/**\n%s\n */\n", eina_strbuf_string_get(tmpbuf));
 
-        _template_fill(tmpbuf, "@#CLASS_@#FUNC", classname, evname, EINA_TRUE);
+        _template_fill(tmpbuf, "@#CLASS_EVENT_@#FUNC", classname, evname, EINA_TRUE);
         eina_strbuf_replace_all(tmpbuf, ",", "_");
         const char* s = eina_strbuf_string_get(tmpbuf);
         eina_strbuf_append_printf(str_ev, "#define %s (&(_%s))\n", s, s);
@@ -525,7 +525,7 @@ eo1_source_beginning_generate(const char *classname, Eina_Strbuf *buf)
 
         eolian_class_event_information_get(event, &evname, &evdesc);
         evdesc_line1 = _source_desc_get(evdesc);
-        _template_fill(str_ev, "@#CLASS_@#FUNC", classname, evname, EINA_TRUE);
+        _template_fill(str_ev, "@#CLASS_EVENT_@#FUNC", classname, evname, EINA_TRUE);
         eina_strbuf_replace_all(str_ev, ",", "_");
 
         eina_strbuf_append_printf(tmpbuf,
@@ -780,7 +780,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         const char *evname;
 
         eolian_class_event_information_get(event, &evname, NULL);
-        _template_fill(tmpbuf, "@#CLASS_@#FUNC", classname, evname, EINA_TRUE);
+        _template_fill(tmpbuf, "@#CLASS_EVENT_@#FUNC", classname, evname, EINA_TRUE);
         eina_strbuf_replace_all(tmpbuf, ",", "_");
         eina_strbuf_append_printf(str_ev, "\n     %s,", eina_strbuf_string_get(tmpbuf));
      }
