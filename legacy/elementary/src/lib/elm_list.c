@@ -1475,7 +1475,9 @@ _mouse_up_cb(void *data,
    evas_object_ref(obj);
    _elm_list_walk(sd);
 
-   elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+   if (sd->focused_item != (Elm_Object_Item *)it)
+        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+
    if (sd->multi &&
        ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
         (evas_key_modifier_is_set(ev->modifiers, "Control"))))
