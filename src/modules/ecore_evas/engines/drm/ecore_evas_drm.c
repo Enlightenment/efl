@@ -48,6 +48,10 @@ static void _ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, 
 static void _ecore_evas_drm_layer_set(Ecore_Evas *ee, int layer);
 static void _ecore_evas_drm_iconified_set(Ecore_Evas *ee, Eina_Bool on);
 static void _ecore_evas_drm_borderless_set(Ecore_Evas *ee, Eina_Bool on);
+static void _ecore_evas_drm_maximized_set(Ecore_Evas *ee, Eina_Bool on);
+static void _ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
+static void _ecore_evas_drm_withdrawn_set(Ecore_Evas *ee, Eina_Bool on);
+static void _ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -96,12 +100,12 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_iconified_set,
    _ecore_evas_drm_borderless_set,
    NULL, //void (*fn_override_set) (Ecore_Evas *ee, Eina_Bool on);
-   NULL, //void (*fn_maximized_set) (Ecore_Evas *ee, Eina_Bool on);
-   NULL, //void (*fn_fullscreen_set) (Ecore_Evas *ee, Eina_Bool on);
+   _ecore_evas_drm_maximized_set,
+   _ecore_evas_drm_fullscreen_set,
    NULL, //void (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
-   NULL, //void (*fn_withdrawn_set) (Ecore_Evas *ee, Eina_Bool on);
+   _ecore_evas_drm_withdrawn_set,
    NULL, //void (*fn_sticky_set) (Ecore_Evas *ee, Eina_Bool on);
-   NULL, //void (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
+   _ecore_evas_drm_ignore_events_set,
    NULL, //void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
    NULL, //void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
    NULL, //void (*fn_profiles_set) (Ecore_Evas *ee, const char **profiles, int count);
@@ -600,6 +604,36 @@ _ecore_evas_drm_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (ee->prop.borderless == on) return;
    ee->prop.borderless = on;
+}
+
+static void 
+_ecore_evas_drm_maximized_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   if (ee->prop.maximized == on) return;
+   ee->prop.maximized = on;
+}
+
+static void 
+_ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   if (ee->prop.fullscreen == on) return;
+   ee->prop.fullscreen = on;
+}
+
+static void 
+_ecore_evas_drm_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   if (ee->prop.withdrawn == on) return;
+   ee->prop.withdrawn = on;
+   if (on) ecore_evas_hide(ee);
+   else ecore_evas_show(ee);
+}
+
+static void 
+_ecore_evas_drm_ignore_events_set(Ecore_Evas *ee, int ignore)
+{
+   if (ee->ignore_events == ignore) return;
+   ee->ignore_events = ignore;
 }
 
 static int 
