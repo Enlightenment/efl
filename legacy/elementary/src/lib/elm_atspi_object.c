@@ -1009,7 +1009,7 @@ _elm_atspi_factory_construct(Evas_Object *obj)
    else if (!strncmp(type, "elm_", 4)) // defaults to implementation for elm_widget class.
      ret = eo_add(ELM_ATSPI_WIDGET_CLASS, obj);
 
-   eo_unref(ret); // only evas_object should hold reference to atspi object
+   if (ret) eo_unref(ret); // only evas_object should hold reference to atspi object
 
    return ret;
 }
