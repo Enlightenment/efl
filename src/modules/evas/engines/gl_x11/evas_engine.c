@@ -3457,8 +3457,6 @@ eng_gl_surface_read_pixels(void *data, void *surface,
      }
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-   evas_common_convert_argb_premul(pixels, w * h);
-
    return EINA_TRUE;
 }
 //--------------------------------//
