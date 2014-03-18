@@ -1964,4 +1964,11 @@ _evas_box_evas_object_smart_data_get(Eo *obj EINA_UNUSED, Evas_Object_Box_Data *
    return (void *)_pd;
 }
 
+EOLIAN static void
+_evas_box_class_constructor(Eo_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+
 #include "canvas/evas_box.eo.c"

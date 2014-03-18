@@ -716,6 +716,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
    }
    implements {
+      class::constructor;
       Eo_Base::constructor;
       Evas_Object::smart_data::get;
       Evas_Smart::calculate;
