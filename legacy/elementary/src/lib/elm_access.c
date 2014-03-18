@@ -1241,7 +1241,7 @@ _elm_access_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_access_constructor(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,

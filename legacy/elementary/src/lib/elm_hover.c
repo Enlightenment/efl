@@ -614,7 +614,7 @@ elm_hover_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_hover_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_eo_base_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,

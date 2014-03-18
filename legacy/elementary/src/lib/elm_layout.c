@@ -1699,7 +1699,7 @@ elm_layout_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_layout_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_eo_base_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    sd->obj = obj;
    eo_do_super(obj, MY_CLASS, eo_constructor());

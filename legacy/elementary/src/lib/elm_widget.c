@@ -5250,7 +5250,7 @@ _atspi_obj_create(void *data)
 }
 
 EOLIAN static void
-_elm_widget_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
+_elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    Eo *parent;
 
