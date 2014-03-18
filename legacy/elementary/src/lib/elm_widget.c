@@ -1317,24 +1317,22 @@ _elm_widget_can_focus_child_list_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
    Eina_List *child_list = NULL;
    Evas_Object *child;
 
-   if (sd->subobjs)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
-        EINA_LIST_FOREACH(sd->subobjs, l, child)
+        if (!_elm_widget_is(child)) continue;
+        if ((elm_widget_can_focus_get(child)) &&
+            (evas_object_visible_get(child)) &&
+            (!elm_widget_disabled_get(child)))
+          child_list = eina_list_append(child_list, child);
+        else
           {
-             if (!_elm_widget_is(child)) continue;
-             if ((elm_widget_can_focus_get(child)) &&
-                 (evas_object_visible_get(child)) &&
-                 (!elm_widget_disabled_get(child)))
-               child_list = eina_list_append(child_list, child);
-             else
-               {
-                  Eina_List *can_focus_list;
-                  can_focus_list = elm_widget_can_focus_child_list_get(child);
-                  if (can_focus_list)
-                    child_list = eina_list_merge(child_list, can_focus_list);
-               }
+             Eina_List *can_focus_list;
+             can_focus_list = elm_widget_can_focus_child_list_get(child);
+             if (can_focus_list)
+               child_list = eina_list_merge(child_list, can_focus_list);
           }
      }
+
    return child_list;
 }
 
