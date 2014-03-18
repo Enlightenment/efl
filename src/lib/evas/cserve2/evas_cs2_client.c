@@ -2735,7 +2735,9 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
    if (fe->server_file_id)
      {
         if ((fdata = _shared_file_data_get_by_id(fe->server_file_id)) != NULL)
-          return fdata;
+          if (!fdata->changed)
+            return fdata;
+        fe->server_file_id = 0;
      }
 
    // Check hash
@@ -2757,6 +2759,7 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
         fd = &(_index.files.entries.filedata[k]);
         if (!fd->id) break;
         if (!fd->refcount) continue;
+        if (fd->changed) continue;
 
         key = _shared_string_safe_get(fd->key);
         file = _shared_string_safe_get(fd->path);
@@ -3106,6 +3109,7 @@ _shared_image_entry_image_data_find(Image_Entry *ie)
                   continue;
                }
 
+             if (fd->changed || !fd->valid) continue;
              key = _shared_string_safe_get(fd->key);
              file = _shared_string_safe_get(fd->path);
              if (!file)
