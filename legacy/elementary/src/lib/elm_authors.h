@@ -153,6 +153,7 @@
  * @author suxia li <suxia.li@@samsung.com>
  * @author yan.wang <yan.wang@@linux.intel.com>
  * @author Anand <anand.km@@samsung.com>
+ * @author Subhransu Sekhar Mohanty <sub.mohanty@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
