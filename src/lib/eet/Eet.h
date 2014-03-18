@@ -469,6 +469,25 @@ typedef enum _Eet_File_Mode
 } Eet_File_Mode; /**< Modes that a file can be opened. */
 
 /**
+ * @enum _Eet_Image_Encoding
+ * Specify lossy encoding for image
+ * @since 1.10
+ */
+typedef enum _Eet_Image_Encoding
+{
+   EET_IMAGE_LOSSLESS = 0,
+   EET_IMAGE_JPEG = 1,
+   EET_IMAGE_ETC1 = 2
+} Eet_Image_Encoding;
+
+typedef enum _Eet_Colorspace
+{
+   EET_COLORSPACE_ARGB8888 = 0,
+   /* The number between are reserved to preserve compatibility with evas */
+   EET_COLORSPACE_ETC1 = 8
+} Eet_Colorspace;
+
+/**
  * @typedef Eet_File
  * Opaque handle that defines an Eet file (or memory).
  *
@@ -1054,7 +1073,7 @@ eet_data_image_header_read(Eet_File *ef,
                            int *alpha,
                            int *compress,
                            int *quality,
-                           int *lossy);
+                           Eet_Image_Encoding *lossy);
 
 /**
  * Read image data from the named key in the eet file.
@@ -1099,7 +1118,7 @@ eet_data_image_read(Eet_File *ef,
                     int *alpha,
                     int *compress,
                     int *quality,
-                    int *lossy);
+                    Eet_Image_Encoding *lossy);
 
 /**
  * Read image data from the named key in the eet file and store it in the given buffer.
@@ -1160,7 +1179,7 @@ eet_data_image_read_to_surface(Eet_File *ef,
                                int *alpha,
                                int *compress,
                                int *quality,
-                               int *lossy);
+                               Eet_Image_Encoding *lossy);
 
 /**
  * Write image data to the named key in an eet file.
@@ -1208,7 +1227,7 @@ eet_data_image_write(Eet_File *ef,
                      int alpha,
                      int compress,
                      int quality,
-                     int lossy);
+                     Eet_Image_Encoding lossy);
 
 /**
  * Decode Image data header only to get information.
@@ -1243,7 +1262,7 @@ eet_data_image_header_decode(const void *data,
                              int *alpha,
                              int *compress,
                              int *quality,
-                             int *lossy);
+                             Eet_Image_Encoding *lossy);
 
 /**
  * Decode Image data into pixel data.
@@ -1283,7 +1302,7 @@ eet_data_image_decode(const void *data,
                       int *alpha,
                       int *compress,
                       int *quality,
-                      int *lossy);
+                      Eet_Image_Encoding *lossy);
 
 /**
  * Decode Image data into pixel data and stores in the given buffer.
@@ -1325,7 +1344,7 @@ eet_data_image_decode_to_surface(const void *data,
                                  int *alpha,
                                  int *compress,
                                  int *quality,
-                                 int *lossy);
+                                 Eet_Image_Encoding *lossy);
 
 /**
  * Encode image data for storage or transmission.
@@ -1365,7 +1384,7 @@ eet_data_image_encode(const void *data,
                       int alpha,
                       int compress,
                       int quality,
-                      int lossy);
+                      Eet_Image_Encoding lossy);
 
 /**
  * @defgroup Eet_File_Image_Cipher_Group Image Store and Load using a Cipher
@@ -1424,7 +1443,7 @@ eet_data_image_header_read_cipher(Eet_File *ef,
                                   int *alpha,
                                   int *compress,
                                   int *quality,
-                                  int *lossy);
+                                  Eet_Image_Encoding *lossy);
 
 /**
  * Read image data from the named key in the eet file using a cipher.
@@ -1474,7 +1493,7 @@ eet_data_image_read_cipher(Eet_File *ef,
                            int *alpha,
                            int *compress,
                            int *quality,
-                           int *lossy);
+                           Eet_Image_Encoding *lossy);
 
 /**
  * Read image data from the named key in the eet file using a cipher.
@@ -1530,7 +1549,7 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef,
                                       int *alpha,
                                       int *compress,
                                       int *quality,
-                                      int *lossy);
+                                      Eet_Image_Encoding *lossy);
 
 /**
  * Write image data to the named key in an eet file using a cipher.
@@ -1578,7 +1597,7 @@ eet_data_image_write_cipher(Eet_File *ef,
                             int alpha,
                             int compress,
                             int quality,
-                            int lossy);
+                            Eet_Image_Encoding lossy);
 
 /**
  * Decode Image data header only to get information using a cipher.
@@ -1626,7 +1645,7 @@ eet_data_image_header_decode_cipher(const void *data,
                                     int *alpha,
                                     int *compress,
                                     int *quality,
-                                    int *lossy);
+                                    Eet_Image_Encoding *lossy);
 
 /**
  * Decode Image data into pixel data using a cipher.
@@ -1676,7 +1695,7 @@ eet_data_image_decode_cipher(const void *data,
                              int *alpha,
                              int *compress,
                              int *quality,
-                             int *lossy);
+                             Eet_Image_Encoding *lossy);
 
 /**
  * Decode Image data into pixel data using a cipher.
@@ -1732,7 +1751,7 @@ eet_data_image_decode_to_surface_cipher(const void *data,
                                         int *alpha,
                                         int *compress,
                                         int *quality,
-                                        int *lossy);
+                                        Eet_Image_Encoding *lossy);
 
 /**
  * Encode image data for storage or transmission using a cipher.
@@ -1777,7 +1796,7 @@ eet_data_image_encode_cipher(const void *data,
                              int alpha,
                              int compress,
                              int quality,
-                             int lossy,
+                             Eet_Image_Encoding lossy,
                              int *size_ret);
 
 /**

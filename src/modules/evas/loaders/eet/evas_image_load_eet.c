@@ -70,11 +70,12 @@ evas_image_load_file_head_eet(void *loader_data,
 			      int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   int       a, compression, quality, lossy;
+   int       a, compression, quality;
+   Eet_Image_Encoding lossy;
    int       ok;
 
    ok = eet_data_image_header_read(loader->ef, loader->key,
-				   &prop->w, &prop->h, &a, &compression, &quality, &lossy);
+                                   &prop->w, &prop->h, &a, &compression, &quality, &lossy);
    if (!ok)
      return _evas_image_load_return_error(EVAS_LOAD_ERROR_DOES_NOT_EXIST, error);
    if (IMG_TOO_BIG(prop->w, prop->h))
@@ -93,13 +94,14 @@ evas_image_load_file_data_eet(void *loader_data,
 			      int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   int       alpha, compression, quality, lossy, ok;
+   int       alpha, compression, quality, ok;
+   Eet_Image_Encoding lossy;
    DATA32   *body, *p, *end;
    DATA32    nas = 0;
 
    ok = eet_data_image_read_to_surface(loader->ef, loader->key, 0, 0,
-				       pixels, prop->w, prop->h, prop->w * 4,
-				       &alpha, &compression, &quality, &lossy);
+                                       pixels, prop->w, prop->h, prop->w * 4,
+                                       &alpha, &compression, &quality, &lossy);
    if (!ok)
      return _evas_image_load_return_error(EVAS_LOAD_ERROR_GENERIC, error);
    

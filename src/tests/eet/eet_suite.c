@@ -1290,7 +1290,7 @@ START_TEST(eet_image)
    int compress;
    int quality;
    int result;
-   int lossy;
+   Eet_Image_Encoding lossy;
    int alpha;
    unsigned int w;
    unsigned int h;
@@ -1658,7 +1658,7 @@ START_TEST(eet_small_image)
    int alpha;
    int compression;
    int quality;
-   int lossy;
+   Eet_Image_Encoding lossy;
    int result;
 
    image[0] = IM0;

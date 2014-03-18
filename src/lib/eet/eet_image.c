@@ -28,6 +28,16 @@
 #include "lz4.h"
 #include "lz4hc.h"
 
+#include "rg_etc1.h"
+
+#define OFFSET_BLOCK_SIZE 4
+#define OFFSET_ALGORITHN 5
+#define OFFSET_OPTIONS 6
+#define OFFSET_WIDTH 8
+#define OFFSET_HEIGHT 12
+#define OFFSET_BLOCKS 16
+
+
 /*---*/
 
 typedef struct _JPEG_error_mgr *emptr;
@@ -662,6 +672,172 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    return 1;
 }
 
+static inline unsigned int
+_tgv_length_get(const char *m, unsigned int length, unsigned int *offset)
+{
+   unsigned int r = 0;
+   unsigned int shift = 0;
+
+   while (*offset < length && ((*m) & 0x80))
+     {
+        r = r | (((*m) & 0x7F) << shift);
+        shift += 7;
+        m++;
+        (*offset)++;
+     }
+   if (*offset < length)
+     {
+        r = r | (((*m) & 0x7F) << shift);
+        (*offset)++;
+     }
+
+   return r;
+}
+
+static int
+eet_data_image_etc1_decode(const void *data,
+                           unsigned int length,
+                           unsigned int *p,
+                           unsigned int dst_x,
+                           unsigned int dst_y,
+                           unsigned int dst_w,
+                           unsigned int dst_h,
+                           unsigned int cspace)
+{
+   Eina_Rectangle master;
+   Eina_Rectangle current;
+   const char *m = data;
+   char *buffer;
+   unsigned int block_width, block_height;
+   unsigned int compress;
+   unsigned int width, height;
+   unsigned int block_count;
+   unsigned int etc1_width = 0;
+   unsigned int offset;
+   unsigned int x, y;
+
+   block_width = 4 << (m[OFFSET_BLOCK_SIZE] & 0x0f);
+   block_height = 4 << ((m[OFFSET_BLOCK_SIZE] & 0xf0) >> 4);
+
+   if (m[OFFSET_ALGORITHN] != 0) return 0;
+
+   compress = m[OFFSET_OPTIONS] & 0x1;
+
+   width = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
+   height = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
+
+   EINA_RECTANGLE_SET(&master, 0, 0, width, height);
+   EINA_RECTANGLE_SET(&current, dst_x, dst_y, dst_w, dst_h);
+
+   if (!eina_rectangle_intersection(&master, &current))
+     return 0;
+
+   if (cspace == EET_COLORSPACE_ETC1)
+     {
+        if (master.x % 4 ||
+            master.y % 4)
+          abort ();
+
+        etc1_width = ((dst_w + 2) / 4 + ((dst_w + 2) % 4 ? 1 : 0)) * 8;
+     }
+   else
+     {
+        // Account for duplicated border pixels
+        master.x += 1;
+        master.y += 1;
+     }
+
+   // Allocate space for each ETC1 block (64bytes per 4 * 4 pixels group)
+   block_count = block_width * block_height / (4 * 4);
+   if (compress)
+     buffer = alloca(8 * block_count);
+   else
+     buffer = NULL;
+
+   offset = OFFSET_BLOCKS;
+
+   for (y = 0; y < height + 2; y += block_height)
+     for (x = 0; x < width + 2; x += block_width)
+       {
+          const char *data_start;
+          const char *it;
+          unsigned int block_length;
+          unsigned int expand_length;
+          unsigned int i, j;
+
+          block_length = _tgv_length_get(m + offset, length, &offset);
+          if (block_length == 0) return 0;
+
+          data_start = m + offset;
+          offset += block_length;
+
+          EINA_RECTANGLE_SET(&current, x, y,
+                             block_width, block_height);
+          if (!eina_rectangle_intersection(&current, &master))
+            continue ;
+
+          if (compress)
+            {
+               expand_length = LZ4_uncompress(data_start,
+                                              buffer, block_count * 8);
+               // That's an overhead for now, need to be fixed
+               if (expand_length != block_length)
+                 return 0;
+            }
+          else
+            {
+               buffer = (void*) data_start;
+               if (block_count * 8 != block_length)
+                 return 0;
+            }
+          it = buffer;
+
+          for (i = 0; i < block_height; i += 4)
+            for (j = 0; j < block_width; j += 4, it += 8)
+              {
+                 Eina_Rectangle current_etc;
+                 unsigned int temporary[4 * 4] = { 0 };
+                 unsigned int offset_x, offset_y;
+                 int k;
+
+                 EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
+
+                 if (!eina_rectangle_intersection(&current_etc, &current))
+                   continue ;
+
+                 switch (cspace)
+                   {
+                    case EET_COLORSPACE_ARGB8888:
+                       if (!rg_etc1_unpack_block(it, temporary, 0))
+                         {
+                            fprintf(stderr, "HOUSTON WE HAVE A PROBLEM ! Block starting at {%i, %i} is corrupted !\n", x + j, y + i);
+                            continue ;
+                         }
+
+                       offset_x = current_etc.x - x - j;
+                       offset_y = current_etc.y - y - i;
+                       for (k = 0; k < current_etc.h; k++)
+                         {
+                            memcpy(&p[current_etc.x - 1 +
+                                      (current_etc.y - 1 + k) * master.w],
+                                   &temporary[offset_x + (offset_y + k) * 4],
+                                   current_etc.w * sizeof (unsigned int));
+                         }
+                       break;
+                    case EET_COLORSPACE_ETC1:
+                       memcpy(&p[current_etc.x +
+                                 current_etc.y * etc1_width],
+                              it, 8);
+                       break;
+                    default:
+                       abort();
+                   }
+              }
+       }
+
+   return 1;
+}
+
 static void *
 eet_data_image_lossless_convert(int         *size,
                                 const void  *data,
@@ -815,6 +991,191 @@ eet_data_image_lossless_compressed_convert(int         *size,
       free(comp);
       return d;
    }
+}
+
+static void *
+eet_data_image_etc1_compressed_convert(int         *size,
+                                       const unsigned char *data,
+                                       unsigned int w,
+                                       unsigned int h,
+                                       int          quality,
+                                       int          compression)
+{
+   Eina_Binbuf *r;
+   rg_etc1_pack_params param;
+   unsigned char header[8] = "TGV1";
+   unsigned int nw, nh;
+   unsigned int block, block_count;
+   unsigned int x, y;
+   unsigned int compress_length;
+   unsigned int real_x, real_y;
+   char *comp;
+   char *buffer;
+   void *result;
+
+   r = eina_binbuf_new();
+   if (!r) return NULL;
+
+   nw = htonl(w);
+   nh = htonl(h);
+   param.m_dithering = 1;
+   if (quality > 70)
+     {
+        param.m_quality = rg_etc1_high_quality;
+        block = 7;
+     }
+   else if (quality < 30)
+     {
+        param.m_quality = rg_etc1_medium_quality;
+        block = 6;
+     }
+   else
+     {
+        param.m_quality = rg_etc1_low_quality;
+        block = 5;
+     }
+
+   header[4] = (block << 4) | block;
+   header[5] = 0;
+   header[6] = (!!compression & 0x1); // For now only LZ4 compression
+   header[7] = 0;
+
+   eina_binbuf_append_length(r, header, sizeof (header));
+   eina_binbuf_append_length(r, (unsigned char*) &nw, sizeof (nw));
+   eina_binbuf_append_length(r, (unsigned char*) &nh, sizeof (nh));
+
+   block = 4 << block;
+   block_count = (block * block) / (4 * 4);
+   buffer = alloca(block_count * 8);
+
+   if (compression)
+     {
+        compress_length = LZ4_compressBound(block_count * 8);
+        comp = alloca(compress_length);
+     }
+   else
+     {
+        comp = NULL;
+     }
+
+   // Write block
+   for (y = 0; y < h + 2; y += block)
+     {
+        real_y = y > 0 ? y - 1 : 0;
+
+        for (x = 0; x < w + 2; x += block)
+          {
+             unsigned int i, j;
+             unsigned char duplicate_w[2], duplicate_h[2];
+             int wlen;
+             char *offset = buffer;
+
+             real_x = x > 0 ? x - 1 : 0;
+
+             for (i = 0; i < block; i += 4)
+               {
+                  unsigned char block_h;
+                  int kmax;
+
+                  duplicate_h[0] = !!((real_y + i) == 0);
+                  duplicate_h[1] = !!((real_y + i + (4 - duplicate_h[0])) >= h);
+                  block_h = 4 - duplicate_h[0] - duplicate_h[1];
+
+                  kmax = real_y + i + block_h < h ?
+                    block_h : h - real_y - i - 1;
+
+                  for (j = 0; j < block; j += 4)
+                    {
+                       unsigned char todo[64] = { 0 };
+                       unsigned char block_w;
+                       int block_length;
+                       int k, lmax;
+
+
+                       duplicate_w[0] = !!((real_x + j) == 0);
+                       duplicate_w[1] = !!(((real_x + j + (4 - duplicate_w[0]))) >= w);
+                       block_w = 4 - duplicate_w[0] - duplicate_w[1];
+
+                       lmax = real_x + j + block_w < w ?
+                         block_w : w - real_x - j - 1;
+                       block_length = real_x + j + 4 < w ?
+                         4 : w - real_x - j - 1;
+
+                       if (lmax > 0)
+                         {
+                            for (k = duplicate_h[0]; k < kmax; k++)
+                              memcpy(&todo[(k + duplicate_h[0]) * 16 + duplicate_w[0] * 4],
+                                     &data[(real_y + i + k) * w + real_x + j],
+                                     4 * lmax);
+                         }
+
+
+                       if (duplicate_h[0] && block_length > 0) // Duplicate first line
+                         memcpy(&todo[0],
+                                &data[(real_y + i) * w + real_x + j],
+                                block_length * 4);
+
+                       if (duplicate_h[1] && block_length > 0 && kmax >= 0) // Duplicate last line
+                         memcpy(&todo[kmax * 16],
+                                &data[(real_y + i + kmax) * w + real_x + j],
+                                block_length * 4);
+
+                       if (duplicate_w[0]) // Duplicate first row
+                         {
+                            for (k = 0; k < kmax; k++)
+                              memcpy(&todo[(k + duplicate_h[0]) * 16],
+                                     &data[(real_y + i + k) * w + real_x + j],
+                                     4); // Copy a pixel at a time
+                         }
+
+                       if (duplicate_w[1] && lmax >= 0) // Duplicate last row
+                         {
+                            for (k = 0; k < kmax; k++)
+                              memcpy(&todo[(k + duplicate_h[0]) * 16 + (duplicate_w[0] + lmax) * 4],
+                                     &data[(real_y + i + k) * w + real_x + j + lmax],
+                                     4); // Copy a pixel at a time
+                         }
+
+
+                       rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
+                       offset += 8;
+                    }
+               }
+
+             if (compression)
+               {
+                  wlen = LZ4_compress(buffer, comp, block_count * 8);
+               }
+             else
+               {
+                  comp = buffer;
+                  wlen = block_count * 8;
+               }
+
+             if (wlen > 0)
+               {
+                  unsigned int blen = wlen;
+
+                  while (blen)
+                    {
+                       unsigned char plen;
+
+                       plen = blen & 0x7F;
+                       blen = blen >> 7;
+
+                       if (blen) plen = 0x80 | plen;
+                       eina_binbuf_append_length(r, &plen, 1);
+                    }
+                  eina_binbuf_append_length(r, (unsigned char *) comp, wlen);
+               }
+          }
+     }
+
+   *size = eina_binbuf_length_get(r);
+   result = eina_binbuf_string_steal(r);
+   eina_binbuf_free(r);
+
+   return result;
 }
 
 static void *
@@ -1101,7 +1462,7 @@ eet_data_image_write_cipher(Eet_File    *ef,
                             int          alpha,
                             int          comp,
                             int          quality,
-                            int          lossy)
+                            Eet_Image_Encoding lossy)
 {
    void *d = NULL;
    int size = 0;
@@ -1128,7 +1489,7 @@ eet_data_image_write(Eet_File    *ef,
                      int          alpha,
                      int          comp,
                      int          quality,
-                     int          lossy)
+                     Eet_Image_Encoding lossy)
 {
    return eet_data_image_write_cipher(ef,
                                       name,
@@ -1151,7 +1512,7 @@ eet_data_image_read_cipher(Eet_File     *ef,
                            int          *alpha,
                            int          *comp,
                            int          *quality,
-                           int          *lossy)
+                           Eet_Image_Encoding *lossy)
 {
    unsigned int *d = NULL;
    void *data = NULL;
@@ -1185,7 +1546,7 @@ eet_data_image_read(Eet_File     *ef,
                     int          *alpha,
                     int          *comp,
                     int          *quality,
-                    int          *lossy)
+                    Eet_Image_Encoding *lossy)
 {
    return eet_data_image_read_cipher(ef, name, NULL, w, h, alpha,
                                      comp, quality, lossy);
@@ -1204,7 +1565,7 @@ eet_data_image_read_to_surface_cipher(Eet_File     *ef,
                                       int          *alpha,
                                       int          *comp,
                                       int          *quality,
-                                      int          *lossy)
+                                      Eet_Image_Encoding *lossy)
 {
    void *data = NULL;
    int free_data = 0;
@@ -1244,7 +1605,7 @@ eet_data_image_read_to_surface(Eet_File     *ef,
                                int          *alpha,
                                int          *comp,
                                int          *quality,
-                               int          *lossy)
+                               Eet_Image_Encoding *lossy)
 {
    return eet_data_image_read_to_surface_cipher(ef, name, NULL,
                                                 src_x, src_y, d,
@@ -1262,7 +1623,7 @@ eet_data_image_header_read_cipher(Eet_File     *ef,
                                   int          *alpha,
                                   int          *comp,
                                   int          *quality,
-                                  int          *lossy)
+                                  Eet_Image_Encoding *lossy)
 {
    void *data = NULL;
    int size = 0;
@@ -1296,7 +1657,7 @@ eet_data_image_header_read(Eet_File     *ef,
                            int          *alpha,
                            int          *comp,
                            int          *quality,
-                           int          *lossy)
+                           Eet_Image_Encoding *lossy)
 {
    return eet_data_image_header_read_cipher(ef, name, NULL,
                                             w, h, alpha,
@@ -1311,7 +1672,7 @@ eet_data_image_encode_cipher(const void  *data,
                              int          alpha,
                              int          comp,
                              int          quality,
-                             int          lossy,
+                             Eet_Image_Encoding lossy,
                              int         *size_ret)
 {
    void *d = NULL;
@@ -1319,24 +1680,32 @@ eet_data_image_encode_cipher(const void  *data,
    unsigned int ciphered_sz = 0;
    int size = 0;
 
-   if (lossy == 0)
+   switch (lossy)
      {
-        if (comp > 0)
-          d = eet_data_image_lossless_compressed_convert(&size, data,
-                                                         w, h, alpha, comp);
+      case EET_IMAGE_LOSSLESS:
+         if (comp > 0)
+           d = eet_data_image_lossless_compressed_convert(&size, data,
+                                                          w, h, alpha, comp);
 
-        /* eet_data_image_lossless_compressed_convert will refuse to compress something
-           if the result is bigger than the entry. */
-        if (comp <= 0 || !d)
-          d = eet_data_image_lossless_convert(&size, data, w, h, alpha);
-     }
-   else
-     {
-        if (!alpha)
-          d = eet_data_image_jpeg_convert(&size, data, w, h, alpha, quality);
-        else
-          d = eet_data_image_jpeg_alpha_convert(&size, data,
-                                                w, h, alpha, quality);
+         /* eet_data_image_lossless_compressed_convert will refuse to compress something
+            if the result is bigger than the entry. */
+         if (comp <= 0 || !d)
+           d = eet_data_image_lossless_convert(&size, data, w, h, alpha);
+         break;
+      case EET_IMAGE_JPEG:
+         if (!alpha)
+           d = eet_data_image_jpeg_convert(&size, data, w, h, alpha, quality);
+         else
+           d = eet_data_image_jpeg_alpha_convert(&size, data,
+                                                 w, h, alpha, quality);
+         break;
+      case EET_IMAGE_ETC1:
+         if (alpha) abort();
+         d = eet_data_image_etc1_compressed_convert(&size, data, w, h,
+                                                    quality, comp);
+         break;
+      default:
+         abort();
      }
 
    if (cipher_key)
@@ -1369,7 +1738,7 @@ eet_data_image_encode(const void  *data,
                       int          alpha,
                       int          comp,
                       int          quality,
-                      int          lossy)
+                      Eet_Image_Encoding lossy)
 {
    return eet_data_image_encode_cipher(data, NULL, w, h, alpha,
                                        comp, quality, lossy, size_ret);
@@ -1384,7 +1753,7 @@ eet_data_image_header_decode_cipher(const void   *data,
                                     int          *alpha,
                                     int          *comp,
                                     int          *quality,
-                                    int          *lossy)
+                                    Eet_Image_Encoding *lossy)
 {
    int header[8];
    void *deciphered_d = NULL;
@@ -1463,7 +1832,7 @@ eet_data_image_header_decode_cipher(const void   *data,
           *comp = cp;
 
         if (lossy)
-          *lossy = 0;
+          *lossy = EET_IMAGE_LOSSLESS;
 
         if (quality)
           *quality = 100;
@@ -1497,13 +1866,26 @@ eet_data_image_header_decode_cipher(const void   *data,
                *comp = 0;
 
              if (lossy)
-               *lossy = 1;
+               *lossy = EET_IMAGE_JPEG;
 
              if (quality)
                *quality = 75;
 
              return 1;
           }
+     }
+   else if (!strncmp(data, "TGV1", 4))
+     {
+        const char *m = data;
+
+        if (w) *w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
+        if (h) *h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
+        if (alpha) *alpha = 0; // ETC1 only for now
+        if (comp) *comp = m[OFFSET_OPTIONS] & 0x1;
+        if (lossy) *lossy = EET_IMAGE_ETC1;
+        if (quality) *quality = 50;
+
+        return 1;
      }
    else
      {
@@ -1526,7 +1908,7 @@ eet_data_image_header_decode_cipher(const void   *data,
                *comp = 0;
 
              if (lossy)
-               *lossy = 1;
+               *lossy = EET_IMAGE_JPEG;
 
              if (quality)
                *quality = 75;
@@ -1547,7 +1929,7 @@ eet_data_image_header_decode(const void   *data,
                              int          *alpha,
                              int          *comp,
                              int          *quality,
-                             int          *lossy)
+                             Eet_Image_Encoding *lossy)
 {
    return eet_data_image_header_decode_cipher(data,
                                               NULL,
@@ -1598,9 +1980,9 @@ _eet_data_image_decode_inside(const void   *data,
                               int           alpha,
                               int           comp,
                               int           quality,
-                              int           lossy)
+                              Eet_Image_Encoding lossy)
 {
-   if (lossy == 0 && quality == 100)
+   if (lossy == EET_IMAGE_LOSSLESS && quality == 100)
      {
         unsigned int *body;
 
@@ -1687,7 +2069,7 @@ _eet_data_image_decode_inside(const void   *data,
              for (x = 0; x < (w * h); x++) SWAP32(d[x]);
           }
      }
-   else if (comp == 0 && lossy == 1)
+   else if (comp == 0 && lossy == EET_IMAGE_JPEG)
      {
         if (alpha)
           {
@@ -1721,6 +2103,12 @@ _eet_data_image_decode_inside(const void   *data,
                                                  h, row_stride))
           return 0;
      }
+   else if (lossy == EET_IMAGE_ETC1)
+     {
+        return eet_data_image_etc1_decode(data, size, d,
+                                          src_x, src_y, src_w, src_h,
+                                          EET_COLORSPACE_ARGB8888);
+     }
    else
      abort();
 
@@ -1736,11 +2124,12 @@ eet_data_image_decode_cipher(const void   *data,
                              int          *alpha,
                              int          *comp,
                              int          *quality,
-                             int          *lossy)
+                             Eet_Image_Encoding *lossy)
 {
    unsigned int *d = NULL;
    unsigned int iw, ih;
-   int ialpha, icompress, iquality, ilossy;
+   int ialpha, icompress, iquality;
+   Eet_Image_Encoding ilossy;
    void *deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
@@ -1802,7 +2191,7 @@ eet_data_image_decode(const void   *data,
                       int          *alpha,
                       int          *comp,
                       int          *quality,
-                      int          *lossy)
+                      Eet_Image_Encoding *lossy)
 {
    return eet_data_image_decode_cipher(data, NULL, size, w, h,
                                        alpha, comp, quality, lossy);
@@ -1821,10 +2210,11 @@ eet_data_image_decode_to_surface_cipher(const void   *data,
                                         int          *alpha,
                                         int          *comp,
                                         int          *quality,
-                                        int          *lossy)
+                                        Eet_Image_Encoding *lossy)
 {
    unsigned int iw, ih;
-   int ialpha, icompress, iquality, ilossy;
+   int ialpha, icompress, iquality;
+   Eet_Image_Encoding ilossy;
    void *deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
@@ -1887,7 +2277,7 @@ eet_data_image_decode_to_surface(const void   *data,
                                  int          *alpha,
                                  int          *comp,
                                  int          *quality,
-                                 int          *lossy)
+                                 Eet_Image_Encoding *lossy)
 {
    return eet_data_image_decode_to_surface_cipher(data, NULL, size,
                                                   src_x, src_y, d,
