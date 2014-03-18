@@ -40,6 +40,10 @@ static void _ecore_evas_drm_show(Ecore_Evas *ee);
 static void _ecore_evas_drm_hide(Ecore_Evas *ee);
 static void _ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title);
 static void _ecore_evas_drm_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
+static void _ecore_evas_drm_size_min_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_drm_size_max_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
 static void _ecore_evas_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
 static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
@@ -78,10 +82,10 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_activate) (Ecore_Evas *ee);
    _ecore_evas_drm_title_set,
    _ecore_evas_drm_name_class_set,
-   NULL, //void (*fn_size_min_set) (Ecore_Evas *ee, int w, int h);
-   NULL, //void (*fn_size_max_set) (Ecore_Evas *ee, int w, int h);
-   NULL, //void (*fn_size_base_set) (Ecore_Evas *ee, int w, int h);
-   NULL, //void (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
+   _ecore_evas_drm_size_min_set,
+   _ecore_evas_drm_size_max_set,
+   _ecore_evas_drm_size_base_set,
+   _ecore_evas_drm_size_step_set,
    NULL, //void (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
    NULL, //void (*fn_layer_set) (Ecore_Evas *ee, int layer);
    NULL, //void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
@@ -487,6 +491,46 @@ _ecore_evas_drm_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
    ee->prop.clas = NULL;
    if (n) ee->prop.name = strdup(n);
    if (c) ee->prop.clas = strdup(c);
+}
+
+static void 
+_ecore_evas_drm_size_min_set(Ecore_Evas *ee, int w, int h)
+{
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.min.w == w) && (ee->prop.min.h == h)) return;
+   ee->prop.min.w = w;
+   ee->prop.min.h = h;
+}
+
+static void 
+_ecore_evas_drm_size_max_set(Ecore_Evas *ee, int w, int h)
+{
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.max.w == w) && (ee->prop.max.h == h)) return;
+   ee->prop.max.w = w;
+   ee->prop.max.h = h;
+}
+
+static void 
+_ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h)
+{
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.base.w == w) && (ee->prop.base.h == h)) return;
+   ee->prop.base.w = w;
+   ee->prop.base.h = h;
+}
+
+static void 
+_ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h)
+{
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.step.w == w) && (ee->prop.step.h == h)) return;
+   ee->prop.step.w = w;
+   ee->prop.step.h = h;
 }
 
 static int 
