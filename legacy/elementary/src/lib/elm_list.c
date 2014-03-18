@@ -3044,11 +3044,11 @@ _elm_list_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *
    Evas_Coord *y = va_arg(*list, Evas_Coord *);
    Evas_Coord *w = va_arg(*list, Evas_Coord *);
    Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Eina_Bool *is_next = va_arg(*list, Eina_Bool *);
+   Eina_Bool is_next = va_arg(*list, int);
 
    Elm_List_Smart_Data *sd = _pd;
 
-   if (is_next && *is_next)
+   if (is_next)
      {
         if (sd->focused_item)
           {
