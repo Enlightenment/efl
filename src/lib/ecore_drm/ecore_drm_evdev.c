@@ -541,22 +541,10 @@ _device_process_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned in
 
    _device_process_flush(dev, timestamp);
 
-   switch (event->code)
-     {
-      case BTN_LEFT:
-      case BTN_RIGHT:
-      case BTN_MIDDLE:
-      case BTN_SIDE:
-      case BTN_EXTRA:
-      case BTN_FORWARD:
-      case BTN_BACK:
-      case BTN_TASK:
-        _device_notify_button(dev, event, timestamp);
-        break;
-      default:
-        _device_notify_key(dev, event, timestamp);
-        break;
-     }
+   if ((event->code >= BTN_LEFT) && (event->code <= BTN_TASK))
+     _device_notify_button(dev, event, timestamp);
+   else if ((event->code >= KEY_ESC) && (event->code <= KEY_MICMUTE))
+     _device_notify_key(dev, event, timestamp);
 }
 
 static void 
