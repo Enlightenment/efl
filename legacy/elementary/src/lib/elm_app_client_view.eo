@@ -1,0 +1,139 @@
+class Elm_App_Client_View (Eo_Base)
+{
+   eo_prefix: elm_app_client_view;
+   constructors {
+      constructor {
+         /*@ Class constructor of elm_app_client_view */
+         params {
+            @in const char *path; /*@ DBus path of view */
+         }
+      }
+   }
+   properties {
+      state {
+         get {
+            /*@ Get state of view */
+            legacy null;
+         }
+         values {
+            Elm_App_View_State state; /*@ state of view */
+         }
+      }
+      new_events {
+         get {
+            /*@ Get new events of view */
+            legacy null;
+         }
+         values {
+            int events; /*@ number of events of view */
+         }
+      }
+      window {
+         get {
+            /*@ Get window of view */
+            legacy null;
+         }
+         values {
+            int window; /*@ window of view */
+         }
+      }
+      icon_pixels {
+         get {
+            /*@ Get icon pixels of view, view could have a icon in raw format not saved in disk. */
+            legacy null;
+         }
+         values {
+            unsigned int w; /*@ icon width */
+            unsigned int h; /*@ icon height */
+            Eina_Bool has_alpha; /*@ if icon have alpha channel */
+            const unsigned char *pixels; /*@ unsigned char array, with all bytes of icon */
+         }
+      }
+      path {
+         get {
+            /*@ Get DBus path of view */
+            legacy null;
+         }
+         values {
+            const char *ret; /*@ DBus path of view */
+         }
+      }
+      package {
+         get {
+            /*@ Get application package */
+            legacy null;
+         }
+         values {
+            const char *ret; /*@ Package of application */
+         }
+      }
+      icon {
+         get {
+            /*@ Get icon path of view */
+            legacy null;
+         }
+         values {
+            const char *ret; /*@ icon path of view */
+         }
+      }
+      progress {
+         get {
+            /*@ Get progress of view, should be -1 if there nothing in progress or something between 0-100 */
+            legacy null;
+         }
+         values {
+            unsigned short progress; /*@ progress of view */
+         }
+      }
+      title {
+         get {
+            /*@ Get title of view */
+            legacy null;
+         }
+         values {
+            const char *ret; /*@ title of view */
+         }
+      }
+   }
+   methods {
+      pause {
+         /*@ Pause view */
+         params {
+            @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was paused */
+            @in const void *data; /*@ callback user data */
+         }
+         legacy null;
+      }
+      resume {
+         /*@ Resume view */
+         params {
+            @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was resumed */
+            @in const void *data; /*@ callback user data */
+         }
+         legacy null;
+      }
+      close {
+         /*@ Close view */
+         params {
+            @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was closed */
+            @in const void *data; /*@ callback user data */
+         }
+         legacy null;
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+   }
+   events {
+      state,changed; /*@ State of view changed. */
+      title,changed; /*@ Title of view changed. */
+      icon,changed; /*@ Icon of view changed. */
+      icon,pixels,changed; /*@ Icons pixels of view changed. */
+      new_events,changed; /*@ New events of view changed. */
+      progress,changed; /*@ Progress of view changed. */
+      window,changed; /*@ Window of view changed. */
+      property,changed; /*@ One of view properties changed. */
+   }
+
+}

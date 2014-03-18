@@ -70,7 +70,7 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 
         old_view = evas_object_data_del(view_props, "view");
         eo_do(old_view,
-              eo_event_callback_del(ELM_APP_CLIENT_VIEW_EV_PROPERTY_CHANGED,
+              eo_event_callback_del(ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED,
                                     _app_view_prop_changed_cb, table));
         elm_list_clear(view_props);
      }
@@ -90,7 +90,7 @@ _app_view_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
          elm_app_client_view_progress_get(&progress),
          elm_app_client_view_new_events_get(&new_events),
          elm_app_client_view_window_get(&window),
-         eo_event_callback_add(ELM_APP_CLIENT_VIEW_EV_PROPERTY_CHANGED,
+         eo_event_callback_add(ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED,
                                _app_view_prop_changed_cb, table));
 
    snprintf(buffer, sizeof(buffer), "Title=%s", title);

@@ -1,3 +1,8 @@
+typedef void *(*Elm_App_Client_View_Cb)(void *data, Elm_App_Client_View *view, const char *error, const char *error_message);
+
+#include "elm_app_client_view.eo.h"
+
+#if 0
 #define ELM_APP_CLIENT_VIEW_CLASS elm_app_client_view_class_get()
 
 const Eo_Class *elm_app_client_view_class_get(void) EINA_CONST;
@@ -21,8 +26,6 @@ enum
    ELM_APP_CLIENT_VIEW_SUB_ID_PACKAGE_GET,
    ELM_APP_CLIENT_VIEW_SUB_ID_LAST
 };
-
-typedef void *(*Elm_App_Client_View_Cb)(void *data, Elm_App_Client_View *view, const char *error, const char *error_message);
 
 #define ELM_APP_CLIENT_VIEW_ID(sub_id) (ELM_APP_CLIENT_VIEW_BASE_ID + sub_id)
 
@@ -192,3 +195,5 @@ extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_VIEW_EV_WINDOW_CHANGED;
 
 extern EAPI const Eo_Event_Description _ELM_APP_CLIENT_VIEW_EV_PROPERTY_CHANGED;
 #define ELM_APP_CLIENT_VIEW_EV_PROPERTY_CHANGED (&(_ELM_APP_CLIENT_VIEW_EV_PROPERTY_CHANGED))
+#endif
+
