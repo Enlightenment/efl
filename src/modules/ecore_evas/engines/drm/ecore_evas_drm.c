@@ -25,6 +25,8 @@ static int _ecore_evas_drm_shutdown(void);
 static Ecore_Evas_Interface_Drm *_ecore_evas_drm_interface_new(void);
 
 static void _ecore_evas_drm_free(Ecore_Evas *ee);
+static void _ecore_evas_drm_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+static void _ecore_evas_drm_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 static void _ecore_evas_drm_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 static void _ecore_evas_drm_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_show(Ecore_Evas *ee);
@@ -40,8 +42,8 @@ static Ecore_Drm_Device *dev = NULL;
 static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func = 
 {
    _ecore_evas_drm_free,
-   NULL, //void (*fn_callback_resize_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
-   NULL, //void (*fn_callback_move_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   _ecore_evas_drm_callback_resize_set,
+   _ecore_evas_drm_callback_move_set,
    NULL, //void (*fn_callback_show_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
    NULL, //void (*fn_callback_hide_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
    _ecore_evas_drm_delete_request_set,
@@ -350,6 +352,18 @@ _ecore_evas_drm_free(Ecore_Evas *ee)
 {
    ecore_evas_input_event_unregister(ee);
    _ecore_evas_drm_shutdown();
+}
+
+static void 
+_ecore_evas_drm_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
+{
+   ee->func.fn_resize = func;
+}
+
+static void 
+_ecore_evas_drm_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
+{
+   ee->func.fn_move = func;
 }
 
 static void 
