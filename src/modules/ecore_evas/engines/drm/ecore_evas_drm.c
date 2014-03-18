@@ -34,6 +34,7 @@ static void _ecore_evas_drm_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Ev
 static void _ecore_evas_drm_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 static void _ecore_evas_drm_move(Ecore_Evas *ee, int x, int y);
 static void _ecore_evas_drm_resize(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 static void _ecore_evas_drm_show(Ecore_Evas *ee);
 static void _ecore_evas_drm_hide(Ecore_Evas *ee);
 static int _ecore_evas_drm_render(Ecore_Evas *ee);
@@ -64,7 +65,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_move,
    NULL, //void (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
    _ecore_evas_drm_resize,
-   NULL, //void (*fn_move_resize) (Ecore_Evas *ee, int x, int y, int w, int h);
+   _ecore_evas_drm_move_resize,
    NULL, //void (*fn_rotation_set) (Ecore_Evas *ee, int rot, int resize);
    NULL, //void (*fn_shaped_set) (Ecore_Evas *ee, int shaped);
    _ecore_evas_drm_show,
@@ -423,6 +424,15 @@ _ecore_evas_drm_resize(Ecore_Evas *ee, int w, int h)
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
+}
+
+static void 
+_ecore_evas_drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
+{
+   if ((ee->x != x) || (ee->y != y))
+     _ecore_evas_drm_move(ee, x, y);
+   if ((ee->w != w) || (ee->h != h))
+     _ecore_evas_drm_resize(ee, w, h);
 }
 
 static void 
