@@ -1964,4 +1964,4 @@ _evas_box_evas_object_smart_data_get(Eo *obj EINA_UNUSED, Evas_Object_Box_Data *
    return (void *)_pd;
 }
 
-#include "evas_box.eo.c"
+#include "canvas/evas_box.eo.c"
