@@ -7,7 +7,7 @@
 
 /* TOKENIZER */
 
-#define BUFSIZE 65536
+#define BUFSIZE 256*1024
 
 typedef struct _eo_tokenizer
 {

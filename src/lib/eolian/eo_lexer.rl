@@ -1303,7 +1303,10 @@ eo_tokenizer_database_fill(const char *filename)
      }
 
    if (len == BUFSIZE)
-      WRN("%s: buffer(%d) is full, might not be big enough.", filename, len);
+     {
+        ERR("%s: buffer(%d) is full, might not be big enough.", filename, len);
+        goto end;
+     }
 
    if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
 
