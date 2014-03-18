@@ -1070,15 +1070,12 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 
    if (elm_widget_focus_get(obj))
      {
-        if (!sd->highlighted_item)
-          {
-             if (sd->last_focused_item)
-                _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
-             else if (sd->last_selected_item)
-                _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
-             else
-                _elm_list_item_focused((Elm_List_Item *)eina_list_data_get(sd->items));
-          }
+        if (sd->last_focused_item)
+           _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
+        else if (sd->last_selected_item)
+           _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
+        else if (!sd->highlighted_item)
+           _elm_list_item_focused((Elm_List_Item *)eina_list_data_get(sd->items));
         _elm_widget_focus_highlight_start(obj);
      }
    else
