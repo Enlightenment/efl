@@ -19,14 +19,6 @@
 # include <Ecore_Drm.h>
 //#endif
 
-/* local structures */
-typedef struct _Ecore_Evas_Engine_Data_Drm Ecore_Evas_Engine_Data_Drm;
-
-struct _Ecore_Evas_Engine_Data_Drm
-{
-   int fd;
-};
-
 /* local function prototypes */
 static int _ecore_evas_drm_init(const char *device);
 static int _ecore_evas_drm_shutdown(void);
@@ -213,9 +205,18 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int 
         goto eng_err;
      }
 
+   ee->prop.window = einfo->info.output;
+
    _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
-   ecore_drm_device_window_set(dev, ee);
+
+   ecore_drm_device_window_set(dev, ee->prop.window);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+
    evas_event_feed_mouse_in(ee->evas, 
                             (unsigned int)((unsigned long long)
                                            (ecore_time_get() * 1000.0) & 
