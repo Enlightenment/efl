@@ -987,7 +987,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
              evas_gl_common_image_push(gc, im,
                                        dx, dy, dw, dh,
                                        sx, sy, sw, sh,
-                                       sx, sy, sw, sh,
+                                       dx, dy, dw, dh,
                                        r, g, b, a, smooth,
                                        yuv, yuy2, nv12);
           }
