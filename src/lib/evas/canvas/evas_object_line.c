@@ -217,7 +217,7 @@ evas_object_line_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_line_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSED)
+_evas_line_eo_base_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
    Evas_Line_Data *o;

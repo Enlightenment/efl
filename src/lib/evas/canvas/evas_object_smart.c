@@ -543,7 +543,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 }
 
 EOLIAN static void
-_evas_smart_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
+_evas_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
    Evas_Smart_Data *smart;

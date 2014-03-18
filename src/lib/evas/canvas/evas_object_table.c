@@ -955,7 +955,7 @@ evas_object_table_add(Evas *evas)
 }
 
 EOLIAN static void
-_evas_table_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
+_evas_table_eo_base_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));

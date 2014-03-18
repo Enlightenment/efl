@@ -63,7 +63,7 @@ _init_cow(void)
 }
 
 EOLIAN static void
-_evas_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
@@ -610,7 +610,7 @@ evas_object_del(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;

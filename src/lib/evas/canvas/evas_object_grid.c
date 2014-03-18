@@ -256,7 +256,7 @@ evas_object_grid_add(Evas *evas)
 }
 
 EOLIAN static void
-_evas_grid_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
+_evas_grid_eo_base_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_smart_attach(_evas_object_grid_smart_class_new()));

@@ -150,7 +150,7 @@ evas_new(void)
 }
 
 EOLIAN static void
-_evas_constructor(Eo *eo_obj, Evas_Public_Data *e)
+_evas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
@@ -199,7 +199,7 @@ evas_free(Evas *eo_e)
 }
 
 EOLIAN static void
-_evas_destructor(Eo *eo_e, Evas_Public_Data *e)
+_evas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
    Evas_Coord_Touch_Point *touch_point;

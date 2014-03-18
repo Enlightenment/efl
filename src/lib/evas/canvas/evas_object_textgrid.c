@@ -474,7 +474,7 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN static void
-_evas_textgrid_destructor(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED)
+_evas_textgrid_eo_base_destructor(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_textgrid_free(eo_obj, obj);
@@ -1063,7 +1063,7 @@ evas_object_textgrid_add(Evas *e)
 }
 
 EOLIAN static void
-_evas_textgrid_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EINA_UNUSED)
+_evas_textgrid_eo_base_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EINA_UNUSED)
 {
    Eo *eo_parent;
 

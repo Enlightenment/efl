@@ -320,7 +320,7 @@ _init_cow(Eo *eo_obj)
 }
 
 EOLIAN static void
-_evas_image_constructor(Eo *eo_obj, Evas_Image_Data *o)
+_evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas *eo_e;
@@ -2557,7 +2557,7 @@ evas_object_image_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_image_destructor(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
+_evas_image_eo_base_destructor(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 

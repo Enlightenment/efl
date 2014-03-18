@@ -5494,7 +5494,7 @@ evas_object_textblock_add(Evas *e)
 }
 
 EOLIAN static void
-_evas_textblock_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data EINA_UNUSED)
+_evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Textblock_Data *o;
@@ -10553,7 +10553,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_evas_textblock_destructor(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNUSED)
+_evas_textblock_eo_base_destructor(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNUSED)
 {
    evas_object_textblock_free(eo_obj);
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
