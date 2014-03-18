@@ -635,17 +635,17 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 void
 _edje_recalc(Edje *ed)
 {
-   if ((ed->freeze > 0) || (_edje_freeze_val > 0))
+   if ((ed->freeze > 0) || (_edje_util_freeze_val > 0))
      {
         ed->recalc = EINA_TRUE;
         if (!ed->calc_only)
           {
-             if (_edje_freeze_val > 0)
+             if (_edje_util_freeze_val > 0)
                {
                   if (!ed->freeze_calc)
                     {
-                       _edje_freeze_calc_count++;
-                       _edje_freeze_calc_list = eina_list_append(_edje_freeze_calc_list, ed);
+                       _edje_util_freeze_calc_count++;
+                       _edje_util_freeze_calc_list = eina_list_append(_edje_util_freeze_calc_list, ed);
                        ed->freeze_calc = EINA_TRUE;
                     }
                }

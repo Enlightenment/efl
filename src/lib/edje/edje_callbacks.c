@@ -108,7 +108,7 @@ _edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
    ignored = rp->part->ignore_flags & ev->event_flags;
 
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
 
    if ((!ev->event_flags) || (!ignored))
      {
@@ -154,7 +154,7 @@ _edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
          rp->still_in = EINA_TRUE;
      }
 //   _edje_recalc_do(ed);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
 
    return EO_CALLBACK_CONTINUE;
@@ -178,7 +178,7 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
    ignored = rp->part->ignore_flags & ev->event_flags;
 
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
 
    if ((!ev->event_flags) || (!ignored))
      {
@@ -228,7 +228,7 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
    rp->still_in = EINA_FALSE;
 
 //   _edje_recalc_do(ed);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
 
    return EO_CALLBACK_CONTINUE;
@@ -285,7 +285,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
               rp->still_in = EINA_TRUE;
           }
      }
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
    if (rp->drag)
      {
 	if (rp->drag->down.count > 0)
@@ -328,7 +328,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
 	  }
      }
    _edje_unref(ed);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -376,7 +376,7 @@ _edje_timer_cb(void *data EINA_UNUSED)
 
 	ed = eina_list_data_get(animl);
 	_edje_block(ed);
-	_edje_freeze(ed);
+	_edje_util_freeze(ed);
 	animl = eina_list_remove(animl, eina_list_data_get(animl));
 	if ((!ed->paused) && (!ed->delete_me))
 	  {
@@ -423,7 +423,7 @@ _edje_timer_cb(void *data EINA_UNUSED)
 	  }
 	break_prog:
 	_edje_unblock(ed);
-	_edje_thaw(ed);
+	_edje_util_thaw(ed);
 	_edje_unref(ed);
      }
    if (_edje_anim_count > 0) return ECORE_CALLBACK_RENEW;

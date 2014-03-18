@@ -72,58 +72,17 @@ static int _sort_defined_boxes(const void *a, const void *b);
 
 /************************** API Routines **************************/
 
-EAPI Eina_Bool
-edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
+EOLIAN void
+_edje_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file, const char **group)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-
-   eo_do(obj, edje_obj_file_set(file, group, &ret));
-   return ret;
-}
-
-EAPI Eina_Bool
-edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-
-   eo_do(obj, edje_obj_mmap_set(file, group, &ret));
-   return ret;
-}
-
-EAPI void
-edje_object_file_get(const Evas_Object *obj, const char **file, const char **group)
-{
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_file_get(file, group));
-}
-
-void
-_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char **file = va_arg(*list, const char **);
-   const char **group = va_arg(*list, const char **);
-   const Edje *ed = _pd;
    if (file) *file = ed->path;
    if (group) *group = ed->group;
 }
 
-EAPI Edje_Load_Error
-edje_object_load_error_get(const Evas_Object *obj)
+EOLIAN Edje_Load_Error
+_edje_load_error_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return EDJE_LOAD_ERROR_NONE;
-   Edje_Load_Error ret = EDJE_LOAD_ERROR_NONE;
-   eo_do((Eo *)obj, edje_obj_load_error_get(&ret));
-   return ret;
-}
-
-void
-_load_error_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Edje_Load_Error *ret = va_arg(*list, Edje_Load_Error *);
-   const Edje *ed = _pd;
-   *ret = ed->load_error;
+   return ed->load_error;
 }
 
 EAPI const char *
@@ -798,7 +757,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                _edje_ref(ed);
                _edje_block(ed);
-               _edje_freeze(ed);
+               _edje_util_freeze(ed);
                //	     if (ed->collection->script) _edje_embryo_script_init(ed);
                _edje_var_init(ed);
                for (i = 0; i < ed->table_parts_size; i++)
@@ -1097,7 +1056,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                  edje_object_signal_emit(obj, "edje,state,ltr", "edje");
 
                _edje_recalc(ed);
-               _edje_thaw(ed);
+               _edje_util_thaw(ed);
                _edje_unblock(ed);
                _edje_unref(ed);
                ed->load_error = EDJE_LOAD_ERROR_NONE;
@@ -1153,7 +1112,7 @@ on_error:
    eina_list_free(externals);
    eina_list_free(sources);
    eina_array_flush(&parts);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unblock(ed);
    _edje_unref(ed);
    _edje_file_del(ed);
@@ -1291,9 +1250,9 @@ _edje_file_del(Edje *ed)
    if (tev) evas_event_freeze(tev);
    if (ed->freeze_calc)
      {
-        _edje_freeze_calc_list = eina_list_remove(_edje_freeze_calc_list, ed);
+        _edje_util_freeze_calc_list = eina_list_remove(_edje_util_freeze_calc_list, ed);
         ed->freeze_calc = EINA_FALSE;
-        _edje_freeze_calc_count--;
+        _edje_util_freeze_calc_count--;
      }
    _edje_entry_shutdown(ed);
    _edje_message_del(ed);
@@ -2004,6 +1963,6 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
    emsg.src = alias ? alias : new_src;
    emsg.data = NULL;
    if (ed_parent)
-     _edje_message_send(ed_parent, EDJE_QUEUE_SCRIPT,
+     _edje_util_message_send(ed_parent, EDJE_QUEUE_SCRIPT,
                         EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }

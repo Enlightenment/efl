@@ -1,0 +1,10 @@
+class Edje_Edit (Edje)
+{
+   data: Edje_Edit;
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Smart::del;
+      Edje::file::set;
+   }
+}

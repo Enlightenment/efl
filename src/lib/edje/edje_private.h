@@ -1941,9 +1941,9 @@ extern Eina_List       *_edje_edjes;
 
 extern char            *_edje_fontset_append;
 extern FLOAT_T          _edje_scale;
-extern int              _edje_freeze_val;
-extern int              _edje_freeze_calc_count;
-extern Eina_List       *_edje_freeze_calc_list;
+extern int              _edje_util_freeze_val;
+extern int              _edje_util_freeze_calc_count;
+extern Eina_List       *_edje_util_freeze_calc_list;
 
 extern Eina_Bool        _edje_password_show_last;
 extern FLOAT_T          _edje_password_show_last_timeout;
@@ -2078,8 +2078,8 @@ void              _edje_text_class_members_free(void);
 void              _edje_text_class_hash_free(void);
 
 Edje             *_edje_fetch(const Evas_Object *obj) EINA_PURE;
-int               _edje_freeze(Edje *ed);
-int               _edje_thaw(Edje *ed);
+int               _edje_util_freeze(Edje *ed);
+int               _edje_util_thaw(Edje *ed);
 int               _edje_block(Edje *ed);
 int               _edje_unblock(Edje *ed);
 int               _edje_block_break(Edje *ed);
@@ -2175,7 +2175,7 @@ void          _edje_message_cb_set          (Edje *ed, void (*func) (void *data,
 Edje_Message *_edje_message_new             (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id);
 void          _edje_message_free            (Edje_Message *em);
 void          _edje_message_propornot_send  (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg, Eina_Bool prop);
-void          _edje_message_send            (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg);
+void          _edje_util_message_send       (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg);
 void          _edje_message_parameters_push (Edje_Message *em);
 void          _edje_message_process         (Edje_Message *em);
 void          _edje_message_queue_process   (void);

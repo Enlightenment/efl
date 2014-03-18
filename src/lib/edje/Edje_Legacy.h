@@ -188,7 +188,7 @@ EAPI void edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update);
  * @param obj A handle to an Edje object.
  * @return @c true if does, @c false if it doesn't.
  */
-EAPI Eina_Bool edje_object_update_hints_get(Evas_Object *obj);
+EAPI Eina_Bool edje_object_update_hints_get(const Evas_Object *obj);
 
 /**
  * @brief Get the maximum size specified -- as an EDC property -- for a

@@ -51,25 +51,11 @@ edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *data, E
    eina_stringshare_del(src);
 }
 
-EAPI void
-edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+EOLIAN void
+_edje_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_signal_callback_add(emission, source, (Edje_Signal_Cb)func, data));
-}
-
-void
-_signal_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
-   void *data = va_arg(*list, void *);
-
-   Edje *ed = _pd;
-
    if ((!emission) || (!source) || (!func)) return;
-   ed = _pd;
+
    if (!ed) return;
    if (ed->delete_me) return;
 
@@ -96,21 +82,12 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
    return ret;
 }
 
-void
-_signal_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void*
+_edje_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Edje_Signal_Cb func = va_arg(*list, Edje_Signal_Cb);
-   void *data = va_arg(*list, void *);
-   void **ret = va_arg(*list, void **);
-   Edje *ed = _pd;
-
-   if (ret) *ret = NULL;
-
-   if ((!emission) || (!source) || (!func)) return;
-   if (!ed) return;
-   if (ed->delete_me) return;
+   if ((!emission) || (!source) || (!func)) return NULL;
+   if (!ed) return NULL;
+   if (ed->delete_me) return NULL;
 
    emission = eina_stringshare_add(emission);
    source = eina_stringshare_add(source);
@@ -121,6 +98,8 @@ _signal_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
    eina_stringshare_del(emission);
    eina_stringshare_del(source);
+
+   return NULL;
 }
 
 EAPI void *
@@ -132,42 +111,19 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
    return ret;
 }
 
-EAPI void
-edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+EOLIAN void
+_edje_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
 {
-   if (!obj) return;
-   if (!eo_isa(obj, EDJE_OBJ_CLASS)) return;
-   eo_do(obj, edje_obj_signal_emit(emission, source));
-}
-
-void
-_signal_emit(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Edje *ed;
-
    if ((!emission) || (!source)) return;
-   ed = _pd;
    if (!ed) return;
    if (ed->delete_me) return;
    _edje_emit(ed, (char *)emission, (char *)source);
 }
 
 /* FIXDOC: Verify/Expand */
-EAPI void
-edje_object_play_set(Evas_Object *obj, Eina_Bool play)
+EOLIAN void
+_edje_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_play_set(play));
-}
-
-void
-_play_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool play = va_arg(*list, int);
-
-   Edje *ed = _pd;
    double t;
    Eina_List *l;
    Edje_Running_Program *runp;
@@ -202,41 +158,20 @@ _play_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-edje_object_play_get(const Evas_Object *obj)
+EOLIAN Eina_Bool
+_edje_play_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_play_get(&ret));
-   return ret;
-}
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   if (ed->paused) return EINA_FALSE;
 
-void
-_play_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
-   *ret = EINA_FALSE;
-
-   if (!ed) return;
-   if (ed->delete_me) return;
-   if (ed->paused) return;
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* FIXDOC: Verify/Expand */
-EAPI void
-edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
+EOLIAN void
+_edje_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_animation_set(on));
-}
-
-void
-_animation_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool on = va_arg(*list, int);
-   Edje *ed = _pd;
    Eina_List *l;
    unsigned int i;
 
@@ -244,7 +179,7 @@ _animation_set(Eo *obj, void *_pd, va_list *list)
    if (ed->delete_me) return;
    _edje_block(ed);
    ed->no_anim = !on;
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
    if (!on)
      {
         Eina_List *newl = NULL;
@@ -288,31 +223,18 @@ break_prog:
           edje_object_animation_set(rp->typedata.swallow->swallowed_object, on);
      }
 
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unblock(ed);
 }
 
-
-EAPI Eina_Bool
-edje_object_animation_get(const Evas_Object *obj)
+EOLIAN Eina_Bool
+_edje_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_animation_get(&ret));
-   return ret;
-}
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   if (ed->no_anim) return EINA_FALSE;
 
-void
-_animation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
-   *ret = EINA_FALSE;
-
-   if (!ed) return;
-   if (ed->delete_me) return;
-   if (ed->no_anim) return;
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* Private Routines */
@@ -330,7 +252,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
    if (ed->delete_me) return EINA_FALSE;
    _edje_block(ed);
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
    t = FROM_DOUBLE(tim - runp->start_time);
    total = runp->program->tween.time;
    t = DIV(t, total);
@@ -404,7 +326,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
                     }
                }
           }
-        _edje_thaw(ed);
+        _edje_util_thaw(ed);
         _edje_unref(ed);
         if (!ed->walking_actions) free(runp);
         _edje_unblock(ed);
@@ -412,7 +334,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
      }
 break_prog:
    _edje_recalc(ed);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
    _edje_unblock(ed);
    return EINA_TRUE;
@@ -428,7 +350,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 
    if (ed->delete_me) return;
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
    EINA_LIST_FOREACH(runp->program->targets, l, pt)
      {
         Edje_Real_Part *rp;
@@ -468,7 +390,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
           }
      }
    //   _edje_emit(ed, "program,stop", pname);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
    if (free_runp) free(runp);
 }
@@ -540,7 +462,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
    recursions++;
    _edje_block(ed);
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
    switch (pr->action)
      {
       case EDJE_ACTION_TYPE_STATE_SET:
@@ -1003,7 +925,7 @@ low_mem_current:
             }
        }
 break_prog:
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
    recursions--;
    if (recursions == 0) recursion_limit = 0;
@@ -1176,9 +1098,9 @@ end:
    if (broadcast)
      edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
    else
-     _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+     _edje_util_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
    /* old send code - use api now
-      _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+      _edje_util_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
       EINA_LIST_FOREACH(ed->subobjs, l, obj)
       {
       Edje *ed2;
@@ -1186,7 +1108,7 @@ end:
       ed2 = _edje_fetch(obj);
       if (!ed2) continue;
       if (ed2->delete_me) continue;
-      _edje_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+      _edje_util_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
       }
     */
    if (emsg.data && (--(emsg.data->ref) == 0))
@@ -1237,7 +1159,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
    //   printf("EDJE EMIT: (%p) signal: \"%s\" source: \"%s\"\n", ed, sig, src);
    _edje_block(ed);
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
 
    if (ed->collection && ed->L)
      _edje_lua2_script_func_signal(ed, sig, src);
@@ -1390,7 +1312,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
           }
      }
 break_prog:
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
    _edje_unblock(ed);
 }
@@ -1417,7 +1339,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    if (!ed->callbacks || !ed->callbacks->matches) return;
 
    _edje_ref(ed);
-   _edje_freeze(ed);
+   _edje_util_freeze(ed);
    _edje_block(ed);
 
    ed->walking_callbacks++;
@@ -1472,7 +1394,7 @@ break_prog:
                                  ed->callbacks->matches->matches_count);
 
    _edje_unblock(ed);
-   _edje_thaw(ed);
+   _edje_util_thaw(ed);
    _edje_unref(ed);
 }
 

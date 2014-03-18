@@ -31,58 +31,28 @@ _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int
      }
 }
 
-EAPI void
-edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+EOLIAN void
+_edje_message_send(Eo *obj, Edje *_pd EINA_UNUSED, Edje_Message_Type type, int id, void *msg)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_message_send(type, id, msg));
-}
-
-void
-_message_send(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Edje_Message_Type type = va_arg(*list, Edje_Message_Type);
-   int id = va_arg(*list, int);
-   void *msg = va_arg(*list, void *);
    _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
 }
 
-
-EAPI void
-edje_object_message_handler_set(Evas_Object *obj, Edje_Message_Handler_Cb func, void *data)
+EOLIAN void
+_edje_message_handler_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Message_Handler_Cb func, void *data)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_message_handler_set(func, data));
-}
-
-void
-_message_handler_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Edje_Message_Handler_Cb func = va_arg(*list, Edje_Message_Handler_Cb);
-   void *data = va_arg(*list, void *);
-   Edje *ed = _pd;
    _edje_message_cb_set(ed, func, data);
 }
 
-EAPI void
-edje_object_message_signal_process(Evas_Object *obj)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_message_signal_process());
-}
-
-void
-_message_signal_process(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN void
+_edje_message_signal_process(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_List *l, *ln, *tmpq = NULL;
-   Edje *ed;
    Edje *lookup_ed;
    Eina_List *lg;
    Edje_Message *em;
    Eina_List *groups = NULL;
    int gotos = 0;
 
-   ed = _pd;
    if (!ed) return;
 
    groups = ed->groups;
@@ -548,7 +518,7 @@ _edje_message_propornot_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type,
 }
 
 void
-_edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg)
+_edje_util_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg)
 {
    _edje_message_propornot_send(ed, queue, type, id, emsg, EINA_FALSE);
 }

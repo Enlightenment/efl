@@ -150,10 +150,9 @@ _edje_edit_data_clean(Edje_Edit *eed)
    eed->script_need_recompile = EINA_FALSE;
 }
 
-static void
-_edje_edit_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_edje_edit_evas_smart_del(Eo *obj, Edje_Edit *eed)
 {
-   Edje_Edit *eed = _pd;
    _edje_edit_data_clean(eed);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
@@ -167,19 +166,16 @@ _edje_edit_program_script_free(Program_Script *ps)
    free(ps);
 }
 
-static void
-_edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_edje_edit_edje_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
 {
-   const char *file = va_arg(*list, const char *);
-   const char *group= va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje_Edit *eed = _pd;
+   Eina_Bool ret;
    Eet_File *ef;
    char **keys, buf[64];
    int count, i;
    int len = strlen("edje/scripts/embryo/source/");
 
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
    _edje_edit_data_clean(eed);
 
@@ -199,7 +195,7 @@ _edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, edje_obj_file_set(file, group, &int_ret));
    if (!int_ret)
-     return;
+     return ret;
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);
 
@@ -226,7 +222,9 @@ _edje_edit_smart_file_set(Eo *obj, void *_pd, va_list *list)
    if (keys) free(keys);
    eet_close(ef);
 
-   if (ret) *ret = EINA_TRUE;
+   ret = EINA_TRUE;
+
+   return ret;
 }
 
 EAPI Evas_Object *
@@ -238,21 +236,21 @@ edje_edit_object_add(Evas *evas)
    return e;
 }
 
-static void
-_edje_edit_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+EOLIAN static void
+_edje_edit_eo_base_constructor(Eo *obj, Edje_Edit *eed)
 {
-   Edje_Edit *eed = class_data;
    eed->base = eo_data_ref(obj, EDJE_OBJ_CLASS);
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 }
 
-static void
-_edje_edit_destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+EOLIAN static void
+_edje_edit_eo_base_destructor(Eo *obj, Edje_Edit *class_data EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_destructor());
    eo_data_unref(obj, class_data);
 }
+
 /* End of Edje_Edit smart stuff */
 
 static Edje_Part_Description_Common *
@@ -8347,30 +8345,4 @@ edje_edit_print_internal_status(Evas_Object *obj)
  */
 }
 
-static void
-_edje_edit_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _edje_edit_constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _edje_edit_destructor),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _edje_edit_smart_del),
-        EO_OP_FUNC(EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_FILE_SET), _edje_edit_smart_file_set),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Class_Description edje_edit_class_desc = {
-     EO_VERSION,
-     "Edje_Edit",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     sizeof(Edje_Edit),
-     _edje_edit_class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(edje_edit_class_get, &edje_edit_class_desc, EDJE_OBJ_CLASS, NULL);
-
+#include "edje_edit.eo.c"

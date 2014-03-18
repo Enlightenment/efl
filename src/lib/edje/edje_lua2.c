@@ -976,7 +976,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
    if (!type) return 0;
    if (!strcmp(type, "none"))
      {
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_NONE, id, NULL);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_NONE, id, NULL);
      }
    else if (!strcmp(type, "sig"))
      {
@@ -990,7 +990,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         const char *str = luaL_checkstring(L, 3);            // Stack usage [-0, +0, v]
         emsg = alloca(sizeof(Edje_Message_String));
         emsg->str = (char *)str;
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING, id, emsg);
      }
    else if (!strcmp(type, "int"))
      {
@@ -998,7 +998,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         int val = luaL_checkinteger(L, 3);                   // Stack usage [-0, +0, v]
         emsg = alloca(sizeof(Edje_Message_Int));
         emsg->val = val;
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT, id, emsg);
      }
    else if (!strcmp(type, "float"))
      {
@@ -1006,7 +1006,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         float val = luaL_checknumber(L, 3);                  // Stack usage [-0, +0, v]
         emsg = alloca(sizeof(Edje_Message_Float));
         emsg->val = val;
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT, id, emsg);
      }
    else if (!strcmp(type, "strset"))
      {
@@ -1029,7 +1029,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
              lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
              emsg->str[i - 1] = (char *)str;
           }
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_SET, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_SET, id, emsg);
      }
    else if (!strcmp(type, "intset"))
      {
@@ -1050,7 +1050,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
              emsg->val[i - 1] = lua_tointeger(L, -1);        // Stack usage [-0, +0, -]
              lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT_SET, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT_SET, id, emsg);
      }
    else if (!strcmp(type, "floatset"))
      {
@@ -1071,7 +1071,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
              emsg->val[i - 1] = lua_tonumber(L, -1);         // Stack usage [-0, +0, -]
              lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT_SET, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT_SET, id, emsg);
      }
    else if (!strcmp(type, "strint"))
      {
@@ -1080,7 +1080,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         emsg = alloca(sizeof(Edje_Message_String_Int));
         emsg->str = (char *)str;
         emsg->val =  luaL_checkinteger(L, 4);                // Stack usage [-0, +0, v]
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT, id, emsg);
      }
    else if (!strcmp(type, "strfloat"))
      {
@@ -1089,7 +1089,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         emsg = alloca(sizeof(Edje_Message_String_Float));
         emsg->str = (char *)str;
         emsg->val =  luaL_checknumber(L, 4);                 // Stack usage [-0, +0, v]
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT, id, emsg);
      }
    else if (!strcmp(type, "strintset"))
      {
@@ -1113,7 +1113,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
              emsg->val[i - 1] = lua_tointeger(L, -1);        // Stack usage [-0, +0, -]
              lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT_SET, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT_SET, id, emsg);
      }
    else if (!strcmp(type, "strfloatset"))
      {
@@ -1137,7 +1137,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
              emsg->val[i - 1] = lua_tonumber(L, -1);         // Stack usage [-0, +0, -]
              lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
-        _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT_SET, id, emsg);
+        _edje_util_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT_SET, id, emsg);
      }
    return 0;
 }

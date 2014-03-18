@@ -77,7 +77,7 @@ _edje_var_anim_cb(void *data EINA_UNUSED)
 	ed = eina_list_data_get(tl);
 	_edje_ref(ed);
 	_edje_block(ed);
-	_edje_freeze(ed);
+	_edje_util_freeze(ed);
 	tl = eina_list_remove(tl, ed);
 	if (!ed->var_pool) continue;
 	tl2 = NULL;
@@ -159,7 +159,7 @@ _edje_var_anim_cb(void *data EINA_UNUSED)
 	if (!ed->var_pool->animators)
 	  _edje_anim_list = eina_list_remove(_edje_anim_list, ed);
 	_edje_unblock(ed);
-	_edje_thaw(ed);
+	_edje_util_thaw(ed);
 	_edje_unref(ed);
      }
    if (!_edje_anim_list)

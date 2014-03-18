@@ -1,3 +1,5 @@
+#include "edje.eo.h"
+#if 0
 #define EDJE_OBJ_CLASS edje_object_class_get()
 
 const Eo_Class *edje_object_class_get(void) EINA_CONST;
@@ -297,7 +299,7 @@ enum
  *
  * @see edje_object_part_text_input_panel_variation_get
  */
-#define edje_obj_part_text_input_panel_variation_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int *, ret)
+#define edje_obj_part_text_input_panel_layout_variation_get(part, ret) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_GET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int *, ret)
 
 /**
  * @def edje_obj_part_text_input_panel_variation_set
@@ -310,7 +312,7 @@ enum
  *
  * @see edje_object_part_text_input_panel_variation_get
  */
-#define edje_obj_part_text_input_panel_variation_set(part, variation) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int, variation)
+#define edje_obj_part_text_input_panel_layout_variation_set(part, variation) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_PART_TEXT_INPUT_PANEL_LAYOUT_VARIATION_SET), EO_TYPECHECK(const char *, part), EO_TYPECHECK(int, variation)
 
 /**
  * @def edje_obj_part_text_autocapital_type_set
@@ -2278,10 +2280,15 @@ enum
  */
 #define edje_obj_signal_emit(emission, source) EDJE_OBJ_ID(EDJE_OBJ_SUB_ID_SIGNAL_EMIT), EO_TYPECHECK(const char *, emission), EO_TYPECHECK(const char *, source)
 
+#endif
 /**
  * @}
  */
+#include "edje_edit.eo.h"
+#if 0
 
 #define EDJE_EDIT_CLASS edje_edit_class_get()
 
 const Eo_Class *edje_edit_class_get(void) EINA_CONST;
+
+#endif

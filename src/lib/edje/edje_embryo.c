@@ -1493,7 +1493,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
    switch (type)
      {
       case EDJE_MESSAGE_NONE:
-         _edje_message_send(ed, EDJE_QUEUE_APP, type, id, NULL);
+         _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, NULL);
          break;
       case EDJE_MESSAGE_SIGNAL:
          break;
@@ -1514,7 +1514,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                    embryo_data_string_get(ep, cptr, s);
                    emsg = alloca(sizeof(Edje_Message_String));
                    emsg->str = s;
-                   _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+                   _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
                 }
            }
          break;
@@ -1526,7 +1526,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
               ptr = embryo_data_address_get(ep, params[3]);
               if (ptr) emsg->val = (int)*ptr;
               else emsg->val = 0;
-              _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+              _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
            }
          break;
       case EDJE_MESSAGE_FLOAT:
@@ -1543,7 +1543,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                 }
               else
                 emsg->val = 0.0;
-              _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+              _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
            }
          break;
       case EDJE_MESSAGE_STRING_SET:
@@ -1570,7 +1570,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                         emsg->str[i - 3] = s;
                      }
                 }
-              _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+              _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
            }
          break;
       case EDJE_MESSAGE_INT_SET:
@@ -1586,7 +1586,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                    if (ptr) emsg->val[i - 3] = (int)*ptr;
                    else emsg->val[i - 3] = 0;
                 }
-              _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+              _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
            }
          break;
       case EDJE_MESSAGE_FLOAT_SET:
@@ -1609,7 +1609,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                    else
                      emsg->val[i - 3] = 0.0;
                 }
-              _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+              _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
            }
          break;
       case EDJE_MESSAGE_STRING_INT:
@@ -1632,7 +1632,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                    ptr = embryo_data_address_get(ep, params[4]);
                    if (ptr) emsg->val = (int)*ptr;
                    else emsg->val = 0;
-                   _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+                   _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
                 }
            }
          break;
@@ -1662,7 +1662,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                      }
                    else
                      emsg->val = 0.0;
-                   _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+                   _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
                 }
            }
          break;
@@ -1691,7 +1691,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                         if (ptr) emsg->val[i - 4] = (int)*ptr;
                         else emsg->val[i - 4] = 0;
                      }
-                   _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+                   _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
                 }
            }
          break;
@@ -1727,7 +1727,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
                         else
                           emsg->val[i - 4] = 0.0;
                      }
-                   _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+                   _edje_util_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
                 }
            }
          break;

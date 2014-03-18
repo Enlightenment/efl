@@ -24,9 +24,9 @@ char *_edje_fontset_append = NULL;
 FLOAT_T _edje_scale = ZERO;
 Eina_Bool _edje_password_show_last = EINA_FALSE;
 double _edje_password_show_last_timeout = 0;
-int _edje_freeze_val = 0;
-int _edje_freeze_calc_count = 0;
-Eina_List *_edje_freeze_calc_list = NULL;
+int _edje_util_freeze_val = 0;
+int _edje_util_freeze_calc_count = 0;
+Eina_List *_edje_util_freeze_calc_list = NULL;
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
 struct _Edje_List_Foreach_Data
@@ -236,7 +236,7 @@ EAPI void
 edje_freeze(void)
 {
 #ifdef FASTFREEZE
-   _edje_freeze_val++;
+   _edje_util_freeze_val++;
 #else
 // FIXME: could just have a global freeze instead of per object
 // above i tried.. but this broke some things. notable e17's menus. why?
@@ -250,7 +250,7 @@ edje_freeze(void)
 
 #ifdef FASTFREEZE
 static void
-_edje_thaw_edje(Edje *ed)
+_edje_util_thaw_edje(Edje *ed)
 {
    unsigned int i;
 
@@ -267,7 +267,7 @@ _edje_thaw_edje(Edje *ed)
              Edje *ed2;
 
              ed2 = _edje_fetch(rp->typedata.swallow->swallowed_object);
-             if (ed2) _edje_thaw_edje(ed2);
+             if (ed2) _edje_util_thaw_edje(ed2);
           }
      }
    if ((ed->recalc) && (ed->freeze <= 0)) _edje_recalc_do(ed);
@@ -278,16 +278,16 @@ EAPI void
 edje_thaw(void)
 {
 #ifdef FASTFREEZE
-   if (!_edje_freeze_val) return;
-   _edje_freeze_val--;
-   if ((_edje_freeze_val == 0) && (_edje_freeze_calc_count > 0))
+   if (!_edje_util_freeze_val) return;
+   _edje_util_freeze_val--;
+   if ((_edje_util_freeze_val == 0) && (_edje_util_freeze_calc_count > 0))
      {
         Edje *ed;
 
-        _edje_freeze_calc_count = 0;
-        EINA_LIST_FREE(_edje_freeze_calc_list, ed)
+        _edje_util_freeze_calc_count = 0;
+        EINA_LIST_FREE(_edje_util_freeze_calc_list, ed)
           {
-             _edje_thaw_edje(ed);
+             _edje_util_thaw_edje(ed);
              ed->freeze_calc = EINA_FALSE;
           }
      }
@@ -349,29 +349,15 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
    _edje_password_show_last_timeout = password_show_last_timeout;
 }
 
-EAPI Eina_Bool
-edje_object_scale_set(Evas_Object *obj, double scale)
+EOLIAN Eina_Bool
+_edje_scale_set(Eo *obj, Edje *ed, double scale)
 {
-   if (!eo_isa(obj, EDJE_OBJ_CLASS)) return EINA_FALSE;
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_scale_set(scale, &ret));
-   return ret;
-}
-
-void
-_scale_set(Eo *obj, void *_pd, va_list *list)
-{
-   double scale = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_TRUE;
-   Edje *ed, *ged;
+   Edje *ged;
    Evas_Object *o;
    Eina_List *l;
    unsigned int i;
 
-   ed = _pd;
-   if (ed->scale == scale) return;
+   if (ed->scale == scale) return EINA_TRUE;
    ed->scale = FROM_DOUBLE(scale);
    EINA_LIST_FOREACH(ed->groups, l, ged)
       edje_object_scale_set(ged->obj, scale);
@@ -387,40 +373,20 @@ _scale_set(Eo *obj, void *_pd, va_list *list)
           }
      }
    edje_object_calc_force(obj);
+
+   return EINA_TRUE;
 }
 
-EAPI double
-edje_object_scale_get(const Evas_Object *obj)
+EOLIAN double
+_edje_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return 0.0;
-   double ret = 0.0;
-   eo_do((Eo *)obj, edje_obj_scale_get(&ret));
-   return ret;
+   return TO_DOUBLE(ed->scale);
 }
 
-void
-_scale_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   double *ret = va_arg(*list, double *);
-   const Edje *ed = _pd;
-   *ret = TO_DOUBLE(ed->scale);
-}
-
-EAPI Eina_Bool
-edje_object_mirrored_get(const Evas_Object *obj)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_mirrored_get(&ret));
-   return ret;
-}
-
-void
-_mirrored_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
-   *ret = ed->is_rtl;
+   return ed->is_rtl;
 }
 
 void
@@ -433,19 +399,9 @@ _edje_object_orientation_inform(Evas_Object *obj)
      edje_object_signal_emit(obj, "edje,state,ltr", "edje");
 }
 
-EAPI void
-edje_object_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+EOLIAN void
+_edje_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_mirrored_set(rtl));
-}
-
-void
-_mirrored_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool rtl = va_arg(*list, int);
-
-   Edje *ed = _pd;
    unsigned int i;
 
    if (ed->is_rtl == rtl) return;
@@ -471,49 +427,22 @@ _mirrored_set(Eo *obj, void *_pd, va_list *list)
    return;
 }
 
-EAPI const char *
-edje_object_data_get(const Evas_Object *obj, const char *key)
+EOLIAN const char*
+_edje_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 {
-   if (!obj) return NULL;
-   const char *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_data_get(key, &ret));
-   return ret;
-}
-
-void
-_data_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *key = va_arg(*list, const char *);
-   const char **ret = va_arg(*list, const char **);
-   *ret = NULL;
-
-   const Edje *ed = _pd;
-
    if ((!ed) || (!key))
-     return;
-   if (!ed->collection) return;
-   if (!ed->collection->data) return;
-   *ret = edje_string_get(eina_hash_find(ed->collection->data, key));
+     return NULL;
+   if (!ed->collection) return NULL;
+   if (!ed->collection->data) return NULL;
+
+   return edje_string_get(eina_hash_find(ed->collection->data, key));
 }
 
-EAPI int
-edje_object_freeze(Evas_Object *obj)
+EOLIAN int
+_edje_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return 0;
-   int ret = 0;
-   eo_do(obj, edje_obj_freeze(&ret));
-   return ret;
-}
-
-void
-_freeze(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *ret = va_arg(*list, int *);
-
-   Edje *ed = _pd;
    unsigned int i;
 
-   if (ret) *ret = 0;
    for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *rp;
@@ -524,27 +453,14 @@ _freeze(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
             (rp->typedata.swallow->swallowed_object))
           edje_object_freeze(rp->typedata.swallow->swallowed_object);
      }
-   int int_ret = _edje_freeze(ed);
-   if (ret) *ret = int_ret;
+   return _edje_util_freeze(ed);
 }
 
-EAPI int
-edje_object_thaw(Evas_Object *obj)
+EOLIAN int
+_edje_thaw(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return 0;
-   int ret;
-   eo_do(obj, edje_obj_thaw(&ret));
-   return ret;
-}
-
-void
-_thaw(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *ret = va_arg(*list, int *);
-   Edje *ed = _pd;
    unsigned int i;
 
-   if (ret) *ret = 0;
    for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *rp;
@@ -556,8 +472,7 @@ _thaw(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
             (rp->typedata.swallow->swallowed_object))
           edje_object_thaw(rp->typedata.swallow->swallowed_object);
      }
-   int int_ret = _edje_thaw(ed);
-   if (ret) *ret = int_ret;
+   return _edje_util_thaw(ed);
 }
 
 EAPI Eina_Bool
@@ -719,39 +634,13 @@ _edje_color_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *ke
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
+EOLIAN Eina_Bool
+_edje_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_color_class_set(color_class, r, g, b, a, r2, g2, b2, a2, r3, g3, b3, a3, &ret));
-   return ret;
-}
-
-void
-_color_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *color_class = va_arg(*list, const char *);
-   int r = va_arg(*list, int);
-   int g = va_arg(*list, int);
-   int b = va_arg(*list, int);
-   int a = va_arg(*list, int);
-   int r2 = va_arg(*list, int);
-   int g2 = va_arg(*list, int);
-   int b2 = va_arg(*list, int);
-   int a2 = va_arg(*list, int);
-   int r3 = va_arg(*list, int);
-   int g3 = va_arg(*list, int);
-   int b3 = va_arg(*list, int);
-   int a3 = va_arg(*list, int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   Edje *ed = _pd;
    Edje_Color_Class *cc;
    unsigned int i;
 
-   if ((!ed) || (!color_class)) return;
+   if ((!ed) || (!color_class)) return EINA_FALSE;
    if (r < 0)        r = 0;
    else if (r > 255) r = 255;
    if (g < 0)        g = 0;
@@ -770,19 +659,18 @@ _color_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
             (cc->r3 == r3) && (cc->g3 == g3) &&
             (cc->b3 == b3) && (cc->a3 == a3))
           {
-             if (ret) *ret = EINA_TRUE;
-             return;
+             return EINA_TRUE;
           }
         goto update_color_class;
      }
 
    color_class = eina_stringshare_add(color_class);
-   if (!color_class) return;
+   if (!color_class) return EINA_FALSE;
    cc = malloc(sizeof(Edje_Color_Class));
    if (!cc)
      {
         eina_stringshare_del(color_class);
-        return;
+        return EINA_FALSE;
      }
    cc->name = color_class;
    eina_hash_direct_add(ed->color_classes, cc->name, cc);
@@ -822,38 +710,13 @@ update_color_class:
 
    _edje_recalc(ed);
    _edje_emit(ed, "color_class,set", color_class);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
+EOLIAN Eina_Bool
+_edje_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_color_class_get(color_class, r, g, b, a, r2, g2, b2, a2, r3, g3, b3, a3, &ret));
-   return ret;
-}
-
-void
-_color_class_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *color_class = va_arg(*list, const char *);
-   int *r = va_arg(*list, int *);
-   int *g = va_arg(*list, int *);
-   int *b = va_arg(*list, int *);
-   int *a = va_arg(*list, int *);
-   int *r2 = va_arg(*list, int *);
-   int *g2 = va_arg(*list, int *);
-   int *b2 = va_arg(*list, int *);
-   int *a2 = va_arg(*list, int *);
-   int *r3 = va_arg(*list, int *);
-   int *g3 = va_arg(*list, int *);
-   int *b3 = va_arg(*list, int *);
-   int *a3 = va_arg(*list, int *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   const Edje *ed = _pd;
    Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
 
    if (cc)
@@ -865,8 +728,7 @@ _color_class_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         S(r3, g3, b3, a3);
 #undef S
 #undef X
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    else
      {
@@ -877,8 +739,10 @@ _color_class_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         S(r3, g3, b3, a3);
 #undef S
 #undef X
-        return;
+        return EINA_FALSE;
      }
+
+   return EINA_FALSE;
 }
 
 void
@@ -1029,30 +893,14 @@ _edje_text_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
+EOLIAN Eina_Bool
+_edje_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char *font, Evas_Font_Size size)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_text_class_set(text_class, font, size, &ret));
-   return ret;
-}
-
-void
-_text_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *text_class = va_arg(*list, const char *);
-   const char *font = va_arg(*list, const char *);
-   Evas_Font_Size size = va_arg(*list, Evas_Font_Size);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   Edje *ed = _pd;
    Eina_List *l;
    Edje_Text_Class *tc = NULL;
    unsigned int i;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!text_class)) return;
+   if ((!ed) || (!text_class)) return EINA_FALSE;
 
    /* for each text_class in the edje */
    EINA_LIST_FOREACH(ed->text_classes, l, tc)
@@ -1064,8 +912,7 @@ _text_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                  ((tc->font == font) ||
                   (tc->font && font && !strcmp(tc->font, font))))
                {
-                  if (ret) *ret = EINA_TRUE;
-                  return;
+                  return EINA_TRUE;
                }
 
              /* Update new text class properties */
@@ -1079,12 +926,12 @@ _text_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         /* No matches, create a new text class */
         tc = calloc(1, sizeof(Edje_Text_Class));
-        if (!tc) return;
+        if (!tc) return EINA_FALSE;
         tc->name = eina_stringshare_add(text_class);
         if (!tc->name)
           {
              free(tc);
-             return;
+             return EINA_FALSE;
           }
         tc->font = eina_stringshare_add(font);
         tc->size = size;
@@ -1113,83 +960,41 @@ _text_class_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    _edje_textblock_styles_cache_free(ed, text_class);
    _edje_textblock_style_all_update(ed);
    _edje_recalc(ed);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_exists(const Evas_Object *obj, const char *part)
+EOLIAN Eina_Bool
+_edje_part_exists(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_exists(part, &ret));
-   return ret;
-}
-
-void
-_part_exists(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
-
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   *ret = EINA_TRUE;
+   if (!rp) return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
-EAPI const Evas_Object *
-edje_object_part_object_get(const Evas_Object *obj, const char *part)
+EOLIAN const Evas_Object*
+_edje_part_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   const Evas_Object *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_object_get(part, &ret));
-   return ret;
-}
-
-void
-_part_object_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const Evas_Object **ret = va_arg(*list, const Evas_Object **);
-   *ret = NULL;
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   *ret = rp->object;
+   if (!rp) return NULL;
+
+   return rp->object;
 }
 
-EAPI Eina_Bool
-edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
+EOLIAN Eina_Bool
+_edje_part_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_geometry_get(part, x, y, w, h, &ret));
-   return ret;
-}
-
-void
-_part_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part))
@@ -1198,7 +1003,7 @@ _part_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         if (y) *y = 0;
         if (w) *w = 0;
         if (h) *h = 0;
-        return;
+        return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -1211,46 +1016,27 @@ _part_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         if (y) *y = 0;
         if (w) *w = 0;
         if (h) *h = 0;
-        return;
+        return EINA_FALSE;
      }
    if (x) *x = rp->x;
    if (y) *y = rp->y;
    if (w) *w = rp->w;
    if (h) *h = rp->h;
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI void
-edje_object_item_provider_set(Evas_Object *obj, Edje_Item_Provider_Cb func, void *data)
+EOLIAN void
+_edje_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider_Cb func, void *data)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_item_provider_set(func, data));
-}
-
-void
-_item_provider_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Edje_Item_Provider_Cb func = va_arg(*list, Edje_Item_Provider_Cb);
-   void *data = va_arg(*list, void *);
-   Edje *ed = _pd;
    ed->item_provider.func = func;
    ed->item_provider.data = data;
 }
 
 /* FIXDOC: New Function */
-EAPI void
-edje_object_text_change_cb_set(Evas_Object *obj, Edje_Text_Change_Cb func, void *data)
+EOLIAN void
+_edje_text_change_cb_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Text_Change_Cb func, void *data)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_text_change_cb_set(func, data));
-}
-
-void
-_text_change_cb_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Edje_Text_Change_Cb func = va_arg(*list, Edje_Text_Change_Cb);
-   void *data = va_arg(*list, void *);
-   Edje *ed = _pd;
    unsigned int i;
 
    ed->text_change.func = func;
@@ -1337,20 +1123,9 @@ _edje_object_part_text_raw_append(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp
    return EINA_TRUE;
 }
 
-EAPI void
-edje_object_part_text_style_user_push(Evas_Object *obj, const char *part,
-                                const char *style)
+EOLIAN void
+_edje_part_text_style_user_push(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *style)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_style_user_push(part, style));
-}
-
-void
-_part_text_style_user_push(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *style = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Evas_Textblock_Style *ts;
 
@@ -1370,18 +1145,9 @@ _part_text_style_user_push(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    _edje_recalc(ed);
 }
 
-EAPI void
-edje_object_part_text_style_user_pop(Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_style_user_pop(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_style_user_pop(part));
-}
-
-void
-_part_text_style_user_pop(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -1397,33 +1163,22 @@ _part_text_style_user_pop(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    _edje_recalc(ed);
 }
 
-EAPI const char *
-edje_object_part_text_style_user_peek(const Evas_Object *obj, const char *part)
+EOLIAN const char*
+_edje_part_text_style_user_peek(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   const char *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_style_user_peek(part, &ret));
-   return ret;
-}
-
-void
-_part_text_style_user_peek(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char **ret = va_arg(*list, const char **);
-   if (ret) *ret = NULL;
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    const Evas_Textblock_Style *ts;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return NULL;
 
    ts = evas_object_textblock_style_user_peek(rp->object);
    if (ts)
-      if (ret) *ret = evas_textblock_style_get(ts);
+      return evas_textblock_style_get(ts);
+
+   return NULL;
 }
 
 static void
@@ -1452,117 +1207,72 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text)
    eud->u.string.text = raw_text;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
+EOLIAN Eina_Bool
+_edje_part_text_set(Eo *obj, Edje *ed, const char *part, const char *text)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_set(part, text, &ret));
-   return ret;
-}
-
-void
-_part_text_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *text = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   Eina_Bool r;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
-       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text))
      {
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
-   r = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
+   return _edje_object_part_text_raw_set(ed, obj, rp, part, text);
    _edje_user_define_string(ed, part, rp->typedata.text->text);
-   if (ret) *ret = r;
 }
 
-EAPI const char *
-edje_object_part_text_get(const Evas_Object *obj, const char *part)
+EOLIAN const char*
+_edje_part_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   const char *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_get(part, &ret));
-   return ret;
-}
-
-void
-_part_text_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char **ret = va_arg(*list, const char **);
-   *ret = NULL;
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
-       (!rp->typedata.text)) return;
+       (!rp->typedata.text)) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        *ret = _edje_entry_text_get(rp);
-        return;
+        return _edje_entry_text_get(rp);
      }
    else
      {
         if (rp->part->type == EDJE_PART_TYPE_TEXT)
           {
-             *ret = rp->typedata.text->text;
-             return;
+             return rp->typedata.text->text;
           }
         if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
           {
-             *ret = evas_object_textblock_text_markup_get(rp->object);
-             return;
+             return evas_object_textblock_text_markup_get(rp->object);
           }
      }
+
+   return NULL;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_escaped_set(Evas_Object *obj, const char *part, const char *text)
+EOLIAN Eina_Bool
+_edje_part_text_escaped_set(Eo *obj, Edje *ed, const char *part, const char *text)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_escaped_set(part, text, &ret));
-   return ret;
-}
-
-void
-_part_text_escaped_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *text = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Eina_Bool int_ret;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
-       (!rp->typedata.text)) return;
+       (!rp->typedata.text)) return EINA_FALSE;
    if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK &&
        rp->part->type != EDJE_PART_TYPE_TEXT)
-     return;
+     return EINA_FALSE;
    if ((rp->part->type == EDJE_PART_TYPE_TEXT) && (text))
      {
         Eina_Strbuf *sbuf;
@@ -1616,14 +1326,13 @@ _part_text_escaped_set(Eo *obj, void *_pd, va_list *list)
         int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, eina_strbuf_string_get(sbuf));
         _edje_user_define_string(ed, part, rp->typedata.text->text);
         eina_strbuf_free(sbuf);
-        if (ret) *ret = int_ret;
-        return;
+        return int_ret;
      }
    int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
    _edje_user_define_string(ed, part, rp->typedata.text->text);
-   if (ret) *ret = int_ret;
-}
 
+   return int_ret;
+}
 
 char *
 _edje_text_escape(const char *text)
@@ -1733,31 +1442,17 @@ _edje_text_unescape(const char *text)
    return ret;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_unescaped_set(Evas_Object *obj, const char *part, const char *text_to_escape)
+EOLIAN Eina_Bool
+_edje_part_text_unescaped_set(Eo *obj, Edje *ed, const char *part, const char *text_to_escape)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_unescaped_set(part, text_to_escape, &ret));
-   return ret;
-}
-
-void
-_part_text_unescaped_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *text_to_escape = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Eina_Bool int_ret = EINA_FALSE;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
-       (!rp->typedata.text)) return;
+       (!rp->typedata.text)) return EINA_FALSE;
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
      int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text_to_escape);
    else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
@@ -1768,95 +1463,62 @@ _part_text_unescaped_set(Eo *obj, void *_pd, va_list *list)
         free(text);
      }
    _edje_user_define_string(ed, part, rp->typedata.text->text);
-   if (ret) *ret = int_ret;
+
+   return int_ret;
 }
 
-EAPI char *
-edje_object_part_text_unescaped_get(const Evas_Object *obj, const char *part)
+EOLIAN char*
+_edje_part_text_unescaped_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   char *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_unescaped_get(part, &ret));
-   return ret;
-}
-
-void
-_part_text_unescaped_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   char **ret = va_arg(*list, char **);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
-       (!rp->typedata.text)) return;
+       (!rp->typedata.text)) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
         const char *t = _edje_entry_text_get(rp);
-        *ret = _edje_text_unescape(t);
-        return;
+        return _edje_text_unescape(t);
      }
    else
      {
         if (rp->part->type == EDJE_PART_TYPE_TEXT)
           {
-             *ret = strdup(rp->typedata.text->text);
-             return;
+             return strdup(rp->typedata.text->text);
           }
         if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
           {
              const char *t = evas_object_textblock_text_markup_get(rp->object);
-             *ret = _edje_text_unescape(t);
-             return;
+             return _edje_text_unescape(t);
           }
      }
+
+   return NULL;
 }
 
-EAPI const char *
-edje_object_part_text_selection_get(const Evas_Object *obj, const char *part)
+EOLIAN const char*
+_edje_part_text_selection_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   const char* ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_selection_get(part, &ret));
-   return ret;
-}
-
-void
-_part_text_selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char **ret = va_arg(*list, const char **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-      *ret = _edje_entry_selection_get(rp);
+      return _edje_entry_selection_get(rp);
+
+   return NULL;
 }
 
-EAPI void
-edje_object_part_text_select_none(const Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_select_none(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_select_none(part));
-}
-
-void
-_part_text_select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -1866,18 +1528,9 @@ _part_text_select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_select_none(rp);
 }
 
-EAPI void
-edje_object_part_text_select_all(const Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_select_all(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_select_all(part));
-}
-
-void
-_part_text_select_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -1887,19 +1540,9 @@ _part_text_select_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_select_all(rp);
 }
 
-EAPI void
-edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *text)
+EOLIAN void
+_edje_part_text_insert(Eo *obj, Edje *ed, const char *part, const char *text)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_insert(part, text));
-}
-
-void
-_part_text_insert(Eo *obj, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *text = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -1919,19 +1562,9 @@ _part_text_insert(Eo *obj, void *_pd, va_list *list)
      ed->text_change.func(ed->text_change.data, obj, part);
 }
 
-EAPI void
-edje_object_part_text_append(Evas_Object *obj, const char *part, const char *text)
+EOLIAN void
+_edje_part_text_append(Eo *obj, Edje *ed, const char *part, const char *text)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_append(part, text));
-}
-
-void
-_part_text_append(Eo *obj, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *text = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -1950,131 +1583,67 @@ _part_text_append(Eo *obj, void *_pd, va_list *list)
      ed->text_change.func(ed->text_change.data, obj, part);
 }
 
-EAPI const Eina_List *
-edje_object_part_text_anchor_list_get(const Evas_Object *obj, const char *part)
+EOLIAN const Eina_List*
+_edje_part_text_anchor_list_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   const Eina_List *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_anchor_list_get(part, &ret));
-   return ret;
-}
-
-void
-_part_text_anchor_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     *ret = _edje_entry_anchors_list(rp);
+     return _edje_entry_anchors_list(rp);
+
+   return NULL;
 }
 
-EAPI const Eina_List *
-edje_object_part_text_anchor_geometry_get(const Evas_Object *obj, const char *part, const char *anchor)
+EOLIAN const Eina_List*
+_edje_part_text_anchor_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *anchor)
 {
-   if (!obj) return NULL;
-   const Eina_List *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_anchor_geometry_get(part, anchor, &ret));
-   return ret;
-}
-
-void
-_part_text_anchor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *anchor = va_arg(*list, const char *);
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     *ret = _edje_entry_anchor_geometry_get(rp, anchor);
+     return _edje_entry_anchor_geometry_get(rp, anchor);
+
+   return NULL;
 }
 
-EAPI const Eina_List *
-edje_object_part_text_item_list_get(const Evas_Object *obj, const char *part)
+EOLIAN const Eina_List*
+_edje_part_text_item_list_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   const Eina_List *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_item_list_get(part, &ret));
-   return ret;
-}
-
-void
-_part_text_item_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     *ret = _edje_entry_items_list(rp);
+     return _edje_entry_items_list(rp);
+
+   return NULL;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_item_geometry_get(const Evas_Object *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+EOLIAN Eina_Bool
+_edje_part_text_item_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_item_geometry_get(part, item, cx, cy, cw, ch, &ret));
-   return ret;
-}
-
-void
-_part_text_item_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *item = va_arg(*list, const char *);
-   Evas_Coord *cx = va_arg(*list, Evas_Coord *);
-   Evas_Coord *cy = va_arg(*list, Evas_Coord *);
-   Evas_Coord *cw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *ch = va_arg(*list, Evas_Coord *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        Eina_Bool int_ret = _edje_entry_item_geometry_get(rp, item, cx, cy, cw, ch);
-        if (ret) *ret = int_ret;
+        return _edje_entry_item_geometry_get(rp, item, cx, cy, cw, ch);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI void
-edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN void
+_edje_part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_cursor_geometry_get(part, x, y, w, h));
-}
-
-void
-_part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if (x) *x = 0;
@@ -2092,19 +1661,9 @@ _part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_user_insert(const Evas_Object *obj, const char *part, const char *text)
+EOLIAN void
+_edje_part_text_user_insert(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *text)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_user_insert(part, text));
-}
-
-void
-_part_text_user_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const char *text = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2114,19 +1673,9 @@ _part_text_user_insert(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_user_insert(rp, text);
 }
 
-EAPI void
-edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Eina_Bool allow)
+EOLIAN void
+_edje_part_text_select_allow_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool allow)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_select_allow_set(part, allow));
-}
-
-void
-_part_text_select_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool allow = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2136,18 +1685,9 @@ _part_text_select_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_select_allow_set(rp, allow);
 }
 
-EAPI void
-edje_object_part_text_select_abort(const Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_select_abort(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_select_abort(part));
-}
-
-void
-_part_text_select_abort(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2157,18 +1697,9 @@ _part_text_select_abort(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_select_abort(rp);
 }
 
-EAPI void
-edje_object_part_text_select_begin(const Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_select_begin(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_select_begin(part));
-}
-
-void
-_part_text_select_begin(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2178,18 +1709,9 @@ _part_text_select_begin(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_select_begin(rp);
 }
 
-EAPI void
-edje_object_part_text_select_extend(const Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_select_extend(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_select_extend(part));
-}
-
-void
-_part_text_select_extend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2199,162 +1721,89 @@ _part_text_select_extend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_select_extend(rp);
 }
 
-EAPI void *
-edje_object_part_text_imf_context_get(const Evas_Object *obj, const char *part)
+EOLIAN void*
+_edje_part_text_imf_context_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   void *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_imf_context_get(part, &ret));
-   return ret;
-}
-
-void
-_part_text_imf_context_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   void **ret = va_arg(*list, void **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, (char *)part);
-   if (!rp) return;
+   if (!rp) return NULL;
 
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     *ret = _edje_entry_imf_context_get(rp);
+     return _edje_entry_imf_context_get(rp);
+
+   return NULL;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_next(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_next(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_cursor_next(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        Eina_Bool int_ret = _edje_entry_cursor_next(rp, cur);
-        if (ret) *ret = int_ret;
+        return _edje_entry_cursor_next(rp, cur);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_prev(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_prev(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_cursor_prev(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_prev(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        Eina_Bool int_ret = _edje_entry_cursor_prev(rp, cur);
-        if (ret) *ret = int_ret;
+        return _edje_entry_cursor_prev(rp, cur);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_up(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_up(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_cursor_up(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_up(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        Eina_Bool int_ret = _edje_entry_cursor_up(rp, cur);
-        if (ret) *ret = int_ret;
+        return _edje_entry_cursor_up(rp, cur);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_down(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_down(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_cursor_down(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_down(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        Eina_Bool int_ret = _edje_entry_cursor_down(rp, cur);
-        if (ret) *ret = int_ret;
+        return _edje_entry_cursor_down(rp, cur);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI void
-edje_object_part_text_cursor_begin_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN void
+_edje_part_text_cursor_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_cursor_begin_set(part, cur));
-}
-
-void
-_part_text_cursor_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2366,19 +1815,9 @@ _part_text_cursor_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_cursor_end_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN void
+_edje_part_text_cursor_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_cursor_end_set(part, cur));
-}
-
-void
-_part_text_cursor_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2390,20 +1829,9 @@ _part_text_cursor_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_cursor_copy(Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst)
+EOLIAN void
+_edje_part_text_cursor_copy(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor src, Edje_Cursor dst)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_cursor_copy(part, src, dst));
-}
-
-void
-_part_text_cursor_copy(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor src = va_arg(*list, Edje_Cursor);
-   Edje_Cursor dst = va_arg(*list, Edje_Cursor);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2415,19 +1843,9 @@ _part_text_cursor_copy(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_cursor_line_begin_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN void
+_edje_part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_cursor_line_begin_set(part, cur));
-}
-
-void
-_part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2439,19 +1857,9 @@ _part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_cursor_line_end_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN void
+_edje_part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_cursor_line_end_set(part, cur));
-}
-
-void
-_part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2463,137 +1871,72 @@ _part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_coord_set(Evas_Object *obj, const char *part,
-                                       Edje_Cursor cur, Evas_Coord x,
-                                       Evas_Coord y)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_coord_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur, Evas_Coord x, Evas_Coord y)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_text_cursor_coord_set(part, cur, x, y, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_coord_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   if (ret) *ret = EINA_FALSE;
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        Eina_Bool int_ret = _edje_entry_cursor_coord_set(rp, cur, x, y);
-        if (ret) *ret = int_ret;
+        return _edje_entry_cursor_coord_set(rp, cur, x, y);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_is_format_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_cursor_is_format_get(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_is_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        *ret = _edje_entry_cursor_is_format_get(rp, cur);
+        return _edje_entry_cursor_is_format_get(rp, cur);
      }
+   return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN Eina_Bool
+_edje_part_text_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_cursor_is_visible_format_get(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return EINA_FALSE;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        *ret = _edje_entry_cursor_is_visible_format_get(rp, cur);
+        return _edje_entry_cursor_is_visible_format_get(rp, cur);
      }
+
+   return EINA_FALSE;
 }
 
-EAPI char *
-edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN char*
+_edje_part_text_cursor_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return NULL;
-   char *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_text_cursor_content_get(part, cur, &ret));
-   return ret;
-}
-
-void
-_part_text_cursor_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   char **ret = va_arg(*list, char **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        *ret = _edje_entry_cursor_content_get(rp, cur);
+        return _edje_entry_cursor_content_get(rp, cur);
      }
+
+   return NULL;
 }
 
-EAPI void
-edje_object_part_text_cursor_pos_set(Evas_Object *obj, const char *part, Edje_Cursor cur, int pos)
+EOLIAN void
+_edje_part_text_cursor_pos_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur, int pos)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_cursor_pos_set(part, cur, pos));
-}
-
-void
-_part_text_cursor_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   int pos = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2605,46 +1948,27 @@ _part_text_cursor_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI int
-edje_object_part_text_cursor_pos_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+EOLIAN int
+_edje_part_text_cursor_pos_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
-   if (!obj) return 0;
    int ret;
-   eo_do((Eo *)obj, edje_obj_part_text_cursor_pos_get(part, cur, &ret));
+   Edje_Real_Part *rp;
+   ret = 0;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_cursor_pos_get(rp, cur);
+     }
+
    return ret;
 }
 
-void
-_part_text_cursor_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_imf_context_reset(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Edje_Cursor cur = va_arg(*list, Edje_Cursor);
-   int *ret = va_arg(*list, int *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = 0;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_cursor_pos_get(rp, cur);
-     }
-}
-
-EAPI void
-edje_object_part_text_imf_context_reset(const Evas_Object *obj, const char *part)
-{
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_imf_context_reset(part));
-}
-
-void
-_part_text_imf_context_reset(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2656,19 +1980,9 @@ _part_text_imf_context_reset(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_input_panel_layout_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Layout layout)
+EOLIAN void
+_edje_part_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Panel_Layout layout)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_layout_set(part, layout));
-}
-
-void
-_part_text_input_panel_layout_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Input_Panel_Layout layout = va_arg(*list, Edje_Input_Panel_Layout);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2680,46 +1994,27 @@ _part_text_input_panel_layout_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Edje_Input_Panel_Layout
-edje_object_part_text_input_panel_layout_get(const Evas_Object *obj, const char *part)
+EOLIAN Edje_Input_Panel_Layout
+_edje_part_text_input_panel_layout_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
    Edje_Input_Panel_Layout ret;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_layout_get(part, &ret));
+   Edje_Real_Part *rp;
+   ret = EDJE_INPUT_PANEL_LAYOUT_INVALID;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_input_panel_layout_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_input_panel_layout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, int variation)
 {
-   const char *part = va_arg(*list, const char *);
-   Edje_Input_Panel_Layout *ret = va_arg(*list, Edje_Input_Panel_Layout *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EDJE_INPUT_PANEL_LAYOUT_INVALID;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_layout_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_input_panel_layout_variation_set(Evas_Object *obj, const char *part, int variation)
-{
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_variation_set(part, variation));
-}
-
-void
-_part_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   int variation = va_arg(*list, int);
-
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2731,48 +2026,27 @@ _part_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, void *_pd, va_l
      }
 }
 
-EAPI int
-edje_object_part_text_input_panel_layout_variation_get(const Evas_Object *obj, const char *part)
+EOLIAN int
+_edje_part_text_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   int ret = 0;
-   if (obj)
-     eo_do((Eo *)obj, edje_obj_part_text_input_panel_variation_get(part, &ret));
-   return ret;
-}
+   int r;
 
-void
-_part_text_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   int *r = va_arg(*list, int *);
-
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
-   if (*r) *r = 0;
-   if ((!ed) || (!part)) return ;
+   r = 0;
+   if ((!ed) || (!part)) return r;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return ;
+   if (!rp) return r;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        if (*r) *r = _edje_entry_input_panel_layout_variation_get(rp);
+        r = _edje_entry_input_panel_layout_variation_get(rp);
      }
-   return ;
+   return r;
 }
 
-EAPI void
-edje_object_part_text_autocapital_type_set(Evas_Object *obj, const char *part, Edje_Text_Autocapital_Type autocapital_type)
+EOLIAN void
+_edje_part_text_autocapital_type_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Text_Autocapital_Type autocapital_type)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_autocapital_type_set(part, autocapital_type));
-}
-
-void
-_part_text_autocapital_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Text_Autocapital_Type autocapital_type = va_arg(*list, Edje_Text_Autocapital_Type);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2784,46 +2058,27 @@ _part_text_autocapital_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Edje_Text_Autocapital_Type
-edje_object_part_text_autocapital_type_get(const Evas_Object *obj, const char *part)
+EOLIAN Edje_Text_Autocapital_Type
+_edje_part_text_autocapital_type_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
    Edje_Text_Autocapital_Type ret;
-   eo_do((Eo *)obj, edje_obj_part_text_autocapital_type_get(part, &ret));
+   Edje_Real_Part *rp;
+   ret = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_autocapital_type_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_autocapital_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_prediction_allow_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool prediction)
 {
-   const char *part = va_arg(*list, const char *);
-   Edje_Text_Autocapital_Type *ret = va_arg(*list, Edje_Text_Autocapital_Type *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_autocapital_type_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_prediction_allow_set(Evas_Object *obj, const char *part, Eina_Bool prediction)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_prediction_allow_set(part, prediction));
-}
-
-void
-_part_text_prediction_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool prediction = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2835,46 +2090,27 @@ _part_text_prediction_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-edje_object_part_text_prediction_allow_get(const Evas_Object *obj, const char *part)
+EOLIAN Eina_Bool
+_edje_part_text_prediction_allow_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_prediction_allow_get(part, &ret));
+   Eina_Bool ret;
+   Edje_Real_Part *rp;
+   ret = EINA_FALSE;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_prediction_allow_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_prediction_allow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool enabled)
 {
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_prediction_allow_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_input_panel_enabled_set(Evas_Object *obj, const char *part, Eina_Bool enabled)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_enabled_set(part, enabled));
-}
-
-void
-_part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool enabled = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2886,45 +2122,27 @@ _part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list
      }
 }
 
-EAPI Eina_Bool
-edje_object_part_text_input_panel_enabled_get(const Evas_Object *obj, const char *part)
+EOLIAN Eina_Bool
+_edje_part_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_enabled_get(part, &ret));
+   Eina_Bool ret;
+   Edje_Real_Part *rp;
+   ret = EINA_FALSE;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_input_panel_enabled_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_input_panel_show(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_enabled_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_input_panel_show(const Evas_Object *obj, const char *part)
-{
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_show(part));
-}
-
-void
-_part_text_input_panel_show(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2934,18 +2152,9 @@ _part_text_input_panel_show(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_input_panel_show(rp);
 }
 
-EAPI void
-edje_object_part_text_input_panel_hide(const Evas_Object *obj, const char *part)
+EOLIAN void
+_edje_part_text_input_panel_hide(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_hide(part));
-}
-
-void
-_part_text_input_panel_hide(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2955,19 +2164,9 @@ _part_text_input_panel_hide(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      _edje_entry_input_panel_hide(rp);
 }
 
-EAPI void
-edje_object_part_text_input_panel_language_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Lang lang)
+EOLIAN void
+_edje_part_text_input_panel_language_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Panel_Lang lang)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_language_set(part, lang));
-}
-
-void
-_part_text_input_panel_language_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Input_Panel_Lang lang = va_arg(*list, Edje_Input_Panel_Lang);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -2979,47 +2178,27 @@ _part_text_input_panel_language_set(Eo *obj EINA_UNUSED, void *_pd, va_list *lis
      }
 }
 
-EAPI Edje_Input_Panel_Lang
-edje_object_part_text_input_panel_language_get(const Evas_Object *obj, const char *part)
+EOLIAN Edje_Input_Panel_Lang
+_edje_part_text_input_panel_language_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EDJE_INPUT_PANEL_LANG_AUTOMATIC;
    Edje_Input_Panel_Lang ret;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_language_get(part, &ret));
+   Edje_Real_Part *rp;
+   ret = EDJE_INPUT_PANEL_LANG_AUTOMATIC;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_input_panel_language_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_input_panel_language_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const void *data, int len)
 {
-   const char *part = va_arg(*list, const char *);
-   Edje_Input_Panel_Lang *ret = va_arg(*list, Edje_Input_Panel_Lang *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EDJE_INPUT_PANEL_LANG_AUTOMATIC;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_language_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_input_panel_imdata_set(Evas_Object *obj, const char *part, const void *data, int len)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_imdata_set(part, data, len));
-}
-
-void
-_part_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   const void *data = va_arg(*list, const void *);
-   int len = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -3031,20 +2210,9 @@ _part_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_input_panel_imdata_get(const Evas_Object *obj, const char *part, void *data, int *len)
+EOLIAN void
+_edje_part_text_input_panel_imdata_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, void *data, int *len)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_imdata_get(part, data, len));
-}
-
-void
-_part_text_input_panel_imdata_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   void *data = va_arg(*list, void *);
-   int *len = va_arg(*list, int *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -3056,19 +2224,9 @@ _part_text_input_panel_imdata_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_part_text_input_panel_return_key_type_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type)
+EOLIAN void
+_edje_part_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_return_key_type_set(part, return_key_type));
-}
-
-void
-_part_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Input_Panel_Return_Key_Type return_key_type = va_arg(*list, Edje_Input_Panel_Return_Key_Type);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -3080,46 +2238,27 @@ _part_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, void *_pd, va_li
      }
 }
 
-EAPI Edje_Input_Panel_Return_Key_Type
-edje_object_part_text_input_panel_return_key_type_get(const Evas_Object *obj, const char *part)
+EOLIAN Edje_Input_Panel_Return_Key_Type
+_edje_part_text_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
    Edje_Input_Panel_Return_Key_Type ret;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_return_key_type_get(part, &ret));
+   Edje_Real_Part *rp;
+   ret = EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_input_panel_return_key_type_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool disabled)
 {
-   const char *part = va_arg(*list, const char *);
-   Edje_Input_Panel_Return_Key_Type *ret = va_arg(*list, Edje_Input_Panel_Return_Key_Type *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_return_key_type_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_input_panel_return_key_disabled_set(Evas_Object *obj, const char *part, Eina_Bool disabled)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_return_key_disabled_set(part, disabled));
-}
-
-void
-_part_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool disabled = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -3131,45 +2270,27 @@ _part_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, void *_pd, v
      }
 }
 
-EAPI Eina_Bool
-edje_object_part_text_input_panel_return_key_disabled_get(const Evas_Object *obj, const char *part)
+EOLIAN Eina_Bool
+_edje_part_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_return_key_disabled_get(part, &ret));
+   Eina_Bool ret;
+   Edje_Real_Part *rp;
+   ret = EINA_FALSE;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_input_panel_return_key_disabled_get(rp);
+     }
+
    return ret;
 }
 
-void
-_part_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_part_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool ondemand)
 {
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_return_key_disabled_get(rp);
-     }
-}
-
-EAPI void
-edje_object_part_text_input_panel_show_on_demand_set(Evas_Object *obj, const char *part, Eina_Bool ondemand)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_text_input_panel_show_on_demand_set(part, ondemand));
-}
-
-void _part_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool ondemand = va_arg(*list, int);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if ((!ed) || (!part)) return;
@@ -3181,46 +2302,27 @@ void _part_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, void *_pd, v
      }
 }
 
-EAPI Eina_Bool
-edje_object_part_text_input_panel_show_on_demand_get(const Evas_Object *obj, const char *part)
+EOLIAN Eina_Bool
+_edje_part_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_text_input_panel_show_on_demand_get(part, &ret));
+   Eina_Bool ret;
+   Edje_Real_Part *rp;
+   ret = EINA_FALSE;
+
+   if ((!ed) || (!part)) return ret;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return ret;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        ret = _edje_entry_input_panel_show_on_demand_get(rp);
+     }
+
    return ret;
 }
 
-void _part_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN void
+_edje_text_insert_filter_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
-   Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
-
-   if ((!ed) || (!part)) return;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     {
-        *ret = _edje_entry_input_panel_show_on_demand_get(rp);
-     }
-}
-
-EAPI void
-edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
-{
-   if (!obj) return;
-   eo_do(obj, edje_obj_text_insert_filter_callback_add(part, func, data));
-}
-
-void
-_text_insert_filter_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Text_Filter_Cb func = va_arg(*list, Edje_Text_Filter_Cb);
-   void *data = va_arg(*list, void *);
-   Edje *ed = _pd;
    Edje_Text_Insert_Filter_Callback *cb;
 
    if ((!ed) || (!part)) return;
@@ -3232,27 +2334,13 @@ _text_insert_filter_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      eina_list_append(ed->text_insert_filter_callbacks, cb);
 }
 
-EAPI void *
-edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func)
+EOLIAN void*
+_edje_text_insert_filter_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Text_Filter_Cb func)
 {
-   if (!obj) return NULL;
-   void *ret = NULL;
-   eo_do(obj, edje_obj_text_insert_filter_callback_del(part, func, &ret));
-   return ret;
-}
-
-void
-_text_insert_filter_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Text_Filter_Cb func = va_arg(*list, Edje_Text_Filter_Cb);
-   void **ret = va_arg(*list, void **);
-   Edje *ed = _pd;
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
-   if (ret) *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func))
@@ -3262,34 +2350,20 @@ _text_insert_filter_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                 eina_list_remove_list(ed->text_insert_filter_callbacks, l);
              eina_stringshare_del(cb->part);
              free(cb);
-             if (ret) *ret = data;
-             return;
+             return data;
           }
      }
+
+   return NULL;
 }
 
-EAPI void *
-edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
+EOLIAN void*
+_edje_text_insert_filter_callback_del_full(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
-   if (!obj) return NULL;
-   void *ret = NULL;
-   eo_do(obj, edje_obj_text_insert_filter_callback_del_full(part, func, data, &ret));
-   return ret;
-}
-
-void
-_text_insert_filter_callback_del_full(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Text_Filter_Cb func = va_arg(*list, Edje_Text_Filter_Cb);
-   void *data = va_arg(*list, void *);
-   void **ret = va_arg(*list, void **);
-   Edje *ed = _pd;
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
-   if (ret) *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func) &&
@@ -3300,26 +2374,16 @@ _text_insert_filter_callback_del_full(Eo *obj EINA_UNUSED, void *_pd, va_list *l
                 eina_list_remove_list(ed->text_insert_filter_callbacks, l);
              eina_stringshare_del(cb->part);
              free(cb);
-             if (ret) *ret = tmp;
-             return;
+             return tmp;
           }
      }
+
+   return NULL;
 }
 
-EAPI void
-edje_object_text_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
+EOLIAN void
+_edje_text_markup_filter_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Markup_Filter_Cb func, void *data)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_text_markup_filter_callback_add(part, func, data));
-}
-
-void
-_text_markup_filter_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Markup_Filter_Cb func = va_arg(*list, Edje_Markup_Filter_Cb);
-   void *data = va_arg(*list, void *);
-   Edje *ed = _pd;
    Edje_Markup_Filter_Callback *cb;
 
    if ((!ed) || (!part)) return;
@@ -3331,27 +2395,13 @@ _text_markup_filter_callback_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      eina_list_append(ed->markup_filter_callbacks, cb);
 }
 
-EAPI void *
-edje_object_text_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func)
+EOLIAN void*
+_edje_text_markup_filter_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Markup_Filter_Cb func)
 {
-   if (!obj) return NULL;
-   void *ret = NULL;
-   eo_do(obj, edje_obj_text_markup_filter_callback_del(part, func, &ret));
-   return ret;
-}
-
-void
-_text_markup_filter_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Markup_Filter_Cb func = va_arg(*list, Edje_Markup_Filter_Cb);
-   void **ret = va_arg(*list, void **);
-   Edje *ed = _pd;
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
-   if (ret) *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func))
@@ -3361,34 +2411,20 @@ _text_markup_filter_callback_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                 eina_list_remove_list(ed->markup_filter_callbacks, l);
              eina_stringshare_del(cb->part);
              free(cb);
-             if (ret) *ret = data;
-             return;
+             return data;
           }
      }
+
+   return NULL;
 }
 
-EAPI void *
-edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
+EOLIAN void*
+_edje_text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Markup_Filter_Cb func, void *data)
 {
-   if (!obj) return NULL;
-   void *ret = NULL;
-   eo_do(obj, edje_obj_text_markup_filter_callback_del_full(part, func, data, &ret));
-   return ret;
-}
-
-void
-_text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Edje_Markup_Filter_Cb func = va_arg(*list, Edje_Markup_Filter_Cb);
-   void *data = va_arg(*list, void *);
-   void **ret = va_arg(*list, void **);
-   Edje *ed = _pd;
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
-   if (ret) *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func) &&
@@ -3399,33 +2435,20 @@ _text_markup_filter_callback_del_full(Eo *obj EINA_UNUSED, void *_pd, va_list *l
                 eina_list_remove_list(ed->markup_filter_callbacks, l);
              eina_stringshare_del(cb->part);
              free(cb);
-             if (ret) *ret = tmp;
-             return;
+             return tmp;
           }
      }
+
+   return NULL;
 }
 
-EAPI Eina_Bool
-edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
+EOLIAN Eina_Bool
+_edje_part_swallow(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *obj_swallow)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_swallow(part, obj_swallow, &ret));
-   return ret;
-}
-
-void
-_part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *obj_swallow = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp, *rpcur;
    Edje_User_Defined *eud = NULL;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
 
    /* Need to recalc before providing the object. */
    // XXX: I guess this is not required, removing for testing purposes
@@ -3442,11 +2465,7 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (rpcur)
      {
         /* the object is already swallowed in the requested part */
-        if (rpcur == rp)
-          {
-             *ret = EINA_TRUE;
-             return;
-          }
+        if (rpcur == rp) return EINA_TRUE;
         /* The object is already swallowed somewhere, unswallow it first */
         edje_object_part_unswallow(ed->obj, obj_swallow);
      }
@@ -3454,15 +2473,15 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (!rp)
      {
         DBG("cannot swallow part %s: part not exist!", part);
-        return;
+        return EINA_FALSE;
      }
    if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
      {
         ERR("cannot swallow part %s: not swallow type!", rp->part->name);
-        return;
+        return EINA_FALSE;
      }
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return;
+       (!rp->typedata.swallow)) return EINA_FALSE;
    _edje_real_part_swallow(ed, rp, obj_swallow, EINA_TRUE);
 
    if (rp->typedata.swallow->swallowed_object)
@@ -3480,7 +2499,7 @@ _part_swallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           }
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -3755,18 +2774,9 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
      }
 }
 
-EAPI void
-edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
+EOLIAN void
+_edje_part_unswallow(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_part_unswallow(obj_swallow));
-}
-
-void
-_part_unswallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object *obj_swallow = va_arg(*list, Evas_Object *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
 
    if (!obj_swallow) return;
@@ -3822,50 +2832,27 @@ _part_unswallow(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Evas_Object *
-edje_object_part_swallow_get(const Evas_Object *obj, const char *part)
+EOLIAN Evas_Object*
+_edje_part_swallow_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   if (!obj) return NULL;
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_swallow_get(part, &ret));
-   return ret;
-}
-
-void
-_part_swallow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
+   if (!rp) return NULL;
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return;
-   *ret = rp->typedata.swallow->swallowed_object;
+       (!rp->typedata.swallow)) return NULL;
+
+   return rp->typedata.swallow->swallowed_object;
 }
 
-EAPI void
-edje_object_size_min_get(const Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+EOLIAN void
+_edje_size_min_get(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_size_min_get(minw, minh));
-}
-
-void
-_size_min_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *minw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *minh = va_arg(*list, Evas_Coord *);
-   Edje *ed = _pd;
-
    if ((!ed) || (!ed->collection))
      {
         if (minw) *minw = 0;
@@ -3876,20 +2863,9 @@ _size_min_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (minh) *minh = ed->collection->prop.min.h;
 }
 
-EAPI void
-edje_object_size_max_get(const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
+EOLIAN void
+_edje_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Evas_Coord *maxw, Evas_Coord *maxh)
 {
-   if (!obj) return;
-   eo_do((Eo *)obj, edje_obj_size_max_get(maxw, maxh));
-}
-
-void
-_size_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *maxw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *maxh = va_arg(*list, Evas_Coord *);
-   Edje *ed = (Edje *)_pd;
-
    if ((!ed) || (!ed->collection))
      {
         if (maxw) *maxw = 0;
@@ -3920,17 +2896,9 @@ _size_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-edje_object_calc_force(Evas_Object *obj)
+EOLIAN void
+_edje_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_calc_force());
-}
-
-void
-_calc_force(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Edje *ed = _pd;
    int pf, pf2;
 
    if (!ed) return;
@@ -3939,55 +2907,30 @@ _calc_force(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    ed->all_part_change = EINA_TRUE;
 #endif
 
-   pf2 = _edje_freeze_val;
+   pf2 = _edje_util_freeze_val;
    pf = ed->freeze;
 
-   _edje_freeze_val = 0;
+   _edje_util_freeze_val = 0;
    ed->freeze = 0;
 
    _edje_recalc_do(ed);
 
    ed->freeze = pf;
-   _edje_freeze_val = pf2;
+   _edje_util_freeze_val = pf2;
 }
 
-EAPI void
-edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+EOLIAN void
+_edje_size_min_calc(Eo *obj, Edje *_pd EINA_UNUSED, Evas_Coord *minw, Evas_Coord *minh)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_size_min_calc(minw, minh));
-}
-
-void
-_size_min_calc(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Evas_Coord *minw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *minh = va_arg(*list, Evas_Coord *);
    edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
 }
 
-EAPI Eina_Bool
-edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN Eina_Bool
+_edje_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_parts_extends_calc(x, y, w, h, &ret));
-   return ret;
-}
-
-void
-_parts_extends_calc(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
    Evas_Coord xx2 = 0, yy2 = 0;
    unsigned int i;
-   if (ret) *ret = EINA_FALSE;
 
    if (!ed)
      {
@@ -3995,7 +2938,7 @@ _parts_extends_calc(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         if (y) *y = 0;
         if (w) *w = 0;
         if (h) *h = 0;
-        return;
+        return EINA_FALSE;
      }
 
    ed->calc_only = EINA_TRUE;
@@ -4030,24 +2973,12 @@ _parts_extends_calc(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (w) *w = xx2 - xx1;
    if (h) *h = yy2 - yy1;
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI void
-edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
+EOLIAN void
+_edje_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_size_min_restricted_calc(minw, minh, restrictedw, restrictedh));
-}
-
-void
-_size_min_restricted_calc(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *minw = va_arg(*list, Evas_Coord *);
-   Evas_Coord *minh = va_arg(*list, Evas_Coord *);
-   Evas_Coord restrictedw = va_arg(*list, Evas_Coord);
-   Evas_Coord restrictedh = va_arg(*list, Evas_Coord);
-   Edje *ed = _pd;
    Evas_Coord pw, ph;
    int maxw, maxh;
    int okw, okh;
@@ -4195,29 +3126,18 @@ _size_min_restricted_calc(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 /* FIXME: Correctly return other states */
-EAPI const char *
-edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val_ret)
+EOLIAN const char*
+_edje_part_state_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *val_ret)
 {
-   if (!obj) return NULL;
-   const char *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_state_get(part, val_ret, &ret));
-   return ret;
-}
+   const char *ret;
 
-void
-_part_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double *val_ret = va_arg(*list, double *);
-   const char **ret = va_arg(*list, const char **);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
-   *ret = "";
+   ret = "";
 
    if ((!ed) || (!part))
      {
         if (val_ret) *val_ret = 0;
-        return;
+        return ret;
      }
 
    /* Need to recalc before providing the object. */
@@ -4228,16 +3148,16 @@ _part_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         if (val_ret) *val_ret = 0;
         INF("part not found");
-        return;
+        return ret;
      }
    if (rp->chosen_description)
      {
         if (val_ret) *val_ret = rp->chosen_description->state.value;
         if (rp->chosen_description->state.name)
-          *ret = rp->chosen_description->state.name;
+          ret = rp->chosen_description->state.name;
         else
-          *ret = "default";
-        return;
+          ret = "default";
+        return ret;
      }
    else
      {
@@ -4245,72 +3165,50 @@ _part_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           {
              if (val_ret) *val_ret = rp->param1.description->state.value;
              if (rp->param1.description->state.name)
-               *ret = rp->param1.description->state.name;
+               ret = rp->param1.description->state.name;
              else
-               *ret = "default";
-             return;
+               ret = "default";
+             return ret;
           }
      }
    if (val_ret) *val_ret = 0;
-}
 
-EAPI Edje_Drag_Dir
-edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
-{
-   if (!obj) return EDJE_DRAG_DIR_NONE;
-   Edje_Drag_Dir ret;
-   eo_do((Eo *)obj, edje_obj_part_drag_dir_get(part, &ret));
    return ret;
 }
 
-void
-_part_drag_dir_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Edje_Drag_Dir
+_edje_part_drag_dir_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Edje_Drag_Dir *ret = va_arg(*list, Edje_Drag_Dir *);
-   Edje *ed = (Edje *)_pd;
+   Edje_Drag_Dir ret;
    Edje_Real_Part *rp;
-   *ret = EDJE_DRAG_DIR_NONE;
+   ret = EDJE_DRAG_DIR_NONE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if ((rp->part->dragable.x) && (rp->part->dragable.y)) *ret = EDJE_DRAG_DIR_XY;
-   else if (rp->part->dragable.x) *ret = EDJE_DRAG_DIR_X;
-   else if (rp->part->dragable.y) *ret = EDJE_DRAG_DIR_Y;
-}
+   if (!rp) return ret;
+   if ((rp->part->dragable.x) && (rp->part->dragable.y)) ret = EDJE_DRAG_DIR_XY;
+   else if (rp->part->dragable.x) ret = EDJE_DRAG_DIR_X;
+   else if (rp->part->dragable.y) ret = EDJE_DRAG_DIR_Y;
 
-EAPI Eina_Bool
-edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, double dy)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_drag_value_set(part, dx, dy, &ret));
    return ret;
 }
 
-void
-_part_drag_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_part_drag_value_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
 {
-   const char *part = va_arg(*list, const char *);
-   double dx = va_arg(*list, double);
-   double dy = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
    Eina_List *l;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (!rp->drag) return;
-   if (rp->drag->down.count > 0) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
+   if (rp->drag->down.count > 0) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_DRAG_VALUE && !strcmp(part, eud->part))
@@ -4338,8 +3236,7 @@ _part_drag_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (rp->part->dragable.y < 0) dy = 1.0 - dy;
    if ((rp->drag->val.x == FROM_DOUBLE(dx)) && (rp->drag->val.y == FROM_DOUBLE(dy)))
      {
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    rp->drag->val.x = FROM_DOUBLE(dx);
    rp->drag->val.y = FROM_DOUBLE(dy);
@@ -4348,36 +3245,22 @@ _part_drag_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 #endif
    _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(ed, "drag,set", rp->part->name);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
 /* FIXME: Should this be x and y instead of dx/dy? */
-EAPI Eina_Bool
-edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
+EOLIAN Eina_Bool
+_edje_part_drag_value_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dx, double *dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_drag_value_get(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double *dx = va_arg(*list, double *);
-   double *dy = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
    double ddx, ddy;
-   *ret = EINA_FALSE;
 
    if ((!ed) || (!part))
      {
         if (dx) *dx = 0;
         if (dy) *dy = 0;
-        return;
+        return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -4388,7 +3271,7 @@ _part_drag_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         if (dx) *dx = 0;
         if (dy) *dy = 0;
-        return;
+        return EINA_FALSE;
      }
    ddx = TO_DOUBLE(rp->drag->val.x);
    ddy = TO_DOUBLE(rp->drag->val.y);
@@ -4396,35 +3279,21 @@ _part_drag_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (rp->part->dragable.y < 0) ddy = 1.0 - ddy;
    if (dx) *dx = ddx;
    if (dy) *dy = ddy;
-   *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
+EOLIAN Eina_Bool
+_edje_part_drag_size_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dw, double dh)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_drag_size_set(part, dw, dh, &ret));
-   return ret;
-}
-
-void
-_part_drag_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double dw = va_arg(*list, double);
-   double dh = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
    Eina_List *l;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (!rp->drag) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_DRAG_SIZE && !strcmp(part, eud->part))
@@ -4449,8 +3318,7 @@ _part_drag_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    else if (dh > 1.0) dh = 1.0;
    if ((rp->drag->size.x == FROM_DOUBLE(dw)) && (rp->drag->size.y == FROM_DOUBLE(dh)))
      {
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    rp->drag->size.x = FROM_DOUBLE(dw);
    rp->drag->size.y = FROM_DOUBLE(dh);
@@ -4460,34 +3328,20 @@ _part_drag_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    rp->invalidate = EINA_TRUE;
 #endif
    _edje_recalc(ed);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double *dw, double *dh)
+EOLIAN Eina_Bool
+_edje_part_drag_size_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dw, double *dh)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_drag_size_get(part, dw, dh, &ret));
-   return ret;
-}
-
-void
-_part_drag_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double *dw = va_arg(*list, double *);
-   double *dh = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
 
    if ((!ed) || (!part))
      {
         if (dw) *dw = 0;
         if (dh) *dh = 0;
-        return;
+        return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -4498,39 +3352,25 @@ _part_drag_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         if (dw) *dw = 0;
         if (dh) *dh = 0;
-        return;
+        return EINA_FALSE;
      }
    if (dw) *dw = TO_DOUBLE(rp->drag->size.x);
    if (dh) *dh = TO_DOUBLE(rp->drag->size.y);
-   *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, double dy)
+EOLIAN Eina_Bool
+_edje_part_drag_step_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_drag_step_set(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double dx = va_arg(*list, double);
-   double dy = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
    Eina_List *l;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (!rp->drag) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_DRAG_STEP && !strcmp(part, eud->part))
@@ -4558,34 +3398,20 @@ _part_drag_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = EINA_TRUE;
 #endif
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
+EOLIAN Eina_Bool
+_edje_part_drag_step_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dx, double *dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_drag_step_get(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double *dx = va_arg(*list, double *);
-   double *dy = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
 
    if ((!ed) || (!part))
      {
         if (dx) *dx = 0;
         if (dy) *dy = 0;
-        return;
+        return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -4596,39 +3422,25 @@ _part_drag_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         if (dx) *dx = 0;
         if (dy) *dy = 0;
-        return;
+        return EINA_FALSE;
      }
    if (dx) *dx = TO_DOUBLE(rp->drag->step.x);
    if (dy) *dy = TO_DOUBLE(rp->drag->step.y);
-   *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, double dy)
+EOLIAN Eina_Bool
+_edje_part_drag_page_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_drag_page_set(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_page_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double dx = va_arg(*list, double);
-   double dy = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
    Eina_List *l;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (!rp->drag) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_DRAG_PAGE && !strcmp(part, eud->part))
@@ -4656,34 +3468,20 @@ _part_drag_page_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = EINA_TRUE;
 #endif
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
+EOLIAN Eina_Bool
+_edje_part_drag_page_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dx, double *dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_drag_page_get(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_page_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double *dx = va_arg(*list, double *);
-   double *dy = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = (Edje *)_pd;
    Edje_Real_Part *rp;
-   *ret = EINA_FALSE;
 
    if ((!ed) || (!part))
      {
         if (dx) *dx = 0;
         if (dy) *dy = 0;
-        return;
+        return EINA_FALSE;
      }
 
    /* Need to recalc before providing the object. */
@@ -4694,41 +3492,27 @@ _part_drag_page_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      {
         if (dx) *dx = 0;
         if (dy) *dy = 0;
-        return;
+        return EINA_FALSE;
      }
    if (dx) *dx = TO_DOUBLE(rp->drag->page.x);
    if (dy) *dy = TO_DOUBLE(rp->drag->page.y);
-   *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)
+EOLIAN Eina_Bool
+_edje_part_drag_step(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_drag_step(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_step(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double dx = va_arg(*list, double);
-   double dy = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    FLOAT_T px, py;
    Edje_User_Defined *eud;
    Eina_List *l;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (!rp->drag) return;
-   if (rp->drag->down.count > 0) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
+   if (rp->drag->down.count > 0) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_DRAG_STEP && !strcmp(part, eud->part))
@@ -4757,45 +3541,30 @@ _part_drag_step(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    rp->drag->val.y = CLAMP (rp->drag->val.y, ZERO, FROM_DOUBLE(1.0));
    if ((px == rp->drag->val.x) && (py == rp->drag->val.y))
      {
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = EINA_TRUE;
 #endif
    _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(ed, "drag,step", rp->part->name);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy)
+EOLIAN Eina_Bool
+_edje_part_drag_page(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_drag_page(part, dx, dy, &ret));
-   return ret;
-}
-
-void
-_part_drag_page(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   double dx = va_arg(*list, double);
-   double dy = va_arg(*list, double);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    FLOAT_T px, py;
    Edje_User_Defined *eud;
    Eina_List *l;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (!rp->drag) return;
-   if (rp->drag->down.count > 0) return;
+   if (!rp) return EINA_FALSE;
+   if (!rp->drag) return EINA_FALSE;
+   if (rp->drag->down.count > 0) return EINA_FALSE;
 
    EINA_LIST_FOREACH(ed->user_defined, l, eud)
      if (eud->type == EDJE_USER_DRAG_PAGE && !strcmp(part, eud->part))
@@ -4822,15 +3591,15 @@ _part_drag_page(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    rp->drag->val.y = CLAMP (rp->drag->val.y, ZERO, FROM_DOUBLE(1.0));
    if ((px == rp->drag->val.x) && (py == rp->drag->val.y))
      {
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = EINA_TRUE;
 #endif
    _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
    _edje_emit(ed, "drag,page", rp->part->name);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
 void
@@ -4850,186 +3619,130 @@ _edje_box_shutdown(void)
    _edje_box_layout_registry = NULL;
 }
 
-EAPI Eina_Bool
-edje_object_part_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
+EOLIAN Eina_Bool
+_edje_part_box_append(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_box_append(part, child, &ret));
-   return ret;
-}
-
-void
-_part_box_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part) || (!child)) return;
+   if ((!ed) || (!part) || (!child)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return ret;
 
    if (_edje_real_part_box_append(ed, rp, child))
      {
         Edje_User_Defined *eud;
 
         eud = _edje_user_definition_new(EDJE_USER_BOX_PACK, part, ed);
-        if (!eud) return;
+        if (!eud) return ret;
         eud->u.box.child = child;
         eud->u.box.index = -1;
 
         evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
      }
-}
 
-EAPI Eina_Bool
-edje_object_part_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_box_prepend(part, child, &ret));
    return ret;
 }
 
-void
-_part_box_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_part_box_prepend(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return ret;
 
    if (_edje_real_part_box_prepend(ed, rp, child))
      {
         Edje_User_Defined *eud;
 
         eud = _edje_user_definition_new(EDJE_USER_BOX_PACK, part, ed);
-        if (!eud) return;
+        if (!eud) return ret;
         eud->u.box.child = child;
 
         evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
      }
-}
 
-EAPI Eina_Bool
-edje_object_part_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_box_insert_before(part, child, reference, &ret));
    return ret;
 }
 
-void
-_part_box_insert_before(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_part_box_insert_before(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child, const Evas_Object *reference)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   const Evas_Object *reference = va_arg(*list, const Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return ret;
 
    if (_edje_real_part_box_insert_before(ed, rp, child, reference))
      {
         Edje_User_Defined *eud;
 
         eud = _edje_user_definition_new(EDJE_USER_BOX_PACK, part, ed);
-        if (!eud) return;
+        if (!eud) return ret;
         eud->u.box.child = child;
 
         evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
      }
-}
 
-EAPI Eina_Bool
-edje_object_part_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_box_insert_at(part, child, pos, &ret));
    return ret;
 }
 
-void
-_part_box_insert_at(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_part_box_insert_at(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child, unsigned int pos)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   unsigned int pos = va_arg(*list, unsigned int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return ret;
 
    if (_edje_real_part_box_insert_at(ed, rp, child, pos))
      {
         Edje_User_Defined *eud;
 
         eud = _edje_user_definition_new(EDJE_USER_BOX_PACK, part, ed);
-        if (!eud) return;
+        if (!eud) return ret;
         eud->u.box.child = child;
 
         evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
      }
-}
 
-EAPI Evas_Object *
-edje_object_part_box_remove(Evas_Object *obj, const char *part, Evas_Object *child)
-{
-   if (!obj) return NULL;
-   Evas_Object *ret = NULL;
-   eo_do(obj, edje_obj_part_box_remove(part, child, &ret));
    return ret;
 }
 
-void
-_part_box_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Evas_Object*
+_edje_part_box_remove(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Evas_Object *r;
-   if (ret) *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return NULL;
 
    r = _edje_real_part_box_remove(ed, rp, child);
 
@@ -5042,38 +3755,23 @@ _part_box_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           if (eud->type == EDJE_USER_BOX_PACK && eud->u.box.child == child && !strcmp(eud->part, part))
             {
                _edje_user_definition_free(eud);
-               if (ret) *ret = r;
-               return;
+               return r;
             }
      }
-   if (ret) *ret = r;
+   return r;
 }
 
-EAPI Evas_Object *
-edje_object_part_box_remove_at(Evas_Object *obj, const char *part, unsigned int pos)
+EOLIAN Evas_Object*
+_edje_part_box_remove_at(Eo *obj EINA_UNUSED, Edje *ed, const char *part, unsigned int pos)
 {
-   if (!obj) return NULL;
-   Evas_Object *ret = NULL;
-   eo_do(obj, edje_obj_part_box_remove_at(part, pos, &ret));
-   return ret;
-}
-
-void
-_part_box_remove_at(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   unsigned int pos = va_arg(*list, unsigned int);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
    Evas_Object *r;
-   if (ret) *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return NULL;
 
    r = _edje_real_part_box_remove_at(ed, rp, pos);
 
@@ -5086,41 +3784,28 @@ _part_box_remove_at(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           if (eud->type == EDJE_USER_BOX_PACK && eud->u.box.child == r && !strcmp(eud->part, part))
             {
                _edje_user_definition_free(eud);
-               if (ret) *ret = r;
-               return;
+               return r;
             }
      }
-   if (ret) *ret = r;
+   return r;
 }
 
-EAPI Eina_Bool
-edje_object_part_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear)
+EOLIAN Eina_Bool
+_edje_part_box_remove_all(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool clear)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_box_remove_all(part, clear, &ret));
-   return ret;
-}
-
-void
-_part_box_remove_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool clear = va_arg(*list, int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_BOX) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_BOX) return ret;
 
    if (_edje_real_part_box_remove_all(ed, rp, clear))
      {
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
         Edje_User_Defined *eud;
         Eina_List *ll, *l;
 
@@ -5128,29 +3813,19 @@ _part_box_remove_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           if (eud->type == EDJE_USER_BOX_PACK && !strcmp(eud->part, part))
             {
                _edje_user_definition_free(eud);
-               return;
+               return ret;
             }
      }
-}
 
-EAPI Eina_List *
-edje_object_access_part_list_get(const Evas_Object *obj)
-{
-   if (!obj) return NULL;
-   Eina_List *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_access_part_list_get(&ret));
    return ret;
 }
 
-void
-_access_part_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_List*
+_edje_access_part_list_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   Eina_List **ret = va_arg(*list, Eina_List **);
-   Edje *ed = _pd;
    Eina_List *access_parts = NULL;
-   *ret = NULL;
 
-   if ((!ed)) return;
+   if ((!ed)) return NULL;
 
    unsigned int i;
    for (i = 0; i < ed->table_parts_size; i++)
@@ -5161,7 +3836,7 @@ _access_part_list_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           access_parts = eina_list_append(access_parts, rp->part->name);
      }
 
-   *ret = access_parts;
+   return access_parts;
 }
 
 static void
@@ -5361,70 +4036,39 @@ _edje_real_part_box_remove_all(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear)
    return EINA_TRUE;
 }
 
-EAPI Evas_Object *
-edje_object_part_table_child_get(const Evas_Object *obj, const char *part, unsigned int col, unsigned int row)
+EOLIAN Evas_Object*
+_edje_part_table_child_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, unsigned int col, unsigned int row)
 {
-   if (!obj) return NULL;
-   Evas_Object *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_part_table_child_get(part, col, row, &ret));
-   return ret;
-}
-
-void
-_part_table_child_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   unsigned int col = va_arg(*list, unsigned int);
-   unsigned int row = va_arg(*list, unsigned int);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   *ret = NULL;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return NULL;
 
-   *ret = evas_object_table_child_get(rp->object, col, row);
+   return evas_object_table_child_get(rp->object, col, row);
 }
 
-EAPI Eina_Bool
-edje_object_part_table_pack(Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
+EOLIAN Eina_Bool
+_edje_part_table_pack(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_table_pack(part, child_obj, col, row, colspan, rowspan, &ret));
-   return ret;
-}
-
-void
-_part_table_pack(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child_obj = va_arg(*list, Evas_Object *);
-   unsigned short col = va_arg(*list, unsigned int);
-   unsigned short row = va_arg(*list, unsigned int);
-   unsigned short colspan = va_arg(*list, unsigned int);
-   unsigned short rowspan = va_arg(*list, unsigned int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return ret;
 
    if (_edje_real_part_table_pack(ed, rp, child_obj, col, row, colspan, rowspan))
      {
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
         eud = _edje_user_definition_new(EDJE_USER_TABLE_PACK, part, ed);
-        if (!eud) return;
+        if (!eud) return ret;
 
         eud->u.table.child = child_obj;
         eud->u.table.col = col;
@@ -5434,36 +4078,26 @@ _part_table_pack(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 
         evas_object_event_callback_add(child_obj, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
      }
-}
 
-EAPI Eina_Bool
-edje_object_part_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_table_unpack(part, child_obj, &ret));
    return ret;
 }
 
-void
-_part_table_unpack(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_part_table_unpack(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Object *child_obj)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *child_obj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
+   Eina_Bool ret;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
+   ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return ret;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return ret;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return ret;
 
    if (_edje_real_part_table_unpack(ed, rp, child_obj))
      {
-        if (ret) *ret = EINA_TRUE;
+        ret = EINA_TRUE;
         Edje_User_Defined *eud;
         Eina_List *l;
 
@@ -5476,65 +4110,40 @@ _part_table_unpack(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                break;
             }
      }
-}
 
-EAPI Eina_Bool
-edje_object_part_table_col_row_size_get(const Evas_Object *obj, const char *part, int *cols, int *rows)
-{
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_part_table_col_row_size_get(part, cols, rows, &ret));
    return ret;
 }
 
-void
-_part_table_col_row_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN Eina_Bool
+_edje_part_table_col_row_size_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, int *cols, int *rows)
 {
-   const char *part = va_arg(*list, const char *);
-   int *cols = va_arg(*list, int *);
-   int *rows = va_arg(*list, int *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return EINA_FALSE;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE;
 
    evas_object_table_col_row_size_get(rp->object, cols, rows);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_object_part_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear)
+EOLIAN Eina_Bool
+_edje_part_table_clear(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool clear)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_part_table_clear(part, clear, &ret));
-   return ret;
-}
-
-void
-_part_table_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part = va_arg(*list, const char *);
-   Eina_Bool clear = va_arg(*list, int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    Edje_Real_Part *rp;
-   if (ret) *ret = EINA_FALSE;
 
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return EINA_FALSE;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TABLE) return;
+   if (!rp) return EINA_FALSE;
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE;
 
    _edje_real_part_table_clear(ed, rp, clear);
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -5678,19 +4287,9 @@ edje_evas_global_perspective_get(const Evas *e)
    return evas_object_data_get(obj, "_edje_perspective");
 }
 
-EAPI void
-edje_object_perspective_set(Evas_Object *obj, Edje_Perspective *ps)
+EOLIAN void
+_edje_perspective_set(Eo *obj, Edje *ed, Edje_Perspective *ps)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_perspective_set(ps));
-}
-
-void
-_perspective_set(Eo *obj, void *_pd, va_list *list)
-{
-   Edje_Perspective *ps = va_arg(*list, Edje_Perspective *);
-   Edje *ed = _pd;
-
    if (!ed) return;
    if (ed->persp == ps) return;
    if (ed->persp != ps)
@@ -5705,46 +4304,22 @@ _perspective_set(Eo *obj, void *_pd, va_list *list)
    _edje_recalc_do(ed);
 }
 
-EAPI const Edje_Perspective *
-edje_object_perspective_get(const Evas_Object *obj)
+EOLIAN const Edje_Perspective*
+_edje_perspective_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return NULL;
-   const Edje_Perspective *ret = NULL;
-   eo_do((Eo *)obj, edje_obj_perspective_get(&ret));
-   return ret;
-}
-
-void
-_perspective_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Edje_Perspective **ret = va_arg(*list, const Edje_Perspective **);
-   const Edje *ed = _pd;
-   *ret = ed->persp;
+   return ed->persp;
 }
 
 #define EDJE_PRELOAD_EMISSION "preload,done"
 #define EDJE_PRELOAD_SOURCE NULL
 
-EAPI Eina_Bool
-edje_object_preload(Evas_Object *obj, Eina_Bool cancel)
+EOLIAN Eina_Bool
+_edje_preload(Eo *obj, Edje *ed, Eina_Bool cancel)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, edje_obj_preload(cancel, &ret));
-   return ret;
-}
-
-void
-_preload(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool cancel = va_arg(*list, int);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Edje *ed = _pd;
    int count;
    unsigned int i;
-   if (ret) *ret = EINA_FALSE;
 
-   if (!ed) return;
+   if (!ed) return EINA_FALSE;
 
    _edje_recalc_do(ed);
 
@@ -5826,22 +4401,12 @@ _preload(Eo *obj, void *_pd, va_list *list)
         _edje_emit(ed, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE);
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI void
-edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update)
+EOLIAN void
+_edje_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
 {
-   if (!obj) return;
-   eo_do(obj, edje_obj_update_hints_set(update));
-}
-
-void
-_update_hints_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool update = va_arg(*list, int);
-   Edje *ed = _pd;
-
    if (!ed) return;
    if (ed->update_hints == !!update) return;
 
@@ -5853,21 +4418,10 @@ _update_hints_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-edje_object_update_hints_get(Evas_Object *obj)
+EOLIAN Eina_Bool
+_edje_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (!obj) return EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)obj, edje_obj_update_hints_get(&ret));
-   return ret;
-}
-
-void
-_update_hints_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   const Edje *ed = _pd;
-   *ret = ed->update_hints;
+   return ed->update_hints;
 }
 
 Eina_Bool
@@ -6259,7 +4813,7 @@ _edje_fetch(const Evas_Object *obj)
 }
 
 int
-_edje_freeze(Edje *ed)
+_edje_util_freeze(Edje *ed)
 {
    ed->freeze++;
 //   printf("FREEZE %i\n", ed->freeze);
@@ -6267,7 +4821,7 @@ _edje_freeze(Edje *ed)
 }
 
 int
-_edje_thaw(Edje *ed)
+_edje_util_thaw(Edje *ed)
 {
    ed->freeze--;
    if (ed->freeze < 0)
