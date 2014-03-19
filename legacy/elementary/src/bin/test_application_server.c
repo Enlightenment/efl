@@ -146,7 +146,7 @@ test_application_server_common(const char *pkg)
                           elm_app_server_constructor(pkg, _create_view_cb));
    eo_do(server, elm_app_server_title_set(pkg),
          elm_app_server_views_get(&views_iter),
-         eo_event_callback_add(ELM_APP_SERVER_EV_TERMINATE, _terminate_cb, NULL));
+         eo_event_callback_add(ELM_APP_SERVER_EVENT_TERMINATE, _terminate_cb, NULL));
 
    //views create in shallow state
    EINA_ITERATOR_FOREACH(views_iter, view)

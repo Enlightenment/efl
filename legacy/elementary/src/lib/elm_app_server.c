@@ -6,15 +6,9 @@
 #include "elm_priv.h"
 #include "elm_app_server_eet.h"
 
-EAPI Eo_Op ELM_APP_SERVER_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_APP_SERVER_CLASS
 
 #define MY_CLASS_NAME "Elm_App_Server"
-
-EAPI const Eo_Event_Description _ELM_APP_SERVER_EV_TERMINATE =
-         EO_EVENT_DESCRIPTION("terminate",
-                              "Called when application must be terminated.");
 
 typedef struct
 {
@@ -137,7 +131,7 @@ _method_terminate(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
 
-   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_EV_TERMINATE, NULL, NULL));
+   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_EVENT_TERMINATE, NULL, NULL));
 
    return eldbus_message_method_return_new(message);
 }
@@ -199,16 +193,14 @@ static const Eldbus_Service_Interface_Desc iface_desc = {
    "org.enlightenment.Application1", _methods, NULL, _props, NULL, NULL
 };
 
-static void
-_app_server_constructor(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg, Elm_App_Server_Create_View_Cb create_view_cb)
 {
-   Elm_App_Server_Data *data = _pd;
-   const char *pkg = va_arg(*list, const char *);
    char *path;
    Elm_App_Server_Views_Eet *views_eet;
    char buf[PATH_MAX];
 
-   data->create_view_cb = va_arg(*list, Elm_App_Server_Create_View_Cb);
+   data->create_view_cb = create_view_cb;
 
    EINA_SAFETY_ON_NULL_GOTO(data->create_view_cb, error);
    EINA_SAFETY_ON_TRUE_GOTO(!pkg, error);
@@ -292,10 +284,9 @@ error:
    eo_error_set(obj);
 }
 
-static void
-_save(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_server_save(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
    Eina_Iterator *iter;
    Elm_App_Server_View *view;
    Elm_App_Server_Views_Eet *views_eet;
@@ -335,23 +326,18 @@ _save(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    app_server_views_eet_shutdown();
 }
 
-static void
-_close_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_server_close_all(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
    _close_all_views(data);
 }
 
-static void
-_view_check(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_app_server_view_check(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data, const char *id)
 {
-   Elm_App_Server_Data *data = _pd;
-   const char *id = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    const char *ptr;
 
-   *ret = EINA_FALSE;
-   EINA_SAFETY_ON_NULL_RETURN(id);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(id, EINA_FALSE);
 
    for (ptr = id; *ptr; ptr++)
      {
@@ -359,103 +345,83 @@ _view_check(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           break;
      }
 
-   if (!eina_hash_find(data->views, id))
-     *ret = EINA_TRUE;
+   if (!eina_hash_find(data->views, id)) return EINA_TRUE;
+   return EINA_FALSE;
 }
 
-static void
-_title_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_app_server_title_set(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data, const char *title)
 {
-   Elm_App_Server_Data *data = _pd;
-   const char *title = va_arg(*list, const char *);
-
    title = title ? title : "";
 
    if (eina_stringshare_replace(&data->title, title))
      eldbus_service_property_changed(data->iface, "Title");
 }
 
-static void
-_title_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Stringshare *
+_elm_app_server_title_get(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
-   Eina_Stringshare **ret = va_arg(*list, Eina_Stringshare **);
-
-   *ret = data->title;
+   return data->title;
 }
 
-static void
-_icon_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_app_server_icon_set(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data, const char *icon)
 {
-   Elm_App_Server_Data *data = _pd;
-   const char *icon = va_arg(*list, const char *);
-
    icon = icon ? icon : "";
 
    if (eina_stringshare_replace(&data->icon_name, icon))
      eldbus_service_property_changed(data->iface, "IconName");
 }
 
-static void
-_icon_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Stringshare *
+_elm_app_server_icon_get(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
-   Eina_Stringshare **ret = va_arg(*list, Eina_Stringshare **);
-
-   *ret = data->icon_name;
+   return data->icon_name;
 }
 
-static void
-_icon_pixels_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_server_pixels_set(Eo *obj EINA_UNUSED, Elm_App_Server_Data *pd EINA_UNUSED,
+      unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED,
+      Eina_Bool has_alpha EINA_UNUSED, const unsigned char *pixels EINA_UNUSED)
 {
    //TODO
 }
 
-static void
-_icon_pixels_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_server_pixels_get(Eo *obj EINA_UNUSED, Elm_App_Server_Data *pd EINA_UNUSED,
+      unsigned int *w EINA_UNUSED, unsigned int *h EINA_UNUSED,
+      Eina_Bool *has_alpha EINA_UNUSED, const unsigned char **pixels EINA_UNUSED)
 {
    //TODO
 }
 
-static void
-_package_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static Eina_Stringshare*
+_elm_app_server_package_get(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
-   Eina_Stringshare **ret = va_arg(*list, Eina_Stringshare **);
-
-   *ret = data->pkg;
+   return data->pkg;
 }
 
-static void
-_views_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Iterator*
+_elm_app_server_views_get(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
-   Eina_Iterator **ret = va_arg(*list, Eina_Iterator **);
-
-   *ret = eina_hash_iterator_data_new(data->views);
+   return eina_hash_iterator_data_new(data->views);
 }
 
-static void
-_path_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const char*
+_elm_app_server_path_get(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
-   const char **path = va_arg(*list, const char **);
-
-   *path = eldbus_service_object_path_get(data->iface);
+   return eldbus_service_object_path_get(data->iface);
 }
 
-static void
-_view_add(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_app_server_view_add(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data, Elm_App_Server_View *view)
 {
-   Elm_App_Server_Data *data = _pd;
-   Elm_App_Server_View *view = va_arg(*list, Elm_App_Server_View *);
    _view_append(data, view);
 }
 
-static void
-_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_server_eo_base_destructor(Eo *obj, Elm_App_Server_Data *data)
 {
-   Elm_App_Server_Data *data = _pd;
    Eina_Iterator *iter;
    Elm_App_Server_View *view;
 
@@ -480,92 +446,11 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_server_eo_base_constructor(Eo *obj, Elm_App_Server_Data *_pd EINA_UNUSED)
 {
    eo_error_set(obj);
    ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_CONSTRUCTOR),
-                 _app_server_constructor),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_SAVE), _save),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_CLOSE_ALL),
-                 _close_all),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_VIEW_CHECK),
-                 _view_check),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_TITLE_SET),
-                 _title_set),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_TITLE_GET),
-                 _title_get),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_SET), _icon_set),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_GET), _icon_get),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_PIXELS_SET),
-                 _icon_pixels_set),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_ICON_PIXELS_GET),
-                 _icon_pixels_get),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_PACKAGE_GET),
-                 _package_get),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_VIEWS_GET),
-                 _views_get),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_PATH_GET), _path_get),
-      EO_OP_FUNC(ELM_APP_SERVER_ID(ELM_APP_SERVER_SUB_ID_VIEW_ADD), _view_add),
-      EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_CONSTRUCTOR,
-                       "Constructor of elm_app_server."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_SAVE,
-                       "Save current state of applications views."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_CLOSE_ALL, "Close all views."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_VIEW_CHECK,
-                       "Return the view dbus object path if id available."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_TITLE_SET,
-                       "Set title of application."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_TITLE_GET,
-                       "Get title of application."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_ICON_SET,
-                       "Set icon of applicaiton."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_ICON_GET,
-                       "Get icon of applicaiton."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_ICON_PIXELS_SET,
-                       "Set icon to application, using the raw pixels of image."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_ICON_PIXELS_GET,
-                       "Get application raw icon."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_PACKAGE_GET,
-                       "Get application package."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_VIEWS_GET,
-                       "Return iterator with all views of application."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_PATH_GET,
-                       "Get application DBus path."),
-     EO_OP_DESCRIPTION(ELM_APP_SERVER_SUB_ID_VIEW_ADD,
-                       "Add a view to application."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Event_Description *event_desc[] = {
-     ELM_APP_SERVER_EV_TERMINATE,
-     NULL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_APP_SERVER_BASE_ID, op_desc, ELM_APP_SERVER_SUB_ID_LAST),
-     event_desc,
-     sizeof(Elm_App_Server_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_app_server_class_get, &class_desc, EO_BASE_CLASS, NULL);
+#include "elm_app_server.eo.c"

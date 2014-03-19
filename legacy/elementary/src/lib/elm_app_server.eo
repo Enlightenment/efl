@@ -1,0 +1,112 @@
+class Elm_App_Server (Eo_Base)
+{
+   eo_prefix: elm_app_server;
+   constructors {
+      constructor {
+         /*@ Class constructor of elm_app_server */
+         params {
+            @in const char *packageid; /*@ package of application */
+            @in Elm_App_Server_Create_View_Cb create_view_cb; /*@ callback to be called when user whants to open some application view */
+         }
+      }
+   }
+   properties {
+      icon {
+         set {
+            legacy null;
+         }
+         get {
+            legacy null;
+         }
+         values {
+            Eina_Stringshare *icon; /*@ title of icon */
+         }
+      }
+      views {
+         get {
+            /*@ Return a iterator with all views of application */
+            legacy null;
+         }
+         values {
+            Eina_Iterator *ret; /*@ Iterator with all views of application, you must free iterator after use */
+         }
+      }
+      path {
+         get {
+            legacy null;
+         }
+         values {
+            const char *ret;
+         }
+      }
+      package {
+         get {
+            legacy null;
+         }
+         values {
+            Eina_Stringshare *ret;
+         }
+      }
+      pixels {
+         get {
+            /*@ Get application raw icon. */
+            legacy null;
+         }
+         set {
+            /*@ Set icon to application, using the raw pixels of image. */
+            legacy null;
+         }
+         values {
+            unsigned int w;
+            unsigned int h;
+            Eina_Bool has_alpha;
+            const unsigned char *pixels;
+         }
+      }
+   }
+   methods {
+      close_all {
+         /*@ Close all views of application */
+         legacy null;
+      }
+      view_check {
+         /*@ If view id is available and unique, return the full DBus object path of view */
+         params {
+            @in const char *id; /*@ view identifier */
+         }
+         return Eina_Bool; /* @c EINA_TRUE if id is valid or @c EINA_FALSE if not */
+         legacy null;
+      }
+      view_add {
+         /*@ Add a view to elm_app_server. This should only be used if the application open a view that was not requested by create_view_cb. */
+         params {
+            @in Elm_App_Server_View *view; /*@ elm_app_server_view */
+         }
+         legacy null;
+      }
+      title_set {
+         /*@ Set a title to application. */
+         params {
+            @in const char *title; /*@ title of application */
+         }
+         legacy null;
+      }
+      title_get {
+         /*@ Get title of application */
+         return Eina_Stringshare *; /* title of application */
+         legacy null;
+      }
+      save {
+         /*@ Save the state of all views */
+         legacy null;
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+   }
+   events {
+      terminate; /*@ Called when application must be terminated. */
+   }
+
+}
