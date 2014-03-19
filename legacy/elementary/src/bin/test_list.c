@@ -1302,15 +1302,63 @@ _list_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
    printf("\n=== Key Down : %s ===\n", ev->keyname);
 }
 
+static Ecore_Timer *timer = NULL;
+static void
+_test_list_focus_win_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED,
+                            void *event_info EINA_UNUSED)
+{
+   ecore_timer_del(timer);
+   timer = NULL;
+}
+
+static Eina_Bool
+_focus_timer_cb(void *data)
+{
+   elm_object_item_focus_set(data, EINA_TRUE);
+   timer = NULL;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_select_timer_cb(void *data)
+{
+   elm_list_item_selected_set(data, EINA_TRUE);
+   timer = NULL;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_focus_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
+{
+   ecore_timer_del(timer);
+   timer = ecore_timer_add(1.5, _focus_timer_cb, data);
+}
+
+static void
+_sel_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   ecore_timer_del(timer);
+   timer = ecore_timer_add(1.5, _select_timer_cb, data);
+}
+
 static void
 _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
-   Evas_Object *win, *li, *btn, *bx, *bx2, *fr, *bx_opt, *chk;
+   Evas_Object *win, *li, *btn, *bx, *bx2, *fr, *bx_opt, *chk, *bx_btn;
+   Evas_Object *btn_focus, *btn_sel;
    unsigned int lhand, rhand, idx;
    char buf[256];
+   Elm_Object_Item *it = NULL, *it_3 = NULL;
 
    win = elm_win_util_standard_add(name, title);
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
+                                  _test_list_focus_win_del_cb, NULL);
 
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
@@ -1396,6 +1444,32 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    test_list_focus_focus_on_selection_set(li, chk, EINA_FALSE);
 
+   // Focus/Selection
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus/Selection");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_btn = elm_box_add(fr);
+   elm_object_content_set(fr, bx_btn);
+   evas_object_show(bx_btn);
+
+   btn_focus = elm_button_add(bx_btn);
+   elm_object_text_set(btn_focus, "Focus 3rd Item after 1.5 seconds.");
+   evas_object_size_hint_weight_set(btn_focus, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_focus, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_focus);
+   evas_object_show(btn_focus);
+
+   btn_sel = elm_button_add(bx_btn);
+   elm_object_text_set(btn_sel, "Select 3rd Item after 1.5 seconds.");
+   evas_object_size_hint_weight_set(btn_sel, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_sel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_sel);
+   evas_object_show(btn_sel);
+
    for (idx = 0; _list_focus_combo[idx] >= 0; idx++)
      {
         lhand = _list_focus_combo[idx] / 10;
@@ -1407,16 +1481,21 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
             _list_focus_names[lhand],
             _list_focus_names[rhand]);
 
-        elm_list_item_append(li, buf,
-                test_list_focus_content_get(li, lhand, horiz),
-                test_list_focus_content_get(li, rhand, horiz),
-                NULL, NULL);
+        it = elm_list_item_append(li, buf,
+                                  test_list_focus_content_get(li, lhand, horiz),
+                                  test_list_focus_content_get(li, rhand, horiz),
+                                  NULL, NULL);
+        if (idx == 2)
+          it_3 = it;
      }
+
+   evas_object_smart_callback_add(btn_focus, "clicked", _focus_btn_cb, it_3);
+   evas_object_smart_callback_add(btn_sel, "clicked", _sel_btn_cb, it_3);
 
    elm_list_go(li);
    evas_object_show(li);
 
-   evas_object_resize(win, 420, 450);
+   evas_object_resize(win, 420, 500);
    evas_object_show(win);
 }
 
