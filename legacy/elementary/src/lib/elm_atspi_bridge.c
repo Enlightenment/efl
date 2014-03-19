@@ -285,7 +285,7 @@ _accessible_get_index_in_parent(const Eldbus_Service_Interface *iface EINA_UNUSE
    const char *obj_path = eldbus_service_object_path_get(iface);
    Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
    Eldbus_Message *ret;
-   int idx;
+   unsigned int idx;
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -358,7 +358,7 @@ _access_object_from_path(const char *path)
 
    sscanf(tmp, "%llu", &eo_ptr);
    eo = (Elm_Atspi_Object *)eo_ptr;
-   return eo_isa(eo, ELM_ATSPI_CLASS) ? eo : NULL;
+   return eo_isa(eo, ELM_ATSPI_OBJ_CLASS) ? eo : NULL;
 }
 
 static char *
@@ -891,7 +891,7 @@ _cache_object_register_interfaces(const char *path, Elm_Atspi_Object *node)
    else
      eina_hash_add(_cache, path, node);
 
-   if (!eo_isa(node, ELM_ATSPI_CLASS)) return;
+   if (!eo_isa(node, ELM_ATSPI_OBJ_CLASS)) return;
 
    accessible = eldbus_service_interface_register(_a11y_bus, path, &accessible_iface_desc);
    events = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
@@ -1190,7 +1190,7 @@ _send_signal_children_changed(Elm_Atspi_Object *parent, Elm_Atspi_Object *child,
    Eldbus_Message_Iter *iter, *viter;
    Eldbus_Message *msg;
    const char *desc = NULL;
-   int idx;
+   unsigned int idx;
 
    if (!BIT_FLAG_GET(_object_children_broadcast_mask, type))
      return;
@@ -1285,16 +1285,16 @@ _send_signal_window(Elm_Atspi_Object *eo, enum _Atspi_Window_Signals type)
 static Eina_Bool
 _handle_atspi_event(void *data EINA_UNUSED, Elm_Atspi_Object *ao, const Eo_Event_Description *desc, void *event_info)
 {
-   if (desc == EV_ATSPI_OBJ_NAME_CHANGED)
+   if (desc == ELM_ATSPI_OBJECT_EVENT_NAME_CHANGED)
      _send_signal_property_changed(ao, ATSPI_OBJECT_PROPERTY_NAME);
-   else if (desc == EV_ATSPI_OBJ_STATE_CHANGED)
+   else if (desc == ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED)
      {
         int *event_data = event_info;
         _send_signal_state_changed(ao, (AtspiStateType)event_data[0], (Eina_Bool)event_data[1]);
      }
-   else if (desc == EV_ATSPI_OBJ_CHILD_ADD)
+   else if (desc == ELM_ATSPI_OBJECT_EVENT_CHILD_ADDED)
      _send_signal_children_changed(ao, event_info, ATSPI_OBJECT_CHILD_ADDED);
-   else if (desc == EV_ATSPI_OBJ_CHILD_DEL)
+   else if (desc == ELM_ATSPI_OBJECT_EVENT_CHILD_REMOVED)
      _send_signal_children_changed(ao, event_info, ATSPI_OBJECT_CHILD_REMOVED);
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
      _send_signal_window(ao, ATSPI_WINDOW_EVENT_ACTIVATE);

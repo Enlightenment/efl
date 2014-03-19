@@ -553,7 +553,9 @@ BUILT_SOURCES = \
 		elm_interface_atspi_component.eo.c \
 		elm_interface_atspi_component.eo.h \
 		elm_interface_atspi_window.eo.c \
-		elm_interface_atspi_window.eo.h
+		elm_interface_atspi_window.eo.h \
+		elm_atspi_object.eo.c \
+		elm_atspi_object.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -570,7 +572,8 @@ EXTRA_DIST += \
 	     elm_app_server.eo \
 	     elm_app_server_view.eo \
 	     elm_interface_atspi_component.eo \
-	     elm_interface_atspi_window.eo
+	     elm_interface_atspi_window.eo \
+	     elm_atspi_object.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -587,5 +590,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_app_server.eo.h \
 				  elm_app_server_view.eo.h \
 				  elm_interface_atspi_component.eo.h \
-				  elm_interface_atspi_window.eo.h
+				  elm_interface_atspi_window.eo.h \
+				  elm_atspi_object.eo.h
 

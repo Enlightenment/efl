@@ -5251,7 +5251,7 @@ _atspi_obj_create(void *data)
    if (obj)
      {
        eo_do(obj, elm_atspi_obj_parent_get(&parent));
-       eo_do(parent, eo_event_callback_call(EV_ATSPI_OBJ_CHILD_ADD, obj, NULL));
+       eo_do(parent, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_CHILD_ADDED, obj, NULL));
      }
    return EINA_FALSE;
 }

@@ -84,8 +84,8 @@ mixin Elm_Interface_Atspi_Component ()
             @in int x;
             @in int y;
             @in AtspiCoordType type;
-            @out Elm_Atspi_Object *ret;
          }
+         return Elm_Atspi_Object *;
       }
       position_set {
          legacy null;

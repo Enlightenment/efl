@@ -1,11 +1,13 @@
 void _elm_atspi_object_global_callback_add(Eo_Event_Cb cv, void *user_data);
 void _elm_atspi_object_global_callback_del(Eo_Event_Cb cv);
 
-#define ELM_ATSPI_CLASS elm_atspi_obj_class_get()
-const Eo_Class *elm_atspi_obj_class_get(void) EINA_CONST;
-
 #define ELM_ATSPI_WIDGET_CLASS elm_atspi_widget_obj_class_get()
 const Eo_Class *elm_atspi_widget_obj_class_get(void) EINA_CONST;
+
+#include "elm_atspi_object.eo.h"
+#if 0
+#define ELM_ATSPI_CLASS elm_atspi_obj_class_get()
+const Eo_Class *elm_atspi_obj_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ELM_ATSPI_OBJ_BASE_ID;
 
@@ -42,6 +44,7 @@ extern const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_DEL;
 extern const Eo_Event_Description _EV_ATSPI_OBJ_STATE_CHANGED;
 #define EV_ATSPI_OBJ_STATE_CHANGED (&(_EV_ATSPI_OBJ_STATE_CHANGED))
 
+#endif
 /* Component Interface */
 #include "elm_interface_atspi_component.eo.h"
 
@@ -213,6 +216,7 @@ enum
 };
 /* Selection Interface - END */
 
+#if 0
 /**
  * @def elm_atspi_obj_name_get
  * @since 1.10
@@ -341,6 +345,7 @@ enum
 #define elm_atspi_obj_attributes_get()\
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET),\
    EO_TYPECHECK()
+#endif
 
 #if 0
 /**

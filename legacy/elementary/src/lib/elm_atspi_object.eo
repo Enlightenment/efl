@@ -1,0 +1,129 @@
+class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
+{
+   eo_prefix: elm_atspi_obj;
+   data: null;
+   properties {
+      localized_role_name {
+         get {
+            legacy null;
+         }
+         values {
+            const char *ret;
+         }
+      }
+      object {
+         get {
+            legacy null;
+         }
+         values {
+            Evas_Object *ret;
+         }
+      }
+      state {
+         get {
+            legacy null;
+         }
+         values {
+            Elm_Atspi_State ret; /*@ state */
+         }
+      }
+      name {
+         get {
+            legacy null;
+         }
+         values {
+            const char *ret; /*@ obj name */
+         }
+      }
+      relation_set {
+         get {
+            legacy null;
+         }
+      }
+      role {
+         get {
+            legacy null;
+         }
+         values {
+            AtspiRole role;
+         }
+      }
+      children {
+         get {
+            legacy null;
+         }
+         values {
+            Eina_List *ret;
+         }
+      }
+      role_name {
+         get {
+            legacy null;
+         }
+         values {
+            const char *ret;
+         }
+      }
+      attributes {
+         get {
+            legacy null;
+         }
+      }
+      index_in_parent {
+         get {
+            legacy null;
+         }
+         values {
+            unsigned int idx;
+         }
+      }
+      description {
+         get {
+            legacy null;
+         }
+         values {
+            const char *ret;
+         }
+      }
+      parent {
+         get {
+            legacy null;
+         }
+         values {
+            Elm_Atspi_Object *ret;
+         }
+      }
+   }
+   methods {
+      child_at_index_get {
+         legacy null;
+         params {
+            @in int idx;
+         }
+         return Elm_Atspi_Object *;
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::event_callback_call;
+      Elm_Interface_Atspi_Component::z_order::get;
+      Elm_Interface_Atspi_Component::layer::get;
+      Elm_Interface_Atspi_Component::extents_set;
+      Elm_Interface_Atspi_Component::extents_get;
+      Elm_Interface_Atspi_Component::accessible_at_point_get;
+      Elm_Interface_Atspi_Component::alpha::get;
+      virtual::relation_set::get;
+      virtual::name::get;
+      virtual::parent::get;
+      virtual::attributes::get;
+      virtual::role::get;
+      virtual::children::get;
+   }
+   events {
+      name,changed; /*@ Called when accessible object text has changed. */
+      state,changed; /*@ Called when accessible object state has changed. */
+      child,added; /*@ Called when accessible object children was created. */
+      child,removed; /*@ Called when accessible object children was destroyed. */
+   }
+
+}
