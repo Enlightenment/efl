@@ -95,8 +95,10 @@ struct _Dropable
    /* FIXME: Cache window */
    Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
    struct {
-      Evas_Coord   x, y;
-      Eina_Bool    in : 1;
+      Evas_Coord      x, y;
+      Eina_Bool       in : 1;
+      const char     *type;
+      Elm_Sel_Format  format;
    } last;
 };
 
@@ -1171,10 +1173,10 @@ _x11_dropable_find(Ecore_X_Window win)
    return NULL;
 }
 
-static Dropable *
-_x11_dropable_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
+static Eina_List *
+_x11_dropable_list_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
 {
-   Eina_List *itr, *top_objects_list = NULL;
+   Eina_List *itr, *top_objects_list = NULL, *dropable_list = NULL;
    Evas *evas = NULL;
    Evas_Object *top_obj;
    Dropable *dropable = NULL;
@@ -1211,15 +1213,31 @@ _x11_dropable_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
           {
              eo_do(object, eo_base_data_get("__elm_dropable", (void **)&dropable));
              if (dropable)
-                goto end;
+               {
+                  Eina_Bool exist = EINA_FALSE;
+                  Eina_List *l;
+                  Dropable *d = NULL;
+                  EINA_LIST_FOREACH(dropable_list, l, d)
+                    {
+                       if (d == dropable)
+                         {
+                            exist = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!exist)
+                    dropable_list = eina_list_append(dropable_list, dropable);
+                  object = evas_object_smart_parent_get(object);
+                  if (dropable)
+                    cnp_debug("Drop target %p of type %s found\n",
+                              dropable->obj, eo_class_name_get(eo_class_get(dropable->obj)));
+               }
              else
                 object = evas_object_smart_parent_get(object);
           }
      }
-end:
    eina_list_free(top_objects_list);
-   if (dropable) cnp_debug("Drop target %p of type %s found\n", dropable->obj, eo_class_name_get(eo_class_get(dropable->obj)));
-   return dropable;
+   return dropable_list;
 }
 
 static void
@@ -1234,22 +1252,6 @@ _x11_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
    *y = *y - ey;
 }
 
-static void
-_x11_dropable_all_set(Ecore_X_Window win, Evas_Coord x, Evas_Coord y, Eina_Bool set)
-{
-   Eina_List *l;
-   Dropable *dropable;
-   EINA_LIST_FOREACH(drops, l, dropable)
-     {
-        if (_x11_elm_widget_xwin_get(dropable->obj) == win)
-          {
-             dropable->last.x = x;
-             dropable->last.y = y;
-             dropable->last.in = set;
-          }
-     }
-}
-
 static Eina_Bool
 _x11_dnd_enter(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 {
@@ -1262,7 +1264,6 @@ _x11_dnd_enter(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
    if (dropable)
      {
         cnp_debug("Enter %x\n", enter->win);
-        _x11_dropable_all_set(enter->win, 0, 0, EINA_FALSE);
      }
    /* Skip it */
    cnp_debug("enter types=%p (%d)\n", enter->types, enter->num_types);
@@ -1294,53 +1295,74 @@ _x11_dnd_enter(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 }
 
 static void
-_x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Eina_Bool have_obj, Elm_Xdnd_Action action)
+_x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {
-   Dropable *dropable_last = NULL;
+   Dropable *d, *last_dropable = NULL;
+   Eina_List *l;
    Dropable_Cbs *cbs;
    Eina_Inlist *itr;
 
-   if (dropable->last.in)
-     dropable_last = _x11_dropable_geom_find
-     (_x11_elm_widget_xwin_get(dropable->obj),
-         dropable->last.x, dropable->last.y);
-   if ((have_obj) && (dropable_last == dropable)) // same
+   EINA_LIST_FOREACH(drops, l, d)
      {
-        cnp_debug("same obj dropable %p\n", dropable);
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if (cbs->poscb)
-             cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
-     }
-   else if ((have_obj) && (!dropable_last)) // enter new obj
-     {
-        cnp_debug("enter %p\n", dropable->obj);
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if (cbs->entercb)
-             cbs->entercb(cbs->enterdata, dropable->obj);
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if (cbs->poscb)
-             cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
-     }
-   else if ((!have_obj) && (dropable_last)) // leave last obj
-     {
-        cnp_debug("leave %p\n", dropable_last->obj);
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if (cbs->leavecb)
-             cbs->leavecb(cbs->leavedata, dropable->obj);
-     }
-   else if (have_obj) // leave last obj and enter new one
-     {
-        cnp_debug("enter %p\n", dropable->obj);
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if (cbs->entercb)
-             cbs->entercb(cbs->enterdata, dropable->obj);
-        if (dropable_last)
+        if (d->last.in)
           {
-             dropable = dropable_last;
+             last_dropable = d;
+             break;
+          }
+     }
+   if (last_dropable)
+     {
+        if (last_dropable == dropable) // same
+          {
+             cnp_debug("same obj dropable %p\n", dropable->obj);
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                if (cbs->leavecb)
-                  cbs->leavecb(cbs->leavedata, dropable->obj);
-             cnp_debug("leave %p\n", dropable->obj);
+                if (cbs->poscb)
+                  cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+          }
+        else
+          {
+             if (dropable) // leave last obj and enter new one
+               {
+                  cnp_debug("leave %p\n", last_dropable->obj);
+                  cnp_debug("enter %p\n", dropable->obj);
+                  last_dropable->last.in = EINA_FALSE;
+                  last_dropable->last.type = NULL;
+                  dropable->last.in = EINA_TRUE;
+                  EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                     if (cbs->entercb)
+                       cbs->entercb(cbs->enterdata, dropable->obj);
+                  EINA_INLIST_FOREACH_SAFE(last_dropable->cbs_list, itr, cbs)
+                     if (cbs->leavecb)
+                       cbs->leavecb(cbs->leavedata, last_dropable->obj);
+               }
+             else // leave last obj
+               {
+                  cnp_debug("leave %p\n", last_dropable->obj);
+                  last_dropable->last.in = EINA_FALSE;
+                  last_dropable->last.type = NULL;
+                  EINA_INLIST_FOREACH_SAFE(last_dropable->cbs_list, itr, cbs)
+                     if (cbs->leavecb)
+                       cbs->leavecb(cbs->leavedata, last_dropable->obj);
+               }
+          }
+     }
+   else
+     {
+        if (dropable) // enter new obj
+          {
+             cnp_debug("enter %p\n", dropable->obj);
+             dropable->last.in = EINA_TRUE;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+               {
+                if (cbs->entercb)
+                  cbs->entercb(cbs->enterdata, dropable->obj);
+                if (cbs->poscb)
+                  cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+               }
+          }
+        else
+          {
+             cnp_debug("both dropable & last_dropable are null\n");
           }
      }
 }
@@ -1389,50 +1411,129 @@ _x11_dnd_action_rev_map(Elm_Xdnd_Action action)
    return act;
 }
 
+static int
+_x11_dnd_types_get(Elm_Sel_Format format, const char **types)
+{
+   int i;
+   int types_no = 0;
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (_x11_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
+          {
+             if (format == ELM_SEL_FORMAT_TARGETS)
+               if (types)
+                 types[types_no++] = _x11_atoms[i].name;
+          }
+        else if (_x11_atoms[i].formats & format)
+          {
+             if (types)
+               types[types_no++] = _x11_atoms[i].name;
+          }
+     }
+   return types_no;
+}
+
 static Eina_Bool
 _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 {
    Ecore_X_Event_Xdnd_Position *pos = ev;
    Ecore_X_Rectangle rect = { 0, 0, 0, 0 };
-   Dropable *dropable, *dropable_old;
+   Dropable *dropable;
    Elm_Xdnd_Action act;
 
    /* Need to send a status back */
    /* FIXME: Should check I can drop here */
    /* FIXME: Should highlight widget */
-   dropable_old = dropable = _x11_dropable_find(pos->win);
+   dropable = _x11_dropable_find(pos->win);
    if (dropable)
      {
-        Evas_Coord x, y, ox = 0, oy = 0, ow = 0, oh = 0;
+        Eina_List *dropable_list;
+        Evas_Coord x, y, ox = 0, oy = 0;
 
+        act = _x11_dnd_action_map(pos->action);
         x = pos->position.x;
         y = pos->position.y;
         _x11_dropable_coords_adjust(dropable, &x, &y);
-        dropable = _x11_dropable_geom_find(pos->win, x, y);
-        act = _x11_dnd_action_map(pos->action);
-        if (dropable)
+        dropable_list = _x11_dropable_list_geom_find(pos->win, x, y);
+        /* check if there is dropable (obj) can accept this drop */
+        if (dropable_list)
           {
-             evas_object_geometry_get(dropable->obj, &ox, &oy, &ow, &oh);
-             rect.x = pos->position.x - x + ox;
-             rect.y = pos->position.y - y + oy;
-             rect.width = ow;
-             rect.height = oh;
-             ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, rect, pos->action);
-             cnp_debug("dnd position %i %i %p\n", x - ox, y - oy, dropable);
-             _x11_dnd_dropable_handle(dropable, x - ox, y - oy, EINA_TRUE,
-                                      act);
-             // CCCCCCC: call dnd exit on last obj if obj != last
-             // CCCCCCC: call drop position on obj
-             _x11_dropable_all_set(pos->win, x, y, EINA_TRUE);
+             Eina_List *l;
+             Eina_Bool found = EINA_FALSE;
+             int i, j;
+
+             EINA_LIST_FOREACH(dropable_list, l, dropable)
+               {
+                  Dropable_Cbs *cbs;
+                  Eina_Inlist *itr;
+                  EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                    {
+                       int types_no;
+                       const char *types[CNP_N_ATOMS];
+                       types_no = _x11_dnd_types_get(cbs->types, types);
+                       for (j = 0; j < types_no; j++)
+                         {
+                            for (i = 0; i < savedtypes.ntypes; i++)
+                              {
+                                 if (!strcmp(types[j], savedtypes.types[i]))
+                                   {
+                                      found = EINA_TRUE;
+                                      dropable->last.type = savedtypes.types[i];
+                                      dropable->last.format = cbs->types;
+                                      break;
+                                   }
+                              }
+                            if (found) break;
+                         }
+                       if (found) break;
+                    }
+                  if (found) break;
+               }
+             if (found)
+               {
+                  Dropable *d = NULL;
+                  Eina_Rectangle inter_rect = {0, 0, 0, 0};
+                  int idx = 0;
+                  EINA_LIST_FOREACH(dropable_list, l, d)
+                    {
+                       if (idx == 0)
+                         {
+                            evas_object_geometry_get(d->obj, &inter_rect.x, &inter_rect.y,
+                                                     &inter_rect.w, &inter_rect.h);
+                         }
+                       else
+                         {
+                            Eina_Rectangle cur_rect;
+                            evas_object_geometry_get(d->obj, &cur_rect.x, &cur_rect.y,
+                                                     &cur_rect.w, &cur_rect.h);
+                            if (!eina_rectangle_intersection(&inter_rect, &cur_rect)) continue;
+                         }
+                       idx++;
+                    }
+                  rect.x = inter_rect.x;
+                  rect.y = inter_rect.y;
+                  rect.width = inter_rect.w;
+                  rect.height = inter_rect.h;
+                  ecore_x_dnd_send_status(EINA_TRUE, EINA_FALSE, rect, pos->action);
+                  cnp_debug("dnd position %i %i %p\n", x - ox, y - oy, dropable);
+                  _x11_dnd_dropable_handle(dropable, x - ox, y - oy, act);
+                  // CCCCCCC: call dnd exit on last obj if obj != last
+                  // CCCCCCC: call drop position on obj
+               }
+             else
+               {
+                  //if not: send false status
+                  ecore_x_dnd_send_status(EINA_FALSE, EINA_FALSE, rect, pos->action);
+                  cnp_debug("dnd position (%d, %d) not in obj\n", x, y);
+                  _x11_dnd_dropable_handle(NULL, 0, 0, act);
+                  // CCCCCCC: call dnd exit on last obj
+               }
           }
         else
           {
              ecore_x_dnd_send_status(EINA_FALSE, EINA_FALSE, rect, pos->action);
-             cnp_debug("dnd position (%d, %d) not in obj\n", x, y);
-             _x11_dnd_dropable_handle(dropable_old, 0, 0, EINA_FALSE,
-                                      act);
-             // CCCCCCC: call dnd exit on last obj
-             _x11_dropable_all_set(pos->win, x, y, EINA_TRUE);
+             cnp_debug("dnd position (%d, %d) has no drop\n", x, y);
+             _x11_dnd_dropable_handle(NULL, 0, 0, act);
           }
      }
    else
@@ -1445,17 +1546,9 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 static Eina_Bool
 _x11_dnd_leave(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 {
-   Ecore_X_Event_Xdnd_Leave *leave = ev;
-   Dropable *dropable;
-
-   dropable = _x11_dropable_find(leave->win);
-   if (dropable)
-     {
-        cnp_debug("Leave %x\n", leave->win);
-        _x11_dnd_dropable_handle(dropable, 0, 0, EINA_FALSE, ELM_XDND_ACTION_UNKNOWN);
-        _x11_dropable_all_set(leave->win, 0, 0, EINA_FALSE);
-        // CCCCCCC: call dnd exit on last obj if there was one
-     }
+   cnp_debug("Leave %x\n", ((Ecore_X_Event_Xdnd_Leave *)ev)->win);
+   _x11_dnd_dropable_handle(NULL, 0, 0, ELM_XDND_ACTION_UNKNOWN);
+   // CCCCCCC: call dnd exit on last obj if there was one
    // leave->win leave->source
    return EINA_TRUE;
 }
@@ -1464,11 +1557,13 @@ static Eina_Bool
 _x11_dnd_drop(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 {
    Ecore_X_Event_Xdnd_Drop *drop;
-   Dropable *dropable;
+   Dropable *dropable = NULL;
    Elm_Selection_Data ddata;
    Evas_Coord x = 0, y = 0;
    Elm_Xdnd_Action act = ELM_XDND_ACTION_UNKNOWN;
-   int i, j;
+   Eina_List *l;
+   Dropable_Cbs *cbs;
+   Eina_Inlist *itr;
 
    drop = ev;
 
@@ -1484,19 +1579,14 @@ _x11_dnd_drop(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 
    cnp_debug("Drop position is %d,%d\n", savedtypes.x, savedtypes.y);
 
-   dropable = _x11_dropable_geom_find(drop->win, savedtypes.x, savedtypes.y);
-   if (!dropable) return EINA_TRUE; /* didn't find one */
-
-   evas_object_geometry_get(dropable->obj, &x, &y, NULL, NULL);
-   savedtypes.x -= x;
-   savedtypes.y -= y;
-
-   /* Find our type from the previous list */
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   EINA_LIST_FOREACH(drops, l, dropable)
      {
-        for (j = 0; j < savedtypes.ntypes; j++)
+        if (dropable->last.in)
           {
-             if (!strcmp(savedtypes.types[j], _x11_atoms[i].name)) goto found;
+             evas_object_geometry_get(dropable->obj, &x, &y, NULL, NULL);
+             savedtypes.x -= x;
+             savedtypes.y -= y;
+             goto found;
           }
      }
 
@@ -1504,12 +1594,11 @@ _x11_dnd_drop(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
    return EINA_TRUE;
 
 found:
-   cnp_debug("Found a target we'd like: %s\n", _x11_atoms[i].name);
    cnp_debug("0x%x\n", drop->win);
 
    act = _x11_dnd_action_map(drop->action);
 
-   if (i == CNP_ATOM_text_urilist)
+   if ((!strcmp(dropable->last.type, text_uri)))
      {
         cnp_debug("We found a URI... (%scached) %s\n",
                   savedtypes.imgfile ? "" : "not ",
@@ -1523,8 +1612,6 @@ found:
              ddata.y = savedtypes.y;
              ddata.action = act;
 
-             Dropable_Cbs *cbs;
-             Eina_Inlist *itr;
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                {
                   /* If it's markup that also supports images */
@@ -1569,14 +1656,21 @@ found:
           }
      }
 
-   cnp_debug("doing a request then\n");
-   _x11_selections[ELM_SEL_TYPE_XDND].xwin = drop->win;
-   _x11_selections[ELM_SEL_TYPE_XDND].requestwidget = dropable->obj;
-   _x11_selections[ELM_SEL_TYPE_XDND].requestformat = ELM_SEL_FORMAT_MARKUP;
-   _x11_selections[ELM_SEL_TYPE_XDND].active = EINA_TRUE;
-   _x11_selections[ELM_SEL_TYPE_XDND].action = act;
+   if (dropable->last.type)
+     {
+        cnp_debug("doing a request then: %s\n", dropable->last.type);
+        _x11_selections[ELM_SEL_TYPE_XDND].xwin = drop->win;
+        _x11_selections[ELM_SEL_TYPE_XDND].requestwidget = dropable->obj;
+        _x11_selections[ELM_SEL_TYPE_XDND].requestformat = dropable->last.format;
+        _x11_selections[ELM_SEL_TYPE_XDND].active = EINA_TRUE;
+        _x11_selections[ELM_SEL_TYPE_XDND].action = act;
 
-   ecore_x_selection_xdnd_request(drop->win, _x11_atoms[i].name);
+        ecore_x_selection_xdnd_request(drop->win, dropable->last.type);
+     }
+   else
+     {
+        cnp_debug("cannot match format\n");
+     }
    return EINA_TRUE;
 }
 
@@ -1890,6 +1984,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
         /* Create new drop */
         dropable = calloc(1, sizeof(Dropable));
         if (!dropable) goto error;
+        dropable->last.in = EINA_FALSE;
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
