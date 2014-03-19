@@ -161,6 +161,7 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_YCBCR422601_PL, /**<  YCbCr 4:2:2, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to line of Y,Cb,Y,Cr bytes */
    EVAS_COLORSPACE_YCBCR420NV12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb,Cr rows. */
    EVAS_COLORSPACE_YCBCR420TM12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of tiled row pointer, pointing to the Y rows, then the Cb,Cr rows. */
+   EVAS_COLORSPACE_AGRY88, /**< AY 8bits Alpha and 8bits Grey, accessed 1 16bits at a time */
    EVAS_COLORSPACE_ETC1, /**< OpenGL ETC1 encoding of RGB texture @since 1.10 */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 

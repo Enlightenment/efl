@@ -30,6 +30,16 @@ struct _Evas_Loader_Internal
    Evas_Image_Load_Opts *opts;
 };
 
+static const Evas_Colorspace cspace_grey[2] = {
+   EVAS_COLORSPACE_GRY8,
+   EVAS_COLORSPACE_ARGB8888
+};
+
+static const Evas_Colorspace cspace_grey_alpha[2] = {
+   EVAS_COLORSPACE_AGRY88,
+   EVAS_COLORSPACE_ARGB8888
+};
+
 static void
 _evas_image_png_read(png_structp png_ptr, png_bytep out, png_size_t count)
 {
@@ -162,8 +172,19 @@ evas_image_load_file_head_png(void *loader_data,
         prop->h = (int) h32;
      }
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
-   if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
-   if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
+   switch (color_type)
+     {
+      case PNG_COLOR_TYPE_RGB_ALPHA:
+         hasa = 1;
+         break;
+      case PNG_COLOR_TYPE_GRAY_ALPHA:
+         hasa = 1;
+         prop->cspaces = cspace_grey_alpha;
+         break;
+      case PNG_COLOR_TYPE_GRAY:
+         prop->cspaces = cspace_grey;
+         break;
+     }
    if (hasa) prop->alpha = 1;
 
    *error = EVAS_LOAD_ERROR_NONE;
@@ -191,11 +212,11 @@ evas_image_load_file_data_png(void *loader_data,
    unsigned char *surface;
    unsigned char **lines;
    unsigned char *tmp_line;
-   DATA32 *src_ptr, *dst_ptr;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
    Evas_PNG_Info epi;
    png_uint_32 w32, h32;
+   unsigned int pack_offset;
    int w, h;
    int bit_depth, color_type, interlace_type;
    char hasa;
@@ -284,7 +305,8 @@ evas_image_load_file_data_png(void *loader_data,
    if ((color_type == PNG_COLOR_TYPE_GRAY) ||
        (color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
      {
-	png_set_gray_to_rgb(png_ptr);
+        if (prop->cspace == EVAS_COLORSPACE_ARGB8888)
+          png_set_gray_to_rgb(png_ptr);
 	if (bit_depth < 8) png_set_expand_gray_1_2_4_to_8(png_ptr);
      }
    /* expand transparency entry -> alpha channel if present */
@@ -306,28 +328,38 @@ evas_image_load_file_data_png(void *loader_data,
    if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 #endif
 
+   switch (prop->cspace)
+     {
+      case EVAS_COLORSPACE_ARGB8888: pack_offset = sizeof(DATA32); break;
+      case EVAS_COLORSPACE_GRY8: pack_offset = sizeof(DATA8); break;
+      case EVAS_COLORSPACE_AGRY88: pack_offset = sizeof(DATA16); break;
+      default: abort();
+     }
+
    /* we read image line by line if scale down was set */
    if (scale_ratio == 1)
      {
         lines = (unsigned char **) alloca(h * sizeof(unsigned char *));
         for (i = 0; i < h; i++)
-          lines[i] = surface + (i * w * sizeof(DATA32));
+          lines[i] = surface + (i * w * pack_offset);
         png_read_image(png_ptr, lines);
         png_read_end(png_ptr, info_ptr);
      }
    else
      {
-        tmp_line = (unsigned char *) alloca(image_w * sizeof(DATA32));
-        dst_ptr = (DATA32 *)surface;
+        unsigned char *src_ptr, *dst_ptr;
+
+        tmp_line = (unsigned char *) alloca(image_w * pack_offset);
+        dst_ptr = surface;
         for (i = 0; i < h; i++)
           {
              png_read_row(png_ptr, tmp_line, NULL);
-             src_ptr = (DATA32 *)tmp_line;
+             src_ptr = tmp_line;
              for (j = 0; j < w; j++)
                {
                   *dst_ptr = *src_ptr;
-                  dst_ptr++;
-                  src_ptr += scale_ratio;
+                  dst_ptr += pack_offset;
+                  src_ptr += scale_ratio * pack_offset;
                }
              for (j = 0; j < (scale_ratio - 1); j++)
                {
