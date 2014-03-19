@@ -87,8 +87,8 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
          /*@ Get generic data from object. */
          params {
             @in const char* key; /*@ the key associated with the data */
-            @out void* data; /*@ the data for the key */
          }
+         return void *; /* the data for the key */
       }
       event_callback_del {
          /*@ Del a callback with a specific data associated to it for an event. */
@@ -142,8 +142,8 @@ This function registers the object handle pointed by wref to obj so when obj is 
          params {
             @in const Eo_Event_Description* desc; /*@ The description of the event to call */
             @in const void* event_info; /*@ Extra event info to pass to the callbacks */
-            @out Eina_Bool aborted; /*@ @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
          }
+         return Eina_Bool; /* @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
       }
       event_callback_priority_add {
          /*@ Add a callback for an event with a specific priority.
