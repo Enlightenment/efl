@@ -2155,7 +2155,7 @@ _elm_widget_focus_list_direction_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
    for (; l; l = eina_list_next(l))
      {
         Evas_Object *cur = list_data_get(l);
-        if (cur)
+        if (cur && _elm_widget_is(cur))
           elm_widget_focus_direction_get(cur, base, degree, direction, weight);
      }
    if (current_best != *direction) return EINA_TRUE;
@@ -2380,6 +2380,7 @@ _elm_widget_focus_list_next_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED,
         Evas_Object *cur = list_data_get(l);
 
         if (!cur) continue;
+        if (!_elm_widget_is(cur)) continue;
         if (elm_widget_parent_get(cur) != obj)
           continue;
 
