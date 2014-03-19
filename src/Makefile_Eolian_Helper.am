@@ -1,6 +1,6 @@
 if HAVE_EOLIAN_GEN
 EOLIAN_GEN = @eolian_gen@
-_EOLIAN_GEN_DEP =
+_EOLIAN_GEN_DEP = @eolian_gen@
 else
 EOLIAN_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
 _EOLIAN_GEN_DEP = bin/eolian/eolian_gen${EXEEXT}
