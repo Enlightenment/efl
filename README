@@ -506,7 +506,10 @@ COMPILER FLAGS
 --------------
 
 You can affect compilation optimization, debugging and other factors
-by setting your CFLAGS environment variable (and CXXFLAGS)
+by setting your CFLAGS environment variable (and CXXFLAGS). Be aware
+that to ensure ABI stability you should use the exact same CFLAGS / 
+CXXFLAGS for all the build of EFL and any applications/libraries that
+depend on them.
 
 Other recommendations:
 
