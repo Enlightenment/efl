@@ -13,6 +13,8 @@ _edje_format_param_parse(char *item, char **key, char **val)
    char *p, *k, *v;
 
    p = strchr(item, '=');
+   if (!p) return;
+
    k = malloc(p - item + 1);
    strncpy(k, item, p - item);
    k[p - item] = 0;

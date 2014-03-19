@@ -1056,6 +1056,8 @@ _anchor_format_parse(const char *item)
    size_t len;
 
    start = strchr(item, '=');
+   if (!start) return NULL;
+
    start++; /* Advance after the '=' */
    /* If we can find a quote as the first non-space char,
     * our new delimiter is a quote, not a space. */
