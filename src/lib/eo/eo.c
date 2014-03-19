@@ -834,8 +834,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
                 case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
                    ERR("Regular non-instantiable classes ('%s') aren't allowed in class ('%s') extension list",
                        extn->desc->name, desc->name);
+                   va_end(p_list);
                    return NULL;
-                   break;
                 case EO_CLASS_TYPE_REGULAR:
                 case EO_CLASS_TYPE_INTERFACE:
                 case EO_CLASS_TYPE_MIXIN:
