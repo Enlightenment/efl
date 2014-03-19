@@ -248,7 +248,7 @@ ecore_drm_device_find(const char *name, const char *seat)
         /* try to allocate space for return device structure */
         if ((dev = calloc(1, sizeof(Ecore_Drm_Device))))
           {
-             const char *id, *seat;
+             const char *id, *seat_id;
 
              /* set device name */
              dev->drm.name = 
@@ -262,11 +262,11 @@ ecore_drm_device_find(const char *name, const char *seat)
              if ((id = udev_device_get_sysnum(tmpdevice)))
                dev->id = atoi(id);
 
-             /* set dev seat */
-             seat = udev_device_get_property_value(tmpdevice, "ID_SEAT");
-             if (!seat) seat = "seat0";
+             /* set dev seat_id */
+             seat_id = udev_device_get_property_value(tmpdevice, "ID_SEAT");
+             if (!seat_id) seat_id = "seat0";
 
-             dev->seat = eina_stringshare_add(seat);
+             dev->seat = eina_stringshare_add(seat_id);
 
              /* dev->format = GBM_FORMAT_XRGB8888; */
              dev->format = 0;
