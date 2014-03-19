@@ -450,12 +450,12 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_DESCRIPTION_GET), _description_get),
         EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_LOCALIZED_ROLE_NAME_GET), _localized_role_name_get),
         EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_STATE_GET), _state_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ACCESSIBLE_AT_POINT_GET), _comp_access_at_point_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_EXTENTS_GET), _comp_extents_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_EXTENTS_SET), _comp_extents_set),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_LAYER_GET), _comp_layer_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_Z_ORDER_GET), _comp_z_order_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ALPHA_GET), _comp_alpha_get),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_ACCESSIBLE_AT_POINT_GET), _comp_access_at_point_get),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_EXTENTS_GET), _comp_extents_get),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_EXTENTS_SET), _comp_extents_set),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_LAYER_GET), _comp_layer_get),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_Z_ORDER_GET), _comp_z_order_get),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_ALPHA_GET), _comp_alpha_get),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -497,116 +497,56 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_atspi_obj_class_get, &class_desc, EO_BASE_CLASS, ELM_ATSPI_COMPONENT_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_atspi_obj_class_get, &class_desc, EO_BASE_CLASS, ELM_INTERFACE_ATSPI_COMPONENT_CLASS, NULL);
 
 // Component interface
-EAPI Eo_Op ELM_ATSPI_COMPONENT_INTERFACE_BASE_ID = EO_NOOP;
-
-static void
-_comp_interface_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_interface_atspi_component_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,int *x, int *y, AtspiCoordType type)
 {
-   EO_PARAMETER_GET(int *, x, list);
-   EO_PARAMETER_GET(int *, y, list);
-   EO_PARAMETER_GET(AtspiCoordType, type, list);
-
-   eo_do(obj, elm_atspi_component_interface_extents_get(x, y, NULL, NULL, type));
+   eo_do(obj, elm_interface_atspi_component_extents_get(x, y, NULL, NULL, type));
 }
 
-static void
-_comp_interface_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static Eina_Bool
+_elm_interface_atspi_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int x, int y, AtspiCoordType type)
 {
-   EO_PARAMETER_GET(int, x, list);
-   EO_PARAMETER_GET(int, y, list);
-   EO_PARAMETER_GET(AtspiCoordType, type, list);
-   EO_PARAMETER_GET(Eina_Bool*, ret, list);
+   Eina_Bool ret = EINA_FALSE;
    int c_w, c_h;
 
-   eo_do(obj, elm_atspi_component_interface_extents_get(NULL, NULL, &c_w, &c_h, type));
-   eo_do(obj, elm_atspi_component_interface_extents_set(x, y, c_w, c_h, type, ret));
+   eo_do(obj, elm_interface_atspi_component_extents_get(NULL, NULL, &c_w, &c_h, type));
+   eo_do(obj, elm_interface_atspi_component_extents_set(x, y, c_w, c_h, type, &ret));
+   return ret;
 }
 
-static void
-_comp_interface_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static Eina_Bool
+_elm_interface_atspi_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int w, int h)
 {
-   EO_PARAMETER_GET(int, w, list);
-   EO_PARAMETER_GET(int, h, list);
-   EO_PARAMETER_GET(Eina_Bool*, ret, list);
+   Eina_Bool ret = EINA_FALSE;
    int c_x, c_y;
 
-   eo_do(obj, elm_atspi_component_interface_extents_get(&c_x, &c_y, NULL, NULL, ATSPI_COORD_TYPE_WINDOW));
-   eo_do(obj, elm_atspi_component_interface_extents_set(c_x, c_y, w, h, ATSPI_COORD_TYPE_WINDOW, ret));
+   eo_do(obj, elm_interface_atspi_component_extents_get(&c_x, &c_y, NULL, NULL, ATSPI_COORD_TYPE_WINDOW));
+   eo_do(obj, elm_interface_atspi_component_extents_set(c_x, c_y, w, h, ATSPI_COORD_TYPE_WINDOW, &ret));
+   return ret;
 }
 
-static void
-_comp_interface_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_interface_atspi_component_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *w, int *h)
 {
-   EO_PARAMETER_GET(int*, w, list);
-   EO_PARAMETER_GET(int*, h, list);
-
-   eo_do(obj, elm_atspi_component_interface_extents_get(NULL,  NULL, w, h, ATSPI_COORD_TYPE_WINDOW));
+   eo_do(obj, elm_interface_atspi_component_extents_get(NULL,  NULL, w, h, ATSPI_COORD_TYPE_WINDOW));
 }
 
-static void
-_comp_interface_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_interface_atspi_component_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+      int x, int y, AtspiCoordType type)
 {
-   EO_PARAMETER_GET(int, x, list);
-   EO_PARAMETER_GET(int, y, list);
-   EO_PARAMETER_GET(AtspiCoordType, type, list);
-   EO_PARAMETER_GET(Eina_Bool*, ret, list);
    int w_x, w_y, w_w, w_h;
 
-   if (ret) *ret = EINA_FALSE;
-
-   if (!eo_do(obj, elm_atspi_component_interface_extents_get(&w_x, &w_y, &w_w, &w_h, type)))
-      return;
+   if (!eo_do(obj, elm_interface_atspi_component_extents_get(&w_x, &w_y, &w_w, &w_h, type)))
+      return EINA_FALSE;
 
    if ((x >= w_x) && (x <= w_x + w_w) && (y >= w_y) && (y <= w_y + w_h))
-     if (ret) *ret = EINA_TRUE;
+     return EINA_TRUE;
+   return EINA_FALSE;
 }
-
-static void
-_component_interface_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_POSITION_GET), _comp_interface_position_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_POSITION_SET), _comp_interface_position_set),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_CONTAINS), _comp_interface_contains),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_SIZE_GET), _comp_interface_size_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_SIZE_SET), _comp_interface_size_set),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-
-static const Eo_Op_Description component_op_desc[] = {
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_CONTAINS, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ACCESSIBLE_AT_POINT_GET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_EXTENTS_GET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_EXTENTS_SET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_POSITION_GET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_POSITION_SET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_SIZE_GET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_SIZE_SET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_LAYER_GET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_Z_ORDER_GET, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_FOCUS_GRAB, ""),
-   EO_OP_DESCRIPTION(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ALPHA_GET, ""),
-   EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description component_interface_desc = {
-     EO_VERSION,
-     "Elm_Atspi_Component_Interface",
-     EO_CLASS_TYPE_MIXIN,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_ATSPI_COMPONENT_INTERFACE_BASE_ID, component_op_desc, ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_LAST),
-     NULL,
-     0,
-     _component_interface_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_atspi_component_interface_get, &component_interface_desc, NULL, NULL);
 
 // Window Interface
 
@@ -789,7 +729,7 @@ _widget_class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET), _widget_parent_get),
         EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET), _widget_children_get),
         EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_STATE_GET), _widget_state_get),
-        EO_OP_FUNC(ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_FOCUS_GRAB), _widget_comp_focus_grab),
+        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_FOCUS_GRAB), _widget_comp_focus_grab),
         EO_OP_FUNC_SENTINEL
    };
    eo_class_funcs_set(klass, func_desc);
@@ -1051,3 +991,6 @@ void _elm_atspi_object_global_callback_del(Eo_Event_Cb cb)
           }
      }
 }
+
+#include "elm_interface_atspi_component.eo.c"
+

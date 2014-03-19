@@ -43,6 +43,9 @@ extern const Eo_Event_Description _EV_ATSPI_OBJ_STATE_CHANGED;
 #define EV_ATSPI_OBJ_STATE_CHANGED (&(_EV_ATSPI_OBJ_STATE_CHANGED))
 
 /* Component Interface */
+#include "elm_interface_atspi_component.eo.h"
+
+#if 0
 #define ELM_ATSPI_COMPONENT_INTERFACE elm_atspi_component_interface_get()
 
 const Eo_Class *elm_atspi_component_interface_get(void) EINA_CONST;
@@ -67,6 +70,7 @@ enum
 };
 
 #define ELM_ATSPI_COMPONENT_INTERFACE_ID(sub_id) (ELM_ATSPI_COMPONENT_INTERFACE_BASE_ID + sub_id)
+#endif
 /* Component Interface - END */
 
 /* Window Interface */
@@ -335,6 +339,7 @@ enum
    ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ATTRIBUTES_GET),\
    EO_TYPECHECK()
 
+#if 0
 /**
  * @def elm_atspi_component_interface_contains
  * @since 1.10
@@ -500,3 +505,5 @@ enum
 #define elm_atspi_component_interface_alpha_get(ret)\
    ELM_ATSPI_COMPONENT_INTERFACE_ID(ELM_ATSPI_COMPONENT_INTERFACE_SUB_ID_ALPHA_GET),\
    EO_TYPECHECK(double*, ret)
+#endif
+

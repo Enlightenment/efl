@@ -1,0 +1,118 @@
+mixin Elm_Interface_Atspi_Component ()
+{
+   eo_prefix: elm_interface_atspi_component;
+   data: null;
+   properties {
+      size {
+         set {
+            return Eina_Bool;
+            legacy null;
+         }
+         get {
+            legacy null;
+         }
+         values {
+            int x;
+            int y;
+         }
+      }
+      layer {
+         get {
+            legacy null;
+         }
+         values {
+            int ret;
+         }
+      }
+      alpha {
+         get {
+            legacy null;
+         }
+         values {
+            double ret; /*@ alpha */
+         }
+      }
+      z_order {
+         get {
+            legacy null;
+         }
+         values {
+            int ret;
+         }
+      }
+   }
+   methods {
+      extents_set {
+         params {
+            @in int x;
+            @in int y;
+            @in int w;
+            @in int h;
+            @in AtspiCoordType type;
+         }
+         return Eina_Bool;
+         legacy null;
+      }
+      extents_get {
+         params {
+            @out int x;
+            @out int y;
+            @out int w;
+            @out int h;
+            @in AtspiCoordType type;
+         }
+         legacy null;
+      }
+      contains {
+         legacy null;
+         params {
+            @in int x;
+            @in int y;
+            @in AtspiCoordType type;
+         }
+         return Eina_Bool;
+      }
+      focus_grab {
+         legacy null;
+         params {
+            @out Eina_Bool ret;
+         }
+      }
+      accessible_at_point_get {
+         legacy null;
+         params {
+            @in int x;
+            @in int y;
+            @in AtspiCoordType type;
+            @out Elm_Atspi_Object *ret;
+         }
+      }
+      position_set {
+         legacy null;
+         params {
+            @in int x;
+            @in int y;
+            @in AtspiCoordType type;
+         }
+         return Eina_Bool;
+      }
+      position_get {
+         legacy null;
+         params {
+            @out int x;
+            @out int y;
+            @in AtspiCoordType type;
+         }
+      }
+   }
+   implements {
+      virtual::z_order::get;
+      virtual::layer::get;
+      virtual::extents_set;
+      virtual::extents_get;
+      virtual::accessible_at_point_get;
+      virtual::focus_grab;
+      virtual::alpha::get;
+   }
+
+}
