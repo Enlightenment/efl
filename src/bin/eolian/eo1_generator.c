@@ -253,6 +253,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
    if (!eolian_class_exists(classname))
      {
         ERR ("Class \"%s\" not found in database", classname);
+        free(tmpstr);
         return EINA_FALSE;
      }
 
