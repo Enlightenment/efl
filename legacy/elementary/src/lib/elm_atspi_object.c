@@ -143,12 +143,6 @@ EAPI const Eo_Event_Description _EV_ATSPI_OBJ_CHILD_DEL =
 EAPI const Eo_Event_Description _EV_ATSPI_OBJ_STATE_CHANGED =
         EO_EVENT_DESCRIPTION("state,changed", "Called when accessible object state has changed.");
 
-EAPI const Eo_Event_Description _EV_ATSPI_OBJ_WINDOW_ACTIVATED =
-        EO_EVENT_DESCRIPTION("widnow,created", "Called when new window has been activated. (unfocuesed)");
-
-EAPI const Eo_Event_Description _EV_ATSPI_OBJ_WINDOW_DEACTIVATED =
-        EO_EVENT_DESCRIPTION("widnow,created", "Called when new window has been deactivated (unfocused).");
-
 static void
 _eo_emit_state_changed_event(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -548,28 +542,8 @@ _elm_interface_atspi_component_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUS
    return EINA_FALSE;
 }
 
-// Window Interface
+#include "elm_interface_atspi_window.eo.c"
 
-static const Eo_Event_Description *window_event_desc[] = {
-     EV_ATSPI_OBJ_WINDOW_ACTIVATED,
-     EV_ATSPI_OBJ_WINDOW_DEACTIVATED,
-     NULL
-};
-
-static const Eo_Class_Description window_interface_desc = {
-     EO_VERSION,
-     "Elm_Atspi_Window_Interface",
-     EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     window_event_desc,
-     0,
-     NULL,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_atspi_window_interface_get, &window_interface_desc, NULL, NULL);
-
-/// Elm_Atspi_Widget base class
 static void
 _emit_atspi_state_changed_focused_event(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -838,14 +812,14 @@ static void
 _win_focused(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Atspi_Object *ao = data;
-   eo_do(ao, eo_event_callback_call(EV_ATSPI_OBJ_WINDOW_ACTIVATED, NULL, NULL));
+   eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL, NULL));
 }
 
 static void
 _win_unfocused(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Atspi_Object *ao = data;
-   eo_do(ao, eo_event_callback_call(EV_ATSPI_OBJ_WINDOW_DEACTIVATED, NULL, NULL));
+   eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL, NULL));
 }
 
 static void
@@ -912,7 +886,7 @@ static const Eo_Class_Description win_class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_atspi_win_obj_class_get, &win_class_desc, ELM_ATSPI_WIDGET_CLASS, ELM_ATSPI_WINDOW_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_atspi_win_obj_class_get, &win_class_desc, ELM_ATSPI_WIDGET_CLASS, ELM_INTERFACE_ATSPI_WINDOW_CLASS, NULL);
 
 Elm_Atspi_Object*
 _elm_atspi_root_object_get(void)

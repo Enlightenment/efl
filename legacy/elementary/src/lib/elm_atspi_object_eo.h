@@ -74,6 +74,8 @@ enum
 /* Component Interface - END */
 
 /* Window Interface */
+#include "elm_interface_atspi_window.eo.h"
+#if 0
 #define ELM_ATSPI_WINDOW_INTERFACE elm_atspi_window_interface_get()
 const Eo_Class *elm_atspi_window_interface_get(void) EINA_CONST;
 
@@ -82,6 +84,7 @@ extern const Eo_Event_Description _EV_ATSPI_OBJ_WINDOW_ACTIVATED;
 
 extern const Eo_Event_Description _EV_ATSPI_OBJ_WINDOW_DEACTIVATED;
 #define EV_ATSPI_OBJ_WINDOW_DEACTIVATED (&(_EV_ATSPI_OBJ_WINDOW_DEACTIVATED))
+#endif
 /* Window Interface - END */
 
 /* Action Interface */

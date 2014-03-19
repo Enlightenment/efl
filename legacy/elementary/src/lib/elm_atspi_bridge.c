@@ -901,7 +901,7 @@ _cache_object_register_interfaces(const char *path, Elm_Atspi_Object *node)
    if (eo_isa(node, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
      eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
 
-   if (eo_isa(node, ELM_ATSPI_WINDOW_INTERFACE))
+   if (eo_isa(node, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
      {
         window = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
         eo_do(node, eo_base_data_set("window_event_interface", window, NULL));
@@ -1296,9 +1296,9 @@ _handle_atspi_event(void *data EINA_UNUSED, Elm_Atspi_Object *ao, const Eo_Event
      _send_signal_children_changed(ao, event_info, ATSPI_OBJECT_CHILD_ADDED);
    else if (desc == EV_ATSPI_OBJ_CHILD_DEL)
      _send_signal_children_changed(ao, event_info, ATSPI_OBJECT_CHILD_REMOVED);
-   else if (desc == EV_ATSPI_OBJ_WINDOW_ACTIVATED)
+   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
      _send_signal_window(ao, ATSPI_WINDOW_EVENT_ACTIVATE);
-   else if (desc == EV_ATSPI_OBJ_WINDOW_DEACTIVATED)
+   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED)
      _send_signal_window(ao, ATSPI_WINDOW_EVENT_DEACTIVATE);
 
    return EINA_TRUE;

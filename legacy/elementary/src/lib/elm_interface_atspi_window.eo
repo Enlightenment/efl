@@ -1,0 +1,9 @@
+interface Elm_Interface_Atspi_Window ()
+{
+   data: null;
+   events {
+      window,activated; /*@ Called when new window has been activated. (unfocuesed) */
+      window,deactivated; /*@ Called when new window has been deactivated (unfocused). */
+   }
+
+}
