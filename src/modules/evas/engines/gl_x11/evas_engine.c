@@ -735,9 +735,9 @@ gl_extn_veto(Render_Engine *re)
              // strings will be like the following:
              // OpenGL vendor string: Intel Open Source Technology Center
              // OpenGL renderer string: Mesa DRI Intel(R) Sandybridge Desktop
-             if (((vendor) && (strstr(vendor, "Intel"))) &&
-                 ((renderer) && (strstr(renderer, "Mesa"))) &&
-                 ((renderer) && (strstr(renderer, "Intel")))
+             if (((vendor) && (strstr((const char *)vendor, "Intel"))) &&
+                 ((renderer) && (strstr((const char *)renderer, "Mesa"))) &&
+                 ((renderer) && (strstr((const char *)renderer, "Intel")))
                 )
                extn_have_y_inverted = 0;
           }
