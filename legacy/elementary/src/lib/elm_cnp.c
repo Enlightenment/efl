@@ -1544,7 +1544,11 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 }
 
 static Eina_Bool
+#ifdef DEBUGON
 _x11_dnd_leave(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
+#else
+_x11_dnd_leave(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev EINA_UNUSED)
+#endif
 {
    cnp_debug("Leave %x\n", ((Ecore_X_Event_Xdnd_Leave *)ev)->win);
    _x11_dnd_dropable_handle(NULL, 0, 0, ELM_XDND_ACTION_UNKNOWN);
