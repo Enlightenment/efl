@@ -659,7 +659,8 @@ _elm_scroller_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    if (content)
      {
-        elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
+        if (elm_widget_is(content))
+          elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
         elm_widget_sub_object_add(obj, content);
 
         eo_do(obj, elm_interface_scrollable_content_set(content));
