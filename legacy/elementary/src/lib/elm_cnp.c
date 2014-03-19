@@ -1544,13 +1544,13 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 }
 
 static Eina_Bool
-#ifdef DEBUGON
 _x11_dnd_leave(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
-#else
-_x11_dnd_leave(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev EINA_UNUSED)
-#endif
 {
+#ifdef DEBUGON
    cnp_debug("Leave %x\n", ((Ecore_X_Event_Xdnd_Leave *)ev)->win);
+#else
+   (void)ev;
+#endif
    _x11_dnd_dropable_handle(NULL, 0, 0, ELM_XDND_ACTION_UNKNOWN);
    // CCCCCCC: call dnd exit on last obj if there was one
    // leave->win leave->source
