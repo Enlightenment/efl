@@ -309,7 +309,7 @@ _elm_app_server_save(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
               elm_app_server_view_icon_get(&icon_name),
               elm_app_server_view_new_events_get(&new_events),
               elm_app_server_view_progress_get(&progress),
-              eo_event_callback_call(ELM_APP_SERVER_VIEW_EV_SAVE, NULL, NULL));
+              eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL, NULL));
 
         view_props = elm_app_server_view_props_new(id, title, icon_name,
                                                    new_events, progress);

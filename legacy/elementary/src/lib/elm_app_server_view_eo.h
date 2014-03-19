@@ -1,3 +1,6 @@
+#include "elm_app_server_view.eo.h"
+
+#if 0
 #define ELM_APP_SERVER_VIEW_CLASS elm_app_server_view_class_get()
 
 const Eo_Class *elm_app_server_view_class_get(void) EINA_CONST;
@@ -187,3 +190,4 @@ extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_SHALLOW;
 
 extern EAPI const Eo_Event_Description _ELM_APP_SERVER_VIEW_EV_SAVE;
 #define ELM_APP_SERVER_VIEW_EV_SAVE (&(_ELM_APP_SERVER_VIEW_EV_SAVE))
+#endif

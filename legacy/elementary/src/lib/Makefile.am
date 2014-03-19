@@ -547,7 +547,9 @@ BUILT_SOURCES = \
 		elm_app_client_view.eo.c \
 		elm_app_client_view.eo.h \
 		elm_app_server.eo.c \
-		elm_app_server.eo.h
+		elm_app_server.eo.h \
+		elm_app_server_view.eo.c \
+		elm_app_server_view.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -561,7 +563,8 @@ EXTRA_DIST += \
 	     elm_actionslider.eo \
 	     elm_app_client.eo \
 	     elm_app_client_view.eo \
-	     elm_app_server.eo
+	     elm_app_server.eo \
+	     elm_app_server_view.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -575,5 +578,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_actionslider.eo.h \
 				  elm_app_client.eo.h \
 				  elm_app_client_view.eo.h \
-				  elm_app_server.eo.h
+				  elm_app_server.eo.h \
+				  elm_app_server_view.eo.h
 

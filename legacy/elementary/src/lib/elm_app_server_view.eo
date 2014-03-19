@@ -1,0 +1,132 @@
+class Elm_App_Server_View (Eo_Base)
+{
+   eo_prefix: elm_app_server_view;
+   constructors {
+      constructor {
+         /*@ Class constructor of elm_app_server_view */
+         params {
+            @in const char *id; /*@ identifier of view */
+         }
+      }
+   }
+   properties {
+      progress {
+         set {
+            legacy null;
+         }
+         get {
+            legacy null;
+         }
+         values {
+            short progress;
+         }
+      }
+      new_events {
+         set {
+            legacy null;
+         }
+         get {
+            legacy null;
+         }
+         values {
+            int events;
+         }
+      }
+      icon {
+         set {
+            legacy null;
+         }
+         get {
+            legacy null;
+         }
+         values {
+            const char *icon;
+         }
+      }
+      title {
+         set {
+            legacy null;
+         }
+         get {
+            legacy null;
+         }
+         values {
+            const char *title;
+         }
+      }
+      window {
+         set {
+            legacy null;
+         }
+         values {
+            Evas_Object *win;
+         }
+      }
+      id {
+         get {
+            legacy null;
+         }
+         values {
+            Eina_Stringshare *ret;
+         }
+      }
+      state {
+         get {
+            legacy null;
+         }
+         values {
+            Elm_App_View_State ret;
+         }
+      }
+      path {
+         get {
+            legacy null;
+         }
+         values {
+            const char *ret;
+         }
+      }
+      pixels {
+         get {
+            /*@ Get application raw icon. */
+            legacy null;
+         }
+         set {
+            /*@ Set icon to application, using the raw pixels of image. */
+            legacy null;
+         }
+         values {
+            unsigned int w;
+            unsigned int h;
+            Eina_Bool has_alpha;
+            const unsigned char *pixels;
+         }
+      }
+   }
+   methods {
+      pause {
+         legacy null;
+      }
+      resume {
+         legacy null;
+      }
+      shallow {
+         legacy null;
+      }
+      close {
+         legacy null;
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+   }
+   events {
+      resumed; /*@ Called when view must be resumed */
+      paused; /*@ Called when view must be paused */
+      closed; /*@ Called when view must be closed */
+      shallow; /*@ Called when view state is set to shallow */
+      save; /*@ Called when view state should be saved */
+   }
+
+}

@@ -113,9 +113,9 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
          elm_app_server_view_new_events_set(5),
          elm_app_server_view_window_set(ctx->win),
          elm_app_server_view_resume(),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_CLOSED, _close_cb, ctx),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_PAUSED, _pause_cb, ctx),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_RESUMED, _resume_cb, ctx),
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_CLOSED, _close_cb, ctx),
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_PAUSED, _pause_cb, ctx),
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_RESUMED, _resume_cb, ctx),
          eo_event_callback_add(EO_EV_DEL, _view_del_cb, ctx));
 
    return view;
@@ -160,9 +160,9 @@ test_application_server_common(const char *pkg)
         ctx->view_name = eina_stringshare_printf("%s %s", pkg, id);
 
         eo_do(view,
-              eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_CLOSED, _close_cb, ctx),
-              eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_PAUSED, _pause_cb, ctx),
-              eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_RESUMED, _resume_cb, ctx),
+              eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_CLOSED, _close_cb, ctx),
+              eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_PAUSED, _pause_cb, ctx),
+              eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_RESUMED, _resume_cb, ctx),
               eo_event_callback_add(EO_EV_DEL, _view_del_cb, ctx));
      }
    eina_iterator_free(views_iter);
