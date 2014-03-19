@@ -2204,7 +2204,7 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
 
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
-   elm_widget_sub_object_del(VIEW(item), old_icon);
+   elm_widget_sub_object_del(WIDGET(item), old_icon);
    edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
    if (item->icon)
        edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
@@ -2307,7 +2307,7 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
             (VIEW(item), "elm.swallow.icon_new");
         if (old_icon)
           {
-             elm_widget_sub_object_del(VIEW(item), old_icon);
+             elm_widget_sub_object_del(WIDGET(item), old_icon);
              evas_object_hide(old_icon);
           }
         edje_object_part_swallow
