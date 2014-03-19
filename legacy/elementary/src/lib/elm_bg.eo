@@ -1,0 +1,149 @@
+class Elm_Bg (Elm_Layout)
+{
+   eo_prefix: elm_obj_bg;
+   properties {
+      option {
+         set {
+            /*@
+            Set the mode of display for a given background widget's image
+
+            This sets how the background widget will display its image. This
+            will only work if the elm_bg_file_set() was previously called with
+            an image file on @a obj. The image can be display tiled, scaled,
+            centered or stretched.
+
+            @see elm_bg_option_get()
+
+            @ingroup Bg */
+         }
+         get {
+            /*@
+            Get the mode of display for a given background widget's image
+
+            @return The image displaying mode in use for @a obj or #ELM_BG_OPTION_LAST,
+            on errors.
+
+            @see elm_bg_option_set() for more details
+
+            @ingroup Bg */
+         }
+         values {
+            Elm_Bg_Option option; /*@ The desired background option (see #Elm_Bg_Option) */
+         }
+      }
+      color {
+         set {
+            /*@
+            Set the color on a given background widget
+
+            This sets the color used for the background rectangle, in RGB
+            format. Each color component's range is from 0 to 255.
+
+            @note You probably only want to use this function if you haven't
+            previously called elm_bg_file_set(), so that you just want a solid
+            color background.
+
+            @note You can reset the color by setting @p r, @p g, @p b as -1, -1, -1.
+
+            @see elm_bg_color_get()
+
+            @ingroup Bg */
+            legacy null; /* legacy doesn't have 'a' param */
+         }
+         get {
+            /*@
+            Get the color set on a given background widget
+
+            @note Use @c NULL pointers on the file components you're not
+            interested in: they'll be ignored by the function.
+
+            @see elm_bg_color_get() for more details
+
+            @ingroup Bg */
+            legacy null; /* legacy doesn't have 'a' param */
+         }
+         values {
+            int r; /*@ The red color component's value */
+            int g; /*@ The green color component's value */
+            int b; /*@ The blue color component's value */
+            int a; /*@ The blue color component's value */
+         }
+      }
+      file {
+         set {
+            /*@
+            Set the file (image or edje collection) to give life for the
+            background
+
+            @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+
+            This sets the image file used in the background object. If the
+            image comes from an Edje group, it will be stretched to completely
+            fill the background object. If it comes from a traditional image file, it
+            will by default be centered in this widget's are (thus retaining
+            its aspect), what could lead to some parts being not visible. You
+            may change the mode of exhibition for a real image file with
+            elm_bg_option_set().
+
+            @note Once the image of @p obj is set, a previously set one will be
+            deleted, even if @p file is @c NULL.
+
+            @note This will only affect the contents of one of the background's
+            swallow spots, namely @c "elm.swallow.background". If you want to
+            achieve the @c Layout's file setting behavior, you'll have to call
+            that method on this object.
+
+            @ingroup Bg */
+            return Eina_Bool;
+         }
+         get {
+            /*@
+            Get the file (image or edje collection) set on a given background
+            widget
+
+            @note Use @c NULL pointers on the file components you're not
+            interested in: they'll be ignored by the function.
+
+            @ingroup Bg */
+         }
+         values {
+            const char *file; /*@ The file path */
+            const char *group; /*@ Optional key (group in Edje) within the file */
+         }
+      }
+      load_size {
+         set {
+            /*@
+            Set the size of the pixmap representation of the image set on a
+            given background widget.
+
+            @warning This function just makes sense if an image file was set on
+            @p obj, with elm_bg_file_set().
+
+            This function sets a new size for pixmap representation of the
+            given bg image. It allows for the image to be loaded already in the
+            specified size, reducing the memory usage and load time (for
+            example, when loading a big image file with its load size set to a
+            smaller size)
+
+            @note This is just a hint for the underlying system. The real size
+            of the pixmap may differ depending on the type of image being
+            loaded, being bigger than requested.
+
+            @ingroup Bg */
+         }
+         values {
+            Evas_Coord w; /*@ The new width of the image pixmap representation. */
+            Evas_Coord h; /*@ The new height of the image pixmap representation. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Elm_Layout::content_aliases::get;
+      Elm_Layout::sizing_eval;
+   }
+
+}

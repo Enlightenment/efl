@@ -1,3 +1,6 @@
+#include "elm_bg.eo.h"
+
+#if 0
 #define ELM_OBJ_BG_CLASS elm_obj_bg_class_get()
 
 const Eo_Class *elm_obj_bg_class_get(void) EINA_CONST;
@@ -128,3 +131,4 @@ enum
  * @ingroup Bg
  */
 #define elm_obj_bg_load_size_set(w, h) ELM_OBJ_BG_ID(ELM_OBJ_BG_SUB_ID_LOAD_SIZE_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+#endif
