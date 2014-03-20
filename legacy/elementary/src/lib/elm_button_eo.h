@@ -1,3 +1,6 @@
+#include "elm_button.eo.h"
+
+#if 0
 #define ELM_OBJ_BUTTON_CLASS elm_obj_button_class_get()
 
 const Eo_Class *elm_obj_button_class_get(void) EINA_CONST;
@@ -116,3 +119,4 @@ enum
  * @ingroup Button
  */
 #define elm_obj_button_autorepeat_gap_timeout_get(ret) ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GAP_TIMEOUT_GET), EO_TYPECHECK(double *, ret)
+#endif

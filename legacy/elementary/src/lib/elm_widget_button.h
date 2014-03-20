@@ -18,7 +18,7 @@
 /**
  * Base widget smart data extended with button instance data.
  */
-typedef struct _Elm_Button_Smart_Data
+typedef struct _Elm_Button_Data
 {
    /* auto-repeat stuff */
    double                ar_threshold; /**< Time to wait until first auto-repeated click is generated */
@@ -28,14 +28,14 @@ typedef struct _Elm_Button_Smart_Data
 
    Eina_Bool             autorepeat : 1; /**< Whether auto-repetition of clicks is enabled or not (bound to _Elm_Button_Smart_Class::admits_autorepeat) */
    Eina_Bool             repeating : 1; /**< Whether auto-repetition is going on */
-} Elm_Button_Smart_Data;
+} Elm_Button_Data;
 
 /**
  * @}
  */
 
 #define ELM_BUTTON_DATA_GET(o, sd) \
-  Elm_Button_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_BUTTON_CLASS)
+  Elm_Button_Data * sd = eo_data_scope_get(o, ELM_OBJ_BUTTON_CLASS)
 
 #define ELM_BUTTON_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_BUTTON_DATA_GET(o, ptr);                       \

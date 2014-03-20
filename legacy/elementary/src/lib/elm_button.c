@@ -7,8 +7,6 @@
 #include "elm_widget_button.h"
 #include "elm_widget_layout.h"
 
-EAPI Eo_Op ELM_OBJ_BUTTON_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_BUTTON_CLASS
 
 #define MY_CLASS_NAME "Elm_Button"
@@ -62,8 +60,8 @@ _activate(Evas_Object *obj)
      }
 }
 
-static void
-_elm_button_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_button_elm_layout_sizing_eval(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
@@ -75,21 +73,17 @@ _elm_button_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
-static void
-_elm_button_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_button_elm_widget_activate(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
-   Elm_Activate act = va_arg(*list, Elm_Activate);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   if (elm_widget_disabled_get(obj)) return;
-   if (act != ELM_ACTIVATE_DEFAULT) return;
-   if (evas_object_freeze_events_get(obj)) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
    evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot
@@ -111,84 +105,70 @@ _icon_signal_emit(Evas_Object *obj)
 /* FIXME: replicated from elm_layout just because button's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-static void
-_elm_button_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_button_elm_widget_theme_apply(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
    _icon_signal_emit(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-static void
-_elm_button_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_button_elm_widget_sub_object_del(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-static void
-_elm_button_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_button_elm_container_content_set(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_button_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_button_elm_widget_event(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   if (ret) *ret = EINA_FALSE;
    (void) src;
+   Evas_Event_Key_Down *ev = event_info;
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if ((strcmp(ev->key, "Return")) &&
        (strcmp(ev->key, "KP_Enter")) &&
        (strcmp(ev->key, "space")))
-     return;
+     return EINA_FALSE;
 
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
    _activate(obj);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -281,8 +261,8 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return NULL;
 }
 
-static void
-_elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_button_evas_smart_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -312,18 +292,16 @@ _elm_button_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
      CRI("Failed to set layout!");
 }
 
-static void
-_elm_button_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_button_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
+   return _content_aliases;
 }
 
-static void
-_elm_button_smart_text_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_button_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _text_aliases;
+   return _text_aliases;
 }
 
 EAPI Evas_Object *
@@ -335,8 +313,8 @@ elm_button_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_button_eo_base_constructor(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -344,74 +322,40 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_button_autorepeat_set(Evas_Object *obj,
-                          Eina_Bool on)
+EOLIAN static void
+_elm_button_autorepeat_set(Eo *obj EINA_UNUSED, Elm_Button_Data *sd, Eina_Bool on)
 {
-   ELM_BUTTON_CHECK(obj);
-   eo_do(obj, elm_obj_button_autorepeat_set(on));
-}
-
-static void
-_autorepeat_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool on = va_arg(*list, int);
-   Elm_Button_Smart_Data *sd = _pd;
-
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->autorepeat = on;
    sd->repeating = EINA_FALSE;
 }
 
 #define _AR_CAPABLE(obj) \
-  (_elm_button_admits_autorepeat_get(obj))
+  (_internal_elm_button_admits_autorepeat_get(obj))
 
 static Eina_Bool
-_elm_button_admits_autorepeat_get(const Evas_Object *obj)
+_internal_elm_button_admits_autorepeat_get(const Evas_Object *obj)
 {
    Eina_Bool ret = EINA_FALSE;
    eo_do((Eo *) obj, elm_obj_button_admits_autorepeat_get(&ret));
    return ret;
 }
 
-static void
-_admits_autorepeat_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-elm_button_autorepeat_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_button_autorepeat_get(Eo *obj, Elm_Button_Data *sd)
 {
-   ELM_BUTTON_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_button_autorepeat_get(&ret));
-   return ret;
+   return (_AR_CAPABLE(obj) & sd->autorepeat);
 }
 
-static void
-_autorepeat_get(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_button_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Button_Smart_Data *sd = _pd;
-   *ret = _AR_CAPABLE(obj) & sd->autorepeat;
-}
-
-EAPI void
-elm_button_autorepeat_initial_timeout_set(Evas_Object *obj,
-                                          double t)
-{
-   ELM_BUTTON_CHECK(obj);
-   eo_do(obj, elm_obj_button_autorepeat_initial_timeout_set(t));
-}
-
-static void
-_autorepeat_initial_timeout_set(Eo *obj, void *_pd, va_list *list)
-{
-   double t = va_arg(*list, double);
-   Elm_Button_Smart_Data *sd = _pd;
-
    if (!_AR_CAPABLE(obj))
      {
         ERR("this widget does not support auto repetition of clicks.");
@@ -423,41 +367,18 @@ _autorepeat_initial_timeout_set(Eo *obj, void *_pd, va_list *list)
    sd->ar_threshold = t;
 }
 
-EAPI double
-elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_button_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
 {
-   ELM_BUTTON_CHECK(obj) 0.0;
-    double ret = 0.0;
-    eo_do((Eo *) obj, elm_obj_button_autorepeat_initial_timeout_get(&ret));
-    return ret;
-}
-
-static void
-_autorepeat_initial_timeout_get(Eo *obj, void *_pd, va_list *list)
-{
-   double *ret = va_arg(*list, double *);
-   Elm_Button_Smart_Data *sd = _pd;
-
    if (!_AR_CAPABLE(obj))
-      *ret = 0.0;
+      return 0.0;
    else
-      *ret = sd->ar_threshold;
+      return sd->ar_threshold;
 }
 
-EAPI void
-elm_button_autorepeat_gap_timeout_set(Evas_Object *obj,
-                                      double t)
+EOLIAN static void
+_elm_button_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 {
-   ELM_BUTTON_CHECK(obj);
-   eo_do(obj, elm_obj_button_autorepeat_gap_timeout_set(t));
-}
-
-static void
-_autorepeat_gap_timeout_set(Eo *obj, void *_pd, va_list *list)
-{
-   double t = va_arg(*list, double);
-   Elm_Button_Smart_Data *sd = _pd;
-
    if (!_AR_CAPABLE(obj))
      {
         ERR("this widget does not support auto repetition of clicks.");
@@ -470,93 +391,28 @@ _autorepeat_gap_timeout_set(Eo *obj, void *_pd, va_list *list)
    if ((sd->repeating) && (sd->timer)) ecore_timer_interval_set(sd->timer, t);
 }
 
-EAPI double
-elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_button_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Elm_Button_Data *sd)
 {
-   ELM_BUTTON_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *) obj, elm_obj_button_autorepeat_gap_timeout_get(&ret));
-   return ret;
+   return sd->ar_interval;
+}
+
+EOLIAN static Eina_Bool
+_elm_button_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_button_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 static void
-_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_button_class_constructor(Eo_Class *klass)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Button_Smart_Data *sd = _pd;
-
-   *ret = sd->ar_interval;
-}
-
-static void
-_elm_button_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
-}
-
-static void
-_elm_button_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_button_smart_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_button_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_button_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_button_smart_sub_object_del),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACTIVATE), _elm_button_smart_activate),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_button_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_button_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_button_smart_content_set),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_button_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_button_smart_content_aliases_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), _elm_button_smart_text_aliases_get),
-
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _admits_autorepeat_get),
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_SET), _autorepeat_set),
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GET), _autorepeat_get),
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_INITIAL_TIMEOUT_SET), _autorepeat_initial_timeout_set),
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_INITIAL_TIMEOUT_GET), _autorepeat_initial_timeout_get),
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GAP_TIMEOUT_SET), _autorepeat_gap_timeout_set),
-        EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GAP_TIMEOUT_GET), _autorepeat_gap_timeout_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET, "Get whether auto-repetition is implemented or not"),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_SET, "Turn on/off the autorepeat event generated when the button is kept pressed."),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GET, "Get whether the autorepeat feature is enabled."),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_INITIAL_TIMEOUT_SET, "Set the initial timeout before the autorepeat event is generated."),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_INITIAL_TIMEOUT_GET, "Get the initial timeout before the autorepeat event is generated."),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GAP_TIMEOUT_SET, "Set the interval between each generated autorepeat event."),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUTTON_SUB_ID_AUTOREPEAT_GAP_TIMEOUT_GET, "Get the interval between each generated autorepeat event."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_BUTTON_BASE_ID, op_desc, ELM_OBJ_BUTTON_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Button_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_button_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+#include "elm_button.eo.c"
