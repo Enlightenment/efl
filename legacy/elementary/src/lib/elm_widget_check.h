@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with check instance data.
  */
-typedef struct _Elm_Check_Smart_Data Elm_Check_Smart_Data;
-struct _Elm_Check_Smart_Data
+typedef struct _Elm_Check_Data Elm_Check_Data;
+struct _Elm_Check_Data
 {
    Eina_Bool             state;
    Eina_Bool            *statep;
@@ -29,7 +29,7 @@ struct _Elm_Check_Smart_Data
  */
 
 #define ELM_CHECK_DATA_GET(o, sd) \
-  Elm_Check_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CHECK_CLASS)
+  Elm_Check_Data * sd = eo_data_scope_get(o, ELM_OBJ_CHECK_CLASS)
 
 #define ELM_CHECK_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_CHECK_DATA_GET(o, ptr);                        \

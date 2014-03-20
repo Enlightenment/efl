@@ -1,0 +1,70 @@
+class Elm_Check (Elm_Layout)
+{
+   eo_prefix: elm_obj_check;
+   properties {
+      state {
+         set {
+            /*@
+            @brief Set the on/off state of the check object
+
+            This sets the state of the check. If set with elm_check_state_pointer_set()
+            the state of that variable is also changed. Calling this @b doesn't cause
+            the "changed" signal to be emitted.
+
+            @ingroup Check */
+         }
+         get {
+            /*@
+            @brief Get the state of the check object
+
+            @return The boolean state
+
+            @ingroup Check */
+         }
+         values {
+            Eina_Bool state; /*@ The state to use (1 == on, 0 == off) */
+         }
+      }
+      state_pointer {
+         set {
+            /*@
+            @brief Set a convenience pointer to a boolean to change
+
+            This sets a pointer to a boolean, that, in addition to the check objects
+            state will also be modified directly. To stop setting the object pointed
+            to simply use NULL as the @p statep parameter. If @p statep is not NULL,
+            then when this is called, the check objects state will also be modified to
+            reflect the value of the boolean @p statep points to, just like calling
+            elm_check_state_set().
+
+            @ingroup Check */
+         }
+         values {
+            Eina_Bool *statep; /*@ Pointer to the boolean to modify */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Elm_Widget::activate;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::theme_apply;
+      Elm_Widget::sub_object_del;
+      Elm_Widget::event;
+      Elm_Container::content_set;
+      Elm_Layout::text_aliases::get;
+      Elm_Layout::content_aliases::get;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      changed;
+      language,changed;
+      access,changed;
+      focused;
+      unfocused;
+   }
+
+}

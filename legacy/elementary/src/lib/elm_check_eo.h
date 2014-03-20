@@ -1,3 +1,5 @@
+#include "elm_check.eo.h"
+#if 0
 #define ELM_OBJ_CHECK_CLASS elm_obj_check_class_get()
 
 const Eo_Class *elm_obj_check_class_get(void) EINA_CONST;
@@ -56,3 +58,4 @@ enum
  * @ingroup Check
  */
 #define elm_obj_check_state_pointer_set(statep) ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_POINTER_SET), EO_TYPECHECK(Eina_Bool *, statep)
+#endif

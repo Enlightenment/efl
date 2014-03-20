@@ -7,8 +7,6 @@
 #include "elm_widget_check.h"
 #include "elm_widget_layout.h"
 
-EAPI Eo_Op ELM_OBJ_CHECK_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_CHECK_CLASS
 
 #define MY_CLASS_NAME "Elm_Check"
@@ -82,61 +80,52 @@ _icon_signal_emit(Evas_Object *obj)
 /* FIXME: replicated from elm_layout just because check's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-static void
-_elm_check_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_check_elm_widget_sub_object_del(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   if (ret) *ret = EINA_TRUE;
    eo_do(obj, elm_obj_layout_sizing_eval());
+
+   return EINA_TRUE;
 }
 
-static void
-_elm_check_smart_activate(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_check_elm_widget_activate(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
-   Elm_Activate act = va_arg(*list, Elm_Activate);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   if (elm_widget_disabled_get(obj)) return;
-   if (act != ELM_ACTIVATE_DEFAULT) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    _activate(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-static void
-_elm_check_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_check_elm_container_content_set(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   if (ret) *ret = EINA_TRUE;
    eo_do(obj, elm_obj_layout_sizing_eval());
+
+   return EINA_TRUE;
 }
 
-static void
-_elm_check_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_check_elm_layout_sizing_eval(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -149,44 +138,37 @@ _elm_check_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static void
-_elm_check_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_check_elm_widget_event(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   if (ret) *ret = EINA_FALSE;
    (void) src;
+   Evas_Event_Key_Down *ev = event_info;
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if ((strcmp(ev->key, "Return")) &&
        (strcmp(ev->key, "KP_Enter")) &&
        (strcmp(ev->key, "space")))
-     return;
+     return EINA_FALSE;
 
    _activate(obj);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (ret) *ret = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-static void
-_elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   Elm_Check_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (!sd->state) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
    else elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
@@ -200,7 +182,7 @@ _elm_check_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    eo_do(obj, elm_obj_layout_sizing_eval());
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static char *
@@ -217,7 +199,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 static char *
 _access_state_cb(void *data, Evas_Object *obj)
 {
-   Elm_Check_Smart_Data *sd = eo_data_scope_get(data, MY_CLASS);
+   Elm_Check_Data *sd = eo_data_scope_get(data, MY_CLASS);
    const char *on_text, *off_text;
 
    if (elm_widget_disabled_get(obj))
@@ -291,8 +273,8 @@ _on_check_toggle(void *data,
    _activate(data);
 }
 
-static void
-_elm_check_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_check_evas_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -325,18 +307,16 @@ _elm_check_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    elm_layout_sizing_eval(obj);
 }
 
-static void
-_elm_check_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_check_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
+   return _content_aliases;
 }
 
-static void
-_elm_check_smart_text_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_check_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _text_aliases;
+   return _text_aliases;
 }
 
 EAPI Evas_Object *
@@ -348,8 +328,8 @@ elm_check_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_check_eo_base_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -357,19 +337,9 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_check_state_set(Evas_Object *obj,
-                    Eina_Bool state)
+EOLIAN static void
+_elm_check_state_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool state)
 {
-   ELM_CHECK_CHECK(obj);
-   eo_do(obj, elm_obj_check_state_set(state));
-}
-
-static void
-_elm_check_smart_state_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool state = va_arg(*list, int);
-   Elm_Check_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (state != sd->state)
@@ -385,37 +355,15 @@ _elm_check_smart_state_set(Eo *obj, void *_pd, va_list *list)
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-EAPI Eina_Bool
-elm_check_state_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_check_state_get(Eo *obj EINA_UNUSED, Elm_Check_Data *sd)
 {
-   ELM_CHECK_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_check_state_get(&ret));
-   return ret;
+   return sd->state;
 }
 
-static void
-_elm_check_smart_state_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_check_state_pointer_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool *statep)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Check_Smart_Data *sd = _pd;
-   *ret = sd->state;
-}
-
-EAPI void
-elm_check_state_pointer_set(Evas_Object *obj,
-                            Eina_Bool *statep)
-{
-   ELM_CHECK_CHECK(obj);
-   eo_do(obj, elm_obj_check_state_pointer_set(statep));
-}
-
-static void
-_elm_check_smart_state_pointer_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool *statep = va_arg(*list, Eina_Bool *);
-   Elm_Check_Smart_Data *sd = _pd;
-
    if (statep)
      {
         sd->statep = statep;
@@ -432,67 +380,22 @@ _elm_check_smart_state_pointer_set(Eo *obj, void *_pd, va_list *list)
      sd->statep = NULL;
 }
 
-static void
-_elm_check_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_check_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_check_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 static void
-_elm_check_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_elm_check_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_check_smart_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_check_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_check_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_check_smart_sub_object_del),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACTIVATE), _elm_check_smart_activate),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_check_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_check_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_check_smart_content_set),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_check_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_check_smart_content_aliases_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), _elm_check_smart_text_aliases_get),
-
-        EO_OP_FUNC(ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_SET), _elm_check_smart_state_set),
-        EO_OP_FUNC(ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_GET), _elm_check_smart_state_get),
-        EO_OP_FUNC(ELM_OBJ_CHECK_ID(ELM_OBJ_CHECK_SUB_ID_STATE_POINTER_SET), _elm_check_smart_state_pointer_set),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_CHECK_SUB_ID_STATE_SET, "Set the on/off state of the check object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CHECK_SUB_ID_STATE_GET, "Get the state of the check object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CHECK_SUB_ID_STATE_POINTER_SET, "Set a convenience pointer to a boolean to change."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_CHECK_BASE_ID, op_desc, ELM_OBJ_CHECK_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Check_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_check_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+#include "elm_check.eo.c"
