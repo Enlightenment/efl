@@ -2704,6 +2704,8 @@ ob_collections_group(void)
    current_de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    current_de->id = eina_list_count(edje_collections);
 
+   if (!edje_collections_lookup)
+     ob_collections();
    eina_hash_add(edje_collections_lookup, &current_de->id, current_de);
 
    pc = mem_alloc(SZ(Edje_Part_Collection_Parser));
