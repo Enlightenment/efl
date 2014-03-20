@@ -17,7 +17,7 @@
 /**
  * Base layout smart data extended with datetime instance data.
  */
-typedef struct _Elm_Datetime_Smart_Data Elm_Datetime_Smart_Data;
+typedef struct _Elm_Datetime_Data       Elm_Datetime_Data;
 typedef struct _Datetime_Field          Datetime_Field;
 typedef struct _Datetime_Mod_Api        Datetime_Mod_Api;
 typedef struct _Format_Map              Format_Map;
@@ -53,7 +53,7 @@ struct _Datetime_Mod_Api
                                                     Evas_Object *obj);
 };
 
-struct _Elm_Datetime_Smart_Data
+struct _Elm_Datetime_Data
 {
    /* fixed set of fields. */
    Datetime_Field            field_list[ELM_DATETIME_TYPE_COUNT];
@@ -82,7 +82,7 @@ struct _Format_Map
  */
 
 #define ELM_DATETIME_DATA_GET(o, sd) \
-  Elm_Datetime_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_DATETIME_CLASS)
+  Elm_Datetime_Data * sd = eo_data_scope_get(o, ELM_OBJ_DATETIME_CLASS)
 
 #define ELM_DATETIME_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_DATETIME_DATA_GET(o, ptr);                     \

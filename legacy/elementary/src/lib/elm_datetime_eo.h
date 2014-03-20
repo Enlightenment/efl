@@ -1,3 +1,6 @@
+#include "elm_datetime.eo.h"
+
+#if 0
 #define ELM_OBJ_DATETIME_CLASS elm_obj_datetime_class_get()
 
 const Eo_Class *elm_obj_datetime_class_get(void) EINA_CONST;
@@ -203,3 +206,4 @@ enum
  * @ingroup Datetime
  */
 #define elm_obj_datetime_value_max_set(maxtime, ret) ELM_OBJ_DATETIME_ID(ELM_OBJ_DATETIME_SUB_ID_VALUE_MAX_SET), EO_TYPECHECK(const struct tm *, maxtime), EO_TYPECHECK(Eina_Bool *, ret)
+#endif

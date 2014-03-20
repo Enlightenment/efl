@@ -575,7 +575,9 @@ BUILT_SOURCES = \
 		elm_conformant.eo.c \
 		elm_conformant.eo.h \
 		elc_ctxpopup.eo.c \
-		elc_ctxpopup.eo.h
+		elc_ctxpopup.eo.h \
+		elm_datetime.eo.c \
+		elm_datetime.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -603,7 +605,8 @@ EXTRA_DIST += \
 	     elm_clock.eo \
 	     elm_colorselector.eo \
 	     elm_conformant.eo \
-	     elc_ctxpopup.eo
+	     elc_ctxpopup.eo \
+	     elm_datetime.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -631,5 +634,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_clock.eo.h \
 				  elm_conformant.eo.h \
 				  elm_colorselector.eo.h \
-				  elc_ctxpopup.eo.h
+				  elc_ctxpopup.eo.h \
+				  elm_datetime.eo.h
 
