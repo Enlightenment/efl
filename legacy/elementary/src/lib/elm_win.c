@@ -705,14 +705,12 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Smart_Data *sd,
                                     Evas_Object *obj)
 {
    Evas_Coord tx, ty, tw, th;
-   Evas_Coord w, h, px, py, pw, ph;
+   Evas_Coord px, py, pw, ph;
    Edje_Message_Int_Set *m;
-   Evas_Object *previous = sd->focus_highlight.prev.target;
    Evas_Object *target = sd->focus_highlight.cur.target;
 
-   evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
+   evas_object_geometry_get(obj, &px, &py, &pw, &ph);
    elm_widget_focus_highlight_geometry_get(target, &tx, &ty, &tw, &th, EINA_TRUE);
-   elm_widget_focus_highlight_geometry_get(previous, &px, &py, &pw, &ph, EINA_FALSE);
    evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
 
