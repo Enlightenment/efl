@@ -16,7 +16,7 @@ tmpl_eapi_funcdef[] = "\n\
  *\n\
 @#list_desc_param\
  */\n\
-EAPI @#type_return@#class_@#func(@#is_constEvas_Object *obj@#params);@#flags\n\
+EAPI @#type_return@#class_@#func(@#is_constEo *obj@#params);@#flags\n\
 ";
 
 /*@#CLASS_CHECK(obj) @#check_ret;\n\*/
@@ -24,7 +24,7 @@ static const char
 tmpl_eapi_body[] ="\
 \n\
 EAPI @#ret_type\n\
-@#eapi_prefix_@#func(@#is_constEvas_Object *obj@#full_params)\n\
+@#eapi_prefix_@#func(@#is_constEo *obj@#full_params)\n\
 {\n\
 @#ret_init_val\
    eo_do((Eo *) obj, @#eoprefix_@#func(@#eo_params));\n\
