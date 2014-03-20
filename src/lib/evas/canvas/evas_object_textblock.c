@@ -2262,6 +2262,7 @@ _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
    size_t len;
 
    start = strchr(item, '=');
+   if (!start) return ;
    *key = eina_stringshare_add_length(item, start - item);
    start++; /* Advance after the '=' */
    /* If we can find a quote as the first non-space char,
