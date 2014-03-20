@@ -382,6 +382,7 @@ static void st_collections_group_programs_program_in(void);
 static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
 static void st_collections_group_programs_program_target(void);
+static void st_collections_group_programs_program_targets(void);
 static void st_collections_group_programs_program_after(void);
 static void st_collections_group_programs_program_api(void);
 
@@ -748,6 +749,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.programs.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.part.description.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.description.programs.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.description.programs.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.parts.part.description.programs.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.description.programs.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.description.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -757,6 +759,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.part.description.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.description.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.description.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.parts.part.description.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.description.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.programs.image", st_images_image}, /* dup */
@@ -780,6 +783,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.programs.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.part.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.programs.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.programs.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.parts.part.programs.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.programs.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.part.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -789,6 +793,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.part.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.part.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.parts.part.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.part.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.parts.programs.image", st_images_image}, /* dup */
@@ -813,6 +818,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.programs.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.programs.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.programs.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.parts.programs.program.after", st_collections_group_programs_program_after},
      {"collections.group.parts.programs.program.api", st_collections_group_programs_program_api},
      {"collections.group.parts.program.name", st_collections_group_programs_program_name}, /* dup */
@@ -823,6 +829,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.parts.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.parts.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.parts.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.parts.program.api", st_collections_group_programs_program_api}, /* dup */
 #ifdef HAVE_EPHYSICS
@@ -839,6 +846,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.program.action", st_collections_group_programs_program_action}, /* dup */
      {"collections.group.program.transition", st_collections_group_programs_program_transition}, /* dup */
      {"collections.group.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.program.targets", st_collections_group_programs_program_targets}, /* dup */
      {"collections.group.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.program.api", st_collections_group_programs_program_api}, /* dup */
      {"collections.group.programs.program.name", st_collections_group_programs_program_name},
@@ -849,6 +857,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.action", st_collections_group_programs_program_action},
      {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
      {"collections.group.programs.program.target", st_collections_group_programs_program_target},
+     {"collections.group.programs.program.targets", st_collections_group_programs_program_targets},
      {"collections.group.programs.program.after", st_collections_group_programs_program_after},
      {"collections.group.programs.program.api", st_collections_group_programs_program_api},
      {"collections.group.programs.image", st_images_image}, /* dup */
@@ -9621,6 +9630,64 @@ st_collections_group_programs_program_transition(void)
      }
 }
 
+static void
+_program_target_add(char *name)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+   Edje_Program_Target *et;
+   Edje_Program_Target *etw;
+   Eina_List *l;
+   char *copy;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = current_program;
+
+   EINA_LIST_FOREACH(ep->targets, l, etw)
+     {
+        if (!strcmp(name, (char*) (etw + 1)))
+          {
+             free(name);
+             return;
+          }
+     }
+
+   et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
+   ep->targets = eina_list_append(ep->targets, et);
+   copy = (char*) (et + 1);
+   memcpy(copy, name, strlen(name) + 1);
+   switch (ep->action)
+     {
+      case EDJE_ACTION_TYPE_ACTION_STOP:
+         data_queue_program_lookup(pc, name, &(et->id));
+         break;
+      case EDJE_ACTION_TYPE_STATE_SET:
+      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+      case EDJE_ACTION_TYPE_FOCUS_SET:
+      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+#ifdef HAVE_EPHYSICS
+      case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
+      case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
+      case EDJE_ACTION_TYPE_PHYSICS_FORCE:
+      case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
+      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
+      case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
+      case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
+      case EDJE_ACTION_TYPE_PHYSICS_STOP:
+      case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
+#endif
+         data_queue_part_lookup(pc, name, &(et->id));
+         break;
+      default:
+         ERR("parse error %s:%i. target may only be used after action",
+             file_in, line - 1);
+         exit(-1);
+     }
+   free(name);
+}
+
 /**
     @page edcref
     @property
@@ -9636,66 +9703,31 @@ st_collections_group_programs_program_transition(void)
 static void
 st_collections_group_programs_program_target(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Program *ep;
-
    check_arg_count(1);
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = current_program;
-     {
-	Edje_Program_Target *et;
-	Edje_Program_Target *etw;
-	Eina_List *l;
-	char *name;
-	char *copy;
+   _program_target_add(parse_str(0));
+}
 
-	name = parse_str(0);
-        
-	EINA_LIST_FOREACH(ep->targets, l, etw)
-          {
-             if (!strcmp(name, (char*) (etw + 1)))
-               {
-                  free(name);
-                  return;
-               }
-          }
+/**
+    @page edcref
+    @property
+        target
+    @parameters
+        [target1] [target2] [target3] ...
+    @since 1.10
+    @effect
+        Programs or parts upon which the specified action will act. Multiple target
+        or targets keywords may be specified. SIGNAL_EMITs do not have
+        targets.
+    @endproperty
+*/
+static void
+st_collections_group_programs_program_targets(void)
+{
+   int n, argc;
 
-	et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
-	ep->targets = eina_list_append(ep->targets, et);
-	copy = (char*) (et + 1);
-	memcpy(copy, name, strlen(name) + 1);
-        switch (ep->action)
-          {
-           case EDJE_ACTION_TYPE_ACTION_STOP:
-              data_queue_program_lookup(pc, name, &(et->id));
-              break;
-           case EDJE_ACTION_TYPE_STATE_SET:
-           case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-           case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-           case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-           case EDJE_ACTION_TYPE_FOCUS_SET:
-           case EDJE_ACTION_TYPE_FOCUS_OBJECT:
-#ifdef HAVE_EPHYSICS
-           case EDJE_ACTION_TYPE_PHYSICS_IMPULSE:
-           case EDJE_ACTION_TYPE_PHYSICS_TORQUE_IMPULSE:
-           case EDJE_ACTION_TYPE_PHYSICS_FORCE:
-           case EDJE_ACTION_TYPE_PHYSICS_TORQUE:
-           case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
-           case EDJE_ACTION_TYPE_PHYSICS_VEL_SET:
-           case EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET:
-           case EDJE_ACTION_TYPE_PHYSICS_STOP:
-           case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
-#endif
-              data_queue_part_lookup(pc, name, &(et->id));
-              break;
-           default:
-              ERR("parse error %s:%i. target may only be used after action",
-                  file_in, line - 1);
-              exit(-1);
-          }
-	free(name);
-     }
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     _program_target_add(parse_str(n));
 }
 
 /**
