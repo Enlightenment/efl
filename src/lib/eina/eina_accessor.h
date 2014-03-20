@@ -157,6 +157,7 @@ typedef Eina_Accessor* (*Eina_Accessor_Clone_Callback)(Eina_Accessor *it);
  * Type to provide random access to data structures.
  *
  * If creating an accessor remember to set the type using @ref EINA_MAGIC_SET.
+ * 
  */
 struct _Eina_Accessor
 {

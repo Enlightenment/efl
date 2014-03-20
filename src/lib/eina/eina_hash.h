@@ -287,8 +287,16 @@
  */
 typedef struct _Eina_Hash       Eina_Hash;
 
+/**
+ * @typedef Eina_Hash_Tuple
+ * Type for a hash table of key/value pairs.
+ */
 typedef struct _Eina_Hash_Tuple Eina_Hash_Tuple;
 
+/**
+ * @struct _Eina_Hash_Tuple
+ * Data for a hash table of key/value pairs.
+ */
 struct _Eina_Hash_Tuple
 {
    const void  *key; /**< The key */
@@ -296,24 +304,44 @@ struct _Eina_Hash_Tuple
    unsigned int key_length; /**< The length of the key */
 };
 
+/**
+ * @typedef Eina_Key_Length
+ * Type for a function to determine the length of a hash key.
+ */
 typedef unsigned int (*Eina_Key_Length)(const void *key);
+
 /**
  * @def EINA_KEY_LENGTH
  * @param Function The function used to calculate length of hash key.
  */
 #define EINA_KEY_LENGTH(Function) ((Eina_Key_Length)Function)
+
+/**
+ * @typedef Eina_Key_Cmp
+ * Type for a function to compare two hash keys.
+ */
 typedef int          (*Eina_Key_Cmp)(const void *key1, int key1_length, const void *key2, int key2_length);
 /**
  * @def EINA_KEY_CMP
  * @param Function The function used to compare hash key.
  */
 #define EINA_KEY_CMP(Function)    ((Eina_Key_Cmp)Function)
+
+/**
+ * @typedef Eina_Key_Hash
+ * Type for a function to create a hash key.
+ */
 typedef int          (*Eina_Key_Hash)(const void *key, int key_length);
 /**
  * @def EINA_KEY_HASH
  * @param Function The function used to hash key.
  */
 #define EINA_KEY_HASH(Function)   ((Eina_Key_Hash)Function)
+
+/**
+ * @typedef Eina_Hash_Foreach
+ * Type for a function to iterate over a hash table.
+ */
 typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 
 
@@ -1015,22 +1043,72 @@ EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MAL
 EAPI void           eina_hash_foreach(const Eina_Hash  *hash,
                                       Eina_Hash_Foreach func,
                                       const void       *fdata) EINA_ARG_NONNULL(1, 2);
-/* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html) hash function used by WebCore (http://webkit.org/blog/8/hashtables-part-2/) */
+
+				      
+/** 
+ * @brief 
+ * Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html) hash function used by WebCore (http://webkit.org/blog/8/hashtables-part-2/) 
+ * 
+ * @param key The key to hash
+ * @param len The length of the key
+ * @return The hash value
+ */
 EAPI int eina_hash_superfast(const char *key,
                              int         len) EINA_ARG_NONNULL(1);
-/* Hash function first reported by dan bernstein many years ago in comp.lang.c */
+
+/** 
+ * @brief 
+ * Hash function first reported by Dan Bernstein many years ago in comp.lang.c 
+ * 
+ * @param key The key to hash
+ * @param len The length of the key
+ * @return The hash value
+ */
 static inline int eina_hash_djb2(const char *key,
                                  int         len) EINA_ARG_NONNULL(1);
+/** 
+ * @brief 
+ * Hash function first reported by Dan Bernstein many years ago in comp.lang.c 
+ * 
+ * @param key The key to hash
+ * @param plen The length of the key
+ * @return The hash value
+ */
 static inline int eina_hash_djb2_len(const char *key,
                                      int        *plen) EINA_ARG_NONNULL(1, 2);
-/* Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm */
+
+/** 
+ * @brief 
+ * Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm  
+ * 
+ * @param pkey The key to hash
+ * @param len The length of the key
+ * @return The hash value
+ */
 static inline int eina_hash_int32(const unsigned int *pkey,
                                   int                 len) EINA_ARG_NONNULL(1);
+/** 
+ * @brief 
+ * Hash function from http://www.concentric.net/~Ttwang/tech/inthash.htm  
+ * 
+ * @param pkey The key to hash
+ * @param len The length of the key
+ * @return The hash value
+ */
 static inline int eina_hash_int64(const unsigned long long int *pkey,
                                   int                      len) EINA_ARG_NONNULL(1);
-/* http://sites.google.com/site/murmurhash/ */
+
+/** 
+ * @brief 
+ * Hash function from http://sites.google.com/site/murmurhash/  
+ * 
+ * @param key The key to hash
+ * @param len The length of the key
+ * @return The hash value
+ */
 static inline int eina_hash_murmur3(const char *key,
                            int         len) EINA_ARG_NONNULL(1);
+
 #include "eina_inline_hash.x"
 
 /**

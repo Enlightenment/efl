@@ -70,7 +70,7 @@
  *
  * @image html eina_inlist-node_eg1-inlist.png
  * @image rtf eina_inlist-node_eg1-inlist.png
- * @image latex eina_inlist-node_eg1-inlist.eps width=\textwidth
+ * @image latex eina_inlist-node_eg1-inlist.eps "" width=\textwidth
  *
  * The macro @ref EINA_INLIST_FOREACH can be used to iterate over the list:
  *
@@ -157,7 +157,7 @@
  * <img src="eina_inlist-node_eg2-list-inlist.png" style="max-width: 100%;"/>
  * @endhtmlonly
  * @image rtf eina_inlist-node_eg2-list-inlist.png
- * @image latex eina_inlist-node_eg2-list-inlist.eps width=\textwidth
+ * @image latex eina_inlist-node_eg2-list-inlist.eps "" width=\textwidth
  *
  * Accessing both lists is done normally, as if they didn't have any elements in
  * common:
@@ -233,7 +233,7 @@
  * <img src="eina_inlist-node_eg3-two-inlists.png" style="max-width: 100%;"/>
  * @endhtmlonly
  * @image rtf eina_inlist-node_eg3-two-inlists.png
- * @image latex eina_inlist-node_eg3-two-inlists.eps width=\textwidth
+ * @image latex eina_inlist-node_eg3-two-inlists.eps "" width=\textwidth
  *
  * For the first list, we can use the macro @ref EINA_INLIST_FOREACH to iterate
  * over its elements:

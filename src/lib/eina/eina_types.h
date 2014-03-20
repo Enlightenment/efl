@@ -226,6 +226,11 @@
 /**
  * @def EINA_ARG_NONNULL
  * Used to warn when the specified arguments of the function are @c NULL.
+ * 
+ * @param ... Oridnals of the parameters to check for nullity (1..n)
+ * 
+ * @returns Nothing, but Doxygen will complain if it's not documented :-P
+ * 
  */
 # define EINA_ARG_NONNULL(...)
 

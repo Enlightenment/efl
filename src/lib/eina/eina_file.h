@@ -99,8 +99,8 @@ typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
 typedef struct _Eina_Stat Eina_Stat;
 
 /**
- * @typedef Eina_File_Lines
- * A typedef to #_Eina_File_Lines.
+ * @typedef Eina_File_Line
+ * A typedef to #_Eina_File_Line.
  */
 typedef struct _Eina_File_Line Eina_File_Line;
 
@@ -108,7 +108,7 @@ typedef struct _Eina_File_Line Eina_File_Line;
  * @typedef Eina_File_Dir_List_Cb
  * Type for a callback to be called when iterating over the files of a
  * directory.
- * @param The file name EXCLUDING the path
+ * @param name The file name EXCLUDING the path
  * @param path The path passed to eina_file_dir_list()
  * @param data The data passed to eina_file_dir_list()
  */
@@ -130,7 +130,12 @@ typedef enum {
   EINA_FILE_WHT      /**< Whiteout file type (unused on Windows). */
 } Eina_File_Type;
 
+/**
+ * @typedef Eina_File
+ * A file handle.
+ */
 typedef struct _Eina_File Eina_File;
+
 /**
  * @typedef Eina_File_Populate
  * File access type used in Eina_File_Direct_info.
@@ -145,12 +150,12 @@ typedef enum {
 } Eina_File_Populate;
 
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
- * to when the app using eina is compiled. exposing the path buffer below
- * can't safely and portably vary based on how/when you compile. it should
+ * to when the app using eina is compiled. Exposing the path buffer below
+ * can't safely and portably vary based on how/when you compile. It should
  * always be the same for both eina inside AND for apps outside that use eina
  * so define this to 8192 - most PATH_MAX values are like 4096 or 1024 (with
- * windows i think being 260), so 8192 should cover almost all cases. there
- * is a possibility that PATH_MAX could be more than 8192. if anyone spots
+ * windows i think being 260), so 8192 should cover almost all cases. There
+ * is a possibility that PATH_MAX could be more than 8192. If anyone spots
  * a path_max that is bigger - let us know, but, for now we will assume
  * it never happens */
 /**
@@ -164,36 +169,36 @@ typedef enum {
  */
 struct _Eina_File_Direct_Info
 {
-   size_t               path_length; /**< size of the whole path */
-   size_t               name_length; /**< size of the filename/basename component */
-   size_t               name_start; /**< where the filename/basename component starts */
-   Eina_File_Type       type; /**< file type */
+   size_t               path_length;         /**< size of the whole path */
+   size_t               name_length;         /**< size of the filename/basename component */
+   size_t               name_start;          /**< where the filename/basename component starts */
+   Eina_File_Type       type;                /**< file type */
    char                 path[EINA_PATH_MAX]; /**< the path */
 };
 
 /**
  * @struct _Eina_Stat
- * A structure to store informations of a path.
+ * A structure to store some file statistics.
  * @since 1.2
  */
 struct _Eina_Stat
 {
-   unsigned long int    dev;
-   unsigned long int    ino;
-   unsigned int         mode;
-   unsigned int         nlink;
-   unsigned int         uid;
-   unsigned int         gid;
-   unsigned long int    rdev;
-   unsigned long int    size;
-   unsigned long int    blksize;
-   unsigned long int    blocks;
-   unsigned long int    atime;
-   unsigned long int    atimensec;
-   unsigned long int    mtime;
-   unsigned long int    mtimensec;
-   unsigned long int    ctime;
-   unsigned long int    ctimensec;
+   unsigned long int    dev;       /**< The device where this file is located */
+   unsigned long int    ino;       /**< The inode */
+   unsigned int         mode;      /**< The mode */
+   unsigned int         nlink;     /**< The link number */
+   unsigned int         uid;       /**< The owner user id */
+   unsigned int         gid;       /**< The owner group id */
+   unsigned long int    rdev;      /**< The remote device */
+   unsigned long int    size;      /**< The file size in bytes */
+   unsigned long int    blksize;   /**< The block size in bytes */
+   unsigned long int    blocks;    /**< The number of blocks allocated */
+   unsigned long int    atime;     /**< The timestamp when the file was last accessed */
+   unsigned long int    atimensec; /**< The nano version of the timestamp when the file was last accessed */
+   unsigned long int    mtime;     /**< The timestamp when the file was last modified */
+   unsigned long int    mtimensec; /**< The nano version of the timestamp when the file was modified */
+   unsigned long int    ctime;     /**< The timestamp when the file was created */
+   unsigned long int    ctimensec; /**< The nano version of the timestamp when the file was created */
 };
 
 /**
@@ -203,10 +208,10 @@ struct _Eina_Stat
  */
 struct _Eina_File_Line
 {
-  const char *start;
-  const char *end;
-  unsigned int index;
-  unsigned long long length;
+  const char *start;         /**< The start of the line */
+  const char *end;           /**< The end of the line */
+  unsigned int index;        /**< The line number */
+  unsigned long long length; /**< The number of characters in the line */
 };
 
 /**
@@ -462,7 +467,7 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
 /**
  * @brief Create a virtual file from a memory pointer.
  *
- * @param virtual_name A virtual name for Eina_File, if #NULL, a generated one will be given
+ * @param virtual_name A virtual name for Eina_File, if @c NULL, a generated one will be given
  * @param data The memory pointer to take data from
  * @param length The length of the data in memory
  * @param copy #EINA_TRUE if the data must be copied
@@ -618,6 +623,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @brief Ask the OS to populate or otherwise pages of memory in file mapping
  * 
  * @param file The file handle from which the map comes
+ * @param rule The rule to apply to the mapped memory
  * @param map Memory that was mapped inside of which the memory range is
  * @param offset The offset in bytes from the start of the map address
  * @param length The length in bytes of the memory region to populate
@@ -635,7 +641,7 @@ eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map
 /**
  * @brief Map line by line in memory efficiently with an Eina_Iterator
  * @param file The file to run over
- * @return an Eina_Iterator that will produce @typedef Eina_File_Lines.
+ * @return an Eina_Iterator that will produce @ref Eina_File_Line.
  *
  * This function return an iterator that will act like fgets without the
  * useless memcpy. Be aware that once eina_iterator_next has been called,

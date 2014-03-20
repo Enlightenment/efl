@@ -48,7 +48,7 @@
  * <a href="eina_list_example_01_a.png">Full-size</a>
  * @endhtmlonly
  * @image rtf eina_list_example_01_a.png
- * @image latex eina_list_example_01_a.eps width=\textwidth
+ * @image latex eina_list_example_01_a.eps "" width=\textwidth
  * @until roslin
  * There are a couple of interesting things happening here, first is that we are
  * passing a NULL pointer to the first @ref eina_list_append() call, when this
@@ -81,7 +81,7 @@
  * <a href="eina_list_example_01_b.png">Full-size</a>
  * @endhtmlonly
  * @image rtf eina_list_example_01_b.png
- * @image latex eina_list_example_01_b.eps width=\textwidth
+ * @image latex eina_list_example_01_b.eps "" width=\textwidth
  * 
  * Once done using the list it needs to be freed, and since we are done with
  * eina that also need to be shutdown:
@@ -1352,7 +1352,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * <img src="eina-list-foreach.png" style="max-width: 100%;" />
  * <a href="eina-list-foreach.png">Full-size</a>
  * @endhtmlonly
- * @image latex eina-list-foreach.eps width=\textwidth
+ * @image latex eina-list-foreach.eps "" width=\textwidth
  *
  * It can be used to free list data, as in the following example:
  *
@@ -1410,7 +1410,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * <img src="eina-list-reverse-foreach.png" style="max-width: 100%;" />
  * <a href="eina-list-reverse-foreach.png">Full-size</a>
  * @endhtmlonly
- * @image latex eina-list-reverse-foreach.eps width=\textwidth
+ * @image latex eina-list-reverse-foreach.eps "" width=\textwidth
  *
  * It can be used to free list data, as in the following example:
  *
@@ -1471,7 +1471,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * <img src="eina-list-foreach-safe.png" style="max-width: 100%;" />
  * <a href="eina-list-foreach-safe.png">Full-size</a>
  * @endhtmlonly
- * @image latex eina-list-foreach-safe.eps width=\textwidth
+ * @image latex eina-list-foreach-safe.eps "" width=\textwidth
  *
  * This macro can be used to free list nodes, as in the following example:
  *
@@ -1528,7 +1528,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * <img src="eina-list-reverse-foreach-safe.png" style="max-width: 100%;" />
  * <a href="eina-list-reverse-foreach-safe.png">Full-size</a>
  * @endhtmlonly
- * @image latex eina-list-reverse-foreach-safe.eps width=\textwidth
+ * @image latex eina-list-reverse-foreach-safe.eps "" width=\textwidth
  *
  * This macro can be used to free list nodes, as in the following example:
  *
@@ -1577,7 +1577,7 @@ EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MA
  * <img src="eina-list-free.png" style="max-width: 100%;" />
  * <a href="eina-list-free.png">Full-size</a>
  * @endhtmlonly
- * @image latex eina-list-free.eps width=\textwidth
+ * @image latex eina-list-free.eps "" width=\textwidth
  *
  * If you do not need to release node data, it is easier to call #eina_list_free().
  *

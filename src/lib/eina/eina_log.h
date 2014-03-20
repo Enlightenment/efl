@@ -443,6 +443,11 @@ struct _Eina_Log_Domain
  */
 EAPI void eina_log_threads_enable(void);
 
+
+/**
+ * @typedef Eina_Log_Level
+ * List of available logging levels.
+ */
 /**
  * @enum _Eina_Log_Level
  * List of available logging levels.
@@ -467,6 +472,14 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d,
                                   const char *file, const char *fnc, int line,
                                   const char *fmt, void *data, va_list args);
 
+/**
+ * @typedef Eina_Log_State
+ * List of available log states.
+ */
+/**
+ * @enum _Eina_Log_State
+ * List of available log states.
+ */
 typedef enum _Eina_Log_State
 {
   EINA_LOG_STATE_START,
@@ -517,27 +530,34 @@ EAPI void eina_log_level_set(int level);
  */
 EAPI int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Determine if a given @p level should be logged.
+ *
+ * @return #EINA_TRUE if the @p level should be logged, else #EINA_FALSE.
+ *
+ * @see eina_log_level_set()
+ */
 static inline Eina_Bool eina_log_level_check(int level);
 
 /**
- * Checks if current thread is the main thread.
+ * @brief Checks if current thread is the main thread.
  *
- * @return #EINA_TRUE if threads were enabled and the current thread
- *         is the one that called eina_log_threads_init(). If there is
- *         no thread support (compiled with --disable-pthreads) or
- *         they were not enabled, then #EINA_TRUE is also
- *         returned. The only case where #EINA_FALSE is returned is
- *         when threads were successfully enabled but the current
- *         thread is not the main (one that called
- *         eina_log_threads_init()).
+ * If there is no thread support (compiled with --disable-pthreads) or
+ * threads were not enabled, then #EINA_TRUE is returned. The only case where 
+ * #EINA_FALSE is returned is when threads were successfully enabled but the 
+ * current thread is not the one that called eina_log_threads_init() (the 
+ * manin thread).
+ * 
+ * @return #EINA_TRUE if the current thread is the one that called 
+ * eina_log_threads_init(), otherwise #EINA_FALSE. 
  */
 EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
 
 
 /**
- * @brief Set if color logging should be disabled.
+ * @brief Enable or disable colored text in the logs.
  *
- * @param disabled if #EINA_TRUE, color logging should be disabled.
+ * @param disabled If #EINA_TRUE, color logging should be disabled.
  *
  * @note this is initially set to envvar EINA_LOG_COLOR_DISABLE by eina_init().
  *
@@ -546,9 +566,9 @@ EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UN
 EAPI void               eina_log_color_disable_set(Eina_Bool disabled);
 
 /**
- * @brief Get if color logging should be disabled.
+ * @brief Determine if color logging is enabled or disabled.
  *
- * @return if #EINA_TRUE, color logging should be disabled.
+ * @return If #EINA_TRUE, color logging is disabled.
  *
  * @see eina_log_color_disable_set()
  */
@@ -758,6 +778,7 @@ EAPI void eina_log_domain_unregister(int domain);
  * @param line originating line in @a file.
  * @param fmt printf-like format to use. Should not provide trailing
  *        '\n' as it is automatically included.
+ * @param ... variadic args.
  *
  * @note MT: this function may be called from different threads if
  *       eina_log_threads_enable() was called before.
@@ -945,7 +966,7 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
  * Configure console color of given file.
  *
  * @param fp file to configure console color (usually stderr or stdout).
- * @param color a VT color code such as #EINA_COLOR_RED or #EINA_COLOR_RESET.
+ * @param color a VT color code such as EINA_COLOR_RED or EINA_COLOR_RESET.
  *
  * @note if color is disabled, nothing is done. See
  *       eina_log_color_disable_get()
@@ -956,10 +977,17 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
 EAPI void eina_log_console_color_set(FILE *fp,
                                      const char *color) EINA_ARG_NONNULL(1, 2);
 
+/** String that indicates the log system is initializing */
 extern EAPI const char *_eina_log_state_init;
+/** String that indicates the log system is shutting down */
 extern EAPI const char *_eina_log_state_shutdown;
-
+/** @def EINA_LOG_STATE_INIT
+ *String that indicates the log system is initializing 
+ */
 #define EINA_LOG_STATE_INIT _eina_log_state_init
+/** @def EINA_LOG_STATE_SHUTDOWN
+ *String that indicates the log system is shutting down 
+ */
 #define EINA_LOG_STATE_SHUTDOWN _eina_log_state_shutdown
 
 /**

@@ -49,13 +49,13 @@
  * Before we can start using any array function we need to initialize eina:
  * @until eina_init
  *
- * So now to actually creating our array. The only interesting thing here is the
- * argument given to the eina_array_new() function, this argument sets how fast
+ * So now to actually create our array. The only interesting thing here is the
+ * argument given to the eina_array_new() function. This argument sets how fast
  * the array grows.
  * @until array_new
  *
  * If you know before hand how big the array will need to be you should set the
- * step to that. In our case we can set it to the number of string we have and
+ * step to that. In our case we can set it to the number of strings we have and
  * since we didn't do that in the eina_array_new() we can do it now:
  * @until array_step_set
  *
@@ -82,8 +82,8 @@
  * And finally shutdown eina and exit:
  * @until }
  *
- * The full source code can be found on the examples folder
- * on the @ref eina_array_01_c "eina_array_01.c" file.
+ * The full source code can be found in the examples folder
+ * in the @ref eina_array_01_c "eina_array_01.c" file.
  */
 
 /**
@@ -102,7 +102,7 @@
  * @until Eina.h
  *
  * This the callback we are going to use to decide which strings stay on the
- * array and which will be removed, we use something simple, but this can be as
+ * array and which will be removed. We use something simple, but this can be as
  * complex as you like:
  * @until }
  *
@@ -127,8 +127,8 @@
  * Since this time we didn't use strdup we don't need to free each string:
  * @until }
  *
- * The full source code can be found on the examples folder
- * on the @ref eina_array_02_c "eina_array_02.c" file.
+ * The full source code can be found in the examples folder
+ * in the @ref eina_array_02_c "eina_array_02.c" file.
  */
 
 /**
@@ -146,7 +146,7 @@
  * The Array data type in Eina is designed to have very fast access to
  * its data (compared to the Eina @ref Eina_List_Group). On the other hand,
  * data can be added or removed only at the end of the array. To insert
- * data at any place, the Eina @ref Eina_List_Group is the correct container
+ * data at any position, the Eina @ref Eina_List_Group is the correct container
  * to use.
  *
  * To use the array data type, eina_init() must be called before any
@@ -155,11 +155,11 @@
  *
  * An array must be created with eina_array_new(). It allocates all
  * the necessary data for an array. When not needed anymore, an array
- * is freed with eina_array_free(). This function does not free any
- * allocated memory used to store the data of each element. For that,
- * just iterate over the array to free them. A convenient way to do
- * that is by using #EINA_ARRAY_ITER_NEXT. An example of code is given
- * in the description of this macro.
+ * is freed with eina_array_free(). This frees the memory used by the Eina_Array
+ * itself, but does not free any memory used to store the data of each element. 
+ * To free that memory you must iterate over the array and free each data element
+ * individually. A convenient way to do that is by using #EINA_ARRAY_ITER_NEXT. 
+ * An example of that pattern is given in the description of @ref EINA_ARRAY_ITER_NEXT.
  *
  * @warning Functions do not check if the used array is valid or not. It's up to
  * the user to be sure of that. It is designed like that for performance
@@ -176,16 +176,15 @@
  * element to a full array it grows and that when you remove an element from an
  * array it @b may shrink.
  *
- * When the array needs to grow it allocates memory not just for the element
- * currently being added since that would mean allocating memory(which is
- * computationally expensive) often, instead it grows to be able to hold @p step
- * more elements. Similarly if you remove elements in such a way that that the
- * array is left holding its capacity - @p step elements it will shrink.
+ * Allocating memory is expensive, so when the array needs to grow it allocates 
+ * enough memory to hold @p step additonal elements, not just the element 
+ * currently being added. Similarly if you remove elements, it won't free space 
+ * until you have removed @p step elements. 
  *
  * The following image illustrates how an Eina_Array grows:
  *
  * @image html eina_array-growth.png
- * @image latex eina_array-growth.eps width=\textwidth
+ * @image latex eina_array-growth.eps "" width=\textwidth
  *
  * Eina_Array only stores pointers but it can store data of any type in the form
  * of void pointers.
@@ -234,10 +233,10 @@ struct _Eina_Array
 #define EINA_ARRAY_VERSION 1
    int          version; /**< Should match EINA_ARRAY_VERSION used when compiled your apps, provided for ABI compatibility */
 
-   void       **data; /**< Pointer to a vector of pointer to payload */
-   unsigned int total; /**< Total number of slots in the vector */
-   unsigned int count; /**< Number of active slots in the vector */
-   unsigned int step; /**< How much must we grow the vector when it is full */
+   void       **data;  /**< Pointer to a vector of pointer to payload */
+   unsigned int total; /**< Number of allocated slots in the vector */
+   unsigned int count; /**< Number of slots in the vector that actually point to data */
+   unsigned int step;  /**< Number of slots to grow or shrink the vector */
    EINA_MAGIC
 };
 
@@ -264,8 +263,8 @@ EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_
  *
  * This function frees @p array. It calls first eina_array_flush() then
  * free the memory of the pointer. It does not free the memory
- * allocated for the elements of @p array. To free them,
- * use #EINA_ARRAY_ITER_NEXT. For performance reasons, there is no check
+ * allocated for the elements of @p array. To free them, walk the array with
+ * #EINA_ARRAY_ITER_NEXT. For performance reasons, there is no check
  * of @p array.
  */
 EAPI void        eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
@@ -329,9 +328,48 @@ EAPI void eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_array_remove(Eina_Array * array,
                                  Eina_Bool (*keep)(void *data, void *gdata),
                                  void *gdata) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Append a data to an array.
+ *
+ * @param array The array.
+ * @param data The data to add.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function appends @p data to @p array. For performance
+ * reasons, there is no check of @p array. If it is @c NULL or
+ * invalid, the program may crash. If @p data is @c NULL, or if an
+ * allocation is necessary and fails, #EINA_FALSE is returned
+ * Otherwise, #EINA_TRUE is returned.
+ */
 static inline Eina_Bool eina_array_push(Eina_Array *array,
                                         const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Remove the last data of an array.
+ *
+ * @param array The array.
+ * @return The retrieved data.
+ *
+ * This function removes the last data of @p array, decreases the count
+ * of @p array and returns the data. For performance reasons, there
+ * is no check of @p array. If it is @c NULL or invalid, the program
+ * may crash. If the count member is less or equal than 0, @c NULL is
+ * returned.
+ */
 static inline void     *eina_array_pop(Eina_Array *array) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Return the data at a given position in an array.
+ *
+ * @param array The array.
+ * @param idx The potition of the data to retrieve.
+ * @return The retrieved data.
+ *
+ * This function returns the data at the position @p idx in @p
+ * array. For performance reasons, there is no check of @p array or @p
+ * idx. If it is @c NULL or invalid, the program may crash.
+ */
 static inline void     *eina_array_data_get(const Eina_Array *array,
                                             unsigned int      idx) EINA_ARG_NONNULL(1);
 /**
@@ -350,11 +388,34 @@ static inline void     *eina_array_data_get(const Eina_Array *array,
 static inline void      eina_array_data_set(const Eina_Array *array,
                                             unsigned int      idx,
                                             const void       *data) EINA_ARG_NONNULL(1);
+/**
+ * @brief Return the number of elements in an array.
+ *
+ * @param array The array.
+ * @return The number of elements.
+ *
+ * This function returns the number of elements in @p array (array->count). For
+ * performance reasons, there is no check of @p array. If it is
+ * @c NULL or invalid, the program may crash.
+ *
+ * @deprecated use eina_array_count()
+ */
 static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Return the number of elements in an array.
+ *
+ * @param array The array.
+ * @return The number of elements.
+ *
+ * This function returns the number of elements in @p array (array->count). For
+ * performance reasons, there is no check of @p array. If it is
+ * @c NULL or invalid, the program may crash.
+ */
 static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returned a new iterator associated to an array.
+ * @brief Get a new iterator associated to an array.
  *
  * @param array The array.
  * @return A new iterator.
@@ -362,12 +423,12 @@ static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NO
  * This function returns a newly allocated iterator associated to
  * @p array. If @p array is @c NULL or the count member of @p array is
  * less or equal than 0, this function returns @c NULL. If the memory can
- * not be allocated, NULL is returned. Otherwise, a valid iterator is returned.
+ * not be allocated, @c NULL is returned. Otherwise, a valid iterator is returned.
  */
 EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returned a new accessor associated to an array.
+ * @brief Get a new accessor associated to an array.
  *
  * @param array The array.
  * @return A new accessor.
@@ -375,7 +436,7 @@ EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA
  * This function returns a newly allocated accessor associated to
  * @p array. If @p array is @c NULL or the count member of @p array is
  * less or equal than 0, this function returns @c NULL. If the memory can
- * not be allocated, @c NULL is returned Otherwise, a valid accessor is
+ * not be allocated, @c NULL is returned. Otherwise, a valid accessor is
  * returned.
  */
 EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
@@ -387,9 +448,10 @@ EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA
  * @param fdata The user data to pass to the callback.
  * @return #EINA_TRUE if it successfully iterate all items of the array.
  *
- * This function provide a safe way to iterate over an array. @p cb should
- * return #EINA_TRUE as long as you want the function to continue iterating,
- * by returning #EINA_FALSE it will stop and return #EINA_FALSE as a result.
+ * This function provides a safe way to iterate over an array. @p cb should
+ * return #EINA_TRUE as long as you want the function to continue iterating.
+ * If @p cb returns #EINA_FALSE, iterations will stop and the function will also
+ * return #EINA_FALSE.
  */
 static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
                                               Eina_Each_Cb cb,

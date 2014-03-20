@@ -111,13 +111,14 @@ typedef struct _Eina_Clist Eina_Clist;
 /**
  * @struct _Eina_Clist
  * Compact list type
+ * 
  * @note This structure is used as both the list head and the list entry.
  * @since 1.1.0
  */
 struct _Eina_Clist
 {
-   Eina_Clist *next;
-   Eina_Clist *prev;
+   Eina_Clist *next; /**< The next entry in the list */
+   Eina_Clist *prev; /**< The previous entry in the list */
 };
 
 /**
@@ -191,7 +192,7 @@ static inline void eina_clist_element_init(Eina_Clist *elem);
  * Check if an element is in a list or not.
  *
  * @param elem An element
- *
+ * @return TRUE if the element is in a list, else FALSE.
  * @pre Either eina_clist_element_init() has been called on @a elem,
  *      it has been added to a list or remove from a list.
  * @since 1.1.0

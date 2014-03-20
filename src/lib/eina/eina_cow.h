@@ -73,6 +73,7 @@ EAPI void eina_cow_del(Eina_Cow *cow);
 /**
  * @brief Return an initialized pointer from the pool.
  * @param cow The pool to take things from.
+ * @return A pointer to the new pool instance
  */
 EAPI const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
 
@@ -100,6 +101,7 @@ EAPI void *eina_cow_write(Eina_Cow *cow,
  * @param cow The pool the pointer come from.
  * @param dst The read only version of the pointer.
  * @param data The pointer to which data was written to.
+ * @param needed_gc Does this pool need to be garbage collected?
  *
  * NOTE: this function is not thread safe, be careful.
  */

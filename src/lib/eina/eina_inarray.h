@@ -247,6 +247,7 @@ EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 /**
  * @brief Initialize inline array.
  * @param array array object to initialize.
+ * @param sizeof_eina_inarray the initial size of the array.
  * @param member_size size of each member in the array.
  * @param step when resizing the array, do this using the following
  *        extra amount.

@@ -133,7 +133,7 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function appends @p data to @p buf. @p data must be allocated and
- * different from @NULL. It is slightly faster than eina_binbuf_append() as
+ * different from @c NULL. It is slightly faster than eina_binbuf_append() as
  * it does not compute the size of @p str. If @p buf can't append it,
  * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
  *
