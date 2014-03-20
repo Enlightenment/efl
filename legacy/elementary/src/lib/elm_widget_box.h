@@ -17,8 +17,8 @@
 /**
  * Base widget smart data extended with box instance data.
  */
-typedef struct _Elm_Box_Smart_Data        Elm_Box_Smart_Data;
-struct _Elm_Box_Smart_Data
+typedef struct _Elm_Box_Data        Elm_Box_Data;
+struct _Elm_Box_Data
 {
    Eina_Bool             homogeneous : 1;
    Eina_Bool             delete_me : 1;
@@ -64,7 +64,7 @@ struct _Transition_Animation_Data
  */
 
 #define ELM_BOX_DATA_GET(o, sd) \
-  Elm_Box_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_BOX_CLASS)
+  Elm_Box_Data * sd = eo_data_scope_get(o, ELM_OBJ_BOX_CLASS)
 
 #define ELM_BOX_DATA_GET_OR_RETURN(o, ptr)           \
   ELM_BOX_DATA_GET(o, ptr);                          \

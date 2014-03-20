@@ -1,3 +1,6 @@
+#include "elm_box.eo.h"
+
+#if 0
 #define ELM_OBJ_BOX_CLASS elm_obj_box_class_get()
 
 const Eo_Class *elm_obj_box_class_get(void) EINA_CONST;
@@ -286,3 +289,5 @@ enum
  * @ingroup Box
  */
 #define elm_obj_box_recalculate() ELM_OBJ_BOX_ID(ELM_OBJ_BOX_SUB_ID_RECALCULATE)
+#endif
+
