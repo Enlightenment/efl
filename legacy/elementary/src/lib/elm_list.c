@@ -2791,6 +2791,7 @@ elm_list_item_selected_set(Elm_Object_Item *it,
           }
         _item_highlight(item);
         _item_select(item);
+        elm_object_item_focus_set((Elm_Object_Item *)item, EINA_TRUE);
      }
    else
      {
