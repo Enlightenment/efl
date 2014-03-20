@@ -1,0 +1,52 @@
+class Elm_Bubble (Elm_Layout)
+{
+   eo_prefix: elm_obj_bubble;
+   properties {
+      pos {
+         set {
+            /*@
+            Set the corner of the bubble
+
+            This function sets the corner of the bubble. The corner will be used to
+            determine where the arrow in the frame points to and where label, icon and
+            info are shown.
+
+
+            @ingroup Bubble */
+         }
+         get {
+            /*@
+            Get the corner of the bubble
+
+            @return The given corner for the bubble.
+
+            This function gets the selected corner of the bubble.
+
+            @ingroup Bubble */
+         }
+         values {
+            Elm_Bubble_Pos pos; /*@ The given corner for the bubble. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Elm_Widget::focus_direction;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::access;
+      Elm_Layout::text_set;
+      Elm_Layout::text_aliases::get;
+      Elm_Layout::content_aliases::get;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      clicked;
+      focused;
+      unfocused;
+   }
+
+}

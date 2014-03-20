@@ -1,3 +1,6 @@
+#include "elm_bubble.eo.h"
+
+#if 0
 #define ELM_OBJ_BUBBLE_CLASS elm_obj_bubble_class_get()
 
 const Eo_Class *elm_obj_bubble_class_get(void) EINA_CONST;
@@ -41,3 +44,4 @@ enum
  * @ingroup Bubble
  */
 #define elm_obj_bubble_pos_get(ret) ELM_OBJ_BUBBLE_ID(ELM_OBJ_BUBBLE_SUB_ID_POS_GET), EO_TYPECHECK(Elm_Bubble_Pos *, ret)
+#endif

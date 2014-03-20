@@ -559,7 +559,9 @@ BUILT_SOURCES = \
 		elm_bg.eo.c \
 		elm_bg.eo.h \
 		elm_box.eo.c \
-		elm_box.eo.h
+		elm_box.eo.h \
+		elm_bubble.eo.c \
+		elm_bubble.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -579,7 +581,8 @@ EXTRA_DIST += \
 	     elm_interface_atspi_window.eo \
 	     elm_atspi_object.eo \
 	     elm_bg.eo \
-	     elm_box.eo
+	     elm_box.eo \
+	     elm_bubble.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -599,5 +602,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_interface_atspi_window.eo.h \
 				  elm_atspi_object.eo.h \
 				  elm_box.eo.h \
-				  elm_bg.eo.h
+				  elm_bg.eo.h \
+				  elm_bubble.eo.h
 

@@ -7,8 +7,6 @@
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 
-EAPI Eo_Op ELM_OBJ_BUBBLE_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_BUBBLE_CLASS
 
 #define MY_CLASS_NAME "Elm_Bubble"
@@ -46,8 +44,8 @@ static const char *corner_string[] =
    "bottom_right"
 };
 
-static void
-_elm_bubble_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_bubble_elm_layout_sizing_eval(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -75,71 +73,49 @@ _on_mouse_up(void *data,
 
 /* overriding layout's focus_next() in order to just cycle through the
  * content's tree */
-static void
-_elm_bubble_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_bubble_elm_widget_focus_next(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Evas_Object *content;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    if ((elm_widget_can_focus_get(obj)) &&
        (!wd->focused))
      {
         // ACCESS
         *next = (Evas_Object *)obj;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    else
      {
         content = elm_layout_content_get(obj, NULL);
-        if (!content) return;
+        if (!content) return EINA_FALSE;
 
         /* attempt to follow focus cycle into sub-object */
-        int_ret = elm_widget_focus_next_get(content, dir, next);
-        if (ret) *ret = int_ret;
+        return elm_widget_focus_next_get(content, dir, next);
      }
 }
 
-static void
-_elm_bubble_smart_focus_direction(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_bubble_elm_widget_focus_direction(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
 {
    Evas_Object *content;
 
-   Evas_Object *base = va_arg(*list, Evas_Object *);
-   double degree = va_arg(*list, double);
-   Evas_Object **direction = va_arg(*list, Evas_Object **);
-   double *weight = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret;
-
    content = elm_layout_content_get(obj, NULL);
 
-   if (!content) return;
+   if (!content) return EINA_FALSE;
 
    /* Try Focus cycle in subitem */
-   int_ret = elm_widget_focus_direction_get
+   return elm_widget_focus_direction_get
             (content, base, degree, direction, weight);
-   if (ret) *ret = int_ret;
 }
 
-static void
-_elm_bubble_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_bubble_elm_layout_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const char *part, const char *label)
 {
-   const char *part = va_arg(*list, const char *);
-   const char *label = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (part && (!strcmp(part, "info") || !strcmp(part, "elm.info")))
      {
@@ -151,7 +127,7 @@ _elm_bubble_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 
    elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static char *
@@ -194,10 +170,9 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return ret;
 }
 
-static void
-_elm_bubble_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_bubble_evas_smart_add(Eo *obj, Elm_Bubble_Data *priv)
 {
-   Elm_Bubble_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -227,10 +202,9 @@ _elm_bubble_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
-static void
-_elm_bubble_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_bubble_elm_widget_access(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Eina_Bool is_access)
 {
-   Eina_Bool is_access = va_arg(*list, int);
    ELM_BUBBLE_CHECK(obj);
 
    if (is_access)
@@ -248,8 +222,8 @@ elm_bubble_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_bubble_eo_base_constructor(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -257,19 +231,9 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_bubble_pos_set(Evas_Object *obj,
-                   Elm_Bubble_Pos pos)
+EOLIAN static void
+_elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
 {
-   ELM_BUBBLE_CHECK(obj);
-   eo_do(obj, elm_obj_bubble_pos_set(pos));
-}
-
-static void
-_pos_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Bubble_Pos pos = va_arg(*list, Elm_Bubble_Pos);
-   Elm_Bubble_Smart_Data *sd = _pd;
    ELM_LAYOUT_DATA_GET(obj, ld);
 
    if (pos < ELM_BUBBLE_POS_TOP_LEFT || pos > ELM_BUBBLE_POS_BOTTOM_RIGHT)
@@ -283,92 +247,40 @@ _pos_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Elm_Bubble_Pos
-elm_bubble_pos_get(const Evas_Object *obj)
+EOLIAN static Elm_Bubble_Pos
+_elm_bubble_pos_get(Eo *obj EINA_UNUSED, Elm_Bubble_Data *sd)
 {
-   ELM_BUBBLE_CHECK(obj) ELM_BUBBLE_POS_INVALID;
-   Elm_Bubble_Pos ret = ELM_BUBBLE_POS_INVALID;
-   eo_do((Eo *) obj, elm_obj_bubble_pos_get(&ret));
-   return ret;
+   return sd->pos;
 }
 
-static void
-_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_bubble_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
-   Elm_Bubble_Pos *ret = va_arg(*list, Elm_Bubble_Pos *);
-   Elm_Bubble_Smart_Data *sd = _pd;
-   *ret = sd->pos;
+   return EINA_TRUE;
 }
 
-static void
-_elm_bubble_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_bubble_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_bubble_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_bubble_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return _text_aliases;
 }
 
-static void
-_elm_bubble_smart_text_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_bubble_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Bubble_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _text_aliases;
+   return _content_aliases;
 }
 
-static void
-_elm_bubble_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_bubble_class_constructor(Eo_Class *klass)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_bubble_smart_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_bubble_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_bubble_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_bubble_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_bubble_smart_focus_direction),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_bubble_smart_access),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_bubble_smart_text_set),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_bubble_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), _elm_bubble_smart_text_aliases_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_bubble_smart_content_aliases_get),
-
-        EO_OP_FUNC(ELM_OBJ_BUBBLE_ID(ELM_OBJ_BUBBLE_SUB_ID_POS_SET), _pos_set),
-        EO_OP_FUNC(ELM_OBJ_BUBBLE_ID(ELM_OBJ_BUBBLE_SUB_ID_POS_GET), _pos_get),
-
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_BUBBLE_SUB_ID_POS_SET, "Set the corner of the bubble."),
-     EO_OP_DESCRIPTION(ELM_OBJ_BUBBLE_SUB_ID_POS_GET, "Get the corner of the bubble."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_BUBBLE_BASE_ID, op_desc, ELM_OBJ_BUBBLE_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Bubble_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_bubble_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_bubble.eo.c"
