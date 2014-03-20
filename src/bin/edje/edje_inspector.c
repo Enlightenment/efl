@@ -873,6 +873,7 @@ part_details(Evas_Object *ed, const char *ppart)
         double value;
         eina_strlcpy(state, str, sizeof(state)); /* bad states_list! :-( */
         delim = strchr(state, ' ');
+        if (!delim) continue ;
         *delim = '\0';
         delim++;
         value = strtod(delim, NULL);
