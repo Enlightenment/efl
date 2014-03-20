@@ -1,0 +1,149 @@
+class Elm_Colorselector (Elm_Layout)
+{
+   eo_prefix: elm_obj_colorselector;
+   properties {
+      color {
+         set {
+            /*@
+            Set color to colorselector
+
+            @ingroup Colorselector */
+         }
+         get {
+            /*@
+            Get current color from colorselector
+
+            @ingroup Colorselector */
+         }
+         values {
+            int r; /*@ r-value of color */
+            int g; /*@ g-value of color */
+            int b; /*@ b-value of color */
+            int a; /*@ a-value of color */
+         }
+      }
+      palette_name {
+         set {
+            /*@
+            Set current palette's name
+
+            When colorpalette name is set, colors will be loaded from and saved to config
+            using the set name. If no name is set then colors will be loaded from or
+            saved to "default" config.
+
+            @ingroup Colorselector */
+         }
+         get {
+            /*@
+            Get current palette's name
+
+            @return Name of palette
+
+            Returns the currently set palette name using which colors will be
+            saved/loaded in to config.
+
+            @ingroup Colorselector */
+         }
+         values {
+            const char *palette_name; /*@ Name of palette */
+         }
+      }
+      mode {
+         set {
+            /*@
+            Set Colorselector's mode.
+
+            Colorselector supports three modes palette only, selector only and both.
+
+            @ingroup Colorselector */
+         }
+         get {
+            /*@
+            Get Colorselector's mode.
+
+            @return mode The current mode of colorselector
+
+            @ingroup Colorselector */
+         }
+         values {
+            Elm_Colorselector_Mode mode; /*@ Elm_Colorselector_Mode */
+         }
+      }
+      palette_items {
+         get {
+            /*@
+            Get list of palette items.
+
+            @return The list of color palette items.
+
+            Note That palette item list is internally managed by colorselector widget and
+            it should not be freed/modified by application.
+
+            @since 1.9
+
+            @ingroup Colorselector */
+            return const Eina_List *;
+         }
+      }
+      palette_selected_item {
+         get {
+            /*@
+            Get the selected item in colorselector palette.
+
+            @return The selected item, or NULL if none is selected.
+
+            @since 1.9
+            @ingroup Colorselector */
+            return Elm_Object_Item *;
+         }
+      }
+   }
+   methods {
+      palette_color_add {
+         /*@
+         Add a new color item to palette.
+
+         @return A new color palette Item.
+
+         @ingroup Colorselector */
+
+         return Elm_Object_Item *;
+         params {
+            @in int r; /*@ r-value of color */
+            @in int g; /*@ g-value of color */
+            @in int b; /*@ b-value of color */
+            @in int a; /*@ a-value of color */
+         }
+      }
+      palette_clear {
+         /*@
+         Clear the palette items.
+
+         @ingroup Colorselector */
+
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::theme_apply;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::access;
+      Elm_Widget::event;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      color,item,selected;
+      color,item,longpressed;
+      changed;
+      language,changed;
+      access,changed;
+      focused;
+      unfocused;
+   }
+
+}

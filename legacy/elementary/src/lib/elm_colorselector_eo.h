@@ -1,3 +1,5 @@
+#include "elm_colorselector.eo.h"
+#if 0
 #define ELM_OBJ_COLORSELECTOR_CLASS elm_obj_colorselector_class_get()
 
 const Eo_Class *elm_obj_colorselector_class_get(void) EINA_CONST;
@@ -166,3 +168,4 @@ enum
  * @ingroup Colorselector
  */
 #define elm_obj_colorselector_palette_name_get(ret) ELM_OBJ_COLORSELECTOR_ID(ELM_OBJ_COLORSELECTOR_SUB_ID_PALETTE_NAME_GET), EO_TYPECHECK(const char **, ret)
+#endif
