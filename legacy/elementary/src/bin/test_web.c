@@ -9,6 +9,8 @@ typedef struct
    Evas_Object *btn_back;
    Evas_Object *btn_fwd;
    Evas_Object *url_entry;
+   Evas_Object *bx;
+   Evas_Object *hoversel;
    Eina_List *sub_wins;
    Eina_Bool js_hooks : 1;
 } Web_Test;
@@ -313,6 +315,22 @@ _bring_in_region_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
    elm_web_region_bring_in(wt->web, 50, 0, 1, 1);
 }
 
+static void
+_on_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Web_Test *wt = data;
+   elm_box_unpack(wt->bx, wt->hoversel);
+   evas_object_hide(wt->hoversel);
+}
+
+static void
+_on_unfullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Web_Test *wt = data;
+   elm_box_pack_start(wt->bx, wt->hoversel);
+   evas_object_show(wt->hoversel);
+}
+
 typedef struct
 {
    const char* name;
@@ -598,6 +616,8 @@ test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    wt = calloc(1, sizeof(*wt));
    win = elm_win_util_standard_add("web", "Web");
 
+   evas_object_smart_callback_add(win, "fullscreen", _on_fullscreen_cb, wt);
+   evas_object_smart_callback_add(win, "unfullscreen", _on_unfullscreen_cb, wt);
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -628,6 +648,8 @@ test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    evas_object_event_callback_add(web, EVAS_CALLBACK_DEL, _main_web_del_cb, wt);
    wt->web = web;
+   wt->bx = bx;
+   wt->hoversel = hoversel;
 
 
    elm_web_html_string_load(wt->web,
