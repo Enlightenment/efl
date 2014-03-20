@@ -17,7 +17,7 @@
 /**
  * Base layout smart data extended with calendar instance data.
  */
-typedef struct _Elm_Calendar_Smart_Data Elm_Calendar_Smart_Data;
+typedef struct _Elm_Calendar_Data Elm_Calendar_Data;
 
 typedef enum _Day_Color // EINA_DEPRECATED
 {
@@ -26,7 +26,7 @@ typedef enum _Day_Color // EINA_DEPRECATED
    DAY_SUNDAY = 2
 } Day_Color;
 
-struct _Elm_Calendar_Smart_Data
+struct _Elm_Calendar_Data
 {
    Evas_Object             *obj; // the object itself
    Eina_List               *marks;
@@ -68,7 +68,7 @@ struct _Elm_Calendar_Mark
  */
 
 #define ELM_CALENDAR_DATA_GET(o, sd) \
-  Elm_Calendar_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CALENDAR_CLASS)
+  Elm_Calendar_Data * sd = eo_data_scope_get(o, ELM_OBJ_CALENDAR_CLASS)
 
 #define ELM_CALENDAR_CHECK(obj)                              \
   if (EINA_UNLIKELY(!eo_isa((obj), ELM_OBJ_CALENDAR_CLASS))) \

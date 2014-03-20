@@ -1,3 +1,6 @@
+#include "elm_calendar.eo.h"
+
+#if 0
 #define ELM_OBJ_CALENDAR_CLASS elm_obj_calendar_class_get()
 
 const Eo_Class *elm_obj_calendar_class_get(void) EINA_CONST;
@@ -317,3 +320,4 @@ enum
  * @ingroup Calendar
  */
 #define elm_obj_calendar_displayed_time_get(displayed_time, ret) ELM_OBJ_CALENDAR_ID(ELM_OBJ_CALENDAR_SUB_ID_DISPLAYED_TIME_GET), EO_TYPECHECK(struct tm *, displayed_time), EO_TYPECHECK(Eina_Bool *, ret)
+#endif

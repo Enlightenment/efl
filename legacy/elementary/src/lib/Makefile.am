@@ -563,7 +563,9 @@ BUILT_SOURCES = \
 		elm_bubble.eo.c \
 		elm_bubble.eo.h \
 		elm_button.eo.c \
-		elm_button.eo.h
+		elm_button.eo.h \
+		elm_calendar.eo.c \
+		elm_calendar.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -585,7 +587,8 @@ EXTRA_DIST += \
 	     elm_bg.eo \
 	     elm_box.eo \
 	     elm_bubble.eo \
-	     elm_button.eo
+	     elm_button.eo \
+	     elm_calendar.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -607,5 +610,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_box.eo.h \
 				  elm_bg.eo.h \
 				  elm_bubble.eo.h \
-				  elm_button.eo.h
+				  elm_button.eo.h \
+				  elm_calendar.eo.h
 
