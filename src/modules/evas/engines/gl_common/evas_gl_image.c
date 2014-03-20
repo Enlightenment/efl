@@ -122,11 +122,18 @@ evas_gl_common_image_unref(Evas_GL_Image *im)
      }
 }
 
+static const Evas_Colorspace known_cspace[] = {
+   EVAS_COLORSPACE_GRY8,
+   EVAS_COLORSPACE_AGRY88,
+   EVAS_COLORSPACE_ARGB8888
+};
+
 static Evas_GL_Image *
 _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_Load_Opts *lo, int *error)
 {
    Evas_GL_Image *im;
    Eina_List     *l;
+   int cspace = EVAS_COLORSPACE_ARGB8888;
 
    /* i'd LOVe to do this, but we can't because we load to load header
     * to get image size to know if its too big or not! so this disallows
@@ -168,17 +175,39 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	return NULL;
      }
+   if (im_im->cache_entry.cspaces)
+     {
+        unsigned int i;
+
+        for (i = 0; im_im->cache_entry.cspaces[i] != EVAS_COLORSPACE_ARGB8888; i++)
+          {
+             unsigned int j;
+
+             for (j = 0;
+                  known_cspace[j] != EVAS_COLORSPACE_ARGB8888;
+                  j++)
+               if (known_cspace[j] == im_im->cache_entry.cspaces[i])
+                 break;
+
+             if (known_cspace[j] == im_im->cache_entry.cspaces[i])
+               break;
+          }
+
+        cspace = im_im->cache_entry.cspaces[i];
+        im_im->cache_entry.space = cspace;
+     }
+
    im->references = 1;
    im->im = im_im;
    im->gc = gc;
    im->cached = 1;
-   im->cs.space = EVAS_COLORSPACE_ARGB8888;
+   im->cs.space = cspace;
    im->alpha = im->im->cache_entry.flags.alpha;
    im->w = im->im->cache_entry.w;
    im->h = im->im->cache_entry.h;
    if (lo) im->load_opts = *lo;
    gc->shared->images = eina_list_prepend(gc->shared->images, im);
-   return im;   
+   return im;
 }
 
 Evas_GL_Image *
@@ -286,6 +315,8 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_GRY8:
+      case EVAS_COLORSPACE_AGRY88:
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -329,6 +360,7 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
      {
       case EVAS_COLORSPACE_ARGB8888:
       case EVAS_COLORSPACE_GRY8:
+      case EVAS_COLORSPACE_AGRY88:
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -378,7 +410,9 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	break;
+      case EVAS_COLORSPACE_GRY8:
+      case EVAS_COLORSPACE_AGRY88:
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
@@ -512,7 +546,9 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
    if (!im->gc->shared->info.sec_image_map) return;
    if (!im->gc->shared->info.bgra) return;
    // does not handle yuv yet.
-   if (im->cs.space != EVAS_COLORSPACE_ARGB8888) return;
+   if (im->cs.space != EVAS_COLORSPACE_ARGB8888 ||
+       im->cs.space != EVAS_COLORSPACE_GRY8 ||
+       im->cs.space != EVAS_COLORSPACE_AGRY88) return;
    if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
      {
         if (im->cs.data)
@@ -567,7 +603,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
 
         im->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
         im->im->cache_entry.flags.alpha = im->alpha;
-        im->cs.space = EVAS_COLORSPACE_ARGB8888;
+        im->im->cache_entry.space = im->cs.space;
         evas_cache_image_colorspace(&im->im->cache_entry, im->cs.space);
         im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, im->w, im->h);
         if (!im->tex)
@@ -687,6 +723,8 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_GRY8:
+      case EVAS_COLORSPACE_AGRY88:
          if ((im->tex) &&
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {

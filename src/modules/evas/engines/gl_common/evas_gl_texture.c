@@ -42,17 +42,21 @@ static const struct {
    Eina_Bool alpha;
    Eina_Bool bgra;
 
+   Evas_Colorspace cspace;
+
    const GLenum *intformat;
    const GLenum *format;
 } matching_format[] = {
-  { EINA_TRUE, EINA_TRUE, &bgra_ifmt, &bgra_fmt },
-  { EINA_TRUE, EINA_FALSE, &rgba_ifmt, &rgba_fmt },
-  { EINA_FALSE, EINA_TRUE, &bgr_ifmt, &bgr_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_ARGB8888, &bgra_ifmt, &bgra_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgba_ifmt, &rgba_fmt },
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ARGB8888, &bgr_ifmt, &bgr_fmt },
 #ifdef GL_GLES
-  { EINA_FALSE, EINA_FALSE, &rgba_ifmt, &rgba_fmt }
+  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgba_ifmt, &rgba_fmt },
 #else
-  { EINA_FALSE, EINA_FALSE, &rgb_ifmt, &rgb_fmt }
+  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgb_ifmt, &rgb_fmt },
 #endif
+  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt }
 };
 
 static const GLenum matching_rgba[] = { GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, 0x0 };
@@ -92,7 +96,7 @@ _evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
 }
 
 static int
-_evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra)
+_evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace cspace)
 {
    unsigned int i;
 
@@ -101,7 +105,8 @@ _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra)
 
    for (i = 0; i < sizeof (matching_format) / sizeof (matching_format[0]); ++i)
      if (matching_format[i].alpha == alpha &&
-         matching_format[i].bgra == bgra)
+         matching_format[i].bgra == bgra &&
+         matching_format[i].cspace == cspace)
        return i;
 
    abort();
@@ -188,7 +193,11 @@ _tex_format_index(GLuint format)
       case GL_LUMINANCE12:
       case GL_LUMINANCE16:
         return 3;
-        // XXX: luminance_alpha not supported at all
+      case GL_LUMINANCE4_ALPHA4:
+      case GL_LUMINANCE8_ALPHA8:
+      case GL_LUMINANCE12_ALPHA12:
+      case GL_LUMINANCE16_ALPHA16:
+         return 4;
       default:
         return 0;
      }
@@ -430,7 +439,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
 #define TEX_HREP 1
 #define TEX_VREP 1
 
-   lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra);
+   lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra, im->cache_entry.space);
    tex->pt = _pool_tex_find(gc,
                             im->cache_entry.w + TEX_HREP + 2,
                             im->cache_entry.h + TEX_VREP,
@@ -841,7 +850,7 @@ evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
-   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra);
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_native_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format,
@@ -864,7 +873,7 @@ evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, un
    tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
    if (!tex) return NULL;
 
-   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra);
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_render_new(gc, w, h,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format);
@@ -886,7 +895,7 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
    tex = evas_gl_common_texture_alloc(gc, im->w, im->h, im->alpha);
    if (!tex) return NULL;
 
-   lformat = _evas_gl_texture_search_format(tex->alpha, gc->shared->info.bgra);
+   lformat = _evas_gl_texture_search_format(tex->alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
    tex->pt = _pool_tex_dynamic_new(gc, tex->w, tex->h,
                                    *matching_format[lformat].intformat,
                                    *matching_format[lformat].format);
@@ -912,7 +921,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         pt_unref(tex->pt);
         tex->alpha = im->cache_entry.flags.alpha;
 
-        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra);
+        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra, im->cache_entry.space);
         // FIXME: why a 'render' new here ???
         tex->pt = _pool_tex_render_new(tex->gc, tex->w, tex->h,
                                        *matching_format[lformat].intformat,
@@ -953,7 +962,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         // out is a miniature of the texture, upload that now and schedule the data for later.
 
         // Creating the mini picture texture
-        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra);
+        lformat = _evas_gl_texture_search_format(tex->alpha, tex->gc->shared->info.bgra, im->cache_entry.space);
         tex->ptt = _pool_tex_find(tex->gc, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE,
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format,
