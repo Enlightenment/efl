@@ -256,6 +256,7 @@ group "Elm_Config" struct {
               value "action" string: "toggle";
               value "params" string: "";
               value "any_mod" uchar: 1;
+              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -264,6 +265,7 @@ group "Elm_Config" struct {
               value "action" string: "toggle";
               value "params" string: "";
               value "any_mod" uchar: 1;
+              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -272,6 +274,7 @@ group "Elm_Config" struct {
               value "action" string: "toggle";
               value "params" string: "";
               value "any_mod" uchar: 1;
+              value "no_string" uchar: 0;
            }
         }
      }

@@ -300,6 +300,7 @@ struct _Elm_Config_Binding_Key
    const char   *action;
    const char   *params;
    unsigned char any_mod;
+   unsigned char no_string;
 };
 
 struct _Elm_Module
