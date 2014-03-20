@@ -9171,7 +9171,7 @@ st_collections_group_programs_program_action(void)
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	ep->state = parse_str(1);
-	if (get_arg_count() == 1)
+	if (get_arg_count() == 2)
 	  ep->value = 0.0;
 	else
 	  ep->value = parse_float_range(2, 0.0, 1.0);
