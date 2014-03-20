@@ -119,7 +119,7 @@ EAPI void                         elm_ctxpopup_direction_priority_set(Evas_Objec
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
+EAPI void                         elm_ctxpopup_direction_priority_get(const Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
 
 /**
  * @brief Get the current direction of a ctxpopup.

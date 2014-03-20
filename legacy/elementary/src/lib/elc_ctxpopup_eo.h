@@ -1,3 +1,6 @@
+#include "elc_ctxpopup.eo.h"
+
+#if 0
 #define ELM_OBJ_CTXPOPUP_CLASS elm_obj_ctxpopup_class_get()
 
 const Eo_Class *elm_obj_ctxpopup_class_get(void) EINA_CONST;
@@ -199,3 +202,4 @@ enum
  * @ingroup Ctxpopup
  */
 #define elm_obj_ctxpopup_auto_hide_disabled_get(ret) ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif

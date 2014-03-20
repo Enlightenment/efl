@@ -7,8 +7,6 @@
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
 
-EAPI Eo_Op ELM_OBJ_CTXPOPUP_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_CTXPOPUP_CLASS
 
 #define MY_CLASS_NAME "Elm_Ctxpopup"
@@ -31,11 +29,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_CTXPOPUP_SIGNALS
 
-static void
-_elm_ctxpopup_smart_translate(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_translate(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
    Eina_List *l;
    Elm_Ctxpopup_Item *it;
 
@@ -46,35 +42,26 @@ _elm_ctxpopup_smart_translate(Eo *obj, void *_pd, va_list *list)
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
    if (!sd)
-     return;
+     return EINA_FALSE;
 
    if (!elm_widget_focus_next_get(sd->box, dir, next))
      {
@@ -82,27 +69,19 @@ _elm_ctxpopup_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
         elm_widget_focus_next_get(sd->box, dir, next);
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
 {
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   Evas_Object *base = va_arg(*list, Evas_Object *);
-   double degree = va_arg(*list, double);
-   Evas_Object **direction = va_arg(*list, Evas_Object **);
-   double *weight = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
    Eina_List *l = NULL;
    void *(*list_data_get)(const Eina_List *list);
 
    if (!sd)
-     return;
+     return EINA_FALSE;
 
    list_data_get = eina_list_data_get;
 
@@ -110,25 +89,20 @@ _elm_ctxpopup_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, 
 
    int_ret = elm_widget_focus_list_direction_get
             (obj, base, l, list_data_get, degree, direction, weight);
-   if (ret) *ret = int_ret;
    eina_list_free(l);
+
+   return int_ret;
 }
 
-static void
-_elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_event(Eo *obj, Elc_Ctxpopup_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   if (ret) *ret = EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
    (void)src;
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if (!strcmp(ev->key, "Tab"))
      {
@@ -136,8 +110,7 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
           elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
         else
           elm_widget_focus_cycle(sd->box, ELM_FOCUS_NEXT);
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 
    if (sd->box)
@@ -161,11 +134,11 @@ _elm_ctxpopup_smart_event(Eo *obj, void *_pd, va_list *list)
    if (!strcmp(ev->key, "Escape"))
      evas_object_hide(obj);
    else
-     return;
+     return EINA_FALSE;
 
 success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -611,32 +584,28 @@ _base_shift_by_arrow(Evas_Object *arrow,
      }
 }
 
-static void
-_elm_ctxpopup_smart_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *enable = va_arg(*list, Eina_Bool *);
-   *enable = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_ctxpopup_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_sub_object_add(Eo *obj, Elc_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_add(sobj, &int_ret));
 
-   if (ret) *ret = int_ret;
+   return int_ret;
 }
 
-static void
-_elm_ctxpopup_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
    Evas_Coord_Rectangle rect = { 0, 0, 1, 1 };
    Evas_Coord_Point list_size = { 0, 0 }, parent_size = {0, 0};
 
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->arrow) return;  /* simple way to flag "under deletion" */
@@ -741,17 +710,13 @@ _on_content_resized(void *data,
 }
 
 //FIXME: lost the content size when theme hook is called.
-static void
-_elm_ctxpopup_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_theme_apply(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    Eina_Bool int_ret;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    elm_widget_theme_object_set
      (obj, sd->bg, "ctxpopup", "bg", elm_widget_style_get(obj));
@@ -770,33 +735,25 @@ _elm_ctxpopup_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* kind of a big and tricky override here: an internal box will hold
  * the actual content. content aliases won't be of much help here */
-static void
-_elm_ctxpopup_smart_content_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_container_content_set(Eo *obj, Elc_Ctxpopup_Data *sd, const char *part, Evas_Object *content)
 {
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret = EINA_TRUE;
 
    if ((part) && (strcmp(part, "default")))
      {
         eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
-        goto end;
+        return int_ret;
      }
 
-   if (!content)
-     {
-        int_ret = EINA_FALSE;
-        goto end;
-     }
+   if (!content) return EINA_FALSE;
 
-   if (content == sd->content) goto end;
+   if (content == sd->content) return EINA_TRUE;
 
    evas_object_del(sd->content);
    if (sd->content == sd->list) sd->list = NULL;
@@ -814,45 +771,36 @@ _elm_ctxpopup_smart_content_set(Eo *obj, void *_pd, va_list *list)
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-end:
-   if (ret) *ret = int_ret;
+   return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_content_get(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elc_ctxpopup_elm_container_content_get(Eo *obj, Elc_Ctxpopup_Data *sd, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   *ret = NULL;
 
    if ((part) && (strcmp(part, "default")))
      {
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, ret));
-        return;
+        Evas_Object *ret = NULL;
+        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, &ret));
+        return ret;
      }
 
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   *ret = sd->content;
+   return sd->content;
 }
 
-static void
-_elm_ctxpopup_smart_content_unset(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elc_ctxpopup_elm_container_content_unset(Eo *obj, Elc_Ctxpopup_Data *sd, const char *part)
 {
    Evas_Object *content;
-
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
 
    if ((part) && (strcmp(part, "default")))
      {
         eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &content));
-        goto end;
+        return content;
      }
 
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
    content = sd->content;
-   if (!content) goto end;
+   if (!content) return content;
 
    elm_box_unpack(sd->box, content);
    sd->content = NULL;
@@ -860,8 +808,7 @@ _elm_ctxpopup_smart_content_unset(Eo *obj, void *_pd, va_list *list)
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-end:
-   if (ret) *ret = content;
+   return NULL;
 }
 
 static void
@@ -1046,7 +993,7 @@ _list_resize_cb(void *data,
 }
 
 static void
-_list_del(Elm_Ctxpopup_Smart_Data *sd)
+_list_del(Elc_Ctxpopup_Data *sd)
 {
    ELM_SAFE_FREE(sd->list, evas_object_del);
 }
@@ -1079,29 +1026,24 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_disable(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_elm_widget_disable(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_disable(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
    if (sd->list)
      elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
    else if (sd->content)
      elm_object_disabled_set(sd->content, elm_widget_disabled_get(obj));
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_ctxpopup_evas_smart_add(Eo *obj, Elc_Ctxpopup_Data *priv)
 {
-   Elm_Ctxpopup_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -1153,10 +1095,9 @@ _elm_ctxpopup_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
-static void
-_elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_ctxpopup_evas_smart_del(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
    Elm_Ctxpopup_Item *it;
 
    evas_object_event_callback_del_full
@@ -1173,10 +1114,9 @@ _elm_ctxpopup_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_ctxpopup_smart_parent_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elc_ctxpopup_elm_widget_parent_set(Eo *obj, Elc_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
 {
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
    //default parent is to be hover parent
    elm_ctxpopup_hover_parent_set(obj, parent);
 }
@@ -1196,8 +1136,8 @@ elm_ctxpopup_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_ctxpopup_eo_base_constructor(Eo *obj, Elc_Ctxpopup_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1205,21 +1145,10 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_ctxpopup_hover_parent_set(Evas_Object *obj,
-                              Evas_Object *parent)
-{
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_hover_parent_set(parent));
-}
-
-static void
-_hover_parent_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elc_ctxpopup_hover_parent_set(Eo *obj, Elc_Ctxpopup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
-
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
 
    if (!parent) return;
 
@@ -1244,53 +1173,22 @@ _hover_parent_set(Eo *obj, void *_pd, va_list *list)
    if (sd->visible) elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
-elm_ctxpopup_hover_parent_get(const Evas_Object *obj)
+EOLIAN static Evas_Object*
+_elc_ctxpopup_hover_parent_get(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd)
 {
-   ELM_CTXPOPUP_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_ctxpopup_hover_parent_get(&ret));
-   return ret;
+   return sd->parent;
 }
 
-static void
-_hover_parent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elc_ctxpopup_clear(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd)
 {
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-   *ret = sd->parent;
-}
-
-EAPI void
-elm_ctxpopup_clear(Evas_Object *obj)
-{
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_clear());
-}
-
-static void
-_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    _list_del(sd);
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 }
 
-EAPI void
-elm_ctxpopup_horizontal_set(Evas_Object *obj,
-                            Eina_Bool horizontal)
+EOLIAN static void
+_elc_ctxpopup_horizontal_set(Eo *obj, Elc_Ctxpopup_Data *sd, Eina_Bool horizontal)
 {
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_horizontal_set(horizontal));
-}
-
-static void
-_horizontal_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool horizontal = va_arg(*list, int);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    sd->horizontal = !!horizontal;
 
    if (!sd->list) return;
@@ -1302,36 +1200,10 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
    if (sd->visible) elm_layout_sizing_eval(obj);
 }
 
-EAPI Eina_Bool
-elm_ctxpopup_horizontal_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_horizontal_get(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd)
 {
-   ELM_CTXPOPUP_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_ctxpopup_horizontal_get(&ret));
-   return ret;
-}
-
-static void
-_horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   *ret = sd->horizontal;
-}
-
-EAPI Elm_Object_Item *
-elm_ctxpopup_item_append(Evas_Object *obj,
-                         const char *label,
-                         Evas_Object *icon,
-                         Evas_Smart_Cb func,
-                         const void *data)
-{
-
-   ELM_CTXPOPUP_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_ctxpopup_item_append(label, icon, func, data, &ret));
-   return ret;
+   return sd->horizontal;
 }
 
 static void
@@ -1342,22 +1214,14 @@ _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, item);
 }
 
-static void
-_item_append(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elc_ctxpopup_item_append(Eo *obj, Elc_Ctxpopup_Data *sd, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
-   const char *label = va_arg(*list, const char *);
-   Evas_Object *icon = va_arg(*list, Evas_Object *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
    Elm_Ctxpopup_Item *item;
 
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
 
    item = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
-   if (!item) return;
+   if (!item) return NULL;
 
    elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    elm_widget_item_disable_hook_set(item, _item_disable_hook);
@@ -1392,30 +1256,12 @@ _item_append(Eo *obj, void *_pd, va_list *list)
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-   *ret = (Elm_Object_Item *)item;
+   return (Elm_Object_Item *)item;
 }
 
-EAPI void
-elm_ctxpopup_direction_priority_set(Evas_Object *obj,
-                                    Elm_Ctxpopup_Direction first,
-                                    Elm_Ctxpopup_Direction second,
-                                    Elm_Ctxpopup_Direction third,
-                                    Elm_Ctxpopup_Direction fourth)
+EOLIAN static void
+_elc_ctxpopup_direction_priority_set(Eo *obj, Elc_Ctxpopup_Data *sd, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth)
 {
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_direction_priority_set(first, second, third, fourth));
-}
-
-static void
-_direction_priority_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Ctxpopup_Direction first = va_arg(*list, Elm_Ctxpopup_Direction);
-   Elm_Ctxpopup_Direction second = va_arg(*list, Elm_Ctxpopup_Direction);
-   Elm_Ctxpopup_Direction third = va_arg(*list, Elm_Ctxpopup_Direction);
-   Elm_Ctxpopup_Direction fourth = va_arg(*list, Elm_Ctxpopup_Direction);
-
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    sd->dir_priority[0] = first;
    sd->dir_priority[1] = second;
    sd->dir_priority[2] = third;
@@ -1424,171 +1270,45 @@ _direction_priority_set(Eo *obj, void *_pd, va_list *list)
    if (sd->visible) elm_layout_sizing_eval(obj);
 }
 
-EAPI void
-elm_ctxpopup_direction_priority_get(Evas_Object *obj,
-                                    Elm_Ctxpopup_Direction *first,
-                                    Elm_Ctxpopup_Direction *second,
-                                    Elm_Ctxpopup_Direction *third,
-                                    Elm_Ctxpopup_Direction *fourth)
+EOLIAN static void
+_elc_ctxpopup_direction_priority_get(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth)
 {
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_direction_priority_get(first, second, third, fourth));
-}
-
-static void
-_direction_priority_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Ctxpopup_Direction *first = va_arg(*list, Elm_Ctxpopup_Direction *);
-   Elm_Ctxpopup_Direction *second = va_arg(*list, Elm_Ctxpopup_Direction *);
-   Elm_Ctxpopup_Direction *third = va_arg(*list, Elm_Ctxpopup_Direction *);
-   Elm_Ctxpopup_Direction *fourth = va_arg(*list, Elm_Ctxpopup_Direction *);
-
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    if (first) *first = sd->dir_priority[0];
    if (second) *second = sd->dir_priority[1];
    if (third) *third = sd->dir_priority[2];
    if (fourth) *fourth = sd->dir_priority[3];
 }
 
-EAPI Elm_Ctxpopup_Direction
-elm_ctxpopup_direction_get(const Evas_Object *obj)
+EOLIAN static Elm_Ctxpopup_Direction
+_elc_ctxpopup_direction_get(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd)
 {
-   ELM_CTXPOPUP_CHECK(obj) ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-   Elm_Ctxpopup_Direction ret = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-   eo_do((Eo *) obj, elm_obj_ctxpopup_direction_get(&ret));
-   return ret;
+   return sd->dir;
 }
 
-static void
-_direction_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elc_ctxpopup_dismiss(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
-   Elm_Ctxpopup_Direction *ret = va_arg(*list, Elm_Ctxpopup_Direction *);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   *ret = sd->dir;
-}
-
-EAPI void
-elm_ctxpopup_dismiss(Evas_Object *obj)
-{
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_dismiss());
-}
-
-static void
-_dismiss(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    _hide_signals_emit(obj, sd->dir);
 }
 
-EAPI void
-elm_ctxpopup_auto_hide_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+EOLIAN static void
+_elc_ctxpopup_auto_hide_disabled_set(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd, Eina_Bool disabled)
 {
-   ELM_CTXPOPUP_CHECK(obj);
-   eo_do(obj, elm_obj_ctxpopup_auto_hide_disabled_set(disabled));
-}
-
-static void
-_auto_hide_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool disabled = va_arg(*list, int);
-
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
    disabled = !!disabled;
    if (sd->auto_hide == !disabled) return;
    sd->auto_hide = !disabled;
 }
 
-EAPI Eina_Bool
-elm_ctxpopup_auto_hide_disabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elc_ctxpopup_auto_hide_disabled_get(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data *sd)
 {
-   ELM_CTXPOPUP_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_ctxpopup_auto_hide_disabled_get(&ret));
-   return ret;
+   return sd->auto_hide;
 }
 
-static void
-_auto_hide_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elc_ctxpopup_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Ctxpopup_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->auto_hide;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_ctxpopup_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_ctxpopup_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_SET), _elm_ctxpopup_smart_parent_set),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_DISABLE), _elm_ctxpopup_smart_disable),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_ctxpopup_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_ctxpopup_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_ADD), _elm_ctxpopup_smart_sub_object_add),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_ctxpopup_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT),  _elm_ctxpopup_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_ctxpopup_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION),  _elm_ctxpopup_smart_focus_direction),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_TRANSLATE), _elm_ctxpopup_smart_translate),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_ctxpopup_smart_content_set),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_ctxpopup_smart_content_get),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_ctxpopup_smart_content_unset),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_ctxpopup_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SUB_OBJECT_ADD_ENABLE), _elm_ctxpopup_smart_layout_sub_object_add_enable),
-
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HOVER_PARENT_SET), _hover_parent_set),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HOVER_PARENT_GET), _hover_parent_get),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_CLEAR), _clear),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HORIZONTAL_SET), _horizontal_set),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_HORIZONTAL_GET), _horizontal_get),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_ITEM_APPEND), _item_append),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_SET), _direction_priority_set),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_GET), _direction_priority_get),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_GET), _direction_get),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_DISMISS), _dismiss),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_SET), _auto_hide_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_CTXPOPUP_ID(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET), _auto_hide_disabled_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_HOVER_PARENT_SET, "Set the Ctxpopup's parent."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_HOVER_PARENT_GET, "Get the Ctxpopup's parent."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_CLEAR, "Clear all items in the given ctxpopup object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_HORIZONTAL_SET, "Change the ctxpopup's orientation to horizontal or vertical."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_HORIZONTAL_GET, "Get the value of current ctxpopup object's orientation."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_ITEM_APPEND, "Add a new item to a ctxpopup object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_SET, "Set the direction priority of a ctxpopup."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_PRIORITY_GET, "Get the direction priority of a ctxpopup."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DIRECTION_GET, "Get the current direction of a ctxpopup."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_DISMISS, "Dismiss a ctxpopup object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_SET, "Set ctxpopup auto hide mode triggered by ctxpopup policy"),
-     EO_OP_DESCRIPTION(ELM_OBJ_CTXPOPUP_SUB_ID_AUTO_HIDE_DISABLED_GET, "Get ctxpopup auto hide mode triggered by ctxpopup policy"),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_CTXPOPUP_BASE_ID, op_desc, ELM_OBJ_CTXPOPUP_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Ctxpopup_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_ctxpopup_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elc_ctxpopup.eo.c"

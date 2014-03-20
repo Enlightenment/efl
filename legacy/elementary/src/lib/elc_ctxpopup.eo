@@ -1,0 +1,196 @@
+class Elc_Ctxpopup (Elm_Layout)
+{
+   eo_prefix: elm_obj_ctxpopup;
+   legacy_prefix: elm_ctxpopup;
+   properties {
+      horizontal {
+         set {
+            /*@
+            @brief Change the ctxpopup's orientation to horizontal or vertical.
+
+            @ingroup Ctxpopup */
+         }
+         get {
+            /*@
+            @brief Get the value of current ctxpopup object's orientation.
+
+            @return @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical mode (or errors)
+
+            @see elm_ctxpopup_horizontal_set()
+
+            @ingroup Ctxpopup */
+         }
+         values {
+            Eina_Bool horizontal; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
+         }
+      }
+      auto_hide_disabled {
+         set {
+            /*@
+            @brief Set ctxpopup auto hide mode triggered by ctxpopup policy.
+            @since 1.9
+
+            Use this function when user wants ctxpopup not to hide automatically.
+            By default, ctxpopup is dismissed whenever mouse clicked its background area, language is changed,
+            and its parent geometry is updated(changed).
+            Not to hide ctxpopup automatically, disable auto hide function by calling this API,
+            then ctxpopup won't be dismissed in those scenarios.
+
+            Default value of disabled is @c EINA_FALSE.
+
+            @see elm_ctxpopup_auto_hide_disabled_get()
+
+            @ingroup Ctxpopup */
+         }
+         get {
+            /*@
+            @brief Get ctxpopup auto hide mode triggered by ctxpopup policy.
+            @since 1.9
+
+            @return auto hide mode's state of a ctxpopup
+
+            @see elm_ctxpopup_auto_hide_disabled_set() for more information.
+
+            @ingroup Ctxpopup */
+         }
+         values {
+            Eina_Bool disabled; /*@ auto hide enable/disable. */
+         }
+      }
+      hover_parent {
+         set {
+            /*@
+            @brief Set the Ctxpopup's parent
+
+            Set the parent object.
+
+            @note elm_ctxpopup_add() will automatically call this function
+            with its @c parent argument.
+
+            @see elm_ctxpopup_add()
+            @see elm_hover_parent_set()
+
+            @ingroup Ctxpopup */
+         }
+         get {
+            /*@
+            @brief Get the Ctxpopup's parent
+
+            @see elm_ctxpopup_hover_parent_set() for more information
+
+            @ingroup Ctxpopup */
+         }
+         values {
+            Evas_Object *parent; /*@ The parent to use */
+         }
+      }
+      direction_priority {
+         set {
+            /*@
+            @brief Set the direction priority of a ctxpopup.
+
+            This functions gives a chance to user to set the priority of ctxpopup
+            showing direction. This doesn't guarantee the ctxpopup will appear in the
+            requested direction.
+
+            @see Elm_Ctxpopup_Direction
+
+            @ingroup Ctxpopup */
+         }
+         get {
+            /*@
+            @brief Get the direction priority of a ctxpopup.
+
+            @see elm_ctxpopup_direction_priority_set() for more information.
+
+            @ingroup Ctxpopup */
+         }
+         values {
+            Elm_Ctxpopup_Direction first; /*@ 1st priority of direction */
+            Elm_Ctxpopup_Direction second; /*@ 2nd priority of direction */
+            Elm_Ctxpopup_Direction third; /*@ 3th priority of direction */
+            Elm_Ctxpopup_Direction fourth; /*@ 4th priority of direction */
+         }
+      }
+      direction {
+         get {
+            /*@
+            @brief Get the current direction of a ctxpopup.
+
+            @return current direction of a ctxpopup
+
+            @warning Once the ctxpopup showed up, the direction would be determined
+
+            @ingroup Ctxpopup */
+            return Elm_Ctxpopup_Direction;
+         }
+      }
+   }
+   methods {
+      dismiss {
+         /*@
+         @brief Dismiss a ctxpopup object
+
+         Use this function to simulate clicking outside of the ctxpopup to dismiss it.
+         In this way, the ctxpopup will be hidden and the "clicked" signal will be
+         emitted. */
+
+      }
+      clear {
+         /*@
+         @brief Clear all items in the given ctxpopup object.
+
+         @ingroup Ctxpopup */
+
+      }
+      item_append {
+         /*@
+         @brief Add a new item to a ctxpopup object.
+
+         @return A handle to the item added or @c NULL, on errors
+
+         @warning Ctxpopup can't hold both an item list and a content at the same
+         time. When an item is added, any previous content will be removed.
+
+         @see elm_object_content_set()
+
+         @ingroup Ctxpopup */
+
+         return Elm_Object_Item *;
+         params {
+            @in const char *label; /*@ The Label of the new item */
+            @in Evas_Object *icon; /*@ Icon to be set on new item */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
+            @in const void *data; /*@ Data passed to @p func */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::del;
+      Evas_Smart::add;
+      Elm_Widget::parent::set;
+      Elm_Widget::focus_direction;
+      Elm_Widget::sub_object_add;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::disable;
+      Elm_Widget::translate;
+      Elm_Widget::theme_apply;
+      Elm_Widget::event;
+      Elm_Container::content_get;
+      Elm_Container::content_set;
+      Elm_Container::content_unset;
+      Elm_Layout::sub_object_add_enable;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      language,changed;
+      access,changed;
+      focused;
+      unfocused;
+   }
+
+}
