@@ -525,7 +525,7 @@ _device_process_flush(Ecore_Drm_Evdev *dev, unsigned int timestamp)
           {
              /* start first motion as centered I guess? */
              dev->mouse.x = (dev->abs.min_x + dev->abs.max_x) / 2;
-             dev->mouse.y = (dev->abs.max_x + dev->abs.max_y) / 2;
+             dev->mouse.y = (dev->abs.min_y + dev->abs.max_y) / 2;
           }
 
         dev->mouse.x += (dev->abs.x[0] - dev->abs.x[1]);
