@@ -73,6 +73,12 @@ gl_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
+gl_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   eina_stringshare_del(data);
+}
+
+static void
 _win_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("<%s> <%d> will del <%p>\n", __func__, __LINE__, data);
@@ -184,8 +190,8 @@ _grid_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_
              *p2 = '\0';
              printf("Item %s\n", p);
              if (!it) it = elm_gengrid_last_item_get(obj);
-             if (it) it = elm_gengrid_item_insert_after(obj, gic, strdup(p), it, NULL, NULL);
-             else it = elm_gengrid_item_append(obj, gic, strdup(p), NULL, NULL);
+             if (it) it = elm_gengrid_item_insert_after(obj, gic, eina_stringshare_add(p), it, NULL, NULL);
+             else it = elm_gengrid_item_append(obj, gic, eina_stringshare_add(p), NULL, NULL);
              p = p2;
           }
         else p = NULL;
@@ -901,6 +907,7 @@ test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         gic->item_style = "default";
         gic->func.text_get = gl_text_get;
         gic->func.content_get = gl_content_get;
+        gic->func.del = gl_del_cb;
 
         elm_drop_item_container_add(grid, ELM_SEL_FORMAT_TARGETS, _grid_item_getcb, NULL, NULL,
               NULL, NULL, NULL, NULL, _grid_dropcb, NULL);
