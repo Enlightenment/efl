@@ -19,8 +19,8 @@
 /**
  * Base layout smart data extended with clock instance data.
  */
-typedef struct _Elm_Clock_Smart_Data Elm_Clock_Smart_Data;
-struct _Elm_Clock_Smart_Data
+typedef struct _Elm_Clock_Data Elm_Clock_Data;
+struct _Elm_Clock_Data
 {
    double                interval, first_interval;
    Elm_Clock_Edit_Mode   digedit;
@@ -52,7 +52,7 @@ struct _Elm_Clock_Smart_Data
  */
 
 #define ELM_CLOCK_DATA_GET(o, sd) \
-  Elm_Clock_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CLOCK_CLASS)
+  Elm_Clock_Data * sd = eo_data_scope_get(o, ELM_OBJ_CLOCK_CLASS)
 
 #define ELM_CLOCK_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_CLOCK_DATA_GET(o, ptr);                        \

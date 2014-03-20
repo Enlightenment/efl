@@ -6,8 +6,6 @@
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
 
-EAPI Eo_Op ELM_OBJ_CLOCK_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_CLOCK_CLASS
 
 #define MY_CLASS_NAME "Elm_Clock"
@@ -562,19 +560,17 @@ _time_update(Evas_Object *obj)
      sd->cur.ampm = -1;
 }
 
-static void
-_elm_clock_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_clock_elm_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _time_update(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -653,10 +649,9 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return NULL;
 }
 
-static void
-_elm_clock_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_clock_evas_smart_add(Eo *obj, Elm_Clock_Data *priv)
 {
-   Elm_Clock_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -692,10 +687,9 @@ _elm_clock_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
 }
 
-static void
-_elm_clock_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_clock_evas_smart_del(Eo *obj, Elm_Clock_Data *sd)
 {
-   Elm_Clock_Smart_Data *sd = _pd;
 
    ecore_timer_del(sd->ticker);
    ecore_timer_del(sd->spin);
@@ -707,37 +701,28 @@ _elm_clock_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static Eina_Bool _elm_clock_smart_focus_next_enable = EINA_FALSE;
 
-static void
-_elm_clock_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_clock_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_clock_smart_focus_next_enable;
+   return _elm_clock_smart_focus_next_enable;
 }
 
-static void
-_elm_clock_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_clock_elm_widget_focus_next(Eo *obj, Elm_Clock_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
    Evas_Object *ao, *po;
    Eina_List *items = NULL;
 
-   Elm_Clock_Smart_Data *sd = _pd;
 
    if (!sd->edit)
      {
         *next = (Evas_Object *)obj;
-        if (ret) *ret = !elm_widget_highlight_get(obj);
-        return;
+        return !elm_widget_highlight_get(obj);
      }
    else if (!elm_widget_highlight_get(obj))
      {
         *next = (Evas_Object *)obj;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 
    int i;
@@ -771,7 +756,7 @@ _elm_clock_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         items = eina_list_append(items, ao);
      }
 
-   if (ret) *ret = elm_widget_focus_list_next_get
+   return elm_widget_focus_list_next_get
            (obj, items, eina_list_data_get, dir, next);
 }
 
@@ -794,10 +779,10 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
     _access_time_register(obj, is_access);
 }
 
-static void
-_elm_clock_smart_access(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_clock_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED, Eina_Bool access)
 {
-   _elm_clock_smart_focus_next_enable = va_arg(*list, int);
+   _elm_clock_smart_focus_next_enable = access;
    _access_obj_process(obj, _elm_clock_smart_focus_next_enable);
 }
 
@@ -810,8 +795,8 @@ elm_clock_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_clock_eo_base_constructor(Eo *obj, Elm_Clock_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -820,7 +805,7 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 }
 
 static void
-_timediff_set(Elm_Clock_Smart_Data *sd)
+_timediff_set(Elm_Clock_Data *sd)
 {
    struct timeval timev;
    struct tm *tm;
@@ -834,24 +819,9 @@ _timediff_set(Elm_Clock_Smart_Data *sd)
                     sd->min - tm->tm_min) * 60) + sd->sec - tm->tm_sec;
 }
 
-EAPI void
-elm_clock_time_set(Evas_Object *obj,
-                   int hrs,
-                   int min,
-                   int sec)
+EOLIAN static void
+_elm_clock_time_set(Eo *obj, Elm_Clock_Data *sd, int hrs, int min, int sec)
 {
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_time_set(hrs, min, sec));
-}
-
-static void
-_time_set(Eo *obj, void *_pd, va_list *list)
-{
-   int hrs = va_arg(*list, int);
-   int min = va_arg(*list, int);
-   int sec = va_arg(*list, int);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    sd->hrs = hrs;
    sd->min = min;
    sd->sec = sec;
@@ -860,43 +830,17 @@ _time_set(Eo *obj, void *_pd, va_list *list)
    _time_update(obj);
 }
 
-EAPI void
-elm_clock_time_get(const Evas_Object *obj,
-                   int *hrs,
-                   int *min,
-                   int *sec)
+EOLIAN static void
+_elm_clock_time_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, int *hrs, int *min, int *sec)
 {
-   ELM_CLOCK_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_clock_time_get(hrs, min, sec));
-}
-
-static void
-_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *hrs = va_arg(*list, int *);
-   int *min = va_arg(*list, int *);
-   int *sec = va_arg(*list, int *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    if (hrs) *hrs = sd->hrs;
    if (min) *min = sd->min;
    if (sec) *sec = sd->sec;
 }
 
-EAPI void
-elm_clock_edit_set(Evas_Object *obj,
-                   Eina_Bool edit)
+EOLIAN static void
+_elm_clock_edit_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool edit)
 {
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_edit_set(edit));
-}
-
-static void
-_edit_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool edit = va_arg(*list, int);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    sd->edit = edit;
    if (!edit)
      _timediff_set(sd);
@@ -906,38 +850,15 @@ _edit_set(Eo *obj, void *_pd, va_list *list)
      _time_update(obj);
 }
 
-EAPI Eina_Bool
-elm_clock_edit_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_clock_edit_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
-   ELM_CLOCK_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_clock_edit_get(&ret));
-   return ret;
+   return sd->edit;
 }
 
-static void
-_edit_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_clock_edit_mode_set(Eo *obj, Elm_Clock_Data *sd, Elm_Clock_Edit_Mode digedit)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
-   *ret = sd->edit;
-}
-
-EAPI void
-elm_clock_edit_mode_set(Evas_Object *obj,
-                        Elm_Clock_Edit_Mode digedit)
-{
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_edit_mode_set(digedit));
-}
-
-static void
-_edit_mode_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Clock_Edit_Mode digedit = va_arg(*list, Elm_Clock_Edit_Mode);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    sd->digedit = digedit;
    if (digedit == ELM_CLOCK_EDIT_DEFAULT)
      elm_clock_edit_set(obj, EINA_FALSE);
@@ -945,143 +866,53 @@ _edit_mode_set(Eo *obj, void *_pd, va_list *list)
      _time_update(obj);
 }
 
-EAPI Elm_Clock_Edit_Mode
-elm_clock_edit_mode_get(const Evas_Object *obj)
+EOLIAN static Elm_Clock_Edit_Mode
+_elm_clock_edit_mode_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
-   ELM_CLOCK_CHECK(obj) 0;
-   Elm_Clock_Edit_Mode ret = 0;
-   eo_do((Eo *) obj, elm_obj_clock_edit_mode_get(&ret));
-   return ret;
+   return sd->digedit;
 }
 
-static void
-_edit_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_clock_show_am_pm_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool am_pm)
 {
-   Elm_Clock_Edit_Mode *ret = va_arg(*list, Elm_Clock_Edit_Mode *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
-   *ret = sd->digedit;
-}
-
-EAPI void
-elm_clock_show_am_pm_set(Evas_Object *obj,
-                         Eina_Bool am_pm)
-{
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_show_am_pm_set(am_pm));
-}
-
-static void
-_show_am_pm_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool am_pm = va_arg(*list, int);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    sd->am_pm = !!am_pm;
    _time_update(obj);
 }
 
-EAPI Eina_Bool
-elm_clock_show_am_pm_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_clock_show_am_pm_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
-   ELM_CLOCK_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_clock_show_am_pm_get(&ret));
-   return ret;
+   return sd->am_pm;
 }
 
-static void
-_show_am_pm_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_clock_show_seconds_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool seconds)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
-   *ret = sd->am_pm;
-}
-
-EAPI void
-elm_clock_show_seconds_set(Evas_Object *obj,
-                           Eina_Bool seconds)
-{
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_show_seconds_set(seconds));
-}
-
-static void
-_show_seconds_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool seconds = va_arg(*list, int);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    sd->seconds = !!seconds;
    _time_update(obj);
 }
 
-EAPI Eina_Bool
-elm_clock_show_seconds_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_clock_show_seconds_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
-   ELM_CLOCK_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_clock_show_seconds_get(&ret));
-   return ret;
+   return sd->seconds;
 }
 
-static void
-_show_seconds_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_clock_first_interval_set(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, double interval)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
-   *ret = sd->seconds;
-}
-
-EAPI void
-elm_clock_first_interval_set(Evas_Object *obj,
-                             double interval)
-{
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_first_interval_set(interval));
-}
-
-static void
-_first_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double interval = va_arg(*list, double);
-   Elm_Clock_Smart_Data *sd = _pd;
-
    sd->first_interval = interval;
 }
 
-EAPI double
-elm_clock_first_interval_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_clock_first_interval_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
-   ELM_CLOCK_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *) obj, elm_obj_clock_first_interval_get(&ret));
-   return ret;
+   return sd->first_interval;
 }
 
-static void
-_first_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_clock_pause_set(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd, Eina_Bool paused)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
-   *ret = sd->first_interval;
-}
-
-EAPI void
-elm_clock_pause_set(Evas_Object *obj, Eina_Bool paused)
-{
-   ELM_CLOCK_CHECK(obj);
-   eo_do(obj, elm_obj_clock_pause_set(paused));
-}
-
-static void
-_pause_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool paused = va_arg(*list, int);
-   Elm_Clock_Smart_Data *sd = _pd;
    paused = !!paused;
    if (sd->paused == paused)
      return;
@@ -1095,94 +926,25 @@ _pause_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_clock_pause_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_clock_pause_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
-   ELM_CLOCK_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_clock_pause_get(&ret));
-   return ret;
+   return sd->paused;
+}
+
+EOLIAN static Eina_Bool
+_elm_clock_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 static void
-_pause_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_clock_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Clock_Smart_Data *sd = _pd;
-
-   *ret = sd->paused;
-}
-
-static void
-_elm_clock_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_clock_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_clock_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_clock_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_clock_smart_access),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_clock_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_clock_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_clock_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_TIME_SET), _time_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_TIME_GET), _time_get),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_EDIT_SET), _edit_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_EDIT_GET), _edit_get),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_EDIT_MODE_SET), _edit_mode_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_EDIT_MODE_GET), _edit_mode_get),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_SHOW_AM_PM_SET), _show_am_pm_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_SHOW_AM_PM_GET), _show_am_pm_get),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_SET), _show_seconds_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_GET), _show_seconds_get),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_SET), _first_interval_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_GET), _first_interval_get),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_SET), _pause_set),
-        EO_OP_FUNC(ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET), _pause_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       _elm_clock_smart_focus_next_enable = EINA_TRUE;
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_TIME_SET, "Set a clock widget's time, programmatically."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_TIME_GET, "Get a clock widget's time values."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_EDIT_SET, "Set whether a given clock widget is under <b>edition mode</b> or."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_EDIT_GET, "Retrieve whether a given clock widget is under editing mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_EDIT_MODE_SET, "Set what digits of the given clock widget should be editable."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_EDIT_MODE_GET, "Retrieve what digits of the given clock widget should be."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_SHOW_AM_PM_SET, "Set if the given clock widget must show hours in military or."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_SHOW_AM_PM_GET, "Get if the given clock widget shows hours in military or am/pm."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_SET, "Set if the given clock widget must show time with seconds or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_SHOW_SECONDS_GET, "Get whether the given clock widget is showing time with seconds."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_SET, "Set the first interval on time updates for a user mouse button hold."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_FIRST_INTERVAL_GET, "Get the first interval on time updates for a user mouse button hold."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_PAUSE_SET, "Set whether the given clock widget should be paused or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET, "Get if the given clock widget is paused."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_CLOCK_BASE_ID, op_desc, ELM_OBJ_CLOCK_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Clock_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_clock_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_clock.eo.c"

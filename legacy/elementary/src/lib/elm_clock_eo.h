@@ -1,3 +1,6 @@
+#include "elm_clock.eo.h"
+
+#if 0
 #define ELM_OBJ_CLOCK_CLASS elm_obj_clock_class_get()
 
 const Eo_Class *elm_obj_clock_class_get(void) EINA_CONST;
@@ -230,3 +233,5 @@ enum
  * @ingroup Clock
  */
 #define elm_obj_clock_pause_get(ret) ELM_OBJ_CLOCK_ID(ELM_OBJ_CLOCK_SUB_ID_PAUSE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
+
