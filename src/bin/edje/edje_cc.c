@@ -13,6 +13,7 @@ static void main_help(void);
 
 Eina_Prefix  *pfx = NULL;
 Eina_List *snd_dirs = NULL;
+Eina_List *vibration_dirs = NULL;
 Eina_List *img_dirs = NULL;
 Eina_List *fnt_dirs = NULL;
 Eina_List *data_dirs = NULL;
@@ -91,6 +92,7 @@ main_help(void)
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
+      "-vd vbiration/directory  Add a directory to look in for relative path vibration samples\n"
       "-dd data/directory       Add a directory to look in for relative path data.file entries\n"
       "-td temp/directory       Directory to store temporary files\n"
       "-l license               Specify the license of a theme\n"
@@ -187,6 +189,11 @@ main(int argc, char **argv)
           {
              i++;
              snd_dirs = eina_list_append(snd_dirs, argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-vd") || !strcmp(argv[i], "--vibration_dir")) && (i < (argc - 1)))
+          {
+             i++;
+             vibration_dirs = eina_list_append(vibration_dirs, argv[i]);
           }
         else if ((!strcmp(argv[i], "-dd") || !strcmp(argv[i], "--data_dir")) && (i < (argc - 1)))
           {

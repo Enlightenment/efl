@@ -521,6 +521,49 @@ output(void)
           }
 
      }
+   if (edje_file->vibration_dir)
+     {
+        Edje_Vibration_Sample *sample;
+        void *data;
+        char out[PATH_MAX];
+        char out1[PATH_MAX];
+        char *pp;
+        int data_size;
+        FILE *f;
+        int i;
+
+        for (i = 0; i < (int)edje_file->vibration_dir->samples_count; i++)
+          {
+             sample = &edje_file->vibration_dir->samples[i];
+             if ((!sample) || (!sample->name)) continue;
+             snprintf(out, sizeof(out), "edje/vibrations/%i", sample->id);
+             data = (void *)eet_read_direct(tef, out, &data_size);
+             if (data)
+               {
+                  snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->src);
+                  pp = strdup(out1);
+                  p = strrchr(pp, '/');
+                  *p = 0;
+                  if (strstr(pp, "../"))
+                    {
+                       ERR("Potential security violation. attempt to write in parent dir.");
+                       exit(-1);
+                    }
+                  ecore_file_mkpath(pp);
+                  free(pp);
+                  if (strstr(out, "../"))
+                    {
+                       ERR("Potential security violation. attempt to write in parent dir.");
+                       exit(-1);
+                    }
+                  f = fopen(out1, "wb");
+                  if (fwrite(data, data_size, 1, f) != 1)
+                    ERR("Could not write sound: %s", strerror(errno));
+                  fclose(f);
+              }
+          }
+     }
+
    eet_close(tef);
    if (outdir) free(outdir);
 }

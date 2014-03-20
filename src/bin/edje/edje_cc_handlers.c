@@ -68,6 +68,10 @@
  *      <ul>
  *        <li>@ref sec_collections_sounds_sample "Sample"</li>
  *      </ul>
+ *      <li>@ref sec_collections_vibrations "Vibrations"</li>
+ *      <ul>
+ *        <li>@ref sec_collections_vibrations_sample "Sample"</li>
+ *      </ul>
  *      <li>@ref sec_collections_group "Group"</li>
  *      <ul>
  *        <li>@ref sec_collections_group_script "Script"</li>
@@ -385,6 +389,8 @@ static void ob_collections_group_programs_program_script(void);
 static void st_collections_group_sound_sample_name(void);
 static void st_collections_group_sound_sample_source(void);
 static void st_collections_group_sound_tone(void);
+static void st_collections_group_vibration_sample_name(void);
+static void st_collections_group_vibration_sample_source(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_physics_world_gravity(void);
@@ -443,6 +449,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.sounds.sample.source", st_collections_group_sound_sample_source}, /* dup */
      {"collections.sounds.tone", st_collections_group_sound_tone},
      {"collections.group.sounds.tone", st_collections_group_sound_tone}, /* dup */
+     {"collections.vibrations.sample.name", st_collections_group_vibration_sample_name},
+     {"collections.vibrations.sample.source", st_collections_group_vibration_sample_source},
+     {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
+     {"collections.grpup.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.script_only", st_collections_group_script_only},
@@ -886,6 +896,10 @@ New_Object_Handler object_handlers[] =
      {"collections.group.sounds", NULL}, /* dup */
      {"collections.sounds.sample", NULL},
      {"collections.group.sounds.sample", NULL}, /* dup */
+     {"collections.vibrations", NULL},
+     {"collections.group.vibrations", NULL}, /* dup */
+     {"collections.vibrations.sample", NULL},
+     {"collections.group.vibrations.sample", NULL}, /* dup */
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
      {"collections.group.limits", NULL},
@@ -2285,6 +2299,7 @@ st_styles_style_tag(void)
         collections {
             ..
             sounds { }
+            vibrations { }
             group { }
             group { }
             ..
@@ -2292,7 +2307,8 @@ st_styles_style_tag(void)
     @description
         The "collections" block is used to list the groups that compose the
         theme. Additional "collections" blocks do not prevent overriding group
-        names. The "sounds" block comprises of all sound definitions.
+        names. The "sounds" block comprises of all sound definitions. The "vibrations"
+        block compriese all vibration definitions.
     @endblock
 */
 static void
@@ -2520,6 +2536,126 @@ st_collections_group_sound_tone(void)
    tone->name = tmp;
    tone->value = value;
    tone->id = edje_file->sound_dir->tones_count - 1;
+}
+
+/**
+   @edcsubsection{collections_vibrations,Vibrations}
+ */
+
+/**
+    @page edcref
+    @block
+        vibrations
+    @context
+        vibrations {
+           sample {
+              name: "vibration_file1";
+              source: "vibration_file1.xxx";
+           }
+        }
+
+    @description
+        The "vibrations" block contains a list of one or more vibration sample.
+    @endblock
+    @since 1.10
+*/
+
+/**
+   @edcsubsection{collections_vibrations_sample,Sample}
+ */
+
+/**
+    @page edcref
+    @block
+        sample
+    @context
+       sample {
+          name: "vibration_file1";
+          source: "vibration_file1.xxx";
+       }
+    @description
+        The sample block defines the vibration sample.
+    @endblock
+    @property
+        name
+    @parameters
+        [sample name]
+    @effect
+        Used to include each vibration file. The full path to the directory holding
+        the vibrations can be defined later with edje_cc's "-vd" option.
+    @endproperty
+    @since 1.10
+ */
+static void
+st_collections_group_vibration_sample_name(void)
+{
+   Edje_Vibration_Sample *sample;
+   const char *tmp;
+   unsigned int i;
+
+   if (!edje_file->vibration_dir)
+     edje_file->vibration_dir = mem_alloc(SZ(Edje_Vibration_Directory));
+
+   tmp = parse_str(0);
+
+   for (i = 0; i < edje_file->vibration_dir->samples_count; i++)
+     {
+        if (!strcmp(edje_file->vibration_dir->samples[i].name, tmp))
+          {
+             free((char *)tmp);
+             return;
+          }
+     }
+
+   edje_file->vibration_dir->samples_count++;
+   sample = realloc(edje_file->vibration_dir->samples,
+                    sizeof(Edje_Vibration_Sample) *
+                    edje_file->vibration_dir->samples_count);
+   if (!sample)
+     {
+        ERR("No enough memory.");
+        exit(-1);
+     }
+   edje_file->vibration_dir->samples = sample;
+
+   sample =
+     edje_file->vibration_dir->samples +
+     edje_file->vibration_dir->samples_count - 1;
+   memset(sample, 0, sizeof(Edje_Vibration_Sample));
+
+   sample->name = tmp;
+   sample->id = edje_file->vibration_dir->samples_count - 1;
+
+   check_arg_count(1);
+}
+
+/**
+    @page edcref
+    @property
+        source
+    @parameters
+        [vibration file name]
+    @effect
+        The Vibration source file name
+    @endproperty
+    @since 1.10
+ */
+static void
+st_collections_group_vibration_sample_source(void)
+{
+   Edje_Vibration_Sample *sample;
+
+   if (!edje_file->vibration_dir->samples)
+     {
+        ERR("Invalid vibration sample source definition.");
+        exit(-1);
+     }
+
+   sample =
+     edje_file->vibration_dir->samples +
+     edje_file->vibration_dir->samples_count - 1;
+   sample->src = parse_str(0);
+   check_arg_count(1);
 }
 
 /**
@@ -9105,7 +9241,7 @@ st_collections_group_programs_program_in(void)
     @effect
         Action to be performed by the program. Valid actions are: STATE_SET,
         ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
-        FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE,
+        FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE, PLAY_VIBRATION,
         PHYSICS_IMPULSE, PHYSICS_TORQUE_IMPULSE, PHYSICS_FORCE, PHYSICS_TORQUE,
         PHYSICS_FORCES_CLEAR, PHYSICS_VEL_SET, PHYSICS_ANG_VEL_SET,
         PHYSICS_STOP, PHYSICS_ROT_SET
@@ -9122,6 +9258,7 @@ st_collections_group_programs_program_in(void)
            action: PARAM_SET "part" "param" "value";\n
            action: PLAY_SAMPLE "sample name" speed (speed of sample - 1.0 is original speed - faster is higher pitch) [channel optional EFFECT/FX | BACKGROUND/BG | MUSIC/MUS | FOREGROUND/FG | INTERFACE/UI | INPUT | ALERT;\n
            action: PLAY_TONE "tone name" duration in seconds ( Range 0.1 to 10.0 );\n
+           action: PLAY_VIBRATION "sample name" repeat (repeat count);\n
            action: PHYSICS_IMPULSE 10 -23.4 0;\n
            action: PHYSICS_TORQUE_IMPULSE 0 2.1 0.95;\n
            action: PHYSICS_FORCE -20.8 0 30.85;\n
@@ -9165,6 +9302,7 @@ st_collections_group_programs_program_action(void)
                            "PHYSICS_ANG_VEL_SET", EDJE_ACTION_TYPE_PHYSICS_ANG_VEL_SET,
                            "PHYSICS_STOP", EDJE_ACTION_TYPE_PHYSICS_STOP,
                            "PHYSICS_ROT_SET", EDJE_ACTION_TYPE_PHYSICS_ROT_SET,
+                           "PLAY_VIBRATION", EDJE_ACTION_TYPE_VIBRATION_SAMPLE,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -9218,6 +9356,21 @@ st_collections_group_programs_program_action(void)
                }
           }
         ep->duration = parse_float_range(2, 0.1, 10.0);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_VIBRATION_SAMPLE)
+     {
+        ep->vibration_name = parse_str(1);
+        for (i = 0; i < (int)edje_file->vibration_dir->samples_count; i++)
+          {
+             if (!strcmp(edje_file->vibration_dir->samples[i].name, ep->vibration_name))
+               break;
+             if (i == (int)(edje_file->vibration_dir->samples_count - 1))
+               {
+                  ERR("No Vibration Sample name %s exist.", ep->vibration_name);
+                  exit(-1);
+               }
+          }
+        ep->vibration_repeat = parse_int(2);
      }
    else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
      {
@@ -9308,6 +9461,7 @@ st_collections_group_programs_program_action(void)
         check_arg_count(5);
         break;
       case EDJE_ACTION_TYPE_SOUND_SAMPLE:
+      case EDJE_ACTION_TYPE_VIBRATION_SAMPLE:
         break;
       default:
 	check_arg_count(3);

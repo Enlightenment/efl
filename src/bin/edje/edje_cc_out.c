@@ -122,6 +122,7 @@ typedef struct _Head_Write Head_Write;
 typedef struct _Fonts_Write Fonts_Write;
 typedef struct _Image_Write Image_Write;
 typedef struct _Sound_Write Sound_Write;
+typedef struct _Vibration_Write Vibration_Write;
 typedef struct _Group_Write Group_Write;
 typedef struct _License_Write License_Write;
 
@@ -166,6 +167,13 @@ struct _Sound_Write
 {
    Eet_File *ef;
    Edje_Sound_Sample *sample;
+   int i;
+};
+
+struct _Vibration_Write
+{
+   Eet_File *ef;
+   Edje_Vibration_Sample *sample;
    int i;
 };
 
@@ -1084,6 +1092,96 @@ data_write_sounds(Eet_File *ef, int *sound_num)
 }
 
 static void
+data_thread_vibrations(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Vibration_Write *vw = data;
+   Eina_List *ll;
+   char *dir_path = NULL;
+   char path[PATH_MAX];
+   char id_str[30];
+   Eina_File *f = NULL;
+   void *m = NULL;
+   int bytes = 0;
+
+   EINA_LIST_FOREACH(vibration_dirs, ll, dir_path)
+     {
+        snprintf((char *)path, sizeof(path), "%s/%s", dir_path,
+                 vw->sample->src);
+        f = eina_file_open(path, 0);
+        if (f) break;
+     }
+   if (!f)
+     {
+        snprintf((char *)path, sizeof(path), "%s",
+                 vw->sample->src);
+        f = eina_file_open(path, 0);
+     }
+   if (f) using_file(path, 'S');
+   if (!f)
+     {
+        ERR("Unable to load vibration data of: %s", vw->sample->src);
+        exit(-1);
+     }
+
+   snprintf(id_str, sizeof(id_str), "edje/vibrations/%i", vw->sample->id);
+   m = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (m)
+     {
+        bytes = eet_write(vw->ef, id_str, m, eina_file_size_get(f),
+                          EET_COMPRESSION_NONE);
+        if (eina_file_map_faulted(f, m))
+          {
+             ERR("File access error when reading '%s'",
+                 eina_file_filename_get(f));
+             exit(-1);
+          }
+        eina_file_map_free(f, m);
+     }
+   eina_file_close(f);
+
+   INF("Wrote %9i bytes (%4iKb) for \"%s\" %s vibration entry \"%s\"",
+       bytes, (bytes + 512) / 1024,
+       id_str, "RAW", vw->sample->name);
+}
+
+static void
+data_thread_vibrations_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Vibration_Write *sw = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   free(sw);
+}
+
+static void
+data_write_vibrations(Eet_File *ef, int *num)
+{
+   if ((edje_file) && (edje_file->vibration_dir))
+     {
+        int i;
+
+        for (i = 0; i < (int)edje_file->vibration_dir->samples_count; i++)
+          {
+             Vibration_Write *vw;
+
+             vw = calloc(1, sizeof(Vibration_Write));
+             if (!vw) continue;
+             vw->ef = ef;
+             vw->sample = &edje_file->vibration_dir->samples[i];
+             vw->i = i;
+             *num += 1;
+             pending_threads++;
+             if (threads)
+               ecore_thread_run(data_thread_vibrations, data_thread_vibrations_end, NULL, vw);
+             else
+               {
+                  data_thread_vibrations(vw, NULL);
+                  data_thread_vibrations_end(vw, NULL);
+               }
+          }
+     }
+}
+static void
 check_groups(Eet_File *ef)
 {
    Edje_Part_Collection *pc;
@@ -1807,6 +1905,7 @@ data_write(void)
    Eet_Error err;
    int image_num = 0;
    int sound_num = 0;
+   int vibration_num = 0;
    int font_num = 0;
    int collection_num = 0;
    double t;
@@ -1864,6 +1963,8 @@ data_write(void)
    INF("fonts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_sounds(ef, &sound_num);
    INF("sounds: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   data_write_vibrations(ef, &vibration_num);
+   INF("vibrations: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_license(ef);
    INF("license: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    if (authors)

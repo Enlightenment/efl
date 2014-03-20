@@ -237,6 +237,7 @@ native get_state_val(part_id, State_Param:p, ...);
 /* Multisense */
 native       play_sample      (sample_name[], Float:speed, ...);
 native       play_tone        (tone_name[], Float:duration, ...);
+native       play_vibration   (sample_name[], ...);
 
 /***********************************************************/
 /* Edje physics calls.                                     */

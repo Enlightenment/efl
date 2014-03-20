@@ -75,6 +75,7 @@
  * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
  * play_sample(sample_name, speed, ...)
  * play_tone(tone_name, duration, ...)
+ * play_vibration(sample_name, repeat)
  * run_program(program_id)
  * Direction:get_drag_dir(part_id)
  * get_drag(part_id, &Float:dx, &Float:&dy)
@@ -948,6 +949,26 @@ _edje_embryo_fn_play_tone(Embryo_Program *ep, Embryo_Cell *params)
      GETINT(channel, params[3]);
    _edje_multisense_internal_sound_tone_play(ed, tone_name,
                                              (double)duration, channel);
+   return 0;
+}
+
+static Embryo_Cell
+_edje_embryo_fn_play_vibration(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *sample_name = NULL;
+   int repeat = 10;
+
+   if (params[0] < (int) (sizeof(Embryo_Cell) * 2)) return 0;
+   ed = embryo_program_data_get(ep);
+   GETSTR(sample_name, params[1]);
+   if ((!sample_name)) return 0;
+
+   if (params[0] == (int) (sizeof(Embryo_Cell) * 2))
+      GETINT(repeat, params[2]);
+
+   _edje_multisense_internal_vibration_sample_play(ed, sample_name,
+                                                   repeat);
    return 0;
 }
 
@@ -3754,6 +3775,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "set_max_size", _edje_embryo_fn_set_max_size);
    embryo_program_native_call_add(ep, "play_sample", _edje_embryo_fn_play_sample);
    embryo_program_native_call_add(ep, "play_tone", _edje_embryo_fn_play_tone);
+   embryo_program_native_call_add(ep, "play_vibration", _edje_embryo_fn_play_vibration);
    embryo_program_native_call_add(ep, "send_message", _edje_embryo_fn_send_message);
    embryo_program_native_call_add(ep, "get_geometry", _edje_embryo_fn_get_geometry);
    embryo_program_native_call_add(ep, "custom_state", _edje_embryo_fn_custom_state);

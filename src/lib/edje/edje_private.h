@@ -272,9 +272,12 @@ typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Image_Directory_Set             Edje_Image_Directory_Set;
 typedef struct _Edje_Image_Directory_Set_Entry       Edje_Image_Directory_Set_Entry;
 typedef struct _Edje_Limit                           Edje_Limit;
+typedef struct _Edje_Plugin                          Edje_Plugin;
 typedef struct _Edje_Sound_Sample                    Edje_Sound_Sample;
 typedef struct _Edje_Sound_Tone                      Edje_Sound_Tone;
 typedef struct _Edje_Sound_Directory                 Edje_Sound_Directory;
+typedef struct _Edje_Vibration_Sample                Edje_Vibration_Sample;
+typedef struct _Edje_Vibration_Directory             Edje_Vibration_Directory;
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
@@ -461,6 +464,7 @@ struct _Edje_File
    Edje_External_Directory        *external_dir;
    Edje_Image_Directory           *image_dir;
    Edje_Sound_Directory           *sound_dir;
+   Edje_Vibration_Directory       *vibration_dir;
 
    Eina_List                      *styles;
 
@@ -613,6 +617,18 @@ struct _Edje_Sound_Directory
    unsigned int tones_count;
 };
 
+struct _Edje_Vibration_Sample
+{
+   const char *name;
+   const char *src;
+   int   id;
+};
+
+struct _Edje_Vibration_Directory
+{
+   Edje_Vibration_Sample *samples;  /* an array of Edje_Sound_Sample entries */
+   unsigned int samples_count;
+};
 /*----------*/
 
 struct _Edje_Program /* a conditional program to be run */
@@ -626,6 +642,8 @@ struct _Edje_Program /* a conditional program to be run */
    const char *tone_name;
    double duration;
    double speed;
+   const char *vibration_name;
+   int vibration_repeat;
 
    struct {
       const char *part;
@@ -2431,6 +2449,7 @@ void _edje_multisense_init(void);
 void _edje_multisense_shutdown(void);
 Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed, int channel);
 Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration, int channel);
+Eina_Bool _edje_multisense_internal_vibration_sample_play(Edje *ed, const char *sample_name, int repeat);
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 

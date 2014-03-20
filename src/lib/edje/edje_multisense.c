@@ -295,6 +295,19 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
 
 }
 
+Eina_Bool
+_edje_multisense_internal_vibration_sample_play(Edje *ed EINA_UNUSED, const char *sample_name EINA_UNUSED, int repeat EINA_UNUSED)
+{
+#ifdef ENABLE_MULTISENSE
+	ERR("Vibration is not supported yet, name:%s, repeat:%d", sample_name, repeat);
+	return EINA_FALSE;
+#else
+   (void) ed;
+   (void) repeat;
+   return EINA_FALSE;
+#endif
+}
+
 void
 _edje_multisense_init(void)
 {

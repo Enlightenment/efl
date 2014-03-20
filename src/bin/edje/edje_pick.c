@@ -66,6 +66,7 @@ struct _Edje_Pick_File_Params
    Eina_List *imagesetlist;  /* List of IDs (Edje_Pick_Data) for image sets */
    Eina_List *samplelist;
    Eina_List *tonelist;
+   Eina_List *vibrationlist;
 };
 typedef struct _Edje_Pick_File_Params Edje_Pick_File_Params;
 
@@ -196,6 +197,13 @@ _edje_pick_out_file_free(Edje_File *out_file)
                free(out_file->sound_dir->tones);
 
              free(out_file->sound_dir);
+          }
+        if (out_file->vibration_dir)
+          {
+             if (out_file->vibration_dir->samples)
+               free(out_file->vibration_dir->samples);
+
+             free(out_file->vibration_dir);
           }
 
         eina_list_free(out_file->color_classes);
@@ -861,6 +869,57 @@ _edje_pick_sounds_add(Edje_File *edf)
 }
 
 static int
+_edje_pick_vibrations_add(Edje_File *edf)
+{
+   char buf[1024];
+   int size, k;
+   void *data;
+   Eina_Bool status = EDJE_PICK_NO_ERROR;
+   static int current_sample_id = 0;
+
+   if (edf->vibration_dir)  /* Copy Sounds */
+     {
+        for (k = 0; k < (int) edf->vibration_dir->samples_count; k++)
+          {
+             Edje_Vibration_Sample *sample = &edf->vibration_dir->samples[k];
+
+             snprintf(buf, sizeof(buf), "edje/vibrations/%i", sample->id);
+             VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", sample->name));
+
+             data = eet_read(edf->ef, buf, &size);
+             if (size)
+               {
+                  Edje_Pick_Data *smpl = malloc(sizeof(*smpl));
+                  smpl->filename = eina_stringshare_add(sample->name);
+                  smpl->data = data;
+                  smpl->size = size;
+                  smpl->entry = (void *) sample; /* for output file vibration dir */
+                  smpl->id.old_id = sample->id;
+                  sample->id = smpl->id.new_id = current_sample_id;
+                  smpl->id.used = EINA_FALSE;
+
+                  VERBOSE(EINA_LOG_INFO("Read <%s> sample data <%p> size <%d>\n",
+                                 buf, smpl->data, smpl->size));
+
+                  current_sample_id++;
+                  context.current_file->vibrationlist =
+                    eina_list_append(context.current_file->vibrationlist, smpl);
+               }
+             else
+               {
+                  EINA_LOG_ERR("Sample <%s> was not found in <%s> file.\n",
+                         sample->name, context.current_file->name);
+                  status = EDJE_PICK_SAMPLE_NOT_FOUND;
+                  /* Should that really be freed? Or is some other handling needed? */
+                  free(data);
+               }
+          }
+     }
+
+   return status;
+}
+
+static int
 _font_cmp(const void *d1, const void *d2)
 {
    const Edje_Font *f1 = d1;
@@ -977,7 +1036,7 @@ _edje_pick_lua_scripts_add(Edje_File *edf, int id, int new_id)
 static void
 _edje_pick_styles_update(Edje_File *o, Edje_File *edf)
 {
-   /* Color Class in Edje_File */
+   /* Styles in Edje_File */
    Eina_List *l;
    Edje_Style *stl;
 
@@ -1186,6 +1245,30 @@ _edje_pick_sound_dir_compose(Eina_List *samples, Eina_List *tones, Edje_File *o)
      }
 }
 
+static void
+_edje_pick_vibration_dir_compose(Eina_List *vibrations, Edje_File *o)
+{  /* Compose vibrationdir array from all used vibrations */
+   if (vibrations)
+     {
+        Edje_Vibration_Sample *sample;
+        Edje_Vibration_Sample *p;
+        Eina_List *l;
+
+        o->vibration_dir = calloc(1, sizeof(*(o->vibration_dir)));
+        o->vibration_dir->samples = malloc(eina_list_count(vibrations) *
+                                       sizeof(Edje_Vibration_Sample));
+
+        p = o->vibration_dir->samples;
+        EINA_LIST_FOREACH(vibrations, l, sample)
+          {
+             memcpy(p, sample, sizeof(Edje_Vibration_Sample));
+             p++;
+          }
+
+        o->vibration_dir->samples_count = eina_list_count(vibrations);
+     }
+}
+
 int
 main(int argc, char **argv)
 {
@@ -1196,6 +1279,7 @@ main(int argc, char **argv)
    Eina_List *images = NULL;
    Eina_List *samples = NULL;
    Eina_List *tones = NULL;
+   Eina_List *vibrations = NULL;
    Edje_Image_Directory_Set *sets = NULL; /* ALL files sets composed here */
 
    Edje_Part_Collection *edc;
@@ -1251,6 +1335,7 @@ main(int argc, char **argv)
         /* Build lists of all images, samples and fonts of input files    */
         _edje_pick_images_add(edf, out_file);  /* Add Images to imagelist */
         _edje_pick_sounds_add(edf);  /* Add Sounds to samplelist          */
+        _edje_pick_vibrations_add(edf);  /* Add Vibrations to samplelist  */
         _Edje_Pick_Fonts_add(edf);   /* Add fonts from file to fonts list */
 
         /* Copy styles, color class */
@@ -1367,9 +1452,25 @@ main(int argc, char **argv)
              if (context.current_file->append || tn->used)
                tones = eina_list_append(tones, tn->tone);
           }
+
+        EINA_LIST_FOREACH(context.current_file->vibrationlist, l, s)
+          {
+             if (context.current_file->append || s->id.used)
+               {  /* Write only used vibrations */
+                  vibrations = eina_list_append(vibrations, s->entry);
+
+                  snprintf(buf, sizeof(buf), "edje/vibrations/%i",
+                           s->id.new_id);
+                  eet_write(out_file->ef, buf,
+                            s->data, s->size,EINA_TRUE);
+                  VERBOSE(EINA_LOG_INFO("Wrote <%s> vibration data <%p> size <%d>\n",
+                                 buf, s->data, s->size));
+               }
+          }
      }
 
    _edje_pick_sound_dir_compose(samples, tones, out_file);
+   _edje_pick_vibration_dir_compose(vibrations, out_file);
 
    /* Write file header after processing all groups */
    if (out_file)

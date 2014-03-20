@@ -874,6 +874,11 @@ low_mem_current:
            goto break_prog;
          _edje_multisense_internal_sound_tone_play(ed, pr->tone_name, pr->duration, pr->channel);
          break;
+      case EDJE_ACTION_TYPE_VIBRATION_SAMPLE:
+         if (_edje_block_break(ed))
+           goto break_prog;
+         _edje_multisense_internal_vibration_sample_play(ed, pr->vibration_name, pr->vibration_repeat);
+         break;
       case EDJE_ACTION_TYPE_PARAM_COPY:
            {
               Edje_Real_Part *src_part, *dst_part;

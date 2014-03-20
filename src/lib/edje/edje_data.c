@@ -19,6 +19,8 @@ Eet_Data_Descriptor *_edje_edd_edje_limit_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_sound_sample = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_sound_tone = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_sound_directory = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_vibration_sample = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_vibration_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
@@ -204,6 +206,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_sound_sample);
    FREED(_edje_edd_edje_sound_tone);
    FREED(_edje_edd_edje_sound_directory);
+   FREED(_edje_edd_edje_vibration_sample);
+   FREED(_edje_edd_edje_vibration_directory);
    FREED(_edje_edd_edje_program);
    FREED(_edje_edd_edje_program_pointer);
    FREED(_edje_edd_edje_program_target);
@@ -353,6 +357,19 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_sound_directory, Edje_Sound_Directory, "samples", samples, _edje_edd_edje_sound_sample);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_sound_directory, Edje_Sound_Directory, "tones", tones, _edje_edd_edje_sound_tone);
 
+   /* Vibration */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Vibration_Sample);
+   _edje_edd_edje_vibration_sample =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vibration_sample, Edje_Vibration_Sample, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vibration_sample, Edje_Vibration_Sample, "src", src, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vibration_sample, Edje_Vibration_Sample, "id", id, EET_T_INT);
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Vibration_Directory);
+   _edje_edd_edje_vibration_directory =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_vibration_directory, Edje_Vibration_Directory, "samples", samples, _edje_edd_edje_vibration_sample);
+
    /* collection directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Collection_Directory_Entry);
    _edje_edd_edje_part_collection_directory_entry =
@@ -413,6 +430,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "external_dir", external_dir, _edje_edd_edje_external_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "sound_dir", sound_dir, _edje_edd_edje_sound_directory);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "vibration_dir", vibration_dir, _edje_edd_edje_vibration_directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_classes", color_classes, _edje_edd_edje_color_class);
    EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_string);
@@ -453,6 +471,9 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "tone_name", tone_name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program ,"duration", duration, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program ,"speed", speed, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "vibration_name", vibration_name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "vibration_repeat", vibration_repeat, EET_T_INT);
+
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "state", state, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "state2", state2, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "value", value, EET_T_DOUBLE);

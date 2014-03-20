@@ -1570,6 +1570,22 @@ _edje_file_free(Edje_File *edf)
         free(edf->sound_dir);
      }
 
+   if (edf->vibration_dir)
+     {
+        unsigned int i;
+
+        if (edf->free_strings)
+          {
+             for (i = 0; i < edf->vibration_dir->samples_count; ++i)
+               {
+                  eina_stringshare_del(edf->vibration_dir->samples[i].name);
+                  eina_stringshare_del(edf->vibration_dir->samples[i].src);
+               }
+          }
+        free(edf->vibration_dir->samples);
+        free(edf->vibration_dir);
+     }
+
    if (edf->external_dir)
      {
         if (edf->external_dir->entries) free(edf->external_dir->entries);
