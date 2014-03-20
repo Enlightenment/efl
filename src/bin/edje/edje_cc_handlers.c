@@ -9465,6 +9465,9 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_SOUND_SAMPLE:
       case EDJE_ACTION_TYPE_VIBRATION_SAMPLE:
         break;
+      case EDJE_ACTION_TYPE_STATE_SET:
+        check_min_arg_count(2);
+        break;
       default:
 	check_arg_count(3);
      }
