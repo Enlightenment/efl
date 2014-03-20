@@ -2841,7 +2841,13 @@ _elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Ev
 {
    Eina_Bool int_ret = EINA_FALSE;
    eo_do((Eo *)obj, elm_obj_widget_on_focus_region(x, y, w, h, &int_ret));
-   return int_ret;
+   if (!int_ret)
+     {
+        evas_object_geometry_get(obj, NULL, NULL, w, h);
+        if (x) *x = 0;
+        if (y) *y = 0;
+     }
+   return EINA_TRUE;
 }
 
 EOLIAN static void
