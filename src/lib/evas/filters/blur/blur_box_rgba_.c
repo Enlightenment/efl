@@ -32,6 +32,8 @@ _box_blur_horiz_rgba_step(const DATA32* restrict const srcdata,
 
    span1 = alloca(len * sizeof(DATA32));
    span2 = alloca(len * sizeof(DATA32));
+   memset(span1, 0, len * sizeof(DATA32));
+   memset(span2, 0, len * sizeof(DATA32));
 
    // For each line, apply as many blurs as requested
    for (int l = 0; l < loops; l++)
@@ -50,7 +52,6 @@ _box_blur_horiz_rgba_step(const DATA32* restrict const srcdata,
           {
              const int radius = radii[run];
              const int left = MIN(radius, len);
-             const int right = MIN(radius, (len - radius));
 
 #if DIV_USING_BITSHIFT
              const int pow2 = pow2_shifts[run];
@@ -61,39 +62,44 @@ _box_blur_horiz_rgba_step(const DATA32* restrict const srcdata,
 
              const DATA8* restrict sl = (DATA8 *) src;
              const DATA8* restrict sr = (DATA8 *) src;
+             const DATA8* restrict sre = (DATA8 *) (src + len);
+             const DATA8* restrict sle = (DATA8 *) (src + len - radius);
              DATA8* restrict d = (DATA8 *) dst;
              int acc[4] = {0};
-             int x, k;
+             int count = 0;
 
              // Read-ahead
-             for (x = left; x; x--)
+             for (int x = left; x > 0; x--)
                {
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] += sr[k];
                   sr += sizeof(DATA32);
+                  count++;
                }
 
              // Left
-             for (x = 0; x < left; x++)
+             for (int x = left; x > 0; x--)
                {
-                  for (k = 0; k < 4; k++)
-                    acc[k] += sr[k];
-                  sr += sizeof(DATA32);
+                  if (sr < sre)
+                    {
+                       for (int k = 0; k < 4; k++)
+                         acc[k] += sr[k];
+                       sr += sizeof(DATA32);
+                       count++;
+                    }
 
-                  const int divider = x + left + 1;
-                  d[ALPHA] = acc[ALPHA] / divider;
-                  d[RED]   = acc[RED]   / divider;
-                  d[GREEN] = acc[GREEN] / divider;
-                  d[BLUE]  = acc[BLUE]  / divider;
+                  d[ALPHA] = acc[ALPHA] / count;
+                  d[RED]   = acc[RED]   / count;
+                  d[GREEN] = acc[GREEN] / count;
+                  d[BLUE]  = acc[BLUE]  / count;
                   d += sizeof(DATA32);
                }
 
              // Main part
-             for (x = len - (2 * radius); x > 0; x--)
+             for (; sr < sre; sr += sizeof(DATA32), sl += sizeof(DATA32))
                {
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] += sr[k];
-                  sr += sizeof(DATA32);
 
                   d[ALPHA] = DIVIDE(acc[ALPHA]);
                   d[RED]   = DIVIDE(acc[RED]);
@@ -101,24 +107,23 @@ _box_blur_horiz_rgba_step(const DATA32* restrict const srcdata,
                   d[BLUE]  = DIVIDE(acc[BLUE]);
                   d += sizeof(DATA32);
 
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] -= sl[k];
-                  sl += sizeof(DATA32);
                }
 
              // Right part
-             for (x = right; x; x--)
+             count = 2 * radius + 1;
+             for (; sl < sle; sl += sizeof(DATA32))
                {
-                  const int divider = x + right;
+                  const int divider = --count;
                   d[ALPHA] = acc[ALPHA] / divider;
                   d[RED]   = acc[RED]   / divider;
                   d[GREEN] = acc[GREEN] / divider;
                   d[BLUE]  = acc[BLUE]  / divider;
                   d += sizeof(DATA32);
 
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] -= sl[k];
-                  sl += sizeof(DATA32);
                }
 
              // More runs to go: swap spans
@@ -173,6 +178,8 @@ _box_blur_vert_rgba_step(const DATA32* restrict const srcdata,
 
    span1 = alloca(len * sizeof(DATA32));
    span2 = alloca(len * sizeof(DATA32));
+   memset(span1, 0, len * sizeof(DATA32));
+   memset(span2, 0, len * sizeof(DATA32));
 
    // For each line, apply as many blurs as requested
    for (int l = 0; l < loops; l++)
@@ -196,7 +203,6 @@ _box_blur_vert_rgba_step(const DATA32* restrict const srcdata,
           {
              const int radius = radii[run];
              const int left = MIN(radius, len);
-             const int right = MIN(radius, (len - radius));
 
 #if DIV_USING_BITSHIFT
              const int pow2 = pow2_shifts[run];
@@ -207,39 +213,44 @@ _box_blur_vert_rgba_step(const DATA32* restrict const srcdata,
 
              const DATA8* restrict sl = (DATA8 *) src;
              const DATA8* restrict sr = (DATA8 *) src;
+             const DATA8* restrict sre = (DATA8 *) (src + len);
+             const DATA8* restrict sle = (DATA8 *) (src + len - radius);
              DATA8* restrict d = (DATA8 *) dst;
              int acc[4] = {0};
-             int x, k;
+             int count = 0;
 
              // Read-ahead
-             for (x = left; x; x--)
+             for (int x = left; x > 0; x--)
                {
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] += sr[k];
                   sr += sizeof(DATA32);
+                  count++;
                }
 
              // Left
-             for (x = 0; x < left; x++)
+             for (int x = left; x > 0; x--)
                {
-                  for (k = 0; k < 4; k++)
-                    acc[k] += sr[k];
-                  sr += sizeof(DATA32);
+                  if (sr < sre)
+                    {
+                       for (int k = 0; k < 4; k++)
+                         acc[k] += sr[k];
+                       sr += sizeof(DATA32);
+                       count++;
+                    }
 
-                  const int divider = x + left + 1;
-                  d[ALPHA] = acc[ALPHA] / divider;
-                  d[RED]   = acc[RED]   / divider;
-                  d[GREEN] = acc[GREEN] / divider;
-                  d[BLUE]  = acc[BLUE]  / divider;
+                  d[ALPHA] = acc[ALPHA] / count;
+                  d[RED]   = acc[RED]   / count;
+                  d[GREEN] = acc[GREEN] / count;
+                  d[BLUE]  = acc[BLUE]  / count;
                   d += sizeof(DATA32);
                }
 
              // Main part
-             for (x = len - (2 * radius); x > 0; x--)
+             for (; sr < sre; sr += sizeof(DATA32), sl += sizeof(DATA32))
                {
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] += sr[k];
-                  sr += sizeof(DATA32);
 
                   d[ALPHA] = DIVIDE(acc[ALPHA]);
                   d[RED]   = DIVIDE(acc[RED]);
@@ -247,24 +258,23 @@ _box_blur_vert_rgba_step(const DATA32* restrict const srcdata,
                   d[BLUE]  = DIVIDE(acc[BLUE]);
                   d += sizeof(DATA32);
 
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] -= sl[k];
-                  sl += sizeof(DATA32);
                }
 
              // Right part
-             for (x = right; x; x--)
+             count = 2 * radius + 1;
+             for (; sl < sle; sl += sizeof(DATA32))
                {
-                  const int divider = x + right;
+                  const int divider = --count;
                   d[ALPHA] = acc[ALPHA] / divider;
                   d[RED]   = acc[RED]   / divider;
                   d[GREEN] = acc[GREEN] / divider;
                   d[BLUE]  = acc[BLUE]  / divider;
                   d += sizeof(DATA32);
 
-                  for (k = 0; k < 4; k++)
+                  for (int k = 0; k < 4; k++)
                     acc[k] -= sl[k];
-                  sl += sizeof(DATA32);
                }
 
              // More runs to go: swap spans

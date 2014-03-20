@@ -32,6 +32,8 @@ _box_blur_alpha_horiz_step(const DATA8* restrict const srcdata,
 
    span1 = alloca(len);
    span2 = alloca(len);
+   memset(span1, 0, len);
+   memset(span2, 0, len);
 
    // For each line, apply as many blurs as requested
    for (int l = 0; l < loops; l++)
@@ -50,8 +52,6 @@ _box_blur_alpha_horiz_step(const DATA8* restrict const srcdata,
           {
              const int radius = radii[run];
              const int left = MIN(radius, len);
-             const int right = MIN(radius, (len - radius));
-             int acc = 0;
 
 #if DIV_USING_BITSHIFT
              const int pow2 = pow2_shifts[run];
@@ -60,44 +60,46 @@ _box_blur_alpha_horiz_step(const DATA8* restrict const srcdata,
              const int divider = 2 * radius + 1;
 #endif
 
-             const DATA8* restrict sr = src;
              const DATA8* restrict sl = src;
+             const DATA8* restrict sr = src;
+             const DATA8* restrict sre = src + len;
+             const DATA8* restrict sle = src + len - radius;
              DATA8* restrict d = dst;
+             int acc = 0, count = 0;
 
              // Read-ahead & accumulate
-             for (int k = left; k; k--)
+             for (int x = left; x > 0; x--)
                {
-                  acc += *sr;
-                  sr += 1;
+                  acc += *sr++;
+                  count++;
                }
 
              // Left edge
-             for (int k = 0; k < left; k++)
+             for (int x = left; x > 0; x--)
                {
-                  acc += *sr;
-                  *d = acc / (k + left + 1);
-                  sr += 1;
-                  d += 1;
+                  if (sr < sre)
+                    {
+                       acc += *sr++;
+                       count++;
+                    }
+
+                  *d++ = acc / count;
                }
 
              // Middle part, normal blur
-             for (int k = len - (2 * radius); k; k--)
+             while (sr < sre)
                {
-                  acc += *sr;
-                  *d = DIVIDE(acc);
-                  acc -= *sl;
-                  sl += 1;
-                  sr += 1;
-                  d += 1;
+                  acc += *sr++;
+                  *d++ = DIVIDE(acc);
+                  acc -= *sl++;
                }
 
              // Right edge
-             for (int k = right; k; k--)
+             count = 2 * radius + 1;
+             while (sl < sle)
                {
-                  *d = acc / (k + right);
-                  acc -= *sl;
-                  d += 1;
-                  sl += 1;
+                  *d++ = acc / (--count);
+                  acc -= *sl++;
                }
 
              // More runs to go: swap spans
@@ -177,8 +179,6 @@ _box_blur_alpha_vert_step(const DATA8* restrict const srcdata,
           {
              const int radius = radii[run];
              const int left = MIN(radius, len);
-             const int right = MIN(radius, (len - radius));
-             int acc = 0;
 
 #if DIV_USING_BITSHIFT
              const int pow2 = pow2_shifts[run];
@@ -187,44 +187,46 @@ _box_blur_alpha_vert_step(const DATA8* restrict const srcdata,
              const int divider = 2 * radius + 1;
 #endif
 
-             const DATA8* restrict sr = src;
              const DATA8* restrict sl = src;
+             const DATA8* restrict sr = src;
+             const DATA8* restrict sre = src + len;
+             const DATA8* restrict sle = src + len - radius;
              DATA8* restrict d = dst;
+             int acc = 0, count = 0;
 
              // Read-ahead & accumulate
-             for (int k = left; k; k--)
+             for (int x = left; x > 0; x--)
                {
-                  acc += *sr;
-                  sr += 1;
+                  acc += *sr++;
+                  count++;
                }
 
              // Left edge
-             for (int k = 0; k < left; k++)
+             for (int x = left; x > 0; x--)
                {
-                  acc += *sr;
-                  *d = acc / (k + left + 1);
-                  sr += 1;
-                  d += 1;
+                  if (sr < sre)
+                    {
+                       acc += *sr++;
+                       count++;
+                    }
+
+                  *d++ = acc / count;
                }
 
              // Middle part, normal blur
-             for (int k = len - (2 * radius); k; k--)
+             while (sr < sre)
                {
-                  acc += *sr;
-                  *d = DIVIDE(acc);
-                  acc -= *sl;
-                  sl += 1;
-                  sr += 1;
-                  d += 1;
+                  acc += *sr++;
+                  *d++ = DIVIDE(acc);
+                  acc -= *sl++;
                }
 
              // Right edge
-             for (int k = right; k; k--)
+             count = 2 * radius + 1;
+             while (sl < sle)
                {
-                  *d = acc / (k + right);
-                  acc -= *sl;
-                  d += 1;
-                  sl += 1;
+                  *d++ = acc / (--count);
+                  acc -= *sl++;
                }
 
              // More runs to go: swap spans

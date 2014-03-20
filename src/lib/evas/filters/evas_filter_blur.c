@@ -73,7 +73,6 @@ _box_blur_horiz_apply_rgba(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
    _box_blur_horiz_rgba(in->image.data, out->image.data, radii,
                         in->cache_entry.w, in->cache_entry.h);
@@ -103,7 +102,6 @@ _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
    _box_blur_vert_rgba(in->image.data, out->image.data, radii,
                        in->cache_entry.w, in->cache_entry.h);
@@ -151,7 +149,6 @@ _box_blur_horiz_apply_alpha(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
    _box_blur_horiz_alpha(in->image.data8, out->image.data8, radii,
                          in->cache_entry.w, in->cache_entry.h);
@@ -181,7 +178,6 @@ _box_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
    _box_blur_vert_alpha(in->image.data8, out->image.data8, radii,
                         in->cache_entry.w, in->cache_entry.h);
@@ -317,7 +313,6 @@ _gaussian_blur_horiz_apply_alpha(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
    _gaussian_blur_horiz_alpha(in->image.data8, out->image.data8, r,
                               in->cache_entry.w, in->cache_entry.h);
@@ -341,7 +336,6 @@ _gaussian_blur_vert_apply_alpha(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data8, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data8, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
    _gaussian_blur_vert_alpha(in->image.data8, out->image.data8, r,
                              in->cache_entry.w, in->cache_entry.h);
@@ -365,7 +359,6 @@ _gaussian_blur_horiz_apply_rgba(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.w >= (2*r + 1), EINA_FALSE);
 
    _gaussian_blur_horiz_rgba(in->image.data, out->image.data, r,
                              in->cache_entry.w, in->cache_entry.h);
@@ -389,7 +382,6 @@ _gaussian_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(in->image.data, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(out->image.data, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(out->cache_entry.h >= (2*r + 1), EINA_FALSE);
 
    _gaussian_blur_vert_rgba(in->image.data, out->image.data, r,
                             in->cache_entry.w, in->cache_entry.h);
