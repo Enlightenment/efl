@@ -658,6 +658,7 @@ _sel_eval(Evas_Object *obj,
                          }
                     }
                   free(last);
+                  last = NULL;
                   if (it->letter) last = strdup(it->letter);
                }
           }
