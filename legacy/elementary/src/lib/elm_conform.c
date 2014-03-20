@@ -7,8 +7,6 @@
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
 
-EAPI Eo_Op ELM_OBJ_CONFORMANT_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_CONFORMANT_CLASS
 
 #define MY_CLASS_NAME "Elm_Conformant"
@@ -588,21 +586,19 @@ _on_rotation_changed(void *data,
      }
 }
 
-static void
-_elm_conformant_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_conformant_elm_widget_theme_apply(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _conformant_parts_swallow(obj);
 
    elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 // unused now - but meant to be for making sure the focused widget is always
@@ -892,8 +888,8 @@ _on_prop_change(void *data,
 
 #endif
 
-static void
-_elm_conformant_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_conformant_evas_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -913,11 +909,10 @@ _elm_conformant_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNU
    elm_layout_sizing_eval(obj);
 }
 
-static void
-_elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_conformant_evas_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 {
    Evas_Object *top;
-   Elm_Conformant_Smart_Data *sd = _pd;
 
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(sd->prop_hdl);
@@ -935,17 +930,15 @@ _elm_conformant_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_conformant_smart_parent_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_conformant_elm_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, Evas_Object *parent)
 {
 #ifdef HAVE_ELEMENTARY_X
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
    Evas_Object *top = elm_widget_top_get(parent);
    Ecore_X_Window xwin = elm_win_xwindow_get(parent);
 
    if ((xwin) && (!elm_win_inlined_image_object_get(top)))
      {
-        Elm_Conformant_Smart_Data *sd = _pd;
 
         sd->prop_hdl = ecore_event_handler_add
             (ECORE_X_EVENT_WINDOW_PROPERTY, _on_prop_change, obj);
@@ -956,11 +949,10 @@ _elm_conformant_smart_parent_set(Eo *obj, void *_pd, va_list *list)
 #endif
 }
 
-static void
-_elm_conformant_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_conformant_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
+   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -972,8 +964,8 @@ elm_conformant_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
 {
    Evas_Object *top;
 
@@ -981,7 +973,6 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
-   Elm_Conformant_Smart_Data *sd = _pd;
 
    top = elm_widget_top_get(obj);
    _on_indicator_mode_changed(obj, top, NULL);
@@ -999,37 +990,9 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_elm_conformant_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_conformant_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_conformant_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_SET), _elm_conformant_smart_parent_set),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_conformant_smart_theme),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_conformant_smart_content_aliases_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_CONFORMANT_BASE_ID, op_desc, ELM_OBJ_CONFORMANT_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Conformant_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_conformant_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+#include "elm_conformant.eo.c"

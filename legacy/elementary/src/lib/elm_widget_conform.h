@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with conformant instance data.
  */
-typedef struct _Elm_Conformant_Smart_Data Elm_Conformant_Smart_Data;
-struct _Elm_Conformant_Smart_Data
+typedef struct _Elm_Conformant_Data Elm_Conformant_Data;
+struct _Elm_Conformant_Data
 {
    Evas_Object                   *portrait_indicator;
    Evas_Object                   *landscape_indicator;
@@ -62,7 +62,7 @@ enum _Conformant_Part_Type
  */
 
 #define ELM_CONFORMANT_DATA_GET(o, sd) \
-  Elm_Conformant_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_CONFORMANT_CLASS)
+  Elm_Conformant_Data * sd = eo_data_scope_get(o, ELM_OBJ_CONFORMANT_CLASS)
 
 #define ELM_CONFORMANT_DATA_GET_OR_RETURN(o, ptr)    \
   ELM_CONFORMANT_DATA_GET(o, ptr);                   \
