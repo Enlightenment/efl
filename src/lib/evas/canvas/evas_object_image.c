@@ -3072,29 +3072,33 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                  if (b1 > 0) bb = (bb * bsb) / b1;
                                  else bb = 0;
                               }
-                            // #--
-                            // |
+                            // #--.
+                            // |  |
+                            // '--'
                             inx = 0; iny = 0;
                             inw = bl; inh = bt;
                             outx = ox; outy = oy;
                             outw = bsl; outh = bst;
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            // .##
-                            // |
+                            // .##.
+                            // |  |
+                            // '--'
                             inx = bl; iny = 0;
                             inw = imw - bl - br; inh = bt;
                             outx = ox + bsl; outy = oy;
                             outw = iw - bsl - bsr; outh = bst;
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            // --#
-                            //   |
+                            // .--#
+                            // |  |
+                            // '--'
                             inx = imw - br; iny = 0;
                             inw = br; inh = bt;
                             outx = ox + iw - bsr; outy = oy;
                             outw = bsr; outh = bst;
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            // .--
-                            // #  
+                            // .--.
+                            // #  |
+                            // '--'
                             inx = 0; iny = bt;
                             inw = bl; inh = imh - bt - bb;
                             outx = ox; outy = oy + bst;
@@ -3102,6 +3106,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                             // .--.
                             // |##|
+                            // '--'
                             if (o->cur->border.fill > EVAS_BORDER_FILL_NONE)
                               {
                                  inx = bl; iny = bt;
@@ -3121,29 +3126,33 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                                  else
                                    _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                               }
-                            // --.
-                            //   #
+                            // .--.
+                            // |  #
+                            // '--'
                             inx = imw - br; iny = bt;
                             inw = br; inh = imh - bt - bb;
                             outx = ox + iw - bsr; outy = oy + bst;
                             outw = bsr; outh = ih - bst - bsb;
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            // |
-                            // #--
+                            // .--.
+                            // |  |
+                            // #--'
                             inx = 0; iny = imh - bb;
                             inw = bl; inh = bb;
                             outx = ox; outy = oy + ih - bsb;
                             outw = bsl; outh = bsb;
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            // |
-                            // .## 
+                            // .--.
+                            // |  |
+                            // '##'
                             inx = bl; iny = imh - bb;
                             inw = imw - bl - br; inh = bb;
                             outx = ox + bsl; outy = oy + ih - bsb;
                             outw = iw - bsl - bsr; outh = bsb;
                             _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            //   |
-                            // --#
+                            // .--.
+                            // |  |
+                            // '--#
                             inx = imw - br; iny = imh - bb;
                             inw = br; inh = bb;
                             outx = ox + iw - bsr; outy = oy + ih - bsb;
