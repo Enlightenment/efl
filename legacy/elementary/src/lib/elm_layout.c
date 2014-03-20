@@ -1090,7 +1090,7 @@ _elm_layout_elm_container_content_swallow_list_get(Eo *obj EINA_UNUSED, Elm_Layo
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
-        if ((sub_d->type == SWALLOW) && ret)
+        if (sub_d->type == SWALLOW)
           ret = eina_list_append(ret, sub_d->obj);
      }
 
