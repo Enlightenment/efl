@@ -149,7 +149,7 @@ eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, long long current
    progress->op = op->op;
    progress->current = current;
    progress->max = max;
-   progress->percent = (float) current * 100.0 / (float) max;
+   progress->percent = max ? (float) current * 100.0 / (float) max : 100;
    progress->source = eina_stringshare_ref(op->source);
    progress->dest = eina_stringshare_ref(op->dest);
 
