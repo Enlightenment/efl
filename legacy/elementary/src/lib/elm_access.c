@@ -253,9 +253,8 @@ _access_highlight_read(Elm_Access_Info *ac, Evas_Object *obj)
                     eina_strbuf_append_printf(strbuf, ", %s", txt);
                   else
                     eina_strbuf_append(strbuf, txt);
-
-                  free(txt);
                }
+             free(txt);
           }
      }
 
