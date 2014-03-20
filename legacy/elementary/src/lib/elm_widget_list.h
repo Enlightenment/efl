@@ -43,6 +43,8 @@ struct _Elm_List_Smart_Data
       Evas_Coord x, y;
    } history[ELM_LIST_SWIPE_MOVES];
 
+   Elm_Object_Item                      *highlighted_item;
+
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             was_selected : 1;
    Eina_Bool                             fix_pending : 1;
@@ -53,7 +55,6 @@ struct _Elm_List_Smart_Data
    Eina_Bool                             multi : 1;
    Eina_Bool                             swipe : 1;
    Eina_Bool                             delete_me : 1;
-   Elm_Object_Item                      *highlighted_item;
 };
 
 typedef struct _Elm_List_Item Elm_List_Item;
