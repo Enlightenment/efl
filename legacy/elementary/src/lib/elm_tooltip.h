@@ -117,11 +117,33 @@ typedef Evas_Object *(*Elm_Tooltip_Content_Cb)(void *data, Evas_Object *obj, Eva
  */
 typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj, Evas_Object *tooltip, void *item);
 
+/**
+ * @brief Force show tooltip of object
+ *
+ * @param obj Target object
+ *
+ * Force show the tooltip and disable hide on mouse_out.
+ * If another content is set as tooltip, the visible tooltip will hididen and
+ * showed again with new content.
+ * This can force show more than one tooltip at a time.
+ *
+ * @ingroup Tooltips
+ */
 EAPI void        elm_object_tooltip_show(Evas_Object *obj);
+
+/**
+ * @brief Force hide tooltip of object
+ *
+ * @param obj Target object
+ *
+ * Force hide the tooltip and (re)enable future mouse interations.
+ *
+ * @ingroup Tooltips
+ */
 EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
 
 /**
- * Set the text to be displayed inside the tooltip.
+ * @brief Set the text to be displayed inside the tooltip.
  *
  * @param obj The tooltip object.
  * @param text The text to be displayed.
@@ -131,11 +153,46 @@ EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
 EAPI void        elm_object_tooltip_text_set(Evas_Object *obj, const char *text);
 EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text);
 #define elm_object_tooltip_translatable_text_set(obj, text) elm_object_tooltip_domain_translatable_text_set((obj), NULL, (text))
+
+/**
+ * @brief Set the content to be shown in the tooltip object
+ *
+ * @param obj The object being attached a tooltip.
+ * @param func The function used to create the tooltip contents.
+ * @param data What to provide to @a func as callback data/context.
+ * @param del_cb Function called when data is not needed anymore, either when
+ *        another callback replaces @p func, the tooltip is unset with
+ *        elm_object_tooltip_unset() or the owner object @a obj
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is NULL.
+ *
+ * Setup the tooltip to object. The object can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @ingroup Tooltips
+ */
 EAPI void        elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+
+/**
+ * @brief Unset tooltip from object
+ *
+ * @param obj Target object
+ *
+ * Remove tooltip from object. The callback provided as del_cb to
+ * elm_object_tooltip_content_cb_set() will be called to notify it is
+ * not used anymore.
+ *
+ * @see elm_object_tooltip_content_cb_set()
+ *
+ * @ingroup Tooltips
+ */
 EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
 
 /**
- * Sets a different style for this object tooltip.
+ * @brief Set a different style for this object tooltip.
  *
  * @note before you set a style you should define a tooltip with
  *       elm_object_tooltip_content_cb_set() or
@@ -149,7 +206,7 @@ EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
 EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
 
 /**
- * Get the style for this object tooltip.
+ * @brief Get the style for this object tooltip.
  *
  * @param obj an object with tooltip already set.
  * @return style the theme style in use, defaults to "default". If the
@@ -161,6 +218,7 @@ EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
 
 /**
  * @brief Disable size restrictions on an object's tooltip
+ *
  * @param obj The tooltip's anchor object
  * @param disable If EINA_TRUE, size restrictions are disabled
  * @return EINA_FALSE on failure, EINA_TRUE on success
@@ -174,6 +232,7 @@ EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool 
 
 /**
  * @brief Retrieve size restriction state of an object's tooltip
+ *
  * @param obj The tooltip's anchor object
  * @return If EINA_TRUE, size restrictions are disabled
  *

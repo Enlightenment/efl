@@ -894,18 +894,6 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
    if (del_cb) del_cb((void *)data, owner, NULL);
 }
 
-/**
- * Force show tooltip of object
- *
- * @param obj Target object
- *
- * Force show the tooltip and disable hide on mouse_out.
- * If another content is set as tooltip, the visible tooltip will hididen and
- * showed again with new content.
- * This can force show more than one tooltip at a time.
- *
- * @ingroup Tooltips
- */
 EAPI void
 elm_object_tooltip_show(Evas_Object *obj)
 {
@@ -914,15 +902,6 @@ elm_object_tooltip_show(Evas_Object *obj)
    _elm_tooltip_show(tt);
 }
 
-/**
- * Force hide tooltip of object
- *
- * @param obj Target object
- *
- * Force hide the tooltip and (re)enable future mouse interations.
- *
- * @ingroup Tooltips
- */
 EAPI void
 elm_object_tooltip_hide(Evas_Object *obj)
 {
@@ -931,18 +910,6 @@ elm_object_tooltip_hide(Evas_Object *obj)
    _elm_tooltip_hide_anim_start(tt);
 }
 
-/**
- * Set the text to be shown in the tooltip object
- *
- * @param obj Target object
- * @param text The text to set in the content
- *
- * Setup the text as tooltip to object. The object can have only one tooltip,
- * so any previous tooltip data is removed.
- * This method call internaly the elm_tooltip_content_cb_set().
- *
- * @ingroup Tooltips
- */
 EAPI void
 elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
 {
@@ -954,8 +921,6 @@ elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
      (obj, _elm_tooltip_label_create, text, _elm_tooltip_label_del_cb);
 }
 
-/**
- */
 EAPI void
 elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text)
 {
@@ -972,45 +937,12 @@ elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *do
       _elm_tooltip_trans_label_del_cb);
 }
 
-/**
- * Set the content to be shown in the tooltip object
- *
- * Setup the tooltip to object. The object can have only one tooltip,
- * so any previous tooltip data is removed. @p func(with @p data) will
- * be called every time that need show the tooltip and it should
- * return a valid Evas_Object. This object is then managed fully by
- * tooltip system and is deleted when the tooltip is gone.
- *
- * @param obj the object being attached a tooltip.
- * @param func the function used to create the tooltip contents.
- * @param data what to provide to @a func as callback data/context.
- * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @p func, the tooltip is unset with
- *        elm_object_tooltip_unset() or the owner object @a obj
- *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is NULL.
- *
- * @ingroup Tooltips
- */
 EAPI void
 elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
    elm_object_sub_tooltip_content_cb_set(obj, obj, func, data, del_cb);
 }
 
-/**
- * Unset tooltip from object
- *
- * @param obj Target object
- *
- * Remove tooltip from object. The callback provided as del_cb to
- * elm_object_tooltip_content_cb_set() will be called to notify it is
- * not used anymore.
- *
- * @see elm_object_tooltip_content_cb_set()
- *
- * @ingroup Tooltips
- */
 EAPI void
 elm_object_tooltip_unset(Evas_Object *obj)
 {
@@ -1018,16 +950,6 @@ elm_object_tooltip_unset(Evas_Object *obj)
    _elm_tooltip_unset(tt);
 }
 
-/**
- * Sets a different style for this object tooltip.
- *
- * @note before you set a style you should define a tooltip with
- *       elm_object_tooltip_content_cb_set() or
- *       elm_object_tooltip_text_set().
- *
- * @param obj an object with tooltip already set.
- * @param style the theme style to use (default, transparent, ...)
- */
 EAPI void
 elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
 {
@@ -1036,13 +958,6 @@ elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
    elm_tooltip_theme(tt);
 }
 
-/**
- * Get the style for this object tooltip.
- *
- * @param obj an object with tooltip already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a tooltip set, then NULL is returned.
- */
 EAPI const char *
 elm_object_tooltip_style_get(const Evas_Object *obj)
 {
@@ -1050,15 +965,6 @@ elm_object_tooltip_style_get(const Evas_Object *obj)
    return tt->style ? tt->style : "default";
 }
 
-/**
- * @brief Disable size restrictions on an object's tooltip
- * @param obj The tooltip's anchor object
- * @param disable If EINA_TRUE, size restrictions are disabled
- * @return EINA_FALSE on failure, EINA_TRUE on success
- *
- * This function allows a tooltip to expand beyond its parent window's canvas.
- * It will instead be limited only by the size of the display.
- */
 EAPI Eina_Bool
 elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable)
 {
@@ -1066,15 +972,6 @@ elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable)
    return tt->free_size = disable;
 }
 
-/**
- * @brief Retrieve size restriction state of an object's tooltip
- * @param obj The tooltip's anchor object
- * @return If EINA_TRUE, size restrictions are disabled
- *
- * This function returns whether a tooltip is allowed to expand beyond
- * its parent window's canvas.
- * It will instead be limited only by the size of the display.
- */
 EAPI Eina_Bool
 elm_object_tooltip_window_mode_get(const Evas_Object *obj)
 {
