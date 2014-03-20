@@ -250,9 +250,21 @@ _obj_mouse_up(void *data,
               void *event_info EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET(data, sd);
-   if (sd->still_in)
+   if (sd->still_in &&
+       (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK))
      elm_widget_focus_mouse_up_handle(obj);
+
    sd->still_in = EINA_FALSE;
+}
+
+static void
+_obj_mouse_in(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj,
+              void *event_info EINA_UNUSED)
+{
+   if (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN)
+     elm_widget_focus_mouse_up_handle(obj);
 }
 
 EOLIAN static void
@@ -271,6 +283,8 @@ _elm_widget_evas_smart_add(Eo *obj, Elm_Widget_Smart_Data *priv)
                                   _obj_mouse_move, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
                                   _obj_mouse_up, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_IN,
+                                  _obj_mouse_in, obj);
    /* just a helper for inheriting classes */
    if (priv->resize_obj)
      {

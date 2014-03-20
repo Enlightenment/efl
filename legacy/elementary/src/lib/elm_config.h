@@ -1239,6 +1239,45 @@ EAPI Eina_Bool elm_config_focus_highlight_clip_disabled_get(void);
 EAPI void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
 
 /**
+ * Focus Movement Policy
+ *
+ * @since 1.10
+ * @ingroup Focus
+ */
+typedef enum
+{
+   ELM_FOCUS_MOVE_POLICY_CLICK,
+   ELM_FOCUS_MOVE_POLICY_IN
+} Elm_Focus_Move_Policy;
+
+/**
+ * Get the focus movement policy
+ *
+ * @return The focus movement policy
+ *
+ * Get how the focus is moved to another object. It can be @c
+ * ELM_FOCUS_MOVE_POLICY_CLICK or @c ELM_FOCUS_MOVE_POLICY_IN. The first means
+ * elementary focus is moved on elementary object click. The second means
+ * elementary focus is moved on elementary object mouse in.
+ *
+ * @see elm_config_focus_move_policy_set()
+ * @since 1.10
+ * @ingroup Focus
+ */
+EAPI Elm_Focus_Move_Policy elm_config_focus_move_policy_get(void);
+
+/**
+ * Set elementary focus movement policy
+ *
+ * @param policy A policy to apply for the focus movement
+ *
+ * @see elm_config_focus_move_policy_get()
+ * @since 1.10
+ * @ingroup Focus
+ */
+EAPI void elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy);
+
+/**
  * Get the system mirrored mode. This determines the default mirrored mode
  * of widgets.
  *
