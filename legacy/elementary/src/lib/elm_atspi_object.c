@@ -78,7 +78,7 @@ const char* Atspi_Name[] = {
     "status bar",
     "table",
     "table cell",
-    "table column header"
+    "table column header",
     "table row header",
     "tearoff menu item",
     "terminal",
