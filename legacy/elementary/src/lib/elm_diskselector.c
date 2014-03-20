@@ -63,7 +63,7 @@ _selected_item_indicate(Elm_Diskselector_Item *item)
 
    EINA_LIST_FOREACH(sd->r_items, l, it)
      {
-        if (it->label && !strcmp(it->label, it->label))
+        if (it->label && !strcmp(it->label, item->label))
           edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,default", "elm");
