@@ -4520,6 +4520,9 @@ if test "x$prefix" != "x/usr"; then
   done
   resolved_dbusservicedir=$path
 
+echo "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+echo "$resolved_dbusservicedir"
+echo "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
   old=
   path=$USER_SESSION_DIR
   while test "x$old" != "x$path"; do
@@ -4542,7 +4545,7 @@ if test "x$prefix" != "x/usr"; then
     AC_MSG_NOTICE([installing DBus services in user local "$resolved_dbusservicedir". Only accessible to user $USER])
   elif echo "$XDG_DATA_DIRS" | grep -e "$resolved_datadir" >/dev/null 2>/dev/null; then
     AC_MSG_NOTICE([installing DBus services in "$resolved_datadir" set in \$XDG_DATA_DIRS. Every user must have \$XDG_DATA_DIRS containing "$resolved_datadir".])
-  elif echo "$resolved_dbusservicedir" | grep -e '^/usr' >/dev/null 2>/dev/null; then
+  elif echo "$resolved_dbusservicedir" | grep -e '^/usr/s' >/dev/null 2>/dev/null; then
     AC_MSG_NOTICE([installing DBus serivces in $resolved_dbusservicedir])
   else
     needs_alert_dbus=1
@@ -4556,7 +4559,7 @@ if test "x$prefix" != "x/usr"; then
       AC_MSG_NOTICE([installing systemd services in "$base_USER_SESSION_DIR" set in \$XDG_DATA_DIRS. Every user must have \$XDG_DATA_DIRS containing "$base_USER_SESSION_DIR".])
     elif echo "$XDG_CONFIG_DIRS" | grep -e "$base_USER_SESSION_DIR" >/dev/null 2>/dev/null; then
       AC_MSG_NOTICE([installing systemd services in "$base_USER_SESSION_DIR" set in \$XDG_CONFIG_DIRS. Every user must have \$XDG_CONFIG_DIRS containing "$base_USER_SESSION_DIR".])
-    elif echo "$resolved_USER_SESSION_DIR" | grep -e '^/usr' >/dev/null 2>/dev/null; then
+    elif echo "$resolved_USER_SESSION_DIR" | grep -e '^/usr/s' >/dev/null 2>/dev/null; then
       AC_MSG_NOTICE([installing systemd serivces in $resolved_USER_SESSION_DIR])
     else
        needs_alert_systemd=1
