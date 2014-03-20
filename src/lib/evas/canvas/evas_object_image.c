@@ -503,6 +503,7 @@ _image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
           obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output, o->engine_data, &stride);
         else
           stride = w * 4;
+
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
           {
              state_write->has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output, o->engine_data);
@@ -3107,6 +3108,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    if (pixels)
      {
         Evas_Coord idw, idh, idx, idy;
+        int l = 0, r = 0, t = 0, b = 0;
         int ix, iy, iw, ih;
 
         if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
@@ -3122,8 +3124,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
              Evas_Filter_Context *filter = NULL;
              void * const surface_save = surface;
              void * const context_save = context;
-             const Eina_Bool do_async_save = do_async;
-             int l = 0, r = 0, t = 0, b = 0;
+             Eina_Bool input_stolen = EINA_FALSE;
              Eina_Bool clear = EINA_FALSE;
              int W, H, offx, offy;
 
@@ -3148,6 +3149,20 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 
              /* Evas Filters on Image Object. Yet another experimental piece of code.
               * Replace current context, offset and surface by filter-made targets.
+              *
+              * Mechanism:
+              * 1. Create a new surface & context, matching the object geometry
+              * 2. Render all borders & tiles into that surface
+              * 3. Apply effect and draw this surface into the original target
+              *
+              * Notes:
+              * This becomes VERY SLOW when the image OBJECT size grows... even if
+              * the image itself is very small. But we can't really apply a proper blur
+              * over one tile and repeat since blurs should overlap.
+              *
+              * Behaviour depends on the 'filled' flag:
+              * - If filled, then scale down the image to accomodate the whole filter's padding.
+              * - Otherwise, draw image in place and clip the filter's effects (eg. blur will be clipped out).
               */
              if (!o->cur->filter.invalid && o->cur->filter.code)
                {
@@ -3156,8 +3171,8 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
                   Eina_Bool ok;
 
                   evas_filter_program_padding_get(pgm, &l, &r, &t, &b);
-                  W = obj->cur->geometry.w + l + r;
-                  H = obj->cur->geometry.h + t + b;
+                  W = obj->cur->geometry.w;
+                  H = obj->cur->geometry.h;
 
                   if (!redraw && o->cur->filter.output)
                     {
@@ -3211,8 +3226,21 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 
                   if (obj->layer->evas->engine.func->gl_surface_read_pixels)
                     {
-                       evas_filter_context_proxy_render_all(filter, eo_obj, EINA_FALSE);
+                       // GL case: Create new surface, draw to it (OpenGL) and call glReadPixels
                        surface = obj->layer->evas->engine.func->image_map_surface_new(output, W, H, EINA_TRUE);
+                       input_stolen = EINA_FALSE;
+                    }
+                  else
+                    {
+                       // Software case: Directly draw into the filter's input buffer
+                       surface = evas_filter_buffer_backing_steal(filter, EVAS_FILTER_BUFFER_INPUT_ID);
+                       input_stolen = EINA_TRUE;
+                    }
+
+                  if (!surface)
+                    {
+                       surface = surface_save;
+                       ok = EINA_FALSE;
                     }
 
 state_write:
@@ -3220,12 +3248,19 @@ state_write:
                     {
                        if (ok)
                          {
-                            offx = l;
-                            offy = t;
                             context = obj->layer->evas->engine.func->context_new(output);
                             clear = EINA_TRUE;
-                            do_async = EINA_FALSE;
                             state_write->filter.chain = pgm;
+                            if (!o->filled)
+                              {
+                                 offx = 0;
+                                 offy = 0;
+                              }
+                            else
+                              {
+                                 offx = l;
+                                 offy = t;
+                              }
                          }
                        else
                          {
@@ -3238,6 +3273,15 @@ state_write:
                          }
                     }
                   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write)
+
+                    if (clear)
+                      {
+                         obj->layer->evas->engine.func->context_color_set(output, context, 0, 0, 0, 0);
+                         obj->layer->evas->engine.func->context_render_op_set(output, context, EVAS_RENDER_COPY);
+                         obj->layer->evas->engine.func->rectangle_draw(output, context, surface, 0, 0, W, H, EINA_FALSE);
+                         obj->layer->evas->engine.func->context_color_set(output, context, 255, 255, 255, 255);
+                         obj->layer->evas->engine.func->context_render_op_set(output, context, EVAS_RENDER_BLEND);
+                      }
                }
 
              while ((int)idx < obj->cur->geometry.w)
@@ -3256,14 +3300,9 @@ state_write:
                   else
                     iw = ((int)(idx + idw)) - ix;
 
-                  if (clear)
-                    {
-                       obj->layer->evas->engine.func->context_color_set(output, context, 0, 0, 0, 0);
-                       obj->layer->evas->engine.func->context_render_op_set(output, context, EVAS_RENDER_COPY);
-                       obj->layer->evas->engine.func->rectangle_draw(output, context, surface, 0, 0, W, H, EINA_FALSE);
-                       obj->layer->evas->engine.func->context_color_set(output, context, 255, 255, 255, 255);
-                       obj->layer->evas->engine.func->context_render_op_set(output, context, EVAS_RENDER_BLEND);
-                    }
+                  // Filter stuff
+                  if (o->filled)
+                    iw -= l + r;
 
                   while ((int)idy < obj->cur->geometry.h)
                     {
@@ -3278,6 +3317,11 @@ state_write:
                          }
                        else
                          ih = ((int)(idy + idh)) - iy;
+
+                       // Filter stuff
+                       if (o->filled)
+                         ih -= t + b;
+
                        if ((o->cur->border.l == 0) &&
                            (o->cur->border.r == 0) &&
                            (o->cur->border.t == 0) &&
@@ -3472,14 +3516,18 @@ state_write:
                        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write)
                     }
 
-                  evas_filter_image_draw(filter, context, EVAS_FILTER_BUFFER_INPUT_ID, surface, do_async_save);
-                  obj->layer->evas->engine.func->context_free(output, context);
+                  if (!input_stolen)
+                    evas_filter_image_draw(filter, context, EVAS_FILTER_BUFFER_INPUT_ID, surface, do_async);
+                  else
+                    evas_filter_buffer_backing_release(filter, surface);
 
                   evas_filter_target_set(filter, context_save, surface_save, obj->cur->geometry.x + x, obj->cur->geometry.y + y);
                   evas_filter_context_autodestroy(filter);
                   evas_filter_run(filter);
 
-                  obj->layer->evas->engine.func->image_map_surface_free(output, surface);
+                  if (!input_stolen)
+                    obj->layer->evas->engine.func->image_map_surface_free(output, surface);
+                  obj->layer->evas->engine.func->context_free(output, context);
                }
           }
      }
