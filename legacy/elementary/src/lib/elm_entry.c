@@ -388,6 +388,39 @@ _hide_selection_handler(Evas_Object *obj)
    sd->end_handler_shown = EINA_FALSE;
 }
 
+static Eina_Rectangle *
+_viewport_region_get(Evas_Object *obj)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+   Eina_Rectangle *rect = eina_rectangle_new(0, 0, 0, 0);
+   Evas_Object *parent;
+
+   if (sd->scroll)
+     evas_object_geometry_get(sd->scr_edje, &rect->x, &rect->y, &rect->w, &rect->h);
+   else
+     evas_object_geometry_get(sd->entry_edje, &rect->x, &rect->y, &rect->w, &rect->h);
+
+   parent = elm_widget_parent_get(obj);
+   while (parent)
+     {
+        if (eo_isa(parent, ELM_INTERFACE_SCROLLABLE_CLASS))
+          {
+             Eina_Rectangle *pr = eina_rectangle_new(0, 0, 0, 0);
+             evas_object_geometry_get(parent, &pr->x, &pr->y, &pr->w, &pr->h);
+             if (!eina_rectangle_intersection(rect, pr))
+               {
+                  rect->x = rect->y = rect->w = rect->h = 0;
+                  eina_rectangle_free(pr);
+                  break;
+               }
+             eina_rectangle_free(pr);
+          }
+        parent = elm_widget_parent_get(parent);
+     }
+
+   return rect;
+}
+
 static void
 _update_selection_handler(Evas_Object *obj)
 {
@@ -400,6 +433,11 @@ _update_selection_handler(Evas_Object *obj)
 
    if (!sd->sel_handler_disabled)
      {
+        Eina_Rectangle *rect;
+        Evas_Coord hx, hy;
+        Eina_Bool hidden = EINA_FALSE;
+
+        rect = _viewport_region_get(obj);
         start_pos = edje_object_part_text_cursor_pos_get
            (sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_BEGIN);
         end_pos = edje_object_part_text_cursor_pos_get
@@ -407,7 +445,7 @@ _update_selection_handler(Evas_Object *obj)
 
         evas_object_geometry_get(sd->entry_edje, &ent_x, &ent_y, NULL, NULL);
         last_pos = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text",
-                                                            EDJE_CURSOR_MAIN);
+                                                        EDJE_CURSOR_MAIN);
         edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                              EDJE_CURSOR_MAIN, start_pos);
         edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
@@ -418,27 +456,67 @@ _update_selection_handler(Evas_Object *obj)
                                                   &ex, &ey, NULL, &eh);
         edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                              EDJE_CURSOR_MAIN, last_pos);
-        if (!sd->start_handler_shown)
+        if (start_pos < end_pos)
+          {
+             hx = ent_x + sx;
+             hy = ent_y + sy + sh;
+             evas_object_move(sd->start_handler, hx, hy);
+          }
+        else
+          {
+             hx = ent_x + ex;
+             hy = ent_y + ey + eh;
+             evas_object_move(sd->start_handler, hx, hy);
+          }
+        if (!eina_rectangle_xcoord_inside(rect, hx) ||
+            !eina_rectangle_ycoord_inside(rect, hy))
+          {
+             hidden = EINA_TRUE;
+          }
+        if (!sd->start_handler_shown && !hidden)
           {
              edje_object_signal_emit(sd->start_handler,
                                      "elm,handler,show", "elm");
              sd->start_handler_shown = EINA_TRUE;
           }
-        if (start_pos < end_pos)
-          evas_object_move(sd->start_handler, ent_x + sx, ent_y + sy + sh);
-        else
-          evas_object_move(sd->start_handler, ent_x + ex, ent_y + ey + eh);
+        else if (sd->start_handler_shown && hidden)
+          {
+             edje_object_signal_emit(sd->start_handler,
+                                     "elm,handler,hide", "elm");
+             sd->start_handler_shown = EINA_FALSE;
+          }
 
-        if (!sd->end_handler_shown)
+        hidden = EINA_FALSE;
+        if (start_pos < end_pos)
+          {
+             hx = ent_x + ex;
+             hy = ent_y + ey + eh;
+             evas_object_move(sd->end_handler, hx, hy);
+          }
+        else
+          {
+             hx = ent_x + sx;
+             hy = ent_y + sy + sh;
+             evas_object_move(sd->end_handler, hx, hy);
+          }
+        if (!eina_rectangle_xcoord_inside(rect, hx) ||
+            !eina_rectangle_ycoord_inside(rect, hy))
+          {
+             hidden = EINA_TRUE;
+          }
+        if (!sd->end_handler_shown && !hidden)
           {
              edje_object_signal_emit(sd->end_handler,
                                      "elm,handler,show", "elm");
              sd->end_handler_shown = EINA_TRUE;
           }
-        if (start_pos < end_pos)
-          evas_object_move(sd->end_handler, ent_x + ex, ent_y + ey + eh);
-        else
-          evas_object_move(sd->end_handler, ent_x + sx, ent_y + sy + sh);
+        else if (sd->end_handler_shown && hidden)
+          {
+             edje_object_signal_emit(sd->end_handler,
+                                     "elm,handler,hide", "elm");
+             sd->end_handler_shown = EINA_FALSE;
+          }
+        eina_rectangle_free(rect);
      }
    else
      {
@@ -5131,6 +5209,14 @@ _elm_entry_content_viewport_resize_cb(Evas_Object *obj,
    _elm_entry_resize_internal(obj);
 }
 
+static void
+_scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
+{
+   ELM_ENTRY_DATA_GET(obj, sd);
+   if (sd->have_selection)
+     _update_selection_handler(obj);
+}
+
 EAPI void
 elm_entry_scrollable_set(Evas_Object *obj,
                          Eina_Bool scroll)
@@ -5176,6 +5262,8 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
         elm_widget_resize_object_set(obj, sd->scr_edje, EINA_TRUE);
 
         eo_do(obj, elm_interface_scrollable_objects_set(sd->scr_edje, sd->hit_rect));
+
+        eo_do(obj, elm_interface_scrollable_scroll_cb_set(_scroll_cb));
 
         eo_do(obj, elm_interface_scrollable_bounce_allow_set(sd->h_bounce, sd->v_bounce));
         if (sd->single_line)
