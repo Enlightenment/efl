@@ -7654,7 +7654,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
 	char state[512], *delim;
 	double value;
 	strncpy(state, data, sizeof(state) - 1); /* if we go over it, too bad.. the list of states may need to change to provide name and value separated */
-	delim = strchr(state, ' ');
+        delim = strchr(state, ' ');
+        if (!delim) continue;
 	*delim = '\0';
 	delim++;
 	value = strtod(delim, NULL);
