@@ -4849,6 +4849,27 @@ update:
    evas_object_inform_call_resize(eo_obj);
 }
 
+EOLIAN Eina_Bool
+_evas_image_filter_padding_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o,
+                               int *l, int *r, int *t, int *b)
+{
+   Evas_Filter_Program *pgm = o->cur->filter.chain;
+   int pl = 0, pr = 0, pt = 0, pb = 0;
+   Eina_Bool used = EINA_FALSE;
+
+   if (pgm)
+     {
+        used = !o->cur->filter.invalid;
+        evas_filter_program_padding_get(pgm, &pl, &pr, &pt, &pb);
+     }
+
+   if (l) *l = pl;
+   if (r) *r = pr;
+   if (t) *t = pt;
+   if (b) *b = pb;
+   return used;
+}
+
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
 
 #include "canvas/evas_image.eo.c"

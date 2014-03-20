@@ -1063,6 +1063,18 @@ class Evas_Image (Evas_Object)
             Eo* eobj; /*@ Eo object to use through proxy rendering */
          }
       }
+      filter_padding {
+         get {
+            /*@ Get the value of the extra padding set when a filter is used. */
+            return Eina_Bool; /*@ Returns false if the filter is invalid and padding is 0 */
+         }
+         values {
+            int l; /*@ Left padding in pixels */
+            int r; /*@ Right padding in pixels */
+            int t; /*@ Top padding in pixels */
+            int b; /*@ Bottom padding in pixels */
+         }
+      }
    }
    methods {
       preload_begin {
