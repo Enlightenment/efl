@@ -321,18 +321,6 @@ end:
    eina_strbuf_free(eoparam);
 }
 
-//TODO change replacement
-static char*
-_class_h_find(const char *classname, Eina_Strbuf *buf)
-{
-   Eina_Strbuf *classreal = eina_strbuf_new();
-   _template_fill(classreal, "@#OBJCLASS_CLASS", classname, "", EINA_FALSE);
-   char *ret = strstr(eina_strbuf_string_get(buf), eina_strbuf_string_get(classreal));
-   eina_strbuf_free(classreal);
-
-   return ret;
-}
-
 Eina_Bool
 legacy_header_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
 {
@@ -371,101 +359,11 @@ legacy_header_generate(const char *classname, int eo_version EINA_UNUSED, Eina_S
 }
 
 Eina_Bool
-legacy_header_append(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *header)
-{
-   const Eolian_Function_Type ftype_order[] = {CONSTRUCTOR, PROPERTY_FUNC, METHOD_FUNC};
-   char tmpstr[0xFF];
-
-   if (!eolian_class_exists(classname))
-     {
-        printf ("Class \"%s\" not found in database\n", classname);
-        return EINA_FALSE;
-     }
-
-   char *clsptr = _class_h_find(classname, header);
-
-   if (!clsptr)
-     {
-        printf ("Class %s not found - append all\n", classname);
-        eina_strbuf_append_char(header, '\n');
-        if (!eo1_header_generate(classname, header)) return EINA_FALSE;
-        return EINA_TRUE;
-     }
-
-   printf ("Class %s found - searching for functions...\n", classname);
-
-   char *funcdef_pos = _nextline(strstr(clsptr, "+ sub_id)"), 1);
-   char *subid_pos = _startline(clsptr, strstr(clsptr, "SUB_ID_LAST"));
-
-   if (!(funcdef_pos && subid_pos) || (subid_pos > funcdef_pos))
-     {
-       printf ("Bad insertion queues - update aborted\n");
-       return EINA_FALSE;
-     }
-
-   Eina_Strbuf *str_subid = eina_strbuf_new();
-   Eina_Strbuf *str_funcdef = eina_strbuf_new();
-
-   const Eina_List *l;
-   void *data;
-
-   int i;
-   for (i = 0; i < 3; i++)
-      EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, ftype_order[i]), l, data)
-        {
-           const Eolian_Function_Type ftype = eolian_function_type_get((Eolian_Function)data);
-           const char *funcname = eolian_function_name_get((Eolian_Function)data);
-           Eina_Bool prop_read = (ftype == PROPERTY_FUNC || ftype == GET ) ? EINA_TRUE : EINA_FALSE ;
-           Eina_Bool prop_write = (ftype == PROPERTY_FUNC || ftype == SET ) ? EINA_TRUE : EINA_FALSE ;
-
-           if (!prop_read && !prop_write)
-             {
-                if (!strstr(eina_strbuf_string_get(header), funcname))
-                  {
-                     printf ("Appending eo function %s\n", funcname);
-                     eo1_enum_append(classname, funcname, str_subid);
-                     if (!eo1_fundef_generate(classname, (Eolian_Function)data, UNRESOLVED, str_funcdef)) return EINA_FALSE;
-                  }
-             }
-           if (prop_write)
-             {
-                sprintf(tmpstr, "%s_set", funcname);
-                if (!strstr(eina_strbuf_string_get(header), tmpstr))
-                  {
-                     printf ("Appending eo function %s\n", tmpstr);
-                     eo1_enum_append(classname, tmpstr, str_subid);
-                     if (!eo1_fundef_generate(classname, (Eolian_Function)data, SET, str_funcdef)) return EINA_FALSE;
-                  }
-             }
-           if (prop_read)
-             {
-                sprintf(tmpstr, "%s_get", funcname);
-                if (!strstr(eina_strbuf_string_get(header), tmpstr))
-                  {
-                     printf ("Appending eo function %s\n", tmpstr);
-                     eo1_enum_append(classname, tmpstr, str_subid);
-                     if (!eo1_fundef_generate(classname, (Eolian_Function)data, GET, str_funcdef)) return EINA_FALSE;
-                  }
-             }
-        }
-
-   const char *hdstr = eina_strbuf_string_get(header);
-   unsigned enum_offs = subid_pos - hdstr;
-   unsigned defs_offs = funcdef_pos - hdstr + eina_strbuf_length_get(str_subid);
-   eina_strbuf_insert(header, eina_strbuf_string_get(str_subid), enum_offs);
-   eina_strbuf_insert(header, eina_strbuf_string_get(str_funcdef), defs_offs);
-
-   eina_strbuf_free(str_subid);
-   eina_strbuf_free(str_funcdef);
-
-   return EINA_TRUE;
-}
-
-Eina_Bool
-legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
+legacy_source_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
+   Eolian_Function fn;
 
    if (!eolian_class_exists(classname))
      {
@@ -476,10 +374,7 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version E
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
 
-   if (!eo1_source_beginning_generate(classname, buf)) goto end;
-
    //Properties
-   Eolian_Function fn;
    EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, PROPERTY_FUNC), itr, fn)
      {
         const Eolian_Function_Type ftype = eolian_function_type_get(fn);
@@ -489,29 +384,23 @@ legacy_source_generate(const char *classname, Eina_Bool legacy, int eo_version E
 
         if (prop_write)
           {
-             if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf, NULL)) goto end;
-             if (legacy) _eapi_func_generate(classname, fn, SET, str_bodyf);
+             _eapi_func_generate(classname, fn, SET, str_bodyf);
           }
         if (prop_read)
           {
-             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) goto end;
-             if (legacy) _eapi_func_generate(classname, fn, GET, str_bodyf);
+             _eapi_func_generate(classname, fn, GET, str_bodyf);
           }
      }
 
    //Methods
    EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, METHOD_FUNC), itr, fn)
      {
-        if (!eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL)) goto end;
-        if (legacy) _eapi_func_generate(classname, fn, UNRESOLVED, str_bodyf);
+        _eapi_func_generate(classname, fn, UNRESOLVED, str_bodyf);
      }
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_bodyf));
 
-   if (!eo1_source_end_generate(classname, buf)) goto end;
-
    ret = EINA_TRUE;
-end:
    eina_strbuf_free(tmpbuf);
    eina_strbuf_free(str_bodyf);
 

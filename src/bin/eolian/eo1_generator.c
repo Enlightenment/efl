@@ -854,3 +854,49 @@ end:
    return ret;
 }
 
+Eina_Bool
+eo_source_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
+{
+   Eina_Bool ret = EINA_FALSE;
+   const Eina_List *itr;
+   Eolian_Function fn;
+
+   Eina_Strbuf *str_bodyf = eina_strbuf_new();
+
+   if (!eo1_source_beginning_generate(classname, buf)) goto end;
+
+   //Properties
+   EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, PROPERTY_FUNC), itr, fn)
+     {
+        const Eolian_Function_Type ftype = eolian_function_type_get(fn);
+
+        Eina_Bool prop_read = ( ftype == SET ) ? EINA_FALSE : EINA_TRUE;
+        Eina_Bool prop_write = ( ftype == GET ) ? EINA_FALSE : EINA_TRUE;
+
+        if (prop_write)
+          {
+             if (!eo1_bind_func_generate(classname, fn, SET, str_bodyf, NULL)) goto end;
+          }
+        if (prop_read)
+          {
+             if (!eo1_bind_func_generate(classname, fn, GET, str_bodyf, NULL)) goto end;
+          }
+     }
+
+   //Methods
+   EINA_LIST_FOREACH(eolian_class_functions_list_get(classname, METHOD_FUNC), itr, fn)
+     {
+        if (!eo1_bind_func_generate(classname, fn, UNRESOLVED, str_bodyf, NULL)) goto end;
+     }
+
+   eina_strbuf_append(buf, eina_strbuf_string_get(str_bodyf));
+   eina_strbuf_reset(str_bodyf);
+
+   if (!eo1_source_end_generate(classname, buf)) goto end;
+
+   ret = EINA_TRUE;
+end:
+   eina_strbuf_free(str_bodyf);
+   return ret;
+}
+
