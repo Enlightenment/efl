@@ -218,17 +218,17 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
    s++;
 
    param->way = PARAM_IN;
-   if (strncmp(toknz->saved.tok, "@in ", 3) == 0)
+   if (strncmp(toknz->saved.tok, "@in ", 4) == 0)
      {
         toknz->saved.tok += 3;
         param->way = PARAM_IN;
      }
-   else if (strncmp(toknz->saved.tok, "@out ", 4) == 0)
+   else if (strncmp(toknz->saved.tok, "@out ", 5) == 0)
      {
         toknz->saved.tok += 4;
         param->way = PARAM_OUT;
      }
-   else if (strncmp(toknz->saved.tok, "@inout ", 6) == 0)
+   else if (strncmp(toknz->saved.tok, "@inout ", 7) == 0)
      {
         toknz->saved.tok += 6;
         param->way = PARAM_INOUT;
