@@ -398,9 +398,13 @@ check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 static void
 check_nameless_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Common *ed, Eet_File *ef)
 {
-   if (!ed->state.name)
-      error_and_abort(ef, "Collection %i: description with state missing on part \"%s\"",
-                      pc->id, ep->name);
+   Edje_Part_Collection_Directory_Entry *de;
+
+   if (ed->state.name) return;
+
+   de = eina_hash_find(edje_collections_lookup, &pc->id);
+   error_and_abort(ef, "Group '%s': part \"%s\" has description with missing state",
+                   de->entry, ep->name);
 }
 
 static void
