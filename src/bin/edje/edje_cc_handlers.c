@@ -5348,13 +5348,6 @@ st_collections_group_parts_part_description_inherit(void)
    ep = current_part;
    ed = current_desc;
 
-   if (!ed->state.name)
-     {
-        ERR("parse error %s:%i. inherit may only be used after state",
-            file_in, line - 1);
-        exit(-1);
-     }
-
    parent = parent_desc;
    if (!parent)
      {
