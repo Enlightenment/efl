@@ -9,8 +9,6 @@
 
 #define DISPLAY_ITEM_NUM_MIN 3
 
-EAPI Eo_Op ELM_OBJ_DISKSELECTOR_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_DISKSELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Diskselector"
@@ -37,18 +35,16 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static void
-_elm_diskselector_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Diskselector_Smart_Data *sd = _pd;
    Elm_Diskselector_Item *it;
    Eina_List *l;
 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -778,22 +774,18 @@ _theme_data_get(Evas_Object *obj)
    else sd->minh = -1;
 }
 
-static void
-_elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Eina_List *l;
    Elm_Diskselector_Item *it;
    Evas_Object *blank;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    Evas *evas;
    const char *style = elm_widget_style_get(obj);
 
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
@@ -839,24 +831,19 @@ _elm_diskselector_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    evas_event_thaw(evas);
    evas_event_thaw_eval(evas);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_diskselector_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_sub_object_del(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Diskselector_Item *it;
    const Eina_List *l;
 
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
@@ -869,19 +856,17 @@ _elm_diskselector_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *
           }
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_diskselector_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_on_focus(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
      {
@@ -896,43 +881,31 @@ _elm_diskselector_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool _elm_diskselector_smart_focus_next_enable = EINA_FALSE;
 
-static void
-_elm_diskselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_diskselector_smart_focus_next_enable;
+   return _elm_diskselector_smart_focus_next_enable;
 }
 
-static void
-_elm_diskselector_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_focus_next(Eo *obj, Elm_Diskselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret;
-
    Eina_List *items = NULL;
    Eina_List *elist = NULL;
    Elm_Diskselector_Item *it;
-
-   ELM_DISKSELECTOR_CHECK(obj);
-   Elm_Diskselector_Smart_Data *sd = _pd;
 
    EINA_LIST_FOREACH(sd->items, elist, it)
      items = eina_list_append(items, it->base.access_obj);
 
    if (!sd->round)
      {
-        int_ret = elm_widget_focus_list_next_get
+        return elm_widget_focus_list_next_get
               (obj, items, eina_list_data_get, dir, next);
-        if (ret) *ret = int_ret;
-        return;
      }
 
    if (!elm_widget_focus_list_next_get
@@ -942,32 +915,26 @@ _elm_diskselector_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list
         elm_widget_focus_list_next_get
           (obj, items, eina_list_data_get, dir, next);
      }
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_diskselector_smart_event(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_diskselector_elm_widget_event(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Diskselector_Smart_Data *sd = _pd;
    Elm_Diskselector_Item *it = NULL;
    Eina_List *l;
+   Evas_Event_Key_Down  *ev = event_info;
 
-   if (ret) *ret = EINA_FALSE;
    (void) src;
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if (!sd->selected_item)
      {
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 
    if ((!strcmp(ev->key, "Left")) ||
@@ -994,7 +961,7 @@ _elm_diskselector_smart_event(Eo *obj, void *_pd, va_list *list)
    else if ((!strcmp(ev->key, "End")) ||
             ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      l = eina_list_last(sd->items);
-   else return;
+   else return EINA_FALSE;
 
    if (l)
      it = eina_list_data_get(l);
@@ -1007,7 +974,7 @@ _elm_diskselector_smart_event(Eo *obj, void *_pd, va_list *list)
      }
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -1119,7 +1086,7 @@ _scroll_drag_stop_cb(Evas_Object *obj,
 }
 
 static void
-_round_item_del(Elm_Diskselector_Smart_Data *sd,
+_round_item_del(Elm_Diskselector_Data *sd,
                 Elm_Diskselector_Item *it)
 {
    if (!it) return;
@@ -1131,7 +1098,7 @@ _round_item_del(Elm_Diskselector_Smart_Data *sd,
 }
 
 static void
-_round_items_del(Elm_Diskselector_Smart_Data *sd)
+_round_items_del(Elm_Diskselector_Data *sd)
 {
    Eina_List *l;
    Elm_Diskselector_Item *it;
@@ -1176,7 +1143,7 @@ _icon_duplicate(Evas_Object *icon)
 }
 
 static void
-_round_items_add(Elm_Diskselector_Smart_Data *sd)
+_round_items_add(Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item *temp_it;
    Elm_Diskselector_Item *dit;
@@ -1258,10 +1225,9 @@ _round_items_add(Elm_Diskselector_Smart_Data *sd)
      }
 }
 
-static void
-_elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_diskselector_evas_smart_add(Eo *obj, Elm_Diskselector_Data *priv)
 {
-   Elm_Diskselector_Smart_Data *priv = _pd;
    Evas *evas;
    Evas_Object *blank, *edje;
 
@@ -1336,14 +1302,12 @@ _elm_diskselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    evas_event_thaw_eval(evas);
 }
 
-static void
-_elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_diskselector_evas_smart_del(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item *it;
    Eina_List *l;
    Evas_Object *blank;
-
-   Elm_Diskselector_Smart_Data *sd = _pd;
 
    /* left blank */
    EINA_LIST_FOREACH (sd->left_blanks, l, blank)
@@ -1414,46 +1378,35 @@ _elm_diskselector_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_diskselector_smart_move(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_diskselector_evas_smart_move(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 }
 
-static void
-_elm_diskselector_smart_resize(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_diskselector_evas_smart_resize(Eo *obj, Elm_Diskselector_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
-static void
-_elm_diskselector_smart_member_add(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_diskselector_evas_smart_member_add(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *member)
 {
-   Evas_Object *member = va_arg(*list, Evas_Object *);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
 }
 
-static void
-_elm_diskselector_smart_access(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_diskselector_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool access)
 {
-   _elm_diskselector_smart_focus_next_enable = va_arg(*list, int);
+   _elm_diskselector_smart_focus_next_enable = access;
 }
 
 EAPI Evas_Object *
@@ -1465,8 +1418,8 @@ elm_diskselector_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_diskselector_eo_base_constructor(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1474,41 +1427,18 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI Eina_Bool
-elm_diskselector_round_enabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_diskselector_round_enabled_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   ELM_DISKSELECTOR_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_diskselector_round_enabled_get(&ret));
-   return ret;
+   return sd->round;
 }
 
-static void
-_round_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
-   *ret = sd->round;
-}
-
-EAPI void
-elm_diskselector_round_enabled_set(Evas_Object *obj,
-                                   Eina_Bool enabled)
-{
-   ELM_DISKSELECTOR_CHECK(obj);
-   eo_do(obj, elm_obj_diskselector_round_enabled_set(enabled));
-}
-
-static void
-_round_enabled_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_diskselector_round_enabled_set(Eo *obj, Elm_Diskselector_Data *sd, Eina_Bool enabled)
 {
    Eina_List *elist;
    Elm_Diskselector_Item *it;
    Evas_Object *blank;
-
-   Eina_Bool enabled = va_arg(*list, int);
-   Elm_Diskselector_Smart_Data *sd = _pd;
 
    if (sd->round == enabled)
      return;
@@ -1583,38 +1513,15 @@ _round_enabled_set(Eo *obj, void *_pd, va_list *list)
    _sizing_eval(obj);
 }
 
-EAPI int
-elm_diskselector_side_text_max_length_get(const Evas_Object *obj)
+EOLIAN static int
+_elm_diskselector_side_text_max_length_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   ELM_DISKSELECTOR_CHECK(obj) 0;
-   int ret = 0;
-   eo_do((Eo *) obj, elm_obj_diskselector_side_text_max_length_get(&ret));
-   return ret;
+   return sd->len_side;
 }
 
-static void
-_side_text_max_length_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_diskselector_side_text_max_length_set(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd, int len)
 {
-   int *ret = va_arg(*list, int *);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
-   *ret = sd->len_side;
-}
-
-EAPI void
-elm_diskselector_side_text_max_length_set(Evas_Object *obj,
-                                          int len)
-{
-   ELM_DISKSELECTOR_CHECK(obj);
-   eo_do(obj, elm_obj_diskselector_side_text_max_length_set(len));
-}
-
-static void
-_side_text_max_length_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int len = va_arg(*list, int);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    sd->len_side = len;
 }
 
@@ -1647,13 +1554,10 @@ elm_diskselector_scroller_policy_get(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_scrollable_policy_get(policy_h, policy_v));
 }
 
-static void
-_scroller_policy_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_diskselector_elm_interface_scrollable_policy_get(Eo *obj, Elm_Diskselector_Data *sd EINA_UNUSED, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
 {
    Elm_Scroller_Policy s_policy_h, s_policy_v;
-
-   Elm_Scroller_Policy *policy_h = va_arg(*list, Elm_Scroller_Policy *);
-   Elm_Scroller_Policy *policy_v = va_arg(*list, Elm_Scroller_Policy *);
 
    eo_do_super((Eo *)obj, MY_CLASS, elm_interface_scrollable_policy_get(&s_policy_h, &s_policy_v));
    if (policy_h) *policy_h = (Elm_Scroller_Policy)s_policy_h;
@@ -1669,12 +1573,9 @@ elm_diskselector_scroller_policy_set(Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_policy_set(policy_h, policy_v));
 }
 
-static void
-_scroller_policy_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_diskselector_elm_interface_scrollable_policy_set(Eo *obj, Elm_Diskselector_Data *sd EINA_UNUSED, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
-   Elm_Scroller_Policy policy_h = va_arg(*list, Elm_Scroller_Policy);
-   Elm_Scroller_Policy policy_v = va_arg(*list, Elm_Scroller_Policy);
-
    if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
        (policy_v >= ELM_SCROLLER_POLICY_LAST))
      return;
@@ -1682,19 +1583,10 @@ _scroller_policy_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do_super(obj, MY_CLASS, elm_interface_scrollable_policy_set(policy_h, policy_v));
 }
 
-EAPI void
-elm_diskselector_clear(Evas_Object *obj)
-{
-   ELM_DISKSELECTOR_CHECK(obj);
-   eo_do(obj, elm_obj_diskselector_clear());
-}
-
-static void
-_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_diskselector_clear(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item *it;
-
-   Elm_Diskselector_Smart_Data *sd = _pd;
 
    if (!sd->items) return;
 
@@ -1710,49 +1602,18 @@ _clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _sizing_eval(obj);
 }
 
-EAPI const Eina_List *
-elm_diskselector_items_get(const Evas_Object *obj)
+EOLIAN static const Eina_List*
+_elm_diskselector_items_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   ELM_DISKSELECTOR_CHECK(obj) NULL;
-   const Eina_List *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_diskselector_items_get(&ret));
-   return ret;
+   return sd->items;
 }
 
-static void
-_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
-   *ret = sd->items;
-}
-
-EAPI Elm_Object_Item *
-elm_diskselector_item_append(Evas_Object *obj,
-                             const char *label,
-                             Evas_Object *icon,
-                             Evas_Smart_Cb func,
-                             const void *data)
-{
-   ELM_DISKSELECTOR_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_diskselector_item_append(label, icon, func, data, &ret));
-   return ret;
-}
-
-static void
-_item_append(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_diskselector_item_append(Eo *obj, Elm_Diskselector_Data *sd, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    Elm_Diskselector_Item *it, *dit;
    Eina_List *elist;
 
-   const char *label = va_arg(*list, const char *);
-   Evas_Object *icon = va_arg(*list, Evas_Object *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Diskselector_Smart_Data *sd = _pd;
    Evas *evas;
 
    evas = evas_object_evas_get(obj);
@@ -1806,25 +1667,13 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    evas_event_thaw(evas);
    evas_event_thaw_eval(evas);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_diskselector_selected_item_get(const Evas_Object *obj)
+EOLIAN static Elm_Object_Item*
+_elm_diskselector_selected_item_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   ELM_DISKSELECTOR_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_diskselector_selected_item_get(&ret));
-   return ret;
-}
-
-static void
-_selected_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
-   *ret = (Elm_Object_Item *)sd->selected_item;
+   return (Elm_Object_Item *)sd->selected_item;
 }
 
 EAPI void
@@ -1882,57 +1731,23 @@ elm_diskselector_item_next_get(const Elm_Object_Item *item)
    else return NULL;
 }
 
-EAPI Elm_Object_Item *
-elm_diskselector_first_item_get(const Evas_Object *obj)
+EOLIAN static Elm_Object_Item*
+_elm_diskselector_first_item_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   ELM_DISKSELECTOR_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_diskselector_first_item_get(&ret));
-   return ret;
+   if (!sd || !sd->items) return NULL;
+   else return eina_list_data_get(sd->items);
 }
 
-static void
-_first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_diskselector_last_item_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-   if (!sd || !sd->items) *ret = NULL;
-   else *ret = eina_list_data_get(sd->items);
+   if (!sd->items) return NULL;
+   else return eina_list_data_get(eina_list_last(sd->items));
 }
 
-EAPI Elm_Object_Item *
-elm_diskselector_last_item_get(const Evas_Object *obj)
+EOLIAN static void
+_elm_diskselector_display_item_num_set(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd, int num)
 {
-   ELM_DISKSELECTOR_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_diskselector_last_item_get(&ret));
-   return ret;
-}
-
-static void
-_last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
-   if (!sd->items) *ret = NULL;
-   else *ret = eina_list_data_get(eina_list_last(sd->items));
-}
-
-EAPI void
-elm_diskselector_display_item_num_set(Evas_Object *obj,
-                                      int num)
-{
-   ELM_DISKSELECTOR_CHECK(obj);
-   eo_do(obj, elm_obj_diskselector_display_item_num_set(num));
-}
-
-static void
-_display_item_num_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int num = va_arg(*list, int);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
    if (num < DISPLAY_ITEM_NUM_MIN) num = DISPLAY_ITEM_NUM_MIN;
    sd->display_item_num = num;
    sd->display_item_num_by_api = EINA_TRUE;
@@ -1940,95 +1755,19 @@ _display_item_num_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    if (!sd->round) _blank_item_check(obj, num);
 }
 
-EAPI int
-elm_diskselector_display_item_num_get(const Evas_Object *obj)
+EOLIAN static int
+_elm_diskselector_display_item_num_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
-   ELM_DISKSELECTOR_CHECK(obj) (-1);
-   int ret = -1;
-   eo_do((Eo *) obj, elm_obj_diskselector_display_item_num_get(&ret));
-   return ret;
+   return sd->display_item_num;
 }
 
 static void
-_display_item_num_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_diskselector_class_constructor(Eo_Class *klass)
 {
-   int *ret = va_arg(*list, int *);
-   Elm_Diskselector_Smart_Data *sd = _pd;
-
-   *ret = sd->display_item_num;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _elm_diskselector_smart_member_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_diskselector_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_diskselector_smart_del),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_diskselector_smart_resize),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_diskselector_smart_move),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_diskselector_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_TRANSLATE), _elm_diskselector_smart_translate),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_diskselector_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_diskselector_smart_on_focus),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_diskselector_smart_sub_object_del),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_diskselector_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_diskselector_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_diskselector_smart_access),
-
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_SET), _scroller_policy_set),
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_GET), _scroller_policy_get),
-
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_ROUND_ENABLED_GET), _round_enabled_get),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_ROUND_ENABLED_SET), _round_enabled_set),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_SIDE_TEXT_MAX_LENGTH_GET), _side_text_max_length_get),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_SIDE_TEXT_MAX_LENGTH_SET), _side_text_max_length_set),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_CLEAR), _clear),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_ITEMS_GET), _items_get),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_ITEM_APPEND), _item_append),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_SELECTED_ITEM_GET), _selected_item_get),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_FIRST_ITEM_GET), _first_item_get),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_LAST_ITEM_GET), _last_item_get),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_DISPLAY_ITEM_NUM_SET), _display_item_num_set),
-        EO_OP_FUNC(ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_DISPLAY_ITEM_NUM_GET), _display_item_num_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
       _elm_diskselector_smart_focus_next_enable = EINA_TRUE;
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_ROUND_ENABLED_GET, "Get a value whether round mode is enabled or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_ROUND_ENABLED_SET, "Enable or disable round mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_SIDE_TEXT_MAX_LENGTH_GET, "Get the side labels max length."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_SIDE_TEXT_MAX_LENGTH_SET, "Set the side labels max length."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_CLEAR, "Remove all diskselector's items."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_ITEMS_GET, "Get a list of all the diskselector items."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_ITEM_APPEND, "Appends a new item to the diskselector object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_SELECTED_ITEM_GET, "Get the selected item."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_FIRST_ITEM_GET, "Get the first item of the diskselector."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_LAST_ITEM_GET, "Get the last item of the diskselector."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_DISPLAY_ITEM_NUM_SET, "Set the number of items to be displayed."),
-     EO_OP_DESCRIPTION(ELM_OBJ_DISKSELECTOR_SUB_ID_DISPLAY_ITEM_NUM_GET, "Get the number of items in the diskselector object."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_DISKSELECTOR_BASE_ID, op_desc, ELM_OBJ_DISKSELECTOR_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Diskselector_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_diskselector_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, ELM_INTERFACE_SCROLLABLE_CLASS, NULL);
+#include "elm_diskselector.eo.c"

@@ -1,3 +1,6 @@
+#include "elm_diskselector.eo.h"
+
+#if 0
 #define ELM_OBJ_DISKSELECTOR_CLASS elm_obj_diskselector_class_get()
 
 const Eo_Class *elm_obj_diskselector_class_get(void) EINA_CONST;
@@ -192,3 +195,5 @@ enum
  * @ingroup Diskselector
  */
 #define elm_obj_diskselector_display_item_num_get(ret) ELM_OBJ_DISKSELECTOR_ID(ELM_OBJ_DISKSELECTOR_SUB_ID_DISPLAY_ITEM_NUM_GET), EO_TYPECHECK(int *, ret)
+#endif
+
