@@ -998,7 +998,15 @@ evas_common_image_premul(Image_Entry *ie)
    if (!evas_cache_image_pixels(ie)) return;
    if (!ie->flags.alpha) return;
 
-   nas = evas_common_convert_argb_premul(evas_cache_image_pixels(ie), ie->w * ie->h);
+   switch (ie->space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+         nas = evas_common_convert_argb_premul(evas_cache_image_pixels(ie), ie->w * ie->h);
+         break;
+      case EVAS_COLORSPACE_AGRY88:
+         nas = evas_common_convert_ag_premul((void*) evas_cache_image_pixels(ie), ie->w * ie->h);
+      default: return;
+     }
    if ((ALPHA_SPARSE_INV_FRACTION * nas) >= (ie->w * ie->h))
      ie->flags.alpha_sparse = 1;
 }

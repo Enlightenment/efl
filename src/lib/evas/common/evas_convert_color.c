@@ -1,6 +1,26 @@
 #include "evas_common_private.h"
 #include "evas_convert_color.h"
 
+EAPI DATA32
+evas_common_convert_ag_premul(DATA16 *data, unsigned int len)
+{
+   DATA16 *de = data + len;
+   DATA32 nas = 0;
+
+   while (data < de)
+     {
+        DATA16  a = 1 + ((*data >> 8) & 0xff);
+
+        *data = (*data & 0xff00) |
+          ((((*data & 0xff) * a) >> 8) & 0xff);
+        data++;
+
+        if ((a == 1) || (a == 256))
+          nas++;
+     }
+
+   return nas;
+}
 
 EAPI DATA32
 evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
