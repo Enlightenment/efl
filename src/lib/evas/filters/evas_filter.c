@@ -914,7 +914,11 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (dx < 0) dx = 0;
    if (dy < 0) dy = 0;
-   if (!dx && !dy) goto fail;
+   if (!dx && !dy)
+     {
+        DBG("Changing 0px blur into simple blend");
+        return evas_filter_command_blend_add(ctx, drawctx, inbuf, outbuf, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
+     }
 
    in = _filter_buffer_get(ctx, inbuf);
    if (!in)
@@ -1212,6 +1216,12 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
    Evas_Filter_Buffer *tmp = NULL, *in, *out;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+
+   if (!radius)
+     {
+        DBG("Changing 0px grow into simple blend");
+        return evas_filter_command_blend_add(ctx, draw_context, inbuf, outbuf, 0, 0, EVAS_FILTER_FILL_MODE_NONE);
+     }
 
    in = _filter_buffer_get(ctx, inbuf);
    EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
