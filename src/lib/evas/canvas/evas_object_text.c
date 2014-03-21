@@ -2801,6 +2801,7 @@ _filter_source_set(Eo *eo_obj, void *_pd, va_list *list)
 
    if (!o->cur.filter.sources)
      {
+        if (!source) return;
         o->cur.filter.sources = eina_hash_string_small_new
               (EINA_FREE_CB(_filter_source_hash_free_cb));
      }
