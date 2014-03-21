@@ -1304,6 +1304,96 @@ test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                           elm_config_scale_get() * 36);
    elm_object_content_set(fr, api->grid);
    evas_object_show(api->grid);
+   evas_object_resize(win, 600, 600);
+   evas_object_show(win);
+}
+
+void
+test_gengrid_item_focus(void *data EINA_UNUSED,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bx_horiz, *gengrid, *btn, *fr, *lb;
+   Elm_Gengrid_Item_Class *ic;
+   Item_Data *id;
+   char buf[PATH_MAX];
+   int i, n;
+
+   win = elm_win_util_standard_add("gengrid-item-focus", "Gengrid Item Focus");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx_horiz = elm_box_add(win);
+   elm_box_horizontal_set(bx_horiz, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx_horiz, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx_horiz);
+   evas_object_show(bx_horiz);
+
+   btn = elm_button_add(bx_horiz);
+   elm_object_text_set(btn, "Left");
+   elm_box_pack_end(bx_horiz, btn);
+   evas_object_show(btn);
+
+   bx = elm_box_add(bx_horiz);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_horiz, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Gengrid Item Focus");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb = elm_label_add(fr);
+   elm_object_text_set(lb, "<align=left>Gengrid Item focus</align>");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Up");
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+   elm_object_focus_set(btn, EINA_TRUE);
+
+   gengrid = elm_gengrid_add(bx);
+   elm_gengrid_item_size_set(gengrid,
+                             elm_config_scale_get() * 150,
+                             elm_config_scale_get() * 150);
+   evas_object_size_hint_weight_set(gengrid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gengrid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gengrid);
+   evas_object_show(gengrid);
+
+   btn = elm_button_add(bx);
+   elm_object_text_set(btn, "Down");
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(bx_horiz);
+   elm_object_text_set(btn, "Right");
+   elm_box_pack_end(bx_horiz, btn);
+   evas_object_show(btn);
+
+   ic = elm_gengrid_item_class_new();
+   ic->item_style = "default";
+   ic->func.text_get = grid_text_get;
+   ic->func.content_get = grid_content_get;
+   ic->func.state_get = NULL;
+   ic->func.del = grid_del;
+
+   n = 0;
+   for (i = 0; i < 24; i++)
+     {
+        id = calloc(1, sizeof(Item_Data));
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
+        n = (n + 1) % 9;
+        id->mode = i;
+        id->path = eina_stringshare_add(buf);
+        id->item = elm_gengrid_item_append(gengrid, ic, id, NULL, NULL);
+     }
+   elm_gengrid_item_class_free(ic);
 
    evas_object_resize(win, 600, 600);
    evas_object_show(win);

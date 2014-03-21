@@ -4,6 +4,7 @@ group { name: "elm/gengrid/item/group_index/default";
 
 group { name: "elm/gengrid/item/default/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
 #define IMGP() \
@@ -322,6 +323,7 @@ group { name: "elm/gengrid/item/default/default";
 
 group { name: "elm/gengrid/item/default_style/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    styles.style {    name: "gengrid_style";
@@ -525,6 +527,7 @@ group { name: "elm/gengrid/item/up/default";
 
 group { name: "elm/gengrid/item/album-preview/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon.1 elm.swallow.icon.2 elm.swallow.icon.3 elm.swallow.icon.4";
    data.item: "states" "have_files";
@@ -736,6 +739,7 @@ group { name: "elm/gengrid/item/album-preview/default";
 
 group { name: "elm/gengrid/item/thumb/default";
    data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    

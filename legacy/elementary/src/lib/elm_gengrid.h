@@ -237,6 +237,8 @@
  *   be translated.
  * - @c "focused" - When the gengrid has received focus. (since 1.8)
  * - @c "unfocused" - When the gengrid has lost focus. (since 1.8)
+ * - @c "item,focused" - When the gengrid item has received focus. (since 1.10)
+ * - @c "item,unfocused" - When the gengrid item has lost focus. (since 1.10)
  *
  * Supported elm_object common APIs
  * @li elm_object_signal_emit()
