@@ -137,6 +137,7 @@ static Edje_Pack_Element *current_item = NULL;
 static Edje_Part_Description_Common *current_desc = NULL;
 static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
+static Eina_Bool current_group_inherit = EINA_FALSE;
 
 struct _Edje_Cc_Handlers_Hierarchy_Info
 {  /* Struct that keeps globals value to impl hierarchy */
@@ -189,6 +190,7 @@ static void ob_collections(void);
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
 static void st_collections_group_inherit(void);
+static void st_collections_group_remove(void);
 static void st_collections_group_script_only(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
@@ -456,6 +458,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.grpup.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
+     {"collections.group.remove", st_collections_group_remove},
      {"collections.group.script_only", st_collections_group_script_only},
      {"collections.group.lua_script_only", st_collections_group_script_only},
      {"collections.group.alias", st_collections_group_alias},
@@ -2709,6 +2712,7 @@ ob_collections_group(void)
         ERR("A collection without a name was detected, that's not allowed.");
         exit(-1);
      }
+   current_group_inherit = EINA_FALSE;
 
    current_de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    current_de->id = eina_list_count(edje_collections);
@@ -3092,6 +3096,7 @@ st_collections_group_inherit(void)
      }
 
    free(parent_name);
+   current_group_inherit = EINA_TRUE;
    #undef STRDUP
 }
 
@@ -3641,6 +3646,116 @@ ob_collections_group_parts_part(void)
    prnt = edje_cc_handlers_hierarchy_parent_get();
    if (prnt)  /* This is the child of parent in stack */
      prnt->nested_children_count++;
+}
+
+static void *
+_part_desc_free(Edje_Part_Description_Common *ed)
+{
+   if (!ed) return NULL;
+   free((void*)ed->state.name);
+   free(ed);
+   return NULL;
+}
+
+static void *
+_part_free(Edje_Part *ep)
+{
+   Edje_Part_Parser *epp = (Edje_Part_Parser*)ep;
+   unsigned int j;
+
+   free((void*)ep->name);
+   free((void*)ep->source);
+   free((void*)ep->source2);
+   free((void*)ep->source3);
+   free((void*)ep->source4);
+   free((void*)ep->source5);
+   free((void*)ep->source6);
+
+   free((void*)epp->reorder.insert_before);
+   free((void*)epp->reorder.insert_after);
+
+   for (j = 0 ; j < ep->items_count ; j++)
+     free(ep->items[j]);
+   free(ep->items);
+
+   free((void*)ep->api.name);
+   free((void*)ep->api.description);
+
+   _part_desc_free(ep->default_desc);
+   for (j = 0 ; j < ep->other.desc_count ; j++)
+     _part_desc_free(ep->other.desc[j]);
+   free(ep->other.desc);
+   free(ep);
+   return NULL;
+}
+
+/**
+    @page edcref
+    @property
+        remove
+    @parameters
+        [part name] [part name] [part name] ...
+    @effect
+        Removes the listed parts from an inherited group. Removing nonexistent
+        parts is not allowed.
+    @endproperty
+    @since 1.10
+*/
+static void
+st_collections_group_remove(void)
+{
+   unsigned int n, argc, orig_count;
+   Edje_Part_Collection *pc;
+
+   check_min_arg_count(1);
+
+   if (!current_group_inherit)
+     {
+        ERR("Cannot remove parts from non-inherited group '%s'", current_de->entry);
+        exit(-1);
+     }
+
+   pc = eina_list_last_data_get(edje_collections);
+   orig_count = pc->parts_count;
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        char *name;
+        unsigned int j, cur_count = pc->parts_count;
+
+        name = parse_str(n);
+
+        for (j = 0; j < pc->parts_count; j++)
+          {
+             unsigned int i;
+
+             if (strcmp(pc->parts[j]->name, name)) continue;
+
+             pc->parts[j] = _part_free(pc->parts[j]);
+             for (i = j; i < pc->parts_count - 1; i++)
+               {
+                  if (!pc->parts[i + 1]) break;
+                  pc->parts[i] = pc->parts[i + 1];
+               }
+             pc->parts_count--;
+             break;
+          }
+        if (cur_count == pc->parts_count)
+          {
+             ERR("Attempted removal of nonexistent part '%s' in group '%s'.",
+                 name, current_de->entry);
+             exit(-1);
+          }
+        free(name);
+     }
+   if (orig_count == pc->parts_count) return;
+   if (pc->parts_count)
+     pc->parts = realloc(pc->parts, pc->parts_count * sizeof(Edje_Part *));
+   else
+     {
+        free(pc->parts);
+        pc->parts = NULL;
+     }
 }
 
 /**
