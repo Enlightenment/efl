@@ -210,7 +210,6 @@ evas_image_load_file_data_png(void *loader_data,
    Eina_File *f;
 
    unsigned char *surface;
-   unsigned char **lines;
    unsigned char *tmp_line;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
@@ -293,7 +292,12 @@ evas_image_load_file_data_png(void *loader_data,
      }
 
    surface = pixels;
-   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) hasa = 1;
+   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+     {
+        /* expand transparency entry -> alpha channel if present */
+        png_set_tRNS_to_alpha(png_ptr);
+        hasa = 1;
+     }
    if (color_type == PNG_COLOR_TYPE_RGB_ALPHA) hasa = 1;
    if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA) hasa = 1;
    if (hasa) prop->alpha = 1;
@@ -309,9 +313,6 @@ evas_image_load_file_data_png(void *loader_data,
           png_set_gray_to_rgb(png_ptr);
 	if (bit_depth < 8) png_set_expand_gray_1_2_4_to_8(png_ptr);
      }
-   /* expand transparency entry -> alpha channel if present */
-   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-     png_set_tRNS_to_alpha(png_ptr);
    /* reduce 16bit color -> 8bit color if necessary */
    if (bit_depth > 8) png_set_strip_16(png_ptr);
    /* pack all pixels to byte boundaries */
@@ -319,30 +320,39 @@ evas_image_load_file_data_png(void *loader_data,
 
    w = w32;
    h = h32;
-   /* we want ARGB */
-#ifdef WORDS_BIGENDIAN
-   png_set_swap_alpha(png_ptr);
-   if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
-#else
-   png_set_bgr(png_ptr);
-   if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-#endif
 
    switch (prop->cspace)
      {
-      case EVAS_COLORSPACE_ARGB8888: pack_offset = sizeof(DATA32); break;
+      case EVAS_COLORSPACE_ARGB8888:
+         /* we want ARGB */
+#ifdef WORDS_BIGENDIAN
+         png_set_swap_alpha(png_ptr);
+         if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
+#else
+         png_set_bgr(png_ptr);
+         if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+#endif
+         pack_offset = sizeof(DATA32);
+         break;
+      case EVAS_COLORSPACE_AGRY88:
+         /* we want AGRY */
+#ifdef WORDS_BIGENDIAN
+         png_set_swap_alpha(png_ptr);
+         if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_BEFORE);
+#else
+         if (!hasa) png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+#endif
+         pack_offset = sizeof(DATA16);
+         break;
       case EVAS_COLORSPACE_GRY8: pack_offset = sizeof(DATA8); break;
-      case EVAS_COLORSPACE_AGRY88: pack_offset = sizeof(DATA16); break;
       default: abort();
      }
 
    /* we read image line by line if scale down was set */
    if (scale_ratio == 1)
      {
-        lines = (unsigned char **) alloca(h * sizeof(unsigned char *));
         for (i = 0; i < h; i++)
-          lines[i] = surface + (i * w * pack_offset);
-        png_read_image(png_ptr, lines);
+          png_read_row(png_ptr, surface + (i * w * pack_offset), NULL);
         png_read_end(png_ptr, info_ptr);
      }
    else
