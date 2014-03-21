@@ -4520,9 +4520,6 @@ if test "x$prefix" != "x/usr"; then
   done
   resolved_dbusservicedir=$path
 
-echo "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
-echo "$resolved_dbusservicedir"
-echo "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
   old=
   path=$USER_SESSION_DIR
   while test "x$old" != "x$path"; do
