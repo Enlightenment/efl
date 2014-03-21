@@ -51,7 +51,8 @@ _eio_monitor_free(Eio_Monitor *monitor)
           eio_monitor_fallback_del(monitor);
      }
 
-   INF("Stopping monitor on '%s'.", monitor->path);
+   if (_eio_log_dom_global != -1)
+     INF("Stopping monitor on '%s'.", monitor->path);
 
    eina_stringshare_del(monitor->path);
    free(monitor);
