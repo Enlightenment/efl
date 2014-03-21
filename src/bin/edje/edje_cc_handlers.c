@@ -190,7 +190,7 @@ static void ob_collections(void);
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
 static void st_collections_group_inherit(void);
-static void st_collections_group_remove(void);
+static void st_collections_group_part_remove(void);
 static void st_collections_group_script_only(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
@@ -459,7 +459,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.grpup.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
-     {"collections.group.remove", st_collections_group_remove},
+     {"collections.group.part_remove", st_collections_group_part_remove},
      {"collections.group.script_only", st_collections_group_script_only},
      {"collections.group.lua_script_only", st_collections_group_script_only},
      {"collections.group.alias", st_collections_group_alias},
@@ -3755,7 +3755,7 @@ st_collections_group_parts_part_inherit(void)
 /**
     @page edcref
     @property
-        remove
+        part_remove
     @parameters
         [part name] [part name] [part name] ...
     @effect
@@ -3765,7 +3765,7 @@ st_collections_group_parts_part_inherit(void)
     @since 1.10
 */
 static void
-st_collections_group_remove(void)
+st_collections_group_part_remove(void)
 {
    unsigned int n, argc, orig_count;
    Edje_Part_Collection *pc;
