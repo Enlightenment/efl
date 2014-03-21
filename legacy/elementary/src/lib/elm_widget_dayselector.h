@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with dayselector instance data.
  */
-typedef struct _Elm_Dayselector_Smart_Data Elm_Dayselector_Smart_Data;
-struct _Elm_Dayselector_Smart_Data
+typedef struct _Elm_Dayselector_Data Elm_Dayselector_Data;
+struct _Elm_Dayselector_Data
 {
    Eina_List            *items;
    Elm_Dayselector_Day   week_start;
@@ -40,7 +40,7 @@ struct _Elm_Dayselector_Item
  */
 
 #define ELM_DAYSELECTOR_DATA_GET(o, sd) \
-  Elm_Dayselector_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_DAYSELECTOR_CLASS)
+  Elm_Dayselector_Data * sd = eo_data_scope_get(o, ELM_OBJ_DAYSELECTOR_CLASS)
 
 #define ELM_DAYSELECTOR_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_DAYSELECTOR_DATA_GET(o, ptr);                  \

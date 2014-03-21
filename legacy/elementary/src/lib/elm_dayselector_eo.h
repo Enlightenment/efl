@@ -1,3 +1,6 @@
+#include "elm_dayselector.eo.h"
+
+#if 0
 #define ELM_OBJ_DAYSELECTOR_CLASS elm_obj_dayselector_class_get()
 
 const Eo_Class *elm_obj_dayselector_class_get(void) EINA_CONST;
@@ -163,3 +166,5 @@ enum
  * @ingroup Dayselector
  */
 #define elm_obj_dayselector_weekdays_names_get(ret) ELM_OBJ_DAYSELECTOR_ID(ELM_OBJ_DAYSELECTOR_SUB_ID_WEEKDAYS_NAMES_GET), EO_TYPECHECK(Eina_List **, ret)
+#endif
+
