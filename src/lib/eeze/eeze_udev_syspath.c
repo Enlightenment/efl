@@ -5,6 +5,23 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
+EAPI Eina_Stringshare *
+eeze_udev_syspath_get_parent_filtered(const char *syspath, const char *subsystem, const char *devtype)
+{
+   _udev_device *device, *parent;
+   Eina_Stringshare *ret = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(syspath, NULL);
+
+   if (!(device = _new_device(syspath)))
+     return NULL;
+   parent = udev_device_get_parent_with_subsystem_devtype(device, subsystem, devtype);
+   if (parent)
+     ret = eina_stringshare_add(udev_device_get_syspath(parent));
+   udev_device_unref(device);
+   return ret;
+}
+
 EAPI const char *
 eeze_udev_syspath_get_parent(const char *syspath)
 {
@@ -104,12 +121,32 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
    return subsystem;
 }
 
+EAPI Eina_Bool
+eeze_udev_syspath_check_property(const char *syspath, const char *property, const char *value)
+{
+   _udev_device *device;
+   const char *test;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!syspath || !property || !value)
+     return EINA_FALSE;
+
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
+   if ((test = udev_device_get_property_value(device, property)))
+     ret = !strcmp(test, value);
+
+   udev_device_unref(device);
+   return ret;
+}
+
 EAPI const char *
 eeze_udev_syspath_get_property(const char *syspath,
                                const char *property)
 {
    _udev_device *device;
-   const char *value = NULL, *test;
+   const char *test;
+   Eina_Stringshare *value;
 
    if (!syspath || !property)
      return NULL;
@@ -121,6 +158,26 @@ eeze_udev_syspath_get_property(const char *syspath,
 
    udev_device_unref(device);
    return value;
+}
+
+EAPI Eina_Bool
+eeze_udev_syspath_check_sysattr(const char *syspath, const char *sysattr, const char *value)
+{
+   _udev_device *device;
+   const char *test;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!syspath || !sysattr || !value)
+     return EINA_FALSE;
+
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
+
+   if ((test = udev_device_get_sysattr_value(device, sysattr)))
+     ret = !strcmp(test, value);
+
+   udev_device_unref(device);
+   return ret;
 }
 
 EAPI const char *

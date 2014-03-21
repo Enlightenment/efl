@@ -419,6 +419,19 @@ EAPI const char      *eeze_udev_devpath_get_syspath(const char *devpath);
 EAPI const char      *eeze_udev_syspath_get_parent(const char *syspath);
 
 /**
+ * Find the parent device of a device from its syspath with a filter applied.
+ *
+ * @param syspath The syspath of a device, with or without "/sys/"
+ * @param subsystem The desired subsystem of the parent device
+ * @param devtype The desired device type of the parent device
+ * @return The syspath of the parent device
+ *
+ * Return a stringshared syspath (/sys/$syspath) for the parent device if one exists which matches the filter.
+ * @since 1.10
+ */
+EAPI Eina_Stringshare *eeze_udev_syspath_get_parent_filtered(const char *syspath, const char *subsystem, const char *devtype);
+
+/**
  * Returns a list of all parent device syspaths for @p syspath.
  *
  * @param syspath The device to find parents of
@@ -458,6 +471,17 @@ EAPI const char      *eeze_udev_syspath_get_devname(const char *syspath);
 EAPI const char      *eeze_udev_syspath_get_subsystem(const char *syspath);
 
 /**
+ * Check the property value of a device from the /sys/ path against a provided value.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @param property The property to check; full list of these is a FIXME
+ * @param value The value to check the property against
+ * @return @c EINA_TRUE if the property matches the supplied value
+ * @since 1.10
+ */
+EAPI Eina_Bool eeze_udev_syspath_check_property(const char *syspath, const char *property, const char *value);
+
+/**
  * Get the property value of a device from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
@@ -474,6 +498,17 @@ EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const 
  * @return A stringshared char* with the sysattr or @c NULL on failure
  */
 EAPI const char      *eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr);
+
+/**
+ * Check the sysattr value of a device from the /sys/ path against a provided value.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @param sysattr The sysattr to check; full list of these is a FIXME
+ * @param value The value to check the property against
+ * @return @c EINA_TRUE if the sysattr matches the supplied value
+ * @since 1.10
+ */
+EAPI Eina_Bool eeze_udev_syspath_check_sysattr(const char *syspath, const char *sysattr, const char *value);
 
 /**
  * Checks whether the device is a mouse.
