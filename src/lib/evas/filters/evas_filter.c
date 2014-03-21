@@ -892,6 +892,7 @@ evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context,
    ENFN->context_clip_get(ENDT, draw_context, &cx, &cy, &cw, &ch);
    DRAW_CLIP_SET(cx, cy, cw, ch);
 
+   buf->dirty = EINA_TRUE;
    return cmd->id;
 }
 
@@ -904,7 +905,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    Evas_Filter_Buffer *in = NULL, *out = NULL, *tmp = NULL, *in_dy = NULL;
    Evas_Filter_Buffer *out_dy = NULL, *out_dx = NULL;
    Evas_Filter_Buffer *copybuf = NULL, *blur_out = NULL;
-   Eina_Bool copy_back = EINA_FALSE, convert = EINA_FALSE;
+   Eina_Bool copy_back = EINA_FALSE, blend = EINA_FALSE;
    int R, G, B, A;
    int ret = 0, id;
 
@@ -928,6 +929,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         ERR("Buffer %d does not exist [output].", outbuf);
         goto fail;
      }
+
+   blend = (out->dirty && !out->transient);
 
    switch (type)
      {
@@ -1008,12 +1011,12 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         ERR("Output and input don't have the same format");
         goto fail;
      }
-   else if (in->alpha_only && !out->alpha_only)
+   else if (blend || (in->alpha_only && !out->alpha_only))
      {
-        DBG("Adding extra blending step (Alpha --> RGBA)");
-        blur_out = evas_filter_temporary_buffer_get(ctx, 0, 0, EINA_TRUE);
+        DBG("Adding extra blending step (%s --> RGBA)", in->alpha_only ? "Alpha" : "RGBA");
+        blur_out = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
         if (!blur_out) goto fail;
-        convert = EINA_TRUE;
+        blend = EINA_TRUE;
      }
    else
      blur_out = out;
@@ -1023,7 +1026,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
         if (!tmp) goto fail;
 
-        if (!convert && (ox || oy))
+        if (!blend && (ox || oy))
           {
              copybuf = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
              if (!copybuf) goto fail;
@@ -1127,13 +1130,16 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         ox = oy = 0;
      }
 
-   if (convert)
+   if (blend)
      {
-        DBG("Add convert %d -> %d", blur_out->id, out->id);
+        DBG("Add blend %d (%s) -> %d (%s)",
+            blur_out->id, blur_out->alpha_only ? "Alpha" : "RGBA",
+            out->id, out->alpha_only ? "Alpha" : "RGBA");
         id = evas_filter_command_blend_add(ctx, drawctx, blur_out->id, out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
         if (id < 0) goto fail;
      }
 
+   out->dirty = EINA_TRUE;
    _filter_buffer_unlock_all(ctx);
    return ret;
 
@@ -1192,6 +1198,7 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
      DBG("Draw clip: %d,%d,%d,%d", cmd->draw.clip.x, cmd->draw.clip.y,
          cmd->draw.clip.w, cmd->draw.clip.h);
 
+   out->dirty = EINA_TRUE;
    return cmd->id;
 }
 
@@ -1202,7 +1209,7 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
    int blurcmd, threshcmd, blendcmd, tmin = 0, growbuf;
    int diam = abs(radius) * 2 + 1;
    DATA8 curve[256] = {0};
-   Evas_Filter_Buffer *tmp = NULL, *in;
+   Evas_Filter_Buffer *tmp = NULL, *in, *out;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
 
@@ -1244,6 +1251,16 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
           curve[k] = ((k - start) * 255) / (end - start);
         if (end < 256)
           memset(curve + end, 255, 256 - end);
+     }
+
+   out = _filter_buffer_get(ctx, growbuf);
+   if (!out) return -1;
+   out->dirty = EINA_TRUE;
+   if (growbuf != outbuf)
+     {
+        out = _filter_buffer_get(ctx, growbuf);
+        if (!out) return -1;
+        out->dirty = EINA_TRUE;
      }
 
    threshcmd = evas_filter_command_curve_add(ctx, draw_context, growbuf, growbuf,
@@ -1312,6 +1329,7 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
    cmd->curve.data = copy;
    cmd->curve.channel = channel;
 
+   out->dirty = EINA_TRUE;
    return cmd->id;
 }
 
@@ -1374,6 +1392,8 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
           }
      }
 
+   out->dirty = EINA_TRUE;
+
 end:
    _filter_buffer_unlock_all(ctx);
    return cmdid;
@@ -1412,6 +1432,7 @@ evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context,
    DRAW_FILL_SET(fillmode);
 
    cmdid = cmd->id;
+   out->dirty = EINA_TRUE;
 
 end:
    _filter_buffer_unlock_all(ctx);
@@ -1462,6 +1483,8 @@ evas_filter_command_bump_map_add(Evas_Filter_Context *ctx,
    cmd->bump.compensate = !!(flags & EVAS_FILTER_BUMP_COMPENSATE);
    cmdid = cmd->id;
 
+   out->dirty = EINA_TRUE;
+
 end:
    _filter_buffer_unlock_all(ctx);
    return cmdid;
@@ -1500,6 +1523,8 @@ evas_filter_command_transform_add(Evas_Filter_Context *ctx,
    cmd->transform.flags = flags;
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
+
+   out->dirty = EINA_TRUE;
 
    return cmd->id;
 }

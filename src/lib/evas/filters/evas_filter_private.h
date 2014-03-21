@@ -204,6 +204,7 @@ struct _Evas_Filter_Buffer
    Eina_Bool locked : 1;      // internal flag
    Eina_Bool stolen : 1;      // stolen by the client
    Eina_Bool delete_me : 1;   // request delete asap (after released by client)
+   Eina_Bool dirty : 1;       // Marked as dirty as soon as a command writes to it
 };
 
 enum _Evas_Filter_Interpolation_Mode
