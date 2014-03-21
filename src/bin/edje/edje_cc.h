@@ -196,8 +196,12 @@ void    check_arg_count(int n);
 void    check_min_arg_count(int n);
 
 int     object_handler_num(void);
+int     object_handler_short_num(void);
 int     statement_handler_num(void);
+int     statement_handler_short_num(void);
+int     statement_handler_short_single_num(void);
 int     nested_handler_num(void);
+int     nested_handler_short_num(void);
 
 void    reorder_parts(void);
 void    source_edd(void);
@@ -215,7 +219,9 @@ void    using_file(const char *filename, const char type);
 
 void    error_and_abort(Eet_File *ef, const char *fmt, ...);
 
-
+void stack_push_quick(const char *str);
+void stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free);
+Eina_Bool edje_cc_handlers_wildcard(void);
 void edje_cc_handlers_hierarchy_alloc(void);
 void edje_cc_handlers_hierarchy_free(void);
 void edje_cc_handlers_pop_notify(const char *token);
@@ -252,10 +258,15 @@ extern Eina_List             *codes;
 extern Eina_List             *defines;
 extern Eina_List             *aliases;
 extern New_Object_Handler     object_handlers[];
+extern New_Object_Handler     object_handlers_short[];
 extern New_Statement_Handler  statement_handlers[];
+extern New_Statement_Handler  statement_handlers_short[];
+extern New_Statement_Handler  statement_handlers_short_single[];
 extern New_Nested_Handler     nested_handlers[];
+extern New_Nested_Handler     nested_handlers_short[];
 extern int                    compress_mode;
 extern int                    threads;
 extern int		      anotate;
+extern Eina_Bool current_group_inherit;
 
 #endif

@@ -58,8 +58,10 @@ static int strstrip(const char *in, char *out, size_t size);
 int        line = 0;
 Eina_List *stack = NULL;
 Eina_Array params;
+static int had_quote = 0;
 
 static char  file_buf[4096];
+static int   did_wildcard = 0;
 static int   verbatim = 0;
 static int   verbatim_line1 = 0;
 static int   verbatim_line2 = 0;
@@ -108,8 +110,12 @@ _parse_param_get(int n)
 }
 
 static Eina_Hash *_new_object_hash = NULL;
+static Eina_Hash *_new_object_short_hash = NULL;
 static Eina_Hash *_new_statement_hash = NULL;
+static Eina_Hash *_new_statement_short_hash = NULL;
+static Eina_Hash *_new_statement_short_single_hash = NULL;
 static Eina_Hash *_new_nested_hash = NULL;
+static Eina_Hash *_new_nested_short_hash = NULL;
 static void
 fill_object_statement_hashes(void)
 {
@@ -118,8 +124,12 @@ fill_object_statement_hashes(void)
    if (_new_object_hash) return;
 
    _new_object_hash = eina_hash_string_superfast_new(NULL);
+   _new_object_short_hash = eina_hash_string_superfast_new(NULL);
    _new_statement_hash = eina_hash_string_superfast_new(NULL);
+   _new_statement_short_hash = eina_hash_string_superfast_new(NULL);
+   _new_statement_short_single_hash = eina_hash_string_superfast_new(NULL);
    _new_nested_hash = eina_hash_string_superfast_new(NULL);
+   _new_nested_short_hash = eina_hash_string_superfast_new(NULL);
 
    n = object_handler_num();
    for (i = 0; i < n; i++)
@@ -127,17 +137,41 @@ fill_object_statement_hashes(void)
         eina_hash_direct_add(_new_object_hash, object_handlers[i].type,
                              &(object_handlers[i]));
      }
+   n = object_handler_short_num();
+   for (i = 0; i < n; i++)
+     {
+        eina_hash_direct_add(_new_object_short_hash, object_handlers_short[i].type,
+                             &(object_handlers_short[i]));
+     }
    n = statement_handler_num();
    for (i = 0; i < n; i++)
      {
         eina_hash_direct_add(_new_statement_hash, statement_handlers[i].type,
                              &(statement_handlers[i]));
      }
+   n = statement_handler_short_num();
+   for (i = 0; i < n; i++)
+     {
+        eina_hash_direct_add(_new_statement_short_hash, statement_handlers_short[i].type,
+                             &(statement_handlers_short[i]));
+     }
+   n = statement_handler_short_single_num();
+   for (i = 0; i < n; i++)
+     {
+        eina_hash_direct_add(_new_statement_short_single_hash, statement_handlers_short_single[i].type,
+                             &(statement_handlers_short_single[i]));
+     }
    n = nested_handler_num();
    for (i = 0; i < n; i++)
      {
         eina_hash_direct_add(_new_nested_hash, nested_handlers[i].type,
                              &(nested_handlers[i]));
+     }
+   n = nested_handler_short_num();
+   for (i = 0; i < n; i++)
+     {
+        eina_hash_direct_add(_new_nested_short_hash, nested_handlers_short[i].type,
+                             &(nested_handlers_short[i]));
      }
 }
 
@@ -151,20 +185,32 @@ new_object(void)
    fill_object_statement_hashes();
    id = stack_id();
    oh = eina_hash_find(_new_object_hash, id);
+   if (!oh)
+     oh = eina_hash_find(_new_object_short_hash, id);
    if (oh)
      {
         if (oh->func) oh->func();
      }
    else
      {
-        sh = eina_hash_find(_new_statement_hash, id);
-        if (!sh)
+        if (had_quote)
+          did_wildcard = edje_cc_handlers_wildcard();
+        if (!did_wildcard)
           {
-             ERR("%s:%i unhandled keyword %s",
-                 file_in, line - 1,
-                 (char *)eina_list_data_get(eina_list_last(stack)));
-             err_show();
-             exit(-1);
+             sh = eina_hash_find(_new_statement_hash, id);
+             if (!sh)
+               sh = eina_hash_find(_new_statement_short_hash, id);
+             if (!sh)
+               sh = eina_hash_find(_new_statement_short_single_hash, id);
+             if ((!sh) && (!did_wildcard) && (!had_quote) && (!edje_cc_handlers_wildcard()))
+               {
+                  ERR("%s:%i unhandled keyword %s",
+                      file_in, line - 1,
+                      (char *)eina_list_data_get(eina_list_last(stack)));
+                  err_show();
+                  exit(-1);
+               }
+             did_wildcard = !sh;
           }
      }
 }
@@ -173,10 +219,12 @@ static void
 new_statement(void)
 {
    const char *id;
-   New_Statement_Handler *sh;
+   New_Statement_Handler *sh = NULL;
    fill_object_statement_hashes();
    id = stack_id();
    sh = eina_hash_find(_new_statement_hash, id);
+   if (!sh)
+     sh = eina_hash_find(_new_statement_short_hash, id);
    if (sh)
      {
         if (sh->func) sh->func();
@@ -189,6 +237,21 @@ new_statement(void)
         err_show();
         exit(-1);
      }
+}
+
+static Eina_Bool
+new_statement_single(void)
+{
+   const char *id;
+   New_Statement_Handler *sh = NULL;
+   fill_object_statement_hashes();
+   id = stack_id();
+   sh = eina_hash_find(_new_statement_short_single_hash, id);
+   if (sh)
+     {
+        if (sh->func) sh->func();
+     }
+   return !!sh;
 }
 
 static char *
@@ -235,8 +298,9 @@ next_token(char *p, char *end, char **new_p, int *delim)
    int in_comment_ss  = 0;
    int in_comment_cpp = 0;
    int in_comment_sa  = 0;
-   int had_quote = 0;
    int is_escaped = 0;
+
+   had_quote = 0;
 
    *delim = 0;
    if (p >= end) return NULL;
@@ -444,6 +508,8 @@ stack_push(char *token)
              tmp[eina_strbuf_length_get(stack_buf) - token_length - 1] = '\0';
 
              nested = eina_hash_find(_new_nested_hash, tmp);
+             if (!nested)
+               nested = eina_hash_find(_new_nested_short_hash, tmp);
              if (nested)
                {
                   if (!strcmp(token, nested->token) &&
@@ -500,6 +566,8 @@ stack_pop(void)
           {
              hierarchy[lookup - hierarchy] = '\0';
              nested = eina_hash_find(_new_nested_hash, hierarchy);
+             if (!nested)
+               nested = eina_hash_find(_new_nested_short_hash, hierarchy);
              if (nested && nested->func_pop) nested->func_pop();
              lookup = strrchr(hierarchy + eina_strbuf_length_get(stack_buf) - tmp_length, '.');
           }
@@ -507,6 +575,8 @@ stack_pop(void)
         hierarchy[eina_strbuf_length_get(stack_buf) - 1 - tmp_length] = '\0';
 
         nested = eina_hash_find(_new_nested_hash, hierarchy);
+        if (!nested)
+          nested = eina_hash_find(_new_nested_short_hash, hierarchy);
         if (nested)
           {
              if (nested->func_pop) nested->func_pop();
@@ -533,6 +603,38 @@ stack_pop(void)
                            eina_strbuf_length_get(stack_buf)); /* remove: 'tmp' */
      }
    free(tmp);
+}
+
+void
+stack_push_quick(const char *str)
+{
+   char *s;
+
+   s = mem_strdup(str);
+   stack = eina_list_append(stack, s);
+   eina_strbuf_append_char(stack_buf, '.');
+   eina_strbuf_append(stack_buf, s);
+}
+
+void
+stack_pop_quick(Eina_Bool check_last, Eina_Bool do_free)
+{
+   char *tmp, *str;
+
+   str = tmp = eina_list_last_data_get(stack);
+   if (check_last)
+     {
+        char *end;
+
+        end = strrchr(tmp, '.');
+        if (end)
+          tmp = end + 1;
+     }
+   eina_strbuf_remove(stack_buf,
+                           eina_strbuf_length_get(stack_buf) - strlen(tmp) - 1,
+                           eina_strbuf_length_get(stack_buf)); /* remove: '.tmp' */
+   stack = eina_list_remove_list(stack, eina_list_last(stack));
+   if (do_free) free(str);
 }
 
 static const char *
@@ -592,6 +694,12 @@ parse(char *data, off_t size)
                }
              else if (*token == ';')
                {
+                  if (did_wildcard)
+                    {
+                       free(token);
+                       did_wildcard = 0;
+                       continue;
+                    }
                   if (do_params)
                     {
                        void *param;
@@ -603,6 +711,11 @@ parse(char *data, off_t size)
                          free(param);
                        /* remove top from stack */
                        stack_pop();
+                    }
+                  else
+                    {
+                       if (new_statement_single())
+                         stack_pop();
                     }
                }
              else if (*token == '{')
@@ -1044,13 +1157,25 @@ parse_enum(int n, ...)
    int result;
    va_list va;
 
-   str = _parse_param_get(n);
-   if (!str)
+   if (n >= 0)
      {
-        ERR("%s:%i no parameter supplied as argument %i",
-            file_in, line - 1, n + 1);
-        err_show();
-        exit(-1);
+        str = _parse_param_get(n);
+        if (!str)
+          {
+             ERR("%s:%i no parameter supplied as argument %i",
+                 file_in, line - 1, n + 1);
+             err_show();
+             exit(-1);
+          }
+     }
+   else
+     {
+        char *end;
+
+        str = eina_list_last_data_get(stack);
+        end = strrchr(str, '.');
+        if (end)
+          str = end + 1;
      }
 
    va_start(va, n);

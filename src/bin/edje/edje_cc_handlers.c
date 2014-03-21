@@ -125,6 +125,11 @@
  *        </ul>
  *      </ul>
  *    </ul>
+ *    <li>@ref sec_lazedc "LazEDC"</li>
+ *    <ul>
+ *       <li>@ref sec_lazedc_synonyms "Synonyms"</li>
+ *       <li>@ref sec_lazedc_shorthand "Shorthand"</li>
+ *    </ul>
  * </ul>
  *
  * @author Andres Blanc (dresb) andresblanc@gmail.com
@@ -269,6 +274,7 @@ static void st_collections_group_parts_part_table_items_item_position(void);
 static void st_collections_group_parts_part_table_items_item_span(void);
 
 static void ob_collections_group_parts_part_description(void);
+static void ob_collections_group_parts_part_desc(void);
 static void st_collections_group_parts_part_description_inherit(void);
 static void st_collections_group_parts_part_description_source(void);
 static void st_collections_group_parts_part_description_state(void);
@@ -410,6 +416,21 @@ static void st_collections_group_physics_world_z(void);
 static void st_collections_group_physics_world_depth(void);
 #endif
 
+/* short */
+static void st_collections_group_parts_part_precise(void);
+static void st_collections_group_parts_part_imprecise(void);
+static void st_collections_group_parts_part_mouse(void);
+static void st_collections_group_parts_part_nomouse(void);
+static void st_collections_group_parts_part_repeat(void);
+static void st_collections_group_parts_part_norepeat(void);
+static void st_collections_group_parts_part_description_vis(void);
+static void st_collections_group_parts_part_description_hid(void);
+static void ob_collections_group_parts_part_short(void);
+
+static void st_collections_group_mouse(void);
+static void st_collections_group_nomouse(void);
+static void st_collections_group_broadcast(void);
+static void st_collections_group_nobroadcast(void);
 /*****/
 
 
@@ -706,6 +727,157 @@ New_Statement_Handler statement_handlers[] =
      PROGRAM_STATEMENTS("collections.group")
 };
 
+/**
+   @edcsubsection{lazedc,LazEDC}
+ */
+
+/**
+    @page edcref
+    @block
+        LazEDC
+    @context
+        ..
+        collections.group { "test";
+           parts {
+              rect { "clip"; }
+              rect { "test"; nomouse; repeat; precise;
+                 clip: "clip";
+                 desc { "default";
+                    color: 255 0 0 255;
+                    rel2.relative: 0.5 1;
+                 }
+              }
+              rect { "test2"; inherit: "test";
+                 clip: "clip";
+                 desc { "default";
+                    rel1.relative: 0.5 0;
+                    rel2.relative: 1 1;
+                 }
+                 desc { "t2"; inherit: "default";
+                    color: 0 255 0 255;
+                 }
+                 desc { "t3"; inherit: "default";
+                    color: 0 0 255 255;
+                 }
+              }
+              program { signal: "load"; name: "start";
+                 sequence {
+                    action: STATE_SET "t2";
+                    target: "test2";
+                    transition: LINEAR 0.6;
+                    in: 0.5 0;
+                    action: STATE_SET "t3";
+                    target: "test2";
+                    transition: LINEAR 0.3;
+                    name: "del";
+                 }
+              }
+           }
+        }
+        ..
+    @description
+        LazEDC is an advanced form of EDC which allows the developer to
+        leave out or shorten various forms. Parts can be created by using
+        their type names, and the "name" and "state" keywords can be omitted entirely.
+        Additionally, default description blocks will be automatically created with default
+        values even if the description isn't explicitly specified.
+        @note Failing to use quotes for block names will trigger syntax errors
+        if a block name is the same as an existing EDC keyword.
+    @since 1.10
+    @endblock
+*/
+
+/**
+   @edcsubsection{lazedc_synonyms,Synonyms}
+ */
+
+/**
+    @page edcref
+    @block
+        Synonyms
+    @context
+    group {
+       parts {
+          part {
+             before -> insert_before
+             after -> insert_after
+             ignore -> ignore_flags
+             pointer -> pointer_mode
+             alt_font -> use_alternate_font_metrics
+             clip -> clip_to
+          }
+       }
+    }
+
+    @description
+        These statements on the left are identical to their original keywords on the right.
+    @since 1.10
+    @endblock
+*/
+
+
+New_Statement_Handler statement_handlers_short[] =
+{
+     {"collections.group.parts.part.before", st_collections_group_parts_part_insert_before},
+     {"collections.group.parts.part.after", st_collections_group_parts_part_insert_after},
+     {"collections.group.parts.part.ignore", st_collections_group_parts_part_ignore_flags},
+     {"collections.group.parts.part.pointer", st_collections_group_parts_part_pointer_mode},
+     {"collections.group.parts.part.alt_font", st_collections_group_parts_part_use_alternate_font_metrics},
+     {"collections.group.parts.part.clip", st_collections_group_parts_part_clip_to_id},
+};
+
+/**
+   @edcsubsection{lazedc_shorthand,Shorthand}
+ */
+
+/**
+    @page edcref
+    @block
+        Shorthand
+    @context
+    group {
+       broadcast; -> broadcast_signal: 1;
+       nobroadcast; -> broadcast_signal: 0;
+       mouse; -> mouse_events: 1;
+       nomouse; -> mouse_events: 0;
+       parts {
+          part {
+             mouse; -> mouse_events: 1;
+             nomouse; -> mouse_events: 0;
+             repeat; -> repeat_events: 1;
+             norepeat; -> repeat_events: 0;
+             precise; -> precise_is_inside: 1;
+             imprecise; -> precise_is_inside: 0;
+             desc {
+                vis; -> visible: 1;
+                hid; -> visible: 0;
+             }
+          }
+       }
+    }
+
+    @description
+        These statements on the left have the same meaning as statements on the right,
+        but they are shorter.
+    @since 1.10
+    @endblock
+*/
+New_Statement_Handler statement_handlers_short_single[] =
+{
+     {"collections.group.parts.part.mouse", st_collections_group_parts_part_mouse},
+     {"collections.group.parts.part.nomouse", st_collections_group_parts_part_nomouse},
+     {"collections.group.parts.part.repeat", st_collections_group_parts_part_repeat},
+     {"collections.group.parts.part.norepeat", st_collections_group_parts_part_norepeat},
+     {"collections.group.parts.part.precise", st_collections_group_parts_part_precise},
+     {"collections.group.parts.part.imprecise", st_collections_group_parts_part_imprecise},
+     {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
+     {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
+     {"collections.group.mouse", st_collections_group_mouse},
+     {"collections.group.nomouse", st_collections_group_nomouse},
+     {"collections.group.broadcast", st_collections_group_broadcast},
+     {"collections.group.nobroadcast", st_collections_group_nobroadcast},
+};
+
 #define PROGRAM_OBJECTS(PREFIX) \
      {PREFIX".program", ob_collections_group_programs_program}, /* dup */ \
      {PREFIX".program.script", ob_collections_group_programs_program_script}, /* dup */ \
@@ -847,8 +1019,72 @@ New_Object_Handler object_handlers[] =
      PROGRAM_OBJECTS("collections.group")
 };
 
+/**
+   @edcsubsection{lazedc_blocks,Blocks}
+ */
+
+/**
+    @page edcref
+    @block
+        Blocks
+    @context
+    parts {
+       rect{}
+       text{}
+       image{}
+       swallow{}
+       textblock{}
+       group{}
+       box{}
+       table{}
+       external{}
+       proxy{}
+       spacer{}
+       part {
+          desc {
+          }
+       }
+    }
+
+    @description
+        Lowercase part types can be specified as blocks with the same effect as part { type: TYPE; }
+        The "description" block can also be shortened to "desc".
+        
+    @since 1.10
+    @endblock
+*/
+New_Object_Handler object_handlers_short[] =
+{
+     {"collections.group.parts.rect", ob_collections_group_parts_part_short},
+     {"collections.group.parts.text", ob_collections_group_parts_part_short},
+     {"collections.group.parts.image", ob_collections_group_parts_part_short},
+     {"collections.group.parts.swallow", ob_collections_group_parts_part_short},
+     {"collections.group.parts.textblock", ob_collections_group_parts_part_short},
+     {"collections.group.parts.group", ob_collections_group_parts_part_short},
+     {"collections.group.parts.box", ob_collections_group_parts_part_short},
+     {"collections.group.parts.table", ob_collections_group_parts_part_short},
+     {"collections.group.parts.external", ob_collections_group_parts_part_short},
+     {"collections.group.parts.proxy", ob_collections_group_parts_part_short},
+     {"collections.group.parts.spacer", ob_collections_group_parts_part_short},
+     {"collections.group.parts.part.desc", ob_collections_group_parts_part_desc},
+};
+
 New_Nested_Handler nested_handlers[] = {
      {"collections.group.parts", "part", NULL, edje_cc_handlers_hierarchy_pop }
+};
+
+New_Nested_Handler nested_handlers_short[] = {
+     {"collections.group.parts", "rect", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "text", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "image", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "swallow", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "textblock", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "group", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "box", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "table", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "external", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "proxy", NULL, edje_cc_handlers_hierarchy_pop },
+     {"collections.group.parts", "spacer", NULL, edje_cc_handlers_hierarchy_pop },
 };
 
 /*****/
@@ -860,15 +1096,39 @@ object_handler_num(void)
 }
 
 int
+object_handler_short_num(void)
+{
+   return sizeof(object_handlers_short) / sizeof (New_Object_Handler);
+}
+
+int
 statement_handler_num(void)
 {
    return sizeof(statement_handlers) / sizeof (New_Object_Handler);
 }
 
 int
+statement_handler_short_num(void)
+{
+   return sizeof(statement_handlers_short) / sizeof (New_Object_Handler);
+}
+
+int
+statement_handler_short_single_num(void)
+{
+   return sizeof(statement_handlers_short_single) / sizeof (New_Object_Handler);
+}
+
+int
 nested_handler_num(void)
 {
    return sizeof(nested_handlers) / sizeof (New_Nested_Handler);
+}
+
+int
+nested_handler_short_num(void)
+{
+   return sizeof(nested_handlers_short) / sizeof (New_Nested_Handler);
 }
 
 static void
@@ -2036,6 +2296,26 @@ ob_styles_style(void)
    edje_file->styles = eina_list_append(edje_file->styles, stl);
 }
 
+static void
+_style_name(char *name)
+{
+   Edje_Style *stl, *tstl;
+   Eina_List *l;
+
+   stl = eina_list_last_data_get(edje_file->styles);
+   free(stl->name);
+   stl->name = name;
+   EINA_LIST_FOREACH(edje_file->styles, l, tstl)
+     {
+        if (stl->name && tstl->name && (stl != tstl) && (!strcmp(stl->name, tstl->name)))
+          {
+             ERR("parse error %s:%i. There is already a style named \"%s\"",
+          file_in, line - 1, stl->name);
+             exit(-1);
+          }
+     }
+}
+
 /**
     @page edcref
     @property
@@ -2049,20 +2329,7 @@ ob_styles_style(void)
 static void
 st_styles_style_name(void)
 {
-   Edje_Style *stl, *tstl;
-   Eina_List *l;
-
-   stl = eina_list_data_get(eina_list_last(edje_file->styles));
-   stl->name = parse_str(0);
-   EINA_LIST_FOREACH(edje_file->styles, l, tstl)
-     {
-	if (stl->name && tstl->name && (stl != tstl) && (!strcmp(stl->name, tstl->name)))
-	  {
-	     ERR("parse error %s:%i. There is already a style named \"%s\"",
-		 file_in, line - 1, stl->name);
-	     exit(-1);
-	  }
-     }
+   _style_name(parse_str(0));
 }
 
 /**
@@ -2534,6 +2801,10 @@ ob_collections_group(void)
         ERR("A collection without a name was detected, that's not allowed.");
         exit(-1);
      }
+   current_program = NULL;
+   current_part = NULL;
+   current_desc = NULL;
+
    current_group_inherit = EINA_FALSE;
 
    current_de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
@@ -2564,35 +2835,20 @@ ob_collections_group(void)
 #endif
 }
 
-/**
-    @page edcref
-    @property
-        name
-    @parameters
-        [group name]
-    @effect
-        The name that will be used by the application to load the resulting
-        Edje object and to identify the group to swallow in a GROUP part. If a
-        group with the same name exists already it will be completely overriden
-        by the new group.
-    @endproperty
-*/
 static void
-st_collections_group_name(void)
+_group_name(char *name)
 {
    Edje_Part_Collection_Directory_Entry *alias;
    Edje_Part_Collection_Directory_Entry *older;
    Edje_Part_Collection *current_pc;
    Eina_List *l = NULL;
 
-   check_arg_count(1);
-
    current_pc = eina_list_data_get(eina_list_last(edje_collections));
 
    if (current_de->entry)
      goto double_named_group;
 
-   current_de->entry = parse_str(0);
+   current_de->entry = name;
    current_pc->part = current_de->entry;
 
    older = eina_hash_find(edje_file->collection, current_de->entry);
@@ -2618,6 +2874,26 @@ double_named_group:
    ERR("Invalid group '%s', only a single name statement is valid for group,"
        "use alias instead.", current_de->entry);
    exit(-1);
+}
+
+/**
+    @page edcref
+    @property
+        name
+    @parameters
+        [group name]
+    @effect
+        The name that will be used by the application to load the resulting
+        Edje object and to identify the group to swallow in a GROUP part. If a
+        group with the same name exists already it will be completely overriden
+        by the new group.
+    @endproperty
+*/
+static void
+st_collections_group_name(void)
+{
+   check_arg_count(1);
+   _group_name(parse_str(0));
 }
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
@@ -2734,6 +3010,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    ob_collections_group_parts_part_description();
    ed = ep->default_desc;
    parent_desc = ed2 = ep2->default_desc;
+   free((void*)ed->state.name);
    ed->state.name = STRDUP(ed2->state.name);
    ed->state.value = ed2->state.value;
    st_collections_group_parts_part_description_inherit();
@@ -3133,6 +3410,28 @@ st_collections_group_broadcast_signal(void)
    pc->broadcast_signal = parse_bool(0);
 }
 
+static void
+st_collections_group_broadcast(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(0);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->broadcast_signal = 1;
+}
+
+static void
+st_collections_group_nobroadcast(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(0);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->broadcast_signal = 0;
+}
+
 /**
    @edcsubsection{collections_group_script,Script}
  */
@@ -3300,6 +3599,28 @@ st_collections_group_mouse_events(void)
 
    pcp = eina_list_data_get(eina_list_last(edje_collections));
    pcp->default_mouse_events = parse_bool(0);
+}
+
+static void
+st_collections_group_mouse(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(0);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->default_mouse_events = 1;
+}
+
+static void
+st_collections_group_nomouse(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(0);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->default_mouse_events = 0;
 }
 
 /**
@@ -3505,6 +3826,7 @@ edje_cc_handlers_part_make(int id)
           }
         id = pc->parts_count - 1;
      }
+
    current_part = pc->parts[id] = ep;
    pcp = (Edje_Part_Collection_Parser *)pc;
 
@@ -3539,7 +3861,45 @@ edje_cc_handlers_part_make(int id)
 }
 
 static void
-ob_collections_group_parts_part(void)
+_part_type_set(unsigned int type)
+{
+   /* handle type change of inherited part */
+   if (type != current_part->type)
+     {
+        Edje_Part_Description_Common *new, *previous;
+        Edje_Part_Collection *pc;
+        Edje_Part *ep;
+        unsigned int i;
+
+        /* we don't free old part as we don't remove all reference to them */
+        part_description_image_cleanup(current_part);
+
+        pc = eina_list_data_get(eina_list_last(edje_collections));
+        ep = current_part;
+
+        previous = ep->default_desc;
+        if (previous)
+          {
+             new = _edje_part_description_alloc(type, pc->part, ep->name);
+             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
+
+             ep->default_desc = new;
+          }
+
+        for (i = 0; i < ep->other.desc_count; i++)
+          {
+             previous = ep->other.desc[i];
+             new = _edje_part_description_alloc(type, pc->part, ep->name);
+             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
+             ep->other.desc[i] = new;
+          }
+     }
+
+   current_part->type = type;
+}
+
+static void
+_part_create(void)
 {
    Edje_Part *cp = current_part;  /* Save to restore on pop    */
    Edje_Part *ep = edje_cc_handlers_part_make(-1); /* This changes current_part */
@@ -3551,6 +3911,38 @@ ob_collections_group_parts_part(void)
    prnt = edje_cc_handlers_hierarchy_parent_get();
    if (prnt)  /* This is the child of parent in stack */
      prnt->nested_children_count++;
+}
+
+static void
+ob_collections_group_parts_part_short(void)
+{
+   unsigned int type;
+
+   type = parse_enum(-1,
+                  "none", EDJE_PART_TYPE_NONE,
+                  "rect", EDJE_PART_TYPE_RECTANGLE,
+                  "text", EDJE_PART_TYPE_TEXT,
+                  "image", EDJE_PART_TYPE_IMAGE,
+                  "swallow", EDJE_PART_TYPE_SWALLOW,
+                  "textblock", EDJE_PART_TYPE_TEXTBLOCK,
+                  "group", EDJE_PART_TYPE_GROUP,
+                  "box", EDJE_PART_TYPE_BOX,
+                  "table", EDJE_PART_TYPE_TABLE,
+                  "external", EDJE_PART_TYPE_EXTERNAL,
+                  "proxy", EDJE_PART_TYPE_PROXY,
+                  "spacer", EDJE_PART_TYPE_SPACER,
+                  NULL);
+
+   stack_pop_quick(EINA_TRUE, EINA_TRUE);
+   stack_push_quick("part");
+   _part_create();
+   _part_type_set(type);
+}
+
+static void
+ob_collections_group_parts_part(void)
+{
+   _part_create();
 }
 
 static void *
@@ -3627,7 +4019,7 @@ st_collections_group_parts_part_inherit(void)
         if (strcmp(pc->parts[i]->name, name)) continue;
         pname = current_part->name;
         current_part->name = NULL;
-        _part_free(current_part);
+        current_part = _part_free(current_part);
         edje_cc_handlers_part_make(id);
         _part_copy(current_part, pc->parts[i]);
         free((void*)current_part->name);
@@ -3731,6 +4123,47 @@ st_collections_group_program_remove(void)
      }
 }
 
+static Eina_Bool
+_part_name_check(void)
+{
+   unsigned int i;
+   Edje_Part_Collection *pc;
+   Edje_Part *ep = current_part;
+
+   if (!ep->name) return EINA_FALSE;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   for (i = 0; i < (pc->parts_count - 1); i++)
+     {  /* Compare name only if did NOT updated ep from hircy pop */
+        if ((ep != pc->parts[i]) &&
+              (pc->parts[i]->name &&
+               (!strcmp(pc->parts[i]->name, ep->name))))
+          {
+             Edje_Part_Parser *epp;
+
+             epp = (Edje_Part_Parser *)pc->parts[i];
+             if (!epp->can_override)
+               {
+                  ERR("parse error %s:%i. There is already a part of the name %s",
+                      file_in, line - 1, ep->name);
+                  exit(-1);
+               }
+             else
+               {
+                  pc->parts_count--;
+                  pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
+                  current_part = pc->parts[i];
+                  edje_cc_handlers_hierarchy_rename(ep, current_part);
+                  free(ep);
+                  epp->can_override = EINA_FALSE;
+                  break;
+               }
+          }
+     }
+   return EINA_TRUE;
+}
+
 /**
     @page edcref
     @property
@@ -3815,46 +4248,13 @@ st_collections_group_part_remove(void)
 static void
 st_collections_group_parts_part_name(void)
 {
-   Edje_Part_Collection *pc;
    Edje_Part *ep;
-   Edje_Part_Parser *epp;
 
    check_arg_count(1);
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_part;
    ep->name = parse_str(0);
-
-   if (ep->name)
-     {
-        unsigned int i;
-
-        for (i = 0; i < (pc->parts_count - 1); i++)
-          {  /* Compare name only if did NOT updated ep from hircy pop */
-             if ((ep != pc->parts[i]) &&
-                   (pc->parts[i]->name &&
-                    (!strcmp(pc->parts[i]->name, ep->name))))
-               {
-                  epp = (Edje_Part_Parser *)pc->parts[i];
-                  if (!epp->can_override)
-                    {
-                       ERR("parse error %s:%i. There is already a part of the name %s",
-                           file_in, line - 1, ep->name);
-                       exit(-1);
-                    }
-                  else
-                    {
-                       pc->parts_count--;
-                       pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
-                       current_part = pc->parts[i];
-                       edje_cc_handlers_hierarchy_rename(ep, current_part);
-                       free(ep);
-                       epp->can_override = EINA_FALSE;
-                       break;
-                    }
-               }
-          }
-     }
+   _part_name_check();
 }
 
 /**
@@ -3901,39 +4301,7 @@ st_collections_group_parts_part_type(void)
 		     "SPACER", EDJE_PART_TYPE_SPACER,
                      NULL);
 
-   /* handle type change of inherited part */
-   if (type != current_part->type)
-     {
-        Edje_Part_Description_Common *new, *previous;
-        Edje_Part_Collection *pc;
-        Edje_Part *ep;
-        unsigned int i;
-
-        /* we don't free old part as we don't remove all reference to them */
-        part_description_image_cleanup(current_part);
-
-        pc = eina_list_data_get(eina_list_last(edje_collections));
-        ep = current_part;
-
-        previous = ep->default_desc;
-        if (previous)
-          {
-             new = _edje_part_description_alloc(type, pc->part, ep->name);
-             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
-
-             ep->default_desc = new;
-          }
-
-        for (i = 0; i < ep->other.desc_count; i++)
-          {
-             previous = ep->other.desc[i];
-             new = _edje_part_description_alloc(type, pc->part, ep->name);
-             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
-             ep->other.desc[i] = new;
-          }
-     }
-
-   current_part->type = type;
+   _part_type_set(type);
 }
 
 /**
@@ -4099,6 +4467,20 @@ st_collections_group_parts_part_mouse_events(void)
    current_part->mouse_events = parse_bool(0);
 }
 
+static void
+st_collections_group_parts_part_mouse(void)
+{
+   check_arg_count(0);
+   current_part->mouse_events = 1;
+}
+
+static void
+st_collections_group_parts_part_nomouse(void)
+{
+   check_arg_count(0);
+   current_part->mouse_events = 0;
+}
+
 /**
     @page edcref
     @property
@@ -4116,6 +4498,22 @@ st_collections_group_parts_part_repeat_events(void)
    check_arg_count(1);
 
    current_part->repeat_events = parse_bool(0);
+}
+
+static void
+st_collections_group_parts_part_repeat(void)
+{
+   check_arg_count(0);
+
+   current_part->repeat_events = 1;
+}
+
+static void
+st_collections_group_parts_part_norepeat(void)
+{
+   check_arg_count(0);
+
+   current_part->repeat_events = 0;
 }
 
 /**
@@ -4212,6 +4610,22 @@ st_collections_group_parts_part_precise_is_inside(void)
    check_arg_count(1);
 
    current_part->precise_is_inside = parse_bool(0);
+}
+
+static void
+st_collections_group_parts_part_precise(void)
+{
+   check_arg_count(0);
+
+   current_part->precise_is_inside = 1;
+}
+
+static void
+st_collections_group_parts_part_imprecise(void)
+{
+   check_arg_count(0);
+
+   current_part->precise_is_inside = 0;
 }
 
 /**
@@ -5362,6 +5776,14 @@ ob_collections_group_parts_part_description(void)
    ed->minmul.h = FROM_INT(1);
 }
 
+static void
+ob_collections_group_parts_part_desc(void)
+{
+   stack_pop_quick(EINA_TRUE, EINA_TRUE);
+   stack_push_quick("description");
+   ob_collections_group_parts_part_description();
+}
+
 /**
     @page edcref
     @property
@@ -5629,6 +6051,45 @@ st_collections_group_parts_part_description_source(void)
    free(name);
 }
 
+static void
+_part_description_state_update(Edje_Part_Description_Common *ed)
+{
+   Edje_Part *ep = current_part;
+
+   if (ed == ep->default_desc) return;
+   if ((ep->default_desc->state.name && !strcmp(ed->state.name, ep->default_desc->state.name) && ed->state.value == ep->default_desc->state.value) ||
+       (!ep->default_desc->state.name && !strcmp(ed->state.name, "default") && ed->state.value == ep->default_desc->state.value))
+     {
+        if (ep->type == EDJE_PART_TYPE_IMAGE)
+          _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
+
+        free(ed);
+        ep->other.desc_count--;
+        ep->other.desc = realloc(ep->other.desc,
+                                 sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
+        current_desc = ep->default_desc;
+     }
+   else if (ep->other.desc_count)
+     {
+        unsigned int i;
+        for (i = 0; i < ep->other.desc_count - 1; ++i)
+          {
+             if (!strcmp(ed->state.name, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
+               {
+                  if (ep->type == EDJE_PART_TYPE_IMAGE)
+                    _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
+
+                  free(ed);
+                  ep->other.desc_count--;
+                  ep->other.desc = realloc(ep->other.desc,
+                                           sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
+                  current_desc = ep->other.desc[i];
+                  break;
+               }
+          }
+     }
+}
+
 /**
     @page edcref
     @property
@@ -5671,41 +6132,7 @@ st_collections_group_parts_part_description_state(void)
      ed->state.value = 0.0;
    else
      ed->state.value = parse_float_range(1, 0.0, 1.0);
-
-   if (ed != ep->default_desc)
-     {
-        if ((ep->default_desc->state.name && !strcmp(s, ep->default_desc->state.name) && ed->state.value == ep->default_desc->state.value) ||
-            (!ep->default_desc->state.name && !strcmp(s, "default") && ed->state.value == ep->default_desc->state.value))
-          {
-             if (ep->type == EDJE_PART_TYPE_IMAGE)
-               _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
-
-             free(ed);
-             ep->other.desc_count--;
-             ep->other.desc = realloc(ep->other.desc,
-                                      sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
-             current_desc = ep->default_desc;
-          }
-        else if (ep->other.desc_count)
-          {
-             unsigned int i;
-             for (i = 0; i < ep->other.desc_count - 1; ++i)
-               {
-                  if (!strcmp(s, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
-                    {
-                       if (ep->type == EDJE_PART_TYPE_IMAGE)
-                         _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
-
-                       free(ed);
-                       ep->other.desc_count--;
-                       ep->other.desc = realloc(ep->other.desc,
-                                                sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
-                       current_desc = ep->other.desc[i];
-                       break;
-                    }
-               }
-          }
-     }
+   _part_description_state_update(ed);
 }
 
 /**
@@ -5733,6 +6160,37 @@ st_collections_group_parts_part_description_visible(void)
 
    current_desc->visible = parse_bool(0);
 }
+
+static void
+st_collections_group_parts_part_description_vis(void)
+{
+   check_arg_count(0);
+
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
+     {
+       ERR("parse error %s:%i. SPACER part can't have a visibility defined",
+           file_in, line - 1);
+       exit(-1);
+     }
+
+   current_desc->visible = 1;
+}
+
+static void
+st_collections_group_parts_part_description_hid(void)
+{
+   check_arg_count(0);
+
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
+     {
+       ERR("parse error %s:%i. SPACER part can't have a visibility defined",
+           file_in, line - 1);
+       exit(-1);
+     }
+
+   current_desc->visible = 0;
+}
+
 /**
     @page edcref
     @property
@@ -9319,6 +9777,27 @@ ob_collections_group_programs_program(void)
    current_program = ep;
 }
 
+static void
+_program_name(char *name)
+{
+   Edje_Part_Collection *pc;
+   Eina_List *l;
+   void *pl;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   free((void *)current_program->name);
+   current_program->name = name;
+
+   _edje_program_check(current_program->name, current_program, pc->programs.fnmatch, pc->programs.fnmatch_count);
+   _edje_program_check(current_program->name, current_program, pc->programs.strcmp, pc->programs.strcmp_count);
+   _edje_program_check(current_program->name, current_program, pc->programs.strncmp, pc->programs.strncmp_count);
+   _edje_program_check(current_program->name, current_program, pc->programs.strrncmp, pc->programs.strrncmp_count);
+   _edje_program_check(current_program->name, current_program, pc->programs.nocmp, pc->programs.nocmp_count);
+
+   EINA_LIST_FOREACH(current_program_lookups, l, pl)
+     program_lookup_rename(pl, name);
+}
+
 /**
     @page edcref
     @property
@@ -9332,27 +9811,9 @@ ob_collections_group_programs_program(void)
 static void
 st_collections_group_programs_program_name(void)
 {
-   Edje_Part_Collection *pc;
-   Eina_List *l;
-   void *pl;
-
    check_arg_count(1);
-
    _program_sequence_check();
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   if (current_program->name) free((void *)current_program->name);
-   current_program->name = parse_str(0);
-
-   _edje_program_check(current_program->name, current_program, pc->programs.fnmatch, pc->programs.fnmatch_count);
-   _edje_program_check(current_program->name, current_program, pc->programs.strcmp, pc->programs.strcmp_count);
-   _edje_program_check(current_program->name, current_program, pc->programs.strncmp, pc->programs.strncmp_count);
-   _edje_program_check(current_program->name, current_program, pc->programs.strrncmp, pc->programs.strrncmp_count);
-   _edje_program_check(current_program->name, current_program, pc->programs.nocmp, pc->programs.nocmp_count);
-
-
-   EINA_LIST_FOREACH(current_program_lookups, l, pl)
-     program_lookup_rename(pl, current_program->name);
+   _program_name(parse_str(0));
 }
 
 /**
@@ -10402,6 +10863,9 @@ edje_cc_handlers_hierarchy_pop(void)
                      file_in, line - 1, current_de->entry, current_part->name);
                  exit(-1);
             }
+        /* auto-add default desc if it was omitted */
+        if (!current_part->default_desc)
+          ob_collections_group_parts_part_description();
      }
 
    if (info)
@@ -10415,4 +10879,67 @@ edje_cc_handlers_hierarchy_pop(void)
 
         free(info);
      }
+}
+
+Eina_Bool
+edje_cc_handlers_wildcard(void)
+{
+   char *token, *last;
+
+   token = eina_list_last_data_get(stack);
+   last = eina_list_data_get(eina_list_prev(eina_list_last(stack)));
+   if (!last) return EINA_FALSE;
+   if (last)
+     {
+        char *end;
+
+        end = strrchr(last, '.');
+        if (end) last = end + 1;
+     }
+   if (!last) return EINA_FALSE;
+   if (current_part)
+     {
+        if ((!strcmp(last, "part")) && (!current_part->name))
+          {
+             Eina_Bool ret;
+
+             free((void*)current_part->name);
+             current_part->name = token;
+             ret = _part_name_check();
+             if (ret)
+               stack_pop_quick(EINA_FALSE, EINA_FALSE);
+             return ret;
+          }
+        if (current_desc && ((!strcmp(last, "desc")) || (!strcmp(last, "description"))))
+          {
+             if ((!current_desc->state.name) || strcmp(current_desc->state.name, token))
+               {
+                  free((char*)current_desc->state.name);
+                  current_desc->state.name = token;
+                  _part_description_state_update(current_desc);
+               }
+             stack_pop_quick(EINA_FALSE, current_desc->state.name != token);
+             return EINA_TRUE;
+          }
+     }
+   if (current_program && ((!strcmp(last, "program")) || (!strcmp(last, "sequence"))))
+     {
+        _program_sequence_check();
+        _program_name(token);
+        stack_pop_quick(EINA_FALSE, EINA_FALSE);
+        return EINA_TRUE;
+     }
+   if (current_de && (!strcmp(last, "group")))
+     {
+        _group_name(token);
+        stack_pop_quick(EINA_FALSE, EINA_FALSE);
+        return EINA_TRUE;
+     }
+   if (edje_file->styles && (!strcmp(last, "style")))
+     {
+         _style_name(token);
+         stack_pop_quick(EINA_FALSE, EINA_FALSE);
+         return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
