@@ -175,6 +175,7 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    while (!async_loader_exit)
      {
         Evas_GL_Texture_Async_Preload *async;
+        unsigned int bytes_count;
         GLuint fmt;
 
         if (!async_loader_standby && async_loader_tex)
@@ -189,6 +190,14 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
         async = eina_list_data_get(async_loader_tex);
         async_loader_tex = eina_list_remove_list(async_loader_tex, async_loader_tex);
         if (!async) continue;
+
+        switch (async->im->cache_entry.space)
+          {
+           case EVAS_COLORSPACE_ARGB8888: bytes_count = 4; break;
+           case EVAS_COLORSPACE_GRY8: bytes_count = 1; break;
+           case EVAS_COLORSPACE_AGRY88: bytes_count = 2; break;
+           default: continue;
+          }
 
         async_loader_running = EINA_TRUE;
         async_current = async;
@@ -210,110 +219,7 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
           }
 
         // FIXME: loop until all subtile are uploaded or the image is about to be deleted
-
-        // TEMPORARY CODE JUST TO SEE IF IT WORK
-        fmt = async->tex->pt->format;
-        glBindTexture(GL_TEXTURE_2D, async->tex->pt->texture);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        if (async->unpack_row_length)
-          {
-             glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-        //  +-+
-        //  +-+
-        //
-        _tex_sub_2d(async->tex->gc, async->tex->x, async->tex->y,
-                    async->im->cache_entry.w, async->im->cache_entry.h,
-                    fmt, async->tex->pt->dataformat,
-                    async->im->image.data);
-        //  xxx
-        //  xxx
-        //  ---
-        _tex_sub_2d(async->tex->gc, async->tex->x, async->tex->y + async->im->cache_entry.h,
-                    async->im->cache_entry.w, 1,
-                    fmt, async->tex->pt->dataformat,
-                    async->im->image.data + ((async->im->cache_entry.h - 1) * async->im->cache_entry.w));
-        //  xxx
-        //  xxx
-        // o
-        _tex_sub_2d(async->tex->gc, async->tex->x - 1, async->tex->y + async->im->cache_entry.h,
-                    1, 1,
-                    fmt, async->tex->pt->dataformat,
-                    async->im->image.data + ((async->im->cache_entry.h - 1) * async->im->cache_entry.w));
-        //  xxx
-        //  xxx
-        //     o
-        _tex_sub_2d(async->tex->gc, async->tex->x + async->im->cache_entry.w, async->tex->y + async->im->cache_entry.h,
-                    1, 1,
-                    fmt, async->tex->pt->dataformat,
-                    async->im->image.data + ((async->im->cache_entry.h - 1) * async->im->cache_entry.w) + (async->im->cache_entry.w - 1));
-        if (async->unpack_row_length)
-          {
-             glPixelStorei(GL_UNPACK_ROW_LENGTH, async->im->cache_entry.w);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             // |xxx
-             // |xxx
-             //
-             _tex_sub_2d(async->tex->gc, async->tex->x - 1, async->tex->y,
-                         1, async->im->cache_entry.h,
-                         fmt, async->tex->pt->dataformat,
-                         async->im->image.data);
-             //  xxx|
-             //  xxx|
-             //
-             _tex_sub_2d(async->tex->gc, async->tex->x + async->im->cache_entry.w, async->tex->y,
-                         1, async->im->cache_entry.h,
-                         fmt, async->tex->pt->dataformat,
-                         async->im->image.data + (async->im->cache_entry.w - 1));
-          }
-        else
-          {
-             DATA32 *tpix, *ps, *pd;
-             int i;
-
-             tpix = alloca(async->im->cache_entry.h * sizeof(DATA32));
-             pd = tpix;
-             ps = async->im->image.data;
-             for (i = 0; i < (int)async->im->cache_entry.h; i++)
-               {
-                  *pd = *ps;
-                  pd++;
-                  ps += async->im->cache_entry.w;
-               }
-             // |xxx
-             // |xxx
-             //
-             _tex_sub_2d(async->tex->gc, async->tex->x - 1, async->tex->y,
-                         1, async->im->cache_entry.h,
-                         fmt, async->tex->pt->dataformat,
-                         tpix);
-             pd = tpix;
-             ps = async->im->image.data + (async->im->cache_entry.w - 1);
-             for (i = 0; i < (int)async->im->cache_entry.h; i++)
-               {
-                  *pd = *ps;
-                  pd++;
-                  ps += async->im->cache_entry.w;
-               }
-             //  xxx|
-             //  xxx|
-             //
-             _tex_sub_2d(async->tex->gc, async->tex->x + async->im->cache_entry.w, async->tex->y,
-                         1, async->im->cache_entry.h,
-                         fmt, async->tex->pt->dataformat,
-                         tpix);
-          }
-
-        // Switch back to current texture
-        if (async->tex->ptt->texture != async->tex->gc->pipe[0].shader.cur_tex)
-          {
-             glBindTexture(GL_TEXTURE_2D, async->tex->gc->pipe[0].shader.cur_tex);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
+        evas_gl_common_texture_upload(async->tex, async->im, bytes_count);
 
         // Shall we block now ?
         if (!_evas_gl_preload_lock())

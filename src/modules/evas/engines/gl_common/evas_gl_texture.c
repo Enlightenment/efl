@@ -56,7 +56,9 @@ static const struct {
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ARGB8888, &rgb_ifmt, &rgb_fmt },
 #endif
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
-  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt }
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt }
 };
 
 static const GLenum matching_rgba[] = { GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, 0x0 };
@@ -909,9 +911,117 @@ evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im
 }
 
 void
-evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
+evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int bytes_count)
 {
    GLuint fmt;
+
+   fmt = tex->pt->format;
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   if (tex->gc->shared->info.unpack_row_length)
+     {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+//   printf("tex upload %ix%i\n", im->cache_entry.w, im->cache_entry.h);
+   //  +-+
+   //  +-+
+   //
+   _tex_sub_2d(tex->gc, tex->x, tex->y,
+               im->cache_entry.w, im->cache_entry.h,
+               fmt, tex->pt->dataformat,
+               im->image.data);
+   //  xxx
+   //  xxx
+   //  ---
+   _tex_sub_2d(tex->gc, tex->x, tex->y + im->cache_entry.h,
+               im->cache_entry.w, 1,
+               fmt, tex->pt->dataformat,
+               (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
+   //  xxx
+   //  xxx
+   // o
+   _tex_sub_2d(tex->gc, tex->x - 1, tex->y + im->cache_entry.h,
+               1, 1,
+               fmt, tex->pt->dataformat,
+               (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
+   //  xxx
+   //  xxx
+   //     o
+   _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
+               1, 1,
+               fmt, tex->pt->dataformat,
+               (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1)) * bytes_count);
+   if (tex->gc->shared->info.unpack_row_length)
+     {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, im->cache_entry.w);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        // |xxx
+        // |xxx
+        //
+        _tex_sub_2d(tex->gc, tex->x - 1, tex->y,
+                    1, im->cache_entry.h,
+                    fmt, tex->pt->dataformat,
+                    im->image.data);
+        //  xxx|
+        //  xxx|
+        //
+        _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y,
+                    1, im->cache_entry.h,
+                    fmt, tex->pt->dataformat,
+                    (unsigned char *) im->image.data + (im->cache_entry.w - 1) * bytes_count);
+     }
+   else
+     {
+        DATA8 *tpix, *ps, *pd;
+        int i;
+
+        tpix = alloca(im->cache_entry.h * bytes_count);
+        pd = tpix;
+        ps = (unsigned char*) im->image.data;
+        for (i = 0; i < (int)im->cache_entry.h; i++)
+          {
+             memcpy(pd, ps, bytes_count);
+             pd++;
+             ps += im->cache_entry.w * bytes_count;
+          }
+        // |xxx
+        // |xxx
+        //
+        _tex_sub_2d(tex->gc, tex->x - 1, tex->y,
+                    1, im->cache_entry.h,
+                    fmt, tex->pt->dataformat,
+                    tpix);
+        pd = tpix;
+        ps = (unsigned char*) im->image.data + (im->cache_entry.w - 1) * bytes_count;
+        for (i = 0; i < (int)im->cache_entry.h; i++)
+          {
+             memcpy(pd, ps, bytes_count);
+             pd++;
+             ps += im->cache_entry.w * bytes_count;
+          }
+        //  xxx|
+        //  xxx|
+        //
+        _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y,
+                    1, im->cache_entry.h,
+                    fmt, tex->pt->dataformat,
+                    tpix);
+     }
+   if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
+     {
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+     }
+}
+
+void
+evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
+{
+   unsigned int bytes_count;
 
    if (tex->alpha != im->cache_entry.flags.alpha)
      {
@@ -931,12 +1041,21 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    if (!tex->pt) return;
    if (!im->image.data) return;
 
+   switch (im->cache_entry.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888: bytes_count = 4; break;
+      case EVAS_COLORSPACE_GRY8: bytes_count = 1; break;
+      case EVAS_COLORSPACE_AGRY88: bytes_count = 2; break;
+      default: return;
+     }
+
    // if preloaded, then async push it in after uploading a miniature of it
    if (im->cache_entry.flags.preload_done && tex->w > 2 * EVAS_GL_TILE_SIZE && tex->h > 2 * EVAS_GL_TILE_SIZE)
      {
         Evas_GL_Texture_Async_Preload *async;
-        int *in;
-        int out[EVAS_GL_TILE_SIZE * EVAS_GL_TILE_SIZE];
+        unsigned char *in;
+        unsigned char *out;
+        GLuint fmt;
         float xstep, ystep;
         float x, y;
         int i, j;
@@ -945,19 +1064,28 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 
         if (tex->ptt) return ;
 
+        out = alloca(bytes_count *  EVAS_GL_TILE_SIZE * EVAS_GL_TILE_SIZE);
         xstep = (float)tex->w / (EVAS_GL_TILE_SIZE - 2);
         ystep = (float)tex->h / (EVAS_GL_TILE_SIZE - 1);
-        in = (int*) im->image.data;
+        in = (unsigned char*) im->image.data;
 
         for (y = 0, j = 0; j < EVAS_GL_TILE_SIZE - 1; y += ystep, j++)
           {
-             out[j * EVAS_GL_TILE_SIZE] = in[(int)y * im->cache_entry.w];
+             memcpy(&out[j * EVAS_GL_TILE_SIZE * bytes_count],
+                    &in[(int)y * im->cache_entry.w * bytes_count],
+                    bytes_count);
              for (x = 0, i = 1; i < EVAS_GL_TILE_SIZE - 1; x += xstep, i++)
-               out[j * EVAS_GL_TILE_SIZE + i] = in[(int)y * im->cache_entry.w + (int)x];
-             out[j * EVAS_GL_TILE_SIZE + i] = in[(int)y * im->cache_entry.w + (int)(x - xstep)];
+               memcpy(&out[(j * EVAS_GL_TILE_SIZE + i) * bytes_count],
+                      &in[((int)y * im->cache_entry.w + (int)x) * bytes_count],
+                      bytes_count);
+             memcpy(&out[(j * EVAS_GL_TILE_SIZE + i) * bytes_count],
+                    &in[((int)y * im->cache_entry.w + (int)(x - xstep)) * bytes_count],
+                    bytes_count);
           }
 
-        memcpy(&out[j * EVAS_GL_TILE_SIZE], &out[(j - 1) * EVAS_GL_TILE_SIZE], EVAS_GL_TILE_SIZE * sizeof (int));
+        memcpy(&out[(j * EVAS_GL_TILE_SIZE) * bytes_count],
+               &out[((j - 1) * EVAS_GL_TILE_SIZE) * bytes_count],
+               EVAS_GL_TILE_SIZE * bytes_count);
 
         // out is a miniature of the texture, upload that now and schedule the data for later.
 
@@ -1033,107 +1161,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         tex->ptt = NULL;
      }
 
-   fmt = tex->pt->format;
-   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   if (tex->gc->shared->info.unpack_row_length)
-     {
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-//   printf("tex upload %ix%i\n", im->cache_entry.w, im->cache_entry.h);
-   //  +-+
-   //  +-+
-   //
-   _tex_sub_2d(tex->gc, tex->x, tex->y,
-               im->cache_entry.w, im->cache_entry.h,
-               fmt, tex->pt->dataformat,
-               im->image.data);
-   //  xxx
-   //  xxx
-   //  ---
-   _tex_sub_2d(tex->gc, tex->x, tex->y + im->cache_entry.h,
-               im->cache_entry.w, 1,
-               fmt, tex->pt->dataformat,
-               im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
-   //  xxx
-   //  xxx
-   // o
-   _tex_sub_2d(tex->gc, tex->x - 1, tex->y + im->cache_entry.h,
-               1, 1,
-               fmt, tex->pt->dataformat,
-               im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w));
-   //  xxx
-   //  xxx
-   //     o
-   _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
-               1, 1,
-               fmt, tex->pt->dataformat,
-               im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
-   if (tex->gc->shared->info.unpack_row_length)
-     {
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, im->cache_entry.w);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        // |xxx
-        // |xxx
-        //
-        _tex_sub_2d(tex->gc, tex->x - 1, tex->y,
-                    1, im->cache_entry.h,
-                    fmt, tex->pt->dataformat,
-                    im->image.data);
-        //  xxx|
-        //  xxx|
-        //
-        _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y,
-                    1, im->cache_entry.h,
-                    fmt, tex->pt->dataformat,
-                    im->image.data + (im->cache_entry.w - 1));
-     }
-   else
-     {
-        DATA32 *tpix, *ps, *pd;
-        int i;
-        
-        tpix = alloca(im->cache_entry.h * sizeof(DATA32));
-        pd = tpix;
-        ps = im->image.data;
-        for (i = 0; i < (int)im->cache_entry.h; i++)
-          {
-             *pd = *ps;
-             pd++;
-             ps += im->cache_entry.w;
-          }
-        // |xxx
-        // |xxx
-        //
-        _tex_sub_2d(tex->gc, tex->x - 1, tex->y,
-                    1, im->cache_entry.h,
-                    fmt, tex->pt->dataformat,
-                    tpix);
-        pd = tpix;
-        ps = im->image.data + (im->cache_entry.w - 1);
-        for (i = 0; i < (int)im->cache_entry.h; i++)
-          {
-             *pd = *ps;
-             pd++;
-             ps += im->cache_entry.w;
-          }
-        //  xxx|
-        //  xxx|
-        //
-        _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y,
-                    1, im->cache_entry.h,
-                    fmt, tex->pt->dataformat,
-                    tpix);
-     }
-   if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
-     {
-        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
+   evas_gl_common_texture_upload(tex, im, bytes_count);
 }
 
 void
