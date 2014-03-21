@@ -124,6 +124,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
    switch (cspace)
      {
       case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
+      case EVAS_COLORSPACE_AGRY88: siz = w * h * sizeof(DATA16); break;
       case EVAS_COLORSPACE_ARGB8888: siz = w * h * sizeof(DATA32); break;
       case EVAS_COLORSPACE_ETC1:
          // Need to round width and height independently
