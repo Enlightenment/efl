@@ -208,9 +208,10 @@ static void ob_collections_group_lua_script(void);
 
 static void st_collections_group_parts_alias(void);
 
-static Edje_Part *edje_cc_handlers_part_make(void);
+static Edje_Part *edje_cc_handlers_part_make(int);
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
+static void st_collections_group_parts_part_inherit(void);
 static void st_collections_group_parts_part_type(void);
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_physics_body(void);
@@ -515,6 +516,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.parts.color_classes.color_class.color3", st_color_class_color3}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
+     {"collections.group.parts.part.inherit", st_collections_group_parts_part_inherit},
      {"collections.group.parts.part.api", st_collections_group_parts_part_api},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
 #ifdef HAVE_EPHYSICS
@@ -2815,6 +2817,121 @@ _edje_data_item_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key,
    return EINA_TRUE;
 }
 
+#define STRDUP(x) x ? strdup(x) : NULL
+static void
+_part_copy(Edje_Part *ep, Edje_Part *ep2)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part_Parser *epp, *epp2;
+   Edje_Pack_Element *item, *item2;
+   Edje_Pack_Element_Parser *pitem;
+   Edje_Part_Description_Common *ed, *ed2;
+   unsigned int j;
+
+   pc = eina_list_last_data_get(edje_collections);
+
+   ep->name = STRDUP(ep2->name);
+   ep->source = STRDUP(ep2->source);
+   ep->source2 = STRDUP(ep2->source2);
+   ep->source3 = STRDUP(ep2->source3);
+   ep->source4 = STRDUP(ep2->source4);
+   ep->source5 = STRDUP(ep2->source5);
+   ep->source6 = STRDUP(ep2->source6);
+
+   data_queue_copied_part_lookup(pc, &(ep2->clip_to_id), &(ep->clip_to_id));
+
+   ep->type = ep2->type;
+   ep->mouse_events = ep2->mouse_events;
+   ep->repeat_events = ep2->repeat_events;
+   ep->ignore_flags = ep2->ignore_flags;
+   ep->scale = ep2->scale;
+   ep->pointer_mode = ep2->pointer_mode;
+   ep->precise_is_inside = ep2->precise_is_inside;
+   ep->use_alternate_font_metrics = ep2->use_alternate_font_metrics;
+   ep->effect = ep2->effect;
+   ep->entry_mode = ep2->entry_mode;
+   ep->select_mode = ep2->select_mode;
+   ep->cursor_mode = ep2->cursor_mode;
+   ep->multiline = ep2->multiline;
+   ep->access = ep2->access;
+   ep->dragable.x = ep2->dragable.x;
+   ep->dragable.step_x = ep2->dragable.step_x;
+   ep->dragable.count_x = ep2->dragable.count_x;
+   ep->dragable.y = ep2->dragable.y;
+   ep->dragable.step_y = ep2->dragable.step_y;
+   ep->dragable.count_y = ep2->dragable.count_y;
+   ep->nested_children_count = ep2->nested_children_count;
+
+   data_queue_copied_part_lookup(pc, &(ep2->dragable.confine_id), &(ep->dragable.confine_id));
+   data_queue_copied_part_lookup(pc, &(ep2->dragable.threshold_id), &(ep->dragable.threshold_id));
+   data_queue_copied_part_lookup(pc, &(ep2->dragable.event_id), &(ep->dragable.event_id));
+
+   epp = (Edje_Part_Parser *)ep;
+   epp2 = (Edje_Part_Parser *)ep2;
+   epp->reorder.insert_before = STRDUP(epp2->reorder.insert_before);
+   epp->reorder.insert_after = STRDUP(epp2->reorder.insert_after);
+   epp->can_override = EINA_TRUE;
+
+   for (j = 0 ; j < ep2->items_count ; j++)
+     {
+        ob_collections_group_parts_part_box_items_item();
+        item = ep->items[j];
+        item2 = ep2->items[j];
+        item->type = item2->type;
+        item->name = STRDUP(item2->name);
+        item->source = STRDUP(item2->source);
+        item->min.w = item2->min.w;
+        item->min.h = item2->min.h;
+        item->prefer.w = item2->prefer.w;
+        item->prefer.h = item2->prefer.h;
+        item->max.w = item2->max.w;
+        item->max.h = item2->max.h;
+        item->padding.l = item2->padding.l;
+        item->padding.r = item2->padding.r;
+        item->padding.t = item2->padding.t;
+        item->padding.b = item2->padding.b;
+        item->align.x = item2->align.x;
+        item->align.y = item2->align.y;
+        item->weight.x = item2->weight.x;
+        item->weight.y = item2->weight.y;
+        item->aspect.w = item2->aspect.w;
+        item->aspect.h = item2->aspect.h;
+        item->aspect.mode = item2->aspect.mode;
+        item->options = STRDUP(item2->options);
+        item->col = item2->col;
+        item->row = item2->row;
+        item->colspan = item2->colspan;
+        item->rowspan = item2->rowspan;
+
+        pitem = (Edje_Pack_Element_Parser *)item;
+        pitem->can_override = EINA_TRUE;
+     }
+
+   ep->api.name = STRDUP(ep2->api.name);
+   if (ep2->api.description) ep->api.description = STRDUP(ep2->api.description);
+
+   // copy default description
+   ob_collections_group_parts_part_description();
+   ed = ep->default_desc;
+   parent_desc = ed2 = ep2->default_desc;
+   ed->state.name = STRDUP(ed2->state.name);
+   ed->state.value = ed2->state.value;
+   st_collections_group_parts_part_description_inherit();
+   parent_desc = NULL;
+
+   // copy other description
+   for (j = 0 ; j < ep2->other.desc_count ; j++)
+     {
+        ob_collections_group_parts_part_description();
+        ed = ep->other.desc[j];
+        parent_desc = ed2 = ep2->other.desc[j];
+        ed->state.name = STRDUP(ed2->state.name);
+        ed->state.value = ed2->state.value;
+        st_collections_group_parts_part_description_inherit();
+        parent_desc = NULL;
+     }
+}
+
 /**
     @page edcref
     @property
@@ -2837,10 +2954,6 @@ st_collections_group_inherit(void)
    Edje_Part_Collection *pc, *pc2;
    Edje_Part_Collection_Parser *pcp, *pcp2;
    Edje_Part *ep, *ep2;
-   Edje_Part_Parser *epp, *epp2;
-   Edje_Pack_Element *item, *item2;
-   Edje_Pack_Element_Parser *pitem;
-   Edje_Part_Description_Common *ed, *ed2;
    Edje_List_Foreach_Data fdata;
    Eina_List *l;
    char *parent_name;
@@ -2938,113 +3051,13 @@ st_collections_group_inherit(void)
 
    // FIXME: Handle limits dup
 
-   #define STRDUP(x) x ? strdup(x) : NULL
    for (i = 0 ; i < pc2->parts_count ; i++)
      {
         // copy the part
-        edje_cc_handlers_part_make();
+        edje_cc_handlers_part_make(-1);
         ep = pc->parts[i];
         ep2 = pc2->parts[i];
-        ep->name = STRDUP(ep2->name);
-        ep->source = STRDUP(ep2->source);
-        ep->source2 = STRDUP(ep2->source2);
-        ep->source3 = STRDUP(ep2->source3);
-        ep->source4 = STRDUP(ep2->source4);
-        ep->source5 = STRDUP(ep2->source5);
-        ep->source6 = STRDUP(ep2->source6);
-
-        data_queue_copied_part_lookup(pc, &(ep2->clip_to_id), &(ep->clip_to_id));
-
-        ep->type = ep2->type;
-        ep->mouse_events = ep2->mouse_events;
-        ep->repeat_events = ep2->repeat_events;
-        ep->ignore_flags = ep2->ignore_flags;
-        ep->scale = ep2->scale;
-        ep->pointer_mode = ep2->pointer_mode;
-        ep->precise_is_inside = ep2->precise_is_inside;
-        ep->use_alternate_font_metrics = ep2->use_alternate_font_metrics;
-        ep->effect = ep2->effect;
-        ep->entry_mode = ep2->entry_mode;
-        ep->select_mode = ep2->select_mode;
-        ep->cursor_mode = ep2->cursor_mode;
-        ep->multiline = ep2->multiline;
-        ep->access = ep2->access;
-        ep->dragable.x = ep2->dragable.x;
-        ep->dragable.step_x = ep2->dragable.step_x;
-        ep->dragable.count_x = ep2->dragable.count_x;
-        ep->dragable.y = ep2->dragable.y;
-        ep->dragable.step_y = ep2->dragable.step_y;
-        ep->dragable.count_y = ep2->dragable.count_y;
-        ep->nested_children_count = ep2->nested_children_count;
-
-        data_queue_copied_part_lookup(pc, &(ep2->dragable.confine_id), &(ep->dragable.confine_id));
-        data_queue_copied_part_lookup(pc, &(ep2->dragable.threshold_id), &(ep->dragable.threshold_id));
-        data_queue_copied_part_lookup(pc, &(ep2->dragable.event_id), &(ep->dragable.event_id));
-
-        epp = (Edje_Part_Parser *)ep;
-        epp2 = (Edje_Part_Parser *)ep2;
-        epp->reorder.insert_before = STRDUP(epp2->reorder.insert_before);
-        epp->reorder.insert_after = STRDUP(epp2->reorder.insert_after);
-        epp->can_override = EINA_TRUE;
-
-        for (j = 0 ; j < ep2->items_count ; j++)
-          {
-             ob_collections_group_parts_part_box_items_item();
-             item = ep->items[j];
-             item2 = ep2->items[j];
-             item->type = item2->type;
-             item->name = STRDUP(item2->name);
-             item->source = STRDUP(item2->source);
-             item->min.w = item2->min.w;
-             item->min.h = item2->min.h;
-             item->prefer.w = item2->prefer.w;
-             item->prefer.h = item2->prefer.h;
-             item->max.w = item2->max.w;
-             item->max.h = item2->max.h;
-             item->padding.l = item2->padding.l;
-             item->padding.r = item2->padding.r;
-             item->padding.t = item2->padding.t;
-             item->padding.b = item2->padding.b;
-             item->align.x = item2->align.x;
-             item->align.y = item2->align.y;
-             item->weight.x = item2->weight.x;
-             item->weight.y = item2->weight.y;
-             item->aspect.w = item2->aspect.w;
-             item->aspect.h = item2->aspect.h;
-             item->aspect.mode = item2->aspect.mode;
-             item->options = STRDUP(item2->options);
-             item->col = item2->col;
-             item->row = item2->row;
-             item->colspan = item2->colspan;
-             item->rowspan = item2->rowspan;
-
-             pitem = (Edje_Pack_Element_Parser *)item;
-             pitem->can_override = EINA_TRUE;
-          }
-
-        ep->api.name = STRDUP(ep2->api.name);
-        if (ep2->api.description) ep->api.description = STRDUP(ep2->api.description);
-
-        // copy default description
-        ob_collections_group_parts_part_description();
-        ed = ep->default_desc;
-        parent_desc = ed2 = ep2->default_desc;
-        ed->state.name = STRDUP(ed2->state.name);
-        ed->state.value = ed2->state.value;
-        st_collections_group_parts_part_description_inherit();
-        parent_desc = NULL;
-
-        // copy other description
-        for (j = 0 ; j < ep2->other.desc_count ; j++)
-          {
-             ob_collections_group_parts_part_description();
-             ed = ep->other.desc[j];
-             parent_desc = ed2 = ep2->other.desc[j];
-             ed->state.name = STRDUP(ed2->state.name);
-             ed->state.value = ed2->state.value;
-             st_collections_group_parts_part_description_inherit();
-             parent_desc = NULL;
-          }
+        _part_copy(ep, ep2);
      }
 
    //copy programs
@@ -3583,7 +3596,7 @@ st_collections_group_parts_alias(void)
     @endblock
 */
 static Edje_Part *
-edje_cc_handlers_part_make(void)
+edje_cc_handlers_part_make(int id)
 {  /* Doing ob_collections_group_parts_part() job, without hierarchy */
    Edje_Part_Collection *pc;
    Edje_Part_Collection_Parser *pcp;
@@ -3593,17 +3606,21 @@ edje_cc_handlers_part_make(void)
    ep = mem_alloc(SZ(Edje_Part_Parser));
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
-   pc->parts_count++;
-   pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
-   if (!pc->parts)
+   if (id < 0)
      {
-        ERR("Not enough memory.");
-        exit(-1);
+        pc->parts_count++;
+        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
+        if (!pc->parts)
+          {
+             ERR("Not enough memory.");
+             exit(-1);
+          }
+        id = pc->parts_count - 1;
      }
-   current_part = pc->parts[pc->parts_count - 1] = ep;
+   current_part = pc->parts[id] = ep;
    pcp = (Edje_Part_Collection_Parser *)pc;
 
-   ep->id = pc->parts_count - 1;
+   ep->id = id;
    ep->type = EDJE_PART_TYPE_IMAGE;
    ep->mouse_events = pcp->default_mouse_events;
    ep->repeat_events = 0;
@@ -3637,7 +3654,7 @@ static void
 ob_collections_group_parts_part(void)
 {
    Edje_Part *cp = current_part;  /* Save to restore on pop    */
-   Edje_Part *ep = edje_cc_handlers_part_make(); /* This changes current_part */
+   Edje_Part *ep = edje_cc_handlers_part_make(-1); /* This changes current_part */
    Edje_Part *prnt;
 
    /* Add this new part to hierarchy stack (removed part finished parse) */
@@ -3687,6 +3704,52 @@ _part_free(Edje_Part *ep)
    free(ep->other.desc);
    free(ep);
    return NULL;
+}
+
+/**
+    @page edcref
+    @property
+        inherit
+    @parameters
+        [part name]
+    @effect
+        Copies all attributes except part name from referenced part into current part.
+        ALL existing attributes, except part name, are overwritten.
+    @endproperty
+    @since 1.10
+*/
+static void
+st_collections_group_parts_part_inherit(void)
+{
+   char *name;
+   Edje_Part_Collection *pc;
+   unsigned int i;
+
+   check_arg_count(1);
+
+   name = parse_str(0);
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   for (i = 0; i < pc->parts_count; i++)
+     {
+        int id = current_part->id;
+        const char *pname;
+
+        if (strcmp(pc->parts[i]->name, name)) continue;
+        pname = current_part->name;
+        current_part->name = NULL;
+        _part_free(current_part);
+        edje_cc_handlers_part_make(id);
+        _part_copy(current_part, pc->parts[i]);
+        free((void*)current_part->name);
+        current_part->name = pname;
+        free(name);
+        return;
+     }
+
+   ERR("Cannot inherit non-existing part '%s' in group '%s'", name, current_de->entry);
+   exit(-1);
+
+   free(name);
 }
 
 /**
