@@ -37,6 +37,7 @@ enum _Evas_Filter_Mode
    EVAS_FILTER_MODE_MASK,         /**< Apply Alpha or RGBA texture on image */
    EVAS_FILTER_MODE_BUMP,         /**< Apply bump mapping (light effect) */
    EVAS_FILTER_MODE_TRANSFORM,    /**< Apply a simple geometrical transformation */
+   EVAS_FILTER_MODE_PADDING_SET,  /**< Special padding_set instruction to force a specific padding value */
    EVAS_FILTER_MODE_LAST
 };
 

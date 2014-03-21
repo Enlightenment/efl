@@ -316,7 +316,12 @@ struct _Evas_Filter_Program
    Eina_Hash /* const char * : Evas_Filter_Proxy_Binding */ *proxies;
    Eina_Inlist /* Evas_Filter_Instruction */ *instructions;
    Eina_Inlist /* Buffer */ *buffers;
+   struct {
+      int l, r, t, b;
+   } pad;
    Eina_Bool valid : 1;
+   Eina_Bool padding_calc : 1; // Padding has been calculated
+   Eina_Bool padding_set : 1; // Padding has been forced
 };
 
 /* Instructions */
@@ -1635,6 +1640,85 @@ _transform_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+static void
+_padding_set_padding_update(Evas_Filter_Program *pgm,
+                            Evas_Filter_Instruction *instr,
+                            int *padl, int *padr, int *padt, int *padb)
+{
+   int l = 0, r = 0, t = 0, b = 0;
+   Eina_Bool lset = EINA_FALSE;
+   Eina_Bool rset = EINA_FALSE;
+   Eina_Bool tset = EINA_FALSE;
+   Eina_Bool bset = EINA_FALSE;
+
+   l = _instruction_param_geti(instr, "l", &lset);
+   r = _instruction_param_geti(instr, "r", &rset);
+   t = _instruction_param_geti(instr, "t", &tset);
+   b = _instruction_param_geti(instr, "b", &bset);
+
+   if (!lset && !rset && !bset && !tset)
+     DBG("padding_set() called without specifying any of l,r,t,b resets to 0");
+
+   if (l < 0 || r < 0 || t < 0 || b < 0)
+     {
+        WRN("invalid padding values in padding_set(%d, %d, %d, %d), resets to 0", l, r, t, b);
+        l = r = t = b = 0;
+     }
+
+   if (!rset) r = l;
+   if (!tset) t = r;
+   if (!bset) b = t;
+
+   if (padl) *padl = l;
+   if (padr) *padr = r;
+   if (padt) *padt = t;
+   if (padb) *padb = b;
+   pgm->padding_set = EINA_TRUE;
+}
+
+/**
+  @page evasfiltersref
+
+  @subsection sec_commands_padding_set Padding_Set
+
+  Forcily set a specific padding for this filter.
+
+  @code
+    padding_set (l, r = [l], t = [r], b = [t]);
+  @endcode
+
+  @param l        Padding on the left side in pixels.
+  @param r        Padding on the right side in pixels. If unset, defaults to @a l.
+  @param t        Padding on the top in pixels. If unset, defaults to @a r.
+  @param b        Padding on the bottom in pixels. If unset, defaults to @a t.
+
+  All values must be >= 0. When filtering 'filled' images, some values may be too high
+  and would result in completely hiding the image.
+
+  It is not possible to set only one of those without forcing the others as well.
+  A common use case will be when changing a blur size during an animation, or
+  when applying a mask that will hide most of the (blurred) text.
+
+  @since 1.10
+ */
+
+static Eina_Bool
+_padding_set_instruction_prepare(Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "padding_set"), EINA_FALSE);
+
+   instr->type = EVAS_FILTER_MODE_PADDING_SET;
+   instr->pad.update = _padding_set_padding_update;
+   _instruction_param_seq_add(instr, "l", VT_INT, 0);
+   _instruction_param_seq_add(instr, "r", VT_INT, 0);
+   _instruction_param_seq_add(instr, "t", VT_INT, 0);
+   _instruction_param_seq_add(instr, "b", VT_INT, 0);
+
+   return EINA_TRUE;
+}
+
 static Evas_Filter_Instruction *
 _instruction_create(const char *name)
 {
@@ -1661,6 +1745,8 @@ _instruction_create(const char *name)
      prepare = _mask_instruction_prepare;
    else if (!strcasecmp(name, "transform"))
      prepare = _transform_instruction_prepare;
+   else if (!strcasecmp(name, "padding_set"))
+     prepare = _padding_set_instruction_prepare;
 
    if (!prepare)
      {
@@ -1825,6 +1911,7 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 
              // Add to the queue
              pgm->instructions = eina_inlist_append(pgm->instructions, EINA_INLIST_GET(instr));
+             pgm->padding_calc = EINA_FALSE;
              instr = NULL;
              count++;
           }
@@ -1859,20 +1946,42 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
 
+   if (pgm->padding_calc || pgm->padding_set)
+     {
+        if (l) *l = pgm->pad.l;
+        if (r) *r = pgm->pad.r;
+        if (t) *t = pgm->pad.t;
+        if (b) *b = pgm->pad.b;
+        return EINA_TRUE;
+     }
+
    // Reset all paddings
    EINA_INLIST_FOREACH(pgm->buffers, buf)
      buf->pad.l = buf->pad.r = buf->pad.t = buf->pad.b = 0;
 
    // Accumulate paddings
    EINA_INLIST_FOREACH(pgm->instructions, instr)
-     if (instr->pad.update)
-       {
-          instr->pad.update(pgm, instr, &pl, &pr, &pt, &pb);
-          if (pl > maxl) maxl = pl;
-          if (pr > maxr) maxr = pr;
-          if (pt > maxt) maxt = pt;
-          if (pb > maxb) maxb = pb;
-       }
+     {
+        if (instr->type == EVAS_FILTER_MODE_PADDING_SET)
+          {
+             instr->pad.update(pgm, instr, &maxl, &maxr, &maxt, &maxb);
+             break;
+          }
+        else if (instr->pad.update)
+          {
+             instr->pad.update(pgm, instr, &pl, &pr, &pt, &pb);
+             if (pl > maxl) maxl = pl;
+             if (pr > maxr) maxr = pr;
+             if (pt > maxt) maxt = pt;
+             if (pb > maxb) maxb = pb;
+          }
+     }
+
+   pgm->pad.l = maxl;
+   pgm->pad.r = maxr;
+   pgm->pad.t = maxt;
+   pgm->pad.b = maxb;
+   pgm->padding_calc = EINA_TRUE;
 
    if (l) *l = maxl;
    if (r) *r = maxr;
@@ -2350,6 +2459,8 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
       case EVAS_FILTER_MODE_TRANSFORM:
         instr2cmd = _instr2cmd_transform;
         break;
+      case EVAS_FILTER_MODE_PADDING_SET:
+        return EINA_TRUE;
       default:
         CRI("Invalid instruction type: %d", instr->type);
         return -1;
