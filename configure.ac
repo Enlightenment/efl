@@ -4288,6 +4288,10 @@ if test "x${with_binary_edje_cc}" != "x"; then
 echo "  edje_cc.......: ${with_binary_edje_cc}"
 fi
 
+if test "x${with_binary_eolian_gen}" != "x"; then
+echo "  eolian_gen....: ${with_binary_eolian_gen}"
+fi
+
 echo "  "
 echo "Installation....: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix........: $prefix"
