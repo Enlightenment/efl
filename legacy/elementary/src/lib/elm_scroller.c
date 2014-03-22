@@ -477,7 +477,8 @@ _elm_scroller_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
    if (sobj == sd->content)
      {
-        elm_widget_on_show_region_hook_set(sd->content, NULL, NULL);
+        if (elm_widget_is(sobj))
+          elm_widget_on_show_region_hook_set(sd->content, NULL, NULL);
 
         sd->content = NULL;
      }
