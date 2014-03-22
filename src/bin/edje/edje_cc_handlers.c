@@ -10027,7 +10027,7 @@ ob_collections_group_programs_program_script(void)
              cd->is_lua = 0;
 
              len = strlen(cp->script);
-             for (i = 0; i < len; i++)
+             for (i = 0; empty && i < len; i++)
                {
                   if (((cp->script[i] > 'a') && (cp->script[i] < 'z')) ||
                       ((cp->script[i] > 'A') && (cp->script[i] < 'Z')) ||
