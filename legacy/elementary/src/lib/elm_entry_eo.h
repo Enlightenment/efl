@@ -1,3 +1,5 @@
+#include "elm_entry.eo.h"
+#if 0
 #define ELM_OBJ_ENTRY_CLASS elm_obj_entry_class_get()
 
 const Eo_Class *elm_obj_entry_class_get(void) EINA_CONST;
@@ -1396,3 +1398,4 @@ enum
  * @ingroup Entry
  */
 #define elm_obj_entry_anchor_hover_end() ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END)
+#endif

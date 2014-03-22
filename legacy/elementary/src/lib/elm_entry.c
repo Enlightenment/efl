@@ -7,8 +7,6 @@
 #include "elm_priv.h"
 #include "elm_widget_entry.h"
 
-EAPI Eo_Op ELM_OBJ_ENTRY_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_ENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Entry"
@@ -628,13 +626,9 @@ _get_drop_format(Evas_Object *obj)
 }
 
 /* we can't reuse layout's here, because it's on entry_edje only */
-static void
-_elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_disable(Eo *obj, Elm_Entry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Elm_Entry_Smart_Data *sd = _pd;
-
    elm_drop_target_del(obj, sd->drop_format,
                        NULL, NULL,
                        NULL, NULL,
@@ -667,26 +661,23 @@ _elm_entry_smart_disable(Eo *obj, void *_pd, va_list *list)
                             _drag_drop_cb, NULL);
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-static void
-_elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    const char *style = elm_widget_style_get(obj);
-   if (ret) *ret = EINA_FALSE;
 
-   Elm_Entry_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -788,7 +779,7 @@ _elm_entry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    evas_object_unref(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -886,13 +877,11 @@ _deferred_recalc_job(void *data)
      }
 }
 
-static void
-_elm_entry_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
 
@@ -1036,21 +1025,17 @@ _return_key_enabled_check(Evas_Object *obj)
    elm_entry_input_panel_return_key_disabled_set(obj, return_key_disabled);
 }
 
-static void
-_elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;
-   if (ret) *ret = EINA_FALSE;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    top = elm_widget_top_get(obj);
    if (top && eo_isa(top, ELM_OBJ_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (!sd->editable) return;
+   if (!sd->editable) return EINA_FALSE;
    if (elm_widget_focus_get(obj))
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
@@ -1083,22 +1068,15 @@ _elm_entry_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           }
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_entry_smart_on_focus_region(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -1112,12 +1090,10 @@ _show_region_hook(void *data EINA_UNUSED,
    eo_do(obj, elm_interface_scrollable_content_region_show(x, y, w, h));
 }
 
-static void
-_elm_entry_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
+   Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
     * elm,state,icon,{visible,hidden}, so we have to replicate this
     * smart function */
@@ -1130,10 +1106,10 @@ _elm_entry_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
      }
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, ret));
-   if (!ret) return;
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &ret));
+   if (!ret) return EINA_FALSE;
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -2089,7 +2065,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
 }
 
 static void
-_signal_anchor_geoms_do_things_with_lol(Elm_Entry_Smart_Data *sd,
+_signal_anchor_geoms_do_things_with_lol(Elm_Entry_Data *sd,
                                         Elm_Entry_Anchor_Info *ei)
 {
    Evas_Textblock_Rectangle *r;
@@ -2707,13 +2683,9 @@ _chars_add_till_limit(Evas_Object *obj,
    evas_object_smart_callback_call(obj, SIG_MAX_LENGTH, NULL);
 }
 
-static void
-_elm_entry_smart_signal(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_entry_elm_layout_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source)
 {
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    /* always pass to both edje objs */
    edje_object_signal_emit(sd->entry_edje, emission, source);
    edje_object_message_signal_process(sd->entry_edje);
@@ -2725,16 +2697,11 @@ _elm_entry_smart_signal(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *lis
      }
 }
 
-static void
-_elm_entry_smart_callback_add(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_elm_layout_signal_callback_add (Eo *obj, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Edje_Signal_Cb func_cb = va_arg(*list, Edje_Signal_Cb);
-   void *data = va_arg(*list, void *);
    Evas_Object *ro;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    ro = wd->resize_obj;
@@ -2755,47 +2722,39 @@ _elm_entry_smart_callback_add(Eo *obj, void *_pd, va_list *list)
    wd->resize_obj = ro;
 }
 
-static void
-_elm_entry_smart_callback_del(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void *
+_elm_entry_elm_layout_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb)
 {
-   const char *emission = va_arg(*list, const char *);
-   const char *source = va_arg(*list, const char *);
-   Edje_Signal_Cb func_cb = va_arg(*list, Edje_Signal_Cb);
-   void **data = va_arg(*list, void **);
    Evas_Object *ro;
+   void *data = NULL;
 
-   Elm_Entry_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    ro = wd->resize_obj;
 
    wd->resize_obj = sd->entry_edje;
 
    eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_del
-         (emission, source, func_cb, data));
+         (emission, source, func_cb, &data));
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
         eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_del
-              (emission, source, func_cb, data));
+              (emission, source, func_cb, &data));
      }
 
    wd->resize_obj = ro;
+   return data;
 }
 
-static void
-_elm_entry_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
     * "elm,state,{icon,end},visible", we have to repeat ourselves */
@@ -2805,19 +2764,15 @@ _elm_entry_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
      elm_entry_end_visible_set(obj, EINA_TRUE);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_entry_smart_content_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Evas_Object*
+_elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **content = va_arg(*list, Evas_Object **);
-   if (content) *content = NULL;
-
    Evas_Object *int_content;
    eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &int_content));
-   if (!int_content) return;
+   if (!int_content) return NULL;
 
    /* too bad entry does not follow the pattern
     * "elm,state,{icon,end},hidden", we have to repeat ourselves */
@@ -2827,17 +2782,12 @@ _elm_entry_smart_content_unset(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
      elm_entry_end_visible_set(obj, EINA_FALSE);
 
-   if (content) *content = int_content;
+   return int_content;
 }
 
-static void
-_elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *entry)
 {
-   Elm_Entry_Smart_Data *sd = _pd;
-   const char *part = va_arg(*list, const char *);
-   const char *entry = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_TRUE;
    int len = 0;
 
    if (!entry) entry = "";
@@ -2848,7 +2798,7 @@ _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
         else
           edje_object_part_text_set(sd->entry_edje, part, entry);
 
-        return;
+        return EINA_TRUE;
      }
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -2893,32 +2843,25 @@ _elm_entry_smart_text_set(Eo *obj, void *_pd, va_list *list)
 
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
+   return EINA_TRUE;
 }
 
-static void
-_elm_entry_smart_text_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const char *
+_elm_entry_elm_layout_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
 {
-   const char *item = va_arg(*list, const char *);
-   const char **ret = va_arg(*list, const char **);
    const char *text;
-   if (ret) *ret = NULL;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    if (item)
      {
         if (!strcmp(item, "default")) goto proceed;
         else if (!strcmp(item, "guide"))
           {
-             if (ret)
-               *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
+             return edje_object_part_text_get(sd->entry_edje, "elm.guide");
           }
         else
           {
-             if (ret)
-               *ret = edje_object_part_text_get(sd->entry_edje, item);
+             return edje_object_part_text_get(sd->entry_edje, item);
           }
-        return;
      }
 
 proceed:
@@ -2928,7 +2871,7 @@ proceed:
      {
         ERR("text=NULL for edje %p, part 'elm.text'", sd->entry_edje);
 
-        return;
+        return NULL;
      }
 
    if (sd->append_text_len > 0)
@@ -2943,7 +2886,7 @@ proceed:
         if (!tmpbuf)
           {
              ERR("Failed to allocate memory for entry's text %p", obj);
-             return;
+             return NULL;
           }
         memcpy(tmpbuf, text, tlen);
 
@@ -2960,7 +2903,7 @@ proceed:
         eina_stringshare_replace(&sd->text, text);
      }
 
-   if (ret) *ret = sd->text;
+   return sd->text;
 }
 
 static char *
@@ -3307,14 +3250,13 @@ _end_handler_mouse_move_cb(void *data,
      _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
 }
 
-static void
-_elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_entry_evas_smart_add(Eo *obj, Elm_Entry_Data *priv)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
 #endif
 
-   Elm_Entry_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -3502,14 +3444,12 @@ _elm_entry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      priv->sel_handler_disabled = EINA_TRUE;
 }
 
-static void
-_elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_entry_evas_smart_del(Eo *obj, Elm_Entry_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
    Elm_Entry_Markup_Filter *tf;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    if (sd->delay_write)
      {
@@ -3578,13 +3518,9 @@ _elm_entry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_entry_smart_move(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_evas_smart_move(Eo *obj, Elm_Entry_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
@@ -3595,42 +3531,33 @@ _elm_entry_smart_move(Eo *obj, void *_pd, va_list *list)
      _update_selection_handler(obj);
 }
 
-static void
-_elm_entry_smart_resize(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_evas_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
-static void
-_elm_entry_smart_member_add(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_evas_smart_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_Object *member)
 {
-   Evas_Object *member = va_arg(*list, Evas_Object *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
 }
 
-static void
-_elm_entry_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description *
+_elm_entry_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
+   return _content_aliases;
 }
 
-static void
-_elm_entry_smart_theme_enable(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_layout_theme_enable(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *enable = va_arg(*list, Eina_Bool *);
-   *enable = EINA_FALSE;
+   return EINA_FALSE;
 }
 
 EAPI Evas_Object *
@@ -3642,8 +3569,8 @@ elm_entry_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -3651,73 +3578,30 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_entry_text_style_user_push(Evas_Object *obj,
-                               const char *style)
+EOLIAN static void
+_elm_entry_text_style_user_push(Eo *obj, Elm_Entry_Data *sd, const char *style)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_text_style_user_push(style));
-}
-
-static void
-_text_style_user_push(Eo *obj, void *_pd, va_list *list)
-{
-   const char *style = va_arg(*list, const char *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI void
-elm_entry_text_style_user_pop(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_text_style_user_pop());
-}
-
-static void
-_text_style_user_pop(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
 
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI const char *
-elm_entry_text_style_user_peek(const Evas_Object *obj)
+EOLIAN static const char*
+_elm_entry_text_style_user_peek(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) NULL;
-   const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_entry_text_style_user_peek(&ret));
-   return ret;
+   return edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text");
 }
 
-static void
-_text_style_user_peek(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
 {
-   const char **ret = va_arg(*list, const char **);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text");
-}
-
-EAPI void
-elm_entry_single_line_set(Evas_Object *obj,
-                          Eina_Bool single_line)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_single_line_set(single_line));
-}
-
-static void
-_single_line_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool single_line = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (sd->single_line == single_line) return;
 
    sd->single_line = single_line;
@@ -3738,38 +3622,15 @@ _single_line_set(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_entry_single_line_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_single_line_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_single_line_get(&ret));
-   return ret;
+   return sd->single_line;
 }
 
-static void
-_single_line_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->single_line;
-}
-
-EAPI void
-elm_entry_password_set(Evas_Object *obj,
-                       Eina_Bool password)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_password_set(password));
-}
-
-static void
-_password_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool password = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    password = !!password;
 
    if (sd->password == password) return;
@@ -3801,22 +3662,10 @@ _password_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Eina_Bool
-elm_entry_password_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_password_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_password_get(&ret));
-   return ret;
-}
-
-static void
-_password_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->password;
+   return sd->password;
 }
 
 EAPI void
@@ -3836,21 +3685,10 @@ elm_entry_entry_get(const Evas_Object *obj)
    return text;
 }
 
-EAPI void
-elm_entry_entry_append(Evas_Object *obj,
-                       const char *entry)
+EOLIAN static void
+_elm_entry_entry_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *entry)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_entry_append(entry));
-}
-
-static void
-_entry_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *entry = va_arg(*list, const char *);
    int len = 0;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    if (!entry) entry = "";
 
@@ -3878,25 +3716,14 @@ _entry_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_entry_is_empty(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_is_empty(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_TRUE;
-   Eina_Bool ret = EINA_TRUE;
-   eo_do((Eo *) obj, elm_obj_entry_is_empty(&ret));
-   return ret;
-}
-
-static void
-_is_empty(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool ret;
    /* FIXME: until there's support for that in textblock, we just
     * check to see if the there is text or not. */
    const Evas_Object *tb;
    Evas_Textblock_Cursor *cur;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    /* It's a hack until we get the support suggested above.  We just
     * create a cursor, point it to the begining, and then try to
@@ -3908,138 +3735,58 @@ _is_empty(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
       will be removed once evas 1.0 is out */
    cur = evas_object_textblock_cursor_new((Evas_Object *)tb);
    evas_textblock_cursor_pos_set(cur, 0);
-   if (ret) *ret = evas_textblock_cursor_char_next(cur);
+   ret = evas_textblock_cursor_char_next(cur);
    evas_textblock_cursor_free(cur);
 
-   if (ret) *ret = !*ret;
+   return !ret;
 }
 
-EAPI Evas_Object *
-elm_entry_textblock_get(Evas_Object *obj)
+EOLIAN static Evas_Object*
+_elm_entry_textblock_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   eo_do(obj, elm_obj_entry_textblock_get(&ret));
-   return ret;
-}
-
-static void
-_textblock_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret)
-     *ret = (Evas_Object *)edje_object_part_object_get
+   return (Evas_Object *)edje_object_part_object_get
         (sd->entry_edje, "elm.text");
 }
 
-EAPI void
-elm_entry_calc_force(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_calc_force(Eo *obj, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_calc_force());
-}
-
-static void
-_calc_force(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_calc_force(sd->entry_edje);
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
 }
 
-EAPI const char *
-elm_entry_selection_get(const Evas_Object *obj)
+EOLIAN static const char*
+_elm_entry_selection_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) NULL;
-   const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_entry_selection_get(&ret));
-   return ret;
+   if ((sd->password)) return NULL;
+   return edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
 }
 
-static void
-_selection_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool disabled)
 {
-   const char **ret = va_arg(*list, const char **);
-   Elm_Entry_Smart_Data *sd = _pd;
-   if (ret) *ret = NULL;
-
-   if ((sd->password)) return;
-   if (ret) *ret = edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
-}
-
-EAPI void
-elm_entry_selection_handler_disabled_set(Evas_Object *obj,
-                                         Eina_Bool disabled)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_entry_selection_handler_disabled_set(disabled));
-}
-
-static void
-_selection_handler_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool disabled = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (sd->sel_handler_disabled == disabled) return;
    sd->sel_handler_disabled = disabled;
 }
 
-EAPI Eina_Bool
-elm_entry_selection_handler_disabled_get(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_selection_handler_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_selection_handler_disabled_get(&ret));
-   return ret;
+   return sd->sel_handler_disabled;
 }
 
-static void
-_selection_handler_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_entry_insert(Eo *obj, Elm_Entry_Data *sd, const char *entry)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->sel_handler_disabled;
-}
-
-EAPI void
-elm_entry_entry_insert(Evas_Object *obj,
-                       const char *entry)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_entry_insert(entry));
-}
-
-static void
-_entry_insert(Eo *obj, void *_pd, va_list *list)
-{
-   const char *entry = va_arg(*list, const char *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_insert(sd->entry_edje, "elm.text", entry);
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
 }
 
-EAPI void
-elm_entry_line_wrap_set(Evas_Object *obj,
-                        Elm_Wrap_Type wrap)
+EOLIAN static void
+_elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *sd, Elm_Wrap_Type wrap)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_line_wrap_set(wrap));
-}
-
-static void
-_line_wrap_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Wrap_Type wrap = va_arg(*list, Elm_Wrap_Type);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (sd->line_wrap == wrap) return;
    sd->last_w = -1;
    sd->line_wrap = wrap;
@@ -4048,38 +3795,15 @@ _line_wrap_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Elm_Wrap_Type
-elm_entry_line_wrap_get(const Evas_Object *obj)
+EOLIAN static Elm_Wrap_Type
+_elm_entry_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Elm_Wrap_Type ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_line_wrap_get(&ret));
-   return ret;
+   return sd->line_wrap;
 }
 
-static void
-_line_wrap_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 {
-   Elm_Wrap_Type *ret = va_arg(*list, Elm_Wrap_Type *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->line_wrap;
-}
-
-EAPI void
-elm_entry_editable_set(Evas_Object *obj,
-                       Eina_Bool editable)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_editable_set(editable));
-}
-
-static void
-_editable_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool editable = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (sd->editable == editable) return;
    sd->editable = editable;
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
@@ -4100,36 +3824,15 @@ _editable_set(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_entry_editable_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_editable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_editable_get(&ret));
-   return ret;
+   return sd->editable;
 }
 
-static void
-_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->editable;
-}
-
-EAPI void
-elm_entry_select_none(Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_select_none());
-}
-
-static void
-_select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if ((sd->password)) return;
    if (sd->sel_mode)
      {
@@ -4148,18 +3851,9 @@ _select_none(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    _hide_selection_handler(obj);
 }
 
-EAPI void
-elm_entry_select_all(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_select_all(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_select_all());
-}
-
-static void
-_select_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if ((sd->password)) return;
    if (sd->sel_mode)
      {
@@ -4172,20 +3866,9 @@ _select_all(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
    edje_object_part_text_select_all(sd->entry_edje, "elm.text");
 }
 
-EAPI void
-elm_entry_select_region_set(Evas_Object *obj, int start, int end)
+EOLIAN static void
+_elm_entry_select_region_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int start, int end)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_select_region_set(start, end));
-}
-
-static void
-_select_region_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-   int start = va_arg(*list, int);
-   int end = va_arg(*list, int);
-
    if ((sd->password)) return;
    if (sd->sel_mode)
      {
@@ -4202,360 +3885,143 @@ _select_region_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    edje_object_part_text_select_extend(sd->entry_edje, "elm.text");
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_geometry_get(const Evas_Object *obj,
-                              Evas_Coord *x,
-                              Evas_Coord *y,
-                              Evas_Coord *w,
-                              Evas_Coord *h)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_geometry_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_cursor_geometry_get(x, y, w, h, &ret));
-   return ret;
-}
-
-static void
-_cursor_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_TRUE;
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_next(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_next(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_entry_cursor_next(&ret));
-   return ret;
-}
-
-static void
-_cursor_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_next
+   return edje_object_part_text_cursor_next
         (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_prev(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_prev(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_entry_cursor_prev(&ret));
-   return ret;
-}
-
-static void
-_cursor_prev(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_prev
+   return edje_object_part_text_cursor_prev
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_up(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_up(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_entry_cursor_up(&ret));
-   return ret;
-}
-
-static void
-_cursor_up(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_up
+   return edje_object_part_text_cursor_up
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_down(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_down(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_entry_cursor_down(&ret));
-   return ret;
-}
-
-static void
-_cursor_down(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_down
+   return edje_object_part_text_cursor_down
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_cursor_begin_set(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_cursor_begin_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_begin_set());
-}
-
-static void
-_cursor_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_begin_set
      (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_cursor_end_set(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_cursor_end_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_end_set());
-}
-
-static void
-_cursor_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_end_set
      (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_cursor_line_begin_set(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_cursor_line_begin_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_line_begin_set());
-}
-
-static void
-_cursor_line_begin_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_line_begin_set
      (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_cursor_line_end_set(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_cursor_line_end_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_line_end_set());
-}
-
-static void
-_cursor_line_end_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_line_end_set
      (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_cursor_selection_begin(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_cursor_selection_begin(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_selection_begin());
-}
-
-static void
-_cursor_selection_begin(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_select_begin(sd->entry_edje, "elm.text");
 }
 
-EAPI void
-elm_entry_cursor_selection_end(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_cursor_selection_end(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_selection_end());
-}
-
-static void
-_cursor_selection_end(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_select_extend(sd->entry_edje, "elm.text");
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_is_format_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_is_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_cursor_is_format_get(&ret));
-   return ret;
-}
-
-static void
-_cursor_is_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_is_format_get
+   return edje_object_part_text_cursor_is_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI Eina_Bool
-elm_entry_cursor_is_visible_format_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_cursor_is_visible_format_get(&ret));
-   return ret;
-}
-
-static void
-_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_is_visible_format_get
+   return edje_object_part_text_cursor_is_visible_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI char *
-elm_entry_cursor_content_get(const Evas_Object *obj)
+EOLIAN static char*
+_elm_entry_cursor_content_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) NULL;
-   char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_entry_cursor_content_get(&ret));
-   return ret;
-}
-
-static void
-_cursor_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   char **ret = va_arg(*list, char **);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_content_get
+   return edje_object_part_text_cursor_content_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_cursor_pos_set(Evas_Object *obj,
-                         int pos)
+EOLIAN static void
+_elm_entry_cursor_pos_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int pos)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cursor_pos_set(pos));
-}
-
-static void
-_cursor_pos_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int pos = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_cursor_pos_set
      (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, pos);
    edje_object_message_signal_process(sd->entry_edje);
 }
 
-EAPI int
-elm_entry_cursor_pos_get(const Evas_Object *obj)
+EOLIAN static int
+_elm_entry_cursor_pos_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) 0;
-   int ret = 0;
-   eo_do((Eo *) obj, elm_obj_entry_cursor_pos_get(&ret));
-   return ret;
-}
-
-static void
-_cursor_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *ret = va_arg(*list, int *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = edje_object_part_text_cursor_pos_get
+   return edje_object_part_text_cursor_pos_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI void
-elm_entry_selection_cut(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_selection_cut(Eo *obj, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_selection_cut());
-}
-
-static void
-_selection_cut(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if ((sd->password)) return;
    _cut_cb(obj, NULL, NULL);
 }
 
-EAPI void
-elm_entry_selection_copy(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_selection_copy(Eo *obj, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_selection_copy());
-}
-
-static void
-_selection_copy(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if ((sd->password)) return;
    _copy_cb(obj, NULL, NULL);
 }
 
-EAPI void
-elm_entry_selection_paste(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_selection_paste(Eo *obj, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_selection_paste());
-}
-
-static void
-_selection_paste(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if ((sd->password)) return;
    _paste_cb(obj, NULL, NULL);
 }
 
-EAPI void
-elm_entry_context_menu_clear(Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_context_menu_clear());
-}
-
-static void
-_context_menu_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_entry_context_menu_clear(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    EINA_LIST_FREE(sd->items, it)
      {
@@ -4566,29 +4032,10 @@ _context_menu_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
      }
 }
 
-EAPI void
-elm_entry_context_menu_item_add(Evas_Object *obj,
-                                const char *label,
-                                const char *icon_file,
-                                Elm_Icon_Type icon_type,
-                                Evas_Smart_Cb func,
-                                const void *data)
+EOLIAN static void
+_elm_entry_context_menu_item_add(Eo *obj, Elm_Entry_Data *sd, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_context_menu_item_add(label, icon_file, icon_type, func, data));
-}
-
-static void
-_context_menu_item_add(Eo *obj, void *_pd, va_list *list)
-{
-   const char *label = va_arg(*list, const char *);
-   const char *icon_file = va_arg(*list, const char *);
-   Elm_Icon_Type icon_type = va_arg(*list, Elm_Icon_Type);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
    Elm_Entry_Context_Menu_Item *it;
-
-   Elm_Entry_Smart_Data *sd = _pd;
 
    it = calloc(1, sizeof(Elm_Entry_Context_Menu_Item));
    if (!it) return;
@@ -4602,40 +4049,17 @@ _context_menu_item_add(Eo *obj, void *_pd, va_list *list)
    it->data = (void *)data;
 }
 
-EAPI void
-elm_entry_context_menu_disabled_set(Evas_Object *obj,
-                                    Eina_Bool disabled)
+EOLIAN static void
+_elm_entry_context_menu_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool disabled)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_context_menu_disabled_set(disabled));
-}
-
-static void
-_context_menu_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool disabled = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (sd->context_menu == !disabled) return;
    sd->context_menu = !disabled;
 }
 
-EAPI Eina_Bool
-elm_entry_context_menu_disabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_context_menu_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_context_menu_disabled_get(&ret));
-   return ret;
-}
-
-static void
-_context_menu_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = !sd->context_menu;
+   return !sd->context_menu;
 }
 
 EAPI const char *
@@ -4657,23 +4081,11 @@ elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item,
    if (icon_type) *icon_type = item->icon_type;
 }
 
-EAPI void
-elm_entry_item_provider_append(Evas_Object *obj,
-                               Elm_Entry_Item_Provider_Cb func,
-                               void *data)
+EOLIAN static void
+_elm_entry_item_provider_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_item_provider_append(func, data));
-}
-
-static void
-_item_provider_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Item_Provider_Cb func = va_arg(*list, Elm_Entry_Item_Provider_Cb);
-   void *data = va_arg(*list, void *);
    Elm_Entry_Item_Provider *ip;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
@@ -4684,23 +4096,11 @@ _item_provider_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->item_providers = eina_list_append(sd->item_providers, ip);
 }
 
-EAPI void
-elm_entry_item_provider_prepend(Evas_Object *obj,
-                                Elm_Entry_Item_Provider_Cb func,
-                                void *data)
+EOLIAN static void
+_elm_entry_item_provider_prepend(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_item_provider_prepend(func, data));
-}
-
-static void
-_item_provider_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Item_Provider_Cb func = va_arg(*list, Elm_Entry_Item_Provider_Cb);
-   void *data = va_arg(*list, void *);
    Elm_Entry_Item_Provider *ip;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
@@ -4711,24 +4111,12 @@ _item_provider_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->item_providers = eina_list_prepend(sd->item_providers, ip);
 }
 
-EAPI void
-elm_entry_item_provider_remove(Evas_Object *obj,
-                               Elm_Entry_Item_Provider_Cb func,
-                               void *data)
+EOLIAN static void
+_elm_entry_item_provider_remove(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_item_provider_remove(func, data));
-}
-
-static void
-_item_provider_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Item_Provider_Cb func = va_arg(*list, Elm_Entry_Item_Provider_Cb);
-   void *data = va_arg(*list, void *);
    Eina_List *l;
    Elm_Entry_Item_Provider *ip;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    EINA_LIST_FOREACH(sd->item_providers, l, ip)
@@ -4742,23 +4130,11 @@ _item_provider_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-elm_entry_markup_filter_append(Evas_Object *obj,
-                               Elm_Entry_Filter_Cb func,
-                               void *data)
+EOLIAN static void
+_elm_entry_markup_filter_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Entry_Filter_Cb func, void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_markup_filter_append(func, data));
-}
-
-static void
-_markup_filter_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Filter_Cb func = va_arg(*list, Elm_Entry_Filter_Cb);
-   void *data = va_arg(*list, void *);
    Elm_Entry_Markup_Filter *tf;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    tf = _filter_new(func, data);
@@ -4767,23 +4143,11 @@ _markup_filter_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->markup_filters = eina_list_append(sd->markup_filters, tf);
 }
 
-EAPI void
-elm_entry_markup_filter_prepend(Evas_Object *obj,
-                                Elm_Entry_Filter_Cb func,
-                                void *data)
+EOLIAN static void
+_elm_entry_markup_filter_prepend(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Entry_Filter_Cb func, void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_markup_filter_prepend(func, data));
-}
-
-static void
-_markup_filter_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Filter_Cb func = va_arg(*list, Elm_Entry_Filter_Cb);
-   void *data = va_arg(*list, void *);
    Elm_Entry_Markup_Filter *tf;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    tf = _filter_new(func, data);
@@ -4792,24 +4156,12 @@ _markup_filter_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->markup_filters = eina_list_prepend(sd->markup_filters, tf);
 }
 
-EAPI void
-elm_entry_markup_filter_remove(Evas_Object *obj,
-                               Elm_Entry_Filter_Cb func,
-                               void *data)
+EOLIAN static void
+_elm_entry_markup_filter_remove(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Entry_Filter_Cb func, void *data)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_markup_filter_remove(func, data));
-}
-
-static void
-_markup_filter_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Entry_Filter_Cb func = va_arg(*list, Elm_Entry_Filter_Cb);
-   void *data = va_arg(*list, void *);
    Eina_List *l;
    Elm_Entry_Markup_Filter *tf;
 
-   Elm_Entry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    EINA_LIST_FOREACH(sd->markup_filters, l, tf)
@@ -5025,106 +4377,43 @@ inserting:
      evas_object_smart_callback_call(entry, SIG_REJECTED, NULL);
 }
 
-EAPI Eina_Bool
-elm_entry_file_set(Evas_Object *obj,
-                   const char *file,
-                   Elm_Text_Format format)
+EOLIAN static Eina_Bool
+_elm_entry_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file, Elm_Text_Format format)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_entry_file_set(file, format, &ret));
-   return ret;
-}
-
-static void
-_file_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *file = va_arg(*list, const char *);
-   Elm_Text_Format format = va_arg(*list, Elm_Text_Format);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   Elm_Entry_Smart_Data *sd = _pd;
-
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
    eina_stringshare_replace(&sd->file, file);
    sd->format = format;
    Eina_Bool int_ret = _load_do(obj);
-   if (ret) *ret = int_ret;
+   return int_ret;
 }
 
-EAPI void
-elm_entry_file_get(const Evas_Object *obj,
-                   const char **file,
-                   Elm_Text_Format *format)
+EOLIAN static void
+_elm_entry_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, Elm_Text_Format *format)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_entry_file_get(file, format));
-}
-
-static void
-_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char **file = va_arg(*list, const char **);
-   Elm_Text_Format *format = va_arg(*list, Elm_Text_Format *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (file) *file = sd->file;
    if (format) *format = sd->format;
 }
 
-EAPI void
-elm_entry_file_save(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_file_save(Eo *obj, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_file_save());
-}
-
-static void
-_file_save(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    _save_do(obj);
    sd->delay_write = ecore_timer_add(ELM_ENTRY_DELAY_WRITE_TIME,
                                      _delay_write, obj);
 }
 
-EAPI void
-elm_entry_autosave_set(Evas_Object *obj,
-                       Eina_Bool auto_save)
+EOLIAN static void
+_elm_entry_autosave_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool auto_save)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_autosave_set(auto_save));
-}
-
-static void
-_autosave_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool auto_save = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->auto_save = !!auto_save;
 }
 
-EAPI Eina_Bool
-elm_entry_autosave_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_autosave_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_autosave_get(&ret));
-   return ret;
-}
-
-static void
-_autosave_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->auto_save;
+   return sd->auto_save;
 }
 
 EINA_DEPRECATED EAPI void
@@ -5148,21 +4437,11 @@ elm_entry_cnp_textonly_get(const Evas_Object *obj)
    return elm_entry_cnp_mode_get(obj) != ELM_CNP_MODE_MARKUP;
 }
 
-EAPI void
-elm_entry_cnp_mode_set(Evas_Object *obj,
-                       Elm_Cnp_Mode cnp_mode)
+EOLIAN static void
+_elm_entry_cnp_mode_set(Eo *obj, Elm_Entry_Data *sd, Elm_Cnp_Mode cnp_mode)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_cnp_mode_set(cnp_mode));
-}
-
-static void
-_cnp_mode_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Cnp_Mode cnp_mode = va_arg(*list, Elm_Cnp_Mode);
    Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
 
-   Elm_Entry_Smart_Data *sd = _pd;
 
    if (sd->cnp_mode == cnp_mode) return;
    sd->cnp_mode = cnp_mode;
@@ -5184,22 +4463,10 @@ _cnp_mode_set(Eo *obj, void *_pd, va_list *list)
                        _drag_drop_cb, NULL);
 }
 
-EAPI Elm_Cnp_Mode
-elm_entry_cnp_mode_get(const Evas_Object *obj)
+EOLIAN static Elm_Cnp_Mode
+_elm_entry_cnp_mode_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) ELM_CNP_MODE_MARKUP;
-   Elm_Cnp_Mode ret = ELM_CNP_MODE_MARKUP;
-   eo_do((Eo *) obj, elm_obj_entry_cnp_mode_get(&ret));
-   return ret;
-}
-
-static void
-_cnp_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Cnp_Mode *ret = va_arg(*list, Elm_Cnp_Mode *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->cnp_mode;
+   return sd->cnp_mode;
 }
 
 static void
@@ -5217,20 +4484,9 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
      _update_selection_handler(obj);
 }
 
-EAPI void
-elm_entry_scrollable_set(Evas_Object *obj,
-                         Eina_Bool scroll)
+EOLIAN static void
+_elm_entry_scrollable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool scroll)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_scrollable_set(scroll));
-}
-
-static void
-_scrollable_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool scroll = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    scroll = !!scroll;
    if (sd->scroll == scroll) return;
    sd->scroll = scroll;
@@ -5294,37 +4550,15 @@ _scrollable_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Eina_Bool
-elm_entry_scrollable_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_scrollable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_scrollable_get(&ret));
-   return ret;
+   return sd->scroll;
 }
 
-static void
-_scrollable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_icon_visible_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool setting)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->scroll;
-}
-
-EAPI void
-elm_entry_icon_visible_set(Evas_Object *obj,
-                           Eina_Bool setting)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_icon_visible_set(setting));
-}
-
-static void
-_icon_visible_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool setting = va_arg(*list, int);
-
    if (!elm_layout_content_get(obj, "elm.swallow.icon")) return;
 
    if (setting)
@@ -5335,19 +4569,9 @@ _icon_visible_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI void
-elm_entry_end_visible_set(Evas_Object *obj,
-                          Eina_Bool setting)
+EOLIAN static void
+_elm_entry_end_visible_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool setting)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_end_visible_set(setting));
-}
-
-static void
-_end_visible_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool setting = va_arg(*list, int);
-
    if (!elm_layout_content_get(obj, "elm.swallow.end")) return;
 
    if (setting)
@@ -5367,13 +4591,9 @@ elm_entry_scrollbar_policy_set(Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_policy_set(h, v));
 }
 
-static void
-_scroller_policy_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_elm_interface_scrollable_policy_set(Eo *obj, Elm_Entry_Data *sd, Elm_Scroller_Policy h, Elm_Scroller_Policy v)
 {
-   Elm_Scroller_Policy h = va_arg(*list, Elm_Scroller_Policy);
-   Elm_Scroller_Policy v = va_arg(*list, Elm_Scroller_Policy);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->policy_h = h;
    sd->policy_v = v;
    eo_do_super(obj, MY_CLASS, elm_interface_scrollable_policy_set(sd->policy_h, sd->policy_v));
@@ -5388,13 +4608,9 @@ elm_entry_bounce_set(Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_bounce_allow_set(h_bounce, v_bounce));
 }
 
-static void
-_bounce_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_elm_interface_scrollable_bounce_allow_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
-   Eina_Bool h_bounce = va_arg(*list, int);
-   Eina_Bool v_bounce = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->h_bounce = h_bounce;
    sd->v_bounce = v_bounce;
    eo_do_super(obj, MY_CLASS, elm_interface_scrollable_bounce_allow_set(h_bounce, v_bounce));
@@ -5409,292 +4625,114 @@ elm_entry_bounce_get(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_scrollable_bounce_allow_get(h_bounce, v_bounce));
 }
 
-EAPI void
-elm_entry_input_panel_layout_set(Evas_Object *obj,
-                                 Elm_Input_Panel_Layout layout)
+EOLIAN static void
+_elm_entry_input_panel_layout_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Panel_Layout layout)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_layout_set(layout));
-}
-
-static void
-_input_panel_layout_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Input_Panel_Layout layout = va_arg(*list, Elm_Input_Panel_Layout);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_layout = layout;
 
    edje_object_part_text_input_panel_layout_set
      (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)layout);
 }
 
-EAPI Elm_Input_Panel_Layout
-elm_entry_input_panel_layout_get(const Evas_Object *obj)
+EOLIAN static Elm_Input_Panel_Layout
+_elm_entry_input_panel_layout_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) ELM_INPUT_PANEL_LAYOUT_INVALID;
-   Elm_Input_Panel_Layout ret = ELM_INPUT_PANEL_LAYOUT_INVALID;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_layout_get(&ret));
-   return ret;
+   return sd->input_panel_layout;
 }
 
-static void
-_input_panel_layout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int variation)
 {
-   Elm_Input_Panel_Layout *ret = va_arg(*list, Elm_Input_Panel_Layout *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_layout;
-}
-
-EAPI void
-elm_entry_input_panel_layout_variation_set(Evas_Object *obj,
-                                           int variation)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_layout_variation_set(variation));
-}
-
-static void
-_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int variation = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_layout_variation = variation;
 
    edje_object_part_text_input_panel_layout_variation_set
      (sd->entry_edje, "elm.text", variation);
 }
 
-EAPI int
-elm_entry_input_panel_layout_variation_get(const Evas_Object *obj)
+EOLIAN static int
+_elm_entry_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) 0;
-   int ret = 0;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_layout_variation_get(&ret));
-
-   return ret;
+   return sd->input_panel_layout_variation;
 }
 
-static void
-_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_autocapital_type_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Autocapital_Type autocapital_type)
 {
-   int *ret = va_arg(*list, int *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_layout_variation;
-}
-
-EAPI void
-elm_entry_autocapital_type_set(Evas_Object *obj,
-                               Elm_Autocapital_Type autocapital_type)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_autocapital_type_set(autocapital_type));
-}
-
-static void
-_autocapital_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Autocapital_Type autocapital_type = va_arg(*list, Elm_Autocapital_Type);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->autocapital_type = autocapital_type;
    edje_object_part_text_autocapital_type_set
      (sd->entry_edje, "elm.text", (Edje_Text_Autocapital_Type)autocapital_type);
 }
 
-EAPI Elm_Autocapital_Type
-elm_entry_autocapital_type_get(const Evas_Object *obj)
+EOLIAN static Elm_Autocapital_Type
+_elm_entry_autocapital_type_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) ELM_AUTOCAPITAL_TYPE_NONE;
-   Elm_Autocapital_Type ret = ELM_AUTOCAPITAL_TYPE_NONE;
-   eo_do((Eo *) obj, elm_obj_entry_autocapital_type_get(&ret));
-   return ret;
+   return sd->autocapital_type;
 }
 
-static void
-_autocapital_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_prediction_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool prediction)
 {
-   Elm_Autocapital_Type *ret = va_arg(*list, Elm_Autocapital_Type *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->autocapital_type;
-}
-
-EAPI void
-elm_entry_prediction_allow_set(Evas_Object *obj,
-                               Eina_Bool prediction)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_prediction_allow_set(prediction));
-}
-
-static void
-_prediction_allow_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool prediction = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->prediction_allow = prediction;
    edje_object_part_text_prediction_allow_set
      (sd->entry_edje, "elm.text", prediction);
 }
 
-EAPI Eina_Bool
-elm_entry_prediction_allow_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_prediction_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_TRUE;
-   Eina_Bool ret = EINA_TRUE;
-   eo_do((Eo *) obj, elm_obj_entry_prediction_allow_get(&ret));
-   return ret;
+   return sd->prediction_allow;
 }
 
-static void
-_prediction_allow_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_imf_context_reset(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->prediction_allow;
-}
-
-EAPI void
-elm_entry_imf_context_reset(Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_imf_context_reset());
-}
-
-static void
-_imf_context_reset(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_imf_context_reset(sd->entry_edje, "elm.text");
 }
 
-EAPI void
-elm_entry_input_panel_enabled_set(Evas_Object *obj,
-                                  Eina_Bool enabled)
+EOLIAN static void
+_elm_entry_input_panel_enabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool enabled)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_enabled_set(enabled));
-}
-
-static void
-_input_panel_enabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool enabled = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_enable = enabled;
    edje_object_part_text_input_panel_enabled_set
      (sd->entry_edje, "elm.text", enabled);
 }
 
-EAPI Eina_Bool
-elm_entry_input_panel_enabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_input_panel_enabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_TRUE;
-   Eina_Bool ret = EINA_TRUE;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_enabled_get(&ret));
-   return ret;
+   return sd->input_panel_enable;
 }
 
-static void
-_input_panel_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_input_panel_show(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_enable;
-}
-
-EAPI void
-elm_entry_input_panel_show(Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_show());
-}
-
-static void
-_input_panel_show(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
 }
 
-EAPI void
-elm_entry_input_panel_hide(Evas_Object *obj)
+EOLIAN static void
+_elm_entry_input_panel_hide(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_hide());
-}
-
-static void
-_input_panel_hide(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
 
    edje_object_part_text_input_panel_hide(sd->entry_edje, "elm.text");
 }
 
-EAPI void
-elm_entry_input_panel_language_set(Evas_Object *obj,
-                                   Elm_Input_Panel_Lang lang)
+EOLIAN static void
+_elm_entry_input_panel_language_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Panel_Lang lang)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_language_set(lang));
-}
-
-static void
-_input_panel_language_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Input_Panel_Lang lang = va_arg(*list, Elm_Input_Panel_Lang);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_lang = lang;
    edje_object_part_text_input_panel_language_set
      (sd->entry_edje, "elm.text", (Edje_Input_Panel_Lang)lang);
 }
 
-EAPI Elm_Input_Panel_Lang
-elm_entry_input_panel_language_get(const Evas_Object *obj)
+EOLIAN static Elm_Input_Panel_Lang
+_elm_entry_input_panel_language_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) ELM_INPUT_PANEL_LANG_AUTOMATIC;
-   Elm_Input_Panel_Lang ret = ELM_INPUT_PANEL_LANG_AUTOMATIC;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_language_get(&ret));
-   return ret;
+   return sd->input_panel_lang;
 }
 
-static void
-_input_panel_language_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_input_panel_imdata_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const void *data, int len)
 {
-   Elm_Input_Panel_Lang *ret = va_arg(*list, Elm_Input_Panel_Lang *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_lang;
-}
-
-EAPI void
-elm_entry_input_panel_imdata_set(Evas_Object *obj,
-                                 const void *data,
-                                 int len)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_imdata_set(data, len));
-}
-
-static void
-_input_panel_imdata_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const void *data = va_arg(*list, const void *);
-   int len = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    free(sd->input_panel_imdata);
 
    sd->input_panel_imdata = calloc(1, len);
@@ -5706,179 +4744,71 @@ _input_panel_imdata_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      sd->input_panel_imdata_len);
 }
 
-EAPI void
-elm_entry_input_panel_imdata_get(const Evas_Object *obj,
-                                 void *data,
-                                 int *len)
+EOLIAN static void
+_elm_entry_input_panel_imdata_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, void *data, int *len)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_imdata_get(data, len));
-}
-
-static void
-_input_panel_imdata_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   void *data = va_arg(*list, void *);
-   int *len = va_arg(*list, int *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    edje_object_part_text_input_panel_imdata_get
      (sd->entry_edje, "elm.text", data, len);
 }
 
-EAPI void
-elm_entry_input_panel_return_key_type_set(Evas_Object *obj,
-                                          Elm_Input_Panel_Return_Key_Type
-                                          return_key_type)
+EOLIAN static void
+_elm_entry_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Panel_Return_Key_Type return_key_type)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_return_key_type_set(return_key_type));
-}
-
-static void
-_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Input_Panel_Return_Key_Type return_key_type = va_arg(*list, Elm_Input_Panel_Return_Key_Type);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_return_key_type = return_key_type;
 
    edje_object_part_text_input_panel_return_key_type_set
      (sd->entry_edje, "elm.text", (Edje_Input_Panel_Return_Key_Type)return_key_type);
 }
 
-EAPI Elm_Input_Panel_Return_Key_Type
-elm_entry_input_panel_return_key_type_get(const Evas_Object *obj)
+EOLIAN static Elm_Input_Panel_Return_Key_Type
+_elm_entry_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
-   Elm_Input_Panel_Return_Key_Type ret = ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_return_key_type_get(&ret));
-   return ret;
+   return sd->input_panel_return_key_type;
 }
 
-static void
-_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool disabled)
 {
-   Elm_Input_Panel_Return_Key_Type *ret = va_arg(*list, Elm_Input_Panel_Return_Key_Type *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_return_key_type;
-}
-
-EAPI void
-elm_entry_input_panel_return_key_disabled_set(Evas_Object *obj,
-                                              Eina_Bool disabled)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_return_key_disabled_set(disabled));
-}
-
-static void
-_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool disabled = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_return_key_disabled = disabled;
 
    edje_object_part_text_input_panel_return_key_disabled_set
      (sd->entry_edje, "elm.text", disabled);
 }
 
-EAPI Eina_Bool
-elm_entry_input_panel_return_key_disabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_return_key_disabled_get(&ret));
-   return ret;
+   return sd->input_panel_return_key_disabled;
 }
 
-static void
-_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_input_panel_return_key_autoenabled_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool enabled)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->input_panel_return_key_disabled;
-}
-
-EAPI void
-elm_entry_input_panel_return_key_autoenabled_set(Evas_Object *obj,
-                                                 Eina_Bool enabled)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_return_key_autoenabled_set(enabled));
-}
-
-static void
-_input_panel_return_key_autoenabled_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool enabled = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->auto_return_key = enabled;
    _return_key_enabled_check(obj);
 }
 
-EAPI void
-elm_entry_input_panel_show_on_demand_set(Evas_Object *obj,
-                                         Eina_Bool ondemand)
+EOLIAN static void
+_elm_entry_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool ondemand)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_input_panel_show_on_demand_set(ondemand));
-}
-
-static void
-_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool ondemand = va_arg(*list, int);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    sd->input_panel_show_on_demand = ondemand;
 
    edje_object_part_text_input_panel_show_on_demand_set
      (sd->entry_edje, "elm.text", ondemand);
 }
 
-EAPI Eina_Bool
-elm_entry_input_panel_show_on_demand_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_entry_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_entry_input_panel_show_on_demand_get(&ret));
-   return ret;
+   return sd->input_panel_show_on_demand;
 }
 
-static void
-_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void*
+_elm_entry_imf_context_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Entry_Smart_Data *sd = _pd;
+   if (!sd) return NULL;
 
-   if (ret) *ret = sd->input_panel_show_on_demand;
-}
-
-EAPI void *
-elm_entry_imf_context_get(Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj) NULL;
-   void *ret = NULL;
-   eo_do(obj, elm_obj_entry_imf_context_get(&ret));
-   return ret;
-}
-
-static void
-_imf_context_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   void **ret = va_arg(*list, void **);
-   if (!ret) return;
-
-   *ret = NULL;
-   Elm_Entry_Smart_Data *sd = _pd;
-   if (!sd) return;
-
-   *ret = edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text");
+   return edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text");
 }
 
 /* START - ANCHOR HOVER */
@@ -5893,20 +4823,9 @@ _anchor_parent_del_cb(void *data,
    sd->anchor_hover.hover_parent = NULL;
 }
 
-EAPI void
-elm_entry_anchor_hover_parent_set(Evas_Object *obj,
-                                  Evas_Object *parent)
+EOLIAN static void
+_elm_entry_anchor_hover_parent_set(Eo *obj, Elm_Entry_Data *sd, Evas_Object *parent)
 {
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_anchor_hover_parent_set(parent));
-}
-
-static void
-_anchor_hover_parent_set(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    if (sd->anchor_hover.hover_parent)
      evas_object_event_callback_del_full
        (sd->anchor_hover.hover_parent, EVAS_CALLBACK_DEL,
@@ -5918,84 +4837,36 @@ _anchor_hover_parent_set(Eo *obj, void *_pd, va_list *list)
        _anchor_parent_del_cb, obj);
 }
 
-EAPI Evas_Object *
-elm_entry_anchor_hover_parent_get(const Evas_Object *obj)
+EOLIAN static Evas_Object*
+_elm_entry_anchor_hover_parent_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_entry_anchor_hover_parent_get(&ret));
-   return ret;
+   return sd->anchor_hover.hover_parent;
 }
 
-static void
-_anchor_hover_parent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_anchor_hover_style_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *style)
 {
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->anchor_hover.hover_parent;
-}
-
-EAPI void
-elm_entry_anchor_hover_style_set(Evas_Object *obj,
-                                 const char *style)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_anchor_hover_style_set(style));
-}
-
-static void
-_anchor_hover_style_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *style = va_arg(*list, const char *);
-   Elm_Entry_Smart_Data *sd = _pd;
-
    eina_stringshare_replace(&sd->anchor_hover.hover_style, style);
 }
 
-EAPI const char *
-elm_entry_anchor_hover_style_get(const Evas_Object *obj)
+EOLIAN static const char*
+_elm_entry_anchor_hover_style_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   ELM_ENTRY_CHECK(obj) NULL;
-   const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_entry_anchor_hover_style_get(&ret));
-   return ret;
+   return sd->anchor_hover.hover_style;
 }
 
-static void
-_anchor_hover_style_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_entry_anchor_hover_end(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   const char **ret = va_arg(*list, const char **);
-   Elm_Entry_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->anchor_hover.hover_style;
-}
-
-EAPI void
-elm_entry_anchor_hover_end(Evas_Object *obj)
-{
-   ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_entry_anchor_hover_end());
-}
-
-static void
-_anchor_hover_end(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
-{
-   Elm_Entry_Smart_Data *sd = _pd;
-
    ELM_SAFE_FREE(sd->anchor_hover.hover, evas_object_del);
    ELM_SAFE_FREE(sd->anchor_hover.pop, evas_object_del);
 }
 /* END - ANCHOR HOVER */
 
-static void
-_elm_entry_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
-   Elm_Activate act = va_arg(*list, Elm_Activate);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   if (act != ELM_ACTIVATE_DEFAULT) return;
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
@@ -6006,263 +4877,26 @@ _elm_entry_smart_activate(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 static void
-_elm_entry_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_elm_entry_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-}
-
-static void
-_elm_entry_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_entry_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_entry_smart_del),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_entry_smart_move),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_entry_smart_resize),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _elm_entry_smart_member_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_entry_smart_on_focus),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_DISABLE), _elm_entry_smart_disable),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_entry_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS_REGION), _elm_entry_smart_on_focus_region),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_entry_smart_sub_object_del),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACTIVATE), _elm_entry_smart_activate),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_entry_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_entry_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_entry_smart_content_set),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_entry_smart_content_unset),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_entry_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIGNAL_EMIT), _elm_entry_smart_signal),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIGNAL_CALLBACK_ADD), _elm_entry_smart_callback_add),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIGNAL_CALLBACK_DEL), _elm_entry_smart_callback_del),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_entry_smart_text_set),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_GET), _elm_entry_smart_text_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_entry_smart_content_aliases_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_THEME_ENABLE), _elm_entry_smart_theme_enable),
-
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_BOUNCE_ALLOW_SET), _bounce_set),
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_SET), _scroller_policy_set),
-
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_TEXT_STYLE_USER_PUSH), _text_style_user_push),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_TEXT_STYLE_USER_POP), _text_style_user_pop),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_TEXT_STYLE_USER_PEEK), _text_style_user_peek),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SINGLE_LINE_SET), _single_line_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SINGLE_LINE_GET), _single_line_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_PASSWORD_SET), _password_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_PASSWORD_GET), _password_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ENTRY_APPEND), _entry_append),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_IS_EMPTY), _is_empty),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_TEXTBLOCK_GET), _textblock_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CALC_FORCE), _calc_force),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_GET), _selection_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_SET), _selection_handler_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_GET), _selection_handler_disabled_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ENTRY_INSERT), _entry_insert),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_SET), _line_wrap_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_GET), _line_wrap_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_EDITABLE_SET), _editable_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_EDITABLE_GET), _editable_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_NONE), _select_none),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_ALL), _select_all),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECT_REGION_SET), _select_region_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_GEOMETRY_GET), _cursor_geometry_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_NEXT), _cursor_next),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_PREV), _cursor_prev),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_UP), _cursor_up),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_DOWN), _cursor_down),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_BEGIN_SET), _cursor_begin_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_END_SET), _cursor_end_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_LINE_BEGIN_SET), _cursor_line_begin_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_LINE_END_SET), _cursor_line_end_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_SELECTION_BEGIN), _cursor_selection_begin),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_SELECTION_END), _cursor_selection_end),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_IS_FORMAT_GET), _cursor_is_format_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_IS_VISIBLE_FORMAT_GET), _cursor_is_visible_format_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_CONTENT_GET), _cursor_content_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_POS_SET), _cursor_pos_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CURSOR_POS_GET), _cursor_pos_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_CUT), _selection_cut),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_COPY), _selection_copy),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SELECTION_PASTE), _selection_paste),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_CLEAR), _context_menu_clear),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_ITEM_ADD), _context_menu_item_add),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_DISABLED_SET), _context_menu_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_DISABLED_GET), _context_menu_disabled_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ITEM_PROVIDER_APPEND), _item_provider_append),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ITEM_PROVIDER_PREPEND), _item_provider_prepend),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ITEM_PROVIDER_REMOVE), _item_provider_remove),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_MARKUP_FILTER_APPEND), _markup_filter_append),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_MARKUP_FILTER_PREPEND), _markup_filter_prepend),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_MARKUP_FILTER_REMOVE), _markup_filter_remove),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_FILE_SET), _file_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_FILE_GET), _file_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_FILE_SAVE), _file_save),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_AUTOSAVE_SET), _autosave_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_AUTOSAVE_GET), _autosave_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CNP_MODE_SET), _cnp_mode_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_CNP_MODE_GET), _cnp_mode_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SCROLLABLE_SET), _scrollable_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_SCROLLABLE_GET), _scrollable_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ICON_VISIBLE_SET), _icon_visible_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_END_VISIBLE_SET), _end_visible_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_SET), _input_panel_layout_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_GET), _input_panel_layout_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_AUTOCAPITAL_TYPE_SET), _autocapital_type_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_AUTOCAPITAL_TYPE_GET), _autocapital_type_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_PREDICTION_ALLOW_SET), _prediction_allow_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_PREDICTION_ALLOW_GET), _prediction_allow_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_IMF_CONTEXT_RESET), _imf_context_reset),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_ENABLED_SET), _input_panel_enabled_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_ENABLED_GET), _input_panel_enabled_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW), _input_panel_show),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_HIDE), _input_panel_hide),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LANGUAGE_SET), _input_panel_language_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LANGUAGE_GET), _input_panel_language_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_IMDATA_SET), _input_panel_imdata_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_IMDATA_GET), _input_panel_imdata_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_TYPE_SET), _input_panel_return_key_type_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_TYPE_GET), _input_panel_return_key_type_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_DISABLED_SET), _input_panel_return_key_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_DISABLED_GET), _input_panel_return_key_disabled_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_AUTOENABLED_SET), _input_panel_return_key_autoenabled_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_IMF_CONTEXT_GET), _imf_context_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_PARENT_SET), _anchor_hover_parent_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_PARENT_GET), _anchor_hover_parent_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_SET), _anchor_hover_style_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_GET), _anchor_hover_style_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END), _anchor_hover_end),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET), _input_panel_layout_variation_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET), _input_panel_layout_variation_get),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_SET), _input_panel_show_on_demand_set),
-        EO_OP_FUNC(ELM_OBJ_ENTRY_ID(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_GET), _input_panel_show_on_demand_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_TEXT_STYLE_USER_PUSH, "Push the style to the top of user style stack."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_TEXT_STYLE_USER_POP, "Remove the style in the top of user style stack."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_TEXT_STYLE_USER_PEEK, "Retrieve the style on the top of user style stack."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SINGLE_LINE_SET, "Sets the entry to single line mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SINGLE_LINE_GET, "Get whether the entry is set to be single line."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_PASSWORD_SET, "Sets the entry to password mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_PASSWORD_GET, "Get whether the entry is set to password mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ENTRY_APPEND, "Appends entry to the text of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_IS_EMPTY, "Get whether the entry is empty."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_TEXTBLOCK_GET, "Returns the actual textblock object of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CALC_FORCE, "Forces calculation of the entry size and text layouting."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_GET, "Get any selected text within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_SET, "This disables the entry's selection handlers."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_HANDLER_DISABLED_GET, "This returns whether the entry's selection handlers are disabled."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ENTRY_INSERT, "Inserts the given text into the entry at the current cursor position."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_SET, "Set the line wrap type to use on multi-line entries."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_LINE_WRAP_GET, "Get the wrap mode the entry was set to use."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_EDITABLE_SET, "Sets if the entry is to be editable or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_EDITABLE_GET, "Get whether the entry is editable or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECT_NONE, "This drops any existing text selection within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECT_ALL, "This selects all text within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECT_REGION_SET, "This selects a region of text within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_GEOMETRY_GET, "This function returns the geometry of the cursor."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_NEXT, "This moves the cursor one place to the right within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_PREV, "This moves the cursor one place to the left within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_UP, "This moves the cursor one line up within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_DOWN, "This moves the cursor one line down within the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_BEGIN_SET, "This moves the cursor to the beginning of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_END_SET, "This moves the cursor to the end of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_LINE_BEGIN_SET, "This moves the cursor to the beginning of the current line."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_LINE_END_SET, "This moves the cursor to the end of the current line."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_SELECTION_BEGIN, "This begins a selection within the entry as though."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_SELECTION_END, "This ends a selection within the entry as though."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_IS_FORMAT_GET, "Get whether a format node exists at the current cursor position."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_IS_VISIBLE_FORMAT_GET, "Get if the current cursor position holds a visible format node."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_CONTENT_GET, "Get the character pointed by the cursor at its current position."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_POS_SET, "Sets the cursor position in the entry to the given value."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CURSOR_POS_GET, "Retrieves the current position of the cursor in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_CUT, "This executes a 'cut' action on the selected text in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_COPY, "This executes a 'copy' action on the selected text in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SELECTION_PASTE, "This executes a 'paste' action in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_CLEAR, "This clears and frees the items in a entry's contextual (longpress)."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_ITEM_ADD, "This adds an item to the entry's contextual menu."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_DISABLED_SET, "This disables the entry's contextual (longpress) menu."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CONTEXT_MENU_DISABLED_GET, "This returns whether the entry's contextual (longpress) menu is disabled."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ITEM_PROVIDER_APPEND, "This appends a custom item provider to the list for that entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ITEM_PROVIDER_PREPEND, "This prepends a custom item provider to the list for that entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ITEM_PROVIDER_REMOVE, "This removes a custom item provider to the list for that entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_MARKUP_FILTER_APPEND, "Append a markup filter function for text inserted in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_MARKUP_FILTER_PREPEND, "Prepend a markup filter function for text inserted in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_MARKUP_FILTER_REMOVE, "Remove a markup filter from the list."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_FILE_SET, "This sets the file (and implicitly loads it) for the text to display and then edit."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_FILE_GET, "Get the file being edited by the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_FILE_SAVE, "This function writes any changes made to the file set with elm_entry_file_set()."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_AUTOSAVE_SET, "This sets the entry object to 'autosave' the loaded text file or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_AUTOSAVE_GET, "This gets the entry object's 'autosave' status."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CNP_MODE_SET, "Control pasting of text and images for the widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_CNP_MODE_GET, "Getting elm_entry text paste/drop mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SCROLLABLE_SET, "Enable or disable scrolling in entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_SCROLLABLE_GET, "Get the scrollable state of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ICON_VISIBLE_SET, "Sets the visibility of the left-side widget of the entry,."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_END_VISIBLE_SET, "Sets the visibility of the end widget of the entry, set by elm_object_part_content_set(ent, 'end', content)."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_SET, "Set the input panel layout of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_GET, "Get the input panel layout of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_AUTOCAPITAL_TYPE_SET, "Set the autocapitalization type on the immodule."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_AUTOCAPITAL_TYPE_GET, "Retrieve the autocapitalization type on the immodule."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_PREDICTION_ALLOW_SET, "Set whether the entry should allow to use the text prediction."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_PREDICTION_ALLOW_GET, "Get whether the entry should allow to use the text prediction."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_IMF_CONTEXT_RESET, "Reset the input method context of the entry if needed."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_ENABLED_SET, "Sets the attribute to show the input panel automatically."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_ENABLED_GET, "Retrieve the attribute to show the input panel automatically."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW, "Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_HIDE, "Hide the input panel (virtual keyboard)."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LANGUAGE_SET, "Set the language mode of the input panel."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LANGUAGE_GET, "Get the language mode of the input panel."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_IMDATA_SET, "Set the input panel-specific data to deliver to the input panel."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_IMDATA_GET, "Get the specific data of the current input panel."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_TYPE_SET, "Set the 'return' key type."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_TYPE_GET, "Get the 'return' key type."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_DISABLED_SET, "Set the return key on the input panel to be disabled."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_DISABLED_GET, "Get whether the return key on the input panel should be disabled or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_RETURN_KEY_AUTOENABLED_SET, "Set whether the return key on the input panel is disabled automatically when entry has no text."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_IMF_CONTEXT_GET, "Returns the input method context of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_PARENT_SET, "Set the parent of the hover popup."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_PARENT_GET, "Get the parent of the hover popup."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_SET, "Set the style that the hover should use."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_STYLE_GET, "Get the style that the hover should use."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_ANCHOR_HOVER_END, "Ends the hover popup in the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_SET, "Set the input panel layout variation of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_LAYOUT_VARIATION_GET, "Get the input panel layout variation of the entry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_SET, "Set the attribute to show the input panel in case of only an user's explicit Mouse Up event."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ENTRY_SUB_ID_INPUT_PANEL_SHOW_ON_DEMAND_GET, "Get the attribute to show the input panel in case of only an user's explicit Mouse Up event."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
 
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_ENTRY_BASE_ID, op_desc, ELM_OBJ_ENTRY_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Entry_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_entry_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_INTERFACE_SCROLLABLE_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+#include "elm_entry.eo.c"

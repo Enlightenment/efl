@@ -20,8 +20,8 @@ typedef struct _Mod_Api                     Mod_Api;
 /**
  * Base widget smart data extended with entry instance data.
  */
-typedef struct _Elm_Entry_Smart_Data        Elm_Entry_Smart_Data;
-struct _Elm_Entry_Smart_Data
+typedef struct _Elm_Entry_Data        Elm_Entry_Data;
+struct _Elm_Entry_Data
 {
    Evas_Object                          *hit_rect, *entry_edje, *scr_edje;
 
@@ -147,7 +147,7 @@ typedef enum _Length_Unit
  */
 
 #define ELM_ENTRY_DATA_GET(o, sd) \
-  Elm_Entry_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_ENTRY_CLASS)
+  Elm_Entry_Data * sd = eo_data_scope_get(o, ELM_OBJ_ENTRY_CLASS)
 
 #define ELM_ENTRY_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_ENTRY_DATA_GET(o, ptr);                        \

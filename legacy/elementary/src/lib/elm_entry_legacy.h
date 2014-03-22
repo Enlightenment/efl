@@ -194,7 +194,7 @@ EAPI Eina_Bool          elm_entry_is_empty(const Evas_Object *obj);
  *
  * @ingroup Entry
  */
-EAPI Evas_Object *      elm_entry_textblock_get(Evas_Object *obj);
+EAPI Evas_Object *      elm_entry_textblock_get(const Evas_Object *obj);
 
 /**
  * Forces calculation of the entry size and text layouting.
@@ -1112,7 +1112,7 @@ EAPI void                   elm_entry_input_panel_return_key_autoenabled_set(Eva
  *
  * @ingroup Entry
  */
-EAPI void                  *elm_entry_imf_context_get(Evas_Object *obj);
+EAPI void                  *elm_entry_imf_context_get(const Evas_Object *obj);
 
 /**
  * Set the parent of the hover popup
