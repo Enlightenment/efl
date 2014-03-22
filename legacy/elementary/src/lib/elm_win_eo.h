@@ -14,6 +14,7 @@ enum
      ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR,
      ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_ADD,
      ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_DEL,
+     ELM_OBJ_WIN_SUB_ID_TYPE_GET,
      ELM_OBJ_WIN_SUB_ID_TITLE_SET,
      ELM_OBJ_WIN_SUB_ID_TITLE_GET,
      ELM_OBJ_WIN_SUB_ID_ICON_NAME_SET,
@@ -154,6 +155,18 @@ enum
  * @see elm_win_resize_object_del
  */
 #define elm_obj_win_resize_object_del(subobj) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_DEL), EO_TYPECHECK(Evas_Object *, subobj)
+
+/**
+ * @def elm_obj_win_type_get
+ * @since 1.9
+ *
+ * Get the type of the window
+ *
+ * @param[out] ret
+ *
+ * @see elm_win_type_get
+ */
+#define elm_obj_win_type_get(ret) ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_TYPE_GET), EO_TYPECHECK(Elm_Win_Type *, ret)
 
 /**
  * @def elm_obj_win_title_set
