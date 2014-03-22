@@ -146,7 +146,7 @@ eeze_udev_syspath_get_property(const char *syspath,
 {
    _udev_device *device;
    const char *test;
-   Eina_Stringshare *value;
+   Eina_Stringshare *value = NULL;
 
    if (!syspath || !property)
      return NULL;

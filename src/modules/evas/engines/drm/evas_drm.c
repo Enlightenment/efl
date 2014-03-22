@@ -203,7 +203,7 @@ _evas_drm_crtc_buffer_get(int fd, int crtc_id)
 }
 
 static void 
-_evas_drm_tty_sigusr1(int x EINA_UNUSED, siginfo_t *info, void *data EINA_UNUSED)
+_evas_drm_tty_sigusr1(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Engine_Info_Drm *einfo;
 
@@ -231,7 +231,7 @@ _evas_drm_tty_sigusr1(int x EINA_UNUSED, siginfo_t *info, void *data EINA_UNUSED
 }
 
 static void 
-_evas_drm_tty_sigusr2(int x EINA_UNUSED, siginfo_t *info, void *data EINA_UNUSED)
+_evas_drm_tty_sigusr2(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
    Evas_Engine_Info_Drm *einfo;
 
