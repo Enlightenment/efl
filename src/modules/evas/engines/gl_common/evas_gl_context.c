@@ -2766,29 +2766,42 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                case EVAS_RENDER_BLEND: /**< default op: d = d*(1-sa) + s */
                   glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  break;
+               case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
+                  glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                   break;
                case EVAS_RENDER_COPY: /**< d = s */
                   gc->pipe[i].shader.blend = 0;
-                  glBlendFunc(GL_ONE, GL_ONE);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  // just disable blend mode. no need to set blend func
+                  //glBlendFunc(GL_ONE, GL_ZERO);
                   break;
-                  // FIXME: fix blend funcs below!
-               case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
                case EVAS_RENDER_COPY_REL: /**< d = s*da */
+                  glBlendFunc(GL_DST_ALPHA, GL_ZERO);
+                  break;
                case EVAS_RENDER_ADD: /**< d = d + s */
+                  glBlendFunc(GL_ONE, GL_ONE);
+                  break;
                case EVAS_RENDER_ADD_REL: /**< d = d + s*da */
+                  glBlendFunc(GL_DST_ALPHA, GL_ONE);
+                  break;
                case EVAS_RENDER_SUB: /**< d = d - s */
+                  glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+                  break;
                case EVAS_RENDER_SUB_REL: /**< d = d - s*da */
+                  glBlendFunc(GL_ZERO, GL_ONE_MINUS_DST_ALPHA);
+                  break;
+               case EVAS_RENDER_MASK: /**< d = d*sa */
+                  glBlendFunc(GL_ZERO, GL_SRC_ALPHA);
+                  break;
+               // FIXME: fix blend funcs below!
                case EVAS_RENDER_TINT: /**< d = d*s + d*(1 - sa) + s*(1 - da) */
                case EVAS_RENDER_TINT_REL: /**< d = d*(1 - sa + s) */
-               case EVAS_RENDER_MASK: /**< d = d*sa */
                case EVAS_RENDER_MUL: /**< d = d*s */
                default:
                   glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   break;
                }
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         if (gc->pipe[i].shader.blend != gc->state.current.blend)
           {
