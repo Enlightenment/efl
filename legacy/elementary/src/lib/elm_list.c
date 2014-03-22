@@ -1074,7 +1074,7 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
            _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
         else if (sd->last_selected_item)
            _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
-        else if (!sd->highlighted_item)
+        else if (!sd->mouse_down)
            _elm_list_item_focused((Elm_List_Item *)eina_list_data_get(sd->items));
         _elm_widget_focus_highlight_start(obj);
      }
@@ -1152,7 +1152,6 @@ _item_highlight(Elm_List_Item *it)
    if ((select_raise) && (!strcmp(select_raise, "on")))
      evas_object_raise(VIEW(it));
    it->highlighted = EINA_TRUE;
-   sd->highlighted_item = (Elm_Object_Item *)it;
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
 }
@@ -1219,7 +1218,6 @@ _item_unhighlight(Elm_List_Item *it)
      }
    it->highlighted = EINA_FALSE;
 
-   sd->highlighted_item = NULL;
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
 }
@@ -1405,6 +1403,7 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (sd->on_hold) return;
+   sd->mouse_down = EINA_TRUE;
    sd->was_selected = it->selected;
 
    evas_object_ref(obj);
@@ -1448,6 +1447,8 @@ _mouse_up_cb(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
+
+   sd->mouse_down = EINA_FALSE;
    sd->longpressed = EINA_FALSE;
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    ELM_SAFE_FREE(it->swipe_timer, ecore_timer_del);

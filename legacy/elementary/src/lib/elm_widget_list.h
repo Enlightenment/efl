@@ -43,8 +43,6 @@ struct _Elm_List_Smart_Data
       Evas_Coord x, y;
    } history[ELM_LIST_SWIPE_MOVES];
 
-   Elm_Object_Item                      *highlighted_item;
-
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             was_selected : 1;
    Eina_Bool                             fix_pending : 1;
@@ -55,6 +53,7 @@ struct _Elm_List_Smart_Data
    Eina_Bool                             multi : 1;
    Eina_Bool                             swipe : 1;
    Eina_Bool                             delete_me : 1;
+   Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the list at the moment. this flag is set to true on mouse and reset to false on mouse up */
 };
 
 typedef struct _Elm_List_Item Elm_List_Item;
