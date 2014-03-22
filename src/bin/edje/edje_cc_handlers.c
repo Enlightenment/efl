@@ -9846,6 +9846,7 @@ static void
 ob_collections_group_programs_program_sequence(void)
 {
    sequencing = current_program;
+   ((Edje_Program_Parser*)sequencing)->can_override = EINA_FALSE;
 }
 
 static void
@@ -10091,6 +10092,7 @@ edje_cc_handlers_pop_notify(const char *token)
 {
    if ((!sequencing) || strcmp(token, "sequence")) return;
    current_program = sequencing;
+   ((Edje_Program_Parser*)sequencing)->can_override = EINA_TRUE;
    sequencing = NULL;
 }
 
