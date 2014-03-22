@@ -195,6 +195,7 @@ static void ob_collections_group(void);
 static void st_collections_group_name(void);
 static void st_collections_group_inherit(void);
 static void st_collections_group_part_remove(void);
+static void st_collections_group_program_remove(void);
 static void st_collections_group_script_only(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
@@ -498,6 +499,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.part_remove", st_collections_group_part_remove},
+     {"collections.group.program_remove", st_collections_group_program_remove},
      {"collections.group.script_only", st_collections_group_script_only},
      {"collections.group.lua_script_only", st_collections_group_script_only},
      {"collections.group.alias", st_collections_group_alias},
@@ -3553,6 +3555,95 @@ st_collections_group_parts_part_inherit(void)
    exit(-1);
 
    free(name);
+}
+
+static Eina_Bool
+_program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
+{
+   unsigned int i;
+   Edje_Part_Collection *pc;
+
+   pc = eina_list_last_data_get(edje_collections);
+
+   for (i = 0; i < count; ++i)
+     if (pgrms[i]->name && (!strcmp(name, pgrms[i]->name)))
+       {
+          Edje_Program_Target *prt;
+          Edje_Program_After *pa;
+          Edje_Program *pr = pgrms[i];
+
+          _edje_program_remove(pc, pgrms[i]);
+
+          free((void*)pr->name);
+          free((void*)pr->signal);
+          free((void*)pr->source);
+          free((void*)pr->filter.part);
+          free((void*)pr->filter.state);
+          free((void*)pr->state);
+          free((void*)pr->state2);
+          free((void*)pr->sample_name);
+          free((void*)pr->tone_name);
+          EINA_LIST_FREE(pr->targets, prt);
+             free(prt);
+          EINA_LIST_FREE(pr->after, pa)
+             free(pa);
+          free(pr);
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
+/**
+    @page edcref
+    @property
+        program_remove
+    @parameters
+        [program name] [program name] [program name] ...
+    @effect
+        Removes the listed programs from an inherited group. Removing nonexistent
+        programs is not allowed.
+        This will break program sequences if a program in the middle of the sequence is removed.
+    @endproperty
+    @since 1.10
+*/
+static void
+st_collections_group_program_remove(void)
+{
+   unsigned int n, argc;
+   Edje_Part_Collection *pc;
+
+   check_min_arg_count(1);
+
+   if (!current_group_inherit)
+     {
+        ERR("Cannot remove programs from non-inherited group '%s'", current_de->entry);
+        exit(-1);
+     }
+
+   pc = eina_list_last_data_get(edje_collections);
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        char *name;
+        Eina_Bool success = EINA_FALSE;
+
+        name = parse_str(n);
+
+        success |= _program_remove(name, pc->programs.fnmatch, pc->programs.fnmatch_count);
+        success |= _program_remove(name, pc->programs.strcmp, pc->programs.strcmp_count);
+        success |= _program_remove(name, pc->programs.strncmp, pc->programs.strncmp_count);
+        success |= _program_remove(name, pc->programs.strrncmp, pc->programs.strrncmp_count);
+        success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
+
+        copied_program_lookup_delete(pc, name);
+        if (!success)
+          {
+             ERR("Attempted removal of nonexistent program '%s' in group '%s'.",
+                 name, current_de->entry);
+             exit(-1);
+          }
+        free(name);
+     }
 }
 
 /**

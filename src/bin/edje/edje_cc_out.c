@@ -2377,6 +2377,21 @@ program_lookup_rename(void *p, const char *name)
 }
 
 void
+copied_program_lookup_delete(Edje_Part_Collection *pc, const char *name)
+{
+   Program_Lookup *pl;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH_SAFE(program_lookups, l, ll, pl)
+     {
+        if (pl->anonymous || (pl->pc != pc) || strcmp(pl->u.name, name)) continue;
+        free(pl->u.name);
+        program_lookups = eina_list_remove_list(program_lookups, l);
+        free(pl);
+     }
+}
+
+void
 data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
    Eina_List *l;
