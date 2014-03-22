@@ -101,30 +101,36 @@ op_copy_init(void)
    memset(op_copy_span_funcs, 0, sizeof(op_copy_span_funcs));
    memset(op_copy_pt_funcs, 0, sizeof(op_copy_pt_funcs));
 #ifdef BUILD_MMX
-   init_copy_pixel_span_funcs_mmx();
-   init_copy_pixel_color_span_funcs_mmx();
-   init_copy_pixel_mask_span_funcs_mmx();
-   init_copy_color_span_funcs_mmx();
-   init_copy_mask_color_span_funcs_mmx();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        init_copy_pixel_span_funcs_mmx();
+        init_copy_pixel_color_span_funcs_mmx();
+        init_copy_pixel_mask_span_funcs_mmx();
+        init_copy_color_span_funcs_mmx();
+        init_copy_mask_color_span_funcs_mmx();
 
-   init_copy_pixel_pt_funcs_mmx();
-   init_copy_pixel_color_pt_funcs_mmx();
-   init_copy_pixel_mask_pt_funcs_mmx();
-   init_copy_color_pt_funcs_mmx();
-   init_copy_mask_color_pt_funcs_mmx();
+        init_copy_pixel_pt_funcs_mmx();
+        init_copy_pixel_color_pt_funcs_mmx();
+        init_copy_pixel_mask_pt_funcs_mmx();
+        init_copy_color_pt_funcs_mmx();
+        init_copy_mask_color_pt_funcs_mmx();
+     }
 #endif
 #ifdef BUILD_NEON
-   init_copy_pixel_span_funcs_neon();
-   init_copy_pixel_color_span_funcs_neon();
-   init_copy_pixel_mask_span_funcs_neon();
-   init_copy_color_span_funcs_neon();
-   init_copy_mask_color_span_funcs_neon();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+        init_copy_pixel_span_funcs_neon();
+        init_copy_pixel_color_span_funcs_neon();
+        init_copy_pixel_mask_span_funcs_neon();
+        init_copy_color_span_funcs_neon();
+        init_copy_mask_color_span_funcs_neon();
 
-   init_copy_pixel_pt_funcs_neon();
-   init_copy_pixel_color_pt_funcs_neon();
-   init_copy_pixel_mask_pt_funcs_neon();
-   init_copy_color_pt_funcs_neon();
-   init_copy_mask_color_pt_funcs_neon();
+        init_copy_pixel_pt_funcs_neon();
+        init_copy_pixel_color_pt_funcs_neon();
+        init_copy_pixel_mask_pt_funcs_neon();
+        init_copy_color_pt_funcs_neon();
+        init_copy_mask_color_pt_funcs_neon();
+     }
 #endif
    init_copy_pixel_span_funcs_c();
    init_copy_pixel_color_span_funcs_c();

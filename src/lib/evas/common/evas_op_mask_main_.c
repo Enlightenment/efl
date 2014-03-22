@@ -56,17 +56,20 @@ op_mask_init(void)
    memset(op_mask_span_funcs, 0, sizeof(op_mask_span_funcs));
    memset(op_mask_pt_funcs, 0, sizeof(op_mask_pt_funcs));
 #ifdef BUILD_MMX
-   init_mask_pixel_span_funcs_mmx();
-   init_mask_pixel_color_span_funcs_mmx();
-   init_mask_pixel_mask_span_funcs_mmx();
-   init_mask_color_span_funcs_mmx();
-   init_mask_mask_color_span_funcs_mmx();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        init_mask_pixel_span_funcs_mmx();
+        init_mask_pixel_color_span_funcs_mmx();
+        init_mask_pixel_mask_span_funcs_mmx();
+        init_mask_color_span_funcs_mmx();
+        init_mask_mask_color_span_funcs_mmx();
 
-   init_mask_pixel_pt_funcs_mmx();
-   init_mask_pixel_color_pt_funcs_mmx();
-   init_mask_pixel_mask_pt_funcs_mmx();
-   init_mask_color_pt_funcs_mmx();
-   init_mask_mask_color_pt_funcs_mmx();
+        init_mask_pixel_pt_funcs_mmx();
+        init_mask_pixel_color_pt_funcs_mmx();
+        init_mask_pixel_mask_pt_funcs_mmx();
+        init_mask_color_pt_funcs_mmx();
+        init_mask_mask_color_pt_funcs_mmx();
+     }
 #endif
    init_mask_pixel_span_funcs_c();
    init_mask_pixel_color_span_funcs_c();

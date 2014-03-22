@@ -55,17 +55,20 @@ op_mul_init(void)
    memset(op_mul_span_funcs, 0, sizeof(op_mul_span_funcs));
    memset(op_mul_pt_funcs, 0, sizeof(op_mul_pt_funcs));
 #ifdef BUILD_MMX
-   init_mul_pixel_span_funcs_mmx();
-   init_mul_pixel_color_span_funcs_mmx();
-   init_mul_pixel_mask_span_funcs_mmx();
-   init_mul_color_span_funcs_mmx();
-   init_mul_mask_color_span_funcs_mmx();
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        init_mul_pixel_span_funcs_mmx();
+        init_mul_pixel_color_span_funcs_mmx();
+        init_mul_pixel_mask_span_funcs_mmx();
+        init_mul_color_span_funcs_mmx();
+        init_mul_mask_color_span_funcs_mmx();
 
-   init_mul_pixel_pt_funcs_mmx();
-   init_mul_pixel_color_pt_funcs_mmx();
-   init_mul_pixel_mask_pt_funcs_mmx();
-   init_mul_color_pt_funcs_mmx();
-   init_mul_mask_color_pt_funcs_mmx();
+        init_mul_pixel_pt_funcs_mmx();
+        init_mul_pixel_color_pt_funcs_mmx();
+        init_mul_pixel_mask_pt_funcs_mmx();
+        init_mul_color_pt_funcs_mmx();
+        init_mul_mask_color_pt_funcs_mmx();
+     }
 #endif
    init_mul_pixel_span_funcs_c();
    init_mul_pixel_color_span_funcs_c();
