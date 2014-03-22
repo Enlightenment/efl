@@ -109,6 +109,7 @@ struct _Elm_Gengrid_Smart_Data
                                                      * selection */
    Eina_Bool                             show_region : 1;
    Eina_Bool                             bring_in : 1;
+   Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the list at the moment. this flag is set to true on mouse and reset to false on mouse up */
 };
 
 struct Elm_Gen_Item_Type

@@ -489,6 +489,7 @@ _item_mouse_down_cb(void *data,
    if (ev->button != 1) return;
 
    it->down = 1;
+   sd->mouse_down = EINA_TRUE;
    it->dragging = 0;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    it->dx = ev->canvas.x - x;
@@ -565,6 +566,7 @@ _item_mouse_up_cb(void *data,
    sd = GG_IT(it)->wsd;
 
    it->down = EINA_FALSE;
+   sd->mouse_down = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
@@ -1900,6 +1902,7 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
+   Eina_Bool sel_ret = EINA_FALSE;
 
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
@@ -1915,204 +1918,119 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
    if ((!strcmp(ev->key, "Left")) ||
        ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
-        if ((sd->horizontal) &&
-            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-              (_item_multi_select_up(sd)))
-             || (_item_single_select_up(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else if ((!sd->horizontal) &&
-                 (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-                   (_item_multi_select_left(sd)))
-                  || (_item_single_select_left(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else
-          x -= step_x;
-
         if (sd->horizontal)
           {
-             if (_item_focus_up(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_up(sd);
+             if (!sel_ret)
+               sel_ret = _item_single_select_up(sd);
           }
         else
           {
-             if (_item_focus_left(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_left(sd);
+             if (!sel_ret)
+                  sel_ret = _item_single_select_left(sd);
           }
 
+        if (sel_ret)
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
+
+        if (ret) *ret = EINA_FALSE;
         return;
      }
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
-        if ((sd->horizontal) &&
-            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-              (_item_multi_select_down(sd)))
-             || (_item_single_select_down(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else if ((!sd->horizontal) &&
-                 (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-                   (_item_multi_select_right(sd)))
-                  || (_item_single_select_right(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else
-          x += step_x;
-
         if (sd->horizontal)
           {
-             if (_item_focus_down(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_down(sd);
+             if (!sel_ret)
+               sel_ret = _item_single_select_down(sd);
           }
         else
           {
-             if (_item_focus_right(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_right(sd);
+             if (!sel_ret)
+                  sel_ret = _item_single_select_right(sd);
           }
 
+        if (sel_ret)
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
+
+        if (ret) *ret = EINA_FALSE;
         return;
      }
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
-        if ((sd->horizontal) &&
-            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-              (_item_multi_select_left(sd)))
-             || (_item_single_select_left(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else if ((!sd->horizontal) &&
-                 (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-                   (_item_multi_select_up(sd)))
-                  || (_item_single_select_up(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else
-          y -= step_y;
-
         if (sd->horizontal)
           {
-             if (_item_focus_left(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_left(sd);
+             if (!sel_ret)
+               sel_ret = _item_single_select_left(sd);
           }
         else
           {
-             if (_item_focus_up(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_up(sd);
+             if (!sel_ret)
+                  sel_ret = _item_single_select_up(sd);
           }
 
+        if (sel_ret)
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
+
+        if (ret) *ret = EINA_FALSE;
         return;
      }
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
-        if ((sd->horizontal) &&
-            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-              (_item_multi_select_right(sd)))
-             || (_item_single_select_right(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else if ((!sd->horizontal) &&
-                 (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-                   (_item_multi_select_down(sd)))
-                  || (_item_single_select_down(sd))))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else
-          y += step_y;
-
         if (sd->horizontal)
           {
-             if (_item_focus_right(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_right(sd);
+             if (!sel_ret)
+               sel_ret = _item_single_select_right(sd);
           }
         else
           {
-             if (_item_focus_down(sd))
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  if (ret) *ret = EINA_TRUE;
-               }
-             else
-               {
-                  if (ret) *ret = EINA_FALSE;
-               }
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               sel_ret = _item_multi_select_down(sd);
+             if (!sel_ret)
+                  sel_ret = _item_single_select_down(sd);
           }
 
+        if (sel_ret)
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             if (ret) *ret = EINA_TRUE;
+             return;
+          }
+
+        if (ret) *ret = EINA_FALSE;
         return;
      }
    else if ((!strcmp(ev->key, "Home")) ||
             ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
      {
         it = elm_gengrid_first_item_get(obj);
-        elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (ret) *ret = EINA_TRUE;
@@ -2122,7 +2040,6 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
             ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
      {
         it = elm_gengrid_last_item_get(obj);
-        elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         if (ret) *ret = EINA_TRUE;
@@ -2194,6 +2111,7 @@ _elm_gengrid_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Gengrid_Smart_Data *sd = _pd;
    Elm_Object_Item *it = NULL;
+   Eina_Bool is_sel = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
    if (!int_ret) return;
@@ -2205,15 +2123,22 @@ _elm_gengrid_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (elm_widget_focus_get(obj))
      {
         if (sd->last_focused_item)
-          elm_object_item_focus_set(sd->last_focused_item, EINA_TRUE);
+          it = sd->last_focused_item;
         else if (sd->last_selected_item)
-          elm_object_item_focus_set(sd->last_selected_item, EINA_TRUE);
-        else
+          it = sd->last_selected_item;
+        else if (!sd->mouse_down)
           {
              it = elm_gengrid_first_item_get(obj);
-             elm_object_item_focus_set(it, EINA_TRUE);
+             is_sel = EINA_TRUE;
           }
-        _elm_widget_focus_highlight_start(obj);
+
+        if (it)
+          {
+             if (is_sel)
+               elm_gengrid_item_selected_set(it, EINA_TRUE);
+             else
+               elm_object_item_focus_set(it, EINA_TRUE);
+          }
      }
    else
      {
@@ -2640,7 +2565,11 @@ _item_select(Elm_Gen_Item *it)
    sd->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
    if (it->generation == sd->generation)
-     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
+     {
+        evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
+        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+     }
+
    it->walking--;
    sd->walking--;
    if ((sd->clear_me) && (!sd->walking))
