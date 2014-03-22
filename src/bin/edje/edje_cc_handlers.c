@@ -117,6 +117,7 @@
  *        <li>@ref sec_collections_group_programs "Programs"</li>
  *        <ul>
  *          <li>@ref sec_collections_group_script "Script"</li>
+ *          <li>@ref sec_collections_group_program_sequence "Sequence"</li>
  *        </ul>
  *        <li>@ref sec_collections_group_physics "Physics"</li>
  *        <ul>
@@ -138,6 +139,7 @@ static Edje_Part_Description_Common *current_desc = NULL;
 static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
 static Eina_Bool current_group_inherit = EINA_FALSE;
+static Edje_Program *sequencing = NULL;
 
 struct _Edje_Cc_Handlers_Hierarchy_Info
 {  /* Struct that keeps globals value to impl hierarchy */
@@ -389,6 +391,8 @@ static void st_collections_group_programs_program_targets(void);
 static void st_collections_group_programs_program_after(void);
 static void st_collections_group_programs_program_api(void);
 
+static void ob_collections_group_programs_program_sequence(void);
+
 static void ob_collections_group_programs_program_script(void);
 static void st_collections_group_sound_sample_name(void);
 static void st_collections_group_sound_sample_source(void);
@@ -434,16 +438,27 @@ static void st_collections_group_physics_world_depth(void);
 
 #define PROGRAM_BASE(PREFIX) \
      {PREFIX".program.name", st_collections_group_programs_program_name}, /* dup */ \
+     {PREFIX".program.sequence.name", st_collections_group_programs_program_name}, /* dup */ \
      {PREFIX".program.signal", st_collections_group_programs_program_signal}, /* dup */ \
+     {PREFIX".program.sequence.signal", st_collections_group_programs_program_signal}, /* dup */ \
      {PREFIX".program.source", st_collections_group_programs_program_source}, /* dup */ \
+     {PREFIX".program.sequence.source", st_collections_group_programs_program_source}, /* dup */ \
      {PREFIX".program.in", st_collections_group_programs_program_in}, /* dup */ \
+     {PREFIX".program.sequence.in", st_collections_group_programs_program_in}, /* dup */ \
      {PREFIX".program.action", st_collections_group_programs_program_action}, /* dup */ \
+     {PREFIX".program.sequence.action", st_collections_group_programs_program_action}, /* dup */ \
      {PREFIX".program.transition", st_collections_group_programs_program_transition}, /* dup */ \
+     {PREFIX".program.sequence.transition", st_collections_group_programs_program_transition}, /* dup */ \
      {PREFIX".program.target", st_collections_group_programs_program_target}, /* dup */ \
+     {PREFIX".program.sequence.target", st_collections_group_programs_program_target}, /* dup */ \
      {PREFIX".program.targets", st_collections_group_programs_program_targets}, /* dup */ \
+     {PREFIX".program.sequence.targets", st_collections_group_programs_program_targets}, /* dup */ \
      {PREFIX".program.after", st_collections_group_programs_program_after}, /* dup */ \
+     {PREFIX".program.sequence.after", st_collections_group_programs_program_after}, /* dup */ \
      {PREFIX".program.api", st_collections_group_programs_program_api}, /* dup */ \
-     {PREFIX".program.filter", st_collections_group_programs_program_filter}, /* dup */
+     {PREFIX".program.sequence.api", st_collections_group_programs_program_api}, /* dup */ \
+     {PREFIX".program.filter", st_collections_group_programs_program_filter}, /* dup */ \
+     {PREFIX".program.sequence.filter", st_collections_group_programs_program_filter}, /* dup */
 
 #define PROGRAM_STATEMENTS(PREFIX) \
      IMAGE_SET_STATEMENTS(PREFIX".programs") \
@@ -696,6 +711,8 @@ New_Statement_Handler statement_handlers[] =
 #define PROGRAM_OBJECTS(PREFIX) \
      {PREFIX".program", ob_collections_group_programs_program}, /* dup */ \
      {PREFIX".program.script", ob_collections_group_programs_program_script}, /* dup */ \
+     {PREFIX".program.sequence.script", ob_collections_group_programs_program_script}, /* dup */ \
+     {PREFIX".program.sequence", ob_collections_group_programs_program_sequence}, /* dup */ \
      {PREFIX".programs", NULL}, /* dup */ \
      {PREFIX".programs.set", ob_images_set}, /* dup */ \
      {PREFIX".programs.set.image", ob_images_set_image}, /* dup */ \
@@ -705,6 +722,7 @@ New_Statement_Handler statement_handlers[] =
      {PREFIX".programs.fonts", NULL}, /* dup */ \
      {PREFIX".programs.program", ob_collections_group_programs_program}, /* dup */ \
      {PREFIX".programs.program.script", ob_collections_group_programs_program_script}, /* dup */ \
+     {PREFIX".programs.program.sequence.script", ob_collections_group_programs_program_script}, /* dup */ \
      {PREFIX".programs.script", ob_collections_group_script}, /* dup */ \
      {PREFIX".script", ob_collections_group_script}, /* dup */
 
@@ -9009,6 +9027,45 @@ st_collections_group_parts_part_description_params_choice(void)
    _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_CHOICE);
 }
 
+static void
+_program_after(const char *name)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+   Edje_Program_After *pa;
+   Edje_Program_After *pa2;
+   Eina_List *l;
+   char *copy;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = current_program;
+
+   EINA_LIST_FOREACH(ep->after, l, pa2)
+     {
+        if (!strcmp(name, (char*) (pa2 + 1)))
+          return;
+     }
+
+   pa = mem_alloc(SZ(Edje_Program_After) + strlen(name) + 1);
+   pa->id = -1;
+   ep->after = eina_list_append(ep->after, pa);
+   copy = (char*)(pa + 1);
+   memcpy(copy, name, strlen(name) + 1);
+   data_queue_program_lookup(pc, name, &(pa->id));
+}
+
+static Edje_Program *
+_program_sequence_new(void)
+{
+   Edje_Program *ep, *pr = current_program;
+
+   /* sequence a new program after current */
+   ob_collections_group_programs_program();
+   ep = current_program;
+   current_program = pr;
+   _program_after(ep->name);
+   return current_program = ep;
+}
 
 /**
    @edcsubsection{collections_group_programs,Programs}
@@ -9241,9 +9298,12 @@ st_collections_group_programs_program_action(void)
    Edje_Part_Collection *pc;
    Edje_Program *ep;
    int i;
-   
+
    pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = current_program;
+   if (sequencing)
+     ep = _program_sequence_new();
+   else
+     ep = current_program;
    ep->action = parse_enum(0,
                            "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
                            "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
@@ -9699,39 +9759,12 @@ st_collections_group_programs_program_targets(void)
 static void
 st_collections_group_programs_program_after(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Program *ep;
+   char *name;
 
    check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = current_program;
-     {
-	Edje_Program_After *pa;
-	Edje_Program_After *pa2;
-	Eina_List *l;
-	char *name;
-        char *copy;
-
-	name = parse_str(0);
-
-        EINA_LIST_FOREACH(ep->after, l, pa2)
-          {
-             if (!strcmp(name, (char*) (pa2 + 1)))
-               {
-                  free(name);
-                  return;
-               }
-          }
-
-	pa = mem_alloc(SZ(Edje_Program_After) + strlen(name) + 1);
-	pa->id = -1;
-	ep->after = eina_list_append(ep->after, pa);
-        copy = (char*)(pa + 1);
-        memcpy(copy, name, strlen(name) + 1);
-	data_queue_program_lookup(pc, name, &(pa->id));
-	free(name);
-     }
+   name = parse_str(0);
+   _program_after(name);
+   free(name);
 }
 
 /**
@@ -9759,6 +9792,60 @@ st_collections_group_programs_program_api(void)
        check_arg_count(2);
        current_program->api.description = parse_str(1);
      }
+}
+
+/**
+   @edcsubsection{collections_group_program_sequence,Sequence}
+ */
+
+/**
+    @page edcref
+    @block
+        sequence
+    @context
+       ..
+          program {
+             name: "programname";
+             signal: "signalname";
+             source: "partname";
+             filter: "partname" "statename";
+             in: 0.3 0.0;
+             action: STATE_SET "statename" state_value;
+             transition: LINEAR 0.5;
+             targets: "partname" "anotherpart";
+             sequence {
+                action: STATE_SET "somestate";
+                transition: SINUSOIDAL 0.4;
+                targets: "partname" "anotherpart";
+                signal: "also,runs"; source: "on,signals";
+                name: "runs_after_programname";
+
+                action: STATE_SET "someotherstate";
+                transition: DECELERATE 4.0;
+                in: 0.2 0.0;
+                targets: "partname" "anotherpart";
+                name: "runs_after_runs_after_programname";
+                after: "coolprogram1337";
+                filter: "partname" "goodstate";
+             }
+          }
+       ..
+    @description
+        Sequences allow quick, easy chaining of programs.
+        Each "action" keyword within the sequence will start a new program definition.
+        Programs defined in sequences can be used as regular programs in every way,
+        but they will automatically set up sequence chains which run after the originating program.
+        After the sequence block is closed, the original program can continue to be
+        modified.
+        Scripts are allowed within sequences: each script block will be treated as a newly
+        sequenced program.
+        @since 1.10
+    @endblock
+*/
+static void
+ob_collections_group_programs_program_sequence(void)
+{
+   sequencing = current_program;
 }
 
 static void
@@ -9821,6 +9908,8 @@ ob_collections_group_programs_program_script(void)
              if (!empty)
                {
                   cd->programs = eina_list_append(cd->programs, cp);
+                  if (sequencing)
+                    _program_sequence_new();
                   data_queue_anonymous_lookup(pc, current_program, &(cp->id));
                   current_program->action = EDJE_ACTION_TYPE_SCRIPT;
                }
@@ -9995,6 +10084,15 @@ st_collections_group_physics_world_z(void)
     @page edcref
     </table>
 */
+
+
+void
+edje_cc_handlers_pop_notify(const char *token)
+{
+   if ((!sequencing) || strcmp(token, "sequence")) return;
+   current_program = sequencing;
+   sequencing = NULL;
+}
 
 static void
 edje_cc_handlers_hierarchy_set(Edje_Part *src)

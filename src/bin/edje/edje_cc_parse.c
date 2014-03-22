@@ -518,6 +518,8 @@ stack_pop(void)
                     do_remove = EINA_FALSE;
                }
           }
+        else
+          edje_cc_handlers_pop_notify(tmp);
 
         if (do_remove)
           eina_strbuf_remove(stack_buf,

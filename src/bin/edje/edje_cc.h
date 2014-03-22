@@ -216,6 +216,7 @@ void    error_and_abort(Eet_File *ef, const char *fmt, ...);
 
 void edje_cc_handlers_hierarchy_alloc(void);
 void edje_cc_handlers_hierarchy_free(void);
+void edje_cc_handlers_pop_notify(const char *token);
 
 /* global vars */
 extern Eina_List             *ext_dirs;
