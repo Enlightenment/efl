@@ -213,6 +213,7 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
    struct iovec iov[2];
    struct msghdr msg;
    ssize_t size;
+   int *iptr;
 
    /* send a message to the calling process */
    /* 'fd' is the fd to send */
@@ -242,7 +243,8 @@ _send_msg(int opcode, int fd, void *data, size_t bytes)
    msg.msg_controllen = RIGHTS_LEN;
 
    fprintf(stderr, "Launcher Sending FD: %d\n", fd);
-   *((int *)CMSG_DATA(cmsgptr)) = fd;
+   iptr = (int *)(CMSG_DATA(cmsgptr));
+   *iptr = fd;
 
    errno = 0;
    size = sendmsg(_write_fd, &msg, MSG_EOR);
@@ -267,6 +269,7 @@ _recv_msg(void)
    struct cmsghdr *cmsg = NULL;
    char data[BUFSIZ];
    ssize_t size;
+   int *iptr;
 
    fprintf(stderr, "Received Message\n");
 
@@ -307,7 +310,8 @@ _recv_msg(void)
         switch (cmsg->cmsg_type)
           {
            case SCM_RIGHTS:
-             fd = *((int *)CMSG_DATA(cmsg));
+             iptr = (int *)(CMSG_DATA(cmsg));
+             fd = *iptr;
              switch (dmsg.opcode)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:

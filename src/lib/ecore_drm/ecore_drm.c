@@ -116,6 +116,7 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    struct iovec iov[2];
    struct msghdr msg;
    ssize_t size;
+   int *iptr;
 
    /* Simplified version of sending messages. We don't need to send any 
     * 'credentials' with this as it is just basically an IPC to send over 
@@ -147,10 +148,9 @@ _ecore_drm_socket_send(int opcode, int fd, void *data, size_t bytes)
    msg.msg_control = cmsgptr;
    msg.msg_controllen = RIGHTS_LEN;
 
-   if (fd > -1)
-     *((int *)CMSG_DATA(cmsgptr)) = fd;
-   else
-     *((int *)CMSG_DATA(cmsgptr)) = _ecore_drm_sockets[1];
+   iptr = (int *)(CMSG_DATA(cmsgptr));
+   if (fd > -1) *iptr = fd;
+   else *iptr = _ecore_drm_sockets[1];
 
    errno = 0;
    size = sendmsg(_ecore_drm_sockets[1], &msg, MSG_EOR);
@@ -173,6 +173,7 @@ _ecore_drm_socket_receive(int opcode EINA_UNUSED, int *fd, void **data, size_t b
    struct iovec iov[2];
    struct msghdr msg;
    char buff[CMSG_SPACE(sizeof(fd))];
+   int *iptr;
    /* ssize_t size; */
 
    memset(&dmsg, 0, sizeof(dmsg));
@@ -212,7 +213,8 @@ _ecore_drm_socket_receive(int opcode EINA_UNUSED, int *fd, void **data, size_t b
         switch (cmsg->cmsg_type)
           {
            case SCM_RIGHTS:
-             if (fd) *fd = *((int *)CMSG_DATA(cmsg));
+             iptr = (int *)(CMSG_DATA(cmsg));
+             if (fd) *fd = *iptr;
              switch (dmsg.opcode)
                {
                 case ECORE_DRM_OP_DEVICE_OPEN:

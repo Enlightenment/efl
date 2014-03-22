@@ -140,7 +140,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 };
 
 EAPI Ecore_Evas *
-ecore_evas_drm_new_internal(const char *device, unsigned int parent, int x, int y, int w, int h)
+ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED, int x, int y, int w, int h)
 {
    Ecore_Evas *ee;
    Evas_Engine_Info_Drm *einfo;
@@ -737,13 +737,13 @@ _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 
    if ((ee->visible) && (updates))
      {
-        Eina_List *l = NULL;
-        Eina_Rectangle *r;
-
-        EINA_LIST_FOREACH(updates, l, r)
-          {
-             /* TODO */
-          }
+//        Eina_List *l = NULL;
+//        Eina_Rectangle *r;
+//
+//        EINA_LIST_FOREACH(updates, l, r)
+//          {
+//             /* TODO */
+//          }
 
         _ecore_evas_idle_timeout_update(ee);
         rend = 1;
