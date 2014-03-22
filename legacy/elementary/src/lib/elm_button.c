@@ -172,7 +172,8 @@ _elm_button_elm_widget_event(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Evas_Obj
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   _elm_config_key_binding_call(obj, ev, key_actions);
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
