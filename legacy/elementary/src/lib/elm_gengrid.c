@@ -1515,7 +1515,7 @@ _elm_gengrid_item_focused(Elm_Gen_Item *it)
        (elm_widget_item_disabled_get(it)))
      return;
 
-   elm_gengrid_item_bring_in
+   elm_gengrid_item_show
           ((Elm_Object_Item *)it, ELM_GENGRID_ITEM_SCROLLTO_IN);
    sd->focused_item = (Elm_Object_Item *)it;
 
