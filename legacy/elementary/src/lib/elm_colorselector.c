@@ -1830,9 +1830,9 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_colorselector_elm_widget_access(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, Eina_Bool access)
+_elm_colorselector_elm_widget_access(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
-   _elm_colorselector_smart_focus_next_enable = access;
+   _elm_colorselector_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_colorselector_smart_focus_next_enable);
 }
 
