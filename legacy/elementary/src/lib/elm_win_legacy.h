@@ -17,17 +17,6 @@
 EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
 
 /**
- * Get the type of a window.
- *
- * @param obj The window object for which it gets the type.
- *
- * @return The type of a window object. If the object is not window object, return ELM_WIN_UNKNOWN.
- *
- * @ingroup Win
- */
-EAPI Elm_Win_Type          elm_win_type_get(const Evas_Object *obj);
-
-/**
  * Adds a window object with standard setup
  *
  * @param name The name of the window

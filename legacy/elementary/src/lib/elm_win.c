@@ -3303,23 +3303,6 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-EAPI Elm_Win_Type
-elm_win_type_get(const Evas_Object *obj)
-{
-   ELM_WIN_CHECK(obj) ELM_WIN_UNKNOWN;
-   Elm_Win_Type ret = ELM_WIN_UNKNOWN;
-   eo_do((Eo *) obj, elm_obj_win_type_get(&ret));
-   return ret;
-}
-
-static void
-_type_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Win_Type *ret = va_arg(*list, Elm_Win_Type *);
-   Elm_Win_Smart_Data *sd = _pd;
-   *ret = sd->type;
-}
-
 EAPI Evas_Object *
 elm_win_util_standard_add(const char *name,
                           const char *title)
@@ -5915,7 +5898,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR), _win_constructor),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_ADD), _resize_object_add),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_DEL), _resize_object_del),
-        EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_TYPE_GET), _type_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_TITLE_SET), _title_set),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_TITLE_GET), _title_get),
         EO_OP_FUNC(ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_ICON_NAME_SET), _icon_name_set),
@@ -6027,7 +6009,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_WIN_CONSTRUCTOR, "Adds a window object."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_ADD, "Add subobj as a resize object of window obj."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_RESIZE_OBJECT_DEL, "Delete subobj as a resize object of window obj."),
-     EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_TYPE_GET, "Get the type of the window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_TITLE_SET, "Set the title of the window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_TITLE_GET, "Get the title of the window."),
      EO_OP_DESCRIPTION(ELM_OBJ_WIN_SUB_ID_ICON_NAME_SET, "Set the icon name of the window."),
