@@ -1462,13 +1462,11 @@ _push_transition_cb(void *data)
 {
    Elm_Naviframe_Item *prev_it, *it = data;
 
-   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
-
    it->animator = NULL;
 
-   if (sd->stack->last->prev)
+   if (EINA_INLIST_GET(it)->prev)
      {
-        prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last->prev,
+        prev_it = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(it)->prev,
                                             Elm_Naviframe_Item);
         elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed,deferred",
                                 "elm");
