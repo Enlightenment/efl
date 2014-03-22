@@ -2234,7 +2234,7 @@ _elm_win_focus_highlight_init(Elm_Win_Smart_Data *sd)
                            EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
                            _elm_win_object_focus_out, sd->obj);
 
-   sd->focus_highlight.cur.target = evas_focus_get(sd->evas);
+   sd->focus_highlight.cur.target = NULL;
    sd->focus_highlight.fobj = edje_object_add(sd->evas);
    sd->focus_highlight.theme_changed = EINA_TRUE;
 
