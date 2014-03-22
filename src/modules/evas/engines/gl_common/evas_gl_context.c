@@ -2771,8 +2771,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   break;
                case EVAS_RENDER_COPY: /**< d = s */
                   gc->pipe[i].shader.blend = 0;
-                  glBlendFunc(GL_ONE, GL_ONE);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  // just disable blend mode. no need to set blend func
+                  //glBlendFunc(GL_ONE, GL_ONE);
+                  //GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   break;
                   // FIXME: fix blend funcs below!
                case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
