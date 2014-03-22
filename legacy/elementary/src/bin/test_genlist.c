@@ -3768,7 +3768,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    unsigned lhand, rhand;
    Elm_Object_Item *it = NULL, *it_2 = NULL;
 
-   win = elm_win_util_standard_add("genlist-item-focus", "Genlist Item Focus");
+   win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
                                   _test_genlist_focus_win_del_cb, NULL);

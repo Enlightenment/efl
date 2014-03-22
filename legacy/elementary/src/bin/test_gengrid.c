@@ -1309,9 +1309,9 @@ test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 }
 
 void
-test_gengrid_item_focus(void *data EINA_UNUSED,
-                        Evas_Object *obj EINA_UNUSED,
-                        void *event_info EINA_UNUSED)
+test_gengrid_focus(void *data EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx_horiz, *gengrid, *btn, *fr, *lb;
    Elm_Gengrid_Item_Class *ic;
@@ -1319,7 +1319,7 @@ test_gengrid_item_focus(void *data EINA_UNUSED,
    char buf[PATH_MAX];
    int i, n;
 
-   win = elm_win_util_standard_add("gengrid-item-focus", "Gengrid Item Focus");
+   win = elm_win_util_standard_add("gengrid-focus", "Gengrid Focus");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
