@@ -2351,12 +2351,12 @@ data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest
      }
 }
 
-void
+void *
 data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    Program_Lookup *pl;
 
-   if (!name) return; /* FIXME: should we stop compiling ? */
+   if (!name) return NULL; /* FIXME: should we stop compiling ? */
 
    pl = mem_alloc(SZ(Program_Lookup));
    program_lookups = eina_list_append(program_lookups, pl);
@@ -2364,6 +2364,16 @@ data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    pl->u.name = mem_strdup(name);
    pl->dest = dest;
    pl->anonymous = EINA_FALSE;
+   return pl;
+}
+
+void
+program_lookup_rename(void *p, const char *name)
+{
+   Program_Lookup *pl = p;
+
+   free(pl->u.name);
+   pl->u.name = strdup(name);
 }
 
 void

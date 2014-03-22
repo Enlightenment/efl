@@ -138,8 +138,10 @@ static Edje_Pack_Element *current_item = NULL;
 static Edje_Part_Description_Common *current_desc = NULL;
 static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
+static Eina_List *current_program_lookups = NULL;
 static Eina_Bool current_group_inherit = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
+static Eina_List *sequencing_lookups = NULL;
 
 struct _Edje_Cc_Handlers_Hierarchy_Info
 {  /* Struct that keeps globals value to impl hierarchy */
@@ -9036,6 +9038,7 @@ _program_after(const char *name)
    Edje_Program_After *pa2;
    Eina_List *l;
    char *copy;
+   void *pl;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_program;
@@ -9051,7 +9054,9 @@ _program_after(const char *name)
    ep->after = eina_list_append(ep->after, pa);
    copy = (char*)(pa + 1);
    memcpy(copy, name, strlen(name) + 1);
-   data_queue_program_lookup(pc, name, &(pa->id));
+   pl = data_queue_program_lookup(pc, name, &(pa->id));
+   if (pl)
+     current_program_lookups = eina_list_append(current_program_lookups, pl);
 }
 
 static Edje_Program *
@@ -9109,6 +9114,8 @@ ob_collections_group_programs_program(void)
    Edje_Program_Parser *epp;
    char *def_name;
 
+   current_program_lookups = eina_list_free(current_program_lookups);
+
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    ep = mem_alloc(SZ(Edje_Program_Parser));
@@ -9141,6 +9148,8 @@ static void
 st_collections_group_programs_program_name(void)
 {
    Edje_Part_Collection *pc;
+   Eina_List *l;
+   void *pl;
 
    check_arg_count(1);
 
@@ -9153,6 +9162,10 @@ st_collections_group_programs_program_name(void)
    _edje_program_check(current_program->name, current_program, pc->programs.strncmp, pc->programs.strncmp_count);
    _edje_program_check(current_program->name, current_program, pc->programs.strrncmp, pc->programs.strrncmp_count);
    _edje_program_check(current_program->name, current_program, pc->programs.nocmp, pc->programs.nocmp_count);
+
+
+   EINA_LIST_FOREACH(current_program_lookups, l, pl)
+     program_lookup_rename(pl, current_program->name);
 }
 
 /**
@@ -9846,6 +9859,8 @@ static void
 ob_collections_group_programs_program_sequence(void)
 {
    sequencing = current_program;
+   sequencing_lookups = current_program_lookups;
+   current_program_lookups = NULL;
    ((Edje_Program_Parser*)sequencing)->can_override = EINA_FALSE;
 }
 
@@ -10093,6 +10108,9 @@ edje_cc_handlers_pop_notify(const char *token)
    if ((!sequencing) || strcmp(token, "sequence")) return;
    current_program = sequencing;
    ((Edje_Program_Parser*)sequencing)->can_override = EINA_TRUE;
+   current_program_lookups = eina_list_free(current_program_lookups);
+   current_program_lookups = sequencing_lookups;
+   sequencing_lookups = NULL;
    sequencing = NULL;
 }
 
