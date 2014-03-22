@@ -44,7 +44,7 @@ struct _Elm_Flip_Smart_Data
 
    Eina_Bool             state : 1;
    Eina_Bool             next_state : 1;
-   Eina_Bool             down : 1;
+   Eina_Bool             mouse_down : 1;
    Eina_Bool             finish : 1;
    Eina_Bool             started : 1;
    Eina_Bool             backflip : 1;

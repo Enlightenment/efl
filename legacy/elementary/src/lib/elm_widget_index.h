@@ -35,7 +35,7 @@ struct _Elm_Index_Smart_Data
                                             level. activeness means the box is
                                             filled with contents. */
 
-   Eina_Bool             down : 1;
+   Eina_Bool             mouse_down : 1;
    Eina_Bool             horizontal : 1;
    Eina_Bool             autohide_disabled : 1;
    Eina_Bool             indicator_disabled : 1;

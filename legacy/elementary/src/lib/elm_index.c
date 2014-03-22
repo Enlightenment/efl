@@ -686,7 +686,7 @@ _on_mouse_down(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    if (ev->button != 1) return;
-   sd->down = 1;
+   sd->mouse_down = EINA_TRUE;
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, NULL);
    sd->dx = ev->canvas.x - x;
    sd->dy = ev->canvas.y - y;
@@ -716,7 +716,7 @@ _on_mouse_up(void *data,
    ELM_INDEX_DATA_GET(data, sd);
 
    if (ev->button != 1) return;
-   sd->down = 0;
+   sd->mouse_down = EINA_FALSE;
    item = elm_index_selected_item_get(data, sd->level);
    if (item)
      {
@@ -746,7 +746,7 @@ _on_mouse_move(void *data,
    ELM_INDEX_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
-   if (!sd->down) return;
+   if (!sd->mouse_down) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_geometry_get(wd->resize_obj, &x, &y, &w, NULL);
    x = ev->cur.canvas.x - x;
@@ -792,7 +792,7 @@ _on_mouse_in_access(void *data,
 {
    ELM_INDEX_DATA_GET(data, sd);
 
-   if (sd->down) return;
+   if (sd->mouse_down) return;
 
    if (!sd->autohide_disabled)
      {

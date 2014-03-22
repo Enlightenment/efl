@@ -1587,7 +1587,7 @@ _down_cb(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    ELM_SAFE_FREE(sd->animator, ecore_animator_del);
-   sd->down = EINA_TRUE;
+   sd->mouse_down = EINA_TRUE;
    sd->started = EINA_FALSE;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    sd->x = ev->canvas.x - x;
@@ -1613,7 +1613,7 @@ _up_cb(void *data,
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   sd->down = 0;
+   sd->mouse_down = EINA_FALSE;
    if (!sd->started) return;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    sd->x = ev->canvas.x - x;
@@ -1668,7 +1668,7 @@ _move_cb(void *data,
    Evas_Coord x, y, w, h;
 
    ELM_FLIP_DATA_GET(fl, sd);
-   if (!sd->down) return;
+   if (!sd->mouse_down) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    evas_object_geometry_get(data, &x, &y, &w, &h);
    sd->x = ev->cur.canvas.x - x;
