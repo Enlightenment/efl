@@ -395,6 +395,42 @@ static void st_collections_group_physics_world_depth(void);
 
 /*****/
 
+#define PROGRAM_STATEMENTS(PREFIX) \
+     {PREFIX".programs.image", st_images_image}, /* dup */ \
+     {PREFIX".programs.set.name", st_images_set_name}, /* dup */ \
+     {PREFIX".programs.set.image.image", st_images_set_image_image}, /* dup */ \
+     {PREFIX".programs.set.image.size", st_images_set_image_size}, /* dup */ \
+     {PREFIX".programs.set.image.border", st_images_set_image_border}, /* dup */ \
+     {PREFIX".programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */ \
+     {PREFIX".programs.images.image", st_images_image}, /* dup */ \
+     {PREFIX".programs.images.set.name", st_images_set_name}, /* dup */ \
+     {PREFIX".programs.images.set.image.image", st_images_set_image_image}, /* dup */ \
+     {PREFIX".programs.images.set.image.size", st_images_set_image_size}, /* dup */ \
+     {PREFIX".programs.images.set.image.border", st_images_set_image_border}, /* dup */ \
+     {PREFIX".programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */ \
+     {PREFIX".programs.font", st_fonts_font}, /* dup */ \
+     {PREFIX".programs.fonts.font", st_fonts_font}, /* dup */ \
+     {PREFIX".programs.program.name", st_collections_group_programs_program_name}, /* dup */ \
+     {PREFIX".programs.program.signal", st_collections_group_programs_program_signal}, /* dup */ \
+     {PREFIX".programs.program.source", st_collections_group_programs_program_source}, /* dup */ \
+     {PREFIX".programs.program.in", st_collections_group_programs_program_in}, /* dup */ \
+     {PREFIX".programs.program.action", st_collections_group_programs_program_action}, /* dup */ \
+     {PREFIX".programs.program.transition", st_collections_group_programs_program_transition}, /* dup */ \
+     {PREFIX".programs.program.target", st_collections_group_programs_program_target}, /* dup */ \
+     {PREFIX".programs.program.after", st_collections_group_programs_program_after}, /* dup */ \
+     {PREFIX".programs.program.api", st_collections_group_programs_program_api}, /* dup */ \
+     {PREFIX".programs.program.filter", st_collections_group_programs_program_filter}, /* dup */ \
+     {PREFIX".program.name", st_collections_group_programs_program_name}, /* dup */ \
+     {PREFIX".program.signal", st_collections_group_programs_program_signal}, /* dup */ \
+     {PREFIX".program.source", st_collections_group_programs_program_source}, /* dup */ \
+     {PREFIX".program.in", st_collections_group_programs_program_in}, /* dup */ \
+     {PREFIX".program.action", st_collections_group_programs_program_action}, /* dup */ \
+     {PREFIX".program.transition", st_collections_group_programs_program_transition}, /* dup */ \
+     {PREFIX".program.target", st_collections_group_programs_program_target}, /* dup */ \
+     {PREFIX".program.after", st_collections_group_programs_program_after}, /* dup */ \
+     {PREFIX".program.api", st_collections_group_programs_program_api}, /* dup */ \
+     {PREFIX".program.filter", st_collections_group_programs_program_filter}, /* dup */ \
+
 New_Statement_Handler statement_handlers[] =
 {
      {"externals.external", st_externals_external},
@@ -717,145 +753,32 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.color_classes.color_class.color", st_color_class_color}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class.color3", st_color_class_color3}, /* dup */
-     {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.programs.set.name", st_images_set_name}, /* dup */
-     {"collections.group.parts.part.description.programs.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.parts.part.description.programs.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.parts.part.description.programs.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.parts.part.description.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set.name", st_images_set_name}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.description.programs.fonts.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.description.programs.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.parts.part.description.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.parts.part.description.programs.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.part.description.programs.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.parts.part.description.programs.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.parts.part.description.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.parts.part.description.programs.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.parts.part.description.programs.program.after", st_collections_group_programs_program_after}, /* dup */
-     {"collections.group.parts.part.description.programs.program.api", st_collections_group_programs_program_api}, /* dup */
-     {"collections.group.parts.part.description.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.parts.part.description.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.parts.part.description.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.part.description.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.parts.part.description.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.parts.part.description.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.parts.part.description.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.parts.part.description.program.after", st_collections_group_programs_program_after}, /* dup */
-     {"collections.group.parts.part.description.program.api", st_collections_group_programs_program_api}, /* dup */
-     {"collections.group.parts.part.programs.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.programs.set.name", st_images_set_name}, /* dup */
-     {"collections.group.parts.part.programs.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.parts.part.programs.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.parts.part.programs.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.parts.part.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.parts.part.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.part.programs.images.set.name", st_images_set_name}, /* dup */
-     {"collections.group.parts.part.programs.images.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.parts.part.programs.images.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.parts.part.programs.images.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.parts.part.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.parts.part.programs.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.programs.fonts.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.programs.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.parts.part.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.parts.part.programs.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.part.programs.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.parts.part.programs.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.parts.part.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.parts.part.programs.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.parts.part.programs.program.after", st_collections_group_programs_program_after}, /* dup */
-     {"collections.group.parts.part.programs.program.api", st_collections_group_programs_program_api}, /* dup */
-     {"collections.group.parts.part.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.parts.part.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.parts.part.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.part.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.parts.part.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.parts.part.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.parts.part.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.parts.part.program.after", st_collections_group_programs_program_after}, /* dup */
-     {"collections.group.parts.part.program.api", st_collections_group_programs_program_api}, /* dup */
-     {"collections.group.parts.programs.image", st_images_image}, /* dup */
-     {"collections.group.parts.programs.set.name", st_images_set_name}, /* dup */
-     {"collections.group.parts.programs.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.parts.programs.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.parts.programs.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.parts.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.parts.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.parts.programs.images.set.name", st_images_set_name}, /* dup */
-     {"collections.group.parts.programs.images.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.parts.programs.images.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.parts.programs.images.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.parts.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.parts.programs.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.programs.fonts.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.programs.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.parts.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.parts.programs.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.programs.program.filter", st_collections_group_programs_program_filter}, /* dup */
-     {"collections.group.parts.programs.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.parts.programs.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.parts.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.parts.programs.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.parts.programs.program.after", st_collections_group_programs_program_after},
-     {"collections.group.parts.programs.program.api", st_collections_group_programs_program_api},
-     {"collections.group.parts.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.parts.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.parts.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.parts.program.filter", st_collections_group_programs_program_filter}, /* dup */
-     {"collections.group.parts.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.parts.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.parts.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.parts.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.parts.program.after", st_collections_group_programs_program_after}, /* dup */
-     {"collections.group.parts.program.api", st_collections_group_programs_program_api}, /* dup */
 #ifdef HAVE_EPHYSICS
      {"collections.group.physics.world.gravity", st_collections_group_physics_world_gravity},
      {"collections.group.physics.world.rate", st_collections_group_physics_world_rate},
      {"collections.group.physics.world.z", st_collections_group_physics_world_z},
      {"collections.group.physics.world.depth", st_collections_group_physics_world_depth},
 #endif
-     {"collections.group.program.name", st_collections_group_programs_program_name}, /* dup */
-     {"collections.group.program.signal", st_collections_group_programs_program_signal}, /* dup */
-     {"collections.group.program.source", st_collections_group_programs_program_source}, /* dup */
-     {"collections.group.program.filter", st_collections_group_programs_program_filter}, /* dup */
-     {"collections.group.program.in", st_collections_group_programs_program_in}, /* dup */
-     {"collections.group.program.action", st_collections_group_programs_program_action}, /* dup */
-     {"collections.group.program.transition", st_collections_group_programs_program_transition}, /* dup */
-     {"collections.group.program.target", st_collections_group_programs_program_target}, /* dup */
-     {"collections.group.program.after", st_collections_group_programs_program_after}, /* dup */
-     {"collections.group.program.api", st_collections_group_programs_program_api}, /* dup */
-     {"collections.group.programs.program.name", st_collections_group_programs_program_name},
-     {"collections.group.programs.program.signal", st_collections_group_programs_program_signal},
-     {"collections.group.programs.program.source", st_collections_group_programs_program_source},
-     {"collections.group.programs.program.filter", st_collections_group_programs_program_filter}, /* dup */
-     {"collections.group.programs.program.in", st_collections_group_programs_program_in},
-     {"collections.group.programs.program.action", st_collections_group_programs_program_action},
-     {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
-     {"collections.group.programs.program.target", st_collections_group_programs_program_target},
-     {"collections.group.programs.program.after", st_collections_group_programs_program_after},
-     {"collections.group.programs.program.api", st_collections_group_programs_program_api},
-     {"collections.group.programs.image", st_images_image}, /* dup */
-     {"collections.group.programs.set.name", st_images_set_name}, /* dup */
-     {"collections.group.programs.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.programs.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.programs.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.programs.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.programs.images.image", st_images_image}, /* dup */
-     {"collections.group.programs.images.set.name", st_images_set_name}, /* dup */
-     {"collections.group.programs.images.set.image.image", st_images_set_image_image}, /* dup */
-     {"collections.group.programs.images.set.image.size", st_images_set_image_size}, /* dup */
-     {"collections.group.programs.images.set.image.border", st_images_set_image_border}, /* dup */
-     {"collections.group.programs.images.set.image.scale_by", st_images_set_image_border_scale_by}, /* dup */
-     {"collections.group.programs.font", st_fonts_font}, /* dup */
-     {"collections.group.programs.fonts.font", st_fonts_font} /* dup */
+     PROGRAM_STATEMENTS("collections.group.parts.part.description")
+     PROGRAM_STATEMENTS("collections.group.parts.part")
+     PROGRAM_STATEMENTS("collections.group.parts")
+     PROGRAM_STATEMENTS("collections.group")
 };
+
+#define PROGRAM_OBJECTS(PREFIX) \
+     {PREFIX".program", ob_collections_group_programs_program}, /* dup */ \
+     {PREFIX".program.script", ob_collections_group_programs_program_script}, /* dup */ \
+     {PREFIX".programs", NULL}, /* dup */ \
+     {PREFIX".programs.set", ob_images_set}, /* dup */ \
+     {PREFIX".programs.set.image", ob_images_set_image}, /* dup */ \
+     {PREFIX".programs.images", NULL}, /* dup */ \
+     {PREFIX".programs.images.set", ob_images_set}, /* dup */ \
+     {PREFIX".programs.images.set.image", ob_images_set_image}, /* dup */ \
+     {PREFIX".programs.fonts", NULL}, /* dup */ \
+     {PREFIX".programs.program", ob_collections_group_programs_program}, /* dup */ \
+     {PREFIX".programs.program.script", ob_collections_group_programs_program_script}, /* dup */ \
+     {PREFIX".programs.script", ob_collections_group_script}, /* dup */ \
+     {PREFIX".script", ob_collections_group_script}, /* dup */
 
 New_Object_Handler object_handlers[] =
 {
@@ -965,58 +888,14 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.params", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
-     {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.parts.part.description.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.parts.part.description.programs", NULL}, /* dup */
-     {"collections.group.parts.part.description.programs.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.description.programs.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.description.programs.images", NULL}, /* dup */
-     {"collections.group.parts.part.description.programs.images.set", ob_images_set},
-     {"collections.group.parts.part.description.programs.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.description.programs.fonts", NULL}, /* dup */
-     {"collections.group.parts.part.description.programs.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.parts.part.description.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.parts.part.description.script", ob_collections_group_script}, /* dup */
-     {"collections.group.parts.part.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.parts.part.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.parts.part.programs", NULL}, /* dup */
-     {"collections.group.parts.part.programs.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.programs.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.programs.images", NULL}, /* dup */
-     {"collections.group.parts.part.programs.images.set", ob_images_set}, /* dup */
-     {"collections.group.parts.part.programs.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.part.programs.fonts", NULL}, /* dup */
-     {"collections.group.parts.part.programs.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.parts.part.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.parts.part.script", ob_collections_group_script}, /* dup */
-     {"collections.group.parts.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.parts.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.parts.programs", NULL}, /* dup */
-     {"collections.group.parts.programs.set", ob_images_set}, /* dup */
-     {"collections.group.parts.programs.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.programs.images", NULL}, /* dup */
-     {"collections.group.parts.programs.images.set", ob_images_set}, /* dup */
-     {"collections.group.parts.programs.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.parts.programs.fonts", NULL}, /* dup */
-     {"collections.group.parts.programs.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.parts.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.parts.script", ob_collections_group_script}, /* dup */
 #ifdef HAVE_EPHYSICS
      {"collections.group.physics", NULL},
      {"collections.group.physics.world", NULL},
 #endif
-     {"collections.group.program", ob_collections_group_programs_program}, /* dup */
-     {"collections.group.program.script", ob_collections_group_programs_program_script}, /* dup */
-     {"collections.group.programs", NULL},
-     {"collections.group.programs.set", ob_images_set}, /* dup */
-     {"collections.group.programs.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.programs.images", NULL}, /* dup */
-     {"collections.group.programs.images.set", ob_images_set}, /* dup */
-     {"collections.group.programs.images.set.image", ob_images_set_image}, /* dup */
-     {"collections.group.programs.fonts", NULL}, /* dup */
-     {"collections.group.programs.program", ob_collections_group_programs_program},
-     {"collections.group.programs.program.script", ob_collections_group_programs_program_script},
-     {"collections.group.programs.script", ob_collections_group_script} /* dup */
+     PROGRAM_OBJECTS("collections.group.parts.part.description")
+     PROGRAM_OBJECTS("collections.group.parts.part")
+     PROGRAM_OBJECTS("collections.group.parts")
+     PROGRAM_OBJECTS("collections.group")
 };
 
 New_Nested_Handler nested_handlers[] = {
