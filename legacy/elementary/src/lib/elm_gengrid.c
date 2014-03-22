@@ -323,7 +323,7 @@ _item_mouse_move_cb(void *data,
           {
              sd->on_hold = EINA_TRUE;
              if (!sd->was_selected)
-               _item_unselect(it);
+               it->unsel_cb(it);
           }
      }
 
@@ -396,7 +396,7 @@ _item_mouse_move_cb(void *data,
         it->dragging = 1;
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!GG_IT(it)->wsd->was_selected)
-          _item_unselect(it);
+          it->unsel_cb(it);
 
         if (dy < 0)
           {
@@ -502,7 +502,7 @@ _item_mouse_down_cb(void *data,
    if (sd->on_hold) return;
 
    sd->was_selected = it->selected;
-   _item_highlight(it);
+   it->highlight_cb(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
@@ -604,7 +604,7 @@ _item_mouse_up_cb(void *data,
    if (sd->longpressed)
      {
         sd->longpressed = EINA_FALSE;
-        if (!sd->was_selected) _item_unselect(it);
+        if (!sd->was_selected) it->unsel_cb(it);
         sd->was_selected = EINA_FALSE;
         return;
      }
@@ -625,17 +625,17 @@ _item_mouse_up_cb(void *data,
      {
         if (!it->selected)
           {
-             _item_highlight(it);
+             it->highlight_cb(it);
              it->sel_cb(it);
           }
-        else _item_unselect(it);
+        else it->unsel_cb(it);
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               _item_unselect(sd->selected->data);
+               it->unsel_cb(sd->selected->data);
           }
         else
           {
@@ -643,9 +643,9 @@ _item_mouse_up_cb(void *data,
              Elm_Gen_Item *item2;
 
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, item2)
-               if (item2 != it) _item_unselect(item2);
+               if (item2 != it) it->unsel_cb(item2);
           }
-        _item_highlight(it);
+        it->highlight_cb(it);
         it->sel_cb(it);
      }
 }
@@ -3496,7 +3496,7 @@ elm_gengrid_item_selected_set(Elm_Object_Item *item,
                }
           }
         it->highlight_cb(it);
-        _item_select(it);
+        it->sel_cb(it);
         return;
      }
    if (it->unhighlight_cb) it->unhighlight_cb(it);

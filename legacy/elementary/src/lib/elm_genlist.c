@@ -3381,7 +3381,7 @@ _item_unselect(Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if ((it->generation < sd->generation)) return;
-   _item_unhighlight(it); /* unhighlight the item first */
+   it->unhighlight_cb(it); /* unhighlight the item first */
    if (!it->selected) return; /* then check whether the item is selected */
 
   if (GL_IT(it)->wsd->focus_on_selection_enabled)
@@ -3415,7 +3415,7 @@ _item_mouse_move_cb(void *data,
           {
              sd->on_hold = EINA_TRUE;
              if ((!sd->wasselected) && (!it->flipped))
-               _item_unselect(it);
+               it->unsel_cb(it);
           }
      }
    if (sd->multi_touched)
@@ -3513,7 +3513,7 @@ _item_mouse_move_cb(void *data,
         it->dragging = EINA_TRUE;
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!sd->wasselected)
-          _item_unselect(it);
+          it->unsel_cb(it);
         if (dy < 0)
           {
              if (ady > adx)
@@ -3577,7 +3577,7 @@ _long_press_cb(void *data)
         list = elm_genlist_realized_items_get
             ((sd)->obj);
         EINA_LIST_FREE(list, it_tmp)
-          if (it != it_tmp) _item_unselect(it_tmp);
+          if (it != it_tmp) it->unsel_cb(it_tmp);
 
         if (elm_genlist_item_expanded_get((Elm_Object_Item *)it))
           {
@@ -3720,7 +3720,7 @@ _item_multi_down_cb(void *data,
    sd->prev_mx = ev->canvas.x;
    sd->prev_my = ev->canvas.y;
    if (!sd->wasselected)
-     _item_unselect(it);
+     it->unsel_cb(it);
    sd->wasselected = EINA_FALSE;
    sd->longpressed = EINA_FALSE;
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -3806,7 +3806,7 @@ _item_mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
    if (sd->on_hold) return;
    sd->wasselected = it->selected;
-   _item_highlight(it);
+   it->highlight_cb(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      if ((!elm_widget_item_disabled_get(it)) &&
          (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
@@ -4316,18 +4316,18 @@ _access_activate_cb(void *data EINA_UNUSED,
      {
         if (!it->selected)
           {
-             _item_highlight(it);
+             it->highlight_cb(it);
              it->sel_cb(it);
           }
         else
-          _item_unselect(it);
+          it->unsel_cb(it);
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               _item_unselect(sd->selected->data);
+               it->unsel_cb(sd->selected->data);
           }
         else
           {
@@ -4337,10 +4337,10 @@ _access_activate_cb(void *data EINA_UNUSED,
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
                {
                   if (it2 != it)
-                    _item_unselect(it2);
+                    it->unsel_cb(it2);
                }
           }
-        _item_highlight(it);
+        it->highlight_cb(it);
         it->sel_cb(it);
      }
 }
@@ -4393,7 +4393,7 @@ _item_mouse_up_cb(void *data,
    if (sd->multi_touched)
      {
         if ((!sd->multi) && (!it->selected) && (it->highlighted))
-          _item_unhighlight(it);
+          it->unhighlight_cb(it);
         if (sd->multi_down) return;
         _multi_touch_gesture_eval(it);
         return;
@@ -4450,7 +4450,7 @@ _item_mouse_up_cb(void *data,
      {
         sd->longpressed = EINA_FALSE;
         if ((!sd->wasselected) && (!it->flipped))
-          _item_unselect(it);
+          it->unsel_cb(it);
         sd->wasselected = EINA_FALSE;
         return;
      }
@@ -4478,18 +4478,18 @@ _item_mouse_up_cb(void *data,
      {
         if (!it->selected)
           {
-             _item_highlight(it);
+             it->highlight_cb(it);
              it->sel_cb(it);
           }
         else
-          _item_unselect(it);
+          it->unsel_cb(it);
      }
    else
      {
         if (!it->selected)
           {
              while (sd->selected)
-               _item_unselect(sd->selected->data);
+               it->unsel_cb(sd->selected->data);
           }
         else
           {
@@ -4499,10 +4499,10 @@ _item_mouse_up_cb(void *data,
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
                {
                   if (it2 != it)
-                    _item_unselect(it2);
+                    it->unsel_cb(it2);
                }
           }
-        _item_highlight(it);
+        it->highlight_cb(it);
         it->sel_cb(it);
      }
 }
@@ -6507,7 +6507,7 @@ elm_genlist_item_selected_set(Elm_Object_Item *item,
                }
           }
         it->highlight_cb(it);
-        _item_select(it);
+        it->sel_cb(it);
 
         return;
      }
@@ -7654,7 +7654,7 @@ _flip_job(void *data)
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   _item_unselect(it);
+   it->unsel_cb(it);
    _elm_genlist_item_unrealize(it, EINA_FALSE);
 
    it->flipped = EINA_TRUE;
