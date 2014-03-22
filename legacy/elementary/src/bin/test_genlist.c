@@ -3226,174 +3226,6 @@ test_genlist19(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
 /*************/
 
-static unsigned _gl_focus_objects = 5;
-static const char *_gl_focus_object_names[] = {"None", "Square", "Button", "Check", "Box"};
-
-static char *
-gl_focus_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
-{
-   char buf[256];
-   unsigned char op = (uintptr_t)data % 100;
-   unsigned char v1, v2;
-
-   v1 = op / 10;
-   if (v1 > 4) v1 = 4;
-   v2 = op % 10;
-   if (v2 > 4) v2 = 4;
-   snprintf(buf, sizeof(buf), " %s / %s ",
-            _gl_focus_object_names[v1], _gl_focus_object_names[v2]);
-   return strdup(buf);
-}
-
-static Evas_Object *
-gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
-{
-   Evas_Object *cnt = NULL;
-
-   char op = (uintptr_t)data % 100;
-   char type = (!strcmp(part,"elm.swallow.icon")) ? op / 10 : op % 10;
-
-   switch(type)
-     {
-      case 1:
-         cnt = elm_bg_add(obj);
-         evas_object_color_set(cnt, 128, 18, 128, 255);
-         break;
-      case 2:
-         cnt = elm_button_add(obj);
-         break;
-      case 3:
-         cnt = elm_check_add(obj);
-         break;
-      case 4:
-         cnt = elm_box_add(obj);
-         evas_object_size_hint_align_set(cnt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-         elm_box_horizontal_set(cnt, EINA_TRUE);
-         elm_box_pack_end(cnt, gl_focus_content_get((void *)2, obj, ""));
-         elm_box_pack_end(cnt, gl_focus_content_get((void *)3, obj, ""));
-         elm_box_pack_end(cnt, gl_focus_content_get((void *)2, obj, ""));
-         break;
-      default:
-         break;
-
-     }
-   if (cnt)
-     {
-        evas_object_size_hint_weight_set(cnt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_show(cnt);
-     }
-   return cnt;
-}
-
-static void
-gl_focus_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
-{
-    elm_genlist_focus_on_selection_set(gl, focus);
-    elm_check_state_set(chk, focus);
-    printf("genlist_focus_on_selection = %s\n", (focus) ? "true" : "false");
-}
-
-static void
-gl_focus_focus_check_changed(void *data, Evas_Object *obj, void *event_info  EINA_UNUSED)
-{
-   Eina_Bool nextstate = !elm_genlist_focus_on_selection_get(data);
-   gl_focus_focus_on_selection_set(data, obj, nextstate);
-}
-
-static void
-gl_focus_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   elm_win_focus_highlight_animate_set((Evas_Object *)data,
-                                       elm_check_state_get(obj));
-}
-
-void
-test_genlist_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Evas_Object *win, *gl, *bx, *bxx, *chk;
-   unsigned lhand, rhand;
-
-   win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
-   elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
-
-   bxx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bxx);
-   evas_object_show(bxx);
-
-   gl = elm_genlist_add(win);
-   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bxx, gl);
-   evas_object_show(gl);
-
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_horizontal_set(bx, EINA_TRUE);
-   evas_object_show(bx);
-
-   chk = elm_check_add(win);
-   elm_object_text_set(chk, "Focus on selection");
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed", gl_focus_focus_check_changed, gl);
-   elm_box_pack_end(bx, chk);
-   evas_object_show(chk);
-
-   gl_focus_focus_on_selection_set(gl, chk, EINA_TRUE);
-
-   chk = elm_check_add(win);
-   elm_object_text_set(chk, "Focus Animation");
-   elm_check_state_set(chk, EINA_TRUE);
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed",
-                                  gl_focus_focus_animate_check_changed, win);
-   elm_box_pack_end(bx, chk);
-   evas_object_show(chk);
-
-   elm_box_pack_end(bxx, bx);
-
-   itc1 = elm_genlist_item_class_new();
-   itc1->item_style = "default";
-   itc1->func.text_get = gl_focus_text_get;
-   itc1->func.content_get  = gl_focus_content_get;
-   itc1->func.state_get = NULL;
-   itc1->func.del = NULL;
-
-   itc4 = elm_genlist_item_class_new();
-   itc4->item_style = "tree_effect";
-   itc4->func.text_get = gl_focus_text_get;
-   itc4->func.content_get  = gl_focus_content_get;
-   itc4->func.state_get = NULL;
-   itc4->func.del = NULL;
-
-   for (lhand = 0; lhand < _gl_focus_objects; lhand++)
-     {
-        for (rhand = 0; rhand < _gl_focus_objects; rhand++)
-          {
-             unsigned digit1 = lhand * 10 + rhand;
-             elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit1,
-                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-             unsigned digit2 = (_gl_focus_objects - lhand -1) * 10 +
-                (_gl_focus_objects - rhand -1);
-             elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit2,
-                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-             if (rhand == (_gl_focus_objects - 1))
-               elm_genlist_item_append(gl, itc4, (void*)(uintptr_t)digit1,
-                     NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
-          }
-     }
-
-   elm_genlist_item_class_free(itc1);
-   elm_genlist_item_class_free(itc4);
-
-   evas_object_resize(win, 300, 500);
-   evas_object_show(win);
-}
-
-
 /* test genlist item styles */
 
 const char *_genlist_styles[] = {
@@ -3782,13 +3614,96 @@ test_genlist_del(void *data EINA_UNUSED,
    evas_object_show(win);
 }
 
+/*************/
+static unsigned _gl_focus_objects = 5;
+static const char *_gl_focus_object_names[] = {"None", "Square", "Button", "Check", "Box"};
+
+static char *
+gl_focus_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[256];
+   unsigned char op = (uintptr_t)data % 100;
+   unsigned char v1, v2;
+
+   v1 = op / 10;
+   if (v1 > 4) v1 = 4;
+   v2 = op % 10;
+   if (v2 > 4) v2 = 4;
+   snprintf(buf, sizeof(buf), " %s / %s ",
+            _gl_focus_object_names[v1], _gl_focus_object_names[v2]);
+   return strdup(buf);
+}
+
+static Evas_Object *
+gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Evas_Object *cnt = NULL;
+
+   char op = (uintptr_t)data % 100;
+   char type = (!strcmp(part,"elm.swallow.icon")) ? op / 10 : op % 10;
+
+   switch(type)
+     {
+      case 1:
+         cnt = elm_bg_add(obj);
+         evas_object_color_set(cnt, 128, 18, 128, 255);
+         break;
+      case 2:
+         cnt = elm_button_add(obj);
+         break;
+      case 3:
+         cnt = elm_check_add(obj);
+         break;
+      case 4:
+         cnt = elm_box_add(obj);
+         evas_object_size_hint_align_set(cnt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+         elm_box_horizontal_set(cnt, EINA_TRUE);
+         elm_box_pack_end(cnt, gl_focus_content_get((void *)2, obj, ""));
+         elm_box_pack_end(cnt, gl_focus_content_get((void *)3, obj, ""));
+         elm_box_pack_end(cnt, gl_focus_content_get((void *)2, obj, ""));
+         break;
+      default:
+         break;
+
+     }
+   if (cnt)
+     {
+        evas_object_size_hint_weight_set(cnt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_show(cnt);
+     }
+   return cnt;
+}
+
+static void
+gl_focus_focus_on_selection_set(Evas_Object *gl, Evas_Object *chk, Eina_Bool focus)
+{
+    elm_genlist_focus_on_selection_set(gl, focus);
+    elm_check_state_set(chk, focus);
+    printf("genlist_focus_on_selection = %s\n", (focus) ? "true" : "false");
+}
+
+static void
+gl_focus_focus_check_changed(void *data, Evas_Object *obj, void *event_info  EINA_UNUSED)
+{
+   Eina_Bool nextstate = !elm_genlist_focus_on_selection_get(data);
+   gl_focus_focus_on_selection_set(data, obj, nextstate);
+}
+
+static void
+gl_focus_focus_animate_check_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   elm_win_focus_highlight_animate_set((Evas_Object *)data,
+                                       elm_check_state_get(obj));
+}
+
+
 void
-test_genlist_item_focus(void *data EINA_UNUSED,
-                        Evas_Object *obj EINA_UNUSED,
-                        void *event_info EINA_UNUSED)
+test_genlist_focus(void *data EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx_horiz, *gl, *btn, *fr, *lb;
-   int i;
+   unsigned lhand, rhand;
 
    win = elm_win_util_standard_add("genlist-item-focus", "Genlist Item Focus");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
@@ -3851,21 +3766,37 @@ test_genlist_item_focus(void *data EINA_UNUSED,
 
    itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
-   itc1->func.text_get = gl_text_get;
-   itc1->func.content_get  = gl_content_get;
-   itc1->func.state_get = gl_state_get;
+   itc1->func.text_get = gl_focus_text_get;
+   itc1->func.content_get  = gl_focus_content_get;
+   itc1->func.state_get = NULL;
    itc1->func.del = NULL;
 
-   for (i = 0; i < 50; i++)
+   itc4 = elm_genlist_item_class_new();
+   itc4->item_style = "tree_effect";
+   itc4->func.text_get = gl_focus_text_get;
+   itc4->func.content_get  = gl_focus_content_get;
+   itc4->func.state_get = NULL;
+   itc4->func.del = NULL;
+
+   for (lhand = 0; lhand < _gl_focus_objects; lhand++)
      {
-        elm_genlist_item_append(gl, itc1,
-                                (void *)(uintptr_t)i/* item data */,
-                                NULL/* parent */,
-                                ELM_GENLIST_ITEM_NONE,
-                                gl_sel/* func */,
-                                (void *)(uintptr_t)(i * 10)/* func data */);
+        for (rhand = 0; rhand < _gl_focus_objects; rhand++)
+          {
+             unsigned digit1 = lhand * 10 + rhand;
+             elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit1,
+                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+             unsigned digit2 = (_gl_focus_objects - lhand -1) * 10 +
+                (_gl_focus_objects - rhand -1);
+             elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit2,
+                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+             if (rhand == (_gl_focus_objects - 1))
+               elm_genlist_item_append(gl, itc4, (void*)(uintptr_t)digit1,
+                     NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
+          }
      }
+
    elm_genlist_item_class_free(itc1);
+   elm_genlist_item_class_free(itc4);
 
    evas_object_resize(win, 320, 450);
    evas_object_show(win);
