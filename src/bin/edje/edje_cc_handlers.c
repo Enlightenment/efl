@@ -795,6 +795,7 @@ New_Statement_Handler statement_handlers[] =
      {PREFIX".programs.fonts", NULL}, /* dup */ \
      {PREFIX".programs.program", ob_collections_group_programs_program}, /* dup */ \
      {PREFIX".programs.program.script", ob_collections_group_programs_program_script}, /* dup */ \
+     {PREFIX".programs.script", ob_collections_group_script}, /* dup */ \
      {PREFIX".script", ob_collections_group_script}, /* dup */
 
 New_Object_Handler object_handlers[] =
