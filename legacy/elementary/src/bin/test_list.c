@@ -1281,6 +1281,14 @@ test_list_focus_focus_check_changed(void *data, Evas_Object *obj,
 }
 
 static void
+test_list_focus_focus_highlight_check_changed(void *data, Evas_Object *obj,
+                                              void *event_info EINA_UNUSED)
+{
+   elm_win_focus_highlight_enabled_set((Evas_Object *)data,
+                                       elm_check_state_get(obj));
+}
+
+static void
 test_list_focus_focus_animate_check_changed(void *data, Evas_Object *obj,
                                             void *event_info EINA_UNUSED)
 {
@@ -1347,6 +1355,13 @@ _sel_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_focus_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
+{
+   printf("Button clicked: %s\n", (char *)data);
+}
+
+static void
 _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
    Evas_Object *win, *li, *btn, *bx, *bx2, *fr, *bx_opt, *chk, *bx_btn;
@@ -1371,6 +1386,8 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    btn = elm_button_add(bx);
    elm_object_text_set(btn, "Up");
    elm_box_pack_end(bx, btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _focus_button_clicked_cb, "Up");
    evas_object_show(btn);
 
    bx2 = elm_box_add(bx);
@@ -1383,6 +1400,8 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    btn = elm_button_add(bx2);
    elm_object_text_set(btn, "Left");
    elm_box_pack_end(bx2, btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _focus_button_clicked_cb, "Left");
    evas_object_show(btn);
 
    li = elm_list_add(win);
@@ -1404,11 +1423,15 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    btn = elm_button_add(bx2);
    elm_object_text_set(btn, "Right");
    elm_box_pack_end(bx2, btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _focus_button_clicked_cb, "Right");
    evas_object_show(btn);
 
    btn = elm_button_add(bx);
    elm_object_text_set(btn, "Down");
    elm_box_pack_end(bx, btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _focus_button_clicked_cb, "Down");
    evas_object_show(btn);
 
    // Options
@@ -1423,6 +1446,16 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_box_horizontal_set(bx_opt, EINA_TRUE);
    elm_object_content_set(fr, bx_opt);
    evas_object_show(bx_opt);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Focus Highlight");
+   elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_list_focus_focus_highlight_check_changed,
+                                  win);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
 
    chk = elm_check_add(bx_opt);
    elm_object_text_set(chk, "Focus Animation");
