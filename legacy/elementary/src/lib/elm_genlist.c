@@ -2490,6 +2490,8 @@ _elm_genlist_item_unfocused(Elm_Gen_Item *it)
       (WIDGET(it), SIG_ITEM_UNFOCUSED, it);
 }
 
+/* NOTE: this code will be used later when the item selection on key press
+   becomes optional. So do not remove this.
 static Eina_Bool
 _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
 {
@@ -2542,6 +2544,7 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
 
    return EINA_TRUE;
 }
+*/
 
 static void
 _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
@@ -2609,6 +2612,7 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
    Evas_Coord pan_max_x = 0, pan_max_y = 0;
+   Eina_Bool sel_ret = EINA_FALSE;
 
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
@@ -2648,51 +2652,37 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
-        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-             (_item_multi_select_up(sd)))
-            || (_item_single_select_up(sd)))
+        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+          sel_ret = _item_multi_select_up(sd);
+        if (!sel_ret)
+          sel_ret = _item_single_select_up(sd);
+
+        if (sel_ret)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (ret) *ret = EINA_TRUE;
-          }
-        else
-          y -= step_y;
-
-        if (_item_focused_next(obj, ELM_FOCUS_UP))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else
-          {
-             if (ret) *ret = EINA_FALSE;
+             return;
           }
 
+        if (ret) *ret = EINA_FALSE;
         return;
      }
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
-        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-             (_item_multi_select_down(sd)))
-            || (_item_single_select_down(sd)))
+        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+          sel_ret = _item_multi_select_down(sd);
+        if (!sel_ret)
+          sel_ret = _item_single_select_down(sd);
+
+        if (sel_ret)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (ret) *ret = EINA_TRUE;
-          }
-        else
-          y += step_y;
-
-        if (_item_focused_next(obj, ELM_FOCUS_DOWN))
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-          }
-        else
-          {
-             if (ret) *ret = EINA_FALSE;
+             return;
           }
 
+        if (ret) *ret = EINA_FALSE;
         return;
      }
    else if ((!strcmp(ev->key, "Home")) ||
@@ -2702,7 +2692,6 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
         if (it)
           {
              elm_genlist_item_selected_set(it, EINA_TRUE);
-             elm_object_item_focus_set(it, EINA_TRUE);
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (ret) *ret = EINA_TRUE;
              return;
@@ -2715,7 +2704,6 @@ _elm_genlist_smart_event(Eo *obj, void *_pd, va_list *list)
         if (it)
           {
              elm_genlist_item_selected_set(it, EINA_TRUE);
-             elm_object_item_focus_set(it, EINA_TRUE);
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              if (ret) *ret = EINA_TRUE;
              return;
@@ -2875,6 +2863,7 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Genlist_Smart_Data *sd = _pd;
    Elm_Object_Item *it = NULL;
+   Eina_Bool is_sel = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
    if (!int_ret) return;
@@ -2889,14 +2878,22 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           it = sd->last_focused_item;
         else if (sd->last_selected_item)
           it = sd->last_selected_item;
-        else
-          it = elm_genlist_first_item_get(obj);
+        else if (!sd->mouse_down)
+          {
+             it = elm_genlist_first_item_get(obj);
+             is_sel = EINA_TRUE;
+          }
 
         if (it)
           {
              it = _elm_genlist_nearest_visible_item_get(obj, it);
              if (it)
-               elm_object_item_focus_set(it, EINA_TRUE);
+               {
+                  if (is_sel)
+                    elm_genlist_item_selected_set(it, EINA_TRUE);
+                  else
+                    elm_object_item_focus_set(it, EINA_TRUE);
+               }
           }
      }
    else
@@ -5424,9 +5421,11 @@ _item_select(Elm_Gen_Item *it)
    sd->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
    if (it->generation == sd->generation)
-     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
-
-   _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
+     {
+        evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
+        elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+        _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
+     }
 
    it->walking--;
    sd->walking--;
