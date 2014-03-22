@@ -1560,6 +1560,8 @@ _elm_gengrid_item_unfocused(Elm_Gen_Item *it)
       (WIDGET(it), SIG_ITEM_UNFOCUSED, it);
 }
 
+/* NOTE: this code will be used later when the item selection on key press
+   becomes optional. So do not remove this.
 static Eina_Bool
 _item_focus_up(Elm_Gengrid_Smart_Data *sd)
 {
@@ -1674,6 +1676,7 @@ _item_focus_right(Elm_Gengrid_Smart_Data *sd)
 
    return EINA_TRUE;
 }
+*/
 
 static Eina_Bool
 _item_multi_select_left(Elm_Gengrid_Smart_Data *sd)
