@@ -41,6 +41,13 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {NULL, NULL}
 };
 
+static void _key_action_activate(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"activate", _key_action_activate},
+   {NULL, NULL}
+};
+
 static void
 _activate(Evas_Object *obj)
 {
@@ -149,6 +156,12 @@ _elm_button_elm_container_content_set(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static void _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+   _activate(obj);
+}
+
 EOLIAN static Eina_Bool
 _elm_button_elm_widget_event(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -159,13 +172,7 @@ _elm_button_elm_widget_event(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Evas_Obj
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if ((strcmp(ev->key, "Return")) &&
-       (strcmp(ev->key, "KP_Enter")) &&
-       (strcmp(ev->key, "space")))
-     return EINA_FALSE;
-
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
-   _activate(obj);
+   _elm_config_key_binding_call(obj, ev, key_actions);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
