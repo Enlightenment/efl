@@ -2377,10 +2377,14 @@ _item_multi_select_down(Elm_Genlist_Smart_Data *sd)
 static Eina_Bool
 _all_items_deselect(Elm_Genlist_Smart_Data *sd)
 {
+   Eina_List *l;
+   Elm_Object_Item *it;
+
    if (!sd->selected) return EINA_FALSE;
 
-   while (sd->selected)
-     elm_genlist_item_selected_set(sd->selected->data, EINA_FALSE);
+   l = eina_list_clone(sd->selected);
+   EINA_LIST_FREE(l, it)
+     elm_genlist_item_selected_set(it, EINA_FALSE);
 
    return EINA_TRUE;
 }
