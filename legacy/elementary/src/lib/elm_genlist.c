@@ -2897,6 +2897,7 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                     elm_genlist_item_selected_set(it, EINA_TRUE);
                   else
                     elm_object_item_focus_set(it, EINA_TRUE);
+                  _elm_widget_focus_highlight_start(obj);
                }
           }
      }
