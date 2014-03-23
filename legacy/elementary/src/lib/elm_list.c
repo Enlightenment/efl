@@ -3149,9 +3149,7 @@ _elm_list_focused_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
    Elm_List_Smart_Data *sd = _pd;
-   if (ret) *ret = NULL;
 
-   if (!elm_object_focus_get(obj)) return;
    if (ret) *ret = sd->focused_item;
 }
 
