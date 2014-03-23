@@ -38,6 +38,7 @@ struct _Elm_Genlist_Smart_Data
    Eina_List                            *selected; /* a list of
                                                     * selected
                                                     * items */
+   Eina_List                            *deselecting; /* a list of items currently being deselected */
    Eina_List                            *group_items; /* a list of
                                                        * groups index
                                                        * items */
