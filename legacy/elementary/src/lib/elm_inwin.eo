@@ -1,0 +1,34 @@
+class Elm_Inwin (Elm_Layout)
+{
+   eo_prefix: elm_obj_win_inwin;
+   data: null;
+   methods {
+      activate {
+         /*@
+         Activates an inwin object, ensuring its visibility
+
+         This function will make sure that the inwin @p obj is completely visible
+         by calling evas_object_show() and evas_object_raise() on it, to bring it
+         to the front. It also sets the keyboard focus to it, which will be passed
+         onto its content.
+
+         The object's theme will also receive the signal "elm,action,show" with
+         source "elm".
+
+         @ingroup Inwin */
+
+         legacy elm_win_inwin_activate;
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Elm_Widget::parent::set;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Layout::content_aliases::get;
+      Elm_Layout::sizing_eval;
+   }
+
+}
