@@ -2334,6 +2334,14 @@ _item_multi_select_up(Elm_Genlist_Smart_Data *sd)
    if (!sd->multi) return EINA_FALSE;
 
    prev = elm_genlist_item_prev_get(sd->last_selected_item);
+   while (prev)
+     {
+        if ((((Elm_Gen_Item*)prev)->generation == sd->generation) &&
+            (!elm_object_item_disabled_get(prev)))
+          break;
+        prev = (Elm_Object_Item *)ELM_GEN_ITEM_FROM_INLIST(
+           EINA_INLIST_GET((Elm_Gen_Item *)prev)->prev);
+     }
    if (!prev) return EINA_TRUE;
 
    if (elm_genlist_item_selected_get(prev))
@@ -2358,6 +2366,14 @@ _item_multi_select_down(Elm_Genlist_Smart_Data *sd)
    if (!sd->multi) return EINA_FALSE;
 
    next = elm_genlist_item_next_get(sd->last_selected_item);
+   while ((next))
+     {
+        if ((((Elm_Gen_Item *)next)->generation == sd->generation) &&
+            (!elm_object_item_disabled_get(next)))
+          break;
+        next = (Elm_Object_Item *)ELM_GEN_ITEM_FROM_INLIST(
+           EINA_INLIST_GET((Elm_Gen_Item *)next)->next);
+     }
    if (!next) return EINA_TRUE;
 
    if (elm_genlist_item_selected_get(next))
@@ -2394,18 +2410,24 @@ _all_items_deselect(Elm_Genlist_Smart_Data *sd)
 static Eina_Bool
 _item_single_select_up(Elm_Genlist_Smart_Data *sd)
 {
-   Elm_Gen_Item *prev;
+   Elm_Gen_Item *prev = NULL;
 
    if (!sd->selected)
-     {
-        prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while ((prev) && (prev->generation < sd->generation))
-          prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
-     }
+     prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
    else
      prev = (Elm_Gen_Item *)elm_genlist_item_prev_get
-         (sd->last_selected_item);
+        (sd->last_selected_item);
 
+   printf("last %p prev %p\n", sd->last_selected_item, prev);
+   while (prev)
+     {
+        if ((prev->generation == sd->generation) &&
+            (!elm_object_item_disabled_get((Elm_Object_Item *)prev)))
+          break;
+        prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
+     }
+
+   printf("prev %p\n", prev);
    if (!prev) return EINA_FALSE;
 
    _all_items_deselect(sd);
@@ -2417,17 +2439,23 @@ _item_single_select_up(Elm_Genlist_Smart_Data *sd)
 static Eina_Bool
 _item_single_select_down(Elm_Genlist_Smart_Data *sd)
 {
-   Elm_Gen_Item *next;
+   Elm_Gen_Item *next = NULL;
 
    if (!sd->selected)
-     {
-        next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while ((next) && (next->generation < sd->generation))
-          next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
-     }
+     next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
    else
-     next = (Elm_Gen_Item *)elm_genlist_item_next_get
-         (sd->last_selected_item);
+     {
+        next = (Elm_Gen_Item *)elm_genlist_item_next_get
+           (sd->last_selected_item);
+     }
+
+   while ((next))
+     {
+        if ((next->generation == sd->generation) &&
+            (!elm_object_item_disabled_get((Elm_Object_Item *)next)))
+          break;
+        next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
+     }
 
    if (!next) return EINA_FALSE;
 
