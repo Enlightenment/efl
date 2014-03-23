@@ -10,6 +10,8 @@ extern "C" {
  *
  * @{
  */
+#include "ecore_poll.eo.h"
+#if 0
 #define ECORE_POLLER_CLASS ecore_poller_class_get()
 const Eo_Class *ecore_poller_class_get(void) EINA_CONST;
 extern EAPI Eo_Op ECORE_POLLER_BASE_ID;
@@ -63,6 +65,7 @@ enum
  */
 #define ecore_poller_interval_get(ret) ECORE_POLLER_ID(ECORE_POLLER_SUB_ID_INTERVAL_GET), EO_TYPECHECK(int *, ret)
 
+#endif
 /**
  * @}
  */

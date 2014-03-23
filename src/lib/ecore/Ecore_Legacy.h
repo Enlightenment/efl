@@ -25,7 +25,7 @@ EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *poller, int interv
  *
  * This returns a poller's polling interval, or 0 on error.
  */
-EAPI int ecore_poller_poller_interval_get(Ecore_Poller *poller);
+EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *poller);
 /**
  * @brief Creates a poller to call the given function at a particular tick interval.
  * @param type The ticker type to attach the poller to. Must be ECORE_POLLER_CORE.
