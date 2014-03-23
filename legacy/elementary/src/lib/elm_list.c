@@ -1071,13 +1071,13 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 
    if (!sd->items) return;
 
-   if (elm_widget_focus_get(obj))
+   if (elm_widget_focus_get(obj) && !sd->mouse_down)
      {
         if (sd->last_focused_item)
           _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
         else if (sd->last_selected_item)
           _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
-        else if (!sd->mouse_down)
+        else
           elm_list_item_selected_set(
              eina_list_data_get(sd->items), EINA_TRUE);
         _elm_widget_focus_highlight_start(obj);

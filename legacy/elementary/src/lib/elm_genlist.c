@@ -2876,13 +2876,13 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
        (!sd->last_selected_item))
      sd->last_selected_item = eina_list_data_get(sd->selected);
 
-   if (elm_widget_focus_get(obj))
+   if (elm_widget_focus_get(obj) && !sd->mouse_down)
      {
         if (sd->last_focused_item)
           it = sd->last_focused_item;
         else if (sd->last_selected_item)
           it = sd->last_selected_item;
-        else if (!sd->mouse_down)
+        else
           {
              it = elm_genlist_first_item_get(obj);
              is_sel = EINA_TRUE;
