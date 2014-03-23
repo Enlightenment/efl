@@ -353,7 +353,7 @@ static void
 _edje_signals_free(Elm_Icon_Smart_Data *sd)
 {
    Edje_Signal_Data *esd;
-   Elm_Image_Smart_Data *id = eo_data_scope_get(sd->obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(sd->obj, ELM_OBJ_IMAGE_CLASS);
 
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
@@ -372,7 +372,7 @@ _elm_icon_smart_file_set(Eo *obj, void *_pd, va_list *list)
    Evas_Object *pclip;
 
    Elm_Icon_Smart_Data *sd = _pd;
-   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    const char *file = va_arg(*list, const char *);
    const char *key = va_arg(*list, const char *);
@@ -630,7 +630,7 @@ _elm_icon_signal_emit(Evas_Object *obj,
                       const char *source)
 {
 
-   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -648,7 +648,7 @@ _elm_icon_signal_callback_add(Evas_Object *obj,
    Edje_Signal_Data *esd;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    if (!id->edje) return;
 
@@ -679,7 +679,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    Eina_List *l;
 
    ELM_ICON_DATA_GET(obj, sd);
-   Elm_Image_Smart_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
+   Elm_Image_Data *id = eo_data_scope_get(obj, ELM_OBJ_IMAGE_CLASS);
 
    if (!id->edje) return NULL;
 

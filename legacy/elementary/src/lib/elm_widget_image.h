@@ -25,8 +25,8 @@
 /**
  * Base widget smart data extended with image instance data.
  */
-typedef struct _Elm_Image_Smart_Data Elm_Image_Smart_Data;
-struct _Elm_Image_Smart_Data
+typedef struct _Elm_Image_Data Elm_Image_Data;
+struct _Elm_Image_Data
 {
    Evas_Object          *hit_rect;
    Evas_Object          *img;
@@ -67,7 +67,7 @@ struct _Elm_Image_Smart_Data
  */
 
 #define ELM_IMAGE_DATA_GET(o, sd) \
-  Elm_Image_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_IMAGE_CLASS)
+  Elm_Image_Data * sd = eo_data_scope_get(o, ELM_OBJ_IMAGE_CLASS)
 
 #define ELM_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_IMAGE_DATA_GET(o, ptr);                        \

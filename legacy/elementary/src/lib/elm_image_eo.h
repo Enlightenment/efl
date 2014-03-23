@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elm_image.eo.h"
+#if 0
 #define ELM_OBJ_IMAGE_CLASS elm_obj_image_class_get()
 
 const Eo_Class *elm_obj_image_class_get(void) EINA_CONST;
@@ -560,6 +562,7 @@ enum
  */
 #define elm_obj_image_scale_get(ret) ELM_OBJ_IMAGE_ID(ELM_OBJ_IMAGE_SUB_ID_SCALE_GET), EO_TYPECHECK(double *, ret)
 
+#endif
 
 /**
  * @}
