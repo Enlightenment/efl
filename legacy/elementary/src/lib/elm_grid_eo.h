@@ -3,6 +3,9 @@
  *
  * @{
  */
+#include "elm_grid.eo.h"
+
+#if 0
 #define ELM_OBJ_GRID_CLASS elm_obj_grid_class_get()
 
 const Eo_Class *elm_obj_grid_class_get(void) EINA_CONST;
@@ -100,6 +103,7 @@ enum
  */
 #define elm_obj_grid_children_get(ret) ELM_OBJ_GRID_ID(ELM_OBJ_GRID_SUB_ID_CHILDREN_GET), EO_TYPECHECK(Eina_List **, ret)
 
+#endif
 
 /**
  * @}

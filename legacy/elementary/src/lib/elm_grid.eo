@@ -1,0 +1,87 @@
+class Elm_Grid (Elm_Widget)
+{
+   eo_prefix: elm_obj_grid;
+   data: null;
+   properties {
+      size {
+         set {
+            /*@
+            Set the virtual size of the grid
+
+            @ingroup Grid */
+         }
+         get {
+            /*@
+            Get the virtual size of the grid
+
+            @ingroup Grid */
+         }
+         values {
+            Evas_Coord w; /*@ The virtual width of the grid */
+            Evas_Coord h; /*@ The virtual height of the grid */
+         }
+      }
+      children {
+         get {
+            /*@
+            Get the list of the children for the grid.
+
+            @note This is a duplicate of the list kept by the grid internally.
+            It's up to the user to destroy it when it no longer needs it.
+            It's possible to remove objects from the grid when walking this
+            list, but these removals won't be reflected on it.
+
+            @ingroup Grid */
+            return Eina_List *;
+         }
+      }
+   }
+   methods {
+      clear {
+         /*@
+         Faster way to remove all child objects from a grid object.
+
+         @ingroup Grid */
+
+         params {
+            @in Eina_Bool clear; /*@ If true, it will delete just removed children */
+         }
+      }
+      unpack {
+         /*@
+         Unpack a child from a grid object
+
+         @ingroup Grid */
+
+         params {
+            @in Evas_Object *subobj; /*@ The child to unpack */
+         }
+      }
+      pack {
+         /*@
+         Pack child at given position and size
+
+         @ingroup Grid */
+
+         params {
+            @in Evas_Object *subobj; /*@ The child to pack */
+            @in Evas_Coord x; /*@ The virtual x coord at which to pack it */
+            @in Evas_Coord y; /*@ The virtual y coord at which to pack it */
+            @in Evas_Coord w; /*@ The virtual width at which to pack it */
+            @in Evas_Coord h; /*@ The virtual height at which to pack it */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::focus_direction;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::theme_apply;
+   }
+
+}

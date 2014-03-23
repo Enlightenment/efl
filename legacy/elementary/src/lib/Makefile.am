@@ -589,7 +589,9 @@ BUILT_SOURCES = \
 		elm_gesture_layer.eo.c \
 		elm_gesture_layer.eo.h \
 		elm_glview.eo.c \
-		elm_glview.eo.h
+		elm_glview.eo.h \
+		elm_grid.eo.c \
+		elm_grid.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -624,7 +626,8 @@ EXTRA_DIST += \
 	     elm_entry.eo \
 	     elm_flip.eo \
 	     elm_gesture_layer.eo \
-	     elm_glview.eo
+	     elm_glview.eo \
+	     elm_grid.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -659,5 +662,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_entry.eo.h \
 				  elm_flip.eo.h \
 				  elm_gesture_layer.eo.h \
-				  elm_glview.eo.h
+				  elm_glview.eo.h \
+				  elm_grid.eo.h
 
