@@ -1,3 +1,6 @@
+#include "elm_flip.eo.h"
+
+#if 0
 #define ELM_OBJ_FLIP_CLASS elm_obj_flip_class_get()
 
 const Eo_Class *elm_obj_flip_class_get(void) EINA_CONST;
@@ -152,3 +155,4 @@ enum
  * @ingroup Flip
  */
 #define elm_obj_flip_interaction_direction_hitsize_get(dir, ret) ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_HITSIZE_GET), EO_TYPECHECK(Elm_Flip_Direction, dir), EO_TYPECHECK(double *, ret)
+#endif

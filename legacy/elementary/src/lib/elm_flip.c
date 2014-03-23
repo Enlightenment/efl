@@ -7,8 +7,6 @@
 #include "elm_widget_flip.h"
 #include "elm_widget_container.h"
 
-EAPI Eo_Op ELM_OBJ_FLIP_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_FLIP_CLASS
 
 #define MY_CLASS_NAME "Elm_Flip"
@@ -32,7 +30,7 @@ _slice_free(Slice *sl)
 }
 
 static void
-_state_slices_clear(Elm_Flip_Smart_Data *sd)
+_state_slices_clear(Elm_Flip_Data *sd)
 {
    int i, j, num;
 
@@ -93,66 +91,48 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-static void
-_elm_flip_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_theme_apply(Eo *obj, Elm_Flip_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
-   if (ret) *ret = EINA_FALSE;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_flip_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_flip_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool int_ret;
-   Elm_Flip_Smart_Data *sd = _pd;
 
    /* attempt to cycle focus on in sub-items */
    if (sd->state)
-     int_ret = elm_widget_focus_next_get(sd->front.content, dir, next);
+     return elm_widget_focus_next_get(sd->front.content, dir, next);
    else
-     int_ret = elm_widget_focus_next_get(sd->back.content, dir, next);
-   if (ret) *ret = int_ret;
+     return elm_widget_focus_next_get(sd->back.content, dir, next);
 }
 
-static void
-_elm_flip_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (!elm_widget_can_focus_get(obj))
-     *ret = EINA_TRUE;
+     return EINA_TRUE;
    else
-     *ret = EINA_FALSE;
+     return EINA_FALSE;
 }
 
-static void
-_elm_flip_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_focus_direction(Eo *obj, Elm_Flip_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
 {
-   Evas_Object *base = va_arg(*list, Evas_Object *);
-   double degree = va_arg(*list, double);
-   Evas_Object **direction = va_arg(*list, Evas_Object **);
-   double *weight = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret;
-   Elm_Flip_Smart_Data *sd = _pd;
+   Eina_Bool ret;
 
    Eina_List *l = NULL;
    void *(*list_data_get)(const Eina_List *list);
@@ -164,11 +144,12 @@ _elm_flip_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
    if (sd->back.content)
      l = eina_list_append(l, sd->back.content);
 
-   int_ret = elm_widget_focus_list_direction_get
+   ret = elm_widget_focus_list_direction_get
             (obj, base, l, list_data_get, degree, direction, weight);
 
-   if (ret) *ret = int_ret;
    eina_list_free(l);
+
+   return ret;
 }
 
 static void
@@ -180,41 +161,33 @@ _changed_size_hints_cb(void *data,
    _sizing_eval(data);
 }
 
-static void
-_elm_flip_smart_sub_object_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_sub_object_add(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
-   if (ret) *ret = EINA_FALSE;
 
    if (evas_object_data_get(sobj, "elm-parent") == obj)
-     goto end;
+     return EINA_TRUE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_add(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    evas_object_data_set(sobj, "_elm_leaveme", sobj);
    evas_object_smart_member_add(sobj, obj);
    evas_object_event_callback_add
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
 
-end:
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_flip_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_widget_sub_object_del(Eo *obj, Elm_Flip_Data *sd, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
-   if (ret) *ret = EINA_FALSE;
 
-   Elm_Flip_Smart_Data *sd = _pd;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->front.content)
      {
@@ -236,7 +209,7 @@ _elm_flip_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
    _sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static Slice *
@@ -260,7 +233,7 @@ _slice_new(Evas_Object *container_obj,
 }
 
 static void
-_slice_apply(Elm_Flip_Smart_Data *sd,
+_slice_apply(Elm_Flip_Data *sd,
              Slice *sl,
              Evas_Coord x EINA_UNUSED,
              Evas_Coord y EINA_UNUSED,
@@ -317,7 +290,7 @@ _slice_apply(Elm_Flip_Smart_Data *sd,
 }
 
 static void
-_slice_3d(Elm_Flip_Smart_Data *sd EINA_UNUSED,
+_slice_3d(Elm_Flip_Data *sd EINA_UNUSED,
           Slice *sl,
           Evas_Coord x,
           Evas_Coord y,
@@ -345,7 +318,7 @@ _slice_3d(Elm_Flip_Smart_Data *sd EINA_UNUSED,
 }
 
 static void
-_slice_light(Elm_Flip_Smart_Data *sd EINA_UNUSED,
+_slice_light(Elm_Flip_Data *sd EINA_UNUSED,
              Slice *sl,
              Evas_Coord x,
              Evas_Coord y,
@@ -381,7 +354,7 @@ _slice_light(Elm_Flip_Smart_Data *sd EINA_UNUSED,
 }
 
 static void
-_slice_xyz(Elm_Flip_Smart_Data *sd EINA_UNUSED,
+_slice_xyz(Elm_Flip_Data *sd EINA_UNUSED,
            Slice *sl,
            double xx1,
            double yy1,
@@ -403,7 +376,7 @@ _slice_xyz(Elm_Flip_Smart_Data *sd EINA_UNUSED,
 }
 
 static void
-_slice_uv(Elm_Flip_Smart_Data *sd EINA_UNUSED,
+_slice_uv(Elm_Flip_Data *sd EINA_UNUSED,
           Slice *sl,
           double u1,
           double v1,
@@ -531,7 +504,7 @@ _slice_obj_vert_color_merge(Slice *s1,
 static int
 _state_update(Evas_Object *obj)
 {
-   Elm_Flip_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Elm_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Slice *sl;
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
@@ -891,7 +864,7 @@ _state_update(Evas_Object *obj)
 }
 
 static void
-_state_end(Elm_Flip_Smart_Data *sd)
+_state_end(Elm_Flip_Data *sd)
 {
    _state_slices_clear(sd);
 }
@@ -1393,7 +1366,7 @@ _animate(void *data)
 
 static double
 _pos_get(Evas_Object *obj,
-         Elm_Flip_Smart_Data *sd,
+         Elm_Flip_Data *sd,
          int *rev,
          Elm_Flip_Mode *m)
 {
@@ -1470,7 +1443,7 @@ static Eina_Bool
 _event_anim(void *data,
             double pos)
 {
-   Elm_Flip_Smart_Data *sd = data;
+   Elm_Flip_Data *sd = data;
    double p;
 
    p = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE, 0.0, 0.0);
@@ -1548,7 +1521,7 @@ _update_job(void *data)
 {
    Elm_Flip_Mode m = ELM_FLIP_ROTATE_X_CENTER_AXIS;
    Evas_Object *obj = data;
-   Elm_Flip_Smart_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   Elm_Flip_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    int rev = 0;
    double p;
 
@@ -1794,55 +1767,39 @@ _flip_content_unset(Evas_Object *obj,
    return content;
 }
 
-static void
-_elm_flip_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_flip_elm_container_content_set(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool int_ret = EINA_FALSE;
-
    if (!part || !strcmp(part, "front"))
-      int_ret = _flip_content_set(obj, content, EINA_TRUE);
+      return _flip_content_set(obj, content, EINA_TRUE);
    else if (!strcmp(part, "back"))
-      int_ret = _flip_content_set(obj, content, EINA_FALSE);
-
-   if (ret) *ret = int_ret;
+      return _flip_content_set(obj, content, EINA_FALSE);
+   return EINA_FALSE;
 }
 
-static void
-_elm_flip_smart_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_flip_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Flip_Smart_Data *sd = _pd;
-   *ret = NULL;
-
    if (!part || !strcmp(part, "front"))
-      *ret = sd->front.content;
+      return sd->front.content;
    else if (!strcmp(part, "back"))
-      *ret = sd->back.content;
+      return sd->back.content;
+   return NULL;
 }
 
-static void
-_elm_flip_smart_content_unset(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Evas_Object*
+_elm_flip_elm_container_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EINA_UNUSED, const char *part)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Evas_Object *int_ret = NULL;
-
    if (!part || !strcmp(part, "front"))
-      int_ret = _flip_content_unset(obj, EINA_TRUE);
+      return _flip_content_unset(obj, EINA_TRUE);
    else if (!strcmp(part, "back"))
-      int_ret = _flip_content_unset(obj, EINA_FALSE);
-   if (ret) *ret = int_ret;
+      return _flip_content_unset(obj, EINA_FALSE);
+   return NULL;
 }
 
-static void
-_elm_flip_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_flip_evas_smart_add(Eo *obj, Elm_Flip_Data *priv)
 {
-   Elm_Flip_Smart_Data *priv = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
@@ -1883,11 +1840,9 @@ _elm_flip_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _sizing_eval(obj);
 }
 
-static void
-_elm_flip_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_flip_evas_smart_del(Eo *obj, Elm_Flip_Data *sd)
 {
-   Elm_Flip_Smart_Data *sd = _pd;
-
    ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
 
@@ -1903,10 +1858,9 @@ elm_flip_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_flip_eo_base_constructor(Eo *obj, Elm_Flip_Data *sd)
 {
-   Elm_Flip_Smart_Data *sd = _pd;
    sd->obj = obj;
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
@@ -1915,21 +1869,10 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI Eina_Bool
-elm_flip_front_visible_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_flip_front_visible_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd)
 {
-   ELM_FLIP_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_flip_front_visible_get(&ret));
-   return ret;
-}
-
-static void
-_front_visible_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Flip_Smart_Data *sd = _pd;
-   *ret = sd->state;
+   return sd->state;
 }
 
 EAPI void
@@ -1944,8 +1887,8 @@ elm_flip_perspective_set(Evas_Object *obj,
 // FIXME: add ambient and lighting control
 
 static void
-_elm_flip_go_to(Evas_Object *obj,
-                Elm_Flip_Smart_Data *sd,
+_internal_elm_flip_go_to(Evas_Object *obj,
+                Elm_Flip_Data *sd,
                 Eina_Bool front,
                 Elm_Flip_Mode mode)
 {
@@ -1983,54 +1926,22 @@ _elm_flip_go_to(Evas_Object *obj,
      }
 }
 
-EAPI void
-elm_flip_go_to(Evas_Object *obj,
-               Eina_Bool front,
-               Elm_Flip_Mode mode)
+EOLIAN static void
+_elm_flip_go_to(Eo *obj, Elm_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode mode)
 {
-   ELM_FLIP_CHECK(obj);
-   eo_do(obj, elm_obj_flip_go_to(front, mode));
-}
-
-static void
-_go_to(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool front = va_arg(*list, int);
-   Elm_Flip_Mode mode = va_arg(*list, Elm_Flip_Mode);
-   Elm_Flip_Smart_Data *sd = _pd;
-
    if (sd->next_state == front) return;
 
-   _elm_flip_go_to(obj, sd, front, mode);
+   _internal_elm_flip_go_to(obj, sd, front, mode);
 }
 
-EAPI void
-elm_flip_go(Evas_Object *obj,
-            Elm_Flip_Mode mode)
+EOLIAN static void
+_elm_flip_go(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Mode mode)
 {
-   ELM_FLIP_CHECK(obj);
-   eo_do(obj, elm_obj_flip_go(mode));
+   _internal_elm_flip_go_to(obj, sd, !sd->state, mode);
 }
 
 static void
-_go(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Flip_Mode mode = va_arg(*list, Elm_Flip_Mode);
-   Elm_Flip_Smart_Data *sd = _pd;
-
-   _elm_flip_go_to(obj, sd, !sd->state, mode);
-}
-
-EAPI void
-elm_flip_interaction_set(Evas_Object *obj,
-                         Elm_Flip_Interaction mode)
-{
-   ELM_FLIP_CHECK(obj);
-   eo_do(obj, elm_obj_flip_interaction_set(mode));
-}
-
-static void
-_event_rect_create(Eo *obj, Elm_Flip_Smart_Data *sd, int i)
+_event_rect_create(Eo *obj, Elm_Flip_Data *sd, int i)
 {
    Evas_Object *clip;
    Evas *e;
@@ -2054,13 +1965,11 @@ _event_rect_create(Eo *obj, Elm_Flip_Smart_Data *sd, int i)
      (sd->event[i], EVAS_CALLBACK_MOUSE_MOVE, _move_cb, obj);
 }
 
-static void
-_interaction_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_flip_interaction_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Interaction mode)
 {
-   Elm_Flip_Interaction mode = va_arg(*list, Elm_Flip_Interaction);
    int i;
 
-   Elm_Flip_Smart_Data *sd = _pd;
 
    if (sd->intmode == mode) return;
    sd->intmode = mode;
@@ -2081,41 +1990,18 @@ _interaction_set(Eo *obj, void *_pd, va_list *list)
    _configure(obj);
 }
 
-EAPI Elm_Flip_Interaction
-elm_flip_interaction_get(const Evas_Object *obj)
+EOLIAN static Elm_Flip_Interaction
+_elm_flip_interaction_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd)
 {
-   ELM_FLIP_CHECK(obj) ELM_FLIP_INTERACTION_NONE;
-   Elm_Flip_Interaction ret = ELM_FLIP_INTERACTION_NONE;
-   eo_do((Eo *) obj, elm_obj_flip_interaction_get(&ret));
-   return ret;
+   return sd->intmode;
 }
 
-static void
-_interaction_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_flip_interaction_direction_enabled_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Direction dir, Eina_Bool enabled)
 {
-   Elm_Flip_Interaction *ret = va_arg(*list, Elm_Flip_Interaction *);
-   Elm_Flip_Smart_Data *sd = _pd;
-   *ret = sd->intmode;
-}
-
-EAPI void
-elm_flip_interaction_direction_enabled_set(Evas_Object *obj,
-                                           Elm_Flip_Direction dir,
-                                           Eina_Bool enabled)
-{
-   ELM_FLIP_CHECK(obj);
-   eo_do(obj, elm_obj_flip_interaction_direction_enabled_set(dir, enabled));
-}
-
-static void
-_interaction_direction_enabled_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
-   Eina_Bool enabled = va_arg(*list, int);
    int i = (int) dir;
    int area;
 
-   Elm_Flip_Smart_Data *sd = _pd;
 
    enabled = !!enabled;
    if (sd->dir_enabled[i] == enabled) return;
@@ -2133,44 +2019,17 @@ _interaction_direction_enabled_set(Eo *obj, void *_pd, va_list *list)
    _configure(obj);
 }
 
-EAPI Eina_Bool
-elm_flip_interaction_direction_enabled_get(Evas_Object *obj,
-                                           Elm_Flip_Direction dir)
+EOLIAN static Eina_Bool
+_elm_flip_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Flip_Direction dir)
 {
-   ELM_FLIP_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do(obj, elm_obj_flip_interaction_direction_enabled_get(dir, &ret));
-   return ret;
+   return sd->dir_enabled[(int) dir];
 }
 
-static void
-_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_flip_interaction_direction_hitsize_set(Eo *obj, Elm_Flip_Data *sd, Elm_Flip_Direction dir, double hitsize)
 {
-   Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   Elm_Flip_Smart_Data *sd = _pd;
-
-   *ret = sd->dir_enabled[(int) dir];
-}
-
-EAPI void
-elm_flip_interaction_direction_hitsize_set(Evas_Object *obj,
-                                           Elm_Flip_Direction dir,
-                                           double hitsize)
-{
-   ELM_FLIP_CHECK(obj);
-   eo_do(obj, elm_obj_flip_interaction_direction_hitsize_set(dir, hitsize));
-}
-
-static void
-_interaction_direction_hitsize_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
-   double hitsize = va_arg(*list, double);
    int i = (int) dir;
 
-   Elm_Flip_Smart_Data *sd = _pd;
 
    if (hitsize < 0.0)
      hitsize = -1.0;
@@ -2189,84 +2048,18 @@ _interaction_direction_hitsize_set(Eo *obj, void *_pd, va_list *list)
    _configure(obj);
 }
 
-EAPI double
-elm_flip_interaction_direction_hitsize_get(Evas_Object *obj,
-                                           Elm_Flip_Direction dir)
+EOLIAN static double
+_elm_flip_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Flip_Direction dir)
 {
-   ELM_FLIP_CHECK(obj) EINA_FALSE;
-   double ret;
-   eo_do(obj, elm_obj_flip_interaction_direction_hitsize_get(dir, &ret));
-   return ret;
-}
-
-static void
-_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Flip_Direction dir = va_arg(*list, Elm_Flip_Direction);
-   double *ret = va_arg(*list, double *);
    int i = (int) dir;
-   Elm_Flip_Smart_Data *sd = _pd;
 
-   *ret = sd->dir_hitsize[i];
+   return sd->dir_hitsize[i];
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_elm_flip_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_flip_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_flip_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_flip_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_flip_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_flip_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_flip_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_flip_smart_focus_direction),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_ADD), _elm_flip_smart_sub_object_add),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_flip_smart_sub_object_del),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_flip_smart_content_set),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_flip_smart_content_get),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_flip_smart_content_unset),
-
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_FRONT_VISIBLE_GET), _front_visible_get),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_GO), _go),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_GO_TO), _go_to),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_SET), _interaction_set),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_GET), _interaction_get),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_ENABLED_SET), _interaction_direction_enabled_set),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_ENABLED_GET), _interaction_direction_enabled_get),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_HITSIZE_SET), _interaction_direction_hitsize_set),
-        EO_OP_FUNC(ELM_OBJ_FLIP_ID(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_HITSIZE_GET), _interaction_direction_hitsize_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_FRONT_VISIBLE_GET, "Get flip front visibility state"),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_PERSPECTIVE_SET, "Set flip perspective."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_GO, "Runs the flip animation."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_GO_TO, "Runs the flip animation to front or back."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_INTERACTION_SET, "Set the interactive flip mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_INTERACTION_GET, "Get the interactive flip mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_ENABLED_SET, "Set which directions of the flip respond to interactive flip."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_ENABLED_GET, "Get the enabled state of that flip direction."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_HITSIZE_SET, "Set the amount of the flip that is sensitive to interactive flip."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FLIP_SUB_ID_INTERACTION_DIRECTION_HITSIZE_GET, "Get the amount of the flip that is sensitive to interactive flip."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_FLIP_BASE_ID, op_desc, ELM_OBJ_FLIP_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Flip_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_flip_class_get, &class_desc, ELM_OBJ_CONTAINER_CLASS, NULL);
+
+#include "elm_flip.eo.c"
