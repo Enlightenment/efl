@@ -3779,6 +3779,13 @@ _sel_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_dis_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   elm_object_item_disabled_set(data, EINA_TRUE);
+}
+
+static void
 _focus_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
                          void *event_info EINA_UNUSED)
 {
@@ -3791,10 +3798,10 @@ test_genlist_focus(void *data EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *gl, *btn, *fr;
-   Evas_Object *bx_opt, *chk, *bx_btn, *btn_focus, *btn_sel;
+   Evas_Object *bx_opt, *chk, *bx_btn, *btn_focus, *btn_sel, *btn_dis;
    Evas_Object *bx_mv, *rd, *rdg;
    unsigned lhand, rhand;
-   Elm_Object_Item *it = NULL, *it_2 = NULL;
+   Elm_Object_Item *it = NULL, *it_0 = NULL, *it_2 = NULL;
 
    win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -3878,8 +3885,9 @@ test_genlist_focus(void *data EINA_UNUSED,
         for (rhand = 0; rhand < _gl_focus_objects; rhand++)
           {
              unsigned digit1 = lhand * 10 + rhand;
-             elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit1,
-                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+             it = elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit1,
+                                          NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+             if (!it_0) it_0 = it;
 
              unsigned digit2 = (_gl_focus_objects - lhand -1) * 10 +
                 (_gl_focus_objects - rhand -1);
@@ -3978,11 +3986,6 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_object_text_set(fr, "Focus/Selection");
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   // Focus/Selection
-   fr = elm_frame_add(bx);
-   elm_object_text_set(fr, "Focus/Selection");
-   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
@@ -4004,8 +4007,16 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_box_pack_end(bx_btn, btn_sel);
    evas_object_show(btn_sel);
 
+   btn_dis = elm_button_add(bx_btn);
+   elm_object_text_set(btn_dis, "Disable 1st Item.");
+   evas_object_size_hint_weight_set(btn_dis, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_dis, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_dis);
+   evas_object_show(btn_dis);
+
    evas_object_smart_callback_add(btn_focus, "clicked", _focus_btn_cb, it_2);
    evas_object_smart_callback_add(btn_sel, "clicked", _sel_btn_cb, it_2);
+   evas_object_smart_callback_add(btn_dis, "clicked", _dis_btn_cb, it_0);
 
    evas_object_resize(win, 420, 600);
    evas_object_show(win);
