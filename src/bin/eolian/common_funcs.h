@@ -38,7 +38,16 @@ char *_startline(char *str, char *pos);
 
 char *_source_desc_get(const char *str);
 
+void _class_func_names_fill(const char *classname, const char *funcname);
+
 char current_eo_prefix_lower[256];
 
 char current_eo_prefix_upper[256];
+
+char capobjclass[0xFF];
+char lowobjclass[0xFF];
+char capclass[0xFF];
+char lowclass[0xFF];
+char normclass[0xFF];
+char capfunc[0xFF];
 #endif

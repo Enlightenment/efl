@@ -4,7 +4,6 @@
 #include "Eolian.h"
 
 #include "legacy_generator.h"
-#include "eo1_generator.h"
 #include "common_funcs.h"
 
 static const char
