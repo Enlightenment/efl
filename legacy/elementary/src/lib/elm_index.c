@@ -9,8 +9,6 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_index.h"
 
-EAPI Eo_Op ELM_OBJ_INDEX_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_INDEX_CLASS
 
 #define MY_CLASS_NAME "Elm_Index"
@@ -55,7 +53,7 @@ _box_custom_layout(Evas_Object *o,
                    Evas_Object_Box_Data *priv,
                    void *data)
 {
-   Elm_Index_Smart_Data *sd = data;
+   Elm_Index_Data *sd = data;
 
    _els_box_layout(o, priv, sd->horizontal, EINA_TRUE, EINA_FALSE);
 }
@@ -122,7 +120,7 @@ _access_widget_item_register(Elm_Index_Item *it)
 static void
 _omit_calc(void *data, int num_of_items, int max_num_of_items)
 {
-   Elm_Index_Smart_Data *sd = data;
+   Elm_Index_Data *sd = data;
    int max_group_num, num_of_extra_items, i, g, size, sum, *group_pos, *omit_info;
    Elm_Index_Omit *o;
 
@@ -317,18 +315,15 @@ _index_box_auto_fill(Evas_Object *obj,
    sd->level_active[level] = EINA_TRUE;
 }
 
-static void
-_elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Index_Item *it;
 
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
-   Elm_Index_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    ELM_LAYOUT_DATA_GET(obj, ld);
 
    _index_box_clear(obj, 0);
@@ -340,7 +335,7 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
      eina_stringshare_replace(&ld->group, "base/vertical");
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event_rect[0], minw, minh);
@@ -397,15 +392,15 @@ _elm_index_smart_theme(Eo *obj, void *_pd, va_list *list)
           edje_object_signal_emit(VIEW(it), "elm,state,active", "elm");
      }
 
-   if (ret) *ret = EINA_TRUE;
-
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_index_register(obj);
+
+   return EINA_TRUE;
 }
 
-static void
-_elm_index_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_index_elm_layout_sizing_eval(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -875,13 +870,12 @@ _index_resize_cb(void *data EINA_UNUSED,
      }
 }
 
-static void
-_elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_index_evas_smart_add(Eo *obj, Elm_Index_Data *priv)
 {
    Evas_Object *o;
    Evas_Coord minw = 0, minh = 0;
 
-   Elm_Index_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -954,12 +948,10 @@ _elm_index_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      _access_index_register(obj);
 }
 
-static void
-_elm_index_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_index_evas_smart_del(Eo *obj, Elm_Index_Data *sd)
 {
    Elm_Index_Omit *o;
-
-   Elm_Index_Smart_Data *sd = _pd;
 
    while (sd->items)
      elm_widget_item_del(sd->items->data);
@@ -974,27 +966,21 @@ _elm_index_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static Eina_Bool _elm_index_smart_focus_next_enable = EINA_FALSE;
 
-static void
-_elm_index_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_index_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Index_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_index_smart_focus_next_enable;
+   return _elm_index_smart_focus_next_enable;
 }
 
-static void
-_elm_index_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_index_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Index_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_index_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_index_elm_widget_focus_next(Eo *obj, Elm_Index_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    Eina_List *items = NULL;
@@ -1002,8 +988,6 @@ _elm_index_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Index_Item *it;
    Evas_Object *ao;
    Evas_Object *po;
-
-   Elm_Index_Smart_Data *sd = _pd;
 
    if (!sd->autohide_disabled)
      elm_layout_signal_emit((Evas_Object *)obj, "elm,state,active", "elm");
@@ -1026,7 +1010,7 @@ _elm_index_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if ((!sd->autohide_disabled) && (!int_ret))
      elm_layout_signal_emit((Evas_Object *)obj, "elm,state,inactive", "elm");
 
-   if (ret) *ret = int_ret;
+   return int_ret;
 }
 
 static void
@@ -1071,10 +1055,10 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
      }
 }
 
-static void
-_elm_index_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_index_elm_widget_access(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
-   _elm_index_smart_focus_next_enable = va_arg(*list, int);
+   _elm_index_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_index_smart_focus_next_enable);
 }
 
@@ -1087,8 +1071,8 @@ elm_index_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_index_eo_base_constructor(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1096,20 +1080,9 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_index_autohide_disabled_set(Evas_Object *obj,
-                                Eina_Bool disabled)
+EOLIAN static void
+_elm_index_autohide_disabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool disabled)
 {
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_autohide_disabled_set(disabled));
-}
-
-static void
-_autohide_disabled_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool disabled = va_arg(*list, int);
-   Elm_Index_Smart_Data *sd = _pd;
-
    disabled = !!disabled;
    if (sd->autohide_disabled == disabled) return;
    sd->autohide_disabled = disabled;
@@ -1125,56 +1098,23 @@ _autohide_disabled_set(Eo *obj, void *_pd, va_list *list)
    //FIXME: Should be update indicator based on the indicator visibility
 }
 
-EAPI Eina_Bool
-elm_index_autohide_disabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_index_autohide_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
-   ELM_INDEX_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_index_autohide_disabled_get(&ret));
-   return ret;
+   return sd->autohide_disabled;
 }
 
-static void
-_autohide_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_index_item_level_set(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, int level)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Index_Smart_Data *sd = _pd;
-   *ret = sd->autohide_disabled;
-}
-
-EAPI void
-elm_index_item_level_set(Evas_Object *obj,
-                         int level)
-{
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_item_level_set(level));
-}
-
-static void
-_item_level_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int level = va_arg(*list, int);
-   Elm_Index_Smart_Data *sd = _pd;
-
    if (sd->level == level) return;
    sd->level = level;
 }
 
-EAPI int
-elm_index_item_level_get(const Evas_Object *obj)
+EOLIAN static int
+_elm_index_item_level_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
-   ELM_INDEX_CHECK(obj) 0;
-   int ret = 0;
-   eo_do((Eo *) obj, elm_obj_index_item_level_get(&ret));
-   return ret;
-}
-
-static void
-_item_level_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int *ret = va_arg(*list, int *);
-   Elm_Index_Smart_Data *sd = _pd;
-   *ret = sd->level;
+   return sd->level;
 }
 
 //FIXME: Should update indicator based on the autohidden status & indicator visibility
@@ -1242,105 +1182,50 @@ elm_index_item_selected_set(Elm_Object_Item *it,
      }
 }
 
-EAPI Elm_Object_Item *
-elm_index_selected_item_get(const Evas_Object *obj,
-                            int level)
+EOLIAN static Elm_Object_Item*
+_elm_index_selected_item_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, int level)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_index_selected_item_get(level, &ret));
-   return ret;
-}
-
-static void
-_selected_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int level = va_arg(*list, int);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-
    Eina_List *l;
    Elm_Index_Item *it;
-
-   Elm_Index_Smart_Data *sd = _pd;
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
         if ((it->selected) && (it->level == level))
           {
-             *ret = (Elm_Object_Item *)it;
-             return;
+             return (Elm_Object_Item *)it;
           }
      }
 
-   *ret = NULL;
+   return NULL;
 }
 
-EAPI Elm_Object_Item *
-elm_index_item_append(Evas_Object *obj,
-                      const char *letter,
-                      Evas_Smart_Cb func,
-                      const void *data)
+EOLIAN static Elm_Object_Item*
+_elm_index_item_append(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Smart_Cb func, const void *data)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_index_item_append(letter, func, data, &ret));
-   return ret;
-}
-
-static void
-_item_append(Eo *obj, void *_pd, va_list *list)
-{
-   const char *letter = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
    Elm_Index_Item *it;
 
-   Elm_Index_Smart_Data *sd = _pd;
 
    it = _item_new(obj, letter, func, data);
-   if (!it) return;
+   if (!it) return NULL;
 
    sd->items = eina_list_append(sd->items, it);
    _index_box_clear(obj, sd->level);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_index_item_prepend(Evas_Object *obj,
-                       const char *letter,
-                       Evas_Smart_Cb func,
-                       const void *data)
+EOLIAN static Elm_Object_Item*
+_elm_index_item_prepend(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Smart_Cb func, const void *data)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_index_item_prepend(letter, func, data, &ret));
-   return ret;
-}
-
-static void
-_item_prepend(Eo *obj, void *_pd, va_list *list)
-{
-   const char *letter = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
    Elm_Index_Item *it;
 
-   Elm_Index_Smart_Data *sd = _pd;
-
    it = _item_new(obj, letter, func, data);
-   if (!it) return;
+   if (!it) return NULL;
 
    sd->items = eina_list_prepend(sd->items, it);
    _index_box_clear(obj, sd->level);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
 EINA_DEPRECATED EAPI Elm_Object_Item *
@@ -1353,129 +1238,50 @@ elm_index_item_prepend_relative(Evas_Object *obj,
             (obj, (Elm_Object_Item *)relative, letter, NULL, item);
 }
 
-EAPI Elm_Object_Item *
-elm_index_item_insert_after(Evas_Object *obj,
-                            Elm_Object_Item *after,
-                            const char *letter,
-                            Evas_Smart_Cb func,
-                            const void *data)
+EOLIAN static Elm_Object_Item*
+_elm_index_item_insert_after(Eo *obj, Elm_Index_Data *sd, Elm_Object_Item *after, const char *letter, Evas_Smart_Cb func, const void *data)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_index_item_insert_after(after, letter, func, data, &ret));
-   return ret;
-}
-
-static void
-_item_insert_after(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Object_Item *after = va_arg(*list, Elm_Object_Item *);
-   const char *letter = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
    Elm_Index_Item *it;
 
-   Elm_Index_Smart_Data *sd = _pd;
 
-   if (!after)
-     {
-        *ret = elm_index_item_append(obj, letter, func, data);
-        return;
-     }
+   if (!after) return elm_index_item_append(obj, letter, func, data);
 
    it = _item_new(obj, letter, func, data);
-   if (!it) return;
+   if (!it) return NULL;
 
    sd->items = eina_list_append_relative(sd->items, it, after);
    _index_box_clear(obj, sd->level);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_index_item_insert_before(Evas_Object *obj,
-                             Elm_Object_Item *before,
-                             const char *letter,
-                             Evas_Smart_Cb func,
-                             const void *data)
+EOLIAN static Elm_Object_Item*
+_elm_index_item_insert_before(Eo *obj, Elm_Index_Data *sd, Elm_Object_Item *before, const char *letter, Evas_Smart_Cb func, const void *data)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_index_item_insert_before(before, letter, func, data, &ret));
-   return ret;
-}
-
-static void
-_item_insert_before(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Object_Item *before = va_arg(*list, Elm_Object_Item *);
-   const char *letter = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
    Elm_Index_Item *it;
 
-   Elm_Index_Smart_Data *sd = _pd;
-
-   if (!before)
-     {
-        *ret = elm_index_item_prepend(obj, letter, func, data);
-        return;
-     }
+   if (!before) return elm_index_item_prepend(obj, letter, func, data);
 
    it = _item_new(obj, letter, func, data);
-   if (!it) return;
+   if (!it) return NULL;
 
    sd->items = eina_list_prepend_relative(sd->items, it, before);
    _index_box_clear(obj, sd->level);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_index_item_sorted_insert(Evas_Object *obj,
-                             const char *letter,
-                             Evas_Smart_Cb func,
-                             const void *data,
-                             Eina_Compare_Cb cmp_func,
-                             Eina_Compare_Cb cmp_data_func)
+EOLIAN static Elm_Object_Item*
+_elm_index_item_sorted_insert(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_index_item_sorted_insert(letter, func, data, cmp_func, cmp_data_func, &ret));
-   return ret;
-}
-
-static void
-_item_sorted_insert(Eo *obj, void *_pd, va_list *list)
-{
-   const char *letter = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *data = va_arg(*list, const void *);
-   Eina_Compare_Cb cmp_func = va_arg(*list, Eina_Compare_Cb);
-   Eina_Compare_Cb cmp_data_func = va_arg(*list, Eina_Compare_Cb);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
    Elm_Index_Item *it;
    Eina_List *lnear;
    int cmp;
 
-   Elm_Index_Smart_Data *sd = _pd;
-
-   if (!(sd->items))
-     {
-        *ret = elm_index_item_append(obj, letter, func, data);
-        return;
-     }
+   if (!(sd->items)) return elm_index_item_append(obj, letter, func, data);
 
    it = _item_new(obj, letter, func, data);
-   if (!it) return;
+   if (!it) return NULL;
 
    lnear = eina_list_search_sorted_near_list(sd->items, cmp_func, it, &cmp);
    if (cmp < 0)
@@ -1498,44 +1304,21 @@ _item_sorted_insert(Eo *obj, void *_pd, va_list *list)
      }
    _index_box_clear(obj, sd->level);
 
-   if (!it)
-     *ret = NULL;
-   else
-     *ret = (Elm_Object_Item *)it;
+   if (!it) return NULL;
+   else return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_index_item_find(Evas_Object *obj,
-                    const void *data)
+EOLIAN static Elm_Object_Item*
+_elm_index_item_find(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED, const void *data)
 {
-   ELM_INDEX_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_index_item_find(data, &ret));
-   return ret;
+   return (Elm_Object_Item *)_item_find(obj, data);
 }
 
-static void
-_elm_index_item_find(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = (Elm_Object_Item *)_item_find(obj, data);
-}
-
-EAPI void
-elm_index_item_clear(Evas_Object *obj)
-{
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_item_clear());
-}
-
-static void
-_item_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_index_item_clear(Eo *obj, Elm_Index_Data *sd)
 {
    Elm_Index_Item *it;
    Eina_List *l, *clear = NULL;
-
-   Elm_Index_Smart_Data *sd = _pd;
 
    _index_box_clear(obj, sd->level);
    EINA_LIST_FOREACH(sd->items, l, it)
@@ -1547,20 +1330,10 @@ _item_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      elm_widget_item_del(it);
 }
 
-EAPI void
-elm_index_level_go(Evas_Object *obj,
-                   int level)
+EOLIAN static void
+_elm_index_level_go(Eo *obj, Elm_Index_Data *sd, int level)
 {
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_level_go(level));
-}
-
-static void
-_level_go(Eo *obj, void *_pd, va_list *list)
-{
-   int level = va_arg(*list, int);
    (void) level;
-   Elm_Index_Smart_Data *sd = _pd;
    _index_box_clear(obj, 0);
    _index_box_auto_fill(obj, 0);
    if (sd->level == 1)
@@ -1570,20 +1343,9 @@ _level_go(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI void
-elm_index_indicator_disabled_set(Evas_Object *obj,
-                                 Eina_Bool disabled)
+EOLIAN static void
+_elm_index_indicator_disabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool disabled)
 {
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_indicator_disabled_set(disabled));
-}
-
-static void
-_indicator_disabled_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool disabled = va_arg(*list, int);
-   Elm_Index_Smart_Data *sd = _pd;
-
    disabled = !!disabled;
    if (sd->indicator_disabled == disabled) return;
    sd->indicator_disabled = disabled;
@@ -1594,21 +1356,10 @@ _indicator_disabled_set(Eo *obj, void *_pd, va_list *list)
      elm_layout_signal_emit(obj, "elm,indicator,state,active", "elm");
 }
 
-EAPI Eina_Bool
-elm_index_indicator_disabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_index_indicator_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
-   ELM_INDEX_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_index_indicator_disabled_get(&ret));
-   return ret;
-}
-
-static void
-_indicator_disabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Index_Smart_Data *sd = _pd;
-   *ret = sd->indicator_disabled;
+   return sd->indicator_disabled;
 }
 
 EAPI const char *
@@ -1619,20 +1370,9 @@ elm_index_item_letter_get(const Elm_Object_Item *it)
    return ((Elm_Index_Item *)it)->letter;
 }
 
-EAPI void
-elm_index_horizontal_set(Evas_Object *obj,
-                         Eina_Bool horizontal)
+EOLIAN static void
+_elm_index_horizontal_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool horizontal)
 {
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_horizontal_set(horizontal));
-}
-
-static void
-_horizontal_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool horizontal = va_arg(*list, int);
-   Elm_Index_Smart_Data *sd = _pd;
-
    horizontal = !!horizontal;
    if (horizontal == sd->horizontal) return;
 
@@ -1640,69 +1380,27 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Eina_Bool
-elm_index_horizontal_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_index_horizontal_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
-   ELM_INDEX_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_index_horizontal_get(&ret));
-   return ret;
+   return sd->horizontal;
 }
 
-static void
-_horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_index_delay_change_time_set(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, double dtime)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Index_Smart_Data *sd = _pd;
-   *ret = sd->horizontal;
-}
-
-EAPI void
-elm_index_delay_change_time_set(Evas_Object *obj, double delay_change_time)
-{
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_delay_change_time_set(delay_change_time));
-}
-
-static void
-_delay_change_time_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double dtime = va_arg(*list, double);
-   Elm_Index_Smart_Data *sd = _pd;
    sd->delay_change_time = dtime;
 }
 
-EAPI double
-elm_index_delay_change_time_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_index_delay_change_time_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
-   ELM_INDEX_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *)obj, elm_obj_index_delay_change_time_get(&ret));
-   return ret;
+   return sd->delay_change_time;
 }
 
-static void
-_delay_change_time_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_index_omit_enabled_set(Eo *obj, Elm_Index_Data *sd, Eina_Bool enabled)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Index_Smart_Data *sd = _pd;
-   *ret = sd->delay_change_time;
-}
-
-EAPI void
-elm_index_omit_enabled_set(Evas_Object *obj,
-                           Eina_Bool enabled)
-{
-   ELM_INDEX_CHECK(obj);
-   eo_do(obj, elm_obj_index_omit_enabled_set(enabled));
-}
-
-static void
-_omit_enabled_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool enabled = va_arg(*list, int);
-   Elm_Index_Smart_Data *sd = _pd;
-
    if (sd->horizontal) return;
 
    enabled = !!enabled;
@@ -1718,99 +1416,16 @@ _omit_enabled_set(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_index_omit_enabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_index_omit_enabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
-   ELM_INDEX_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_index_omit_enabled_get(&ret));
-   return ret;
+   return sd->omit_enabled;
 }
 
 static void
-_omit_enabled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_index_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Index_Smart_Data *sd = _pd;
-   *ret = sd->omit_enabled;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_index_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_index_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_index_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_index_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_index_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_index_smart_access),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_index_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_index_smart_sizing_eval),
-
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_AUTOHIDE_DISABLED_SET), _autohide_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_AUTOHIDE_DISABLED_GET), _autohide_disabled_get),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_LEVEL_SET), _item_level_set),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_LEVEL_GET), _item_level_get),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_SELECTED_ITEM_GET), _selected_item_get),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_APPEND), _item_append),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_PREPEND), _item_prepend),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_INSERT_AFTER), _item_insert_after),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_INSERT_BEFORE), _item_insert_before),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_SORTED_INSERT), _item_sorted_insert),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_FIND), _elm_index_item_find),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_ITEM_CLEAR), _item_clear),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_LEVEL_GO), _level_go),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_SET), _indicator_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_GET), _indicator_disabled_get),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_SET), _horizontal_set),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET), _horizontal_get),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET), _delay_change_time_set),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET), _delay_change_time_get),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_SET), _omit_enabled_set),
-        EO_OP_FUNC(ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_GET), _omit_enabled_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_AUTOHIDE_DISABLED_SET, "Enable or disable auto hiding feature for a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_AUTOHIDE_DISABLED_GET, "Get whether auto hiding feature is enabled or not for a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_LEVEL_SET, "Set the items level for a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_LEVEL_GET, "Get the items level set for a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_SELECTED_ITEM_GET, "Returns the last selected item, for a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_APPEND, "Append a new item on a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_PREPEND, "Prepend a new item on a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_INSERT_AFTER, "Insert a new item into the index object after item after."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_INSERT_BEFORE, "Insert a new item into the index object before item before."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_SORTED_INSERT, "Insert a new item into the given index widget, using cmp_func."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_FIND, "Find a given index widget's item, <b>using item data</b>."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_ITEM_CLEAR, "Removes all items from a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_LEVEL_GO, "Go to a given items level on a index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_SET, "Set the indicator as to be disabled."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_INDICATOR_DISABLED_GET, "Get the value of indicator's disabled status."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_SET, "Enable or disable horizontal mode on the index object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_HORIZONTAL_GET, "Get a value whether horizontal mode is enabled or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_SET, "Set a delay change time value for index object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_DELAY_CHANGE_TIME_GET, "Get a delay change time value for index object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_SET, "Enable or disable omit feature for a given index widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_GET, "Get whether omit feature is enabled or not for a given index widget."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_INDEX_BASE_ID, op_desc, ELM_OBJ_INDEX_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Index_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_index_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_index.eo.c"

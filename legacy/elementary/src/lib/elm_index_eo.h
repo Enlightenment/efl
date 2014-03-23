@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elm_index.eo.h"
+#if 0
 #define ELM_OBJ_INDEX_CLASS elm_obj_index_class_get()
 
 const Eo_Class *elm_obj_index_class_get(void) EINA_CONST;
@@ -310,6 +312,7 @@ enum
  */
 #define elm_obj_index_omit_enabled_get(ret) ELM_OBJ_INDEX_ID(ELM_OBJ_INDEX_SUB_ID_OMIT_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+#endif
 
 /**
  * @}

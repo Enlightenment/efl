@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with index instance data.
  */
-typedef struct _Elm_Index_Smart_Data Elm_Index_Smart_Data;
-struct _Elm_Index_Smart_Data
+typedef struct _Elm_Index_Data Elm_Index_Data;
+struct _Elm_Index_Data
 {
    Evas_Object          *event_rect[2]; /**< rectangle objects for event handling */
    Evas_Object          *bx[2]; // 2 - for now all that's supported
@@ -68,7 +68,7 @@ struct _Elm_Index_Omit
  * @}
  */
 #define ELM_INDEX_DATA_GET(o, sd) \
-  Elm_Index_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_INDEX_CLASS)
+  Elm_Index_Data * sd = eo_data_scope_get(o, ELM_OBJ_INDEX_CLASS)
 
 #define ELM_INDEX_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_INDEX_DATA_GET(o, ptr);                        \
