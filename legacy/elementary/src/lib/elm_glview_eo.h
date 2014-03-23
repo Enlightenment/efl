@@ -1,3 +1,6 @@
+#include "elm_glview.eo.h"
+
+#if 0
 #define ELM_OBJ_GLVIEW_CLASS elm_obj_glview_class_get()
 
 const Eo_Class *elm_obj_glview_class_get(void) EINA_CONST;
@@ -180,3 +183,4 @@ enum
  * @ingroup GLView
  */
 #define elm_obj_glview_changed_set() ELM_OBJ_GLVIEW_ID(ELM_OBJ_GLVIEW_SUB_ID_CHANGED_SET)
+#endif

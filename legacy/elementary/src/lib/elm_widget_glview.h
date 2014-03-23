@@ -17,8 +17,8 @@
 /**
  * Base widget smart data extended with glview instance data.
  */
-typedef struct _Elm_Glview_Smart_Data Elm_Glview_Smart_Data;
-struct _Elm_Glview_Smart_Data
+typedef struct _Elm_Glview_Data Elm_Glview_Data;
+struct _Elm_Glview_Data
 {
    Elm_GLView_Mode          mode;
    Elm_GLView_Resize_Policy scale_policy;
@@ -47,7 +47,7 @@ struct _Elm_Glview_Smart_Data
  */
 
 #define ELM_GLVIEW_DATA_GET(o, sd) \
-  Elm_Glview_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GLVIEW_CLASS)
+  Elm_Glview_Data * sd = eo_data_scope_get(o, ELM_OBJ_GLVIEW_CLASS)
 
 #define ELM_GLVIEW_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_GLVIEW_DATA_GET(o, ptr);                  \
