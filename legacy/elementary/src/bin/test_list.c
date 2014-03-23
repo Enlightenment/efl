@@ -1577,7 +1577,7 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_list_go(li);
    evas_object_show(li);
 
-   evas_object_resize(win, 420, 500);
+   evas_object_resize(win, 420, 600);
    evas_object_show(win);
 }
 
