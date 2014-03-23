@@ -13,9 +13,7 @@
 
 #define MY_CLASS_NAME "Ecore_Idler"
 
-EAPI Eo_Op ECORE_IDLER_BASE_ID = EO_NOOP;
-
-struct _Ecore_Idler_Private_Data
+struct _Ecore_Idler_Data
 {
    EINA_INLIST;
    Ecore_Idler  *obj;
@@ -25,9 +23,9 @@ struct _Ecore_Idler_Private_Data
    Eina_Bool     delete_me : 1;
 };
 
-typedef struct _Ecore_Idler_Private_Data Ecore_Idler_Private_Data;
-static Ecore_Idler_Private_Data *idlers = NULL;
-static Ecore_Idler_Private_Data *idler_current = NULL;
+typedef struct _Ecore_Idler_Data Ecore_Idler_Data;
+static Ecore_Idler_Data *idlers = NULL;
+static Ecore_Idler_Data *idler_current = NULL;
 static int idlers_delete_me = 0;
 
 static void *
@@ -48,19 +46,14 @@ ecore_idler_add(Ecore_Task_Cb func,
    return ie;
 }
 
-static void
-_idler_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_idler_constructor(Eo *obj, Ecore_Idler_Data *ie, Ecore_Task_Cb func, const void *data)
 {
-   Ecore_Task_Cb func = va_arg(*list, Ecore_Task_Cb);
-   const void *data = va_arg(*list, const void *);
-
     if (EINA_UNLIKELY(!eina_main_loop_is()))
       {
          eo_error_set(obj);
          EINA_MAIN_LOOP_CHECK_RETURN;
       }
-
-   Ecore_Idler_Private_Data *ie = _pd;
 
    ie->obj = obj;
    eo_do_super(obj, MY_CLASS, eo_constructor());
@@ -75,12 +68,11 @@ _idler_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
    ie->func = func;
    ie->data = (void *)data;
-   idlers = (Ecore_Idler_Private_Data *)eina_inlist_append(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
+   idlers = (Ecore_Idler_Data *)eina_inlist_append(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
 }
 
-
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_idler_eo_base_constructor(Eo *obj, Ecore_Idler_Data *_pd EINA_UNUSED)
 {
    eo_error_set(obj);
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
@@ -111,18 +103,16 @@ ecore_idler_del(Ecore_Idler *idler)
 static void *
 _ecore_idler_del(Ecore_Idler *obj)
 {
-   Ecore_Idler_Private_Data *idler = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Idler_Data *idler = eo_data_scope_get(obj, MY_CLASS);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(idler->delete_me, NULL);
    idler->delete_me = 1;
    idlers_delete_me = 1;
    return idler->data;
 }
 
-static void
-_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_idler_eo_base_destructor(Eo *obj, Ecore_Idler_Data *idler)
 {
-   Ecore_Idler_Private_Data *idler = _pd;
-
    idler->delete_me = 1;
    idlers_delete_me = 1;
 
@@ -132,10 +122,10 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 void
 _ecore_idler_shutdown(void)
 {
-   Ecore_Idler_Private_Data *ie;
+   Ecore_Idler_Data *ie;
    while ((ie = idlers))
      {
-        idlers = (Ecore_Idler_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(idlers));
+        idlers = (Ecore_Idler_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(idlers));
 
         eo_do(ie->obj, eo_parent_set(NULL));
         if (eo_destructed_is(ie->obj))
@@ -158,12 +148,12 @@ _ecore_idler_all_call(void)
    else
      {
         /* recursive main loop, continue from where we were */
-         idler_current = (Ecore_Idler_Private_Data *)EINA_INLIST_GET(idler_current)->next;
+         idler_current = (Ecore_Idler_Data *)EINA_INLIST_GET(idler_current)->next;
      }
 
    while (idler_current)
      {
-        Ecore_Idler_Private_Data *ie = (Ecore_Idler_Private_Data *)idler_current;
+        Ecore_Idler_Data *ie = (Ecore_Idler_Data *)idler_current;
         if (!ie->delete_me)
           {
              ie->references++;
@@ -174,16 +164,16 @@ _ecore_idler_all_call(void)
              ie->references--;
           }
         if (idler_current) /* may have changed in recursive main loops */
-          idler_current = (Ecore_Idler_Private_Data *)EINA_INLIST_GET(idler_current)->next;
+          idler_current = (Ecore_Idler_Data *)EINA_INLIST_GET(idler_current)->next;
      }
    if (idlers_delete_me)
      {
-        Ecore_Idler_Private_Data *l;
+        Ecore_Idler_Data *l;
         int deleted_idlers_in_use = 0;
         for (l = idlers; l; )
           {
-             Ecore_Idler_Private_Data *ie = l;
-             l = (Ecore_Idler_Private_Data *)EINA_INLIST_GET(l)->next;
+             Ecore_Idler_Data *ie = l;
+             l = (Ecore_Idler_Data *)EINA_INLIST_GET(l)->next;
              if (ie->delete_me)
                {
                   if (ie->references)
@@ -192,7 +182,7 @@ _ecore_idler_all_call(void)
                        continue;
                     }
 
-                  idlers = (Ecore_Idler_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
+                  idlers = (Ecore_Idler_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
 
                   eo_do(ie->obj, eo_parent_set(NULL));
                   if (eo_destructed_is(ie->obj))
@@ -215,34 +205,4 @@ _ecore_idler_exist(void)
    return 0;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-
-        EO_OP_FUNC(ECORE_IDLER_ID(ECORE_IDLER_SUB_ID_CONSTRUCTOR), _idler_constructor),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ECORE_IDLER_SUB_ID_CONSTRUCTOR, "Add an idler handler."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ECORE_IDLER_BASE_ID, op_desc, ECORE_IDLER_SUB_ID_LAST),
-     NULL,
-     sizeof(Ecore_Idler_Private_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(ecore_idler_class_get, &class_desc, EO_BASE_CLASS, NULL)
+#include "ecore_idler.eo.c"

@@ -238,6 +238,8 @@ enum
  *
  * @{
  */
+#include "ecore_idler.eo.h"
+#if 0
 
 #define ECORE_IDLER_CLASS ecore_idler_class_get()
 const Eo_Class *ecore_idler_class_get(void) EINA_CONST;
@@ -264,6 +266,7 @@ enum
  */
 #define ecore_idler_constructor(func, data) ECORE_IDLER_ID(ECORE_IDLER_SUB_ID_CONSTRUCTOR), EO_TYPECHECK(Ecore_Task_Cb, func), EO_TYPECHECK(const void *, data)
 
+#endif
 /**
  *
  */

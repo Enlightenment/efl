@@ -1,0 +1,17 @@
+class Ecore_Idler (Eo_Base)
+{
+   eo_prefix: ecore_idler;
+   constructors {
+      constructor {
+         /*@ Contructor. */
+         params {
+            @in Ecore_Task_Cb func;
+            @in const void *data;
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+   }
+}
