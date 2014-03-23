@@ -1308,6 +1308,21 @@ test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(win);
 }
 
+static void
+_gengrid_focus_item_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info)
+{
+   printf("%s: %p\n", (char *)data, event_info);
+}
+
+static void
+_gengrid_focus_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   printf("\n=== Key Down : %s ===\n", ev->keyname);
+}
+
 void
 test_gengrid_focus(void *data EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED,
@@ -1365,6 +1380,14 @@ test_gengrid_focus(void *data EINA_UNUSED,
    evas_object_size_hint_align_set(gengrid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, gengrid);
    evas_object_show(gengrid);
+   evas_object_smart_callback_add(gengrid, "item,focused", _gengrid_focus_item_cb, "item,focused");
+   evas_object_smart_callback_add(gengrid, "item,unfocused", _gengrid_focus_item_cb, "item,unfocused");
+   evas_object_smart_callback_add(gengrid, "selected", _gengrid_focus_item_cb, "selected");
+   evas_object_smart_callback_add(gengrid, "unselected", _gengrid_focus_item_cb, "unselected");
+   evas_object_smart_callback_add(gengrid, "activated", _gengrid_focus_item_cb, "activated");
+   evas_object_smart_callback_add(gengrid, "highlighted", _gengrid_focus_item_cb, "highlighted");
+   evas_object_smart_callback_add(gengrid, "unhighlighted", _gengrid_focus_item_cb, "unhighlighted");
+   evas_object_event_callback_add(gengrid, EVAS_CALLBACK_KEY_DOWN, _gengrid_focus_key_down_cb, NULL);
 
    btn = elm_button_add(bx);
    elm_object_text_set(btn, "Down");

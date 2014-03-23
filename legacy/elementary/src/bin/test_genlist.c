@@ -3707,6 +3707,20 @@ test_genlist_focus_focus_animate_check_changed(void *data, Evas_Object *obj,
                                        elm_check_state_get(obj));
 }
 
+static void
+_gl_focus_item_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("%s: %p\n", (char *)data, event_info);
+}
+
+static void
+_gl_focus_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   printf("\n=== Key Down : %s ===\n", ev->keyname);
+}
+
 static Ecore_Timer *timer = NULL;
 static void
 _test_genlist_focus_win_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
@@ -3808,6 +3822,14 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_box_pack_end(bx2, gl);
    evas_object_show(gl);
+   evas_object_smart_callback_add(gl, "item,focused", _gl_focus_item_cb, "item,focused");
+   evas_object_smart_callback_add(gl, "item,unfocused", _gl_focus_item_cb, "item,unfocused");
+   evas_object_smart_callback_add(gl, "selected", _gl_focus_item_cb, "selected");
+   evas_object_smart_callback_add(gl, "unselected", _gl_focus_item_cb, "unselected");
+   evas_object_smart_callback_add(gl, "activated", _gl_focus_item_cb, "activated");
+   evas_object_smart_callback_add(gl, "highlighted", _gl_focus_item_cb, "highlighted");
+   evas_object_smart_callback_add(gl, "unhighlighted", _gl_focus_item_cb, "unhighlighted");
+   evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _gl_focus_key_down_cb, NULL);
 
    btn = elm_button_add(bx2);
    elm_object_text_set(btn, "Right");
