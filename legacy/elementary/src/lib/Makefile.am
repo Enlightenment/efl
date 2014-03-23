@@ -595,7 +595,9 @@ BUILT_SOURCES = \
 		elc_hoversel.eo.c \
 		elc_hoversel.eo.h \
 		elm_image.eo.c \
-		elm_image.eo.h
+		elm_image.eo.h \
+		elm_icon.eo.c \
+		elm_icon.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -633,7 +635,8 @@ EXTRA_DIST += \
 	     elm_glview.eo \
 	     elm_grid.eo \
 	     elc_hoversel.eo \
-	     elm_image.eo
+	     elm_image.eo \
+	     elm_icon.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -671,5 +674,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_glview.eo.h \
 				  elm_grid.eo.h \
 				  elc_hoversel.eo.h \
-				  elm_image.eo.h
+				  elm_image.eo.h \
+				  elm_icon.eo.h
 

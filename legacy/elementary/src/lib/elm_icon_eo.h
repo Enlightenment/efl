@@ -1,3 +1,6 @@
+#include "elm_icon.eo.h"
+
+#if 0
 #define ELM_OBJ_ICON_CLASS elm_obj_icon_class_get()
 
 const Eo_Class *elm_obj_icon_class_get(void) EINA_CONST;
@@ -88,3 +91,5 @@ enum
  * @ingroup Icon
  */
 #define elm_obj_icon_order_lookup_get(ret) ELM_OBJ_ICON_ID(ELM_OBJ_ICON_SUB_ID_ORDER_LOOKUP_GET), EO_TYPECHECK(Elm_Icon_Lookup_Order *, ret)
+#endif
+
