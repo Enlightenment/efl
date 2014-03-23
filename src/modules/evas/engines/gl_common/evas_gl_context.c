@@ -372,7 +372,11 @@ _evas_gl_common_version_check()
      return 0;
 
    tmp = strchr(version, '.');
-   if (!tmp) return 0;
+   if (!tmp)
+     {
+        free(version);
+        return 0;
+     }
    /* the first '.' always exists */
    *tmp = '\0';
    major = atoi(version);
