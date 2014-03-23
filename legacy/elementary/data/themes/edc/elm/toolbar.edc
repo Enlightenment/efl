@@ -366,7 +366,8 @@ group { name: "elm/toolbar/base/default";
 // === item: standard default item
 group { name: "elm/toolbar/item/default";
    data.item: "transition_animation_on" "1";
-   
+   data.item: "focusraise" "on";
+
    images.image: "shadow_inset_bevels.png" COMP;
    images.image: "shadow_angled_in_sides.png" COMP;
    images.image: "horizontal_separated_bar_small_glow.png" COMP;

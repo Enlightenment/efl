@@ -26,6 +26,8 @@ static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_ITEM_FOCUSED[] = "item,focused";
+static const char SIG_ITEM_UNFOCUSED[] = "item,unfocused";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SCROLL, ""},
    {SIG_SCROLL_ANIM_START, ""},
@@ -35,6 +37,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
    {SIG_LONGPRESSED, ""},
    {SIG_CLICKED_DOUBLE, ""},
+   {SIG_ITEM_FOCUSED, ""},
+   {SIG_ITEM_UNFOCUSED, ""},
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_FOCUSED, ""}, /**< handled by elm_widget */
@@ -577,46 +581,158 @@ _resize_job(void *data)
 }
 
 static void
+_elm_toolbar_item_focused(Elm_Toolbar_Item *it)
+{
+   Evas_Object *obj = WIDGET(it);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+   const char *focus_raise;
+
+   if ((!sd) || (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       (it == sd->focused_item))
+     return;
+
+   sd->focused_item = it;
+   elm_toolbar_item_show((Elm_Object_Item *)it, ELM_TOOLBAR_ITEM_SCROLLTO_IN);
+   if (elm_widget_focus_highlight_enabled_get(obj))
+     {
+        edje_object_signal_emit
+           (VIEW(it), "elm,state,focused", "elm");
+     }
+   edje_object_signal_emit
+      (VIEW(it), "elm,highlight,on", "elm");
+   focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+   if ((focus_raise) && (!strcmp(focus_raise, "on")))
+     evas_object_raise(VIEW(it));
+   evas_object_smart_callback_call
+      (obj, SIG_ITEM_FOCUSED, it);
+}
+
+static void
+_elm_toolbar_item_unfocused(Elm_Toolbar_Item *it)
+{
+   Evas_Object *obj = WIDGET(it);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if ((!sd) || !sd->focused_item ||
+       (it != sd->focused_item))
+     return;
+   if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
+     return;
+   sd->prev_focused_item = it;
+   if (elm_widget_focus_highlight_enabled_get(obj))
+     {
+        edje_object_signal_emit
+           (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
+     }
+   edje_object_signal_emit
+      (VIEW(it), "elm,highlight,off", "elm");
+   sd->focused_item = NULL;
+   evas_object_smart_callback_call
+      (obj, SIG_ITEM_UNFOCUSED, it);
+}
+
+/*
+ * This function searches the nearest visible item based on the given item.
+ * If the given item is in the toolbar viewport, this returns the given item.
+ * Or this searches other items and checks the nearest fully visible item
+ * according to the given item's position.
+ */
+static Elm_Object_Item *
+_elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
+{
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0; // toolbar viewport geometry
+   Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0; // candidate item geometry
+   Eina_List *item_list = NULL;
+   Elm_Object_Item *item = NULL;
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (!it) return NULL;
+
+   evas_object_geometry_get(obj, &vx, &vy, &vw, &vh);
+   evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
+
+   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+     return it;
+
+   item_list = evas_object_box_children_get(sd->bx);
+
+   if ((sd->vertical && (iy < vy)) ||
+       (!sd->vertical && (iw < vw)))
+     {
+        while ((item_list = eina_list_next(item_list)))
+          {
+             item = eina_list_data_get(item_list);
+             evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+               return item;
+          }
+     }
+   else
+     {
+        while ((item_list = eina_list_prev(item_list)))
+          {
+             item = eina_list_data_get(item_list);
+             evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+               return item;
+          }
+     }
+   return NULL;
+}
+
+static void
 _elm_toolbar_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_TOOLBAR_DATA_GET(obj, sd);
    Eina_Bool int_ret = EINA_FALSE;
+   Elm_Object_Item *it = NULL;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
    if (!int_ret) return;
+   if (!sd->items) return;
 
-   if (elm_widget_focus_get(obj))
-     evas_object_focus_set(wd->resize_obj, EINA_TRUE);
+   if (elm_widget_focus_get(obj) && !sd->mouse_down)
+     {
+        if (sd->last_focused_item)
+          it = (Elm_Object_Item *)sd->last_focused_item;
+        else
+          it = (Elm_Object_Item *)ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items);
+        if (it)
+          {
+             it = _elm_toolbar_nearest_visible_item_get(obj, it);
+             _elm_toolbar_item_focused((Elm_Toolbar_Item *)it);
+          }
+        evas_object_focus_set(wd->resize_obj, EINA_TRUE);
+     }
    else
      {
-        if (sd->highlighted_item)
-          {
-             edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,off", "elm");
-             sd->highlighted_item = NULL;
-          }
+        sd->prev_focused_item = sd->focused_item;
+        sd->last_focused_item = sd->focused_item;
+        if (sd->focused_item)
+          _elm_toolbar_item_unfocused(sd->focused_item);
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
      }
-
    if (ret) *ret = EINA_TRUE;
 }
 
 static Elm_Toolbar_Item *
-_highlight_next_item_get(Evas_Object *obj, Evas_Object *box, Eina_Bool reverse)
+_focus_next_item_get(Evas_Object *obj, Eina_Bool reverse)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
    Eina_List *list = NULL;
    Elm_Toolbar_Item *it = NULL;
    Evas_Object *it_obj = NULL;
 
-   list = evas_object_box_children_get(box);
+   list = evas_object_box_children_get(sd->bx);
    if (reverse)
      list = eina_list_reverse(list);
 
-   if (sd->highlighted_item)
+   if (sd->focused_item)
      {
-        list = eina_list_data_find_list(list, VIEW(sd->highlighted_item));
+        list = eina_list_data_find_list(list, VIEW(sd->focused_item));
         if (list) list = eina_list_next(list);
      }
    it_obj = eina_list_data_get(list);
@@ -642,6 +758,67 @@ _highlight_next_item_get(Evas_Object *obj, Evas_Object *box, Eina_Bool reverse)
 }
 
 static void
+_item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
+{
+   ELM_TOOLBAR_ITEM_CHECK(it);
+   Evas_Object *obj = WIDGET(it);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (focused)
+     {
+        if (!elm_object_focus_get(obj))
+          elm_object_focus_set(obj, EINA_TRUE);
+        if (it != (Elm_Object_Item *)sd->focused_item)
+          {
+             if (sd->focused_item)
+               _elm_toolbar_item_unfocused(sd->focused_item);
+             _elm_toolbar_item_focused((Elm_Toolbar_Item *)it);
+          }
+     }
+   else
+     {
+        if (it)
+          _elm_toolbar_item_unfocused((Elm_Toolbar_Item *)it);
+     }
+   _elm_widget_focus_highlight_start(obj);
+}
+
+static Eina_Bool
+_item_focus_get_hook(Elm_Object_Item *it)
+{
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   Evas_Object *obj = WIDGET(it);
+   ELM_TOOLBAR_CHECK(obj) EINA_FALSE;
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (it == (Elm_Object_Item *)sd->focused_item)
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_item_focused_next( Evas_Object *obj,
+                   Eina_Bool reverse,
+                   Elm_Focus_Direction dir)
+{
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+   Elm_Toolbar_Item *next_focused_item;
+
+   next_focused_item = _focus_next_item_get(obj, reverse);
+   if (!next_focused_item)
+     return EINA_FALSE;
+
+   if ((!sd->vertical && (dir == ELM_FOCUS_LEFT || dir == ELM_FOCUS_RIGHT))
+         || (sd->vertical && (dir == ELM_FOCUS_UP || dir == ELM_FOCUS_DOWN)))
+   {
+      elm_object_item_focus_set((Elm_Object_Item *)next_focused_item, EINA_TRUE);
+      return EINA_TRUE;
+   }
+   _elm_widget_focus_highlight_start(obj);
+   return EINA_FALSE;
+}
+
+static void
 _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
 {
    Evas_Object *src = va_arg(*list, Evas_Object *);
@@ -654,9 +831,6 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
    (void) src;
    (void) type;
 
-   Elm_Toolbar_Item *it = NULL;
-   Evas_Coord x, y, w, h;
-
    if (elm_widget_disabled_get(obj)) return;
    if (type != EVAS_CALLBACK_KEY_DOWN) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -666,55 +840,63 @@ _elm_toolbar_smart_event(Eo *obj, void *_pd, va_list *list)
        (!strcmp(ev->key, "KP_Enter")) ||
        (!strcmp(ev->key, "space")))
      {
-        if (sd->highlighted_item)
-          _item_select(sd->highlighted_item);
+         if (sd->focused_item)
+           _item_select(sd->focused_item);
 
         goto success;
      }
    else if ((!strcmp(ev->key, "Left")) ||
             ((!strcmp(ev->key, "KP_Left")) && !ev->string))
      {
-        if (!sd->vertical)
-          it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
+        if (_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_LEFT))
+          {
+             goto success;
+          }
         else
-          return;
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && !ev->string))
      {
-        if (!sd->vertical)
-          it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
+        if (_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_RIGHT))
+          {
+             goto success;
+          }
         else
-          return;
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && !ev->string))
      {
-        if (sd->vertical)
-          it = _highlight_next_item_get(obj, sd->bx, EINA_TRUE);
+        if (_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_UP))
+          {
+             goto success;
+          }
         else
-          return;
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
      }
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && !ev->string))
      {
-        if (sd->vertical)
-          it = _highlight_next_item_get(obj, sd->bx, EINA_FALSE);
+        if (_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_DOWN))
+          {
+             goto success;
+          }
         else
-          return;
+          {
+             if (ret) *ret = EINA_FALSE;
+             return;
+          }
      }
-
-   if (!it)
-     return;
-
-   if (sd->highlighted_item)
-     edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,off", "elm");
-   sd->highlighted_item = it;
-   edje_object_signal_emit(VIEW(sd->highlighted_item), "elm,highlight,on", "elm");
-
-   if (_elm_toolbar_item_coordinates_calc(
-         sd->highlighted_item, ELM_TOOLBAR_ITEM_SCROLLTO_IN, &x, &y, &w, &h))
-     eo_do(obj, elm_interface_scrollable_region_bring_in(x, y, w, h));
 
 success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -907,6 +1089,7 @@ static void
 _item_del(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item_State *it_state;
+   ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    _item_unselect(it);
 
@@ -930,6 +1113,13 @@ _item_del(Elm_Toolbar_Item *it)
         edje_object_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
         evas_object_del(it->icon);
      }
+
+   if (sd->focused_item == it)
+     sd->focused_item = NULL;
+   if (sd->last_focused_item == it)
+     sd->last_focused_item = NULL;
+   if (sd->prev_focused_item == it)
+     sd->prev_focused_item = NULL;
 
    evas_object_del(it->object);
    //TODO: See if checking for sd->menu_parent is necessary before
@@ -1139,6 +1329,20 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
+_elm_toolbar_highlight_in_theme(Evas_Object *obj)
+{
+   const char *fh;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   fh = edje_object_data_get
+       (wd->resize_obj, "focus_highlight");
+   if ((fh) && (!strcmp(fh, "on")))
+     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+   else
+     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+}
+
+static void
 _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
 {
    Elm_Toolbar_Item *it;
@@ -1188,6 +1392,7 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
    if (sd->more_item)
      _item_theme_hook(obj, sd->more_item, scale, sd->icon_size);
 
+   _elm_toolbar_highlight_in_theme(obj);
    _sizing_eval(obj);
 
    if (ret) *ret = EINA_TRUE;
@@ -1856,6 +2061,7 @@ _mouse_down_cb(Elm_Toolbar_Item *it,
    if (ev->button != 1) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
+   sd->mouse_down = EINA_TRUE;
    sd->long_press = EINA_FALSE;
    if (sd->long_timer)
      ecore_timer_interval_set
@@ -1877,7 +2083,11 @@ _mouse_up_cb(Elm_Toolbar_Item *it,
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    if (ev->button != 1) return;
+   sd->mouse_down = EINA_FALSE;
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
+   if ((!elm_object_item_disabled_get((Elm_Object_Item *)it)) &&
+       (sd->focused_item != it))
+     elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
    evas_object_event_callback_del_full
      (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE,
      (Evas_Object_Event_Cb)_mouse_move_cb, it);
@@ -2089,6 +2299,8 @@ _item_new(Evas_Object *obj,
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
+   elm_widget_item_focus_set_hook_set(it, _item_focus_set_hook);
+   elm_widget_item_focus_get_hook_set(it, _item_focus_get_hook);
 
    it->label = eina_stringshare_add(label);
    it->prio.visible = 1;
@@ -2570,6 +2782,7 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (priv->bx, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
    elm_toolbar_icon_order_lookup_set(obj, ELM_ICON_LOOKUP_THEME_FDO);
 
+   _elm_toolbar_highlight_in_theme(obj);
    _sizing_eval(obj);
 }
 
@@ -2715,6 +2928,74 @@ _elm_toolbar_smart_access(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    Elm_Toolbar_Smart_Data *sd = _pd;
    _elm_toolbar_smart_focus_next_enable = va_arg(*list, int);
    _access_obj_process(sd, _elm_toolbar_smart_focus_next_enable);
+}
+
+static void
+_elm_toolbar_coordinates_adjust(Elm_Toolbar_Item *it,
+                                Evas_Coord *x,
+                                Evas_Coord *y,
+                                Evas_Coord *w,
+                                Evas_Coord *h)
+{
+   ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
+
+   Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
+
+   evas_object_geometry_get(sd->hit_rect, &vx, &vy, &vw, &vh);
+   evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
+   *x = ix;
+   *y = iy;
+   *w = iw;
+   *h = ih;
+   if (sd->vertical)
+     {
+        //TODO: Enhance it later.
+        if ((ix < vx) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
+          *y = iy - ih;
+        else if (iy < vy)
+          *y = iy + ih;
+     }
+   else
+     {
+        //TODO: Enhance it later.
+        if ((iy < vy) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
+          *x = ix - iw;
+        else if (ix < vx)
+          *x = ix + iw;
+     }
+}
+
+static void
+_elm_toolbar_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Coord *x = va_arg(*list, Evas_Coord *);
+   Evas_Coord *y = va_arg(*list, Evas_Coord *);
+   Evas_Coord *w = va_arg(*list, Evas_Coord *);
+   Evas_Coord *h = va_arg(*list, Evas_Coord *);
+   Eina_Bool is_next = va_arg(*list, int);
+
+   Elm_Toolbar_Smart_Data *sd = _pd;
+
+   if (is_next)
+     {
+        if (sd->focused_item)
+          {
+             _elm_toolbar_coordinates_adjust
+                (sd->focused_item, x, y, w, h);
+             elm_widget_focus_highlight_focus_part_geometry_get
+                (VIEW(sd->focused_item), x, y, w, h);
+          }
+     }
+   else
+     {
+        if (sd->prev_focused_item)
+          {
+             _elm_toolbar_coordinates_adjust
+                (sd->prev_focused_item, x, y, w, h);
+             elm_widget_focus_highlight_focus_part_geometry_get
+                (VIEW(sd->prev_focused_item), x, y, w, h);
+          }
+     }
 }
 
 EAPI Evas_Object *
@@ -3951,6 +4232,15 @@ elm_toolbar_item_bring_in(Elm_Object_Item *it, Elm_Toolbar_Item_Scrollto_Type ty
 }
 
 static void
+_elm_toolbar_focused_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
+   Elm_Toolbar_Smart_Data *sd = _pd;
+
+   if (ret) *ret = (Elm_Object_Item *)sd->focused_item;
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
@@ -3969,6 +4259,8 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_toolbar_smart_focus_next_manager_is),
         EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_toolbar_smart_focus_next),
         EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_toolbar_smart_access),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), _elm_toolbar_focus_highlight_geometry_get),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUSED_ITEM_GET), _elm_toolbar_focused_item_get),
 
         EO_OP_FUNC(ELM_OBJ_TOOLBAR_ID(ELM_OBJ_TOOLBAR_SUB_ID_ICON_SIZE_SET), _icon_size_set),
         EO_OP_FUNC(ELM_OBJ_TOOLBAR_ID(ELM_OBJ_TOOLBAR_SUB_ID_ICON_SIZE_GET), _icon_size_get),

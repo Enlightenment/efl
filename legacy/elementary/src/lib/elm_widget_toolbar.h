@@ -29,7 +29,9 @@ struct _Elm_Toolbar_Smart_Data
    Eina_Inlist                          *items;
    Elm_Toolbar_Item                     *more_item;
    Elm_Toolbar_Item                     *selected_item; /**< a selected item by mouse click, return key, api, and etc. */
-   Elm_Toolbar_Item                     *highlighted_item; /**< a highlighted item by keypard arrow */
+   Elm_Toolbar_Item                     *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
+   Elm_Toolbar_Item                     *prev_focused_item; /**< previous focused item by keypad arrow or mouse. */
+   Elm_Toolbar_Item                     *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
    Elm_Toolbar_Item                     *reorder_empty, *reorder_item;
    Elm_Toolbar_Shrink_Mode               shrink_mode;
    Elm_Icon_Lookup_Order                 lookup_order;
@@ -49,6 +51,7 @@ struct _Elm_Toolbar_Smart_Data
    Eina_Bool                             delete_me : 1;
    Eina_Bool                             reorder_mode : 1;
    Eina_Bool                             transverse_expanded : 1;
+   Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the toolbar at the moment. This flag is set to true on mouse and reset to false on mouse up. */
 };
 
 struct _Elm_Toolbar_Item

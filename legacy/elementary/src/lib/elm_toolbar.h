@@ -31,6 +31,8 @@
  * - @c "language,changed" - when the program language changes.
  * - @c "focused" - When the toolbar has received focus. (since 1.8)
  * - @c "unfocused" - When the toolbar has lost focus. (since 1.8)
+ * - @c "item,focused" - When the toolbar item has received focus. (since 1.10)
+ * - @c "item,unfocused" - When the toolbar item has lost focus. (since 1.10)
  *
  * Available styles for it:
  * - @c "default"
@@ -48,6 +50,8 @@
  * @li @ref elm_object_item_part_content_set
  * @li @ref elm_object_item_part_content_get
  * @li @ref elm_object_item_part_content_unset
+ * @li @ref elm_object_item_focus_set
+ * @li @ref elm_object_item_focus_get
  *
  * List of examples:
  * @li @ref toolbar_example_01
