@@ -2418,7 +2418,6 @@ _item_single_select_up(Elm_Genlist_Smart_Data *sd)
      prev = (Elm_Gen_Item *)elm_genlist_item_prev_get
         (sd->last_selected_item);
 
-   printf("last %p prev %p\n", sd->last_selected_item, prev);
    while (prev)
      {
         if ((prev->generation == sd->generation) &&
@@ -2427,7 +2426,6 @@ _item_single_select_up(Elm_Genlist_Smart_Data *sd)
         prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
 
-   printf("prev %p\n", prev);
    if (!prev) return EINA_FALSE;
 
    _all_items_deselect(sd);
