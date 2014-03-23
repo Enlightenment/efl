@@ -1,0 +1,165 @@
+class Elc_Hoversel (Elm_Button, Evas_Selectable_Interface)
+{
+   eo_prefix: elm_obj_hoversel;
+   legacy_prefix: elm_hoversel;
+   properties {
+      horizontal {
+         set {
+            /*@
+            @brief This sets the hoversel to expand horizontally.
+
+            @note The initial button will display horizontally regardless of this
+            setting.
+
+            @ingroup Hoversel */
+         }
+         get {
+            /*@
+            @brief This returns whether the hoversel is set to expand horizontally.
+
+            @return If true, the hover will expand horizontally to the right.
+
+            @see elm_hoversel_horizontal_set()
+
+            @ingroup Hoversel */
+         }
+         values {
+            Eina_Bool horizontal; /*@ If true, the hover will expand horizontally to the
+            right. */
+         }
+      }
+      hover_parent {
+         set {
+            /*@
+            @brief Set the Hover parent
+
+            Sets the hover parent object, the area that will be darkened when the
+            hoversel is clicked. Should probably be the window that the hoversel is
+            in. See @ref Hover objects for more information.
+
+            @ingroup Hoversel */
+         }
+         get {
+            /*@
+            @brief Get the Hover parent
+
+            @return The used parent
+
+            Get the hover parent object.
+
+            @see elm_hoversel_hover_parent_set()
+
+            @ingroup Hoversel */
+         }
+         values {
+            Evas_Object *parent; /*@ The parent to use */
+         }
+      }
+      expanded {
+         get {
+            /*@
+            @brief Returns whether the hoversel is expanded.
+
+            @return  This will return @c EINA_TRUE if the hoversel is expanded or
+            @c EINA_FALSE if it is not expanded.
+
+            @ingroup Hoversel */
+            return Eina_Bool;
+         }
+      }
+      items {
+         get {
+            /*@
+            @brief Get the list of items within the given hoversel.
+
+            @return Returns a list of Elm_Object_Item
+
+            @see elm_hoversel_item_add()
+
+            @ingroup Hoversel */
+            return const Eina_List *;
+         }
+      }
+   }
+   methods {
+      hover_begin {
+         /*@
+         @brief This triggers the hoversel popup from code, the same as if the user
+         had clicked the button.
+
+         @ingroup Hoversel */
+
+      }
+      clear {
+         /*@
+         @brief This will remove all the children items from the hoversel.
+
+         @warning Should @b not be called while the hoversel is active; use
+         elm_hoversel_expanded_get() to check first.
+
+         @see elm_object_item_del()
+
+         @ingroup Hoversel */
+
+      }
+      hover_end {
+         /*@
+         @brief This dismisses the hoversel popup as if the user had clicked
+         outside the hover.
+
+         @ingroup Hoversel */
+
+      }
+      item_add {
+         /*@
+         @brief Add an item to the hoversel button
+
+         @return A handle to the item added.
+
+         This adds an item to the hoversel to show when it is clicked. Note: if you
+         need to use an icon from an edje file then use
+         elm_hoversel_item_icon_set() right after this function, and set
+         icon_file to NULL here.
+
+         For more information on what @p icon_file and @p icon_type are, see the
+         @ref Icon "icon documentation".
+
+         @ingroup Hoversel */
+
+         return Elm_Object_Item *;
+         params {
+            @in const char *label; /*@ The text label to use for the item (NULL if not desired) */
+            @in const char *icon_file; /*@ An image file path on disk to use for the icon or standard
+            icon name (NULL if not desired) */
+            @in Elm_Icon_Type icon_type; /*@ The icon type if relevant */
+            @in Evas_Smart_Cb func; /*@ Convenience function to call when this item is selected. The last
+            parameter @p event_info of @c func is the selected item pointer. */
+            @in const void *data; /*@ Data to pass to item-related functions */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::hide;
+      Evas_Smart::show;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::parent::set;
+      Elm_Widget::theme_apply;
+      Elm_Widget::translate;
+      Elm_Widget::event;
+      Elm_Button::admits_autorepeat::get;
+   }
+   events {
+      selected;
+      dismissed;
+      expanded;
+      item,focused;
+      item,unfocused;
+      clicked;
+      language,changed;
+      access,changed;
+   }
+
+}

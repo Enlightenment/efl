@@ -1,3 +1,5 @@
+#include "elc_hoversel.eo.h"
+#if 0
 #define ELM_OBJ_HOVERSEL_CLASS elm_obj_hoversel_class_get()
 
 const Eo_Class *elm_obj_hoversel_class_get(void) EINA_CONST;
@@ -165,3 +167,5 @@ enum
  * @ingroup Hoversel
  */
 #define elm_obj_hoversel_item_add(label, icon_file, icon_type, func, data, ret) ELM_OBJ_HOVERSEL_ID(ELM_OBJ_HOVERSEL_SUB_ID_ITEM_ADD), EO_TYPECHECK(const char *, label), EO_TYPECHECK(const char *, icon_file), EO_TYPECHECK(Elm_Icon_Type, icon_type), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Elm_Object_Item **, ret)
+#endif
+
