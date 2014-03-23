@@ -1368,6 +1368,13 @@ _sel_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_dis_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   elm_object_item_disabled_set(data, EINA_TRUE);
+}
+
+static void
 _focus_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
                          void *event_info EINA_UNUSED)
 {
@@ -1378,10 +1385,10 @@ static void
 _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 {
    Evas_Object *win, *li, *btn, *bx, *bx2, *fr, *bx_opt, *chk, *bx_btn;
-   Evas_Object *btn_focus, *btn_sel, *bx_mv, *rd, *rdg;
+   Evas_Object *btn_focus, *btn_sel, *btn_dis, *bx_mv, *rd, *rdg;
    unsigned int lhand, rhand, idx;
    char buf[256];
-   Elm_Object_Item *it = NULL, *it_3 = NULL;
+   Elm_Object_Item *it = NULL, *it_0 = NULL, *it_3 = NULL;
 
    win = elm_win_util_standard_add(name, title);
    elm_win_autodel_set(win, EINA_TRUE);
@@ -1550,6 +1557,13 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_box_pack_end(bx_btn, btn_sel);
    evas_object_show(btn_sel);
 
+   btn_dis = elm_button_add(bx_btn);
+   elm_object_text_set(btn_dis, "Disable 1st Item.");
+   evas_object_size_hint_weight_set(btn_dis, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn_dis, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_btn, btn_dis);
+   evas_object_show(btn_dis);
+
    for (idx = 0; _list_focus_combo[idx] >= 0; idx++)
      {
         lhand = _list_focus_combo[idx] / 10;
@@ -1565,6 +1579,8 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
                                   test_list_focus_content_get(li, lhand, horiz),
                                   test_list_focus_content_get(li, rhand, horiz),
                                   NULL, NULL);
+        if (idx == 0)
+          it_0 = it;
         if (idx == 4)
           elm_object_item_disabled_set(it, EINA_TRUE);
         if (idx == 2)
@@ -1573,6 +1589,7 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    evas_object_smart_callback_add(btn_focus, "clicked", _focus_btn_cb, it_3);
    evas_object_smart_callback_add(btn_sel, "clicked", _sel_btn_cb, it_3);
+   evas_object_smart_callback_add(btn_dis, "clicked", _dis_btn_cb, it_0);
 
    elm_list_go(li);
    evas_object_show(li);
