@@ -344,6 +344,8 @@ enum
  *
  * @{
  */
+#include "ecore_job.eo.h"
+#if 0
 
 #define ECORE_JOB_CLASS ecore_job_class_get()
 const Eo_Class *ecore_job_class_get(void) EINA_CONST;
@@ -370,6 +372,7 @@ enum
  */
 #define ecore_job_constructor(func, data) ECORE_JOB_ID(ECORE_JOB_SUB_ID_CONSTRUCTOR), EO_TYPECHECK(Ecore_Cb, func), EO_TYPECHECK(const void *, data)
 
+#endif
 /**
  * @}
  */

@@ -13,8 +13,6 @@
 
 #define MY_CLASS_NAME "Ecore_Job"
 
-EAPI Eo_Op ECORE_JOB_BASE_ID = EO_NOOP;
-
 static Eina_Bool _ecore_job_event_handler(void *data,
                                           int   type,
                                           void *ev);
@@ -24,9 +22,9 @@ static void _ecore_job_event_free(void *data,
 static int ecore_event_job_type = 0;
 static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
-typedef struct _Ecore_Job_Private_Data Ecore_Job_Private_Data;
+typedef struct _Ecore_Job_Data Ecore_Job_Data;
 
-struct _Ecore_Job_Private_Data
+struct _Ecore_Job_Data
 {
    Ecore_Event *event;
    Ecore_Cb     func;
@@ -71,12 +69,9 @@ ecore_job_add(Ecore_Cb    func,
    return job;
 }
 
-static void
-_job_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_job_constructor(Eo *obj, Ecore_Job_Data *job, Ecore_Cb func, const void *data)
 {
-   Ecore_Cb func = va_arg(*list, Ecore_Cb);
-   const void *data = va_arg(*list, const void *);
-
    if (EINA_UNLIKELY(!eina_main_loop_is()))
      {
         eo_error_set(obj);
@@ -92,8 +87,6 @@ _job_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
         return;
      }
 
-   Ecore_Job_Private_Data *job = _pd;
-
    job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, obj);
    if (!job->event)
      {
@@ -105,8 +98,8 @@ _job_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    job->data = (void *)data;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_job_eo_base_constructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
 {
    eo_error_set(obj);
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
@@ -124,15 +117,15 @@ ecore_job_del(Ecore_Job *obj)
 
    if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Job_Private_Data *job = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Job_Data *job = eo_data_scope_get(obj, MY_CLASS);
    data = job->data;
    ecore_event_del(job->event);
    eo_do(obj, eo_parent_set(NULL));
    return data;
 }
 
-static void
-_destructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_job_eo_base_destructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
 {
    /*FIXME: check if ecore_event_del should be called from here*/
    eo_do_super(obj, MY_CLASS, eo_destructor());
@@ -147,7 +140,7 @@ _ecore_job_event_handler(void *data EINA_UNUSED,
                          int   type EINA_UNUSED,
                          void *ev)
 {
-   Ecore_Job_Private_Data *job;
+   Ecore_Job_Data *job;
 
    job = ev;
    job->func(job->data);
@@ -168,32 +161,4 @@ _ecore_job_event_free(void *data,
       eo_manual_free_set(obj, EINA_FALSE);
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(ECORE_JOB_ID(ECORE_JOB_SUB_ID_CONSTRUCTOR), _job_constructor),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ECORE_JOB_SUB_ID_CONSTRUCTOR, "Add a job to the event queue."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ECORE_JOB_BASE_ID, op_desc, ECORE_JOB_SUB_ID_LAST),
-     NULL,
-     sizeof(Ecore_Job_Private_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(ecore_job_class_get, &class_desc, EO_BASE_CLASS, NULL);
+#include "ecore_job.eo.c"

@@ -1,0 +1,17 @@
+class Ecore_Job (Eo_Base)
+{
+   eo_prefix: ecore_job;
+   constructors {
+      constructor {
+         /*@ Contructor. */
+         params {
+            @in Ecore_Cb func;
+            @in const void *data;
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+   }
+}
