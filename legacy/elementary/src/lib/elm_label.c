@@ -8,8 +8,6 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_label.h"
 
-EAPI Eo_Op ELM_OBJ_LABEL_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_LABEL_CLASS
 
 #define MY_CLASS_NAME "Elm_Label"
@@ -165,32 +163,29 @@ _label_slide_change(Evas_Object *obj)
      }
 }
 
-static void
-_elm_label_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret = EINA_FALSE;
 
-   Elm_Label_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    evas_event_freeze(evas_object_evas_get(obj));
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) goto end;
+   if (!int_ret) return EINA_FALSE;
 
    _label_format_set(wd->resize_obj, sd->format);
    _label_slide_change(obj);
 
-end:
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
-   if (ret) *ret = int_ret;
 
+   return int_ret;
 }
 
-static void
-_elm_label_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_label_elm_layout_sizing_eval(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
@@ -318,17 +313,11 @@ _stringshare_key_value_replace(const char **srcstring, const char *key, const ch
    return 0;
 }
 
-static void
-_elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_label_elm_layout_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *label)
 {
-   Elm_Label_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   const char *part = va_arg(*list, const char *);
-   const char *label = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
-
-   if (ret) *ret = EINA_FALSE;
 
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
@@ -339,7 +328,7 @@ _elm_label_smart_text_set(Eo *obj, void *_pd, va_list *list)
         sd->lastw = 0;
         eo_do(obj, elm_obj_layout_sizing_eval());
      }
-   if (ret) *ret = int_ret;
+   return int_ret;
 }
 
 static char *
@@ -365,10 +354,9 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
    evas_object_smart_callback_call(data, SIG_SLIDE_END, NULL);
 }
 
-static void
-_elm_label_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_label_evas_smart_add(Eo *obj, Elm_Label_Data *priv)
 {
-   Elm_Label_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -414,8 +402,8 @@ elm_label_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -423,21 +411,12 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
+EOLIAN static void
+_elm_label_line_wrap_set(Eo *obj, Elm_Label_Data *sd, Elm_Wrap_Type wrap)
 {
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_line_wrap_set(wrap));
-}
-
-static void
-_line_wrap_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Wrap_Type wrap = va_arg(*list, Elm_Wrap_Type);
    const char *wrap_str, *text;
    int len;
 
-   Elm_Label_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->linewrap == wrap) return;
@@ -475,35 +454,15 @@ _line_wrap_set(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Elm_Wrap_Type
-elm_label_line_wrap_get(const Evas_Object *obj)
+EOLIAN static Elm_Wrap_Type
+_elm_label_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
-   ELM_LABEL_CHECK(obj) EINA_FALSE;
-   Elm_Wrap_Type ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_label_line_wrap_get(&ret));
-   return ret;
+   return sd->linewrap;
 }
 
-static void
-_line_wrap_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd, Evas_Coord w)
 {
-   Elm_Wrap_Type *ret = va_arg(*list, Elm_Wrap_Type *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->linewrap;
-}
-
-EAPI void
-elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w)
-{
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_wrap_width_set(w));
-}
-
-static void
-_wrap_width_set(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Elm_Label_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (w < 0) w = 0;
@@ -517,39 +476,19 @@ _wrap_width_set(Eo *obj, void *_pd, va_list *list)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Coord
-elm_label_wrap_width_get(const Evas_Object *obj)
+EOLIAN static Evas_Coord
+_elm_label_wrap_width_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
-   ELM_LABEL_CHECK(obj) 0;
-   Evas_Coord ret = 0;
-   eo_do((Eo *) obj, elm_obj_label_wrap_width_get(&ret));
-   return ret;
+   return sd->wrap_w;
 }
 
-static void
-_wrap_width_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_label_ellipsis_set(Eo *obj, Elm_Label_Data *sd, Eina_Bool ellipsis)
 {
-   Evas_Coord *ret = va_arg(*list, Evas_Coord *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->wrap_w;
-}
-
-EAPI void
-elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
-{
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_ellipsis_set(ellipsis));
-}
-
-static void
-_ellipsis_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool ellipsis = va_arg(*list, int);
    Eina_Strbuf *fontbuf = NULL;
    int len, removeflag = 0;
    const char *text;
 
-   Elm_Label_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->ellipsis == ellipsis) return;
@@ -576,53 +515,22 @@ _ellipsis_set(Eo *obj, void *_pd, va_list *list)
    eina_strbuf_free(fontbuf);
 }
 
-EAPI Eina_Bool
-elm_label_ellipsis_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_label_ellipsis_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
-   ELM_LABEL_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_label_ellipsis_get(&ret));
-   return ret;
+   return sd->ellipsis;
 }
 
-static void
-_ellipsis_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_label_slide_mode_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, Elm_Label_Slide_Mode mode)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->ellipsis;
-}
-
-EAPI void
-elm_label_slide_mode_set(Evas_Object *obj, Elm_Label_Slide_Mode mode)
-{
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_slide_mode_set(mode));
-}
-
-static void
-_slide_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Label_Slide_Mode mode = va_arg(*list, Elm_Label_Slide_Mode);
-   Elm_Label_Smart_Data *sd = _pd;
    sd->slide_mode = mode;
 }
 
-EAPI Elm_Label_Slide_Mode
-elm_label_slide_mode_get(const Evas_Object *obj)
+EOLIAN static Elm_Label_Slide_Mode
+_elm_label_slide_mode_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
-   ELM_LABEL_CHECK(obj) ELM_LABEL_SLIDE_MODE_NONE;
-   Elm_Label_Slide_Mode ret = ELM_LABEL_SLIDE_MODE_NONE;
-   eo_do((Eo *) obj, elm_obj_label_slide_mode_get(&ret));
-   return ret;
-}
-
-static void
-_slide_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Label_Slide_Mode *ret = va_arg(*list, Elm_Label_Slide_Mode *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->slide_mode;
+   return sd->slide_mode;
 }
 
 EINA_DEPRECATED EAPI void
@@ -643,166 +551,61 @@ elm_label_slide_get(const Evas_Object *obj)
    return ret;
 }
 
-EAPI void
-elm_label_slide_duration_set(Evas_Object *obj, double duration)
+EOLIAN static void
+_elm_label_slide_duration_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, double duration)
 {
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_slide_duration_set(duration));
-}
-
-static void
-_slide_duration_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double duration = va_arg(*list, double);
-   Elm_Label_Smart_Data *sd = _pd;
    sd->slide_duration = duration;
    sd->use_slide_speed = EINA_FALSE;
 }
 
-EAPI double
-elm_label_slide_duration_get(const Evas_Object *obj)
+EOLIAN static void
+_elm_label_slide_speed_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, double speed)
 {
-   ELM_LABEL_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *) obj, elm_obj_label_slide_duration_get(&ret));
-   return ret;
-}
-
-EAPI void
-elm_label_slide_speed_set(Evas_Object *obj, double speed)
-{
-   ELM_LABEL_CHECK(obj);
-   eo_do(obj, elm_obj_label_slide_speed_set(speed));
-}
-
-static void
-_slide_speed_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double speed = va_arg(*list, double);
-   Elm_Label_Smart_Data *sd = _pd;
    sd->slide_speed = speed;
    sd->use_slide_speed = EINA_TRUE;
 }
 
-EAPI double
-elm_label_slide_speed_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_label_slide_speed_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
-   ELM_LABEL_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *) obj, elm_obj_label_slide_speed_get(&ret));
-   return ret;
+   return sd->slide_speed;
 }
 
-static void
-_slide_speed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *ret = va_arg(*list, double *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->slide_speed;
-}
-
-EAPI void
-elm_label_slide_go(Evas_Object *obj)
-{
-   ELM_LABEL_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_label_slide_go());
-}
-
-static void
-_slide_go(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_label_slide_go(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
    _label_slide_change(obj);
    elm_layout_sizing_eval(obj);
 }
 
-static void
-_slide_duration_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static double
+_elm_label_slide_duration_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Label_Smart_Data *sd = _pd;
-   *ret = sd->slide_duration;
+   return sd->slide_duration;
 }
 
-static void
-_elm_label_smart_text_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_label_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Label_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _text_aliases;
+   return _text_aliases;
 }
 
-static void
-_elm_label_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_label_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Label_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_label_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_label_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Label_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
+EOLIAN static void
+_elm_label_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_label_smart_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_label_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_label_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_label_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_label_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_label_smart_text_set),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), _elm_label_smart_text_aliases_get),
-
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_LINE_WRAP_SET), _line_wrap_set),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_LINE_WRAP_GET), _line_wrap_get),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_WRAP_WIDTH_SET), _wrap_width_set),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_WRAP_WIDTH_GET), _wrap_width_get),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_SET), _ellipsis_set),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET), _ellipsis_get),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_SET), _slide_mode_set),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET), _slide_mode_get),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET), _slide_duration_set),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET), _slide_duration_get),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO), _slide_go),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_SET), _slide_speed_set),
-        EO_OP_FUNC(ELM_OBJ_LABEL_ID(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_GET), _slide_speed_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_LINE_WRAP_SET, "Set the wrapping behavior of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_LINE_WRAP_GET, "Get the wrapping behavior of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_WRAP_WIDTH_SET, "Set wrap width of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_WRAP_WIDTH_GET, "Get wrap width of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_SET, "Set the ellipsis behavior of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_ELLIPSIS_GET, "Get the ellipsis behavior of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_SET, "Set slide effect mode of label widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_MODE_GET, "Get current slide effect mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_SET, "Set the slide duration of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_DURATION_GET, "Get the slide duration of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_GO, "Start slide effect."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_SET, "Set the slide speed of the label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_LABEL_SUB_ID_SLIDE_SPEED_GET, "Get the slide speed of the label."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_LABEL_BASE_ID, op_desc, ELM_OBJ_LABEL_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Label_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_label_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_label.eo.c"
