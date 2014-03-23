@@ -1,3 +1,7 @@
+#include "elm_map_pan.eo.h"
+#include "elm_map.eo.h"
+
+#if 0
 #define ELM_OBJ_MAP_PAN_CLASS elm_obj_map_pan_class_get()
 
 const Eo_Class *elm_obj_map_pan_class_get(void) EINA_CONST;
@@ -628,3 +632,4 @@ enum
  * @ingroup Map
  */
 #define elm_obj_map_track_remove(route) ELM_OBJ_MAP_ID(ELM_OBJ_MAP_SUB_ID_TRACK_REMOVE), EO_TYPECHECK(Evas_Object *, route)
+#endif

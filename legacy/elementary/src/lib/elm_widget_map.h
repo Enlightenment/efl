@@ -17,7 +17,7 @@
 /**
  * Base widget smart data extended with map instance data.
  */
-typedef struct _Elm_Map_Smart_Data     Elm_Map_Smart_Data;
+typedef struct _Elm_Map_Data     Elm_Map_Data;
 
 typedef struct _Elm_Map_Name_List      Elm_Map_Name_List;
 typedef char *(*Elm_Map_Module_Source_Name_Func)(void);
@@ -148,7 +148,7 @@ struct _Color
 
 struct _Overlay_Group
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    double              lon, lat;
    Elm_Map_Overlay    *overlay; // virtual group type overlay
    Elm_Map_Overlay    *klass; // class overlay for this virtual group
@@ -160,7 +160,7 @@ struct _Overlay_Group
 
 struct _Overlay_Default
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    Evas_Coord          w, h;
 
    double              lon, lat;
@@ -179,7 +179,7 @@ struct _Overlay_Default
 
 struct _Overlay_Class
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    Eina_List          *members;
    int                 zoom_max;
    Evas_Object        *content;
@@ -188,7 +188,7 @@ struct _Overlay_Class
 
 struct _Overlay_Bubble
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    Evas_Object        *pobj;
    Evas_Object        *obj, *sc, *bx;
    double              lon, lat;
@@ -197,7 +197,7 @@ struct _Overlay_Bubble
 
 struct _Overlay_Route
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
 
    Evas_Object        *obj;
    Eina_List          *paths;
@@ -206,21 +206,21 @@ struct _Overlay_Route
 
 struct _Overlay_Line
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    double              flon, flat, tlon, tlat;
    Evas_Object        *obj;
 };
 
 struct _Overlay_Polygon
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    Eina_List          *regions; // list of Regions
    Evas_Object        *obj;
 };
 
 struct _Overlay_Circle
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    double              lon, lat;
    double              radius; // Intial pixel in intial view
    double              ratio; // initial-radius/map-size
@@ -229,7 +229,7 @@ struct _Overlay_Circle
 
 struct _Overlay_Scale
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    Evas_Coord          x, y;
    Evas_Coord          w, h;
    Evas_Object        *obj;
@@ -237,7 +237,7 @@ struct _Overlay_Scale
 
 struct _Elm_Map_Overlay
 {
-   Elm_Map_Smart_Data    *wsd;
+   Elm_Map_Data    *wsd;
 
    Evas_Coord             zoom_min;
    Color                  c;
@@ -262,7 +262,7 @@ struct _Elm_Map_Overlay
 
 struct _Elm_Map_Route
 {
-   Elm_Map_Smart_Data      *wsd;
+   Elm_Map_Data      *wsd;
 
    char                    *fname;
    Elm_Map_Route_Type       type;
@@ -289,7 +289,7 @@ struct _Elm_Map_Route
 
 struct _Path_Node
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
 
    int                 idx;
    struct
@@ -301,14 +301,14 @@ struct _Path_Node
 
 struct _Path_Waypoint
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
 
    const char         *point;
 };
 
 struct _Elm_Map_Name
 {
-   Elm_Map_Smart_Data      *wsd;
+   Elm_Map_Data      *wsd;
 
    int                      method;
    char                    *address;
@@ -322,7 +322,7 @@ struct _Elm_Map_Name
 
 struct _Elm_Map_Name_List
 {
-   Elm_Map_Smart_Data      *wsd;
+   Elm_Map_Data      *wsd;
 
    Eina_List               *names;
    double                   lon, lat;
@@ -354,7 +354,7 @@ struct _Grid_Item
 {
    Grid                    *g;
 
-   Elm_Map_Smart_Data      *wsd;
+   Elm_Map_Data      *wsd;
    Evas_Object             *img;
    const char              *file;
    const char              *url;
@@ -367,7 +367,7 @@ struct _Grid_Item
 
 struct _Grid
 {
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
    int                 zoom;  /* zoom level tiles want for optimal
                                * display (1, 2, 4, 8) */
    int                 tw, th; // size of grid in tiles
@@ -377,18 +377,18 @@ struct _Grid
 struct _Calc_Job
 {
    double zoom;
-   void (*zoom_mode_set)(Elm_Map_Smart_Data *sd, double zoom);
+   void (*zoom_mode_set)(Elm_Map_Data *sd, double zoom);
 
    Eina_Bool bring_in : 1;
    double lon, lat;
-   void (*region_show_bring_in)(Elm_Map_Smart_Data *sd, double lon,
+   void (*region_show_bring_in)(Elm_Map_Data *sd, double lon,
                                 double lat, Eina_Bool bring_in);
 
    Eina_List *overlays;
-   void (*overlays_show)(Elm_Map_Smart_Data *sd, Eina_List *overlays);
+   void (*overlays_show)(Elm_Map_Data *sd, Eina_List *overlays);
 };
 
-struct _Elm_Map_Smart_Data
+struct _Elm_Map_Data
 {
    Evas_Object                          *hit_rect;
    Evas_Object                          *pan_obj;
@@ -477,11 +477,11 @@ struct _Elm_Map_Smart_Data
    Calc_Job                               calc_job;
 };
 
-typedef struct _Elm_Map_Pan_Smart_Data Elm_Map_Pan_Smart_Data;
-struct _Elm_Map_Pan_Smart_Data
+typedef struct _Elm_Map_Pan_Data Elm_Map_Pan_Data;
+struct _Elm_Map_Pan_Data
 {
    Evas_Object            *wobj;
-   Elm_Map_Smart_Data *wsd;
+   Elm_Map_Data *wsd;
 };
 
 /**
@@ -489,10 +489,10 @@ struct _Elm_Map_Pan_Smart_Data
  */
 
 #define ELM_MAP_DATA_GET(o, sd) \
-  Elm_Map_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_MAP_CLASS)
+  Elm_Map_Data * sd = eo_data_scope_get(o, ELM_OBJ_MAP_CLASS)
 
 #define ELM_MAP_PAN_DATA_GET(o, sd) \
-  Elm_Map_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_MAP_PAN_CLASS)
+  Elm_Map_Pan_Data * sd = eo_data_scope_get(o, ELM_OBJ_MAP_PAN_CLASS)
 
 #define ELM_MAP_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_MAP_DATA_GET(o, ptr);                     \

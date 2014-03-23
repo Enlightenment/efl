@@ -559,7 +559,7 @@ EAPI Elm_Map_Overlay *     elm_map_overlay_add(Evas_Object *obj, double lon, dou
  *
  * @ingroup Map
  */
-EAPI EAPI Eina_List *      elm_map_overlays_get(Evas_Object *obj);
+EAPI EAPI Eina_List *      elm_map_overlays_get(const Evas_Object *obj);
 
 /**
  * Add a new class overlay to the map object.
