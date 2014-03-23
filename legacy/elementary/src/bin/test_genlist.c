@@ -3695,7 +3695,7 @@ static void
 test_genlist_focus_focus_highlight_check_changed(void *data, Evas_Object *obj,
                                                  void *event_info EINA_UNUSED)
 {
-   elm_win_focus_highlight_enabled_set((Evas_Object *)data,
+   elm_win_focus_highlight_enabled_set(data,
                                        elm_check_state_get(obj));
 }
 
@@ -3703,8 +3703,21 @@ static void
 test_genlist_focus_focus_animate_check_changed(void *data, Evas_Object *obj,
                                                void *event_info EINA_UNUSED)
 {
-   elm_win_focus_highlight_animate_set((Evas_Object *)data,
+   elm_win_focus_highlight_animate_set(data,
                                        elm_check_state_get(obj));
+}
+
+static void
+_gl_focus_move_policy_changed(void *data EINA_UNUSED,
+                              Evas_Object *obj,
+                              void *event_info EINA_UNUSED)
+{
+   int val = elm_radio_value_get(obj);
+
+   if (val == 0)
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_CLICK);
+   else if (val == 1)
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_IN);
 }
 
 static void
@@ -3779,6 +3792,7 @@ test_genlist_focus(void *data EINA_UNUSED,
 {
    Evas_Object *win, *bx, *bx2, *gl, *btn, *fr;
    Evas_Object *bx_opt, *chk, *bx_btn, *btn_focus, *btn_sel;
+   Evas_Object *bx_mv, *rd, *rdg;
    unsigned lhand, rhand;
    Elm_Object_Item *it = NULL, *it_2 = NULL;
 
@@ -3925,6 +3939,45 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 
+   // Focus Movement Policy
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus Movement Policy");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_mv = elm_box_add(fr);
+   elm_box_horizontal_set(bx_mv, EINA_TRUE);
+   elm_object_content_set(fr, bx_mv);
+   evas_object_show(bx_mv);
+
+   rdg = rd = elm_radio_add(bx_mv);
+   elm_object_text_set(rd, "Focus Move by Click");
+   elm_radio_state_value_set(rd, 0);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _gl_focus_move_policy_changed,
+                                  NULL);
+   elm_box_pack_end(bx_mv, rd);
+   evas_object_show(rd);
+
+   rd = elm_radio_add(bx_mv);
+   elm_object_text_set(rd, "Focus Move by Mouse-In");
+   elm_radio_group_add(rd, rdg);
+   elm_radio_state_value_set(rd, 1);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _gl_focus_move_policy_changed,
+                                  NULL);
+   elm_box_pack_end(bx_mv, rd);
+   evas_object_show(rd);
+
+   // Focus/Selection
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus/Selection");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    // Focus/Selection
    fr = elm_frame_add(bx);
    elm_object_text_set(fr, "Focus/Selection");
