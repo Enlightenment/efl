@@ -513,7 +513,7 @@ abstract Elm_Widget (Evas_Smart)
       access {
          /*@ 'Virtual' function on the widget being set access. */
          params {
-            @in Eina_Bool access;
+            @in Eina_Bool acs;
          }
          legacy null;
       }

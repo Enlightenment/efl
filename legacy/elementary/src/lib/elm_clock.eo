@@ -171,7 +171,7 @@ class Elm_Clock (Elm_Layout)
             @since 1.9 */
          }
          values {
-            Eina_Bool pause; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
+            Eina_Bool paused; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
          }
       }
       time {

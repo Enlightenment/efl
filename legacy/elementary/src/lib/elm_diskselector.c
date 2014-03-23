@@ -1404,9 +1404,9 @@ _elm_diskselector_evas_smart_member_add(Eo *obj, Elm_Diskselector_Data *sd, Evas
 }
 
 EOLIAN static void
-_elm_diskselector_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool access)
+_elm_diskselector_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
-   _elm_diskselector_smart_focus_next_enable = access;
+   _elm_diskselector_smart_focus_next_enable = acs;
 }
 
 EAPI Evas_Object *
