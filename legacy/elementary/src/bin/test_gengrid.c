@@ -1415,6 +1415,8 @@ test_gengrid_focus(void *data EINA_UNUSED,
         id->mode = i;
         id->path = eina_stringshare_add(buf);
         id->item = elm_gengrid_item_append(gengrid, ic, id, NULL, NULL);
+        if (i == 4)
+          elm_object_item_disabled_set(id->item, EINA_TRUE);
      }
    elm_gengrid_item_class_free(ic);
 

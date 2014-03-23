@@ -3872,6 +3872,8 @@ test_genlist_focus(void *data EINA_UNUSED,
              it = elm_genlist_item_append(gl, itc1, (void*)(uintptr_t)digit2,
                                           NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
              if (!it_2) it_2 = it;
+             if (rhand == 4)
+               elm_object_item_disabled_set(it, EINA_TRUE);
 
              if (rhand == (_gl_focus_objects - 1))
                elm_genlist_item_append(gl, itc4, (void*)(uintptr_t)digit1,

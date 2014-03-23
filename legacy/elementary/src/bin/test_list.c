@@ -1565,6 +1565,8 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
                                   test_list_focus_content_get(li, lhand, horiz),
                                   test_list_focus_content_get(li, rhand, horiz),
                                   NULL, NULL);
+        if (idx == 4)
+          elm_object_item_disabled_set(it, EINA_TRUE);
         if (idx == 2)
           it_3 = it;
      }
