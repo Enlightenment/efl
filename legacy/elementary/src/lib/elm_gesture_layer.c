@@ -5,8 +5,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-EAPI Eo_Op ELM_OBJ_GESTURE_LAYER_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_GESTURE_LAYER_CLASS
 
 #define MY_CLASS_NAME "Elm_Gesture_Layer"
@@ -58,7 +56,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ((sd->gesture[T]) ? sd->gesture[T]->test : EINA_FALSE)
 
 #define ELM_GESTURE_LAYER_DATA_GET(o, sd) \
-  Elm_Gesture_Layer_Smart_Data * sd = eo_data_scope_get(o, MY_CLASS)
+  Elm_Gesture_Layer_Data * sd = eo_data_scope_get(o, MY_CLASS)
 
 #define ELM_GESTURE_LAYER_DATA_GET_OR_RETURN(o, ptr) \
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                \
@@ -359,8 +357,8 @@ struct _Rotate_Type /* Fields used by _rotation_test() */
 };
 typedef struct _Rotate_Type                  Rotate_Type;
 
-typedef struct _Elm_Gesture_Layer_Smart_Data Elm_Gesture_Layer_Smart_Data;
-struct _Elm_Gesture_Layer_Smart_Data
+typedef struct _Elm_Gesture_Layer_Data Elm_Gesture_Layer_Data;
+struct _Elm_Gesture_Layer_Data
 {
    Evas_Object          *target; /* Target Widget */
    Event_History        *event_history_list;
@@ -536,7 +534,7 @@ _event_flag_get(void *event_info,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_event_consume(Elm_Gesture_Layer_Smart_Data *sd,
+_event_consume(Elm_Gesture_Layer_Data *sd,
                void *event_info,
                Evas_Callback_Type event_type,
                Evas_Event_Flags ev_flags)
@@ -683,7 +681,7 @@ _state_set(Gesture_Info *g,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_states_reset(Elm_Gesture_Layer_Smart_Data *sd)
+_states_reset(Elm_Gesture_Layer_Data *sd)
 {
    int i;
    Gesture_Info *p;
@@ -1573,7 +1571,7 @@ static Eina_List *
 _pointer_event_record(Taps_Type *st,
                       Eina_List *pe_list,
                       Pointer_Event *pe,
-                      Elm_Gesture_Layer_Smart_Data *sd,
+                      Elm_Gesture_Layer_Data *sd,
                       void *event_info,
                       Evas_Callback_Type event_type)
 {
@@ -3719,23 +3717,20 @@ _rotate_test(Evas_Object *obj,
      }
 }
 
-static void
-_elm_gesture_layer_smart_disable(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gesture_layer_elm_widget_disable(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (elm_widget_disabled_get(obj))
      _callbacks_unregister(obj);
    else
      _callbacks_register(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gesture_layer_evas_smart_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
-   Elm_Gesture_Layer_Smart_Data *priv = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
@@ -3764,12 +3759,11 @@ _elm_gesture_layer_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    memset(priv->gesture, 0, sizeof(priv->gesture));
 }
 
-static void _cbs_clean(Elm_Gesture_Layer_Smart_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type);
+static void _cbs_clean(Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type);
 
-static void
-_elm_gesture_layer_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gesture_layer_evas_smart_del(Eo *obj, Elm_Gesture_Layer_Data *sd)
 {
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
    Pointer_Event *data;
    int i;
 
@@ -3823,138 +3817,57 @@ elm_gesture_layer_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gesture_layer_eo_base_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
-EAPI Eina_Bool
-elm_gesture_layer_hold_events_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_gesture_layer_hold_events_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
-   ELM_GESTURE_LAYER_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_gesture_layer_hold_events_get(&ret));
-   return ret;
+   return !sd->repeat_events;
 }
 
-static void
-_hold_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gesture_layer_hold_events_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd, Eina_Bool hold_events)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-   *ret = !sd->repeat_events;
-}
-
-EAPI void
-elm_gesture_layer_hold_events_set(Evas_Object *obj,
-                                  Eina_Bool hold_events)
-{
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_hold_events_set(hold_events));
-}
-
-static void
-_hold_events_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool hold_events = va_arg(*list, int);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-
    sd->repeat_events = !(!!hold_events);
 }
 
-EAPI double
-elm_gesture_layer_zoom_step_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_gesture_layer_zoom_step_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
-   ELM_GESTURE_LAYER_CHECK(obj) 0;
-   double ret = 0;
-   eo_do((Eo *) obj, elm_obj_gesture_layer_zoom_step_get(&ret));
-   return ret;
+   return sd->zoom_step;
 }
 
-static void
-_zoom_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gesture_layer_zoom_step_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd, double step)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-   *ret = sd->zoom_step;
-}
-
-EAPI void
-elm_gesture_layer_zoom_step_set(Evas_Object *obj,
-                                double step)
-{
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_zoom_step_set(step));
-}
-
-static void
-_zoom_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double step = va_arg(*list, double);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-
    if (step < 0) return;
 
    sd->zoom_step = step;
 }
 
-EAPI double
-elm_gesture_layer_rotate_step_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_gesture_layer_rotate_step_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
-   ELM_GESTURE_LAYER_CHECK(obj) 0;
-   double ret = 0;
-   eo_do((Eo *) obj, elm_obj_gesture_layer_rotate_step_get(&ret));
-   return ret;
+   return sd->rotate_step;
 }
 
-static void
-_rotate_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gesture_layer_rotate_step_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd, double step)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-   *ret = sd->rotate_step;
-}
-
-EAPI void
-elm_gesture_layer_rotate_step_set(Evas_Object *obj,
-                                  double step)
-{
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_rotate_step_set(step));
-}
-
-static void
-_rotate_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double step = va_arg(*list, double);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-
    if (step < 0) return;
 
    sd->rotate_step = step;
 }
 
-EAPI Eina_Bool
-elm_gesture_layer_attach(Evas_Object *obj,
-                         Evas_Object *target)
+EOLIAN static Eina_Bool
+_elm_gesture_layer_attach(Eo *obj, Elm_Gesture_Layer_Data *sd, Evas_Object *target)
 {
-   ELM_GESTURE_LAYER_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_gesture_layer_attach(target, &ret));
-   return ret;
-}
-
-static void
-_attach(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Object *target = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-   if (ret) *ret = EINA_FALSE;
-
-   if (!target) return;
+   if (!target) return EINA_FALSE;
 
    /* if was attached before, unregister callbacks first */
    if (sd->target)
@@ -3963,11 +3876,11 @@ _attach(Eo *obj, void *_pd, va_list *list)
    sd->target = target;
 
    _callbacks_register(obj);
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
-_cbs_clean(Elm_Gesture_Layer_Smart_Data *sd,
+_cbs_clean(Elm_Gesture_Layer_Data *sd,
           Elm_Gesture_Type idx,
           Elm_Gesture_State cb_type)
 {
@@ -3983,27 +3896,9 @@ _cbs_clean(Elm_Gesture_Layer_Smart_Data *sd,
    SET_TEST_BIT(sd->gesture[idx]);
 }
 
-EAPI void
-elm_gesture_layer_cb_set(Evas_Object *obj,
-                         Elm_Gesture_Type idx,
-                         Elm_Gesture_State cb_type,
-                         Elm_Gesture_Event_Cb cb,
-                         void *data)
+EOLIAN static void
+_elm_gesture_layer_cb_set(Eo *obj, Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
 {
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_cb_set(idx, cb_type, cb, data));
-}
-
-static void
-_cb_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Gesture_Type idx = va_arg(*list, Elm_Gesture_Type);
-   Elm_Gesture_State cb_type = va_arg(*list, Elm_Gesture_State);
-   Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
-   void *data = va_arg(*list, void *);
-
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-
    /* Clear gesture intermediate data, stop any timers */
    if (IS_TESTED_GESTURE(sd->gesture[idx]))
      _glayer_tests_array[idx].reset(sd->gesture[idx]);
@@ -4012,29 +3907,12 @@ _cb_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data));
 }
 
-EAPI void
-elm_gesture_layer_cb_add(Evas_Object *obj,
-                         Elm_Gesture_Type idx,
-                         Elm_Gesture_State cb_type,
-                         Elm_Gesture_Event_Cb cb,
-                         void *data)
+EOLIAN static void
+_elm_gesture_layer_cb_add(Eo *obj, Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
 {
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_cb_add(idx, cb_type, cb, data));
-}
-
-static void
-_cb_add(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Gesture_Type idx = va_arg(*list, Elm_Gesture_Type);
-   Elm_Gesture_State cb_type = va_arg(*list, Elm_Gesture_State);
-   Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
-   void *data = va_arg(*list, void *);
-
    if (!cb) return;
 
    Gesture_Info *p;
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
 
    if (!sd->gesture[idx])
      sd->gesture[idx] = calloc(1, sizeof(Gesture_Info));
@@ -4054,27 +3932,9 @@ _cb_add(Eo *obj, void *_pd, va_list *list)
    SET_TEST_BIT(p);
 }
 
-EAPI void
-elm_gesture_layer_cb_del(Evas_Object *obj,
-                         Elm_Gesture_Type idx,
-                         Elm_Gesture_State cb_type,
-                         Elm_Gesture_Event_Cb cb,
-                         void *data)
+EOLIAN static void
+_elm_gesture_layer_cb_del(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
 {
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_cb_del(idx, cb_type, cb, data));
-}
-
-static void
-_cb_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Gesture_Type idx = va_arg(*list, Elm_Gesture_Type);
-   Elm_Gesture_State cb_type = va_arg(*list, Elm_Gesture_State);
-   Elm_Gesture_Event_Cb cb = va_arg(*list, Elm_Gesture_Event_Cb);
-   void *data = va_arg(*list, void *);
-
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-
    if (!sd->gesture[idx]) return;
 
    Eina_Inlist *itr;
@@ -4272,98 +4132,25 @@ elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj)
    return sd->double_tap_timeout;
 }
 
-EAPI void
-elm_gesture_layer_tap_finger_size_set(Evas_Object *obj,
-      Evas_Coord sz)
+EOLIAN static void
+_elm_gesture_layer_tap_finger_size_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd, Evas_Coord sz)
 {
-   ELM_GESTURE_LAYER_CHECK(obj);
-   eo_do(obj, elm_obj_gesture_layer_tap_finger_size_set(sz));
-}
-
-static void
-_tap_finger_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord sz = va_arg(*list, Evas_Coord);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-
    if (sz < 0)
       sz = 0;  /* Should not be negative, will reset to system value */
 
    sd->tap_finger_size = sz;
 }
 
-EAPI Evas_Coord
-elm_gesture_layer_tap_finger_size_get(const Evas_Object *obj)
+EOLIAN static Evas_Coord
+_elm_gesture_layer_tap_finger_size_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
-   ELM_GESTURE_LAYER_CHECK(obj) elm_config_finger_size_get();
-   Evas_Coord ret = 0;
-   eo_do((Eo *) obj, elm_obj_gesture_layer_tap_finger_size_get(&ret));
-   return ret;
+   return sd->tap_finger_size;
 }
 
 static void
-_tap_finger_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_gesture_layer_class_constructor(Eo_Class *klass)
 {
-   Evas_Coord *ret = va_arg(*list, Evas_Coord *);
-   Elm_Gesture_Layer_Smart_Data *sd = _pd;
-   *ret = sd->tap_finger_size;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_gesture_layer_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_gesture_layer_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_DISABLE), _elm_gesture_layer_smart_disable),
-
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_GET), _hold_events_get),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_SET), _hold_events_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_GET), _zoom_step_get),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_SET), _zoom_step_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_GET), _rotate_step_get),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET), _rotate_step_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH), _attach),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET), _cb_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_SET), _tap_finger_size_set),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET), _tap_finger_size_get),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD), _cb_add),
-        EO_OP_FUNC(ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL), _cb_del),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_GET, "Call this function to get repeat-events settings."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_HOLD_EVENTS_SET, "This function is to make gesture-layer repeat events."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_GET, "This function returns step-value for zoom action."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ZOOM_STEP_SET, "This function sets step-value for zoom action."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_GET, "This function returns step-value for rotate action."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ROTATE_STEP_SET, "This function sets step-value for rotate action."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_ATTACH, "Attach a given gesture layer widget to an Evas object, thus setting the widget's target."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_SET, "Use function to set callbacks to be notified about change of state of gesture."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_SET, "Use function to set valid touch-area size for finger."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET, "This function returns the valid touch-area size for finger."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_ADD, "Use function to add callbacks to be notified about change of state of gesture."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GESTURE_LAYER_SUB_ID_CB_DEL, "Use function to remove added callbacks."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_GESTURE_LAYER_BASE_ID, op_desc, ELM_OBJ_GESTURE_LAYER_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Gesture_Layer_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_gesture_layer_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
+#include "elm_gesture_layer.eo.c"

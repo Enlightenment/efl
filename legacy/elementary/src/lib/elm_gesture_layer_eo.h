@@ -1,3 +1,6 @@
+#include "elm_gesture_layer.eo.h"
+
+#if 0
 #define ELM_OBJ_GESTURE_LAYER_CLASS elm_obj_gesture_layer_class_get()
 
 const Eo_Class *elm_obj_gesture_layer_class_get(void) EINA_CONST;
@@ -214,3 +217,4 @@ enum
  * @ingroup Elm_Gesture_Layer
  */
 #define elm_obj_gesture_layer_tap_finger_size_get(ret) ELM_OBJ_GESTURE_LAYER_ID(ELM_OBJ_GESTURE_LAYER_SUB_ID_TAP_FINGER_SIZE_GET), EO_TYPECHECK(Evas_Coord *, ret)
+#endif

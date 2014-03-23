@@ -585,7 +585,9 @@ BUILT_SOURCES = \
 		elm_entry.eo.c \
 		elm_entry.eo.h \
 		elm_flip.eo.c \
-		elm_flip.eo.h
+		elm_flip.eo.h \
+		elm_gesture_layer.eo.c \
+		elm_gesture_layer.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -618,7 +620,8 @@ EXTRA_DIST += \
 	     elm_dayselector.eo \
 	     elm_diskselector.eo \
 	     elm_entry.eo \
-	     elm_flip.eo
+	     elm_flip.eo \
+	     elm_gesture_layer.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -651,5 +654,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_dayselector.eo.h \
 				  elm_diskselector.eo.h \
 				  elm_entry.eo.h \
-				  elm_flip.eo.h
+				  elm_flip.eo.h \
+				  elm_gesture_layer.eo.h
 
