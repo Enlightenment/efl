@@ -2440,7 +2440,7 @@ static void
 _elm_genlist_item_focused(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
-   Elm_Genlist_Smart_Data *sd = GL_IT(it)->wsd;
+   ELM_GENLIST_DATA_GET(obj, sd);
    const char *focus_raise;
 
    if (it->generation < sd->generation)
@@ -2464,14 +2464,14 @@ _elm_genlist_item_focused(Elm_Gen_Item *it)
    focus_raise = edje_object_data_get(VIEW(it), "focusraise");
    if ((focus_raise) && (!strcmp(focus_raise, "on")))
      evas_object_raise(VIEW(it));
-   evas_object_smart_callback_call
-           (WIDGET(it), SIG_ITEM_FOCUSED, it);
+   evas_object_smart_callback_call(obj, SIG_ITEM_FOCUSED, it);
 }
 
 static void
 _elm_genlist_item_unfocused(Elm_Gen_Item *it)
 {
-   Elm_Genlist_Smart_Data *sd = GL_IT(it)->wsd;
+   Evas_Object *obj = WIDGET(it);
+   ELM_GENLIST_DATA_GET(obj, sd);
 
    if (it->generation < sd->generation)
      return;
@@ -2486,12 +2486,12 @@ _elm_genlist_item_unfocused(Elm_Gen_Item *it)
 
    sd->prev_focused_item = (Elm_Object_Item *)it;
 
-   edje_object_signal_emit
-      (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
+   if (elm_widget_focus_highlight_enabled_get(obj))
+     edje_object_signal_emit
+        (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
 
    sd->focused_item = NULL;
-   evas_object_smart_callback_call
-      (WIDGET(it), SIG_ITEM_UNFOCUSED, it);
+   evas_object_smart_callback_call(obj, SIG_ITEM_UNFOCUSED, it);
 }
 
 /* NOTE: this code will be used later when the item selection on key press

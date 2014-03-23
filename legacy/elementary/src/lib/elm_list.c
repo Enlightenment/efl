@@ -1036,7 +1036,8 @@ _elm_list_item_focused(Elm_List_Item *it)
 static void
 _elm_list_item_unfocused(Elm_List_Item *it)
 {
-   ELM_LIST_DATA_GET(WIDGET(it), sd);
+   Evas_Object *obj = WIDGET(it);
+   ELM_LIST_DATA_GET(obj, sd);
 
    if ((!sd) || (!sd->focused_item) ||
        (it != (Elm_List_Item *)sd->focused_item))
@@ -1046,13 +1047,14 @@ _elm_list_item_unfocused(Elm_List_Item *it)
    if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      return;
 
-   if (elm_widget_focus_highlight_enabled_get(WIDGET(sd->focused_item)))
-     edje_object_signal_emit
-        (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
+   if (elm_widget_focus_highlight_enabled_get(obj))
+     {
+        edje_object_signal_emit
+           (VIEW(sd->focused_item), "elm,state,unfocused", "elm");
+     }
 
    sd->focused_item = NULL;
-   evas_object_smart_callback_call
-      (WIDGET(it), SIG_ITEM_UNFOCUSED, it);
+   evas_object_smart_callback_call(obj, SIG_ITEM_UNFOCUSED, it);
 }
 
 /*
