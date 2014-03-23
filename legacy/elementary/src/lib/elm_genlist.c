@@ -2815,8 +2815,8 @@ _elm_genlist_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
 
 /*
  * This function searches the nearest visible item based on the given item.
- * If the given item is in the genlist viewport, this returns the give item.
- * Or this searches the realied items and checks the nearest fully visible item
+ * If the given item is in the genlist viewport, this returns the given item.
+ * Or this searches the realized items and checks the nearest fully visible item
  * according to the given item's position.
  */
 static Elm_Object_Item *
