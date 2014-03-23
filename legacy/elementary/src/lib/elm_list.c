@@ -1055,6 +1055,56 @@ _elm_list_item_unfocused(Elm_List_Item *it)
       (WIDGET(it), SIG_ITEM_UNFOCUSED, it);
 }
 
+/*
+ * This function searches the nearest visible item based on the given item.
+ * If the given item is in the list viewport, this returns the given item.
+ * Or this searches other items and checks the nearest fully visible item
+ * according to the given item's position.
+ */
+static Elm_Object_Item *
+_elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
+{
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0; // list viewport geometry
+   Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0; // candidate item geometry
+   Eina_List *item_list = NULL;
+   Elm_Object_Item *item = NULL;
+   ELM_LIST_DATA_GET(obj, sd);
+
+   if (!it) return NULL;
+
+   evas_object_geometry_get(obj, &vx, &vy, &vw, &vh);
+   evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
+
+   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+     return it;
+
+   item_list = eina_list_data_find_list(sd->items, it);
+
+   if ((!sd->h_mode && (iy < vy)) ||
+       (sd->h_mode && (iw < vw)))
+     {
+        while ((item_list = eina_list_next(item_list)))
+          {
+             item = eina_list_data_get(item_list);
+             evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+               return item;
+          }
+     }
+   else
+     {
+        while ((item_list = eina_list_prev(item_list)))
+          {
+             item = eina_list_data_get(item_list);
+             evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+               return item;
+          }
+     }
+   return NULL;
+}
+
 static void
 _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
 {
@@ -1062,6 +1112,8 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    Elm_List_Smart_Data *sd = _pd;
+   Elm_Object_Item *it = NULL;
+   Eina_Bool is_sel = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
    if (!int_ret) return;
@@ -1074,13 +1126,26 @@ _elm_list_smart_on_focus(Eo *obj, void *_pd, va_list *list)
    if (elm_widget_focus_get(obj) && !sd->mouse_down)
      {
         if (sd->last_focused_item)
-          _elm_list_item_focused((Elm_List_Item *)sd->last_focused_item);
+          it = sd->last_focused_item;
         else if (sd->last_selected_item)
-          _elm_list_item_focused((Elm_List_Item *)sd->last_selected_item);
+          it = sd->last_selected_item;
         else
-          elm_list_item_selected_set(
-             eina_list_data_get(sd->items), EINA_TRUE);
-        _elm_widget_focus_highlight_start(obj);
+          {
+             it = eina_list_data_get(sd->items);
+             is_sel = EINA_TRUE;
+          }
+
+        if (it)
+          {
+             it = _elm_list_nearest_visible_item_get(obj, it);
+             if (it)
+               {
+                  if (is_sel)
+                    elm_list_item_selected_set(it, EINA_TRUE);
+                  else
+                    elm_object_item_focus_set(it, EINA_TRUE);
+               }
+          }
      }
    else
      {
