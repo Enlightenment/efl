@@ -2,6 +2,7 @@
    part { \
       name: "field"#_pos; type: SWALLOW; \
       scale: 1; \
+      clip_to: "clip"; \
       description { state: "default" 0.0; \
          visible: 0; \
          min: 0 0; \
@@ -102,7 +103,14 @@
    }
 group { name: "elm/datetime/base/default";
    parts {
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "separator0";
+            rel2.to: "separator7";
+         }
+      }
       part { name: "disclip"; type: RECT;
+         clip_to: "clip";
          description { state: "default" 0.0;
             rel1.to: "separator0";
             rel2.to: "separator7";
@@ -113,6 +121,7 @@ group { name: "elm/datetime/base/default";
          }
       }
       part { name: "disclip2"; type: RECT;
+         clip_to: "clip";
          description { state: "default" 0.0;
             rel1.to: "separator0";
             rel2.to: "separator7";
