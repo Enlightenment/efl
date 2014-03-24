@@ -9122,6 +9122,15 @@ st_collections_group_parts_part_description_params_choice(void)
 }
 
 static void
+_program_sequence_check(void)
+{
+   if (sequencing != current_program) return;
+   ERR("parse error %s:%i. cannot set sequence parent program attributes within sequence block",
+                 file_in, line - 1);
+   exit(-1);
+}
+
+static void
 _program_after(const char *name)
 {
    Edje_Part_Collection *pc;
@@ -9245,6 +9254,8 @@ st_collections_group_programs_program_name(void)
 
    check_arg_count(1);
 
+   _program_sequence_check();
+
    pc = eina_list_data_get(eina_list_last(edje_collections));
    if (current_program->name) free((void *)current_program->name);
    current_program->name = parse_str(0);
@@ -9281,6 +9292,8 @@ st_collections_group_programs_program_signal(void)
 
    check_arg_count(1);
 
+   _program_sequence_check();
+
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    _edje_program_remove(pc, current_program);
@@ -9307,6 +9320,8 @@ st_collections_group_programs_program_source(void)
 
    check_arg_count(1);
 
+   _program_sequence_check();
+
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    _edje_program_remove(pc, current_program);
@@ -9331,6 +9346,8 @@ st_collections_group_programs_program_filter(void)
 {
    check_min_arg_count(1);
 
+   _program_sequence_check();
+
    if(is_param(1)) {
 	   current_program->filter.part = parse_str(0);
 	   current_program->filter.state = parse_str(1);
@@ -9354,6 +9371,8 @@ static void
 st_collections_group_programs_program_in(void)
 {
    check_arg_count(2);
+
+   _program_sequence_check();
 
    current_program->in.from = parse_float_range(0, 0.0, 999999999.0);
    current_program->in.range = parse_float_range(1, 0.0, 999999999.0);
@@ -9654,6 +9673,8 @@ st_collections_group_programs_program_transition(void)
 {
    check_min_arg_count(2);
 
+   _program_sequence_check();
+
    current_program->tween.mode = parse_enum(0,
                                             // short names
 					    "LIN", EDJE_TWEEN_MODE_LINEAR,
@@ -9824,6 +9845,8 @@ st_collections_group_programs_program_target(void)
 {
    check_arg_count(1);
 
+   _program_sequence_check();
+
    _program_target_add(parse_str(0));
 }
 
@@ -9844,6 +9867,10 @@ static void
 st_collections_group_programs_program_targets(void)
 {
    int n, argc;
+
+   check_min_arg_count(1);
+
+   _program_sequence_check();
 
    for (n = 0, argc = get_arg_count(); n < argc; n++)
      _program_target_add(parse_str(n));
@@ -9867,6 +9894,7 @@ st_collections_group_programs_program_after(void)
    char *name;
 
    check_arg_count(1);
+   _program_sequence_check();
    name = parse_str(0);
    _program_after(name);
    free(name);
@@ -9889,6 +9917,8 @@ static void
 st_collections_group_programs_program_api(void)
 {
    check_min_arg_count(1);
+
+   _program_sequence_check();
 
    current_program->api.name = parse_str(0);
 
@@ -9974,6 +10004,8 @@ ob_collections_group_programs_program_script(void)
 {
    Edje_Part_Collection *pc;
    Code *cd;
+
+   _program_sequence_check();
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    cd = eina_list_data_get(eina_list_last(codes));
