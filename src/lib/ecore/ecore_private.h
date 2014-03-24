@@ -128,7 +128,7 @@ Ecore_Timer *_ecore_timer_loop_add(double in,
                                    Ecore_Task_Cb func,
                                    const void *data);
 void        *_ecore_timer_del(Ecore_Timer *timer);
-void         _ecore_timer_delay(Ecore_Timer *timer,
+void         _ecore_timer_util_delay(Ecore_Timer *timer,
                                 double add);
 void         _ecore_timer_shutdown(void);
 void         _ecore_timer_cleanup(void);

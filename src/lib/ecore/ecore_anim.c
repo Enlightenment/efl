@@ -71,7 +71,7 @@ _begin_tick(void)
 
              timer = _ecore_timer_loop_add(animators_frametime,
                                            _ecore_animator, NULL);
-             _ecore_timer_delay(timer, d);
+             _ecore_timer_util_delay(timer, d);
           }
         break;
 

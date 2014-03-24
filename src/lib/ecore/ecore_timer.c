@@ -10,13 +10,11 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#define MY_CLASS ECORE_TIMER_CLASS
+#define MY_CLASS ECORE_OBJ_TIMER_CLASS
 #define MY_CLASS_NAME "Ecore_Timer"
 
-EAPI Eo_Op ECORE_TIMER_BASE_ID = EO_NOOP;
-
 #define ECORE_TIMER_CHECK(obj)                       \
-  if (!eo_isa((obj), ECORE_TIMER_CLASS)) \
+  if (!eo_isa((obj), ECORE_OBJ_TIMER_CLASS)) \
     return
 
 #ifdef WANT_ECORE_TIMER_DUMP
@@ -26,7 +24,7 @@ EAPI Eo_Op ECORE_TIMER_BASE_ID = EO_NOOP;
 typedef void (*Ecore_Timer_Bt_Func)();
 #endif
 
-struct _Ecore_Timer_Private_Data
+struct _Ecore_Timer_Data
 {
    EINA_INLIST;
    Ecore_Timer         *obj;
@@ -47,7 +45,7 @@ struct _Ecore_Timer_Private_Data
    unsigned char       frozen : 1;
 };
 
-typedef struct _Ecore_Timer_Private_Data Ecore_Timer_Private_Data;
+typedef struct _Ecore_Timer_Data Ecore_Timer_Data;
 
 static void _ecore_timer_set(Ecore_Timer *timer,
                              double        at,
@@ -61,9 +59,9 @@ static int _ecore_timer_cmp(const void *d1,
 
 static int timers_added = 0;
 static int timers_delete_me = 0;
-static Ecore_Timer_Private_Data *timers = NULL;
-static Ecore_Timer_Private_Data *timer_current = NULL;
-static Ecore_Timer_Private_Data *suspended = NULL;
+static Ecore_Timer_Data *timers = NULL;
+static Ecore_Timer_Data *timer_current = NULL;
+static Ecore_Timer_Data *suspended = NULL;
 static double last_check = 0.0;
 static double precision = 10.0 / 1000000.0;
 
@@ -153,14 +151,14 @@ ecore_timer_add(double        in,
    Ecore_Timer *timer = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   timer = eo_add_custom(MY_CLASS, _ecore_parent, ecore_timer_constructor(in, func, data));
+   timer = eo_add_custom(MY_CLASS, _ecore_parent, ecore_obj_timer_constructor(in, func, data));
    eo_unref(timer);
    return timer;
 }
 
 static Eina_Bool
 _ecore_timer_add(Ecore_Timer *obj,
-                 Ecore_Timer_Private_Data *timer,
+                 Ecore_Timer_Data *timer,
                  double now,
                  double in,
                  Ecore_Task_Cb func,
@@ -194,43 +192,34 @@ _ecore_timer_add(Ecore_Timer *obj,
    return EINA_TRUE;
 }
 
-static void
-_timer_constructor(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_ecore_timer_constructor(Eo *obj, Ecore_Timer_Data *timer, double in, Ecore_Task_Cb func, const void *data)
 {
-   double in = va_arg(*list, double);
-   Ecore_Task_Cb func = va_arg(*list, Ecore_Task_Cb);
-   const void *data = va_arg(*list, const void *);
    double now;
 
    _ecore_lock();
    now = ecore_time_get();
 
-   Ecore_Timer_Private_Data *timer = _pd;
    _ecore_timer_add(obj, timer, now, in, func, data);
    _ecore_unlock();
 }
 
-static void
-_timer_loop_constructor(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_ecore_timer_loop_constructor(Eo *obj, Ecore_Timer_Data *timer, double in, Ecore_Task_Cb func, const void *data)
 {
-   double in = va_arg(*list, double);
-   Ecore_Task_Cb func = va_arg(*list, Ecore_Task_Cb);
-   const void *data = va_arg(*list, const void *);
    double now;
 
    now = ecore_loop_time_get();
 
-   Ecore_Timer_Private_Data *timer = _pd;
    _ecore_timer_add(obj, timer, now, in, func, data);
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_timer_eo_base_constructor(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED)
 {
    eo_error_set(obj);
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
-
 
 /**
  * Creates a timer to call the given function in the given period of time.
@@ -289,21 +278,11 @@ ecore_timer_del(Ecore_Timer *timer)
  * @param   timer The timer to change.
  * @param   in    The interval in seconds.
  */
-EAPI void
-ecore_timer_interval_set(Ecore_Timer *timer,
-                         double       in)
-{
-   ECORE_TIMER_CHECK(timer);
-   eo_do(timer, ecore_obj_timer_interval_set(in));
-}
-
-static void
-_timer_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_ecore_timer_interval_set(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer, double in)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   double in = va_arg(*list, double);
    if (in < 0.0) in = 0.0;
-   Ecore_Timer_Private_Data *timer = _pd;
 
    _ecore_lock();
    timer->in = in;
@@ -316,27 +295,17 @@ _timer_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
  * @param   timer The timer to retrieve the interval from
  * @return  The interval on success. -1 on failure.
  */
-EAPI double
-ecore_timer_interval_get(Ecore_Timer *timer)
+EOLIAN static double
+_ecore_timer_interval_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
-   double interval = -1.0;
-
-   ECORE_TIMER_CHECK(timer) interval;
-   eo_do(timer, ecore_obj_timer_interval_get(&interval));
-   return interval;
-}
-
-static void
-_timer_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *ret = va_arg(*list, double *);
-   *ret = -1.0;
+   double ret = -1.0;
 
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Timer_Private_Data *timer = _pd;
    _ecore_lock();
-   *ret = timer->in;
+   ret = timer->in;
    _ecore_unlock();
+
+   return ret;
 }
 
 /**
@@ -346,22 +315,13 @@ _timer_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
  * @param   timer The timer to change.
  * @param   add   The delay to add to the next iteration.
  */
-EAPI void
-ecore_timer_delay(Ecore_Timer *timer,
-                  double       add)
+EOLIAN static void
+_ecore_timer_delay(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED, double add)
 {
-   ECORE_TIMER_CHECK(timer);
-   eo_do(timer, ecore_obj_timer_delay(add));
-}
-
-static void
-_timer_delay(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   double add = va_arg(*list, double);
    EINA_MAIN_LOOP_CHECK_RETURN;
 
    _ecore_lock();
-   _ecore_timer_delay(obj, add);
+   _ecore_timer_util_delay(obj, add);
    _ecore_unlock();
 }
 
@@ -375,20 +335,11 @@ _timer_delay(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
  * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
  * @endcode
  */
-EAPI void
-ecore_timer_reset(Ecore_Timer *timer)
-{
-   ECORE_TIMER_CHECK(timer);
-   eo_do(timer, ecore_obj_timer_reset());
-}
-
-static void
-_timer_reset(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_timer_reset(Eo *obj, Ecore_Timer_Data *timer)
 {
    double now, add;
    EINA_MAIN_LOOP_CHECK_RETURN;
-
-   Ecore_Timer_Private_Data *timer = _pd;
 
    _ecore_lock();
    now = ecore_time_get();
@@ -397,7 +348,7 @@ _timer_reset(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      add = timer->pending;
    else
      add = timer->at - now;
-   _ecore_timer_delay(obj, timer->in - add);
+   _ecore_timer_util_delay(obj, timer->in - add);
    _ecore_unlock();
 }
 
@@ -408,36 +359,27 @@ _timer_reset(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
  * @return The pending time.
  * @ingroup        Ecore_Timer_Group
  */
-EAPI double
-ecore_timer_pending_get(Ecore_Timer *timer)
-{
-   double ret = 0.0;
-
-   ECORE_TIMER_CHECK(timer) ret;
-   eo_do(timer, ecore_obj_timer_pending_get(&ret));
-   return ret;
-}
-
-static void
-_timer_pending_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static double
+_ecore_timer_pending_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
    double now;
-   double *ret = va_arg(*list, double *);
-   *ret = 0.0;
+   double ret = 0.0;
 
    EINA_MAIN_LOOP_CHECK_RETURN;
 
    _ecore_lock();
-   Ecore_Timer_Private_Data *timer = _pd;
 
    now = ecore_time_get();
 
    if (timer->frozen)
-     *ret = timer->pending;
+     ret = timer->pending;
    else
-     *ret = timer->at - now;
+     ret = timer->at - now;
    _ecore_unlock();
+
+   return ret;
 }
+
 /**
  * Pauses a running timer.
  *
@@ -459,22 +401,21 @@ ecore_timer_freeze(Ecore_Timer *timer)
    eo_do(timer, eo_event_freeze());
 }
 
-static void
-_timer_freeze(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_timer_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
    double now;
 
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   Ecore_Timer_Private_Data *timer = _pd;
    _ecore_lock();
 
    /* Timer already frozen */
    if (timer->frozen)
      goto unlock;
 
-   timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
-   suspended = (Ecore_Timer_Private_Data *)eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+   timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   suspended = (Ecore_Timer_Data *)eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
    now = ecore_time_get();
 
@@ -494,15 +435,12 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
    return !!r;
 }
 
-static void
-_timer_freeze_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static int
+_ecore_timer_eo_base_event_freeze_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   Ecore_Timer_Private_Data *timer = _pd;
-   int *r = va_arg(*list, int*);
-
-   if (r) *r = timer->frozen;
+   return timer->frozen;
 }
 
 /**
@@ -525,13 +463,12 @@ ecore_timer_thaw(Ecore_Timer *timer)
    eo_do(timer, eo_event_thaw());
 }
 
-static void
-_timer_thaw(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_timer_eo_base_event_thaw(Eo *obj, Ecore_Timer_Data *timer)
 {
    double now;
 
    EINA_MAIN_LOOP_CHECK_RETURN;
-   Ecore_Timer_Private_Data *timer = _pd;
 
    _ecore_lock();
 
@@ -539,7 +476,7 @@ _timer_thaw(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!timer->frozen)
      goto unlock;
 
-   suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+   suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
    now = ecore_time_get();
 
    _ecore_timer_set(obj, timer->pending + now, timer->in, timer->func, timer->data);
@@ -553,7 +490,7 @@ ecore_timer_dump(void)
 #ifdef WANT_ECORE_TIMER_DUMP
    Eina_Strbuf *result;
    char *out;
-   Ecore_Timer_Private_Data *tm;
+   Ecore_Timer_Data *tm;
    Eina_List *tmp = NULL;
    int living_timer = 0;
    int unknow_timer = 0;
@@ -613,17 +550,17 @@ _ecore_timer_loop_add(double        in,
                       const void   *data)
 {
    Ecore_Timer *timer = NULL;
-   timer = eo_add_custom(MY_CLASS, _ecore_parent, ecore_timer_loop_constructor(in, func, data));
+   timer = eo_add_custom(MY_CLASS, _ecore_parent, ecore_obj_timer_loop_constructor(in, func, data));
    eo_unref(timer);
 
    return timer;
 }
 
 EAPI void
-_ecore_timer_delay(Ecore_Timer *obj,
+_ecore_timer_util_delay(Ecore_Timer *obj,
                    double       add)
 {
-   Ecore_Timer_Private_Data *timer = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Data *timer = eo_data_scope_get(obj, MY_CLASS);
 
    if (timer->frozen)
      {
@@ -631,7 +568,7 @@ _ecore_timer_delay(Ecore_Timer *obj,
      }
    else
      {
-        timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+        timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
         eo_data_unref(obj, timer);
         _ecore_timer_set(obj, timer->at + add, timer->in, timer->func, timer->data);
      }
@@ -640,14 +577,14 @@ _ecore_timer_delay(Ecore_Timer *obj,
 void *
 _ecore_timer_del(Ecore_Timer *obj)
 {
-   Ecore_Timer_Private_Data *timer = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Data *timer = eo_data_scope_get(obj, MY_CLASS);
 
    if (timer->frozen && !timer->references)
      {
         void *data = timer->data;
 
         eo_data_unref(obj, timer);
-        suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+        suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
         if (timer->delete_me)
           timers_delete_me--;
@@ -667,11 +604,9 @@ _ecore_timer_del(Ecore_Timer *obj)
    return timer->data;
 }
 
-static void
-_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_timer_eo_base_destructor(Eo *obj, Ecore_Timer_Data *pd)
 {
-   Ecore_Timer_Private_Data *pd = _pd;
-
    if (!pd->delete_me)
    {
      pd->delete_me = 1;
@@ -684,11 +619,11 @@ _destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 void
 _ecore_timer_shutdown(void)
 {
-   Ecore_Timer_Private_Data *timer;
+   Ecore_Timer_Data *timer;
 
    while ((timer = timers))
      {
-        timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
+        timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timers));
 
         eo_data_unref(timer->obj, timer);
         eo_do(timer->obj, eo_parent_set(NULL));
@@ -700,7 +635,7 @@ _ecore_timer_shutdown(void)
 
    while ((timer = suspended))
      {
-        suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
+        suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(suspended));
 
         eo_data_unref(timer->obj, timer);
         eo_do(timer->obj, eo_parent_set(NULL));
@@ -716,15 +651,15 @@ _ecore_timer_shutdown(void)
 void
 _ecore_timer_cleanup(void)
 {
-   Ecore_Timer_Private_Data *l;
+   Ecore_Timer_Data *l;
    int in_use = 0, todo = timers_delete_me, done = 0;
 
    if (!timers_delete_me) return;
    for (l = timers; l; )
      {
-        Ecore_Timer_Private_Data *timer = l;
+        Ecore_Timer_Data *timer = l;
 
-        l = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(l)->next;
+        l = (Ecore_Timer_Data *)EINA_INLIST_GET(l)->next;
         if (timer->delete_me)
           {
              if (timer->references)
@@ -732,7 +667,7 @@ _ecore_timer_cleanup(void)
                   in_use++;
                   continue;
                }
-             timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+             timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 
              eo_data_unref(timer->obj, timer);
              eo_do(timer->obj, eo_parent_set(NULL));
@@ -747,9 +682,9 @@ _ecore_timer_cleanup(void)
      }
    for (l = suspended; l; )
      {
-        Ecore_Timer_Private_Data *timer = l;
+        Ecore_Timer_Data *timer = l;
 
-        l = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(l)->next;
+        l = (Ecore_Timer_Data *)EINA_INLIST_GET(l)->next;
         if (timer->delete_me)
           {
              if (timer->references)
@@ -757,7 +692,7 @@ _ecore_timer_cleanup(void)
                   in_use++;
                   continue;
                }
-             suspended = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
+             suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
 
              eo_data_unref(timer->obj, timer);
              eo_do(timer->obj, eo_parent_set(NULL));
@@ -784,7 +719,7 @@ _ecore_timer_cleanup(void)
 void
 _ecore_timer_enable_new(void)
 {
-   Ecore_Timer_Private_Data *timer;
+   Ecore_Timer_Data *timer;
 
    if (!timers_added) return;
    timers_added = 0;
@@ -794,10 +729,10 @@ _ecore_timer_enable_new(void)
 int
 _ecore_timers_exists(void)
 {
-   Ecore_Timer_Private_Data *timer = timers;
+   Ecore_Timer_Data *timer = timers;
 
    while ((timer) && (timer->delete_me))
-     timer = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(timer)->next;
+     timer = (Ecore_Timer_Data *)EINA_INLIST_GET(timer)->next;
 
    return !!timer;
 }
@@ -806,10 +741,10 @@ static inline Ecore_Timer *
 _ecore_timer_first_get(void)
 {
    Ecore_Timer *ret = NULL;
-   Ecore_Timer_Private_Data *timer = timers;
+   Ecore_Timer_Data *timer = timers;
 
    while ((timer) && ((timer->delete_me) || (timer->just_added)))
-     timer = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(timer)->next;
+     timer = (Ecore_Timer_Data *)EINA_INLIST_GET(timer)->next;
 
    if (timer)
      ret = timer->obj;
@@ -820,17 +755,17 @@ static inline Ecore_Timer *
 _ecore_timer_after_get(Ecore_Timer *obj)
 {
    Ecore_Timer *ret = NULL;
-   Ecore_Timer_Private_Data *base = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Data *base = eo_data_scope_get(obj, MY_CLASS);
 
-   Ecore_Timer_Private_Data *timer = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(base)->next;
-   Ecore_Timer_Private_Data *valid_timer = NULL;
+   Ecore_Timer_Data *timer = (Ecore_Timer_Data *)EINA_INLIST_GET(base)->next;
+   Ecore_Timer_Data *valid_timer = NULL;
    double maxtime = base->at + precision;
 
    while ((timer) && (timer->at < maxtime))
      {
         if (!((timer->delete_me) || (timer->just_added)))
           valid_timer = timer;
-        timer = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(timer)->next;
+        timer = (Ecore_Timer_Data *)EINA_INLIST_GET(timer)->next;
      }
 
    if (valid_timer)
@@ -844,7 +779,7 @@ _ecore_timer_next_get(void)
    double now;
    double in;
    Ecore_Timer *first_obj, *second_obj;
-   Ecore_Timer_Private_Data *first;
+   Ecore_Timer_Data *first;
 
    first_obj = _ecore_timer_first_get();
    if (!first_obj) return -1;
@@ -864,10 +799,10 @@ static inline void
 _ecore_timer_reschedule(Ecore_Timer *obj,
                         double       when)
 {
-   Ecore_Timer_Private_Data *timer = eo_data_scope_get(obj, MY_CLASS);
+   Ecore_Timer_Data *timer = eo_data_scope_get(obj, MY_CLASS);
    if ((timer->delete_me) || (timer->frozen)) return;
 
-   timers = (Ecore_Timer_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
    eo_data_unref(obj, timer);
 
    /* if the timer would have gone off more than 15 seconds ago,
@@ -900,7 +835,7 @@ _ecore_timer_expired_call(double when)
    if (!timers) return 0;
    if (last_check > when)
      {
-        Ecore_Timer_Private_Data *timer;
+        Ecore_Timer_Data *timer;
         /* User set time backwards */
         EINA_INLIST_FOREACH(timers, timer) timer->at -= (last_check - when);
      }
@@ -914,14 +849,14 @@ _ecore_timer_expired_call(double when)
    else
      {
         /* recursive main loop, continue from where we were */
-        Ecore_Timer_Private_Data *timer_old = timer_current;
-        timer_current = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(timer_current)->next;
+        Ecore_Timer_Data *timer_old = timer_current;
+        timer_current = (Ecore_Timer_Data *)EINA_INLIST_GET(timer_current)->next;
         _ecore_timer_reschedule(timer_old->obj, when);
      }
 
    while (timer_current)
      {
-        Ecore_Timer_Private_Data *timer = timer_current;
+        Ecore_Timer_Data *timer = timer_current;
 
         if (timer->at > when)
           {
@@ -931,7 +866,7 @@ _ecore_timer_expired_call(double when)
 
         if ((timer->just_added) || (timer->delete_me))
           {
-             timer_current = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(timer_current)->next;
+             timer_current = (Ecore_Timer_Data *)EINA_INLIST_GET(timer_current)->next;
              continue;
           }
 
@@ -943,7 +878,7 @@ _ecore_timer_expired_call(double when)
         timer->references--;
 
         if (timer_current) /* may have changed in recursive main loops */
-          timer_current = (Ecore_Timer_Private_Data *)EINA_INLIST_GET(timer_current)->next;
+          timer_current = (Ecore_Timer_Data *)EINA_INLIST_GET(timer_current)->next;
 
         _ecore_timer_reschedule(timer->obj, when);
      }
@@ -957,9 +892,9 @@ _ecore_timer_set(Ecore_Timer  *obj,
                  Ecore_Task_Cb func,
                  void         *data)
 {
-   Ecore_Timer_Private_Data *t2;
+   Ecore_Timer_Data *t2;
 
-   Ecore_Timer_Private_Data *timer = eo_data_ref(obj, MY_CLASS);
+   Ecore_Timer_Data *timer = eo_data_ref(obj, MY_CLASS);
 
    timers_added = 1;
    timer->at = at;
@@ -975,12 +910,12 @@ _ecore_timer_set(Ecore_Timer  *obj,
           {
              if (timer->at > t2->at)
                {
-                  timers = (Ecore_Timer_Private_Data *)eina_inlist_append_relative(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer), EINA_INLIST_GET(t2));
+                  timers = (Ecore_Timer_Data *)eina_inlist_append_relative(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer), EINA_INLIST_GET(t2));
                   return;
                }
           }
      }
-   timers = (Ecore_Timer_Private_Data *)eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
+   timers = (Ecore_Timer_Data *)eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 }
 
 #ifdef WANT_ECORE_TIMER_DUMP
@@ -988,57 +923,11 @@ static int
 _ecore_timer_cmp(const void *d1,
                  const void *d2)
 {
-   const Ecore_Timer_Private_Data *t1 = d1;
-   const Ecore_Timer_Private_Data *t2 = d2;
+   const Ecore_Timer_Data *t1 = d1;
+   const Ecore_Timer_Data *t2 = d2;
 
    return (int)((t1->in - t2->in) * 100);
 }
 #endif
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_CONSTRUCTOR), _timer_constructor),
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_LOOP_CONSTRUCTOR), _timer_loop_constructor),
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_INTERVAL_SET), _timer_interval_set),
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_INTERVAL_GET), _timer_interval_get),
-
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE), _timer_freeze),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW), _timer_thaw),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), _timer_freeze_get),
-
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_DELAY), _timer_delay),
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_RESET), _timer_reset),
-        EO_OP_FUNC(ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_PENDING_GET), _timer_pending_get),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_CONSTRUCTOR, "Creates a timer to call the given function in the given period of time."),
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_LOOP_CONSTRUCTOR, "Creates a timer to call the given function in the given period of time."),
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_INTERVAL_SET, "Change the interval the timer ticks of."),
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_INTERVAL_GET, "Get the interval the timer ticks on."),
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_DELAY, "Add some delay for the next occurrence of a timer."),
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_RESET, "Reset a timer to its full interval"),
-     EO_OP_DESCRIPTION(ECORE_TIMER_SUB_ID_PENDING_GET, "Get the pending time regarding a timer."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ECORE_TIMER_BASE_ID, op_desc, ECORE_TIMER_SUB_ID_LAST),
-     NULL,
-     sizeof(Ecore_Timer_Private_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(ecore_timer_class_get, &class_desc, EO_BASE_CLASS, NULL)
+#include "ecore_timer.eo.c"

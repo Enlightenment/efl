@@ -121,6 +121,8 @@ enum
  *
  * @{
  */
+#include "ecore_timer.eo.h"
+#if 0
 
 #define ECORE_TIMER_CLASS ecore_timer_class_get()
 const Eo_Class *ecore_timer_class_get(void) EINA_CONST;
@@ -223,7 +225,7 @@ enum
  * @see ecore_timer_pending_get
  */
 #define ecore_obj_timer_pending_get(ret) ECORE_TIMER_ID(ECORE_TIMER_SUB_ID_PENDING_GET), EO_TYPECHECK(double *, ret)
-
+#endif
 /**
  * @}
  */

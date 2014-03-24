@@ -1,0 +1,58 @@
+class Ecore_Timer (Eo_Base)
+{
+   eo_prefix: ecore_obj_timer;
+   constructors {
+      loop_constructor {
+         /*@ Contructor. */
+         params {
+            @in double in;
+            @in Ecore_Task_Cb func;
+            @in const void *data;
+         }
+      }
+      constructor {
+         /*@ Contructor. */
+         params {
+            @in double in;
+            @in Ecore_Task_Cb func;
+            @in const void *data;
+         }
+      }
+   }
+   properties {
+      interval {
+         set {
+            /*@ Change the interval the timer ticks of. */
+         }
+         get {
+            /*@ Get the interval the timer ticks on. */
+         }
+         values {
+            double in;
+         }
+      }
+      pending {
+         get {
+            /*@ Get the pending time regarding a timer. */
+            return double;
+         }
+      }
+   }
+   methods {
+      reset {
+         /*@ Reset a timer to its full interval. */
+      }
+      delay {
+         /*@ Add some delay for the next occurrence of a timer. */
+         params {
+            @in double add;
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Eo_Base::event_freeze;
+      Eo_Base::event_thaw;
+   }
+}
