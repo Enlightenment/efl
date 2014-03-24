@@ -1070,16 +1070,4 @@ ecore_memory_state_set(Ecore_Memory_State state)
    ecore_event_add(ECORE_EVENT_MEMORY_STATE, NULL, NULL, NULL);
 }
 
-
-static const Eo_Class_Description parent_class_desc = {
-     EO_VERSION,
-     "Ecore_Parent",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     NULL,
-     NULL
-};
-
-EO_DEFINE_CLASS(ecore_parent_class_get, &parent_class_desc, EO_BASE_CLASS, NULL);
+#include "ecore_parent.eo.c"

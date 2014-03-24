@@ -1,0 +1,4 @@
+class Ecore_Parent (Eo_Base)
+{
+   data: null;
+}

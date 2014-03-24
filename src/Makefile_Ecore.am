@@ -15,7 +15,9 @@ BUILT_SOURCES += \
                  lib/ecore/ecore_idle_exiter.eo.c \
                  lib/ecore/ecore_idle_exiter.eo.h \
                  lib/ecore/ecore_animator.eo.c \
-                 lib/ecore/ecore_animator.eo.h
+                 lib/ecore/ecore_animator.eo.h \
+                 lib/ecore/ecore_parent.eo.c \
+                 lib/ecore/ecore_parent.eo.h
 
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = \
@@ -25,7 +27,8 @@ ecoreeolianfiles_DATA = \
               lib/ecore/ecore_idler.eo \
               lib/ecore/ecore_idle_enterer.eo \
               lib/ecore/ecore_idle_exiter.eo \
-              lib/ecore/ecore_animator.eo
+              lib/ecore/ecore_animator.eo \
+              lib/ecore/ecore_parent.eo
 
 EXTRA_DIST += \
               ${ecoreeolianfiles_DATA}
@@ -47,7 +50,8 @@ nodist_installed_ecoremainheaders_DATA = \
                                         lib/ecore/ecore_idler.eo.h \
                                         lib/ecore/ecore_idle_enterer.eo.h \
                                         lib/ecore/ecore_idle_exiter.eo.h \
-                                        lib/ecore/ecore_animator.eo.h
+                                        lib/ecore/ecore_animator.eo.h \
+                                        lib/ecore/ecore_parent.eo.h
 
 lib_ecore_libecore_la_SOURCES = \
 lib/ecore/ecore.c \
