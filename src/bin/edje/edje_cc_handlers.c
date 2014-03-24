@@ -2786,6 +2786,7 @@ st_collections_group_inherit(void)
             "the name !", file_in, line - 1, parent_name);
         exit(-1);
      }
+   current_group_inherit = EINA_TRUE;
 
    if (pc2->data)
      {
@@ -2912,7 +2913,6 @@ st_collections_group_inherit(void)
      }
 
    free(parent_name);
-   current_group_inherit = EINA_TRUE;
    #undef STRDUP
 }
 
