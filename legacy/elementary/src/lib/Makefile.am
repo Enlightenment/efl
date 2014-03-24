@@ -449,6 +449,7 @@ elm_hover.c \
 elm_icon.c \
 elm_image.c \
 elm_index.c \
+elm_interface_atspi_component.c \
 elm_interface_fileselector.c \
 elm_interface_scrollable.c \
 elm_inwin.c \
