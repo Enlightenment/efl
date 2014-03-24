@@ -1099,18 +1099,25 @@ _focus_timer_cb(void *data)
 }
 
 static void
-_test_toolbar_focus_item_set_btn_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+_test_toolbar_focus_item_set_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
                                     void *event_info EINA_UNUSED)
 {
    ecore_timer_del(timer);
    timer = ecore_timer_add(1.5, _focus_timer_cb, data);
 }
 
+static void
+_test_toolbar_focus_disable_item_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                        void *event_info EINA_UNUSED)
+{
+   elm_object_item_disabled_set(data, EINA_TRUE);
+}
+
 void
 test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *toolbar, *fr, *btn, *bx_opt, *chk;
-   Elm_Object_Item *tb_it, *it_3;
+   Elm_Object_Item *tb_it, *it_0, *it_3;
 
    win = elm_win_util_standard_add("toolbar-focus", "Toolbar Focus");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -1132,7 +1139,7 @@ test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    toolbar = elm_toolbar_add(win);
    elm_toolbar_shrink_mode_set(toolbar, ELM_TOOLBAR_SHRINK_SCROLL);
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, 0.0);
-   elm_toolbar_item_append(toolbar, "document-print", "Print", NULL, NULL);
+   it_0 = elm_toolbar_item_append(toolbar, "document-print", "Print", NULL, NULL);
    elm_toolbar_item_append(toolbar, "folder-new", "Folder", NULL, NULL);
    it_3 = elm_toolbar_item_append(toolbar, "clock", "Clock", NULL, NULL);
    elm_toolbar_item_append(toolbar, "refresh", "Update", NULL, NULL);
@@ -1212,6 +1219,16 @@ test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_smart_callback_add(btn, "clicked",
                                   _test_toolbar_focus_item_set_btn_cb,
                                   it_3);
+
+   btn = elm_button_add(bx_opt);
+   elm_object_text_set(btn, "Disable 1st item.");
+   evas_object_size_hint_weight_set(btn, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_opt, btn);
+   evas_object_show(btn);
+   evas_object_smart_callback_add(btn, "clicked",
+                                  _test_toolbar_focus_disable_item_btn_cb,
+                                  it_0);
 
    evas_object_resize(win, 420, 200);
    evas_object_show(win);

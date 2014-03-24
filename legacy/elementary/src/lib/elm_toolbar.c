@@ -646,25 +646,38 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
    Eina_List *item_list = NULL;
    Elm_Object_Item *item = NULL;
    ELM_TOOLBAR_DATA_GET(obj, sd);
+   Eina_Bool search_next = EINA_FALSE;
+   Evas_Object *it_obj;
 
    if (!it) return NULL;
 
    evas_object_geometry_get(obj, &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
 
-   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
-     return it;
-
    item_list = evas_object_box_children_get(sd->bx);
 
+   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+     {
+        if (!elm_object_item_disabled_get(it))
+          return it;
+        else
+          search_next = EINA_TRUE;
+     }
+
    if ((sd->vertical && (iy < vy)) ||
-       (!sd->vertical && (iw < vw)))
+       (!sd->vertical && (iw < vw)) ||
+       search_next)
      {
         while ((item_list = eina_list_next(item_list)))
           {
-             item = eina_list_data_get(item_list);
+             it_obj = eina_list_data_get(item_list);
+             if (it_obj)
+               item = evas_object_data_get(it_obj, "item");
+             if (!item)
+               break;
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
-             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
+                 !elm_object_item_disabled_get(item))
                return item;
           }
      }
@@ -672,9 +685,14 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
      {
         while ((item_list = eina_list_prev(item_list)))
           {
-             item = eina_list_data_get(item_list);
+             it_obj = eina_list_data_get(item_list);
+             if (it_obj)
+               item = evas_object_data_get(it_obj, "item");
+             if (!item)
+               break;
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
-             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch))
+             if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
+                 !elm_object_item_disabled_get(item))
                return item;
           }
      }
