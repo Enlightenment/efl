@@ -9,14 +9,17 @@ BUILT_SOURCES += \
                  lib/ecore/ecore_job.eo.c \
                  lib/ecore/ecore_job.eo.h \
                  lib/ecore/ecore_idler.eo.c \
-                 lib/ecore/ecore_idler.eo.h
+                 lib/ecore/ecore_idler.eo.h \
+                 lib/ecore/ecore_idle_enterer.eo.c \
+                 lib/ecore/ecore_idle_enterer.eo.h
 
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = \
               lib/ecore/ecore_timer.eo \
               lib/ecore/ecore_poll.eo \
               lib/ecore/ecore_job.eo \
-              lib/ecore/ecore_idler.eo
+              lib/ecore/ecore_idler.eo \
+              lib/ecore/ecore_idle_enterer.eo
 
 EXTRA_DIST += \
               ${ecoreeolianfiles_DATA}
@@ -35,7 +38,8 @@ nodist_installed_ecoremainheaders_DATA = \
                                         lib/ecore/ecore_timer.eo.h \
                                         lib/ecore/ecore_poll.eo.h \
                                         lib/ecore/ecore_job.eo.h \
-                                        lib/ecore/ecore_idler.eo.h
+                                        lib/ecore/ecore_idler.eo.h \
+                                        lib/ecore/ecore_idle_enterer.eo.h
 
 lib_ecore_libecore_la_SOURCES = \
 lib/ecore/ecore.c \

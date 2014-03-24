@@ -270,6 +270,8 @@ enum
 /**
  *
  */
+#include "ecore_idle_enterer.eo.h"
+#if 0
 
 #define ECORE_IDLE_ENTERER_CLASS ecore_idle_enterer_class_get()
 const Eo_Class *ecore_idle_enterer_class_get(void) EINA_CONST;
@@ -309,6 +311,7 @@ enum
  */
 #define ecore_idle_enterer_before_constructor(func, data) ECORE_IDLE_ENTERER_ID(ECORE_IDLE_ENTERER_SUB_ID_BEFORE_CONSTRUCTOR), EO_TYPECHECK(Ecore_Task_Cb, func), EO_TYPECHECK(const void *, data)
 
+#endif
 /**
  *
  */
