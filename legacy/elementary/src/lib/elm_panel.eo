@@ -1,0 +1,78 @@
+class Elm_Panel (Elm_Layout)
+{
+   eo_prefix: elm_obj_panel;
+   properties {
+      orient {
+         set {
+            /*@
+            @brief Sets the orientation of the panel
+
+            Sets from where the panel will (dis)appear.
+
+            @ingroup Panel */
+         }
+         get {
+            /*@
+            @brief Get the orientation of the panel.
+
+            @return The Elm_Panel_Orient, or ELM_PANEL_ORIENT_LEFT on failure.
+
+            @ingroup Panel */
+         }
+         values {
+            Elm_Panel_Orient orient; /*@ The panel orientation. Can be one of the following:
+            @li ELM_PANEL_ORIENT_TOP
+            @li ELM_PANEL_ORIENT_LEFT
+            @li ELM_PANEL_ORIENT_RIGHT */
+         }
+      }
+      hidden {
+         set {
+            /*@
+            @brief Set the state of the panel.
+
+            @ingroup Panel */
+         }
+         get {
+            /*@
+            @brief Get the state of the panel.
+
+            @return EINA_TRUE if it is hidden state
+
+            @ingroup Panel */
+         }
+         values {
+            Eina_Bool hidden; /*@ If true, the panel will run the animation to disappear. */
+         }
+      }
+   }
+   methods {
+      toggle {
+         /*@
+         @brief Toggle the hidden state of the panel from code
+
+         @ingroup Panel */
+
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::theme_apply;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::access;
+      Elm_Widget::event;
+      Elm_Container::content_get;
+      Elm_Container::content_unset;
+      Elm_Container::content_set;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      focused;
+      unfocused;
+   }
+
+}
