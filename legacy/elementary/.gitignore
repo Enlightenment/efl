@@ -52,3 +52,5 @@ tags
 *.gmo
 /config.cache-env
 /compile
+build.conf
+.gitignore

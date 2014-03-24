@@ -726,6 +726,7 @@ src/modules/Makefile
 src/modules/prefs/Makefile
 src/modules/access_output/Makefile
 src/modules/datetime_input_ctxpopup/Makefile
+src/modules/gengrid_focus_hook/Makefile
 src/modules/test_entry/Makefile
 src/modules/test_map/Makefile
 src/edje_externals/Makefile

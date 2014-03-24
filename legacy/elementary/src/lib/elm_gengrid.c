@@ -87,6 +87,27 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_GENGRID_SIGNALS
 
+static Gengrid_Focus_Direction_Mod_Api *gengrid_focus_direction_mod = NULL;
+
+static Gengrid_Focus_Direction_Mod_Api *
+_gengrid_focus_direction_mod_init(void)
+{
+   Elm_Module *mod = NULL;
+
+   if (!(mod = _elm_module_find_as("gengrid_focus/api"))) return NULL;
+
+   mod->api = malloc(sizeof(Gengrid_Focus_Direction_Mod_Api));
+   if (!mod->api) return NULL;
+
+   ((Gengrid_Focus_Direction_Mod_Api *)(mod->api))->hook_ptr =
+     _elm_module_symbol_get(mod, "gen_focus_direction");
+
+   if (!((Gengrid_Focus_Direction_Mod_Api *)(mod->api))->hook_ptr)
+     return NULL;
+
+   return mod->api;
+}
+
 static void
 _item_show_region(void *data)
 {
@@ -550,6 +571,34 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    evas_event_thaw_eval(evas_object_evas_get(WIDGET(it)));
 }
 
+
+static void
+_elm_gengrid_item_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Gen_Item *it = data;
+   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   if (sd->focus_direction && gengrid_focus_direction_mod)
+     {
+        Evas_Coord x = 0;
+        Evas_Coord y = 0;
+        Evas_Coord v_w = 0;
+        Evas_Coord v_h = 0;
+        Evas_Coord step_x = 0;
+        Evas_Coord step_y = 0;
+        Evas_Coord page_x = 0;
+        Evas_Coord page_y = 0;
+
+        eo_do(sd->obj,
+            elm_interface_scrollable_content_pos_get(&x, &y),
+            elm_interface_scrollable_step_size_get(&step_x, &step_y),
+            elm_interface_scrollable_page_size_get(&page_x, &page_y),
+            elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+
+        elm_gengrid_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+        elm_gengrid_item_show((Elm_Object_Item *)it, ELM_GENGRID_ITEM_SCROLLTO_IN);
+     }
+}
+
 static void
 _item_mouse_up_cb(void *data,
                   Evas *evas EINA_UNUSED,
@@ -816,6 +865,7 @@ _item_realize(Elm_Gen_Item *it)
                   edje_object_part_swallow(VIEW(it), key, ic);
                   evas_object_show(ic);
                   elm_widget_sub_object_add(WIDGET(it), ic);
+                  evas_object_smart_callback_add(ic, "focused", _elm_gengrid_item_focused_cb, it);
                }
           }
      }
@@ -1914,6 +1964,8 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!sd->items) return;
 
+   if (sd->focus_direction && gengrid_focus_direction_mod) return;
+
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
@@ -2173,7 +2225,13 @@ _elm_gengrid_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    Elm_Object_Item *it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
+   if (sd->focus_direction && gengrid_focus_direction_mod)
+     {
+        if (ret) *ret = EINA_TRUE;
+        return;
+     }
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   
    if (!int_ret) return;
 
    if (elm_widget_focus_get(obj) && (sd->selected) &&
@@ -2228,10 +2286,28 @@ _elm_gengrid_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
 }
 
 static void
-_elm_gengrid_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+_elm_gengrid_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Elm_Gengrid_Smart_Data *sd = _pd;
    *ret = EINA_FALSE;
+   if (sd->focus_direction && gengrid_focus_direction_mod)
+     *ret = EINA_TRUE;
+}
+
+static void
+_elm_gengrid_smart_focus_direction(Eo *obj, void *_pd, va_list *list)
+{
+   Elm_Gengrid_Smart_Data *sd = _pd;
+   if (sd->focus_direction && gengrid_focus_direction_mod)
+     {
+        gengrid_focus_direction_mod->hook_ptr(obj, _pd, list);
+     }
+   else
+     {
+        Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+        *ret = EINA_FALSE;
+     }
 }
 
 static void
@@ -2737,12 +2813,14 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
                              elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
+   if (!gengrid_focus_direction_mod) gengrid_focus_direction_mod = _gengrid_focus_direction_mod_init();
    eo_do(obj, elm_interface_scrollable_objects_set(wd->resize_obj, priv->hit_rect));
 
    priv->old_h_bounce = bounce;
    priv->old_v_bounce = bounce;
 
    eo_do(obj, elm_interface_scrollable_bounce_allow_set(bounce, bounce));
+
 
    eo_do(obj,
          elm_interface_scrollable_animate_start_cb_set
@@ -2760,6 +2838,7 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    priv->align_x = 0.5;
    priv->align_y = 0.5;
    priv->highlight = EINA_TRUE;
+   priv->focus_direction = EINA_FALSE;
 
    priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
@@ -3245,6 +3324,15 @@ elm_gengrid_horizontal_set(Evas_Object *obj,
 {
    ELM_GENGRID_CHECK(obj);
    eo_do(obj, elm_obj_gengrid_horizontal_set(horizontal));
+}
+
+EAPI void
+elm_gengrid_focus_direction_allow_set(Evas_Object *obj,
+                                      Eina_Bool flag)
+{
+  ELM_GENGRID_CHECK(obj);
+  ELM_GENGRID_DATA_GET(obj, sd);
+  sd->focus_direction = flag; 
 }
 
 static void
@@ -4136,7 +4224,6 @@ elm_gengrid_item_show(Elm_Object_Item *item,
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
    sd = GG_IT(it)->wsd;
-
    if ((it->generation < sd->generation)) return;
 
    sd->show_region = EINA_TRUE;
@@ -4484,6 +4571,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_gengrid_smart_focus_direction_manager_is),
         EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), _elm_gengrid_focus_highlight_geometry_get),
         EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUSED_ITEM_GET), _elm_gengrid_focused_item_get),
+        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_gengrid_smart_focus_direction),
 
         EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_gengrid_smart_sizing_eval),
 
