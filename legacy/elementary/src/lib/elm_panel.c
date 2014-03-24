@@ -276,8 +276,7 @@ _elm_panel_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (src != obj) return;
 
-   if (!_elm_config_key_binding_call(obj, ev, key_actions))
-     return EINA_FALSE;
+   if (!_elm_config_key_binding_call(obj, ev, key_actions)) return;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    if (ret) *ret = EINA_TRUE;
