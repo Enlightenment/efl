@@ -4060,6 +4060,29 @@ EAPI const Eina_List *edje_edit_script_error_list_get(Evas_Object *obj);
 
 //@}
 /******************************************************************************/
+/************************   SOURCE CODE API   *********************************/
+/******************************************************************************/
+/** @name Scripts API
+ *  Functions to deal with embryo scripts (see @ref edcref).
+ */ //@{
+
+/**
+ * Return source code of the current edje edit object.
+ *
+ * This function will return source code of the whole group, loaded previously.
+ * This function also will collect all possible resources that is required and
+ * mentioned in description blocks. For example: all images, fonts, data, styles,
+ * and color_classes.
+ *
+ * @param obj The object being edited
+ *
+ * @return Source code containing all resources required by the object.
+ */
+
+EAPI const char *edje_edit_source_generate(Evas_Object *obj);
+
+//@}
+/******************************************************************************/
 /**************************   ERROR API   ***********************************/
 /******************************************************************************/
 /** @name Error API

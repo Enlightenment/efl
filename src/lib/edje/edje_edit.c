@@ -7050,9 +7050,200 @@ edje_edit_script_error_list_get(Evas_Object *obj)
 #define BUF_APPENDF(FMT, ...) \
    ret &= eina_strbuf_append_printf(buf, FMT, ##__VA_ARGS__)
 
+#define COLLECT_RESOURCE(condition_data, list) \
+   if (condition_data) \
+     { \
+        if (!eina_list_data_find(list, condition_data)) \
+          list = eina_list_append(list, condition_data); \
+     }
+
 static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL", "PROXY", "SPACER"};
 static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
 static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
+
+static Eina_Bool
+_edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *pce, Eina_Strbuf *buf);
+
+ static Eina_Bool
+_edje_generate_source_of_style(Edje * ed, const char *name, Eina_Strbuf *buf);
+
+ static Eina_Bool
+_edje_generate_source_of_colorclass(Edje * ed, const char *name, Eina_Strbuf *buf);
+
+static const char *
+_edje_generate_image_source(Evas_Object *obj, const char *entry)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Bool ret = EINA_TRUE;
+   if (!buf) return NULL;
+
+   int comp = edje_edit_image_compression_type_get(obj, entry);
+   if (comp < 0) return NULL;
+
+   BUF_APPENDF("image: \"%s\" ", entry);
+
+   if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY)
+     BUF_APPENDF("LOSSY %d;\n",
+                 edje_edit_image_compression_rate_get(obj, entry));
+   else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
+     BUF_APPEND("RAW;\n");
+   else if (comp == EDJE_EDIT_IMAGE_COMP_USER)
+     BUF_APPEND("USER;\n");
+   else
+     BUF_APPEND("COMP;\n");
+
+   if (!ret)
+     {
+        ERR("Generating EDC for Image");
+        eina_strbuf_free(buf);
+        return NULL;
+     }
+
+   return eina_strbuf_string_get(buf);
+}
+
+
+EAPI const char *
+edje_edit_source_generate(Evas_Object *obj)
+{
+   Edje_Part_Collection_Directory_Entry *ce;
+   Edje_Part *part;
+   Edje_Part_Description_Common *part_desc;
+   Edje_Part_Description_Image *part_desc_image;
+   Edje_Part_Description_Text *part_desc_text;
+   unsigned int i, j;
+   const char *entry;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Bool ret = EINA_TRUE;
+   Eina_List *images = NULL, *color_classes = NULL, *styles = NULL, *fonts = NULL;
+   Eina_List *l;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file) return NULL;
+
+   ce = eina_hash_find(ed->file->collection, ed->group);
+   if (!ce) return EINA_FALSE;
+
+   /* Go through all of group's parts to find all resources needed for that group. */
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        part = ed->table_parts[i]->part;
+        part_desc = (Edje_Part_Description_Common *)part->default_desc;
+
+        /* find all image parts and collect all images required by those parts. */
+        if (part->type == EDJE_PART_TYPE_IMAGE)
+          {
+             /*  parse "default" description of this part. */
+             part_desc_image = (Edje_Part_Description_Image *)part->default_desc;
+             /* find image name according to it's id that is in description */
+             entry = _edje_image_name_find(eed, part_desc_image->image.id);
+             COLLECT_RESOURCE(entry, images);
+             /*  look through all other's descriptions. */
+             for (j = 0; j < part->other.desc_count; j++)
+               {
+                  part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
+                  entry = _edje_image_name_find(eed, part_desc_image->image.id);
+                  COLLECT_RESOURCE(entry, images);
+               }
+          }
+        /* find all text, textblock part and fonts, styles required by those parts. */
+        if ((part->type == EDJE_PART_TYPE_TEXTBLOCK) ||
+            (part->type == EDJE_PART_TYPE_TEXT))
+          {
+             part_desc_text = (Edje_Part_Description_Text *)part->default_desc;
+             COLLECT_RESOURCE(part_desc_text->text.style.str, styles);
+             if (part_desc_text->text.font.str)
+               {
+                  Edje_Font_Directory_Entry *fnt;
+                  fnt  = eina_hash_find(ed->file->fonts, part_desc_text->text.font.str);
+                  COLLECT_RESOURCE(fnt, fonts);
+               }
+             for (j = 0; j < part->other.desc_count; j++)
+               {
+                  part_desc_text = (Edje_Part_Description_Text *)part->other.desc[j];
+                  COLLECT_RESOURCE(part_desc_text->text.style.str, styles);
+                  if (part_desc_text->text.font.str)
+                    {
+                       Edje_Font_Directory_Entry *fnt;
+                       fnt  = eina_hash_find(ed->file->fonts, part_desc_text->text.font.str);
+                       COLLECT_RESOURCE(fnt, fonts);
+                    }
+               }
+          }
+        /* find all color_classes required by those every part. */
+        COLLECT_RESOURCE(part_desc->color_class, color_classes);
+        for (j = 0; j < part->other.desc_count; j++)
+          {
+             part_desc = part->other.desc[j];
+             COLLECT_RESOURCE(part_desc->color_class, color_classes);
+          }
+     }
+
+   /* if images were found, print them */
+   if (images)
+     {
+        BUF_APPEND(I0"images {\n");
+
+        EINA_LIST_FOREACH(images, l, entry)
+          {
+             const char *image_source = _edje_generate_image_source(obj, entry);
+             if (!image_source) continue;
+             BUF_APPENDF(I1"%s", image_source);
+          }
+
+        BUF_APPEND(I0"}\n\n");
+     }
+   /* if styles were found, print them */
+   if (styles)
+     {
+        BUF_APPEND(I0 "styles {\n");
+        EINA_LIST_FOREACH(styles, l, entry)
+           _edje_generate_source_of_style(ed, entry, buf);
+        BUF_APPEND(I0 "}\n\n");
+     }
+   /* if fonts were found, print them */
+   if (fonts)
+     {
+        BUF_APPEND(I0 "fonts {\n");
+        Edje_Font_Directory_Entry *fnt;
+
+        EINA_LIST_FOREACH(fonts, l, fnt)
+          {
+               BUF_APPENDF(I1"font: \"%s\" \"%s\";\n", fnt->file,
+                           fnt->entry);
+          }
+
+        BUF_APPEND(I0 "}\n\n");
+     }
+   /* if color_classes were found, print them */
+   if (color_classes)
+     {
+	BUF_APPEND(I0 "color_classes {\n");
+
+	EINA_LIST_FOREACH(color_classes, l, entry)
+	  _edje_generate_source_of_colorclass(ed, entry, buf);
+
+	BUF_APPEND(I0 "}\n\n");
+     }
+
+   /* print the main code of group collections */
+   BUF_APPEND(I0"collections {\n");
+   _edje_generate_source_of_group(ed, ce, buf);
+   BUF_APPEND(I0"}");
+
+   if (!ret)
+     {
+        ERR("Generating EDC for This Group.");
+        return NULL;
+     }
+
+   /* return resulted source code of the group */
+   return eina_strbuf_string_get(buf);
+}
+
+#undef COLLECT_RESOURCE
 
  static Eina_Bool
 _edje_generate_source_of_colorclass(Edje * ed, const char *name, Eina_Strbuf *buf)
@@ -7829,21 +8020,11 @@ _edje_generate_source(Evas_Object *obj)
 
 	EINA_LIST_FOREACH(ll, l, entry)
 	  {
-		int comp = edje_edit_image_compression_type_get(obj, entry);
-		if (comp < 0) continue;
+             const char *image_source = _edje_generate_image_source(obj, entry);
+	     if (!image_source) continue;
 
-		BUF_APPENDF(I1"image: \"%s\" ", entry);
-
-		if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY)
-		  BUF_APPENDF("LOSSY %d;\n",
-		          edje_edit_image_compression_rate_get(obj, entry));
-		else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
-		  BUF_APPEND("RAW;\n");
-		else if (comp == EDJE_EDIT_IMAGE_COMP_USER)
-		  BUF_APPEND("USER;\n");
-		else
-		  BUF_APPEND("COMP;\n");
-	  }
+             BUF_APPENDF(I1"%s", image_source);
+          }
 	BUF_APPEND(I0"}\n\n");
 	edje_edit_string_list_free(ll);
 
