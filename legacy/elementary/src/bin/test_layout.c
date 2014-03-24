@@ -34,6 +34,12 @@ _clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_object_part_text_set(data, "text", elm_object_text_get(obj));
 }
 
+static void
+_cb_signal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission, const char *source)
+{
+   printf("signal: '%s' '%s'\n", emission, source);
+}
+
 void
 test_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -77,6 +83,8 @@ test_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(box, ly);
    //elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
+   
+   elm_layout_signal_callback_add(ly, "*", "*", _cb_signal, NULL);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button 1");
