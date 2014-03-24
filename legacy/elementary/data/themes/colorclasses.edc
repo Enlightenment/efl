@@ -146,6 +146,16 @@ color_classes {
       color: FN_COL_DEFAULT_BASIC;
    }
 
+   color_class { name: "hoversel_text";
+      color: FN_COL_DEFAULT;
+   }
+   color_class { name: "hoversel_text_disabled";
+      color: FN_COL_DISABLE;
+   }
+   color_class { name: "hoversel_item_active";
+      color: FN_COL_HIGHLIGHT;
+   }
+   
 // modules
    color_class { name: "module_label";
       color: FN_COL_DEFAULT;
