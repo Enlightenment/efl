@@ -18,11 +18,14 @@
  * The TGV file format is oriented around compression mecanism
  * that hardware are good at decompressing. We do still provide
  * a fully software implementation in case your hardware doesn't
- * handle it.
+ * handle it. As OpenGL is pretty bad at handling border of
+ * texture, we do duplicate the first pixels of every border.
  *
  * This file format is designed to compress/decompress things
  * in block area. Giving opportunity to store really huge file
- * and only decompress/compress them as we need.
+ * and only decompress/compress them as we need. Note that region
+ * only work with software decompression as we don't have a sane
+ * way to duplicate border to avoid artifact when scaling texture.
  *
  * The file format is as follow :
  * - char     magic[4]: "TGV1"
@@ -245,7 +248,13 @@ evas_image_load_file_data_tgv(void *loader_data,
             master.y % 4)
           abort();
 
-        etc1_width = (prop->w / 4 + (prop->w % 4 ? 1 : 0)) * 8;
+        etc1_width = ((prop->w + 2) / 4 + ((prop->w + 2) % 4 ? 1 : 0)) * 8;
+     }
+   else if (prop->cspace == EVAS_COLORSPACE_ARGB8888)
+     {
+        // Offset to take duplicated pixels into account
+        master.x += 1;
+        master.y += 1;
      }
 
    // Allocate space for each ETC1 block (64bytes per 4 * 4 pixels group)
@@ -255,8 +264,8 @@ evas_image_load_file_data_tgv(void *loader_data,
    else
      buffer = NULL;
 
-   for (y = 0; y < loader->size.height; y += loader->block.height)
-     for (x = 0; x < loader->size.width; x += loader->block.width)
+   for (y = 0; y < loader->size.height + 2; y += loader->block.height)
+     for (x = 0; x < loader->size.width + 2; x += loader->block.width)
        {
           Eina_Rectangle current;
           const char *data_start;
@@ -319,8 +328,8 @@ evas_image_load_file_data_tgv(void *loader_data,
                        offset_y = current_etc.y - y - i;
                        for (k = 0; k < current_etc.h; k++)
                          {
-                            memcpy(&p[current_etc.x +
-                                      (current_etc.y + k) * master.w],
+                            memcpy(&p[current_etc.x - 1 +
+                                      (current_etc.y - 1 + k) * master.w],
                                    &temporary[offset_x + (offset_y + k) * 4],
                                    current_etc.w * sizeof (unsigned int));
                          }

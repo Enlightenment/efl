@@ -130,26 +130,29 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
                        if (lmax > 0)
                          {
-                            for (k = duplicate_h[0]; k < kmax; k++)
-                              memcpy(&todo[k * 16 + duplicate_w[0] * 4],
+                            for (k = 0; k < kmax; k++)
+                              memcpy(&todo[(k + duplicate_h[0]) * 16 + duplicate_w[0] * 4],
                                      &data[(real_y + i + k) * im->cache_entry.w + real_x + j],
                                      4 * lmax);
                          }
 
                        if (duplicate_h[0] && block_length > 0) // Duplicate first line
-                         memcpy(&todo[0], &data[(real_y + i) * im->cache_entry.w + real_x + j], block_length);
-                       if (duplicate_h[1] && block_length > 0 && kmax > 0) // Duplicate last line
-                         memcpy(&todo[kmax * 16], &data[(real_y + i + kmax) * im->cache_entry.w + real_x + j], block_length);
+                         memcpy(&todo[0], &data[(real_y + i) * im->cache_entry.w + real_x + j], block_length * 4);
+                       if (duplicate_h[1] && block_length > 0 && kmax >= 0) // Duplicate last line
+                         memcpy(&todo[kmax * 16], &data[(real_y + i + kmax) * im->cache_entry.w + real_x + j], block_length * 4);
                        if (duplicate_w[0]) // Duplicate first row
                          {
                             for (k = 0; k < kmax; k++)
-                              memcpy(&todo[k * 16], &data[(real_y + i + k) * im->cache_entry.w + real_x + j], 4); // Copy a pixel at a time
+                              memcpy(&todo[(k + duplicate_h[0]) * 16],
+                                     &data[(real_y + i + k) * im->cache_entry.w + real_x + j],
+                                     4); // Copy a pixel at a time
                          }
                        if (duplicate_w[1] && lmax >= 0) // Duplicate last row
                          {
                             for (k = 0; k < kmax; k++)
-                              memcpy(&todo[k * 16 + (duplicate_w[0] + lmax) * 4],
-                                     &data[(real_y + i + k) * im->cache_entry.w + real_x + j + lmax], 4); // Copy a pixel at a time
+                              memcpy(&todo[(k + duplicate_h[0]) * 16 + (duplicate_w[0] + lmax) * 4],
+                                     &data[(real_y + i + k) * im->cache_entry.w + real_x + j + lmax],
+                                     4); // Copy a pixel at a time
                          }
 
                        rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
