@@ -1,3 +1,6 @@
+#include "elm_menu.eo.h"
+
+#if 0
 #define ELM_OBJ_MENU_CLASS elm_obj_menu_class_get()
 
 const Eo_Class *elm_obj_menu_class_get(void) EINA_CONST;
@@ -137,3 +140,5 @@ enum
  * @ingroup Menu
  */
 #define elm_obj_menu_selected_item_get(ret) ELM_OBJ_MENU_ID(ELM_OBJ_MENU_SUB_ID_SELECTED_ITEM_GET), EO_TYPECHECK(Elm_Object_Item **, ret)
+#endif
+

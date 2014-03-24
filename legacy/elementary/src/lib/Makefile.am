@@ -608,7 +608,9 @@ BUILT_SOURCES = \
 		elm_map_pan.eo.c \
 		elm_map_pan.eo.h \
 		elm_map.eo.c \
-		elm_map.eo.h
+		elm_map.eo.h \
+		elm_menu.eo.c \
+		elm_menu.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -652,7 +654,8 @@ EXTRA_DIST += \
 	     elm_inwin.eo \
 	     elm_label.eo \
 	     elm_map_pan.eo \
-	     elm_map.eo
+	     elm_map.eo \
+	     elm_menu.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -696,5 +699,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_inwin.eo.h \
 				  elm_label.eo.h \
 				  elm_map_pan.eo.h \
-				  elm_map.eo.h
+				  elm_map.eo.h \
+				  elm_menu.eo.h
 

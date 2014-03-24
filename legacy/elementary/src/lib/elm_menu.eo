@@ -1,0 +1,130 @@
+class Elm_Menu (Elm_Widget, Evas_Clickable_Interface)
+{
+   eo_prefix: elm_obj_menu;
+   properties {
+      selected_item {
+         get {
+            /*@
+            @brief Get the selected item in the menu
+
+            @return The selected item, or NULL if none
+
+            @see elm_menu_item_selected_get()
+            @see elm_menu_item_selected_set()
+
+            @ingroup Menu */
+            return Elm_Object_Item *;
+         }
+      }
+      items {
+         get {
+            /*@
+            @brief Returns a list of @p item's items.
+
+            @return An Eina_List* of @p item's items
+
+            @ingroup Menu */
+            return const Eina_List *;
+         }
+      }
+      first_item {
+         get {
+            /*@
+            @brief Get the first item in the menu
+
+            @return The first item, or NULL if none
+
+            @ingroup Menu */
+            return Elm_Object_Item *;
+         }
+      }
+      last_item {
+         get {
+            /*@
+            @brief Get the last item in the menu
+
+            @return The last item, or NULL if none
+
+            @ingroup Menu */
+            return Elm_Object_Item *;
+         }
+      }
+   }
+   methods {
+      move {
+         /*@
+         @brief Move the menu to a new position
+
+         Sets the top-left position of the menu to (@p x,@p y).
+
+         @note @p x and @p y coordinates are relative to parent.
+
+         @ingroup Menu */
+
+         params {
+            @in Evas_Coord x; /*@ The new position. */
+            @in Evas_Coord y; /*@ The new position. */
+         }
+      }
+      item_add {
+         /*@
+         @brief Add an item at the end of the given menu widget
+
+         @return Returns the new item.
+
+         @note This function does not accept relative icon path.
+
+         @ingroup Menu */
+
+         return Elm_Object_Item *;
+         params {
+            @in Elm_Object_Item *parent; /*@ The parent menu item (optional) */
+            @in const char *icon; /*@ An icon display on the item. The icon will be destroyed by the menu. */
+            @in const char *label; /*@ The label of the item. */
+            @in Evas_Smart_Cb func; /*@ Function called when the user select the item. */
+            @in const void *data; /*@ Data sent by the callback. */
+         }
+      }
+      close {
+         /*@
+         @brief Close a opened menu
+
+         @return void
+
+         Hides the menu and all it's sub-menus.
+
+         @ingroup Menu */
+
+      }
+      item_separator_add {
+         /*@
+         @brief Add a separator item to menu @p obj under @p parent.
+
+         @return The created item or NULL on failure
+
+         This is item is a @ref Separator.
+
+         @ingroup Menu */
+
+         return Elm_Object_Item *;
+         params {
+            @in Elm_Object_Item *parent; /*@ The item to add the separator under */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::show;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::parent;
+      Elm_Widget::theme_apply;
+      Elm_Widget::translate;
+   }
+   events {
+      language,changed;
+      access,changed;
+   }
+
+}

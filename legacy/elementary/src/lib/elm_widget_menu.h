@@ -17,8 +17,8 @@
 /**
  * Base widget smart data extended with menu instance data.
  */
-typedef struct _Elm_Menu_Smart_Data Elm_Menu_Smart_Data;
-struct _Elm_Menu_Smart_Data
+typedef struct _Elm_Menu_Data Elm_Menu_Data;
+struct _Elm_Menu_Data
 {
    Evas_Object          *hv, *bx, *location, *parent;
 
@@ -60,7 +60,7 @@ struct _Elm_Menu_Item
  */
 
 #define ELM_MENU_DATA_GET(o, sd) \
-  Elm_Menu_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_MENU_CLASS)
+  Elm_Menu_Data * sd = eo_data_scope_get(o, ELM_OBJ_MENU_CLASS)
 
 #define ELM_MENU_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_MENU_DATA_GET(o, ptr);                         \
