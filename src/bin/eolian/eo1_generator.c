@@ -694,10 +694,16 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              goto end;
           }
 
+        /* e.g event_freeze can be a property or a method. If a type is explicit (property SET/GET),
+         * we assume it can't be a method.
+         */
+        if ((in_meth && in_prop) && (ftype == SET || ftype == GET)) in_meth = NULL;
+
         if (in_meth)
           {
              _template_fill(str_func, tmpl_impl_str, impl_class, funcname, EINA_FALSE);
              eo1_bind_func_generate(classname, in_meth, UNRESOLVED, str_bodyf, impl_class);
+             continue;
           }
 
         if (in_prop)
