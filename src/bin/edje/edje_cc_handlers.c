@@ -439,29 +439,23 @@ static void st_collections_group_physics_world_depth(void);
      {PREFIX"color_classes.color_class.color2", st_color_class_color2}, /* dup */ \
      {PREFIX"color_classes.color_class.color3", st_color_class_color3}, /* dup */
 
+#define PROGRAM_SEQUENCE(PREFIX, NAME, FN) \
+     {PREFIX".program."NAME, FN}, /* dup */ \
+     {PREFIX".program.sequence."NAME, FN}, /* dup */
+
+
 #define PROGRAM_BASE(PREFIX) \
-     {PREFIX".program.name", st_collections_group_programs_program_name}, /* dup */ \
-     {PREFIX".program.sequence.name", st_collections_group_programs_program_name}, /* dup */ \
-     {PREFIX".program.signal", st_collections_group_programs_program_signal}, /* dup */ \
-     {PREFIX".program.sequence.signal", st_collections_group_programs_program_signal}, /* dup */ \
-     {PREFIX".program.source", st_collections_group_programs_program_source}, /* dup */ \
-     {PREFIX".program.sequence.source", st_collections_group_programs_program_source}, /* dup */ \
-     {PREFIX".program.in", st_collections_group_programs_program_in}, /* dup */ \
-     {PREFIX".program.sequence.in", st_collections_group_programs_program_in}, /* dup */ \
-     {PREFIX".program.action", st_collections_group_programs_program_action}, /* dup */ \
-     {PREFIX".program.sequence.action", st_collections_group_programs_program_action}, /* dup */ \
-     {PREFIX".program.transition", st_collections_group_programs_program_transition}, /* dup */ \
-     {PREFIX".program.sequence.transition", st_collections_group_programs_program_transition}, /* dup */ \
-     {PREFIX".program.target", st_collections_group_programs_program_target}, /* dup */ \
-     {PREFIX".program.sequence.target", st_collections_group_programs_program_target}, /* dup */ \
-     {PREFIX".program.targets", st_collections_group_programs_program_targets}, /* dup */ \
-     {PREFIX".program.sequence.targets", st_collections_group_programs_program_targets}, /* dup */ \
-     {PREFIX".program.after", st_collections_group_programs_program_after}, /* dup */ \
-     {PREFIX".program.sequence.after", st_collections_group_programs_program_after}, /* dup */ \
-     {PREFIX".program.api", st_collections_group_programs_program_api}, /* dup */ \
-     {PREFIX".program.sequence.api", st_collections_group_programs_program_api}, /* dup */ \
-     {PREFIX".program.filter", st_collections_group_programs_program_filter}, /* dup */ \
-     {PREFIX".program.sequence.filter", st_collections_group_programs_program_filter}, /* dup */
+     PROGRAM_SEQUENCE(PREFIX, "name", st_collections_group_programs_program_name) \
+     PROGRAM_SEQUENCE(PREFIX, "signal", st_collections_group_programs_program_signal) \
+     PROGRAM_SEQUENCE(PREFIX, "source", st_collections_group_programs_program_source) \
+     PROGRAM_SEQUENCE(PREFIX, "in", st_collections_group_programs_program_in) \
+     PROGRAM_SEQUENCE(PREFIX, "action", st_collections_group_programs_program_action) \
+     PROGRAM_SEQUENCE(PREFIX, "transition", st_collections_group_programs_program_transition) \
+     PROGRAM_SEQUENCE(PREFIX, "target", st_collections_group_programs_program_target) \
+     PROGRAM_SEQUENCE(PREFIX, "targets", st_collections_group_programs_program_targets) \
+     PROGRAM_SEQUENCE(PREFIX, "after", st_collections_group_programs_program_after) \
+     PROGRAM_SEQUENCE(PREFIX, "api", st_collections_group_programs_program_api) \
+     PROGRAM_SEQUENCE(PREFIX, "filter", st_collections_group_programs_program_filter)
 
 #define PROGRAM_STATEMENTS(PREFIX) \
      IMAGE_SET_STATEMENTS(PREFIX".programs") \
