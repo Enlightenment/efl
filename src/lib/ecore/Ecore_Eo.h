@@ -75,6 +75,8 @@ enum
  *
  * @{
  */
+#include "ecore_animator.eo.h"
+#if 0
 
 #define ECORE_ANIMATOR_CLASS ecore_animator_class_get()
 const Eo_Class *ecore_animator_class_get(void) EINA_CONST;
@@ -114,7 +116,7 @@ enum
  *
  */
 #define ecore_animator_timeline_constructor(runtime, func, data) ECORE_ANIMATOR_ID(ECORE_ANIMATOR_SUB_ID_TIMELINE_CONSTRUCTOR), EO_TYPECHECK(double, runtime), EO_TYPECHECK(Ecore_Timeline_Cb, func), EO_TYPECHECK(const void *, data)
-
+#endif
 /**
  * @}
  */

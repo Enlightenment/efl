@@ -1,0 +1,27 @@
+class Ecore_Animator (Eo_Base)
+{
+   eo_prefix: ecore_animator;
+   constructors {
+      timeline_constructor {
+         /*@ Contructor. */
+         params {
+            @in double runtime;
+            @in Ecore_Timeline_Cb func;
+            @in const void *data;
+         }
+      }
+      constructor {
+         /*@ Contructor. */
+         params {
+            @in Ecore_Task_Cb func;
+            @in const void *data;
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Eo_Base::event_freeze;
+      Eo_Base::event_thaw;
+   }
+}
