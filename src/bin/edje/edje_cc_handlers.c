@@ -1128,25 +1128,27 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 
         memcpy(copy, name, strlen(name) + 1);
 
-        if (ep2->action == EDJE_ACTION_TYPE_STATE_SET)
-          data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_ACTION_STOP)
-          data_queue_copied_program_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_SCRIPT)
-          data_queue_copied_program_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
-          data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
-          data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
-          data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_FOCUS_SET)
-
-          data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
-        else if (ep2->action == EDJE_ACTION_TYPE_FOCUS_OBJECT)
-          data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
-        else
+        switch (ep2->action)
           {
+           case EDJE_ACTION_TYPE_STATE_SET:
+           case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+           case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+           case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+           case EDJE_ACTION_TYPE_FOCUS_SET:
+           case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+             if (current_group_inherit)
+               data_queue_part_lookup(pc, name, &et->id);
+             else
+               data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
+             break;
+           case EDJE_ACTION_TYPE_ACTION_STOP:
+           case EDJE_ACTION_TYPE_SCRIPT:
+             if (current_group_inherit)
+               data_queue_program_lookup(pc, name, &et->id);
+             else
+               data_queue_copied_program_lookup(pc, &(et2->id), &(et->id));
+             break;
+           default:
              ERR("parse error %s:%i. target may only be used after action",
                  file_in, line - 1);
              exit(-1);
@@ -2757,7 +2759,7 @@ st_collections_group_inherit(void)
    Edje_List_Foreach_Data fdata;
    Eina_List *l;
    char *parent_name;
-   unsigned int i, j;
+   unsigned int i, j, offset;
 
    check_arg_count(1);
 
@@ -2851,11 +2853,12 @@ st_collections_group_inherit(void)
 
    // FIXME: Handle limits dup
 
+   offset = pc->parts_count;
    for (i = 0 ; i < pc2->parts_count ; i++)
      {
         // copy the part
         edje_cc_handlers_part_make(-1);
-        ep = pc->parts[i];
+        ep = pc->parts[i + offset];
         ep2 = pc2->parts[i];
         _part_copy(ep, ep2);
      }
