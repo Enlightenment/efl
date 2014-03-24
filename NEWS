@@ -1,6 +1,26 @@
 =========
-EFL 1.9.1
+EFL 1.9.2
 =========
+
+Changes since 1.9.1:
+--------------------
+
+Fixes:
+
+   * Evas filters: Fix 1-D blurs on a single buffer
+   * Evas filters: Fix memory leak when destroying the object
+   * Ecore x: Add back the two symbols removed in 1.9.
+   * eet: fix tokenizer's escape logic.
+   * edje: check font change in edje text part cache infra.
+   * Evas cserve2: Fix client crashes when a file changed
+   * Evas gl: Fix clip in image_draw if it's not set
+   * edje_cc no longer fails on collections.group{}
+   * edje_cc now correctly handles lack of state int in STATE_SET action
+   * edje_cc also checks min args correctly for STATE_SET actions
+   * Evas filters: fix potential memory leak
+   * edje_cc uses macros for some of its handler setup
+   * evas/gl - fill up missed blend mode.
+
 
 Changes since 1.9.0:
 --------------------
