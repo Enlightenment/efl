@@ -347,16 +347,18 @@ _gengrid_self_focus_item_get(
 
   if (sd->horizontal)
     {
-       if ((cy > (items_row - 1)) || (cx > (columns - 1))) return EINA_FALSE;
+       if ((cy > (int)(items_row - 1)) ||
+           (cx > (int)(columns - 1))) return EINA_FALSE;
        new_position = items_row * cx + cy;
     }
   else
-   {
-       if ((cx > (items_col - 1)) || (cy > (rows - 1))) return EINA_FALSE;
+    {
+       if ((cx > (int)(items_col - 1)) ||
+           (cy > (int)(rows - 1))) return EINA_FALSE;
        new_position = cx + items_col * cy;
-  }
+    }
 
-  if (new_position > (items_count - 1)) return EINA_FALSE;
+  if (new_position > (int)(items_count - 1)) return EINA_FALSE;
 
   focused_pos++;
   new_position++;
