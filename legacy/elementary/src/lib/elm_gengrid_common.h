@@ -565,13 +565,3 @@ EAPI void                          elm_gengrid_item_select_mode_set(Elm_Object_I
  */
 EAPI Elm_Object_Select_Mode        elm_gengrid_item_select_mode_get(const Elm_Object_Item *it);
 
-
-/**
- * Set if gengrid should manage focus direction.
- *
- * @param obj The gengrid object
- * @param flag The state which should be set.
- *
- * @ingroup Gengrid
- */
-EAPI void elm_gengrid_focus_direction_allow_set(Evas_Object *obj, Eina_Bool flag);

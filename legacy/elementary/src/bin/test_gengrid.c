@@ -252,23 +252,6 @@ grid_content_get(void *data, Evas_Object *obj, const char *part)
    return NULL;
 }
 
-Evas_Object *
-grid_content_buttons_get(void *data, Evas_Object *obj, const char *part)
-{
-   const Item_Data *id = data;
-   if (!strcmp(part, "elm.swallow.icon"))
-     {
-        Evas_Object *bt = elm_button_add(obj);
-        Evas_Object *ic = elm_icon_add(obj);
-        elm_image_file_set(ic, id->path, NULL);
-        elm_image_aspect_fixed_set(ic, EINA_FALSE);
-        elm_object_part_content_set(bt, "icon", ic);
-        evas_object_show(bt);
-        return bt;
-     }
-   return NULL;
-}
-
 Eina_Bool
 grid_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
@@ -346,54 +329,6 @@ create_gengrid(Evas_Object *obj, int items)
    gic->item_style = "default";
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
-   gic->func.state_get = grid_state_get;
-   gic->func.del = NULL;
-
-   n = 0;
-   for (i = 0; i < items; i++)
-     {
-        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
-        n = (n + 1) % 9;
-        id[i].mode = i;
-        id[i].path = eina_stringshare_add(buf);
-        id[i].item = elm_gengrid_item_append(grid, gic, &(id[i]), grid_sel, NULL);
-        if (!(i % 5))
-          elm_gengrid_item_selected_set(id[i].item, EINA_TRUE);
-     }
-   elm_gengrid_item_class_free(gic);
-
-   return grid;
-}
-
-static Evas_Object *
-create_gengrid_buttons(Evas_Object *obj, int items)
-{
-   Evas_Object *grid = NULL;
-   static Item_Data id[144];
-   int i, n;
-   char buf[PATH_MAX];
-
-   grid = elm_gengrid_add(obj);
-   elm_gengrid_item_size_set(grid,
-                             elm_config_scale_get() * 200,
-                             elm_config_scale_get() * 150);
-   elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
-   evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
-   evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
-   evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
-   evas_object_smart_callback_add(grid, "moved", grid_moved, NULL);
-   evas_object_smart_callback_add(grid, "drag,start,up", grid_drag_up, NULL);
-   evas_object_smart_callback_add(grid, "drag,start,right", grid_drag_right, NULL);
-   evas_object_smart_callback_add(grid, "drag,start,down", grid_drag_down, NULL);
-   evas_object_smart_callback_add(grid, "drag,start,left", grid_drag_left, NULL);
-   evas_object_smart_callback_add(grid, "drag,stop", grid_drag_stop, NULL);
-   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   gic = elm_gengrid_item_class_new();
-   gic->item_style = "default";
-   gic->func.text_get = grid_text_get;
-   gic->func.content_get = grid_content_buttons_get;
    gic->func.state_get = grid_state_get;
    gic->func.del = NULL;
 
@@ -1336,56 +1271,6 @@ test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(bt);
 
    evas_object_show(win);
-}
-
-void
-test_gengrid_focus_direction(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Evas_Object *win, *bt, *bxx, *bx;
-
-
-   win = elm_win_util_standard_add("gengrid", "GenGrid");
-   elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 600, 600);
-   evas_object_show(win);
-
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
-
-   bxx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bxx);
-   evas_object_show(bxx);
-
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Next API function");
-   elm_box_pack_end(bxx, bt);
-   evas_object_show(bt);
-
-   /* Create GenGrid */
-   Evas_Object *grid = create_gengrid_buttons(win, (12 * 12));
-   elm_box_pack_end(bxx, grid);
-   evas_object_show(grid);
-
-   elm_gengrid_focus_direction_allow_set(grid, EINA_TRUE);
-//   elm_object_focus_allow_set(grid, EINA_FALSE);
-
-   bx = elm_box_add(win);
-   elm_box_horizontal_set(bx, EINA_TRUE);
-   elm_box_pack_end(bxx, bx);
-   evas_object_show(bx);
-
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Bring in");
-   evas_object_smart_callback_add(bt, "clicked", _btn_bring_in_clicked_cb, grid);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Show");
-   evas_object_smart_callback_add(bt, "clicked", _btn_show_clicked_cb, grid);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
 }
 
 void

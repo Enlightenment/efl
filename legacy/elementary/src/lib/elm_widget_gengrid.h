@@ -15,15 +15,6 @@
  * other widgets which are a gengrid with some more logic on top.
  */
 
-
-typedef struct _Gengrid_Focus_Direction_Mod_Api Gengrid_Focus_Direction_Mod_Api;
-
-struct _Gengrid_Focus_Direction_Mod_Api
-{
-  eo_op_func_type hook_ptr;
-};
-
-
 /**
  * Base widget smart data extended with gengrid instance data.
  */
@@ -119,8 +110,6 @@ struct _Elm_Gengrid_Smart_Data
    Eina_Bool                             show_region : 1;
    Eina_Bool                             bring_in : 1;
    Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the list at the moment. this flag is set to true on mouse and reset to false on mouse up */
-   /* a flag for focus direction. by default it is false */
-   Eina_Bool                             focus_direction : 1;
 };
 
 struct Elm_Gen_Item_Type

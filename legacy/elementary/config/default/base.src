@@ -39,7 +39,7 @@ group "Elm_Config" struct {
   value "finger_size" int: 40;
   value "fps" double: 60.0;
   value "theme" string: "default";
-  value "modules" string: "prefs>prefs_iface:access_output>access/api:datetime_input_ctxpopup>datetime/api:gengrid_focus_hook>gengrid_focus/api";
+  value "modules" string: "prefs>prefs_iface:access_output>access/api:datetime_input_ctxpopup>datetime/api";
   value "tooltip_delay" double: 1.0;
   value "cursor_engine_only" uchar: 1;
   value "focus_highlight_enable" uchar: 0;

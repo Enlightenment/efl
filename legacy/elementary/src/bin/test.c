@@ -130,7 +130,6 @@ void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid3(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid_item_styles(void *data, Evas_Object *obj, void *event_info);
-void test_gengrid_focus_direction(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid4(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid_speed(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid_focus(void *data, Evas_Object *obj, void *event_info);
@@ -666,7 +665,6 @@ add_tests:
    ADD_TEST(NULL, "Lists - Gengrid", "GenGrid Item Styles", test_gengrid_item_styles);
    ADD_TEST(NULL, "Lists - Gengrid", "Gengrid Update Speed", test_gengrid_speed);
    ADD_TEST(NULL, "Lists - Gengrid", "GenGrid Focus", test_gengrid_focus);
-   ADD_TEST(NULL, "Lists - Gengrid", "GenGrid Focus Direction", test_gengrid_focus_direction);
 
    //------------------------------//
    ADD_TEST(NULL, "General", "Scaling", test_scaling);
