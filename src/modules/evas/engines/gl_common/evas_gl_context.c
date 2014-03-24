@@ -372,11 +372,7 @@ _evas_gl_common_version_check()
      return 0;
 
    tmp = strchr(version, '.');
-   if (!tmp)
-     {
-        free(version);
-        return 0;
-     }
+   if (!tmp) goto fail;
    /* the first '.' always exists */
    *tmp = '\0';
    major = atoi(version);
@@ -389,6 +385,8 @@ _evas_gl_common_version_check()
    /* *tmp is ' '  : version is major_number.minor_number followed by vendor */
    *tmp = '\0';
    minor = atoi(tmp2);
+
+ fail:
    free(version);
 
    if (((major == 1) && (minor >= 4)) || (major >= 2))
