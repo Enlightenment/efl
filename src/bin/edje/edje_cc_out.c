@@ -2176,7 +2176,6 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    Part_Lookup_Key key;
    Part_Lookup *pl = NULL;
    Eina_List *list;
-
    key.pc = pc;
    key.mem.dest = dest;
    key.stable = EINA_TRUE;
@@ -2221,7 +2220,6 @@ data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
    Part_Lookup_Key key;
    Part_Lookup *pl = NULL;
    Eina_List *list;
-
    key.pc = pc;
    key.mem.reallocated.base = base;
    key.mem.reallocated.offset = offset;
@@ -2370,6 +2368,9 @@ void *
 data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    Program_Lookup *pl;
+   Edje_Part_Collection_Parser *pcp = (Edje_Part_Collection_Parser *)pc;
+
+   if (pcp->inherit_only && (!current_group_inherit)) return NULL;
 
    if (!name) return NULL; /* FIXME: should we stop compiling ? */
 
@@ -2691,7 +2692,7 @@ data_process_lookups(void)
                     }
                }
 
-             if (i == part->key.pc->parts_count)
+             if ((i == part->key.pc->parts_count) && (!((Edje_Part_Collection_Parser*)part->key.pc)->inherit_only))
                {
                   ERR("Unable to find part name \"%s\" needed in group '%s'.",
                       alias, part->key.pc->part);

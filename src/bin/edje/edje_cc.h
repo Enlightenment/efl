@@ -144,6 +144,7 @@ struct _Edje_Part_Collection_Parser
 {
    Edje_Part_Collection common;
    Eina_Bool default_mouse_events;
+   Eina_Bool inherit_only;
 };
 
 /* global fn calls */

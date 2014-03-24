@@ -144,7 +144,7 @@ static Edje_Part_Description_Common *current_desc = NULL;
 static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
 static Eina_List *current_program_lookups = NULL;
-static Eina_Bool current_group_inherit = EINA_FALSE;
+Eina_Bool current_group_inherit = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
 static Eina_List *sequencing_lookups = NULL;
 
@@ -198,6 +198,7 @@ static void ob_collections(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
+static void st_collections_group_inherit_only(void);
 static void st_collections_group_inherit(void);
 static void st_collections_group_part_remove(void);
 static void st_collections_group_program_remove(void);
@@ -513,6 +514,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
+     {"collections.group.inherit_only", st_collections_group_inherit_only},
      {"collections.group.part_remove", st_collections_group_part_remove},
      {"collections.group.program_remove", st_collections_group_program_remove},
      {"collections.group.script_only", st_collections_group_script_only},
@@ -3027,6 +3029,31 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
         st_collections_group_parts_part_description_inherit();
         parent_desc = NULL;
      }
+}
+
+/**
+    @page edcref
+    @property
+        inherit_only
+    @parameters
+        1 or 0
+    @effect
+        This flags a group as being used only for inheriting, which
+        will inhibit edje_cc resolving of programs and parts that may
+        not exist in this group, but are located in the group which is inheriting
+        this group.
+    @endproperty
+    @since 1.10
+*/
+static void
+st_collections_group_inherit_only(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(1);
+
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
+   pcp->inherit_only = parse_bool(0);
 }
 
 /**
