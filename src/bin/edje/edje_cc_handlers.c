@@ -489,7 +489,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.vibrations.sample.name", st_collections_group_vibration_sample_name},
      {"collections.vibrations.sample.source", st_collections_group_vibration_sample_source},
      {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
-     {"collections.grpup.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
+     {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.part_remove", st_collections_group_part_remove},
