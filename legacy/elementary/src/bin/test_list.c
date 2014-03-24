@@ -1310,6 +1310,14 @@ test_list_focus_focus_move_policy_changed(void *data EINA_UNUSED,
 }
 
 static void
+test_list_focus_item_loop_enable_check_changed(void *data, Evas_Object *obj,
+                                               void *event_info  EINA_UNUSED)
+{
+   Evas_Object *li = data;
+   elm_object_scroll_item_loop_enabled_set(li, elm_check_state_get(obj));
+}
+
+static void
 _item_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("%s: %p\n", (char *)data, event_info);
@@ -1497,6 +1505,17 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    test_list_focus_focus_on_selection_set(li, chk, EINA_FALSE);
 
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Item Looping Enable");
+   elm_check_state_set(chk, elm_object_scroll_item_loop_enabled_get(li));
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_list_focus_item_loop_enable_check_changed,
+                                  li);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   elm_box_pack_end(bx, bx_opt);
    // Focus Movement Policy
    fr = elm_frame_add(bx);
    elm_object_text_set(fr, "Focus Movement Policy");
@@ -1572,8 +1591,8 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
         if (lhand > 4) lhand = 4;
         if (rhand > 4) rhand = 4;
         snprintf(buf, sizeof(buf), " %s / %s ",
-            _list_focus_names[lhand],
-            _list_focus_names[rhand]);
+				_list_focus_names[lhand],
+				_list_focus_names[rhand]);
 
         it = elm_list_item_append(li, buf,
                                   test_list_focus_content_get(li, lhand, horiz),

@@ -134,5 +134,34 @@ EAPI Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
 EAPI Eina_Bool elm_object_scroll_lock_y_get(const Evas_Object *obj);
 
 /**
+ * Enable item loop feature of the given widget
+ *
+ * If @p enable is @c EINA_TRUE, item selection/focus will loop internally.
+ * This means if arrow keys are pressed at end of scroller's item,
+ * screen is moved to opposite side.
+ *
+ * @param obj The object
+ * @param enable item loop feature (@c EINA_TRUE == enable, @c EINA_FALSE == disable)
+ *
+ * @see elm_object_scroll_item_loop_enabled_get()
+ * @since 1.10
+ * @ingroup Scrollitem
+ */
+EAPI void      elm_object_scroll_item_loop_enabled_set(Evas_Object *obj, Eina_Bool enable);
+
+/**
+ * Get the item loop enable status of the given widget
+ *
+ * This gets the item loop enabled status.
+ *
+ * @param obj The object
+ *
+ * @see elm_objecdt_scroll_item_enabled_set()
+ * @since 1.10
+ * @ingroup Scrollitem
+ */
+EAPI Eina_Bool elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj);
+
+/**
  * @}
  */

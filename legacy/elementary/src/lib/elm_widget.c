@@ -3406,6 +3406,18 @@ _elm_widget_drag_child_locked_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *
    return sd->child_drag_y_locked;
 }
 
+EOLIAN static void
+_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
+{
+	return;
+}
+
+EOLIAN static Eina_Bool
+_elm_widget_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+{
+	return EINA_FALSE;
+}
+
 EOLIAN static Eina_Bool
 _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {

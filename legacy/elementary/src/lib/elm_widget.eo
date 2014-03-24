@@ -317,6 +317,17 @@ abstract Elm_Widget (Evas_Smart)
             return int;
          }
       }
+      item_loop_enabled {
+         set {
+            /*@ Set enable or disable item loop feature. */
+         }
+         get {
+            /*@ Get the value whether item loop feature is enabled or not. */
+         }
+         values {
+            Eina_Bool enable;
+         }
+      }
       child_can_focus {
          get {
             /*@ No description supplied by the EAPI. */

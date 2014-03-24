@@ -769,6 +769,14 @@ group { name: "elm/scroller/base/default";
             visible: 1;
          }
       }
+      part { name: "dim_effect"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "effect" 0.0;
+            color: 50 50 50 255;
+         }
+      }
    }
    programs {
       program {
@@ -802,6 +810,70 @@ group { name: "elm/scroller/base/default";
          target: "shadow_hbar";
          target: "glow_hbar";
          target: "center_glow_hbar";
+      }
+      program {
+         signal: "elm,action,looping,left"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,left,done";
+      }
+      program { name: "looping,left,done";
+         action: SIGNAL_EMIT "elm,looping,left,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,left,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+      program {
+         signal: "elm,action,looping,right"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,right,done";
+      }
+      program { name: "looping,right,done";
+         action: SIGNAL_EMIT "elm,looping,right,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,right,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+      program {
+         signal: "elm,action,looping,up"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,up,done";
+      }
+      program { name: "looping,up,done";
+         action: SIGNAL_EMIT "elm,looping,up,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,up,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+      }
+      program {
+         signal: "elm,action,looping,down"; source: "elm";
+         action: STATE_SET "effect" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
+         after: "looping,down,done";
+      }
+      program { name: "looping,down,done";
+         action: SIGNAL_EMIT "elm,looping,down,done" "elm";
+      }
+      program {
+         signal: "elm,action,looping,down,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "dim_effect";
       }
    }
 }

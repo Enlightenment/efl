@@ -727,6 +727,8 @@ EAPI Eina_Bool        elm_widget_drag_lock_x_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_drag_lock_y_get(const Evas_Object *obj);
 EAPI int              elm_widget_drag_child_locked_x_get(const Evas_Object *obj);
 EAPI int              elm_widget_drag_child_locked_y_get(const Evas_Object *obj);
+EAPI void             elm_widget_item_loop_enabled_set(Evas_Object *obj, Eina_Bool enable);
+EAPI Eina_Bool        elm_widget_item_loop_enabled_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
 EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);
@@ -1281,6 +1283,8 @@ enum
    ELM_WIDGET_SUB_ID_DRAG_LOCK_Y_GET,
    ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_X_GET,
    ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_Y_GET,
+   ELM_WIDGET_SUB_ID_ITEM_LOOP_ENABLED_SET,
+   ELM_WIDGET_SUB_ID_ITEM_LOOP_ENABLED_GET,
 
    ELM_WIDGET_SUB_ID_EVENT_CALLBACK_ADD,
    ELM_WIDGET_SUB_ID_EVENT_CALLBACK_DEL,
@@ -2257,6 +2261,25 @@ enum
  */
 #define elm_wdg_drag_child_locked_y_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_DRAG_CHILD_LOCKED_Y_GET), EO_TYPECHECK(int *, ret)
 
+/**
+ * @def elm_wdg_item_loop_enabled_set
+ * @since 1.10
+ *
+ * Set enable or disable item loop feature.
+ *
+ * @param[in] enable
+ */
+#define elm_wdg_item_loop_enabled_set(enable) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ITEM_LOOP_ENABLED_SET), EO_TYPECHECK(Eina_Bool, enable)
+
+/**
+ * @def elm_wdg_item_loop_enabled_get
+ * @since 1.10
+ *
+ * Get the value whether item loop feature is enabled or not.
+ *
+ * @param[out] ret
+ */
+#define elm_wdg_item_loop_enabled_get(ret) ELM_WIDGET_ID(ELM_WIDGET_SUB_ID_ITEM_LOOP_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * @def elm_wdg_event_callback_add

@@ -1530,6 +1530,21 @@ elm_object_scroll_lock_y_get(const Evas_Object *obj)
    return elm_widget_drag_lock_y_get(obj);
 }
 
+EAPI void
+elm_object_scroll_item_loop_enabled_set(Evas_Object *obj,
+                                        Eina_Bool   enable)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_item_loop_enabled_set(obj, enable);
+}
+
+EAPI Eina_Bool
+elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   return elm_widget_item_loop_enabled_get(obj);
+}
+
 EAPI Eina_Bool
 elm_object_widget_check(const Evas_Object *obj)
 {
