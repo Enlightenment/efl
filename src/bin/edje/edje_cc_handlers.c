@@ -1737,8 +1737,16 @@ st_data_item(void)
 
    if (!edje_file->data)
      edje_file->data = eina_hash_string_small_new(free);
+   else
+     {
+        if (eina_hash_find(edje_file->data, key))
+          {
+             ERR("parse error %s:%i. There is already a data.item of the name %s",
+                 file_in, line - 1, key);
+             exit(-1);
+          }
+     }
 
-   /* FIXME: check if data already exist */
    eina_hash_direct_add(edje_file->data, key, es);
 }
 
