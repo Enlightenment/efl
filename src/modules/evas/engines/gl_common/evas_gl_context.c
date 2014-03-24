@@ -310,8 +310,8 @@ _evas_gl_common_version_check()
    char *version;
    char *tmp;
    char *tmp2;
-   int major;
-   int minor;
+   int major = 0;
+   int minor = 0;
 
   /*
    * glGetString returns a string describing the current GL connection.
