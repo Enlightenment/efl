@@ -1,0 +1,121 @@
+class Elm_Photo (Elm_Widget, Evas_Clickable_Interface, Evas_Draggable_Interface)
+{
+   eo_prefix: elm_obj_photo;
+   properties {
+      editable {
+         set {
+            /*@
+            Set editability of the photo.
+
+            An editable photo can be dragged to or from, and can be cut or
+            pasted too.  Note that pasting an image or dropping an item on
+            the image will delete the existing content. */
+         }
+         get {
+            /*@ Get editability of the photo. */
+         }
+         values {
+            Eina_Bool set; /*@ To set of clear editability. */
+         }
+      }
+      fill_inside {
+         set {
+            /*@
+            Set if the photo should be completely visible or not.
+
+            @ingroup Photo */
+         }
+         get {
+            /*@ Get if the photo should be completely visible or not. */
+         }
+         values {
+            Eina_Bool fill; /*@ if true the photo will be completely visible */
+         }
+      }
+      aspect_fixed {
+         set {
+            /*@
+            Set whether the original aspect ratio of the photo should be kept on resize.
+
+            The original aspect ratio (width / height) of the photo is usually
+            distorted to match the object's size. Enabling this option will fix
+            this original aspect, and the way that the photo is fit into
+            the object's area
+
+            @see elm_photo_aspect_fixed_get()
+
+            @ingroup Photo */
+         }
+         get {
+            /*@
+            Get if the object keeps the original aspect ratio.
+
+            @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
+            otherwise.
+
+            @ingroup Photo */
+         }
+         values {
+            Eina_Bool fixed; /*@ @c EINA_TRUE if the photo should fix the aspect,
+            @c EINA_FALSE otherwise. */
+         }
+      }
+      size {
+         set {
+            /*@
+            Set the size that will be used on the photo
+
+            @ingroup Photo */
+         }
+         get {
+            /*@ Get the size that will be used on the photo */
+         }
+         values {
+            int size; /*@ The size of the photo */
+         }
+      }
+      file {
+         set {
+            /*@
+            Set the file that will be used as the photo widget's image.
+
+            @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+
+            @note Use @c NULL on @a file to set the photo widget back to it's
+            initial state, which indicates "no photo".
+
+            @ingroup Photo */
+            return Eina_Bool;
+         }
+         values {
+            const char *file; /*@ The path to file that will be used as @a obj's image. */
+         }
+      }
+   }
+   methods {
+      thumb_set {
+         /*@
+           Set the file that will be used as thumbnail in the photo.
+
+           @ingroup Photo */
+         const;
+         params {
+            @in const char *file; /*@ The path to file that will be used as thumbnail. */
+            @in const char *group; /*@ The key used in case of an EET file. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::theme_apply;
+   }
+   events {
+      clicked;
+      drag,start;
+      drag,end;
+   }
+
+}

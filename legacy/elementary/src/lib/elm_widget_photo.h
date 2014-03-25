@@ -17,9 +17,9 @@
 /**
  * Base widget smart data extended with photo instance data.
  */
-typedef struct _Elm_Photo_Smart_Data Elm_Photo_Smart_Data;
+typedef struct _Elm_Photo_Data Elm_Photo_Data;
 
-struct _Elm_Photo_Smart_Data
+struct _Elm_Photo_Data
 {
    Evas_Object          *icon;
    int                   size;
@@ -43,7 +43,7 @@ struct _Elm_Photo_Smart_Data
  */
 
 #define ELM_PHOTO_DATA_GET(o, sd) \
-  Elm_Photo_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTO_CLASS)
+  Elm_Photo_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTO_CLASS)
 
 #define ELM_PHOTO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PHOTO_DATA_GET(o, ptr);                        \

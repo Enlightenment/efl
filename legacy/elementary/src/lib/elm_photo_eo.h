@@ -3,6 +3,9 @@
  *
  * @{
  */
+#include "elm_photo.eo.h"
+
+#if 0
 #define ELM_OBJ_PHOTO_CLASS elm_obj_photo_class_get()
 
 const Eo_Class *elm_obj_photo_class_get(void) EINA_CONST;
@@ -170,6 +173,7 @@ enum
  */
 #define elm_obj_photo_aspect_fixed_get(ret) ELM_OBJ_PHOTO_ID(ELM_OBJ_PHOTO_SUB_ID_ASPECT_FIXED_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+#endif
 
 /**
  * @}
