@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elc_popup.eo.h"
+#if 0
 #define ELM_OBJ_POPUP_CLASS elm_obj_popup_class_get()
 
 const Eo_Class *elm_obj_popup_class_get(void) EINA_CONST;
@@ -166,6 +168,7 @@ enum
  * @see elm_popup_align_get
  */
 #define elm_obj_popup_align_get(horizontal, vertical) ELM_OBJ_POPUP_ID(ELM_OBJ_POPUP_SUB_ID_ALIGN_GET), EO_TYPECHECK(double *, horizontal), EO_TYPECHECK(double *, vertical)
+#endif
 /**
  * @}
  */
