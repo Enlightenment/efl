@@ -496,7 +496,14 @@ EXTRA_DIST += \
 lib/evas/filters/blur/blur_gaussian_alpha_.c \
 lib/evas/filters/blur/blur_gaussian_rgba_.c \
 lib/evas/filters/blur/blur_box_alpha_.c \
-lib/evas/filters/blur/blur_box_rgba_.c
+lib/evas/filters/blur/blur_box_alpha_i386.c \
+lib/evas/filters/blur/blur_box_alpha_sse3.c \
+lib/evas/filters/blur/blur_box_alpha_neon.c \
+lib/evas/filters/blur/blur_box_rgba_.c \
+lib/evas/filters/blur/blur_box_rgba_i386.c \
+lib/evas/filters/blur/blur_box_rgba_sse3.c \
+lib/evas/filters/blur/blur_box_rgba_neon.c
+
 
 ### Engines
 

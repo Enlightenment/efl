@@ -8,7 +8,7 @@
 #include "../evas_filter_private.h"
 
 static inline void
-_box_blur_horiz_rgba_step(const DATA32* restrict const srcdata,
+_box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,
                           DATA32* restrict const dstdata,
                           const int* restrict const radii,
                           const int len,
@@ -149,7 +149,7 @@ _box_blur_horiz_rgba_step(const DATA32* restrict const srcdata,
 }
 
 static inline void
-_box_blur_vert_rgba_step(const DATA32* restrict const srcdata,
+_box_blur_rgba_vert_step(const DATA32* restrict const srcdata,
                          DATA32* restrict const dstdata,
                          const int* restrict const radii,
                          const int len,

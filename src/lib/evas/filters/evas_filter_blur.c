@@ -34,12 +34,45 @@ _box_blur_auto_radius(int *radii, int r)
 }
 
 #include "./blur/blur_box_rgba_.c"
+#ifdef BUILD_MMX
+#include "./blur/blur_box_rgba_i386.c"
+#endif
+#ifdef BUILD_SSE3
+#include "./blur/blur_box_rgba_sse3.c"
+#endif
+#ifdef BUILD_NEON
+#include "./blur/blur_box_rgba_neon.c"
+#endif
 
 static void
 _box_blur_horiz_rgba(DATA32 *src, DATA32 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
-   _box_blur_horiz_rgba_step(src, dst, radii, w, h);
+
+#ifdef BUILD_SSE3
+   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+     {
+        _box_blur_rgba_horiz_step_sse3(src, dst, radii, w, h);
+        goto end;
+     }
+#endif
+#ifdef BUILD_MMX
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        _box_blur_rgba_horiz_step_mmx(src, dst, radii, w, h);
+        goto end;
+     }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+        _box_blur_rgba_horiz_step_neon(src, dst, radii, w, h);
+        goto end;
+     }
+#endif
+   _box_blur_rgba_horiz_step(src, dst, radii, w, h);
+
+end:
    DEBUG_TIME_END();
 }
 
@@ -47,7 +80,31 @@ static void
 _box_blur_vert_rgba(DATA32 *src, DATA32 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
-   _box_blur_vert_rgba_step(src, dst, radii, h, w);
+
+#ifdef BUILD_SSE3
+   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+     {
+        _box_blur_rgba_vert_step_sse3(src, dst, radii, h, w);
+        goto end;
+     }
+#endif
+#ifdef BUILD_MMX
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        _box_blur_rgba_vert_step_mmx(src, dst, radii, h, w);
+        goto end;
+     }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+        _box_blur_rgba_vert_step_neon(src, dst, radii, h, w);
+        goto end;
+     }
+#endif
+   _box_blur_rgba_vert_step(src, dst, radii, h, w);
+
+end:
    DEBUG_TIME_END();
 }
 
@@ -110,12 +167,45 @@ _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 }
 
 #include "./blur/blur_box_alpha_.c"
+#ifdef BUILD_MMX
+#include "./blur/blur_box_alpha_i386.c"
+#endif
+#ifdef BUILD_SSE3
+#include "./blur/blur_box_alpha_sse3.c"
+#endif
+#ifdef BUILD_NEON
+#include "./blur/blur_box_alpha_neon.c"
+#endif
 
 static void
 _box_blur_horiz_alpha(DATA8 *src, DATA8 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
+
+#ifdef BUILD_SSE3
+   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+     {
+        _box_blur_alpha_horiz_step_sse3(src, dst, radii, w, h);
+        goto end;
+     }
+#endif
+#ifdef BUILD_MMX
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        _box_blur_alpha_horiz_step_mmx(src, dst, radii, w, h);
+        goto end;
+     }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+        _box_blur_alpha_horiz_step_neon(src, dst, radii, w, h);
+        goto end;
+     }
+#endif
    _box_blur_alpha_horiz_step(src, dst, radii, w, h);
+
+end:
    DEBUG_TIME_END();
 }
 
@@ -123,7 +213,31 @@ static void
 _box_blur_vert_alpha(DATA8 *src, DATA8 *dst, int* radii, int w, int h)
 {
    DEBUG_TIME_BEGIN();
+
+#ifdef BUILD_SSE3
+   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+     {
+        _box_blur_alpha_vert_step_sse3(src, dst, radii, h, w);
+        goto end;
+     }
+#endif
+#ifdef BUILD_MMX
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     {
+        _box_blur_alpha_vert_step_mmx(src, dst, radii, h, w);
+        goto end;
+     }
+#endif
+#ifdef BUILD_NEON
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     {
+        _box_blur_alpha_vert_step_neon(src, dst, radii, h, w);
+        goto end;
+     }
+#endif
    _box_blur_alpha_vert_step(src, dst, radii, h, w);
+
+end:
    DEBUG_TIME_END();
 }
 
