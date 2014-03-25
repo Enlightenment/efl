@@ -8,8 +8,6 @@
 #include "elm_widget_notify.h"
 #include "elm_widget_container.h"
 
-EAPI Eo_Op ELM_OBJ_NOTIFY_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_NOTIFY_CLASS
 
 #define MY_CLASS_NAME "Elm_Notify"
@@ -118,16 +116,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(obj, w, h);
 }
 
-static void
-_elm_notify_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
-   Elm_Notify_Smart_Data *sd = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
@@ -139,7 +133,7 @@ _elm_notify_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    _sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -176,17 +170,12 @@ _changed_size_hints_cb(void *data,
    _calc(data);
 }
 
-static void
-_elm_notify_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
 {
-   Elm_Notify_Smart_Data *sd = _pd;
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
      {
@@ -196,7 +185,7 @@ _elm_notify_smart_sub_object_del(Eo *obj, void *_pd, va_list *list)
         sd->content = NULL;
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -219,21 +208,17 @@ _restack_cb(void *data EINA_UNUSED,
    evas_object_layer_set(sd->notify, evas_object_layer_get(obj));
 }
 
-static void
-_elm_notify_smart_resize(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_notify_evas_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    _calc(obj);
 }
 
-static void
-_elm_notify_smart_move(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_notify_evas_smart_move(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    _calc(obj);
@@ -268,7 +253,7 @@ end:
 
 static void
 _timer_init(Evas_Object *obj,
-            Elm_Notify_Smart_Data *sd)
+            Elm_Notify_Data *sd)
 {
    ecore_timer_del(sd->timer);
    if (sd->timeout > 0.0)
@@ -277,11 +262,9 @@ _timer_init(Evas_Object *obj,
      sd->timer = NULL;
 }
 
-static void
-_elm_notify_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_notify_evas_smart_show(Eo *obj, Elm_Notify_Data *sd)
 {
-   Elm_Notify_Smart_Data *sd = _pd;
-
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
@@ -292,11 +275,10 @@ _elm_notify_smart_show(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_object_focus_set(obj, EINA_TRUE);
 }
 
-static void
-_elm_notify_smart_hide(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_notify_evas_smart_hide(Eo *obj, Elm_Notify_Data *sd)
 {
    const char *hide_signal;
-   Elm_Notify_Smart_Data *sd = _pd;
 
    if (sd->had_hidden && !sd->in_timeout)
      return;
@@ -335,75 +317,48 @@ _parent_hide_cb(void *data,
    evas_object_hide(data);
 }
 
-static void
-_elm_notify_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_notify_smart_focus_next(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Evas_Object *cur;
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-   Elm_Notify_Smart_Data *sd = _pd;
 
-   if (!sd->content) return;
+   if (!sd->content) return EINA_FALSE;
 
    cur = sd->content;
 
    /* Try to cycle focus on content */
-   int_ret = elm_widget_focus_next_get(cur, dir, next);
-   if (ret) *ret = int_ret;
+   return elm_widget_focus_next_get(cur, dir, next);
 }
 
-static void
-_elm_notify_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_notify_smart_focus_direction(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
 {
    Evas_Object *cur;
 
-   Evas_Object *base = va_arg(*list, Evas_Object *);
-   double degree = va_arg(*list, double);
-   Evas_Object **direction = va_arg(*list, Evas_Object **);
-   double *weight = va_arg(*list, double *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-
-   Elm_Notify_Smart_Data *sd = _pd;
-
-   if (!sd->content) return;
+   if (!sd->content) return EINA_FALSE;
 
    cur = sd->content;
 
-   int_ret = elm_widget_focus_direction_get(cur, base, degree, direction, weight);
-   if (ret) *ret = int_ret;
+   return elm_widget_focus_direction_get(cur, base, degree, direction, weight);
 }
 
-static void
-_elm_notify_smart_content_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_notify_elm_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Object *content)
 {
-   Elm_Notify_Smart_Data *sd = _pd;
-
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
-   if (part && strcmp(part, "default")) return;
-   if (sd->content == content) goto end;
+   if (part && strcmp(part, "default")) return EINA_FALSE;
+   if (sd->content == content) return EINA_TRUE;
 
    evas_object_del(sd->content);
    sd->content = content;
@@ -420,42 +375,30 @@ _elm_notify_smart_content_set(Eo *obj, void *_pd, va_list *list)
    _sizing_eval(obj);
    _calc(obj);
 
-end:
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_notify_smart_content_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_notify_elm_container_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
 {
-   Elm_Notify_Smart_Data *sd = _pd;
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   *ret = NULL;
+   if (part && strcmp(part, "default")) return NULL;
 
-   if (part && strcmp(part, "default")) return;
-
-   *ret = sd->content;
+   return sd->content;
 }
 
-static void
-_elm_notify_smart_content_unset(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_notify_elm_container_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
 {
    Evas_Object *content;
 
-   const char *part = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   if (ret) *ret = NULL;
-
-   Elm_Notify_Smart_Data *sd = _pd;
-
-   if (part && strcmp(part, "default")) return;
-   if (!sd->content) return;
+   if (part && strcmp(part, "default")) return NULL;
+   if (!sd->content) return NULL;
 
    content = sd->content;
    elm_widget_sub_object_del(obj, sd->content);
    edje_object_part_unswallow(sd->notify, content);
 
-   if (ret) *ret = content;
+   return content;
 }
 
 static void
@@ -470,11 +413,9 @@ _hide_finished_cb(void *data,
    if (!sd->allow_events) evas_object_hide(sd->block_events);
 }
 
-static void
-_elm_notify_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_notify_evas_smart_add(Eo *obj, Elm_Notify_Data *priv)
 {
-   Elm_Notify_Smart_Data *priv = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
@@ -493,11 +434,9 @@ _elm_notify_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    elm_notify_align_set(obj, 0.5, 0.0);
 }
 
-static void
-_elm_notify_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_notify_evas_smart_del(Eo *obj, Elm_Notify_Data *sd)
 {
-   Elm_Notify_Smart_Data *sd = _pd;
-
    edje_object_signal_callback_del_full
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);
    elm_notify_parent_set(obj, NULL);
@@ -517,8 +456,8 @@ elm_notify_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_notify_eo_base_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -533,12 +472,9 @@ elm_notify_parent_set(Evas_Object *obj,
    eo_do(obj, elm_obj_widget_parent_set(parent));
 }
 
-static void
-_elm_notify_smart_parent_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_notify_elm_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
 {
-   Evas_Object *parent = va_arg(*list, Evas_Object *);
-   Elm_Notify_Smart_Data *sd = _pd;
-
    if (sd->parent)
      {
         evas_object_event_callback_del_full
@@ -584,12 +520,10 @@ elm_notify_parent_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_elm_notify_smart_parent_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Evas_Object*
+_elm_notify_elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Notify_Smart_Data *sd = _pd;
-   *ret = sd->parent;
+   return sd->parent;
 }
 
 EINA_DEPRECATED EAPI void
@@ -674,55 +608,22 @@ elm_notify_orient_get(const Evas_Object *obj)
    return orient;
 }
 
-EAPI void
-elm_notify_timeout_set(Evas_Object *obj,
-                       double timeout)
+EOLIAN static void
+_elm_notify_timeout_set(Eo *obj, Elm_Notify_Data *sd, double timeout)
 {
-   ELM_NOTIFY_CHECK(obj);
-   eo_do(obj, elm_obj_notify_timeout_set(timeout));
-}
-
-static void
-_timeout_set(Eo *obj, void *_pd, va_list *list)
-{
-   double timeout = va_arg(*list, double);
-   Elm_Notify_Smart_Data *sd = _pd;
-
    sd->timeout = timeout;
    _timer_init(obj, sd);
 }
 
-EAPI double
-elm_notify_timeout_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_notify_timeout_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
-   ELM_NOTIFY_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *) obj, elm_obj_notify_timeout_get(&ret));
-   return ret;
+   return sd->timeout;
 }
 
-static void
-_timeout_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_notify_allow_events_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool allow)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Notify_Smart_Data *sd = _pd;
-   *ret = sd->timeout;
-}
-
-EAPI void
-elm_notify_allow_events_set(Evas_Object *obj,
-                            Eina_Bool allow)
-{
-   ELM_NOTIFY_CHECK(obj);
-   eo_do(obj, elm_obj_notify_allow_events_set(allow));
-}
-
-static void
-_allow_events_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool allow = va_arg(*list, int);
-   Elm_Notify_Smart_Data *sd = _pd;
-
    if (allow == sd->allow_events) return;
    sd->allow_events = allow;
    if (!allow)
@@ -738,37 +639,15 @@ _allow_events_set(Eo *obj, void *_pd, va_list *list)
      evas_object_del(sd->block_events);
 }
 
-EAPI Eina_Bool
-elm_notify_allow_events_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_notify_allow_events_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
-   ELM_NOTIFY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_notify_allow_events_get(&ret));
-   return ret;
+   return sd->allow_events;
 }
 
-static void
-_allow_events_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_notify_align_set(Eo *obj, Elm_Notify_Data *sd, double horizontal, double vertical)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Notify_Smart_Data *sd = _pd;
-   *ret = sd->allow_events;
-}
-
-EAPI void
-elm_notify_align_set(Evas_Object *obj, double horizontal, double vertical)
-{
-   ELM_NOTIFY_CHECK(obj);
-   eo_do(obj, elm_obj_notify_align_set(horizontal, vertical));
-}
-
-static void
-_align_set(Eo *obj, void *_pd, va_list *list)
-{
-   double horizontal = va_arg(*list, double);
-   double vertical = va_arg(*list, double);
-   Elm_Notify_Smart_Data *sd = _pd;
-
    sd->horizontal_align = horizontal;
    sd->vertical_align = vertical;
 
@@ -776,20 +655,9 @@ _align_set(Eo *obj, void *_pd, va_list *list)
    _calc(obj);
 }
 
-EAPI void
-elm_notify_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
+EOLIAN static void
+_elm_notify_align_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, double *horizontal, double *vertical)
 {
-   ELM_NOTIFY_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_notify_align_get(horizontal, vertical));
-}
-
-static void
-_align_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *horizontal = va_arg(*list, double *);
-   double *vertical = va_arg(*list, double *);
-   Elm_Notify_Smart_Data *sd = _pd;
-
    if (horizontal)
      *horizontal = sd->horizontal_align;
    if (vertical)
@@ -797,60 +665,9 @@ _align_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_elm_notify_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_notify_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_notify_smart_del),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_notify_smart_resize),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_notify_smart_move),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW), _elm_notify_smart_show),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE), _elm_notify_smart_hide),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_SET), _elm_notify_smart_parent_set),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_PARENT_GET), _elm_notify_smart_parent_get),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_notify_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_notify_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_notify_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_notify_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION), _elm_notify_smart_focus_direction),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_notify_smart_sub_object_del),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_notify_smart_content_set),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_GET), _elm_notify_smart_content_get),
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_UNSET), _elm_notify_smart_content_unset),
-
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_SET), _timeout_set),
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_GET), _timeout_get),
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_SET), _allow_events_set),
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_GET), _allow_events_get),
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_SET), _align_set),
-        EO_OP_FUNC(ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET), _align_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_SET, "Set the time interval after which the notify window is going to be hidden."),
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_TIMEOUT_GET, "Return the timeout value (in seconds)."),
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_SET, "Sets whether events should be passed to by a click outside its area."),
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALLOW_EVENTS_GET, "Return true if events are allowed below the notify object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_SET, "Set the alignment."),
-     EO_OP_DESCRIPTION(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET, "Return the alignment."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_NOTIFY_BASE_ID, op_desc, ELM_OBJ_NOTIFY_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Notify_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_notify_class_get, &class_desc, ELM_OBJ_CONTAINER_CLASS, NULL);
+
+#include "elm_notify.eo.c"

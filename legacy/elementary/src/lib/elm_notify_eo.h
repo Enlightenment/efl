@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elm_notify.eo.h"
+#if 0
 #define ELM_OBJ_NOTIFY_CLASS elm_obj_notify_class_get()
 
 const Eo_Class *elm_obj_notify_class_get(void) EINA_CONST;
@@ -96,6 +98,7 @@ enum
  */
 #define elm_obj_notify_align_get(horizontal, vertical) ELM_OBJ_NOTIFY_ID(ELM_OBJ_NOTIFY_SUB_ID_ALIGN_GET), EO_TYPECHECK(double *, horizontal), EO_TYPECHECK(double *, vertical)
 
+#endif
 
 /**
  * @}

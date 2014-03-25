@@ -18,8 +18,8 @@
 /**
  * Base widget smart data extended with notify instance data.
  */
-typedef struct _Elm_Notify_Smart_Data Elm_Notify_Smart_Data;
-struct _Elm_Notify_Smart_Data
+typedef struct _Elm_Notify_Data Elm_Notify_Data;
+struct _Elm_Notify_Data
 {
    Evas_Object             *notify, *content, *parent;
    Evas_Object             *block_events;
@@ -37,7 +37,7 @@ struct _Elm_Notify_Smart_Data
  */
 
 #define ELM_NOTIFY_DATA_GET(o, sd) \
-  Elm_Notify_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_NOTIFY_CLASS)
+  Elm_Notify_Data * sd = eo_data_scope_get(o, ELM_OBJ_NOTIFY_CLASS)
 
 #define ELM_NOTIFY_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_NOTIFY_DATA_GET(o, ptr);                       \
