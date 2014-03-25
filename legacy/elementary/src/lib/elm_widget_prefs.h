@@ -64,8 +64,8 @@ typedef struct _Elm_Prefs_Item_Node
 /**
  * Base widget smart data extended with prefs instance data.
  */
-typedef struct _Elm_Prefs_Smart_Data Elm_Prefs_Smart_Data;
-struct _Elm_Prefs_Smart_Data
+typedef struct _Elm_Prefs_Data Elm_Prefs_Data;
+struct _Elm_Prefs_Data
 {
    Elm_Prefs_Page_Node  *root;
 
@@ -91,7 +91,7 @@ extern const Eina_Hash *elm_prefs_item_type_widgets_map;
 extern const Elm_Prefs_Item_Iface *elm_prefs_item_default_widget;
 
 #define ELM_PREFS_DATA_GET(o, sd) \
-  Elm_Prefs_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PREFS_CLASS)
+  Elm_Prefs_Data * sd = eo_data_scope_get(o, ELM_OBJ_PREFS_CLASS)
 
 #define ELM_PREFS_ENTRY(o, sd)                                              \
   if (EINA_UNLIKELY(!sd->data_file || !sd->page))                           \

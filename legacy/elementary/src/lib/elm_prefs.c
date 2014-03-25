@@ -10,8 +10,6 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op ELM_OBJ_PREFS_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_PREFS_CLASS
 
 #define MY_CLASS_NAME "Elm_Prefs"
@@ -45,8 +43,8 @@ static void _elm_prefs_values_get_default(Elm_Prefs_Page_Node *,
 static Eina_Bool _prefs_item_widget_value_from_self(Elm_Prefs_Item_Node *,
                                                     Eina_Bool);
 
-static void
-_elm_prefs_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_prefs_evas_smart_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -148,7 +146,7 @@ end:
 }
 
 static void
-_root_node_free(Elm_Prefs_Smart_Data *sd)
+_root_node_free(Elm_Prefs_Data *sd)
 {
    _page_free(sd->root);
 }
@@ -224,7 +222,7 @@ _prefs_data_type_fix(Elm_Prefs_Item_Node *it,
 }
 
 static Eina_Bool
-_prefs_item_widget_value_from_data(Elm_Prefs_Smart_Data *sd,
+_prefs_item_widget_value_from_data(Elm_Prefs_Data *sd,
                                    Elm_Prefs_Item_Node *it,
                                    Eina_Value *value)
 {
@@ -328,7 +326,7 @@ _elm_prefs_page_item_by_name(Elm_Prefs_Page_Node *p,
 }
 
 static Elm_Prefs_Item_Node *
-_elm_prefs_item_node_by_name(Elm_Prefs_Smart_Data *sd,
+_elm_prefs_item_node_by_name(Elm_Prefs_Data *sd,
                              const char *name)
 {
    char buf[PATH_MAX];
@@ -347,7 +345,7 @@ _elm_prefs_item_node_by_name(Elm_Prefs_Smart_Data *sd,
 }
 
 static Eina_List *
-_elm_prefs_item_list_node_by_name(Elm_Prefs_Smart_Data *sd,
+_elm_prefs_item_list_node_by_name(Elm_Prefs_Data *sd,
                                   const char *name)
 {
    Elm_Prefs_Item_Node *it;
@@ -446,11 +444,9 @@ _elm_prefs_data_cbs_del(Eo *obj)
          "prefs data handle");
 }
 
-static void
-_elm_prefs_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_prefs_evas_smart_del(Eo *obj, Elm_Prefs_Data *sd)
 {
-   Elm_Prefs_Smart_Data *sd = _pd;
-
    sd->delete_me = EINA_TRUE;
 
    if (sd->saving_poller) ecore_poller_del(sd->saving_poller);
@@ -474,39 +470,28 @@ _elm_prefs_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_prefs_smart_focus_next(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Prefs_Smart_Data *sd = _pd;
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool mret;
-
    const Eina_List *items;
 
-   ELM_PREFS_CHECK(obj);
+   ELM_PREFS_CHECK(obj) EINA_FALSE;
 
    items = elm_widget_focus_custom_chain_get(obj);
    if (items)
      {
-        mret = elm_widget_focus_list_next_get
+        return elm_widget_focus_list_next_get
            (obj, items, eina_list_data_get, dir, next);
-
-        if (ret) *ret = mret;
-        return;
      }
 
    if (sd->root && sd->root->w_obj)
      {
-        mret = elm_widget_focus_next_get(sd->root->w_obj, dir, next);
-        if (ret) *ret = mret;
-        return;
+        return elm_widget_focus_next_get(sd->root->w_obj, dir, next);
      }
 
    if (next) *next = NULL;
 
-   if (ret) *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
 EAPI Evas_Object *
@@ -526,8 +511,8 @@ elm_prefs_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_prefs_eo_base_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1061,7 +1046,7 @@ _elm_prefs_values_get_default(Elm_Prefs_Page_Node *page,
 }
 
 static void
-_elm_prefs_values_get_user(Elm_Prefs_Smart_Data *sd,
+_elm_prefs_values_get_user(Elm_Prefs_Data *sd,
                            Elm_Prefs_Page_Node *p)
 {
    char buf[PATH_MAX];
@@ -1137,33 +1122,16 @@ _elm_prefs_values_get_user(Elm_Prefs_Smart_Data *sd,
      }
 }
 
-EAPI Eina_Bool
-elm_prefs_file_set(Evas_Object *obj,
-                   const char *file,
-                   const char *page)
-{
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do(obj, elm_obj_prefs_file_set(file, page, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_file_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_prefs_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, const char *page)
 {
    const char *prefix;
-   const char *file = va_arg(*list, const char *);
-   const char *page = va_arg(*list, const char *);
-   Eina_Bool  *ret  = va_arg(*list, Eina_Bool *);
-
-   Elm_Prefs_Smart_Data *sd = _pd;
 
    if (!_elm_prefs_init_count)
      {
         CRI("prefs_iface module is not loaded! you can't"
             " create prefs widgets");
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
    prefix = elm_app_data_dir_get();
    if (!strlen(prefix))
@@ -1186,19 +1154,14 @@ _elm_prefs_file_set(Eo *obj, void *_pd, va_list *list)
    sd->page = eina_stringshare_add(page ? page : "main");
 
    sd->root = _elm_prefs_page_load(obj, sd->page);
-   if (!sd->root)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!sd->root) return EINA_FALSE;
 
    if (!_elm_prefs_page_populate(sd->root, obj))
      {
         _root_node_free(sd);
         sd->root = NULL;
 
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
    elm_widget_resize_object_set(obj, sd->root->w_obj, EINA_TRUE);
@@ -1208,62 +1171,25 @@ _elm_prefs_file_set(Eo *obj, void *_pd, va_list *list)
    evas_object_smart_callback_call
       (obj, SIG_PAGE_LOADED, (char *)sd->root->name);
 
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-elm_prefs_file_get(const Evas_Object *obj,
-                   const char **file,
-                   const char **page)
+EOLIAN static Eina_Bool
+_elm_prefs_file_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
 {
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_prefs_file_get(file, page, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_file_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char **file = va_arg(*list, const char **);
-   const char **page = va_arg(*list, const char **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Prefs_Smart_Data *sd = _pd;
-
    if (file) *file = sd->file;
    if (page) *page = sd->page;
 
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-elm_prefs_data_set(Evas_Object *obj,
-                   Elm_Prefs_Data *prefs_data)
+EOLIAN static Eina_Bool
+_elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
 {
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do(obj, elm_obj_prefs_data_set(prefs_data, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_data_set(Eo *obj, void *_pd, va_list *list)
-{
-   Elm_Prefs_Smart_Data *sd = _pd;
-   Elm_Prefs_Data *prefs_data = va_arg(*list, Elm_Prefs_Data *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   if (!sd->root)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!sd->root) return EINA_FALSE;
 
    if (prefs_data && !_elm_prefs_data_cbs_add(obj, prefs_data))
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+      return EINA_FALSE;
 
    if (sd->prefs_data)
      {
@@ -1292,41 +1218,20 @@ end:
    evas_object_smart_callback_call
      (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
 
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI Elm_Prefs_Data *
-elm_prefs_data_get(const Evas_Object *obj)
+EOLIAN static Elm_Prefs_Data*
+_elm_prefs_data_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
-   ELM_PREFS_CHECK(obj) NULL;
-   Elm_Prefs_Data *ret;
-   eo_do((Eo *) obj, elm_obj_prefs_data_get(&ret));
-   return ret;
+   if (!sd->root) return NULL;
+   else return sd->prefs_data;
 }
 
-static void
-_elm_prefs_data_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Prefs_Smart_Data *sd = _pd;
-   Elm_Prefs_Data **ret = va_arg(*list, Elm_Prefs_Data **);
-
-   if (!sd->root) *ret = NULL;
-   else *ret = sd->prefs_data;
-}
-
-EAPI void
-elm_prefs_autosave_set(Evas_Object *obj,
-                       Eina_Bool autosave)
-{
-   ELM_PREFS_CHECK(obj);
-   eo_do(obj, elm_obj_prefs_autosave_set(autosave));
-}
-
-static void
-_elm_prefs_autosave_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_prefs_autosave_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, Eina_Bool autosave)
 {
    ELM_PREFS_DATA_GET(obj, sd);
-   Eina_Bool autosave = va_arg(*list, int);
 
    autosave = !!autosave;
 
@@ -1351,38 +1256,15 @@ _elm_prefs_autosave_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_prefs_autosave_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_prefs_autosave_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_prefs_autosave_get(&ret));
-   return ret;
+   return sd->autosave;
 }
 
-static void
-_elm_prefs_autosave_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_prefs_reset(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, Elm_Prefs_Reset_Mode mode)
 {
-   Elm_Prefs_Smart_Data *sd = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   *ret = sd->autosave;
-}
-
-EAPI void
-elm_prefs_reset(Evas_Object *obj,
-                Elm_Prefs_Reset_Mode mode)
-{
-   ELM_PREFS_CHECK(obj);
-   eo_do(obj, elm_obj_prefs_reset(mode));
-}
-
-static void
-_elm_prefs_reset(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Prefs_Smart_Data *sd = _pd;
-   Elm_Prefs_Reset_Mode mode = va_arg(*list, Elm_Prefs_Reset_Mode);
-
    EINA_SAFETY_ON_NULL_RETURN(sd->root);
 
    if (mode == ELM_PREFS_RESET_DEFAULTS)
@@ -1412,57 +1294,32 @@ _elm_prefs_item_api_entry_common(const Evas_Object *obj,
    return ret;
 }
 
-EAPI Eina_Bool
-elm_prefs_item_value_set(Evas_Object *obj,
-                         const char *name,
-                         const Eina_Value *value)
-{
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do(obj, elm_obj_prefs_item_value_set(name, value, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_value_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_prefs_item_value_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, const Eina_Value *value)
 {
    const Eina_Value_Type *t, *def_t;
    Elm_Prefs_Item_Node *it;
    Eina_Value it_val;
 
-   const char *name = va_arg(*list, const char *);
-   const Eina_Value *value = va_arg(*list, const Eina_Value *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
    it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!it) return EINA_FALSE;
 
    if (!_elm_prefs_item_has_value(it))
      {
         ERR("item %s has no underlying value, you can't operate on it",
             it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   EINA_SAFETY_ON_NULL_RETURN(value);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
    t = eina_value_type_get(value);
-   if (!t)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!t) return EINA_FALSE;
 
    if (!it->available)
      {
         ERR("widget of item %s has been deleted, we can't set values on it",
             it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
    if (!it->w_impl->value_get(it->w_obj, &it_val))
@@ -1487,113 +1344,61 @@ _elm_prefs_item_value_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      }
 
    eina_value_flush(&it_val);
-   *ret = EINA_TRUE;
-   return;
+   return EINA_TRUE;
 
 err:
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-elm_prefs_item_value_get(const Evas_Object *obj,
-                         const char *name,
-                         Eina_Value *value)
-{
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_prefs_item_value_get(name, value, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_value_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_prefs_item_value_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, Eina_Value *value)
 {
    Elm_Prefs_Item_Node *it;
 
-   const char *name = va_arg(*list, const char *);
-   Eina_Value *value = va_arg(*list, Eina_Value *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
    it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!it) return EINA_FALSE;
 
    if (!_elm_prefs_item_has_value(it))
      {
         ERR("item %s has no underlying value, you can't operate on it",
             it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   if (!value)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!value) return EINA_FALSE;
 
    if (!it->available)
      {
         ERR("widget of item %s has been deleted, we can't set values on it",
             it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
    if (!it->w_impl->value_get(it->w_obj, value))
      {
         ERR("failed to fetch value from widget of item %s", it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-EAPI const Evas_Object *
-elm_prefs_item_object_get(Evas_Object *obj,
-                          const char *name)
-{
-   ELM_PREFS_CHECK(obj) NULL;
-   const Evas_Object *ret;
-   eo_do(obj, elm_obj_prefs_item_object_get(name, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_object_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Evas_Object*
+_elm_prefs_item_object_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
    Elm_Prefs_Item_Node *it;
-   const char *name = va_arg(*list, const char *);
-   const Evas_Object **ret = va_arg(*list, const Evas_Object **);
 
    it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it) *ret = NULL;
-   else *ret = it->w_obj;
+   if (!it) return NULL;
+   else return it->w_obj;
 }
 
-EAPI void
-elm_prefs_item_visible_set(Evas_Object *obj,
-                           const char *name,
-                           Eina_Bool visible)
-{
-   ELM_PREFS_CHECK(obj);
-   eo_do(obj, elm_obj_prefs_item_visible_set(name, visible));
-}
-
-static void
-_elm_prefs_item_visible_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_prefs_item_visible_set(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char *name, Eina_Bool visible)
 {
    Elm_Prefs_Item_Node *it;
    Eina_List *l;
    Evas_Object *lbl, *icon;
-
-   Elm_Prefs_Smart_Data *sd = _pd;
-   const char *name = va_arg(*list, const char *);
-   Eina_Bool visible = va_arg(*list, int);
 
    EINA_SAFETY_ON_NULL_RETURN(name);
    EINA_SAFETY_ON_NULL_RETURN(sd->root);
@@ -1670,55 +1475,27 @@ _elm_prefs_item_visible_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_prefs_item_visible_get(const Evas_Object *obj,
-                           const char *name)
+EOLIAN static Eina_Bool
+_elm_prefs_item_visible_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_prefs_item_visible_get(name, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_visible_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Prefs_Item_Node *it;
 
    it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!it) return EINA_FALSE;
 
    if (!it->available)
      {
         ERR("widget of item %s has been deleted, we can't act on it",
             it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   *ret = it->visible;
+   return it->visible;
 }
 
-EAPI void
-elm_prefs_item_disabled_set(Evas_Object *obj,
-                            const char *name,
-                            Eina_Bool disabled)
+EOLIAN static void
+_elm_prefs_item_disabled_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, Eina_Bool disabled)
 {
-   ELM_PREFS_CHECK(obj);
-   eo_do(obj, elm_obj_prefs_item_disabled_set(name, disabled));
-}
-
-static void
-_elm_prefs_item_disabled_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   Eina_Bool disabled = va_arg(*list, int);
    Elm_Prefs_Item_Node *it;
 
    it = _elm_prefs_item_api_entry_common(obj, name);
@@ -1734,55 +1511,27 @@ _elm_prefs_item_disabled_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    elm_object_disabled_set(it->w_obj, disabled);
 }
 
-EAPI Eina_Bool
-elm_prefs_item_disabled_get(const Evas_Object *obj,
-                            const char *name)
+EOLIAN static Eina_Bool
+_elm_prefs_item_disabled_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_prefs_item_disabled_get(name, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_disabled_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Prefs_Item_Node *it;
 
    it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!it) return EINA_FALSE;
 
    if (!it->available)
      {
         ERR("widget of item %s has been deleted, we can't act on it",
             it->name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   *ret = elm_object_disabled_get(it->w_obj);
+   return elm_object_disabled_get(it->w_obj);
 }
 
-EAPI void
-elm_prefs_item_editable_set(Evas_Object *obj,
-                            const char *name,
-                            Eina_Bool editable)
+EOLIAN static void
+_elm_prefs_item_editable_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, Eina_Bool editable)
 {
-   ELM_PREFS_CHECK(obj);
-   eo_do(obj, elm_obj_prefs_item_editable_set(name, editable));
-}
-
-static void
-_elm_prefs_item_editable_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   Eina_Bool editable = va_arg(*list, int);
    Elm_Prefs_Item_Node *it;
 
    it = _elm_prefs_item_api_entry_common(obj, name);
@@ -1798,136 +1547,79 @@ _elm_prefs_item_editable_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    it->w_impl->editable_set(it->w_obj, editable);
 }
 
-EAPI Eina_Bool
-elm_prefs_item_editable_get(const Evas_Object *obj,
-                            const char *name)
+EOLIAN static Eina_Bool
+_elm_prefs_item_editable_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_prefs_item_editable_get(name, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_editable_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   const char *name = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Elm_Prefs_Item_Node *it;
 
    it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!it) return EINA_FALSE;
 
    if (!it->w_impl->editable_get)
      {
         ERR("the item %s does not implement the 'editable' "
             "property (using widget %s)", it->name, it->widget);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   *ret = it->w_impl->editable_get(it->w_obj);
+   return it->w_impl->editable_get(it->w_obj);
 }
 
-EAPI Eina_Bool
-elm_prefs_item_swallow(Evas_Object *obj,
-                       const char *name,
-                       Evas_Object *child)
-{
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do(obj, elm_obj_prefs_item_swallow(name, child, &ret));
-   return ret;
-}
-
-static void
-_elm_prefs_item_swallow(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_prefs_item_swallow(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, Evas_Object *child)
 {
    Eina_Value v;
-   const char *name = va_arg(*list, const char *);
-   Evas_Object *child = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool ret = EINA_FALSE;
 
    Elm_Prefs_Item_Node *it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!it) return EINA_FALSE;
 
    if (it->type != ELM_PREFS_TYPE_SWALLOW)
      {
         ERR("item %s does not match a SWALLOW item", name);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   if (!eina_value_setup(&v, EINA_VALUE_TYPE_UINT64))
-     {
-        *ret = EINA_FALSE;
-        return;
-     }
+   if (!eina_value_setup(&v, EINA_VALUE_TYPE_UINT64)) return EINA_FALSE;
    if (!eina_value_set(&v, child))
      {
         eina_value_flush(&v);
-        *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
 
-   *ret = it->w_impl->value_set(it->w_obj, &v);
+   ret = it->w_impl->value_set(it->w_obj, &v);
    eina_value_flush(&v);
-}
 
-EAPI Evas_Object *
-elm_prefs_item_unswallow(Evas_Object *obj,
-                         const char *name)
-{
-   ELM_PREFS_CHECK(obj) NULL;
-   Evas_Object *ret;
-   eo_do(obj, elm_obj_prefs_item_unswallow(name, &ret));
    return ret;
 }
 
-static void
-_elm_prefs_item_unswallow(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Evas_Object*
+_elm_prefs_item_unswallow(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
    Eina_Value v;
-   const char *name = va_arg(*list, const char *);
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
+   Evas_Object *ret = NULL;
 
    Elm_Prefs_Item_Node *it = _elm_prefs_item_api_entry_common(obj, name);
-   if (!it)
-     {
-        *ret = NULL;
-        return;
-     }
+   if (!it) return NULL;
 
    if (it->type != ELM_PREFS_TYPE_SWALLOW)
      {
         ERR("item %s does not match a SWALLOW item", name);
-        *ret = NULL;
-        return;
+        return NULL;
      }
 
-   if (!(it->w_impl->value_get(it->w_obj, &v)))
-     {
-        *ret = NULL;
-        return;
-     }
+   if (!(it->w_impl->value_get(it->w_obj, &v))) return NULL;
 
    if (eina_value_type_get(&v) != EINA_VALUE_TYPE_UINT64 ||
        !eina_value_get(&v, ret))
      {
         eina_value_flush(&v);
-        *ret = NULL;
-        return;
+        return NULL;
      }
 
    eina_value_flush(&v);
+
+   return ret;
 }
 
 static unsigned int
@@ -2173,130 +1865,9 @@ _elm_prefs_shutdown(void)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_elm_prefs_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD),
-                   _elm_prefs_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL),
-                   _elm_prefs_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT),
-                   _elm_prefs_smart_focus_next),
-
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_FILE_SET),
-                   _elm_prefs_file_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_FILE_GET),
-                   _elm_prefs_file_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_DATA_SET),
-                   _elm_prefs_data_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_DATA_GET),
-                   _elm_prefs_data_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_AUTOSAVE_SET),
-                   _elm_prefs_autosave_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_AUTOSAVE_GET),
-                   _elm_prefs_autosave_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_RESET),
-                   _elm_prefs_reset),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_VALUE_SET),
-                   _elm_prefs_item_value_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_VALUE_GET),
-                   _elm_prefs_item_value_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_OBJECT_GET),
-                   _elm_prefs_item_object_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_VISIBLE_SET),
-                   _elm_prefs_item_visible_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_VISIBLE_GET),
-                   _elm_prefs_item_visible_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_DISABLED_SET),
-                   _elm_prefs_item_disabled_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_DISABLED_GET),
-                   _elm_prefs_item_disabled_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_EDITABLE_SET),
-                   _elm_prefs_item_editable_set),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_EDITABLE_GET),
-                   _elm_prefs_item_editable_get),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_SWALLOW),
-                   _elm_prefs_item_swallow),
-        EO_OP_FUNC(ELM_OBJ_PREFS_ID(ELM_OBJ_PREFS_SUB_ID_ITEM_UNSWALLOW),
-                   _elm_prefs_item_unswallow),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_FILE_SET, "Set file and page to populate a given "
-      "prefs widget's interface."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_FILE_GET, "Retrieve file and page bound to a given "
-      "prefs widget."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_DATA_SET, "Set user data for a given prefs widget."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_DATA_GET, "Retrieve user data for a given prefs "
-      "widget."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_AUTOSAVE_SET, "Set whether a given prefs widget "
-      "should save its values back (on the user data file, if set) "
-      "automatically on every UI element changes."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_AUTOSAVE_GET, "Get whether a given prefs widget is "
-      "saving its values back automatically on changes."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_RESET, "Reset the values of a given prefs widget to "
-      "a previous state."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_VALUE_SET, "Set the value on a given prefs "
-      "widget's item."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_VALUE_GET, "Retrieve the value of a given prefs"
-      " widget's item."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_OBJECT_GET, "Retrieve the Elementary widget "
-      "bound to a given prefs widget's item."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_VISIBLE_SET, "Set whether the widget bound to "
-      "given prefs widget's item should be visible or not."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_VISIBLE_GET, "Retrieve whether the widget bound"
-      " to a given prefs widget's item is visible or not."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_DISABLED_SET, "Set whether the widget bound to "
-      "a given prefs widget's item is disabled or not."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_DISABLED_GET, "Retrieve whether the widget "
-      "bound to a given prefs widget's item is disabled or not."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_EDITABLE_SET, "Set whether the widget bound to "
-      "a given prefs widget's item is editable or not."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_EDITABLE_GET, "Retrieve whether the widget "
-      "bound to a given prefs widget's item is editable or not."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_SWALLOW, "\"Swallows\" an object into a SWALLOW"
-      " item of a prefs widget."),
-     EO_OP_DESCRIPTION
-     (ELM_OBJ_PREFS_SUB_ID_ITEM_UNSWALLOW, "Unswallow an object from a SWALLOW"
-      " item of a prefs widget."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS
-     (&ELM_OBJ_PREFS_BASE_ID, op_desc, ELM_OBJ_PREFS_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Prefs_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_prefs_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
+#include "elm_prefs.eo.c"
