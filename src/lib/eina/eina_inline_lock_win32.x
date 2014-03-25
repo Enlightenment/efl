@@ -25,6 +25,7 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
+/** @privatesection @{ */
 typedef CRITICAL_SECTION       Eina_Lock;
 typedef struct _Eina_Condition Eina_Condition;
 typedef struct _Eina_RWLock    Eina_RWLock;
@@ -35,40 +36,40 @@ typedef Eina_Lock              Eina_Spinlock;
 #if _WIN32_WINNT >= 0x0600
 struct _Eina_Condition
 {
-   CRITICAL_SECTION  *mutex;
-   CONDITION_VARIABLE condition;
+   CRITICAL_SECTION  *mutex;      /**< The locking mechanism for this condition variable */
+   CONDITION_VARIABLE condition;  /**< The condition variable */
 };
 
 struct _Eina_RWLock
 {
-   SRWLOCK  mutex;
+   SRWLOCK  mutex;               /**< The locking mechanism */
 
-   Eina_Bool is_read_mode : 1;
+   Eina_Bool is_read_mode : 1;   /**< Indicates if the lock is a read lock */
 };
 #else
 struct _Eina_Condition
 {
-   int               waiters_count;
-   CRITICAL_SECTION  waiters_count_lock;
-   CRITICAL_SECTION *mutex;
-   HANDLE            semaphore;
-   HANDLE            waiters_done;
-   Eina_Bool         was_broadcast;
+   int               waiters_count;       /**< The count of threads that are waiting on this condition */
+   CRITICAL_SECTION  waiters_count_lock;  /**< The locking mechanism for the waiters_count member */
+   CRITICAL_SECTION *mutex;               /**< The locking mechanism for the condition */
+   HANDLE            semaphore;           /**< Semaphore used to coordinate waiters */
+   HANDLE            waiters_done;        /**< Event to trigger when all the waiters are done */
+   Eina_Bool         was_broadcast;       /**< Indicates whether this condition has signalled its waiters */
 };
 
 struct _Eina_RWLock
 {
-   LONG           readers_count;
-   LONG           writers_count;
-   int            readers;
-   int            writers;
+   LONG           readers_count;  /**< The number of readers waiting for locks */
+   LONG           writers_count;  /**< The number of writers waiting for locks */
+   int            readers;        /**< The number of readers that have locks */
+   int            writers;        /**< The number of writers that have locks */
 
-   Eina_Lock      mutex;
-   Eina_Condition cond_read;
-   Eina_Condition cond_write;
+   Eina_Lock      mutex;          /**< The locking mechanism */
+   Eina_Condition cond_read;      /**< The condition for readers */
+   Eina_Condition cond_write;     /**< The condition for writers */
 };
 #endif
-
+/** @} privatesection */
 
 EAPI extern Eina_Bool _eina_threads_activated;
 EAPI extern Eina_Bool _eina_thread_tls_cb_register(Eina_TLS key, Eina_TLS_Delete_Cb cb);

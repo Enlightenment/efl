@@ -30,11 +30,13 @@ EAPI extern Eina_Bool _eina_thread_tls_cb_register(Eina_TLS key, Eina_TLS_Delete
 EAPI extern Eina_Bool _eina_thread_tls_cb_unregister(Eina_TLS key);
 EAPI extern Eina_Bool _eina_thread_tls_key_add(Eina_TLS key);
 
+/** @privatesection @{ */
 typedef HANDLE    Eina_Lock;
 typedef Eina_Lock Eina_Spinlock;
 typedef Eina_Lock Eina_RWLock;
 typedef DWORD     Eina_TLS;
 typedef void *    Eina_Semaphore;
+/** @} privatesection */
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)

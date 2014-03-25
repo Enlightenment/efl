@@ -65,33 +65,35 @@ typedef pthread_spinlock_t Eina_Spinlock;
 typedef Eina_Lock Eina_Spinlock;
 #endif
 
+/** @privatesection  @{ */
 struct _Eina_Lock
 {
 #ifdef EINA_HAVE_DEBUG_THREADS
-   EINA_INLIST;
+   EINA_INLIST; /**< Keeps track of the threads waiting for the lock */
 #endif
-   pthread_mutex_t   mutex;
+   pthread_mutex_t   mutex; /**< The mutex that handles the locking */
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_t         lock_thread_id;
-   Eina_Lock_Bt_Func lock_bt[EINA_LOCK_DEBUG_BT_NUM];
-   int               lock_bt_num;
-   Eina_Bool         locked : 1;
+   pthread_t         lock_thread_id; /**< The ID of the thread that currently has the lock */
+   Eina_Lock_Bt_Func lock_bt[EINA_LOCK_DEBUG_BT_NUM]; /**< The function that will produce a backtrace on the thread that has the lock */
+   int               lock_bt_num; /**< Number of addresses in the backtrace */
+   Eina_Bool         locked : 1;  /**< Indicates locked or not locked */
 #endif
 };
 
 struct _Eina_Condition
 {
-   Eina_Lock      *lock;
-   pthread_cond_t  condition;
+   Eina_Lock      *lock;      /**< The lock for this condition */
+   pthread_cond_t  condition; /**< The condition variable */
 };
 
 struct _Eina_RWLock
 {
-   pthread_rwlock_t mutex;
+   pthread_rwlock_t mutex; /**< The mutex that handles the locking */
 #ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_t        lock_thread_wid;
+   pthread_t        lock_thread_wid; /**< The ID of the thread that currently has the lock */
 #endif
 };
+/** @} privatesection */
 
 EAPI extern Eina_Bool _eina_threads_activated;
 
