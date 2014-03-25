@@ -1197,7 +1197,7 @@ _profile_fetch_from_conf(void)
 {
    char buf[PATH_MAX], *p, *s;
    Eet_File *ef = NULL;
-   int len = 0;
+   int len = 0, i;
 
    // if env var - use profile without question
    s = getenv("ELM_PROFILE");
@@ -1212,52 +1212,35 @@ _profile_fetch_from_conf(void)
         return;
      }
 
-   // user profile
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
-   ef = eet_open(buf, EET_FILE_MODE_READ);
-   if (ef)
+   for (i = 0; i < 2; i++)
      {
-        p = eet_read(ef, "config", &len);
-        if (p)
+        // user profile
+        if (i == 0)
+          _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+        // system profile
+        else if (i == 1)
+          _elm_data_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+        if (ef)
           {
-             _elm_profile = malloc(len + 1);
-             if (_elm_profile)
+             p = eet_read(ef, "config", &len);
+             if (p)
                {
-                  memcpy(_elm_profile, p, len);
-                  _elm_profile[len] = 0;
-                  free(p);
+                  _elm_profile = malloc(len + 1);
+                  if (_elm_profile)
+                    {
+                       memcpy(_elm_profile, p, len);
+                       _elm_profile[len] = 0;
+                       free(p);
+                    }
+                  else free(p);
+                  eet_close(ef);
+                  p = strchr(_elm_profile, '/');
+                  if (p) *p = 0;
+                  return;
                }
-             else free(p);
              eet_close(ef);
-             p = strchr(_elm_profile, '/');
-             if (p) *p = 0;
-             return;
           }
-        eet_close(ef);
-     }
-
-   // system profile
-   _elm_data_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
-   ef = eet_open(buf, EET_FILE_MODE_READ);
-   if (ef)
-     {
-        p = eet_read(ef, "config", &len);
-        if (p)
-          {
-             _elm_profile = malloc(len + 1);
-             if (_elm_profile)
-               {
-                  memcpy(_elm_profile, p, len);
-                  _elm_profile[len] = 0;
-                  free(p);
-               }
-             else free(p);
-             eet_close(ef);
-             p = strchr(_elm_profile, '/');
-             if (p) *p = 0;
-             return;
-          }
-        eet_close(ef);
      }
 
    _elm_profile = strdup("default");
