@@ -542,7 +542,8 @@ group { name: "elm/slider/horizontal/default";
       }
       program {
          signal: "elm,state,units,visible"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,visible" "elm";
+         action: SIGNAL_EMIT "limits,visible" "elm";
+         target: "limits";
       }
       program {
          signal: "elm,state,units,hidden"; source: "elm";
@@ -555,7 +556,8 @@ group { name: "elm/slider/horizontal/default";
       }
       program {
          signal: "elm,state,units,hidden"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,hide" "elm";
+         action: SIGNAL_EMIT "limits,hide" "elm";
+         target: "limits";
       }
       program {
          signal: "elm,state,inverted,on"; source: "elm";
@@ -583,7 +585,8 @@ group { name: "elm/slider/horizontal/default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: SIGNAL_EMIT "elm.dragable.slider:elm,state,disabled" "elm";
+         action: SIGNAL_EMIT "elm,state,disabled" "elm";
+         target: "elm.dragable.slider";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
@@ -595,7 +598,8 @@ group { name: "elm/slider/horizontal/default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: SIGNAL_EMIT "elm.dragable.slider:elm,state,enabled" "elm";
+         action: SIGNAL_EMIT "elm,state,enabled" "elm";
+         target: "elm.dragable.slider";
       }
    }
 #undef ICON
