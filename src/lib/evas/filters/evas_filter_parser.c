@@ -263,6 +263,8 @@ static struct
    { "stretch_xy", EVAS_FILTER_FILL_MODE_STRETCH_XY }
 };
 
+static Evas_Filter_Fill_Mode _fill_mode_get(Evas_Filter_Instruction *instr);
+
 typedef enum
 {
    VT_NONE,
@@ -924,6 +926,7 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
                       int *padl, int *padr, int *padt, int *padb)
 {
    const char *inbuf, *outbuf;
+   Evas_Filter_Fill_Mode fillmode;
    Buffer *in, *out;
    int ox, oy, l = 0, r = 0, t = 0, b = 0;
 
@@ -937,6 +940,10 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
    outbuf = _instruction_param_gets(instr, "dst", NULL);
    out = _buffer_get(pgm, outbuf);
    EINA_SAFETY_ON_NULL_RETURN(out);
+
+   fillmode = _fill_mode_get(instr);
+   if (fillmode & (EVAS_FILTER_FILL_MODE_STRETCH_X | EVAS_FILTER_FILL_MODE_REPEAT_X)) ox = 0;
+   if (fillmode & (EVAS_FILTER_FILL_MODE_STRETCH_Y | EVAS_FILTER_FILL_MODE_REPEAT_Y)) oy = 0;
 
    if (ox < 0) l = (-ox) + in->pad.l;
    else r = ox + in->pad.r;
