@@ -8,8 +8,6 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_panes.h"
 
-EAPI Eo_Op ELM_OBJ_PANES_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_PANES_CLASS
 
 #define MY_CLASS_NAME "Elm_Panes"
@@ -42,15 +40,12 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-static void
-_elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
 {
    double size;
    Evas_Coord minw = 0, minh = 0;
 
-   Elm_Panes_Smart_Data *sd = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    ELM_LAYOUT_DATA_GET(obj, ld);
 
@@ -64,7 +59,7 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    size = elm_panes_content_left_size_get(obj);
 
@@ -81,11 +76,11 @@ _elm_panes_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    elm_panes_content_left_size_set(obj, size);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_panes_smart_focus_next(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
    double w, h;
    unsigned char i;
@@ -93,14 +88,7 @@ _elm_panes_smart_focus_next(Eo *obj, void *_pd, va_list *list)
    Evas_Object *chain[2];
    Evas_Object *left, *right;
 
-   Elm_Panes_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.bar", &w, &h);
@@ -110,9 +98,7 @@ _elm_panes_smart_focus_next(Eo *obj, void *_pd, va_list *list)
 
    if (((sd->horizontal) && (h == 0.0)) || ((!sd->horizontal) && (w == 0.0)))
      {
-       int_ret = elm_widget_focus_next_get(right, dir, next);
-       if (ret) *ret = int_ret;
-       return;
+       return elm_widget_focus_next_get(right, dir, next);
      }
 
    /* Direction */
@@ -126,24 +112,21 @@ _elm_panes_smart_focus_next(Eo *obj, void *_pd, va_list *list)
         chain[0] = left;
         chain[1] = right;
      }
-   else return;
+   else return EINA_FALSE;
 
    i = elm_widget_focus_get(chain[1]);
 
-   if (elm_widget_focus_next_get(chain[i], dir, next))
-     {
-        if (ret) *ret = EINA_TRUE;
-        return;
-     }
+   if (elm_widget_focus_next_get(chain[i], dir, next)) return EINA_TRUE;
 
    i = !i;
 
    if (elm_widget_focus_next_get(chain[i], dir, &to_focus))
      {
         *next = to_focus;
-        if (ret) *ret = !!i;
-        return;
+        return !!i;
      }
+
+   return EINA_FALSE;
 }
 
 static void
@@ -191,8 +174,8 @@ _on_unpressed(void *data,
      }
 }
 
-static void
-_elm_panes_smart_add(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_panes_evas_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_PANES_DATA_GET(obj, sd);
@@ -247,8 +230,8 @@ elm_panes_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_panes_eo_base_constructor(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -294,44 +277,23 @@ elm_panes_content_right_unset(Evas_Object *obj)
    return elm_layout_content_unset(obj, "right");
 }
 
-EAPI double
-elm_panes_content_left_size_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_panes_content_left_size_get(Eo *obj, Elm_Panes_Data *sd)
 {
-   ELM_PANES_CHECK(obj) 0.0;
-   double ret = 0.0;
-   eo_do((Eo *) obj, elm_obj_panes_content_left_size_get(&ret));
-   return ret;
-}
-
-static void
-_elm_panes_smart_content_left_size_get(Eo *obj, void *_pd, va_list *list)
-{
-   double *ret = va_arg(*list, double *);
    double w, h;
 
-   Elm_Panes_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0.0);
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.bar", &w, &h);
 
-   if (sd->horizontal) *ret = h;
-   else *ret = w;
+   if (sd->horizontal) return h;
+   else return w;
 }
 
-EAPI void
-elm_panes_content_left_size_set(Evas_Object *obj,
-                                double size)
+EOLIAN static void
+_elm_panes_content_left_size_set(Eo *obj, Elm_Panes_Data *sd, double size)
 {
-   ELM_PANES_CHECK(obj);
-   eo_do(obj, elm_obj_panes_content_left_size_set(size));
-}
-
-static void
-_elm_panes_smart_content_left_size_set(Eo *obj, void *_pd, va_list *list)
-{
-   double size = va_arg(*list, double);
-   Elm_Panes_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (size < 0.0) size = 0.0;
@@ -345,86 +307,36 @@ _elm_panes_smart_content_left_size_set(Eo *obj, void *_pd, va_list *list)
        (wd->resize_obj, "elm.bar", size, 0.0);
 }
 
-EAPI double
-elm_panes_content_right_size_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_panes_content_right_size_get(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
-   double ret = 1.0;
-   eo_do((Eo *) obj, elm_obj_panes_content_right_size_get(&ret));
-   return ret;
+   return 1.0 - elm_panes_content_left_size_get(obj);
 }
 
-static void
-_elm_panes_smart_content_right_size_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_panes_content_right_size_set(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED, double size)
 {
-   double *ret = va_arg(*list, double *);
-   *ret = 1.0 - elm_panes_content_left_size_get(obj);
-}
-
-EAPI void
-elm_panes_content_right_size_set(Evas_Object *obj,
-                                 double size)
-{
-   elm_panes_content_left_size_set(obj, (1.0 - size));
-   eo_do(obj, elm_obj_panes_content_right_size_set(size));
-}
-
-static void
-_elm_panes_smart_content_right_size_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   double size = va_arg(*list, double);
    elm_panes_content_left_size_set(obj, (1.0 - size));
 }
 
-EAPI void
-elm_panes_horizontal_set(Evas_Object *obj,
-                         Eina_Bool horizontal)
+EOLIAN static void
+_elm_panes_horizontal_set(Eo *obj, Elm_Panes_Data *sd, Eina_Bool horizontal)
 {
-   ELM_PANES_CHECK(obj);
-   eo_do(obj, elm_obj_panes_horizontal_set(horizontal));
-}
-
-static void
-_elm_panes_smart_horizontal_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool horizontal = va_arg(*list, int);
-   Elm_Panes_Smart_Data *sd = _pd;
-
    sd->horizontal = horizontal;
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 
    elm_panes_content_left_size_set(obj, 0.5);
 }
 
-EAPI Eina_Bool
-elm_panes_horizontal_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_panes_horizontal_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *sd)
 {
-   ELM_PANES_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_panes_horizontal_get(&ret));
-   return ret;
+   return sd->horizontal;
 }
 
-static void
-_elm_panes_smart_horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_panes_fixed_set(Eo *obj, Elm_Panes_Data *sd, Eina_Bool fixed)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Panes_Smart_Data *sd = _pd;
-   *ret = sd->horizontal;
-}
-
-EAPI void
-elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed)
-{
-   ELM_PANES_CHECK(obj);
-   eo_do(obj, elm_obj_panes_fixed_set(fixed));
-}
-
-static void
-_elm_panes_smart_fixed_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool fixed = va_arg(*list, int);
-   Elm_Panes_Smart_Data *sd = _pd;
-
    sd->fixed = !!fixed;
    if (sd->fixed == EINA_TRUE)
      {
@@ -444,84 +356,28 @@ _elm_panes_smart_fixed_set(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_panes_fixed_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_panes_fixed_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *sd)
 {
-   ELM_PANES_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_panes_fixed_get(&ret));
-   return ret;
+   return sd->fixed;
+}
+
+EOLIAN static Eina_Bool
+_elm_panes_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_panes_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd EINA_UNUSED)
+{
+   return _content_aliases;
 }
 
 static void
-_elm_panes_smart_fixed_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+_elm_panes_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Panes_Smart_Data *sd = _pd;
-   *ret = sd->fixed;
-}
-
-static void
-_elm_panes_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_TRUE;
-}
-
-static void
-_elm_panes_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
-{
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_panes_smart_add),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_panes_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_panes_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_panes_smart_focus_next),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_panes_smart_content_aliases_get),
-
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_CONTENT_LEFT_SIZE_GET), _elm_panes_smart_content_left_size_get),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_CONTENT_LEFT_SIZE_SET), _elm_panes_smart_content_left_size_set),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_CONTENT_RIGHT_SIZE_GET), _elm_panes_smart_content_right_size_get),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_CONTENT_RIGHT_SIZE_SET), _elm_panes_smart_content_right_size_set),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_SET), _elm_panes_smart_horizontal_set),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_GET), _elm_panes_smart_horizontal_get),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_FIXED_SET), _elm_panes_smart_fixed_set),
-        EO_OP_FUNC(ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_FIXED_GET), _elm_panes_smart_fixed_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_LEFT_SIZE_GET, "Get the size proportion of panes widget's left side."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_LEFT_SIZE_SET, "Set the size proportion of panes widget's left side."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_RIGHT_SIZE_GET, "Get the size proportion of panes widget's right side."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_CONTENT_RIGHT_SIZE_SET, "Set the size proportion of panes widget's right side."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_SET, "Set how to split and dispose each content."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_HORIZONTAL_GET, "Retrieve the split direction of a given panes widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_FIXED_SET, "Set whether the left and right panes can be resized by user interaction"),
-     EO_OP_DESCRIPTION(ELM_OBJ_PANES_SUB_ID_FIXED_GET, "Retrieve the resize mode for the panes of a given panes widget."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_PANES_BASE_ID, op_desc, ELM_OBJ_PANES_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Panes_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_panes_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_panes.eo.c"

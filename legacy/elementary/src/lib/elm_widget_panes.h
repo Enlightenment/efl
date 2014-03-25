@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with panes instance data.
  */
-typedef struct _Elm_Panes_Smart_Data Elm_Panes_Smart_Data;
-struct _Elm_Panes_Smart_Data
+typedef struct _Elm_Panes_Data Elm_Panes_Data;
+struct _Elm_Panes_Data
 {
    Evas_Object *event;
    struct
@@ -38,7 +38,7 @@ struct _Elm_Panes_Smart_Data
  */
 
 #define ELM_PANES_DATA_GET(o, sd) \
-  Elm_Panes_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PANES_CLASS)
+  Elm_Panes_Data * sd = eo_data_scope_get(o, ELM_OBJ_PANES_CLASS)
 
 #define ELM_PANES_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_PANES_DATA_GET(o, ptr);                        \

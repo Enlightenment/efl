@@ -1,3 +1,5 @@
+#include "elm_panes.eo.h"
+#if 0
 #define ELM_OBJ_PANES_CLASS elm_obj_panes_class_get()
 
 const Eo_Class *elm_obj_panes_class_get(void) EINA_CONST;
@@ -131,3 +133,4 @@ enum
  * @ingroup Panes
  */
 #define elm_obj_panes_fixed_get(ret) ELM_OBJ_PANES_ID(ELM_OBJ_PANES_SUB_ID_FIXED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
