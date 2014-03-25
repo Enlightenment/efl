@@ -1,0 +1,194 @@
+class Elm_Mapbuf (Elm_Container)
+{
+   eo_prefix: elm_obj_mapbuf;
+   properties {
+      auto {
+         set {
+            /*@
+            Set or unset auto flag for map rendering.
+
+            When a ampbuf object has "auto mode" enabled, then it will enable and
+            disable map mode based on current visibility. Mapbuf will track if you show
+            or hide it AND if the object is inside the canvas viewport or not when it
+            is moved or resized. Note that if you turn automode off, then map mode
+            will be in a disabled state at this point. When you turn it on for the
+            first time, the current state will be evaluated base on current properties
+            of the mapbuf object.
+
+            Auto mode is disabled by default.
+
+            @ingroup Mapbuf */
+         }
+         get {
+            /*@
+            Get a value whether auto mode is enabled or not.
+
+            @return @c EINA_TRUE means autso mode is enabled. @c EINA_FALSE
+            indicates it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+
+            @see elm_mapbuf_auto_set() for details.
+
+            @ingroup Mapbuf */
+         }
+         values {
+            Eina_Bool on; /*@ @c EINA_TRUE to enable auto mode or @c EINA_FALSE
+            to disable it. */
+         }
+      }
+      smooth {
+         set {
+            /*@
+            Enable or disable smooth map rendering.
+
+            This sets smoothing for map rendering. If the object is a type that has
+            its own smoothing settings, then both the smooth settings for this object
+            and the map must be turned off.
+
+            By default smooth maps are enabled.
+
+            @ingroup Mapbuf */
+         }
+         get {
+            /*@
+            Get a value whether smooth map rendering is enabled or not.
+
+            @return @c EINA_TRUE means smooth map rendering is enabled. @c EINA_FALSE
+            indicates it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+
+            @see elm_mapbuf_smooth_set() for details.
+
+            @ingroup Mapbuf */
+         }
+         values {
+            Eina_Bool smooth; /*@ @c EINA_TRUE to enable smooth map rendering or @c EINA_FALSE
+            to disable it. */
+         }
+      }
+      alpha {
+         set {
+            /*@
+            Set or unset alpha flag for map rendering.
+
+            This sets alpha flag for map rendering. If the object is a type that has
+            its own alpha settings, then this will take precedence. Only image objects
+            have this currently. It stops alpha blending of the map area, and is
+            useful if you know the object and/or all sub-objects is 100% solid.
+
+            Alpha is enabled by default.
+
+            @ingroup Mapbuf */
+         }
+         get {
+            /*@
+            Get a value whether alpha blending is enabled or not.
+
+            @return @c EINA_TRUE means alpha blending is enabled. @c EINA_FALSE
+            indicates it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+
+            @see elm_mapbuf_alpha_set() for details.
+
+            @ingroup Mapbuf */
+         }
+         values {
+            Eina_Bool alpha; /*@ @c EINA_TRUE to enable alpha blending or @c EINA_FALSE
+            to disable it. */
+         }
+      }
+      enabled {
+         set {
+            /*@
+            Enable or disable the map.
+
+            This enables the map that is set or disables it. On enable, the object
+            geometry will be saved, and the new geometry will change (position and
+            size) to reflect the map geometry set.
+
+            Also, when enabled, alpha and smooth states will be used, so if the
+            content isn't solid, alpha should be enabled, for example, otherwise
+            a black rectangle will fill the content.
+
+            When disabled, the stored map will be freed and geometry prior to
+            enabling the map will be restored.
+
+            It's disabled by default.
+
+            @see elm_mapbuf_alpha_set()
+            @see elm_mapbuf_smooth_set()
+
+            @ingroup Mapbuf */
+         }
+         get {
+            /*@
+            Get a value whether map is enabled or not.
+
+            @return @c EINA_TRUE means map is enabled. @c EINA_FALSE indicates
+            it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+
+            @see elm_mapbuf_enabled_set() for details.
+
+            @ingroup Mapbuf */
+         }
+         values {
+            Eina_Bool enabled; /*@ @c EINA_TRUE to enable map or @c EINA_FALSE to disable it. */
+         }
+      }
+   }
+   methods {
+      point_color_set {
+         /*@
+         Set the color of a vertex in the mapbuf
+
+         This sets the color of the vertex in the mapbuf. Colors will be linearly
+         interpolated between vertex points through the mapbuf. Color will multiply
+         the "texture" pixels (like GL_MODULATE in OpenGL). The default color of
+         a vertex in a mapbuf is white solid (255, 255, 255, 255) which means it will
+         have no affect on modifying the texture pixels.
+
+         @see evas_object_map_set()
+         @since 1.9 */
+
+         params {
+            @in int idx; /*@ index of point to change. Must be smaller than mapbuf size. */
+            @in int r; /*@ red (0 - 255) */
+            @in int g; /*@ green (0 - 255) */
+            @in int b; /*@ blue (0 - 255) */
+            @in int a; /*@ alpha (0 - 255) */
+         }
+      }
+      point_color_get {
+         /*@
+         Get the color set on a vertex in the mapbuf
+
+         This gets the color set by elm_mapbuf_point_color_set() on the given vertex
+         of the mapbuf.
+
+         @see elm_mapbuf_point_color_set()
+
+         @since 1.9 */
+
+         params {
+            @in int idx; /*@ index of point get. Must be smaller than map size. */
+            @out int r; /*@ pointer to red return */
+            @out int g; /*@ pointer to green return */
+            @out int b; /*@ pointer to blue return */
+            @out int a; /*@ pointer to alpha return */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::hide;
+      Evas_Smart::show;
+      Evas_Smart::move;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::resize;
+      Elm_Widget::theme_apply;
+      Elm_Widget::sub_object_del;
+      Elm_Container::content_get;
+      Elm_Container::content_set;
+      Elm_Container::content_unset;
+   }
+
+}

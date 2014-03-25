@@ -3,6 +3,9 @@
  *
  * @{
  */
+#include "elm_mapbuf.eo.h"
+
+#if 0
 #define ELM_OBJ_MAPBUF_CLASS elm_obj_mapbuf_class_get()
 
 const Eo_Class *elm_obj_mapbuf_class_get(void) EINA_CONST;
@@ -154,6 +157,7 @@ enum
  * @see elm_mapbuf_point_color_get
  */
 #define elm_obj_mapbuf_point_color_get(idx, r, g, b, a) ELM_OBJ_MAPBUF_ID(ELM_OBJ_MAPBUF_SUB_ID_POINT_COLOR_GET), EO_TYPECHECK(int, idx), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+#endif
 
 /**
  * @}
