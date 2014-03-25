@@ -5075,6 +5075,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                {
                   Evas_Object_Textblock_Format_Item *fi = NULL;
                   Evas_Object_Textblock_Format *pfmt = c->fmt;
+                  pfmt->ref++;
 
                   off += fnode->offset;
                   /* No need to skip on the first run, or a non-visible one */
@@ -5092,6 +5093,8 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
 
                        _layout_text_append_commit(c, &queue, n, rel);
                     }
+
+                  _format_unref_free(c->obj, pfmt);
 
                   if ((c->have_underline2) || (c->have_underline))
                     {
