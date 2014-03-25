@@ -2860,63 +2860,70 @@ st_collections_group_inherit(void)
    pcp2 = (Edje_Part_Collection_Parser *)pc2;
    pcp->default_mouse_events = pcp2->default_mouse_events;
 
-   {
-      Edje_Limit **elp;
+   if (pc2->limits.vertical_count || pc2->limits.horizontal_count)
+     {
+        Edje_Limit **elp;
 
-      elp = realloc(pc->limits.vertical,
-                    pc->limits.vertical_count + pc2->limits.vertical_count * sizeof(Edje_Limit *));
-      if (!elp)
-        {
-           ERR("Not enough memory.");
-           exit(-1);
-        }
-      pc->limits.vertical = elp;
-      offset = pc->limits.vertical_count;
-      for (i = 0; i < pc2->limits.vertical_count; i++)
-        {
-           Edje_Limit *el;
+        if (pc2->limits.vertical_count)
+          {
+             elp = realloc(pc->limits.vertical,
+                           pc->limits.vertical_count + pc2->limits.vertical_count * sizeof(Edje_Limit *));
+             if (!elp)
+               {
+                  ERR("Not enough memory.");
+                  exit(-1);
+               }
+             pc->limits.vertical = elp;
+             offset = pc->limits.vertical_count;
+             for (i = 0; i < pc2->limits.vertical_count; i++)
+               {
+                  Edje_Limit *el;
 
-           el = mem_alloc(SZ(Edje_Limit));
-           if (!el)
-             {
-                ERR("Not enough memory.");
-                exit(-1);
-             }
+                  el = mem_alloc(SZ(Edje_Limit));
+                  if (!el)
+                    {
+                       ERR("Not enough memory.");
+                       exit(-1);
+                    }
 
-           pc->limits.vertical[i + offset] = el;
+                  pc->limits.vertical[i + offset] = el;
 
-           el->name = STRDUP(pc2->limits.vertical[i]->name);
-           el->value = pc2->limits.vertical[i]->value;
-           pc->limits.vertical_count++;
-        }
+                  el->name = STRDUP(pc2->limits.vertical[i]->name);
+                  el->value = pc2->limits.vertical[i]->value;
+                  pc->limits.vertical_count++;
+               }
+          }
 
-      elp = realloc(pc->limits.horizontal,
-                    pc->limits.horizontal_count + pc2->limits.horizontal_count * sizeof(Edje_Limit *));
-      if (!elp)
-        {
-           ERR("Not enough memory.");
-           exit(-1);
-        }
-      pc->limits.horizontal = elp;
-      offset = pc->limits.horizontal_count;
-      for (i = 0; i < pc2->limits.horizontal_count; i++)
-        {
-           Edje_Limit *el;
+        if (pc2->limits.horizontal_count)
+          {
+             elp = realloc(pc->limits.horizontal,
+                           pc->limits.horizontal_count + pc2->limits.horizontal_count * sizeof(Edje_Limit *));
+             if (!elp)
+               {
+                  ERR("Not enough memory.");
+                  exit(-1);
+               }
+             pc->limits.horizontal = elp;
+             offset = pc->limits.horizontal_count;
+             for (i = 0; i < pc2->limits.horizontal_count; i++)
+               {
+                  Edje_Limit *el;
 
-           el = mem_alloc(SZ(Edje_Limit));
-           if (!el)
-             {
-                ERR("Not enough memory.");
-                exit(-1);
-             }
+                  el = mem_alloc(SZ(Edje_Limit));
+                  if (!el)
+                    {
+                       ERR("Not enough memory.");
+                       exit(-1);
+                    }
 
-           pc->limits.horizontal[i + offset] = el;
+                  pc->limits.horizontal[i + offset] = el;
 
-           el->name = STRDUP(pc2->limits.horizontal[i]->name);
-           el->value = pc2->limits.horizontal[i]->value;
-           pc->limits.horizontal_count++;
-        }
-   }
+                  el->name = STRDUP(pc2->limits.horizontal[i]->name);
+                  el->value = pc2->limits.horizontal[i]->value;
+                  pc->limits.horizontal_count++;
+               }
+          }
+     }
 
    offset = pc->parts_count;
    for (i = 0 ; i < pc2->parts_count ; i++)
