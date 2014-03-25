@@ -17,15 +17,15 @@
 /**
  * Base widget smart data extended with photocam instance data.
  */
-typedef struct _Elm_Photocam_Smart_Data     Elm_Photocam_Smart_Data;
-typedef struct _Elm_Photocam_Pan_Smart_Data Elm_Photocam_Pan_Smart_Data;
+typedef struct _Elm_Photocam_Data           Elm_Photocam_Data;
+typedef struct _Elm_Photocam_Pan_Data       Elm_Photocam_Pan_Data;
 typedef struct _Elm_Phocam_Grid             Elm_Phocam_Grid;
 typedef struct _Elm_Photocam_Grid_Item      Elm_Photocam_Grid_Item;
 
 struct _Elm_Photocam_Grid_Item
 {
    Evas_Object             *obj;
-   Elm_Photocam_Smart_Data *sd;
+   Elm_Photocam_Data       *sd;
    Evas_Object             *img;
 
    struct
@@ -51,7 +51,7 @@ struct _Elm_Phocam_Grid
                                       * over */
 };
 
-struct _Elm_Photocam_Smart_Data
+struct _Elm_Photocam_Data
 {
    Evas_Object                          *hit_rect;
    Evas_Object                          *g_layer;
@@ -125,10 +125,10 @@ struct _Elm_Photocam_Smart_Data
    Eina_Bool    paused : 1;
 };
 
-struct _Elm_Photocam_Pan_Smart_Data
+struct _Elm_Photocam_Pan_Data
 {
    Evas_Object            *wobj;
-   Elm_Photocam_Smart_Data *wsd;
+   Elm_Photocam_Data      *wsd;
 };
 
 /**
@@ -136,10 +136,10 @@ struct _Elm_Photocam_Pan_Smart_Data
  */
 
 #define ELM_PHOTOCAM_DATA_GET(o, sd) \
-  Elm_Photocam_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTOCAM_CLASS)
+  Elm_Photocam_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTOCAM_CLASS)
 
 #define ELM_PHOTOCAM_PAN_DATA_GET(o, sd) \
-  Elm_Photocam_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTOCAM_PAN_CLASS)
+  Elm_Photocam_Pan_Data * sd = eo_data_scope_get(o, ELM_OBJ_PHOTOCAM_PAN_CLASS)
 
 #define ELM_PHOTOCAM_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_PHOTOCAM_DATA_GET(o, ptr);                     \

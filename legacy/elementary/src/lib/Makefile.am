@@ -618,7 +618,11 @@ BUILT_SOURCES = \
 		elm_notify.eo.c \
 		elm_notify.eo.h \
 		elm_panes.eo.c \
-		elm_panes.eo.h
+		elm_panes.eo.h \
+		elm_photocam.eo.c \
+		elm_photocam.eo.h \
+		elm_photocam_pan.eo.c \
+		elm_photocam_pan.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -667,7 +671,9 @@ EXTRA_DIST += \
 	     elm_panel.eo \
 	     elm_mapbuf.eo \
 	     elm_notify.eo \
-	     elm_panes.eo
+	     elm_panes.eo \
+	     elm_photocam.eo \
+	     elm_photocam_pan.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -716,5 +722,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_panel.eo.h \
 				  elm_mapbuf.eo.h \
 				  elm_notify.eo.h \
-				  elm_panes.eo.h
+				  elm_panes.eo.h \
+				  elm_photocam.eo.h \
+				  elm_photocam_pan.eo.h
 

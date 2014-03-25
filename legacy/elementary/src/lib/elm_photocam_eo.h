@@ -1,3 +1,7 @@
+#include "elm_photocam_pan.eo.h"
+#include "elm_photocam.eo.h"
+
+#if 0
 #define ELM_OBJ_PHOTOCAM_PAN_CLASS elm_obj_photocam_pan_class_get()
 
 const Eo_Class *elm_obj_photocam_pan_class_get(void) EINA_CONST;
@@ -233,3 +237,4 @@ enum
  * @ingroup Photocam
  */
 #define elm_obj_photocam_gesture_enabled_get(ret) ELM_OBJ_PHOTOCAM_ID(ELM_OBJ_PHOTOCAM_SUB_ID_GESTURE_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif

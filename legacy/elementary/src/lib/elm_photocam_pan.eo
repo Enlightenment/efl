@@ -1,0 +1,40 @@
+class Elm_Photocam_Pan (Elm_Pan)
+{
+   eo_prefix: elm_obj_photocam_pan;
+   implements {
+      class::constructor;
+      Eo_Base::destructor;
+      Evas_Smart::calculate;
+      Evas_Smart::move;
+      Evas_Smart::resize;
+      Elm_Pan::content_size::get;
+      Elm_Pan::pos;
+      Elm_Pan::pos_min::get;
+      Elm_Pan::pos_max::get;
+   }
+   events {
+      clicked;
+      press;
+      longpressed;
+      clicked,double;
+      load;
+      loaded;
+      load,detail;
+      loaded,detail;
+      zoom,start;
+      zoom,stop;
+      zoom,change;
+      scroll;
+      scroll,anim,start;
+      scroll,anim,stop;
+      scroll,drag,start;
+      scroll,drag,stop;
+      download,start;
+      download,progress;
+      download,done;
+      download,error;
+      focused;
+      unfocused;
+   }
+
+}

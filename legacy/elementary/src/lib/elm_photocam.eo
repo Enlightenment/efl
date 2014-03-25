@@ -1,0 +1,263 @@
+class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
+{
+   eo_prefix: elm_obj_photocam;
+   properties {
+      paused {
+         set {
+            /*@
+            @brief Set the paused state for photocam
+
+            This sets the paused state to on(EINA_TRUE) or off (EINA_FALSE) for
+            photocam. The default is off. This will stop zooming using animation on
+            zoom level changes and change instantly. This will stop any existing
+            animations that are running.
+
+            @ingroup Photocam */
+         }
+         get {
+            /*@
+            @brief Get the paused state for photocam
+
+            @return The current paused state
+
+            This gets the current paused state for the photocam object.
+
+            @see elm_photocam_paused_set()
+
+            @ingroup Photocam */
+         }
+         values {
+            Eina_Bool paused; /*@ The pause state to set */
+         }
+      }
+      file {
+         set {
+            /*@
+            @brief Set the photo file to be shown
+
+            @return The return error (see EVAS_LOAD_ERROR_NONE, EVAS_LOAD_ERROR_GENERIC etc.)
+
+            This sets (and shows) the specified file (with a relative or absolute
+            path) and will return a load error (same error that
+            evas_object_image_load_error_get() will return). The image will change and
+            adjust its size at this point and begin a background load process for this
+            photo that at some time in the future will be displayed at the full
+            quality needed.
+
+            @ingroup Photocam */
+            return Evas_Load_Error;
+         }
+         get {
+            /*@
+            @brief Returns the path of the current image file
+
+            @return Returns the path
+
+            @see elm_photocam_file_set()
+
+            @ingroup Photocam */
+         }
+         values {
+            const char *file; /*@ The photo file */
+         }
+      }
+      gesture_enabled {
+         set {
+            /*@
+            @brief Set the gesture state for photocam.
+
+            This sets the gesture state to on(EINA_TRUE) or off (EINA_FALSE) for
+            photocam. The default is off. This will start multi touch zooming.
+
+            @ingroup Photocam */
+         }
+         get {
+            /*@
+            @brief Get the gesture state for photocam.
+
+            @return The current gesture state
+
+            This gets the current gesture state for the photocam object.
+
+            @see elm_photocam_gesture_enabled_set()
+
+            @ingroup Photocam */
+         }
+         values {
+            Eina_Bool gesture; /*@ The gesture state to set */
+         }
+      }
+      zoom {
+         set {
+            /*@
+            @brief Set the zoom level of the photo
+
+            This sets the zoom level. If @p zoom is 1, it means no zoom. If it's smaller
+            than 1, it means zoom in. If it's bigger than 1, it means zoom out. For
+            example, @p zoom 1 will be 1:1 pixel for pixel. @p zoom 2 will be 2:1
+            (that is 2x2 photo pixels will display as 1 on-screen pixel) which is a zoom
+            out. 4:1 will be 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom
+            parameter must be greater than 0. It is suggested to stick to powers of 2.
+            (1, 2, 4, 8, 16, 32, etc.).
+
+            @ingroup Photocam */
+         }
+         get {
+            /*@
+            @brief Get the zoom level of the photo
+
+            @return The current zoom level
+
+            This returns the current zoom level of the photocam object. Note that if
+            you set the fill mode to other than ELM_PHOTOCAM_ZOOM_MODE_MANUAL
+            (which is the default), the zoom level may be changed at any time by the
+            photocam object itself to account for photo size and photocam viewport
+            size.
+
+            @see elm_photocam_zoom_set()
+            @see elm_photocam_zoom_mode_set()
+
+            @ingroup Photocam */
+         }
+         values {
+            double zoom; /*@ The zoom level to set */
+         }
+      }
+      zoom_mode {
+         set {
+            /*@
+            @brief Set the zoom mode
+
+            This sets the zoom mode to manual or one of several automatic levels.
+            Manual (ELM_PHOTOCAM_ZOOM_MODE_MANUAL) means that zoom is set manually by
+            elm_photocam_zoom_set() and will stay at that level until changed by code
+            or until zoom mode is changed. This is the default mode. The Automatic
+            modes will allow the photocam object to automatically adjust zoom mode
+            based on properties. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so
+            the photo fits EXACTLY inside the scroll frame with no pixels outside this
+            region. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no
+            pixels within the frame are left unfilled.
+
+            @ingroup Photocam */
+         }
+         get {
+            /*@
+            @brief Get the zoom mode
+
+            @return The current zoom mode
+
+            This gets the current zoom mode of the photocam object.
+
+            @see elm_photocam_zoom_mode_set()
+
+            @ingroup Photocam */
+         }
+         values {
+            Elm_Photocam_Zoom_Mode mode; /*@ The desired mode */
+         }
+      }
+      image_region {
+         get {
+            /*@
+            @brief Get the region of the image that is currently shown
+
+            @see elm_photocam_image_region_show()
+            @see elm_photocam_image_region_bring_in()
+
+            @ingroup Photocam */
+         }
+         values {
+            int x; /*@ A pointer to the X-coordinate of region */
+            int y; /*@ A pointer to the Y-coordinate of region */
+            int w; /*@ A pointer to the width */
+            int h; /*@ A pointer to the height */
+         }
+      }
+      internal_image {
+         get {
+            /*@
+            @brief Get the internal low-res image used for photocam
+
+            @return The internal image object handle, or NULL if none exists
+
+            This gets the internal image object inside photocam. Do not modify it. It
+            is for inspection only, and hooking callbacks to. Nothing else. It may be
+            deleted at any time as well.
+
+            @ingroup Photocam */
+            return Evas_Object *;
+         }
+      }
+      image_size {
+         get {
+            /*@
+            @brief Get the current image pixel width and height
+
+            This gets the current photo pixel width and height (for the original).
+            The size will be returned in the integers @p w and @p h that are pointed
+            to.
+
+            @ingroup Photocam */
+         }
+         values {
+            int w; /*@ A pointer to the width return */
+            int h; /*@ A pointer to the height return */
+         }
+      }
+   }
+   methods {
+      image_region_show {
+         /*@
+         @brief Set the viewed region of the image
+
+         This shows the region of the image without using animation.
+
+         @ingroup Photocam */
+
+         params {
+            @in int x; /*@ X-coordinate of region in image original pixels */
+            @in int y; /*@ Y-coordinate of region in image original pixels */
+            @in int w; /*@ Width of region in image original pixels */
+            @in int h; /*@ Height of region in image original pixels */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::move;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::member_add;
+      Evas_Smart::resize;
+      Elm_Widget::theme_apply;
+      Elm_Widget::on_focus;
+      Elm_Widget::event;
+      Elm_Interface_Scrollable::region_bring_in;
+   }
+   events {
+      clicked;
+      press;
+      longpressed;
+      clicked,double;
+      load;
+      loaded;
+      load,detail;
+      loaded,detail;
+      zoom,start;
+      zoom,stop;
+      zoom,change;
+      scroll;
+      scroll,anim,start;
+      scroll,anim,stop;
+      scroll,drag,start;
+      scroll,drag,stop;
+      download,start;
+      download,progress;
+      download,done;
+      download,error;
+      focused;
+      unfocused;
+   }
+
+}
