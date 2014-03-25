@@ -1,3 +1,5 @@
+#include "elc_player.eo.h"
+#if 0
 #define ELM_OBJ_PLAYER_CLASS elm_obj_player_class_get()
 
 const Eo_Class *elm_obj_player_class_get(void) EINA_CONST;
@@ -10,6 +12,7 @@ enum
 };
 
 #define ELM_OBJ_PLAYER_ID(sub_id) (ELM_OBJ_PLAYER_BASE_ID + sub_id)
+#endif
 
 /**
  * ELM_OBJ_VIDEO_CLASS

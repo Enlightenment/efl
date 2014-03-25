@@ -624,7 +624,9 @@ BUILT_SOURCES = \
 		elm_photocam_pan.eo.c \
 		elm_photocam_pan.eo.h \
 		elm_photo.eo.c \
-		elm_photo.eo.h
+		elm_photo.eo.h \
+		elc_player.eo.c \
+		elc_player.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -676,7 +678,8 @@ EXTRA_DIST += \
 	     elm_panes.eo \
 	     elm_photocam.eo \
 	     elm_photocam_pan.eo \
-	     elm_photo.eo
+	     elm_photo.eo \
+	     elc_player.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -728,5 +731,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_panes.eo.h \
 				  elm_photocam.eo.h \
 				  elm_photocam_pan.eo.h \
-				  elm_photo.eo.h
+				  elm_photo.eo.h \
+				  elc_player.eo.h
 

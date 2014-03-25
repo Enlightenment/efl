@@ -1,0 +1,31 @@
+class Elm_Player (Elm_Layout)
+{
+   eo_prefix: elm_obj_player;
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::theme_apply;
+      Elm_Widget::event;
+      Elm_Container::content_set;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      forward,clicked;
+      info,clicked;
+      next,clicked;
+      pause,clicked;
+      play,clicked;
+      prev,clicked;
+      rewind,clicked;
+      quality,clicked;
+      eject,clicked;
+      volume,clicked;
+      mute,clicked;
+      language,changed;
+      focused;
+      unfocused;
+   }
+
+}
