@@ -82,6 +82,7 @@ test_gesture_layer2.c \
 test_gesture_layer3.c \
 test_glview_simple.c \
 test_glview.c \
+test_glview_manygears.c \
 test_grid.c \
 test_hover.c \
 test_hoversel.c \
