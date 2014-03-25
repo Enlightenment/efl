@@ -721,7 +721,7 @@ _elm_toolbar_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (it)
           {
              it = _elm_toolbar_nearest_visible_item_get(obj, it);
-             _elm_toolbar_item_focused((Elm_Toolbar_Item *)it);
+             if (it) _elm_toolbar_item_focused((Elm_Toolbar_Item *)it);
           }
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
      }
