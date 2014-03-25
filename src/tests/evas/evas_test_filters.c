@@ -118,6 +118,8 @@ START_TEST(evas_filter_parser)
    CHKBAAD("blend(invalid=hello);");
    CHKBAAD("buffer:a(alpha);buffer:a(rgba);blend();");
    CHKBAAD("buffer:a(alpha,src=partname);");
+   CHKGOOD("padding_set(0);blend();");
+   CHKGOOD("padding_set(l=1,r=2,t=3,b=4);blend();");
 
    // Case sensitivity
    CHKGOOD("BLEND();");
@@ -302,7 +304,10 @@ static struct Filter_Test_Case _test_cases[] = {
    { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=repeat_x_stretch_y);", "rect" },
    { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=repeat);", "rect" },
    { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=stretch);", "rect" },
-   { 0, 0, 0, 0, "buffer:m(src=rect);buffer:b(rgba);blend(m,dst=b,fillmode=repeat_x_stretch_y);blend();", "rect" }
+   { 0, 0, 0, 0, "buffer:m(src=rect);buffer:b(rgba);blend(m,dst=b,fillmode=repeat_x_stretch_y);blend();", "rect" },
+
+   // Padding_set
+   { 11, 22, 33, 44, "padding_set(11,22,33,44);blend();"}
 };
 
 static const int _test_cases_count = sizeof(_test_cases) / sizeof(_test_cases[0]);
