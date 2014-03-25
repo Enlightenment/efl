@@ -350,6 +350,7 @@ static Eina_Bool
 _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
 {
    Evas_Filter_Command fake_cmd;
+   Evas_Filter_Fill_Mode fillmode;
    Evas_Filter_Apply_Func blend;
    Evas_Filter_Buffer *fb;
    Eina_Bool ret;
@@ -373,11 +374,25 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
    fb->locked = EINA_TRUE;
 
+   // Repeat mask if unspecified - NONE is not possible
+   fillmode = cmd->draw.fillmode;
+   if ((fillmode & (EVAS_FILTER_FILL_MODE_REPEAT_X | EVAS_FILTER_FILL_MODE_STRETCH_X)) == 0)
+     {
+        DBG("X fillmode not specified: defaults to repeat");
+        fillmode |= EVAS_FILTER_FILL_MODE_REPEAT_X;
+     }
+   if ((fillmode & (EVAS_FILTER_FILL_MODE_REPEAT_Y | EVAS_FILTER_FILL_MODE_STRETCH_Y)) == 0)
+     {
+        DBG("Y fillmode not specified: defaults to repeat");
+        fillmode |= EVAS_FILTER_FILL_MODE_REPEAT_Y;
+     }
+
    // Mask --> Temp
    fake_cmd.input = cmd->mask;
    fake_cmd.mask = NULL;
    fake_cmd.output = fb;
    fake_cmd.draw.render_op = EVAS_RENDER_MUL;
+   fake_cmd.draw.fillmode = fillmode;
    blend = evas_filter_blend_cpu_func_get(&fake_cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
    ret = blend(&fake_cmd);
@@ -387,6 +402,7 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    fake_cmd.draw.render_op = EVAS_RENDER_BLEND;
    fake_cmd.input = fb;
    fake_cmd.output = cmd->output;
+   fake_cmd.draw.fillmode = EVAS_FILTER_FILL_MODE_NONE;
    blend = evas_filter_blend_cpu_func_get(&fake_cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
    ret = blend(&fake_cmd);

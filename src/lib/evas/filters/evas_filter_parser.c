@@ -1520,7 +1520,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   Blend two input buffers into a third (target).
 
   @code
-    mask (mask, src = input, dst = output, color = white, fillmode = none);
+    mask (mask, src = input, dst = output, color = white, fillmode = repeat);
   @endcode
 
   @param mask     A mask or texture to blend with the input @a src into the target @a dst.
@@ -1528,7 +1528,8 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   @param dst      Destination buffer for blending. This must be of same size and colorspace as @a src.
   @param color    A color to use for alpha to RGBA conversion for the blend operations. White means no change.
                   See @ref evasfilters_color "colors". This will have no effect on RGBA sources.
-  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src. Should be set when masking with external textures. Default is none. See @ref evasfilter_fillmode "fillmodes".
+  @param fillmode Defines whether to stretch or repeat the @a mask if its size that of @src.
+                  Should be set when masking with external textures. Default is repeat. See @ref evasfilter_fillmode "fillmodes".
 
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.
 
@@ -1556,7 +1557,7 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
-   _instruction_param_name_add(instr, "fillmode", VT_STRING, "none");
+   _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
 
    return EINA_TRUE;
 }
