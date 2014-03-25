@@ -851,7 +851,7 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
 
    buf = _buffer_new(ctx, w, h, alpha_only);
    buf->locked = EINA_TRUE;
-   DBG("Created temporary buffer: %d", buf->id);
+   DBG("Created temporary buffer: %d (%s)", buf->id, alpha_only ? "Alpha" : "RGBA");
    return buf;
 }
 
@@ -934,6 +934,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         goto fail;
      }
 
+   if (in == out) out->dirty = EINA_FALSE;
    blend = (out->dirty && !out->transient);
 
    switch (type)
@@ -1017,7 +1018,9 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
      }
    else if (blend || (in->alpha_only && !out->alpha_only))
      {
-        DBG("Adding extra blending step (%s --> RGBA)", in->alpha_only ? "Alpha" : "RGBA");
+        DBG("Adding extra blending step %d --> %d (%s --> %s)", in->id, out->id,
+            in->alpha_only ? "Alpha" : "RGBA",
+            out->alpha_only ? "Alpha" : "RGBA");
         blur_out = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
         if (!blur_out) goto fail;
         blend = EINA_TRUE;
