@@ -1774,6 +1774,50 @@ _config_update(void)
        }
      IFCFGEND;
 
+     IFCFG(0x0005);
+     COPYVAL(magnifier_scale);
+     if (!_elm_config->bindings)
+       {
+          Elm_Config_Bindings_Widget *wb;
+          Eina_List *l;
+          
+          EINA_LIST_FOREACH(tcfg->bindings, l, wb)
+            {
+               Elm_Config_Bindings_Widget *wb2;
+
+               wb2 = calloc(1, sizeof(Elm_Config_Bindings_Widget));
+               if (wb2)
+                 {
+                    Elm_Config_Binding_Key *kb;
+                    Eina_List *l2;
+                    
+                    *wb2 = *wb;
+#define DUPSHARE(x) if (wb->x) wb2->x = eina_stringshare_add(wb->x)
+                    DUPSHARE(name);
+#undef DUPSHARE
+                    wb->key_bindings = NULL;
+                    EINA_LIST_FOREACH(wb->key_bindings, l2, kb)
+                      {
+                         Elm_Config_Binding_Key *kb2;
+
+                         kb2 = calloc(1, sizeof(Elm_Config_Binding_Key));
+                         if (kb2)
+                           {
+#define DUPSHARE(x) if (kb->x) kb2->x = eina_stringshare_add(kb->x)
+                              DUPSHARE(modifiers);
+                              DUPSHARE(key);
+                              DUPSHARE(action);
+                              DUPSHARE(params);
+#undef DUPSHARE
+                              wb->key_bindings = eina_list_append(wb->key_bindings, kb2);
+                           }
+                      }
+                    _elm_config->bindings = eina_list_append(_elm_config->bindings, wb2);
+                 }
+            }
+       }
+     IFCFGEND;
+
 #undef COPYSTR
 #undef COPYPTR
 #undef COPYVAL

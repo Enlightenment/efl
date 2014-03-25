@@ -123,7 +123,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-#define ELM_CONFIG_FILE_GENERATION 0x0004
+#define ELM_CONFIG_FILE_GENERATION 0x0005
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | \
                                     ELM_CONFIG_FILE_GENERATION)
 /* NB: profile configuration files (.src) must have their
