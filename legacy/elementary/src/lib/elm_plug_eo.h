@@ -1,3 +1,6 @@
+#include "elm_plug.eo.h"
+
+#if 0
 #define ELM_OBJ_PLUG_CLASS elm_obj_plug_class_get()
 
 const Eo_Class *elm_obj_plug_class_get(void) EINA_CONST;
@@ -44,3 +47,4 @@ enum
  * @ingroup Plug
  */
 #define elm_obj_plug_connect(svcname, svcnum, svcsys, ret) ELM_OBJ_PLUG_ID(ELM_OBJ_PLUG_SUB_ID_CONNECT), EO_TYPECHECK(const char *, svcname), EO_TYPECHECK(int, svcnum), EO_TYPECHECK(Eina_Bool, svcsys), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
