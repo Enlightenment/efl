@@ -10374,6 +10374,7 @@ _program_target_add(char *name)
          data_queue_program_lookup(pc, name, &(et->id));
          break;
       case EDJE_ACTION_TYPE_STATE_SET:
+      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
       case EDJE_ACTION_TYPE_DRAG_VAL_SET:
       case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
       case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
@@ -10408,7 +10409,7 @@ _program_target_add(char *name)
         [target]
     @effect
         Program or part on which the specified action acts. Multiple target
-        keywords may be specified, one per target. SIGNAL_EMITs do not have
+        keywords may be specified, one per target. SIGNAL_EMITs can have
         targets.
     @endproperty
 */
@@ -10431,7 +10432,7 @@ st_collections_group_programs_program_target(void)
     @since 1.10
     @effect
         Programs or parts upon which the specified action will act. Multiple target
-        or targets keywords may be specified. SIGNAL_EMITs do not have
+        or targets keywords may be specified. SIGNAL_EMITs can have
         targets.
     @endproperty
 */

@@ -628,7 +628,21 @@ low_mem_current:
       case EDJE_ACTION_TYPE_SIGNAL_EMIT:
          // _edje_emit(ed, "program,start", pr->name);
          if (_edje_block_break(ed)) goto break_prog;
-         _edje_emit(ed, pr->state, pr->state2);
+         if (pr->targets)
+           {
+              EINA_LIST_FOREACH(pr->targets, l, pt)
+                {
+                   char buf[1024];
+
+                   if (pt->id < 0) continue;
+                   rp = ed->table_parts[pt->id % ed->table_parts_size];
+                   if (!rp) continue;
+                   snprintf(buf, sizeof(buf), "%s:%s", rp->part->name, pr->state);
+                   _edje_emit(ed, buf, pr->state2);
+                }
+           }
+         else
+           _edje_emit(ed, pr->state, pr->state2);
          if (_edje_block_break(ed)) goto break_prog;
          // _edje_emit(ed, "program,stop", pr->name);
          if (_edje_block_break(ed)) goto break_prog;
