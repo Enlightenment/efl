@@ -1393,9 +1393,9 @@ _elm_toolbar_smart_theme(Eo *obj, void *_pd, va_list *list)
        (sd->more, "toolbar", "more", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
    if (sd->vertical)
-     edje_object_signal_emit(sd->more, "elm,orient,vertical", "elm");
+     elm_object_signal_emit(sd->more, "elm,orient,vertical", "elm");
    else
-     edje_object_signal_emit(sd->more, "elm,orient,horizontal", "elm");
+     elm_object_signal_emit(sd->more, "elm,orient,horizontal", "elm");
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
@@ -2770,9 +2770,9 @@ _elm_toolbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    if (!elm_layout_theme_set(priv->more, "toolbar", "more", "default"))
      CRI("Failed to set layout!");
    if (priv->vertical)
-     edje_object_signal_emit(priv->more, "elm,orient,vertical", "elm");
+     elm_object_signal_emit(priv->more, "elm,orient,vertical", "elm");
    else
-     edje_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
+     elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
 
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
