@@ -258,6 +258,167 @@ group { name: "elm/genlist/item_compress/group_index/default";
    }
 }
 
+group { name: "genlist_base"; inherit_only: 1;
+   images.image: "bevel_curved_horiz_out.png" COMP;
+   images.image: "shadow_rounded_horiz.png" COMP;
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_horiz_out.png" COMP;
+   parts {
+       part { name: "event"; type: RECT;
+          description { state: "default" 0.0;
+             color: 0 0 0 0;
+          }
+          description { state: "disabled" 0.0;
+             inherit: "default" 0.0;
+             visible: 0;
+          }
+       }
+       part { name: "base"; type: RECT; mouse_events: 0;
+          description { state: "default" 0.0;
+             color: 64 64 64 255;
+             color_class: "list_item_base";
+          }
+          description { state: "odd" 0.0;
+             color: 56 56 56 255;
+             color_class: "list_item_base_odd";
+          }
+       }
+       program {
+          signal: "elm,state,odd"; source: "elm";
+          action: STATE_SET "odd" 1.0;
+          target: "base";
+       }
+       program {
+          signal: "elm,state,even"; source: "elm";
+          action: STATE_SET "default" 0.0;
+          target: "base";
+       }
+       part { name: "bevel"; mouse_events: 0;
+          description { state: "default" 0.0;
+             image.normal: "bevel_curved_horiz_out.png";
+             image.border: 0 0 2 2;
+             image.middle: 0;
+             fill.smooth: 0;
+          }
+       }
+       part { name: "sel_shadow"; mouse_events: 0;
+          description { state: "default" 0.0;
+             image.normal: "shadow_rounded_horiz.png";
+             image.border: 0 0 9 9;
+             rel1.offset: 0 -4;
+             rel2.offset: -1 5;
+             fill.smooth: 0;
+             visible: 0;
+          }
+          description { state: "selected" 0.0;
+             inherit: "default" 0.0;
+             visible: 1;
+          }
+       }
+       part { name: "sel_base"; mouse_events: 0;
+          description { state: "default" 0.0;
+             image.normal: "vgrad_med_dark.png";
+             fill.smooth: 0;
+             visible: 0;
+             TILED_HORIZ(120)
+          }
+          description { state: "selected" 0.0;
+             inherit: "default" 0.0;
+             visible: 1;
+          }
+       }
+       part { name: "sel_bevel"; mouse_events: 0;
+          description { state: "default" 0.0;
+             image.normal: "bevel_horiz_out.png";
+             image.border: 0 0 2 2;
+             image.middle: 0;
+             fill.smooth: 0;
+             visible: 0;
+          }
+          description { state: "selected" 0.0;
+             inherit: "default" 0.0;
+             visible: 1;
+          }
+       }
+       program {
+          signal: "elm,state,selected"; source: "elm";
+          action: STATE_SET "selected" 0.0;
+          target: "sel_shadow";
+          target: "sel_base";
+          target: "sel_bevel";
+       }
+       program {
+          signal: "elm,state,unselected"; source: "elm";
+          action: STATE_SET "default" 0.0;
+          target: "sel_shadow";
+          target: "sel_base";
+          target: "sel_bevel";
+       }
+       program {
+          signal: "elm,state,disabled"; source: "elm";
+          action: STATE_SET "disabled" 0.0;
+          target: "event";
+       }
+       program {
+          signal: "elm,state,enabled"; source: "elm";
+          action: STATE_SET "default" 0.0;
+          target: "event";
+       }
+   }
+}
+
+group { name: "genlist_top"; inherit_only: 1;
+    images.image: "shine.png" COMP;
+    parts {
+       part { name: "sel_shine"; mouse_events: 0;
+          description { state: "default" 0.0;
+             image.normal: "shine.png";
+             rel1.offset: 0 -2;
+             rel1.to: "sel_base";
+             rel2.relative: 1.0 0.0;
+             rel2.offset: -1 2;
+             rel2.to: "sel_base";
+             visible: 0;
+             FIXED_SIZE(69, 5)
+          }
+          description { state: "selected" 0.0;
+             inherit: "default" 0.0;
+             visible: 1;
+          }
+       }
+       part { name: "event_block"; type: RECT;
+          description { state: "default" 0.0;
+             color: 0 0 0 0;
+             visible: 0;
+          }
+          description { state: "disabled" 0.0;
+             inherit: "default" 0.0;
+             visible: 1;
+          }
+       }
+       program {
+          signal: "elm,state,selected"; source: "elm";
+          action: STATE_SET "selected" 0.0;
+          target: "sel_shine";
+       }
+       program {
+          signal: "elm,state,unselected"; source: "elm";
+          action: STATE_SET "default" 0.0;
+          target: "sel_shine";
+       }
+       program {
+          signal: "elm,state,disabled"; source: "elm";
+          action: STATE_SET "disabled" 0.0;
+          target: "event_block";
+       }
+       program {
+          signal: "elm,state,enabled"; source: "elm";
+          action: STATE_SET "default" 0.0;
+          target: "event_block";
+       }
+    }
+}
+
 group { name: "elm/genlist/item/default/default";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
@@ -265,166 +426,8 @@ group { name: "elm/genlist/item/default/default";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-#define IMGP() \
-   images.image: "bevel_curved_horiz_out.png" COMP; \
-   images.image: "shadow_rounded_horiz.png" COMP; \
-   images.image: "vgrad_med_dark.png" COMP; \
-   images.image: "bevel_horiz_out.png" COMP; \
-   images.image: "shine.png" COMP;
-   IMGP()
+   inherit: "genlist_base";
    parts {
-//---------------------------------------------------------------------------
-#define BASEP() \
-      part { name: "event"; type: RECT; \
-         description { state: "default" 0.0; \
-            color: 0 0 0 0; \
-         } \
-         description { state: "disabled" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 0; \
-         } \
-      } \
-      part { name: "base"; type: RECT; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            color: 64 64 64 255; \
-            color_class: "list_item_base"; \
-         } \
-         description { state: "odd" 0.0; \
-            color: 56 56 56 255; \
-            color_class: "list_item_base_odd"; \
-         } \
-      } \
-      program { \
-         signal: "elm,state,odd"; source: "elm"; \
-         action: STATE_SET "odd" 1.0; \
-         target: "base"; \
-      } \
-      program { \
-         signal: "elm,state,even"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "base"; \
-      } \
-      part { name: "bevel"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "bevel_curved_horiz_out.png"; \
-            image.border: 0 0 2 2; \
-            image.middle: 0; \
-            fill.smooth: 0; \
-         } \
-      } \
-      part { name: "sel_shadow"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "shadow_rounded_horiz.png"; \
-            image.border: 0 0 9 9; \
-            rel1.offset: 0 -4; \
-            rel2.offset: -1 5; \
-            fill.smooth: 0; \
-            visible: 0; \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      part { name: "sel_base"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "vgrad_med_dark.png"; \
-            fill.smooth: 0; \
-            visible: 0; \
-            TILED_HORIZ(120) \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      part { name: "sel_bevel"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "bevel_horiz_out.png"; \
-            image.border: 0 0 2 2; \
-            image.middle: 0; \
-            fill.smooth: 0; \
-            visible: 0; \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      program { \
-         signal: "elm,state,selected"; source: "elm"; \
-         action: STATE_SET "selected" 0.0; \
-         target: "sel_shadow"; \
-         target: "sel_base"; \
-         target: "sel_bevel"; \
-      } \
-      program { \
-         signal: "elm,state,unselected"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "sel_shadow"; \
-         target: "sel_base"; \
-         target: "sel_bevel"; \
-      } \
-      program { \
-         signal: "elm,state,disabled"; source: "elm"; \
-         action: STATE_SET "disabled" 0.0; \
-         target: "event"; \
-      } \
-      program { \
-         signal: "elm,state,enabled"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "event"; \
-      }
-#define TOPP() \
-      part { name: "sel_shine"; mouse_events: 0; \
-         description { state: "default" 0.0; \
-            image.normal: "shine.png"; \
-            rel1.offset: 0 -2; \
-            rel1.to: "sel_base"; \
-            rel2.relative: 1.0 0.0; \
-            rel2.offset: -1 2; \
-            rel2.to: "sel_base"; \
-            visible: 0; \
-            FIXED_SIZE(69, 5) \
-         } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      part { name: "event_block"; type: RECT; \
-         description { state: "default" 0.0; \
-            color: 0 0 0 0; \
-            visible: 0; \
-         } \
-         description { state: "disabled" 0.0; \
-            inherit: "default" 0.0; \
-            visible: 1; \
-         } \
-      } \
-      program { \
-         signal: "elm,state,selected"; source: "elm"; \
-         action: STATE_SET "selected" 0.0; \
-         target: "sel_shine"; \
-      } \
-      program { \
-         signal: "elm,state,unselected"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "sel_shine"; \
-      } \
-      program { \
-         signal: "elm,state,disabled"; source: "elm"; \
-         action: STATE_SET "disabled" 0.0; \
-         target: "event_block"; \
-      } \
-      program { \
-         signal: "elm,state,enabled"; source: "elm"; \
-         action: STATE_SET "default" 0.0; \
-         target: "event_block"; \
-      }
-//---------------------------------------------------------------------------
-      BASEP()
-
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
@@ -625,9 +628,8 @@ group { name: "elm/genlist/item/default/default";
          target: "elm.swallow.end";
       }
       //##//
-
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/default/default", "elm/genlist/item/default/default")
 COMPRESS("elm/genlist/item_compress/default/default", "elm/genlist/item/default/default")
@@ -665,9 +667,8 @@ group { name: "elm/genlist/item/default_style/default";
       tag: "tab" "\t";
    }
    
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
         
       //##//
       part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
@@ -867,8 +868,8 @@ group { name: "elm/genlist/item/default_style/default";
       }
       //##//
       
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/default_style/default", "elm/genlist/item/default_style/default")
 COMPRESS("elm/genlist/item_compress/default_style/default", "elm/genlist/item/default_style/default")
@@ -881,9 +882,8 @@ group { name: "elm/genlist/item/one_icon/default";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -1068,8 +1068,8 @@ group { name: "elm/genlist/item/one_icon/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/one_icon/default", "elm/genlist/item/one_icon/default")
 COMPRESS("elm/genlist/item_compress/one_icon/default", "elm/genlist/item/one_icon/default")
@@ -1082,9 +1082,8 @@ group { name: "elm/genlist/item/end_icon/default";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -1268,8 +1267,8 @@ group { name: "elm/genlist/item/end_icon/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/end_icon/default", "elm/genlist/item/end_icon/default")
 COMPRESS("elm/genlist/item_compress/end_icon/default", "elm/genlist/item/end_icon/default")
@@ -1281,9 +1280,8 @@ group { name: "elm/genlist/item/no_icon/default";
    data.item: "texts" "elm.text";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -1441,8 +1439,8 @@ group { name: "elm/genlist/item/no_icon/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/no_icon/default", "elm/genlist/item/no_icon/default")
 COMPRESS("elm/genlist/item_compress/no_icon/default", "elm/genlist/item/no_icon/default")
@@ -1454,9 +1452,8 @@ group { name: "elm/genlist/item/full/default";
    data.item: "contents" "elm.swallow.content";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.swallow.content"; type: SWALLOW;
@@ -1481,8 +1478,8 @@ group { name: "elm/genlist/item/full/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/full/default", "elm/genlist/item/full/default")
 group { name: "elm/genlist/item_compress/full/default";
@@ -1994,9 +1991,8 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -2197,8 +2193,8 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
 COMPRESS("elm/genlist/item_compress/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
@@ -2425,9 +2421,8 @@ group { name: "elm/genlist/item/double_label/default";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -2741,8 +2736,8 @@ group { name: "elm/genlist/item/double_label/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/double_label/default", "elm/genlist/item/double_label/default")
 COMPRESS_SUB("elm/genlist/item_compress/double_label/default", "elm/genlist/item/double_label/default")
@@ -3050,9 +3045,8 @@ group { name: "elm/genlist/item/message/default";
    data.item: "contents" "elm.swallow.icon";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -3432,8 +3426,8 @@ group { name: "elm/genlist/item/message/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/message/default", "elm/genlist/item/message/default")
 COMPRESS_T1T2("elm/genlist/item_compress/message/default", "elm/genlist/item/message/default")
@@ -3445,9 +3439,8 @@ group { name: "elm/genlist/item/media/default";
    data.item: "texts" "elm.text.title elm.text.album-artist";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
@@ -3716,8 +3709,8 @@ group { name: "elm/genlist/item/media/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 #define COMPRESS_MEDIA(_NAME, _SRC) \
    group { name: _NAME; \
@@ -3915,9 +3908,8 @@ group { name: "elm/genlist/item/media-album/default";
    data.item: "texts" "elm.text.title elm.text.trackno elm.text.length";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text.trackno"; type: TEXT; mouse_events: 0;
@@ -4319,8 +4311,8 @@ group { name: "elm/genlist/item/media-album/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/media-album/default", "elm/genlist/item/media-album/default")
 group { name: "elm/genlist/item_compress/media-album/default";
@@ -4509,9 +4501,8 @@ group { name: "elm/genlist/item/media-preview/default";
    data.item: "contents" "elm.swallow.preview";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -4807,8 +4798,8 @@ group { name: "elm/genlist/item/media-preview/default";
       }
       //##//
 
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/media-preview/default", "elm/genlist/item/media-preview/default")
 group { name: "elm/genlist/item_compress/media-preview/default";
@@ -5099,9 +5090,8 @@ group { name: "elm/genlist/item/mode/default";
    data.item: "mode_part" "elm.swallow.original";
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.mode.flip";
-   IMGP()
+   inherit: "genlist_base";
    parts {
-      BASEP()
 
       //##//
       part { name: "elm.text.mode"; type: TEXT; mouse_events: 0;
@@ -5361,8 +5351,8 @@ group { name: "elm/genlist/item/mode/default";
          action: SIGNAL_EMIT "elm,state,rotate,passive,finished" "elm";
       }
       
-      TOPP()
    }
+   inherit: "genlist_top";
 }
 ODD("elm/genlist/item_odd/mode/default", "elm/genlist/item/mode/default")
 COMPRESS_MODE("elm/genlist/item_compress/mode/default", "elm/genlist/item/mode/default")
@@ -5625,10 +5615,7 @@ COMPRESS_EDIT_ODD("elm/genlist/tree_compress_odd/edit/default", "elm/genlist/tre
 #undef ODD
 #undef COMPRESS
 #undef COMPRESS_ODD
-#undef BASEP
-#undef TOPP
 #undef TREEPAD
-#undef IMGP
 #undef TREEIMGS
 #undef ARROW
 #undef GENLIST_PART_MAP_START
