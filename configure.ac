@@ -1177,8 +1177,14 @@ if test "${want_sdl}" = "yes"; then
    EFL_PKG_CHECK_STRICT([sdl >= 1.2.0])
 fi
 
+# We only enable SDL with opengl if it is not the full version and not ES
+# This can be changed if we ported our SDL code over to SDL 2.0. For older
+# versions the SDL_opengles.h has never been released.
 want_gl_sdl="no"
-if test "${want_sdl}" = "yes" && test "${with_opengl}" != "none"; then
+if test "${want_sdl}" = "yes" && test "${with_opengl}" = "es"; then
+   AC_MSG_ERROR([We currently do not support SDL with OpenGL ES. Please consider full OpenGL if you want to use it with SDL.])
+fi
+if test "${want_sdl}" = "yes" && test "${with_opengl}" = "full"; then
    want_gl_sdl="yes"
 fi
 
