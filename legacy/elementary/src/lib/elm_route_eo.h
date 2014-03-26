@@ -1,3 +1,6 @@
+#include "elm_route.eo.h"
+
+#if 0
 #define ELM_OBJ_ROUTE_CLASS elm_obj_route_class_get()
 
 const Eo_Class *elm_obj_route_class_get(void) EINA_CONST;
@@ -58,3 +61,5 @@ enum
  * @ingroup Route
  */
 #define elm_obj_route_latitude_min_max_get(min, max) ELM_OBJ_ROUTE_ID(ELM_OBJ_ROUTE_SUB_ID_LATITUDE_MIN_MAX_GET), EO_TYPECHECK(double *, min), EO_TYPECHECK(double *, max)
+#endif
+

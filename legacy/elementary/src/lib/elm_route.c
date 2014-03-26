@@ -7,8 +7,6 @@
 #include "elm_priv.h"
 #include "elm_widget_route.h"
 
-EAPI Eo_Op ELM_OBJ_ROUTE_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_ROUTE_CLASS
 
 #define MY_CLASS_NAME "Elm_Route"
@@ -88,21 +86,18 @@ _move_resize_cb(void *data EINA_UNUSED,
    _sizing_eval(obj);
 }
 
-static void
-_elm_route_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_route_elm_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    //TODO
 
    _sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 #ifdef ELM_EMAP
@@ -138,10 +133,9 @@ _update_lon_lat_min_max(Evas_Object *obj,
 
 #endif
 
-static void
-_elm_route_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_route_evas_smart_add(Eo *obj, Elm_Route_Data *priv)
 {
-   Elm_Route_Smart_Data *priv = _pd;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -164,8 +158,8 @@ _elm_route_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    _sizing_eval(obj);
 }
 
-static void
-_elm_route_smart_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_route_evas_smart_del(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
    _clear_route(obj);
 
@@ -189,45 +183,23 @@ elm_route_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_route_eo_base_constructor(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
-#ifdef ELM_EMAP
-/**
- * Set the emap object which describes the route
- *
- * @param obj The photo object
- * @param emap the route
- *
- * @ingroup Route
- */
-EAPI void
-elm_route_emap_set(Evas_Object *obj,
-                   EMap_Route *emap)
+EOLIAN static void
+_elm_route_emap_set(Eo *obj, Elm_Route_Data *sd, void *_emap)
 {
-   ELM_ROUTE_CHECK(obj);
-   eo_do(obj, elm_obj_route_emap_set(emap));
-}
-#endif
-
-static void
-_emap_set(Eo *obj, void *_pd, va_list *list)
-{
-   void *_emap = va_arg(*list, void *);
-
 #ifdef ELM_EMAP
    EMap_Route *emap = _emap;
 
    EMap_Route_Node *node, *node_prev = NULL;
    Evas_Object *o;
    Eina_List *l;
-
-   Elm_Route_Smart_Data *sd = _pd;
 
    sd->emap = emap;
 
@@ -264,88 +236,29 @@ _emap_set(Eo *obj, void *_pd, va_list *list)
    _sizing_eval(obj);
 #else
    (void)obj;
-   (void)_pd;
+   (void)sd;
    (void)_emap;
 #endif
 }
 
-EAPI void
-elm_route_longitude_min_max_get(const Evas_Object *obj,
-                                double *min,
-                                double *max)
+EOLIAN static void
+_elm_route_longitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
 {
-   ELM_ROUTE_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_route_longitude_min_max_get(min, max));
-}
-
-static void
-_longitude_min_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *min = va_arg(*list, double *);
-   double *max = va_arg(*list, double *);
-
-   Elm_Route_Smart_Data *sd = _pd;
-
    if (min) *min = sd->lon_min;
    if (max) *max = sd->lon_max;
 }
 
-EAPI void
-elm_route_latitude_min_max_get(const Evas_Object *obj,
-                               double *min,
-                               double *max)
+EOLIAN static void
+_elm_route_latitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
 {
-   ELM_ROUTE_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_route_latitude_min_max_get(min, max));
-}
-
-static void
-_latitude_min_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *min = va_arg(*list, double *);
-   double *max = va_arg(*list, double *);
-
-   Elm_Route_Smart_Data *sd = _pd;
-
    if (min) *min = sd->lat_min;
    if (max) *max = sd->lat_max;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
+EOLIAN static void
+_elm_route_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_route_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_route_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_route_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_ROUTE_ID(ELM_OBJ_ROUTE_SUB_ID_EMAP_SET), _emap_set),
-        EO_OP_FUNC(ELM_OBJ_ROUTE_ID(ELM_OBJ_ROUTE_SUB_ID_LONGITUDE_MIN_MAX_GET), _longitude_min_max_get),
-        EO_OP_FUNC(ELM_OBJ_ROUTE_ID(ELM_OBJ_ROUTE_SUB_ID_LATITUDE_MIN_MAX_GET), _latitude_min_max_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_ROUTE_SUB_ID_EMAP_SET, "Set the emap object which describes the route."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ROUTE_SUB_ID_LONGITUDE_MIN_MAX_GET, "Get the minimum and maximum values along the longitude."),
-     EO_OP_DESCRIPTION(ELM_OBJ_ROUTE_SUB_ID_LATITUDE_MIN_MAX_GET, "Get the minimum and maximum values along the latitude."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
 
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_ROUTE_BASE_ID, op_desc, ELM_OBJ_ROUTE_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Route_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_route_class_get, &class_desc, ELM_OBJ_WIDGET_CLASS, NULL);
+#include "elm_route.eo.c"

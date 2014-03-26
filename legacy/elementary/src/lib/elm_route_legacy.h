@@ -9,10 +9,6 @@
 EAPI Evas_Object *elm_route_add(Evas_Object *parent);
 
 #ifdef ELM_EMAP
-EAPI void         elm_route_emap_set(Evas_Object *obj, EMap_Route *emap);
-#endif
-
-#ifdef ELM_EMAP
 /**
  * emap set
  *
@@ -21,7 +17,7 @@ EAPI void         elm_route_emap_set(Evas_Object *obj, EMap_Route *emap);
  *
  * @ingroup Route
  */
-EAPI void         elm_route_emap_set(Evas_Object *obj, EMap_Route *emap);
+EAPI void         elm_route_emap_set(Evas_Object *obj, void *emap);
 #endif
 
 /**
