@@ -1,0 +1,42 @@
+class Ecore_Audio_Out (Ecore_Audio)
+{
+   eo_prefix: ecore_audio_obj_out;
+   data: Ecore_Audio_Output;
+   methods {
+      input_attach {
+         /*@
+         Attach an input to an output
+
+         @since 1.8 */
+         legacy null;
+         return Eina_Bool; /*EINA_TRUE if the input was attached, EINA_FALSE otherwise*/
+         params {
+            @in Eo *input; /*The input to attach to the output*/
+         }
+      }
+      input_detach {
+         /*@
+         Detach an input from an output
+
+         @since 1.8 */
+         legacy null;
+         return Eina_Bool; /*EINA_TRUE if the input was detached, EINA_FALSE otherwise*/
+         params {
+            @in Eo *input; /*he input to detach to the output*/
+         }
+      }
+      inputs_get {
+         /*@
+         Returns the list of all attached inputs
+
+         @since 1.8 */
+         legacy null;
+         return Eina_List *; /*An @ref Eina_List of the inputs that are attached to the output*/
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Ecore_Audio::vio_set;
+   }
+}

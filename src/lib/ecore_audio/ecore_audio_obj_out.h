@@ -33,7 +33,9 @@ extern "C"
  * @ingroup Ecore_Audio_Group
  * @{
  */
+#include "ecore_audio_out.eo.h"
 
+#if 0
 #define ECORE_AUDIO_OBJ_OUT_CLASS ecore_audio_obj_out_class_get() /**< Ecore_Audio output object class */
 
 /**
@@ -85,6 +87,7 @@ enum Ecore_Audio_Obj_Out_Sub_Ids
  */
 #define ecore_audio_obj_out_inputs_get(inputs) ECORE_AUDIO_OBJ_OUT_ID(ECORE_AUDIO_OBJ_OUT_SUB_ID_INPUTS_GET), EO_TYPECHECK(Eina_List **, inputs)
 
+#endif
 /**
  * @}
  */
