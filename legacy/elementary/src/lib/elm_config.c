@@ -2167,10 +2167,7 @@ _elm_config_key_binding_call(Evas_Object *obj,
                   while (actions[i].name)
                     {
                        if (!strcmp(binding->action, actions[i].name))
-                         {
-                            actions[i].func(obj, binding->params);
-                            return EINA_TRUE;
-                         }
+                         return actions[i].func(obj, binding->params);
                        i++;
                     }
                   break;

@@ -41,7 +41,7 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {NULL, NULL}
 };
 
-static void _key_action_activate(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -156,10 +156,12 @@ _elm_button_elm_container_content_set(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
    return EINA_TRUE;
 }
 
-static void _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+static Eina_Bool
+_key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
    _activate(obj);
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
