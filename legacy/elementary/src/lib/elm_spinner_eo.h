@@ -1,3 +1,6 @@
+#include "elm_spinner.eo.h"
+
+#if 0
 #define ELM_OBJ_SPINNER_CLASS elm_obj_spinner_class_get()
 
 const Eo_Class *elm_obj_spinner_class_get(void) EINA_CONST;
@@ -299,3 +302,4 @@ enum
  * @ingroup Spinner
  */
 #define elm_obj_spinner_round_get(ret) ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_ROUND_GET), EO_TYPECHECK(int *, ret)
+#endif

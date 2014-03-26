@@ -10,8 +10,6 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op ELM_OBJ_SPINNER_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_SPINNER_CLASS
 
 #define MY_CLASS_NAME "Elm_Spinner"
@@ -37,7 +35,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static void
-_entry_show(Elm_Spinner_Smart_Data *sd)
+_entry_show(Elm_Spinner_Data *sd)
 {
    char buf[32], fmt[32] = "%0.f";
 
@@ -440,8 +438,8 @@ _button_dec_stop_cb(void *data,
    _val_dec_stop(data);
 }
 
-static void
-_elm_spinner_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -454,24 +452,17 @@ _elm_spinner_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EIN
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static void
-_elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *event_info = va_arg(*list, void *);
    Evas_Event_Key_Down *ev = event_info;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Evas_Event_Mouse_Wheel *mev;
-   ELM_SPINNER_DATA_GET(obj, sd);
-
-   if (ret) *ret = EINA_FALSE;
    (void) src;
 
    Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
@@ -523,7 +514,7 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
                  !strcmp(ev->key, "Down") ||
                  ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
           _val_dec_stop(obj);
-        else return;
+        else return EINA_FALSE;
 
         goto success;
      }
@@ -544,23 +535,19 @@ _elm_spinner_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         _spin_value(obj);
      }
 
-   return;
+   return EINA_FALSE;
 
 success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_spinner_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_on_focus(Eo *obj, Elm_Spinner_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-   Elm_Spinner_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))
      {
@@ -570,7 +557,7 @@ _elm_spinner_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         _entry_value_apply(obj);
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static char *
@@ -701,10 +688,9 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, obj);
 }
 
-static void
-_elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_spinner_evas_smart_add(Eo *obj, Elm_Spinner_Data *priv)
 {
-   Elm_Spinner_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -749,12 +735,10 @@ _elm_spinner_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      _access_spinner_register(obj, EINA_TRUE);
 }
 
-static void
-_elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_spinner_evas_smart_del(Eo *obj, Elm_Spinner_Data *sd)
 {
    Elm_Spinner_Special_Value *sv;
-
-   Elm_Spinner_Smart_Data *sd = _pd;
 
    eina_stringshare_del(sd->label);
    ecore_timer_del(sd->delay_change_timer);
@@ -773,15 +757,11 @@ _elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_spinner_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Eina_Bool int_ret;
-
-   int_ret = elm_layout_theme_set(obj, "spinner", "base",
+   Eina_Bool int_ret = elm_layout_theme_set(obj, "spinner", "base",
                               elm_widget_style_get(obj));
-   if (ret) *ret = int_ret;
 
    if (!int_ret) CRI("Failed to set layout!");
 
@@ -789,22 +769,22 @@ _elm_spinner_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
      _access_spinner_register(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
+
+   return int_ret;
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
 
-static void
-_elm_spinner_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = _elm_spinner_smart_focus_next_enable;
+   return _elm_spinner_smart_focus_next_enable;
 }
 
-static void
-_elm_spinner_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
 static Evas_Object *
@@ -820,21 +800,14 @@ _access_object_get(const Evas_Object *obj, const char* part)
    return ao;
 }
 
-static void
-_elm_spinner_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Evas_Object *ao;
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret;
 
    Eina_List *items = NULL;
    const char* increment_part;
    const char* decrement_part;
-
-   ELM_SPINNER_CHECK(obj);
 
    if (!strcmp(elm_widget_style_get(obj), "vertical"))
      {
@@ -856,17 +829,14 @@ _elm_spinner_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    ao = _access_object_get(obj, increment_part);
    items = eina_list_append(items, ao);
 
-   int_ret = elm_widget_focus_list_next_get
+   return elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next);
-   if (ret) *ret = int_ret;
 }
 
-static void
-_elm_spinner_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_spinner_elm_widget_access(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
-   ELM_SPINNER_CHECK(obj);
-
-   _elm_spinner_smart_focus_next_enable = va_arg(*list, int);
+   _elm_spinner_smart_focus_next_enable = acs;
    _access_spinner_register(obj, _elm_spinner_smart_focus_next_enable);
 }
 
@@ -879,8 +849,8 @@ elm_spinner_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_spinner_eo_base_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -888,58 +858,23 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_spinner_label_format_set(Evas_Object *obj,
-                             const char *fmt)
+EOLIAN static void
+_elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 {
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_label_format_set(fmt));
-}
-
-static void
-_elm_spinner_label_format_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *fmt = va_arg(*list, const char *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-
    eina_stringshare_replace(&sd->label, fmt);
    _label_write(obj);
    elm_layout_sizing_eval(obj);
 }
 
-EAPI const char *
-elm_spinner_label_format_get(const Evas_Object *obj)
+EOLIAN static const char*
+_elm_spinner_label_format_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) NULL;
-   const char *ret;
-   eo_do((Eo *) obj, elm_obj_spinner_label_format_get(&ret));
-   return ret;
+   return sd->label;
 }
 
-static void
-_elm_spinner_label_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
 {
-   const char **ret = va_arg(*list, const char **);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->label;
-}
-
-EAPI void
-elm_spinner_min_max_set(Evas_Object *obj,
-                        double min,
-                        double max)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_min_max_set(min, max));
-}
-
-static void
-_elm_spinner_min_max_set(Eo *obj, void *_pd, va_list *list)
-{
-   double min = va_arg(*list, double);
-   double max = va_arg(*list, double);
-   Elm_Spinner_Smart_Data *sd = _pd;
-
    if ((sd->val_min == min) && (sd->val_max == max)) return;
    sd->val_min = min;
    sd->val_max = max;
@@ -949,77 +884,28 @@ _elm_spinner_min_max_set(Eo *obj, void *_pd, va_list *list)
    _label_write(obj);
 }
 
-EAPI void
-elm_spinner_min_max_get(const Evas_Object *obj,
-                        double *min,
-                        double *max)
+EOLIAN static void
+_elm_spinner_min_max_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
 {
-   if (min) *min = 0.0;
-   if (max) *max = 0.0;
-
-   ELM_SPINNER_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_spinner_min_max_get(min, max));
-}
-
-static void
-_elm_spinner_min_max_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *min = va_arg(*list, double *);
-   double *max = va_arg(*list, double *);
-
-   Elm_Spinner_Smart_Data *sd = _pd;
-
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
-EAPI void
-elm_spinner_step_set(Evas_Object *obj,
-                     double step)
+EOLIAN static void
+_elm_spinner_step_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double step)
 {
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_step_set(step));
-}
-
-static void
-_elm_spinner_step_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double step = va_arg(*list, double);
-   Elm_Spinner_Smart_Data *sd = _pd;
    sd->step = step;
 }
 
-EAPI double
-elm_spinner_step_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_spinner_step_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) 0.0;
-   double ret;
-   eo_do((Eo *) obj, elm_obj_spinner_step_get(&ret));
-   return ret;
+   return sd->step;
 }
 
-static void
-_elm_spinner_step_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->step;
-}
-
-EAPI void
-elm_spinner_value_set(Evas_Object *obj,
-                      double val)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_value_set(val));
-}
-
-static void
-_elm_spinner_value_set(Eo *obj, void *_pd, va_list *list)
-{
-   double val = va_arg(*list, double);
-   Elm_Spinner_Smart_Data *sd = _pd;
-
    if (sd->val == val) return;
    sd->val = val;
    sd->val_updated = EINA_FALSE;
@@ -1037,73 +923,29 @@ _elm_spinner_value_set(Eo *obj, void *_pd, va_list *list)
    _label_write(obj);
 }
 
-EAPI double
-elm_spinner_value_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_spinner_value_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) 0.0;
-   double ret;
-   eo_do((Eo *) obj, elm_obj_spinner_value_get(&ret));
-   return ret;
+   return sd->val;
 }
 
-static void
-_elm_spinner_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_wrap_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool wrap)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->val;
-}
-
-EAPI void
-elm_spinner_wrap_set(Evas_Object *obj,
-                     Eina_Bool wrap)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_wrap_set(wrap));
-}
-
-static void
-_elm_spinner_wrap_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool wrap = va_arg(*list, int);
-   Elm_Spinner_Smart_Data *sd = _pd;
    sd->wrap = wrap;
 }
 
-EAPI Eina_Bool
-elm_spinner_wrap_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_spinner_wrap_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_spinner_wrap_get(&ret));
-   return ret;
+   return sd->wrap;
 }
 
-static void
-_elm_spinner_wrap_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_special_value_add(Eo *obj, Elm_Spinner_Data *sd, double value, const char *label)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->wrap;
-}
-
-EAPI void
-elm_spinner_special_value_add(Evas_Object *obj,
-                              double value,
-                              const char *label)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_special_value_add(value, label));
-}
-
-static void
-_elm_spinner_special_value_add(Eo *obj, void *_pd, va_list *list)
-{
-   double value = va_arg(*list, double);
-   const char *label = va_arg(*list, const char *);
    Elm_Spinner_Special_Value *sv;
    Eina_List *l;
-   Elm_Spinner_Smart_Data *sd = _pd;
 
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
@@ -1166,215 +1008,61 @@ elm_spinner_special_value_get(Evas_Object *obj,
    return NULL;
 }
 
-EAPI void
-elm_spinner_editable_set(Evas_Object *obj,
-                         Eina_Bool editable)
+EOLIAN static void
+_elm_spinner_editable_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool editable)
 {
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_editable_set(editable));
-}
-
-static void
-_elm_spinner_editable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool editable = va_arg(*list, int);
-   Elm_Spinner_Smart_Data *sd = _pd;
    sd->editable = editable;
 }
 
-EAPI Eina_Bool
-elm_spinner_editable_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_spinner_editable_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret;
-   eo_do((Eo *) obj, elm_obj_spinner_editable_get(&ret));
-   return ret;
+   return sd->editable;
 }
 
-static void
-_elm_spinner_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_interval_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double interval)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->editable;
-}
-
-EAPI void
-elm_spinner_interval_set(Evas_Object *obj,
-                         double interval)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_interval_set(interval));
-}
-
-static void
-_elm_spinner_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double interval = va_arg(*list, double);
-   Elm_Spinner_Smart_Data *sd = _pd;
    sd->first_interval = interval;
 }
 
-EAPI double
-elm_spinner_interval_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_spinner_interval_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) 0.0;
-   double ret;
-   eo_do((Eo *) obj, elm_obj_spinner_interval_get(&ret));
-   return ret;
+   return sd->first_interval;
 }
 
-static void
-_elm_spinner_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_base_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double base)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->first_interval;
-}
-
-EAPI void
-elm_spinner_base_set(Evas_Object *obj,
-                     double base)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_base_set(base));
-}
-
-static void
-_elm_spinner_base_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double base = va_arg(*list, double);
-   Elm_Spinner_Smart_Data *sd = _pd;
    sd->val_base = base;
 }
 
-EAPI double
-elm_spinner_base_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_spinner_base_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) 0.0;
-   double ret;
-   eo_do((Eo *) obj, elm_obj_spinner_base_get(&ret));
-   return ret;
+   return sd->val_base;
 }
 
-static void
-_elm_spinner_base_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_round_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, int rnd)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->val_base;
-}
-
-EAPI void
-elm_spinner_round_set(Evas_Object *obj,
-                      int rnd)
-{
-   ELM_SPINNER_CHECK(obj);
-   eo_do(obj, elm_obj_spinner_round_set(rnd));
-}
-
-static void
-_elm_spinner_round_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   int rnd = va_arg(*list, int);
-   Elm_Spinner_Smart_Data *sd = _pd;
    sd->round = rnd;
 }
 
-EAPI int
-elm_spinner_round_get(const Evas_Object *obj)
+EOLIAN static int
+_elm_spinner_round_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
-   ELM_SPINNER_CHECK(obj) 0;
-   int ret;
-   eo_do((Eo *) obj, elm_obj_spinner_round_get(&ret));
-   return ret;
+   return sd->round;
 }
 
-static void
-_elm_spinner_round_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_spinner_class_constructor(Eo_Class *klass)
 {
-   int *ret = va_arg(*list, int *);
-   Elm_Spinner_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->round;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_spinner_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_spinner_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_spinner_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_spinner_smart_on_focus),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_spinner_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_spinner_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_spinner_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_spinner_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_spinner_smart_access),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_spinner_smart_sizing_eval),
-
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_LABEL_FORMAT_SET), _elm_spinner_label_format_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_LABEL_FORMAT_GET), _elm_spinner_label_format_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_MIN_MAX_SET), _elm_spinner_min_max_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_MIN_MAX_GET), _elm_spinner_min_max_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_STEP_SET), _elm_spinner_step_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_STEP_GET), _elm_spinner_step_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_VALUE_SET), _elm_spinner_value_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_VALUE_GET), _elm_spinner_value_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_WRAP_SET), _elm_spinner_wrap_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_WRAP_GET), _elm_spinner_wrap_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_SPECIAL_VALUE_ADD), _elm_spinner_special_value_add),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_EDITABLE_SET), _elm_spinner_editable_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_EDITABLE_GET), _elm_spinner_editable_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_INTERVAL_SET), _elm_spinner_interval_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_INTERVAL_GET), _elm_spinner_interval_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_BASE_SET), _elm_spinner_base_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_BASE_GET), _elm_spinner_base_get),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_ROUND_SET), _elm_spinner_round_set),
-        EO_OP_FUNC(ELM_OBJ_SPINNER_ID(ELM_OBJ_SPINNER_SUB_ID_ROUND_GET), _elm_spinner_round_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
    if (_elm_config->access_mode)
       _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_LABEL_FORMAT_SET, "Set the format string of the displayed label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_LABEL_FORMAT_GET, "Get the label format of the spinner."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_MIN_MAX_SET, "Set the minimum and maximum values for the spinner."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_MIN_MAX_GET, "Get the minimum and maximum values of the spinner."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_STEP_SET, "Set the step used to increment or decrement the spinner value."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_STEP_GET, "Get the step used to increment or decrement the spinner value."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_VALUE_SET, "Set the value the spinner displays."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_VALUE_GET, "Get the value displayed by the spinner."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_WRAP_SET, "Set whether the spinner should wrap when it reaches its minimum or maximum value."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_WRAP_GET, "Get whether the spinner should wrap when it reaches its minimum or maximum value."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_SPECIAL_VALUE_ADD, "Set a special string to display in the place of the numerical value."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_EDITABLE_SET, "Set whether the spinner can be directly edited by the user or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_EDITABLE_GET, "Get whether the spinner can be directly edited by the user or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_INTERVAL_SET, "Set the interval on time updates for an user mouse button hold on spinner widgets' arrows."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_INTERVAL_GET, "Get the interval on time updates for an user mouse button hold on spinner widgets' arrows."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_BASE_SET, "Set the base for rounding."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_BASE_GET, "Get the base for rounding."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_ROUND_SET, "Set the round value for rounding."),
-     EO_OP_DESCRIPTION(ELM_OBJ_SPINNER_SUB_ID_ROUND_GET, "Get the round value for rounding."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_SPINNER_BASE_ID, op_desc, ELM_OBJ_SPINNER_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Spinner_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_spinner_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_spinner.eo.c"
