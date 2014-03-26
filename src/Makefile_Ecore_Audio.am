@@ -2,6 +2,17 @@ if HAVE_ECORE_AUDIO
 
 ### Library
 
+BUILT_SOURCES += \
+                 lib/ecore_audio/ecore_audio.eo.c \
+                 lib/ecore_audio/ecore_audio.eo.h
+
+ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
+ecore_audioeolianfiles_DATA = \
+              lib/ecore_audio/ecore_audio.eo
+
+EXTRA_DIST += \
+              ${ecore_audioeolianfiles_DATA}
+
 lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
 
 installed_ecoreaudiomainheadersdir = $(includedir)/ecore-audio-@VMAJ@
@@ -13,7 +24,9 @@ lib/ecore_audio/ecore_audio_obj_out.h \
 lib/ecore_audio/ecore_audio_obj_in_tone.h \
 lib/ecore_audio/ecore_audio_protected.h
 
-
+nodist_installed_ecoreaudiomainheaders_DATA = \
+                                        lib/ecore_audio/ecore_audio.eo.h
+                                      
 lib_ecore_audio_libecore_audio_la_SOURCES = \
 lib/ecore_audio/ecore_audio.c \
 lib/ecore_audio/ecore_audio_obj.c \

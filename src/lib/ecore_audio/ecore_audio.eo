@@ -1,0 +1,132 @@
+class Ecore_Audio (Eo_Base)
+{
+   eo_prefix: ecore_audio_obj;
+   data: Ecore_Audio_Object;
+   properties {
+      name {
+         set {
+            /*@
+            Set the name of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         get {
+            /*@
+            Get the name of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         values {
+            const char *name; 
+         }
+      }
+      paused {
+         set {
+            /*@
+            Set the pause state of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         get {
+            /*@
+            Get the pause state of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         values {
+            Eina_Bool paused; /*ret EINA_TRUE if object is paused, EINA_FALSE if not*/
+         }
+      }
+      volume {
+         set {
+            /*@
+            Set the volume of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         get {
+            /*@
+            Get the volume of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         values {
+            double volume; /*The volume*/
+         }
+      }
+      source {
+         set {
+            /*@
+            Set the source of the object
+            
+            What sources are supported depends on the actual object. For example,
+            the libsndfile class accepts WAV, OGG, FLAC files as source.
+            
+            @since 1.8 */
+            legacy null;
+            return Eina_Bool; /*EINA_TRUE if the source was set correctly (i.e. the file was opened), EINA_FALSE otherwise*/
+         }
+         get {
+            /*@
+            Get the source of the object
+            
+            @since 1.8 */
+            legacy null;
+         }
+         values {
+            const char *source; /*The source to set to (i.e. file, URL, device)*/
+         }
+      }
+      format {
+         set {
+            /*@
+            Set the format of the object
+            
+            What formats are supported depends on the actual object. Default is
+            ECORE_AUDIO_FORMAT_AUTO
+            
+            @since 1.8 */
+            legacy null;
+            return Eina_Bool; /*EINA_TRUE if the format was supported, EINA_FALSE otherwise*/
+         }
+         get {
+            /*@
+            Get the format of the object
+            
+            After setting the source if the format was ECORE_AUDIO_FORMAT_AUTO this
+            function will now return the actual format.
+            
+            @since 1.8 */
+            legacy null;
+         }
+         values {
+            Ecore_Audio_Format format; /*The format of the object*/
+         }
+      }
+   }
+   methods {
+      vio_set {
+         /*@
+         Set the virtual IO functions
+         
+         @since 1.8 */
+         params {
+              Ecore_Audio_Vio *vio; /*The @ref Ecore_Audio_Vio struct with the function callbacks*/
+              void *data; /*User data to pass to the VIO functions*/
+              eo_base_data_free_func free_func; /*This function takes care to clean up @ref data when he VIO is destroyed. NULL means do nothing.*/
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      virtual::source;
+      virtual::format;
+      virtual::vio_set;
+   }
+}

@@ -33,7 +33,8 @@ extern "C"
  * @ingroup Ecore_Audio_Group
  * @{
  */
-
+#include "ecore_audio.eo.h"
+#if 0
 #define ECORE_AUDIO_OBJ_CLASS ecore_audio_obj_class_get() /**< Ecore_Audio object class */
 
 /**
@@ -176,6 +177,7 @@ enum Ecore_Audio_Obj_Sub_Ids
  */
 #define ecore_audio_obj_vio_set(vio, data, free_func) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), EO_TYPECHECK(Ecore_Audio_Vio *, vio), EO_TYPECHECK(void *, data), EO_TYPECHECK(eo_base_data_free_func, free_func)
 
+#endif
 /**
  * @}
  */
