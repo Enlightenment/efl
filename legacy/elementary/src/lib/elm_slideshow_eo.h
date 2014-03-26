@@ -1,3 +1,6 @@
+#include "elm_slideshow.eo.h"
+
+#if 0
 #define ELM_OBJ_SLIDESHOW_CLASS elm_obj_slideshow_class_get()
 
 const Eo_Class *elm_obj_slideshow_class_get(void) EINA_CONST;
@@ -371,3 +374,4 @@ enum
  * @ingroup Slideshow
  */
 #define elm_obj_slideshow_count_get(ret) ELM_OBJ_SLIDESHOW_ID(ELM_OBJ_SLIDESHOW_SUB_ID_COUNT_GET), EO_TYPECHECK(unsigned int *, ret)
+#endif

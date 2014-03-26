@@ -646,7 +646,9 @@ BUILT_SOURCES = \
 		elm_separator.eo.c \
 		elm_separator.eo.h \
 		elm_slider.eo.c \
-		elm_slider.eo.h
+		elm_slider.eo.h \
+		elm_slideshow.eo.c \
+		elm_slideshow.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -709,7 +711,8 @@ EXTRA_DIST += \
 	     elm_scroller.eo \
 	     elm_segment_control.eo \
 	     elm_separator.eo \
-	     elm_slider.eo
+	     elm_slider.eo \
+	     elm_slideshow.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -772,5 +775,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_scroller.eo.h \
 				  elm_segment_control.eo.h \
 				  elm_separator.eo.h \
-				  elm_slider.eo.h
+				  elm_slider.eo.h \
+				  elm_slideshow.eo.h
 
