@@ -17,8 +17,8 @@
 /**
  * Base widget smart data extended with scroller instance data.
  */
-typedef struct _Elm_Scroller_Smart_Data Elm_Scroller_Smart_Data;
-struct _Elm_Scroller_Smart_Data
+typedef struct _Elm_Scroller_Data Elm_Scroller_Data;
+struct _Elm_Scroller_Data
 {
    Evas_Object                          *hit_rect;
    Evas_Object                          *g_layer;
@@ -34,7 +34,7 @@ struct _Elm_Scroller_Smart_Data
  */
 
 #define ELM_SCROLLER_DATA_GET(o, sd) \
-  Elm_Scroller_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_SCROLLER_CLASS)
+  Elm_Scroller_Data * sd = eo_data_scope_get(o, ELM_OBJ_SCROLLER_CLASS)
 
 #define ELM_SCROLLER_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_SCROLLER_DATA_GET(o, ptr);                     \

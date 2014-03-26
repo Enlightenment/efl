@@ -638,7 +638,9 @@ BUILT_SOURCES = \
 		elm_radio.eo.c \
 		elm_radio.eo.h \
 		elm_route.eo.c \
-		elm_route.eo.h
+		elm_route.eo.h \
+		elm_scroller.eo.c \
+		elm_scroller.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -697,7 +699,8 @@ EXTRA_DIST += \
 	     elm_prefs.eo \
 	     elm_progressbar.eo \
 	     elm_radio.eo \
-	     elm_route.eo
+	     elm_route.eo \
+	     elm_scroller.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -756,5 +759,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_prefs.eo.h \
 				  elm_progressbar.eo.h \
 				  elm_radio.eo.h \
-				  elm_route.eo.h
+				  elm_route.eo.h \
+				  elm_scroller.eo.h
 

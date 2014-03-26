@@ -1,0 +1,105 @@
+class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable)
+{
+   eo_prefix: elm_obj_scroller;
+   properties {
+      propagate_events {
+         set {
+            /*@
+            @brief Set event propagation on a scroller
+
+            This enables or disables event propagation from the scroller
+            content to the scroller and its parent. By default event
+            propagation is @b enabled.
+
+            @ingroup Scroller */
+         }
+         get {
+            /*@
+            @brief Get event propagation for a scroller
+
+            @return The propagation state
+
+            This gets the event propagation for a scroller.
+
+            @see elm_scroller_propagate_events_set()
+
+            @ingroup Scroller */
+         }
+         values {
+            Eina_Bool propagation; /*@ If propagation is enabled or not */
+         }
+      }
+      custom_widget_base_theme {
+         set {
+            /*@ Set custom theme elements for the scroller */
+         }
+         values {
+            const char *klass;
+            const char *group;
+         }
+      }
+   }
+   methods {
+      page_scroll_limit_set {
+         /*@
+         @brief Set the maxium of the movable page at a flicking.
+
+         The value of maxium movable page should be more than 1.
+
+         @see elm_scroller_page_scroll_limit_get()
+
+         @since 1.8
+
+         @ingroup Scroller */
+
+         const;
+         params {
+            @in int page_limit_h; /*@ The maxium of the movable horizontal page */
+            @in int page_limit_v; /*@ The maxium of the movable vertical page */
+         }
+      }
+      page_scroll_limit_get {
+         /*@
+         @brief Get the maxium of the movable page at a flicking.
+
+         @see elm_scroller_page_scroll_limit_set()
+
+         @since 1.8
+
+         @ingroup Scroller */
+
+         const;
+         params {
+            @in int *page_limit_h; /*@ The maxium of the movable horizontal page */
+            @in int *page_limit_v; /*@ The maxium of the movable vertical page */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::move;
+      Evas_Smart::add;
+      Evas_Smart::member_add;
+      Evas_Smart::resize;
+      Elm_Widget::theme_apply;
+      Elm_Widget::activate;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::sub_object_del;
+      Elm_Widget::event;
+      Elm_Container::content_get;
+      Elm_Container::content_set;
+      Elm_Container::content_unset;
+      Elm_Layout::sizing_eval;
+      Elm_Interface_Scrollable::page_size::set;
+      Elm_Interface_Scrollable::policy::set;
+      Elm_Interface_Scrollable::single_direction;
+   }
+   events {
+      focused;
+      unfocused;
+   }
+
+}
