@@ -96,6 +96,12 @@ _ecore_x_image_shm_check(void)
    if (_ecore_x_image_shm_can != -1)
      return;
 
+   if (!XShmQueryExtension(_ecore_x_disp))
+     {
+        _ecore_x_image_shm_can = 0;
+        return;
+     }
+   
    XSync(_ecore_x_disp, False);
    _ecore_x_image_err = 0;
 
@@ -217,6 +223,18 @@ ecore_x_image_free(Ecore_X_Image *im)
 }
 
 static void
+_ecore_x_image_finalize(Ecore_X_Image *im)
+{
+   im->data = (unsigned char *)im->xim->data;
+   im->bpl = im->xim->bytes_per_line;
+   im->rows = im->xim->height;
+   if (im->xim->bits_per_pixel <= 8) im->bpp = 1;
+   else if (im->xim->bits_per_pixel <= 16) im->bpp = 2;
+   else if (im->xim->bits_per_pixel <= 24) im->bpp = 3;
+   else im->bpp = 4;
+}
+
+static void
 _ecore_x_image_shm_create(Ecore_X_Image *im)
 {
    im->xim = XShmCreateImage(_ecore_x_disp, im->vis, im->depth,
@@ -249,19 +267,23 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
      }
 
    XShmAttach(_ecore_x_disp, &im->shminfo);
+   _ecore_x_image_finalize(im);
+}
 
-   im->data = (unsigned char *)im->xim->data;
-
-   im->bpl = im->xim->bytes_per_line;
-   im->rows = im->xim->height;
-   if (im->xim->bits_per_pixel <= 8)
-     im->bpp = 1;
-   else if (im->xim->bits_per_pixel <= 16)
-     im->bpp = 2;
-   else if (im->xim->bits_per_pixel <= 24)
-     im->bpp = 3;
-   else 
-     im->bpp = 4;
+static void
+_ecore_x_image_create(Ecore_X_Image *im)
+{
+   im->xim = XCreateImage(_ecore_x_disp, im->vis, im->depth,
+                          ZPixmap, 0, NULL, im->w, im->h, 32, 0);
+   if (!im->xim) return;
+   im->xim->data = malloc(im->xim->bytes_per_line * im->h);
+   if (!im->xim->data)
+     {
+        XDestroyImage(im->xim);
+        im->xim = NULL;
+        return;
+     }
+   _ecore_x_image_finalize(im);
 }
 
 EAPI Eina_Bool
@@ -280,11 +302,16 @@ ecore_x_image_get(Ecore_X_Image *im,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (im->shm)
      {
+        
         if (!im->xim)
           _ecore_x_image_shm_create(im);
 
         if (!im->xim)
-          return 0;
+          {
+             fprintf(stderr, "BLAAAAAAAAAAAAH\n");
+             abort();
+             return EINA_FALSE;
+          }
 
         _ecore_x_image_err = 0;
         
@@ -345,8 +372,15 @@ ecore_x_image_get(Ecore_X_Image *im,
      }
    else
      {
-        printf("currently unimplemented ecore_x_image_get without shm\n");
-        ret = EINA_FALSE;
+        if (!im->xim)
+          _ecore_x_image_create(im);
+
+        if (!im->xim)
+          return EINA_FALSE;
+
+        if (XGetSubImage(_ecore_x_disp, draw, sx, sy, w, h,
+                         0xffffffff, ZPixmap, im->xim, x, y) != im->xim)
+          ret = EINA_FALSE;
      }
 
    return ret;
@@ -375,10 +409,19 @@ ecore_x_image_put(Ecore_X_Image *im,
         if (_ecore_xlib_sync) ecore_x_sync();
         gc = tgc;
      }
-   if (!im->xim) _ecore_x_image_shm_create(im);
+   if (!im->xim)
+     {
+        if (im->shm) _ecore_x_image_shm_create(im);
+        else _ecore_x_image_create(im);
+     }
    if (im->xim)
      {
-        XShmPutImage(_ecore_x_disp, draw, gc, im->xim, sx, sy, x, y, w, h, False);
+        if (im->shm)
+          XShmPutImage(_ecore_x_disp, draw, gc, im->xim,
+                       sx, sy, x, y, w, h, False);
+        else
+          XPutImage(_ecore_x_disp, draw, gc, im->xim,
+                    sx, sy, x, y, w, h);
         if (_ecore_xlib_sync) ecore_x_sync();
      }
    if (tgc) ecore_x_gc_free(tgc);
@@ -391,8 +434,12 @@ ecore_x_image_data_get(Ecore_X_Image *im,
                        int *bpp)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!im->xim) _ecore_x_image_shm_create(im);
-   if (!im->xim) return NULL;
+   if (!im->xim)
+     {
+        if (im->shm) _ecore_x_image_shm_create(im);
+        else _ecore_x_image_create(im);
+        if (!im->xim) return NULL;
+     }
    if (bpl) *bpl = im->bpl;
    if (rows) *rows = im->rows;
    if (bpp) *bpp = im->bpp;
@@ -403,7 +450,12 @@ EAPI Eina_Bool
 ecore_x_image_is_argb32_get(Ecore_X_Image *im)
 {
    Visual *vis = im->vis;
-   if (!im->xim) _ecore_x_image_shm_create(im);
+   if (!im->xim)
+     {
+        if (im->shm) _ecore_x_image_shm_create(im);
+        else _ecore_x_image_create(im);
+        if (!im->xim) return EINA_FALSE;
+     }
    if (((vis->class == TrueColor) ||
         (vis->class == DirectColor)) &&
        (im->bpp == 4) &&
@@ -711,4 +763,3 @@ ecore_x_image_to_argb_convert(void *src,
      }
    return EINA_TRUE;
 }
-
