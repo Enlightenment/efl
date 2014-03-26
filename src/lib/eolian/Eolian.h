@@ -36,6 +36,7 @@ extern "C" {
 # include <config.h>
 #endif
 
+#ifdef EFL_BETA_API_SUPPORT
 
 /* Function Id used to extract information on class functions
  *
@@ -115,8 +116,6 @@ typedef enum
    EOLIAN_CLASS_MIXIN,
    EOLIAN_CLASS_INTERFACE
 } Eolian_Class_Type;
-
-#ifdef EFL_BETA_API_SUPPORT
 
 /*
  * @brief Parse a given .eo file and fill the database.
