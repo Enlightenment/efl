@@ -626,6 +626,9 @@ _elm_win_move(Ecore_Evas *ee)
    sd->screen.x = x;
    sd->screen.y = y;
    evas_object_smart_callback_call(sd->obj, SIG_MOVED, NULL);
+   evas_nochange_push(evas_object_evas_get(sd->obj));
+   evas_object_move(sd->obj, x, y);
+   evas_nochange_pop(evas_object_evas_get(sd->obj));
 }
 
 static void
