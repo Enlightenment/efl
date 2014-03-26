@@ -1,11 +1,14 @@
+typedef char *(*progressbar_func_type)(double);
+typedef void (*progressbar_freefunc_type)(char *);
+
+#include "elm_progressbar.eo.h"
+
+#if 0
 #define ELM_OBJ_PROGRESSBAR_CLASS elm_obj_progressbar_class_get()
 
 const Eo_Class *elm_obj_progressbar_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ELM_OBJ_PROGRESSBAR_BASE_ID;
-
-typedef char *(*progressbar_func_type)(double);
-typedef void (*progressbar_freefunc_type)(char *);
 
 enum
 {
@@ -263,3 +266,4 @@ enum
  * @ingroup Progressbar
  */
 #define elm_obj_progressbar_part_value_get(part, ret) ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_GET), EO_TYPECHECK(const char*, part), EO_TYPECHECK(double *, ret)
+#endif

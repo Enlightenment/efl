@@ -8,8 +8,6 @@
 #include "elm_widget_progressbar.h"
 #include "elm_widget_layout.h"
 
-EAPI Eo_Op ELM_OBJ_PROGRESSBAR_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_PROGRESSBAR_CLASS
 
 #define MY_CLASS_NAME "Elm_Progressbar"
@@ -108,8 +106,8 @@ _val_set(Evas_Object *obj)
       }
 }
 
-static void
-_elm_progressbar_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_progressbar_elm_layout_sizing_eval(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -137,57 +135,46 @@ _icon_signal_emit(Evas_Object *obj)
 /* FIXME: replicated from elm_layout just because progressbar's icon
  * spot is elm.swallow.content, not elm.swallow.icon. Fix that
  * whenever we can changed the theme API */
-static void
-_elm_progressbar_smart_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_progressbar_elm_widget_sub_object_del(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Evas_Object *sobj = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
-   if(!int_ret) return;
+   if(!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   if (ret) *ret =  EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* FIXME: replicated from elm_layout just because progressbar's icon
  * spot is elm.swallow.content, not elm.swallow.icon. Fix that
  * whenever we can changed the theme API */
-static void
-_elm_progressbar_smart_content_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_progressbar_elm_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
-   const char *part = va_arg(*list, const char *);
-   Evas_Object *content = va_arg(*list, Evas_Object *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
-   if(!int_ret) return;
+   if(!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   if (ret) *ret =  EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_progressbar_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_progressbar_elm_widget_theme_apply(Eo *obj, Elm_Progressbar_Data *sd)
 {
-   Elm_Progressbar_Smart_Data *sd = _pd;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
    ELM_LAYOUT_DATA_GET(obj, ld);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (sd->horizontal)
      eina_stringshare_replace(&ld->group, "horizontal");
    else eina_stringshare_replace(&ld->group, "vertical");
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (sd->pulse)
      elm_layout_signal_emit(obj, "elm,state,pulse", "elm");
@@ -224,7 +211,7 @@ _elm_progressbar_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static char *
@@ -262,10 +249,9 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return NULL;
 }
 
-static void
-_elm_progressbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_progressbar_evas_smart_add(Eo *obj, Elm_Progressbar_Data *priv)
 {
-   Elm_Progressbar_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -302,10 +288,9 @@ _elm_progressbar_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
 }
 
-static void
-_elm_progressbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_progressbar_evas_smart_del(Eo *obj, Elm_Progressbar_Data *sd)
 {
-   Elm_Progressbar_Smart_Data *sd = _pd;
    Elm_Progress_Status *progress_obj;
 
    eina_stringshare_del(sd->units);
@@ -320,18 +305,16 @@ _elm_progressbar_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_progressbar_smart_text_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_progressbar_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _text_aliases;
+   return _text_aliases;
 }
 
-static void
-_elm_progressbar_smart_content_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_progressbar_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
-   const Elm_Layout_Part_Alias_Description **aliases = va_arg(*list, const Elm_Layout_Part_Alias_Description **);
-   *aliases = _content_aliases;
+   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -343,8 +326,8 @@ elm_progressbar_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_progressbar_eo_base_constructor(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -352,20 +335,9 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_progressbar_pulse_set(Evas_Object *obj,
-                          Eina_Bool pulse)
+EOLIAN static void
+_elm_progressbar_pulse_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, Eina_Bool pulse)
 {
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_pulse_set(pulse));
-}
-
-static void
-_pulse_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool pulse = va_arg(*list, int);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
    pulse = !!pulse;
    if (sd->pulse == pulse) return;
 
@@ -374,38 +346,15 @@ _pulse_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Eina_Bool
-elm_progressbar_pulse_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_progressbar_pulse_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
-   ELM_PROGRESSBAR_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_progressbar_pulse_get(&ret));
-   return ret;
+   return sd->pulse;
 }
 
-static void
-_pulse_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_progressbar_pulse(Eo *obj, Elm_Progressbar_Data *sd, Eina_Bool state)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
-   *ret =  sd->pulse;
-}
-
-EAPI void
-elm_progressbar_pulse(Evas_Object *obj,
-                      Eina_Bool state)
-{
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_pulse(state));
-}
-
-static void
-_pulse(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool state = va_arg(*list, int);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
    state = !!state;
    if ((!sd->pulse) || (sd->pulse_state == state)) return;
 
@@ -417,19 +366,9 @@ _pulse(Eo *obj, void *_pd, va_list *list)
      elm_layout_signal_emit(obj, "elm,state,pulse,stop", "elm");
 }
 
-EAPI void
-elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val)
+EOLIAN static void
+_elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, const char *part_name, double val)
 {
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_part_value_set(part, val));
-}
-
-static void
-_part_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char *part_name = va_arg(*list, const char *);
-   double val = va_arg(*list, double);
-   Elm_Progressbar_Smart_Data *sd = _pd;
    Elm_Progress_Status *ps;
    Eina_Bool  existing_ps = EINA_FALSE;
    Eina_List *l;
@@ -462,47 +401,23 @@ _part_value_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
-EAPI double
-elm_progressbar_part_value_get(const Evas_Object *obj, const char * part)
+EOLIAN static double
+_elm_progressbar_part_value_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, const char* part)
 {
-   ELM_PROGRESSBAR_CHECK(obj) 0.0;
-   double ret;
-   eo_do((Eo *) obj, elm_obj_progressbar_part_value_get(part,&ret));
-   return ret;
-}
-
-static void
-_part_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const char* part = va_arg(*list, const char *);
-   double *ret = va_arg(*list, double *);
-   Elm_Progressbar_Smart_Data *sd = _pd;
    Elm_Progress_Status *ps;
    Eina_List *l;
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
      {
-        if (!strcmp(ps->part_name, part))
-           {
-              *ret = ps->val;
-              return;
-           }
+        if (!strcmp(ps->part_name, part)) return ps->val;
      }
+
+   return 0.0;
 }
 
-EAPI void
-elm_progressbar_value_set(Evas_Object *obj,
-                          double val)
+EOLIAN static void
+_elm_progressbar_value_set(Eo *obj, Elm_Progressbar_Data *sd, double val)
 {
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_value_set(val));
-}
-
-static void
-_value_set(Eo *obj, void *_pd, va_list *list)
-{
-   double val = va_arg(*list, double);
-   Elm_Progressbar_Smart_Data *sd = _pd;
    Elm_Progress_Status *ps;
 
    if (sd->val == val) return;
@@ -518,38 +433,15 @@ _value_set(Eo *obj, void *_pd, va_list *list)
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
-EAPI double
-elm_progressbar_value_get(const Evas_Object *obj)
+EOLIAN static double
+_elm_progressbar_value_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
-   ELM_PROGRESSBAR_CHECK(obj) 0.0;
-   double ret;
-   eo_do((Eo *) obj, elm_obj_progressbar_value_get(&ret));
-   return ret;
+   return sd->val;
 }
 
-static void
-_value_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_progressbar_span_size_set(Eo *obj, Elm_Progressbar_Data *sd, Evas_Coord size)
 {
-   double *ret = va_arg(*list, double *);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
-   *ret = sd->val;
-}
-
-EAPI void
-elm_progressbar_span_size_set(Evas_Object *obj,
-                              Evas_Coord size)
-{
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_span_size_set(size));
-}
-
-static void
-_span_size_set(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Coord size = va_arg(*list, Evas_Coord);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
    if (sd->size == size) return;
 
    sd->size = size;
@@ -566,37 +458,15 @@ _span_size_set(Eo *obj, void *_pd, va_list *list)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Coord
-elm_progressbar_span_size_get(const Evas_Object *obj)
+EOLIAN static Evas_Coord
+_elm_progressbar_span_size_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
-   ELM_PROGRESSBAR_CHECK(obj) 0;
-   Evas_Coord ret;
-   eo_do((Eo *) obj, elm_obj_progressbar_span_size_get(&ret));
-   return ret;
+   return sd->size;
 }
 
-static void
-_span_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_progressbar_unit_format_set(Eo *obj, Elm_Progressbar_Data *sd, const char *units)
 {
-   Evas_Coord *ret = va_arg(*list, Evas_Coord *);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
-   *ret = sd->size;
-}
-
-EAPI void
-elm_progressbar_unit_format_set(Evas_Object *obj,
-                                const char *units)
-{
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_unit_format_set(units));
-}
-
-static void
-_unit_format_set(Eo *obj, void *_pd, va_list *list)
-{
-   const char *units = va_arg(*list, const char *);
-   Elm_Progressbar_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eina_stringshare_replace(&sd->units, units);
@@ -615,38 +485,15 @@ _unit_format_set(Eo *obj, void *_pd, va_list *list)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI const char *
-elm_progressbar_unit_format_get(const Evas_Object *obj)
+EOLIAN static const char*
+_elm_progressbar_unit_format_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
-   ELM_PROGRESSBAR_CHECK(obj) NULL;
-   const char *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_progressbar_unit_format_get(&ret));
-   return ret;
+   return sd->units;
 }
 
-static void
-_unit_format_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_progressbar_unit_format_function_set(Eo *obj, Elm_Progressbar_Data *sd, progressbar_func_type func, progressbar_freefunc_type free_func)
 {
-   const char **ret = va_arg(*list, const char **);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
-   *ret = sd->units;
-}
-
-EAPI void
-elm_progressbar_unit_format_function_set(Evas_Object *obj, char *(func)(double), void (*free_func) (char *))
-{
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_unit_format_function_set(func, free_func));
-}
-
-EAPI void
-_unit_format_function_set(Eo *obj, void *_pd, va_list *list)
-{
-   progressbar_func_type func = va_arg(*list, progressbar_func_type);
-   progressbar_freefunc_type free_func = va_arg(*list, progressbar_freefunc_type);
-   Elm_Progressbar_Smart_Data *sd = _pd;
-
    sd->unit_format_func = func;
    sd->unit_format_free = free_func;
 
@@ -654,20 +501,9 @@ _unit_format_function_set(Eo *obj, void *_pd, va_list *list)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI void
-elm_progressbar_horizontal_set(Evas_Object *obj,
-                               Eina_Bool horizontal)
+EOLIAN static void
+_elm_progressbar_horizontal_set(Eo *obj, Elm_Progressbar_Data *sd, Eina_Bool horizontal)
 {
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_horizontal_set(horizontal));
-}
-
-static void
-_horizontal_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool horizontal = va_arg(*list, int);
-   Elm_Progressbar_Smart_Data*sd = _pd;
-
    horizontal = !!horizontal;
    if (sd->horizontal == horizontal) return;
 
@@ -675,36 +511,15 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-EAPI Eina_Bool
-elm_progressbar_horizontal_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_progressbar_horizontal_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
-   ELM_PROGRESSBAR_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_progressbar_horizontal_get(&ret));
-   return ret;
+   return sd->horizontal;
 }
 
-static void
-_horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_progressbar_inverted_set(Eo *obj, Elm_Progressbar_Data *sd, Eina_Bool inverted)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Progressbar_Smart_Data*sd = _pd;
-   *ret = sd->horizontal;
-}
-
-EAPI void
-elm_progressbar_inverted_set(Evas_Object *obj,
-                             Eina_Bool inverted)
-{
-   ELM_PROGRESSBAR_CHECK(obj);
-   eo_do(obj, elm_obj_progressbar_inverted_set(inverted));
-}
-
-static void
-_inverted_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool inverted = va_arg(*list, int);
-   Elm_Progressbar_Smart_Data*sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    inverted = !!inverted;
@@ -722,106 +537,28 @@ _inverted_set(Eo *obj, void *_pd, va_list *list)
    _units_set(obj);
 }
 
-EAPI Eina_Bool
-elm_progressbar_inverted_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_progressbar_inverted_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd)
 {
-   ELM_PROGRESSBAR_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_progressbar_inverted_get(&ret));
-   return ret;
+   return sd->inverted;
 }
 
-static void
-_inverted_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_progressbar_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Progressbar_Smart_Data*sd = _pd;
-   *ret = sd->inverted;
+   return EINA_FALSE;
 }
 
-static void
-_elm_progressbar_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_progressbar_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_progressbar_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_progressbar_class_constructor(Eo_Class *klass)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
-}
-
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_progressbar_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_progressbar_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_progressbar_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_SUB_OBJECT_DEL), _elm_progressbar_smart_sub_object_del),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_progressbar_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_progressbar_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_CONTAINER_ID(ELM_OBJ_CONTAINER_SUB_ID_CONTENT_SET), _elm_progressbar_smart_content_set),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_progressbar_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_ALIASES_GET), _elm_progressbar_smart_text_aliases_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_CONTENT_ALIASES_GET), _elm_progressbar_smart_content_aliases_get),
-
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PULSE_SET), _pulse_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PULSE_GET), _pulse_get),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PULSE), _pulse),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_VALUE_SET), _value_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_VALUE_GET), _value_get),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_SPAN_SIZE_SET), _span_size_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_SPAN_SIZE_GET), _span_size_get),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_UNIT_FORMAT_SET), _unit_format_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_UNIT_FORMAT_GET), _unit_format_get),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_UNIT_FORMAT_FUNCTION_SET), _unit_format_function_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_HORIZONTAL_SET), _horizontal_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_HORIZONTAL_GET), _horizontal_get),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_SET), _inverted_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_GET), _inverted_get),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_SET), _part_value_set),
-        EO_OP_FUNC(ELM_OBJ_PROGRESSBAR_ID(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_GET), _part_value_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_PULSE_SET, "Set whether a given progress bar widget is at 'pulsing mode' or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_PULSE_GET, "Get whether a given progress bar widget is at 'pulsing mode' or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_PULSE, "Start/stop a given progress bar 'pulsing' animation, if its under that mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_VALUE_SET, "Set the progress value (in percentage) on a given progress bar widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_VALUE_GET, "Get the progress value (in percentage) on a given progress bar widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_SPAN_SIZE_SET, "Set the (exact) length of the bar region of a given progress bar widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_SPAN_SIZE_GET, "Get the length set for the bar region of a given progress bar widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_UNIT_FORMAT_SET, "Set the format string for a given progress bar widget's units label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_UNIT_FORMAT_GET, "Retrieve the format string set for a given progress bar widget's units label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_UNIT_FORMAT_FUNCTION_SET, "Set the format function pointer for the units label."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_HORIZONTAL_SET, "Set the orientation of a given progress bar widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_HORIZONTAL_GET, "Retrieve the orientation of a given progress bar widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_SET, "Invert a given progress bar widget's displaying values order."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_INVERTED_GET, "Get whether a given progress bar widget's displaying values are inverted or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_SET, "Set the progress value (in percentage) on a given progress bar widget for a part."),
-     EO_OP_DESCRIPTION(ELM_OBJ_PROGRESSBAR_SUB_ID_PART_VALUE_GET, "Get the progress value (in percentage) on a given progress bar widget for a part."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_PROGRESSBAR_BASE_ID, op_desc, ELM_OBJ_PROGRESSBAR_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Progressbar_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_progressbar_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elm_progressbar.eo.c"

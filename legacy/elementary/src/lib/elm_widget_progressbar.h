@@ -17,10 +17,10 @@
 /**
  * Base layout smart data extended with progressbar instance data.
  */
-typedef struct _Elm_Progressbar_Smart_Data Elm_Progressbar_Smart_Data;
+typedef struct _Elm_Progressbar_Data Elm_Progressbar_Data;
 typedef struct _Elm_Progress_Status Elm_Progress_Status;
 
-struct _Elm_Progressbar_Smart_Data
+struct _Elm_Progressbar_Data
 {
    Evas_Object          *spacer;
    const char           *units;
@@ -49,7 +49,7 @@ struct _Elm_Progress_Status
  */
 
 #define ELM_PROGRESSBAR_DATA_GET(o, sd) \
-  Elm_Progressbar_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_PROGRESSBAR_CLASS)
+  Elm_Progressbar_Data * sd = eo_data_scope_get(o, ELM_OBJ_PROGRESSBAR_CLASS)
 
 #define ELM_PROGRESSBAR_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_PROGRESSBAR_DATA_GET(o, ptr);                  \

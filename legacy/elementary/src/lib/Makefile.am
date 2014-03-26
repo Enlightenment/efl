@@ -632,7 +632,9 @@ BUILT_SOURCES = \
 		elc_popup.eo.c \
 		elc_popup.eo.h \
 		elm_prefs.eo.c \
-		elm_prefs.eo.h
+		elm_prefs.eo.h \
+		elm_progressbar.eo.c \
+		elm_progressbar.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -688,7 +690,8 @@ EXTRA_DIST += \
 	     elc_player.eo \
 	     elm_plug.eo \
 	     elc_popup.eo \
-	     elm_prefs.eo
+	     elm_prefs.eo \
+	     elm_progressbar.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -744,5 +747,6 @@ nodist_includesunstable_HEADERS = \
 				  elc_player.eo.h \
 				  elm_plug.eo.h \
 				  elc_popup.eo.h \
-				  elm_prefs.eo.h
+				  elm_prefs.eo.h \
+				  elm_progressbar.eo.h
 
