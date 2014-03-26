@@ -1,11 +1,14 @@
+typedef char *(*slider_func_type)(double);
+typedef void (*slider_freefunc_type)(char *);
+
+#include "elm_slider.eo.h"
+
+#if 0
 #define ELM_OBJ_SLIDER_CLASS elm_obj_slider_class_get()
 
 const Eo_Class *elm_obj_slider_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ELM_OBJ_SLIDER_BASE_ID;
-
-typedef char *(*slider_func_type)(double);
-typedef void (*slider_freefunc_type)(char *);
 
 enum
 {
@@ -356,3 +359,5 @@ enum
  * @ingroup Slider
  */
 #define elm_obj_slider_indicator_show_on_focus_get(ret) ELM_OBJ_SLIDER_ID(ELM_OBJ_SLIDER_SUB_ID_INDICATOR_SHOW_ON_FOCUS_GET), EO_TYPECHECK(Eina_Bool*, ret)
+
+#endif

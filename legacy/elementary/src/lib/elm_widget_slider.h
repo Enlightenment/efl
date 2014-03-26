@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with slider instance data.
  */
-typedef struct _Elm_Slider_Smart_Data Elm_Slider_Smart_Data;
-struct _Elm_Slider_Smart_Data
+typedef struct _Elm_Slider_Data Elm_Slider_Data;
+struct _Elm_Slider_Data
 {
    Evas_Object          *spacer, *popup, *track;
    Ecore_Timer          *delay;
@@ -52,7 +52,7 @@ struct _Elm_Slider_Smart_Data
  */
 
 #define ELM_SLIDER_DATA_GET(o, sd) \
-  Elm_Slider_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_SLIDER_CLASS)
+  Elm_Slider_Data * sd = eo_data_scope_get(o, ELM_OBJ_SLIDER_CLASS)
 
 #define ELM_SLIDER_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_SLIDER_DATA_GET(o, ptr);                       \
