@@ -76,7 +76,7 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
 
    ecore_timer_add(0.3, _seek_vol, in);
 
-   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_STOPPED, _finished_cb, NULL));
    eo_do(out, eo_event_callback_add(ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL, _failed_cb, &pulse_context_failed));
 
    eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
@@ -215,8 +215,8 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
    fail_if(!ret);
 
-   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_LOOPED, _looped_cb, NULL));
-   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_LOOPED, _looped_cb, NULL));
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_STOPPED, _finished_cb, NULL));
 
    ecore_main_loop_begin();
 
@@ -306,7 +306,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
    fail_if(!ret);
 
-   eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _finished_cb, NULL));
+   eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_STOPPED, _finished_cb, NULL));
 
    ecore_main_loop_begin();
 

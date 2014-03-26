@@ -7,7 +7,8 @@ BUILT_SOURCES =
 EOLIAN_FLAGS = \
 	       -I$(srcdir)/lib/eo \
 	       -I$(srcdir)/lib/evas/canvas \
-	       -I$(srcdir)/lib/edje
+	       -I$(srcdir)/lib/edje \
+	       -I$(srcdir)/lib/ecore_audio
 
 
 DIST_SUBDIRS =

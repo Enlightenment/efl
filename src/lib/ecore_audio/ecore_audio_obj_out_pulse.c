@@ -141,7 +141,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
       return EINA_FALSE;
   }
 
-  eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED, _update_samplerate_cb, eo_obj));
+  eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, _update_samplerate_cb, eo_obj));
 
   eo_do(in, eo_base_data_set("pulse_data", stream, NULL));
 

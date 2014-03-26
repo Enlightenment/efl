@@ -33,6 +33,8 @@ extern "C"
  * @ingroup Ecore_Audio_Group
  * @{
  */
+#include "ecore_audio_in.eo.h"
+#if 0
 
 #define ECORE_AUDIO_OBJ_IN_CLASS ecore_audio_obj_in_class_get() /**< Ecore_Audio input object class */
 
@@ -265,6 +267,7 @@ extern const Eo_Event_Description _ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED;
  */
 #define ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED (&(_ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED))
 
+#endif
 /**
  * @}
  */
@@ -274,4 +277,3 @@ extern const Eo_Event_Description _ECORE_AUDIO_EV_IN_SAMPLERATE_CHANGED;
 #endif
 
 #endif
-
