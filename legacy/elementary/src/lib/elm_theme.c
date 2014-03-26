@@ -31,8 +31,16 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
                          Eina_File *f,
                          Eina_Bool prepend)
 {
+   char *version;
+   
    if (!f) return;
-
+   if (!(version = edje_mmap_data_get(f, "version"))) return;
+   if (atoi(version) < 110) // bump this version number when we need to
+     {
+        free(version);
+        return;
+     }
+   free(version);
    if (prepend)
      {
         files->items = eina_list_prepend(files->items,
