@@ -1,0 +1,158 @@
+class Elm_Table (Elm_Widget)
+{
+   eo_prefix: elm_obj_table;
+   data: null;
+   properties {
+      homogeneous {
+         set {
+            /*@
+            @brief Set the homogeneous layout in the table
+
+            @ingroup Table */
+         }
+         get {
+            /*@
+            @brief Get the current table homogeneous mode.
+
+            @return A boolean to indicating if the layout is homogeneous in the table
+            (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
+
+            @ingroup Table */
+         }
+         values {
+            Eina_Bool homogeneous; /*@ A boolean to set if the layout is homogeneous in the
+            table (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous) */
+         }
+      }
+      padding {
+         set {
+            /*@
+            @brief Set padding between cells.
+
+            Default value is 0.
+
+            @ingroup Table */
+         }
+         get {
+            /*@
+            @brief Get padding between cells.
+
+            @ingroup Table */
+         }
+         values {
+            Evas_Coord horizontal; /*@ set the horizontal padding. */
+            Evas_Coord vertical; /*@ set the vertical padding. */
+         }
+      }
+   }
+   methods {
+      clear {
+         /*@
+         @brief Faster way to remove all child objects from a table object.
+
+         @ingroup Table */
+
+         params {
+            @in Eina_Bool clear; /*@ If true, will delete children, else just remove from table. */
+         }
+      }
+      child_get {
+         /*@
+         @brief Get child object of table at given coordinates.
+
+         @return Child of object if find if not return NULL. */
+
+         const;
+         return Evas_Object *;
+         params {
+            @in int col; /*@ Column number of child object */
+            @in int row; /*@ Row number of child object */
+         }
+      }
+      pack_set {
+         /*@
+         @brief Set the packing location of an existing child of the table
+
+         Modifies the position of an object already in the table.
+
+         @note All positioning inside the table is relative to rows and columns, so
+         a value of 0 for col and row, means the top left cell of the table, and a
+         value of 1 for colspan and rowspan means @p subobj only takes that 1 cell.
+
+         @ingroup Table */
+
+         params {
+            @in Evas_Object *subobj; /*@ The subobject to be modified in the table */
+            @in int column; /*@ Column number */
+            @in int row; /*@ Row number */
+            @in int colspan; /*@ colspan */
+            @in int rowspan; /*@ rowspan */
+         }
+         legacy null;
+      }
+      pack_get {
+         /*@
+         @brief Get the packing location of an existing child of the table
+
+         @see elm_table_pack_set()
+
+         @ingroup Table */
+
+         params {
+            @in Evas_Object *subobj; /*@ The subobject to be modified in the table */
+            @out int column; /*@ Column number */
+            @out int row; /*@ Row number */
+            @out int colspan; /*@ colspan */
+            @out int rowspan; /*@ rowspan */
+         }
+         legacy null;
+      }
+      unpack {
+         /*@
+         @brief Remove child from table.
+
+         @ingroup Table */
+
+         params {
+            @in Evas_Object *subobj; /*@ The subobject */
+         }
+      }
+      pack {
+         /*@
+         @brief Add a subobject on the table with the coordinates passed
+
+         @note All positioning inside the table is relative to rows and columns, so
+         a value of 0 for x and y, means the top left cell of the table, and a
+         value of 1 for w and h means @p subobj only takes that 1 cell.
+
+         Note that columns and rows only guarantee 16bit unsigned values at best.
+         That means that col + colspan AND row + rowspan must fit inside 16bit
+         unsigned values cleanly. You will be warned once values exceed 15bit
+         storage, and attempting to use values not able to fit in 16bits will
+         result in failure.
+
+         @ingroup Table */
+
+         params {
+            @in Evas_Object *subobj; /*@ The subobject to be added to the table */
+            @in int column; /*@ Column number */
+            @in int row; /*@ Row number */
+            @in int colspan; /*@ colspan */
+            @in int rowspan; /*@ rowspan */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::focus_direction;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::theme_apply;
+      Elm_Widget::sub_object_del;
+   }
+
+}
