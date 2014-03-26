@@ -17,10 +17,10 @@
 /**
  * Base layout smart data extended with segment control instance data.
  */
-typedef struct _Elm_Segment_Control_Smart_Data Elm_Segment_Control_Smart_Data;
+typedef struct _Elm_Segment_Control_Data       Elm_Segment_Control_Data;
 typedef struct _Elm_Segment_Item               Elm_Segment_Item;
 
-struct _Elm_Segment_Control_Smart_Data
+struct _Elm_Segment_Control_Data
 {
    Evas_Object          *obj;
    Eina_List            *items;
@@ -43,7 +43,7 @@ struct _Elm_Segment_Item
  */
 
 #define ELM_SEGMENT_CONTROL_DATA_GET(o, sd) \
-  Elm_Segment_Control_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_SEGMENT_CONTROL_CLASS)
+  Elm_Segment_Control_Data * sd = eo_data_scope_get(o, ELM_OBJ_SEGMENT_CONTROL_CLASS)
 
 #define ELM_SEGMENT_CONTROL_DATA_GET_OR_RETURN(o, ptr) \
   ELM_SEGMENT_CONTROL_DATA_GET(o, ptr);                \

@@ -1,3 +1,6 @@
+#include "elm_segment_control.eo.h"
+
+#if 0
 #define ELM_OBJ_SEGMENT_CONTROL_CLASS elm_obj_segment_control_class_get()
 
 const Eo_Class *elm_obj_segment_control_class_get(void) EINA_CONST;
@@ -139,3 +142,4 @@ enum
  * @ingroup SegmentControl
  */
 #define elm_obj_segment_control_item_get(idx, ret) ELM_OBJ_SEGMENT_CONTROL_ID(ELM_OBJ_SEGMENT_CONTROL_SUB_ID_ITEM_GET), EO_TYPECHECK(int, idx), EO_TYPECHECK(Elm_Object_Item **, ret)
+#endif
