@@ -8,8 +8,6 @@
 
 #include "Eo.h"
 
-EAPI Eo_Op ELM_OBJ_SYSTRAY_BASE_ID = EO_NOOP;
-
 #include "elm_systray_watcher.h"
 
 EAPI int ELM_EVENT_SYSTRAY_READY = 0;
@@ -309,30 +307,24 @@ _menu_died(void *data EINA_UNUSED,
    eldbus_service_property_changed(_iface, "Menu");
 }
 
-static void
-_category_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_category_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, Elm_Systray_Category cat)
 {
-   Elm_Systray_Category cat = va_arg(*args, Elm_Systray_Category);
-
    if (_item.cat == cat) return;
 
    _item.cat = cat;
    eldbus_service_property_changed(_iface, "Category");
 }
 
-static void
-_category_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static Elm_Systray_Category
+_elm_systray_category_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   Elm_Systray_Category *ret = va_arg(*args, Elm_Systray_Category *);
-
-   *ret = _item.cat;
+   return _item.cat;
 }
 
-static void
-_status_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_status_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, Elm_Systray_Status st)
 {
-   Elm_Systray_Status st = va_arg(*args, Elm_Systray_Status);
-
    if (_item.status == st) return;
 
    _item.status = st;
@@ -341,54 +333,45 @@ _status_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
                             _Elm_Systray_Status_Str[_item.status]);
 }
 
-static void
-_status_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static Elm_Systray_Status
+_elm_systray_status_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   Elm_Systray_Status *ret = va_arg(*args, Elm_Systray_Status *);
-   *ret = _item.status;
+   return _item.status;
 }
 
-static void
-_att_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_att_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *att_icon_name)
 {
-   const char *att_icon_name = va_arg(*args, const char *);
-
    if (!eina_stringshare_replace(&(_item.att_icon_name), att_icon_name)) return;
 
    eldbus_service_property_changed(_iface, "AttentionIconName");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWATTENTIONICON, NULL);
 }
 
-static void
-_att_icon_name_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static const char*
+_elm_systray_att_icon_name_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   const char **ret = va_arg(*args, const char **);
-   *ret = _item.att_icon_name;
+   return _item.att_icon_name;
 }
 
-static void
-_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_icon_name_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *icon_name)
 {
-   const char *icon_name = va_arg(*args, const char *);
-
    if (!eina_stringshare_replace(&(_item.icon_name), icon_name)) return;
 
    eldbus_service_property_changed(_iface, "IconName");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWICON, NULL);
 }
 
-static void
-_icon_name_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static const char*
+_elm_systray_icon_name_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   const char **ret = va_arg(*args, const char **);
-   *ret = _item.icon_name;
+   return _item.icon_name;
 }
 
-static void
-_icon_theme_path_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_icon_theme_path_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *icon_theme_path)
 {
-   const char *icon_theme_path = va_arg(*args, const char *);
-
    if (!eina_stringshare_replace(&(_item.icon_theme_path), icon_theme_path))
      return;
 
@@ -397,52 +380,44 @@ _icon_theme_path_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
                             _item.icon_theme_path);
 }
 
-static void
-_icon_theme_path_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static const char*
+_elm_systray_icon_theme_path_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   const char **ret = va_arg(*args, const char **);
-   *ret = _item.icon_theme_path;
+   return _item.icon_theme_path;
 }
 
-static void
-_id_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_id_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *id)
 {
-   const char *id = va_arg(*args, const char *);
-
    if (!eina_stringshare_replace(&(_item.id), id)) return;
 
    eldbus_service_property_changed(_iface, "Id");
 }
 
-static void
-_id_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static const char*
+_elm_systray_id_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   const char **ret = va_arg(*args, const char **);
-   *ret = _item.id;
+   return _item.id;
 }
 
-static void
-_title_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_title_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const char *title)
 {
-   const char *title = va_arg(*args, const char *);
-
    if (!eina_stringshare_replace(&(_item.title), title)) return;
 
    eldbus_service_property_changed(_iface, "Title");
    _elm_systray_signal_emit(ELM_SYSTRAY_SIGNAL_NEWTITLE, NULL);
 }
 
-static void
-_title_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static const char*
+_elm_systray_title_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   const char **ret = va_arg(*args, const char **);
-   *ret = _item.title;
+   return _item.title;
 }
 
-static void
-_menu_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static void
+_elm_systray_menu_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, const Eo *menu_obj)
 {
-   const Eo *menu_obj = va_arg(*args, const Eo *);
    const char *menu = NULL;
 
    if (_item.menu_obj == menu_obj) return;
@@ -465,24 +440,18 @@ _menu_set(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
    eldbus_service_property_changed(_iface, "Menu");
 }
 
-static void
-_menu_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static const Eo*
+_elm_systray_menu_get(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   const Eo **ret = va_arg(*args, const Eo **);
-   *ret = _item.menu_obj;
+   return _item.menu_obj;
 }
 
-static void
-_register(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED, va_list *args)
+EOLIAN static Eina_Bool
+_elm_systray_register(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*args, Eina_Bool *);
-   if (!_elm_need_systray) goto err;
+   if (!_elm_need_systray) return EINA_FALSE;
 
-   *ret = _elm_systray_watcher_status_notifier_item_register(OBJ_PATH);
-   return;
-
-err:
-   *ret = EINA_FALSE;
+   return _elm_systray_watcher_status_notifier_item_register(OBJ_PATH);
 }
 
 EAPI Eina_Bool
@@ -546,83 +515,4 @@ _elm_unneed_systray(void)
      }
 }
 
-// =============================================================================
-// EObject Stuff
-// =============================================================================
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_CATEGORY_SET),
-                   _category_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_CATEGORY_GET),
-                   _category_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_STATUS_SET),
-                   _status_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_STATUS_GET),
-                   _status_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ATT_ICON_NAME_SET),
-                   _att_icon_name_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ATT_ICON_NAME_GET),
-                   _att_icon_name_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ICON_NAME_SET),
-                   _icon_name_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ICON_NAME_GET),
-                   _icon_name_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ICON_THEME_PATH_SET),
-                   _icon_theme_path_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ICON_THEME_PATH_GET),
-                   _icon_theme_path_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ID_SET),
-                   _id_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_ID_GET),
-                   _id_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_TITLE_SET),
-                   _title_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_TITLE_GET),
-                   _title_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_MENU_SET),
-                   _menu_set),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_MENU_GET),
-                   _menu_get),
-        EO_OP_FUNC(ELM_OBJ_SYSTRAY_ID(ELM_OBJ_SYSTRAY_SUB_ID_REGISTER),
-                   _register),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_CATEGORY_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_CATEGORY_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_STATUS_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_STATUS_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ATT_ICON_NAME_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ATT_ICON_NAME_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ICON_NAME_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ICON_NAME_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ICON_THEME_PATH_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ICON_THEME_PATH_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ID_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_ID_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_TITLE_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_TITLE_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_MENU_SET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_MENU_GET, ""),
-     EO_OP_DESCRIPTION(ELM_OBJ_SYSTRAY_SUB_ID_REGISTER, ""),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Elm_Systray",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS
-     (&ELM_OBJ_SYSTRAY_BASE_ID, op_desc, ELM_OBJ_SYSTRAY_SUB_ID_LAST),
-     NULL,
-     0,
-     _class_constructor,
-     NULL//_class_destructor,
-};
-
-EO_DEFINE_CLASS(elm_obj_systray_class_get, &class_desc, EO_BASE_CLASS, NULL);
+#include "elm_systray.eo.c"

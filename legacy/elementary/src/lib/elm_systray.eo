@@ -1,0 +1,102 @@
+class Elm_Systray (Eo_Base)
+{
+   eo_prefix: elm_obj_systray;
+   data: null;
+   properties {
+      id {
+         set {
+            /*@ Set the id of the Status Notifier Item. */
+         }
+         get {
+            /*@ Retrieve the id of the Status Notifier Item. */
+         }
+         values {
+            const char *id;
+         }
+      }
+      category {
+         set {
+            /*@ Set the category of the Status Notifier Item. */
+         }
+         get {
+            /*@ Retrieve the category of the Status Notifier Item. */
+         }
+         values {
+            Elm_Systray_Category cat; /*@ Category */
+         }
+      }
+      icon_theme_path {
+         set {
+            /*@ Set the path to the theme where the icons can be found. Set this value to "" to use the default path. */
+         }
+         get {
+            /*@ Retrieve the path to the icon's theme currently in use. */
+         }
+         values {
+            const char *icon_theme_path;
+         }
+      }
+      menu {
+         set {
+            /*@ Set the object path of the D-Bus Menu that is to be show when the Status Notifier Item is activated by the user. */
+         }
+         get {
+            /*@ Retrieve the object path of the D-Bus Menu currently in use. */
+         }
+         values {
+            const Eo *menu;
+         }
+      }
+      att_icon_name {
+         set {
+            /*@ Set the name of the attention icon to be used by the Status Notifier Item. */
+         }
+         get {
+            /*@ Retrieve the name of the attention icon used by the Status Notifier Item. */
+         }
+         values {
+            const char *att_icon_name;
+         }
+      }
+      status {
+         set {
+            /*@ Set the status of the Status Notifier Item. */
+         }
+         get {
+            /*@ Retrieve the status of the Status Notifier Item. */
+         }
+         values {
+            Elm_Systray_Status st; /*@ Status */
+         }
+      }
+      icon_name {
+         set {
+            /*@ Set the name of the icon to be used by the Status Notifier Item. */
+         }
+         get {
+            /*@ Retrieve the name of the icon used by the Status Notifier Item. */
+         }
+         values {
+            const char *icon_name;
+         }
+      }
+      title {
+         set {
+            /*@ Set the title of the Status Notifier Item. */
+         }
+         get {
+            /*@ Retrieve the title of the Status Notifier Item. */
+         }
+         values {
+            const char *title;
+         }
+      }
+   }
+   methods {
+      register {
+         /*@ Register this Status Notifier Item in the System Tray Watcher. This function should only be called after the event ELM_EVENT_SYSTRAY_READY is emitted. */
+         return Eina_Bool;
+      }
+   }
+
+}
