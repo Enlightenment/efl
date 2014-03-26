@@ -97,4 +97,4 @@ EAPI void                         elm_radio_value_pointer_set(Evas_Object *obj, 
  *
  * @ingroup Radio
  */
-EAPI Evas_Object                 *elm_radio_selected_object_get(Evas_Object *obj);
+EAPI Evas_Object                 *elm_radio_selected_object_get(const Evas_Object *obj);

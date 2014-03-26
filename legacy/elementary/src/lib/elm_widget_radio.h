@@ -17,7 +17,7 @@
 /**
  * Base layout smart data extended with radio instance data.
  */
-typedef struct _Elm_Radio_Smart_Data Elm_Radio_Smart_Data;
+typedef struct _Elm_Radio_Data       Elm_Radio_Data;
 typedef struct _Group                Group;
 
 struct _Group
@@ -27,7 +27,7 @@ struct _Group
    Eina_List *radios;
 };
 
-struct _Elm_Radio_Smart_Data
+struct _Elm_Radio_Data
 {
    int                   value;
    Eina_Bool             state;
@@ -40,7 +40,7 @@ struct _Elm_Radio_Smart_Data
  */
 
 #define ELM_RADIO_DATA_GET(o, sd) \
-  Elm_Radio_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_RADIO_CLASS)
+  Elm_Radio_Data * sd = eo_data_scope_get(o, ELM_OBJ_RADIO_CLASS)
 
 #define ELM_RADIO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_RADIO_DATA_GET(o, ptr);                        \

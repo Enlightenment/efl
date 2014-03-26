@@ -1,0 +1,124 @@
+class Elm_Radio (Elm_Layout)
+{
+   eo_prefix: elm_obj_radio;
+   properties {
+      state_value {
+         set {
+            /*@
+            @brief Set the integer value that this radio object represents
+
+            This sets the value of the radio.
+
+            @ingroup Radio */
+         }
+         get {
+            /*@
+            @brief Get the integer value that this radio object represents
+
+            @return The value used if this radio object is selected
+
+            This gets the value of the radio.
+            @see elm_radio_value_set()
+
+            @ingroup Radio */
+         }
+         values {
+            int value; /*@ The value to use if this radio object is selected */
+         }
+      }
+      value {
+         set {
+            /*@
+            @brief Set the value of the radio group.
+
+            This sets the value of the radio group and will also set the value if
+            pointed to, to the value supplied, but will not call any callbacks.
+
+            @ingroup Radio */
+         }
+         get {
+            /*@
+            @brief Get the value of the radio group
+
+            @return The integer state
+
+            @ingroup Radio */
+         }
+         values {
+            int value; /*@ The value to use for the group */
+         }
+      }
+      value_pointer {
+         set {
+            /*@
+            @brief Set a convenience pointer to a integer to change when radio group
+            value changes.
+
+            This sets a pointer to a integer, that, in addition to the radio objects
+            state will also be modified directly. To stop setting the object pointed
+            to simply use NULL as the @p valuep argument. If valuep is not NULL, then
+            when this is called, the radio objects state will also be modified to
+            reflect the value of the integer valuep points to, just like calling
+            elm_radio_value_set().
+
+            @ingroup Radio */
+         }
+         values {
+            int *valuep; /*@ Pointer to the integer to modify */
+         }
+      }
+      selected_object {
+         get {
+            /*@
+            @brief Get the selected radio object.
+
+            @return The selected radio object
+
+            @ingroup Radio */
+            return Evas_Object *;
+         }
+      }
+   }
+   methods {
+      group_add {
+         /*@
+         @brief Add this radio to a group of other radio objects
+
+         Radio objects work in groups. Each member should have a different integer
+         value assigned. In order to have them work as a group, they need to know
+         about each other. This adds the given radio object to the group of which
+         the group object indicated is a member.
+
+         @ingroup Radio */
+
+         params {
+            @in Evas_Object *group; /*@ Any object whose group the @p obj is to join. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::theme_apply;
+      Elm_Widget::activate;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::disable;
+      Elm_Widget::sub_object_del;
+      Elm_Widget::event;
+      Elm_Container::content_set;
+      Elm_Layout::text_aliases::get;
+      Elm_Layout::content_aliases::get;
+      Elm_Layout::sizing_eval;
+   }
+   events {
+      changed;
+      language,changed;
+      access,changed;
+      focused;
+      unfocused;
+   }
+
+}

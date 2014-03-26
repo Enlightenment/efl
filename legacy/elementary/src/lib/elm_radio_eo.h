@@ -1,3 +1,7 @@
+#include "elm_radio.eo.h"
+
+#if 0
+
 #define ELM_OBJ_RADIO_CLASS elm_obj_radio_class_get()
 
 const Eo_Class *elm_obj_radio_class_get(void) EINA_CONST;
@@ -116,3 +120,5 @@ enum
  * @ingroup Radio
  */
 #define elm_obj_radio_selected_object_get(ret) ELM_OBJ_RADIO_ID(ELM_OBJ_RADIO_SUB_ID_SELECTED_OBJECT_GET), EO_TYPECHECK(Evas_Object **, ret)
+#endif
+
