@@ -33,7 +33,9 @@ extern "C"
  * @ingroup Ecore_Audio_Group
  * @{
  */
+#include "ecore_audio_in_sndfile.eo.h"
 
+#if 0
 #define ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS ecore_audio_obj_in_sndfile_class_get() /**< Ecore_Audio sndfile input */
 
 /**
@@ -52,6 +54,7 @@ enum Ecore_Audio_Obj_In_Sndfile_Sub_Ids
 
 #define ECORE_AUDIO_OBJ_IN_SNDFILE_ID(sub_id) (ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID + EO_TYPECHECK(enum Ecore_Audio_Obj_In_Sndfile_Sub_Ids, sub_id)
 
+#endif
 /**
  * @}
  */

@@ -14,63 +14,41 @@
 #include "ecore_audio_private.h"
 #include <sndfile.h>
 
-EAPI Eo_Op ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_In_Sndfile"
 
 extern SF_VIRTUAL_IO vio_wrapper;
 
-struct _Ecore_Audio_Sndfile
+struct _Ecore_Audio_In_Sndfile_Data
 {
   SNDFILE *handle;
   SF_INFO sfinfo;
 };
 
-typedef struct _Ecore_Audio_Sndfile Ecore_Audio_Sndfile;
+typedef struct _Ecore_Audio_In_Sndfile_Data Ecore_Audio_In_Sndfile_Data;
 
-static void _sndfile_read(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static ssize_t
+_ecore_audio_in_sndfile_ecore_audio_in_read_internal(Eo *eo_obj EINA_UNUSED, Ecore_Audio_In_Sndfile_Data *obj, void *data, size_t len)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
-  int read;
-  void *data = va_arg(*list, void *);
-  size_t len = va_arg(*list, size_t);
-  ssize_t *ret = va_arg(*list, ssize_t *);
-
-  read = sf_read_float(obj->handle, data, len/4)*4;
-
-  if (ret)
-    *ret = read;
+  return sf_read_float(obj->handle, data, len/4)*4;
 }
 
-static void _seek(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static double
+_ecore_audio_in_sndfile_ecore_audio_in_seek(Eo *eo_obj EINA_UNUSED, Ecore_Audio_In_Sndfile_Data *obj, double offs, int mode)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
   sf_count_t count, pos;
-
-  double offs = va_arg(*list, double);
-  int mode = va_arg(*list, int);
-  double *ret = va_arg(*list, double *);
 
   count = offs * obj->sfinfo.samplerate;
   pos = sf_seek(obj->handle, count, mode);
 
-  if (ret)
-    *ret = (double)pos / obj->sfinfo.samplerate;
+  return (double)pos / obj->sfinfo.samplerate;
 }
 
-static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_ecore_audio_in_sndfile_ecore_audio_source_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj, const char *source)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
-
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
   Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
-
-  const char *source = va_arg(*list, const char *);
-  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-  if (ret)
-    *ret = EINA_FALSE;
 
   if (obj->handle) {
     sf_close(obj->handle);
@@ -80,18 +58,15 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
   eina_stringshare_replace(&ea_obj->source, source);
 
   if (!ea_obj->source)
-    return;
+    return EINA_FALSE;
 
   obj->handle = sf_open(ea_obj->source, SFM_READ, &obj->sfinfo);
 
   if (!obj->handle) {
     eina_stringshare_del(ea_obj->source);
     ea_obj->source = NULL;
-    return;
+    return EINA_FALSE;
   }
-
-  if (ret)
-    *ret = EINA_TRUE;
 
   in_obj->seekable = EINA_TRUE;
   in_obj->length = (double)obj->sfinfo.frames / obj->sfinfo.samplerate;
@@ -107,29 +82,25 @@ static void _source_set(Eo *eo_obj, void *_pd, va_list *list)
     ea_obj->format = ECORE_AUDIO_FORMAT_FLAC;
   else
     ea_obj->format = ECORE_AUDIO_FORMAT_AUTO;
+
+   return EINA_TRUE;
 }
 
-static void _source_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const char*
+_ecore_audio_in_sndfile_ecore_audio_source_get(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *_pd EINA_UNUSED)
 {
   Ecore_Audio_Object *obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  const char **ret = va_arg(*list, const char **);
-
-  if (ret)
-    *ret = obj->source;
+  return obj->source;
 }
 
-static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_ecore_audio_in_sndfile_ecore_audio_format_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj, Ecore_Audio_Format format)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  Ecore_Audio_Format format= va_arg(*list, Ecore_Audio_Format);
-  Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
   if (ea_obj->source) {
       ERR("Input is already open - cannot change format");
-      return;
+      return EINA_FALSE;
   }
 
   switch (format) {
@@ -147,24 +118,18 @@ static void _format_set(Eo *eo_obj, void *_pd, va_list *list)
       break;
     default:
       ERR("Format not supported!");
-      if (ret)
-        *ret = EINA_FALSE;
-      return;
+      return EINA_FALSE;
   }
   ea_obj->format = format;
 
-  if (ret)
-    *ret = EINA_TRUE;
+  return EINA_TRUE;
 }
 
-static void _format_get(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Ecore_Audio_Format
+_ecore_audio_in_sndfile_ecore_audio_format_get(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *_pd EINA_UNUSED)
 {
   Ecore_Audio_Object *obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
-
-  Ecore_Audio_Format *ret = va_arg(*list, Ecore_Audio_Format *);
-
-  if (ret)
-    *ret = obj->format;
+  return obj->format;;
 }
 
 static void _free_vio(Ecore_Audio_Object *ea_obj)
@@ -176,15 +141,11 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
   ea_obj->vio = NULL;
 }
 
-static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
+EOLIAN static void
+_ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj, Ecore_Audio_Vio *vio, void *data, eo_base_data_free_func free_func)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
   Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_IN_CLASS);
-
-  Ecore_Audio_Vio *vio = va_arg(*list, Ecore_Audio_Vio *);
-  void *data = va_arg(*list, Ecore_Audio_Vio *);
-  eo_base_data_free_func free_func = va_arg(*list, eo_base_data_free_func);
 
   if (obj->handle) {
     sf_close(obj->handle);
@@ -233,15 +194,16 @@ static void _vio_set(Eo *eo_obj, void *_pd, va_list *list)
     ea_obj->format = ECORE_AUDIO_FORMAT_AUTO;
 }
 
-static void _constructor(Eo *eo_obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_audio_in_sndfile_eo_base_constructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *_pd EINA_UNUSED)
 {
   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
 }
 
-static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_ecore_audio_in_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj)
 {
-  Ecore_Audio_Sndfile *obj = _pd;
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
   if (obj->handle)
@@ -253,41 +215,4 @@ static void _destructor(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
-static void _class_constructor(Eo_Class *klass)
-{
-  const Eo_Op_Func_Description func_desc[] = {
-      /* Virtual functions of parent class implemented in this class */
-      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-      EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_SET), _source_set),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_SOURCE_GET), _source_get),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_SET), _format_set),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_FORMAT_GET), _format_get),
-
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_SEEK), _seek),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_IN_ID(ECORE_AUDIO_OBJ_IN_SUB_ID_READ_INTERNAL), _sndfile_read),
-      EO_OP_FUNC(ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), _vio_set),
-
-      EO_OP_FUNC_SENTINEL
-  };
-
-  eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-    EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description class_desc = {
-    EO_VERSION,
-    MY_CLASS_NAME,
-    EO_CLASS_TYPE_REGULAR,
-    EO_CLASS_DESCRIPTION_OPS(&ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID, op_desc, ECORE_AUDIO_OBJ_IN_SNDFILE_SUB_ID_LAST),
-    NULL,
-    sizeof(Ecore_Audio_Sndfile),
-    _class_constructor,
-    NULL
-};
-
-EO_DEFINE_CLASS(ecore_audio_obj_in_sndfile_class_get, &class_desc, ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+#include "ecore_audio_in_sndfile.eo.c"
