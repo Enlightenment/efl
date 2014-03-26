@@ -1,3 +1,6 @@
+#include "elm_separator.eo.h"
+
+#if 0
 #define ELM_OBJ_SEPARATOR_CLASS elm_obj_separator_class_get()
 
 const Eo_Class *elm_obj_separator_class_get(void) EINA_CONST;
@@ -41,3 +44,5 @@ enum
  * @ingroup Separator
  */
 #define elm_obj_separator_horizontal_get(ret) ELM_OBJ_SEPARATOR_ID(ELM_OBJ_SEPARATOR_SUB_ID_HORIZONTAL_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
+

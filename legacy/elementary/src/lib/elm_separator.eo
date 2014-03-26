@@ -1,0 +1,37 @@
+class Elm_Separator (Elm_Layout)
+{
+   eo_prefix: elm_obj_separator;
+   properties {
+      horizontal {
+         set {
+            /*@
+            @brief Set the horizontal mode of a separator object
+
+            @ingroup Separator */
+         }
+         get {
+            /*@
+            @brief Get the horizontal mode of a separator object
+
+            @return If true, the separator is horizontal
+
+            @see elm_separator_horizontal_set()
+
+            @ingroup Separator */
+         }
+         values {
+            Eina_Bool horizontal; /*@ If true, the separator is horizontal */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::theme_apply;
+      Elm_Layout::sizing_eval;
+   }
+
+}
