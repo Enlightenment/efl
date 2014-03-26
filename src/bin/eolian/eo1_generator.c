@@ -369,7 +369,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
 
-   if (!impl_name && eolian_function_is_virtual_pure(funcid)) return EINA_TRUE;
+   if (!impl_name && eolian_function_is_virtual_pure(funcid, ftype)) return EINA_TRUE;
    Eina_Strbuf *fbody = eina_strbuf_new();
    Eina_Strbuf *va_args = eina_strbuf_new();
    Eina_Strbuf *params = eina_strbuf_new(); /* only variables names */
@@ -759,7 +759,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
              free(desc);
 
-             if (!eolian_function_is_virtual_pure(fn))
+             if (!eolian_function_is_virtual_pure(fn, SET))
                 eo1_eo_func_desc_generate(classname, NULL, tmpstr, tmpbuf);
              else
                 eina_strbuf_reset(tmpbuf);
@@ -774,7 +774,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
              free(desc);
              eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
-             if (!eolian_function_is_virtual_pure(fn))
+             if (!eolian_function_is_virtual_pure(fn, GET))
                 eo1_eo_func_desc_generate(classname, NULL, tmpstr, tmpbuf);
              else
                 eina_strbuf_reset(tmpbuf);
@@ -792,7 +792,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
         free(desc);
         eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
 
-        if (!eolian_function_is_virtual_pure(fn))
+        if (!eolian_function_is_virtual_pure(fn, METHOD_FUNC))
            eo1_eo_func_desc_generate(classname, NULL, funcname, tmpbuf);
         else
            eina_strbuf_reset(tmpbuf);

@@ -329,7 +329,7 @@ EAPI const char *eolian_function_data_get(Eolian_Function function_id, const cha
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_virtual_pure(Eolian_Function function_id);
+EAPI Eina_Bool eolian_function_is_virtual_pure(Eolian_Function function_id, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific description for a function.

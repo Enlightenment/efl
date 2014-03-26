@@ -38,7 +38,8 @@ typedef struct
    Eolian_Function_Type type;
    Eina_Hash *data;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
-   Eina_Bool virtual_pure :1;
+   Eina_Bool get_virtual_pure :1;
+   Eina_Bool set_virtual_pure :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
    Eina_Bool get_return_own :1; /* also used for methods */
@@ -551,7 +552,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
         EINA_LIST_FOREACH(desc->properties, itr, foo_id)
           {
              _Function_Id *fid = (_Function_Id *) foo_id;
-             if (!strcmp(fid->name, func_name) && (f_type == UNRESOLVED || f_type == PROPERTY_FUNC || f_type == fid->type))
+             if (!strcmp(fid->name, func_name))
                 return foo_id;
           }
      }
@@ -631,20 +632,30 @@ eolian_function_name_get(Eolian_Function function_id)
 }
 
 Eina_Bool
-database_function_set_as_virtual_pure(Eolian_Function function_id)
+database_function_set_as_virtual_pure(Eolian_Function function_id, Eolian_Function_Type ftype)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   fid->virtual_pure = EINA_TRUE;
+   switch (ftype)
+     {
+      case UNRESOLVED: case METHOD_FUNC: case GET: fid->get_virtual_pure = EINA_TRUE; break;
+      case SET: fid->set_virtual_pure = EINA_TRUE; break;
+      default: return EINA_FALSE;
+     }
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
-eolian_function_is_virtual_pure(Eolian_Function function_id)
+eolian_function_is_virtual_pure(Eolian_Function function_id, Eolian_Function_Type ftype)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   return fid->virtual_pure;
+   switch (ftype)
+     {
+      case UNRESOLVED: case METHOD_FUNC: case GET: return fid->get_virtual_pure; break;
+      case SET: return fid->set_virtual_pure; break;
+      default: return EINA_FALSE;
+     }
 }
 
 void

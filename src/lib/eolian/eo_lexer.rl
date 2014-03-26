@@ -1490,7 +1490,7 @@ eo_tokenizer_database_fill(const char *filename)
                        ERR("Error - %s not known in class %s", class + 9, kls->name);
                        goto end;
                     }
-                  database_function_set_as_virtual_pure(foo_id);
+                  database_function_set_as_virtual_pure(foo_id, ftype);
                   continue;
                }
              Eolian_Implement impl_desc = database_implement_new(class, func, ftype);

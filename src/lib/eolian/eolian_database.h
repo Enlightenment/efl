@@ -105,7 +105,7 @@ void database_function_return_flag_set_own(Eolian_Function foo_id,
 void database_function_object_set_as_const(Eolian_Function foo_id, Eina_Bool is_const);
 
 Eina_Bool
-database_function_set_as_virtual_pure(Eolian_Function function_id);
+database_function_set_as_virtual_pure(Eolian_Function function_id, Eolian_Function_Type type);
 
 /* Need to add API for callbacks and implements */
 
