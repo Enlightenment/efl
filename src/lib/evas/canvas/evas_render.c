@@ -380,7 +380,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                    Eina_Array *render_objects,
                                    int restack,
                                    int *redraw_all,
-                                   Eina_Bool mapped_parent
+                                   Eina_Bool mapped_parent,
+                                   Eina_Bool src_changed
 #ifdef REND_DBG
                                    , int level
 #endif
@@ -406,12 +407,12 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    /* build active object list */
    evas_object_clip_recalc(obj);
-   is_active = evas_object_is_active(eo_obj, obj);
-   obj->is_active = is_active;
 
+   if (src_changed) is_active = EINA_TRUE;
+   else is_active = evas_object_is_active(eo_obj, obj);
    RDI(level);
    RD("    [--- PROCESS [%p", obj);
-   if (obj->name) 
+   if (obj->name)
      {
         RD(":%s", obj->name);
      }
@@ -473,7 +474,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                                render_objects,
                                                                obj->restack,
                                                                redraw_all,
-                                                               EINA_TRUE
+                                                               EINA_TRUE,
+                                                               src_changed
 #ifdef REND_DBG
                                                                , level + 1
 #endif
@@ -511,6 +513,9 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
              RDI(level);
              RD("      changed + smart - render ok\n");
              OBJ_ARRAY_PUSH(render_objects, obj);
+
+             if (!is_active && obj->proxy->proxies) src_changed = EINA_TRUE;
+
              obj->render_pre = EINA_TRUE;
              Evas_Object_Protected_Data *obj2;
              EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj),
@@ -523,7 +528,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                      render_objects,
                                                      obj->restack,
                                                      redraw_all,
-                                                     mapped_parent
+                                                     mapped_parent,
+                                                     src_changed
 #ifdef REND_DBG
                                                      , level + 1
 #endif
@@ -593,7 +599,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                              render_objects,
                                                              restack,
                                                              redraw_all,
-                                                             mapped_parent
+                                                             mapped_parent,
+                                                             src_changed
 #ifdef REND_DBG
                                                              , level + 1
 #endif
@@ -674,7 +681,7 @@ _evas_render_phase1_process(Evas_Public_Data *e,
           {
              clean_them |= _evas_render_phase1_object_process
                 (e, obj->object, active_objects, restack_objects, delete_objects,
-                 render_objects, 0, redraw_all, EINA_FALSE
+                 render_objects, 0, redraw_all, EINA_FALSE, EINA_FALSE
 #ifdef REND_DBG
                  , 1
 #endif

@@ -2815,44 +2815,6 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
         return;
      }
 
-   if (o->pixels->pixel_updates)
-     {
-        Eina_Rectangle *r;
-        Evas_Public_Data *e = obj->layer->evas;
-
-        if ((o->cur->border.l == 0) &&
-            (o->cur->border.r == 0) &&
-            (o->cur->border.t == 0) &&
-            (o->cur->border.b == 0) &&
-            (o->cur->image.w > 0) &&
-            (o->cur->image.h > 0) &&
-            (!((obj->map->cur.map) && (obj->map->cur.usemap))))
-          {
-             EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
-               {
-                  EINA_LIST_FREE(pixi_write->pixel_updates, r)
-                    {
-                       e->engine.func->image_dirty_region(e->engine.data.output,
-                             o->engine_data, r->x, r->y, r->w, r->h);
-                       eina_rectangle_free(r);
-                    }
-               }
-             EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-          }
-        else
-          {
-             EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
-               {
-                  EINA_LIST_FREE(pixi_write->pixel_updates, r)
-                    eina_rectangle_free(r);
-               }
-             EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-
-             e->engine.func->image_dirty_region(e->engine.data.output,
-                   o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
-          }
-     }
-
    obj->layer->evas->engine.func->context_color_set(output,
                                                     context,
                                                     255, 255, 255, 255);
@@ -3361,14 +3323,14 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                  (!((obj->map->cur.map) && (obj->map->cur.usemap))))
                {
                   Eina_Rectangle *rr;
-                  Eina_List *l;
 
                   EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
                     {
-                       EINA_LIST_FOREACH(pixi_write->pixel_updates, l, rr)
+                       EINA_LIST_FREE(pixi_write->pixel_updates, rr)
                          {
                             Evas_Coord idw, idh, idx, idy;
                             int x, y, w, h;
+                            e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
 
                             idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
                             idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur->fill.y, o->cur->fill.h, &idh);
@@ -3413,6 +3375,16 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                }
              else
                {
+                  Eina_Rectangle *r;
+
+                  EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+                    {
+                       EINA_LIST_FREE(pixi_write->pixel_updates, r)
+                         eina_rectangle_free(r);
+                    }
+                  EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+                  e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+
                   evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj,
                                                       obj);
                   goto done;
