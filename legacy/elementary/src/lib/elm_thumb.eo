@@ -1,0 +1,349 @@
+class Elm_Thumb (Elm_Layout, Evas_Clickable_Interface)
+{
+   eo_prefix: elm_obj_thumb;
+   properties {
+      compress {
+         set {
+            /*@
+            Set the compression for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the compression of the thumb object.
+            @since 1.8
+
+            @return getting The compress setting.
+
+            @see elm_thumb_compress_set()
+
+            @ingroup Thumb */
+            return void; /* Force the return type to be sure the argument doesn't become the return */
+         }
+         values {
+            int compress; /*@ The compression of the thumb. */
+         }
+      }
+      format {
+         set {
+            /*@
+            Set the format for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the format of the thumb object.
+            @since 1.8
+
+            @return getting The Format setting.
+
+            @see elm_thumb_format_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            Ethumb_Thumb_Format format; /*@ The format setting. */
+         }
+      }
+      animate {
+         set {
+            /*@
+            Set the animation state for the thumb object. If its content is an animated
+            video, you may start/stop the animation or tell it to play continuously and
+            looping.
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the animation state for the thumb object.
+
+            @return getting The animation setting or @c ELM_THUMB_ANIMATION_LAST,
+            on errors.
+
+            @see elm_thumb_animate_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            Elm_Thumb_Animation_Setting setting; /*@ The animation setting. */
+         }
+      }
+      fdo_size {
+         set {
+            /*@
+            Set the FDO size for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the fdo size of the thumb object.
+            @since 1.8
+
+            @return getting The FDO size setting.
+
+            @see elm_thumb_fdo_size_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            Ethumb_Thumb_FDO_Size size; /*@ The FDO size setting. */
+         }
+      }
+      file {
+         set {
+            /*@
+            Set the file that will be used as thumbnail @b source.
+
+            The file can be an image or a video (in that case, acceptable
+            extensions are: avi, mp4, ogv, mov, mpg and wmv). To start the
+            video animation, use the function elm_thumb_animate().
+
+            @see elm_thumb_file_get()
+            @see elm_thumb_reload()
+            @see elm_thumb_animate()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the image or video path and key used to generate the thumbnail.
+
+            @see elm_thumb_file_set()
+            @see elm_thumb_path_get()
+
+            @ingroup Thumb */
+         }
+         values {
+            const char *file; /*@ The path to file that will be used as thumbnail source. */
+            const char *key; /*@ The key used in case of an EET file. */
+         }
+      }
+      orientation {
+         set {
+            /*@
+            Set the orientation for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the orientation of the thumb object.
+            @since 1.8
+
+            @return getting The orientation setting.
+
+            @see elm_thumb_orientation_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            Ethumb_Thumb_Orientation orient; /*@ The orientation setting. */
+         }
+      }
+      editable {
+         set {
+            /*@
+            Make the thumbnail 'editable'.
+
+            This means the thumbnail is a valid drag target for drag and drop, and can be
+            cut or pasted too.
+
+            @see elm_thumb_editable_get()
+
+            @ingroup Thumb */
+            return Eina_Bool;
+         }
+         get {
+            /*@
+            Make the thumbnail 'editable'.
+
+            @return Editability.
+
+            This means the thumbnail is a valid drag target for drag and drop, and can be
+            cut or pasted too.
+
+            @see elm_thumb_editable_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            Eina_Bool edit; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+         }
+      }
+      aspect {
+         set {
+            /*@
+            Set the aspect for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the aspect of the thumb object.
+            @since 1.8
+
+            @return getting The aspect setting.
+
+            @see elm_thumb_aspect_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            Ethumb_Thumb_Aspect aspect; /*@ The aspect setting. */
+         }
+      }
+      quality {
+         set {
+            /*@
+            Set the quality for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the quality of the thumb object.
+            @since 1.8
+
+            @return getting The quality setting.
+
+            @see elm_thumb_quality_set()
+
+            @ingroup Thumb */
+            return void; /* Force the return type to be sure the argument doesn't become the return */
+         }
+         values {
+            int quality; /*@ The quality of the thumb. */
+         }
+      }
+      size {
+         set {
+            /*@
+            Set the size for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the size of the thumb object.
+            @since 1.8
+
+            @return getting The size setting.
+
+            @see elm_thumb_size_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            int tw; /*@ The width of the thumb. */
+            int th; /*@ The height of the thumb. */
+         }
+      }
+      crop_align {
+         set {
+            /*@
+            Set the crop alignment for the thumb object.
+            @since 1.8
+
+            @see elm_thumb_file_set()
+
+            @ingroup Thumb */
+         }
+         get {
+            /*@
+            Get the crop alignment of the thumb object.
+            @since 1.8
+
+            @return getting The crop align setting.
+
+            @see elm_thumb_crop_align_set()
+
+            @ingroup Thumb */
+         }
+         values {
+            double cropx; /*@ The x coordinate of the crop. */
+            double cropy; /*@ The y coordinate of the crop. */
+         }
+      }
+      path {
+         get {
+            /*@
+            Get the path and key to the image or video thumbnail generated by ethumb.
+
+            One just needs to make sure that the thumbnail was generated before getting
+            its path; otherwise, the path will be NULL. One way to do that is by asking
+            for the path when/after the "generate,stop" smart callback is called.
+
+            @see elm_thumb_file_get()
+
+            @ingroup Thumb */
+         }
+         values {
+            const char *file; /*@ Pointer to thumb path. */
+            const char *key; /*@ Pointer to thumb key. */
+         }
+      }
+   }
+   methods {
+      reload {
+         /*@
+         Reload thumbnail if it was generated before.
+
+         This is useful if the ethumb client configuration changed, like its
+         size, aspect or any other property one set in the handle returned
+         by elm_thumb_ethumb_client_get().
+
+         If the options didn't change, the thumbnail won't be generated again, but
+         the old one will still be used.
+
+         @see elm_thumb_file_set()
+
+         @ingroup Thumb */
+
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::hide;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::show;
+   }
+   events {
+      clicked;
+      clicked,double;
+      generate,error;
+      generate,start;
+      generate,stop;
+      load,error;
+      press;
+   }
+
+}

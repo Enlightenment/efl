@@ -17,8 +17,8 @@
 /**
  * Base widget smart data extended with thumb instance data.
  */
-typedef struct _Elm_Thumb_Smart_Data Elm_Thumb_Smart_Data;
-struct _Elm_Thumb_Smart_Data
+typedef struct _Elm_Thumb_Data Elm_Thumb_Data;
+struct _Elm_Thumb_Data
 {
    Evas_Object          *obj; // the object itself
    Evas_Object          *view;  /* actual thumbnail, to be swallowed
@@ -66,7 +66,7 @@ struct _Elm_Thumb_Smart_Data
  */
 
 #define ELM_THUMB_DATA_GET(o, sd) \
-  Elm_Thumb_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_THUMB_CLASS)
+  Elm_Thumb_Data * sd = eo_data_scope_get(o, ELM_OBJ_THUMB_CLASS)
 
 #define ELM_THUMB_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_THUMB_DATA_GET(o, ptr);                        \

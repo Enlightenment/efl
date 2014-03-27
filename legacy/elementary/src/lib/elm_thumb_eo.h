@@ -1,3 +1,5 @@
+#include "elm_thumb.eo.h"
+#if 0
 #define ELM_OBJ_THUMB_CLASS elm_obj_thumb_class_get()
 
 const Eo_Class *elm_obj_thumb_class_get(void) EINA_CONST;
@@ -374,3 +376,4 @@ enum
  * @ingroup Thumb
  */
 #define elm_obj_thumb_editable_get(ret) ELM_OBJ_THUMB_ID(ELM_OBJ_THUMB_SUB_ID_EDITABLE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
