@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with video instance data.
  */
-typedef struct _Elm_Video_Smart_Data Elm_Video_Smart_Data;
-struct _Elm_Video_Smart_Data
+typedef struct _Elm_Video_Data Elm_Video_Data;
+struct _Elm_Video_Data
 {
    Evas_Object          *emotion;
    Ecore_Timer          *timer;
@@ -32,7 +32,7 @@ struct _Elm_Video_Smart_Data
  */
 
 #define ELM_VIDEO_DATA_GET(o, sd) \
-  Elm_Video_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_VIDEO_CLASS)
+  Elm_Video_Data * sd = eo_data_scope_get(o, ELM_OBJ_VIDEO_CLASS)
 
 #define ELM_VIDEO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_VIDEO_DATA_GET(o, ptr);                        \

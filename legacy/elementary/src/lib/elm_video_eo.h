@@ -1,4 +1,5 @@
 #include "elc_player.eo.h"
+#include "elm_video.eo.h"
 #if 0
 #define ELM_OBJ_PLAYER_CLASS elm_obj_player_class_get()
 
@@ -12,7 +13,6 @@ enum
 };
 
 #define ELM_OBJ_PLAYER_ID(sub_id) (ELM_OBJ_PLAYER_BASE_ID + sub_id)
-#endif
 
 /**
  * ELM_OBJ_VIDEO_CLASS
@@ -285,3 +285,4 @@ enum
  * @ingroup Video
  */
 #define elm_obj_video_remember_position_get(ret) ELM_OBJ_VIDEO_ID(ELM_OBJ_VIDEO_SUB_ID_REMEMBER_POSITION_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
