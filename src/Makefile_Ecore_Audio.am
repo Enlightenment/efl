@@ -12,7 +12,9 @@ BUILT_SOURCES += \
                  lib/ecore_audio/ecore_audio_in_sndfile.eo.c \
                  lib/ecore_audio/ecore_audio_in_sndfile.eo.h \
                  lib/ecore_audio/ecore_audio_out_sndfile.eo.c \
-                 lib/ecore_audio/ecore_audio_out_sndfile.eo.h
+                 lib/ecore_audio/ecore_audio_out_sndfile.eo.h \
+                 lib/ecore_audio/ecore_audio_out_pulse.eo.c \
+                 lib/ecore_audio/ecore_audio_out_pulse.eo.h
 
 ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecore_audioeolianfiles_DATA = \
@@ -20,7 +22,8 @@ ecore_audioeolianfiles_DATA = \
               lib/ecore_audio/ecore_audio_in.eo \
               lib/ecore_audio/ecore_audio_out.eo \
               lib/ecore_audio/ecore_audio_in_sndfile.eo \
-              lib/ecore_audio/ecore_audio_out_sndfile.eo
+              lib/ecore_audio/ecore_audio_out_sndfile.eo \
+              lib/ecore_audio/ecore_audio_out_pulse.eo
 
 EXTRA_DIST += \
               ${ecore_audioeolianfiles_DATA}
@@ -41,7 +44,8 @@ nodist_installed_ecoreaudiomainheaders_DATA = \
                                         lib/ecore_audio/ecore_audio_in.eo.h \
                                         lib/ecore_audio/ecore_audio_out.eo.h \
                                         lib/ecore_audio/ecore_audio_in_sndfile.eo.h \
-                                        lib/ecore_audio/ecore_audio_out_sndfile.eo.h
+                                        lib/ecore_audio/ecore_audio_out_sndfile.eo.h \
+                                        lib/ecore_audio/ecore_audio_out_pulse.eo.h
                                       
 lib_ecore_audio_libecore_audio_la_SOURCES = \
 lib/ecore_audio/ecore_audio.c \

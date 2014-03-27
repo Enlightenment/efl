@@ -33,7 +33,8 @@ extern "C"
  * @ingroup Ecore_Audio_Group
  * @{
  */
-
+#include "ecore_audio_out_pulse.eo.h"
+#if 0
 #define ECORE_AUDIO_OBJ_OUT_PULSE_CLASS ecore_audio_obj_out_pulse_class_get() /**< Ecore_Audio pulseaudio output */
 
 /**
@@ -73,7 +74,8 @@ extern EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL;
  * Emitted when the outout context has failed. At this point the output is unusable and will never work, so it is advisable to delete it.
  */
 #define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL))
-   
+
+#endif
 /**
  * @}
  */
