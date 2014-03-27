@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elm_toolbar.eo.h"
+#if 0
 #define ELM_OBJ_TOOLBAR_CLASS elm_obj_toolbar_class_get()
 
 const Eo_Class *elm_obj_toolbar_class_get(void) EINA_CONST;
@@ -402,6 +404,7 @@ enum
  */
 #define elm_obj_toolbar_select_mode_get(ret) ELM_OBJ_TOOLBAR_ID(ELM_OBJ_TOOLBAR_SUB_ID_SELECT_MODE_GET), EO_TYPECHECK(Elm_Object_Select_Mode *, ret)
 
+#endif
 /**
  * @}
  */
