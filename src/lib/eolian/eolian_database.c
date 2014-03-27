@@ -52,7 +52,8 @@ typedef struct
    Eina_Stringshare *type;
    Eina_Stringshare *description;
    Eolian_Parameter_Dir param_dir;
-   Eina_Bool is_const :1; /* True if const in this function (e.g get) but not const in the opposite one (e.g set) */
+   Eina_Bool is_const_on_get :1; /* True if const in this the get property */
+   Eina_Bool is_const_on_set :1; /* True if const in this the set property */
    Eina_Bool nonull :1; /* True if this argument cannot be NULL */
    Eina_Bool own :1; /* True if the ownership of this argument passes to the caller/callee */
 } _Parameter_Desc;
@@ -790,19 +791,25 @@ eolian_parameter_information_get(Eolian_Function_Parameter param_desc, Eolian_Pa
 }
 
 void
-database_parameter_get_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_const)
+database_parameter_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_get, Eina_Bool is_const)
 {
    _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN(param);
-   param->is_const = is_const;
+   if (is_get)
+      param->is_const_on_get = is_const;
+   else
+      param->is_const_on_set = is_const;
 }
 
 EAPI Eina_Bool
-eolian_parameter_get_const_attribute_get(Eolian_Function_Parameter param_desc)
+eolian_parameter_const_attribute_get(Eolian_Function_Parameter param_desc, Eina_Bool is_get)
 {
    _Parameter_Desc *param = (_Parameter_Desc *)param_desc;
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
-   return param->is_const;
+   if (is_get)
+      return param->is_const_on_get;
+   else
+      return param->is_const_on_set;
 }
 
 void

@@ -196,7 +196,7 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
         Eina_Bool add_star = EINA_FALSE;
         Eolian_Parameter_Dir pdir;
         eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, &pdesc);
-        Eina_Bool is_const = eolian_parameter_get_const_attribute_get(data);
+        Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == GET);
         if (ftype == GET) {
              add_star = EINA_TRUE;
              pdir = EOLIAN_OUT_PARAM;
@@ -390,7 +390,7 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
                   void* data = eina_list_data_get(l);
                   eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &rettype, &retname, NULL);
                   var_as_ret = EINA_TRUE;
-                  ret_const = eolian_parameter_get_const_attribute_get(data);
+                  ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
           }
      }
@@ -413,13 +413,13 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
         const char *pname;
         const char *ptype;
         eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &ptype, &pname, NULL);
-        Eina_Bool is_const = eolian_parameter_get_const_attribute_get(data);
+        Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == GET);
         eina_strbuf_append_printf(va_args, "   %s%s %s = va_arg(*list, %s%s);\n",
               ftype == GET && is_const?"const ":"", ptype, pname,
               ftype == GET && is_const?"const ":"", _varg_upgr(ptype));
         eina_strbuf_append_printf(params, ", %s", pname);
         eina_strbuf_append_printf(full_params, ", %s%s %s",
-              ftype == GET && eolian_parameter_get_const_attribute_get(data)?"const ":"",
+              ftype == GET && eolian_parameter_const_attribute_get(data, ftype == GET)?"const ":"",
               ptype, pname);
      }
    if (!var_as_ret)
@@ -430,15 +430,15 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
              const char *ptype;
              Eolian_Parameter_Dir pdir;
              eolian_parameter_information_get((Eolian_Function_Parameter)data, &pdir, &ptype, &pname, NULL);
-             Eina_Bool is_const = eolian_parameter_get_const_attribute_get(data);
+             Eina_Bool is_const = eolian_parameter_const_attribute_get(data, ftype == GET);
              Eina_Bool had_star = !!strchr(ptype, '*');
              if (ftype == UNRESOLVED || ftype == METHOD_FUNC) add_star = (pdir == EOLIAN_OUT_PARAM);
              eina_strbuf_append_printf(va_args, "   %s%s%s%s%s = va_arg(*list, %s%s%s%s);\n",
-                   ftype == GET && is_const?"const ":"", ptype, had_star?"":" ", add_star?"*":"", pname,
-                   ftype == GET && is_const?"const ":"", add_star ? ptype : _varg_upgr(ptype), !had_star && add_star?" ":"", add_star?"*":"");
+                   is_const?"const ":"", ptype, had_star?"":" ", add_star?"*":"", pname,
+                   is_const?"const ":"", add_star ? ptype : _varg_upgr(ptype), !had_star && add_star?" ":"", add_star?"*":"");
              eina_strbuf_append_printf(params, ", %s", pname);
              eina_strbuf_append_printf(full_params, ", %s%s%s%s%s",
-                   ftype == GET && eolian_parameter_get_const_attribute_get(data)?"const ":"",
+                   is_const?"const ":"",
                    ptype, had_star?"":" ", add_star?"*":"", pname);
           }
      }

@@ -1408,22 +1408,18 @@ eo_tokenizer_database_fill(const char *filename)
                         accessor->comment);
                   Eo_Accessor_Param *acc_param;
                   Eina_List *m2;
-                  /* Only in get access, we check const attribute */
-                  if (accessor->type == GETTER)
+                  EINA_LIST_FOREACH(accessor->params, m2, acc_param)
                     {
-                       EINA_LIST_FOREACH(accessor->params, m2, acc_param)
+                       Eolian_Function_Parameter desc = eolian_function_parameter_get(foo_id, acc_param->name);
+                       if (!desc)
                          {
-                            Eolian_Function_Parameter desc = eolian_function_parameter_get(foo_id, acc_param->name);
-                            if (!desc)
-                              {
-                                 printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
-                              }
-                            else
-                               if (strstr(acc_param->attrs, "const"))
-                                 {
-                                    database_parameter_get_const_attribute_set(desc, EINA_TRUE);
-                                 }
+                            printf("Error - %s not known as parameter of property %s\n", acc_param->name, prop->name);
                          }
+                       else
+                          if (strstr(acc_param->attrs, "const"))
+                            {
+                               database_parameter_const_attribute_set(desc, accessor->type == GETTER, EINA_TRUE);
+                            }
                     }
                }
              database_class_function_add(kls->name, foo_id);

@@ -86,7 +86,7 @@ Eolian_Function_Parameter database_property_value_add(Eolian_Function foo_id, co
 /* Add a parameter to a method */
 Eolian_Function_Parameter database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, const char *type, const char *name, const char *description);
 
-void database_parameter_get_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_const);
+void database_parameter_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_get, Eina_Bool is_const);
 
 void database_parameter_nonull_set(Eolian_Function_Parameter, Eina_Bool nonull);
 
