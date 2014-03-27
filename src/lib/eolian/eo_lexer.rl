@@ -424,6 +424,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    # chars allowed on the return line.
    return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-');
+   func_name         = alnum+ >save_fpc (alnum | '_' )+;
 }%%
 
 %%{
@@ -625,7 +626,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto tokenize_class;
    }
 
-   begin_property = ident %end_property_name ignore* begin_def;
+   begin_property = func_name %end_property_name ignore* begin_def;
 
    tokenize_properties := |*
       ignore+;       #=> show_ignore;
@@ -749,7 +750,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto tokenize_class;
    }
 
-   begin_method = ident %end_method_name ignore* begin_def;
+   begin_method = func_name %end_method_name ignore* begin_def;
 
    tokenize_methods := |*
       ignore+;       #=> show_ignore;
