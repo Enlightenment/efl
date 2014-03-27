@@ -1,0 +1,14 @@
+class Elm_Widget_Access_Object (Elm_Atspi_Object)
+{
+   data:null;
+   implements {
+      Eo_Base::constructor;
+      Elm_Interface_Atspi_Component::focus_grab;
+      Elm_Atspi_Object::name::get;
+      Elm_Atspi_Object::parent::get;
+      Elm_Atspi_Object::state::get;
+      Elm_Atspi_Object::role::get;
+      Elm_Atspi_Object::children::get;
+   }
+
+}

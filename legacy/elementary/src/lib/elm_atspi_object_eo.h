@@ -1,8 +1,11 @@
 void _elm_atspi_object_global_callback_add(Eo_Event_Cb cv, void *user_data);
 void _elm_atspi_object_global_callback_del(Eo_Event_Cb cv);
 
+#include "elm_widget_access_object.eo.h"
+#if 0
 #define ELM_ATSPI_WIDGET_CLASS elm_atspi_widget_obj_class_get()
 const Eo_Class *elm_atspi_widget_obj_class_get(void) EINA_CONST;
+#endif
 
 #include "elm_atspi_object.eo.h"
 #if 0

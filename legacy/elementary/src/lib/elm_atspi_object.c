@@ -413,11 +413,11 @@ _emit_atspi_state_changed_unfocused_event(void *data, Evas_Object *eo EINA_UNUSE
    eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &evdata[0], NULL));
 }
 
-static void
-_widget_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_widget_access_object_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *internal_obj = NULL;
-   eo_do_super(obj, ELM_ATSPI_WIDGET_CLASS, eo_constructor());
+   eo_do_super(obj, ELM_WIDGET_ACCESS_OBJECT_CLASS, eo_constructor());
 
    eo_do(obj, eo_parent_get(&internal_obj));
 
@@ -428,27 +428,23 @@ _widget_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    evas_object_smart_callback_add(internal_obj, "unfocused", _emit_atspi_state_changed_unfocused_event, obj);
 }
 
-static void
-_widget_name_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const char*
+_elm_widget_access_object_elm_atspi_object_name_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(const char **, ret, list);
    Evas_Object *widget = NULL;
-   const char *name = NULL;
 
    eo_do(obj, elm_atspi_obj_object_get(&widget));
-   name = elm_object_text_get(widget);
-   if (ret) *ret = name;
+   return elm_object_text_get(widget);
 }
 
-static void
-_widget_role_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static AtspiRole
+_elm_widget_access_object_elm_atspi_object_role_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(AtspiRole*, ret, list);
    const char *type;
    AtspiRole role;
    Evas_Object *widget = NULL;
    eo_do(obj, elm_atspi_obj_object_get(&widget));
-   if (!widget) return;
+   if (!widget) return ATSPI_ROLE_INVALID;
    type = evas_object_type_get(widget);
 
    // FIXME make it hash or cast some first bytes to int.
@@ -459,31 +455,26 @@ _widget_role_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else
      role = ATSPI_ROLE_UNKNOWN;
 
-   if (ret) *ret = role;
+   return role;
 }
 
-static void
-_widget_parent_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Elm_Atspi_Object*
+_elm_widget_access_object_elm_atspi_object_parent_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Elm_Atspi_Object **, ret, list);
    Evas_Object *widget = NULL;
-   Elm_Atspi_Object *parent;
 
    eo_do(obj, elm_atspi_obj_object_get(&widget));
    widget = elm_object_parent_widget_get(widget);
 
    if (widget)
-     parent = _elm_atspi_factory_construct(widget);
+     return _elm_atspi_factory_construct(widget);
    else // if parent is not found, attach it to atspi root object.
-     parent = _elm_atspi_root_object_get();
-
-   if (ret) *ret = parent;
+     return _elm_atspi_root_object_get();
 }
 
-static void
-_widget_children_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_List*
+_elm_widget_access_object_elm_atspi_object_children_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Eina_List **, ret, list);
    Evas_Object *widget = NULL;
    Eina_List *l, *accs = NULL;
    Elm_Widget_Smart_Data *sd;
@@ -492,7 +483,7 @@ _widget_children_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    eo_do(obj, elm_atspi_obj_object_get(&widget));
 
    sd = eo_data_scope_get(widget, ELM_OBJ_WIDGET_CLASS);
-   if (!sd) return;
+   if (!sd) return NULL;
 
    EINA_LIST_FOREACH(sd->subobjs, l, widget)
      {
@@ -501,21 +492,17 @@ _widget_children_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
         if (aobj)
           accs = eina_list_append(accs, aobj);
      }
-   if (ret)
-     *ret = accs;
-   else
-     eina_list_free(accs);
+   return accs;
 }
 
-static void
-_widget_state_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Elm_Atspi_State
+_elm_widget_access_object_elm_atspi_object_state_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Elm_Atspi_State *, ret, list);
    Evas_Object *widget;
    Elm_Atspi_State states;
    eo_do(obj, elm_atspi_obj_object_get(&widget));
 
-   eo_do_super(obj, ELM_ATSPI_WIDGET_CLASS, elm_atspi_obj_state_get(&states));
+   eo_do_super(obj, ELM_WIDGET_ACCESS_OBJECT_CLASS, elm_atspi_obj_state_get(&states));
 
    if (elm_object_focus_get(widget))
      BIT_FLAG_SET(states, ATSPI_STATE_FOCUSED);
@@ -524,58 +511,28 @@ _widget_state_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    if (!elm_object_disabled_get(widget))
      BIT_FLAG_SET(states, ATSPI_STATE_ENABLED);
 
-   if (ret) *ret = states;
+   return states;
 }
 
-static void
-_widget_comp_focus_grab(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_widget_access_object_elm_interface_atspi_component_focus_grab(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Eina_Bool*, ret, list);
    Evas_Object *evobj = NULL;
-   if (ret) *ret = EINA_FALSE;
 
    eo_do(obj, elm_atspi_obj_object_get(&evobj));
-   EINA_SAFETY_ON_NULL_RETURN(evobj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evobj, EINA_FALSE);
    if (elm_object_focus_allow_get(evobj))
      {
        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(evobj));
-	   if (!ee) return;
+       if (!ee) return EINA_FALSE;
        ecore_evas_activate(ee);
        elm_object_focus_set(evobj, EINA_TRUE);
-       if (ret) *ret = EINA_TRUE;
+       return EINA_TRUE;
      }
+   return EINA_FALSE;
 }
 
-static void
-_widget_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _widget_constructor),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_NAME_GET), _widget_name_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_GET), _widget_role_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET), _widget_parent_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET), _widget_children_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_STATE_GET), _widget_state_get),
-        EO_OP_FUNC(ELM_INTERFACE_ATSPI_COMPONENT_ID(ELM_INTERFACE_ATSPI_COMPONENT_SUB_ID_FOCUS_GRAB), _widget_comp_focus_grab),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Class_Description widget_class_desc = {
-     EO_VERSION,
-     "Elm_Widget_Access_Object",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     _widget_class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_atspi_widget_obj_class_get, &widget_class_desc, ELM_ATSPI_OBJ_CLASS, NULL);
-
-
+#include "elm_widget_access_object.eo.c"
 /// Elm_Atspi_App base class
 #define ELM_ATSPI_APP_CLASS elm_atspi_app_obj_class_get()
 
@@ -739,7 +696,7 @@ static const Eo_Class_Description win_class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_atspi_win_obj_class_get, &win_class_desc, ELM_ATSPI_WIDGET_CLASS, ELM_INTERFACE_ATSPI_WINDOW_CLASS, NULL);
+EO_DEFINE_CLASS(elm_atspi_win_obj_class_get, &win_class_desc, ELM_WIDGET_ACCESS_OBJECT_CLASS, ELM_INTERFACE_ATSPI_WINDOW_CLASS, NULL);
 
 Elm_Atspi_Object*
 _elm_atspi_root_object_get(void)
@@ -774,7 +731,7 @@ _elm_atspi_factory_construct(Evas_Object *obj)
    else if (!strcmp(type, "elm_win"))
      ret = eo_add(ELM_ATSPI_WIN_CLASS, obj);
    else if (!strncmp(type, "elm_", 4)) // defaults to implementation for elm_widget class.
-     ret = eo_add(ELM_ATSPI_WIDGET_CLASS, obj);
+     ret = eo_add(ELM_WIDGET_ACCESS_OBJECT_CLASS, obj);
 
    if (ret) eo_unref(ret); // only evas_object should hold reference to atspi object
 

@@ -74,9 +74,7 @@ mixin Elm_Interface_Atspi_Component ()
       }
       focus_grab {
          legacy null;
-         params {
-            @out Eina_Bool ret;
-         }
+         return Eina_Bool;
       }
       accessible_at_point_get {
          legacy null;
