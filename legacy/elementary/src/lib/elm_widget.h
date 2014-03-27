@@ -508,7 +508,7 @@ struct _Elm_Access_Info
 struct _Elm_Action
 {
    const char *name;
-   Eina_Bool (*func)(Evas_Object *obj, const char *params);
+   void (*func)(Evas_Object *obj, const char *params);
 };
 
 void                  _elm_access_shutdown();
