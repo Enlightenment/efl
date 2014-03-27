@@ -5610,8 +5610,8 @@ EAPI char                                    *evas_textblock_text_markup_to_utf8
  *
  * @param obj the textblock object to work with (if @c NULL, it just does the
  * default behaviour, i.e with no extra object information).
- * @param text The markup text (if @c NULL, return @c NULL).
- * @return An allocated plain text version of the markup.
+ * @param text The plain text (if @c NULL, return @c NULL).
+ * @return An allocated markup version of the plain text.
  * @since 1.2
  */
 EAPI char                                    *evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
