@@ -409,7 +409,13 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
    evas_object_clip_recalc(obj);
 
    if (src_changed) is_active = EINA_TRUE;
-   else is_active = evas_object_is_active(eo_obj, obj);
+   else
+     {
+       is_active = evas_object_is_active(eo_obj, obj);
+       src_changed = is_active;
+     }
+   obj->is_active = is_active;
+
    RDI(level);
    RD("    [--- PROCESS [%p", obj);
    if (obj->name)
