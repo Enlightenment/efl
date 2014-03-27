@@ -111,6 +111,10 @@
 #ifndef GL_LUMINANCE16_ALPHA16
 # define GL_LUMINANCE16_ALPHA16 0x8048
 #endif
+#ifndef GL_ETC1_RGB8_OES
+# define GL_ETC1_RGB8_OES 0x8D64
+#endif
+
 
 #ifndef GL_UNPACK_ROW_LENGTH
 # define GL_UNPACK_ROW_LENGTH 0x0cf2
@@ -358,6 +362,7 @@ struct _Evas_GL_Shared
       Eina_Bool sec_image_map : 1;
       Eina_Bool bin_program : 1;
       Eina_Bool unpack_row_length : 1;
+      Eina_Bool etc1 : 1;
       // tuning params - per gpu/cpu combo?
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
@@ -839,7 +844,14 @@ extern void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
 extern void       (*glsym_glReleaseShaderCompiler)(void);
 extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
 extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
-
+extern void       (*glsym_glCompressedTexImage2d) (GLenum target,
+                                                   GLint level,
+                                                   GLenum internalformat,
+                                                   GLsizei width,
+                                                   GLsizei height,
+                                                   GLint border,
+                                                   GLsizei imageSize,
+                                                   const GLvoid * data);
 #ifdef GL_GLES
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
 extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);

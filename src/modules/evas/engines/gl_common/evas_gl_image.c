@@ -128,6 +128,13 @@ static const Evas_Colorspace known_cspace[] = {
    EVAS_COLORSPACE_ARGB8888
 };
 
+static const Evas_Colorspace known_etc1_cspace[] = {
+   EVAS_COLORSPACE_ETC1,
+   EVAS_COLORSPACE_GRY8,
+   EVAS_COLORSPACE_AGRY88,
+   EVAS_COLORSPACE_ARGB8888
+};
+
 static Evas_GL_Image *
 _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_Load_Opts *lo, int *error)
 {
@@ -177,19 +184,25 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
      }
    if (im_im->cache_entry.cspaces)
      {
+        const Evas_Colorspace *cspaces;
         unsigned int i;
+
+        if (gc->shared->info.etc1)
+          cspaces = known_etc1_cspace;
+        else
+          cspaces = known_cspace;
 
         for (i = 0; im_im->cache_entry.cspaces[i] != EVAS_COLORSPACE_ARGB8888; i++)
           {
              unsigned int j;
 
              for (j = 0;
-                  known_cspace[j] != EVAS_COLORSPACE_ARGB8888;
+                  cspaces[j] != EVAS_COLORSPACE_ARGB8888;
                   j++)
-               if (known_cspace[j] == im_im->cache_entry.cspaces[i])
+               if (cspaces[j] == im_im->cache_entry.cspaces[i])
                  break;
 
-             if (known_cspace[j] == im_im->cache_entry.cspaces[i])
+             if (cspaces[j] == im_im->cache_entry.cspaces[i])
                break;
           }
 
@@ -318,6 +331,10 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
       case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_AGRY88:
         break;
+      case EVAS_COLORSPACE_ETC1:
+        if (gc->shared->info.etc1) break;
+        ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
+        break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
         if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
@@ -361,6 +378,10 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
       case EVAS_COLORSPACE_ARGB8888:
       case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_AGRY88:
+        break;
+      case EVAS_COLORSPACE_ETC1:
+        if (gc->shared->info.etc1) break;
+        ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -413,6 +434,10 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
       case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_AGRY88:
          break;
+      case EVAS_COLORSPACE_ETC1:
+        if (gc->shared->info.etc1) break;
+        ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
+        break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
@@ -546,9 +571,10 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
    if (!im->gc->shared->info.sec_image_map) return;
    if (!im->gc->shared->info.bgra) return;
    // does not handle yuv yet.
-   if (im->cs.space != EVAS_COLORSPACE_ARGB8888 ||
-       im->cs.space != EVAS_COLORSPACE_GRY8 ||
-       im->cs.space != EVAS_COLORSPACE_AGRY88) return;
+   if (im->cs.space != EVAS_COLORSPACE_ARGB8888 &&
+       im->cs.space != EVAS_COLORSPACE_GRY8 &&
+       im->cs.space != EVAS_COLORSPACE_AGRY88 &&
+       im->cs.space != EVAS_COLORSPACE_ETC1) return;
    if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
      {
         if (im->cs.data)
@@ -725,6 +751,7 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_ARGB8888:
       case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_ETC1:
          if ((im->tex) &&
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {

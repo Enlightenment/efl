@@ -30,6 +30,10 @@ GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
 void       (*glsym_glEndTiling)            (GLuint a) = NULL;
 
+void       (*glsym_glCompressedTexImage2d) (GLenum target, GLint level, GLenum internalformat,
+                                            GLsizei width, GLsizei height, GLint border, GLsizei imageSize,
+                                            const GLvoid * data) = NULL;
+
 #ifdef GL_GLES
 // just used for finding symbols :)
 typedef void (*_eng_fn) (void);
@@ -211,6 +215,7 @@ gl_symbols(void)
 
    FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", secsym_func_uint);
 #endif
+   FINDSYM(glsym_glCompressedTexImage2d, "glCompressedTexImage2D", glsym_func_void);
 }
 
 static void shader_array_flush(Evas_Engine_GL_Context *gc);
@@ -623,6 +628,8 @@ evas_gl_common_context_new(void)
                  (strstr((char *)ext, "GL_EXT_texture_format_BGRA8888")))
                shared->info.bgra = 1;
 #endif
+             if (glsym_glCompressedTexImage2d && strstr((char *)ext, "OES_compressed_ETC1_RGB8_texture"))
+               shared->info.etc1 = 1;
 #ifdef GL_GLES
              // FIXME: there should be an extension name/string to check for
              // not just symbols in the lib
