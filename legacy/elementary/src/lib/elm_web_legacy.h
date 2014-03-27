@@ -543,7 +543,7 @@ EAPI Eina_Bool         elm_web_navigate(Evas_Object *obj, int steps);
  *
  * @ingroup Web
  */
-EAPI Eina_Bool         elm_web_back_possible_get(Evas_Object *obj);
+EAPI Eina_Bool         elm_web_back_possible_get(const Evas_Object *obj);
 
 /**
  * Queries whether it's possible to go forward in history
@@ -555,7 +555,7 @@ EAPI Eina_Bool         elm_web_back_possible_get(Evas_Object *obj);
  *
  * @ingroup Web
  */
-EAPI Eina_Bool         elm_web_forward_possible_get(Evas_Object *obj);
+EAPI Eina_Bool         elm_web_forward_possible_get(const Evas_Object *obj);
 
 /**
  * Queries whether it's possible to jump the given number of steps

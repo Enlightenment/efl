@@ -660,7 +660,9 @@ BUILT_SOURCES = \
 		elm_toolbar.eo.c \
 		elm_toolbar.eo.h \
 		elm_video.eo.c \
-		elm_video.eo.h
+		elm_video.eo.h \
+		elm_web.eo.c \
+		elm_web.eo.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -730,7 +732,8 @@ EXTRA_DIST += \
 	     elm_table.eo \
 	     elm_thumb.eo \
 	     elm_toolbar.eo \
-	     elm_video.eo
+	     elm_video.eo \
+	     elm_web.eo
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -800,5 +803,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_table.eo.h \
 				  elm_thumb.eo.h \
 				  elm_toolbar.eo.h \
-				  elm_video.eo.h
+				  elm_video.eo.h \
+				  elm_web.eo.h
 
