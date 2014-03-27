@@ -861,9 +861,7 @@ eolian_function_return_type_get(Eolian_Function foo_id, Eolian_Function_Type fty
       case UNRESOLVED: case METHOD_FUNC: key = EOLIAN_METHOD_RETURN_TYPE; break;
       default: return NULL;
      }
-   const char *ret = eolian_function_data_get(foo_id, key);
-   if (!ret) ret = "void";
-   return ret;
+   return eolian_function_data_get(foo_id, key);
 }
 
 void database_function_return_dflt_val_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_dflt_value)

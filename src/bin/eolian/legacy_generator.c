@@ -40,9 +40,10 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
+   Eina_Bool ret_is_void = EINA_FALSE;
 
    rettype = eolian_function_return_type_get(funcid, ftype);
-   if (rettype && !strcmp(rettype, "void")) rettype = NULL;
+   if (rettype && !strcmp(rettype, "void")) ret_is_void = EINA_TRUE;
    if (ftype == GET)
      {
         suffix = "_get";
@@ -158,7 +159,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
      }
    if (flags) eina_strbuf_append_printf(flags, ")");
 
-   if (rettype && strcmp(rettype, "void"))
+   if (rettype && !ret_is_void)
      {
         const char *pdesc = eolian_function_return_comment_get(funcid, ftype);
         eina_strbuf_append_printf(descparam, " * @param[out] ret %s\n", pdesc?pdesc:"No description supplied.");
@@ -201,13 +202,14 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
    const char *retname = NULL;
    Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
+   Eina_Bool ret_is_void = EINA_FALSE;
 
    Eina_Strbuf *fbody = eina_strbuf_new();
    Eina_Strbuf *fparam = eina_strbuf_new();
    Eina_Strbuf *eoparam = eina_strbuf_new();
 
    rettype = eolian_function_return_type_get(funcid, ftype);
-   if (rettype && !strcmp(rettype, "void")) rettype = NULL;
+   if (rettype && !strcmp(rettype, "void")) ret_is_void = EINA_TRUE;
    retname = "ret";
    if (ftype == GET)
      {
@@ -293,7 +295,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
 
    char tmp_ret_str[0xFF];
    sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype?rettype:"void");
-   if (rettype && strcmp(rettype, "void"))
+   if (rettype && !ret_is_void)
      {
         if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
         Eina_Bool had_star = !!strchr(rettype, '*');
@@ -309,7 +311,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
    eina_strbuf_replace_all(fbody, "@#eo_params", eina_strbuf_string_get(eoparam));
    eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
    eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);
-   eina_strbuf_replace_all(fbody, "@#ret_val", (rettype) ? retname : "");
+   eina_strbuf_replace_all(fbody, "@#ret_val", (rettype && !ret_is_void) ? retname : "");
    eina_strbuf_replace_all(fbody, "@#is_const", (ftype == GET || eolian_function_object_is_const(funcid)) ? "const " : "");
 
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
