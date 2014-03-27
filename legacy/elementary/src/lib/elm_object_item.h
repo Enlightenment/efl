@@ -731,6 +731,8 @@ EAPI int                          elm_object_item_track_get(const Elm_Object_Ite
  * @param it The Elementary object item
  * @param part The style
  *
+ * @since 1.9
+ *
  * @ingroup General
  */
 EAPI void                         elm_object_item_style_set(Elm_Object_Item *it, const char *part);
@@ -740,6 +742,8 @@ EAPI void                         elm_object_item_style_set(Elm_Object_Item *it,
  *
  * @param it The Elementary object item
  * @return The style of object item
+ *
+ * @since 1.9
  *
  * @ingroup General
  */
