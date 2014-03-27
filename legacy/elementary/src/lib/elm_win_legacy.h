@@ -526,7 +526,7 @@ EAPI void                  elm_win_available_profiles_set(Evas_Object *obj, cons
  * @ingroup Win
  * @since 1.8
  */
-EAPI Eina_Bool             elm_win_available_profiles_get(Evas_Object *obj, char ***profiles, unsigned int *count);
+EAPI Eina_Bool             elm_win_available_profiles_get(const Evas_Object *obj, char ***profiles, unsigned int *count);
 
 /**
  * Set the profile of a window.
@@ -659,7 +659,7 @@ EAPI void                  elm_win_size_base_set(Evas_Object *obj, int w, int h)
  * @see elm_win_size_step_set
  * @since 1.7
  */
-EAPI void                  elm_win_size_base_get(Evas_Object *obj, int *w, int *h);
+EAPI void                  elm_win_size_base_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * Set the window stepping used with sizing calculation
@@ -689,7 +689,7 @@ EAPI void                  elm_win_size_step_set(Evas_Object *obj, int w, int h)
  * @see elm_win_size_step_set
  * @since 1.7
  */
-EAPI void                  elm_win_size_step_get(Evas_Object *obj, int *w, int *h);
+EAPI void                  elm_win_size_step_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * Set the layer of the window.
@@ -1159,7 +1159,7 @@ EAPI void                  elm_win_illume_command_send(Evas_Object *obj, Elm_Ill
  *
  * @ingroup Win
  */
-EAPI Evas_Object          *elm_win_inlined_image_object_get(Evas_Object *obj);
+EAPI Evas_Object          *elm_win_inlined_image_object_get(const Evas_Object *obj);
 
 /**
  * Determine whether a window has focus
@@ -1190,7 +1190,7 @@ EAPI void                  elm_win_screen_constrain_set(Evas_Object *obj, Eina_B
  *
  * @ingroup Win
  */
-EAPI Eina_Bool             elm_win_screen_constrain_get(Evas_Object *obj);
+EAPI Eina_Bool             elm_win_screen_constrain_get(const Evas_Object *obj);
 
 /**
  * Get screen geometry details for the screen that a window is on

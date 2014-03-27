@@ -1,0 +1,1342 @@
+class Elm_Win (Elm_Widget)
+{
+   eo_prefix: elm_obj_win;
+   constructors {
+      constructor {
+         /*@ No description supplied by the EAPI. */
+         params {
+            @in const char *name;
+            @in Elm_Win_Type type;
+         }
+      }
+   }
+   properties {
+      keyboard_win {
+         set {
+            /*@
+            Sets whether the window is a keyboard.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get whether the window is a keyboard.
+
+            @return If the window is a virtual keyboard
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool is_keyboard; /*@ If true, the window is a virtual keyboard */
+         }
+      }
+      autodel {
+         set {
+            /*@
+            Set the window's autodel state.
+
+            When closing the window in any way outside of the program control, like
+            pressing the X button in the titlebar or using a command from the
+            Window Manager, a "delete,request" signal is emitted to indicate that
+            this event occurred and the developer can take any action, which may
+            include, or not, destroying the window object.
+
+            When the @p autodel parameter is set, the window will be automatically
+            destroyed when this event occurs, after the signal is emitted.
+            If @p autodel is @c EINA_FALSE, then the window will not be destroyed
+            and is up to the program to do so when it's required.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the window's autodel state.
+
+            @return If the window will automatically delete itself when closed
+
+            @see elm_win_autodel_set()
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool autodel; /*@ If true, the window will automatically delete itself when
+            closed */
+         }
+      }
+      override {
+         set {
+            /*@
+            Set the override state of a window.
+
+            A window with @p override set to EINA_TRUE will not be managed by the
+            Window Manager. This means that no decorations of any kind will be shown
+            for it, moving and resizing must be handled by the application, as well
+            as the window visibility.
+
+            This should not be used for normal windows, and even for not so normal
+            ones, it should only be used when there's a good reason and with a lot
+            of care. Mishandling override windows may result situations that
+            disrupt the normal workflow of the end user.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the override state of a window.
+
+            @return If true, the window is overridden
+
+            @see elm_win_override_set()
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool override; /*@ If true, the window is overridden */
+         }
+      }
+      iconified {
+         set {
+            /*@
+            Set the iconified state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the iconified state of a window.
+
+            @return If true, the window is iconified
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool iconified; /*@ If true, the window is iconified */
+         }
+      }
+      wm_available_rotations {
+         set {
+            /*@
+            Set the array of available window rotations.
+
+            This function is used to set the available rotations to give the hints to WM.
+            WM will refer this hints and set the orientation window properly.
+
+            @see elm_win_wm_rotation_available_rotations_get()
+
+            ingroup Win
+            @since 1.9 */
+            legacy elm_win_wm_rotation_available_rotations_set;
+            rotations: const;
+         }
+         get {
+            /*@
+            Get the array of available window rotations.
+
+            This function is used to get the available rotations.
+
+            @see elm_win_wm_rotation_available_rotations_set()
+
+            ingroup Win
+            @since 1.9 */
+            legacy elm_win_wm_rotation_available_rotations_get;
+            return Eina_Bool;
+         }
+         values {
+            int *rotations; /*@ The array of rotation value. */
+            unsigned int count; /*@ The number of array of rotations */
+         }
+      }
+      quickpanel_zone {
+         set {
+            /*@
+            Set which zone this quickpanel should appear in
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get which zone this quickpanel should appear in
+
+            @return The requested zone for this quickpanel
+
+            @ingroup Win */
+         }
+         values {
+            int zone; /*@ The requested zone for this quickpanel */
+         }
+      }
+      maximized {
+         set {
+            /*@
+            Set the maximized state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the maximized state of a window.
+
+            @return If true, the window is maximized
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool maximized; /*@ If true, the window is maximized */
+         }
+      }
+      modal {
+         set {
+            /*@
+            Set the modal state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the modal state of a window.
+
+            @return If true, the window is modal
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool modal; /*@ If true, the window is modal */
+         }
+      }
+      icon_name {
+         set {
+            /*@
+            Set the icon name of the window
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the icon name of the window
+
+            The returned string is an internal one and should not be freed or
+            modified. It will also be invalid if a new icon name is set or if
+            the window is destroyed.
+
+            @return The icon name
+
+            @ingroup Win */
+         }
+         values {
+            const char *icon_name; /*@ The icon name to set */
+         }
+      }
+      withdrawn {
+         set {
+            /*@
+            Set the withdrawn state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the withdrawn state of a window.
+
+            @return If true, the window is withdrawn
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool withdrawn; /*@ If true, the window is withdrawn */
+         }
+      }
+      role {
+         set {
+            /*@
+            Set the role of the window
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the role of the window
+
+            The returned string is an internal one and should not be freed or
+            modified. It will also be invalid if a new role is set or if
+            the window is destroyed.
+
+            @return The role
+
+            @ingroup Win */
+         }
+         values {
+            const char *role; /*@ The role to set */
+         }
+      }
+      size_step {
+         set {
+            /*@
+            Set the window stepping used with sizing calculation
+
+            Base size + stepping is what is calculated for window sizing restrictions.
+
+            @ingroup Win
+            @see elm_win_size_step_get
+            @see elm_win_size_base_set
+            @since 1.7 */
+         }
+         get {
+            /*@
+            Get the stepping of a window.
+
+            @ingroup Win
+            @see elm_win_size_base_set
+            @see elm_win_size_step_set
+            @since 1.7 */
+         }
+         values {
+            int w; /*@ The stepping width (0 disables) */
+            int h; /*@ The stepping height (0 disables) */
+         }
+      }
+      focus_highlight_style {
+         set {
+            /*@
+            Set the style for the focus highlight on this window
+
+            Sets the style to use for theming the highlight of focused objects on
+            the given window. If @p style is NULL, the default will be used.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the style set for the focus highlight object
+
+            Get the style set for this windows highlight object, or NULL if none
+            is set.
+
+            @return The style set or NULL if none was. Default is used in that case.
+
+            @ingroup Win */
+         }
+         values {
+            const char *style; /*@ The style to set */
+         }
+      }
+      borderless {
+         set {
+            /*@
+            Set the borderless state of a window.
+
+            This function requests the Window Manager to not draw any decoration
+            around the window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the borderless state of a window.
+
+            @return If true, the window is borderless
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool borderless; /*@ If true, the window is borderless */
+         }
+      }
+      screen_constrain {
+         set {
+            /*@
+            Constrain the maximum width and height of a window to the width and height of its screen
+
+            When @p constrain is true, @p obj will never resize larger than the screen.
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Retrieve the constraints on the maximum width and height of a window relative to the width and height of its screen
+
+            When this function returns true, @p obj will never resize larger than the screen.
+            @return EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool constrain; /*@ EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction */
+         }
+      }
+      available_profiles {
+         set {
+            /*@
+            Set the array of available profiles to a window.
+
+            @ingroup Win
+            @since 1.8 */
+            profiles: const;
+         }
+         get {
+            /*@
+            Get the array of available profiles of a window.
+
+            @return EINA_TRUE if available profiles exist, EINA_FALSE otherwise
+
+            @ingroup Win
+            @since 1.8 */
+            return Eina_Bool;
+         }
+         values {
+            char **profiles; /*@ The string array of available profiles */
+            unsigned int count; /*@ The number of members in profiles */
+         }
+      }
+      focus_highlight_enabled {
+         set {
+            /*@
+            Set the enabled status for the focus highlight in a window
+
+            This function will enable or disable the focus highlight only for the
+            given window, regardless of the global setting for it
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the enabled value of the focus highlight for this window
+
+            @return EINA_TRUE if enabled, EINA_FALSE otherwise
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool enabled; /*@ The enabled value for the highlight */
+         }
+      }
+      title {
+         set {
+            /*@
+            Set the title of the window
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the title of the window
+
+            The returned string is an internal one and should not be freed or
+            modified. It will also be invalid if a new title is set or if
+            the window is destroyed.
+
+            @return The title
+
+            @ingroup Win */
+         }
+         values {
+            const char *title; /*@ The title to set */
+         }
+      }
+      alpha {
+         set {
+            /*@
+            Set the alpha channel state of a window.
+
+            If @p alpha is EINA_TRUE, the alpha channel of the canvas will be enabled
+            possibly making parts of the window completely or partially transparent.
+            This is also subject to the underlying system supporting it, like for
+            example, running under a compositing manager. If no compositing is
+            available, enabling this option will instead fallback to using shaped
+            windows, with elm_win_shaped_set().
+
+            @see elm_win_alpha_set()
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the alpha channel state of a window.
+
+            @return EINA_TRUE if the window alpha channel is enabled, EINA_FALSE
+            otherwise
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool alpha; /*@ EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise */
+         }
+      }
+      urgent {
+         set {
+            /*@
+            Set the urgent state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the urgent state of a window.
+
+            @return If true, the window is urgent
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool urgent; /*@ If true, the window is urgent */
+         }
+      }
+      rotation {
+         set {
+            /*@
+            Set the rotation of the window.
+
+            Most engines only work with multiples of 90.
+
+            This function is used to set the orientation of the window @p obj to
+            match that of the screen. The window itself will be resized to adjust
+            to the new geometry of its contents. If you want to keep the window size,
+            see elm_win_rotation_with_resize_set().
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the rotation of the window.
+
+            @return The rotation of the window in degrees (0-360)
+
+            @see elm_win_rotation_set()
+            @see elm_win_rotation_with_resize_set()
+
+            @ingroup Win */
+         }
+         values {
+            int rotation; /*@ The rotation of the window, in degrees (0-360),
+            counter-clockwise. */
+         }
+      }
+      icon_object {
+         set {
+            /*@
+            Set a window object's icon
+
+            This sets an image to be used as the icon for the given window, in
+            the window manager decoration part. The exact pixel dimensions of
+            the object (not object size) will be used, and the image pixels
+            will be used as-is when this function is called. If the image
+            object has been updated, then call this function again to source
+            the image pixels and put them on the window's icon. Note that
+            <b>only Evas image objects are allowed</b>, for
+
+            Example of usage:
+            @code
+            icon = evas_object_image_add(evas_object_evas_get(elm_window));
+            evas_object_image_file_set(icon, "/path/to/the/icon", NULL);
+            elm_win_icon_object_set(elm_window, icon);
+            evas_object_show(icon);
+            @endcode
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the icon object used for the window
+
+            The object returns is the one marked by elm_win_icon_object_set() as the
+            object to use for the window icon.
+
+            @return The icon object set
+
+            @ingroup Win */
+            icon: const;
+         }
+         values {
+            Evas_Object *icon; /*@ The Evas image object to use for an icon */
+         }
+      }
+      quickpanel_priority_minor {
+         set {
+            /*@
+            Set the minor priority of a quickpanel window
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the minor priority of a quickpanel window
+
+            @return The minor priority of this quickpanel
+
+            @ingroup Win */
+         }
+         values {
+            int priority; /*@ The minor priority for this quickpanel */
+         }
+      }
+      sticky {
+         set {
+            /*@
+            Set the sticky state of the window.
+
+            Hints the Window Manager that the window in @p obj should be left fixed
+            at its position even when the virtual desktop it's on moves or changes.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the sticky state of the window.
+
+            @return If true, the window's sticky state is enabled
+
+            @see elm_win_sticky_set()
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool sticky; /*@ If true, the window's sticky state is enabled */
+         }
+      }
+      keyboard_mode {
+         set {
+            /*@
+            Sets the keyboard mode of the window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the keyboard mode of the window.
+
+            @return The mode, one of #Elm_Win_Keyboard_Mode
+
+            @ingroup Win */
+         }
+         values {
+            Elm_Win_Keyboard_Mode mode; /*@ The mode to set, one of #Elm_Win_Keyboard_Mode */
+         }
+      }
+      focus_highlight_animate {
+         set {
+            /*@
+            Set the animate status for the focus highlight for this window.
+
+            This function will enable or disable the animation of focus highlight only
+            for the given window, regardless of the global setting for it
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the animate value of the focus highlight for this window
+
+            @return EINA_TRUE if animation is enabled, EINA_FALSE otherwise
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool animate; /*@ The enabled value for the highlight animation */
+         }
+      }
+      aspect {
+         set {
+            /*@
+            Set the aspect ratio of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the aspect ratio of a window.
+
+            @return The aspect ratio set (0 by default)
+
+            @ingroup Win */
+         }
+         values {
+            double aspect; /*@ If 0, the window has no aspect limits, otherwise it is
+            width divided by height */
+         }
+      }
+      quickpanel_priority_major {
+         set {
+            /*@
+            Set the major priority of a quickpanel window
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the major priority of a quickpanel window
+
+            @return The major priority of this quickpanel
+
+            @ingroup Win */
+         }
+         values {
+            int priority; /*@ The major priority for this quickpanel */
+         }
+      }
+      indicator_opacity {
+         set {
+            /*@
+            Sets the indicator opacity mode of the window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the indicator opacity mode of the window.
+
+            @return The mode, one of #Elm_Win_Indicator_Opacity_Mode
+
+            @ingroup Win */
+         }
+         values {
+            Elm_Win_Indicator_Opacity_Mode mode; /*@ The mode to set, one of #Elm_Win_Indicator_Opacity_Mode */
+         }
+      }
+      demand_attention {
+         set {
+            /*@
+            Set the demand_attention state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the demand_attention state of a window.
+
+            @return If true, the window is demand_attention
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool demand_attention; /*@ If true, the window is demand_attention */
+         }
+      }
+      wm_preferred_rotation {
+         set {
+            /*@
+            Set the preferred rotation value.
+
+            This function is used to set the orientation of window @p obj to spicific angle fixed.
+
+            @see elm_win_wm_rotation_preferred_rotation_get()
+
+            ingroup Win
+            @since 1.9 */
+            legacy null;
+         }
+         get {
+            /*@
+            Get the preferred rotation value.
+
+            This function is used to get the preferred rotoation value.
+
+            @return The preferred rotation of the window in degrees (0-360),
+            counter-clockwise.
+
+            @see elm_win_wm_rotation_preferred_rotation_set()
+
+            ingroup Win
+            @since 1.9 */
+            legacy elm_win_wm_rotation_preferred_rotation_get;
+         }
+         values {
+            int rotation; /*@ The preferred rotation of the window in degrees (0-360),
+            counter-clockwise. */
+         }
+      }
+      layer {
+         set {
+            /*@
+            Set the layer of the window.
+
+            What this means exactly will depend on the underlying engine used.
+
+            In the case of X11 backed engines, the value in @p layer has the
+            following meanings:
+            @li < 3: The window will be placed below all others.
+            @li > 5: The window will be placed above all others.
+            @li other: The window will be placed in the default layer.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the layer of the window.
+
+            @return The layer of the window
+
+            @see elm_win_layer_set()
+
+            @ingroup Win */
+         }
+         values {
+            int layer; /*@ The layer of the window */
+         }
+      }
+      profile {
+         set {
+            /*@
+            Set the profile of a window.
+
+            @ingroup Win
+            @since 1.8 */
+         }
+         get {
+            /*@
+            Get the profile of a window.
+
+            @return The string value of a window profile, or NULL if none exists
+
+            @ingroup Win
+            @since 1.8 */
+         }
+         values {
+            const char *profile; /*@ The string value of a window profile */
+         }
+      }
+      shaped {
+         set {
+            /*@
+            Set the shaped state of a window.
+
+            Shaped windows, when supported, will render the parts of the window that
+            has no content, transparent.
+
+            If @p shaped is EINA_FALSE, then it is strongly advised to have some
+            background object or cover the entire window in any other way, or the
+            parts of the canvas that have no data will show framebuffer artifacts.
+
+            @see elm_win_alpha_set()
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the shaped state of a window.
+
+            @return If true, the window is shaped
+
+            @see elm_win_shaped_set()
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool shaped; /*@ If true, the window is shaped */
+         }
+      }
+      fullscreen {
+         set {
+            /*@
+            Set the fullscreen state of a window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the fullscreen state of a window.
+
+            @return If true, the window is fullscreen
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool fullscreen; /*@ If true, the window is fullscreen */
+         }
+      }
+      wm_manual_rotation_done {
+         set {
+            /*@
+            Set the manual rotation done mode.
+
+            This function is used to set or reset the manual rotation done mode.
+            the message of rotation done is sent to WM after rendering its canvas in Ecore_Evas.
+            but if set the manual rotation done mode,
+            it's disabled and user should call the "elm_win_wm_rotation_manual_done" explicitly to sends the message.
+
+            @see elm_win_wm_rotation_manual_rotation_done_get()
+            @see elm_win_wm_rotation_manual_rotation_done()
+
+            ingroup Win
+            @since 1.9 */
+            legacy elm_win_wm_rotation_manual_rotation_done_set;
+         }
+         get {
+            /*@
+            Get the state of manual rotation done mode.
+
+            This function is used to get the state of manual rotation done mode.
+
+            @return @c EINA_TRUE manual rotationn done mode, @c EINA_FALSE otherwise.
+
+            @see elm_win_wm_rotation_manual_rotation_done_set()
+            @see elm_win_wm_rotation_manual_rotation_done()
+
+            ingroup Win
+            @since 1.9 */
+            legacy elm_win_wm_rotation_manual_rotation_done_get;
+         }
+         values {
+            Eina_Bool set; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
+         }
+      }
+      indicator_mode {
+         set {
+            /*@
+            Sets the indicator mode of the window.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get the indicator mode of the window.
+
+            @return The mode, one of #Elm_Win_Indicator_Mode
+
+            @ingroup Win */
+         }
+         values {
+            Elm_Win_Indicator_Mode mode; /*@ The mode to set, one of #Elm_Win_Indicator_Mode */
+         }
+      }
+      conformant {
+         set {
+            /*@
+            Set if this window is an illume conformant window
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get if this window is an illume conformant window
+
+            @return A boolean if this window is illume conformant or not
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool conformant; /*@ The conformant flag (1 = conformant, 0 = non-conformant) */
+         }
+      }
+      size_base {
+         set {
+            /*@
+            Set the base window size used with stepping calculation
+
+            Base size + stepping is what is calculated for window sizing restrictions.
+
+            @ingroup Win
+            @see elm_win_size_step_set
+            @see elm_win_size_base_get
+            @since 1.7 */
+         }
+         get {
+            /*@
+            Get the base size of a window.
+
+            @ingroup Win
+            @see elm_win_size_base_set
+            @see elm_win_size_step_set
+            @since 1.7 */
+         }
+         values {
+            int w; /*@ The base width */
+            int h; /*@ The base height */
+         }
+      }
+      quickpanel {
+         set {
+            /*@
+            Set a window to be an illume quickpanel window
+
+            By default window objects are not quickpanel windows.
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            Get if this window is a quickpanel or not
+
+            @return A boolean if this window is a quickpanel or not
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool quickpanel; /*@ The quickpanel flag (1 = quickpanel, 0 = normal window) */
+         }
+      }
+      rotation_with_resize {
+         set {
+            /*@
+            Rotates the window and resizes it.
+
+            Like elm_win_rotation_set(), but it also resizes the window's contents so
+            that they fit inside the current window geometry.
+
+            @ingroup Win */
+         }
+         values {
+            int rotation; /*@ The rotation of the window in degrees (0-360),
+            counter-clockwise. */
+         }
+      }
+      prop_focus_skip {
+         set {
+            /*@
+            Set the window to be skipped by keyboard focus
+
+            This sets the window to be skipped by normal keyboard input. This means
+            a window manager will be asked to not focus this window as well as omit
+            it from things like the taskbar, pager, "alt-tab" list etc. etc.
+
+            Call this and enable it on a window BEFORE you show it for the first time,
+            otherwise it may have no effect.
+
+            Use this for windows that have only output information or might only be
+            interacted with by the mouse or fingers, and never for typing input.
+            Be careful that this may have side-effects like making the window
+            non-accessible in some cases unless the window is specially handled. Use
+            this with care.
+
+            @ingroup Win */
+         }
+         values {
+            Eina_Bool skip; /*@ The skip flag state (EINA_TRUE if it is to be skipped) */
+         }
+      }
+      screen_position {
+         get {
+            /*@
+            Get the screen position of a window.
+
+            @ingroup Win */
+         }
+         values {
+            int x; /*@ The int to store the x coordinate to */
+            int y; /*@ The int to store the y coordinate to */
+         }
+      }
+      wm_rotation_supported {
+         get {
+            /*@
+            Query whether window manager supports window rotation or not.
+
+            The window manager rotation allows the WM to controls the rotation of application windows.
+            It is designed to support synchronized rotation for the multiple application windows at same time.
+
+            @return @c EINA_TRUE if the window manager rotation is supported, @c EINA_FALSE otherwise.
+
+            @see elm_win_wm_rotation_supported_get()
+            @see elm_win_wm_rotation_preferred_rotation_set()
+            @see elm_win_wm_rotation_preferred_rotation_get()
+            @see elm_win_wm_rotation_available_rotations_set()
+            @see elm_win_wm_rotation_available_rotations_get()
+            @see elm_win_wm_rotation_manual_rotation_done_set()
+            @see elm_win_wm_rotation_manual_rotation_done_get()
+            @see elm_win_wm_rotation_manual_rotation_done()
+
+            @ingroup Win
+            @since 1.9 */
+            return Eina_Bool;
+         }
+      }
+      xwindow {
+         get {
+            /*@
+            Get the Ecore_X_Window of an Evas_Object
+
+            @return The Ecore_X_Window of @p obj
+
+            @ingroup Win */
+            return Ecore_X_Window;
+         }
+      }
+      focus {
+         get {
+            /*@
+            Determine whether a window has focus
+            @return EINA_TRUE if the window exists and has focus, else EINA_FALSE
+
+            @ingroup Win */
+            return Eina_Bool;
+         }
+      }
+      screen_size {
+         get {
+            /*@
+            Get screen geometry details for the screen that a window is on
+            @ingroup Win */
+         }
+         values {
+            int x; /*@ where to return the horizontal offset value. May be NULL. */
+            int y; /*@ where to return the vertical offset value. May be NULL. */
+            int w; /*@ where to return the width value. May be NULL. */
+            int h; /*@ where to return the height value. May be NULL. */
+         }
+      }
+      main_menu {
+         get {
+            /*@
+            Get the Main Menu of a window.
+
+            @return The Main Menu of the window (NULL if error).
+
+            @ingroup Win */
+            return Evas_Object *;
+         }
+      }
+      wl_window {
+         get {
+            /*@
+            Get the Ecore_Wl_Window of an Evas_Object
+
+            @return The Ecore_Wl_Window of @p obj
+
+            @ingroup Win */
+            return Ecore_Wl_Window *;
+            legacy null;
+         }
+      }
+      window_id {
+         get {
+            /*@
+            Get the Ecore_Window of an Evas_Object
+
+            When Elementary is using a Wayland engine, this function will return the surface id of the elm window's surface.
+
+            @return The Ecore_Window of an Evas_Object
+
+            @ingroup Win
+            @since 1.8 */
+            return Ecore_Window;
+            legacy null;
+         }
+      }
+      screen_dpi {
+         get {
+            /*@
+            Get screen dpi for the screen that a window is on
+            @ingroup Win
+            @since 1.7 */
+         }
+         values {
+            int xdpi; /*@ Pointer to value to store return horizontal dpi. May be NULL. */
+            int ydpi; /*@ Pointer to value to store return vertical dpi. May be NULL. */
+         }
+      }
+      inlined_image_object {
+         get {
+            /*@
+            Get the inlined image object handle
+
+            When you create a window with elm_win_add() of type ELM_WIN_INLINED_IMAGE,
+            then the window is in fact an evas image object inlined in the parent
+            canvas. You can get this object (be careful to not manipulate it as it
+            is under control of elementary), and use it to do things like get pixel
+            data, save the image to a file, etc.
+
+            @return The inlined image object, or NULL if none exists
+
+            @ingroup Win */
+            return Evas_Object *;
+         }
+      }
+      type {
+         get {
+            /*@
+            Get the type of a window.
+
+            @return The type of a window object. If the object is not window object, return ELM_WIN_UNKNOWN.
+
+            @ingroup Win */
+            return Elm_Win_Type;
+         }
+      }
+   }
+   methods {
+      wm_manual_rotation_done {
+         /*@
+         To notify the rotation done to WM manually.
+
+         This function is used to notify the rotation done to WM manually.
+
+         @see elm_win_wm_rotation_manual_rotation_done_set()
+         @see elm_win_wm_rotation_manual_rotation_done_get()
+
+         ingroup Win
+         @since 1.9 */
+
+         legacy elm_win_wm_rotation_manual_rotation_done;
+      }
+      socket_listen {
+         /*@
+         Create a socket to provide the service for Plug widget
+
+         @return If socket creation is successful
+
+         @ingroup Win */
+
+         return Eina_Bool;
+         params {
+            @in const char *svcname; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
+            @in int svcnum; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */
+            @in Eina_Bool svcsys; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
+         }
+      }
+      illume_command_send {
+         /*@
+         Send a command to the windowing environment
+
+         This is intended to work in touchscreen or small screen device
+         environments where there is a more simplistic window management policy in
+         place. This uses the window object indicated to select which part of the
+         environment to control (the part that this window lives in), and provides
+         a command and an optional parameter structure (use NULL for this if not
+         needed).
+
+         @ingroup Win */
+
+         params {
+            @in Elm_Illume_Command command; /*@ The command to send */
+            @in void *params; /*@ Optional parameters for the command */
+         }
+      }
+      activate {
+         /*@
+         Activate a window object.
+
+         This function sends a request to the Window Manager to activate the
+         window pointed by @p obj. If honored by the WM, the window will receive
+         the keyboard focus.
+
+         @note This is just a request that a Window Manager may ignore, so calling
+         this function does not ensure in any way that the window will be the
+         active one after it.
+
+         @ingroup Win */
+
+      }
+      resize_object_add {
+         /*@
+         Add @p subobj as a resize object of window @p obj.
+
+
+         Setting an object as a resize object of the window means that the
+         @p subobj child's size and position will be controlled by the window
+         directly. That is, the object will be resized to match the window size
+         and should never be moved or resized manually by the developer.
+
+         In addition, resize objects of the window control what the minimum size
+         of it will be, as well as whether it can or not be resized by the user.
+
+         For the end user to be able to resize a window by dragging the handles
+         or borders provided by the Window Manager, or using any other similar
+         mechanism, all of the resize objects in the window should have their
+         evas_object_size_hint_weight_set() set to EVAS_HINT_EXPAND.
+
+         Also notice that the window can get resized to the current size of the
+         object if the EVAS_HINT_EXPAND is set @b after the call to
+         elm_win_resize_object_add(). So if the object should get resized to the
+         size of the window, set this hint @b before adding it as a resize object
+         (this happens because the size of the window and the object are evaluated
+         as soon as the object is added to the window).
+
+         @ingroup Win */
+
+         params {
+            @in Evas_Object *subobj; /*@ The resize object to add */
+         }
+      }
+      raise {
+         /*@
+         Raise a window object.
+
+         Places the window pointed by @p obj at the top of the stack, so that it's
+         not covered by any other window.
+
+         If elm_win_override_set() is not set, the Window Manager may ignore this
+         request.
+
+         @ingroup Win */
+
+      }
+      lower {
+         /*@
+         Lower a window object.
+
+         Places the window pointed by @p obj at the bottom of the stack, so that
+         no other window is covered by it.
+
+         If elm_win_override_set() is not set, the Window Manager may ignore this
+         request.
+
+         @ingroup Win */
+
+      }
+      resize_object_del {
+         /*@
+         Delete @p subobj as a resize object of window @p obj.
+
+         This function removes the object @p subobj from the resize objects of
+         the window @p obj. It will not delete the object itself, which will be
+         left unmanaged and should be deleted by the developer, manually handled
+         or set as child of some other container.
+
+         @ingroup Win */
+
+         params {
+            @in Evas_Object *subobj; /*@ The resize object to add */
+         }
+      }
+      center {
+         /*@
+         Center a window on its screen
+
+         This function centers window @p obj horizontally and/or vertically based on the values
+         of @p h and @p v.
+         @ingroup Win */
+
+         params {
+            @in Eina_Bool h; /*@ If true, center horizontally. If false, do not change horizontal location. */
+            @in Eina_Bool v; /*@ If true, center vertically. If false, do not change vertical location. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::hide;
+      Evas_Smart::show;
+      Evas_Smart::move;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::resize;
+      Elm_Widget::focus_direction;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::focus_next;
+      Elm_Widget::theme_apply;
+      Elm_Widget::on_focus;
+      Elm_Widget::event;
+   }
+   events {
+      delete,request;
+      focus,out;
+      focus,in;
+      moved;
+      withdrawn;
+      iconified;
+      normal;
+      stick;
+      unstick;
+      fullscreen;
+      unfullscreen;
+      maximized;
+      unmaximized;
+      ioerr;
+      indicator,prop,changed;
+      rotation,changed;
+      profile,changed;
+      focused;
+      unfocused;
+      wm,rotation,changed;
+   }
+
+}

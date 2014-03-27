@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elm_win.eo.h"
+#if 0
 #define ELM_OBJ_WIN_CLASS elm_obj_win_class_get()
 
 const Eo_Class *elm_obj_win_class_get(void) EINA_CONST;
@@ -1373,6 +1375,7 @@ enum
  */
 #define elm_obj_win_wm_manual_rotation_done() ELM_OBJ_WIN_ID(ELM_OBJ_WIN_SUB_ID_WM_MANUAL_ROTATION_DONE)
 
+#endif
 /**
  * @}
  */
