@@ -518,7 +518,7 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
 
    if (state)
      {
-        if ((input->pointer_focus) && (!input->grab) && (state))
+        if ((input->pointer_focus) && (!input->grab))
           {
              ecore_wl_input_grab(input, input->pointer_focus, button);
              input->grab_timestamp = timestamp;
