@@ -1163,6 +1163,7 @@ eet_data_image_read(Eet_File *ef,
  * @see eet_data_image_decode()
  * @see eet_data_image_decode_to_surface()
  * @see eet_data_image_read_to_surface_cipher()
+ * @see eet_data_image_decode_to_cspace_surface_cipher()
  *
  * @since 1.0.2
  * @ingroup Eet_File_Image_Group
@@ -1446,6 +1447,23 @@ eet_data_image_header_read_cipher(Eet_File *ef,
                                   Eet_Image_Encoding *lossy);
 
 /**
+ * Get the colorspace Eet can decode into of a given eet image ressource
+ *
+ * @param ef A valid eet file handle opened for reading.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param cspaces Returned pointer by Eet to a list of possible decoding colorspace finished by @c EET_COLORSPACE_ARGB8888. If @c NULL, only EET_COLORSPACE_ARGB8888 is supported.
+ * @return 1 on successful get, 0 otherwise.
+ *
+ * @since 1.10.0
+ * @ingroup Eet_File_Image_Group
+ */
+EAPI int
+eet_data_image_colorspace_get(Eet_File *ef,
+                              const char *name,
+                              const char *cipher_key,
+                              const Eet_Colorspace **cspaces);
+
+/**
  * Read image data from the named key in the eet file using a cipher.
  * @param ef A valid eet file handle opened for reading.
  * @param name Name of the entry. eg: "/base/file_i_want".
@@ -1513,7 +1531,8 @@ eet_data_image_read_cipher(Eet_File *ef,
  * @return 1 on success, 0 otherwise.
  *
  * This function reads an image from an eet file stored under the named
- * key in the eet file and return a pointer to the decompressed pixel data.
+ * key in the eet file and store the decompressed pixel data in the provided
+ * surface with an @c EET_COLORSPACE_ARGB8888 colorspace.
  *
  * The other parameters of the image (width, height etc.) are placed into
  * the values pointed to (they must be supplied). The pixel data is a linear
@@ -1532,6 +1551,7 @@ eet_data_image_read_cipher(Eet_File *ef,
  * parameter values may not contain any sensible data.
  *
  * @see eet_data_image_read_to_surface()
+ * @see eet_data_image_decode_to_cspace_surface_cipher()
  *
  * @since 1.0.2
  * @ingroup Eet_File_Image_Cipher_Group
@@ -1550,6 +1570,130 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef,
                                       int *compress,
                                       int *quality,
                                       Eet_Image_Encoding *lossy);
+
+
+/**
+ * Read image data from the named key in the eet file using a cipher.
+ * @param ef A valid eet file handle opened for reading.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param cipher_key The key to use as cipher.
+ * @param src_x The starting x coordinate from where to dump the stream.
+ * @param src_y The starting y coordinate from where to dump the stream.
+ * @param d A pointer to the pixel surface.
+ * @param w The expected width in pixels of the pixel surface to decode.
+ * @param h The expected height in pixels of the pixel surface to decode.
+ * @param row_stride The length of a pixels line in the destination surface.
+ * @param cspace The color space of the pixels bsurface.
+ * @param alpha A pointer to the int to hold the alpha flag.
+ * @param compress A pointer to the int to hold the compression amount.
+ * @param quality A pointer to the int to hold the quality amount.
+ * @param lossy A pointer to the int to hold the lossiness flag.
+ * @return 1 on success, 0 otherwise.
+ *
+ * This function reads an image from an eet file stored under the named
+ * key in the eet file and store the decompressed pixel data in the provided
+ * surface colorspace.
+ *
+ * The other parameters of the image (width, height etc.) are placed into
+ * the values pointed to (they must be supplied). The pixel data is a linear
+ * array of pixels starting from the top-left of the image scanning row by
+ * row from left to right. Each pixel is a 32bit value, with the high byte
+ * being the alpha channel, the next being red, then green, and the low byte
+ * being blue. The width and height are measured in pixels and will be
+ * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
+ * that the alpha channel is not used. 1 denotes that it is significant.
+ * Compress is filled with the compression value/amount the image was
+ * stored with. The quality value is filled with the quality encoding of
+ * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
+ * the image was encoded lossily or not.
+ *
+ * On success the function returns 1, and 0 on failure. On failure the
+ * parameter values may not contain any sensible data.
+ *
+ * @see eet_data_image_read_to_surface()
+ * @see eet_data_image_decode_to_cspace_surface_cipher()
+ * @see eet_data_image_read_to_surface_cipher()
+ *
+ * @since 1.10.0
+ * @ingroup Eet_File_Image_Cipher_Group
+ */
+EAPI int
+eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
+                                             const char   *name,
+                                             const char   *cipher_key,
+                                             unsigned int  src_x,
+                                             unsigned int  src_y,
+                                             unsigned int *d,
+                                             unsigned int  w,
+                                             unsigned int  h,
+                                             unsigned int  row_stride,
+                                             Eet_Colorspace cspace,
+                                             int          *alpha,
+                                             int          *comp,
+                                             int          *quality,
+                                             Eet_Image_Encoding *lossy);
+
+
+/**
+ * Read image data from the named key in the eet file using a cipher.
+ * @param ef A valid eet file handle opened for reading.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param cipher_key The key to use as cipher.
+ * @param src_x The starting x coordinate from where to dump the stream.
+ * @param src_y The starting y coordinate from where to dump the stream.
+ * @param d A pointer to the pixel surface.
+ * @param w The expected width in pixels of the pixel surface to decode.
+ * @param h The expected height in pixels of the pixel surface to decode.
+ * @param row_stride The length of a pixels line in the destination surface.
+ * @param cspace The color space of the pixel surface
+ * @param alpha A pointer to the int to hold the alpha flag.
+ * @param compress A pointer to the int to hold the compression amount.
+ * @param quality A pointer to the int to hold the quality amount.
+ * @param lossy A pointer to the int to hold the lossiness flag.
+ * @return 1 on success, 0 otherwise.
+ *
+ * This function reads an image from an eet file stored under the named
+ * key in the eet file and store the decompressed pixels in the specified
+ * color space inside the given surface.
+ *
+ * The other parameters of the image (width, height etc.) are placed into
+ * the values pointed to (they must be supplied). The pixel data is a linear
+ * array of pixels starting from the top-left of the image scanning row by
+ * row from left to right. Each pixel is a 32bit value, with the high byte
+ * being the alpha channel, the next being red, then green, and the low byte
+ * being blue. The width and height are measured in pixels and will be
+ * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
+ * that the alpha channel is not used. 1 denotes that it is significant.
+ * Compress is filled with the compression value/amount the image was
+ * stored with. The quality value is filled with the quality encoding of
+ * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
+ * the image was encoded lossily or not.
+ *
+ * On success the function returns 1, and 0 on failure. On failure the
+ * parameter values may not contain any sensible data.
+ *
+ * @see eet_data_image_read_to_surface()
+ * @see eet_data_image_read_to_surface_cipher()
+ *
+ * @since 1.10.0
+ * @ingroup Eet_File_Image_Cipher_Group
+ */
+
+EAPI int
+eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
+                                               const char   *cipher_key,
+                                               int           size,
+                                               unsigned int  src_x,
+                                               unsigned int  src_y,
+                                               unsigned int *d,
+                                               unsigned int  w,
+                                               unsigned int  h,
+                                               unsigned int  row_stride,
+                                               Eet_Colorspace cspace,
+                                               int          *alpha,
+                                               int          *comp,
+                                               int          *quality,
+                                               Eet_Image_Encoding *lossy);
 
 /**
  * Write image data to the named key in an eet file using a cipher.
