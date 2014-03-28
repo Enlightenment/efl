@@ -1998,7 +1998,6 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (h < minh) h = minh;
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
-   evas_object_move(obj, 0, 0);
    evas_object_resize(obj, w, h);
 }
 
