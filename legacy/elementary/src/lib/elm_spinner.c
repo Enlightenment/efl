@@ -759,6 +759,7 @@ _elm_spinner_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eina_stringshare_del(sd->label);
    ecore_timer_del(sd->delay_change_timer);
    ecore_timer_del(sd->spin_timer);
+   ecore_timer_del(sd->longpress_timer);
 
    if (sd->special_values)
      {
