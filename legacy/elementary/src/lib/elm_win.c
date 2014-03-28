@@ -2228,8 +2228,6 @@ _elm_win_frame_cb_move_start(void *data,
    (void)source;
 #endif
 
-   /* FIXME: Change mouse pointer */
-
    /* NB: Wayland handles moving surfaces by itself so we cannot
     * specify a specific x/y we want. Instead, we will pass in the
     * existing x/y values so they can be recorded as 'previous'
