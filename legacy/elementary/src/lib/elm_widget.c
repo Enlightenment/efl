@@ -1422,6 +1422,7 @@ _elm_widget_top_get(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->parent_obj)
      {
         Evas_Object *int_ret = NULL;
+        if (!eo_isa(sd->parent_obj, ELM_OBJ_WIDGET_CLASS)) return NULL;
         eo_do((Eo *) sd->parent_obj, elm_obj_widget_top_get(&int_ret));
         return int_ret;
      }

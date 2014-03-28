@@ -1784,13 +1784,16 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
    Evas_Object *top, *par;
    Ecore_X_Window xwin = 0;
 
-   top = elm_widget_top_get(obj);
-   if (!top)
+   if (elm_widget_is(obj))
      {
-        par = elm_widget_parent_widget_get(obj);
-        if (par) top = elm_widget_top_get(par);
+        top = elm_widget_top_get(obj);
+        if (!top)
+          {
+             par = elm_widget_parent_widget_get(obj);
+             if (par) top = elm_widget_top_get(par);
+          }
+        if (top) xwin = elm_win_xwindow_get(top);
      }
-   if (top) xwin = elm_win_xwindow_get(top);
    if (!xwin)
      {
         Ecore_Evas *ee;
@@ -2188,9 +2191,12 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    elm_win_override_set(dragwin, EINA_TRUE);
 
    /* dragwin has to be rotated as the main window is */
-   Evas_Object *win = elm_widget_top_get(obj);
-   if (win && eo_isa(win, ELM_OBJ_WIN_CLASS))
-     elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
+   if (elm_widget_is(obj))
+     {
+        Evas_Object *win = elm_widget_top_get(obj);
+        if (win && eo_isa(win, ELM_OBJ_WIN_CLASS))
+          elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
+     }
 
    if (createicon)
      {
@@ -3379,9 +3385,12 @@ _wl_elm_widget_window_get(Evas_Object *obj)
    Evas_Object *top;
    Ecore_Wl_Window *win = NULL;
 
-   top = elm_widget_top_get(obj);
-   if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
-   if (top) win = elm_win_wl_window_get(top);
+   if (elm_widget_is(obj))
+     {
+        top = elm_widget_top_get(obj);
+        if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
+        if (top) win = elm_win_wl_window_get(top);
+     }
    if (!win)
      {
         Ecore_Evas *ee;
