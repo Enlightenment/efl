@@ -750,6 +750,8 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Smart_Data *sd,
         clip = evas_object_clip_get(target);
         if (clip) evas_object_clip_set(obj, clip);
      }
+
+   edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
 }
 
 static void

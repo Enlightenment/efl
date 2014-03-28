@@ -148,5 +148,10 @@ group { name: "elm/focus_highlight/top/default";
          target: "sel";
          after: "pulse";
       }
+      program {
+         signal: "elm,state,anim,stop"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
    }
 }

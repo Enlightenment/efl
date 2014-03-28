@@ -57,6 +57,15 @@ _tb_sel(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
    printf("tb sel %p\n", obj);
 }
 
+static void
+_focus_anim_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (elm_check_state_get(obj))
+     elm_win_focus_highlight_animate_set(data, EINA_TRUE);
+   else
+     elm_win_focus_highlight_animate_set(data, EINA_FALSE);
+}
+
 void
 test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -408,6 +417,23 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
                       }
                }
           }
+     }
+
+   Evas_Object *bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   elm_box_pack_end(tbx, bx);
+   my_show(bx);
+
+     {
+        Evas_Object *ck;
+        ck = elm_check_add(bx);
+        elm_object_text_set(ck, "Focus Highlight Animation Enable");
+        elm_box_pack_end(bx, ck);
+        my_show(ck);
+        evas_object_smart_callback_add(ck, "changed",
+                                       _focus_anim_changed,
+                                       win);
      }
 }
 
