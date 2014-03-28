@@ -282,7 +282,7 @@ main(void)
    _scene_setup(&data);
 
    /* Set the image object as render target for 3D scene. */
-   evas_object_image_t3d_scene_set(image, data.scene);
+   evas_object_image_3d_scene_set(image, data.scene);
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);

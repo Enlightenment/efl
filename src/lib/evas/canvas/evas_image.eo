@@ -998,7 +998,7 @@ class Evas_Image (Evas_Object)
          }
       }
 
-      t3d_scene {
+      3d_scene {
          set {
             /*
               @def evas_obj_image_3d_scene_set

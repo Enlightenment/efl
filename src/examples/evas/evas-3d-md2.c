@@ -148,7 +148,7 @@ main(void)
 
    image = evas_object_image_filled_add(evas);
    evas_object_image_size_set(image, WIDTH, HEIGHT);
-   evas_object_image_t3d_scene_set(image, scene);
+   evas_object_image_3d_scene_set(image, scene);
    evas_object_move(image, 0, 0);
    evas_object_resize(image, WIDTH, HEIGHT);
    evas_object_show(image);
