@@ -232,10 +232,8 @@ _get_value_in_key_string(const char *oldstring, const char *key, char **value)
         int key_len = strlen(key);
         endtag = curlocater + key_len;
         if ((!endtag) || (*endtag != '='))
-          {
-             foundflag = 0;
              return -1;
-          }
+
         firstindex = abs(oldstring - curlocater);
         firstindex += key_len + 1; // strlen("key") + strlen("=")
         *value = (char *)oldstring + firstindex;
