@@ -2847,12 +2847,11 @@ _accel_is_gl(void)
 {
    if ((_elm_accel_preference) &&
        ((!strcasecmp(_elm_accel_preference, "gl")) ||
-           (!strcasecmp(_elm_accel_preference, "opengl")) ||
-           (!strcasecmp(_elm_accel_preference, "3d")) ||
-           (!strcasecmp(_elm_accel_preference, "hw")) ||
-           (!strcasecmp(_elm_accel_preference, "accel")) ||
-           (!strcasecmp(_elm_accel_preference, "hardware")) ||
-           (!strcasecmp(_elm_accel_preference, "accel"))
+        (!strcasecmp(_elm_accel_preference, "opengl")) ||
+        (!strcasecmp(_elm_accel_preference, "3d")) ||
+        (!strcasecmp(_elm_accel_preference, "hw")) ||
+        (!strcasecmp(_elm_accel_preference, "accel")) ||
+        (!strcasecmp(_elm_accel_preference, "hardware"))
        ))
      return EINA_TRUE;
    return EINA_FALSE;
