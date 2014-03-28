@@ -275,7 +275,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              e->x = dev->mouse.x;
              e->y = dev->mouse.y;
              if (iev->code == REL_HWHEEL) e->direction = 1;
-             e->z = iev->value;
+             e->z = -iev->value;
              e->root.x = dev->mouse.x;
              e->root.y = dev->mouse.y;
 
