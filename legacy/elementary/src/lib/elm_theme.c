@@ -29,18 +29,22 @@ static inline void
 _elm_theme_item_finalize(Elm_Theme_Files *files,
                          const char *item,
                          Eina_File *f,
-                         Eina_Bool prepend)
+                         Eina_Bool prepend,
+                         Eina_Bool istheme)
 {
-   char *version;
-   
    if (!f) return;
-   if (!(version = edje_mmap_data_get(f, "version"))) return;
-   if (atoi(version) < 110) // bump this version number when we need to
+   if (istheme)
      {
+        char *version;
+
+        if (!(version = edje_mmap_data_get(f, "version"))) return;
+        if (atoi(version) < 110) // bump this version number when we need to
+          {
+             free(version);
+             return;
+          }
         free(version);
-        return;
      }
-   free(version);
    if (prepend)
      {
         files->items = eina_list_prepend(files->items,
@@ -56,7 +60,7 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
 }
 
 static void
-_elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool prepend)
+_elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool prepend, Eina_Bool istheme)
 {
    Eina_Strbuf *buf = NULL;
    Eina_File *f = NULL;
@@ -86,7 +90,7 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool pre
                                   "%s/"ELEMENTARY_BASE_DIR"/themes/%s.edj",
                                   home, item);
         f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
-        _elm_theme_item_finalize(files, item, f, prepend);
+        _elm_theme_item_finalize(files, item, f, prepend, istheme);
 
         eina_strbuf_reset(buf);
         eina_strbuf_append_printf(buf,
@@ -96,7 +100,7 @@ _elm_theme_file_item_add(Elm_Theme_Files *files, const char *item, Eina_Bool pre
         /* Finalize will be done by the common one */
      }
 
-   _elm_theme_item_finalize(files, item, f, prepend);
+   _elm_theme_item_finalize(files, item, f, prepend, istheme);
 
  on_error:
    if (buf) eina_strbuf_free(buf);
@@ -469,7 +473,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
    EINA_LIST_FREE(th->themes.handles, f) eina_file_close(f);
 
    EINA_LIST_FREE(names, p)
-     _elm_theme_file_item_add(&th->themes, p, EINA_FALSE);
+     _elm_theme_file_item_add(&th->themes, p, EINA_FALSE, EINA_TRUE);
    return EINA_TRUE;
 }
 
@@ -491,7 +495,7 @@ elm_theme_new(void)
    Elm_Theme *th = calloc(1, sizeof(Elm_Theme));
    if (!th) return NULL;
    th->ref = 1;
-   _elm_theme_file_item_add(&th->themes, "default", EINA_FALSE);
+   _elm_theme_file_item_add(&th->themes, "default", EINA_FALSE, EINA_TRUE);
    themes = eina_list_append(themes, th);
    return th;
 }
@@ -579,7 +583,7 @@ elm_theme_overlay_add(Elm_Theme *th, const char *item)
 {
    if (!item) return;
    if (!th) th = &(theme_default);
-   _elm_theme_file_item_add(&th->overlay, item, EINA_TRUE);
+   _elm_theme_file_item_add(&th->overlay, item, EINA_TRUE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
@@ -598,7 +602,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
    Eina_File *file = eina_file_dup(f);
 
    if (!th) th = &(theme_default);
-   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_TRUE);
+   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_TRUE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
@@ -623,7 +627,7 @@ elm_theme_extension_add(Elm_Theme *th, const char *item)
 {
    if (!item) return;
    if (!th) th = &(theme_default);
-   _elm_theme_file_item_add(&th->extension, item, EINA_FALSE);
+   _elm_theme_file_item_add(&th->extension, item, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
@@ -643,7 +647,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 
    if (!f) return;
    if (!th) th = &(theme_default);
-   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_FALSE);
+   _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
