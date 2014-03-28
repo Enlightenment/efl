@@ -703,3 +703,18 @@ err:
         output->next = NULL;
      }
 }
+
+EAPI void 
+ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h)
+{
+   drmModeFB *fb;
+
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (!dev) return;
+
+   if (!(fb = drmModeGetFB(dev->drm.fd, output))) return;
+   if (w) *w = fb->width;
+   if (h) *h = fb->height;
+   drmModeFreeFB(fb);
+}
