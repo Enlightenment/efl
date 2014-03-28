@@ -123,10 +123,9 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
           strcpy((char *)e->compose, compose);
 
         e->modifiers = 0;
-        if (dev->keyboard.shift)
-          e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
         if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
-        if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
         if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
 
         e->timestamp = ecore_loop_time_get() * 1000.0;
@@ -187,10 +186,9 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         e->same_screen = 1;
 
         e->modifiers = 0;
-        if (dev->keyboard.shift)
-          e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
         if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
-        if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
         if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
 
         e->x = dev->mouse.x;
@@ -251,7 +249,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              e->modifiers = 0;
              if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
              if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
-             if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+             if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
              if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
 
              e->x = dev->mouse.x;
@@ -289,7 +287,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              e->modifiers = 0;
              if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
              if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
-             if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+             if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
              if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
 
              e->timestamp = ecore_loop_time_get() * 1000.0;
