@@ -57,7 +57,7 @@ _generate_eo_h_file(char *filename, const char *classname)
 
    const char *htext = eina_strbuf_string_get(hfile);
 
-   FILE* fd = fopen(filename, "w");
+   FILE* fd = fopen(filename, "wb");
    if (!fd)
      {
         const char *err = strerror(errno);
@@ -102,7 +102,7 @@ _generate_c_file(char *filename, const char *classname)
            goto end;
         }
 
-   FILE* fd = fopen(filename, "w");
+   FILE* fd = fopen(filename, "wb");
    if (!fd)
      {
         ERR("Couldnt open file %s for writing", filename);
@@ -137,7 +137,7 @@ _generate_legacy_header_file(char *filename, const char *classname)
         goto end;
      }
 
-   FILE* fd = fopen(filename, "w");
+   FILE* fd = fopen(filename, "wb");
    if (!fd)
      {
         ERR ("Couldnt open file %s for writing", filename);
