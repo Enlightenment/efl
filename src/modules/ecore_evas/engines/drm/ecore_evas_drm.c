@@ -231,7 +231,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
         einfo->info.depth = 32; // FIXME
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
-        einfo->info.vsync = EINA_FALSE;
+        einfo->info.vsync = EINA_TRUE;
         einfo->info.use_hw_accel = EINA_FALSE;
         einfo->info.fd = ecore_drm_device_fd_get(dev);
         einfo->info.tty = ecore_drm_tty_get(dev);
