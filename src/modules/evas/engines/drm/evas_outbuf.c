@@ -13,6 +13,8 @@ _evas_outbuf_buffer_new(Outbuf *ob, Buffer *buff)
 {
    buff->w = ob->w;
    buff->h = ob->h;
+   if (buff->w < ob->priv.mode.hdisplay) buff->w = ob->priv.mode.hdisplay;
+   if (buff->h < ob->priv.mode.vdisplay) buff->h = ob->priv.mode.vdisplay;
 
    /* create a dumb framebuffer */
    if (!evas_drm_framebuffer_create(ob->priv.fd, buff, ob->depth))
@@ -81,6 +83,9 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* set properties of outbuf */
    ob->w = w;
    ob->h = h;
+   if (ob->w < ob->priv.mode.hdisplay) ob->w = ob->priv.mode.hdisplay;
+   if (ob->h < ob->priv.mode.vdisplay) ob->h = ob->priv.mode.vdisplay;
+
    ob->depth = info->info.depth;
    ob->rotation = info->info.rotation;
    ob->destination_alpha = info->info.destination_alpha;
@@ -166,11 +171,15 @@ evas_outbuf_reconfigure(Evas_Engine_Info_Drm *info, Outbuf *ob, int w, int h)
      {
         ob->w = w;
         ob->h = h;
+        if (ob->w < ob->priv.mode.hdisplay) ob->w = ob->priv.mode.hdisplay;
+        if (ob->h < ob->priv.mode.vdisplay) ob->h = ob->priv.mode.vdisplay;
      }
    else
      {
         ob->w = h;
         ob->h = w;
+        if (ob->w < ob->priv.mode.vdisplay) ob->w = ob->priv.mode.vdisplay;
+        if (ob->h < ob->priv.mode.hdisplay) ob->h = ob->priv.mode.hdisplay;
      }
 
    /* destroy the old buffers */
