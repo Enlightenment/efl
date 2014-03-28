@@ -417,7 +417,7 @@ _device_notify_wheel(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned i
    ev->root.x = ev->x;
    ev->root.y = ev->y;
    if (event->value == REL_HWHEEL) ev->direction = 1;
-   ev->z = event->value;
+   ev->z = -event->value;
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
