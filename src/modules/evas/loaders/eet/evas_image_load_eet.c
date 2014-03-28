@@ -64,6 +64,11 @@ _evas_image_load_return_error(int err, int *error)
    return EINA_FALSE;
 }
 
+static const Evas_Colorspace cspaces_etc1[2] = {
+  EVAS_COLORSPACE_ETC1,
+  EVAS_COLORSPACE_ARGB8888
+};
+
 static Eina_Bool
 evas_image_load_file_head_eet(void *loader_data,
 			      Evas_Image_Property *prop,
@@ -72,6 +77,7 @@ evas_image_load_file_head_eet(void *loader_data,
    Evas_Loader_Internal *loader = loader_data;
    int       a, compression, quality;
    Eet_Image_Encoding lossy;
+   const Eet_Colorspace *cspaces;
    int       ok;
 
    ok = eet_data_image_header_read(loader->ef, loader->key,
@@ -80,6 +86,18 @@ evas_image_load_file_head_eet(void *loader_data,
      return _evas_image_load_return_error(EVAS_LOAD_ERROR_DOES_NOT_EXIST, error);
    if (IMG_TOO_BIG(prop->w, prop->h))
      return _evas_image_load_return_error(EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED, error);
+
+   if (eet_data_image_colorspace_get(loader->ef, loader->key, NULL, &cspaces))
+     {
+        unsigned int i;
+
+        for (i = 0; cspaces[i] != EET_COLORSPACE_ARGB8888; i++)
+          if (cspaces[i] == EET_COLORSPACE_ETC1)
+            {
+               prop->cspaces = cspaces_etc1;
+               break;
+            }
+     }
 
    prop->alpha = !!a;
    *error = EVAS_LOAD_ERROR_NONE;
@@ -98,13 +116,23 @@ evas_image_load_file_data_eet(void *loader_data,
    Eet_Image_Encoding lossy;
    DATA32   *body, *p, *end;
    DATA32    nas = 0;
+   Eet_Colorspace cspace;
 
-   ok = eet_data_image_read_to_surface(loader->ef, loader->key, 0, 0,
-                                       pixels, prop->w, prop->h, prop->w * 4,
-                                       &alpha, &compression, &quality, &lossy);
+   switch (prop->cspace)
+     {
+      case EVAS_COLORSPACE_ETC1: cspace = EET_COLORSPACE_ETC1; break;
+      case EVAS_COLORSPACE_ARGB8888: cspace = EVAS_COLORSPACE_ARGB8888; break;
+      default:
+         return _evas_image_load_return_error(EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED, error);
+     }
+
+   ok = eet_data_image_read_to_cspace_surface_cipher(loader->ef, loader->key, NULL, 0, 0,
+                                                     pixels, prop->w, prop->h, prop->w * 4,
+                                                     cspace,
+                                                     &alpha, &compression, &quality, &lossy);
    if (!ok)
      return _evas_image_load_return_error(EVAS_LOAD_ERROR_GENERIC, error);
-   
+
    if (alpha)
      {
         prop->alpha = 1;
