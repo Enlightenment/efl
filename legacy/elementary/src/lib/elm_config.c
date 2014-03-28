@@ -49,6 +49,7 @@ const char *_elm_engines[] = {
    "psl1ght",
    "wayland_shm",
    "wayland_egl",
+   "drm",
    NULL
 };
 
@@ -1884,6 +1885,8 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_SHM);
         else if ((!strcasecmp(s, "wayland_egl")))
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_EGL);
+        else if ((!strcasecmp(s, "drm")))
+          eina_stringshare_replace(&_elm_config->engine, ELM_DRM);
         else
           ERR("Unknown engine '%s'.", s);
      }
