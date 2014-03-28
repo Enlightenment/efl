@@ -19,6 +19,13 @@
 # include <Ecore_Drm.h>
 //#endif
 
+typedef struct _Ecore_Evas_Engine_Drm_Data Ecore_Evas_Engine_Drm_Data;
+
+struct _Ecore_Evas_Engine_Drm_Data
+{
+   int w, h;
+};
+
 /* local function prototypes */
 static int _ecore_evas_drm_init(const char *device);
 static int _ecore_evas_drm_shutdown(void);
@@ -145,6 +152,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    Ecore_Evas *ee;
    Evas_Engine_Info_Drm *einfo;
    Ecore_Evas_Interface_Drm *iface;
+   Ecore_Evas_Engine_Drm_Data *edata;
    int method;
 
    /* try to find the evas drm engine */
@@ -163,6 +171,15 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
         ERR("Failed to allocate space for new Ecore_Evas");
         goto ee_err;
      }
+
+   if (!(edata = calloc(1, sizeof(Ecore_Evas_Engine_Drm_Data))))
+     {
+        ERR("Failed to allocate space for new Ecore_Evas_Engine_Data");
+        free(ee);
+        goto ee_err;
+     }
+
+   ee->engine.data = edata;
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
@@ -374,7 +391,11 @@ _ecore_evas_drm_interface_new(void)
 static void 
 _ecore_evas_drm_free(Ecore_Evas *ee)
 {
+   Ecore_Evas_Engine_Drm_Data *data;
+
+   data = ee->engine.data;
    ecore_evas_input_event_unregister(ee);
+   free(data);
    _ecore_evas_drm_shutdown();
 }
 
@@ -619,8 +640,48 @@ _ecore_evas_drm_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 static void 
 _ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
+   Eina_Bool resized = EINA_FALSE;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   edata = ee->engine.data;
    if (ee->prop.fullscreen == on) return;
+   if (on)
+     {
+        Evas_Engine_Info_Drm *einfo;
+        int ow = 0, oh = 0;
+
+        edata->w = ee->w;
+        edata->h = ee->h;
+        if ((einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas)))
+          ecore_drm_output_size_get(dev, einfo->info.output, &ow, &oh);
+
+        if ((ow == 0) || (oh == 0))
+          {
+             ow = ee->w;
+             oh = ee->h;
+          }
+        if ((ow != ee->w) || (oh != ee->h)) resized = EINA_TRUE;
+        ee->w = ow;
+        ee->h = oh;
+     }
+   else
+     {
+        if ((edata->w != ee->w) || (edata->h != ee->h)) resized = EINA_TRUE;
+        ee->w = edata->w;
+        ee->h = edata->h;
+     }
+
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
    ee->prop.fullscreen = on;
+   evas_output_size_set(ee->evas, ee->w, ee->h);
+   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+
+   if (resized)
+     {
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+     }
 }
 
 static void 
