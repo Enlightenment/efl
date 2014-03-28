@@ -2842,6 +2842,22 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    evas_object_smart_changed(sd->layout);
 }
 
+static Eina_Bool
+_accel_is_gl(void)
+{
+   if ((_elm_accel_preference) &&
+       ((!strcasecmp(_elm_accel_preference, "gl")) ||
+           (!strcasecmp(_elm_accel_preference, "opengl")) ||
+           (!strcasecmp(_elm_accel_preference, "3d")) ||
+           (!strcasecmp(_elm_accel_preference, "hw")) ||
+           (!strcasecmp(_elm_accel_preference, "accel")) ||
+           (!strcasecmp(_elm_accel_preference, "hardware")) ||
+           (!strcasecmp(_elm_accel_preference, "accel"))
+       ))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static void
 _win_constructor(Eo *obj, void *_pd, va_list *list)
 {
@@ -2895,15 +2911,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
         disp = getenv("ELM_DISPLAY");
         if ((disp) && (!strcmp(disp, "x11")))
           {
-             if ((_elm_accel_preference) &&
-                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
-                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
-                  (!strcasecmp(_elm_accel_preference, "3d")) ||
-                  (!strcasecmp(_elm_accel_preference, "hw")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel")) ||
-                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel"))
-                 ))
+             if (_accel_is_gl())
                {
                   enginelist[0] = ELM_OPENGL_X11;
                   enginelist[1] = ELM_SOFTWARE_X11;
@@ -2919,15 +2927,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           }
         else if ((disp) && (!strcmp(disp, "wl")))
           {
-             if ((_elm_accel_preference) &&
-                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
-                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
-                  (!strcasecmp(_elm_accel_preference, "3d")) ||
-                  (!strcasecmp(_elm_accel_preference, "hw")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel")) ||
-                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel"))
-                 ))
+             if (_accel_is_gl())
                {
                   enginelist[0] = ELM_WAYLAND_EGL;
                   enginelist[1] = ELM_WAYLAND_SHM;
@@ -2949,15 +2949,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           }
         else if ((disp) && (!strcmp(disp, "sdl")))
           {
-             if ((_elm_accel_preference) &&
-                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
-                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
-                  (!strcasecmp(_elm_accel_preference, "3d")) ||
-                  (!strcasecmp(_elm_accel_preference, "hw")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel")) ||
-                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel"))
-                 ))
+             if (_accel_is_gl())
                {
                   enginelist[0] = ELM_OPENGL_SDL;
                   enginelist[1] = ELM_SOFTWARE_SDL;
@@ -3008,15 +3000,7 @@ _win_constructor(Eo *obj, void *_pd, va_list *list)
           }
         else
           {
-             if ((_elm_accel_preference) &&
-                 ((!strcasecmp(_elm_accel_preference, "gl")) ||
-                  (!strcasecmp(_elm_accel_preference, "opengl")) ||
-                  (!strcasecmp(_elm_accel_preference, "3d")) ||
-                  (!strcasecmp(_elm_accel_preference, "hw")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel")) ||
-                  (!strcasecmp(_elm_accel_preference, "hardware")) ||
-                  (!strcasecmp(_elm_accel_preference, "accel"))
-                 ))
+             if (_accel_is_gl())
                {
                   enginelist[0] = ELM_OPENGL_X11;
                   enginelist[1] = ELM_WAYLAND_EGL;
