@@ -1,6 +1,6 @@
 /* this table was taken from ecore_fb, is the default en layout */
          "0x00",          "0x00",          "0x00", /**/"",    "",    "",  NULL,/***/
-       "Escape",        "Escape",        "Escape", /**/"",    "",    "",  "\x1b",/***/
+       "Escape",        "Escape",        "Escape", /**/"\033","\033","\033","\033",/***/
             "1",        "exclam",             "1", /**/"1",   "!",   "1",  NULL,/***/
             "2",            "at",             "2", /**/"2",   "@",   "2",  "",/***/
             "3",    "numbersign",             "3", /**/"3",   "#",   "3",  "\x1b",/***/
