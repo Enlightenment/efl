@@ -62,6 +62,7 @@ static int had_quote = 0;
 
 static char  file_buf[4096];
 static int   did_wildcard = 0;
+static int   req_params = 0;
 static int   verbatim = 0;
 static int   verbatim_line1 = 0;
 static int   verbatim_line2 = 0;
@@ -682,7 +683,7 @@ parse(char *data, off_t size)
              else if (*token == ',' || *token == ':') do_params = 1;
              else if (*token == '}')
                {
-                  if (do_params)
+                  if (do_params || req_params)
                     {
                        ERR("parse error %s:%i. } marker before ; marker",
                            file_in, line - 1);
@@ -704,7 +705,7 @@ parse(char *data, off_t size)
                     {
                        void *param;
 
-                       do_params = 0;
+                       req_params = do_params = 0;
                        new_statement();
                        /* clear out params */
                        while ((param = eina_array_pop(&params)))
@@ -714,6 +715,14 @@ parse(char *data, off_t size)
                     }
                   else
                     {
+                       if (req_params)
+                         {
+                            ERR("parse error %s:%i. additional parameters required for '%s' statement",
+                                file_in, line - 1, (char*)eina_list_last_data_get(stack));
+                            err_show();
+                            exit(-1);
+                         }
+
                        if (new_statement_single())
                          stack_pop();
                     }
