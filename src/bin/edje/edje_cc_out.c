@@ -2534,6 +2534,7 @@ _data_image_id_update(Eina_List *images_unused_list)
              if (part->type == EDJE_PART_TYPE_IMAGE)
                {
                   part_desc_image = (Edje_Part_Description_Image *)part->default_desc;
+                  if (!part_desc_image) continue;
                   PART_DESC_IMAGE_ID_UPDATE
                   for (j = 0; j < part->other.desc_count; j++)
                      {
