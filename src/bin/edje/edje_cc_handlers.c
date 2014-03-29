@@ -10017,6 +10017,7 @@ st_collections_group_programs_program_api(void)
              transition: LINEAR 0.5;
              targets: "partname" "anotherpart";
              sequence {
+                action: SIGNAL_EMIT "signal" "source";
                 action: STATE_SET "somestate";
                 transition: SINUSOIDAL 0.4;
                 targets: "partname" "anotherpart";
