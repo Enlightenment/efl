@@ -775,6 +775,17 @@ class Evas_Image (Evas_Object)
 
             @since 1.8 */
          }
+         get {
+            /*@
+            Get the source mmaped file from where an image object must fetch the real
+            image data (it must be an Eina_File).
+
+            If the file supports multiple data stored in it (as Eet files do),
+            you can get the key to be used as the index of the image in
+            this file.
+
+            @since 1.10 */
+         }
          values {
             const Eina_File *f; /*@ The mmaped file */
             const char *key; /*@ The image key in @p file (if its an Eet one), or @c

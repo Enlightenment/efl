@@ -543,6 +543,15 @@ _evas_image_mmap_set(Eo *eo_obj, Evas_Image_Data *o, const Eina_File *f, const c
 }
 
 EOLIAN static void
+_evas_image_mmap_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const Eina_File **f, const char **key)
+{
+   if (f)
+     *f = o->cur->mmaped_source ? o->cur->u.f : NULL;
+   if (key)
+     *key = o->cur->key;
+}
+
+EOLIAN static void
 _evas_image_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
