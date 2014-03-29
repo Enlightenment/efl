@@ -405,9 +405,9 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    alnum_u           = alnum | '_';
    alpha_u           = alpha | '_';
-   ident             = alpha+ >save_fpc (alnum | '_' )+;
-   event            = alpha+ >save_fpc (alnum | '_' | ',' )+;
-   class_meth        = alpha+ >save_fpc (alnum | '_' | '::' )+;
+   ident             = alpha+ >save_fpc (alnum | '_' )*;
+   event            = alpha+ >save_fpc (alnum | '_' | ',' )*;
+   class_meth        = alpha+ >save_fpc (alnum | '_' | '::' )*;
 
    eo_comment        = "/*@" ignore* ('@' | alnum_u) >save_fpc ( any | cr @inc_line )* :>> "*/";
    c_comment         = "/*" ( any | cr @inc_line )* :>> "*/";
