@@ -42,25 +42,7 @@ extern "C"
 #define ECORE_AUDIO_ATTR_TONE_FREQ "ecore_audio_freq"
 
 #include "ecore_audio_in_tone.eo.h"
-#if 0
-#define ECORE_AUDIO_OBJ_IN_TONE_CLASS ecore_audio_obj_in_tone_class_get() /**< Ecore_Audio tone input */
 
-/**
- * @brief Get the Eo class ID 
- *
- * @return The Eo class ID
- */
-const Eo_Class *ecore_audio_obj_in_tone_class_get() EINA_CONST;
-
-extern EAPI Eo_Op ECORE_AUDIO_OBJ_IN_TONE_BASE_ID;
-
-enum Ecore_Audio_Obj_In_Tone_Sub_Ids
-{
-   ECORE_AUDIO_OBJ_IN_TONE_SUB_ID_LAST
-};
-
-#define ECORE_AUDIO_OBJ_IN_TONE_ID(sub_id) (ECORE_AUDIO_OBJ_IN_TONE_BASE_ID + EO_TYPECHECK(enum Ecore_Audio_Obj_In_Tone_Sub_Ids, sub_id)
-#endif
 /**
  * @}
  */

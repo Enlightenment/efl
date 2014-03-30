@@ -34,48 +34,6 @@ extern "C"
  * @{
  */
 #include "ecore_audio_out_pulse.eo.h"
-#if 0
-#define ECORE_AUDIO_OBJ_OUT_PULSE_CLASS ecore_audio_obj_out_pulse_class_get() /**< Ecore_Audio pulseaudio output */
-
-/**
- * @brief Get the Eo class ID 
- *
- * @return The Eo class ID
- */
-const Eo_Class *ecore_audio_obj_out_pulse_class_get() EINA_CONST;
-
-extern EAPI Eo_Op ECORE_AUDIO_OBJ_OUT_PULSE_BASE_ID;
-
-enum _Ecore_Audio_Obj_Out_Pulse_Sub_Ids
-{
-   ECORE_AUDIO_OBJ_OUT_PULSE_SUB_ID_LAST
-};
-
-#define ECORE_AUDIO_OBJ_OUT_PULSE_ID(sub_id) (ECORE_AUDIO_OBJ_OUT_PULSE_BASE_ID + EO_TYPECHECK(enum _Ecore_Audio_Obj_Out_Pulse_Sub_Ids, sub_id))
-
-extern EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY;
-   
-/**
- * @brief The output context is ready
- *
- * @since 1.8
- *
- * Emitted when the outout context is ready for playback
- */
-#define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_READY))
-   
-extern EAPI const Eo_Event_Description _ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL;
-   
-/**
- * @brief The output context has failed
- *
- * @since 1.8
- *
- * Emitted when the outout context has failed. At this point the output is unusable and will never work, so it is advisable to delete it.
- */
-#define ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL (&(_ECORE_AUDIO_EV_OUT_PULSE_CONTEXT_FAIL))
-
-#endif
 /**
  * @}
  */

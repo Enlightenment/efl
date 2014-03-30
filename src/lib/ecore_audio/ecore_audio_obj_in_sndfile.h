@@ -34,27 +34,6 @@ extern "C"
  * @{
  */
 #include "ecore_audio_in_sndfile.eo.h"
-
-#if 0
-#define ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS ecore_audio_obj_in_sndfile_class_get() /**< Ecore_Audio sndfile input */
-
-/**
- * @brief Get the Eo class ID 
- *
- * @return The Eo class ID
- */
-const Eo_Class *ecore_audio_obj_in_sndfile_class_get() EINA_CONST;
-
-extern EAPI Eo_Op ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID;
-
-enum Ecore_Audio_Obj_In_Sndfile_Sub_Ids
-{
-   ECORE_AUDIO_OBJ_IN_SNDFILE_SUB_ID_LAST
-};
-
-#define ECORE_AUDIO_OBJ_IN_SNDFILE_ID(sub_id) (ECORE_AUDIO_OBJ_IN_SNDFILE_BASE_ID + EO_TYPECHECK(enum Ecore_Audio_Obj_In_Sndfile_Sub_Ids, sub_id)
-
-#endif
 /**
  * @}
  */
