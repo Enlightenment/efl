@@ -1,10 +1,13 @@
+typedef void (*flipselector_func_type)(void *, Evas_Object *, void *);
+
+#include "elm_flipselector.eo.h"
+
+#if 0
 #define ELM_OBJ_FLIPSELECTOR_CLASS elm_obj_flipselector_class_get()
 
 const Eo_Class *elm_obj_flipselector_class_get(void) EINA_CONST;
 
 extern EAPI Eo_Op ELM_OBJ_FLIPSELECTOR_BASE_ID;
-
-typedef void (*flipselector_func_type)(void *, Evas_Object *, void *);
 
 enum
 {
@@ -169,3 +172,4 @@ enum
  * @ingroup Flipselector
  */
 #define elm_obj_flipselector_first_interval_get(ret) ELM_OBJ_FLIPSELECTOR_ID(ELM_OBJ_FLIPSELECTOR_SUB_ID_FIRST_INTERVAL_GET), EO_TYPECHECK(double *, ret)
+#endif

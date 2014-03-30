@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with flipselector instance data.
  */
-typedef struct _Elm_Flipselector_Smart_Data Elm_Flipselector_Smart_Data;
-struct _Elm_Flipselector_Smart_Data
+typedef struct _Elm_Flipselector_Data Elm_Flipselector_Data;
+struct _Elm_Flipselector_Data
 {
    Evas_Object          *obj;
    Eina_List            *items;
@@ -46,7 +46,7 @@ struct _Elm_Flipselector_Item
 };
 
 #define ELM_FLIPSELECTOR_DATA_GET(o, sd) \
-  Elm_Flipselector_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_FLIPSELECTOR_CLASS)
+  Elm_Flipselector_Data * sd = eo_data_scope_get(o, ELM_OBJ_FLIPSELECTOR_CLASS)
 
 #define ELM_FLIPSELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
   ELM_FLIPSELECTOR_DATA_GET(o, ptr);                 \

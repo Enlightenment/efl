@@ -591,6 +591,8 @@ BUILT_SOURCES = \
 		elc_fileselector_button.eo.h \
 		elc_fileselector_entry.eo.c \
 		elc_fileselector_entry.eo.h \
+		elm_flipselector.eo.c \
+		elm_flipselector.eo.h \
 		elm_flip.eo.c \
 		elm_flip.eo.h \
 		elm_gesture_layer.eo.c \
@@ -710,6 +712,7 @@ EXTRA_DIST += \
 	     elc_fileselector.eo \
 	     elc_fileselector_button.eo \
 	     elc_fileselector_entry.eo \
+	     elm_flipselector.eo \
 	     elm_flip.eo \
 	     elm_gesture_layer.eo \
 	     elm_glview.eo \
@@ -787,6 +790,7 @@ nodist_includesunstable_HEADERS = \
 				  elc_fileselector.eo.h \
 				  elc_fileselector_button.eo.h \
 				  elc_fileselector_entry.eo.h \
+				  elm_flipselector.eo.h \
 				  elm_flip.eo.h \
 				  elm_gesture_layer.eo.h \
 				  elm_glview.eo.h \
