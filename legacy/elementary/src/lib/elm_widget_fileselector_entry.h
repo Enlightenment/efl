@@ -20,9 +20,9 @@
 /**
  * Base entry smart data extended with fileselector_entry instance data.
  */
-typedef struct _Elm_Fileselector_Entry_Smart_Data \
-Elm_Fileselector_Entry_Smart_Data;
-struct _Elm_Fileselector_Entry_Smart_Data
+typedef struct _Elc_Fileselector_Entry_Data \
+Elc_Fileselector_Entry_Data;
+struct _Elc_Fileselector_Entry_Data
 {
    Evas_Object *button;
    Evas_Object *entry;
@@ -35,7 +35,7 @@ struct _Elm_Fileselector_Entry_Smart_Data
 
 
 #define ELM_FILESELECTOR_ENTRY_DATA_GET(o, sd) \
-  Elm_Fileselector_Entry_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_FILESELECTOR_ENTRY_CLASS)
+  Elc_Fileselector_Entry_Data * sd = eo_data_scope_get(o, ELM_OBJ_FILESELECTOR_ENTRY_CLASS)
 
 #define ELM_FILESELECTOR_ENTRY_DATA_GET_OR_RETURN(o, ptr) \
   ELM_FILESELECTOR_ENTRY_DATA_GET(o, ptr);                \

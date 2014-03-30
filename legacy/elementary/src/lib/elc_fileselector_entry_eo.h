@@ -1,3 +1,6 @@
+#include "elc_fileselector_entry.eo.h"
+
+#if 0
 #define ELM_OBJ_FILESELECTOR_ENTRY_CLASS elm_obj_fileselector_entry_class_get()
 
 const Eo_Class *elm_obj_fileselector_entry_class_get(void) EINA_CONST;
@@ -105,3 +108,4 @@ enum
  * @ingroup File_Selector_Entry
  */
 #define elm_obj_fileselector_entry_inwin_mode_get(ret) ELM_OBJ_FILESELECTOR_ENTRY_ID(ELM_OBJ_FILESELECTOR_ENTRY_SUB_ID_INWIN_MODE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
