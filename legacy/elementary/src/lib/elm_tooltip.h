@@ -40,7 +40,7 @@ typedef enum
  *
  * @ingroup Tooltips
  * @see elm_object_tooltip_move_freeze_pop()
- * @see elm_tooltio_move_freeze_get()
+ * @see elm_object_tooltip_move_freeze_get()
  * @since 1.9
  */
 EAPI void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
