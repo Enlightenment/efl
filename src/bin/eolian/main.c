@@ -293,7 +293,7 @@ int main(int argc, char **argv)
           }
      }
 
-   if (!eo_version)
+   if (!eo_version && !(gen_opt==H_GEN && legacy_support))
      {
         ERR("No eo version specified (use --eo1 or --eo2). Aborting eo generation.\n");
         goto end;
