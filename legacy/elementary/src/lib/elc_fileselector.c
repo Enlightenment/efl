@@ -14,8 +14,6 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 
-EAPI Eo_Op ELM_OBJ_FILESELECTOR_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_FILESELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector"
@@ -49,7 +47,7 @@ static void _canc(void *data, Evas_Object *obj, void *event_info);
 
 /* final routine on deletion */
 static void
-_elm_fileselector_smart_del_do(Elm_Fileselector_Smart_Data *sd)
+_elm_fileselector_smart_del_do(Elc_Fileselector_Data *sd)
 {
    eina_stringshare_del(sd->path);
    eina_stringshare_del(sd->selection);
@@ -58,8 +56,8 @@ _elm_fileselector_smart_del_do(Elm_Fileselector_Smart_Data *sd)
    eo_do_super(sd->obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_fileselector_smart_sizing_eval(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_layout_sizing_eval(Eo *obj, Elc_Fileselector_Data *sd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
 
@@ -83,21 +81,18 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    elm_widget_mirrored_set(sd->home_button, rtl);
 }
 
-static void
-_elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_widget_theme_apply(Eo *obj, Elc_Fileselector_Data *sd)
 {
    const char *style;
    const char *data;
    char buf[1024];
 
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   Eina_Bool int_ret;
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    style = elm_widget_style_get(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -139,23 +134,18 @@ _elm_fileselector_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_fileselector_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_widget_event(Eo *obj, Elc_Fileselector_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   if (ret) *ret = EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
    (void) src;
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if ((!strcmp(ev->key, "Return")) ||
        (!strcmp(ev->key, "KP_Enter")))
@@ -163,10 +153,10 @@ _elm_fileselector_smart_event(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
    else if (!strcmp(ev->key, "Escape"))
      _canc(obj, NULL, NULL);
    else
-     return;
+     return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /***  GENLIST/GENGRID "MODEL"  ***/
@@ -758,7 +748,7 @@ _on_item_activated(void *data,
 }
 
 static void
-_clear_selections(Elm_Fileselector_Smart_Data *sd, Elm_Object_Item *last_selected)
+_clear_selections(Elc_Fileselector_Data *sd, Elm_Object_Item *last_selected)
 {
    Eina_List *items;
    Elm_Object_Item *sel;
@@ -1335,12 +1325,10 @@ _name_entry_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
    _ok(data, NULL, NULL);
 }
 
-static void
-_elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_evas_smart_add(Eo *obj, Elc_Fileselector_Data *priv)
 {
    Evas_Object *ic, *bt, *en, *pb;
-
-   Elm_Fileselector_Smart_Data *priv = _pd;
 
    EINA_REFCOUNT_INIT(priv);
 
@@ -1448,10 +1436,9 @@ _elm_fileselector_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_obj_widget_theme_apply(NULL));
 }
 
-static void
-_elm_fileselector_smart_del(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_evas_smart_del(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Elm_Fileselector_Smart_Data *sd = _pd;
    Elm_Fileselector_Filter *filter;
    char *path;
    Ecore_Event_Handler *h;
@@ -1497,10 +1484,9 @@ elm_fileselector_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_eo_base_constructor(Eo *obj, Elc_Fileselector_Data *sd)
 {
-   Elm_Fileselector_Smart_Data *sd = _pd;
    sd->obj = obj;
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1516,12 +1502,9 @@ elm_fileselector_is_save_set(Evas_Object *obj,
    eo_do(obj, elm_interface_fileselector_is_save_set(is_save));
 }
 
-static void
-_is_save_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_is_save_set(Eo *obj, Elc_Fileselector_Data *sd, Eina_Bool is_save)
 {
-   Eina_Bool is_save = va_arg(*list, int);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    elm_object_disabled_set(sd->name_entry, !is_save);
 
    if (is_save) elm_layout_signal_emit(obj, "elm,state,save,on", "elm");
@@ -1537,12 +1520,10 @@ elm_fileselector_is_save_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_is_save_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_is_save_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   if (ret) *ret = !elm_object_disabled_get(sd->name_entry);
+   return !elm_object_disabled_get(sd->name_entry);
 }
 
 EAPI void
@@ -1553,12 +1534,9 @@ elm_fileselector_folder_only_set(Evas_Object *obj,
    eo_do(obj, elm_interface_fileselector_folder_only_set(only));
 }
 
-static void
-_folder_only_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_folder_only_set(Eo *obj, Elc_Fileselector_Data *sd, Eina_Bool only)
 {
-   Eina_Bool only = va_arg(*list, int);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    if (sd->only_folder == only) return;
 
    sd->only_folder = !!only;
@@ -1574,30 +1552,16 @@ elm_fileselector_folder_only_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_folder_only_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_folder_only_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->only_folder;
+   return sd->only_folder;
 }
 
-EAPI void
-elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
-                                       Eina_Bool visible)
+EOLIAN static void
+_elc_fileselector_buttons_ok_cancel_set(Eo *obj, Elc_Fileselector_Data *sd, Eina_Bool visible)
 {
-   ELM_FILESELECTOR_CHECK(obj);
-   eo_do(obj, elm_obj_fileselector_buttons_ok_cancel_set(visible));
-}
-
-static void
-_buttons_ok_cancel_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool visible = va_arg(*list, int);
-
    Evas_Object *bt;
-
-   Elm_Fileselector_Smart_Data *sd = _pd;
 
    if (visible && (!sd->ok_button))
      {
@@ -1628,21 +1592,10 @@ _buttons_ok_cancel_set(Eo *obj, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elc_fileselector_buttons_ok_cancel_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_fileselector_buttons_ok_cancel_get(&ret));
-   return ret;
-}
-
-static void
-_buttons_ok_cancel_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->ok_button ? EINA_TRUE : EINA_FALSE;
+   return sd->ok_button ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void
@@ -1653,12 +1606,9 @@ elm_fileselector_expandable_set(Evas_Object *obj,
    eo_do(obj, elm_interface_fileselector_expandable_set(expand));
 }
 
-static void
-_expandable_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_expandable_set(Eo *obj, Elc_Fileselector_Data *sd, Eina_Bool expand)
 {
-   Eina_Bool expand = va_arg(*list, int);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    sd->expand = !!expand;
 
    if (sd->path) _populate(obj, sd->path, NULL, NULL);
@@ -1673,12 +1623,10 @@ elm_fileselector_expandable_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_expandable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_expandable_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->expand;
+   return sd->expand;
 }
 
 EAPI void
@@ -1689,10 +1637,9 @@ elm_fileselector_path_set(Evas_Object *obj,
    eo_do(obj, elm_interface_fileselector_path_set(_path));
 }
 
-static void
-_path_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_path_set(Eo *obj, Elc_Fileselector_Data *sd EINA_UNUSED, const char *_path)
 {
-   const char *_path = va_arg(*list, const char *);
    char *path;
 
    path = ecore_file_realpath(_path);
@@ -1709,12 +1656,10 @@ elm_fileselector_path_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_path_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static const char*
+_elc_fileselector_elm_interface_fileselector_path_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   const char **ret = va_arg(*list, const char **);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->path;
+   return sd->path;
 }
 
 EAPI void
@@ -1725,13 +1670,10 @@ elm_fileselector_mode_set(Evas_Object *obj,
    eo_do(obj, elm_interface_fileselector_mode_set(mode));
 }
 
-static void
-_mode_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_mode_set(Eo *obj, Elc_Fileselector_Data *sd, Elm_Fileselector_Mode mode)
 {
    Evas_Object *old;
-   Elm_Fileselector_Mode mode = va_arg(*list, Elm_Fileselector_Mode);
-
-   Elm_Fileselector_Smart_Data *sd = _pd;
 
    if (mode == sd->mode) return;
 
@@ -1768,12 +1710,10 @@ elm_fileselector_mode_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Elm_Fileselector_Mode
+_elc_fileselector_elm_interface_fileselector_mode_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Elm_Fileselector_Mode *ret = va_arg(*list, Elm_Fileselector_Mode *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-   if (ret) *ret = sd->mode;
+   return sd->mode;
 }
 
 EAPI void
@@ -1783,11 +1723,9 @@ elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi)
    eo_do(obj, elm_interface_fileselector_multi_select_set(multi));
 }
 
-static void
-_multi_select_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_multi_select_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd, Eina_Bool multi)
 {
-   Eina_Bool multi = va_arg(*list, int);
-   Elm_Fileselector_Smart_Data *sd = _pd;
    char *path;
 
    multi = !!multi;
@@ -1833,13 +1771,10 @@ elm_fileselector_multi_select_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_multi_select_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->multi;
+   return sd->multi;
 }
 
 EAPI const char *
@@ -1851,43 +1786,35 @@ elm_fileselector_selected_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_selected_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static const char*
+_elc_fileselector_elm_interface_fileselector_selected_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
    const char *fp;
-   const char **ret = va_arg(*list, const char **);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   if (!ret) return;
-
-   *ret = NULL;
-
-   if (!sd->path) return;
+   if (!sd->path) return NULL;
 
    fp = elm_object_text_get(sd->path_entry);
    if (ecore_file_exists(fp))
      {
         eina_stringshare_replace(&sd->selection, fp);
 
-        *ret = sd->selection;
-        return;
+        return sd->selection;
      }
-
-   *ret = sd->path;
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
         Elm_Object_Item *gl_it = elm_genlist_selected_item_get(sd->files_view);
 
-        if (gl_it) *ret = elm_object_item_data_get(gl_it);
+        if (gl_it) return elm_object_item_data_get(gl_it);
      }
    else
      {
         Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(sd->files_view);
 
-        if (gg_it) *ret = elm_object_item_data_get(gg_it);
+        if (gg_it) return elm_object_item_data_get(gg_it);
      }
 
+
+   return sd->path;
 }
 
 EAPI Eina_Bool
@@ -1900,17 +1827,12 @@ elm_fileselector_selected_set(Evas_Object *obj,
    return ret;
 }
 
-static void
-_selected_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_selected_set(Eo *obj, Elc_Fileselector_Data *sd, const char *_path)
 {
-   const char *_path = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool ret = EINA_TRUE;
    char *selected;
-
-   if (ret) *ret = EINA_TRUE;
    char *path;
-
-   Elm_Fileselector_Smart_Data *sd = _pd;
 
    path = ecore_file_realpath(_path);
 
@@ -1919,7 +1841,7 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
      {
         if (!ecore_file_exists(path))
           {
-             if (ret) *ret = EINA_FALSE;
+             ret = EINA_FALSE;
              goto clean_up;
           }
 
@@ -1931,6 +1853,8 @@ _selected_set(Eo *obj, void *_pd, va_list *list)
 
 clean_up:
    free(path);
+
+   return ret;
 }
 
 EAPI const Eina_List *
@@ -1942,22 +1866,17 @@ elm_fileselector_selected_paths_get(const Evas_Object* obj)
    return ret;
 }
 
-static void
-_selected_paths_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static const Eina_List*
+_elc_fileselector_elm_interface_fileselector_selected_paths_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   const Eina_List **ret = va_arg(*list, const Eina_List**);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   if (!ret) return;
-
    if (sd->multi)
-     *ret = sd->paths;
+     return sd->paths;
    else
-     *ret = NULL;
+     return NULL;
 }
 
 static Elm_Fileselector_Filter *
-_filter_add(Elm_Fileselector_Smart_Data *sd, const char *filter_name)
+_filter_add(Elc_Fileselector_Data *sd, const char *filter_name)
 {
    Elm_Fileselector_Filter *ff;
    ff = malloc(sizeof(Elm_Fileselector_Filter));
@@ -1977,21 +1896,13 @@ elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_typ
    return ret;
 }
 
-static void
-_mime_types_filter_append(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, Elc_Fileselector_Data *sd, const char *mime_types, const char *filter_name)
 {
-   const char *mime_types = va_arg(*list, const char *);
-   const char *filter_name = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   Elm_Fileselector_Smart_Data *sd;
    Elm_Fileselector_Filter *ff;
-   Eina_Bool int_ret = EINA_FALSE;
    Eina_Bool need_theme = EINA_FALSE;
 
-   if (!mime_types) goto end;
-
-   sd = _pd;
+   if (!mime_types) return EINA_FALSE;
 
    ff = _filter_add(sd, filter_name ? filter_name : mime_types);
    ff->filter_type = ELM_FILESELECTOR_MIME_FILTER;
@@ -2014,10 +1925,7 @@ _mime_types_filter_append(Eo *obj, void *_pd, va_list *list)
    if (need_theme)
      eo_do(obj, elm_obj_widget_theme_apply(NULL));
 
-   int_ret = EINA_TRUE;
-
-end:
-   if (ret) *ret = int_ret;
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -2029,22 +1937,13 @@ elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_
    return ret;
 }
 
-static void
-_custom_filter_append(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elc_Fileselector_Data *sd, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name)
 {
-   Elm_Fileselector_Filter_Func func = va_arg(*list, Elm_Fileselector_Filter_Func);
-   void *data = va_arg(*list, void *);
-   const char *filter_name = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   Elm_Fileselector_Smart_Data *sd;
    Elm_Fileselector_Filter *ff;
-   Eina_Bool int_ret = EINA_FALSE;
    Eina_Bool need_theme = EINA_FALSE;
 
-   if (!func) goto end;
-
-   sd = _pd;
+   if (!func) return EINA_FALSE;
 
    ff = _filter_add(sd, filter_name ? filter_name : "custom");
    ff->filter_type = ELM_FILESELECTOR_CUSTOM_FILTER;
@@ -2069,9 +1968,7 @@ _custom_filter_append(Eo *obj, void *_pd, va_list *list)
    if (need_theme)
      eo_do(obj, elm_obj_widget_theme_apply(NULL));
 
-   int_ret = EINA_TRUE;
-end:
-   if (ret) *ret = int_ret;
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -2081,10 +1978,9 @@ elm_fileselector_filters_clear(Evas_Object *obj)
    eo_do(obj, elm_interface_fileselector_filters_clear());
 }
 
-static void
-_filters_clear(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_filters_clear(Eo *obj, Elc_Fileselector_Data *sd)
 {
-   Elm_Fileselector_Smart_Data *sd = _pd;
    Elm_Fileselector_Filter *filter;
 
    EINA_LIST_FREE(sd->filter_list, filter)
@@ -2114,12 +2010,9 @@ elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible)
    eo_do(obj, elm_interface_fileselector_hidden_visible_set(visible));
 }
 
-static void
-_hidden_visible_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_hidden_visible_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd, Eina_Bool visible)
 {
-   Eina_Bool visible = va_arg(*list, int);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    visible = !!visible;
    if (sd->hidden_visible == visible) return;
    sd->hidden_visible = visible;
@@ -2137,13 +2030,10 @@ elm_fileselector_hidden_visible_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_hidden_visible_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_interface_fileselector_hidden_visible_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->hidden_visible;
+   return sd->hidden_visible;
 }
 
 EAPI void
@@ -2155,13 +2045,9 @@ elm_fileselector_thumbnail_size_set(Evas_Object *obj,
    eo_do(obj, elm_interface_fileselector_thumbnail_size_set(w, h));
 }
 
-static void
-_thumbnail_size_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_thumbnail_size_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    if (sd->thumbnail_size.w == w && sd->thumbnail_size.h == h) return;
 
    if (!w || !h)
@@ -2185,13 +2071,9 @@ elm_fileselector_thumbnail_size_get(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_fileselector_thumbnail_size_get(w, h));
 }
 
-static void
-_thumbnail_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_thumbnail_size_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    if (w) *w = sd->thumbnail_size.w;
    if (h) *h = sd->thumbnail_size.h;
 }
@@ -2203,12 +2085,9 @@ elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort)
    eo_do(obj, elm_interface_fileselector_sort_method_set(sort));
 }
 
-static void
-_sort_method_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_elm_interface_fileselector_sort_method_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd, Elm_Fileselector_Sort sort)
 {
-   Elm_Fileselector_Sort sort = va_arg(*list, Elm_Fileselector_Sort);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
    if (sd->sort_type == sort) return;
    sd->sort_type = sort;
 
@@ -2256,107 +2135,53 @@ elm_fileselector_sort_method_get(const Evas_Object *obj)
    return ret;
 }
 
-static void
-_sort_method_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static Elm_Fileselector_Sort
+_elc_fileselector_elm_interface_fileselector_sort_method_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd)
 {
-   Elm_Fileselector_Sort *ret = va_arg(*list, Elm_Fileselector_Sort *);
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->sort_type;
+   return sd->sort_type;
 }
 
-static void
-_elm_fileselector_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_fileselector_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_fileselector_smart_text_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_fileselector_elm_layout_text_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Data *sd, const char *part, const char *label)
 {
-   Elm_Fileselector_Smart_Data *sd = _pd;
-
-   const char *part = va_arg(*list, const char *);
-   const char *label = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret = EINA_FALSE;
-
-   if (!part) return;
+   if (!part) return EINA_FALSE;
 
    if (sd->ok_button && !strcmp(part, "ok"))
      {
         elm_object_text_set(sd->ok_button, label);
-        int_ret = EINA_TRUE;
+        return EINA_TRUE;
      }
    else if (sd->cancel_button && !strcmp(part, "cancel"))
      {
         elm_object_text_set(sd->cancel_button, label);
-        int_ret = EINA_TRUE;
+        return EINA_TRUE;
      }
    else
-     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+     {
+        Eina_Bool int_ret = EINA_FALSE;
+        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+        return int_ret;
+     }
 
-   if (ret) *ret = int_ret;
+   return EINA_FALSE;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
+EOLIAN static void
+_elc_fileselector_class_constructor(Eo_Class *klass)
 {
    unsigned int i;
-
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_fileselector_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_fileselector_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_fileselector_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_fileselector_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_fileselector_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_fileselector_smart_focus_direction_manager_is),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_fileselector_smart_sizing_eval),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_fileselector_smart_text_set),
-
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_FOLDER_ONLY_SET), _folder_only_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_FOLDER_ONLY_GET), _folder_only_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_IS_SAVE_SET), _is_save_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_IS_SAVE_GET), _is_save_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_EXPANDABLE_SET), _expandable_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_EXPANDABLE_GET), _expandable_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_PATH_SET), _path_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_PATH_GET), _path_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_MODE_SET), _mode_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_MODE_GET), _mode_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_MULTI_SELECT_SET), _multi_select_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_MULTI_SELECT_GET), _multi_select_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_SELECTED_GET), _selected_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_SELECTED_SET), _selected_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_SELECTED_PATHS_GET), _selected_paths_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_MIME_TYPES_FILTER_APPEND), _mime_types_filter_append),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_CUSTOM_FILTER_APPEND), _custom_filter_append),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_FILTERS_CLEAR), _filters_clear),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_SET), _hidden_visible_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_HIDDEN_VISIBLE_GET), _hidden_visible_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_SET), _thumbnail_size_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_THUMBNAIL_SIZE_GET), _thumbnail_size_get),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_SORT_METHOD_SET), _sort_method_set),
-        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_SORT_METHOD_GET), _sort_method_get),
-
-        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_BUTTONS_OK_CANCEL_SET), _buttons_ok_cancel_set),
-        EO_OP_FUNC(ELM_OBJ_FILESELECTOR_ID(ELM_OBJ_FILESELECTOR_SUB_ID_BUTTONS_OK_CANCEL_GET), _buttons_ok_cancel_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
 
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
@@ -2382,8 +2207,8 @@ _class_constructor(Eo_Class *klass)
 
 }
 
-static void
-_class_destructor(Eo_Class *klass EINA_UNUSED)
+EOLIAN static void
+_elc_fileselector_class_destructor(Eo_Class *klass EINA_UNUSED)
 {
    unsigned int i;
 
@@ -2394,19 +2219,4 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
      }
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_BUTTONS_OK_CANCEL_SET, "Enable/disable the 'ok' and 'cancel' buttons on a given file selector widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_FILESELECTOR_SUB_ID_BUTTONS_OK_CANCEL_GET, "Get whether the 'ok' and 'cancel' buttons on a given file selector widget are being shown."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_FILESELECTOR_BASE_ID, op_desc, ELM_OBJ_FILESELECTOR_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Fileselector_Smart_Data),
-     _class_constructor,
-     _class_destructor
-};
-EO_DEFINE_CLASS(elm_obj_fileselector_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_INTERFACE_FILESELECTOR_CLASS, NULL);
+#include "elc_fileselector.eo.c"

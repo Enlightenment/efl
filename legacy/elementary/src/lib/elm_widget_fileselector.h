@@ -19,8 +19,8 @@ typedef struct _Elm_Fileselector_Filter Elm_Fileselector_Filter;
 /**
  * Base layout smart data extended with fileselector instance data.
  */
-typedef struct _Elm_Fileselector_Smart_Data Elm_Fileselector_Smart_Data;
-struct _Elm_Fileselector_Smart_Data
+typedef struct _Elc_Fileselector_Data Elc_Fileselector_Data;
+struct _Elc_Fileselector_Data
 {
    EINA_REFCOUNT;
 
@@ -82,7 +82,7 @@ struct sel_data
 typedef struct _Listing_Request Listing_Request;
 struct _Listing_Request
 {
-   Elm_Fileselector_Smart_Data *sd;
+   Elc_Fileselector_Data *sd;
    Elm_Object_Item             *parent_it;
 
    Evas_Object                 *obj;
@@ -114,7 +114,7 @@ struct _Elm_Fileselector_Custom_Filter
 struct _Elm_Fileselector_Filter
 {
    const char                         *filter_name;
-   Elm_Fileselector_Smart_Data        *sd;
+   Elc_Fileselector_Data        *sd;
 
    union {
       char                           **mime_types;
@@ -129,7 +129,7 @@ struct _Elm_Fileselector_Filter
  */
 
 #define ELM_FILESELECTOR_DATA_GET(o, sd) \
-  Elm_Fileselector_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_FILESELECTOR_CLASS)
+  Elc_Fileselector_Data * sd = eo_data_scope_get(o, ELM_OBJ_FILESELECTOR_CLASS)
 
 #define ELM_FILESELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
   ELM_FILESELECTOR_DATA_GET(o, ptr);                 \

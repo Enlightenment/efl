@@ -585,6 +585,8 @@ BUILT_SOURCES = \
 		elm_diskselector.eo.h \
 		elm_entry.eo.c \
 		elm_entry.eo.h \
+		elc_fileselector.eo.c \
+		elc_fileselector.eo.h \
 		elc_fileselector_button.eo.c \
 		elc_fileselector_button.eo.h \
 		elc_fileselector_entry.eo.c \
@@ -705,6 +707,7 @@ EXTRA_DIST += \
 	     elm_dayselector.eo \
 	     elm_diskselector.eo \
 	     elm_entry.eo \
+	     elc_fileselector.eo \
 	     elc_fileselector_button.eo \
 	     elc_fileselector_entry.eo \
 	     elm_flip.eo \
@@ -781,6 +784,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_dayselector.eo.h \
 				  elm_diskselector.eo.h \
 				  elm_entry.eo.h \
+				  elc_fileselector.eo.h \
 				  elc_fileselector_button.eo.h \
 				  elc_fileselector_entry.eo.h \
 				  elm_flip.eo.h \

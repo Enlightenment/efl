@@ -1,0 +1,69 @@
+class Elc_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
+{
+   legacy_prefix: elm_fileselector;
+   eo_prefix: elm_obj_fileselector;
+   properties {
+      buttons_ok_cancel {
+         set {
+            /*@
+            Enable/disable the "ok" and "cancel" buttons on a given file
+            selector widget
+
+            @note A file selector without those buttons will never emit the
+            @c "done" smart event, and is only usable if one is just hooking
+            to the other two events.
+
+            @see elm_fileselector_buttons_ok_cancel_get()
+
+            @ingroup Fileselector */
+         }
+         get {
+            /*@
+            Get whether the "ok" and "cancel" buttons on a given file
+            selector widget are being shown.
+
+            @return @c EINA_TRUE if they are being shown, @c EINA_FALSE
+            otherwise (and on errors)
+
+            @see elm_fileselector_buttons_ok_cancel_set() for more details
+
+            @ingroup Fileselector */
+         }
+         values {
+            Eina_Bool visible; /*@ @c EINA_TRUE to show buttons, @c EINA_FALSE to hide. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      class::destructor;
+      Eo_Base::constructor;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::event;
+      Elm_Widget::theme_apply;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Layout::sizing_eval;
+      Elm_Layout::text_set;
+      Elm_Interface_Fileselector::selected_paths::get;
+      Elm_Interface_Fileselector::custom_filter_append;
+      Elm_Interface_Fileselector::expandable;
+      Elm_Interface_Fileselector::thumbnail_size;
+      Elm_Interface_Fileselector::selected;
+      Elm_Interface_Fileselector::mime_types_filter_append;
+      Elm_Interface_Fileselector::hidden_visible;
+      Elm_Interface_Fileselector::filters_clear;
+      Elm_Interface_Fileselector::is_save;
+      Elm_Interface_Fileselector::path;
+      Elm_Interface_Fileselector::sort_method;
+      Elm_Interface_Fileselector::multi_select;
+      Elm_Interface_Fileselector::folder_only;
+      Elm_Interface_Fileselector::mode;
+   }
+   events {
+      focused;
+      unfocused;
+   }
+
+}
