@@ -3,6 +3,8 @@
 
 #include <Eina.h>
 
+//#define EO
+
 extern int _eolian_gen_log_dom;
 
 #ifdef ERR

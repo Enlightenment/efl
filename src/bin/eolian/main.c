@@ -197,7 +197,7 @@ int main(int argc, char **argv)
      {
         /* These options set a flag. */
           {"eo1",        no_argument,         &eo_version, 1},
-          {"eo2",        no_argument,         &eo_version, 2},
+          {"eo",        no_argument,         &eo_version, 2},
           {"verbose",    no_argument,         0, 'v'},
           {"help",       no_argument,         0, 'h'},
           {"gh",         no_argument,         &gen_opt, H_GEN},
@@ -249,7 +249,7 @@ int main(int argc, char **argv)
         printf("       --help/-h Print that help\n");
         printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
         printf("       --output/-o Force output filename to 'outfile'\n");
-        printf("       --eo1/--eo2 Set generator to eo1/eo2 mode. Must be specified\n");
+        printf("       --eo1/--eo Set generator to eo1/eo mode. Must be specified\n");
         printf("       --gh Generate c header file [.h]\n");
         printf("       --gc Generate c source file [.c]\n");
         printf("       --ah Append eo class definitions to an existing c header file [.h]\n");
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 
    if (!eo_version && !(gen_opt==H_GEN && legacy_support))
      {
-        ERR("No eo version specified (use --eo1 or --eo2). Aborting eo generation.\n");
+        ERR("No eo version specified (use --eo1 or --eo). Aborting eo generation.\n");
         goto end;
      }
 
