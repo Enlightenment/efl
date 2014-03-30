@@ -1,3 +1,6 @@
+#include "elc_multibuttonentry.eo.h"
+
+#if 0
 #define ELM_OBJ_MULTIBUTTONENTRY_CLASS elm_obj_multibuttonentry_class_get()
 
 const Eo_Class *elm_obj_multibuttonentry_class_get(void) EINA_CONST;
@@ -302,3 +305,4 @@ enum
  * @ingroup Multibuttonentry
  */
 #define elm_obj_multibuttonentry_format_function_set(format_function, data) ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET), EO_TYPECHECK(Elm_Multibuttonentry_Format_Cb, format_function), EO_TYPECHECK(const void *, data)
+#endif

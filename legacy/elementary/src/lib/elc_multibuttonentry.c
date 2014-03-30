@@ -6,8 +6,6 @@
 #include "elm_priv.h"
 #include "elm_widget_multibuttonentry.h"
 
-EAPI Eo_Op ELM_OBJ_MULTIBUTTONENTRY_BASE_ID = EO_NOOP;
-
 #define MY_CLASS ELM_OBJ_MULTIBUTTONENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Multibuttonentry"
@@ -41,11 +39,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static void
-_elm_multibuttonentry_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
    Elm_Multibuttonentry_Item *it;
    Eina_List *l;
 
@@ -54,7 +50,7 @@ _elm_multibuttonentry_smart_translate(Eo *obj EINA_UNUSED, void *_pd, va_list *l
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static char *
@@ -66,20 +62,15 @@ _format_count(int count, void *data EINA_UNUSED)
    return strdup(buf);
 }
 
-static void
-_elm_multibuttonentry_smart_theme(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elc_Multibuttonentry_Data *sd)
 {
    Eina_List *l;
    Elm_Multibuttonentry_Item *item;
 
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
    Eina_Bool int_ret;
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, item)
      {
@@ -93,7 +84,7 @@ _elm_multibuttonentry_smart_theme(Eo *obj, void *_pd, va_list *list)
 
    elm_layout_sizing_eval(obj);
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -271,7 +262,7 @@ _shrink_mode_set(Evas_Object *obj,
 }
 
 static void
-_view_update(Elm_Multibuttonentry_Smart_Data *sd)
+_view_update(Elc_Multibuttonentry_Data *sd)
 {
    Evas_Coord width = 1, height = 1;
    Evas_Object *obj = sd->parent;
@@ -301,14 +292,9 @@ _view_update(Elm_Multibuttonentry_Smart_Data *sd)
    _visual_guide_text_set(obj);
 }
 
-static void
-_elm_multibuttonentry_smart_on_focus(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_on_focus(Eo *obj, Elc_Multibuttonentry_Data *sd)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-
    if (elm_widget_focus_get(obj))
      {
         // ACCESS
@@ -338,7 +324,7 @@ _elm_multibuttonentry_smart_on_focus(Eo *obj, void *_pd, va_list *list)
      }
 
 end:
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -647,7 +633,7 @@ _access_multibuttonentry_item_register(Evas_Object *obj,
 }
 
 static Elm_Object_Item *
-_button_item_add(Elm_Multibuttonentry_Smart_Data *sd,
+_button_item_add(Elc_Multibuttonentry_Data *sd,
                  const char *str,
                  Multibuttonentry_Pos pos,
                  const void *ref,
@@ -844,32 +830,25 @@ _button_item_add(Elm_Multibuttonentry_Smart_Data *sd,
 
 //FIXME: having an empty event handling function and reacting on Evas
 //events on specific objects is crazy, someone should fix that.
-static void
-_elm_multibuttonentry_smart_event(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_event(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *ev)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   void *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-
-   if (ret) *ret = EINA_FALSE;
    (void)src;
    (void)type;
    (void)ev;
 
    // ACCESS
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return;
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return EINA_FALSE;
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static void
-_elm_multibuttonentry_smart_sizing_eval(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_multibuttonentry_elm_layout_sizing_eval(Eo *obj, Elc_Multibuttonentry_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord left, right, top, bottom;
 
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_min_get(sd->box, &minw, &minh);
@@ -891,7 +870,7 @@ _mouse_clicked_signal_cb(void *data,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = data;
+   Elc_Multibuttonentry_Data *sd = data;
 
    _view_update(sd);
 
@@ -1352,7 +1331,7 @@ _box_layout_cb(Evas_Object *o,
 }
 
 static void
-_view_init(Evas_Object *obj, Elm_Multibuttonentry_Smart_Data *sd)
+_view_init(Evas_Object *obj, Elc_Multibuttonentry_Data *sd)
 {
    sd->box = elm_box_add(obj);
 
@@ -1403,12 +1382,9 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Smart_Data *sd)
      }
 }
 
-static void
-_elm_multibuttonentry_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_layout_text_set(Eo *obj, Elc_Multibuttonentry_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
-   const char *part = va_arg(*list, const char *);
-   const char *label = va_arg(*list, const char *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    Eina_Bool int_ret;
 
    if (!part || !strcmp(part, "default"))
@@ -1424,27 +1400,26 @@ _elm_multibuttonentry_smart_text_set(Eo *obj, void *_pd EINA_UNUSED, va_list *li
    else
      eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
 
-   if (ret) *ret = int_ret;
+   return int_ret;
 }
 
-static void
-_elm_multibuttonentry_smart_text_get(Eo *obj, void *_pd, va_list *list)
+EOLIAN static const char*
+_elc_multibuttonentry_elm_layout_text_get(Eo *obj, Elc_Multibuttonentry_Data *sd, const char *part)
 {
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   const char *part = va_arg(*list, const char *);
-   const char **text = va_arg(*list, const char **);
+   const char *text = NULL;
 
    if (!part || !strcmp(part, "default"))
      {
-        *text = sd->label_str;
+        text = sd->label_str;
      }
    else if (!strcmp(part, "guide"))
      {
-        *text = sd->guide_text_str;
+        text = sd->guide_text_str;
      }
    else
-     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, text));
+     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, &text));
+
+   return text;
 }
 
 static char *
@@ -1485,10 +1460,9 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return ret;
 }
 
-static void
-_elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_multibuttonentry_evas_smart_add(Eo *obj, Elc_Multibuttonentry_Data *priv)
 {
-   Elm_Multibuttonentry_Smart_Data *priv = _pd;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -1516,12 +1490,10 @@ _elm_multibuttonentry_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
      (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
 }
 
-static void
-_elm_multibuttonentry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_multibuttonentry_evas_smart_del(Eo *obj, Elc_Multibuttonentry_Data *sd)
 {
    Elm_Multibuttonentry_Item *item;
-
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
 
    EINA_LIST_FREE(sd->items, item)
      {
@@ -1544,27 +1516,21 @@ _elm_multibuttonentry_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 
 static Eina_Bool _elm_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
 
-static void
-_elm_multibuttonentry_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_multibuttonentry_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_multibuttonentry_smart_focus_next_enable;
+   return _elm_multibuttonentry_smart_focus_next_enable;
 }
 
-static void
-_elm_multibuttonentry_smart_focus_next(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_elm_widget_focus_next(Eo *obj, Elc_Multibuttonentry_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
 
    Eina_List *items = NULL;
@@ -1573,13 +1539,10 @@ _elm_multibuttonentry_smart_focus_next(Eo *obj, void *_pd, va_list *list)
    Evas_Object *ao;
    Evas_Object *po;
 
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
    if (!elm_widget_focus_get(obj))
      {
         *next = (Evas_Object *)obj;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
 
    if (sd->label)
@@ -1608,9 +1571,11 @@ _elm_multibuttonentry_smart_focus_next(Eo *obj, void *_pd, va_list *list)
         items = eina_list_append(items, sd->box);
      }
 
-   if (int_ret && ret)
-     *ret = elm_widget_focus_list_next_get
+   if (int_ret)
+     return elm_widget_focus_list_next_get
               (obj, items, eina_list_data_get, dir, next);
+
+   return EINA_FALSE;
 }
 
 static void
@@ -1629,10 +1594,10 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
      _access_multibuttonentry_item_register(obj, it, is_access);
 }
 
-static void
-_elm_multibuttonentry_smart_access(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elc_multibuttonentry_elm_widget_access(Eo *obj, Elc_Multibuttonentry_Data *sd EINA_UNUSED, Eina_Bool acs)
 {
-   _elm_multibuttonentry_smart_focus_next_enable = va_arg(*list, int);
+   _elm_multibuttonentry_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_multibuttonentry_smart_focus_next_enable);
 }
 
@@ -1645,8 +1610,8 @@ elm_multibuttonentry_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_multibuttonentry_eo_base_constructor(Eo *obj, Elc_Multibuttonentry_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1654,83 +1619,33 @@ _constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI Evas_Object *
-elm_multibuttonentry_entry_get(const Evas_Object *obj)
+EOLIAN static Evas_Object*
+_elc_multibuttonentry_entry_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj) NULL;
-   Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_entry_get(&ret));
-   return ret;
+   return sd->entry;
 }
 
-static void
-_entry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_expanded_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   Evas_Object **ret = va_arg(*list, Evas_Object **);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = sd->entry;
-}
-
-EAPI Eina_Bool
-elm_multibuttonentry_expanded_get(const Evas_Object *obj)
-{
-   ELM_MULTIBUTTONENTRY_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_expanded_get(&ret));
-   return ret;
-}
-
-static void
-_expanded_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ?
+   return sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ?
           EINA_FALSE : EINA_TRUE;
 }
 
-EAPI void
-elm_multibuttonentry_format_function_set(Evas_Object *obj,
-                                         Elm_Multibuttonentry_Format_Cb f_func,
-                                         const void *data)
+EOLIAN static void
+_elc_multibuttonentry_format_function_set(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Elm_Multibuttonentry_Format_Cb f_func, const void *data)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_format_function_set
-         (f_func, data));
-
-}
-
-static void
-_format_function_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   sd->format_func = va_arg(*list, Elm_Multibuttonentry_Format_Cb);
-
+   sd->format_func = f_func;
    if (!sd->format_func) sd->format_func = _format_count;
 
-   sd->format_func_data = va_arg(*list, void *);
+   sd->format_func_data = data;
 
    _view_update(sd);
 }
 
-EAPI void
-elm_multibuttonentry_expanded_set(Evas_Object *obj,
-                                  Eina_Bool expanded)
+EOLIAN static void
+_elc_multibuttonentry_expanded_set(Eo *obj, Elc_Multibuttonentry_Data *sd, Eina_Bool expanded)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_multibuttonentry_expanded_set(expanded));
-}
-
-static void
-_expanded_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool expanded = va_arg(*list, int);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
    if (((sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK) ?
         EINA_FALSE : EINA_TRUE) == expanded) return;
 
@@ -1740,20 +1655,9 @@ _expanded_set(Eo *obj, void *_pd, va_list *list)
      _shrink_mode_set(obj, EINA_TRUE);
 }
 
-EAPI void
-elm_multibuttonentry_editable_set(Evas_Object *obj,
-                                  Eina_Bool editable)
+EOLIAN static void
+_elc_multibuttonentry_editable_set(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Eina_Bool editable)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_multibuttonentry_editable_set(editable));
-}
-
-static void
-_editable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool editable = va_arg(*list, int);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
    editable = !!editable;
    if (sd->editable == editable) return;
    sd->editable = editable;
@@ -1767,194 +1671,58 @@ _editable_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      }
 }
 
-EAPI Eina_Bool
-elm_multibuttonentry_editable_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elc_multibuttonentry_editable_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj) - 1;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_editable_get(&ret));
-   return ret;
+   return sd->editable;
 }
 
-static void
-_editable_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_item_prepend(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, const char *label, Evas_Smart_Cb func, void *data)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = sd->editable;
+   return _button_item_add(sd, label, MULTIBUTTONENTRY_POS_START, NULL, func, data);
 }
 
-EAPI Elm_Object_Item *
-elm_multibuttonentry_item_prepend(Evas_Object *obj,
-                                  const char *label,
-                                  Evas_Smart_Cb func,
-                                  void *data)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_item_append(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, const char *label, Evas_Smart_Cb func, void *data)
 {
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_multibuttonentry_item_prepend(label, func, data, &ret));
-   return ret;
+   return _button_item_add(sd, label, MULTIBUTTONENTRY_POS_END, NULL, func, data);
 }
 
-static void
-_item_prepend(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_item_insert_before(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Elm_Object_Item *before, const char *label, Evas_Smart_Cb func, void *data)
 {
-   const char *label = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   void *data = va_arg(*list, void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   *ret = _button_item_add(sd, label, MULTIBUTTONENTRY_POS_START, NULL, func, data);
+   return _button_item_add(sd, label, MULTIBUTTONENTRY_POS_BEFORE, before, func, data);
 }
 
-EAPI Elm_Object_Item *
-elm_multibuttonentry_item_append(Evas_Object *obj,
-                                 const char *label,
-                                 Evas_Smart_Cb func,
-                                 void *data)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_item_insert_after(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Elm_Object_Item *after, const char *label, Evas_Smart_Cb func, void *data)
 {
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_multibuttonentry_item_append(label, func, data, &ret));
-   return ret;
+   return _button_item_add(sd, label, MULTIBUTTONENTRY_POS_AFTER, after, func, data);
 }
 
-static void
-_item_append(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static const Eina_List*
+_elc_multibuttonentry_items_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   const char *label = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   void *data = va_arg(*list, void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   *ret = _button_item_add(sd, label, MULTIBUTTONENTRY_POS_END, NULL, func, data);
+   return sd->items;
 }
 
-EAPI Elm_Object_Item *
-elm_multibuttonentry_item_insert_before(Evas_Object *obj,
-                                        Elm_Object_Item *before,
-                                        const char *label,
-                                        Evas_Smart_Cb func,
-                                        void *data)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_first_item_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_multibuttonentry_item_insert_before(before, label, func, data, &ret));
-   return ret;
+   return eina_list_data_get(sd->items);
 }
 
-static void
-_item_insert_before(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_last_item_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   Elm_Object_Item *before = va_arg(*list, Elm_Object_Item *);
-   const char *label = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   void *data = va_arg(*list, void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   *ret = _button_item_add(sd, label, MULTIBUTTONENTRY_POS_BEFORE, before, func, data);
+   return eina_list_data_get(eina_list_last(sd->items));
 }
 
-EAPI Elm_Object_Item *
-elm_multibuttonentry_item_insert_after(Evas_Object *obj,
-                                       Elm_Object_Item *after,
-                                       const char *label,
-                                       Evas_Smart_Cb func,
-                                       void *data)
+EOLIAN static Elm_Object_Item*
+_elc_multibuttonentry_selected_item_get(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_multibuttonentry_item_insert_after(after, label, func, data, &ret));
-   return ret;
-}
-
-static void
-_item_insert_after(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   Elm_Object_Item *after = va_arg(*list, Elm_Object_Item *);
-   const char *label = va_arg(*list, const char *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   void *data = va_arg(*list, void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
-   *ret = _button_item_add(sd, label, MULTIBUTTONENTRY_POS_AFTER, after, func, data);
-}
-
-EAPI const Eina_List *
-elm_multibuttonentry_items_get(const Evas_Object *obj)
-{
-   ELM_MULTIBUTTONENTRY_CHECK(obj) NULL;
-   const Eina_List *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_items_get(&ret));
-   return ret;
-}
-
-static void
-_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = sd->items;
-}
-
-EAPI Elm_Object_Item *
-elm_multibuttonentry_first_item_get(const Evas_Object *obj)
-{
-   ELM_MULTIBUTTONENTRY_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_first_item_get(&ret));
-   return ret;
-}
-
-static void
-_first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = eina_list_data_get(sd->items);
-}
-
-EAPI Elm_Object_Item *
-elm_multibuttonentry_last_item_get(const Evas_Object *obj)
-{
-   ELM_MULTIBUTTONENTRY_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_last_item_get(&ret));
-   return ret;
-}
-
-static void
-_last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = eina_list_data_get(eina_list_last(sd->items));
-}
-
-EAPI Elm_Object_Item *
-elm_multibuttonentry_selected_item_get(const Evas_Object *obj)
-{
-   ELM_MULTIBUTTONENTRY_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_multibuttonentry_selected_item_get(&ret));
-   return ret;
-}
-
-static void
-_selected_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
-
-   *ret = sd->selected_it;
+   return sd->selected_it;
 }
 
 EAPI void
@@ -1978,18 +1746,10 @@ elm_multibuttonentry_item_selected_get(const Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
-EAPI void
-elm_multibuttonentry_clear(Evas_Object *obj)
-{
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_multibuttonentry_clear());
-}
-
-static void
-_clear(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elc_multibuttonentry_clear(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd)
 {
    Elm_Multibuttonentry_Item *item;
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
 
    if (sd->items)
      {
@@ -2060,27 +1820,12 @@ elm_multibuttonentry_item_data_set(Elm_Object_Item *it,
    return elm_widget_item_data_set(it, data);
 }
 
-EAPI void
-elm_multibuttonentry_item_filter_append(Evas_Object *obj,
-                                        Elm_Multibuttonentry_Item_Filter_Cb func,
-                                        void *data)
+EOLIAN static void
+_elc_multibuttonentry_item_filter_append(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
-
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_multibuttonentry_item_filter_append(func, data));
-}
-
-static void
-_item_filter_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Multibuttonentry_Item_Filter_Cb func = va_arg(*list, Elm_Multibuttonentry_Item_Filter_Cb);
-   void *data = va_arg(*list, void *);
-
    Elm_Multibuttonentry_Item_Filter *new_item_filter = NULL;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
    Eina_List *l;
-
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
@@ -2099,26 +1844,13 @@ _item_filter_append(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->filter_list = eina_list_append(sd->filter_list, new_item_filter);
 }
 
-EAPI void
-elm_multibuttonentry_item_filter_prepend(Evas_Object *obj,
-                                         Elm_Multibuttonentry_Item_Filter_Cb func,
-                                         void *data)
+EOLIAN static void
+_elc_multibuttonentry_item_filter_prepend(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_multibuttonentry_item_filter_prepend(func, data));
-}
-
-static void
-_item_filter_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Multibuttonentry_Item_Filter_Cb func = va_arg(*list, Elm_Multibuttonentry_Item_Filter_Cb);
-   void *data = va_arg(*list, void *);
-
    Elm_Multibuttonentry_Item_Filter *new_item_filter = NULL;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
    Eina_List *l;
 
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    new_item_filter = _filter_new(func, data);
@@ -2137,25 +1869,11 @@ _item_filter_prepend(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
    sd->filter_list = eina_list_prepend(sd->filter_list, new_item_filter);
 }
 
-EAPI void
-elm_multibuttonentry_item_filter_remove(Evas_Object *obj,
-                                        Elm_Multibuttonentry_Item_Filter_Cb func,
-                                        void *data)
+EOLIAN static void
+_elc_multibuttonentry_item_filter_remove(Eo *obj EINA_UNUSED, Elc_Multibuttonentry_Data *sd, Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
-   ELM_MULTIBUTTONENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_multibuttonentry_item_filter_remove(func, data));
-}
-
-static void
-_item_filter_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Multibuttonentry_Item_Filter_Cb func = va_arg(*list, Elm_Multibuttonentry_Item_Filter_Cb);
-   void *data = va_arg(*list, void *);
-
    Eina_List *l;
    Elm_Multibuttonentry_Item_Filter *item_filter;
-
-   Elm_Multibuttonentry_Smart_Data *sd = _pd;
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
@@ -2172,83 +1890,12 @@ _item_filter_remove(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
 }
 
 static void
-_class_constructor(Eo_Class *klass)
+_elc_multibuttonentry_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_multibuttonentry_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_multibuttonentry_smart_del),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_multibuttonentry_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_TRANSLATE), _elm_multibuttonentry_smart_translate),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_multibuttonentry_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_multibuttonentry_smart_on_focus),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_multibuttonentry_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_multibuttonentry_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_multibuttonentry_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_multibuttonentry_smart_access),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_SET), _elm_multibuttonentry_smart_text_set),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_TEXT_GET), _elm_multibuttonentry_smart_text_get),
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_multibuttonentry_smart_sizing_eval),
-
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ENTRY_GET), _entry_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EXPANDED_GET), _expanded_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EXPANDED_SET), _expanded_set),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_SET), _editable_set),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_GET), _editable_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_PREPEND), _item_prepend),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_APPEND), _item_append),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_INSERT_BEFORE), _item_insert_before),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_INSERT_AFTER), _item_insert_after),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEMS_GET), _items_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FIRST_ITEM_GET), _first_item_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_LAST_ITEM_GET), _last_item_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_SELECTED_ITEM_GET), _selected_item_get),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_CLEAR), _clear),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_APPEND), _item_filter_append),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_PREPEND), _item_filter_prepend),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_REMOVE), _item_filter_remove),
-        EO_OP_FUNC(ELM_OBJ_MULTIBUTTONENTRY_ID(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET), _format_function_set),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       _elm_multibuttonentry_smart_focus_next_enable = EINA_TRUE;
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ENTRY_GET, "Get the entry of the multibuttonentry object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EXPANDED_GET, "Get the value of expanded state."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EXPANDED_SET, "Set/Unset the multibuttonentry to expanded state."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_SET, "Sets if the multibuttonentry is to be editable or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_EDITABLE_GET, "Get whether the multibuttonentry is editable or not."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_PREPEND, "Prepend a new item to the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_APPEND, "Append a new item to the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_INSERT_BEFORE, "Add a new item to the multibuttonentry before the indicated object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_INSERT_AFTER, "Add a new item to the multibuttonentry after the indicated object."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEMS_GET, "Get a list of items in the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FIRST_ITEM_GET, "Get the first item in the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_LAST_ITEM_GET, "Get the last item in the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_SELECTED_ITEM_GET, "Get the selected item in the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_CLEAR, "Remove all items in the multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_APPEND, "Append an item filter function for text inserted in the Multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_PREPEND, "Prepend a filter function for text inserted in the Multibuttonentry."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_ITEM_FILTER_REMOVE, "Remove a filter from the list."),
-     EO_OP_DESCRIPTION(ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_FORMAT_FUNCTION_SET, "Set a function to format the string that will be used to display the hidden items counter."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_MULTIBUTTONENTRY_BASE_ID, op_desc, ELM_OBJ_MULTIBUTTONENTRY_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Multibuttonentry_Smart_Data),
-     _class_constructor,
-     NULL
-};
-EO_DEFINE_CLASS(elm_obj_multibuttonentry_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, NULL);
+
+#include "elc_multibuttonentry.eo.c"

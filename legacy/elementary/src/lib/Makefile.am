@@ -621,6 +621,8 @@ BUILT_SOURCES = \
 		elm_map.eo.h \
 		elm_menu.eo.c \
 		elm_menu.eo.h \
+		elc_multibuttonentry.eo.c \
+		elc_multibuttonentry.eo.h \
 		elm_panel.eo.c \
 		elm_panel.eo.h \
 		elm_mapbuf.eo.c \
@@ -727,6 +729,7 @@ EXTRA_DIST += \
 	     elm_map_pan.eo \
 	     elm_map.eo \
 	     elm_menu.eo \
+	     elc_multibuttonentry.eo \
 	     elm_panel.eo \
 	     elm_mapbuf.eo \
 	     elm_notify.eo \
@@ -805,6 +808,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_map_pan.eo.h \
 				  elm_map.eo.h \
 				  elm_menu.eo.h \
+				  elc_multibuttonentry.eo.h \
 				  elm_panel.eo.h \
 				  elm_mapbuf.eo.h \
 				  elm_notify.eo.h \
