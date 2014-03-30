@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elc_naviframe.eo.h"
+#if 0
 #define ELM_OBJ_NAVIFRAME_CLASS elm_obj_naviframe_class_get()
 
 const Eo_Class *elm_obj_naviframe_class_get(void) EINA_CONST;
@@ -215,6 +217,7 @@ enum
  * @see elm_naviframe_event_enabled_get
  */
 #define elm_obj_naviframe_event_enabled_get(ret) ELM_OBJ_NAVIFRAME_ID(ELM_OBJ_NAVIFRAME_SUB_ID_EVENT_ENABLED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
 /**
  * @}
  */
