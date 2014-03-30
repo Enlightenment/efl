@@ -1,6 +1,8 @@
 #ifndef ELM_INTEFARCE_FILESELECTOR_H
 #define ELM_INTEFARCE_FILESELECTOR_H
 
+#include "elm_interface_fileselector.eo.h"
+#if 0
 #define ELM_FILESELECTOR_INTERFACE elm_fileselector_interface_get()
 
 const Eo_Class *elm_fileselector_interface_get(void) EINA_CONST;
@@ -364,9 +366,10 @@ enum
  * @see elm_fileselector_sort_method_set
  */
 #define elm_fileselector_interface_sort_method_set(sort) ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_SORT_METHOD_SET), EO_TYPECHECK(Elm_Fileselector_Sort, sort)
+#endif
 
 #define ELM_FILESELECTOR_INTERFACE_CHECK(obj, ...) \
-  if (EINA_UNLIKELY(!eo_isa(obj, ELM_FILESELECTOR_INTERFACE))) \
+  if (EINA_UNLIKELY(!eo_isa(obj, ELM_INTERFACE_FILESELECTOR_CLASS))) \
     { \
        ERR("The object (%p) doesn't implement the Elementary fileselector" \
             " interface", obj); \

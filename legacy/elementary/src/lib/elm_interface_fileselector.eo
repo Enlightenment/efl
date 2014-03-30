@@ -1,0 +1,200 @@
+interface Elm_Interface_Fileselector ()
+{
+   eo_prefix: elm_interface_fileselector;
+   data: null;
+   properties {
+      folder_only {
+         set {
+            /*@ Enable/disable folder-only view for a given file selector widget */
+            legacy null;
+         }
+         get {
+            /*@ Get whether folder-only view is set for a given file selector */
+            legacy null;
+         }
+         values {
+            Eina_Bool only;
+         }
+      }
+      selected {
+         set {
+            /*@ Set, programmatically, the currently selected file/directory in the given file selector widget */
+            return Eina_Bool;
+            legacy null;
+         }
+         get {
+            /*@ Get the currently selected item's (full) path, in the given file the given file selector widget */
+            legacy null;
+         }
+         values {
+            const char *path;
+         }
+      }
+      thumbnail_size {
+         set {
+            /*@ Set the size for the thumbnail of the file selector widget's view. */
+            legacy null;
+         }
+         get {
+            /*@ Get the size for the thumbnail of a given file selector widget */
+            legacy null;
+         }
+         values {
+            Evas_Coord w;
+            Evas_Coord h;
+         }
+      }
+      hidden_visible {
+         set {
+            /*@ Enable or disable visibility of hidden files/directories in the file selector widget. */
+            legacy null;
+         }
+         get {
+            /*@ Get if hiden files/directories in the file selector are visible or not. */
+            legacy null;
+         }
+         values {
+            Eina_Bool multi;
+         }
+      }
+      sort_method {
+         set {
+            /*@ Set the sort method of the file selector widget. */
+            legacy null;
+         }
+         get {
+            /*@ Get the sort method of the file selector widget. */
+            legacy null;
+         }
+         values {
+            Elm_Fileselector_Sort sort;
+         }
+      }
+      multi_select {
+         set {
+            /*@ Enable or disable multi-selection in the fileselector */
+            legacy null;
+         }
+         get {
+            /*@ Gets if multi-selection in fileselector is enabled or disabled. */
+            legacy null;
+         }
+         values {
+            Eina_Bool multi;
+         }
+      }
+      expandable {
+         set {
+            /*@ Enable/disable a tree view in the given file selector widget, <b>if it's in */
+            legacy null;
+         }
+         get {
+            /*@ Get whether tree view is enabled for the given file selector */
+            legacy null;
+         }
+         values {
+            Eina_Bool expand;
+         }
+      }
+      path {
+         set {
+            /*@ Set, programmatically, the directory that a given file selector widget will display contents from */
+            legacy null;
+         }
+         get {
+            /*@ Get the parent directory's path that a given file selector selector widget will display contents from */
+            legacy null;
+         }
+         values {
+            const char *path;
+         }
+      }
+      mode {
+         set {
+            /*@ Set the mode in which a given file selector widget will display (layout) file system entries in its view */
+            legacy null;
+         }
+         get {
+            /*@ Get the mode in which a given file selector widget is displaying */
+            legacy null;
+         }
+         values {
+            Elm_Fileselector_Mode mode;
+         }
+      }
+      is_save {
+         set {
+            /*@ Enable/disable the file name entry box where the user can type in a name for a file, in a given file selector widget */
+            legacy null;
+         }
+         get {
+            /*@ Get whether the given file selector is in "saving dialog" mode */
+            legacy null;
+         }
+         values {
+            Eina_Bool is_save;
+         }
+      }
+      selected_paths {
+         get {
+            /*@ Get a list of selected paths in the fileselector. */
+            legacy null;
+         }
+         values {
+            const Eina_List *ret;
+         }
+      }
+   }
+   methods {
+      custom_filter_append {
+         /*@ Append custom filter into filter list */
+         params {
+            @in Elm_Fileselector_Filter_Func func; /*@ function */
+            @in void *data;
+            @in const char *filter_name;
+         }
+         return Eina_Bool;
+         legacy null;
+      }
+      filters_clear {
+         /*@ Clear all filters registered */
+         legacy null;
+      }
+      mime_types_filter_append {
+         /*@ Append mime type based filter into filter list */
+         params {
+            @in const char *mime_types;
+            @in const char *filter_name;
+         }
+         return Eina_Bool;
+         legacy null;
+      }
+   }
+   implements {
+      virtual::selected::set;
+      virtual::selected::get;
+      virtual::selected_paths::get;
+      virtual::custom_filter_append;
+      virtual::expandable::set;
+      virtual::expandable::get;
+      virtual::thumbnail_size::set;
+      virtual::thumbnail_size::get;
+      virtual::folder_only::set;
+      virtual::folder_only::get;
+      virtual::hidden_visible::set;
+      virtual::hidden_visible::get;
+      virtual::filters_clear;
+      virtual::is_save::set;
+      virtual::is_save::get;
+      virtual::path::set;
+      virtual::path::get;
+      virtual::sort_method::set;
+      virtual::sort_method::get;
+      virtual::multi_select::set;
+      virtual::multi_select::get;
+      virtual::mime_types_filter_append;
+      virtual::mode::set;
+      virtual::mode::get;
+   }
+
+}

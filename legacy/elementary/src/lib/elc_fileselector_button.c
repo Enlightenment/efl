@@ -313,7 +313,7 @@ elm_fileselector_button_path_set(Evas_Object *obj,
                                  const char *path)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_fileselector_interface_path_set(path));
+   eo_do(obj, elm_interface_fileselector_path_set(path));
 }
 
 static void
@@ -332,7 +332,7 @@ elm_fileselector_button_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    const char *ret = NULL;
-   eo_do((Eo *) obj, elm_fileselector_interface_path_get(&ret));
+   eo_do((Eo *) obj, elm_interface_fileselector_path_get(&ret));
    return ret;
 }
 
@@ -350,7 +350,7 @@ elm_fileselector_button_expandable_set(Evas_Object *obj,
                                        Eina_Bool value)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_fileselector_interface_expandable_set(value));
+   eo_do(obj, elm_interface_fileselector_expandable_set(value));
 }
 
 static void
@@ -369,7 +369,7 @@ elm_fileselector_button_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_fileselector_interface_expandable_get(&ret));
+   eo_do((Eo *) obj, elm_interface_fileselector_expandable_get(&ret));
    return ret;
 }
 
@@ -387,7 +387,7 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj,
                                         Eina_Bool value)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_fileselector_interface_folder_only_set(value));
+   eo_do(obj, elm_interface_fileselector_folder_only_set(value));
 }
 
 static void
@@ -406,7 +406,7 @@ elm_fileselector_button_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_fileselector_interface_folder_only_get(&ret));
+   eo_do((Eo *) obj, elm_interface_fileselector_folder_only_get(&ret));
    return ret;
 }
 
@@ -424,7 +424,7 @@ elm_fileselector_button_is_save_set(Evas_Object *obj,
                                     Eina_Bool value)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj);
-   eo_do(obj, elm_fileselector_interface_is_save_set(value));
+   eo_do(obj, elm_interface_fileselector_is_save_set(value));
 }
 
 static void
@@ -443,7 +443,7 @@ elm_fileselector_button_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_fileselector_interface_is_save_get(&ret));
+   eo_do((Eo *) obj, elm_interface_fileselector_is_save_get(&ret));
    return ret;
 }
 
@@ -503,14 +503,14 @@ _class_constructor(Eo_Class *klass)
 
         EO_OP_FUNC(ELM_OBJ_BUTTON_ID(ELM_OBJ_BUTTON_SUB_ID_ADMITS_AUTOREPEAT_GET), _elm_fileselector_button_smart_admits_autorepeat_get),
 
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_PATH_SET), _path_set),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_PATH_GET), _path_get),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_EXPANDABLE_SET), _expandable_set),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_EXPANDABLE_GET), _expandable_get),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_FOLDER_ONLY_SET), _folder_only_set),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_FOLDER_ONLY_GET), _folder_only_get),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_IS_SAVE_SET), _is_save_set),
-        EO_OP_FUNC(ELM_FILESELECTOR_INTERFACE_ID(ELM_FILESELECTOR_INTERFACE_SUB_ID_IS_SAVE_GET), _is_save_get),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_PATH_SET), _path_set),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_PATH_GET), _path_get),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_EXPANDABLE_SET), _expandable_set),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_EXPANDABLE_GET), _expandable_get),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_FOLDER_ONLY_SET), _folder_only_set),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_FOLDER_ONLY_GET), _folder_only_get),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_IS_SAVE_SET), _is_save_set),
+        EO_OP_FUNC(ELM_INTERFACE_FILESELECTOR_ID(ELM_INTERFACE_FILESELECTOR_SUB_ID_IS_SAVE_GET), _is_save_get),
 
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_SET), _window_title_set),
         EO_OP_FUNC(ELM_OBJ_FILESELECTOR_BUTTON_ID(ELM_OBJ_FILESELECTOR_BUTTON_SUB_ID_WINDOW_TITLE_GET), _window_title_get),
@@ -546,4 +546,4 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_obj_fileselector_button_class_get, &class_desc, ELM_OBJ_BUTTON_CLASS, ELM_FILESELECTOR_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_obj_fileselector_button_class_get, &class_desc, ELM_OBJ_BUTTON_CLASS, ELM_INTERFACE_FILESELECTOR_CLASS, NULL);
