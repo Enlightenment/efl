@@ -927,7 +927,16 @@ _on_show(void *data EINA_UNUSED,
      {
         elm_list_go(sd->list);
         sd->visible = EINA_TRUE;
-        elm_object_focus_set(sd->list, EINA_TRUE);
+        /*
+         * XXX: Giving focus to the list when it has nothing selected makes
+         * it select the first of its items, which makes the popup in
+         * Terminology never open and instead just trigger the first option.
+         * I'll let as an excercise to the reader to figure out why that
+         * is so fucking annoying. Extra points for noting why this is my
+         * choice of a "fix" instead of fixing the actual focus/select issue
+         * that seems to be spread all over Elementary.
+         */
+        //elm_object_focus_set(sd->list, EINA_TRUE);
         return;
      }
 
