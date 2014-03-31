@@ -2755,6 +2755,8 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
         The child group has the same property as parent group. If you specify the
         type again in an inherited part, it will cause an error (unless you plan
         to fix that).
+        @warning When inheriting any parts, descriptions without state names are NOT
+        allowed.
     @endproperty
     @since 1.1.0
 */
@@ -3589,6 +3591,8 @@ _part_free(Edje_Part *ep)
     @effect
         Copies all attributes except part name from referenced part into current part.
         ALL existing attributes, except part name, are overwritten.
+        @warning When inheriting any parts, descriptions without state names are NOT
+        allowed.
     @endproperty
     @since 1.10
 */
@@ -10376,6 +10380,19 @@ static void
 edje_cc_handlers_hierarchy_pop(void)
 {  /* Remove part from hierarchy stack when finished parsing it */
    Edje_Cc_Handlers_Hierarchy_Info *info = eina_array_pop(part_hierarchy);
+
+   if (current_part)
+     {
+        unsigned int i;
+
+        for (i = 0; i < current_part->other.desc_count; i++)
+          if (!current_part->other.desc[i]->state.name)
+            {
+               ERR("syntax error near %s:%i. Non-default parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
+                     file_in, line - 1, current_de->entry, current_part->name);
+                 exit(-1);
+            }
+     }
 
    if (info)
      {
