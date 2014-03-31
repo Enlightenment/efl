@@ -3706,7 +3706,7 @@ _elm_map_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Map_Pan_Data *psd
 }
 
 EOLIAN static void
-_elm_map_pan_evas_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord _gen_param2 EINA_UNUSED, Evas_Coord _gen_param3 EINA_UNUSED)
+_elm_map_pan_evas_smart_resize(Eo *obj, Elm_Map_Pan_Data *psd, Evas_Coord w EINA_UNUSED, Evas_Coord h EINA_UNUSED)
 {
    _sizing_eval(psd->wsd->obj);
    elm_map_zoom_mode_set(psd->wobj, psd->wsd->mode);
