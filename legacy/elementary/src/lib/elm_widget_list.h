@@ -20,8 +20,8 @@
 /**
  * Base widget smart data extended with list instance data.
  */
-typedef struct _Elm_List_Smart_Data Elm_List_Smart_Data;
-struct _Elm_List_Smart_Data
+typedef struct _Elm_List_Data Elm_List_Data;
+struct _Elm_List_Data
 {
    Evas_Object                          *box, *hit_rect;
 
@@ -86,7 +86,7 @@ struct _Elm_List_Item
  */
 
 #define ELM_LIST_DATA_GET(o, sd) \
-  Elm_List_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_LIST_CLASS)
+  Elm_List_Data * sd = eo_data_scope_get(o, ELM_OBJ_LIST_CLASS)
 
 #define ELM_LIST_DATA_GET_OR_RETURN(o, ptr)          \
   ELM_LIST_DATA_GET(o, ptr);                         \

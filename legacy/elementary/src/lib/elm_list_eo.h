@@ -3,6 +3,8 @@
  *
  * @{
  */
+#include "elm_list.eo.h"
+#if 0
 #define ELM_OBJ_LIST_CLASS elm_obj_list_class_get()
 
  const Eo_Class *elm_obj_list_class_get(void) EINA_CONST;
@@ -433,6 +435,7 @@
  */
 #define elm_obj_list_focus_on_selection_get(ret) ELM_OBJ_LIST_ID(ELM_OBJ_LIST_SUB_ID_FOCUS_ON_SELECTION_GET), EO_TYPECHECK(Eina_Bool *, ret)
 
+#endif
 /**
  * @}
  */
