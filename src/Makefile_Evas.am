@@ -4,16 +4,22 @@
 BUILT_SOURCES += \
                  lib/evas/canvas/evas_line.eo.c \
                  lib/evas/canvas/evas_line.eo.h \
+                 lib/evas/canvas/evas_line.eo.legacy.h \
                  lib/evas/canvas/evas_polygon.eo.c \
                  lib/evas/canvas/evas_polygon.eo.h \
+                 lib/evas/canvas/evas_polygon.eo.legacy.h \
                  lib/evas/canvas/evas_rectangle.eo.c \
                  lib/evas/canvas/evas_rectangle.eo.h \
+                 lib/evas/canvas/evas_rectangle.eo.legacy.h \
                  lib/evas/canvas/evas_text.eo.c \
                  lib/evas/canvas/evas_text.eo.h \
+                 lib/evas/canvas/evas_text.eo.legacy.h \
                  lib/evas/canvas/evas_textblock.eo.c \
                  lib/evas/canvas/evas_textblock.eo.h \
+                 lib/evas/canvas/evas_textblock.eo.legacy.h \
                  lib/evas/canvas/evas_textgrid.eo.c \
                  lib/evas/canvas/evas_textgrid.eo.h \
+                 lib/evas/canvas/evas_textgrid.eo.legacy.h \
                  lib/evas/canvas/evas_signal_interface.eo.c \
                  lib/evas/canvas/evas_signal_interface.eo.h \
                  lib/evas/canvas/evas_smart.eo.c \
@@ -110,7 +116,13 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_scrollable_interface.eo.h \
                                         lib/evas/canvas/evas_selectable_interface.eo.h \
                                         lib/evas/canvas/evas_zoomable_interface.eo.h \
-                                        lib/evas/canvas/evas_box.eo.h
+                                        lib/evas/canvas/evas_box.eo.h \
+                                        lib/evas/canvas/evas_line.eo.legacy.h \
+                                        lib/evas/canvas/evas_polygon.eo.legacy.h \
+                                        lib/evas/canvas/evas_rectangle.eo.legacy.h \
+                                        lib/evas/canvas/evas_text.eo.legacy.h \
+                                        lib/evas/canvas/evas_textblock.eo.legacy.h \
+                                        lib/evas/canvas/evas_textgrid.eo.legacy.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \

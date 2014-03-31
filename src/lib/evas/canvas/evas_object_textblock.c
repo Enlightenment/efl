@@ -6860,51 +6860,20 @@ evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
       EINA_TRUE : EINA_FALSE;
 }
 
-EAPI const Eina_List *
-evas_textblock_node_format_list_get(const Evas_Object *eo_obj, const char *anchor)
-{
-   const Eina_List *list = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_textblock_node_format_list_get(anchor, &list));
-   return list;
-}
-
-EOLIAN static void
-_evas_textblock_node_format_list_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, const char *anchor, const Eina_List **ret_list)
+EOLIAN static const Eina_List *
+_evas_textblock_node_format_list_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, const char *anchor)
 {
    if (!strcmp(anchor, "a"))
-     {
-        *ret_list = o->anchors_a;
-        return;
-     }
+     return o->anchors_a;
    else if (!strcmp(anchor, "item"))
-     {
-        *ret_list = o->anchors_item;
-        return;
-     }
-
-   *ret_list = NULL;
-}
-
-EAPI const Evas_Object_Textblock_Node_Format *
-evas_textblock_node_format_first_get(const Evas_Object *eo_obj)
-{
-   const Evas_Object_Textblock_Node_Format *format = NULL;
-   eo_do((Eo *)eo_obj, format = evas_obj_textblock_node_format_first_get());
-   return format;
+     return o->anchors_item;
+   return NULL;
 }
 
 EOLIAN static const Evas_Object_Textblock_Node_Format*
 _evas_textblock_node_format_first_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 {
    return o->format_nodes;
-}
-
-EAPI const Evas_Object_Textblock_Node_Format *
-evas_textblock_node_format_last_get(const Evas_Object *eo_obj)
-{
-   const Evas_Object_Textblock_Node_Format *format = NULL;
-   eo_do((Eo *)eo_obj, format = evas_obj_textblock_node_format_last_get());
-   return format;
 }
 
 EOLIAN static const Evas_Object_Textblock_Node_Format*
@@ -6925,13 +6894,6 @@ evas_textblock_node_format_prev_get(const Evas_Object_Textblock_Node_Format *n)
 {
    if (!n) return NULL;
    return _NODE_FORMAT(EINA_INLIST_GET(n)->prev);
-}
-
-EAPI void
-evas_textblock_node_format_remove_pair(Evas_Object *eo_obj,
-      Evas_Object_Textblock_Node_Format *n)
-{
-   eo_do(eo_obj, evas_obj_textblock_node_format_remove_pair(n));
 }
 
 EOLIAN static void

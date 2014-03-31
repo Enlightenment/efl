@@ -119,6 +119,7 @@ class Evas_Textblock (Evas_Object)
       node_format_first {
          get {
             /*@ Returns the first format node. */
+            legacy evas_textblock_node_format_first_get;
          }
          values {
             const Evas_Object_Textblock_Node_Format *format;
@@ -152,6 +153,7 @@ class Evas_Textblock (Evas_Object)
       node_format_last {
          get {
             /*@ Returns the last format node. */
+            legacy evas_textblock_node_format_last_get;
          }
          values {
             const Evas_Object_Textblock_Node_Format *format;
@@ -250,9 +252,11 @@ class Evas_Textblock (Evas_Object)
       }
       node_format_list_get {
          /*@ No description supplied by the EAPI. */
+         const;
+         legacy evas_textblock_node_format_list_get;
+         return const Eina_List *;
          params {
             @in const char *anchor;
-            @out const Eina_List *enlist;
          }
       }
       style_user_peek {
@@ -268,6 +272,7 @@ class Evas_Textblock (Evas_Object)
       }
       node_format_remove_pair {
          /*@ Remove a format node and its match. */
+         legacy evas_textblock_node_format_remove_pair;
          params {
             @in Evas_Object_Textblock_Node_Format *n;
          }
