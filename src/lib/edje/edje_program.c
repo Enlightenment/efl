@@ -9,6 +9,164 @@ Ecore_Animator *_edje_timer = NULL;
 Eina_List      *_edje_animators = NULL;
 
 
+static Eina_Bool
+_edje_emit_aliased(Edje *ed, const char *part, const char *sig, const char *src)
+{
+   char *alias, *aliased;
+   int alien, nslen, length;
+
+   /* lookup for alias */
+   if ((!ed->collection) || (!ed->collection->alias)) return EINA_FALSE;
+   alias = eina_hash_find(ed->collection->alias, part);
+   if (!alias) return EINA_FALSE;
+
+   alien = strlen(alias);
+   nslen = strlen(sig);
+   length = alien + nslen + 2;
+
+   aliased = alloca(length);
+   memcpy(aliased, alias, alien);
+   aliased[alien] = EDJE_PART_PATH_SEPARATOR;
+   memcpy(aliased + alien + 1, sig, nslen + 1);
+
+   _edje_emit(ed, aliased, src);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_edje_emit_child(Edje *ed, Edje_Real_Part *rp, const char *part, const char *sig, const char *src)
+{
+   Edje *ed2;
+   char *idx;
+
+   /* search for the index if present and remove it from the part */
+   idx = strchr(part, EDJE_PART_PATH_SEPARATOR_INDEXL);
+   if (idx)
+     {
+        char *end;
+
+        end = strchr(idx + 1, EDJE_PART_PATH_SEPARATOR_INDEXR);
+        if (end && end != idx + 1)
+          {
+             char *tmp;
+
+             tmp = alloca(end - idx);
+             memcpy(tmp, idx + 1, end - idx - 1);
+             tmp[end - idx - 1] = '\0';
+             *idx = '\0';
+             idx = tmp;
+          }
+        else
+          {
+             idx = NULL;
+          }
+     }
+
+   /* search for the right part now */
+   if (!rp)
+     rp = _edje_real_part_get(ed, part);
+   if (!rp) return ed->collection->broadcast_signal;
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_GROUP:
+         if (((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+              (!rp->typedata.swallow)) ||
+             (!rp->typedata.swallow->swallowed_object))
+           break;
+         ed2 = _edje_fetch(rp->typedata.swallow->swallowed_object);
+         if (!ed2) break;
+
+         _edje_emit(ed2, sig, src);
+         return EINA_FALSE;
+
+      case EDJE_PART_TYPE_EXTERNAL:
+         if (((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+              (!rp->typedata.swallow)) ||
+             (!rp->typedata.swallow->swallowed_object))
+           break;
+
+         if (!idx)
+           {
+              _edje_external_signal_emit(rp->typedata.swallow->swallowed_object, sig, src);
+           }
+         else
+           {
+              Evas_Object *child;
+
+              child = _edje_children_get(rp, idx);
+              ed2 = _edje_fetch(child);
+              if (!ed2) break;
+              _edje_emit(ed2, sig, src);
+           }
+         return EINA_FALSE;
+
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+         if (idx)
+           {
+              Evas_Object *child;
+
+              child = _edje_children_get(rp, idx);
+              ed2 = _edje_fetch(child);
+              if (!ed2) break;
+              _edje_emit(ed2, sig, src);
+              return EINA_FALSE;
+           }
+         break ;
+
+      default:
+         //              ERR("SPANK SPANK SPANK !!!\nYou should never be here !");
+         break;
+     }
+   return ed->collection->broadcast_signal;
+}
+
+static void
+_edje_emit_send(Edje *ed, Eina_Bool broadcast, const char *sig, const char *src, void *data, Ecore_Cb free_func)
+{
+   Edje_Message_Signal emsg;
+
+   emsg.sig = sig;
+   emsg.src = src;
+   if (data)
+     {
+        emsg.data = calloc(1, sizeof(*(emsg.data)));
+        emsg.data->ref = 1;
+        emsg.data->data = data;
+        emsg.data->free_func = free_func;
+     }
+   else
+     {
+        emsg.data = NULL;
+     }
+   /* new sends code */
+   if (broadcast)
+     edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+   else
+     _edje_util_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+   /* old send code - use api now
+      _edje_util_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+      EINA_LIST_FOREACH(ed->subobjs, l, obj)
+      {
+      Edje *ed2;
+
+      ed2 = _edje_fetch(obj);
+      if (!ed2) continue;
+      if (ed2->delete_me) continue;
+      _edje_util_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+      }
+    */
+   if (emsg.data && (--(emsg.data->ref) == 0))
+     {
+        if (emsg.data->free_func)
+          {
+             emsg.data->free_func(emsg.data->data);
+          }
+        free(emsg.data);
+     }
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -632,13 +790,16 @@ low_mem_current:
            {
               EINA_LIST_FOREACH(pr->targets, l, pt)
                 {
-                   char buf[1024];
-
                    if (pt->id < 0) continue;
                    rp = ed->table_parts[pt->id % ed->table_parts_size];
                    if (!rp) continue;
-                   snprintf(buf, sizeof(buf), "%s:%s", rp->part->name, pr->state);
-                   _edje_emit(ed, buf, pr->state2);
+                   if (!_edje_emit_aliased(ed, rp->part->name, pr->state, pr->state2))
+                     {
+                        Eina_Bool broadcast;
+
+                        broadcast = _edje_emit_child(ed, rp, rp->part->name, pr->state, pr->state2);
+                        _edje_emit_send(ed, broadcast, pr->state, pr->state2, NULL, NULL);
+                     }
                 }
            }
          else
@@ -958,26 +1119,20 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 void
 _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *))
 {
-   Edje_Message_Signal emsg;
    const char *sep;
    Eina_Bool broadcast;
 
    if (!ed->collection) return;
    if (ed->delete_me) return;
-   broadcast = ed->collection->broadcast_signal;
 
    sep = strchr(sig, EDJE_PART_PATH_SEPARATOR);
-
    /* If we are not sending the signal to a part of the child, the
     * signal if for ourself
     */
    if (sep)
      {
-        Edje_Real_Part *rp = NULL;
         const char *newsig;
-        Edje *ed2;
         char *part;
-        char *idx;
         unsigned int length;
 
         /* the signal contains a colon, split the signal into "parts:signal" */
@@ -988,153 +1143,14 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 
         newsig = sep + 1;
 
-        /* lookup for alias */
-        if (ed->collection && ed->collection->alias)
-          {
-             char *alias;
+        if (_edje_emit_aliased(ed, part, newsig, src)) return;
 
-             alias = eina_hash_find(ed->collection->alias, part);
-             if (alias) {
-                  char *aliased;
-                  int alien;
-                  int nslen;
-
-                  alien = strlen(alias);
-                  nslen = strlen(newsig);
-                  length = alien + nslen + 2;
-
-                  aliased = alloca(length);
-                  memcpy(aliased, alias, alien);
-                  aliased[alien] = EDJE_PART_PATH_SEPARATOR;
-                  memcpy(aliased + alien + 1, newsig, nslen + 1);
-
-                  _edje_emit(ed, aliased, src);
-                  return;
-             }
-          }
-
-        /* search for the index if present and remove it from the part */
-        idx = strchr(part, EDJE_PART_PATH_SEPARATOR_INDEXL);
-        if (idx)
-          {
-             char *end;
-
-             end = strchr(idx + 1, EDJE_PART_PATH_SEPARATOR_INDEXR);
-             if (end && end != idx + 1)
-               {
-                  char *tmp;
-
-                  tmp = alloca(end - idx);
-                  memcpy(tmp, idx + 1, end - idx - 1);
-                  tmp[end - idx - 1] = '\0';
-                  *idx = '\0';
-                  idx = tmp;
-               }
-             else
-               {
-                  idx = NULL;
-               }
-          }
-
-        /* search for the right part now */
-        rp = _edje_real_part_get(ed, part);
-        if (!rp) goto end;
-
-        switch (rp->part->type)
-          {
-           case EDJE_PART_TYPE_GROUP:
-              if (((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-                   (!rp->typedata.swallow)) ||
-                  (!rp->typedata.swallow->swallowed_object))
-                goto end;
-              ed2 = _edje_fetch(rp->typedata.swallow->swallowed_object);
-              if (!ed2) goto end;
-
-              _edje_emit(ed2, newsig, src);
-              broadcast = EINA_FALSE;
-              break;
-
-           case EDJE_PART_TYPE_EXTERNAL:
-              if (((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-                   (!rp->typedata.swallow)) ||
-                  (!rp->typedata.swallow->swallowed_object))
-                break;
-
-              if (!idx)
-                {
-                   _edje_external_signal_emit(rp->typedata.swallow->swallowed_object, newsig, src);
-                }
-              else
-                {
-                   Evas_Object *child;
-
-                   child = _edje_children_get(rp, idx);
-                   ed2 = _edje_fetch(child);
-                   if (!ed2) goto end;
-                   _edje_emit(ed2, newsig, src);
-                }
-              broadcast = EINA_FALSE;
-              break ;
-
-           case EDJE_PART_TYPE_BOX:
-           case EDJE_PART_TYPE_TABLE:
-              if (idx)
-                {
-                   Evas_Object *child;
-
-                   child = _edje_children_get(rp, idx);
-                   ed2 = _edje_fetch(child);
-                   if (!ed2) goto end;
-                   _edje_emit(ed2, newsig, src);
-                   broadcast = EINA_FALSE;
-                }
-              break ;
-
-           default:
-              //              ERR("SPANK SPANK SPANK !!!\nYou should never be here !");
-              break;
-          }
-     }
-
-end:
-   emsg.sig = sig;
-   emsg.src = src;
-   if (data)
-     {
-        emsg.data = calloc(1, sizeof(*(emsg.data)));
-        emsg.data->ref = 1;
-        emsg.data->data = data;
-        emsg.data->free_func = free_func;
+        broadcast = _edje_emit_child(ed, NULL, part, newsig, src);
      }
    else
-     {
-        emsg.data = NULL;
-     }
-   /* new sends code */
-   if (broadcast)
-     edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
-   else
-     _edje_util_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
-   /* old send code - use api now
-      _edje_util_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
-      EINA_LIST_FOREACH(ed->subobjs, l, obj)
-      {
-      Edje *ed2;
+     broadcast = ed->collection->broadcast_signal;
 
-      ed2 = _edje_fetch(obj);
-      if (!ed2) continue;
-      if (ed2->delete_me) continue;
-      _edje_util_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
-      }
-    */
-   if (emsg.data && (--(emsg.data->ref) == 0))
-     {
-        if (emsg.data->free_func)
-          {
-             emsg.data->free_func(emsg.data->data);
-          }
-        free(emsg.data);
-     }
+   _edje_emit_send(ed, broadcast, sig, src, data, free_func);
 }
 
 struct _Edje_Program_Data
