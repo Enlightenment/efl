@@ -20,7 +20,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-void _key_action_toggle(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_toggle(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"toggle", _key_action_toggle},
@@ -237,9 +237,11 @@ _panel_toggle(void *data EINA_UNUSED,
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-void _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
+static Eina_Bool
+_key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    _panel_toggle(NULL, obj, NULL, NULL);
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
