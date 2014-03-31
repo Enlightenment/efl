@@ -10388,7 +10388,7 @@ edje_cc_handlers_hierarchy_pop(void)
         for (i = 0; i < current_part->other.desc_count; i++)
           if (!current_part->other.desc[i]->state.name)
             {
-               ERR("syntax error near %s:%i. Non-default parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
+               ERR("syntax error near %s:%i. Non-default or inherited parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
                      file_in, line - 1, current_de->entry, current_part->name);
                  exit(-1);
             }
