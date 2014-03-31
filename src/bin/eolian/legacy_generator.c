@@ -40,10 +40,8 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
-   Eina_Bool ret_is_void = EINA_FALSE;
 
    rettype = eolian_function_return_type_get(funcid, ftype);
-   if (rettype && !strcmp(rettype, "void")) ret_is_void = EINA_TRUE;
    if (ftype == GET)
      {
         suffix = "_get";
@@ -158,12 +156,6 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
          }
      }
    if (flags) eina_strbuf_append_printf(flags, ")");
-
-   if (rettype && !ret_is_void)
-     {
-        const char *pdesc = eolian_function_return_comment_get(funcid, ftype);
-        eina_strbuf_append_printf(descparam, " * @param[out] ret %s\n", pdesc?pdesc:"No description supplied.");
-     }
 
    eina_strbuf_replace_all(fbody, "@#params", eina_strbuf_string_get(fparam));
    eina_strbuf_replace_all(fbody, "@#list_desc_param", eina_strbuf_string_get(descparam));
