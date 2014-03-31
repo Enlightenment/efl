@@ -10078,8 +10078,6 @@ ob_collections_group_programs_program_script(void)
    Edje_Part_Collection *pc;
    Code *cd;
 
-   _program_sequence_check();
-
    pc = eina_list_data_get(eina_list_last(edje_collections));
    cd = eina_list_data_get(eina_list_last(codes));
 
@@ -10118,11 +10116,11 @@ ob_collections_group_programs_program_script(void)
                     empty = EINA_FALSE;
                }
 
+             if (sequencing)
+               _program_sequence_new();
              if (!empty)
                {
                   cd->programs = eina_list_append(cd->programs, cp);
-                  if (sequencing)
-                    _program_sequence_new();
                   data_queue_anonymous_lookup(pc, current_program, &(cp->id));
                   current_program->action = EDJE_ACTION_TYPE_SCRIPT;
                }
