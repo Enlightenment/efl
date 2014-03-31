@@ -2919,7 +2919,7 @@ _elm_genlist_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           it = sd->last_focused_item;
         else if (sd->last_selected_item)
           it = sd->last_selected_item;
-        else
+        else if (sd->selected)
           {
              it = elm_genlist_first_item_get(obj);
              is_sel = EINA_TRUE;
