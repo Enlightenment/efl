@@ -2096,6 +2096,15 @@ EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
 EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
 
 /**
+ * Get the part name of an edje part object
+ * @param obj An edje part object
+ * @return The name of the part, if the object is an edje part, or @c NULL
+ * @note If this function returns @c NULL, @p obj was not an Edje part object
+ * @see edje_object_part_object_get()
+ * @since 1.10
+ */
+EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
+/**
  * @}
  */
 

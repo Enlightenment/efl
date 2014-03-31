@@ -5285,4 +5285,13 @@ _edje_subobj_unregister(Edje *ed, Evas_Object *obj)
                                        _cb_subobj_del, ed);
 }
 
+EAPI const char *
+edje_object_part_object_name_get(const Evas_Object *obj)
+{
+   Edje_Real_Part *rp;
+
+   rp = evas_object_data_get(obj, "real_part");
+   return rp ? rp->part->name : NULL;
+}
+
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
