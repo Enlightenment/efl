@@ -898,7 +898,8 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
    const char *tmpdir = NULL;
-   int fd;
+   const char *XXXXXX = NULL;
+   int fd, len;
    mode_t old_umask;
 
 #ifndef HAVE_EVIL
@@ -911,14 +912,20 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
    tmpdir = (char *)evil_tmpdir_get();
 #endif /* ! HAVE_EVIL */
 
-   snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
+   len = snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
 
    /* 
     * Make sure temp file is created with secure permissions,
     * http://man7.org/linux/man-pages/man3/mkstemp.3.html#NOTES
     */
    old_umask = umask(S_IRWXG|S_IRWXO);
-   fd = mkstemp(buffer);
+   if ((XXXXXX = strstr(templatename, "XXXXXX.")) != NULL)
+     {
+        int suffixlen = templatename + len - XXXXXX - 6;
+        fd = mkstemps(buffer, suffixlen);
+     }
+   else
+     fd = mkstemp(buffer);
    umask(old_umask);
 
    if (path) *path = eina_tmpstr_add(buffer);

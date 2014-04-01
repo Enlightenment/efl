@@ -334,15 +334,19 @@ EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Sta
  * @brief Generate and create a uniquely named temporary file from template.
  *        Generated file is opened with the open(2) O_EXCL flag.
  *
- * @param [in] templatename is a string. The last six characters of templatename must be XXXXXX. 
+ * @param [in] templatename is a string. It must contain the six characters 'XXXXXX'
+ *             at the end or directly followed by an extension as in 'prefixXXXXXX.ext'.
  * @param [out] path Where to put the name of the created file. If not NULL
  *              should be released by eina_tmpstr_del.
  * @return On success @c file descriptor of the temporary file is returned, 
  *         On error @c -1 is returned, in which case errno is set appropriately.
  *
- * This function calls mkstemp, generates a unique temporary filename 
+ * This function calls mkstemp[s], generates a unique temporary filename
  * from template, creates and opens the file, and returns an open file 
- * descriptor for the file. 
+ * descriptor for the file.
+ *
+ * If a filename extension was specified in @a templatename, then the new @a path
+ * will also contain this extension (since 1.10).
  *
  * @see eina_file_mkdtemp()
  * @since 1.8
