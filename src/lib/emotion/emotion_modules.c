@@ -409,6 +409,7 @@ emotion_engine_instance_del(Emotion_Engine_Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN(inst);
    inst->api->del(inst->data);
+   free(inst);
 }
 
 Eina_Bool
