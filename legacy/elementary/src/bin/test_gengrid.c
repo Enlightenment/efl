@@ -1323,12 +1323,26 @@ _gengrid_focus_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
    printf("\n=== Key Down : %s ===\n", ev->keyname);
 }
 
+static void
+test_gengrid_focus_focus_move_policy_changed(void *data EINA_UNUSED,
+                                             Evas_Object *obj,
+                                             void *event_info EINA_UNUSED)
+{
+   int val = elm_radio_value_get(obj);
+
+   if (val == 0)
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_CLICK);
+   else if (val == 1)
+     elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_IN);
+}
+
 void
 test_gengrid_focus(void *data EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bx_horiz, *gengrid, *btn, *fr, *lb;
+   Evas_Object *win, *bx, *bx_horiz, *gengrid, *btn, *fr, *lb, *bx_mv, *rdg,
+   *rd;
    Elm_Gengrid_Item_Class *ic;
    Item_Data *id;
    char buf[PATH_MAX];
@@ -1398,6 +1412,40 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_object_text_set(btn, "Right");
    elm_box_pack_end(bx_horiz, btn);
    evas_object_show(btn);
+
+   //Focus movement policy
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus Movement Policy");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_mv = elm_box_add(fr);
+   elm_box_horizontal_set(bx_mv, EINA_TRUE);
+   elm_object_content_set(fr, bx_mv);
+   evas_object_show(bx_mv);
+
+   rdg = rd = elm_radio_add(bx_mv);
+   elm_object_text_set(rd, "Focus Move by Click");
+   elm_radio_state_value_set(rd, 0);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(rd, "changed",
+                                  test_gengrid_focus_focus_move_policy_changed,
+                                  NULL);
+   elm_box_pack_end(bx_mv, rd);
+   evas_object_show(rd);
+
+   rd = elm_radio_add(bx_mv);
+   elm_object_text_set(rd, "Focus Move by Mouse-In");
+   elm_radio_group_add(rd, rdg);
+   elm_radio_state_value_set(rd, 1);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(rd, "changed",
+                                  test_gengrid_focus_focus_move_policy_changed,
+                                  NULL);
+   elm_box_pack_end(bx_mv, rd);
+   evas_object_show(rd);
 
    ic = elm_gengrid_item_class_new();
    ic->item_style = "default";
