@@ -12,6 +12,9 @@
 #ifdef HAVE_ELEMENTARY_WAYLAND
 #include <Ecore_Wayland.h>
 #endif
+#ifdef HAVE_ELEMENTARY_DRM
+#include <Ecore_Drm.h>
+#endif
 
 #include <Eio.h>
 
@@ -151,6 +154,7 @@ extern const char *_elm_engines[];
 #define ELM_SOFTWARE_PSL1GHT  (_elm_engines[15])
 #define ELM_WAYLAND_SHM       (_elm_engines[16])
 #define ELM_WAYLAND_EGL       (_elm_engines[17])
+#define ELM_DRM               (_elm_engines[18])
 
 #define ELM_FONT_TOKEN_STYLE  ":style="
 
