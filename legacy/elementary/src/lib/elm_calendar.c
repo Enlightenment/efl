@@ -24,6 +24,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
 /* Should not be translated, it's used if we failed
  * getting from locale. */
 static const char *_days_abbrev[] =
@@ -847,22 +854,17 @@ _update_cur_date(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-EOLIAN static Eina_Bool
-_elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
+   ELM_CALENDAR_DATA_GET(obj, sd);
+   char *dir = params;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-
-   if ((!strcmp(ev->key, "Prior")) ||
-       ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
+   if (!strcmp(dir, "prior"))
      {
         if (_update_data(obj, EINA_TRUE, -1)) _populate(obj);
      }
-   else if ((!strcmp(ev->key, "Next")) ||
-            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
+   else if (!strcmp(dir, "next"))
      {
         if (_update_data(obj, EINA_TRUE, 1)) _populate(obj);
      }
@@ -870,32 +872,28 @@ _elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd, Evas_Object *src,
             && ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                 || (sd->selected)))
      {
-        if ((!strcmp(ev->key, "Left")) ||
-            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+        if (!strcmp(dir, "left"))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
                      && (sd->shown_time.tm_mon == sd->selected_time.tm_mon)))
                _update_sel_it(obj, sd->selected_it - 1);
           }
-        else if ((!strcmp(ev->key, "Right")) ||
-                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+        else if (!strcmp(dir, "right"))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
                      && (sd->shown_time.tm_mon == sd->selected_time.tm_mon)))
                _update_sel_it(obj, sd->selected_it + 1);
           }
-        else if ((!strcmp(ev->key, "Up")) ||
-                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+        else if (!strcmp(dir, "up"))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
                      && (sd->shown_time.tm_mon == sd->selected_time.tm_mon)))
                _update_sel_it(obj, sd->selected_it - ELM_DAY_LAST);
           }
-        else if ((!strcmp(ev->key, "Down")) ||
-                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+        else if (!strcmp(dir, "down"))
           {
              if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
                  || ((sd->shown_time.tm_year == sd->selected_time.tm_year)
@@ -907,6 +905,23 @@ _elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd, Evas_Object *src,
    else return EINA_FALSE;
 
    return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   (void) src;
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
+
 }
 
 EOLIAN static void

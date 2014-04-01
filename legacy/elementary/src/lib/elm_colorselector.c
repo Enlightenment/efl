@@ -34,6 +34,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
 enum Palette_Box_Direction
 {
    PALETTE_BOX_UP,
@@ -1656,42 +1663,34 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
    return res;
 }
 
-EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
-   Evas_Event_Key_Down *ev = event_info;
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
    Eina_List *cl = NULL;
    Elm_Color_Item *item = NULL;
    char colorbar_s[128];
+   char *dir = params;
 
-   (void) src;
-
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd) return EINA_FALSE;
-   if (!sd->selected) sd->selected = sd->items;
-
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   if (!strcmp(dir, "left"))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           cl = eina_list_prev(sd->selected);
-        else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
-          _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->lbt, NULL);
+		  else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+          _button_clicked_cb(sd->cb_data[sd->sel_color_type],
+                             sd->cb_data[sd->sel_color_type]->lbt, NULL);
         else return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if (!strcmp(dir, "right"))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           cl = eina_list_next(sd->selected);
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
-          _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->rbt, NULL);
+          _button_clicked_cb(sd->cb_data[sd->sel_color_type],
+                             sd->cb_data[sd->sel_color_type]->rbt, NULL);
         else return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+   else if (!strcmp(dir, "up"))
      {
         if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           {
@@ -1719,8 +1718,7 @@ _elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Ob
             if (!cl) cl = sd->selected;
         }
      }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+   else if (!strcmp(dir, "down"))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE)
           {
@@ -1744,6 +1742,7 @@ _elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Ob
           }
      }
    else return EINA_FALSE;
+
    if (cl)
      {
         item = eina_list_data_get(cl);
@@ -1756,6 +1755,28 @@ _elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Ob
         sd->selected = cl;
      }
    else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   Eina_List *cl = NULL;
+   Elm_Color_Item *item = NULL;
+   char colorbar_s[128];
+
+   (void) src;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (!sd) return EINA_FALSE;
+   if (!sd->selected) sd->selected = sd->items;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
      return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;

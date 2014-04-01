@@ -35,6 +35,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
 EOLIAN static Eina_Bool
 _elm_diskselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
@@ -918,11 +925,48 @@ _elm_diskselector_elm_widget_focus_next(Eo *obj, Elm_Diskselector_Data *sd, Elm_
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   ELM_DISKSELECTOR_DATA_GET(obj, sd);
+   Elm_Diskselector_Item *it = NULL;
+   Eina_List *l = NULL;
+   char *dir = params;
+
+   if (!strcmp(dir, "prev"))
+     {
+        l = sd->selected_item->node->prev;
+        if ((!l) && (sd->round))
+          l = eina_list_last(sd->items);
+     }
+   else if (!strcmp(dir, "next"))
+     {
+        l = sd->selected_item->node->next;
+        if ((!l) && (sd->round))
+          l = sd->items;
+     }
+   else if (!strcmp(dir, "first"))
+     l = sd->items;
+   else if (!strcmp(dir, "last"))
+     l = eina_list_last(sd->items);
+   else return EINA_FALSE;
+
+   if (l)
+     it = eina_list_data_get(l);
+
+   if (it)
+     {
+        sd->selected_item = it;
+        if (!sd->scroller_move_idle_enterer)
+          sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, obj);
+     }
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elm_diskselector_elm_widget_event(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Elm_Diskselector_Item *it = NULL;
-   Eina_List *l;
    Evas_Event_Key_Down  *ev = event_info;
 
    (void) src;
@@ -937,41 +981,8 @@ _elm_diskselector_elm_widget_event(Eo *obj, Elm_Diskselector_Data *sd, Evas_Obje
         return EINA_TRUE;
      }
 
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
-       (!strcmp(ev->key, "Up")) ||
-       ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-     {
-        l = sd->selected_item->node->prev;
-        if ((!l) && (sd->round))
-          l = eina_list_last(sd->items);
-     }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
-            (!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-     {
-        l = sd->selected_item->node->next;
-        if ((!l) && (sd->round))
-          l = sd->items;
-     }
-   else if ((!strcmp(ev->key, "Home")) ||
-            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
-     l = sd->items;
-   else if ((!strcmp(ev->key, "End")) ||
-            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
-     l = eina_list_last(sd->items);
-   else return EINA_FALSE;
-
-   if (l)
-     it = eina_list_data_get(l);
-
-   if (it)
-     {
-        sd->selected_item = it;
-        if (!sd->scroller_move_idle_enterer)
-          sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, obj);
-     }
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;

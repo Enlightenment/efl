@@ -38,6 +38,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"activate", _key_action_activate},
+   {NULL, NULL}
+};
+
 static void
 _activate(Evas_Object *obj)
 {
@@ -138,6 +145,13 @@ _elm_check_elm_layout_sizing_eval(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
+static Eina_Bool
+_key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   _activate(obj);
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elm_check_elm_widget_event(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -148,15 +162,10 @@ _elm_check_elm_widget_event(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Objec
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if ((strcmp(ev->key, "Return")) &&
-       (strcmp(ev->key, "KP_Enter")) &&
-       (strcmp(ev->key, "space")))
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
      return EINA_FALSE;
 
-   _activate(obj);
-
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
    return EINA_TRUE;
 }
 
