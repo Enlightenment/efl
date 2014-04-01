@@ -1244,12 +1244,46 @@ static void
 _x11_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas *ee;
-   int ex = 0, ey = 0;
+   int ex = 0, ey = 0, ew = 0, eh = 0;
+   Evas_Object *win;
+   Evas_Coord x2, y2;
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(dropable->obj));
-   ecore_evas_geometry_get(ee, &ex, &ey, NULL, NULL);
+   ecore_evas_geometry_get(ee, &ex, &ey, &ew, &eh);
    *x = *x - ex;
    *y = *y - ey;
+
+   if (elm_widget_is(dropable->obj))
+     {
+        win = elm_widget_top_get(dropable->obj);
+        if (win && !strcmp(evas_object_type_get(win), "elm_win"))
+          {
+             int rot = elm_win_rotation_get(win);
+             switch (rot)
+               {
+                case 90:
+                   x2 = ew - *y;
+                   y2 = *x;
+                   break;
+                case 180:
+                   x2 = ew - *x;
+                   y2 = eh - *y;
+                   break;
+                case 270:
+                   x2 = *y;
+                   y2 = eh - *x;
+                   break;
+                default:
+                   x2 = *x;
+                   y2 = *y;
+                   break;
+               }
+             cnp_debug("rotation %d, w %d, h %d - x:%d->%d, y:%d->%d\n",
+                       rot, ew, eh, *x, x2, *y, y2);
+             *x = x2;
+             *y = y2;
+          }
+     }
 }
 
 static Eina_Bool
