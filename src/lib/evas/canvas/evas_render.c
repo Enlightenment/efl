@@ -1334,7 +1334,13 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            , level + 1
 #endif
                                                            , do_async);
-                          evas_object_change_reset(obj2->object);
+                          /* We aren't sure this object will be rendered by
+                             normal(not proxy) drawing after, we reset this
+                             only in case of normal drawing. For optmizing,
+                             push this object in an array then reset them 
+                             in the end of the rendering.*/
+                          if (!proxy_render_data)
+                            evas_object_change_reset(obj2->object);
                        }
                }
              else
@@ -1458,7 +1464,13 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            , level + 1
 #endif
                                                            , do_async);
-                          evas_object_change_reset(obj2->object);
+                          /* We aren't sure this object will be rendered by
+                             normal(not proxy) drawing after, we reset this
+                             only in case of normal drawing. For optmizing,
+                             push this object in an array then reset them 
+                             in the end of the rendering.*/
+                          if (!proxy_render_data)
+                            evas_object_change_reset(obj2->object);
                        }
                }
              else
