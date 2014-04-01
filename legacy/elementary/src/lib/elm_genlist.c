@@ -3338,6 +3338,17 @@ _item_unselect(Elm_Gen_Item *it)
 }
 
 static void
+_item_mouse_in_cb(void *data,
+                  Evas *evas EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   if (!elm_object_item_disabled_get(data) &&
+       (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN))
+     elm_object_item_focus_set(data, EINA_TRUE);
+}
+
+static void
 _item_mouse_move_cb(void *data,
                     Evas *evas EINA_UNUSED,
                     Evas_Object *obj,
@@ -4463,6 +4474,8 @@ _item_mouse_callbacks_add(Elm_Gen_Item *it,
      (view, EVAS_CALLBACK_MULTI_UP, _item_multi_up_cb, it);
    evas_object_event_callback_add
      (view, EVAS_CALLBACK_MULTI_MOVE, _item_multi_move_cb, it);
+   evas_object_event_callback_add
+     (view, EVAS_CALLBACK_MOUSE_IN, _item_mouse_in_cb, it);
 }
 
 static void
@@ -4481,6 +4494,8 @@ _item_mouse_callbacks_del(Elm_Gen_Item *it,
      (view, EVAS_CALLBACK_MULTI_UP, _item_multi_up_cb, it);
    evas_object_event_callback_del_full
      (view, EVAS_CALLBACK_MULTI_MOVE, _item_multi_move_cb, it);
+   evas_object_event_callback_del_full
+     (view, EVAS_CALLBACK_MOUSE_IN, _item_mouse_in_cb, it);
 }
 
 static Eina_Bool
