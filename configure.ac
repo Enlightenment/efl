@@ -284,6 +284,7 @@ AC_PROG_OBJC
 AC_LANG(C)
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
+AC_PROG_SED
 
 AM_CONDITIONAL([BUILD_EFL_NATIVE], [test "x${cross_compiling}" = "xno"])
 
@@ -4184,6 +4185,11 @@ cmakeconfig/EmotionConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
+
+#### Work around bug in automake check macro
+## yes it is hugly, but no choice here for now.
+sed -i "s/am__is_gnu_make = test -n '\$(MAKEFILE_LIST)' && test -n '\$(MAKELEVEL)'/ifdef MAKEFILE_LIST\nifdef MAKELEVEL\nam__is_gnu_make = true\nelse\nam__is_gnu_make = false\nendif\nelse\nam__is_gnu_make = false\nendif/" src/Makefile
+
 
 
 #### Info
