@@ -121,7 +121,7 @@ _parent_set(Eo *obj, void *class_data, Eo *parent_id)
      {
         Private_Data *old_parent_pd;
 
-        old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
+        old_parent_pd = eo_data_scope_get(pd->parent, EO2_BASE_CLASS);
         if (old_parent_pd)
           {
              old_parent_pd->children = eina_list_remove(old_parent_pd->children,
@@ -140,7 +140,7 @@ _parent_set(Eo *obj, void *class_data, Eo *parent_id)
    if (parent_id)
      {
         Private_Data *parent_pd = NULL;
-        parent_pd = eo_data_scope_get(parent_id, EO_BASE_CLASS);
+        parent_pd = eo_data_scope_get(parent_id, EO2_BASE_CLASS);
 
         if (EINA_LIKELY(parent_pd != NULL))
           {
@@ -910,7 +910,7 @@ EAPI const Eina_Value_Type *EO2_DBG_INFO_TYPE = &_EO2_DBG_INFO_TYPE;
 
 
 /* EO_BASE_CLASS stuff */
-#define MY_CLASS EO_BASE_CLASS
+#define MY_CLASS EO2_BASE_CLASS
 
 /* FIXME: Set proper type descriptions. */
 // FIXME: eo2 multiple definition
