@@ -128,7 +128,7 @@ EAPI int unsetenv(const char *name);
  */
 
 /**
- * @brief Make temporay unique file name.
+ * @brief Create a unique temporary file name.
  *
  * @param __template Template of the file to create.
  * @return A file descriptor on success, -1 otherwise.
@@ -137,14 +137,14 @@ EAPI int unsetenv(const char *name);
  * to create a file name. This file is guaranted not to exist at the
  * time invocation and is suitable for use by the function.
  *
- * The @p template parameter can be any file name with some number of
- * 'Xs' appended to it, for example @em baseXXXXXX, where @em base is
- * the part of the new file that you supply and eacg 'X' is a placeholder
- * for a character supplied by mkstemp(). The trailing 'Xs' are replaced
- * with a five-digit value; this value is a unique number. Each successful
- * call to mkstemp() modifes @p template.
+ * The @p template parameter can be any file name with six X's at the end
+ * for example @em baseXXXXXX, where @em base is the part of the new file
+ * that you supply and each 'X' is a placeholder for a character supplied
+ * by mkstemp(). The trailing 'Xs' are replaced with a six-digit value;
+ * this value is a unique number. Each successful call to mkstemp()
+ * modifies @p template.
  *
- * When mkstemp() succeeds, it creates and opens the template file for
+ * When mkstemp() succeeds, it creates and opens the temporary file for
  * reading and writing.
  *
  * On success, the function returns the file descriptor of the
@@ -165,6 +165,17 @@ EAPI int mkstemp(char *__template);
  * @since 1.8.0
  */
 EAPI char *mkdtemp(char *__template);
+
+/**
+ * @brief Create a unique temporary file name with a suffix.
+ *
+ * @param __template Template of the file to create.
+ * @param suffixlen Length of the suffix following the 'XXXXXX' placeholder.
+ * @return A file descriptor on success, -1 otherwise.
+ *
+ * @since 1.10.0
+ */
+EAPI int mkstemps(char *__template, int suffixlen);
 
 /**
  * @brief Return an absolute or full path name for a specified relative path name.

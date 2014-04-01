@@ -269,17 +269,18 @@ unsetenv(const char *name)
  *
  */
 static int
-_mkstemp_init(char *__template, char **suffix, size_t *length, DWORD *val)
+_mkstemp_init(char *__template, char **suffix, size_t *length, DWORD *val,
+              size_t suffixlen)
 {
    *length = strlen(__template);
-   if ((*length < 6) ||
-       (strncmp (__template + *length - 6, "XXXXXX", 6)))
+   if ((*length < (6 + suffixlen))
+       || (strncmp(__template + *length - 6 - suffixlen, "XXXXXX", 6) != 0))
      {
         errno = EINVAL;
         return 0;
      }
 
-   *suffix = __template + *length - 6;
+   *suffix = __template + *length - 6 - suffixlen;
 
    *val = GetTickCount();
    *val += GetCurrentProcessId();
@@ -322,27 +323,27 @@ mkdtemp(char *__template)
    if (!__template)
      {
         errno = EINVAL;
-	return NULL;
+        return NULL;
      }
 
-   if (!_mkstemp_init(__template, &suffix, &length, &val))
+   if (!_mkstemp_init(__template, &suffix, &length, &val, 0))
      return NULL;
 
    for (i = 0; i < 32768; i++)
      {
         val = _mkstemp(suffix, val);
 
-	if (mkdir(__template))
-	  return __template;
+        if (mkdir(__template))
+          return __template;
 
-	if (errno == EFAULT ||
-	    errno == ENOSPC ||
-	    errno == ENOMEM ||
-	    errno == ENOENT ||
-	    errno == ENOTDIR ||
-	    errno == EPERM ||
-	    errno == EROFS)
-	  return NULL;
+        if (errno == EFAULT ||
+            errno == ENOSPC ||
+            errno == ENOMEM ||
+            errno == ENOENT ||
+            errno == ENOTDIR ||
+            errno == EPERM ||
+            errno == EROFS)
+          return NULL;
      }
 
    errno = EEXIST;
@@ -350,17 +351,17 @@ mkdtemp(char *__template)
 }
 
 int
-mkstemp(char *__template)
+mkstemps(char *__template, int suffixlen)
 {
    char      *suffix;
    DWORD      val;
    size_t     length;
    int        i;
 
-   if (!__template)
+   if (!__template || (suffixlen < 0))
      return 0;
 
-   if (!_mkstemp_init(__template, &suffix, &length, &val))
+   if (!_mkstemp_init(__template, &suffix, &length, &val, (size_t) suffixlen))
      return -1;
 
    for (i = 0; i < 32768; i++)
@@ -397,6 +398,11 @@ mkstemp(char *__template)
    return -1;
 }
 
+int
+mkstemp(char *__template)
+{
+   return mkstemps(__template, 0);
+}
 
 char *
 realpath(const char *file_name, char *resolved_name)
