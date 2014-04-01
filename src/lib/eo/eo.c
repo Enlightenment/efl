@@ -594,12 +594,12 @@ end:
    /* Try composite objects */
    if (is_obj)
      {
-        Eina_List *itr;
-        Eo *emb_eo_id;
-        EINA_LIST_FOREACH(fptr->o.obj->composite_objects, itr, emb_eo_id)
+        const _Eo_Object **comp_itr = fptr->o.obj->composites;
+        if (!comp_itr) goto end2;
+
+        for (unsigned int i = 0; i < fptr->o.obj->klass->composites_count; i++, comp_itr++)
           {
-             /* should never return */
-             EO_OBJ_POINTER_RETURN_VAL(emb_eo_id, emb_obj, EINA_FALSE);
+             const _Eo_Object *emb_obj = *comp_itr;
 
              func = _dich_func_get(emb_obj->klass, op);
              if (func == NULL)
@@ -617,6 +617,7 @@ end:
           }
      }
 
+end2:
      {
         const _Eo_Class *main_klass;
         main_klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
@@ -822,6 +823,11 @@ _eo2_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo
 
    obj->refcount++;
    obj->klass = klass;
+   if (klass->composites_count == 0)
+     obj->composites = NULL;
+   else
+     obj->composites = (const _Eo_Object **)
+        ((char *) obj + klass->obj_size - (klass->composites_count * sizeof(_Eo_Object *)));
 
 #ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
