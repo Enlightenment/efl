@@ -339,7 +339,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
         cur->use_engine = EINA_TRUE;
      }
 
-   if (cur->use_engine)
+   if ((cur->use_engine) && (eo_isa(cur->eventarea, ELM_OBJ_WIN_CLASS)))
      {
 #ifdef HAVE_ELEMENTARY_X
         cur->x.win = elm_win_xwindow_get(cur->eventarea);
