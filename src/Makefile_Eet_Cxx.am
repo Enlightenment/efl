@@ -1,0 +1,42 @@
+
+### Library
+
+installed_eetcxxmainheadersdir = $(includedir)/eet_cxx-@VMAJ@
+dist_installed_eetcxxmainheaders_DATA = bindings/eet_cxx/Eet.hh
+
+installed_eetcxxheadersdir = $(includedir)/eet_cxx-@VMAJ@/eet_cxx
+dist_installed_eetcxxheaders_DATA = \
+bindings/eet_cxx/eet_composite.hh \
+bindings/eet_cxx/eet_fold.hh \
+bindings/eet_cxx/eet_register.hh \
+bindings/eet_cxx/eet_tuple.hh \
+bindings/eet_cxx/eet_type.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+if HAVE_CXX11
+
+check_PROGRAMS += tests/eet_cxx/eet_cxx_suite
+TESTS += tests/eet_cxx/eet_cxx_suite
+
+tests_eet_cxx_eet_cxx_suite_SOURCES = \
+tests/eet_cxx/eet_cxx_suite.cc \
+tests/eet_cxx/eet_cxx_test_descriptors.cc
+
+tests_eet_cxx_eet_cxx_suite_CPPFLAGS = 	\
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/bindings/eina_cxx \
+-I$(top_builddir)/src/bindings/eet_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/bindings/eet_cxx \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eet_cxx\" \
+@CHECK_CFLAGS@ \
+@EET_CFLAGS@
+tests_eet_cxx_eet_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
+tests_eet_cxx_eet_cxx_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
+
+endif
+endif

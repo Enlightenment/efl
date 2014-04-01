@@ -32,6 +32,7 @@ include Makefile_Escape.am
 include Makefile_Eina.am
 include Makefile_Eo.am
 include Makefile_Eet.am
+include Makefile_Eet_Cxx.am
 include Makefile_Eolian.am
 include Makefile_Evas.am
 include Makefile_Ecore.am

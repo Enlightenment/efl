@@ -3528,6 +3528,43 @@ eet_data_read_cipher(Eet_File *ef,
                      const char *cipher_key);
 
 /**
+ * Read a data structure from an eet file and decodes it into a buffer using a cipher,
+ * @param ef The eet file handle to read from.
+ * @param edd The data descriptor handle to use when decoding.
+ * @param name The key the data is stored under in the eet file.
+ * @param cipher_key The key to use as cipher.
+ * @param buffer Buffer 
+ * @return A pointer to buffer if successful and NULL on error.
+ *
+ * This function decodes a data structure stored in an eet file, returning
+ * a pointer to it if it decoded successfully, or NULL on failure. This
+ * can save a programmer dozens of hours of work in writing configuration
+ * file parsing and writing code, as eet does all that work for the program
+ * and presents a program-friendly data structure, just as the programmer
+ * likes. Eet can handle members being added or deleted from the data in
+ * storage and safely zero-fills unfilled members if they were not found
+ * in the data. It checks sizes and headers whenever it reads data, allowing
+ * the programmer to not worry about corrupt data.
+ *
+ * Once a data structure has been described by the programmer with the
+ * fields they wish to save or load, storing or retrieving a data structure
+ * from an eet file, or from a chunk of memory is as simple as a single
+ * function call.
+ *
+ * @see eet_data_read_cipher()
+ *
+ * @since 1.10.0
+ * @ingroup Eet_Data_Cipher_Group
+ */
+EAPI void *
+eet_data_read_cipher_buffer(Eet_File            *ef,
+                            Eet_Data_Descriptor *edd,
+                            const char          *name,
+                            const char          *cipher_key,
+                            char                *buffer,
+                            int                 buffer_size);
+
+/**
  * Read a data structure from an eet extended attribute and decodes it using a cipher.
  * @param filename The file to extract the extended attribute from.
  * @param attribute The attribute to get the data from.

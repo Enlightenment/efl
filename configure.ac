@@ -4100,6 +4100,7 @@ pc/escape.pc
 pc/eina.pc
 pc/eina-cxx.pc
 pc/eet.pc
+pc/eet-cxx.pc
 pc/eo.pc
 pc/eolian.pc
 pc/evas-fb.pc
