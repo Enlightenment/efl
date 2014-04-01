@@ -128,7 +128,15 @@ _elm_hover_left_space_calc(Elm_Hover_Data *sd,
 {
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
 
-   if (sd->parent) evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+   if (sd->parent)
+     {
+        evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+        if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+          {
+             x = 0;
+             y = 0;
+          }
+     }
    if (sd->target) evas_object_geometry_get(sd->target, &x2, &y2, &w2, &h2);
 
    *spc_l = x2 - x;
@@ -302,7 +310,15 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
 
    if (sd->on_del) return;
 
-   if (sd->parent) evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+   if (sd->parent)
+     {
+        evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+        if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+          {
+             x = 0;
+             y = 0;
+          }
+     }
    evas_object_geometry_get(obj, &x2, &y2, &w2, &h2);
 
    if (elm_widget_mirrored_get(obj)) ofs_x = w - (x2 - x) - w2;
