@@ -595,6 +595,10 @@ BUILT_SOURCES = \
 		elm_flipselector.eo.h \
 		elm_flip.eo.c \
 		elm_flip.eo.h \
+		elm_genlist.eo.c \
+		elm_genlist.eo.h \
+		elm_genlist_pan.eo.c \
+		elm_genlist_pan.eo.h \
 		elm_gesture_layer.eo.c \
 		elm_gesture_layer.eo.h \
 		elm_glview.eo.c \
@@ -720,6 +724,8 @@ EXTRA_DIST += \
 	     elc_fileselector_entry.eo \
 	     elm_flipselector.eo \
 	     elm_flip.eo \
+	     elm_genlist.eo \
+	     elm_genlist_pan.eo \
 	     elm_gesture_layer.eo \
 	     elm_glview.eo \
 	     elm_grid.eo \
@@ -801,6 +807,8 @@ nodist_includesunstable_HEADERS = \
 				  elc_fileselector_entry.eo.h \
 				  elm_flipselector.eo.h \
 				  elm_flip.eo.h \
+				  elm_genlist.eo.h \
+				  elm_genlist_pan.eo.h \
 				  elm_gesture_layer.eo.h \
 				  elm_glview.eo.h \
 				  elm_grid.eo.h \

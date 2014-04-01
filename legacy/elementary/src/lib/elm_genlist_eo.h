@@ -3,6 +3,10 @@
  *
  * @{
  */
+#include "elm_genlist_pan.eo.h"
+#include "elm_genlist.eo.h"
+
+#if 0
 #define ELM_OBJ_GENLIST_PAN_CLASS elm_obj_genlist_pan_class_get()
 
 const Eo_Class *elm_obj_genlist_pan_class_get(void) EINA_CONST;
@@ -571,6 +575,7 @@ enum
  * @see elm_obj_genlist_focus_on_selection_set
  */
 #define elm_obj_genlist_focus_on_selection_get(ret) ELM_OBJ_GENLIST_ID(ELM_OBJ_GENLIST_SUB_ID_FOCUS_ON_SELECTION_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#endif
 /**
  * @}
  */

@@ -18,7 +18,7 @@
 /**
  * Base widget smart data extended with genlist instance data.
  */
-typedef struct _Elm_Genlist_Smart_Data Elm_Genlist_Smart_Data;
+typedef struct _Elm_Genlist_Data Elm_Genlist_Data;
 
 typedef enum
 {
@@ -27,7 +27,7 @@ typedef enum
    ELM_GENLIST_TREE_EFFECT_CONTRACT = 2
 } Elm_Genlist_Item_Move_Effect_Mode;
 
-struct _Elm_Genlist_Smart_Data
+struct _Elm_Genlist_Data
 {
    Eina_Inlist_Sorted_State             *state;
    Evas_Object                          *hit_rect;
@@ -193,7 +193,7 @@ struct Elm_Gen_Item_Type
 {
    Elm_Gen_Item           *it;
 
-   Elm_Genlist_Smart_Data *wsd;
+   Elm_Genlist_Data       *wsd;
 
    Item_Block             *block;
    Eina_List              *items;
@@ -241,7 +241,7 @@ struct _Item_Block
    int                     count;
    int                     num;
    int                     reorder_offset;
-   Elm_Genlist_Smart_Data *sd;
+   Elm_Genlist_Data       *sd;
    Eina_List              *items;
    Evas_Coord              x, y, w, h, minw, minh;
    int                     position;
@@ -270,11 +270,11 @@ struct _Item_Cache
    Eina_Bool    tree : 1; // it->group
 };
 
-typedef struct _Elm_Genlist_Pan_Smart_Data Elm_Genlist_Pan_Smart_Data;
-struct _Elm_Genlist_Pan_Smart_Data
+typedef struct _Elm_Genlist_Pan_Data Elm_Genlist_Pan_Data;
+struct _Elm_Genlist_Pan_Data
 {
    Evas_Object            *wobj;
-   Elm_Genlist_Smart_Data *wsd;
+   Elm_Genlist_Data       *wsd;
    Ecore_Job              *resize_job;
 };
 
@@ -285,13 +285,13 @@ struct _Elm_Genlist_Pan_Smart_Data
 #define GL_IT(_it) (_it->item)
 
 #define ELM_GENLIST_DATA_GET(o, sd) \
-  Elm_Genlist_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENLIST_CLASS)
+  Elm_Genlist_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENLIST_CLASS)
 
 #define ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd) \
-  Elm_Genlist_Smart_Data * sd = GL_IT(it)->wsd
+  Elm_Genlist_Data * sd = GL_IT(it)->wsd
 
 #define ELM_GENLIST_PAN_DATA_GET(o, sd) \
-  Elm_Genlist_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENLIST_PAN_CLASS)
+  Elm_Genlist_Pan_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENLIST_PAN_CLASS)
 
 #define ELM_GENLIST_DATA_GET_OR_RETURN(o, ptr)       \
   ELM_GENLIST_DATA_GET(o, ptr);                      \
