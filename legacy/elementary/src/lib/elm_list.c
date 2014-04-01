@@ -55,6 +55,7 @@ static void _size_hints_changed_cb(void *, Evas *, Evas_Object *, void *);
 static void _mouse_up_cb(void *, Evas *, Evas_Object *, void *);
 static void _mouse_down_cb(void *, Evas *, Evas_Object *, void *);
 static void _mouse_move_cb(void *, Evas *, Evas_Object *, void *);
+static void _mouse_in_cb(void *, Evas *, Evas_Object *, void *);
 static void _items_fix(Evas_Object *);
 
 static inline void
@@ -66,6 +67,8 @@ _elm_list_item_free(Elm_List_Item *it)
      (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, it);
    evas_object_event_callback_del_full
      (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, it);
+   evas_object_event_callback_del_full
+     (VIEW(it), EVAS_CALLBACK_MOUSE_IN, _mouse_in_cb, it);
 
    if (it->icon)
      evas_object_event_callback_del_full
@@ -1464,6 +1467,17 @@ _swipe_do(Elm_List_Item *it)
 }
 
 static void
+_mouse_in_cb(void *data,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *o EINA_UNUSED,
+             void *event_info EINA_UNUSED)
+{
+   if (!elm_object_item_disabled_get(data) &&
+       (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN))
+     elm_object_item_focus_set(data, EINA_TRUE);
+}
+
+static void
 _mouse_move_cb(void *data,
                Evas *evas EINA_UNUSED,
                Evas_Object *o EINA_UNUSED,
@@ -2070,6 +2084,8 @@ _item_new(Evas_Object *obj,
      (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, it);
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, it);
+   evas_object_event_callback_add
+     (VIEW(it), EVAS_CALLBACK_MOUSE_IN, _mouse_in_cb, it);
    evas_object_size_hint_weight_set
      (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
