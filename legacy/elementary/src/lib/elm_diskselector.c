@@ -931,7 +931,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
    Elm_Diskselector_Item *it = NULL;
    Eina_List *l = NULL;
-   char *dir = params;
+   const char *dir = params;
 
    if (!strcmp(dir, "prev"))
      {

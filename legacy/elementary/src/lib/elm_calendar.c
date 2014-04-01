@@ -858,7 +858,7 @@ static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    ELM_CALENDAR_DATA_GET(obj, sd);
-   char *dir = params;
+   const char *dir = params;
 
    if (!strcmp(dir, "prior"))
      {
@@ -908,7 +908,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Evas_Event_Key_Down *ev = event_info;

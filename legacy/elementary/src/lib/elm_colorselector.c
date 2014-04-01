@@ -1670,7 +1670,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    Eina_List *cl = NULL;
    Elm_Color_Item *item = NULL;
    char colorbar_s[128];
-   char *dir = params;
+   const char *dir = params;
 
    if (!strcmp(dir, "left"))
      {
@@ -1764,10 +1764,6 @@ EOLIAN static Eina_Bool
 _elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
-   Eina_List *cl = NULL;
-   Elm_Color_Item *item = NULL;
-   char colorbar_s[128];
-
    (void) src;
 
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
