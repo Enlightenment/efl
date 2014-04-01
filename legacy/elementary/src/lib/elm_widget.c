@@ -23,9 +23,10 @@
   ELM_WIDGET_DATA_GET(obj, sd);                      \
   if (!sd) return
 
-#define ELM_WIDGET_FOCUS_GET(obj)                                    \
-  ((_elm_access_auto_highlight_get()) ? (elm_widget_highlight_get(obj)) : \
-                                        (elm_widget_focus_get(obj)))
+#define ELM_WIDGET_FOCUS_GET(obj)                                          \
+  (eo_isa(obj, ELM_OBJ_WIDGET_CLASS) &&                                    \
+   ((_elm_access_auto_highlight_get()) ? (elm_widget_highlight_get(obj)) : \
+                                         (elm_widget_focus_get(obj))))
 
 const char SIG_WIDGET_FOCUSED[] = "focused";
 const char SIG_WIDGET_UNFOCUSED[] = "unfocused";
