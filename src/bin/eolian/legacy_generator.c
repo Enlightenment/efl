@@ -40,6 +40,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
+   char tmpstr[0xFF];
 
    rettype = eolian_function_return_type_get(funcid, ftype);
    if (ftype == GET)
@@ -66,19 +67,26 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
      }
 
    func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
-   func_lpref = (func_lpref) ? func_lpref : eolian_class_legacy_prefix_get(classname);
-
-   if (!func_lpref) func_lpref = classname;
+   if (func_lpref && !strcmp(func_lpref, "null")) return;
 
    Eina_Strbuf *fbody = eina_strbuf_new();
    Eina_Strbuf *fparam = eina_strbuf_new();
    Eina_Strbuf *descparam = eina_strbuf_new();
 
-   char tmpstr[0xFF];
-   sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
-   _template_fill(fbody, tmpl_eapi_funcdef, func_lpref, tmpstr, EINA_FALSE);
-   sprintf (tmpstr, "comment%s", suffix);
+   if (func_lpref)
+     {
+        _template_fill(fbody, tmpl_eapi_funcdef, "@#class", "@#func", EINA_FALSE);
+        eina_strbuf_replace_all (fbody, "@#class_@#func", func_lpref);
+     }
+   else
+     {
+        func_lpref = (func_lpref) ? func_lpref : eolian_class_legacy_prefix_get(classname);
+        if (!func_lpref) func_lpref = classname;
+        sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
+        _template_fill(fbody, tmpl_eapi_funcdef, func_lpref, tmpstr, EINA_FALSE);
+     }
 
+   sprintf (tmpstr, "comment%s", suffix);
    const char *desc = eolian_function_description_get(funcid, tmpstr);
    Eina_Strbuf *linedesc = eina_strbuf_new();
    eina_strbuf_append(linedesc, desc ? desc : "No description supplied.");
