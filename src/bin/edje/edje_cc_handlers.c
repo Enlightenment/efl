@@ -2979,8 +2979,10 @@ st_collections_group_inherit(void)
         cp->l1 = cp2->l1;
         cp->l2 = cp2->l2;
         cp->script = STRDUP(cp2->script);
+        cp->original = STRDUP(cp2->original);
         cd->is_lua = cd2->is_lua;
         cd->shared = cd2->shared;
+        cd->original = cd2->original;
         cd->programs = eina_list_append(cd->programs, cp);
         data_queue_copied_anonymous_lookup(pc, &(cp2->id), &(cp->id));
      }
