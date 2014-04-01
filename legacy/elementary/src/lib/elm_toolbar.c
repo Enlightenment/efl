@@ -2090,6 +2090,10 @@ _mouse_in_cb(void *data,
    edje_object_signal_emit(VIEW(it), "elm,state,highlighted", "elm");
    if (it->icon)
      elm_widget_signal_emit(it->icon, "elm,state,highlighted", "elm");
+
+   if (!elm_object_item_disabled_get(data) &&
+       (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN))
+     elm_object_item_focus_set(data, EINA_TRUE);
 }
 
 static void
