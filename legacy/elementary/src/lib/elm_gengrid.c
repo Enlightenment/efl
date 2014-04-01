@@ -8,14 +8,10 @@
 #include "elm_widget_gengrid.h"
 #include "elm_interface_scrollable.h"
 
-EAPI Eo_Op ELM_OBJ_GENGRID_PAN_BASE_ID = EO_NOOP;
-
 #define MY_PAN_CLASS ELM_OBJ_GENGRID_PAN_CLASS
 
 #define MY_PAN_CLASS_NAME "Elm_Gengrid_Pan"
 #define MY_PAN_CLASS_NAME_LEGACY "elm_gengrid_pan"
-
-EAPI Eo_Op ELM_OBJ_GENGRID_BASE_ID = EO_NOOP;
 
 #define MY_CLASS ELM_OBJ_GENGRID_CLASS
 
@@ -90,7 +86,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void
 _item_show_region(void *data)
 {
-   Elm_Gengrid_Smart_Data *sd = data;
+   Elm_Gengrid_Data *sd = data;
    Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, col = 0, row = 0, minx = 0, miny = 0;
    Evas_Coord vw = 0, vh = 0;
    Elm_Gen_Item *it = NULL;
@@ -248,33 +244,24 @@ _calc_job(void *data)
    sd->calc_job = NULL;
 }
 
-static void
-_elm_gengrid_pan_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_pan_eo_base_destructor(Eo *obj, Elm_Gengrid_Pan_Data *psd)
 {
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
    eo_data_unref(psd->wobj, psd->wsd);
    eo_do_super(obj, MY_PAN_CLASS, eo_destructor());
 }
 
-static void
-_elm_gengrid_pan_smart_move(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_evas_smart_move(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd, Evas_Coord _gen_param2 EINA_UNUSED, Evas_Coord _gen_param3 EINA_UNUSED)
 {
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
-   va_arg(*list, Evas_Coord);
-   va_arg(*list, Evas_Coord);
-
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
 }
 
-static void
-_elm_gengrid_pan_smart_resize(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_evas_smart_resize(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord ow, oh;
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
@@ -286,7 +273,7 @@ static void
 _item_unselect(Elm_Gen_Item *it)
 {
    Elm_Gen_Item_Type *item = GG_IT(it);
-   Elm_Gengrid_Smart_Data *sd = item->wsd;
+   Elm_Gengrid_Data *sd = item->wsd;
 
    if ((it->generation < sd->generation) || (!it->highlighted))
      return;
@@ -326,7 +313,7 @@ _item_mouse_move_cb(void *data,
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ox, oy, ow, oh, it_scrl_x, it_scrl_y;
    Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
@@ -441,7 +428,7 @@ static Eina_Bool
 _long_press_cb(void *data)
 {
    Elm_Gen_Item *it = data;
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    it->long_timer = NULL;
    if (elm_widget_item_disabled_get(it) || (it->dragging))
@@ -469,7 +456,7 @@ static void
 _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise = NULL;
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
        || (!sd->highlight) || (it->highlighted) ||
@@ -495,7 +482,7 @@ _item_mouse_down_cb(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Elm_Gen_Item *it = data;
    Evas_Coord x, y;
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    if (ev->button != 1) return;
 
@@ -569,7 +556,7 @@ _item_mouse_up_cb(void *data,
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_Bool dragged = EINA_FALSE;
-   Elm_Gengrid_Smart_Data *sd;
+   Elm_Gengrid_Data *sd;
    Elm_Gen_Item *it = data;
 
    if (ev->button != 1) return;
@@ -753,7 +740,7 @@ _item_realize(Elm_Gen_Item *it)
 {
    char buf[1024];
    char style[1024];
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    if ((it->realized) ||
        (it->generation < sd->generation))
@@ -919,7 +906,7 @@ _reorder_item_move_animator_cb(void *data)
    Elm_Gen_Item *it = data;
    Evas_Coord dx, dy;
    double tt, t;
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    tt = REORDER_EFFECT_TIME;
    t = ((0.0 > (t = ecore_loop_time_get() -
@@ -992,7 +979,7 @@ _item_place(Elm_Gen_Item *it,
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih, ww;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
    Eina_Bool reorder_item_move_forward = EINA_FALSE;
-   Elm_Gengrid_Smart_Data *wsd;
+   Elm_Gengrid_Data *wsd;
    Eina_Bool was_realized;
    Elm_Gen_Item_Type *item;
    long items_count;
@@ -1293,7 +1280,7 @@ _item_place(Elm_Gen_Item *it,
 }
 
 static void
-_group_item_place(Elm_Gengrid_Pan_Smart_Data *psd)
+_group_item_place(Elm_Gengrid_Pan_Data *psd)
 {
    Evas_Coord iw, ih, vw, vh;
    Eina_Bool was_realized;
@@ -1330,14 +1317,13 @@ _group_item_place(Elm_Gengrid_Pan_Smart_Data *psd)
      }
 }
 
-static void
-_elm_gengrid_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_pan_evas_smart_calculate(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd)
 {
    Evas_Coord cx = 0, cy = 0;
    Elm_Gen_Item *it;
 
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
-   Elm_Gengrid_Smart_Data *sd = psd->wsd;
+   Elm_Gengrid_Data *sd = psd->wsd;
 
    if (!sd->nmax) return;
 
@@ -1413,49 +1399,33 @@ _elm_gengrid_pan_smart_calculate(Eo *obj EINA_UNUSED, void *_pd, va_list *list E
      _elm_widget_focus_highlight_start(psd->wobj);
 }
 
-static void
-_elm_gengrid_pan_smart_pos_set(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_elm_pan_pos_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
-
    if ((x == psd->wsd->pan_x) && (y == psd->wsd->pan_y)) return;
    psd->wsd->pan_x = x;
    psd->wsd->pan_y = y;
    evas_object_smart_changed(obj);
 }
 
-static void
-_elm_gengrid_pan_smart_pos_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_elm_pan_pos_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
-
    if (x) *x = psd->wsd->pan_x;
    if (y) *y = psd->wsd->pan_y;
 }
 
-static void
-_elm_gengrid_pan_smart_content_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Pan_Data *psd, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
-
    if (w) *w = psd->wsd->minw;
    if (h) *h = psd->wsd->minh;
 }
 
-static void
-_elm_gengrid_pan_smart_pos_max_get(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_elm_pan_pos_max_get(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord ow, oh;
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if (x)
@@ -1464,14 +1434,10 @@ _elm_gengrid_pan_smart_pos_max_get(Eo *obj, void *_pd, va_list *list)
      *y = (oh < psd->wsd->minh) ? psd->wsd->minh - oh : 0;
 }
 
-static void
-_elm_gengrid_pan_smart_pos_min_get(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_pan_elm_pan_pos_min_get(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord mx = 0, my = 0;
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-
-   Elm_Gengrid_Pan_Smart_Data *psd = _pd;
 
    eo_do(obj, elm_obj_pan_pos_max_get(&mx, &my));
    if (x)
@@ -1480,39 +1446,13 @@ _elm_gengrid_pan_smart_pos_min_get(Eo *obj, void *_pd, va_list *list)
      *y = -my * psd->wsd->align_y;
 }
 
-static void
-_gengrid_pan_class_constructor(Eo_Class *klass)
+EOLIAN static void
+_elm_gengrid_pan_class_constructor(Eo_Class *klass)
 {
-      const Eo_Op_Func_Description func_desc[] = {
-           EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _elm_gengrid_pan_destructor),
-
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_gengrid_pan_smart_resize),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_gengrid_pan_smart_move),
-           EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _elm_gengrid_pan_smart_calculate),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_SET), _elm_gengrid_pan_smart_pos_set),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_GET), _elm_gengrid_pan_smart_pos_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_MAX_GET), _elm_gengrid_pan_smart_pos_max_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_POS_MIN_GET), _elm_gengrid_pan_smart_pos_min_get),
-           EO_OP_FUNC(ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_CONTENT_SIZE_GET), _elm_gengrid_pan_smart_content_size_get),
-           EO_OP_FUNC_SENTINEL
-      };
-      eo_class_funcs_set(klass, func_desc);
-
-      evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
+   evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
-static const Eo_Class_Description _elm_obj_gengrid_pan_class_desc = {
-     EO_VERSION,
-     MY_PAN_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     sizeof(Elm_Gengrid_Pan_Smart_Data),
-     _gengrid_pan_class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_gengrid_pan_class_get, &_elm_obj_gengrid_pan_class_desc, ELM_OBJ_PAN_CLASS, NULL);
+#include "elm_gengrid_pan.eo.c"
 
 static void
 _elm_gengrid_item_focused(Elm_Gen_Item *it)
@@ -1578,7 +1518,7 @@ _elm_gengrid_item_unfocused(Elm_Gen_Item *it)
 /* NOTE: this code will be used later when the item selection on key press
    becomes optional. So do not remove this.
 static Eina_Bool
-_item_focus_up(Elm_Gengrid_Smart_Data *sd)
+_item_focus_up(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
    Elm_Gen_Item *prev;
@@ -1612,7 +1552,7 @@ _item_focus_up(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_focus_down(Elm_Gengrid_Smart_Data *sd)
+_item_focus_down(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
    Elm_Gen_Item *next;
@@ -1647,7 +1587,7 @@ _item_focus_down(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_focus_left(Elm_Gengrid_Smart_Data *sd)
+_item_focus_left(Elm_Gengrid_Data *sd)
 {
    Elm_Gen_Item *prev;
 
@@ -1670,7 +1610,7 @@ _item_focus_left(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_focus_right(Elm_Gengrid_Smart_Data *sd)
+_item_focus_right(Elm_Gengrid_Data *sd)
 {
    Elm_Gen_Item *next;
 
@@ -1694,7 +1634,7 @@ _item_focus_right(Elm_Gengrid_Smart_Data *sd)
 */
 
 static Eina_Bool
-_item_multi_select_left(Elm_Gengrid_Smart_Data *sd)
+_item_multi_select_left(Elm_Gengrid_Data *sd)
 {
    Elm_Object_Item *prev;
 
@@ -1720,7 +1660,7 @@ _item_multi_select_left(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_multi_select_right(Elm_Gengrid_Smart_Data *sd)
+_item_multi_select_right(Elm_Gengrid_Data *sd)
 {
    Elm_Object_Item *next;
 
@@ -1746,7 +1686,7 @@ _item_multi_select_right(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_multi_select_up(Elm_Gengrid_Smart_Data *sd)
+_item_multi_select_up(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
    Eina_Bool r = EINA_TRUE;
@@ -1760,7 +1700,7 @@ _item_multi_select_up(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_multi_select_down(Elm_Gengrid_Smart_Data *sd)
+_item_multi_select_down(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
    Eina_Bool r = EINA_TRUE;
@@ -1774,7 +1714,7 @@ _item_multi_select_down(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_all_items_deselect(Elm_Gengrid_Smart_Data *sd)
+_all_items_deselect(Elm_Gengrid_Data *sd)
 {
    if (!sd->selected) return EINA_FALSE;
 
@@ -1786,7 +1726,7 @@ _all_items_deselect(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_single_select_up(Elm_Gengrid_Smart_Data *sd)
+_item_single_select_up(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
    Elm_Gen_Item *prev;
@@ -1820,7 +1760,7 @@ _item_single_select_up(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_single_select_down(Elm_Gengrid_Smart_Data *sd)
+_item_single_select_down(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
    Elm_Gen_Item *next;
@@ -1854,7 +1794,7 @@ _item_single_select_down(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_single_select_left(Elm_Gengrid_Smart_Data *sd)
+_item_single_select_left(Elm_Gengrid_Data *sd)
 {
    Elm_Gen_Item *prev;
 
@@ -1877,7 +1817,7 @@ _item_single_select_left(Elm_Gengrid_Smart_Data *sd)
 }
 
 static Eina_Bool
-_item_single_select_right(Elm_Gengrid_Smart_Data *sd)
+_item_single_select_right(Elm_Gengrid_Data *sd)
 {
    Elm_Gen_Item *next;
 
@@ -1899,16 +1839,10 @@ _item_single_select_right(Elm_Gengrid_Smart_Data *sd)
    return EINA_TRUE;
 }
 
-static void
-_elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Object *src = va_arg(*list, Evas_Object *);
-   Evas_Callback_Type type = va_arg(*list, Evas_Callback_Type);
-   Evas_Event_Key_Down *ev = va_arg(*list, void *);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   if (ret) *ret = EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
    (void) src;
 
    Evas_Coord x = 0;
@@ -1922,10 +1856,10 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
    Elm_Object_Item *it = NULL;
    Eina_Bool sel_ret = EINA_FALSE;
 
-   if (elm_widget_disabled_get(obj)) return;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (!sd->items) return;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (!sd->items) return EINA_FALSE;
 
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
@@ -1954,12 +1888,10 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sel_ret)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
+             return EINA_TRUE;
           }
 
-        if (ret) *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
@@ -1982,12 +1914,10 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sel_ret)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
+             return EINA_TRUE;
           }
 
-        if (ret) *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
@@ -2010,12 +1940,10 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sel_ret)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
+             return EINA_TRUE;
           }
 
-        if (ret) *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
@@ -2038,12 +1966,10 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         if (sel_ret)
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             if (ret) *ret = EINA_TRUE;
-             return;
+             return EINA_TRUE;
           }
 
-        if (ret) *ret = EINA_FALSE;
-        return;
+        return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Home")) ||
             ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
@@ -2051,8 +1977,7 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         it = elm_gengrid_first_item_get(obj);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    else if ((!strcmp(ev->key, "End")) ||
             ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
@@ -2060,8 +1985,7 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         it = elm_gengrid_last_item_get(obj);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    else if ((!strcmp(ev->key, "Prior")) ||
             ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
@@ -2101,10 +2025,9 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
      }
    else if (!strcmp(ev->key, "Escape"))
      {
-        if (!_all_items_deselect(sd)) return;
+        if (!_all_items_deselect(sd)) return EINA_FALSE;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (ret) *ret = EINA_TRUE;
-        return;
+        return EINA_TRUE;
      }
    else if (((!strcmp(ev->key, "Return")) ||
              (!strcmp(ev->key, "KP_Enter")) ||
@@ -2114,11 +2037,11 @@ _elm_gengrid_smart_event(Eo *obj, void *_pd, va_list *list)
         it = elm_gengrid_selected_item_get(obj);
         evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
      }
-   else return;
+   else return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /*
@@ -2176,18 +2099,15 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
    return NULL;
 }
 
-static void
-_elm_gengrid_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret = EINA_FALSE;
-   Elm_Gengrid_Smart_Data *sd = _pd;
    Elm_Object_Item *it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
    eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && (sd->selected) &&
        (!sd->last_selected_item))
@@ -2228,38 +2148,28 @@ _elm_gengrid_smart_on_focus(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           }
      }
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool _elm_gengrid_smart_focus_next_enable = EINA_FALSE;
 
-static void
-_elm_gengrid_smart_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = _elm_gengrid_smart_focus_next_enable;
+   return _elm_gengrid_smart_focus_next_enable;
 }
 
-static void
-_elm_gengrid_smart_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   *ret = EINA_FALSE;
+   return EINA_FALSE;
 }
 
-static void
-_elm_gengrid_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_focus_next(Eo *obj, Elm_Gengrid_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
-   Elm_Focus_Direction dir = va_arg(*list, Elm_Focus_Direction);
-   Evas_Object **next = va_arg(*list, Evas_Object **);
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
-   Eina_Bool int_ret;
-
    Eina_List *items = NULL;
    Elm_Gen_Item *it;
-
-   Elm_Gengrid_Smart_Data *sd = _pd;
 
    EINA_INLIST_FOREACH(sd->items, it)
      {
@@ -2267,9 +2177,8 @@ _elm_gengrid_smart_focus_next(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
           items = eina_list_append(items, it->base.access_obj);
      }
 
-   int_ret = elm_widget_focus_list_next_get
+   return elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next);
-   if (ret) *ret = int_ret;
 }
 
 static void
@@ -2293,19 +2202,16 @@ _mirrored_set(Evas_Object *obj,
      }
 }
 
-static void
-_elm_gengrid_smart_theme(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_theme_apply(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   if (ret) *ret = EINA_FALSE;
    Eina_Bool int_ret;
-
    eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
-   if (!int_ret) return;
+   if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   if (ret) *ret = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void
@@ -2324,7 +2230,7 @@ _item_position_update(Eina_Inlist *list,
 static void
 _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 {
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    elm_widget_item_pre_notify_del(it);
    it->generation = sd->generation - 1; /* This means that the item is deleted */
@@ -2349,7 +2255,7 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 static void
 _elm_gengrid_item_del_serious(Elm_Gen_Item *it)
 {
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    _elm_gengrid_item_del_not_serious(it);
    sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
@@ -2565,7 +2471,7 @@ _item_focus_get_hook(Elm_Object_Item *it)
 }
 
 static void
-_elm_gengrid_clear(Evas_Object *obj,
+_internal_elm_gengrid_clear(Evas_Object *obj,
                    Eina_Bool standby)
 {
    Eina_Inlist *next, *l;
@@ -2624,7 +2530,7 @@ static void
 _item_select(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
-   Elm_Gengrid_Smart_Data *sd = GG_IT(it)->wsd;
+   Elm_Gengrid_Data *sd = GG_IT(it)->wsd;
 
    if ((it->generation < sd->generation) || (it->decorate_it_set) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
@@ -2651,7 +2557,7 @@ _item_select(Elm_Gen_Item *it)
    it->walking--;
    sd->walking--;
    if ((sd->clear_me) && (!sd->walking))
-     _elm_gengrid_clear(WIDGET(it), EINA_TRUE);
+     _internal_elm_gengrid_clear(WIDGET(it), EINA_TRUE);
    else
      {
         if ((!it->walking) && (it->generation < sd->generation))
@@ -2666,7 +2572,7 @@ _item_select(Elm_Gen_Item *it)
 }
 
 static Elm_Gen_Item *
-_elm_gengrid_item_new(Elm_Gengrid_Smart_Data *sd,
+_elm_gengrid_item_new(Elm_Gengrid_Data *sd,
                       const Elm_Gen_Item_Class *itc,
                       const void *data,
                       Evas_Smart_Cb func,
@@ -2714,18 +2620,17 @@ _elm_gengrid_item_new(Elm_Gengrid_Smart_Data *sd,
 }
 
 /* common layout sizing won't apply here */
-static void
-_elm_gengrid_smart_sizing_eval(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_elm_layout_sizing_eval(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
    return;  /* no-op */
 }
 
-static void
-_elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_evas_smart_add(Eo *obj, Elm_Gengrid_Data *priv)
 {
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
-   Elm_Gengrid_Pan_Smart_Data *pan_data;
-   Elm_Gengrid_Smart_Data *priv = _pd;
+   Elm_Gengrid_Pan_Data *pan_data;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -2787,11 +2692,9 @@ _elm_gengrid_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do(obj, elm_interface_scrollable_extern_pan_set(priv->pan_obj));
 }
 
-static void
-_elm_gengrid_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_evas_smart_del(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    elm_gengrid_clear(obj);
    eo_unref(sd->pan_obj);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
@@ -2802,36 +2705,25 @@ _elm_gengrid_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_elm_gengrid_smart_move(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_evas_smart_move(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
 
    evas_object_move(sd->hit_rect, x, y);
 }
 
-static void
-_elm_gengrid_smart_resize(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_evas_smart_resize(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
 }
 
-static void
-_elm_gengrid_smart_member_add(Eo *obj, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_evas_smart_member_add(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *member)
 {
-   Evas_Object *member = va_arg(*list, Evas_Object *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
 
    if (sd->hit_rect)
@@ -2839,7 +2731,7 @@ _elm_gengrid_smart_member_add(Eo *obj, void *_pd, va_list *list)
 }
 
 static void
-_access_obj_process(Elm_Gengrid_Smart_Data * sd, Eina_Bool is_access)
+_access_obj_process(Elm_Gengrid_Data * sd, Eina_Bool is_access)
 {
    Elm_Gen_Item *it;
 
@@ -2853,11 +2745,10 @@ _access_obj_process(Elm_Gengrid_Smart_Data * sd, Eina_Bool is_access)
      }
 }
 
-static void
-_elm_gengrid_smart_access(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool acs)
 {
-   Elm_Gengrid_Smart_Data *sd = _pd;
-   _elm_gengrid_smart_focus_next_enable = va_arg(*list, int);
+   _elm_gengrid_smart_focus_next_enable = acs;
    _access_obj_process(sd, _elm_gengrid_smart_focus_next_enable);
 }
 
@@ -2870,10 +2761,9 @@ elm_gengrid_add(Evas_Object *parent)
    return obj;
 }
 
-static void
-_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_eo_base_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   Elm_Gengrid_Smart_Data *sd = _pd;
    sd->obj = obj;
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
@@ -2882,22 +2772,9 @@ _constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
 }
 
-EAPI void
-elm_gengrid_item_size_set(Evas_Object *obj,
-                          Evas_Coord w,
-                          Evas_Coord h)
+EOLIAN static void
+_elm_gengrid_item_size_set(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_item_size_set(w, h));
-}
-
-static void
-_item_size_set(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if ((sd->item_width == w) && (sd->item_height == h)) return;
    sd->item_width = w;
    sd->item_height = h;
@@ -2905,42 +2782,16 @@ _item_size_set(Eo *obj, void *_pd, va_list *list)
    sd->calc_job = ecore_job_add(_calc_job, obj);
 }
 
-EAPI void
-elm_gengrid_item_size_get(const Evas_Object *obj,
-                          Evas_Coord *w,
-                          Evas_Coord *h)
+EOLIAN static void
+_elm_gengrid_item_size_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord *w, Evas_Coord *h)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_gengrid_item_size_get(w, h));
-}
-
-static void
-_item_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if (w) *w = sd->item_width;
    if (h) *h = sd->item_height;
 }
 
-EAPI void
-elm_gengrid_group_item_size_set(Evas_Object *obj,
-                                Evas_Coord w,
-                                Evas_Coord h)
+EOLIAN static void
+_elm_gengrid_group_item_size_set(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_group_item_size_set(w, h));
-}
-
-static void
-_group_item_size_set(Eo *obj, void *_pd, va_list *list)
-{
-   Evas_Coord w = va_arg(*list, Evas_Coord);
-   Evas_Coord h = va_arg(*list, Evas_Coord);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if ((sd->group_item_width == w) && (sd->group_item_height == h)) return;
    sd->group_item_width = w;
    sd->group_item_height = h;
@@ -2948,43 +2799,17 @@ _group_item_size_set(Eo *obj, void *_pd, va_list *list)
    sd->calc_job = ecore_job_add(_calc_job, obj);
 }
 
-EAPI void
-elm_gengrid_group_item_size_get(const Evas_Object *obj,
-                                Evas_Coord *w,
-                                Evas_Coord *h)
+EOLIAN static void
+_elm_gengrid_group_item_size_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord *w, Evas_Coord *h)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_gengrid_group_item_size_get(w, h));
-}
-
-static void
-_group_item_size_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if (w) *w = sd->group_item_width;
    if (h) *h = sd->group_item_height;
 }
 
-EAPI void
-elm_gengrid_align_set(Evas_Object *obj,
-                      double align_x,
-                      double align_y)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_align_set(align_x, align_y));
-}
-
-static void
-_align_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_align_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, double align_x, double align_y)
 {
    double old_h, old_y;
-
-   double align_x = va_arg(*list, double);
-   double align_y = va_arg(*list, double);
-   Elm_Gengrid_Smart_Data *sd = _pd;
 
    old_h = sd->align_x;
    old_y = sd->align_y;
@@ -3005,54 +2830,20 @@ _align_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      evas_object_smart_calculate(sd->pan_obj);
 }
 
-EAPI void
-elm_gengrid_align_get(const Evas_Object *obj,
-                      double *align_x,
-                      double *align_y)
+EOLIAN static void
+_elm_gengrid_align_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, double *align_x, double *align_y)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_gengrid_align_get(align_x, align_y));
-}
-
-static void
-_align_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   double *align_x = va_arg(*list, double *);
-   double *align_y = va_arg(*list, double *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if (align_x) *align_x = sd->align_x;
    if (align_y) *align_y = sd->align_y;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_item_append(Evas_Object *obj,
-                        const Elm_Gengrid_Item_Class *itc,
-                        const void *data,
-                        Evas_Smart_Cb func,
-                        const void *func_data)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_gengrid_item_append(itc, data, func, func_data, &ret));
-   return ret;
-}
-
-static void
-_item_append(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_item_append(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_Class *itc, const void *data, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
 
-   const Elm_Gengrid_Item_Class *itc = va_arg(*list, const Elm_Gengrid_Item_Class *);
-   const void *data = va_arg(*list, const void *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *func_data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-   *ret = NULL;
-
    it = _elm_gengrid_item_new(sd, itc, data, func, func_data);
-   if (!it) return;
+   if (!it) return NULL;
 
    sd->items = eina_inlist_append(sd->items, EINA_INLIST_GET(it));
    it->position = sd->item_count;
@@ -3064,37 +2855,16 @@ _item_append(Eo *obj, void *_pd, va_list *list)
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_item_prepend(Evas_Object *obj,
-                         const Elm_Gengrid_Item_Class *itc,
-                         const void *data,
-                         Evas_Smart_Cb func,
-                         const void *func_data)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_gengrid_item_prepend(itc, data, func, func_data, &ret));
-   return ret;
-}
-
-static void
-_item_prepend(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_item_prepend(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_Class *itc, const void *data, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
 
-   const Elm_Gengrid_Item_Class *itc = va_arg(*list, const Elm_Gengrid_Item_Class *);
-   const void *data = va_arg(*list, const void *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *func_data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    it = _elm_gengrid_item_new(sd, itc, data, func, func_data);
-   if (!it) return;
+   if (!it) return NULL;
 
    sd->items = eina_inlist_prepend(sd->items, EINA_INLIST_GET(it));
    _item_position_update(sd->items, 0);
@@ -3105,41 +2875,19 @@ _item_prepend(Eo *obj, void *_pd, va_list *list)
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_item_insert_before(Evas_Object *obj,
-                               const Elm_Gengrid_Item_Class *itc,
-                               const void *data,
-                               Elm_Object_Item *relative,
-                               Evas_Smart_Cb func,
-                               const void *func_data)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_gengrid_item_insert_before(itc, data, relative, func, func_data, &ret));
-   return ret;
-}
-
-static void
-_item_insert_before(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_item_insert_before(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_Class *itc, const void *data, Elm_Object_Item *relative, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
    Eina_Inlist *tmp;
 
-   const Elm_Gengrid_Item_Class *itc = va_arg(*list, const Elm_Gengrid_Item_Class *);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item *relative = va_arg(*list, Elm_Object_Item *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *func_data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-   ELM_GENGRID_ITEM_CHECK(relative);
-   Elm_Gengrid_Smart_Data *sd = _pd;
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(relative, NULL);
 
    it = _elm_gengrid_item_new(sd, itc, data, func, func_data);
-   if (!it) return;
+   if (!it) return NULL;
    sd->items = eina_inlist_prepend_relative
        (sd->items, EINA_INLIST_GET(it),
        EINA_INLIST_GET((Elm_Gen_Item *)relative));
@@ -3153,41 +2901,19 @@ _item_insert_before(Eo *obj, void *_pd, va_list *list)
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_item_insert_after(Evas_Object *obj,
-                              const Elm_Gengrid_Item_Class *itc,
-                              const void *data,
-                              Elm_Object_Item *relative,
-                              Evas_Smart_Cb func,
-                              const void *func_data)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_gengrid_item_insert_after(itc, data, relative, func, func_data, &ret));
-   return ret;
-}
-
-static void
-_item_insert_after(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_item_insert_after(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_Class *itc, const void *data, Elm_Object_Item *relative, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
    Eina_Inlist *tmp;
 
-   const Elm_Gengrid_Item_Class *itc = va_arg(*list, const Elm_Gengrid_Item_Class *);
-   const void *data = va_arg(*list, const void *);
-   Elm_Object_Item *relative = va_arg(*list, Elm_Object_Item *);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *func_data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-   ELM_GENGRID_ITEM_CHECK(relative);
-   Elm_Gengrid_Smart_Data *sd = _pd;
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(relative, NULL);
 
    it = _elm_gengrid_item_new(sd, itc, data, func, func_data);
-   if (!it) return;
+   if (!it) return NULL;
    sd->items = eina_inlist_append_relative
        (sd->items, EINA_INLIST_GET(it),
        EINA_INLIST_GET((Elm_Gen_Item *)relative));
@@ -3201,39 +2927,16 @@ _item_insert_after(Eo *obj, void *_pd, va_list *list)
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_item_sorted_insert(Evas_Object *obj,
-                               const Elm_Gengrid_Item_Class *itc,
-                               const void *data,
-                               Eina_Compare_Cb comp,
-                               Evas_Smart_Cb func,
-                               const void *func_data)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do(obj, elm_obj_gengrid_item_sorted_insert(itc, data, comp, func, func_data, &ret));
-   return ret;
-}
-
-static void
-_item_sorted_insert(Eo *obj, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_item_sorted_insert(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_Class *itc, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
 
-   const Elm_Gengrid_Item_Class *itc = va_arg(*list, const Elm_Gengrid_Item_Class *);
-   const void *data = va_arg(*list, const void *);
-   Eina_Compare_Cb comp = va_arg(*list, Eina_Compare_Cb);
-   Evas_Smart_Cb func = va_arg(*list, Evas_Smart_Cb);
-   const void *func_data = va_arg(*list, const void *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    it = _elm_gengrid_item_new(sd, itc, data, func, func_data);
-   if (!it) return;
+   if (!it) return NULL;
 
    if (!sd->state)
      {
@@ -3249,23 +2952,12 @@ _item_sorted_insert(Eo *obj, void *_pd, va_list *list)
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI void
-elm_gengrid_horizontal_set(Evas_Object *obj,
-                           Eina_Bool horizontal)
+EOLIAN static void
+_elm_gengrid_horizontal_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Bool horizontal)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_horizontal_set(horizontal));
-}
-
-static void
-_horizontal_set(Eo *obj, void *_pd, va_list *list)
-{
-   Eina_Bool horizontal = va_arg(*list, int);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    horizontal = !!horizontal;
    if (horizontal == sd->horizontal) return;
    sd->horizontal = horizontal;
@@ -3275,35 +2967,16 @@ _horizontal_set(Eo *obj, void *_pd, va_list *list)
    sd->calc_job = ecore_job_add(_calc_job, obj);
 }
 
-EAPI Eina_Bool
-elm_gengrid_horizontal_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_gengrid_horizontal_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_gengrid_horizontal_get(&ret));
-   return ret;
+   return sd->horizontal;
 }
 
-static void
-_horizontal_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_clear(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->horizontal;
-}
-
-EAPI void
-elm_gengrid_clear(Evas_Object *obj)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_clear());
-}
-
-static void
-_clear(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
-{
-   _elm_gengrid_clear(obj, EINA_FALSE);
+   _internal_elm_gengrid_clear(obj, EINA_FALSE);
 }
 
 EINA_DEPRECATED EAPI const Evas_Object *
@@ -3365,55 +3038,21 @@ elm_gengrid_item_pos_get(const Elm_Object_Item *it,
    if (y) *y = ((Elm_Gen_Item *)it)->y;
 }
 
-EAPI void
-elm_gengrid_multi_select_set(Evas_Object *obj,
-                             Eina_Bool multi)
+EOLIAN static void
+_elm_gengrid_multi_select_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool multi)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_multi_select_set(multi));
-}
-
-static void
-_multi_select_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool multi = va_arg(*list, int);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    sd->multi = !!multi;
 }
 
-EAPI Eina_Bool
-elm_gengrid_multi_select_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_gengrid_multi_select_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_gengrid_multi_select_get(&ret));
-   return ret;
+   return sd->multi;
 }
 
-static void
-_multi_select_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_multi_select_mode_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Elm_Object_Multi_Select_Mode mode)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->multi;
-}
-
-EAPI void
-elm_gengrid_multi_select_mode_set(Evas_Object *obj,
-                                  Elm_Object_Multi_Select_Mode mode)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_multi_select_mode_set(mode));
-}
-
-static void
-_multi_select_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Multi_Select_Mode mode = va_arg(*list, Elm_Object_Multi_Select_Mode);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if (mode >= ELM_OBJECT_MULTI_SELECT_MODE_MAX)
      return;
 
@@ -3421,59 +3060,23 @@ _multi_select_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      sd->multi_select_mode = mode;
 }
 
-EAPI Elm_Object_Multi_Select_Mode
-elm_gengrid_multi_select_mode_get(const Evas_Object *obj)
+EOLIAN static Elm_Object_Multi_Select_Mode
+_elm_gengrid_multi_select_mode_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) ELM_OBJECT_MULTI_SELECT_MODE_MAX;
-   Elm_Object_Multi_Select_Mode ret = ELM_OBJECT_MULTI_SELECT_MODE_MAX;
-   eo_do((Eo *)obj, elm_obj_gengrid_multi_select_mode_get(&ret));
-   return ret;
+   return sd->multi_select_mode;
 }
 
-static void
-_multi_select_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_selected_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   Elm_Object_Multi_Select_Mode *ret = va_arg(*list, Elm_Object_Multi_Select_Mode *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->multi_select_mode;
+   if (sd->selected) return sd->selected->data;
+   return NULL;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_selected_item_get(const Evas_Object *obj)
+EOLIAN static const Eina_List*
+_elm_gengrid_selected_items_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_gengrid_selected_item_get(&ret));
-   return ret;
-}
-
-static void
-_selected_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-   *ret = NULL;
-
-   if (sd->selected) *ret = sd->selected->data;
-}
-
-EAPI const Eina_List *
-elm_gengrid_selected_items_get(const Evas_Object *obj)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   const Eina_List *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_gengrid_selected_items_get(&ret));
-   return ret;
-}
-
-static void
-_selected_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   const Eina_List **ret = va_arg(*list, const Eina_List **);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->selected;
+   return sd->selected;
 }
 
 EAPI void
@@ -3481,7 +3084,7 @@ elm_gengrid_item_selected_set(Elm_Object_Item *item,
                               Eina_Bool selected)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-   Elm_Gengrid_Smart_Data *sd;
+   Elm_Gengrid_Data *sd;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
 
@@ -3518,39 +3121,23 @@ elm_gengrid_item_selected_get(const Elm_Object_Item *it)
    return ((Elm_Gen_Item *)it)->selected;
 }
 
-EAPI Eina_List *
-elm_gengrid_realized_items_get(const Evas_Object *obj)
-{
-   ELM_GENGRID_CHECK(obj) NULL;
-   Eina_List *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_gengrid_realized_items_get(&ret));
-   return ret;
-}
-
-static void
-_realized_items_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Eina_List*
+_elm_gengrid_realized_items_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
    Elm_Gen_Item *it;
 
-   Eina_List **ret = va_arg(*list, Eina_List **);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-   *ret = NULL;
+   Eina_List *ret = NULL;
 
    EINA_INLIST_FOREACH(sd->items, it)
      {
-        if (it->realized) *ret = eina_list_append(*ret, (Elm_Object_Item *)it);
+        if (it->realized) ret = eina_list_append(ret, (Elm_Object_Item *)it);
      }
+
+   return ret;
 }
 
-EAPI void
-elm_gengrid_realized_items_update(Evas_Object *obj)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_realized_items_update());
-}
-
-static void
-_realized_items_update(Eo *obj, void *_pd EINA_UNUSED, va_list *list_unused EINA_UNUSED)
+EOLIAN static void
+_elm_gengrid_realized_items_update(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
    Eina_List *list, *l;
    Elm_Object_Item *it;
@@ -3741,39 +3328,16 @@ elm_gengrid_item_cursor_engine_only_get(const Elm_Object_Item *it)
    return elm_widget_item_cursor_engine_only_get(it);
 }
 
-EAPI void
-elm_gengrid_reorder_mode_set(Evas_Object *obj,
-                             Eina_Bool reorder_mode)
+EOLIAN static void
+_elm_gengrid_reorder_mode_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool reorder_mode)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_reorder_mode_set(reorder_mode));
-}
-
-static void
-_reorder_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool reorder_mode = va_arg(*list, int);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    sd->reorder_mode = !!reorder_mode;
 }
 
-EAPI Eina_Bool
-elm_gengrid_reorder_mode_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_gengrid_reorder_mode_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_gengrid_reorder_mode_get(&ret));
-   return ret;
-}
-
-static void
-_reorder_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->reorder_mode;
+   return sd->reorder_mode;
 }
 
 EAPI void
@@ -3785,11 +3349,9 @@ elm_gengrid_bounce_set(Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_bounce_allow_set(h_bounce, v_bounce));
 }
 
-static void
-_bounce_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_gengrid_elm_interface_scrollable_bounce_allow_set(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
-   Eina_Bool h_bounce = va_arg(*list, int);
-   Eina_Bool v_bounce = va_arg(*list, int);
    eo_do_super(obj, MY_CLASS, elm_interface_scrollable_bounce_allow_set(!!h_bounce, !!v_bounce));
 }
 
@@ -3802,64 +3364,28 @@ elm_gengrid_bounce_get(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_scrollable_bounce_allow_get(h_bounce, v_bounce));
 }
 
-EAPI void
-elm_gengrid_page_relative_set(Evas_Object *obj,
-                              double h_pagerel,
-                              double v_pagerel)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_page_relative_set(h_pagerel, v_pagerel));
-}
-
-static void
-_page_relative_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_gengrid_page_relative_set(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, double h_pagerel, double v_pagerel)
 {
    Evas_Coord pagesize_h;
    Evas_Coord pagesize_v;
-
-   double h_pagerel = va_arg(*list, double);
-   double v_pagerel = va_arg(*list, double);
 
    eo_do((Eo *) obj, elm_interface_scrollable_paging_get(NULL, NULL, &pagesize_h, &pagesize_v));
    eo_do((Eo *) obj, elm_interface_scrollable_paging_set
      (h_pagerel, v_pagerel, pagesize_h, pagesize_v));
 }
 
-EAPI void
-elm_gengrid_page_relative_get(const Evas_Object *obj,
-                              double *h_pagerel,
-                              double *v_pagerel)
+EOLIAN static void
+_elm_gengrid_page_relative_get(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, double *h_pagerel, double *v_pagerel)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do((Eo *) obj, elm_obj_gengrid_page_relative_get(h_pagerel, v_pagerel));
-}
-
-static void
-_page_relative_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
-{
-   double *h_pagerel = va_arg(*list, double *);
-   double *v_pagerel = va_arg(*list, double *);
-
    eo_do((Eo *) obj, elm_interface_scrollable_paging_get(h_pagerel, v_pagerel, NULL, NULL));
 }
 
-EAPI void
-elm_gengrid_page_size_set(Evas_Object *obj,
-                          Evas_Coord h_pagesize,
-                          Evas_Coord v_pagesize)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_page_size_set(h_pagesize, v_pagesize));
-}
-
-static void
-_page_size_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_gengrid_page_size_set(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED, Evas_Coord h_pagesize, Evas_Coord v_pagesize)
 {
    double pagerel_h;
    double pagerel_v;
-
-   Evas_Coord h_pagesize = va_arg(*list, Evas_Coord);
-   Evas_Coord v_pagesize = va_arg(*list, Evas_Coord);
 
    eo_do((Eo *) obj, elm_interface_scrollable_paging_get(&pagerel_h, &pagerel_v, NULL, NULL));
    eo_do((Eo *) obj, elm_interface_scrollable_paging_set
@@ -3911,12 +3437,9 @@ elm_gengrid_scroller_policy_set(Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_policy_set(policy_h, policy_v));
 }
 
-static void
-_scroller_policy_set(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_gengrid_elm_interface_scrollable_policy_set(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
-   Elm_Scroller_Policy policy_h = va_arg(*list, Elm_Scroller_Policy);
-   Elm_Scroller_Policy policy_v = va_arg(*list, Elm_Scroller_Policy);
-
    if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
        (policy_v >= ELM_SCROLLER_POLICY_LAST))
      return;
@@ -3933,70 +3456,32 @@ elm_gengrid_scroller_policy_get(const Evas_Object *obj,
    eo_do((Eo *) obj, elm_interface_scrollable_policy_get(policy_h, policy_v));
 }
 
-static void
-_scroller_policy_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static void
+_elm_gengrid_elm_interface_scrollable_policy_get(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
 {
    Elm_Scroller_Policy s_policy_h, s_policy_v;
-
-   Elm_Scroller_Policy *policy_h = va_arg(*list, Elm_Scroller_Policy *);
-   Elm_Scroller_Policy *policy_v = va_arg(*list, Elm_Scroller_Policy *);
 
    eo_do_super((Eo *)obj, MY_CLASS, elm_interface_scrollable_policy_get(&s_policy_h, &s_policy_v));
    if (policy_h) *policy_h = (Elm_Scroller_Policy)s_policy_h;
    if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_first_item_get(const Evas_Object *obj)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_first_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_gengrid_first_item_get(&ret));
-   return ret;
-}
-
-static void
-_first_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   *ret = NULL;
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   if (!sd->items) return;
+   if (!sd->items) return NULL;
 
    Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
 
    while ((it) && (it->generation < sd->generation))
      it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_at_xy_item_get(const Evas_Object *obj,
-                           Evas_Coord x,
-                           Evas_Coord y,
-                           int *xposret,
-                           int *yposret)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_at_xy_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret)
 {
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_gengrid_at_xy_item_get(x, y,
-            xposret, yposret, &ret));
-
-   return ret;
-}
-
-static void
-_at_xy_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Evas_Coord x = va_arg(*list, Evas_Coord);
-   Evas_Coord y = va_arg(*list, Evas_Coord);
-   int *xposret = va_arg(*list, int *);
-   int *yposret = va_arg(*list, int *);
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-
-   Elm_Gengrid_Smart_Data *sd = _pd;
    Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
 
    Evas_Coord l = 0, r = 0, t = 0, b = 0; /* left, right, top, bottom */
@@ -4055,8 +3540,7 @@ _at_xy_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
                     else *xposret = 0;
                  }
 
-               *ret = (Elm_Object_Item *) it;
-               return;
+               return (Elm_Object_Item *) it;
             }
 
        } while ((it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next)));
@@ -4080,32 +3564,19 @@ _at_xy_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
           *yposret = (1);
      }
 
-   *ret = NULL;
+   return NULL;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_last_item_get(const Evas_Object *obj)
+EOLIAN static Elm_Object_Item*
+_elm_gengrid_last_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) NULL;
-   Elm_Object_Item *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_gengrid_last_item_get(&ret));
-   return ret;
-}
-
-static void
-_last_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-   *ret = NULL;
-
-   if (!sd->items) return;
+   if (!sd->items) return NULL;
 
    Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
    while ((it) && (it->generation < sd->generation))
      it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
 
-   *ret = (Elm_Object_Item *)it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -4145,7 +3616,7 @@ elm_gengrid_item_show(Elm_Object_Item *item,
                       Elm_Gengrid_Item_Scrollto_Type type)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
-   Elm_Gengrid_Smart_Data *sd;
+   Elm_Gengrid_Data *sd;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
    sd = GG_IT(it)->wsd;
@@ -4163,7 +3634,7 @@ EAPI void
 elm_gengrid_item_bring_in(Elm_Object_Item *item,
                           Elm_Gengrid_Item_Scrollto_Type type)
 {
-   Elm_Gengrid_Smart_Data *sd;
+   Elm_Gengrid_Data *sd;
    Elm_Gen_Item *it = (Elm_Gen_Item *)item;
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
@@ -4178,59 +3649,24 @@ elm_gengrid_item_bring_in(Elm_Object_Item *item,
    _item_show_region(sd);
 }
 
-EAPI void
-elm_gengrid_filled_set(Evas_Object *obj,
-                       Eina_Bool fill)
+EOLIAN static void
+_elm_gengrid_filled_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool fill)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_filled_set(fill));
-}
-
-static void
-_filled_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool fill = va_arg(*list, int);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    fill = !!fill;
    if (sd->filled != fill)
      sd->filled = fill;
 }
 
-EAPI Eina_Bool
-elm_gengrid_filled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_gengrid_filled_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_gengrid_filled_get(&ret));
-   return ret;
+   return sd->filled;
 }
 
-static void
-_filled_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static unsigned int
+_elm_gengrid_items_count(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->filled;
-}
-
-EAPI unsigned int
-elm_gengrid_items_count(const Evas_Object *obj)
-{
-   ELM_GENGRID_CHECK(obj) 0;
-   unsigned int ret = 0;
-   eo_do((Eo *) obj, elm_obj_gengrid_items_count(&ret));
-   return ret;
-}
-
-static void
-_items_count(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   unsigned int *ret = va_arg(*list, unsigned int *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->item_count;
+   return sd->item_count;
 }
 
 EAPI Elm_Gengrid_Item_Class *
@@ -4283,20 +3719,9 @@ elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc)
      }
 }
 
-EAPI void
-elm_gengrid_select_mode_set(Evas_Object *obj,
-                            Elm_Object_Select_Mode mode)
+EOLIAN static void
+_elm_gengrid_select_mode_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Elm_Object_Select_Mode mode)
 {
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_select_mode_set(mode));
-}
-
-static void
-_select_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Elm_Object_Select_Mode mode = va_arg(*list, Elm_Object_Select_Mode);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
      return;
 
@@ -4304,57 +3729,22 @@ _select_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
      sd->select_mode = mode;
 }
 
-EAPI Elm_Object_Select_Mode
-elm_gengrid_select_mode_get(const Evas_Object *obj)
+EOLIAN static Elm_Object_Select_Mode
+_elm_gengrid_select_mode_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) ELM_OBJECT_SELECT_MODE_MAX;
-   Elm_Object_Select_Mode ret = ELM_OBJECT_SELECT_MODE_MAX;
-   eo_do((Eo *) obj, elm_obj_gengrid_select_mode_get(&ret));
-   return ret;
+   return sd->select_mode;
 }
 
-static void
-_select_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_highlight_mode_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool highlight)
 {
-   Elm_Object_Select_Mode *ret = va_arg(*list, Elm_Object_Select_Mode *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->select_mode;
-}
-
-EAPI void
-elm_gengrid_highlight_mode_set(Evas_Object *obj,
-                               Eina_Bool highlight)
-{
-   ELM_GENGRID_CHECK(obj);
-   eo_do(obj, elm_obj_gengrid_highlight_mode_set(highlight));
-}
-
-static void
-_highlight_mode_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool highlight = va_arg(*list, int);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
    sd->highlight = !!highlight;
 }
 
-EAPI Eina_Bool
-elm_gengrid_highlight_mode_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_gengrid_highlight_mode_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj) EINA_FALSE;
-   Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_gengrid_highlight_mode_get(&ret));
-   return ret;
-}
-
-static void
-_highlight_mode_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
-{
-   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   *ret = sd->highlight;
+   return sd->highlight;
 }
 
 EAPI int
@@ -4414,17 +3804,11 @@ elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
    return (Elm_Object_Item *)it;
 }
 
-static void
-_elm_gengrid_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static void
+_elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
 {
-   Evas_Coord *x = va_arg(*list, Evas_Coord *);
-   Evas_Coord *y = va_arg(*list, Evas_Coord *);
-   Evas_Coord *w = va_arg(*list, Evas_Coord *);
-   Evas_Coord *h = va_arg(*list, Evas_Coord *);
-   Eina_Bool  is_next = va_arg(*list, int);
    Evas_Coord ox, oy, oh, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
-   Elm_Gengrid_Smart_Data *sd = _pd;
    evas_object_geometry_get(obj, &ox, &oy, NULL, &oh);
 
    if (is_next)
@@ -4467,139 +3851,19 @@ _elm_gengrid_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, void *_pd, va_lis
      }
 }
 
-static void
-_elm_gengrid_focused_item_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+EOLIAN static Elm_Object_Item *
+_elm_gengrid_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   Elm_Object_Item **ret = va_arg(*list, Elm_Object_Item **);
-   Elm_Gengrid_Smart_Data *sd = _pd;
-
-   if (ret) *ret = sd->focused_item;
+   return sd->focused_item;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
+EOLIAN static void
+_elm_gengrid_class_constructor(Eo_Class *klass)
 {
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), _elm_gengrid_smart_member_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _elm_gengrid_smart_add),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _elm_gengrid_smart_del),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _elm_gengrid_smart_resize),
-        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), _elm_gengrid_smart_move),
-
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_THEME_APPLY), _elm_gengrid_smart_theme),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_EVENT), _elm_gengrid_smart_event),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ON_FOCUS), _elm_gengrid_smart_on_focus),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT_MANAGER_IS), _elm_gengrid_smart_focus_next_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_NEXT), _elm_gengrid_smart_focus_next),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_ACCESS), _elm_gengrid_smart_access),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_DIRECTION_MANAGER_IS), _elm_gengrid_smart_focus_direction_manager_is),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUS_HIGHLIGHT_GEOMETRY_GET), _elm_gengrid_focus_highlight_geometry_get),
-        EO_OP_FUNC(ELM_OBJ_WIDGET_ID(ELM_OBJ_WIDGET_SUB_ID_FOCUSED_ITEM_GET), _elm_gengrid_focused_item_get),
-
-        EO_OP_FUNC(ELM_OBJ_LAYOUT_ID(ELM_OBJ_LAYOUT_SUB_ID_SIZING_EVAL), _elm_gengrid_smart_sizing_eval),
-
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_BOUNCE_ALLOW_SET), _bounce_set),
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_SET), _scroller_policy_set),
-        EO_OP_FUNC(ELM_INTERFACE_SCROLLABLE_ID(ELM_INTERFACE_SCROLLABLE_SUB_ID_POLICY_GET), _scroller_policy_get),
-
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_SIZE_SET), _item_size_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_SIZE_GET), _item_size_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_GROUP_ITEM_SIZE_SET), _group_item_size_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_GROUP_ITEM_SIZE_GET), _group_item_size_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ALIGN_SET), _align_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ALIGN_GET), _align_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_APPEND), _item_append),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_PREPEND), _item_prepend),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_INSERT_BEFORE), _item_insert_before),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_INSERT_AFTER), _item_insert_after),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEM_SORTED_INSERT), _item_sorted_insert),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HORIZONTAL_SET), _horizontal_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HORIZONTAL_GET), _horizontal_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_CLEAR), _clear),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_SET), _multi_select_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_GET), _multi_select_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_MODE_SET), _multi_select_mode_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_MODE_GET), _multi_select_mode_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_SELECTED_ITEM_GET), _selected_item_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_SELECTED_ITEMS_GET), _selected_items_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_REALIZED_ITEMS_GET), _realized_items_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_REALIZED_ITEMS_UPDATE), _realized_items_update),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_REORDER_MODE_SET), _reorder_mode_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_REORDER_MODE_GET), _reorder_mode_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_PAGE_RELATIVE_SET), _page_relative_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_PAGE_RELATIVE_GET), _page_relative_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_PAGE_SIZE_SET), _page_size_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_FIRST_ITEM_GET), _first_item_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_LAST_ITEM_GET), _last_item_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_FILLED_SET), _filled_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_FILLED_GET), _filled_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_ITEMS_COUNT), _items_count),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_SET), _select_mode_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_GET), _select_mode_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_SET), _highlight_mode_set),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET), _highlight_mode_get),
-        EO_OP_FUNC(ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET), _at_xy_item_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-
    if (_elm_config->access_mode)
       _elm_gengrid_smart_focus_next_enable = EINA_TRUE;
 
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_SIZE_SET, "Set the size for the items of a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_SIZE_GET, "Get the size set for the items of a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_GROUP_ITEM_SIZE_SET, "Set the size for the group items of a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_GROUP_ITEM_SIZE_GET, "Get the size set for the group items of a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ALIGN_SET, "Set the items grid's alignment within a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ALIGN_GET, "Get the items grid's alignment values within a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_APPEND, "Append a new item in a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_PREPEND, "Prepend a new item in a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_INSERT_BEFORE, "Insert an item before another in a gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_INSERT_AFTER, "Insert an item after another in a gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEM_SORTED_INSERT, "Insert an item in a gengrid widget using a user-defined sort function."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_HORIZONTAL_SET, "Set the direction in which a given gengrid widget will expand while placing its items."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_HORIZONTAL_GET, "Get for what direction a given gengrid widget will expand while placing its items."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_CLEAR, "Remove all items from a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_SET, "Enable or disable multi-selection in a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_GET, "Get whether multi-selection is enabled or disabled for a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_MODE_SET, "Set the gengrid multi select mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_MULTI_SELECT_MODE_GET, "Get the gengrid multi select mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_SELECTED_ITEM_GET, "Get the selected item in a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_SELECTED_ITEMS_GET, "Get a list of selected items in a given gengrid."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_REALIZED_ITEMS_GET, "Get a list of realized items in gengrid."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_REALIZED_ITEMS_UPDATE, "Update the contents of all realized items."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_REORDER_MODE_SET, "Set whether a given gengrid widget is or not able have items reordered."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_REORDER_MODE_GET, "Get whether a given gengrid widget is or not able have items reordered."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_PAGE_RELATIVE_SET, "EINA_DEPRECATED Set a given gengrid widget's scrolling page size, relative to its viewport size."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_PAGE_RELATIVE_GET, "EINA_DEPRECATED Get a given gengrid widget's scrolling page size, relative to its viewport size."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_PAGE_SIZE_SET, "EINA_DEPRECATED Set a given gengrid widget's scrolling page size"),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_FIRST_ITEM_GET, "Get the first item in a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_LAST_ITEM_GET, "Get the last item in a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_FILLED_SET, "Set how the items grid's filled within a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_FILLED_GET, "Get how the items grid's filled within a given gengrid widget."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_ITEMS_COUNT, "Return how many items are currently in a list."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_SET, "Set the gengrid select mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_SELECT_MODE_GET, "Get the gengrid select mode."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_SET, "Set whether the gengrid items should be highlighted when item selected."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_HIGHLIGHT_MODE_GET, "Get whether the gengrid items should be highlighted when item selected."),
-     EO_OP_DESCRIPTION(ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET, "Get the item that is at the x, y canvas coords."),
-     EO_OP_DESCRIPTION_SENTINEL
-};
 
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     MY_CLASS_NAME,
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&ELM_OBJ_GENGRID_BASE_ID, op_desc, ELM_OBJ_GENGRID_SUB_ID_LAST),
-     NULL,
-     sizeof(Elm_Gengrid_Smart_Data),
-     _class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_obj_gengrid_class_get, &class_desc, ELM_OBJ_LAYOUT_CLASS, ELM_INTERFACE_SCROLLABLE_CLASS, EVAS_SMART_CLICKABLE_INTERFACE, NULL);
+#include "elm_gengrid.eo.c"

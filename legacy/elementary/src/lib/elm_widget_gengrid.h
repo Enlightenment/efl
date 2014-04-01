@@ -18,8 +18,8 @@
 /**
  * Base widget smart data extended with gengrid instance data.
  */
-typedef struct _Elm_Gengrid_Smart_Data Elm_Gengrid_Smart_Data;
-struct _Elm_Gengrid_Smart_Data
+typedef struct _Elm_Gengrid_Data Elm_Gengrid_Data;
+struct _Elm_Gengrid_Data
 {
    Eina_Inlist_Sorted_State             *state;
    Evas_Object                          *hit_rect;
@@ -116,7 +116,7 @@ struct Elm_Gen_Item_Type
 {
    Elm_Gen_Item           *it;
 
-   Elm_Gengrid_Smart_Data *wsd;
+   Elm_Gengrid_Data       *wsd;
 
    Ecore_Animator         *item_reorder_move_animator;
    Evas_Coord              gx, gy, ox, oy, tx, ty, rx, ry;
@@ -127,11 +127,11 @@ struct Elm_Gen_Item_Type
    Eina_Bool               moving : 1;
 };
 
-typedef struct _Elm_Gengrid_Pan_Smart_Data Elm_Gengrid_Pan_Smart_Data;
-struct _Elm_Gengrid_Pan_Smart_Data
+typedef struct _Elm_Gengrid_Pan_Data Elm_Gengrid_Pan_Data;
+struct _Elm_Gengrid_Pan_Data
 {
    Evas_Object            *wobj;
-   Elm_Gengrid_Smart_Data *wsd;
+   Elm_Gengrid_Data       *wsd;
    Ecore_Job              *resize_job;
 };
 
@@ -140,10 +140,10 @@ struct _Elm_Gengrid_Pan_Smart_Data
  */
 
 #define ELM_GENGRID_DATA_GET(o, sd) \
-  Elm_Gengrid_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENGRID_CLASS)
+  Elm_Gengrid_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENGRID_CLASS)
 
 #define ELM_GENGRID_PAN_DATA_GET(o, sd) \
-  Elm_Gengrid_Pan_Smart_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENGRID_PAN_CLASS)
+  Elm_Gengrid_Pan_Data * sd = eo_data_scope_get(o, ELM_OBJ_GENGRID_PAN_CLASS)
 
 #define ELM_GENGRID_DATA_GET_OR_RETURN(o, ptr)       \
   ELM_GENGRID_DATA_GET(o, ptr);                      \

@@ -3,6 +3,9 @@
  *
  * @{
  */
+#include "elm_gengrid_pan.eo.h"
+#include "elm_gengrid.eo.h"
+#if 0
 #define ELM_OBJ_GENGRID_PAN_CLASS elm_obj_gengrid_pan_class_get()
 
 const Eo_Class *elm_obj_gengrid_pan_class_get(void) EINA_CONST;
@@ -656,6 +659,7 @@ enum
  */
 #define elm_obj_gengrid_at_xy_item_get(x, y, xposret, yposret, ret) ELM_OBJ_GENGRID_ID(ELM_OBJ_GENGRID_SUB_ID_AT_XY_ITEM_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, xposret), EO_TYPECHECK(int *, yposret), EO_TYPECHECK(Elm_Object_Item **, ret)
 
+#endif
 
 /**
  * @}

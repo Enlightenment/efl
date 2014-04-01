@@ -1,0 +1,22 @@
+class Elm_Gengrid_Pan (Elm_Pan)
+{
+   eo_prefix: elm_obj_gengrid_pan;
+   implements {
+      class::constructor;
+      Eo_Base::destructor;
+      Evas_Smart::calculate;
+      Evas_Smart::move;
+      Evas_Smart::resize;
+      Elm_Pan::content_size::get;
+      Elm_Pan::pos;
+      Elm_Pan::pos_min::get;
+      Elm_Pan::pos_max::get;
+   }
+   events {
+      language,changed;
+      access,changed;
+      focused;
+      unfocused;
+   }
+
+}

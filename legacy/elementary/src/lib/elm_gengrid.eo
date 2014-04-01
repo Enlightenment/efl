@@ -1,0 +1,661 @@
+class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
+{
+   eo_prefix: elm_obj_gengrid;
+   properties {
+      align {
+         set {
+            /*@
+            Set the items grid's alignment within a given gengrid widget
+
+            This sets the alignment of the whole grid of items of a gengrid
+            within its given viewport. By default, those values are both
+            0.5, meaning that the gengrid will have its items grid placed
+            exactly in the middle of its viewport.
+
+            @note If given alignment values are out of the cited ranges,
+            they'll be changed to the nearest boundary values on the valid
+            ranges.
+
+            @see elm_gengrid_align_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get the items grid's alignment values within a given gengrid
+            widget
+
+            @note Use @c NULL pointers on the alignment values you're not
+            interested in: they'll be ignored by the function.
+
+            @see elm_gengrid_align_set() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            double align_x; /*@ Alignment in the horizontal axis (0 <= align_x <= 1). */
+            double align_y; /*@ Alignment in the vertical axis (0 <= align_y <= 1). */
+         }
+      }
+      filled {
+         set {
+            /*@
+            Set how the items grid's filled within a given gengrid widget
+
+            This sets the fill state of the whole grid of items of a gengrid
+            within its given viewport. By default, this value is false, meaning
+            that if the first line of items grid's isn't filled, the items are
+            centered with the alignment
+
+            @see elm_gengrid_filled_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get how the items grid's filled within a given gengrid widget
+
+            @return @c EINA_TRUE, if filled is on, @c EINA_FALSE if it's
+            off
+
+            @note Use @c NULL pointers on the alignment values you're not
+            interested in: they'll be ignored by the function.
+
+            @see elm_gengrid_align_set() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            Eina_Bool fill; /*@ Filled if True */
+         }
+      }
+      page_relative {
+         set {
+            /*@ Set a given gengrid widget's scrolling page size, relative to its viewport size. */
+         }
+         get {
+            /*@ Get a given gengrid widget's scrolling page size, relative to its viewport size. */
+         }
+         values {
+            double h_pagerel;
+            double v_pagerel;
+         }
+      }
+      multi_select {
+         set {
+            /*@
+            Enable or disable multi-selection in a given gengrid widget
+
+            Multi-selection is the ability to have @b more than one
+            item selected, on a given gengrid, simultaneously. When it is
+            enabled, a sequence of clicks on different items will make them
+            all selected, progressively. A click on an already selected item
+            will unselect it. If interacting via the keyboard,
+            multi-selection is enabled while holding the "Shift" key.
+
+            @note By default, multi-selection is @b disabled on gengrids
+
+            @see elm_gengrid_multi_select_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get whether multi-selection is enabled or disabled for a given
+            gengrid widget
+
+            @return @c EINA_TRUE, if multi-selection is enabled, @c
+            EINA_FALSE otherwise
+
+            @see elm_gengrid_multi_select_set() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            Eina_Bool multi; /*@ @c EINA_TRUE, to enable multi-selection,
+            @c EINA_FALSE to disable it. */
+         }
+      }
+      group_item_size {
+         set {
+            /*@
+            Set the size for the group items of a given gengrid widget
+
+            A gengrid, after creation, has still no information on the size
+            to give to each of its cells. So, you most probably will end up
+            with squares one @ref Fingers "finger" wide, the default
+            size. Use this function to force a custom size for you group items,
+            making them as big as you wish.
+
+            @see elm_gengrid_group_item_size_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get the size set for the group items of a given gengrid widget
+
+            @note Use @c NULL pointers on the size values you're not
+            interested in: they'll be ignored by the function.
+
+            @see elm_gengrid_group_item_size_get() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            Evas_Coord w; /*@ The group items' width. */
+            Evas_Coord h; /*@ The group items' height. */
+         }
+      }
+      select_mode {
+         set {
+            /*@
+            Set the gengrid select mode.
+
+            elm_gengrid_select_mode_set() changes item select mode in the gengrid widget.
+            - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
+            callback when first becoming selected. Any further clicks will
+            do nothing, unless you set always select mode.
+            - ELM_OBJECT_SELECT_MODE_ALWAYS :  This means that, even if selected,
+            every click will make the selected callbacks be called.
+            - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
+            entirely and they will neither appear selected nor call selected
+            callback functions.
+
+            @see elm_gengrid_select_mode_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get the gengrid select mode.
+
+            @return The select mode
+            (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+
+            @see elm_gengrid_select_mode_set()
+
+            @ingroup Gengrid */
+         }
+         values {
+            Elm_Object_Select_Mode mode; /*@ The select mode */
+         }
+      }
+      reorder_mode {
+         set {
+            /*@
+            Set whether a given gengrid widget is or not able have items
+            @b reordered
+
+            If a gengrid is set to allow reordering, a click held for more
+            than 0.5 over a given item will highlight it specially,
+            signaling the gengrid has entered the reordering state. From
+            that time on, the user will be able to, while still holding the
+            mouse button down, move the item freely in the gengrid's
+            viewport, replacing to said item to the locations it goes to.
+            The replacements will be animated and, whenever the user
+            releases the mouse button, the item being replaced gets a new
+            definitive place in the grid.
+
+            @see elm_gengrid_reorder_mode_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get whether a given gengrid widget is or not able have items
+            @b reordered
+
+            @return @c EINA_TRUE, if reordering is on, @c EINA_FALSE if it's
+            off
+
+            @see elm_gengrid_reorder_mode_set() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            Eina_Bool reorder_mode; /*@ Use @c EINA_TRUE to turn reordering on,
+            @c EINA_FALSE to turn it off */
+         }
+      }
+      highlight_mode {
+         set {
+            /*@ Set whether the gengrid items' should be highlighted when item selected. */
+         }
+         get {
+            /*@ Get whether the gengrid items' should be highlighted when item selected. */
+         }
+         values {
+            Eina_Bool highlight;
+         }
+      }
+      item_size {
+         set {
+            /*@
+            Set the size for the items of a given gengrid widget
+
+            A gengrid, after creation, has still no information on the size
+            to give to each of its cells. So, you most probably will end up
+            with squares one @ref Fingers "finger" wide, the default
+            size. Use this function to force a custom size for you items,
+            making them as big as you wish.
+
+            @see elm_gengrid_item_size_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get the size set for the items of a given gengrid widget
+
+            @note Use @c NULL pointers on the size values you're not
+            interested in: they'll be ignored by the function.
+
+            @see elm_gengrid_item_size_get() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            Evas_Coord w; /*@ The items' width. */
+            Evas_Coord h; /*@ The items' height. */
+         }
+      }
+      multi_select_mode {
+         set {
+            /*@
+            Set the gengrid multi select mode.
+
+            - ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
+            item is clicked.
+            - ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+            although multi-selection is enabled, if clicked without pressing control
+            key. This mode is only available with multi-selection.
+
+            @see elm_gengrid_multi_select_set()
+            @see elm_gengrid_multi_select_mode_get()
+
+            @ingroup Gengrid
+            @since 1.8 */
+         }
+         get {
+            /*@
+            Get the gengrid multi select mode.
+
+            @return The multi select mode
+            (If getting mode is failed, it returns ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+
+            @see elm_gengrid_multi_select_set()
+            @see elm_gengrid_multi_select_mode_set()
+
+            @ingroup Gengrid
+            @since 1.8 */
+         }
+         values {
+            Elm_Object_Multi_Select_Mode mode; /*@ The multi select mode */
+         }
+      }
+      horizontal {
+         set {
+            /*@
+            Set the direction in which a given gengrid widget will expand while
+            placing its items.
+
+            When in "horizontal mode" (@c EINA_TRUE), items will be placed in @b columns,
+            from top to bottom and, when the space for a column is filled, another one is
+            started on the right, thus expanding the grid horizontally. When in
+            "vertical mode" (@c EINA_FALSE), though, items will be placed in @b rows,
+            from left to right and, when the space for a row is filled, another one is
+            started below, thus expanding the grid vertically.
+
+            @note By default, gengrid is in vertical mode, @c EINA_FALSE.
+
+            @see elm_gengrid_horizontal_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get for what direction a given gengrid widget will expand while
+            placing its items.
+
+            @return @c EINA_TRUE, if @p obj is set to expand horizontally,
+            @c EINA_FALSE if it's set to expand vertically.
+
+            @see elm_gengrid_horizontal_set() for more details
+
+            @ingroup Gengrid */
+         }
+         values {
+            Eina_Bool horizontal; /*@ @c EINA_TRUE to make the gengrid expand horizontally,
+            @c EINA_FALSE to expand vertically. */
+         }
+      }
+      page_size {
+         set {
+            /*@ Set a given gengrid widget's scrolling page size */
+         }
+         values {
+            Evas_Coord h_pagesize;
+            Evas_Coord v_pagesize;
+         }
+      }
+      selected_item {
+         get {
+            /*@
+            Get the selected item in a given gengrid widget
+
+            @return The selected item's handle or @c NULL, if none is
+            selected at the moment (and on errors)
+
+            This returns the selected item in @p obj. If multi selection is
+            enabled on @p obj (@see elm_gengrid_multi_select_set()), only
+            the first item in the list is selected, which might not be very
+            useful. For that case, see elm_gengrid_selected_items_get().
+
+            @ingroup Gengrid */
+            return Elm_Object_Item *;
+         }
+      }
+      realized_items {
+         get {
+            /*@
+            Get a list of realized items in gengrid
+
+            @return The list of realized items, nor NULL if none are realized.
+
+            This returns a list of the realized items in the gengrid. The list
+            contains gengrid item pointers. The list must be freed by the
+            caller when done with eina_list_free(). The item pointers in the
+            list are only valid so long as those items are not deleted or the
+            gengrid is not deleted.
+
+            @see elm_gengrid_realized_items_update()
+
+            @ingroup Gengrid */
+            return Eina_List *;
+         }
+      }
+      first_item {
+         get {
+            /*@
+            Get the first item in a given gengrid widget
+
+            @return The first item's handle or @c NULL, if there are no
+            items in @p obj (and on errors)
+
+            This returns the first item in the @p obj's internal list of
+            items.
+
+            @see elm_gengrid_last_item_get()
+
+            @ingroup Gengrid */
+            return Elm_Object_Item *;
+         }
+      }
+      selected_items {
+         get {
+            /*@
+            Get <b>a list</b> of selected items in a given gengrid
+
+            @return The list of selected items or @c NULL, if none is
+            selected at the moment (and on errors)
+
+            This returns a list of the selected items, in the order that
+            they appear in the grid. This list is only valid as long as no
+            more items are selected or unselected (or unselected implicitly
+            by deletion). The list contains Gengrid item pointers as
+            data, naturally.
+
+            @see elm_gengrid_selected_item_get()
+
+            @ingroup Gengrid */
+            return const Eina_List *;
+         }
+      }
+      last_item {
+         get {
+            /*@
+            Get the last item in a given gengrid widget
+
+            @return The last item's handle or @c NULL, if there are no
+            items in @p obj (and on errors)
+
+            This returns the last item in the @p obj's internal list of
+            items.
+
+            @see elm_gengrid_first_item_get()
+
+            @ingroup Gengrid */
+            return Elm_Object_Item *;
+         }
+      }
+   }
+   methods {
+      item_insert_before {
+         /*@
+         Insert an item before another in a gengrid widget
+
+         @return A handle to the item added or @c NULL, on errors.
+
+         This inserts an item before another in the gengrid.
+
+         @see elm_gengrid_item_append()
+         @see elm_gengrid_item_prepend()
+         @see elm_gengrid_item_insert_after()
+         @see elm_object_item_del()
+
+         @ingroup Gengrid */
+
+         return Elm_Object_Item *;
+         params {
+            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
+            @in const void *data; /*@ The item data. */
+            @in Elm_Object_Item *relative; /*@ The item to place this new one before. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            selected. */
+            @in const void *func_data; /*@ Data to be passed to @p func. */
+         }
+      }
+      realized_items_update {
+         /*@
+         Update the contents of all realized items.
+
+         This updates all realized items by calling all the item class functions again
+         to get the contents, texts and states. Use this when the original
+         item data has changed and the changes are desired to be reflected.
+
+         To update just one item, use elm_gengrid_item_update().
+
+         @see elm_gengrid_realized_items_get()
+         @see elm_gengrid_item_update()
+
+         @ingroup Gengrid */
+
+      }
+      item_insert_after {
+         /*@
+         Insert an item after another in a gengrid widget
+
+         @return A handle to the item added or @c NULL, on errors.
+
+         This inserts an item after another in the gengrid.
+
+         @see elm_gengrid_item_append()
+         @see elm_gengrid_item_prepend()
+         @see elm_gengrid_item_insert_after()
+         @see elm_object_item_del()
+
+         @ingroup Gengrid */
+
+         return Elm_Object_Item *;
+         params {
+            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
+            @in const void *data; /*@ The item data. */
+            @in Elm_Object_Item *relative; /*@ The item to place this new one after. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            selected. */
+            @in const void *func_data; /*@ Data to be passed to @p func. */
+         }
+      }
+      items_count {
+         /*@
+         Return how many items are currently in a list
+
+         @return The total number of list items in the list
+
+         This behavior is O(1) and includes items which may or may not be realized.
+
+         @ingroup Gengrid */
+
+         const;
+         return unsigned int;
+      }
+      at_xy_item_get {
+         /*@
+         Get the item that is at the x, y canvas coords.
+
+         @return The item at the coordinates or NULL if none
+
+         This returns the item at the given coordinates (which are canvas
+         relative, not object-relative). If an item is at that coordinate,
+         that item handle is returned, and if @p xposret is not NULL, the
+         integer pointed to is set to a value of -1, 0 or 1, depending if
+         the coordinate is on the left portion of that item (-1), on the
+         middle section (0) or on the right part (1).
+         if @p yposret is not NULL, the
+         integer pointed to is set to a value of -1, 0 or 1, depending if
+         the coordinate is on the upper portion of that item (-1), on the
+         middle section (0) or on the lower part (1). If NULL is returned as
+         an item (no item found there), then posret may indicate -1 or 1
+         based if the coordinate is above or below all items respectively in
+         the gengrid.
+
+         @ingroup Gengrid */
+
+         const;
+         return Elm_Object_Item *;
+         params {
+            @in Evas_Coord x; /*@ The input x coordinate */
+            @in Evas_Coord y; /*@ The input y coordinate */
+            @out int xposret; /*@ The position relative to the item returned here */
+            @out int yposret; /*@ The position relative to the item returned here */
+         }
+      }
+      item_append {
+         /*@
+         Append a new item in a given gengrid widget.
+
+         @return A handle to the item added or @c NULL, on errors.
+
+         This adds an item to the beginning of the gengrid.
+
+         @see elm_gengrid_item_prepend()
+         @see elm_gengrid_item_insert_before()
+         @see elm_gengrid_item_insert_after()
+         @see elm_object_item_del()
+
+         @ingroup Gengrid */
+
+         return Elm_Object_Item *;
+         params {
+            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
+            @in const void *data; /*@ The item data. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            selected. */
+            @in const void *func_data; /*@ Data to be passed to @p func. */
+         }
+      }
+      item_prepend {
+         /*@
+         Prepend a new item in a given gengrid widget.
+
+         @return A handle to the item added or @c NULL, on errors.
+
+         This adds an item to the end of the gengrid.
+
+         @see elm_gengrid_item_append()
+         @see elm_gengrid_item_insert_before()
+         @see elm_gengrid_item_insert_after()
+         @see elm_object_item_del()
+
+         @ingroup Gengrid */
+
+         return Elm_Object_Item *;
+         params {
+            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
+            @in const void *data; /*@ The item data. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            selected. */
+            @in const void *func_data; /*@ Data to be passed to @p func. */
+         }
+      }
+      clear {
+         /*@
+         Remove all items from a given gengrid widget
+
+         This removes (and deletes) all items in @p obj, leaving it
+         empty.
+
+         @see elm_object_item_del(), to remove just one item.
+
+         @ingroup Gengrid */
+
+      }
+      item_sorted_insert {
+         /*@
+         Insert an item in a gengrid widget using a user-defined sort function.
+
+         @return A handle to the item added or @c NULL, on errors.
+
+         This inserts an item in the gengrid based on user defined comparison
+         function. The two arguments passed to the function @p func are gengrid
+         item handles to compare.
+
+         @see elm_gengrid_item_append()
+         @see elm_gengrid_item_prepend()
+         @see elm_gengrid_item_insert_after()
+         @see elm_object_item_data_get()
+         @see elm_object_item_del()
+
+         @ingroup Gengrid */
+
+         return Elm_Object_Item *;
+         params {
+            @in const Elm_Gengrid_Item_Class *itc; /*@ The item class for the item. */
+            @in const void *data; /*@ The item data. */
+            @in Eina_Compare_Cb comp; /*@ User defined comparison function that defines the sort order
+            based on gengrid item and its data. */
+            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected. */
+            @in const void *func_data; /*@ Data to be passed to @p func. */
+         }
+      }
+   }
+   implements {
+      class::constructor;
+      Eo_Base::constructor;
+      Evas_Smart::move;
+      Evas_Smart::add;
+      Evas_Smart::del;
+      Evas_Smart::member_add;
+      Evas_Smart::resize;
+      Elm_Widget::theme_apply;
+      Elm_Widget::focus_next_manager_is;
+      Elm_Widget::focus_direction_manager_is;
+      Elm_Widget::access;
+      Elm_Widget::focus_next;
+      Elm_Widget::on_focus;
+      Elm_Widget::event;
+      Elm_Widget::focus_highlight_geometry_get;
+      Elm_Widget::focused_item::get;
+      Elm_Layout::sizing_eval;
+      Elm_Interface_Scrollable::bounce_allow::set;
+      Elm_Interface_Scrollable::policy;
+   }
+   events {
+      language,changed;
+      access,changed;
+      focused;
+      unfocused;
+   }
+
+}
