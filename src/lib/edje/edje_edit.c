@@ -7058,7 +7058,8 @@ edje_edit_script_error_list_get(Evas_Object *obj)
      }
 
 static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL", "PROXY", "SPACER"};
-static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
+static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW", "FAR_SHADOW", "FAR_SOFT_SHADOW", "GLOW"};
+static const char *shadow_direction[] = {"BOTTOM_RIGHT", "BOTTOM", "BOTTOM_LEFT", "LEFT", "TOP_LEFT", "TOP", "TOP_RIGHT", "RIGHT"};
 static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
 
 static Eina_Bool
@@ -7807,8 +7808,18 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
         edje_edit_string_free(str);
      }
    if (edje_edit_part_effect_get(obj, part))
-     BUF_APPENDF(I4"effect: %s;\n",
-	         effects[edje_edit_part_effect_get(obj, part)]);
+     {
+        int effect = edje_edit_part_effect_get(obj, part);
+        if (effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION)
+          {
+             BUF_APPENDF(I4"effect: %s %s;\n",
+                         effects[effect & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION],
+                         shadow_direction[effect >> 4]);
+          }
+        else
+          BUF_APPENDF(I4"effect: %s;\n",
+                      effects[effect]);
+     }
 
    //Dragable
    if (edje_edit_part_drag_x_get(obj, part) ||
