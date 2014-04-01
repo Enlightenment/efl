@@ -13,7 +13,7 @@ collections {
 // elm
 #include "edc/elm/bg.edc"
 #include "edc/elm/button.edc"
-// XXX: mobile mode needs invbisible scrollers... make signals that do this
+// XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/elm/scroller.edc"
 // XXX: mobile mode needs different entry setup
 #include "edc/elm/entry.edc"
