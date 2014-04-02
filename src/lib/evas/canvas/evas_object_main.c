@@ -1411,17 +1411,6 @@ _evas_object_render_op_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *o
    return obj->cur->render_op;
 }
 
-EAPI Evas *
-evas_object_evas_get(const Evas_Object *eo_obj)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   Evas *eo_evas = NULL;
-   eo_do((Eo *)eo_obj, eo_evas = evas_common_evas_get());
-   return eo_evas;
-}
-
 EOLIAN static void
 _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Eo_Dbg_Info *root)
 {

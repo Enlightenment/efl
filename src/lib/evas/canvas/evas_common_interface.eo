@@ -6,6 +6,7 @@ interface Evas_Common_Interface ()
       evas {
          get {
             /*@ No description supplied by the EAPI. */
+            legacy evas_object_evas_get;
          }
          values {
             Evas *ret;
@@ -15,5 +16,4 @@ interface Evas_Common_Interface ()
    implements {
       virtual::evas::get;
    }
-
 }

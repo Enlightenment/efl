@@ -2148,18 +2148,7 @@ EAPI void             evas_object_color_set(Evas_Object *obj, int r, int g, int 
  */
 EAPI void             evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
 
-/**
- * Retrieves the Evas canvas that the given object lives on.
- *
- * @param   obj The given Evas object.
- * @return  A pointer to the canvas where the object is on.
- *
- * This function is most useful at code contexts where you need to
- * operate on the canvas but have only the object pointer.
- *
- * @ingroup Evas_Object_Group_Basic
- */
-EAPI Evas            *evas_object_evas_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+#include "canvas/evas_common_interface.eo.legacy.h"
 
 /**
  * Retrieves the type of the given Evas object.
