@@ -99,7 +99,7 @@ EOLIAN static void*
 _ecore_audio_in_tone_eo_base_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, const char *key)
 {
   if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
-      return (void *)obj->freq;
+      return (void *) (intptr_t) obj->freq;
   } else {
       void *ret = NULL;
       eo_do_super(eo_obj, MY_CLASS, eo_base_data_get(key, &ret));
