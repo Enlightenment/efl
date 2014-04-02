@@ -291,7 +291,7 @@ _find_mod(const char *name)
    unsigned int i;
    int inlen;
 
-   if (!name) return NULL;
+   if (!name || !_emotion_modules) return NULL;
    inlen = strlen(name);
    EINA_ARRAY_ITER_NEXT(_emotion_modules, i, m, iterator)
      {
