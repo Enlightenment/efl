@@ -77,7 +77,7 @@ evas_image_load_file_head_eet(void *loader_data,
    Evas_Loader_Internal *loader = loader_data;
    int       a, compression, quality;
    Eet_Image_Encoding lossy;
-   const Eet_Colorspace *cspaces;
+   const Eet_Colorspace *cspaces = NULL;
    int       ok;
 
    ok = eet_data_image_header_read(loader->ef, loader->key,
@@ -91,12 +91,15 @@ evas_image_load_file_head_eet(void *loader_data,
      {
         unsigned int i;
 
-        for (i = 0; cspaces[i] != EET_COLORSPACE_ARGB8888; i++)
-          if (cspaces[i] == EET_COLORSPACE_ETC1)
-            {
-               prop->cspaces = cspaces_etc1;
-               break;
-            }
+	if (cspaces != NULL)
+	  {
+	    for (i = 0; cspaces[i] != EET_COLORSPACE_ARGB8888; i++)
+	      if (cspaces[i] == EET_COLORSPACE_ETC1)
+		{
+		  prop->cspaces = cspaces_etc1;
+		  break;
+		}
+	  }
      }
 
    prop->alpha = !!a;
