@@ -234,8 +234,6 @@ _elm_cursor_set(Elm_Cursor *cur)
                                      ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
                                      cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
-        printf("A set %i\n", cur->x.cursor);
-        printf("A win = %x\n", cur->x.win);
         if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, cur->x.cursor);
 #endif
