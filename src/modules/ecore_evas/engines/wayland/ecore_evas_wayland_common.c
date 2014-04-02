@@ -1182,37 +1182,45 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
 {
    int x, y, fx, fy;
    Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-
-   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-
-   if (!obj)
+   Evas_Object *old;
+   
+   old = ee->prop.cursor.object;
+   if (obj == NULL)
      {
         ee->prop.cursor.object = NULL;
         ee->prop.cursor.layer = 0;
         ee->prop.cursor.hot.x = 0;
         ee->prop.cursor.hot.y = 0;
-        ecore_wl_window_cursor_default_restore(wdata->win);
-        return;
+        goto end;
      }
-
+   
    ee->prop.cursor.object = obj;
    ee->prop.cursor.layer = layer;
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
-
-   ecore_wl_window_pointer_set(wdata->win, NULL, 0, 0);
-
-   evas_pointer_output_xy_get(ee->evas, &x, &y);
+   
+   if (obj != old)
+     {
+        ecore_wl_window_pointer_set(wdata->win, NULL, 0, 0);
+        evas_pointer_output_xy_get(ee->evas, &x, &y);
+        evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
+        evas_object_pass_events_set(ee->prop.cursor.object, 1);
+        if (evas_pointer_inside_get(ee->evas))
+          evas_object_show(ee->prop.cursor.object);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                       _ecore_evas_object_cursor_del, ee);
+     }
    evas_output_framespace_get(ee->evas, &fx, &fy, NULL, NULL);
-   evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_move(ee->prop.cursor.object,
                     x - fx - ee->prop.cursor.hot.x,
                     y - fy - ee->prop.cursor.hot.y);
-   evas_object_pass_events_set(ee->prop.cursor.object, 1);
-   if (evas_pointer_inside_get(ee->evas))
-     evas_object_show(ee->prop.cursor.object);
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
+end:
+   if ((old) && (obj != old))
+     {
+        evas_object_event_callback_del_full
+          (old, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
+        evas_object_del(old);
+     }
 }
 
 void
