@@ -109,7 +109,7 @@ static const Evas_Cache2_Image_Func      _evas_common_image_func2 =
 };
 #endif
 
-static inline size_t
+static inline int
 _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
 #define PAGE_SIZE (4 * 1024)
@@ -119,13 +119,12 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
 #else
 # define ALIGN_TO_PAGE(Siz) Siz
 #endif
-   size_t siz;
+   int siz;
 
    switch (cspace)
      {
       case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
       case EVAS_COLORSPACE_AGRY88: siz = w * h * sizeof(DATA16); break;
-      case EVAS_COLORSPACE_ARGB8888: siz = w * h * sizeof(DATA32); break;
       case EVAS_COLORSPACE_ETC1:
          // Need to round width and height independently
          w += 2; h += 2; // We do duplicate border in ETC1 to have better rendering on GPU.
@@ -133,7 +132,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
            (h / 4 + (h % 4 ? 1 : 0)) * 8;
          break;
       default:
-         return -1;
+      case EVAS_COLORSPACE_ARGB8888: siz = w * h * sizeof(DATA32); break;
      }
 
    if (siz < PAGE_SIZE) return siz;
@@ -146,7 +145,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h, Evas_Colors
 static void *
 _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
-   size_t siz;
+   int siz;
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    void *r = MAP_FAILED;
 #endif
@@ -157,6 +156,8 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Evas_Colors
 #ifndef MAP_HUGETLB
 # define MAP_HUGETLB 0
 #endif
+   if (siz < 0)
+     return NULL;
 
    if (siz < PAGE_SIZE)
      return malloc(siz);
@@ -177,6 +178,7 @@ _evas_common_rgba_image_surface_mmap(unsigned int w, unsigned int h, Evas_Colors
 static void
 _evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
+   if (!data) return ;
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    size_t siz;
 
@@ -456,10 +458,12 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
         _evas_common_rgba_image_surface_munmap(im->image.data,
                                                ie->allocated.w, ie->allocated.h,
                                                ie->space);
+	im->image.data = NULL;
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif
      }
+
    im->image.data = _evas_common_rgba_image_surface_mmap(w, h, ie->space);
    if (!im->image.data) return -1;
    ie->allocated.w = w;
@@ -468,13 +472,13 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
    surfs = eina_list_append(surfs, ie);
 #endif
 #ifdef HAVE_VALGRIND
-   size_t        siz = 0;
+   int        siz = 0;
    siz = _evas_common_rgba_image_surface_size(w, h, ie->space);
 # ifdef VALGRIND_MAKE_READABLE
-   VALGRIND_MAKE_READABLE(im->image.data, siz);
+   if (siz > 0) VALGRIND_MAKE_READABLE(im->image.data, siz);
 # else
 #  ifdef VALGRIND_MAKE_MEM_DEFINED
-   VALGRIND_MAKE_MEM_DEFINED(im->image.data, siz);
+   if (siz > 0) VALGRIND_MAKE_MEM_DEFINED(im->image.data, siz);
 #  endif
 # endif
 #endif
