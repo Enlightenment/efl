@@ -102,12 +102,6 @@ lib_ecore_x_libecore_x_la_LIBADD = @ECORE_X_LIBS@
 lib_ecore_x_libecore_x_la_DEPENDENCIES = @ECORE_X_INTERNAL_LIBS@
 lib_ecore_x_libecore_x_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-MAINTAINERCLEANFILES += \
-$(top_builddir)/src/lib/ecore_x/ecore_x_version.h
-
-BUILT_SOURCES += \
-$(top_builddir)/src/lib/ecore_x/ecore_x_version.h
-
 if HAVE_ECORE_X_XCB
 MAINTAINERCLEANFILES += \
 $(top_builddir)/src/lib/ecore_x/xcb/ecore_xcb_keysym_table.h \
