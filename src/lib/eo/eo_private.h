@@ -109,6 +109,9 @@ struct _Eo_Object
      /* [composite*] */
 };
 
+/* FIXME: Change the type to something generic that makes sense for eo2 */
+typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
+
 typedef struct _Dich_Chain1 Dich_Chain1;
 
 typedef struct

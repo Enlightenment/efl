@@ -242,15 +242,6 @@ typedef unsigned int Eo_Op;
 #define EO_NOOP ((Eo_Op) 0)
 
 /**
- * @typedef eo_op_func_type
- * The type of the Op functions. This is the type of the functions used by
- * Eo.
- *
- * @see eo_op_func_type_class
- */
-typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
-
-/**
  * @addtogroup Eo_Events Eo's Event Handling
  * @{
  */
@@ -369,66 +360,6 @@ enum _Eo_Class_Type
 typedef enum _Eo_Class_Type Eo_Class_Type;
 
 /**
- * @struct _Eo_Op_Func_Description
- * Used to associate an Op with a func.
- * @see eo_class_funcs_set
- */
-struct _Eo_Op_Func_Description
-{
-   Eo_Op op; /**< The op */
-   eo_op_func_type func; /**< The function to call for the op. */
-   Eo_Op_Type op_type; /**< The type of the op */
-};
-
-/**
- * @typedef Eo_Op_Func_Description
- * A convenience typedef for #_Eo_Op_Func_Description
- */
-typedef struct _Eo_Op_Func_Description Eo_Op_Func_Description;
-
-/**
- * @def EO_OP_FUNC(op, func)
- * A convenience macro to be used when populating the #Eo_Op_Func_Description
- * array.
- */
-#define EO_OP_FUNC(op, func) { op, EO_TYPECHECK(eo_op_func_type, func), EO_OP_TYPE_REGULAR }
-
-/**
- * @def EO_OP_FUNC_CLASS(op, func)
- * A convenience macro to be used when populating the #Eo_Op_Func_Description
- * array.
- * The same as #EO_OP_FUNC but for class functions.
- *
- * @see EO_OP_FUNC
- */
-#define EO_OP_FUNC_CLASS(op, func) { op, EO_TYPECHECK(eo_op_func_type, func), EO_OP_TYPE_CLASS }
-
-/**
- * @def EO_OP_FUNC_SENTINEL
- * A convenience macro to be used when populating the #Eo_Op_Func_Description
- * array. It must appear at the end of the ARRAY.
- */
-#define EO_OP_FUNC_SENTINEL { 0, NULL, EO_OP_TYPE_INVALID }
-
-/**
- * @struct _Eo_Op_Description
- * This struct holds the description of a specific op.
- */
-struct _Eo_Op_Description
-{
-   Eo_Op sub_op; /**< The sub_id of the op in it's class. */
-   const char *name; /**< The name of the op. */
-   const char *doc; /**< Explanation about the Op. */
-   Eo_Op_Type op_type; /**< The type of the Op. */
-};
-
-/**
- * @typedef Eo_Op_Description
- * A convenience typedef for #_Eo_Op_Description
- */
-typedef struct _Eo_Op_Description Eo_Op_Description;
-
-/**
  * @def EO_VERSION
  * The current version of EO.
  */
@@ -455,7 +386,6 @@ struct _Eo_Class_Description
    const char *name; /**< The name of the class. */
    Eo_Class_Type type; /**< The type of the class. */
    struct {
-        Eo_Op *base_op_id;
         Eo2_Op_Description *descs2;
         size_t count;
    } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS */
@@ -470,60 +400,6 @@ struct _Eo_Class_Description
  * A convenience typedef for #_Eo_Class_Description
  */
 typedef struct _Eo_Class_Description Eo_Class_Description;
-
-/**
- * @def EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count)
- * An helper macro to help populating #Eo_Class_Description.
- * @param base_op_id A pointer to the base op id of the class.
- * @param op_descs the op descriptions array.
- * @param count the number of ops in the op descriptions array.
- */
-#define EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count) { base_op_id, op_descs, NULL, count }
-
-/**
- * @def EO_OP_DESCRIPTION(op, doc)
- * An helper macro to help populating #Eo_Op_Description
- * @param sub_id The sub id of the op being described.
- * @param doc Additional doc for the op.
- * @see Eo_Op_Description
- * @see EO_OP_DESCRIPTION_CLASS
- * @see EO_OP_DESCRIPTION_SENTINEL
- */
-#define EO_OP_DESCRIPTION(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_REGULAR }
-
-/**
- * @def EO_OP_DESCRIPTION_CLASS(op, doc)
- * An helper macro to help populating #Eo_Op_Description
- * This macro is the same as EO_OP_DESCRIPTION but indicates that the op's
- * implementation is of type CLASS.
- * @param sub_id The sub id of the op being described.
- * @param doc Additional doc for the op.
- * @see Eo_Op_Description
- * @see EO_OP_DESCRIPTION
- * @see EO_OP_DESCRIPTION_SENTINEL
- */
-#define EO_OP_DESCRIPTION_CLASS(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_CLASS }
-
-/**
- * @def EO_OP_DESCRIPTION_SENTINEL
- * An helper macro to help populating #Eo_Op_Description
- * Should be placed at the end of the array.
- * @see Eo_Op_Description
- * @see EO_OP_DESCRIPTION
- */
-#define EO_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, EO_OP_TYPE_INVALID }
-
-/**
- * @def EO_PARAMETER_GET
- * An helper macro to get parameter with less mistake
- */
-#define EO_PARAMETER_GET(Type, Name, List) Type Name = va_arg(*List, Type);
-
-/**
- * @def EO_PARAMETER_ENUM_GET
- * An helper macro to get parameter that are enum with less mistake (require to ask an int)
- */
-#define EO_PARAMETER_ENUM_GET(Type, Name, List) Type Name = va_arg(*List, int);
 
 /**
  * @brief Create a new class.
@@ -586,8 +462,8 @@ EAPI Eina_Bool eo_shutdown(void);
 #define EO2_OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(*desc) - 1)
 
 // Helpers macro to help populating #Eo_Class_Description.
-#define EO2_CLASS_DESCRIPTION_NOOPS() { NULL, NULL, 0}
-#define EO2_CLASS_DESCRIPTION_OPS(op_descs) { NULL, op_descs, EO2_OP_DESC_SIZE(op_descs) }
+#define EO2_CLASS_DESCRIPTION_NOOPS() { NULL, 0}
+#define EO2_CLASS_DESCRIPTION_OPS(op_descs) { op_descs, EO2_OP_DESC_SIZE(op_descs) }
 
 // to fetch internal function and object data at once
 typedef struct _Eo2_Op_Call_Data
