@@ -919,9 +919,9 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
     * http://man7.org/linux/man-pages/man3/mkstemp.3.html#NOTES
     */
    old_umask = umask(S_IRWXG|S_IRWXO);
-   if ((XXXXXX = strstr(templatename, "XXXXXX.")) != NULL)
+   if ((XXXXXX = strstr(buffer, "XXXXXX.")) != NULL)
      {
-        int suffixlen = templatename + len - XXXXXX - 6;
+        int suffixlen = buffer + len - XXXXXX - 6;
         fd = mkstemps(buffer, suffixlen);
      }
    else
