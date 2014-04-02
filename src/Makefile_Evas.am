@@ -36,6 +36,7 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_common_interface.eo.legacy.h \
                  lib/evas/canvas/evas_object.eo.c \
                  lib/evas/canvas/evas_object.eo.h \
+                 lib/evas/canvas/evas_object.eo.legacy.h \
                  lib/evas/canvas/evas.eo.c \
                  lib/evas/canvas/evas.eo.h \
                  lib/evas/canvas/evas_grid.eo.c \
@@ -131,8 +132,9 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_smart.eo.legacy.h \
                                         lib/evas/canvas/evas_smart_clipped.eo.legacy.h \
                                         lib/evas/canvas/evas_table.eo.legacy.h \
-                                        lib/evas/canvas/evas_common_interface.eo.legacy.h
-                    
+                                        lib/evas/canvas/evas_common_interface.eo.legacy.h \
+                                        lib/evas/canvas/evas_object.eo.legacy.h
+
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \
 lib/evas/include/evas_private.h \
