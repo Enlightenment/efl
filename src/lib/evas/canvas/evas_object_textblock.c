@@ -4325,13 +4325,10 @@ _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
          breaks);
 }
 
-/* Should be moved inside _layout_ellipsis_item_new once we fix the hack in
- * textblock render */
-static const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' };
-
 static Evas_Object_Textblock_Text_Item *
 _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
+   const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' };
    Evas_Object_Textblock_Text_Item *ellip_ti;
    Evas_Script_Type script;
    Evas_Font_Instance *script_fi = NULL, *cur_fi;
