@@ -116,7 +116,7 @@ START_TEST(ecore_test_ecore_audio_cleanup)
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
    fail_if(!in);
-   eo_do(in, eo_base_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
    eo_do(in, ecore_audio_obj_in_length_set(2));
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
@@ -166,17 +166,17 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    eo_do(in, ecore_audio_obj_in_remaining_get(&len));
    fail_if(len != 2.5);
 
-   eo_do(in, eo_base_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
+   eo_do(in, eo_key_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
    fail_if(freq != 1000);
 
    freq = 2000;
-   eo_do(in, eo_base_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
 
-   eo_do(in, eo_base_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
+   eo_do(in, eo_key_data_get(ECORE_AUDIO_ATTR_TONE_FREQ, (void **)&freq));
    fail_if(freq != 2000);
 
-   eo_do(in, eo_base_data_set("foo", "bar", NULL));
-   eo_do(in, eo_base_data_get("foo", (void **)&tmp));
+   eo_do(in, eo_key_data_set("foo", "bar", NULL));
+   eo_do(in, eo_key_data_get("foo", (void **)&tmp));
    ck_assert_str_eq(tmp, "bar");
 
    eo_do(in, ecore_audio_obj_in_seek(5.0, SEEK_SET, &len));

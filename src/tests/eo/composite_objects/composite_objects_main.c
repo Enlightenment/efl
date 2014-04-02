@@ -45,7 +45,7 @@ main(int argc, char *argv[])
 
    /* disable the callback forwarder, and fail if it's still called. */
    Eo *simple = NULL;
-   eo_do(obj, simple = eo_base_data_get("simple-obj"));
+   eo_do(obj, simple = eo_key_data_get("simple-obj"));
    eo_ref(simple);
    eo_do(simple, eo_event_callback_forwarder_del(EV_A_CHANGED, obj));
 

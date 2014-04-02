@@ -82,7 +82,7 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
          params {
             @in const char* key; /*@ the key associated with the data */
             @in const void* data; /*@ the data to set */
-            @in eo_base_data_free_func free_func; /*@ the func to free data with (NULL means */
+            @in eo_key_data_free_func free_func; /*@ the func to free data with (NULL means */
          }
       }
       key_data_get {

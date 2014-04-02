@@ -942,10 +942,10 @@ EAPI const Eo_Class *eo_class_class_get(void);
 EAPI const Eo_Class *eo_base_class_get(void);
 
 /**
- * @typedef eo_base_data_free_func
+ * @typedef eo_key_data_free_func
  * Data free func prototype.
  */
-typedef void (*eo_base_data_free_func)(void *);
+typedef void (*eo_key_data_free_func)(void *);
 
 /**
  * @brief Set generic data to object.
@@ -953,20 +953,20 @@ typedef void (*eo_base_data_free_func)(void *);
  * @param[in] data the data to set.
  * @param[in] free_func the func to free data with (NULL means "do nothing").
  *
- * @see #eo_base_data_get
- * @see #eo_base_data_del
+ * @see #eo_key_data_get
+ * @see #eo_key_data_del
  */
-EAPI void eo_base_data_set(const char *key, const void *data, eo_base_data_free_func free_func);
+EAPI void eo_key_data_set(const char *key, const void *data, eo_key_data_free_func free_func);
 
 /**
  * @brief Get generic data from object.
  * @param[in] key the key associated with the data
  * @param[out] data the data for the key
  *
- * @see #eo_base_data_set
- * @see #eo_base_data_del
+ * @see #eo_key_data_set
+ * @see #eo_key_data_del
  */
-EAPI void *eo_base_data_get(const char *key);
+EAPI void *eo_key_data_get(const char *key);
 
 /**
  * @brief Get dbg information from the object.
@@ -978,10 +978,10 @@ EAPI void eo_dbg_info_get(Eo_Dbg_Info *root_node);
  * @brief Del generic data from object.
  * @param[in] key the key associated with the data
  *
- * @see #eo_base_data_set
- * @see #eo_base_data_get
+ * @see #eo_key_data_set
+ * @see #eo_key_data_get
  */
-EAPI void eo_base_data_del(const char *key);
+EAPI void eo_key_data_del(const char *key);
 
 /**
  * @brief Set the parent of an object

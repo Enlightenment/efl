@@ -68,7 +68,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL));
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
 
-   eo_do(obj, eo_base_data_set("cb_count", (intptr_t) 0, NULL));
+   eo_do(obj, eo_key_data_set("cb_count", (intptr_t) 0, NULL));
 }
 
 EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);

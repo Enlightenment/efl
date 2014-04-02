@@ -519,56 +519,56 @@ START_TEST(eo_generic_data)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    void *data = NULL;
 
-   eo_do(obj, eo_base_data_set("test1", (void *) 1, NULL));
-   eo_do(obj, data = eo_base_data_get("test1"));
+   eo_do(obj, eo_key_data_set("test1", (void *) 1, NULL));
+   eo_do(obj, data = eo_key_data_get("test1"));
    fail_if(1 != (intptr_t) data);
-   eo_do(obj, eo_base_data_del("test1"));
-   eo_do(obj, data = eo_base_data_get("test1"));
+   eo_do(obj, eo_key_data_del("test1"));
+   eo_do(obj, data = eo_key_data_get("test1"));
    fail_if(data);
 
-   eo_do(obj, eo_base_data_set("test1", (void *) 1, NULL));
-   eo_do(obj, eo_base_data_set("test2", (void *) 2, NULL));
-   eo_do(obj, data = eo_base_data_get("test1"));
+   eo_do(obj, eo_key_data_set("test1", (void *) 1, NULL));
+   eo_do(obj, eo_key_data_set("test2", (void *) 2, NULL));
+   eo_do(obj, data = eo_key_data_get("test1"));
    fail_if(1 != (intptr_t) data);
-   eo_do(obj, data = eo_base_data_get("test2"));
+   eo_do(obj, data = eo_key_data_get("test2"));
    fail_if(2 != (intptr_t) data);
 
-   eo_do(obj, data = eo_base_data_get("test2"));
+   eo_do(obj, data = eo_key_data_get("test2"));
    fail_if(2 != (intptr_t) data);
-   eo_do(obj, eo_base_data_del("test2"));
-   eo_do(obj, data = eo_base_data_get("test2"));
+   eo_do(obj, eo_key_data_del("test2"));
+   eo_do(obj, data = eo_key_data_get("test2"));
    fail_if(data);
 
-   eo_do(obj, data = eo_base_data_get("test1"));
+   eo_do(obj, data = eo_key_data_get("test1"));
    fail_if(1 != (intptr_t) data);
-   eo_do(obj, eo_base_data_del("test1"));
-   eo_do(obj, data = eo_base_data_get("test1"));
+   eo_do(obj, eo_key_data_del("test1"));
+   eo_do(obj, data = eo_key_data_get("test1"));
    fail_if(data);
 
    int a = 0;
-   eo_do(obj, eo_base_data_set("test3", &a, _fake_free_func));
-   eo_do(obj, data = eo_base_data_get("test3"));
+   eo_do(obj, eo_key_data_set("test3", &a, _fake_free_func));
+   eo_do(obj, data = eo_key_data_get("test3"));
    fail_if(&a != data);
-   eo_do(obj, eo_base_data_get("test3"));
-   eo_do(obj, eo_base_data_del("test3"));
+   eo_do(obj, eo_key_data_get("test3"));
+   eo_do(obj, eo_key_data_del("test3"));
    fail_if(a != 1);
 
    a = 0;
-   eo_do(obj, eo_base_data_set("test3", &a, _fake_free_func));
-   eo_do(obj, eo_base_data_set("test3", NULL, _fake_free_func));
+   eo_do(obj, eo_key_data_set("test3", &a, _fake_free_func));
+   eo_do(obj, eo_key_data_set("test3", NULL, _fake_free_func));
    fail_if(a != 1);
    a = 0;
    data = (void *) 123;
-   eo_do(obj, eo_base_data_set(NULL, &a, _fake_free_func));
-   eo_do(obj, data = eo_base_data_get(NULL));
+   eo_do(obj, eo_key_data_set(NULL, &a, _fake_free_func));
+   eo_do(obj, data = eo_key_data_get(NULL));
    fail_if(data);
-   eo_do(obj, eo_base_data_del(NULL));
+   eo_do(obj, eo_key_data_del(NULL));
 
    a = 0;
-   eo_do(obj, eo_base_data_set("test3", &a, _fake_free_func));
-   eo_do(obj, eo_base_data_set("test3", NULL, NULL));
+   eo_do(obj, eo_key_data_set("test3", &a, _fake_free_func));
+   eo_do(obj, eo_key_data_set("test3", NULL, NULL));
    fail_if(a != 1);
-   eo_do(obj, eo_base_data_set("test3", &a, _fake_free_func));
+   eo_do(obj, eo_key_data_set("test3", &a, _fake_free_func));
 
    eo_unref(obj);
    fail_if(a != 2);

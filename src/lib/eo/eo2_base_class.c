@@ -31,7 +31,7 @@ typedef struct
    EINA_INLIST;
    Eina_Stringshare *key;
    void *data;
-   eo_base_data_free_func free_func;
+   eo_key_data_free_func free_func;
 } Eo_Generic_Data_Node;
 
 static void
@@ -60,7 +60,7 @@ _eo_generic_data_del_all(Private_Data *pd)
 
 static void
 _data_set(Eo *obj, void *class_data,
-          const char *key, const void *data, eo_base_data_free_func free_func)
+          const char *key, const void *data, eo_key_data_free_func free_func)
 {
    Private_Data *pd = class_data;
 
@@ -68,7 +68,7 @@ _data_set(Eo *obj, void *class_data,
 
    if (!key) return;
 
-   eo_do(obj, eo_base_data_del(key); );
+   eo_do(obj, eo_key_data_del(key); );
 
    node = malloc(sizeof(Eo_Generic_Data_Node));
    if (!node) return;
@@ -78,8 +78,8 @@ _data_set(Eo *obj, void *class_data,
    pd->generic_data = eina_inlist_prepend(pd->generic_data,
          EINA_INLIST_GET(node));
 }
-EAPI EO_VOID_FUNC_BODYV(eo_base_data_set, EO_FUNC_CALL(key, data, free_func),
-                        const char *key, const void *data, eo_base_data_free_func free_func);
+EAPI EO_VOID_FUNC_BODYV(eo_key_data_set, EO_FUNC_CALL(key, data, free_func),
+                        const char *key, const void *data, eo_key_data_free_func free_func);
 
 static void *
 _data_get(Eo *obj EINA_UNUSED, void *class_data, const char *key)
@@ -102,7 +102,7 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, const char *key)
 
    return NULL;
 }
-EAPI EO_FUNC_BODYV(eo_base_data_get, void*, NULL, EO_FUNC_CALL(key), const char *key);
+EAPI EO_FUNC_BODYV(eo_key_data_get, void*, NULL, EO_FUNC_CALL(key), const char *key);
 
 static void
 _parent_set(Eo *obj, void *class_data, Eo *parent_id)
@@ -289,7 +289,7 @@ _data_del(Eo *obj EINA_UNUSED, void *class_data, const char *key)
           }
      }
 }
-EAPI EO_VOID_FUNC_BODYV(eo_base_data_del, EO_FUNC_CALL(key), const char *key);
+EAPI EO_VOID_FUNC_BODYV(eo_key_data_del, EO_FUNC_CALL(key), const char *key);
 
 /* Weak reference. */
 
@@ -961,9 +961,9 @@ static Eo_Op_Description op_descs [] = {
        EO_OP_FUNC(eo_parent_set, _parent_set, "Set parent."),
        EO_OP_FUNC(eo_parent_get, _parent_get, "Get parent."),
        EO_OP_FUNC(eo_children_iterator_new, _children_iterator_new, "Get Children Iterator."),
-       EO_OP_FUNC(eo_base_data_set, _data_set, "Set data for key."),
-       EO_OP_FUNC(eo_base_data_get, _data_get, "Get data for key."),
-       EO_OP_FUNC(eo_base_data_del, _data_del, "Del key."),
+       EO_OP_FUNC(eo_key_data_set, _data_set, "Set data for key."),
+       EO_OP_FUNC(eo_key_data_get, _data_get, "Get data for key."),
+       EO_OP_FUNC(eo_key_data_del, _data_del, "Del key."),
        EO_OP_FUNC(eo_wref_add, _wref_add, "Add a weak ref to the object."),
        EO_OP_FUNC(eo_wref_del, _wref_del, "Delete the weak ref."),
        EO_OP_FUNC(eo_event_callback_priority_add, _ev_cb_priority_add, "Add an event callback with a priority."),
