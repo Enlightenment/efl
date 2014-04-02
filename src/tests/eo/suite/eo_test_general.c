@@ -614,7 +614,6 @@ START_TEST(eo_magic_checks)
         fail_if(eo_class_name_get((Eo_Class*) buf));
         fail_if(eo_class_get(obj) != SIMPLE_CLASS);
         fail_if(eo_class_get(SIMPLE_CLASS) != EO_CLASS_CLASS);
-        eo_class_funcs_set((Eo_Class *) buf, NULL);
         eo_do((Eo_Class *) buf,(void) NULL);
         eo_do_super((Eo_Class *) buf, SIMPLE_CLASS, simple_a_set(++i));
         eo_do_super(SIMPLE_CLASS, (Eo_Class *) buf, simple_a_set(++i));
@@ -659,7 +658,7 @@ START_TEST(eo_magic_checks)
 
         obj2 = NULL;
         eo_do(obj, eo_parent_set((Eo *) buf));
-        eo_do(obj, eo_parent_get(&obj2));
+        eo_do(obj, obj2 = eo_parent_get());
         fail_if(obj2 && (obj2 == (Eo *) buf));
 
         eo_unref(obj);
