@@ -178,7 +178,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
      {
         Eina_Bool no_nonull = !flags;
         if (no_nonull) flags = eina_strbuf_new();
-        eina_strbuf_prepend_printf(flags, " EINA_WARN_UNUSED_RESULT%s", !no_nonull?", ":"");
+        eina_strbuf_prepend(flags, " EINA_WARN_UNUSED_RESULT");
      }
    if (flags)
       eina_strbuf_replace_all(fbody, "@#flags", eina_strbuf_string_get(flags));
