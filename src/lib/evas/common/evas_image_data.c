@@ -15,13 +15,21 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
 
    switch (cspace)
      {
-     case EVAS_COLORSPACE_ARGB8888:
-	dst->cache_entry.w = w;
-	dst->cache_entry.h = h;
-	dst->image.data = image_data;
-	dst->image.no_free = 1;
-	dst->cache_entry.flags.alpha = alpha ? 1 : 0;
-	break;
+      case EVAS_COLORSPACE_ARGB8888:
+        dst->cache_entry.w = w;
+        dst->cache_entry.h = h;
+        dst->image.data = image_data;
+        dst->image.no_free = 1;
+        dst->cache_entry.flags.alpha = alpha ? 1 : 0;
+        break;
+      case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_GRY8:
+        dst->cache_entry.w = w;
+        dst->cache_entry.h = h;
+        dst->image.data8 = (DATA8 *) image_data;
+        dst->image.no_free = 1;
+        dst->cache_entry.flags.alpha = 1;
+        break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
@@ -32,14 +40,7 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
 	dst->cache_entry.h = h;
 	dst->cs.data = image_data;
 	dst->cs.no_free = 1;
-	break;
-      case EVAS_COLORSPACE_GRY8:
-        dst->cache_entry.w = w;
-        dst->cache_entry.h = h;
-        dst->image.data8 = (DATA8 *) image_data;
-        dst->image.no_free = 1;
-        dst->cache_entry.flags.alpha = 1;
-        break;
+    break;
       default:
 	abort();
 	break;
@@ -126,6 +127,7 @@ evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, Evas_Colorspace cspac
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_AGRY88:
       case EVAS_COLORSPACE_GRY8:
 	if (dst->cs.data)
 	  {

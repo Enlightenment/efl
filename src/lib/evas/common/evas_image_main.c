@@ -760,6 +760,7 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
      {
       case EVAS_COLORSPACE_ARGB8888:
       case EVAS_COLORSPACE_GRY8:
+      case EVAS_COLORSPACE_AGRY88:
 	if (im->image.data != im->cs.data)
 	  {
 #ifdef EVAS_CSERVE2
