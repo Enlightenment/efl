@@ -104,6 +104,6 @@ static const Eo_Class_Description class_desc = {
      _class_destructor
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS,
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS,
       MIXIN_CLASS, NULL);
 

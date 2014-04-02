@@ -49,5 +49,5 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(mixin_class_get, &class_desc, NULL, EO_BASE_CLASS, NULL)
+EO_DEFINE_CLASS(mixin_class_get, &class_desc, NULL, EO_CLASS, NULL)
 

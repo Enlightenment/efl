@@ -149,7 +149,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 }
 
 EOLIAN static void
-_ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Audio_Vio *vio, void *data, eo_base_data_free_func free_func)
+_ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Audio_Vio *vio, void *data, eo_key_data_free_func free_func)
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 

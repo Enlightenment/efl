@@ -931,12 +931,12 @@ EAPI const Eo_Class *eo_class_class_get(void);
  */
 
 /**
- * @def EO_BASE_CLASS
+ * @def EO_CLASS
  * The class type for the Eo base class.
  */
-#define EO_BASE_CLASS eo_base_class_get()
+#define EO_CLASS eo_base_class_get()
 /**
- * @brief Use #EO_BASE_CLASS
+ * @brief Use #EO_CLASS
  * @internal
  * */
 EAPI const Eo_Class *eo_base_class_get(void);

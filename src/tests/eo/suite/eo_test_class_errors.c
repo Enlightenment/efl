@@ -56,7 +56,7 @@ START_TEST(eo_inherit_errors)
    klass_mixin = eo_class_new(&class_desc_mixin, NULL, NULL);
    fail_if(!klass_mixin);
 
-   klass_simple = eo_class_new(&class_desc_simple, EO_BASE_CLASS, NULL);
+   klass_simple = eo_class_new(&class_desc_simple, EO_CLASS, NULL);
    fail_if(!klass_simple);
 
    TEST_EO_ERROR("eo_class_new", "Non-regular classes ('%s') aren't allowed to inherit from regular classes ('%s').");
@@ -142,14 +142,14 @@ START_TEST(eo_inconsistent_mro)
    fail_if(!klass_mixin3);
 
    TEST_EO_ERROR("_eo_class_mro_init", "Cannot create a consistent method resolution order for class '%s' because of '%s'.");
-   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_CLASS, klass_mixin, klass_mixin2, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
 
-   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin2, klass_mixin, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_CLASS, klass_mixin2, klass_mixin, NULL);
    fail_if(!klass);
 
-   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin2, klass_mixin3, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_CLASS, klass_mixin2, klass_mixin3, NULL);
    fail_if(!klass);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);

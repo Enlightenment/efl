@@ -83,26 +83,26 @@ _ecore_audio_in_tone_ecore_audio_in_length_set(Eo *eo_obj, Ecore_Audio_In_Tone_D
 }
 
 EOLIAN static void
-_ecore_audio_in_tone_eo_base_data_set(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, const char *key, const void *val, eo_base_data_free_func func)
+_ecore_audio_in_tone_eo_key_data_set(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, const char *key, const void *val, eo_key_data_free_func func)
 {
   if (!key) return;
 
   if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
       obj->freq = *(int *)val;
   } else {
-      eo_do_super(eo_obj, MY_CLASS, eo_base_data_set(key, val, func));
+      eo_do_super(eo_obj, MY_CLASS, eo_key_data_set(key, val, func));
   }
 
 }
 
 EOLIAN static void*
-_ecore_audio_in_tone_eo_base_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, const char *key)
+_ecore_audio_in_tone_eo_key_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj, const char *key)
 {
   if (!strcmp(key, ECORE_AUDIO_ATTR_TONE_FREQ)) {
       return (void *) (intptr_t) obj->freq;
   } else {
       void *ret = NULL;
-      eo_do_super(eo_obj, MY_CLASS, eo_base_data_get(key, &ret));
+      eo_do_super(eo_obj, MY_CLASS, eo_key_data_get(key, &ret));
       return ret;
   }
 }

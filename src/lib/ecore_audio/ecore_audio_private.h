@@ -94,7 +94,7 @@ struct _Ecore_Audio_Module
 struct _Ecore_Audio_Vio_Internal {
     Ecore_Audio_Vio *vio;
     void *data;
-    eo_base_data_free_func free_func;
+    eo_key_data_free_func free_func;
 };
 typedef struct _Ecore_Audio_Vio_Internal Ecore_Audio_Vio_Internal;
 

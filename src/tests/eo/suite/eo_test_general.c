@@ -11,7 +11,7 @@
 START_TEST(eo_simple)
 {
    eo_init();
-   Eo *obj = eo_add(EO_BASE_CLASS, NULL);
+   Eo *obj = eo_add(EO_CLASS, NULL);
    fail_if(obj);
 
    obj = eo_add(SIMPLE_CLASS, NULL);
@@ -135,7 +135,7 @@ START_TEST(eo_data_fetch)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -146,7 +146,7 @@ START_TEST(eo_data_fetch)
    eo_unref(obj);
 
    class_desc.data_size = 0;
-   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_CLASS, NULL);
    fail_if(!klass);
 
    obj = eo_add(klass, NULL);
@@ -211,7 +211,7 @@ START_TEST(eo_isa_tests)
              NULL
         };
 
-        klass = eo_class_new(&class_desc, EO_BASE_CLASS, iface, mixin, NULL);
+        klass = eo_class_new(&class_desc, EO_CLASS, iface, mixin, NULL);
         fail_if(!klass);
      }
 
@@ -221,7 +221,7 @@ START_TEST(eo_isa_tests)
    fail_if(!eo_isa(obj, iface));
    fail_if(!eo_isa(obj, mixin));
    fail_if(!eo_isa(obj, klass));
-   fail_if(!eo_isa(obj, EO_BASE_CLASS));
+   fail_if(!eo_isa(obj, EO_CLASS));
    eo_unref(obj);
 
    obj = eo_add(SIMPLE_CLASS, NULL);
@@ -230,7 +230,7 @@ START_TEST(eo_isa_tests)
    fail_if(eo_isa(obj, iface));
    fail_if(eo_isa(obj, mixin));
    fail_if(!eo_isa(obj, SIMPLE_CLASS));
-   fail_if(!eo_isa(obj, EO_BASE_CLASS));
+   fail_if(!eo_isa(obj, EO_CLASS));
    eo_unref(obj);
 
    eo_shutdown();
@@ -300,7 +300,7 @@ START_TEST(eo_man_free)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_CLASS, NULL);
    fail_if(!klass);
    cur_klass = klass;
 
@@ -314,7 +314,7 @@ START_TEST(eo_man_free)
    eo_unref(obj);
 
    _man_should_des = EINA_FALSE;
-   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_CLASS, NULL);
    cur_klass = klass;
    fail_if(!klass);
 
@@ -333,7 +333,7 @@ START_TEST(eo_man_free)
    fail_if(!eo_manual_free(obj));
 
    _man_should_con = EINA_FALSE;
-   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_CLASS, NULL);
    cur_klass = klass;
    fail_if(!klass);
 
@@ -781,7 +781,7 @@ START_TEST(eo_pointers_indirection)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_CLASS, NULL);
    fail_if(!klass);
 
    /* Check simple id validity */

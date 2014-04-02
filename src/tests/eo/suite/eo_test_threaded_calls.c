@@ -76,7 +76,7 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(thread_test_class_get, &class_desc, EO_BASE_CLASS, NULL)
+EO_DEFINE_CLASS(thread_test_class_get, &class_desc, EO_CLASS, NULL)
 
 static void *
 _thread_job(void *data, Eina_Thread t EINA_UNUSED)
