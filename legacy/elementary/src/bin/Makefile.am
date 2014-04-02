@@ -21,6 +21,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_WEB_CFLAGS@ \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @ELEMENTARY_WAYLAND_CFLAGS@ \
+@ELEMENTARY_DRM_CFLAGS@ \
 @EVIL_CFLAGS@
 
 bin_PROGRAMS = \
@@ -145,6 +146,7 @@ elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
+	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_test_CFLAGS =
 elementary_test_LDFLAGS =
@@ -159,6 +161,7 @@ elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
+	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_config_LDFLAGS =
 
@@ -173,6 +176,7 @@ elementary_codegen_LDADD = \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
+	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_codegen_LDFLAGS =
 
@@ -200,6 +204,7 @@ elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EMAP_LIBS@ \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
+	@ELEMENTARY_DRM_LIBS@ \
 	@my_libs@
 elementary_quicklaunch_LDFLAGS =
 
