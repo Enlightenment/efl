@@ -41,6 +41,14 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
    char tmpstr[0xFF];
+   const Eina_List *l;
+   void *data;
+   Eina_Strbuf *flags = NULL;
+   int leg_param_idx = 1; /* Index of the parameter inside the legacy function. It begins from 1 since obj is the first. */
+
+   Eina_Strbuf *fbody = eina_strbuf_new();
+   Eina_Strbuf *fparam = eina_strbuf_new();
+   Eina_Strbuf *descparam = eina_strbuf_new();
 
    rettype = eolian_function_return_type_get(funcid, ftype);
    if (ftype == GET)
@@ -67,11 +75,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
      }
 
    func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
-   if (func_lpref && !strcmp(func_lpref, "null")) return;
-
-   Eina_Strbuf *fbody = eina_strbuf_new();
-   Eina_Strbuf *fparam = eina_strbuf_new();
-   Eina_Strbuf *descparam = eina_strbuf_new();
+   if (func_lpref && !strcmp(func_lpref, "null")) goto end;
 
    if (func_lpref)
      {
@@ -80,7 +84,9 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
      }
    else
      {
-        func_lpref = (func_lpref) ? func_lpref : eolian_class_legacy_prefix_get(classname);
+        func_lpref = eolian_class_legacy_prefix_get(classname);
+        if (func_lpref && !strcmp(func_lpref, "null")) goto end;
+
         if (!func_lpref) func_lpref = classname;
         sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
         _template_fill(fbody, tmpl_eapi_funcdef, func_lpref, tmpstr, EINA_FALSE);
@@ -103,11 +109,6 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
 
    eina_strbuf_replace_all(fbody, "@#desc", eina_strbuf_string_get(linedesc));
    eina_strbuf_free(linedesc);
-
-   const Eina_List *l;
-   void *data;
-   Eina_Strbuf *flags = NULL;
-   int leg_param_idx = 1; /* Index of the parameter inside the legacy function. It begins from 1 since obj is the first. */
 
    EINA_LIST_FOREACH(eolian_property_keys_list_get(funcid), l, data)
      {
@@ -184,6 +185,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    eina_strbuf_replace_all(fbody, "@#flags", (eolian_function_return_is_warn_unused(funcid, ftype)) ? " EINA_WARN_UNUSED_RESULT" : "");
    eina_strbuf_append(buf, eina_strbuf_string_get(fbody));
 
+end:
    eina_strbuf_free(flags);
    eina_strbuf_free(fbody);
    eina_strbuf_free(fparam);
@@ -245,6 +247,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
    else
      {
         func_lpref = eolian_class_legacy_prefix_get(classname);
+        if (func_lpref && !strcmp(func_lpref, "null")) goto end;
 
         if (func_lpref) eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
         else
