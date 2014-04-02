@@ -94,6 +94,7 @@ typedef struct _eo_method_def
 typedef struct _eo_event_def
 {
    const char *name;
+   const char *type;
    const char *comment;
 } Eo_Event_Def;
 

@@ -84,6 +84,7 @@ typedef struct
 typedef struct
 {
    Eina_Stringshare *name;
+   Eina_Stringshare *type;
    Eina_Stringshare *comment;
 } _Event_Desc;
 
@@ -983,12 +984,13 @@ eolian_function_object_is_const(Eolian_Function foo_id)
 }
 
 Eolian_Event
-database_event_new(const char *event_name, const char *event_comment)
+database_event_new(const char *event_name, const char *event_type, const char *event_comment)
 {
    if (!event_name) return NULL;
    _Event_Desc *event_desc = calloc(1, sizeof(_Event_Desc));
    if (!event_desc) return NULL;
    event_desc->name = eina_stringshare_add(event_name);
+   if (event_type) event_desc->type = eina_stringshare_add(event_type);
    event_desc->comment = eina_stringshare_add(event_comment);
    return (Eolian_Event) event_desc;
 }
@@ -1020,11 +1022,12 @@ eolian_class_events_list_get(const char *class_name)
 }
 
 EAPI Eina_Bool
-eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_comment)
+eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_type, const char **event_comment)
 {
    _Event_Desc *_event_desc = (_Event_Desc *) event;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_event_desc, EINA_FALSE);
    if (event_name) *event_name = _event_desc->name;
+   if (event_type) *event_type = _event_desc->type;
    if (event_comment) *event_comment = _event_desc->comment;
    return EINA_TRUE;
 }
@@ -1112,10 +1115,10 @@ _implements_print(Eolian_Implement impl, int nb_spaces)
 static void
 _event_print(Eolian_Event ev, int nb_spaces)
 {
-   const char *name, *comment;
+   const char *name, *comment, *type;
 
-   eolian_class_event_information_get(ev, &name, &comment);
-   printf("%*s <%s> <%s>\n", nb_spaces + 5, "", name, comment);
+   eolian_class_event_information_get(ev, &name, &type, &comment);
+   printf("%*s <%s> <%s> <%s>\n", nb_spaces + 5, "", name, type, comment);
 }
 
 static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)

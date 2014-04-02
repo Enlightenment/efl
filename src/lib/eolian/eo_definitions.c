@@ -95,6 +95,8 @@ eo_definitions_event_def_free(Eo_Event_Def *sgn)
 {
    if (sgn->name)
      eina_stringshare_del(sgn->name);
+   if (sgn->type)
+     eina_stringshare_del(sgn->type);
    if (sgn->comment)
      eina_stringshare_del(sgn->comment);
 

@@ -828,6 +828,13 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.kls->events = eina_list_append(toknz->tmp.kls->events, toknz->tmp.event);
    }
 
+   action end_event_type {
+      if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
+      if (toknz->tmp.event->type != NULL)
+        ABORT(toknz, "event %s has already a type %s", toknz->tmp.event->name, toknz->tmp.event->type);
+      toknz->tmp.event->type = _eo_tokenizer_token_get(toknz, fpc-1);
+   }
+
    action end_event_comment {
       if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
       if (toknz->tmp.event->comment != NULL)
@@ -951,7 +958,8 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    implements = 'implements' ignore* begin_def ignore* impl_it* end_def;
 
    event_comment = ws* eo_comment %end_event_comment;
-   event_it = event %end_event_name ignore* end_statement event_comment? ignore*;
+   event_type = begin_list ws* alpha_u >save_fpc (alnum_u | '*' | ws )* ws* end_list %end_event_type;
+   event_it = event %end_event_name ws* event_type? ignore* end_statement event_comment? ignore*;
    events = 'events' ignore* begin_def ignore* event_it* end_def;
 
    constructors = 'constructors' ignore* begin_def;
@@ -1184,7 +1192,7 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         printf("\n");
         printf("  events:\n");
         EINA_LIST_FOREACH(kls->events, l, sgn)
-           printf("    %s (%s)\n", sgn->name, sgn->comment);
+           printf("    %s <%s> (%s)\n", sgn->name, sgn->type, sgn->comment);
 
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
@@ -1511,7 +1519,7 @@ eo_tokenizer_database_fill(const char *filename)
 
         EINA_LIST_FOREACH(kls->events, l, event)
           {
-             Eolian_Event ev = database_event_new(event->name, event->comment);
+             Eolian_Event ev = database_event_new(event->name, event->type, event->comment);
              database_class_event_add(kls->name, ev);
           }
 

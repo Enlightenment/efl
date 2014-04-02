@@ -286,7 +286,7 @@ eo1_header_generate(const char *classname, Eina_Strbuf *buf)
      {
         const char *evname = NULL;
         const char *evdesc = NULL;
-        eolian_class_event_information_get(event, &evname, &evdesc);
+        eolian_class_event_information_get(event, &evname, NULL, &evdesc);
 
         if (!evdesc) evdesc = "No description";
         eina_strbuf_reset(tmpbuf);
@@ -553,7 +553,7 @@ eo1_source_beginning_generate(const char *classname, Eina_Strbuf *buf)
         const char *evdesc;
         char *evdesc_line1;
 
-        eolian_class_event_information_get(event, &evname, &evdesc);
+        eolian_class_event_information_get(event, &evname, NULL, &evdesc);
         evdesc_line1 = _source_desc_get(evdesc);
         _template_fill(str_ev, "@#CLASS_EVENT_@#FUNC", classname, evname, EINA_TRUE);
         eina_strbuf_replace_all(str_ev, ",", "_");
@@ -810,7 +810,7 @@ eo1_source_end_generate(const char *classname, Eina_Strbuf *buf)
      {
         const char *evname;
 
-        eolian_class_event_information_get(event, &evname, NULL);
+        eolian_class_event_information_get(event, &evname, NULL, NULL);
         _template_fill(tmpbuf, "@#CLASS_EVENT_@#FUNC", classname, evname, EINA_TRUE);
         eina_strbuf_replace_all(tmpbuf, ",", "_");
         eina_strbuf_append_printf(str_ev, "\n     %s,", eina_strbuf_string_get(tmpbuf));

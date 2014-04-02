@@ -578,7 +578,7 @@ EAPI const Eina_List *eolian_class_events_list_get(const char *class_name);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_desc);
+EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char **event_name, const char **event_type, const char **event_desc);
 
 /*
  * @brief Indicates if the class constructor has to invoke

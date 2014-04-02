@@ -133,7 +133,7 @@ Eina_Bool
 database_class_dtor_enable_set(const char *class_name, Eina_Bool enable);
 
 Eolian_Event
-database_event_new(const char *event_name, const char *event_desc);
+database_event_new(const char *event_name, const char *event_type, const char *event_desc);
 
 void
 database_event_free(Eolian_Event event);
