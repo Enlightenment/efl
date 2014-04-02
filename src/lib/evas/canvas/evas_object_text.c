@@ -383,9 +383,9 @@ _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *class_data EINA_UNUSE
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    evas_object_text_init(eo_obj);
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   Eo *parent;
+   Eo *parent = NULL;
 
-   eo_do(eo_obj, eo_parent_get(&parent));
+   eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 }
 
@@ -961,10 +961,10 @@ _evas_text_eo_base_dbg_info_get(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED, Eo_Db
    EO_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
    EO_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
-   eo_do(eo_obj, evas_obj_text_font_source_get(&text));
+   eo_do(eo_obj, text = evas_obj_text_font_source_get());
    EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
 
-   eo_do(eo_obj, evas_obj_text_text_get(&text));
+   eo_do(eo_obj, text = evas_obj_text_text_get());
    EO_DBG_INFO_APPEND(group, "Text", EINA_VALUE_TYPE_STRING, text);
 }
 

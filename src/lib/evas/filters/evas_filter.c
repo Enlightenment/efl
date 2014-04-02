@@ -250,7 +250,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
         ctx = e->engine.func->context_new(e->engine.data.output);
 
         if (eo_isa(eo_proxy, EVAS_OBJ_IMAGE_CLASS))
-          eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
+          eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
 
         Evas_Proxy_Render_Data proxy_render_data = {
              .eo_proxy = eo_proxy,

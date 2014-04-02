@@ -95,14 +95,14 @@ evas_object_rectangle_add(Evas *e)
 EOLIAN static void
 _evas_rectangle_eo_base_constructor(Eo *eo_obj, Evas_Rectangle_Data *class_data EINA_UNUSED)
 {
-   Eo *parent;
+   Eo *parent = NULL;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_rectangle_init(eo_obj);
 
-   eo_do(eo_obj, eo_parent_get(&parent));
+   eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 }
 

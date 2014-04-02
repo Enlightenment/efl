@@ -5499,7 +5499,7 @@ _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data 
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Textblock_Data *o;
-   Eo *eo_parent;
+   Eo *eo_parent = NULL;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
@@ -5513,7 +5513,7 @@ _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data 
    _format_command_init();
    evas_object_textblock_init(eo_obj);
 
-   eo_do(eo_obj, eo_parent_get(&eo_parent));
+   eo_do(eo_obj, eo_parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
 }
 
@@ -6889,7 +6889,7 @@ EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_first_get(const Evas_Object *eo_obj)
 {
    const Evas_Object_Textblock_Node_Format *format = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_textblock_node_format_first_get(&format));
+   eo_do((Eo *)eo_obj, format = evas_obj_textblock_node_format_first_get());
    return format;
 }
 
@@ -6903,7 +6903,7 @@ EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_last_get(const Evas_Object *eo_obj)
 {
    const Evas_Object_Textblock_Node_Format *format = NULL;
-   eo_do((Eo *)eo_obj, evas_obj_textblock_node_format_last_get(&format));
+   eo_do((Eo *)eo_obj, format = evas_obj_textblock_node_format_last_get());
    return format;
 }
 
@@ -10506,13 +10506,13 @@ _evas_textblock_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNU
    Eo_Dbg_Info *node;
 
    const char *style;
-   const char *text;
+   const char *text = NULL;
    char shorttext[48];
-   const Evas_Textblock_Style *ts;
+   const Evas_Textblock_Style *ts = NULL;
 
-   eo_do(eo_obj, evas_obj_textblock_style_get(&ts));
+   eo_do(eo_obj, ts = evas_obj_textblock_style_get());
    style = evas_textblock_style_get(ts);
-   eo_do(eo_obj, evas_obj_textblock_text_markup_get(&text));
+   eo_do(eo_obj, text = evas_obj_textblock_text_markup_get());
    strncpy(shorttext, text, 38);
    if (shorttext[37])
      strcpy(shorttext + 37, "\xe2\x80\xa6"); /* HORIZONTAL ELLIPSIS */

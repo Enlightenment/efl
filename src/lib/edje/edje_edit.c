@@ -193,7 +193,7 @@ _edje_edit_edje_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *
     *    groups).
     */
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, edje_obj_file_set(file, group, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = edje_obj_file_set(file, group));
    if (!int_ret)
      return ret;
 

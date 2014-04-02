@@ -29,10 +29,10 @@ evas_out_add(Evas *e)
 EOLIAN static void
 _evas_out_eo_base_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 {
-   Eo *eo_parent;
+   Eo *eo_parent = NULL;
    Evas_Public_Data *e;
 
-   eo_do(eo_obj, eo_parent_get(&eo_parent));
+   eo_do(eo_obj, eo_parent = eo_parent_get());
    e = eo_data_scope_get(eo_parent, EVAS_CLASS);
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
@@ -54,10 +54,10 @@ evas_output_del(Evas_Out *evo)
 EOLIAN static void
 _evas_out_eo_base_destructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 {
-   Eo *eo_parent;
+   Eo *eo_parent = NULL;
    Evas_Public_Data *e;
 
-   eo_do(eo_obj, eo_parent_get(&eo_parent));
+   eo_do(eo_obj, eo_parent = eo_parent_get());
    e = eo_data_scope_get(eo_parent, EVAS_CLASS);
    if (!e) return ;
    // XXX: need to free output and context one they get allocated one day

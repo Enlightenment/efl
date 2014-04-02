@@ -431,7 +431,7 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 {
    int r = 0;
 
-   eo_do(timer, eo_event_freeze_get(&r));
+   eo_do(timer, r = eo_event_freeze_get());
    return !!r;
 }
 

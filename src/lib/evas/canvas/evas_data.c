@@ -18,7 +18,7 @@ evas_object_data_get(const Evas_Object *obj, const char *key)
    return NULL;
    MAGIC_CHECK_END();
    void *data = NULL;
-   eo_do((Evas_Object *)obj, eo_base_data_get(key, &data));
+   eo_do((Evas_Object *)obj, data = eo_base_data_get(key));
    return data;
 }
 
@@ -29,6 +29,6 @@ evas_object_data_del(Evas_Object *obj, const char *key)
    return NULL;
    MAGIC_CHECK_END();
    void *data = NULL;
-   eo_do(obj, eo_base_data_get(key, &data), eo_base_data_del(key));
+   eo_do(obj, data = eo_base_data_get(key), eo_base_data_del(key));
    return data;
 }

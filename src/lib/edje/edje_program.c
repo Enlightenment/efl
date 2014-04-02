@@ -78,7 +78,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 {
    if (!obj) return NULL;
    void *ret = NULL;
-   eo_do(obj, edje_obj_signal_callback_del(emission, source, (Edje_Signal_Cb)func, NULL, &ret));
+   eo_do(obj, ret = edje_obj_signal_callback_del(emission, source, (Edje_Signal_Cb)func, NULL));
    return ret;
 }
 
@@ -107,7 +107,7 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 {
    if (!obj) return NULL;
    void *ret = NULL;
-   eo_do(obj, edje_obj_signal_callback_del(emission, source, func, data, &ret));
+   eo_do(obj, ret = edje_obj_signal_callback_del(emission, source, func, data));
    return ret;
 }
 

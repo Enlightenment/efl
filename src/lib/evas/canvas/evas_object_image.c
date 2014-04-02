@@ -324,12 +324,12 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas *eo_e;
-   Eo *parent;
+   Eo *parent = NULL;
    Evas_Colorspace cspace;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
-   eo_do(eo_obj, eo_parent_get(&parent));
+   eo_do(eo_obj, parent = eo_parent_get());
    eo_e = evas_object_evas_get(parent);
 
    evas_object_image_init(eo_obj);
@@ -650,7 +650,7 @@ EAPI Eina_Bool
 evas_object_image_source_unset(Evas_Object *eo_obj)
 {
    Eina_Bool result = EINA_FALSE;
-   eo_do(eo_obj, evas_obj_image_source_set(NULL, &result));
+   eo_do(eo_obj, result = evas_obj_image_source_set(NULL));
    return result;
 }
 
@@ -719,8 +719,8 @@ _evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *ro
 
    if (evas_object_image_load_error_get(eo_obj) != EVAS_LOAD_ERROR_NONE)
      {
-        Evas_Load_Error error;
-        eo_do(eo_obj, evas_obj_image_load_error_get(&error));
+        Evas_Load_Error error = EVAS_LOAD_ERROR_GENERIC;
+        eo_do(eo_obj, error = evas_obj_image_load_error_get());
         EO_DBG_INFO_APPEND(group, "Load Error", EINA_VALUE_TYPE_STRING,
                                 evas_load_error_str(error));
      }
@@ -2357,8 +2357,8 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas
 
         ctx = e->engine.func->context_new(e->engine.data.output);
 
-        Eina_Bool source_clip;
-        eo_do(eo_proxy, evas_obj_image_source_clip_get(&source_clip));
+        Eina_Bool source_clip = EINA_FALSE;
+        eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
 
         Evas_Proxy_Render_Data proxy_render_data = {
              .eo_proxy = eo_proxy,
