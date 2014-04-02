@@ -896,6 +896,7 @@ group { name: "e/widgets/border/sparkle/border";
 }
 
 group { name: "e/widgets/border/dialog/border";
+   alias: "e/widgets/border/modal/border";
    inherit: "e/widgets/border/default/border";
    parts {
       part { name: "max1";
