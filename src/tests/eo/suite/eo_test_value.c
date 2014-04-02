@@ -16,10 +16,10 @@ START_TEST(eo_value)
    Eina_Value val2, eo_val;
    void *tmpp = NULL;
    Eo_Dbg_Info *eo_dbg_info;
-   Eo *obj = eo2_add(SIMPLE_CLASS, NULL);
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
    eo_dbg_info = EO_DBG_INFO_LIST_APPEND(NULL, "Root");
-   eo2_do(obj, eo2_dbg_info_get(eo_dbg_info));
+   eo_do(obj, eo_dbg_info_get(eo_dbg_info));
    fail_if(!eo_dbg_info);
    ck_assert_str_eq(eo_dbg_info->name, "Root");
    str = eina_value_to_string(&eo_dbg_info->value);

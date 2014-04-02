@@ -34,10 +34,10 @@ _class_print(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    Eina_Bool called = EINA_FALSE;
-   eo2_do_super(klass, MY_CLASS, called = simple_class_print());
+   eo_do_super(klass, MY_CLASS, called = simple_class_print());
    fail_if(called);
 
-   eo2_do_super(klass, MY_CLASS, called = simple_class_print2());
+   eo_do_super(klass, MY_CLASS, called = simple_class_print2());
    fail_if(called);
 
    return EINA_TRUE;
@@ -51,29 +51,29 @@ _class_print2(Eo_Class *klass, void *class_data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
-EAPI EO2_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EAPI EO2_FUNC_BODY(simple_class_print, Eina_Bool, EINA_FALSE);
-EAPI EO2_FUNC_BODY(simple_class_print2, Eina_Bool, EINA_FALSE);
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
+EAPI EO_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY(simple_class_print, Eina_Bool, EINA_FALSE);
+EAPI EO_FUNC_BODY(simple_class_print2, Eina_Bool, EINA_FALSE);
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(simple_a_set, _a_set, "Set property A"),
-     EO2_OP_FUNC(simple_a_print, _a_print, "Print property A"),
-     EO2_OP_FUNC(simple_class_print, _class_print, "Print class name."),
-     EO2_OP_FUNC(simple_class_print2, _class_print2, "Print2 class name."),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO_OP_FUNC(simple_a_print, _a_print, "Print property A"),
+     EO_OP_FUNC(simple_class_print, _class_print, "Print class name."),
+     EO_OP_FUNC(simple_class_print2, _class_print2, "Print2 class name."),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Simple_Public_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO2_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, NULL);
 

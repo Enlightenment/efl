@@ -10,10 +10,10 @@
 #define MY_CLASS SIMPLE4_CLASS
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Simple4",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_NOOPS(),
+     EO_CLASS_DESCRIPTION_NOOPS(),
      NULL,
      0,
      NULL,

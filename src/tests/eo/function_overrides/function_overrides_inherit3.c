@@ -13,19 +13,19 @@ static void
 _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 {
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
-   eo2_do_super(obj, MY_CLASS, simple_a_set(a + 1));
+   eo_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 }
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Inherit3",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,

@@ -12,7 +12,7 @@ static int
 _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0, b = 0;
-   eo2_do(obj, a = simple_a_get(), b = simple_b_get());
+   eo_do(obj, a = simple_a_get(), b = simple_b_get());
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a + b;
 }
@@ -20,34 +20,34 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo2_do_super(obj, MY_CLASS, eo2_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo2_do_super(obj, MY_CLASS, eo2_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-EAPI EO2_FUNC_BODY(mixin_ab_sum_get, int, 0);
+EAPI EO_FUNC_BODY(mixin_ab_sum_get, int, 0);
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _constructor),
-     EO2_OP_FUNC_OVERRIDE(eo2_destructor, _destructor),
-     EO2_OP_FUNC(mixin_ab_sum_get, _ab_sum_get, "Get the sum of a and b."),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
+     EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor),
+     EO_OP_FUNC(mixin_ab_sum_get, _ab_sum_get, "Get the sum of a and b."),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Mixin",
      EO_CLASS_TYPE_MIXIN,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(mixin_class_get, &class_desc, NULL, EO2_BASE_CLASS, NULL)
+EO_DEFINE_CLASS(mixin_class_get, &class_desc, NULL, EO_BASE_CLASS, NULL)
 

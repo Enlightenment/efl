@@ -16,18 +16,18 @@ _prot_print(Eo *obj, void *class_data EINA_UNUSED)
    printf("%s %d\n", __func__, pd->protected_x1);
 }
 
-EAPI EO2_VOID_FUNC_BODY(inherit_prot_print);
+EAPI EO_VOID_FUNC_BODY(inherit_prot_print);
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(inherit_prot_print, _prot_print, "Print protected var x1."),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC(inherit_prot_print, _prot_print, "Print protected var x1."),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Inherit",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,

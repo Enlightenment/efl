@@ -21,10 +21,10 @@ START_TEST(eo_inherit_errors)
    const Eo_Class *klass_simple;
 
    static const Eo_Class_Description class_desc_simple = {
-        EO2_VERSION,
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -32,10 +32,10 @@ START_TEST(eo_inherit_errors)
    };
 
    static const Eo_Class_Description class_desc_mixin = {
-        EO2_VERSION,
+        EO_VERSION,
         "Mixin",
         EO_CLASS_TYPE_MIXIN,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -43,10 +43,10 @@ START_TEST(eo_inherit_errors)
    };
 
    static Eo_Class_Description class_desc = {
-        EO2_VERSION,
+        EO_VERSION,
         "General",
         EO_CLASS_TYPE_MIXIN,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -56,7 +56,7 @@ START_TEST(eo_inherit_errors)
    klass_mixin = eo_class_new(&class_desc_mixin, NULL, NULL);
    fail_if(!klass_mixin);
 
-   klass_simple = eo_class_new(&class_desc_simple, EO2_BASE_CLASS, NULL);
+   klass_simple = eo_class_new(&class_desc_simple, EO_BASE_CLASS, NULL);
    fail_if(!klass_simple);
 
    TEST_EO_ERROR("eo_class_new", "Non-regular classes ('%s') aren't allowed to inherit from regular classes ('%s').");
@@ -89,10 +89,10 @@ START_TEST(eo_inconsistent_mro)
    const Eo_Class *klass_mixin3;
 
    static const Eo_Class_Description class_desc_simple = {
-        EO2_VERSION,
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -100,10 +100,10 @@ START_TEST(eo_inconsistent_mro)
    };
 
    static const Eo_Class_Description class_desc_mixin = {
-        EO2_VERSION,
+        EO_VERSION,
         "Mixin",
         EO_CLASS_TYPE_MIXIN,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -111,10 +111,10 @@ START_TEST(eo_inconsistent_mro)
    };
 
    static const Eo_Class_Description class_desc_mixin2 = {
-        EO2_VERSION,
+        EO_VERSION,
         "Mixin2",
         EO_CLASS_TYPE_MIXIN,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -122,10 +122,10 @@ START_TEST(eo_inconsistent_mro)
    };
 
    static const Eo_Class_Description class_desc_mixin3 = {
-        EO2_VERSION,
+        EO_VERSION,
         "Mixin3",
         EO_CLASS_TYPE_MIXIN,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         0,
         NULL,
@@ -142,14 +142,14 @@ START_TEST(eo_inconsistent_mro)
    fail_if(!klass_mixin3);
 
    TEST_EO_ERROR("_eo_class_mro_init", "Cannot create a consistent method resolution order for class '%s' because of '%s'.");
-   klass = eo_class_new(&class_desc_simple, EO2_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
 
-   klass = eo_class_new(&class_desc_simple, EO2_BASE_CLASS, klass_mixin2, klass_mixin, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin2, klass_mixin, NULL);
    fail_if(!klass);
 
-   klass = eo_class_new(&class_desc_simple, EO2_BASE_CLASS, klass_mixin2, klass_mixin3, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin2, klass_mixin3, NULL);
    fail_if(!klass);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
@@ -168,10 +168,10 @@ START_TEST(eo_bad_interface)
    const Eo_Class *klass;
 
    static Eo_Class_Description class_desc = {
-        EO2_VERSION,
+        EO_VERSION,
         "Interface",
         EO_CLASS_TYPE_INTERFACE,
-        EO2_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_NOOPS(),
         NULL,
         10,
         NULL,
@@ -216,22 +216,22 @@ START_TEST(eo_null_api)
 
    const Eo_Class *klass;
 
-   static Eo2_Op_Description op_descs[] = {
-        EO2_OP_FUNC(NULL, _null_fct, "NULL API function"),
-        EO2_OP_SENTINEL
+   static Eo_Op_Description op_descs[] = {
+        EO_OP_FUNC(NULL, _null_fct, "NULL API function"),
+        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
-        EO2_VERSION,
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
-        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        EO_CLASS_DESCRIPTION_OPS(op_descs),
         NULL,
         0,
         NULL,
         NULL
    };
 
-   TEST_EO_ERROR("_eo2_class_funcs_set", "Class '%s': NULL API not allowed (%d NULL->%p '%s').");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': NULL API not allowed (%d NULL->%p '%s').");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -249,22 +249,22 @@ START_TEST(eo_wrong_override)
 
    const Eo_Class *klass;
 
-   static Eo2_Op_Description op_descs[] = {
-        EO2_OP_FUNC_OVERRIDE(null_fct, _null_fct),
-        EO2_OP_SENTINEL
+   static Eo_Op_Description op_descs[] = {
+        EO_OP_FUNC_OVERRIDE(null_fct, _null_fct),
+        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
-        EO2_VERSION,
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
-        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        EO_CLASS_DESCRIPTION_OPS(op_descs),
         NULL,
         0,
         NULL,
         NULL
    };
 
-   TEST_EO_ERROR("_eo2_class_funcs_set", "Class '%s': Can't find api func description in class hierarchy (%p->%p).");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': Can't find api func description in class hierarchy (%p->%p).");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -282,23 +282,23 @@ START_TEST(eo_api_redefined)
 
    const Eo_Class *klass;
 
-   static Eo2_Op_Description op_descs[] = {
-        EO2_OP_FUNC(null_fct, _null_fct, "API function"),
-        EO2_OP_FUNC(null_fct, NULL, "Redefining API function"),
-        EO2_OP_SENTINEL
+   static Eo_Op_Description op_descs[] = {
+        EO_OP_FUNC(null_fct, _null_fct, "API function"),
+        EO_OP_FUNC(null_fct, NULL, "Redefining API function"),
+        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
-        EO2_VERSION,
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
-        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        EO_CLASS_DESCRIPTION_OPS(op_descs),
         NULL,
         0,
         NULL,
         NULL
    };
 
-   TEST_EO_ERROR("_eo2_class_funcs_set", "Class '%s': API previously defined (%d %p->%p '%s').");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': API previously defined (%d %p->%p '%s').");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -316,16 +316,16 @@ START_TEST(eo_dich_func_override)
 
    const Eo_Class *klass;
 
-   static Eo2_Op_Description op_descs[] = {
-        EO2_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
-        EO2_OP_FUNC_OVERRIDE(simple_a_set, NULL),
-        EO2_OP_SENTINEL
+   static Eo_Op_Description op_descs[] = {
+        EO_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
+        EO_OP_FUNC_OVERRIDE(simple_a_set, NULL),
+        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
-        EO2_VERSION,
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
-        EO2_CLASS_DESCRIPTION_OPS(op_descs),
+        EO_CLASS_DESCRIPTION_OPS(op_descs),
         NULL,
         0,
         NULL,

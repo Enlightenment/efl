@@ -17,7 +17,7 @@ _a_set(Eo *obj, void *class_data, int a)
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
 
-   eo2_do(obj, eo2_event_callback_call(EV_A_CHANGED, &pd->a));
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a));
 }
 
 static int
@@ -27,13 +27,13 @@ _a_get(Eo *obj EINA_UNUSED, void *class_data)
    return pd->a;
 }
 
-EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
-EAPI EO2_FUNC_BODY(simple_a_get, int, 0);
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
+EAPI EO_FUNC_BODY(simple_a_get, int, 0);
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(simple_a_set, _a_set, "Set property A"),
-     EO2_OP_FUNC(simple_a_get, _a_get, "Get property A"),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO_OP_FUNC(simple_a_get, _a_get, "Get property A"),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Event_Description *event_desc[] = {
@@ -42,15 +42,15 @@ static const Eo_Event_Description *event_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Simple_Public_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO2_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, NULL);
 

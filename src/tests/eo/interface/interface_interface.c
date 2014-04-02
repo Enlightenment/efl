@@ -8,18 +8,18 @@
 
 #define MY_CLASS INTERFACE_CLASS
 
-EO2_FUNC_BODY(interface_ab_sum_get, int, 0);
+EO_FUNC_BODY(interface_ab_sum_get, int, 0);
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC(interface_ab_sum_get, NULL, "Get the sum of a and b."),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC(interface_ab_sum_get, NULL, "Get the sum of a and b."),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Interface",
      EO_CLASS_TYPE_INTERFACE,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
      NULL,

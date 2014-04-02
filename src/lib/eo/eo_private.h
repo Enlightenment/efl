@@ -109,7 +109,7 @@ struct _Eo_Object
      /* [composite*] */
 };
 
-/* FIXME: Change the type to something generic that makes sense for eo2 */
+/* FIXME: Change the type to something generic that makes sense for eo */
 typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
 
 typedef struct _Dich_Chain1 Dich_Chain1;
@@ -216,12 +216,12 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    const _Eo_Class *klass = obj->klass;
 
-   eo2_do(_eo_id_get(obj), eo2_event_callback_call(EO_EV_DEL, NULL));
+   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL));
 
    _eo_condtor_reset(obj);
 
    do_err = EINA_FALSE;
-   eo2_do(_eo_id_get(obj), eo2_destructor(););
+   eo_do(_eo_id_get(obj), eo_destructor(););
 
    if (EINA_UNLIKELY(do_err))
      {

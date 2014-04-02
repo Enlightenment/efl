@@ -12,10 +12,10 @@
 #define MY_CLASS MIXIN4_CLASS
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Mixin4",
      EO_CLASS_TYPE_MIXIN,
-     EO2_CLASS_DESCRIPTION_NOOPS(),
+     EO_CLASS_DESCRIPTION_NOOPS(),
      NULL,
      0,
      NULL,

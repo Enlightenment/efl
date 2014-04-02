@@ -23,7 +23,7 @@ _a_set(Eo *obj, void *class_data, int a)
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
 
-   eo2_do(obj, eo2_event_callback_call(EV_A_CHANGED, &pd->a));
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a));
 }
 
 Eina_Bool
@@ -63,20 +63,20 @@ _cb_deled(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_inf
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo2_do_super(obj, MY_CLASS, eo2_constructor());
+   eo_do_super(obj, MY_CLASS, eo_constructor());
 
-   eo2_do(obj, eo2_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL));
-   eo2_do(obj, eo2_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL));
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
 
-   eo2_do(obj, eo2_base_data_set("cb_count", (intptr_t) 0, NULL));
+   eo_do(obj, eo_base_data_set("cb_count", (intptr_t) 0, NULL));
 }
 
-EAPI EO2_VOID_FUNC_BODYV(simple_a_set, EO2_FUNC_CALL(a), int a);
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
-static Eo2_Op_Description op_descs[] = {
-     EO2_OP_FUNC_OVERRIDE(eo2_constructor, _constructor),
-     EO2_OP_FUNC(simple_a_set, _a_set, "Set property a"),
-     EO2_OP_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property a"),
+     EO_OP_SENTINEL
 };
 
 
@@ -86,15 +86,15 @@ static const Eo_Event_Description *event_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
-     EO2_VERSION,
+     EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO2_CLASS_DESCRIPTION_OPS(op_descs),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Private_Data),
      NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO2_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, NULL);
 

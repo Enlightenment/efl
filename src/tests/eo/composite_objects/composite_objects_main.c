@@ -30,27 +30,27 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo2_add(COMP_CLASS, NULL);
-   eo2_do(obj, eo2_event_callback_add(EV_A_CHANGED, _a_changed_cb, NULL));
+   Eo *obj = eo_add(COMP_CLASS, NULL);
+   eo_do(obj, eo_event_callback_add(EV_A_CHANGED, _a_changed_cb, NULL));
 
    fail_if(!eo_isa(obj, COMP_CLASS));
    fail_if(!eo_isa(obj, SIMPLE_CLASS));
 
    int a = 0;
-   eo2_do(obj, simple_a_set(1));
+   eo_do(obj, simple_a_set(1));
    fail_if(!cb_called);
 
-   eo2_do(obj, a = simple_a_get());
+   eo_do(obj, a = simple_a_get());
    fail_if(a != 1);
 
    /* disable the callback forwarder, and fail if it's still called. */
    Eo *simple = NULL;
-   eo2_do(obj, simple = eo2_base_data_get("simple-obj"));
+   eo_do(obj, simple = eo_base_data_get("simple-obj"));
    eo_ref(simple);
-   eo2_do(simple, eo2_event_callback_forwarder_del(EV_A_CHANGED, obj));
+   eo_do(simple, eo_event_callback_forwarder_del(EV_A_CHANGED, obj));
 
    cb_called = EINA_FALSE;
-   eo2_do(obj, simple_a_set(2));
+   eo_do(obj, simple_a_set(2));
    fail_if(cb_called);
 
    fail_if(!eo_composite_is(simple));
