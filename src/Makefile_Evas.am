@@ -28,6 +28,7 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_smart_clipped.eo.h \
                  lib/evas/canvas/evas_table.eo.c \
                  lib/evas/canvas/evas_table.eo.h \
+                 lib/evas/canvas/evas_table.eo.legacy.h \
                  lib/evas/canvas/evas_common_interface.eo.c \
                  lib/evas/canvas/evas_common_interface.eo.h \
                  lib/evas/canvas/evas_object.eo.c \
@@ -122,7 +123,8 @@ nodist_installed_evascanvasheaders_DATA = \
                                         lib/evas/canvas/evas_rectangle.eo.legacy.h \
                                         lib/evas/canvas/evas_text.eo.legacy.h \
                                         lib/evas/canvas/evas_textblock.eo.legacy.h \
-                                        lib/evas/canvas/evas_textgrid.eo.legacy.h
+                                        lib/evas/canvas/evas_textgrid.eo.legacy.h \
+                                        lib/evas/canvas/evas_table.eo.legacy.h
 
 noinst_HEADERS = \
 lib/evas/include/evas_inline.x \

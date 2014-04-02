@@ -1354,13 +1354,11 @@ _evas_table_children_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv)
    return new_list;
 }
 
-Evas_Object *
-evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned short row)
+EOLIAN static Evas_Object *
+_evas_table_child_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned short col, unsigned short row)
 {
    Eina_List *l;
    Evas_Object_Table_Option *opt;
-
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
    EINA_LIST_FOREACH(priv->children, l, opt)
       if (opt->col == col && opt->row == row)
@@ -1387,7 +1385,7 @@ _evas_table_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
 EOLIAN static void
 _evas_table_class_constructor(Eo_Class *klass)
 {
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);    
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 #include "canvas/evas_table.eo.c"

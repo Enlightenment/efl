@@ -133,6 +133,21 @@ class Evas_Table (Evas_Smart_Clipped)
             return Eina_List * @warn_unused;
          }
       }
+      child {
+         get {
+            /*@
+            Get the child of the table at the given coordinates
+
+            @note This does not take into account col/row spanning*/
+         }
+         keys {
+            unsigned short col;
+            unsigned short row;
+         }
+         values {
+            Evas_Object *child;
+         }
+      }
    }
    methods {
       clear {
