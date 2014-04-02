@@ -278,16 +278,6 @@ struct _Evas_Smart_Interfaces_Array
    const Evas_Smart_Interface **array;
 };
 
-/**
- * @def evas_obj_smart_attach
- *
- * Attach a given smart data to a given smart object.
- *
- * @param[in] s in
- *
- */
-#define evas_obj_smart_attach(s) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ATTACH), EO_TYPECHECK(Evas_Smart *, s)
-
 struct _Evas_Smart
 {
    DATA32            magic;
