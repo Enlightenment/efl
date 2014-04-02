@@ -912,14 +912,12 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 /* EO_CLASS stuff */
 #define MY_CLASS EO_CLASS
 
-/* FIXME: Set proper type descriptions. */
-// FIXME: eo multiple definition
-/* EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD = */
-/*    EO_EVENT_DESCRIPTION("callback,add", "A callback was added."); */
-/* EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL = */
-/*    EO_EVENT_DESCRIPTION("callback,del", "A callback was deleted."); */
-/* EAPI const Eo_Event_Description _EO_EV_DEL = */
-/*    EO_HOT_EVENT_DESCRIPTION("del", "Obj is being deleted."); */
+EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD =
+   EO_EVENT_DESCRIPTION("callback,add", "A callback was added.");
+EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL =
+   EO_EVENT_DESCRIPTION("callback,del", "A callback was deleted.");
+EAPI const Eo_Event_Description _EO_EV_DEL =
+   EO_HOT_EVENT_DESCRIPTION("del", "Obj is being deleted.");
 
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
