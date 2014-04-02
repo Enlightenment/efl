@@ -52,7 +52,7 @@ evas_bench_saver_tgv(int request)
    int i;
 
    source = _test_image_get("mars_rover_panorama_half-size.jpg");
-   eina_file_mkstemp("evas_saver_benchXXXXXX", &dest);
+   eina_file_mkstemp("evas_saver_benchXXXXXX.tgv", &dest);
 
    o = evas_object_image_add(e);
    evas_object_image_file_set(o, source, NULL);
