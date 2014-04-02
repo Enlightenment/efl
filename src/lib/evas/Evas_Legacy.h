@@ -5445,7 +5445,7 @@ EAPI void         evas_object_smart_member_del(Evas_Object *obj) EINA_ARG_NONNUL
  * @see evas_object_smart_member_del()
  * @see evas_object_smart_iterator_new()
  */
-EAPI Eina_List   *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Eina_List   *evas_object_smart_members_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Retrieves an iterator of the member objects of a given Evas smart
@@ -5460,7 +5460,7 @@ EAPI Eina_List   *evas_object_smart_members_get(const Evas_Object *obj) EINA_WAR
  * @see evas_object_smart_member_del()
  * @see evas_object_smart_members_get()
  */
-EAPI Eina_Iterator   *evas_object_smart_iterator_new(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Eina_Iterator   *evas_object_smart_iterator_new(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Gets the parent smart object of a given Evas object, if it has one.
@@ -5526,7 +5526,7 @@ EAPI Eina_Bool    evas_object_smart_type_check_ptr(const Evas_Object *obj, const
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI Evas_Smart  *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas_Smart  *evas_object_smart_smart_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Retrieve user data stored on a given smart object.
@@ -5555,7 +5555,7 @@ EAPI void        *evas_object_smart_data_get(const Evas_Object *obj) EINA_WARN_U
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void         evas_object_smart_data_set(Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
+//EAPI void         evas_object_smart_data_set(Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
 
 /**
  * Add (register) a callback function to the smart event specified by
@@ -5720,7 +5720,7 @@ EAPI void         evas_object_smart_callback_call(Evas_Object *obj, const char *
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI Eina_Bool    evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions) EINA_ARG_NONNULL(1);
+//EAPI Eina_Bool    evas_object_smart_callbacks_descriptions_set(Evas_Object *obj, const Evas_Smart_Cb_Description *descriptions) EINA_ARG_NONNULL(1);
 
 /**
  * Retrieve an smart object's know smart callback descriptions (both
@@ -5755,7 +5755,7 @@ EAPI Eina_Bool    evas_object_smart_callbacks_descriptions_set(Evas_Object *obj,
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void         evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count) EINA_ARG_NONNULL(1);
+//EAPI void         evas_object_smart_callbacks_descriptions_get(const Evas_Object *obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count) EINA_ARG_NONNULL(1);
 
 /**
  * Find callback description for callback called @a name.
@@ -5773,7 +5773,7 @@ EAPI void         evas_object_smart_callbacks_descriptions_get(const Evas_Object
  *        will be done on instance descriptions.
  * @return reference to description if found, @c NULL if not found.
  */
-EAPI void         evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(1, 2);
+//EAPI void         evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Retrieve an Evas smart object's interface, by name string pointer.
@@ -5788,7 +5788,7 @@ EAPI void         evas_object_smart_callback_description_find(const Evas_Object 
  * @return The interface's handle pointer, if found, @c NULL
  * otherwise.
  */
-const void       *evas_object_smart_interface_get(const Evas_Object *obj, const char *name);
+EAPI const void       *evas_object_smart_interface_get(const Evas_Object *obj, const char *name);
 
 /**
  * Retrieve an Evas smart object interface's <b>private data</b>.
@@ -5801,7 +5801,7 @@ const void       *evas_object_smart_interface_get(const Evas_Object *obj, const 
  * @return The object interface's private data blob pointer, if found,
  * @c NULL otherwise.
  */
-void             *evas_object_smart_interface_data_get(const Evas_Object *obj, const Evas_Smart_Interface *iface);
+EAPI void             *evas_object_smart_interface_data_get(const Evas_Object *obj, const Evas_Smart_Interface *iface);
 
 /**
  * Mark smart object as changed, dirty.
@@ -5817,7 +5817,7 @@ void             *evas_object_smart_interface_data_get(const Evas_Object *obj, c
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void         evas_object_smart_changed(Evas_Object *obj) EINA_ARG_NONNULL(1);
+//EAPI void         evas_object_smart_changed(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set or unset the flag signalling that a given smart object needs to
@@ -5846,7 +5846,7 @@ EAPI void         evas_object_smart_changed(Evas_Object *obj) EINA_ARG_NONNULL(1
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void         evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
+//EAPI void         evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
 
 /**
  * Get the value of the flag signalling that a given smart object needs to
@@ -5864,7 +5864,7 @@ EAPI void         evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI Eina_Bool    evas_object_smart_need_recalculate_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Eina_Bool    evas_object_smart_need_recalculate_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Call the @b calculate() smart function immediately on a given smart
@@ -5881,7 +5881,7 @@ EAPI Eina_Bool    evas_object_smart_need_recalculate_get(const Evas_Object *obj)
  *
  * @ingroup Evas_Smart_Object_Group
  */
-EAPI void         evas_object_smart_calculate(Evas_Object *obj) EINA_ARG_NONNULL(1);
+//EAPI void         evas_object_smart_calculate(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Call user-provided @c calculate() smart functions and unset the
@@ -5931,6 +5931,8 @@ EAPI int          evas_smart_objects_calculate_count_get(const Evas *e);
  * their @c move() smart function definition.
  */
 EAPI void         evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy) EINA_ARG_NONNULL(1);
+
+#include "canvas/evas_smart.eo.legacy.h"
 /**
  * @}
  */
@@ -5954,6 +5956,7 @@ EAPI void         evas_object_smart_move_children_relative(Evas_Object *obj, Eva
  */
 EAPI Evas_Object            *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+#include "canvas/evas_smart_clipped.eo.legacy.h"
 /**
  * @}
  */

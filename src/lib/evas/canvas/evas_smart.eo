@@ -52,6 +52,7 @@ class Evas_Smart (Evas_Object, Evas_Signal_Interface)
       clip {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             Evas_Object *clip;
@@ -60,6 +61,7 @@ class Evas_Smart (Evas_Object, Evas_Signal_Interface)
       color {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             int r;
@@ -118,9 +120,11 @@ class Evas_Smart (Evas_Object, Evas_Signal_Interface)
    methods {
       show {
          /*@ No description supplied by the EAPI. */
+         legacy null;
       }
       move {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          params {
             @in Evas_Coord x;
             @in Evas_Coord y;
@@ -236,6 +240,7 @@ class Evas_Smart (Evas_Object, Evas_Signal_Interface)
       }
       hide {
          /*@ No description supplied by the EAPI. */
+         legacy null;
       }
       calculate {
          /*@
@@ -292,6 +297,7 @@ class Evas_Smart (Evas_Object, Evas_Signal_Interface)
       }
       resize {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          params {
             @in Evas_Coord w;
             @in Evas_Coord h;
@@ -299,6 +305,7 @@ class Evas_Smart (Evas_Object, Evas_Signal_Interface)
       }
       clip_unset {
          /*@ No description supplied by the EAPI. */
+         legacy null;
       }
       changed {
          /*@
