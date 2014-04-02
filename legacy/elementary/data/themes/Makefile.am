@@ -103,6 +103,7 @@ edc/elm/clock.edc \
 edc/elm/colorsel.edc \
 edc/elm/conform.edc \
 edc/elm/ctxpopup.edc \
+edc/elm/cursor.edc \
 edc/elm/datetime.edc \
 edc/elm/dayselector.edc \
 edc/elm/diskselector.edc \
@@ -508,6 +509,7 @@ img/pointer_entry_bar.png \
 img/pointer_glow.png \
 img/pointer_mono.png \
 img/pointer.png \
+img/pointer_hand1.png \
 img/ring_shadow.png \
 img/ring_white_blue_glow.png \
 img/ring_white_middle.png \
