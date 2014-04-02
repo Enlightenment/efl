@@ -25,7 +25,7 @@ static Eina_Bool _write_cb(void *data)
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_OUT_CLASS);
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
-  ssize_t written, bread;
+  ssize_t written, bread = 0;
   float buf[1024];
 
   if (!ea_obj->vio || !ea_obj->vio->vio->write)
@@ -34,7 +34,7 @@ static Eina_Bool _write_cb(void *data)
   /* FIXME: Multiple inputs */
   in = eina_list_data_get(out_obj->inputs);
 
-  eo_do(in, ecore_audio_obj_in_read(buf, 4*1024, &bread));
+  eo_do(in, bread = ecore_audio_obj_in_read(buf, 4*1024));
 
   if (bread == 0) {
       ea_obj->paused = EINA_TRUE;
@@ -61,7 +61,7 @@ _ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Output *obj, Eo *input)
   if (in->output == eo_obj)
     return EINA_FALSE;
 
-  if (in->output) eo_do(in->output, ecore_audio_obj_out_input_detach(input, NULL));
+  if (in->output) eo_do(in->output, ecore_audio_obj_out_input_detach(input));
   in->output = eo_obj;
 
   /* TODO: Send event */
@@ -144,7 +144,7 @@ _ecore_audio_out_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Output *obj)
   Eo *in;
 
   EINA_LIST_FOREACH_SAFE(obj->inputs, cur, tmp, in) {
-      eo_do(eo_obj, ecore_audio_obj_out_input_detach(in, NULL));
+      eo_do(eo_obj, ecore_audio_obj_out_input_detach(in));
   }
 
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());

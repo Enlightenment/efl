@@ -46,7 +46,7 @@ EOLIAN static void
 _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_Data *_pd EINA_UNUSED, double volume)
 {
   Eo *in;
-  pa_stream *stream;
+  pa_stream *stream = NULL;
   Eina_List *input;
   uint32_t idx;
   pa_cvolume pa_volume;
@@ -60,7 +60,7 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
   eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_volume_set(volume));
 
   EINA_LIST_FOREACH(out_obj->inputs, input, in) {
-      eo_do(in, eo_key_data_get("pulse_data", (void **)&stream));
+      eo_do(in, stream = eo_key_data_get("pulse_data"));
       idx = pa_stream_get_index(stream);
       pa_operation_unref(pa_context_set_sink_input_volume(class_vars.context, idx, &pa_volume, NULL, NULL));
   }
@@ -72,12 +72,12 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
   Eo *in = data;
 
   void *buf;
-  ssize_t bread;
+  ssize_t bread = 0;
   size_t wlen = len;
 
   pa_stream_begin_write(stream, &buf, &wlen);
 
-  eo_do(in, ecore_audio_obj_in_read(buf, wlen, &bread));
+  eo_do(in, bread = ecore_audio_obj_in_read(buf, wlen));
 
   pa_stream_write(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
   if (bread < (int)len)
@@ -88,14 +88,14 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
 
 static Eina_Bool _update_samplerate_cb(void *data EINA_UNUSED, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-  pa_stream *stream;
-  int samplerate;
-  double speed;
+  pa_stream *stream = NULL;
+  int samplerate = 0;
+  double speed = 0;
 
-  eo_do(eo_obj, ecore_audio_obj_in_samplerate_get(&samplerate));
-  eo_do(eo_obj, ecore_audio_obj_in_speed_get(&speed));
+  eo_do(eo_obj, samplerate = ecore_audio_obj_in_samplerate_get());
+  eo_do(eo_obj, speed = ecore_audio_obj_in_speed_get());
 
-  eo_do(eo_obj, eo_key_data_get("pulse_data", (void **)&stream));
+  eo_do(eo_obj, stream = eo_key_data_get("pulse_data"));
 
   pa_operation_unref(pa_stream_update_sample_rate(stream, samplerate * speed, NULL, NULL));
 
@@ -104,29 +104,29 @@ static Eina_Bool _update_samplerate_cb(void *data EINA_UNUSED, Eo *eo_obj, const
 
 static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 {
-  const char *name;
+  const char *name = NULL;
   pa_sample_spec ss;
-  double speed;
+  double speed = 0;
   pa_stream *stream;
-  Eina_Bool ret;
+  Eina_Bool ret = EINA_FALSE;
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_attach(in, &ret));
+  eo_do_super(eo_obj, MY_CLASS, ret = ecore_audio_obj_out_input_attach(in));
   if (!ret)
     return EINA_FALSE;
 
   ss.format = PA_SAMPLE_FLOAT32LE;
-  eo_do(in, ecore_audio_obj_in_samplerate_get((int *)&ss.rate));
-  eo_do(in, ecore_audio_obj_in_speed_get(&speed));
-  eo_do(in, ecore_audio_obj_in_channels_get((int *)&ss.channels));
-  eo_do(in, ecore_audio_obj_name_get(&name));
+  eo_do(in, ss.rate = ecore_audio_obj_in_samplerate_get());
+  eo_do(in, speed = ecore_audio_obj_in_speed_get());
+  eo_do(in, ss.channels = ecore_audio_obj_in_channels_get());
+  eo_do(in, name = ecore_audio_obj_name_get());
 
   ss.rate = ss.rate * speed;
 
   stream = pa_stream_new(class_vars.context, name, &ss, NULL);
   if (!stream) {
       ERR("Could not create stream");
-      eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in, NULL));
+      eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in));
       return EINA_FALSE;
   }
 
@@ -178,14 +178,14 @@ static void _drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EIN
 EOLIAN static Eina_Bool
 _ecore_audio_out_pulse_ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Out_Pulse_Data *_pd EINA_UNUSED, Eo *in)
 {
-  pa_stream *stream;
-  Eina_Bool ret2;
+  pa_stream *stream = NULL;
+  Eina_Bool ret2 = EINA_FALSE;
 
-  eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in, &ret2));
+  eo_do_super(eo_obj, MY_CLASS, ret2 = ecore_audio_obj_out_input_detach(in));
   if (!ret2)
     return EINA_FALSE;
 
-  eo_do(in, eo_key_data_get("pulse_data", (void **)&stream));
+  eo_do(in, stream = eo_key_data_get("pulse_data"));
 
   pa_stream_set_write_callback(stream, NULL, NULL);
   pa_operation_unref(pa_stream_drain(stream, _drain_cb, NULL));
@@ -210,12 +210,12 @@ static void _state_cb(pa_context *context, void *data EINA_UNUSED)
    if (state == PA_CONTEXT_READY) {
       DBG("PA context ready.");
       EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-         eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, NULL, NULL));
+         eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, NULL));
       }
    } else if ((state == PA_CONTEXT_FAILED) || (state == PA_CONTEXT_TERMINATED)) {
       DBG("PA context fail.");
       EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-         eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL, NULL));
+         eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL));
       }
    } else {
       DBG("Connection state %i", state);
@@ -241,7 +241,7 @@ static void _state_job(void *data EINA_UNUSED)
         }
         // the callback here can delete things in the list..
         EINA_LIST_FOREACH(class_vars.outputs, out, eo_obj) {
-           eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL, NULL));
+           eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL));
         }
         // now unref everything safely
         EINA_LIST_FOREACH_SAFE(class_vars.outputs, out, tmp, eo_obj) {
