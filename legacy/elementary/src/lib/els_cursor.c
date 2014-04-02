@@ -234,6 +234,8 @@ _elm_cursor_set(Elm_Cursor *cur)
                                      ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
                                      cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
+        printf("A set %i\n", cur->x.cursor);
+        printf("A win = %x\n", cur->x.win);
         if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, cur->x.cursor);
 #endif
@@ -339,30 +341,36 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
         cur->use_engine = EINA_TRUE;
      }
 
-   if ((cur->use_engine) && (eo_isa(cur->eventarea, ELM_OBJ_WIN_CLASS)))
+   if (cur->use_engine)
      {
-#ifdef HAVE_ELEMENTARY_X
-        cur->x.win = elm_win_xwindow_get(cur->eventarea);
-        if (cur->x.win)
+        Evas_Object *top;
+
+        top = elm_widget_top_get(cur->owner);
+        if ((top) && (eo_isa(top, ELM_OBJ_WIN_CLASS)))
           {
-             struct _Cursor_Id *cur_id;
-
-             cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
-                              sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
-
-             if (!cur_id)
+#ifdef HAVE_ELEMENTARY_X
+             cur->x.win = elm_win_xwindow_get(top);
+             if (cur->x.win)
                {
-                  INF("X cursor couldn't be found: %s. Using default.",
-                      cur->cursor_name);
-                  cur->x.cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
+                  struct _Cursor_Id *cur_id;
+                  
+                  cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
+                                   sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
+                  
+                  if (!cur_id)
+                    {
+                       INF("X cursor couldn't be found: %s. Using default.",
+                           cur->cursor_name);
+                       cur->x.cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
+                    }
+                  else
+                    cur->x.cursor = ecore_x_cursor_shape_get(cur_id->id);
                }
-             else
-                cur->x.cursor = ecore_x_cursor_shape_get(cur_id->id);
-          }
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        cur->wl.win = elm_win_wl_window_get(cur->eventarea);
+             cur->wl.win = elm_win_wl_window_get(top);
 #endif
+          }
      }
 }
 
