@@ -58,10 +58,10 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
         func_lpref = eolian_function_data_get(funcid, EOLIAN_LEGACY_GET);
         if (!rettype)
           {
-             const Eina_List *l = eolian_parameters_list_get(funcid);
+             l = eolian_parameters_list_get(funcid);
              if (eina_list_count(l) == 1)
                {
-                  void* data = eina_list_data_get(l);
+                  data = eina_list_data_get(l);
                   eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &rettype, NULL, NULL);
                   var_as_ret = EINA_TRUE;
                }
