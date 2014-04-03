@@ -1843,6 +1843,7 @@ static Eina_Bool
 _elm_gengrid_item_edge_check(Elm_Object_Item *it,
                              Elm_Focus_Direction dir)
 {
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    ELM_GENGRID_DATA_GET(WIDGET(it), sd);
    Evas_Coord ix = 0, iy = 0; //item's geometry
    Evas_Coord cx = 0, cy = 0; //prev or next item's geometry
