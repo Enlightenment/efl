@@ -3121,6 +3121,7 @@ _name_request(const Evas_Object *obj,
         free(name->fname);
         free(name);
         free(fname);
+        free(url);
         return NULL;
      }
    INF("Name requested from %s to %s", url, name->fname);
@@ -3174,6 +3175,7 @@ _name_list_request(const Evas_Object *obj,
         ERR("Can't request Name from %s to %s", url, name_list->fname);
         free(name_list->fname);
         free(name_list);
+        free(url);
         free(fname);
         return NULL;
      }
@@ -4393,6 +4395,7 @@ _elm_map_route_add(Eo *obj, Elm_Map_Data *sd, Elm_Map_Route_Type type, Elm_Map_R
         ERR("Can't request Route from %s to %s", url, route->fname);
         free(route->fname);
         free(route);
+        free(url);
         return ret;
      }
    INF("Route requested from %s to %s", url, route->fname);

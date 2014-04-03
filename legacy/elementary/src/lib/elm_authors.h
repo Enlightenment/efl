@@ -154,6 +154,7 @@
  * @author yan.wang <yan.wang@@linux.intel.com>
  * @author Anand <anand.km@@samsung.com>
  * @author Subhransu Sekhar Mohanty <sub.mohanty@@samsung.com>
+ * @author Rajesh P S <rajeshps@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
