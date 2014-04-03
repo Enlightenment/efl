@@ -704,7 +704,7 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd)
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *it = NULL;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
@@ -1347,8 +1347,8 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 
    if (sd->delete_me) return EINA_TRUE;
 
-   Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    elm_widget_theme_object_set
@@ -1586,7 +1586,7 @@ _elm_toolbar_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
    EINA_INLIST_FOREACH(sd->items, it)
      elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -2217,7 +2217,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    _item_del(item);
 
    if (item != sd->more_item)
-      eo_do(obj, elm_obj_widget_theme_apply(NULL));
+      eo_do(obj, elm_obj_widget_theme_apply());
 
    return EINA_TRUE;
 }
@@ -2972,7 +2972,7 @@ _elm_toolbar_eo_base_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -2984,7 +2984,7 @@ _elm_toolbar_icon_size_set(Eo *obj, Elm_Toolbar_Data *sd, int icon_size)
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
    else sd->icon_size = sd->theme_icon_size;
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static int
