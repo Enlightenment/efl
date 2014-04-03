@@ -90,8 +90,8 @@ _elc_fileselector_elm_widget_theme_apply(Eo *obj, Elc_Fileselector_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    style = elm_widget_style_get(obj);
@@ -1433,7 +1433,7 @@ _elc_fileselector_evas_smart_add(Eo *obj, Elc_Fileselector_Data *priv)
    HANDLER_ADD(EIO_MONITOR_DIRECTORY_DELETED, _resource_deleted);
 #undef HANDLER_ADD
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static void
@@ -1491,7 +1491,7 @@ _elc_fileselector_eo_base_constructor(Eo *obj, Elc_Fileselector_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EAPI void
@@ -1516,7 +1516,7 @@ elm_fileselector_is_save_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_interface_fileselector_is_save_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_is_save_get());
    return ret;
 }
 
@@ -1548,7 +1548,7 @@ elm_fileselector_folder_only_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_interface_fileselector_folder_only_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_folder_only_get());
    return ret;
 }
 
@@ -1583,7 +1583,7 @@ _elc_fileselector_buttons_ok_cancel_set(Eo *obj, Elc_Fileselector_Data *sd, Eina
 
         sd->ok_button = bt;
 
-        eo_do(obj, elm_obj_widget_theme_apply(NULL));
+        eo_do(obj, elm_obj_widget_theme_apply());
      }
    else if (!visible)
      {
@@ -1619,7 +1619,7 @@ elm_fileselector_expandable_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_interface_fileselector_expandable_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_expandable_get());
    return ret;
 }
 
@@ -1652,7 +1652,7 @@ elm_fileselector_path_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    const char *ret = NULL;
-   eo_do((Eo *) obj, elm_interface_fileselector_path_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_path_get());
    return ret;
 }
 
@@ -1706,7 +1706,7 @@ elm_fileselector_mode_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, ELM_FILESELECTOR_LAST);
    Elm_Fileselector_Mode ret = ELM_FILESELECTOR_LAST;
-   eo_do((Eo *) obj, elm_interface_fileselector_mode_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_mode_get());
    return ret;
 }
 
@@ -1767,7 +1767,7 @@ elm_fileselector_multi_select_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_interface_fileselector_multi_select_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_multi_select_get());
    return ret;
 }
 
@@ -1782,7 +1782,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    const char *ret = NULL;
-   eo_do((Eo *) obj, elm_interface_fileselector_selected_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_selected_get());
    return ret;
 }
 
@@ -1823,7 +1823,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_interface_fileselector_selected_set(_path, &ret));
+   eo_do(obj, ret = elm_interface_fileselector_selected_set(_path));
    return ret;
 }
 
@@ -1862,7 +1862,7 @@ elm_fileselector_selected_paths_get(const Evas_Object* obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, NULL);
    const Eina_List *ret = NULL;
-   eo_do((Eo *) obj, elm_interface_fileselector_selected_paths_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_selected_paths_get());
    return ret;
 }
 
@@ -1892,7 +1892,7 @@ elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_typ
 {
    ELM_FILESELECTOR_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_interface_fileselector_mime_types_filter_append(mime_type, filter_name, &ret));
+   eo_do(obj, ret = elm_interface_fileselector_mime_types_filter_append(mime_type, filter_name));
    return ret;
 }
 
@@ -1923,7 +1923,7 @@ _elc_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, E
    _populate(obj, sd->path, NULL, NULL);
 
    if (need_theme)
-     eo_do(obj, elm_obj_widget_theme_apply(NULL));
+     eo_do(obj, elm_obj_widget_theme_apply());
 
    return EINA_TRUE;
 }
@@ -1933,7 +1933,7 @@ elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_interface_fileselector_custom_filter_append(func, data, filter_name, &ret));
+   eo_do(obj, ret = elm_interface_fileselector_custom_filter_append(func, data, filter_name));
    return ret;
 }
 
@@ -1966,7 +1966,7 @@ _elc_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elc_F
    _populate(obj, sd->path, NULL, NULL);
 
    if (need_theme)
-     eo_do(obj, elm_obj_widget_theme_apply(NULL));
+     eo_do(obj, elm_obj_widget_theme_apply());
 
    return EINA_TRUE;
 }
@@ -2026,7 +2026,7 @@ elm_fileselector_hidden_visible_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, EINA_FALSE);
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_interface_fileselector_hidden_visible_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_hidden_visible_get());
    return ret;
 }
 
@@ -2130,7 +2130,7 @@ elm_fileselector_sort_method_get(const Evas_Object *obj)
 {
    ELM_FILESELECTOR_INTERFACE_CHECK(obj, ELM_FILESELECTOR_SORT_LAST);
    Elm_Fileselector_Sort ret = ELM_FILESELECTOR_SORT_LAST;
-   eo_do((Eo *) obj, elm_interface_fileselector_sort_method_get(&ret));
+   eo_do((Eo *) obj, ret = elm_interface_fileselector_sort_method_get());
 
    return ret;
 }
@@ -2171,7 +2171,7 @@ _elc_fileselector_elm_layout_text_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Data
    else
      {
         Eina_Bool int_ret = EINA_FALSE;
-        eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
         return int_ret;
      }
 
