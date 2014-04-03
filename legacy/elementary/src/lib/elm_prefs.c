@@ -517,8 +517,7 @@ _elm_prefs_eo_base_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_elm_prefs_smart_callbacks,
-                                                   NULL));
+         evas_obj_smart_callbacks_descriptions_set(_elm_prefs_smart_callbacks));
 }
 
 static Eina_Bool
@@ -1279,12 +1278,12 @@ _elm_prefs_item_api_entry_common(const Evas_Object *obj,
 {
    Elm_Prefs_Item_Node *ret;
 
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
+   ELM_PREFS_CHECK(obj) NULL;
    ELM_PREFS_DATA_GET(obj, sd);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(it_name, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(it_name, NULL);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->root, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->root, NULL);
 
    ret = _elm_prefs_item_node_by_name(sd, it_name);
 
