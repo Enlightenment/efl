@@ -134,7 +134,7 @@ _eo_emit_state_changed_event(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EI
 {
    Elm_Atspi_Object *ao = data;
    int event_data[2] = {ATSPI_STATE_VISIBLE, 1};
-   eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &event_data[0], NULL));
+   eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &event_data[0]));
 }
 
 EOLIAN static void
@@ -143,7 +143,7 @@ _elm_atspi_object_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
    Evas_Object *internal_obj = NULL;
    eo_do_super(obj, ELM_ATSPI_OBJ_CLASS, eo_constructor());
 
-   eo_do(obj, eo_parent_get(&internal_obj));
+   eo_do(obj, internal_obj = eo_parent_get());
 
    /* Evas_Object can only hold refs to atspi-object */
    assert(eo_isa(internal_obj, EVAS_OBJ_SMART_CLASS));
@@ -158,7 +158,7 @@ _elm_atspi_object_child_at_index_get(Eo *obj, void *_pd EINA_UNUSED, int idx)
    Elm_Atspi_Object *ao = NULL;
    Eina_List *children = NULL;
 
-   eo_do(obj, elm_atspi_obj_children_get(&children));
+   eo_do(obj, children = elm_atspi_obj_children_get());
    if (!children) return NULL;
 
    ao = eina_list_nth(children, idx);
@@ -170,21 +170,21 @@ EOLIAN static Evas_Object *
 _elm_atspi_object_object_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *ret = NULL;
-   eo_do(obj, eo_parent_get(&ret));
+   eo_do(obj, ret = eo_parent_get());
    return ret;
 }
 
 EOLIAN static unsigned int
 _elm_atspi_object_index_in_parent_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   unsigned int idx;
+   unsigned int idx = 0;
    Elm_Atspi_Object *chld, *parent = NULL;
    Eina_List *l, *children = NULL;
    unsigned int tmp = 0;
 
-   eo_do(obj, elm_atspi_obj_parent_get(&parent));
+   eo_do(obj, parent = elm_atspi_obj_parent_get());
    if (!parent) return 0;
-   eo_do(parent, elm_atspi_obj_children_get(&children));
+   eo_do(parent, children = elm_atspi_obj_children_get());
 
    EINA_LIST_FOREACH(children, l, chld)
      {
@@ -208,7 +208,7 @@ _elm_atspi_object_role_name_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    AtspiRole role = ATSPI_ROLE_INVALID;
 
-   eo_do(obj, elm_atspi_obj_role_get(&role));
+   eo_do(obj, role = elm_atspi_obj_role_get());
 
    if (role >= ATSPI_ROLE_LAST_DEFINED)
      {
@@ -230,7 +230,7 @@ _elm_atspi_object_localized_role_name_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    const char *name = NULL;
 
-   eo_do(obj, elm_atspi_obj_role_name_get(&name));
+   eo_do(obj, name = elm_atspi_obj_role_name_get());
    if (!name) return NULL;
 #ifdef ENABLE_NLS
    return gettext(name);
@@ -244,7 +244,7 @@ _elm_atspi_object_state_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *evobj = NULL;
    Elm_Atspi_State states = 0;
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
 
    if (evas_object_visible_get(evobj))
      BIT_FLAG_SET(states, ATSPI_STATE_VISIBLE);
@@ -258,9 +258,9 @@ _elm_atspi_object_elm_interface_atspi_component_accessible_at_point_get(Eo *obj,
    int ee_x, ee_y;
    Eina_List *l, *objs;
    Evas_Object *evobj = NULL;
-   Evas_Object *ret;
+   Evas_Object *ret = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
 
    if (!evobj) return NULL;
    if (type == ATSPI_COORD_TYPE_SCREEN)
@@ -292,7 +292,7 @@ _elm_atspi_object_elm_interface_atspi_component_extents_get(Eo *obj, void *_pd E
    int ee_x, ee_y;
    Evas_Object *evobj = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
    if (!evobj) return;
 
    evas_object_geometry_get(evobj, x, y, w, h);
@@ -314,7 +314,7 @@ _elm_atspi_object_elm_interface_atspi_component_extents_set(Eo *obj, void *_pd E
 
    if ((x < 0) || (y < 0) || (w < 0) || (h < 0)) return EINA_FALSE;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
    if (!evobj) return EINA_FALSE;
 
    if (type == ATSPI_COORD_TYPE_SCREEN)
@@ -338,7 +338,7 @@ _elm_atspi_object_elm_interface_atspi_component_layer_get(Eo *obj, void *_pd EIN
    Evas_Object *evobj = NULL;
    AtspiComponentLayer spi_layer;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
    if (!evobj) return 0;
 
    layer = evas_object_layer_get(evobj);
@@ -370,14 +370,14 @@ _elm_atspi_object_eo_base_event_callback_call(Eo *obj, void *_pd EINA_UNUSED,
 {
    Elm_Atspi_Global_Callback_Info *info;
    Eina_List *l;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
    EINA_LIST_FOREACH(_global_callbacks, l, info)
      {
         if (info->cb) info->cb(info->user_data, obj, desc, (void *)event_info);
      }
 
-   eo_do_super(obj, ELM_ATSPI_OBJ_CLASS, eo_event_callback_call(desc, event_info, &ret));
+   eo_do_super(obj, ELM_ATSPI_OBJ_CLASS, ret = eo_event_callback_call(desc, (void *) event_info));
    return ret;
 }
 
@@ -387,7 +387,7 @@ _elm_atspi_object_elm_interface_atspi_component_alpha_get(Eo *obj, void *_pd EIN
    Evas_Object *evobj = NULL;
    int alpha;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
    if (!evobj) return 0.0;
 
    evas_object_color_get(evobj, NULL, NULL, NULL, &alpha);
@@ -402,7 +402,7 @@ _emit_atspi_state_changed_focused_event(void *data, Evas_Object *eo EINA_UNUSED,
 {
    Elm_Atspi_Object *ao = data;
    int evdata[2] = {ATSPI_STATE_FOCUSED, 1};
-   eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &evdata[0], NULL));
+   eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &evdata[0]));
 }
 
 static void
@@ -410,7 +410,7 @@ _emit_atspi_state_changed_unfocused_event(void *data, Evas_Object *eo EINA_UNUSE
 {
    Elm_Atspi_Object *ao = data;
    int evdata[2] = {ATSPI_STATE_FOCUSED, 0};
-   eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &evdata[0], NULL));
+   eo_do(ao, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED, &evdata[0]));
 }
 
 EOLIAN static void
@@ -419,7 +419,7 @@ _elm_widget_access_object_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
    Evas_Object *internal_obj = NULL;
    eo_do_super(obj, ELM_WIDGET_ACCESS_OBJECT_CLASS, eo_constructor());
 
-   eo_do(obj, eo_parent_get(&internal_obj));
+   eo_do(obj, internal_obj = eo_parent_get());
 
    /* Evas_Object can only hold refs to atspi-object */
    assert(eo_isa(internal_obj, ELM_OBJ_WIDGET_CLASS));
@@ -433,7 +433,7 @@ _elm_widget_access_object_elm_atspi_object_name_get(Eo *obj, void *_pd EINA_UNUS
 {
    Evas_Object *widget = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&widget));
+   eo_do(obj, widget = elm_atspi_obj_object_get());
    return elm_object_text_get(widget);
 }
 
@@ -443,7 +443,7 @@ _elm_widget_access_object_elm_atspi_object_role_get(Eo *obj, void *_pd EINA_UNUS
    const char *type;
    AtspiRole role;
    Evas_Object *widget = NULL;
-   eo_do(obj, elm_atspi_obj_object_get(&widget));
+   eo_do(obj, widget = elm_atspi_obj_object_get());
    if (!widget) return ATSPI_ROLE_INVALID;
    type = evas_object_type_get(widget);
 
@@ -463,7 +463,7 @@ _elm_widget_access_object_elm_atspi_object_parent_get(Eo *obj, void *_pd EINA_UN
 {
    Evas_Object *widget = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&widget));
+   eo_do(obj, widget = elm_atspi_obj_object_get());
    widget = elm_object_parent_widget_get(widget);
 
    if (widget)
@@ -480,7 +480,7 @@ _elm_widget_access_object_elm_atspi_object_children_get(Eo *obj, void *_pd EINA_
    Elm_Widget_Smart_Data *sd;
    Elm_Atspi_Object *aobj;
 
-   eo_do(obj, elm_atspi_obj_object_get(&widget));
+   eo_do(obj, widget = elm_atspi_obj_object_get());
 
    sd = eo_data_scope_get(widget, ELM_OBJ_WIDGET_CLASS);
    if (!sd) return NULL;
@@ -498,11 +498,11 @@ _elm_widget_access_object_elm_atspi_object_children_get(Eo *obj, void *_pd EINA_
 EOLIAN static Elm_Atspi_State
 _elm_widget_access_object_elm_atspi_object_state_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Evas_Object *widget;
-   Elm_Atspi_State states;
-   eo_do(obj, elm_atspi_obj_object_get(&widget));
+   Evas_Object *widget = NULL;
+   Elm_Atspi_State states = 0;
+   eo_do(obj, widget = elm_atspi_obj_object_get());
 
-   eo_do_super(obj, ELM_WIDGET_ACCESS_OBJECT_CLASS, elm_atspi_obj_state_get(&states));
+   eo_do_super(obj, ELM_WIDGET_ACCESS_OBJECT_CLASS, states = elm_atspi_obj_state_get());
 
    if (elm_object_focus_get(widget))
      BIT_FLAG_SET(states, ATSPI_STATE_FOCUSED);
@@ -519,7 +519,7 @@ _elm_widget_access_object_elm_interface_atspi_component_focus_grab(Eo *obj, void
 {
    Evas_Object *evobj = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
    EINA_SAFETY_ON_NULL_RETURN_VAL(evobj, EINA_FALSE);
    if (elm_object_focus_allow_get(evobj))
      {
@@ -588,14 +588,14 @@ static void
 _win_focused(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Atspi_Object *ao = data;
-   eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL, NULL));
+   eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
 }
 
 static void
 _win_unfocused(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Atspi_Object *ao = data;
-   eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL, NULL));
+   eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
 }
 
 EOLIAN static void
@@ -604,7 +604,7 @@ _elm_win_access_object_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
    eo_do_super(obj, ELM_WIN_ACCESS_OBJECT_CLASS, eo_constructor());
    Evas_Object *evobj = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
 
    evas_object_smart_callback_add(evobj, "focused", _win_focused, obj);
    evas_object_smart_callback_add(evobj, "unfocused", _win_unfocused, obj);
@@ -614,7 +614,7 @@ EOLIAN static void
 _elm_win_access_object_eo_base_destructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Atspi_Object *root = _elm_atspi_root_object_get();
-   eo_do(root, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_CHILD_REMOVED, obj, NULL));
+   eo_do(root, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_CHILD_REMOVED, obj));
 
    eo_do_super(obj, ELM_WIN_ACCESS_OBJECT_CLASS, eo_destructor());
 }
@@ -624,7 +624,7 @@ _elm_win_access_object_elm_atspi_object_name_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *evobj = NULL;
 
-   eo_do(obj, elm_atspi_obj_object_get(&evobj));
+   eo_do(obj, evobj = elm_atspi_obj_object_get());
    EINA_SAFETY_ON_NULL_RETURN_VAL(evobj, NULL);
 
    return elm_win_title_get(evobj);
@@ -708,7 +708,7 @@ void _elm_atspi_object_global_callback_del(Eo_Event_Cb cb)
    Eina_List *l;
    EINA_LIST_FOREACH(_global_callbacks, l, info)
      {
-        if ((info->cb == cb))
+        if (info->cb == cb)
           {
              _global_callbacks = eina_list_remove(_global_callbacks, info);
              free(info);
