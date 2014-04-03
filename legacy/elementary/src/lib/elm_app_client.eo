@@ -1,5 +1,6 @@
 class Elm_App_Client (Eo_Base)
 {
+   legacy_prefix: null;
    eo_prefix: elm_app_client;
    constructors {
       constructor {
@@ -13,7 +14,6 @@ class Elm_App_Client (Eo_Base)
       views {
          get {
             /*@ Return a iterator with all views of application. */
-            legacy null;
          }
          values {
             Eina_Iterator *ret; /*@ the iterator with all views, must be freed after use */
@@ -22,7 +22,6 @@ class Elm_App_Client (Eo_Base)
       package {
          get {
             /*@ Return the application package. */
-            legacy null;
          }
          values {
             const char *ret; /*@ application package */
@@ -32,11 +31,9 @@ class Elm_App_Client (Eo_Base)
    methods {
       view_all_close {
          /*@ Close all views of application. */
-         legacy null;
       }
       terminate {
          /*@ Terminate application. */
-         legacy null;
       }
       view_open {
          /*@ Open a application view. */
@@ -46,14 +43,12 @@ class Elm_App_Client (Eo_Base)
             @in const void *data; /*@ calback user data */
          }
          return Elm_App_Client_Pending *; /* handler to cancel the view opening if it takes to long */
-         legacy null;
       }
       view_open_cancel {
          /*@ Cancel a pending elm_app_client_view_open(). */
          params {
             @in Elm_App_Client_Pending *pending; /*@ the view open handler */
          }
-         legacy null;
       }
    }
    implements {

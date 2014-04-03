@@ -1,11 +1,11 @@
 class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
 {
+   legacy_prefix: null;
    eo_prefix: elm_atspi_obj;
    data: null;
    properties {
       localized_role_name {
          get {
-            legacy null;
          }
          values {
             const char *ret;
@@ -13,7 +13,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       object {
          get {
-            legacy null;
          }
          values {
             Evas_Object *ret;
@@ -21,7 +20,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       state {
          get {
-            legacy null;
          }
          values {
             Elm_Atspi_State ret; /*@ state */
@@ -29,7 +27,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       name {
          get {
-            legacy null;
          }
          values {
             const char *ret; /*@ obj name */
@@ -37,12 +34,10 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       relation_set {
          get {
-            legacy null;
          }
       }
       role {
          get {
-            legacy null;
          }
          values {
             AtspiRole role;
@@ -50,7 +45,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       children {
          get {
-            legacy null;
          }
          values {
             Eina_List *ret;
@@ -58,7 +52,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       role_name {
          get {
-            legacy null;
          }
          values {
             const char *ret;
@@ -66,12 +59,10 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       attributes {
          get {
-            legacy null;
          }
       }
       index_in_parent {
          get {
-            legacy null;
          }
          values {
             unsigned int idx;
@@ -79,7 +70,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       description {
          get {
-            legacy null;
          }
          values {
             const char *ret;
@@ -87,7 +77,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
       }
       parent {
          get {
-            legacy null;
          }
          values {
             Elm_Atspi_Object *ret;
@@ -96,7 +85,6 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
    }
    methods {
       child_at_index_get {
-         legacy null;
          params {
             @in int idx;
          }

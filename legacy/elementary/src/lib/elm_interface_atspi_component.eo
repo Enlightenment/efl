@@ -1,15 +1,14 @@
 mixin Elm_Interface_Atspi_Component ()
 {
+   legacy_prefix: null;
    eo_prefix: elm_interface_atspi_component;
    data: null;
    properties {
       size {
          set {
             return Eina_Bool;
-            legacy null;
          }
          get {
-            legacy null;
          }
          values {
             int x;
@@ -18,7 +17,6 @@ mixin Elm_Interface_Atspi_Component ()
       }
       layer {
          get {
-            legacy null;
          }
          values {
             int ret;
@@ -26,7 +24,6 @@ mixin Elm_Interface_Atspi_Component ()
       }
       alpha {
          get {
-            legacy null;
          }
          values {
             double ret; /*@ alpha */
@@ -34,7 +31,6 @@ mixin Elm_Interface_Atspi_Component ()
       }
       z_order {
          get {
-            legacy null;
          }
          values {
             int ret;
@@ -51,7 +47,6 @@ mixin Elm_Interface_Atspi_Component ()
             @in AtspiCoordType type;
          }
          return Eina_Bool;
-         legacy null;
       }
       extents_get {
          params {
@@ -61,10 +56,8 @@ mixin Elm_Interface_Atspi_Component ()
             @out int h;
             @in AtspiCoordType type;
          }
-         legacy null;
       }
       contains {
-         legacy null;
          params {
             @in int x;
             @in int y;
@@ -73,11 +66,9 @@ mixin Elm_Interface_Atspi_Component ()
          return Eina_Bool;
       }
       focus_grab {
-         legacy null;
          return Eina_Bool;
       }
       accessible_at_point_get {
-         legacy null;
          params {
             @in int x;
             @in int y;
@@ -86,7 +77,6 @@ mixin Elm_Interface_Atspi_Component ()
          return Elm_Atspi_Object *;
       }
       position_set {
-         legacy null;
          params {
             @in int x;
             @in int y;
@@ -95,7 +85,6 @@ mixin Elm_Interface_Atspi_Component ()
          return Eina_Bool;
       }
       position_get {
-         legacy null;
          params {
             @out int x;
             @out int y;

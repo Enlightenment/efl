@@ -1,5 +1,6 @@
 class Elm_App_Client_View (Eo_Base)
 {
+   legacy_prefix: null;
    eo_prefix: elm_app_client_view;
    constructors {
       constructor {
@@ -13,7 +14,6 @@ class Elm_App_Client_View (Eo_Base)
       state {
          get {
             /*@ Get state of view */
-            legacy null;
          }
          values {
             Elm_App_View_State state; /*@ state of view */
@@ -22,7 +22,6 @@ class Elm_App_Client_View (Eo_Base)
       new_events {
          get {
             /*@ Get new events of view */
-            legacy null;
          }
          values {
             int events; /*@ number of events of view */
@@ -31,7 +30,6 @@ class Elm_App_Client_View (Eo_Base)
       window {
          get {
             /*@ Get window of view */
-            legacy null;
          }
          values {
             int window; /*@ window of view */
@@ -40,7 +38,6 @@ class Elm_App_Client_View (Eo_Base)
       icon_pixels {
          get {
             /*@ Get icon pixels of view, view could have a icon in raw format not saved in disk. */
-            legacy null;
          }
          values {
             unsigned int w; /*@ icon width */
@@ -52,7 +49,6 @@ class Elm_App_Client_View (Eo_Base)
       path {
          get {
             /*@ Get DBus path of view */
-            legacy null;
          }
          values {
             const char *ret; /*@ DBus path of view */
@@ -61,7 +57,6 @@ class Elm_App_Client_View (Eo_Base)
       package {
          get {
             /*@ Get application package */
-            legacy null;
          }
          values {
             const char *ret; /*@ Package of application */
@@ -70,7 +65,6 @@ class Elm_App_Client_View (Eo_Base)
       icon {
          get {
             /*@ Get icon path of view */
-            legacy null;
          }
          values {
             const char *ret; /*@ icon path of view */
@@ -79,7 +73,6 @@ class Elm_App_Client_View (Eo_Base)
       progress {
          get {
             /*@ Get progress of view, should be -1 if there nothing in progress or something between 0-100 */
-            legacy null;
          }
          values {
             unsigned short progress; /*@ progress of view */
@@ -88,7 +81,6 @@ class Elm_App_Client_View (Eo_Base)
       title {
          get {
             /*@ Get title of view */
-            legacy null;
          }
          values {
             const char *ret; /*@ title of view */
@@ -102,7 +94,6 @@ class Elm_App_Client_View (Eo_Base)
             @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was paused */
             @in const void *data; /*@ callback user data */
          }
-         legacy null;
       }
       resume {
          /*@ Resume view */
@@ -110,7 +101,6 @@ class Elm_App_Client_View (Eo_Base)
             @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was resumed */
             @in const void *data; /*@ callback user data */
          }
-         legacy null;
       }
       close {
          /*@ Close view */
@@ -118,7 +108,6 @@ class Elm_App_Client_View (Eo_Base)
             @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was closed */
             @in const void *data; /*@ callback user data */
          }
-         legacy null;
       }
    }
    implements {
