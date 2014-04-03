@@ -582,8 +582,7 @@ _elm_app_access_object_elm_atspi_object_parent_get(Eo *obj EINA_UNUSED, void *_p
 
 // elm_win wrapper
 
-const Eo_Class *elm_atspi_win_obj_class_get(void) EINA_CONST;
-#define ELM_ATSPI_WIN_CLASS elm_atspi_win_obj_class_get()
+#include "elm_win_access_object.eo.h"
 
 static void
 _win_focused(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -599,10 +598,10 @@ _win_unfocused(void *data, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UN
    eo_do(ao, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL, NULL));
 }
 
-static void
-_win_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_win_access_object_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, ELM_ATSPI_WIN_CLASS, eo_constructor());
+   eo_do_super(obj, ELM_WIN_ACCESS_OBJECT_CLASS, eo_constructor());
    Evas_Object *evobj = NULL;
 
    eo_do(obj, elm_atspi_obj_object_get(&evobj));
@@ -611,59 +610,33 @@ _win_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
    evas_object_smart_callback_add(evobj, "unfocused", _win_unfocused, obj);
 }
 
-static void
-_win_destructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_win_access_object_eo_base_destructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Atspi_Object *root = _elm_atspi_root_object_get();
    eo_do(root, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_CHILD_REMOVED, obj, NULL));
 
-   eo_do_super(obj, ELM_ATSPI_WIN_CLASS, eo_destructor());
+   eo_do_super(obj, ELM_WIN_ACCESS_OBJECT_CLASS, eo_destructor());
 }
 
-static void
-_win_name_get(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static const char*
+_elm_win_access_object_elm_atspi_object_name_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(const char **, ret, list);
    Evas_Object *evobj = NULL;
 
    eo_do(obj, elm_atspi_obj_object_get(&evobj));
-   EINA_SAFETY_ON_NULL_RETURN(evobj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evobj, NULL);
 
-   if (ret) *ret = elm_win_title_get(evobj);
+   return elm_win_title_get(evobj);
 }
 
-static void
-_win_parent_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static Elm_Atspi_Object*
+_elm_win_access_object_elm_atspi_object_parent_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Elm_Atspi_Object **, ret, list);
-   if (ret) *ret = _elm_atspi_root_object_get();
+   return _elm_atspi_root_object_get();
 }
 
-static void
-_win_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _win_constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _win_destructor),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_NAME_GET), _win_name_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET), _win_parent_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Class_Description win_class_desc = {
-     EO_VERSION,
-     "Elm_Win_Access_Object",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     _win_class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_atspi_win_obj_class_get, &win_class_desc, ELM_WIDGET_ACCESS_OBJECT_CLASS, ELM_INTERFACE_ATSPI_WINDOW_CLASS, NULL);
+#include "elm_win_access_object.eo.c"
 
 Elm_Atspi_Object*
 _elm_atspi_root_object_get(void)
@@ -696,7 +669,7 @@ _elm_atspi_factory_construct(Evas_Object *obj)
         return NULL;
      }
    else if (!strcmp(type, "elm_win"))
-     ret = eo_add(ELM_ATSPI_WIN_CLASS, obj);
+     ret = eo_add(ELM_WIN_ACCESS_OBJECT_CLASS, obj);
    else if (!strncmp(type, "elm_", 4)) // defaults to implementation for elm_widget class.
      ret = eo_add(ELM_WIDGET_ACCESS_OBJECT_CLASS, obj);
 

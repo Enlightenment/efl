@@ -693,6 +693,8 @@ BUILT_SOURCES = \
 		elm_web.eo.h \
 		elm_widget_access_object.eo.c \
 		elm_widget_access_object.eo.h \
+		elm_win_access_object.eo.c \
+		elm_win_access_object.eo.h \
 		elm_win.eo.c \
 		elm_win.eo.h
 
@@ -780,6 +782,7 @@ EXTRA_DIST += \
 	     elm_video.eo \
 	     elm_web.eo \
 	     elm_widget_access_object.eo \
+	     elm_win_access_object.eo \
 	     elm_win.eo
 
 nodist_includesunstable_HEADERS = \
@@ -866,5 +869,6 @@ nodist_includesunstable_HEADERS = \
 				  elm_video.eo.h \
 				  elm_web.eo.h \
 				  elm_widget_access_object.eo.h \
+				  elm_win_access_object.eo.h \
 				  elm_win.eo.h
 
