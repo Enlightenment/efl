@@ -210,7 +210,6 @@ _eo_condtor_reset(_Eo_Object *obj)
 static inline void
 _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 {
-   Eina_Bool do_err;
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
@@ -220,14 +219,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    _eo_condtor_reset(obj);
 
-   do_err = EINA_FALSE;
    eo_do(_eo_id_get(obj), eo_destructor(););
-
-   if (EINA_UNLIKELY(do_err))
-     {
-        ERR("in %s:%d: Object of class '%s' - One of the object destructors have failed.",
-            file, line, klass->desc->name);
-     }
 
    if (!obj->condtor_done)
      {
