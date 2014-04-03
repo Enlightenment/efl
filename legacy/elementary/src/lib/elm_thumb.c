@@ -594,7 +594,7 @@ _elm_thumb_eo_base_constructor(Eo *obj, Elm_Thumb_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set("Elm_Thumb"),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 
    sd->obj = obj;
 }
@@ -752,10 +752,11 @@ _elm_thumb_compress_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int compress)
    sd->thumb.compress = compress;
 }
 
-EOLIAN static int
-_elm_thumb_compress_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+EOLIAN static void
+_elm_thumb_compress_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int *compress)
 {
-   return sd->thumb.compress;
+   if (compress)
+      *compress = sd->thumb.compress;
 }
 
 EOLIAN static void
@@ -764,10 +765,11 @@ _elm_thumb_quality_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int quality)
    sd->thumb.quality = quality;
 }
 
-EOLIAN static int
-_elm_thumb_quality_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+EOLIAN static void
+_elm_thumb_quality_get(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, int *quality)
 {
-   return sd->thumb.quality;
+   if (quality)
+      *quality = sd->thumb.quality;
 }
 
 EOLIAN static void
