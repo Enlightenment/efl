@@ -90,7 +90,7 @@ static Elm_App_Server_View *
 _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, Eina_Stringshare **error_name, Eina_Stringshare **error_message EINA_UNUSED)
 {
    Elm_App_Server_View *view;
-   const char *id, *pkg;
+   const char *id = NULL, *pkg = NULL;
    App_View_Context *ctx;
 
    ctx = calloc(1, sizeof(App_View_Context));
@@ -103,8 +103,8 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
    view = eo_add_custom(ELM_APP_SERVER_VIEW_CLASS, app_server,
                         elm_app_server_view_constructor(NULL));
 
-   eo_do(view, elm_app_server_view_id_get(&id));
-   eo_do(app_server, elm_app_server_package_get(&pkg));
+   eo_do(view, id = elm_app_server_view_id_get());
+   eo_do(app_server, pkg = elm_app_server_package_get());
    ctx->view_name = eina_stringshare_printf("%s %s", pkg, id);
 
    _window_create(ctx);
@@ -124,11 +124,11 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
 static Eina_Bool
 _terminate_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   const char *title;
+   const char *title = NULL;
 
    printf("terminate cb\n");
    eo_do(obj, elm_app_server_save(),
-         elm_app_server_title_get(&title));
+         title = elm_app_server_title_get());
 
    printf("Closing: %s\n", title);
    eo_unref(obj);
@@ -138,25 +138,25 @@ _terminate_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc 
 Elm_App_Server *
 test_application_server_common(const char *pkg)
 {
-   Eina_Iterator *views_iter;
+   Eina_Iterator *views_iter = NULL;
    Elm_App_Server_View *view;
    Elm_App_Server *server;
 
    server = eo_add_custom(ELM_APP_SERVER_CLASS, NULL,
                           elm_app_server_constructor(pkg, _create_view_cb));
    eo_do(server, elm_app_server_title_set(pkg),
-         elm_app_server_views_get(&views_iter),
+         views_iter = elm_app_server_views_get(),
          eo_event_callback_add(ELM_APP_SERVER_EVENT_TERMINATE, _terminate_cb, NULL));
 
    //views create in shallow state
    EINA_ITERATOR_FOREACH(views_iter, view)
      {
         App_View_Context *ctx;
-        const char *id;
+        const char *id = NULL;
 
         ctx = calloc(1, sizeof(App_View_Context));
 
-        eo_do(view, elm_app_server_view_id_get(&id));
+        eo_do(view, id = elm_app_server_view_id_get());
         ctx->view_name = eina_stringshare_printf("%s %s", pkg, id);
 
         eo_do(view,
