@@ -1,3 +1,4 @@
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -840,7 +841,7 @@ _ecore_evas_win32_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
 
    if (obj != old)
      {
-        ecore_win32_window_cursor_show(ee->prop.window, 0);
+//        ecore_win32_window_cursor_show(ee->prop.window, 0);
         evas_pointer_output_xy_get(ee->evas, &x, &y);
         evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
         evas_object_pass_events_set(ee->prop.cursor.object, 1);
