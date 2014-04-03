@@ -40,6 +40,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    const char *func_lpref = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
+   Eina_Bool ret_const = EINA_FALSE;
    char tmpstr[0xFF];
    const Eina_List *l;
    void *data;
@@ -64,6 +65,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
                   data = eina_list_data_get(l);
                   eolian_parameter_information_get((Eolian_Function_Parameter)data, NULL, &rettype, NULL, NULL);
                   var_as_ret = EINA_TRUE;
+                  ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
           }
      }
@@ -169,7 +171,8 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
    eina_strbuf_replace_all(fbody, "@#params", eina_strbuf_string_get(fparam));
    eina_strbuf_replace_all(fbody, "@#list_desc_param", eina_strbuf_string_get(descparam));
    eina_strbuf_reset(fparam);
-   eina_strbuf_append_printf(fparam, "%s%s",
+   eina_strbuf_append_printf(fparam, "%s%s%s",
+         ret_const ? "const " : "",
          rettype ? rettype : "void",
          rettype && strchr(rettype, '*')?"":" ");
    eina_strbuf_replace_all(fbody, "@#type_return", eina_strbuf_string_get(fparam));
