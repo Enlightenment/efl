@@ -1637,7 +1637,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      }
    else if (tex_only)
      {
-        if (tex->pt->dyn.img)
+        if (tex->pt->dyn.img && (tex->pt->format != GL_ETC1_RGB8_OES))
           {
              if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
                {
@@ -1708,7 +1708,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      }
    else
      {
-        if (tex->gc->shared->info.bgra)
+        if (tex->gc->shared->info.bgra && (tex->pt->format != GL_ETC1_RGB8_OES))
           {
              if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))
                {
@@ -2448,7 +2448,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
       default:
          if (tex_only)
            {
-              if (tex->pt->dyn.img)
+              if (tex->pt->dyn.img && (tex->pt->format != GL_ETC1_RGB8_OES))
                 {
                    prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a,
                                                                           SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA)].prog;
@@ -2461,7 +2461,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
            }
          else
            {
-              if (tex->gc->shared->info.bgra)
+              if (tex->gc->shared->info.bgra && (tex->pt->format != GL_ETC1_RGB8_OES))
                 {
                    prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a,
                                                                           SHADER_IMG_BGRA_NOMUL,
