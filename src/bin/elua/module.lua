@@ -14,7 +14,21 @@ local loaded = {
 
 for k, v in pairs(package.loaded) do loaded[k] = v end
 
-M.path = "./?.lua;/?/init.lua"
+M.path  = "./?.lua;/?/init.lua"
+M.cpath = ""
+
+local loadlib = package.loadlib
+
+local cloader_load = function(soname, modname)
+    local hyp = modname:find("%-")
+    if hyp then modname = modname:sub(hyp + 1) end
+    local  f, err = loadlib(soname, "luaopen_" .. (modname:gsub("%.", "_")))
+    if not f then
+        error("error loading module '" .. modname .. "' from file '"
+            .. fname .. "':\n" .. err, 3)
+    end
+    return f
+end
 
 local loaders = {
     function(modname)
@@ -27,12 +41,28 @@ local loaders = {
     function(modname)
         local  fname, err = package.searchpath(modname, M.path)
         if not fname then return err end
-        local f, err = loadfile(fname)
+        local  f, err = loadfile(fname)
         if not f then
             error("error loading module '" .. modname .. "' from file '"
                 .. fname .. "':\n" .. err, 2)
         end
         return f
+    end,
+    function(modname)
+        local  fname, err = package.searchpath(modname, M.cpath)
+        if not fname then return err end
+        local hyp = modname:find("%-")
+        if hyp then modname = modname:sub(hyp + 1) end
+        return cloader_load(fname, modname)
+    end,
+    function(modname)
+        local rootname, dot = modname, modname:find("%.")
+        if dot then
+            rootname = rootname:sub(dot + 1)
+        end
+        local  fname, err = package.searchpath(rootname, M.cpath)
+        if not fname then return err end
+        return cloader_load(fname, modname)
     end
 }
 M.loaders = loaders
@@ -43,7 +73,8 @@ local find_loader = function(modname, env)
     for i = 1, #loaders do
         local v = loaders[i](modname)
         if type(v) == "function" then
-            return setfenv(v, env)
+            local status, ret = pcall(function() return setfenv(v, env) end)
+            return status and ret or v
         elseif type(v) == "string" then
             err[#err + 1] = v
         end
@@ -72,6 +103,10 @@ M.loaded  = loaded
 
 -- register require
 M.path = (...)(M.require, M.path)
+
+M.config     = package.config
+M.searchpath = package.searchpath
+M.loadlib    = package.loadlib
 
 _G["require"] = M.require
 _G["package"] = M
