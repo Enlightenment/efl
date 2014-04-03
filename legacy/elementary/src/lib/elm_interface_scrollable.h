@@ -145,8 +145,6 @@ enum
 #define elm_obj_pan_gravity_get(x, y) ELM_OBJ_PAN_ID(ELM_OBJ_PAN_SUB_ID_GRAVITY_GET), EO_TYPECHECK(double *, x), EO_TYPECHECK(double *, y)
 #endif
 
-#include "elm_interface_scrollable.eo.h"
-
 #if 0
 #define ELM_SCROLLABLE_INTERFACE elm_scrollable_interface_get()
 
@@ -1239,6 +1237,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
        if (getenv("ELM_ERROR_ABORT")) abort();                               \
        return __VA_ARGS__;                                                   \
     }
+
+#include "elm_interface_scrollable.eo.h"
 
 /**
  * @}
