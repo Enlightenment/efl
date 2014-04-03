@@ -216,6 +216,7 @@ gl_symbols(void)
    FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", secsym_func_uint);
 #endif
    FINDSYM(glsym_glCompressedTexImage2d, "glCompressedTexImage2D", glsym_func_void);
+   FINDSYM2(glsym_glCompressedTexImage2d, "glCompressedTexImage2D", glsym_func_void);
 }
 
 static void shader_array_flush(Evas_Engine_GL_Context *gc);
@@ -730,6 +731,7 @@ evas_gl_common_context_new(void)
                    "non-power-2 tex %i\n"
                    "rect tex %i\n"
                    "bgra : %i\n"
+                   "etc1 : %i\n"
                    "max ansiotropic filtering: %3.3f\n"
                    "egl sec map image: %i\n"
                    "max vertex count: %i\n"
@@ -749,6 +751,7 @@ evas_gl_common_context_new(void)
                    (int)shared->info.tex_npo2,
                    (int)shared->info.tex_rect,
                    (int)shared->info.bgra,
+                   (int)shared->info.etc1,
                    (double)shared->info.anisotropic,
                    (int)shared->info.sec_image_map,
                    (int)shared->info.max_vertex_elements,
