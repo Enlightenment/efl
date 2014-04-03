@@ -220,6 +220,7 @@ evas_image_load_file_data_tgv(void *loader_data,
    Evas_Loader_Internal *loader = loader_data;
    const char *m;
    unsigned int *p = pixels;
+   unsigned char *p_etc1 = pixels;
    char *buffer;
    Eina_Rectangle master;
    unsigned int block_length;
@@ -335,8 +336,8 @@ evas_image_load_file_data_tgv(void *loader_data,
                          }
                        break;
                     case EVAS_COLORSPACE_ETC1:
-                       memcpy(&p[current_etc.x +
-                                 current_etc.y * etc1_width],
+                       memcpy(&p_etc1[(current_etc.x / 4) * 8 +
+                                      (current_etc.y / 4) * etc1_width],
                               it, 8);
                        break;
                     default:
