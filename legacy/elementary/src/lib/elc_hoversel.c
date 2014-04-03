@@ -38,7 +38,7 @@ _elc_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -46,7 +46,7 @@ _elc_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
 EOLIAN static Eina_Bool
 _elc_hoversel_elm_widget_theme_apply(Eo *obj, Elc_Hoversel_Data *sd)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -63,7 +63,7 @@ _elc_hoversel_elm_widget_theme_apply(Eo *obj, Elc_Hoversel_Data *sd)
    /* hoversel's style has an extra bit: orientation */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -280,7 +280,7 @@ _elc_hoversel_evas_smart_add(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED)
    evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
 
    //What are you doing here?
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static void
@@ -341,7 +341,7 @@ _elc_hoversel_eo_base_constructor(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -368,7 +368,7 @@ _elc_hoversel_horizontal_set(Eo *obj, Elc_Hoversel_Data *sd, Eina_Bool horizonta
 {
    sd->horizontal = !!horizontal;
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool
@@ -503,7 +503,7 @@ _elc_hoversel_elm_widget_event(Eo *obj, Elc_Hoversel_Data *sd, Evas_Object *src,
 
    Elm_Hoversel_Item  *litem, *fitem;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_event(src, type, event_info, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_event(src, type, event_info));
    if (int_ret) return EINA_FALSE;
 
    if (!sd || !sd->hover) return EINA_FALSE;
