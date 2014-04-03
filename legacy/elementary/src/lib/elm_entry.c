@@ -676,7 +676,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -1106,7 +1106,7 @@ _elm_entry_elm_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, E
         elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
      }
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &ret));
+   eo_do_super(obj, MY_CLASS, ret = elm_obj_widget_sub_object_del(sobj));
    if (!ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -2734,15 +2734,15 @@ _elm_entry_elm_layout_signal_callback_del(Eo *obj, Elm_Entry_Data *sd, const cha
 
    wd->resize_obj = sd->entry_edje;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_del
-         (emission, source, func_cb, &data));
+   eo_do_super(obj, MY_CLASS, data = elm_obj_layout_signal_callback_del
+         (emission, source, func_cb));
 
    if (sd->scr_edje)
      {
         wd->resize_obj = sd->scr_edje;
 
-        eo_do_super(obj, MY_CLASS, elm_obj_layout_signal_callback_del
-              (emission, source, func_cb, &data));
+        eo_do_super(obj, MY_CLASS, data = elm_obj_layout_signal_callback_del
+              (emission, source, func_cb));
      }
 
    wd->resize_obj = ro;
@@ -2753,7 +2753,7 @@ EOLIAN static Eina_Bool
 _elm_entry_elm_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
    if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
@@ -2770,8 +2770,8 @@ _elm_entry_elm_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, c
 EOLIAN static Evas_Object*
 _elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
 {
-   Evas_Object *int_content;
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &int_content));
+   Evas_Object *int_content = NULL;
+   eo_do_super(obj, MY_CLASS, int_content = elm_obj_container_content_unset(part));
    if (!int_content) return NULL;
 
    /* too bad entry does not follow the pattern
@@ -3575,14 +3575,14 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
 _elm_entry_text_style_user_push(Eo *obj, Elm_Entry_Data *sd, const char *style)
 {
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static void
@@ -3590,7 +3590,7 @@ _elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *sd)
 {
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static const char*
@@ -3608,7 +3608,7 @@ _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
    sd->line_wrap = ELM_WRAP_NONE;
    if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
      elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 
    if (sd->scroll)
      {
@@ -3659,7 +3659,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
         _entry_selection_callbacks_register(obj);
      }
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool
@@ -3673,15 +3673,15 @@ elm_entry_entry_set(Evas_Object *obj,
                     const char *entry)
 {
    ELM_ENTRY_CHECK(obj);
-   eo_do(obj, elm_obj_layout_text_set(NULL, entry, NULL));
+   eo_do(obj, elm_obj_layout_text_set(NULL, entry));
 }
 
 EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
    ELM_ENTRY_CHECK(obj) NULL;
-   const char *text;
-   eo_do((Eo *)obj, elm_obj_layout_text_get(NULL, &text));
+   const char *text = NULL;
+   eo_do((Eo *)obj, text = elm_obj_layout_text_get(NULL));
    return text;
 }
 
@@ -3792,7 +3792,7 @@ _elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *sd, Elm_Wrap_Type wrap)
    sd->line_wrap = wrap;
    if (wrap == ELM_WRAP_NONE)
      ELM_SAFE_FREE(sd->deferred_recalc_job, ecore_job_del);
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Elm_Wrap_Type
@@ -3806,7 +3806,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 {
    if (sd->editable == editable) return;
    sd->editable = editable;
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 
    elm_drop_target_del(obj, sd->drop_format,
                        NULL, NULL,
@@ -4547,7 +4547,7 @@ _elm_entry_scrollable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool scroll)
         elm_widget_on_show_region_hook_set(obj, NULL, NULL);
      }
    sd->last_w = -1;
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool
