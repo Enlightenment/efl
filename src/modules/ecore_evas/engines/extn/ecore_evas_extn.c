@@ -56,23 +56,14 @@ static void
 _ecore_evas_extn_event_free(void *data, void *ev EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-
-   if (bdata->image)
-     evas_object_unref(bdata->image);
    _ecore_evas_unref(ee);
 }
 
 static void
 _ecore_evas_extn_event(Ecore_Evas *ee, int event)
 {
-    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    _ecore_evas_ref(ee);
-
-   if (bdata->image)
-     evas_object_ref(bdata->image);
-   ecore_event_add(event, ee,
-                   _ecore_evas_extn_event_free, ee);
+   ecore_event_add(event, ee, _ecore_evas_extn_event_free, ee);
 }
 
 static void
