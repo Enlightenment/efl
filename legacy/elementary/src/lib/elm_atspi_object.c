@@ -2,12 +2,14 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define ELM_ATSPI_OBJECT_PROTECTED
+#include "atspi/atspi-constants.h"
+
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
 #include "assert.h"
-
-#include "atspi/atspi-constants.h"
 
 static Elm_Atspi_Object *_app;
 static Eina_List *_global_callbacks;

@@ -2,12 +2,14 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define ELM_ATSPI_OBJECT_PROTECTED
+#include "atspi/atspi-constants.h"
+
 #include <stdint.h>
 #include <Elementary.h>
 #include "elm_priv.h"
 #include <assert.h>
-
-#include "atspi/atspi-constants.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
