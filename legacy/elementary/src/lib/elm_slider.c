@@ -531,7 +531,7 @@ _popup_add(Elm_Slider_Data *sd, Eo *obj)
 EOLIAN static Eina_Bool
 _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
    ELM_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -552,7 +552,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
                          elm_widget_style_get(obj));
      }
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (sd->popup)
@@ -920,7 +920,7 @@ _elm_slider_eo_base_constructor(Eo *obj, Elm_Slider_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -1000,7 +1000,7 @@ _elm_slider_horizontal_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool horizontal)
    if (sd->horizontal == horizontal) return;
    sd->horizontal = horizontal;
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool
@@ -1174,9 +1174,9 @@ _elm_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Slide
 EOLIAN static Eina_Bool
 _elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
 
    if (sd->always_popup_show && elm_widget_focus_get(obj))
      _popup_show(obj, NULL, NULL, NULL);
