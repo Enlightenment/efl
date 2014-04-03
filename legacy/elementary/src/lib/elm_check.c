@@ -92,7 +92,7 @@ _elm_check_elm_widget_sub_object_del(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, E
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -121,7 +121,7 @@ _elm_check_elm_container_content_set(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, c
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -176,7 +176,7 @@ _elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (!sd->state) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
@@ -343,7 +343,7 @@ _elm_check_eo_base_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
