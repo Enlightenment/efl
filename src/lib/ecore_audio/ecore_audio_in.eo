@@ -1,5 +1,6 @@
 class Ecore_Audio_In (Ecore_Audio)
 {
+   legacy_prefix: null;
    eo_prefix: ecore_audio_obj_in;
    data: Ecore_Audio_Input;
       properties {
@@ -9,14 +10,12 @@ class Ecore_Audio_In (Ecore_Audio)
             Set the playback speed of the input.
 
             @since 1.8 */
-            legacy null;
          }
          get {
             /*@
             Get the playback speed of the input.
 
             @since 1.8 */
-            legacy null;
          }
          values {
             double speed; /*The speed, 1.0 is the default*/
@@ -28,14 +27,12 @@ class Ecore_Audio_In (Ecore_Audio)
             Set the sample-rate of the input
 
             @since 1.8 */
-            legacy null;
          }
          get {
             /*@
             Get the he sample-rate of the input
 
             @since 1.8 */
-            legacy null;
          }
          values {
             int samplerate; /*The samplerate in Hz*/
@@ -47,14 +44,12 @@ class Ecore_Audio_In (Ecore_Audio)
             Set the amount of channels the input has
 
             @since 1.8 */
-            legacy null;
          }
          get {
             /*@
             Get the amount of channels the input has
 
             @since 1.8 */
-            legacy null;
          }
          values {
             int channels; /*The number of channels*/
@@ -66,14 +61,12 @@ class Ecore_Audio_In (Ecore_Audio)
             Set the preloaded state of the input
 
             @since 1.8 */
-            legacy null;
          }
          get {
             /*@
             Get the the preloaded state of the input
 
             @since 1.8 */
-            legacy null;
          }
          values {
             Eina_Bool preloaded; /*EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
@@ -89,14 +82,12 @@ class Ecore_Audio_In (Ecore_Audio)
             will be emitted
 
             @since 1.8 */
-            legacy null;
          }
          get {
             /*@
             Get the looped state of the input
 
             @since 1.8 */
-            legacy null;
          }
          values {
             Eina_Bool looped; /*EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
@@ -111,14 +102,12 @@ class Ecore_Audio_In (Ecore_Audio)
             (i.e. ECORE_AUDIO_OBJ_IN_TONE_CLASS)
 
             @since 1.8 */
-            legacy null;
          }
          get {
             /*@
             Get the length of the input
 
             @since 1.8 */
-            legacy null;
          }
          values {
             double length; /*The length of the input in seconds*/
@@ -130,7 +119,6 @@ class Ecore_Audio_In (Ecore_Audio)
             Get the output that this input is attached to
 
             @since 1.8 */
-            legacy null;
          }
          values {
             Eo *output; /*The output*/
@@ -142,7 +130,6 @@ class Ecore_Audio_In (Ecore_Audio)
             Get the remaining time of the input
 
             @since 1.8 */
-            legacy null;
          }
          values {
             double remaining; /*The amount of time in seconds left to play*/
@@ -155,7 +142,6 @@ class Ecore_Audio_In (Ecore_Audio)
          Read from the input
 
          @since 1.8 */
-         legacy null;
          return ssize_t; /*The amount of samples written to buf*/
          params {
             @in void *buf; /*The buffer to read into*/
@@ -167,7 +153,6 @@ class Ecore_Audio_In (Ecore_Audio)
          Internal read function
 
          @since 1.8 */
-         legacy null;
          return ssize_t; /*The amount of samples written to buf*/
          params {
             @in void *buf; /*The buffer to read into*/
@@ -179,7 +164,6 @@ class Ecore_Audio_In (Ecore_Audio)
          Seek within the input
 
          @since 1.8 */
-         legacy null;
          return double; /*The current absolute position in seconds within the input*/
          params {
             @in double offs; /*The offset in seconds*/
