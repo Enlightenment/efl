@@ -79,6 +79,8 @@ include Makefile_Eolian_Cxx.am
 include Makefile_Eet_Cxx.am
 include Makefile_Eo_Cxx.am
 
+include Makefile_Elua.am
+
 .PHONY: benchmark examples
 
 BENCHMARK_SUBDIRS = \
@@ -105,7 +107,8 @@ examples/eldbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \
-examples/ethumb_client
+examples/ethumb_client \
+examples/elua
 
 if HAVE_CXX11
 EXAMPLES_SUBDIRS += \

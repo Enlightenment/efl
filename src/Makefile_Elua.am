@@ -1,0 +1,22 @@
+if HAVE_ELUA
+
+bin_PROGRAMS += bin/elua/elua
+
+bin_elua_elua_SOURCES = \
+                bin/elua/cache.c \
+                bin/elua/main.c
+
+bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+    -DELUA_DATA_DIR="\"$(datadir)/elua\"" @ELUA_CFLAGS@
+bin_elua_elua_LDADD = @ELUA_LIBS@
+bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
+
+eluamodulesdir = $(datadir)/elua/modules
+eluamodules_DATA = bin/elua/elm.lua
+EXTRA_DIST += $(eluamodules_DATA)
+
+eluacoredir = $(datadir)/elua/core
+eluacore_DATA = bin/elua/module.lua
+EXTRA_DIST += $(eluacore_DATA)
+
+endif

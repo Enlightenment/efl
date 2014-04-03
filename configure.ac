@@ -4307,6 +4307,51 @@ EFL_EVAL_PKGS([ETHUMB_CLIENT])
 EFL_LIB_END_OPTIONAL([Ethumb_Client])
 #### End of Ethumb_Client
 
+#### Elua
+
+have_elua="yes"
+if test "${want_lua_old}" = "yes"; then
+  have_elua="no"
+fi
+
+EFL_LIB_START_OPTIONAL([Elua], [test "${have_elua}" = "yes"])
+
+### Default values
+
+AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
+
+### Additional options to configure
+
+### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([ELUA], [evil])
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ELUA], [eina])
+EFL_INTERNAL_DEPEND_PKG([ELUA], [eo])
+EFL_INTERNAL_DEPEND_PKG([ELUA], [ecore])
+
+EFL_DEPEND_PKG([ELUA], [LUAJIT], [luajit >= 2.0.0])
+
+EFL_EVAL_PKGS([ELUA])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END_OPTIONAL([Elua])
+#### End of Elua
 
 AC_ARG_ENABLE([always-build-examples],
    [AC_HELP_STRING([--enable-always-build-examples],
@@ -4567,6 +4612,7 @@ echo "Edje............: ${efl_lib_optional_edje} (${features_edje})"
 echo "Emotion.........: ${efl_lib_optional_emotion} (${features_emotion})"
 echo "Ethumb..........: ${efl_lib_optional_ethumb}"
 echo "Ethumb_Client...: ${efl_lib_optional_ethumb_client}"
+echo "Elua............: $have_elua"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then
