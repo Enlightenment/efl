@@ -566,7 +566,7 @@ _elm_list_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -971,7 +971,7 @@ EOLIAN static Eina_Bool
 _elm_list_elm_widget_disable(Eo *obj, Elm_List_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_disable(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_disabled_get(obj))
@@ -1013,7 +1013,7 @@ _elm_list_elm_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
    Eina_List *n;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -1149,7 +1149,7 @@ _elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd)
    Elm_Object_Item *it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)
@@ -1198,7 +1198,7 @@ _elm_list_elm_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_Object *sob
    Elm_List_Item *it;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if ((sobj == sd->box) || (sobj == obj)) goto end;
@@ -2305,7 +2305,7 @@ _elm_list_eo_base_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
