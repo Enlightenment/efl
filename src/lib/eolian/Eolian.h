@@ -110,6 +110,12 @@ typedef enum
    EOLIAN_CLASS_INTERFACE
 } Eolian_Class_Type;
 
+typedef enum
+{
+   EOLIAN_SCOPE_PUBLIC,
+   EOLIAN_SCOPE_PROTECTED
+} Eolian_Function_Scope;
+
 /*
  * @brief Parse a given .eo file and fill the database.
  *
@@ -280,6 +286,16 @@ EAPI Eolian_Function eolian_class_default_destructor_get(const char *class_name)
  * @ingroup Eolian
  */
 EAPI Eolian_Function_Type eolian_function_type_get(Eolian_Function function_id);
+
+/*
+ * @brief Returns the scope of a function
+ *
+ * @param[in] function_id Id of the function
+ * @return the function scope
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Function_Scope eolian_function_scope_get(Eolian_Function function_id);
 
 /*
  * @brief Returns the name of a function

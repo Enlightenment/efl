@@ -113,7 +113,7 @@ static const char
 tmpl_eo_subid_apnd[] = "   @#EOPREFIX_SUB_ID_@#FUNC,\n";
 
 static const char
-tmpl_eo_funcdef_doxygen[] = "\n\
+tmpl_eo_funcdef_doxygen[] = "\
 /**\n\
  * @def @#eoprefix_@#func\n\
  *\n\
@@ -163,6 +163,7 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
    Eina_Bool var_as_ret = EINA_FALSE;
    const char *rettype = NULL;
    Eina_Bool ret_const = EINA_FALSE;
+   Eolian_Function_Scope scope = eolian_function_scope_get(func);
 
    char *fsuffix = "";
    rettype = eolian_function_return_type_get(func, ftype);
@@ -189,12 +190,17 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
    const char *funcdesc = eolian_function_description_get(func, descname);
 
    Eina_Strbuf *str_func = eina_strbuf_new();
-   _template_fill(str_func, tmpl_eo_funcdef_doxygen, classname, funcname, EINA_TRUE);
+   if (scope == EOLIAN_SCOPE_PROTECTED)
+      eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", capclass);
+   _template_fill(str_func, tmpl_eo_funcdef_doxygen, classname, funcname, EINA_FALSE);
 #ifndef EO
    _template_fill(str_func, tmpl_eo1_funcdef, classname, funcname, EINA_FALSE);
 #else
    _template_fill(str_func, tmpl_eo_funcdef, classname, funcname, EINA_FALSE);
+   if (scope == EOLIAN_SCOPE_PROTECTED)
+      eina_strbuf_append_printf(str_func, "#endif\n");
 #endif
+   eina_strbuf_append_printf(str_func, "\n");
 
    eina_strbuf_replace_all(str_func, "@#EOPREFIX", current_eo_prefix_upper);
    eina_strbuf_replace_all(str_func, "@#eoprefix", current_eo_prefix_lower);

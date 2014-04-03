@@ -44,6 +44,7 @@ typedef struct
    Eina_List *keys; /* list of _Parameter_Desc */
    Eina_List *params; /* list of _Parameter_Desc */
    Eolian_Function_Type type;
+   Eolian_Function_Scope scope;
    Eina_Hash *data;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_virtual_pure :1;
@@ -377,6 +378,22 @@ database_function_new(const char *function_name, Eolian_Function_Type foo_type)
    fid->type = foo_type;
    fid->data  = eina_hash_string_superfast_new(free);
    return (Eolian_Function) fid;
+}
+
+EAPI Eolian_Function_Scope
+eolian_function_scope_get(Eolian_Function function_id)
+{
+   _Function_Id *fid = (_Function_Id *)function_id;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EOLIAN_SCOPE_PUBLIC);
+   return fid->scope;
+}
+
+void
+database_function_scope_set(Eolian_Function function_id, Eolian_Function_Scope scope)
+{
+   _Function_Id *fid = (_Function_Id *)function_id;
+   EINA_SAFETY_ON_NULL_RETURN(fid);
+   fid->scope = scope;
 }
 
 void

@@ -33,6 +33,9 @@ static int _eo_tokenizer_log_dom = -1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eo_tokenizer_log_dom, __VA_ARGS__)
 
+#define FUNC_PUBLIC 0
+#define FUNC_PROTECTED 1
+
 static int _init_counter = 0;
 
 int
@@ -152,10 +155,21 @@ _eo_tokenizer_class_get(Eo_Tokenizer *toknz, char *p)
 static Eo_Property_Def*
 _eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
 {
-   Eo_Property_Def *prop = calloc(1, sizeof(Eo_Property_Def));
-   if (prop == NULL) ABORT(toknz, "calloc Eo_Property_Def failure");
+   Eo_Property_Def *prop = NULL;
+   if (!strncmp(toknz->saved.tok, "protected ", 10))
+     {
+        toknz->saved.tok += 10;
+        toknz->tmp.fscope = FUNC_PROTECTED;
+     }
+   else
+     {
+        prop = calloc(1, sizeof(Eo_Property_Def));
+        if (prop == NULL) ABORT(toknz, "calloc Eo_Property_Def failure");
 
-   prop->name = _eo_tokenizer_token_get(toknz, p);
+        prop->name = _eo_tokenizer_token_get(toknz, p);
+        prop->scope = toknz->tmp.fscope;
+        toknz->tmp.fscope = FUNC_PUBLIC;
+     }
 
    return prop;
 }
@@ -163,10 +177,21 @@ _eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
 static Eo_Method_Def*
 _eo_tokenizer_method_get(Eo_Tokenizer *toknz, char *p)
 {
-   Eo_Method_Def *meth = calloc(1, sizeof(Eo_Method_Def));
-   if (meth == NULL) ABORT(toknz, "calloc Eo_Method_Def failure");
+   Eo_Method_Def *meth = NULL;
+   if (!strncmp(toknz->saved.tok, "protected ", 10))
+     {
+        toknz->saved.tok += 10;
+        toknz->tmp.fscope = FUNC_PROTECTED;
+     }
+   else
+     {
+        meth = calloc(1, sizeof(Eo_Method_Def));
+        if (meth == NULL) ABORT(toknz, "calloc Eo_Method_Def failure");
 
-   meth->name = _eo_tokenizer_token_get(toknz, p);
+        meth->name = _eo_tokenizer_token_get(toknz, p);
+        meth->scope = toknz->tmp.fscope;
+        toknz->tmp.fscope = FUNC_PUBLIC;
+     }
 
    return meth;
 }
@@ -424,7 +449,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    # chars allowed on the return line.
    return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-');
-   func_name         = alnum+ >save_fpc (alnum | '_' )+;
+   func_name         = (alnum >save_fpc (alnum | '_')+ (ws (alnum | '_')+)?);
 }%%
 
 %%{
@@ -1374,6 +1399,7 @@ eo_tokenizer_database_fill(const char *filename)
         EINA_LIST_FOREACH(kls->properties, l, prop)
           {
              Eolian_Function foo_id = database_function_new(prop->name, EOLIAN_UNRESOLVED);
+             database_function_scope_set(foo_id, prop->scope);
              EINA_LIST_FOREACH(prop->keys, m, param)
                {
                   Eolian_Function_Parameter p = database_property_key_add(
@@ -1437,6 +1463,7 @@ eo_tokenizer_database_fill(const char *filename)
         EINA_LIST_FOREACH(kls->methods, l, meth)
           {
              Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_METHOD);
+             database_function_scope_set(foo_id, meth->scope);
              database_class_function_add(kls->name, foo_id);
              if (meth->ret)
                {
