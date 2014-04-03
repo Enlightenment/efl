@@ -1,4 +1,4 @@
-mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface)
+mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface, Evas_Smart)
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_scrollable;
