@@ -156,8 +156,8 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const 
 EOLIAN static Eina_Bool
 _elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
-   Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _update_theme_button(obj, sd->forward, "forward");
@@ -535,12 +535,12 @@ _elm_player_elm_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
    if (part && strcmp(part, "video"))
      {
         eo_do_super(obj, MY_CLASS,
-                    elm_obj_container_content_set(part, content, &int_ret));
+                    int_ret = elm_obj_container_content_set(part, content));
         return int_ret;
      }
    if ((!part) || (!strcmp(part, "video"))) part = "elm.swallow.content";
    eo_do_super(obj, MY_CLASS,
-               elm_obj_container_content_set(part, content, &int_ret));
+               int_ret = elm_obj_container_content_set(part, content));
 
    if (!_elm_video_check(content)) return EINA_FALSE;
    if (sd->video == content) goto end;
@@ -692,7 +692,7 @@ _elm_player_eo_base_constructor(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
