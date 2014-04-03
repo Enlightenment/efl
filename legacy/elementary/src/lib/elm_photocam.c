@@ -692,7 +692,7 @@ static Eina_Bool
 _zoom_do(Evas_Object *obj,
          double t)
 {
-   Evas_Coord xx, yy, ow, oh;
+   Evas_Coord xx, yy, ow = 0, oh = 0;
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
 
@@ -826,7 +826,7 @@ _elm_photocam_elm_widget_on_focus(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
@@ -849,7 +849,7 @@ EOLIAN static Eina_Bool
 _elm_photocam_elm_widget_theme_apply(Eo *obj, Elm_Photocam_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -1051,7 +1051,7 @@ _g_layer_zoom_do(Evas_Object *obj,
                  Elm_Gesture_Zoom_Info *g_layer)
 {
    int regx, regy, regw, regh, ix, iy, iw, ih;
-   Evas_Coord rx, ry, rw, rh;
+   Evas_Coord rx, ry, rw = 0, rh = 0;
    int xx, yy;
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
@@ -1113,7 +1113,7 @@ _g_layer_zoom_start_cb(void *data,
    Elm_Gesture_Zoom_Info *p = event_info;
    ELM_PHOTOCAM_DATA_GET(obj, sd);
    double marginx = 0, marginy = 0;
-   Evas_Coord rw, rh;
+   Evas_Coord rw = 0, rh = 0;
    int x, y, w, h;
 
    ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
@@ -1392,7 +1392,7 @@ _elm_photocam_eo_base_constructor(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 static void
