@@ -41,7 +41,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
                              elm_app_client_view_constructor(obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
-          eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED, view, NULL));
+          eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED, view));
      }
 }
 
@@ -61,7 +61,7 @@ _objects_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA
      _sub_path_process(eo, path, cdata, EINA_TRUE);
 
    eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_LIST_LOADED,
-                                    NULL, NULL));
+                                    NULL));
 }
 
 static void _iface_add(void *data, const Eldbus_Message *msg)
@@ -87,7 +87,7 @@ _iface_del(void *data, const Eldbus_Message *msg)
    while (eldbus_message_iter_get_and_next(array_iface, 's', &iface))
      {
         Elm_App_Client_View *view;
-        Elm_App_View_State view_state;
+        Elm_App_View_State view_state = ELM_APP_VIEW_STATE_UNKNOWN;
 
         if (strcmp(iface, "org.enlightenment.ApplicationView1"))
           continue;
@@ -96,7 +96,7 @@ _iface_del(void *data, const Eldbus_Message *msg)
         if (!view)
           continue;
 
-        eo_do(view, elm_app_client_view_state_get(&view_state));
+        eo_do(view, view_state = elm_app_client_view_state_get());
         if (view_state != ELM_APP_VIEW_STATE_CLOSED)
           {
              elm_app_client_view_internal_state_set(view,
@@ -106,7 +106,7 @@ _iface_del(void *data, const Eldbus_Message *msg)
 
         eina_hash_del(cdata->views, path, NULL);
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_DELETED,
-                                         view, NULL));
+                                         view));
         eo_del(view);
      }
 }
@@ -134,11 +134,11 @@ _pkg_name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
     */
    EINA_LIST_FREE(views_list, view)
      {
-        Elm_App_View_State view_state;
-        const char *path;
+        Elm_App_View_State view_state = ELM_APP_VIEW_STATE_UNKNOWN;
+        const char *path = NULL;
 
-        eo_do(view, elm_app_client_view_state_get(&view_state),
-              elm_app_client_view_path_get(&path));
+        eo_do(view, view_state = elm_app_client_view_state_get(),
+              path = elm_app_client_view_path_get());
         if (view_state != ELM_APP_VIEW_STATE_CLOSED)
           {
              elm_app_client_view_internal_state_set(view,
@@ -148,7 +148,7 @@ _pkg_name_owner_changed_cb(void *data, const char *bus EINA_UNUSED, const char *
 
         eina_hash_del(cdata->views, path, NULL);
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_DELETED,
-                                         view, NULL));
+                                         view));
         eo_del(view);
      }
 }
@@ -225,7 +225,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
                              elm_app_client_view_constructor(view_path));
         eina_hash_add(cdata->views, view_path, view);
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED,
-                                         view, NULL));
+                                         view));
      }
 
    if (!view)
