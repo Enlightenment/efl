@@ -33,7 +33,8 @@ _mirrored_set(Evas_Object *obj,
 {
    ELM_PANEL_DATA_GET(obj, sd);
 
-   elm_widget_mirrored_set(sd->bx, rtl);
+   if ((sd->content) && (eo_isa(sd->content, ELM_OBJ_WIDGET_CLASS)))
+     elm_widget_mirrored_set(sd->content, rtl);
    elm_panel_orient_set(obj, elm_panel_orient_get(obj));
 }
 
