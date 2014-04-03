@@ -1839,6 +1839,55 @@ _item_single_select_right(Elm_Gengrid_Data *sd)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_elm_gengrid_item_edge_check(Elm_Object_Item *it,
+                             Elm_Focus_Direction dir)
+{
+   ELM_GENGRID_DATA_GET(WIDGET(it), sd);
+   Evas_Coord ix = 0, iy = 0; //item's geometry
+   Evas_Coord cx = 0, cy = 0; //prev or next item's geometry
+   Elm_Object_Item *item = NULL;
+
+   evas_object_geometry_get(VIEW(it), &ix, &iy, NULL, NULL);
+
+   if (((sd->horizontal) && (dir == ELM_FOCUS_UP)) ||
+       ((!sd->horizontal) && (dir == ELM_FOCUS_LEFT)))
+     {
+        item = elm_gengrid_item_prev_get(it);
+        while (item)
+          {
+             if (!elm_object_item_disabled_get(item)) break;
+             item = elm_gengrid_item_prev_get(item);
+          }
+        if (item)
+          {
+             evas_object_geometry_get(VIEW(item), &cx, &cy, NULL, NULL);
+             if (((sd->horizontal) && (ix == cx) && (iy > cy))||
+                 ((!sd->horizontal) && (iy == cy) && (ix > cx)))
+               return EINA_FALSE;
+          }
+     }
+   else if (((sd->horizontal) && (dir == ELM_FOCUS_DOWN)) ||
+            ((!sd->horizontal) && (dir == ELM_FOCUS_RIGHT)))
+     {
+        item = elm_gengrid_item_next_get(it);
+        while (item)
+          {
+             if (!elm_object_item_disabled_get(item)) break;
+             item = elm_gengrid_item_next_get(item);
+          }
+        if (item)
+          {
+             evas_object_geometry_get(VIEW(item), &cx, &cy, NULL, NULL);
+             if (((sd->horizontal) && (ix == cx) && (iy < cy)) ||
+                 ((!sd->horizontal) && (iy == cy) && (ix < cx)))
+               return EINA_FALSE;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -1855,6 +1904,7 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
    Eina_Bool sel_ret = EINA_FALSE;
+   Eina_Bool edge_ret = EINA_FALSE;
 
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
@@ -1870,6 +1920,12 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
    if ((!strcmp(ev->key, "Left")) ||
        ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
      {
+        if (!sd->horizontal)
+          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
+                                                  ELM_FOCUS_LEFT);
+        if (edge_ret)
+          return EINA_FALSE;
+
         if (sd->horizontal)
           {
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
@@ -1896,6 +1952,12 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
      {
+        if (!sd->horizontal)
+          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
+                                                  ELM_FOCUS_RIGHT);
+        if (edge_ret)
+          return EINA_FALSE;
+
         if (sd->horizontal)
           {
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
@@ -1923,6 +1985,12 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
             ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
      {
         if (sd->horizontal)
+          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
+                                                  ELM_FOCUS_UP);
+        if (edge_ret)
+          return EINA_FALSE;
+
+        if (sd->horizontal)
           {
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
                sel_ret = _item_multi_select_left(sd);
@@ -1948,6 +2016,12 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
      {
+        if (sd->horizontal)
+          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
+                                                  ELM_FOCUS_DOWN);
+        if (edge_ret)
+          return EINA_FALSE;
+
         if (sd->horizontal)
           {
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
