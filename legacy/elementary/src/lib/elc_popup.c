@@ -47,7 +47,7 @@ _elc_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Popup_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
       elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -314,11 +314,11 @@ _elc_popup_elm_widget_theme_apply(Eo *obj, Elc_Popup_Data *sd)
    unsigned int i = 0;
    Eina_List *elist;
    char buf[1024], style[1024];
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -438,11 +438,11 @@ EOLIAN static Eina_Bool
 _elc_popup_elm_widget_sub_object_del(Eo *obj, Elc_Popup_Data *sd, Evas_Object *sobj)
 {
    Elm_Popup_Item *it;
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->title_icon)
@@ -992,14 +992,14 @@ end:
 EOLIAN static Eina_Bool
 _elc_popup_elm_layout_text_set(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, const char *part, const char *label)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    if (!part || !strcmp(part, "default"))
      int_ret = _content_text_set(obj, label);
    else if (!strcmp(part, "title,text"))
      int_ret = _title_text_set(obj, label);
    else
-     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+     eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
 
    return int_ret;
 }
@@ -1028,14 +1028,14 @@ _content_text_get(const Evas_Object *obj)
 EOLIAN static const char*
 _elc_popup_elm_layout_text_get(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, const char *part)
 {
-   const char *text;
+   const char *text = NULL;
 
    if (!part || !strcmp(part, "default"))
      text = _content_text_get(obj);
    else if (!strcmp(part, "title,text"))
      text = _title_text_get(obj);
    else
-     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, &text));
+     eo_do_super(obj, MY_CLASS, text = elm_obj_layout_text_get(part));
 
    return text;
 }
@@ -1195,9 +1195,9 @@ _elc_popup_elm_container_content_set(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, c
      }
    else
      {
-        Eina_Bool int_ret;
+        Eina_Bool int_ret = EINA_FALSE;
         eo_do_super(obj, MY_CLASS,
-                    elm_obj_container_content_set(part, content, &int_ret));
+                    int_ret = elm_obj_container_content_set(part, content));
         return int_ret;
      }
 
@@ -1257,7 +1257,7 @@ _elc_popup_elm_container_content_get(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, c
    else
      {
         eo_do_super(obj, MY_CLASS,
-                    elm_obj_container_content_get(part, &content));
+                    content = elm_obj_container_content_get(part));
      }
 
    if (!content)
@@ -1373,7 +1373,7 @@ _elc_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elc_Popup_Data *sd, Elm_Fo
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
    /* base */
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_swallow_list_get(&base_items));
+   eo_do_super(obj, MY_CLASS, base_items = elm_obj_container_content_swallow_list_get());
 
    items = eina_list_merge(items, base_items);
 
@@ -1420,7 +1420,7 @@ _elc_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elc_Popup_Data *sd, c
    if (sd->action_area) items = eina_list_append(items, sd->action_area);
 
    /* base*/
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_swallow_list_get(&base_items));
+   eo_do_super(obj, MY_CLASS, base_items = elm_obj_container_content_swallow_list_get());
 
    items = eina_list_merge(items, base_items);
 
@@ -1577,7 +1577,7 @@ _elc_popup_eo_base_constructor(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
