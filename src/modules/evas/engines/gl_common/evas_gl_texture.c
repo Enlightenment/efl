@@ -1006,7 +1006,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
 
         tpix = alloca(im->cache_entry.h * bytes_count);
         pd = tpix;
-        ps = (unsigned char*) im->image.data;
+        ps = im->image.data8;
         for (i = 0; i < (int)im->cache_entry.h; i++)
           {
              memcpy(pd, ps, bytes_count);
@@ -1021,7 +1021,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
                     fmt, tex->pt->dataformat,
                     tpix);
         pd = tpix;
-        ps = (unsigned char*) im->image.data + (im->cache_entry.w - 1) * bytes_count;
+        ps = im->image.data8 + (im->cache_entry.w - 1) * bytes_count;
         for (i = 0; i < (int)im->cache_entry.h; i++)
           {
              memcpy(pd, ps, bytes_count);
@@ -1126,7 +1126,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         out = alloca(bytes_count *  EVAS_GL_TILE_SIZE * EVAS_GL_TILE_SIZE);
         xstep = (float)tex->w / (EVAS_GL_TILE_SIZE - 2);
         ystep = (float)tex->h / (EVAS_GL_TILE_SIZE - 1);
-        in = (unsigned char*) im->image.data;
+        in = im->image.data8;
 
         for (y = 0, j = 0; j < EVAS_GL_TILE_SIZE - 1; y += ystep, j++)
           {
