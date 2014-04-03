@@ -1176,10 +1176,10 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 
-#include "elm_widget.eo.h"
-
 typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
+
+#include "elm_widget.eo.h"
 
 #if 0
 #define ELM_OBJ_WIDGET_CLASS elm_widget_class_get()
