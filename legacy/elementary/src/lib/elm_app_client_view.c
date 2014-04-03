@@ -58,33 +58,33 @@ _prop_changed(void *user_data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info
 
    if (!strcmp(prop_event->name, "Title"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_TITLE_CHANGED,
-                                      _string_prop_get(v), NULL));
+                                      (void *) _string_prop_get(v)));
    else if (!strcmp(prop_event->name, "IconName"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_ICON_CHANGED,
-                                      _string_prop_get(v), NULL));
+                                      (void *) _string_prop_get(v)));
    else if (!strcmp(prop_event->name, "IconPixels"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_ICON_PIXELS_CHANGED,
-                                      NULL, NULL));
+                                      NULL));
    else if (!strcmp(prop_event->name, "NewEvents"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_NEW_EVENTS_CHANGED,
-                                      (void *)(uintptr_t)_int_prop_get(v), NULL));
+                                      (void *)(uintptr_t)_int_prop_get(v)));
    else if (!strcmp(prop_event->name, "Progress"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_PROGRESS_CHANGED,
-                                      (void *)(uintptr_t)_short_prop_get(v), NULL));
+                                      (void *)(uintptr_t)_short_prop_get(v)));
    else if (!strcmp(prop_event->name, "State"))
      {
         cdata->state = _string_state_to_id(_string_prop_get(v));
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED,
-                                         (void *)(uintptr_t)cdata->state, NULL));
+                                         (void *)(uintptr_t)cdata->state));
      }
    else if (!strcmp(prop_event->name, "WindowId"))
      eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_WINDOW_CHANGED,
-                                      (void *)(uintptr_t)_int_prop_get(v), NULL));
+                                      (void *)(uintptr_t)_int_prop_get(v)));
    else
       return;
 
    eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_PROPERTY_CHANGED,
-                                    prop_event->name, NULL));
+                                    (void *) prop_event->name));
 }
 
 static void
@@ -123,13 +123,13 @@ elm_app_client_view_internal_state_set(Eo *eo, Elm_App_View_State state)
    if (!changed)
      return;
    eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_VIEW_EVENT_STATE_CHANGED,
-                                    (void *)(uintptr_t)cdata->state, NULL));
+                                    (void *)(uintptr_t)cdata->state));
 }
 
 EOLIAN static void
 _elm_app_client_view_constructor(Eo *eo, Elm_App_Client_View_Data *data, const char *path)
 {
-   Elm_App_Client *parent;
+   Elm_App_Client *parent = NULL;
    const char *package = path;
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
@@ -137,11 +137,11 @@ _elm_app_client_view_constructor(Eo *eo, Elm_App_Client_View_Data *data, const c
    EINA_SAFETY_ON_NULL_GOTO(path, error);
    eo_do_super(eo, MY_CLASS, eo_constructor());
 
-   eo_do(eo, eo_parent_get(&parent));
+   eo_do(eo, parent = eo_parent_get());
    EINA_SAFETY_ON_TRUE_GOTO((!parent) ||
                             (!eo_isa(parent, ELM_APP_CLIENT_CLASS)), error);
 
-   eo_do(parent, elm_app_client_package_get(&package));
+   eo_do(parent, package = elm_app_client_package_get());
 
    eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
