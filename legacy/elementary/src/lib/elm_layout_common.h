@@ -1,4 +1,14 @@
 /**
+ * @typedef Elm_Layout_Part_Alias_Description
+ *
+ * A layout part aliasing (proxying) description, used to get part
+ * names aliasing independently of a widgets theme.
+ *
+ * @ingroup Widget
+ */
+typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Description;
+
+/**
  * @def elm_layout_icon_set
  * Convenience macro to set the icon object in a layout that follows the
  * Elementary naming convention for its parts.

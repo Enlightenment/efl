@@ -39,16 +39,6 @@
  */
 
 /**
- * @typedef Elm_Layout_Part_Alias_Description
- *
- * A layout part aliasing (proxying) description, used to get part
- * names aliasing independently of a widgets theme.
- *
- * @ingroup Widget
- */
-typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Description;
-
-/**
  * @struct _Elm_Layout_Part_Alias_Description
  *
  * Elementary Layout-based widgets may declare part proxies, i.e., aliases
