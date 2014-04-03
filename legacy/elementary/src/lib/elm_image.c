@@ -400,7 +400,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
                           Elm_Selection_Data *drop)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_image_file_set(drop->data, NULL, &ret));
+   eo_do(obj, ret = elm_obj_image_file_set(drop->data, NULL));
    if(ret)
      {
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
@@ -552,7 +552,7 @@ EOLIAN static Eina_Bool
 _elm_image_elm_widget_theme_apply(Eo *obj, Elm_Image_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    eo_do(obj, elm_obj_image_sizing_eval());
@@ -641,7 +641,7 @@ static void
 _elm_image_file_set_do(Evas_Object *obj)
 {
    Evas_Object *pclip = NULL;
-   int w, h;
+   int w = 0, h = 0;
 
    ELM_IMAGE_DATA_GET(obj, sd);
 
@@ -724,7 +724,7 @@ _elm_image_eo_base_constructor(Eo *obj, Elm_Image_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EAPI Eina_Bool
@@ -736,7 +736,7 @@ elm_image_file_set(Evas_Object *obj,
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
-   eo_do(obj, elm_obj_image_file_set(file, group, &ret));
+   eo_do(obj, ret = elm_obj_image_file_set(file, group));
    eo_do(obj, elm_obj_image_sizing_eval());
    return ret;
 }
@@ -751,7 +751,7 @@ elm_image_mmap_set(Evas_Object *obj,
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    eo_do(obj,
-         elm_obj_image_mmap_set(file, group, &ret),
+         ret = elm_obj_image_mmap_set(file, group),
          elm_obj_image_sizing_eval());
    return ret;
 }
@@ -1041,7 +1041,7 @@ elm_image_prescale_get(const Evas_Object *obj)
    ELM_IMAGE_CHECK(obj) 0;
 
    int ret = 0;
-   eo_do((Eo *)obj, elm_obj_image_load_size_get(&ret));
+   eo_do((Eo *)obj, ret = elm_obj_image_load_size_get());
    return ret;
 }
 
