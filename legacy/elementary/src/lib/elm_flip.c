@@ -94,8 +94,8 @@ _sizing_eval(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _elm_flip_elm_widget_theme_apply(Eo *obj, Elm_Flip_Data *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -164,12 +164,12 @@ _changed_size_hints_cb(void *data,
 EOLIAN static Eina_Bool
 _elm_flip_elm_widget_sub_object_add(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    if (evas_object_data_get(sobj, "elm-parent") == obj)
      return EINA_TRUE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_add(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_add(sobj));
    if (!int_ret) return EINA_FALSE;
 
    evas_object_data_set(sobj, "_elm_leaveme", sobj);
@@ -183,10 +183,10 @@ _elm_flip_elm_widget_sub_object_add(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, Eva
 EOLIAN static Eina_Bool
 _elm_flip_elm_widget_sub_object_del(Eo *obj, Elm_Flip_Data *sd, Evas_Object *sobj)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->front.content)
@@ -1866,7 +1866,7 @@ _elm_flip_eo_base_constructor(Eo *obj, Elm_Flip_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static Eina_Bool
