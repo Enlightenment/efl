@@ -201,6 +201,7 @@ class Evas_Box (Evas_Smart_Clipped)
       internal_remove {
          /*@ No description supplied by the EAPI. */
          return Evas_Object *;
+         legacy null;
          params {
             @in Evas_Object *child;
          }
@@ -219,6 +220,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_option_free {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          params {
             @in Evas_Object_Box_Option *opt;
          }
@@ -371,6 +373,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_append {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
@@ -400,6 +403,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_remove_at {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object *;
          params {
             @in unsigned int pos;
@@ -454,6 +458,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_insert_at {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
@@ -508,6 +513,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_insert_before {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
@@ -554,6 +560,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_option_new {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object_Box_Option*;
          params {
             @in Evas_Object *child;
@@ -575,6 +582,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_insert_after {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object_Box_Option *;
          params {
             @in Evas_Object *child;
@@ -609,6 +617,7 @@ class Evas_Box (Evas_Smart_Clipped)
       }
       internal_prepend {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Evas_Object_Box_Option*;
          params {
             @in Evas_Object *child;
