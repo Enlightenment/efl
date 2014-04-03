@@ -1235,7 +1235,7 @@ _elc_naviframe_elm_widget_focus_next(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED
    Elm_Naviframe_Item *top_it;
    void *(*list_data_get)(const Eina_List *list);
 
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    top_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!top_it) goto end;
