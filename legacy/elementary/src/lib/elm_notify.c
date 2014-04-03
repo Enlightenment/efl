@@ -125,7 +125,7 @@ EOLIAN static Eina_Bool
 _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -179,7 +179,7 @@ EOLIAN static Eina_Bool
 _elm_notify_elm_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
@@ -521,7 +521,7 @@ elm_notify_parent_get(const Evas_Object *obj)
 {
    ELM_NOTIFY_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_widget_parent_get(&ret));
+   eo_do((Eo *) obj, ret = elm_obj_widget_parent_get());
    return ret;
 }
 
