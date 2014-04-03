@@ -715,6 +715,8 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Data *sd,
    evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
 
+   if ((px == tx) && (py == ty) && (pw == tw) && (ph == th)) return;
+
    if (!_elm_config->focus_highlight_clip_disable)
      evas_object_clip_unset(obj);
 
