@@ -3881,9 +3881,9 @@ elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
 EOLIAN static void
 _elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
 {
-   Evas_Coord ox, oy, oh, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
+   Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
-   evas_object_geometry_get(obj, &ox, &oy, NULL, &oh);
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
 
    if (is_next)
      {
@@ -3902,26 +3902,32 @@ _elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *
          }
      }
 
-   if (item_y < oy)
+   *x = item_x;
+   *y = item_y;
+   *w = item_w;
+   *h = item_h;
+
+   if (sd->horizontal)
      {
-        *x = item_x;
-        *y = oy;
-        *w = item_w;
-        *h = item_h;
-     }
-   else if (item_y > (oy + oh - item_h))
-     {
-        *x = item_x;
-        *y = oy + oh - item_h;
-        *w = item_w;
-        *h = item_h;
+        if (item_x < ox)
+          {
+             *x = ox;
+          }
+        else if (item_x > (ox + ow - item_w))
+          {
+             *x = ox + ow - item_w;
+          }
      }
    else
      {
-        *x = item_x;
-        *y = item_y;
-        *w = item_w;
-        *h = item_h;
+        if (item_y < oy)
+          {
+             *y = oy;
+          }
+        else if (item_y > (oy + oh - item_h))
+          {
+             *y = oy + oh - item_h;
+          }
      }
 }
 
