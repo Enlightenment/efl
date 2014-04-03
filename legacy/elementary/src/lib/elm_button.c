@@ -117,7 +117,7 @@ _elm_button_elm_widget_theme_apply(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
    _icon_signal_emit(obj);
 
@@ -132,7 +132,7 @@ _elm_button_elm_widget_sub_object_del(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -148,7 +148,7 @@ _elm_button_elm_container_content_set(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -329,7 +329,7 @@ _elm_button_eo_base_constructor(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -347,7 +347,7 @@ static Eina_Bool
 _internal_elm_button_admits_autorepeat_get(const Evas_Object *obj)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, elm_obj_button_admits_autorepeat_get(&ret));
+   eo_do((Eo *) obj, ret = elm_obj_button_admits_autorepeat_get());
    return ret;
 }
 
