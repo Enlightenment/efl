@@ -58,7 +58,7 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    size = elm_panes_content_left_size_get(obj);
@@ -236,7 +236,7 @@ _elm_panes_eo_base_constructor(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EINA_DEPRECATED EAPI void
@@ -323,7 +323,7 @@ EOLIAN static void
 _elm_panes_horizontal_set(Eo *obj, Elm_Panes_Data *sd, Eina_Bool horizontal)
 {
    sd->horizontal = horizontal;
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 
    elm_panes_content_left_size_set(obj, 0.5);
 }

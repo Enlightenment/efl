@@ -138,7 +138,7 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -266,7 +266,7 @@ _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
    if (part && strcmp(part, "default"))
      {
         Eina_Bool int_ret = EINA_TRUE;
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
         return int_ret;
      }
 
@@ -291,7 +291,7 @@ _elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
    if (part && strcmp(part, "default"))
      {
         Evas_Object *ret = NULL;
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, &ret));
+        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(part));
         return ret;
      }
 
@@ -305,7 +305,7 @@ _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
 
    if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &content));
+        eo_do_super(obj, MY_CLASS, content = elm_obj_container_content_unset(part));
         return content;
      }
 
@@ -327,7 +327,7 @@ _elm_panel_evas_smart_add(Eo *obj, Elm_Panel_Data *priv)
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_size_hint_align_set(priv->bx, 0.5, 0.5);
@@ -418,7 +418,7 @@ _elm_panel_eo_base_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
