@@ -1740,17 +1740,6 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w > (nw / 2)) || (h != nh));
 
-   evas_object_textblock_text_markup_set(tb, "<color=#ff0000ff>a</>a"
-                                         "<color=#ff0000ff>a</>a"
-                                         "<color=#ff0000ff>a</>a"
-                                         "<color=#ff0000ff>a</>a"
-                                         "<color=#ff0000ff>a</>a");
-   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
-   evas_object_resize(tb, nw / 2, nh);
-   evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w > (nw / 2)) || (h != nh));
-
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa<br/>b");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=word");
    evas_object_textblock_size_native_get(tb, &nw, &nh);
