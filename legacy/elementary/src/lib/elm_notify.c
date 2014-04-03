@@ -112,6 +112,11 @@ _sizing_eval(Evas_Object *obj)
 
    if (!sd->parent) return;
    evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+   if (eo_isa(sd->parent, ELM_OBJ_WIN_CLASS))
+     {
+        x = 0;
+        y = 0;
+     }
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
 }
