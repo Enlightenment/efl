@@ -379,7 +379,7 @@ _elm_datetime_elm_widget_translate(Eo *obj, Elm_Datetime_Data *sd)
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -453,7 +453,7 @@ _elm_datetime_elm_widget_on_focus(Eo *obj, Elm_Datetime_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))
@@ -470,9 +470,9 @@ _elm_datetime_elm_widget_disable(Eo *obj, Elm_Datetime_Data *sd)
 {
    Datetime_Field *field;
    unsigned int idx = 0;
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_disable(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
    if (!int_ret) return EINA_FALSE;
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
@@ -512,7 +512,7 @@ _elm_datetime_elm_widget_theme_apply(Eo *obj, Elm_Datetime_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if ((!dt_mod) || (!dt_mod->field_value_display)) return EINA_TRUE;
@@ -873,7 +873,7 @@ _elm_datetime_eo_base_constructor(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static const char*
