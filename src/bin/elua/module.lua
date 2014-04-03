@@ -5,13 +5,16 @@ local M = {}
 local util = select(2, ...)
 
 local preload = {
+    ffi  = package.preload["ffi"],
     util = function() return util end
 }
 
 local loaded = {
 }
 
-local path = "./?.lua;/?/init.lua"
+for k, v in pairs(package.loaded) do loaded[k] = v end
+
+M.path = "./?.lua;/?/init.lua"
 
 local loaders = {
     function(modname)
@@ -22,7 +25,7 @@ local loaders = {
         return v
     end,
     function(modname)
-        local  fname, err = package.searchpath(modname, path)
+        local  fname, err = package.searchpath(modname, M.path)
         if not fname then return err end
         local f, err = loadfile(fname)
         if not f then
@@ -64,9 +67,13 @@ M.require = function(modname)
     return loaded[modname]
 end
 
--- register require
-path = (...)(M.require, path)
+M.preload = preload
+M.loaded  = loaded
 
-_G["erequire"] = M.require
+-- register require
+M.path = (...)(M.require, M.path)
+
+_G["require"] = M.require
+_G["package"] = M
 
 return M

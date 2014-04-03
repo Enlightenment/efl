@@ -1,5 +1,5 @@
 local ffi = require("ffi")
-local util = erequire("util")
+local util = require("util")
 
 local elm, evas
 
