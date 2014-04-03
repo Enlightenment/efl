@@ -534,12 +534,11 @@ _elm_widget_access_object_elm_interface_atspi_component_focus_grab(Eo *obj, void
 
 #include "elm_widget_access_object.eo.c"
 /// Elm_Atspi_App base class
-#define ELM_ATSPI_APP_CLASS elm_atspi_app_obj_class_get()
+#include "elm_app_access_object.eo.h"
 
-static void
-_app_children_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+EOLIAN static Eina_List*
+_elm_app_access_object_elm_atspi_object_children_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Eina_List **, ret, list);
    Eina_List *l, *accs = NULL;
    Elm_Atspi_Object *aobj;
    Evas_Object *win;
@@ -552,66 +551,34 @@ _app_children_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
           accs = eina_list_append(accs, aobj);
      }
 
-   if (ret) *ret = accs;
+   return accs;
 }
 
-static void
-_app_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static void
+_elm_app_access_object_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    eo_do_super(obj, ELM_ATSPI_OBJ_CLASS, eo_constructor());
 }
 
-static void
-_app_name_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static const char*
+_elm_app_access_object_elm_atspi_object_name_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(const char **, name, list);
-   if (name) *name = elm_app_name_get();
+   return elm_app_name_get();
 }
 
-static void
-_app_role_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static AtspiRole
+_elm_app_access_object_elm_atspi_object_role_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(AtspiRole *, ret, list);
-   if (ret) *ret = ATSPI_ROLE_APPLICATION;
+   return ATSPI_ROLE_APPLICATION;
 }
 
-static void
-_app_parent_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+EOLIAN static Elm_Atspi_Object*
+_elm_app_access_object_elm_atspi_object_parent_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EO_PARAMETER_GET(Elm_Atspi_Object **, ret, list);
-   if (ret) *ret = NULL;
+   return NULL;
 }
 
-static void
-_app_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _app_constructor),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_NAME_GET), _app_name_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_ROLE_GET), _app_role_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_PARENT_GET), _app_parent_get),
-        EO_OP_FUNC(ELM_ATSPI_OBJ_ID(ELM_ATSPI_OBJ_SUB_ID_CHILDREN_GET), _app_children_get),
-        EO_OP_FUNC_SENTINEL
-   };
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description app_op_desc[] = {
-     EO_OP_DESCRIPTION_SENTINEL
-};
-
-static const Eo_Class_Description app_class_desc = {
-     EO_VERSION,
-     "Elm_App_Access_Object",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-     NULL,
-     0,
-     _app_class_constructor,
-     NULL
-};
-
-EO_DEFINE_CLASS(elm_atspi_app_obj_class_get, &app_class_desc, ELM_ATSPI_OBJ_CLASS, NULL);
+#include "elm_app_access_object.eo.c"
 
 // elm_win wrapper
 
@@ -702,7 +669,7 @@ Elm_Atspi_Object*
 _elm_atspi_root_object_get(void)
 {
    if (!_app)
-     _app = eo_add(ELM_ATSPI_APP_CLASS, NULL);
+     _app = eo_add(ELM_APP_ACCESS_OBJECT_CLASS, NULL);
    else
      eo_ref(_app);
 
