@@ -666,7 +666,7 @@ eo_api_funcs_cmp(const void *p1, const void *p2)
    else return 0;
 }
 
-EAPI Eina_Bool
+static Eina_Bool
 _eo_class_funcs_set(_Eo_Class *klass)
 {
    int op_id;
@@ -711,8 +711,8 @@ _eo_class_funcs_set(_Eo_Class *klass)
 
              if (api_desc == NULL)
                {
-                  ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p).",
-                      klass->desc->name, op_desc->api_func, op_desc->func);
+                  ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).",
+                      klass->desc->name, op_desc->api_func, op_desc->func, op_desc->doc);
                   return EINA_FALSE;
                }
 
