@@ -507,6 +507,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_highlight_animate, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_highlight_clip_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_move_policy, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, item_focus_on_selection, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, fileselector_double_tap_navigation_enable, T_UCHAR);
@@ -1490,6 +1491,7 @@ _config_load(void)
    _elm_config->focus_highlight_animate = EINA_TRUE;
    _elm_config->focus_highlight_clip_disable = EINA_FALSE;
    _elm_config->focus_move_policy = ELM_FOCUS_MOVE_POLICY_CLICK;
+   _elm_config->item_focus_on_selection = EINA_TRUE;
    _elm_config->toolbar_shrink_mode = 2;
    _elm_config->fileselector_expand_enable = EINA_FALSE;
    _elm_config->fileselector_double_tap_navigation_enable = EINA_FALSE;
@@ -2067,6 +2069,9 @@ _env_get(void)
    s = getenv("ELM_FOCUS_MOVE_POLICY");
    if (s) _elm_config->focus_move_policy = !!atoi(s);
 
+   s = getenv("ELM_ITEM_FOCUS_ON_SELECTION");
+   if (s) _elm_config->item_focus_on_selection = !!atoi(s);
+
    s = getenv("ELM_TOOLBAR_SHRINK_MODE");
    if (s) _elm_config->toolbar_shrink_mode = atoi(s);
 
@@ -2597,6 +2602,18 @@ EAPI void
 elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy)
 {
    _elm_config->focus_move_policy = policy;
+}
+
+EAPI Eina_Bool
+elm_config_item_focus_on_selection_get(void)
+{
+   return _elm_config->item_focus_on_selection;
+}
+
+EAPI void
+elm_config_item_focus_on_selection_set(Eina_Bool enabled)
+{
+   _elm_config->item_focus_on_selection = !!enabled;
 }
 
 EAPI Eina_Bool
