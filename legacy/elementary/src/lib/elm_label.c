@@ -172,7 +172,7 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _label_format_set(wd->resize_obj, sd->format);
@@ -320,7 +320,7 @@ _elm_label_elm_layout_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, co
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
    if (int_ret)
      {
         sd->lastw = 0;
@@ -406,7 +406,7 @@ _elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
