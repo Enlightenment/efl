@@ -1336,13 +1336,30 @@ test_gengrid_focus_focus_move_policy_changed(void *data EINA_UNUSED,
      elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_IN);
 }
 
+static void
+_test_gengrid_focus_focus_highlight_check_changed(void *data,
+                                                  Evas_Object *obj,
+                                                  void *event_info EINA_UNUSED)
+{
+   elm_win_focus_highlight_enabled_set((Evas_Object *)data,
+                                       elm_check_state_get(obj));
+}
+
+static void
+_test_gengrid_focus_focus_animate_check_changed(void *data,
+                                                Evas_Object *obj,
+                                                void *event_info EINA_UNUSED)
+{
+   elm_win_focus_highlight_animate_set((Evas_Object *)data,
+                                       elm_check_state_get(obj));
+}
+
 void
 test_gengrid_focus(void *data EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bx_horiz, *gengrid, *btn, *fr, *lb, *bx_mv, *rdg,
-   *rd;
+   Evas_Object *win, *bx, *bx_horiz, *gengrid, *btn, *fr, *bx_mv, *bx_opt, *ck, *rdg, *rd;
    Elm_Gengrid_Item_Class *ic;
    Item_Data *id;
    char buf[PATH_MAX];
@@ -1369,16 +1386,6 @@ test_gengrid_focus(void *data EINA_UNUSED,
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx_horiz, bx);
    evas_object_show(bx);
-
-   fr = elm_frame_add(bx);
-   elm_object_text_set(fr, "Gengrid Item Focus");
-   elm_box_pack_end(bx, fr);
-   evas_object_show(fr);
-
-   lb = elm_label_add(fr);
-   elm_object_text_set(lb, "<align=left>Gengrid Item focus</align>");
-   elm_object_content_set(fr, lb);
-   evas_object_show(lb);
 
    btn = elm_button_add(bx);
    elm_object_text_set(btn, "Up");
@@ -1412,6 +1419,46 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_object_text_set(btn, "Right");
    elm_box_pack_end(bx_horiz, btn);
    evas_object_show(btn);
+
+   //Options
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Options");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx_opt = elm_box_add(fr);
+   elm_box_horizontal_set(bx_opt, EINA_TRUE);
+   elm_object_content_set(fr, bx_opt);
+   evas_object_show(bx_opt);
+
+   ck = elm_check_add(bx_opt);
+   elm_object_text_set(ck, "Focus Highlight");
+   elm_check_state_set(ck, EINA_TRUE);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _test_gengrid_focus_focus_highlight_check_changed,
+                                  win);
+   elm_box_pack_end(bx_opt, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(bx_opt);
+   elm_object_text_set(ck, "Focus Animation");
+   elm_check_state_set(ck, EINA_TRUE);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _test_gengrid_focus_focus_animate_check_changed,
+                                  win);
+   elm_box_pack_end(bx_opt, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(bx_opt);
+   elm_object_text_set(ck, "Horizontal Mode");
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed", _horizontal_grid, gengrid);
+   elm_box_pack_end(bx_opt, ck);
+   evas_object_show(ck);
 
    //Focus movement policy
    fr = elm_frame_add(bx);
