@@ -107,8 +107,8 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 EOLIAN static Eina_Bool
 _elm_table_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
-   Eina_Bool super_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&super_ret));
+   Eina_Bool super_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, super_ret = elm_obj_widget_theme_apply());
    if (super_ret == EINA_FALSE)
       return EINA_FALSE;
 
@@ -151,9 +151,9 @@ _on_size_hints_changed(void *data,
 EOLIAN static Eina_Bool
 _elm_table_elm_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *child)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(child, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(child));
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -179,7 +179,7 @@ _elm_table_evas_smart_add(Eo *obj, void *_pd EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_FALSE);
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static void
