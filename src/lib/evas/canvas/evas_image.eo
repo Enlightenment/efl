@@ -1000,6 +1000,7 @@ class Evas_Image (Evas_Object)
    methods {
       preload_begin {
          /*@ Begin preloading an image object's image data in the background */
+         legacy null;
       }
       data_update_add {
          /*@
@@ -1118,6 +1119,7 @@ class Evas_Image (Evas_Object)
       }
       preload_cancel {
          /*@ Cancel preloading an image object's image data in the background */
+         legacy null;
       }
       data_convert {
          /*@
