@@ -4,7 +4,6 @@
  * _box_blur_alpha_vert_step
  */
 
-#include "evas_common_private.h"
 #include "../evas_filter_private.h"
 
 static inline void

@@ -5,7 +5,6 @@
  */
 
 /* Datatypes and MIN macro */
-#include "evas_common_private.h"
 #include "../evas_filter_private.h"
 
 #if !defined (FUNCTION_NAME) || !defined (STEP)
