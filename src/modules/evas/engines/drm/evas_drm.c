@@ -480,12 +480,9 @@ evas_drm_outbuf_setup(Outbuf *ob)
    /* ob->priv.ctx.vblank_handler = _evas_drm_outbuf_vblank; */
 
    /* check if this card supports async page flipping */
-   ob->priv.use_async_page_flip = EINA_TRUE;
-   if ((drmGetCap(ob->priv.fd, DRM_CAP_ASYNC_PAGE_FLIP, &dumb) < 0) || (!dumb))
-     {
-        WRN("Drm Device does not support async page flip");
-        ob->priv.use_async_page_flip = EINA_FALSE;
-     }
+   ob->priv.use_async_page_flip = EINA_FALSE;
+   if ((drmGetCap(ob->priv.fd, DRM_CAP_ASYNC_PAGE_FLIP, &dumb)) || (dumb))
+     ob->priv.use_async_page_flip = EINA_TRUE;
 
    /* try to get drm resources */
    if (!(res = drmModeGetResources(ob->priv.fd)))
