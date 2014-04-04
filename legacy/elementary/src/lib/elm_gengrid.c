@@ -1939,7 +1939,7 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
                sel_ret = _item_multi_select_left(sd);
              if (!sel_ret)
-                  sel_ret = _item_single_select_left(sd);
+               sel_ret = _item_single_select_left(sd);
           }
 
         if (sel_ret)
@@ -1971,7 +1971,7 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
                sel_ret = _item_multi_select_right(sd);
              if (!sel_ret)
-                  sel_ret = _item_single_select_right(sd);
+               sel_ret = _item_single_select_right(sd);
           }
 
         if (sel_ret)
@@ -2003,7 +2003,7 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
                sel_ret = _item_multi_select_up(sd);
              if (!sel_ret)
-                  sel_ret = _item_single_select_up(sd);
+               sel_ret = _item_single_select_up(sd);
           }
 
         if (sel_ret)
@@ -2035,7 +2035,7 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
                sel_ret = _item_multi_select_down(sd);
              if (!sel_ret)
-                  sel_ret = _item_single_select_down(sd);
+               sel_ret = _item_single_select_down(sd);
           }
 
         if (sel_ret)
