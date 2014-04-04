@@ -11,10 +11,12 @@ log.log_err("test with default log domain")
 
 local foo = function()
     for i = 1, 4 do
-        dom:log(log.level.ERR, "testing: " .. i)
+        log.log_err("testing: " .. i)
     end
 end
 
+foo()
+log.set_default_domain(dom)
 foo()
 
 win:smart_callback_add("delete,request", function()

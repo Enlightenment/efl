@@ -189,6 +189,8 @@ M.Domain = M.Domain_Base:clone {
     end
 }
 
-M.set_default_domain = f
+M.set_default_domain = function(dom)
+    default_domain = dom:__get_domain()
+end
 
 return M
