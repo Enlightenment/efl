@@ -229,7 +229,10 @@ static int lua_main(lua_State *L) {
 
     luaL_openlibs(L);
 
-    elua_loadfile(L, ELUA_DATA_DIR "/core/module.lua");
+    if (report(L, elua_loadfile(L, ELUA_DATA_DIR "/core/module.lua"))) {
+        m->status = 1;
+        return 0;
+    }
     lua_pushcfunction(L, register_require);
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, utillib);

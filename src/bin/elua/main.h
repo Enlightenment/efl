@@ -30,8 +30,6 @@ extern int el_log_domain;
 
 int elua_loadfilex(lua_State *L, const char *fname, const char *mode);
 int elua_loadfile(lua_State *L, const char *fname);
-int elua_loadfilex_mmap(lua_State *L, const char *fname, const char *mode);
-int elua_loadfile_mmap(lua_State *L, const char *fname);
 void elua_register_cache(lua_State *L);
 
 #endif
