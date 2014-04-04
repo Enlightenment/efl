@@ -1080,29 +1080,29 @@ EAPI Eina_Bool       ecore_evas_software_x11_direct_resize_get(const Ecore_Evas 
 EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
 /**
- * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
+ * @brief Create a new Ecore_Evas which does not contain an XWindow. It will
  * only contain an XPixmap to render to
- * 
- * @warning The XPixmap ID can change with every frame after it is rendered, 
- * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ *
+ * @warning The XPixmap ID can change with every frame after it is rendered,
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you
  * need the current pixmap id.
- * 
+ *
  * @since 1.8
  */
 EAPI Ecore_Evas     *ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 
 /**
  * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
- * 
+ *
  * @param ee The Ecore_Evas whose pixmap is desired.
  * @return The underlying Ecore_X_Pixmap
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
- * 
- * @warning The XPixmap ID can change with every frame after it is rendered, 
- * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ *
+ * @warning The XPixmap ID can change with every frame after it is rendered,
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you
  * need the current pixmap id.
- * 
+ *
  * @since 1.8
  */
 EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
@@ -1110,7 +1110,7 @@ EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 #define ECORE_EVAS_GL_X11_OPT_NONE         0
 #define ECORE_EVAS_GL_X11_OPT_INDIRECT     1
 #define ECORE_EVAS_GL_X11_OPT_VSYNC        2
-#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE    3 
+#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE    3
 #define ECORE_EVAS_GL_X11_OPT_LAST         4
 
 #define ECORE_EVAS_GL_X11_SWAP_MODE_AUTO   0
@@ -1118,7 +1118,7 @@ EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 #define ECORE_EVAS_GL_X11_SWAP_MODE_COPY   2
 #define ECORE_EVAS_GL_X11_SWAP_MODE_DOUBLE 3
 #define ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE 4
-   
+
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_Evas     *ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h, const int *opt);
 EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(const Ecore_Evas *ee);
@@ -1128,29 +1128,29 @@ EAPI void            ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ec
 EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
 
 /**
- * @brief Create a new Ecore_Evas which does not contain an XWindow. It will 
+ * @brief Create a new Ecore_Evas which does not contain an XWindow. It will
  * only contain an XPixmap to render to
- * 
- * @warning The XPixmap ID can change with every frame after it is rendered, 
- * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ *
+ * @warning The XPixmap ID can change with every frame after it is rendered,
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you
  * need the current pixmap id.
- * 
+ *
  * @since 1.8
  */
 EAPI Ecore_Evas     *ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 
 /**
  * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
- * 
+ *
  * @param ee The Ecore_Evas whose pixmap is desired.
  * @return The underlying Ecore_X_Pixmap
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
- * 
- * @warning The XPixmap ID can change with every frame after it is rendered, 
- * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you 
+ *
+ * @warning The XPixmap ID can change with every frame after it is rendered,
+ * so you should ALWAYS call ecore_evas_software_x11_pixmap_get when you
  * need the current pixmap id.
- * 
+ *
  * @since 1.8
  */
 EAPI Ecore_X_Pixmap ecore_evas_gl_x11_pixmap_get(const Ecore_Evas *ee);
@@ -2421,25 +2421,25 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  * You can set up event handles for these events as follows:
  *
  * @code
- * static void client_add_cb(void *data, int event, void *event_info)
+ * static Eina_Bool client_add_cb(void *data, int event, void *event_info)
  * {
- *   Evas_Object *obj = event_info;
- *   printf("client added to image object %p\n", obj);
- *   evas_object_show(obj);
+ *    Ecore_Evas *ee = event_info;
+ *    printf("client is connected to external socket %p\n", ee);
+ *    return ECORE_CALLBACK_PASS_ON;
  * }
  *
- * static void client_del_cb(void *data, int event, void *event_info)
+ * static Eina_Bool client_del_cb(void *data, int event, void *event_info)
  * {
- *   Evas_Object *obj = event_info;
- *   printf("client deleted from image object %p\n", obj);
- *   evas_object_hide(obj);
+ *    Ecore_Evas *ee = event_info;
+ *    printf("client is disconnected from external socket %p\n", ee);
+ *    return ECORE_CALLBACK_PASS_ON;
  * }
  *
  * void setup(void)
  * {
- *   ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_ADD,
+ *    ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_ADD,
  *                           client_add_cb, NULL);
- *   ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_DEL,
+ *    ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_DEL,
  *                           client_del_cb, NULL);
  * }
  * @endcode
@@ -2577,69 +2577,69 @@ EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcnam
 
 /**
  * @brief Retrieve the coordinates of the mouse pointer
- * 
+ *
  * @param ee The Ecore_Evas containing the pointer
  * @param x Pointer to integer to store horizontal coordinate. May be @c NULL.
  * @param y Pointer to integer to store vertical coordinate. May be @c NULL.
- * 
+ *
  * @since 1.8
  */
 EAPI void ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
 /**
  * @brief Retrieve the coordinates of the mouse pointer
- * 
+ *
  * @param ee The Ecore_Evas containing the pointer
  * @param x The horizontal coordinate to move the pointer to
  * @param y The vertical coordinate to move the pointer to
- * 
+ *
  * @return @c EINA_TRUE on success, EINA_FALSE on failure.
- * 
+ *
  * @since 1.8
  */
 EAPI Eina_Bool ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y);
 
 /**
  * @brief Retrieve the Visual used for pixmap creation
- * 
+ *
  * @param ee The Ecore_Evas containing the pixmap
- * 
+ *
  * @return The Visual which was used when creating the pixmap
- * 
+ *
  * @warning If and when this function is called depends on the underlying
  * windowing system. This function should only be called if the Ecore_Evas was
  * created using @c ecore_evas_software_x11_pixmap_new or @c ecore_evas_gl_x11_pixmap_new
- * 
+ *
  * @since 1.8
  */
 EAPI void *ecore_evas_pixmap_visual_get(const Ecore_Evas *ee);
 
 /**
  * @brief Retrieve the Colormap used for pixmap creation
- * 
+ *
  * @param ee The Ecore_Evas containing the pixmap
- * 
+ *
  * @return The Colormap which was used when creating the pixmap
- * 
+ *
  * @warning If and when this function is called depends on the underlying
  * windowing system. This function should only be called if the Ecore_Evas was
  * created using @c ecore_evas_software_x11_pixmap_new or @c ecore_evas_gl_x11_pixmap_new
- * 
+ *
  * @since 1.8
  */
 EAPI unsigned long ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee);
 
 /**
  * @brief Retrieve the depth used for pixmap creation
- * 
+ *
  * @param ee The Ecore_Evas containing the pixmap
- * 
+ *
  * @return The depth which was used when creating the pixmap
- * 
+ *
  * @warning If and when this function is called depends on the underlying
  * windowing system. This function should only be called if the Ecore_Evas was
  * created using @c ecore_evas_software_x11_pixmap_new or @c ecore_evas_gl_x11_pixmap_new
- * 
+ *
  * @since 1.8
  */
 EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
