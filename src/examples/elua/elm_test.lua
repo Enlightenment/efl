@@ -1,4 +1,11 @@
+local log = require("eina.log")
+
+local dom = log.Domain("elm_test", log.color.LIGHTRED)
+
 local win = elm.Window("test", "Hello World")
+
+dom:log(log.level.INFO, "created window")
+dom:log(log.level.ERR, "error test!")
 
 win:smart_callback_add("delete,request", function()
     elm.exit()
@@ -36,3 +43,6 @@ btn:show()
 
 win:resize(360, 360)
 win:show()
+
+dom:log(log.level.INFO, "done initing")
+dom:unregister()

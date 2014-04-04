@@ -1,5 +1,7 @@
 -- elua core utilities used in other modules
 
+local ffi = require("ffi")
+
 local M = {}
 
 M.Object = {
@@ -38,5 +40,31 @@ M.Object = {
         return ("Object: %s"):format(self.name or "unnamed")
     end
 }
+
+local loaded_libs = {}
+local loaded_libc = {}
+
+-- makes sure we only keep one handle for each lib
+-- reference counted
+M.lib_load = function(libname)
+    local  lib = loaded_libs[libname]
+    if not lib then
+        lib = ffi.load(libname)
+        loaded_libs[libname] = lib
+        loaded_libc[libname] = 0
+    end
+    loaded_libc[libname] = loaded_libc[libname] + 1
+    return lib
+end
+
+M.lib_unload = function(libname)
+    local  cnt = loaded_libc[libname]
+    if not cnt then return end
+    if cnt == 1 then
+        loaded_libs[libname], loaded_libc[libname] = nil, nil
+    else
+        loaded_libc[libname] = cnt - 1
+    end
+end
 
 return M
