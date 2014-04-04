@@ -117,8 +117,6 @@ struct _Outbuf
         drmEventContext ctx;
         Eina_Bool pending_flip : 1;
 
-        Eina_Bool use_async_page_flip : 1;
-
         Eina_List *pending_writes;
 
         Eina_List *planes;

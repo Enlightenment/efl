@@ -479,11 +479,6 @@ evas_drm_outbuf_setup(Outbuf *ob)
    ob->priv.ctx.page_flip_handler = _evas_drm_outbuf_page_flip;
    /* ob->priv.ctx.vblank_handler = _evas_drm_outbuf_vblank; */
 
-   /* check if this card supports async page flipping */
-   ob->priv.use_async_page_flip = EINA_FALSE;
-   if ((drmGetCap(ob->priv.fd, DRM_CAP_ASYNC_PAGE_FLIP, &dumb)) || (dumb))
-     ob->priv.use_async_page_flip = EINA_TRUE;
-
    /* try to get drm resources */
    if (!(res = drmModeGetResources(ob->priv.fd)))
      {
@@ -731,14 +726,8 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
 
    if (ob->vsync)
      {
-        unsigned int flags = 0;
-
-        flags = DRM_MODE_PAGE_FLIP_EVENT;
-        if (ob->priv.use_async_page_flip) flags |= DRM_MODE_PAGE_FLIP_ASYNC;
-
-        ret = drmModePageFlip(ob->priv.fd, ob->priv.crtc, 
-                              buffer->fb, flags, ob);
-        if (ret)
+        if (drmModePageFlip(ob->priv.fd, ob->priv.crtc, 
+                            buffer->fb, DRM_MODE_PAGE_FLIP_EVENT, ob) < 0)
           {
              ERR("Cannot flip crtc for connector %u: %m", ob->priv.conn);
              return EINA_FALSE;
