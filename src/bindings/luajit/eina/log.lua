@@ -103,12 +103,35 @@ M.log_full = log_full
 
 local getinfo = debug.getinfo
 
+local getfuncname = function(info)
+    return info.name or "<" .. tostring(info.func) .. ">", info.currentline
+end
+
 local log = function(dom, level, msg, loff)
     local info = getinfo(2 + (loff or 0), "nlSf")
-    log_full(dom, level, info.source,
-        info.name or "<" .. tostring(info.func) .. ">", info.currentline, msg)
+    log_full(dom, level, info.source, getfuncname(info), info.currentline, msg)
 end
 M.log = log
+
+local logfuncs = {
+    { "crit", C.EINA_LOG_LEVEL_CRITICAL },
+    { "err",  C.EINA_LOG_LEVEL_ERR      },
+    { "warn", C.EINA_LOG_LEVEL_WARN     },
+    { "info", C.EINA_LOG_LEVEL_INFO     },
+    { "dbg",  C.EINA_LOG_LEVEL_DBG      }
+}
+
+for i, v in ipairs(logfuncs) do
+    M["log_" .. v[1]] = function(msg)
+        if not default_domain then return end
+        local info = getinfo(2, "nlSf")
+        local dom = ffi.cast("Domain_Private*", default_domain).domain
+        eina.eina_log_print(dom, v[2], info.source, getfuncname(info),
+            info.currentline, msg)
+    end
+end
+
+logfuncs = nil
 
 M.Domain_Base = util.Object:clone {
     set_level = function(self, level)
@@ -165,5 +188,7 @@ M.Domain = M.Domain_Base:clone {
         return self.__domain
     end
 }
+
+M.set_default_domain = f
 
 return M

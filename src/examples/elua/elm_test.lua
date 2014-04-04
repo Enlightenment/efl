@@ -7,6 +7,16 @@ local win = elm.Window("test", "Hello World")
 dom:log(log.level.INFO, "created window")
 dom:log(log.level.ERR, "error test!")
 
+log.log_err("test with default log domain")
+
+local foo = function()
+    for i = 1, 4 do
+        dom:log(log.level.ERR, "testing: " .. i)
+    end
+end
+
+foo()
+
 win:smart_callback_add("delete,request", function()
     elm.exit()
 end)
