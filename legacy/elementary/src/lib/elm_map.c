@@ -3446,16 +3446,34 @@ _source_all_unload(Elm_Map_Data *sd)
 
    for (idx = 0; sd->src_tile_names[idx]; idx++)
      eina_stringshare_del(sd->src_tile_names[idx]);
+   free(sd->src_tile_names);
+
    for (idx = 0; sd->src_route_names[idx]; idx++)
      eina_stringshare_del(sd->src_route_names[idx]);
+   free(sd->src_route_names);
+
    for (idx = 0; sd->src_name_names[idx]; idx++)
      eina_stringshare_del(sd->src_name_names[idx]);
+   free(sd->src_name_names);
 
-   EINA_LIST_FREE(sd->src_tiles, s) free(s);
-   EINA_LIST_FREE(sd->src_routes, s) free(s);
-   EINA_LIST_FREE(sd->src_names, s) free(s);
+   EINA_LIST_FREE(sd->src_tiles, s)
+     {
+        eina_stringshare_del(s->name);
+        free(s);
+     }
+   EINA_LIST_FREE(sd->src_routes, s)
+     {
+        eina_stringshare_del(s->name);
+        free(s);
+     }
+   EINA_LIST_FREE(sd->src_names, s)
+     {
+        eina_stringshare_del(s->name);
+        free(s);
+     }
 
    eina_module_list_free(sd->src_mods);
+   eina_array_free(sd->src_mods);
 }
 
 static void
@@ -3471,7 +3489,7 @@ _source_all_load(Elm_Map_Data *sd)
    for (idx = 0; idx < (sizeof(src_tiles) / sizeof(Source_Tile)); idx++)
      {
         src_tile = ELM_NEW(Source_Tile);
-        src_tile->name = src_tiles[idx].name;
+        src_tile->name = eina_stringshare_add(src_tiles[idx].name);
         src_tile->zoom_min = src_tiles[idx].zoom_min;
         src_tile->zoom_max = src_tiles[idx].zoom_max;
         src_tile->url_cb = src_tiles[idx].url_cb;
@@ -3484,7 +3502,7 @@ _source_all_load(Elm_Map_Data *sd)
    for (idx = 0; idx < (sizeof(src_routes) / sizeof(Source_Route)); idx++)
      {
         src_route = ELM_NEW(Source_Route);
-        src_route->name = src_routes[idx].name;
+        src_route->name = eina_stringshare_add(src_routes[idx].name);
         src_route->url_cb = src_routes[idx].url_cb;
         sd->src_routes = eina_list_append(sd->src_routes, src_route);
      }
@@ -3492,7 +3510,7 @@ _source_all_load(Elm_Map_Data *sd)
    for (idx = 0; idx < (sizeof(src_names) / sizeof(Source_Name)); idx++)
      {
         src_name = ELM_NEW(Source_Name);
-        src_name->name = src_names[idx].name;
+        src_name->name = eina_stringshare_add(src_names[idx].name);
         src_name->url_cb = src_names[idx].url_cb;
         sd->src_names = eina_list_append(sd->src_names, src_name);
      }

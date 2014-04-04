@@ -5,10 +5,10 @@
 #include "Elementary.h"
 #include <Eina.h>
 
-EAPI char *
+EAPI Eina_Stringshare *
 map_module_source_name_get(void)
 {
-   return strdup("test_map");
+   return eina_stringshare_add("test_map");
 }
 
 EAPI int

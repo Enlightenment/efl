@@ -20,7 +20,7 @@
 typedef struct _Elm_Map_Data     Elm_Map_Data;
 
 typedef struct _Elm_Map_Name_List      Elm_Map_Name_List;
-typedef char *(*Elm_Map_Module_Source_Name_Func)(void);
+typedef Eina_Stringshare *(*Elm_Map_Module_Source_Name_Func)(void);
 typedef int   (*Elm_Map_Module_Tile_Zoom_Min_Func)(void);
 typedef int   (*Elm_Map_Module_Tile_Zoom_Max_Func)(void);
 typedef char *(*Elm_Map_Module_Tile_Url_Func)(const Evas_Object *,
@@ -63,7 +63,7 @@ typedef struct _Source_Tile            Source_Tile;
 // and the map size is pow(2.0, z) * (tile size)
 struct _Source_Tile
 {
-   const char                           *name;
+   Eina_Stringshare                     *name;
    int                                   zoom_min;
    int                                   zoom_max;
    Elm_Map_Module_Tile_Url_Func          url_cb;
@@ -75,14 +75,14 @@ struct _Source_Tile
 typedef struct _Source_Route           Source_Route;
 struct _Source_Route
 {
-   const char                   *name;
+   Eina_Stringshare             *name;
    Elm_Map_Module_Route_Url_Func url_cb;
 };
 
 typedef struct _Source_Name            Source_Name;
 struct _Source_Name
 {
-   const char                  *name;
+   Eina_Stringshare            *name;
    Elm_Map_Module_Name_Url_Func url_cb;
 };
 
