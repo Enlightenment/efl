@@ -659,7 +659,7 @@ close_pipe:
 Eina_Bool
 ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
 {
-   int num;
+   size_t num;
    BOOL res;
    DWORD written;
 
@@ -706,7 +706,7 @@ Eina_Bool
 ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
 {
    Ecore_Con_Type type;
-   int num;
+   size_t num;
    BOOL res;
    DWORD written;
 

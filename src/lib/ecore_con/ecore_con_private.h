@@ -101,7 +101,7 @@ struct _Ecore_Con_Client
    Ecore_Con_Server *host_server;
    void *data;
    Ecore_Fd_Handler *fd_handler;
-   unsigned int buf_offset;
+   size_t buf_offset;
    Eina_Binbuf *buf;
    const char *ip;
    Eina_List *event_count;
@@ -136,7 +136,7 @@ struct _Ecore_Con_Server
    Eina_List *clients;
    unsigned int client_count;
    Eina_Binbuf *buf;
-   unsigned int write_buf_offset;
+   size_t write_buf_offset;
    Eina_List *infos;
    Eina_List *event_count;
    int client_limit;
@@ -146,7 +146,7 @@ struct _Ecore_Con_Server
    Ecore_Con_Proxy_State ecs_state;
    int ecs_addrlen;
    unsigned char ecs_addr[16];
-   unsigned int ecs_buf_offset;
+   size_t ecs_buf_offset;
    Eina_Binbuf *ecs_buf;
    Eina_Binbuf *ecs_recvbuf;
    const char *proxyip;
