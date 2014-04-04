@@ -934,6 +934,11 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    if (im->references > 1)
      ERR("Setting native with more than one references for im=%p", im);
 
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
+     evas_cache2_image_close(im);
+   else
+#endif
    evas_cache_image_drop(im);
 
    return im2;
