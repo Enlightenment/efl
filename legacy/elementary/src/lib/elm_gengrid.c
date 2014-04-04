@@ -2171,7 +2171,7 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *it)
                return item;
           }
      }
-   return NULL;
+   return it;
 }
 
 EOLIAN static Eina_Bool
