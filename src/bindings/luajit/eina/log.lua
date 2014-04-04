@@ -104,7 +104,7 @@ M.log_full = log_full
 local getinfo = debug.getinfo
 
 local getfuncname = function(info)
-    return info.name or "<" .. tostring(info.func) .. ">", info.currentline
+    return info.name or "<" .. tostring(info.func) .. ">"
 end
 
 local log = function(dom, level, msg, loff)
