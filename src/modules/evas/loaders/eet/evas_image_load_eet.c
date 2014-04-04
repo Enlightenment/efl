@@ -124,7 +124,7 @@ evas_image_load_file_data_eet(void *loader_data,
    switch (prop->cspace)
      {
       case EVAS_COLORSPACE_ETC1: cspace = EET_COLORSPACE_ETC1; break;
-      case EVAS_COLORSPACE_ARGB8888: cspace = EVAS_COLORSPACE_ARGB8888; break;
+      case EVAS_COLORSPACE_ARGB8888: cspace = EET_COLORSPACE_ARGB8888; break;
       default:
          return _evas_image_load_return_error(EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED, error);
      }
