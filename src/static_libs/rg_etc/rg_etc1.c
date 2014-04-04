@@ -1725,7 +1725,7 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
       uint i;
       const uint8* pSelectors = optimizer->m_best_solution.m_selectors;
 
-      rg_etc1_solution_coordinates_block_colors_get(optimizer->m_best_solution, block_colors);
+      rg_etc1_solution_coordinates_block_colors_get(optimizer->m_best_solution.m_coords, block_colors);
       pSrc_pixels = optimizer->m_pParams->m_pSrc_pixels;
       for (i = 0; i < n; i++)
         actual_error += rg_etc1_color_quad_u8_rgb_squared_distance(pSrc_pixels[i], block_colors[pSelectors[i]]);
