@@ -202,7 +202,7 @@ struct Main_Data {
     int    status;
 };
 
-const luaL_reg utillib[] = {
+const luaL_reg cutillib[] = {
     { "init_module", init_module },
     { "register_callbacks", register_callbacks },
     { NULL, NULL }
@@ -235,7 +235,7 @@ static int lua_main(lua_State *L) {
     }
     lua_pushcfunction(L, register_require);
     lua_createtable(L, 0, 0);
-    luaL_register(L, NULL, utillib);
+    luaL_register(L, NULL, cutillib);
     lua_call(L, 2, 0);
 
     elua_register_cache(L);

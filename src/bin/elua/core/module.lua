@@ -2,11 +2,11 @@
 
 local M = {}
 
-local util = select(2, ...)
+local cutil = select(2, ...)
 
 local preload = {
-    ffi  = package.preload["ffi"],
-    util = function() return util end
+    ffi   = package.preload["ffi"],
+    cutil = function() return cutil end
 }
 
 local loaded = {

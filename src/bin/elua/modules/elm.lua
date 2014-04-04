@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+local cutil = require("cutil")
 local util = require("util")
 
 local elm, evas
@@ -35,16 +36,16 @@ ffi.cdef [[
 local callbacks = {}
 
 local smart_cb_wrapper = ffi.cast("Evas_Smart_Cb",
-    util.register_callbacks(callbacks))
+    cutil.register_callbacks(callbacks))
 
-util.init_module(function()
+cutil.init_module(function()
     elm, evas = ffi.load("elementary"), ffi.load("evas")
     elm.elm_init(0, nil)
 end, function()
     elm.elm_exit()
 end)
 
-local Evas_Object = {
+local Evas_Object = util.Object:clone {
     resize = function(self, w, h)
         evas.evas_object_resize(self.__o, w, h)
     end,
@@ -78,49 +79,52 @@ local Evas_Object = {
     end
 }
 
-M.Window = function(name, title)
-    local o = setmetatable({
-        __o = elm.elm_win_add(nil, name, 0),
-        resize_object_add = function(self, o)
-            elm.elm_win_resize_object_add(self.__o, o.__o)
-        end
-    }, { __index = Evas_Object })
-    elm.elm_win_title_set(o.__o, title)
-    return o
-end
+M.Window = Evas_Object:clone {
+    __ctor = function(self, name, title)
+        self.__o = elm.elm_win_add(nil, name, 0)
+        elm.elm_win_title_set(self.__o, title)
+    end,
 
-M.Background = function(parent)
-    return setmetatable({
-        __o = elm.elm_bg_add(parent.__o)
-    }, { __index = Evas_Object })
-end
+    resize_object_add = function(self, o)
+        elm.elm_win_resize_object_add(self.__o, o.__o)
+    end
+}
 
-M.Label = function(parent)
-    return setmetatable({
-        __o = elm.elm_label_add(parent.__o),
-        text_set = function(self, label)
-            elm.elm_object_part_text_set(self.__o, nil, label)
-        end
-    }, { __index = Evas_Object })
-end
+M.Background = Evas_Object:clone {
+    __ctor = function(self, parent)
+        self.__o = elm.elm_bg_add(parent.__o)
+    end
+}
 
-M.Button = function(parent)
-    return setmetatable({
-        __o = elm.elm_button_add(parent.__o),
-        text_set = function(self, label)
-            elm.elm_object_part_text_set(self.__o, nil, label)
-        end
-    }, { __index = Evas_Object })
-end
+M.Label = Evas_Object:clone {
+    __ctor = function(self, parent)
+        self.__o = elm.elm_label_add(parent.__o)
+    end,
 
-M.Box = function(parent)
-    return setmetatable({
-        __o = elm.elm_box_add(parent.__o),
-        pack_end = function(self, obj)
-            elm.elm_box_pack_end(self.__o, obj.__o)
-        end
-    }, { __index = Evas_Object })
-end
+    text_set = function(self, label)
+        elm.elm_object_part_text_set(self.__o, nil, label)
+    end
+}
+
+M.Button = Evas_Object:clone {
+    __ctor = function(self, parent)
+        self.__o = elm.elm_button_add(parent.__o)
+    end,
+
+    text_set = function(self, label)
+        elm.elm_object_part_text_set(self.__o, nil, label)
+    end
+}
+
+M.Box = Evas_Object:clone {
+    __ctor = function(self, parent)
+        self.__o = elm.elm_box_add(parent.__o)
+    end,
+
+    pack_end = function(self, obj)
+        elm.elm_box_pack_end(self.__o, obj.__o)
+    end
+}
 
 M.exit = function()
     elm.elm_exit()
