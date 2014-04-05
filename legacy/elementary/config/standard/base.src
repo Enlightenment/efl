@@ -45,7 +45,7 @@ group "Elm_Config" struct {
   value "focus_highlight_enable" uchar: 0;
   value "focus_highlight_animate" uchar: 0;
   value "focus_highlight_clip_disable" uchar: 1;
-  value "item_focus_on_selection" uchar: 1;
+  value "item_select_on_focus_disable" uchar: 0;
   value "focus_move_policy" uchar: 0;
   value "toolbar_shrink_mode" int: 3;
   value "fileselector_expand_enable" uchar: 1;

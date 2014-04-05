@@ -1278,24 +1278,26 @@ EAPI Elm_Focus_Move_Policy elm_config_focus_move_policy_get(void);
 EAPI void elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy);
 
 /**
- * Set elementary item focus on selection
+ * Get disable status of item select on focus feature.
  *
- * @see elm_config_item_focus_on_selection_set
+ * @return The item select on focus disable status
+ *
+ * @see elm_config_item_select_on_focus_disabled_set
  * @since 1.10
  * @ingroup Focus
  */
-EAPI Eina_Bool elm_config_item_focus_on_selection_get(void);
+EAPI Eina_Bool elm_config_item_select_on_focus_disabled_get(void);
 
 /**
- * Get elementary item focus on selection
+ * Set the disable status of the item select on focus feature.
  *
- * @param enabled Enable item focus on selection if @c EINA_TRUE, disable otherwise
+ * @param disable Disable item select on focus if @c EINA_TRUE, enable otherwise
  *
- * @see elm_config_item_focus_on_selection_get
+ * @see elm_config_item_select_on_focus_disabled_get
  * @since 1.10
  * @ingroup Focus
  */
-EAPI void elm_config_item_focus_on_selection_set(Eina_Bool enabled);
+EAPI void elm_config_item_select_on_focus_disabled_set(Eina_Bool enabled);
 
 /**
  * Get the system mirrored mode. This determines the default mirrored mode

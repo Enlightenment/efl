@@ -1318,10 +1318,10 @@ test_list_focus_item_loop_enable_check_changed(void *data, Evas_Object *obj,
 }
 
 static void
-test_list_focus_item_focus_on_selection_changed(void *data EINA_UNUSED, Evas_Object *obj,
-                                                void *event_info  EINA_UNUSED)
+test_list_focus_item_select_on_focus_disable_changed(void *data EINA_UNUSED, Evas_Object *obj,
+                                                     void *event_info  EINA_UNUSED)
 {
-   elm_config_item_focus_on_selection_set(elm_check_state_get(obj));
+   elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
 }
 
 static void
@@ -1523,11 +1523,11 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    evas_object_show(chk);
 
    chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Item Focus on selection enable");
-   elm_check_state_set(chk, elm_config_item_focus_on_selection_get());
+   elm_object_text_set(chk, "Item Select on Focus disable");
+   elm_check_state_set(chk, elm_config_item_select_on_focus_disabled_get());
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_list_focus_item_focus_on_selection_changed,
+                                  test_list_focus_item_select_on_focus_disable_changed,
                                   NULL);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
