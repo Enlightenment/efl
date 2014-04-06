@@ -1532,7 +1532,6 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 
-   elm_box_pack_end(bx, bx_opt);
    // Focus Movement Policy
    fr = elm_frame_add(bx);
    elm_object_text_set(fr, "Focus Movement Policy");
