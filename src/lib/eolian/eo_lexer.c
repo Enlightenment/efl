@@ -4367,7 +4367,7 @@ eo_tokenizer_database_fill(const char *filename)
           }
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
-             Eolian_Function foo_id = database_function_new(meth->name, CONSTRUCTOR);
+             Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_CTOR);
              database_class_function_add(kls->name, foo_id);
              if (meth->ret) database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
@@ -4379,7 +4379,7 @@ eo_tokenizer_database_fill(const char *filename)
 
         EINA_LIST_FOREACH(kls->destructors, l, meth)
           {
-             Eolian_Function foo_id = database_function_new(meth->name, DESTRUCTOR);
+             Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_DTOR);
              database_class_function_add(kls->name, foo_id);
              if (meth->ret) database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
@@ -4391,7 +4391,7 @@ eo_tokenizer_database_fill(const char *filename)
 
         EINA_LIST_FOREACH(kls->properties, l, prop)
           {
-             Eolian_Function foo_id = database_function_new(prop->name, UNRESOLVED);
+             Eolian_Function foo_id = database_function_new(prop->name, EOLIAN_UNRESOLVED);
              EINA_LIST_FOREACH(prop->keys, m, param)
                {
                   Eolian_Function_Parameter p = database_property_key_add(
@@ -4408,20 +4408,20 @@ eo_tokenizer_database_fill(const char *filename)
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
-                  database_function_type_set(foo_id, (accessor->type == SETTER?SET:GET));
+                  database_function_type_set(foo_id, (accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET));
                   if (accessor->ret && accessor->ret->type)
                     {
                        database_function_return_type_set(foo_id,
-                             accessor->type == SETTER?SET:GET, accessor->ret->type);
+                             accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET, accessor->ret->type);
                        database_function_data_set(foo_id,
                              (accessor->type == SETTER?EOLIAN_PROP_SET_RETURN_COMMENT:EOLIAN_PROP_GET_RETURN_COMMENT),
                              accessor->ret->comment);
                        database_function_return_flag_set_as_warn_unused(foo_id,
-                             accessor->type == SETTER?SET:GET, accessor->ret->warn_unused);
+                             accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET, accessor->ret->warn_unused);
                        database_function_return_flag_set_own(foo_id,
-                             accessor->type == SETTER?SET:GET, accessor->ret->own);
+                             accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET, accessor->ret->own);
                        database_function_return_dflt_val_set(foo_id,
-                             accessor->type == SETTER?SET:GET, accessor->ret->dflt_ret_val);
+                             accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET, accessor->ret->dflt_ret_val);
                     }
                   if (accessor->legacy)
                     {
@@ -4453,17 +4453,17 @@ eo_tokenizer_database_fill(const char *filename)
 
         EINA_LIST_FOREACH(kls->methods, l, meth)
           {
-             Eolian_Function foo_id = database_function_new(meth->name, METHOD_FUNC);
+             Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_METHOD);
              database_class_function_add(kls->name, foo_id);
              if (meth->ret)
                {
                   database_function_data_set(foo_id, EOLIAN_METHOD_RETURN_TYPE, meth->ret->type);
                   database_function_description_set(foo_id, EOLIAN_RETURN_COMMENT, meth->ret->comment);
                   database_function_return_flag_set_as_warn_unused(foo_id,
-                        METHOD_FUNC, meth->ret->warn_unused);
-                  database_function_return_flag_set_own(foo_id, METHOD_FUNC, meth->ret->own);
+                        EOLIAN_METHOD, meth->ret->warn_unused);
+                  database_function_return_flag_set_own(foo_id, EOLIAN_METHOD, meth->ret->own);
                   database_function_return_dflt_val_set(foo_id,
-                        METHOD_FUNC, meth->ret->dflt_ret_val);
+                        EOLIAN_METHOD, meth->ret->dflt_ret_val);
                }
              database_function_description_set(foo_id, EOLIAN_COMMENT, meth->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
@@ -4495,13 +4495,13 @@ eo_tokenizer_database_fill(const char *filename)
              char *func = strstr(class, "::");
              if (func) *func = '\0';
              func += 2;
-             Eolian_Function_Type ftype = UNRESOLVED;
+             Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
              char *type_as_str = strstr(func, "::");
              if (type_as_str)
                {
                   *type_as_str = '\0';
-                  if (!strcmp(type_as_str+2, "set")) ftype = SET;
-                  else if (!strcmp(type_as_str+2, "get")) ftype = GET;
+                  if (!strcmp(type_as_str+2, "set")) ftype = EOLIAN_PROP_SET;
+                  else if (!strcmp(type_as_str+2, "get")) ftype = EOLIAN_PROP_GET;
                }
              if (virtual_pure)
                {

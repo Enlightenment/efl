@@ -89,16 +89,15 @@ typedef struct _Event_Desc* Eolian_Event;
 
 typedef enum
 {
-   UNRESOLVED,
-   PROPERTY_FUNC,
-   // FIXME: bs
-   SET,
-   GET,
-   METHOD_FUNC,
-   CONSTRUCTOR,
-   DFLT_CONSTRUCTOR,
-   DESTRUCTOR,
-   DFLT_DESTRUCTOR
+   EOLIAN_UNRESOLVED,
+   EOLIAN_PROPERTY,
+   EOLIAN_PROP_SET,
+   EOLIAN_PROP_GET,
+   EOLIAN_METHOD,
+   EOLIAN_CTOR,
+   EOLIAN_DTOR,
+   EOLIAN_DFLT_CTOR,
+   EOLIAN_DFLT_DTOR
 } Eolian_Function_Type;
 
 typedef enum

@@ -378,11 +378,11 @@ database_function_type_set(Eolian_Function function_id, Eolian_Function_Type foo
    EINA_SAFETY_ON_NULL_RETURN(fid);
    switch (foo_type)
      {
-      case SET:
-         if (fid->type == GET) foo_type = PROPERTY_FUNC;
+      case EOLIAN_PROP_SET:
+         if (fid->type == EOLIAN_PROP_GET) foo_type = EOLIAN_PROPERTY;
          break;
-      case GET:
-         if (fid->type == SET) foo_type = PROPERTY_FUNC;
+      case EOLIAN_PROP_GET:
+         if (fid->type == EOLIAN_PROP_SET) foo_type = EOLIAN_PROPERTY;
          break;
       default:
          break;
@@ -398,24 +398,24 @@ Eina_Bool database_class_function_add(const char *class_name, Eolian_Function fo
    _Function_Id *fid = (_Function_Id *) foo_id;
    switch (fid->type)
      {
-      case PROPERTY_FUNC:
-      case SET:
-      case GET:
+      case EOLIAN_PROPERTY:
+      case EOLIAN_PROP_SET:
+      case EOLIAN_PROP_GET:
          desc->properties = eina_list_append(desc->properties, foo_id);
          break;
-      case METHOD_FUNC:
+      case EOLIAN_METHOD:
          desc->methods = eina_list_append(desc->methods, foo_id);
          break;
-      case CONSTRUCTOR:
+      case EOLIAN_CTOR:
          desc->constructors = eina_list_append(desc->constructors, foo_id);
          break;
-      case DFLT_CONSTRUCTOR:
+      case EOLIAN_DFLT_CTOR:
          desc->dflt_ctor = foo_id;
          break;
-      case DESTRUCTOR:
+      case EOLIAN_DTOR:
          desc->destructors = eina_list_append(desc->destructors, foo_id);
          break;
-      case DFLT_DESTRUCTOR:
+      case EOLIAN_DFLT_DTOR:
          desc->dflt_dtor = foo_id;
          break;
       default:
@@ -540,7 +540,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
    Class_desc *desc = _class_get(class_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
 
-   if (f_type == UNRESOLVED || f_type == METHOD_FUNC)
+   if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_METHOD)
       EINA_LIST_FOREACH(desc->methods, itr, foo_id)
         {
            _Function_Id *fid = (_Function_Id *) foo_id;
@@ -548,8 +548,8 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
               return foo_id;
         }
 
-   if (f_type == UNRESOLVED || f_type == PROPERTY_FUNC ||
-         f_type == SET || f_type == GET)
+   if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_PROPERTY ||
+         f_type == EOLIAN_PROP_SET || f_type == EOLIAN_PROP_GET)
      {
         EINA_LIST_FOREACH(desc->properties, itr, foo_id)
           {
@@ -559,7 +559,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
           }
      }
 
-   if (f_type == CONSTRUCTOR)
+   if (f_type == EOLIAN_CTOR)
      {
         EINA_LIST_FOREACH(desc->constructors, itr, foo_id)
           {
@@ -569,7 +569,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
           }
      }
 
-   if (f_type == DESTRUCTOR)
+   if (f_type == EOLIAN_DTOR)
      {
         EINA_LIST_FOREACH(desc->destructors, itr, foo_id)
           {
@@ -589,13 +589,13 @@ eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type foo
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    switch (foo_type)
      {
-      case PROPERTY_FUNC:
+      case EOLIAN_PROPERTY:
          return desc->properties;
-      case METHOD_FUNC:
+      case EOLIAN_METHOD:
          return desc->methods;
-      case CONSTRUCTOR:
+      case EOLIAN_CTOR:
          return desc->constructors;
-      case DESTRUCTOR:
+      case EOLIAN_DTOR:
          return desc->destructors;
       default: return NULL;
      }
@@ -621,7 +621,7 @@ EAPI Eolian_Function_Type
 eolian_function_type_get(Eolian_Function function_id)
 {
    _Function_Id *fid = (_Function_Id *)function_id;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, UNRESOLVED);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EOLIAN_UNRESOLVED);
    return fid->type;
 }
 
@@ -640,8 +640,8 @@ database_function_set_as_virtual_pure(Eolian_Function function_id, Eolian_Functi
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case UNRESOLVED: case METHOD_FUNC: case GET: fid->get_virtual_pure = EINA_TRUE; break;
-      case SET: fid->set_virtual_pure = EINA_TRUE; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROP_GET: fid->get_virtual_pure = EINA_TRUE; break;
+      case EOLIAN_PROP_SET: fid->set_virtual_pure = EINA_TRUE; break;
       default: return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -654,8 +654,8 @@ eolian_function_is_virtual_pure(Eolian_Function function_id, Eolian_Function_Typ
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case UNRESOLVED: case METHOD_FUNC: case GET: return fid->get_virtual_pure; break;
-      case SET: return fid->set_virtual_pure; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROP_GET: return fid->get_virtual_pure; break;
+      case EOLIAN_PROP_SET: return fid->set_virtual_pure; break;
       default: return EINA_FALSE;
      }
 }
@@ -850,9 +850,9 @@ void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_T
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key = EOLIAN_PROP_SET_RETURN_TYPE; break;
-      case GET: key = EOLIAN_PROP_GET_RETURN_TYPE; break;
-      case METHOD_FUNC: key = EOLIAN_METHOD_RETURN_TYPE; break;
+      case EOLIAN_PROP_SET: key = EOLIAN_PROP_SET_RETURN_TYPE; break;
+      case EOLIAN_PROP_GET: key = EOLIAN_PROP_GET_RETURN_TYPE; break;
+      case EOLIAN_METHOD: key = EOLIAN_METHOD_RETURN_TYPE; break;
       default: return;
      }
    database_function_data_set(foo_id, key, ret_type);
@@ -864,9 +864,9 @@ eolian_function_return_type_get(Eolian_Function foo_id, Eolian_Function_Type fty
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key = EOLIAN_PROP_SET_RETURN_TYPE; break;
-      case GET: key = EOLIAN_PROP_GET_RETURN_TYPE; break;
-      case UNRESOLVED: case METHOD_FUNC: key = EOLIAN_METHOD_RETURN_TYPE; break;
+      case EOLIAN_PROP_SET: key = EOLIAN_PROP_SET_RETURN_TYPE; break;
+      case EOLIAN_PROP_GET: key = EOLIAN_PROP_GET_RETURN_TYPE; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = EOLIAN_METHOD_RETURN_TYPE; break;
       default: return NULL;
      }
    return eolian_function_data_get(foo_id, key);
@@ -877,9 +877,9 @@ void database_function_return_dflt_val_set(Eolian_Function foo_id, Eolian_Functi
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key = PROP_SET_RETURN_DFLT_VAL; break;
-      case GET: key = PROP_GET_RETURN_DFLT_VAL; break;
-      case METHOD_FUNC: key = METHOD_RETURN_DFLT_VAL; break;
+      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DFLT_VAL; break;
+      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DFLT_VAL; break;
+      case EOLIAN_METHOD: key = METHOD_RETURN_DFLT_VAL; break;
       default: return;
      }
    database_function_data_set(foo_id, key, ret_dflt_value);
@@ -891,9 +891,9 @@ eolian_function_return_dflt_value_get(Eolian_Function foo_id, Eolian_Function_Ty
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key = PROP_SET_RETURN_DFLT_VAL; break;
-      case GET: key = PROP_GET_RETURN_DFLT_VAL; break;
-      case UNRESOLVED: case METHOD_FUNC: key = METHOD_RETURN_DFLT_VAL; break;
+      case EOLIAN_PROP_SET: key = PROP_SET_RETURN_DFLT_VAL; break;
+      case EOLIAN_PROP_GET: key = PROP_GET_RETURN_DFLT_VAL; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = METHOD_RETURN_DFLT_VAL; break;
       default: return NULL;
      }
    return eolian_function_data_get(foo_id, key);
@@ -905,9 +905,9 @@ eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type 
    const char *key = NULL;
    switch (ftype)
      {
-      case SET: key = EOLIAN_PROP_SET_RETURN_COMMENT; break;
-      case GET: key = EOLIAN_PROP_GET_RETURN_COMMENT; break;
-      case UNRESOLVED: case METHOD_FUNC: key = EOLIAN_RETURN_COMMENT; break;
+      case EOLIAN_PROP_SET: key = EOLIAN_PROP_SET_RETURN_COMMENT; break;
+      case EOLIAN_PROP_GET: key = EOLIAN_PROP_GET_RETURN_COMMENT; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = EOLIAN_RETURN_COMMENT; break;
       default: return NULL;
      }
    return eolian_function_data_get(foo_id, key);
@@ -920,8 +920,8 @@ void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
    EINA_SAFETY_ON_NULL_RETURN(fid);
    switch (ftype)
      {
-      case METHOD_FUNC: case GET: fid->get_return_warn_unused = warn_unused; break;
-      case SET: fid->set_return_warn_unused = warn_unused; break;
+      case EOLIAN_METHOD: case EOLIAN_PROP_GET: fid->get_return_warn_unused = warn_unused; break;
+      case EOLIAN_PROP_SET: fid->set_return_warn_unused = warn_unused; break;
       default: return;
      }
 }
@@ -934,8 +934,8 @@ eolian_function_return_is_warn_unused(Eolian_Function foo_id,
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case METHOD_FUNC: case GET: return fid->get_return_warn_unused;
-      case SET: return fid->set_return_warn_unused;
+      case EOLIAN_METHOD: case EOLIAN_PROP_GET: return fid->get_return_warn_unused;
+      case EOLIAN_PROP_SET: return fid->set_return_warn_unused;
       default: return EINA_FALSE;
      }
 }
@@ -947,8 +947,8 @@ void database_function_return_flag_set_own(Eolian_Function foo_id,
    EINA_SAFETY_ON_NULL_RETURN(fid);
    switch (ftype)
      {
-      case METHOD_FUNC: case GET: fid->get_return_own = own; break;
-      case SET: fid->set_return_own = own; break;
+      case EOLIAN_METHOD: case EOLIAN_PROP_GET: fid->get_return_own = own; break;
+      case EOLIAN_PROP_SET: fid->set_return_own = own; break;
       default: return;
      }
 }
@@ -961,8 +961,8 @@ eolian_function_return_own_get(Eolian_Function foo_id,
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    switch (ftype)
      {
-      case METHOD_FUNC: case GET: return fid->get_return_own;
-      case SET: return fid->set_return_own;
+      case EOLIAN_METHOD: case EOLIAN_PROP_GET: return fid->get_return_own;
+      case EOLIAN_PROP_SET: return fid->set_return_own;
       default: return EINA_FALSE;
      }
 }
@@ -1075,10 +1075,10 @@ _implements_print(Eolian_Implement impl, int nb_spaces)
    eolian_implement_information_get(impl, &cl, &fn, &ft);
    switch (ft)
      {
-      case SET: t = "SET"; break;
-      case GET: t = "GET"; break;
-      case METHOD_FUNC: t = "METHOD"; break;
-      case UNRESOLVED:
+      case EOLIAN_PROP_SET: t = "SET"; break;
+      case EOLIAN_PROP_GET: t = "GET"; break;
+      case EOLIAN_METHOD: t = "METHOD"; break;
+      case EOLIAN_UNRESOLVED:
            {
               t = "Type is the same as function being overriden";
               break;
@@ -1128,7 +1128,7 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
    const char *ret_desc = eolian_function_description_get(foo_id, EOLIAN_RETURN_COMMENT);
    switch (fid->type)
      {
-      case PROPERTY_FUNC:
+      case EOLIAN_PROPERTY:
            {
               printf("%*s<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
               const char *str = eolian_function_description_get(foo_id, EOLIAN_COMMENT_GET);
@@ -1145,7 +1145,7 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
               if (str) printf("%*sreturn type for set: <%s>\n", nb_spaces + 5, "", str);
               break;
            }
-      case GET:
+      case EOLIAN_PROP_GET:
            {
               printf("%*sGET:<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
               const char *str = eolian_function_description_get(foo_id, EOLIAN_COMMENT_GET);
@@ -1156,7 +1156,7 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
               if (str) printf("%*sreturn type: <%s>\n", nb_spaces + 5, "", str);
               break;
            }
-      case SET:
+      case EOLIAN_PROP_SET:
            {
               printf("%*sSET:<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
               const char *str = eolian_function_description_get(foo_id, EOLIAN_COMMENT_SET);
@@ -1167,7 +1167,7 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
               if (str) printf("%*sreturn type: <%s>\n", nb_spaces + 5, "", str);
               break;
            }
-      case METHOD_FUNC:
+      case EOLIAN_METHOD:
            {
               printf("%*s<%s> %s\n", nb_spaces, "", ret_desc ? ret_desc : "", fid->name);
               const char *str = eolian_function_description_get(foo_id, EOLIAN_COMMENT);
@@ -1179,8 +1179,8 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
               if (fid->obj_is_const) printf("%*sobj const: <true>\n", nb_spaces + 5, "");
               break;
            }
-      case CONSTRUCTOR:
-      case DESTRUCTOR:
+      case EOLIAN_CTOR:
+      case EOLIAN_DTOR:
            {
               //char *str = eina_hash_find(fid->data, "comment");
               const char *str = eolian_function_description_get(foo_id, EOLIAN_COMMENT);
