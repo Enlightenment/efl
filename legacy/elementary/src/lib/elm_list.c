@@ -213,6 +213,9 @@ _elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
    ELM_LIST_DATA_GET(WIDGET(it), sd);
 
    if (!sd->focus_on_selection_enabled) return EINA_FALSE;
+   if ((h_mode && (dir != ELM_FOCUS_UP) && (dir != ELM_FOCUS_DOWN)) ||
+       (!h_mode && (dir != ELM_FOCUS_LEFT) && (dir != ELM_FOCUS_RIGHT)))
+     return EINA_FALSE;
 
    int focus_objs = 0;
    Evas_Object *focus_chain[2];
@@ -225,10 +228,7 @@ _elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
      focus_chain[focus_objs++] = it->end;
 
    if (!focus_objs)
-     {
-        elm_object_focus_set(VIEW(it), EINA_TRUE);
-        return EINA_FALSE;
-     }
+     return EINA_FALSE;
 
    for (idx = 0; idx < focus_objs; idx++)
      {
@@ -253,10 +253,6 @@ _elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
              elm_object_focus_set(nextfocus, EINA_TRUE);
              return EINA_TRUE;
           }
-
-        if ((h_mode && (dir != ELM_FOCUS_UP) && (dir != ELM_FOCUS_DOWN)) ||
-            (!h_mode && (dir != ELM_FOCUS_LEFT) && (dir != ELM_FOCUS_RIGHT)))
-               return EINA_FALSE;
 
         idx += ((dir == ELM_FOCUS_UP) || (dir == ELM_FOCUS_LEFT)) ? -1 : 1;
         if (idx < 0) idx = focus_objs - 1;
