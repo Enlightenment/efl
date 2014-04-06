@@ -74,12 +74,6 @@ typedef struct _Implement_Legacy_Param* Eolian_Implement_Legacy_Parameter;
  */
 typedef struct _Event_Desc* Eolian_Event;
 
-#define EOLIAN_METHOD_RETURN_TYPE "method_return_type"
-#define EOLIAN_PROP_GET_RETURN_TYPE "property_get_return_type"
-#define EOLIAN_PROP_SET_RETURN_TYPE "property_set_return_type"
-#define EOLIAN_RETURN_COMMENT "method_return_comment"
-#define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
-#define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
 #define EOLIAN_LEGACY "legacy"
 #define EOLIAN_LEGACY_GET "legacy_get"
 #define EOLIAN_LEGACY_SET "legacy_set"

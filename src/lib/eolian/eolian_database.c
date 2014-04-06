@@ -5,6 +5,14 @@
 #define PROP_SET_RETURN_DFLT_VAL "property_set_return_dflt_val"
 #define METHOD_RETURN_DFLT_VAL "method_return_dflt_val"
 
+#define EOLIAN_METHOD_RETURN_TYPE "method_return_type"
+#define EOLIAN_PROP_GET_RETURN_TYPE "property_get_return_type"
+#define EOLIAN_PROP_SET_RETURN_TYPE "property_set_return_type"
+
+#define EOLIAN_METHOD_RETURN_COMMENT "method_return_comment"
+#define EOLIAN_PROP_GET_RETURN_COMMENT "property_get_return_comment"
+#define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
+
 static Eina_Hash *_classes = NULL;
 static int _database_init_count = 0;
 
@@ -907,10 +915,23 @@ eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type 
      {
       case EOLIAN_PROP_SET: key = EOLIAN_PROP_SET_RETURN_COMMENT; break;
       case EOLIAN_PROP_GET: key = EOLIAN_PROP_GET_RETURN_COMMENT; break;
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = EOLIAN_RETURN_COMMENT; break;
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: key = EOLIAN_METHOD_RETURN_COMMENT; break;
       default: return NULL;
      }
    return eolian_function_data_get(foo_id, key);
+}
+
+void database_function_return_comment_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_comment)
+{
+   const char *key = NULL;
+   switch (ftype)
+     {
+      case EOLIAN_PROP_SET: key = EOLIAN_PROP_SET_RETURN_COMMENT; break;
+      case EOLIAN_PROP_GET: key = EOLIAN_PROP_GET_RETURN_COMMENT; break;
+      case EOLIAN_METHOD: key = EOLIAN_METHOD_RETURN_COMMENT; break;
+      default: return;
+     }
+   database_function_data_set(foo_id, key, ret_comment);
 }
 
 void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
@@ -1125,7 +1146,7 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
 {
    Eolian_Function foo_id = (Eolian_Function) fid;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   const char *ret_desc = eolian_function_description_get(foo_id, EOLIAN_RETURN_COMMENT);
+   const char *ret_desc = eolian_function_return_comment_get(foo_id, fid->type);
    switch (fid->type)
      {
       case EOLIAN_PROPERTY:

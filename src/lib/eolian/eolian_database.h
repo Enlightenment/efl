@@ -94,6 +94,8 @@ void database_parameter_own_set(Eolian_Function_Parameter, Eina_Bool own);
 
 void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type);
 
+void database_function_return_comment_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_comment);
+
 void database_function_return_dflt_val_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_dflt_value);
 
 void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
