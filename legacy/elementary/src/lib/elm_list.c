@@ -242,7 +242,7 @@ _elm_list_item_content_focus_set(Elm_List_Item *it, Elm_Focus_Direction dir,
    if (!focused)
      {
         elm_object_focus_set(focus_chain[0], EINA_TRUE);
-        return EINA_FALSE;
+        return EINA_TRUE;
      }
 
    if (dir != ELM_FOCUS_PREVIOUS)
