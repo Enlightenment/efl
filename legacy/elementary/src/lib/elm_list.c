@@ -307,6 +307,95 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_list_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Event_Key_Down *ev)
+{
+   Elm_List_Item *it = NULL;
+   ELM_LIST_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   Evas_Coord v = 0;
+   Evas_Coord min = 0;
+   Eina_Bool focus_only = EINA_FALSE;
+
+   // check if the content can get the focus by direction key
+   it = (Elm_List_Item *)elm_object_focused_item_get(obj);
+   if (_elm_list_item_content_focus_set(it, dir, sd->h_mode))
+     return EINA_TRUE;
+
+   if ((sd->h_mode && (dir != ELM_FOCUS_LEFT) && (dir != ELM_FOCUS_RIGHT)) ||
+       (!sd->h_mode && (dir != ELM_FOCUS_UP) && (dir != ELM_FOCUS_DOWN)))
+     return EINA_FALSE;
+
+   // get content size and viewport size
+   if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT))
+     {
+        eo_do(obj,
+              elm_interface_scrollable_content_viewport_size_get(&v, NULL),
+              elm_interface_scrollable_content_size_get(&min, NULL));
+     }
+   else
+     {
+        eo_do(obj,
+              elm_interface_scrollable_content_viewport_size_get(NULL, &v),
+              elm_interface_scrollable_content_size_get(NULL, &min));
+     }
+
+   // move focus or selection according to the configuration
+   focus_only = _elm_config->item_select_on_focus_disable && elm_widget_focus_highlight_enabled_get(obj);
+   if (focus_only)
+     ret = _item_focused_next(obj, dir);
+   else
+     {
+        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+          {
+             if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_UP))
+               ret = _item_multi_select_up(sd);
+             else
+               ret = _item_multi_select_down(sd);
+          }
+        else
+          {
+             if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_UP))
+               ret = _item_single_select_up(sd);
+             else
+               ret = _item_single_select_down(sd);
+          }
+     }
+   if (ret)
+     return EINA_TRUE;
+
+   // handle item loop feature
+   if (sd->item_loop_enable)
+     {
+        if (min > v)
+          {
+             if (dir == ELM_FOCUS_LEFT)
+               elm_layout_signal_emit(obj, "elm,action,looping,left", "elm");
+             else if (dir == ELM_FOCUS_RIGHT)
+               elm_layout_signal_emit(obj, "elm,action,looping,right", "elm");
+             else if (dir == ELM_FOCUS_UP)
+               elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
+             else if (dir == ELM_FOCUS_DOWN)
+               elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
+          }
+        else
+          {
+             if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_UP))
+               it = (Elm_List_Item *)elm_list_last_item_get(obj);
+             else
+               it = (Elm_List_Item *)elm_list_first_item_get(obj);
+
+             if (focus_only)
+               elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+             else
+               elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+          }
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 EOLIAN static Eina_Bool
 _elm_list_elm_widget_event(Eo *obj, Elm_List_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -321,11 +410,7 @@ _elm_list_elm_widget_event(Eo *obj, Elm_List_Data *sd, Evas_Object *src, Evas_Ca
    Evas_Coord step_y = 0;
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
-   Evas_Coord minw = 0;
-   Evas_Coord minh = 0;
    Elm_List_Item *it = NULL;
-   Eina_Bool sel_ret = EINA_FALSE;
-   Eina_Bool foc_ret = EINA_FALSE;
 
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
@@ -336,197 +421,53 @@ _elm_list_elm_widget_event(Eo *obj, Elm_List_Data *sd, Evas_Object *src, Evas_Ca
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h),
-         elm_interface_scrollable_content_size_get(&minw, &minh));
+         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+
 
    /* TODO: fix logic for horizontal mode */
    if ((!strcmp(ev->key, "Left")) ||
        ((!strcmp(ev->key, "KP_Left")) && !ev->string))
      {
-        it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_content_focus_set(
-           it, ELM_FOCUS_LEFT, sd->h_mode);
-
-        if ((sd->h_mode && !focused))
+        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_LEFT, ev))
           {
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-                    sel_ret = _item_multi_select_up(sd);
-                  else
-                    sel_ret = _item_single_select_up(sd);
-               }
-             else
-               foc_ret = _item_focused_next(obj, ELM_FOCUS_LEFT);
-
-             if (sel_ret || foc_ret)
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  return EINA_TRUE;
-               }
-             else
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (minw > v_w)
-                         {
-                            elm_layout_signal_emit(obj, "elm,action,looping,left", "elm");
-                         }
-                       else
-                         {
-                            it = (Elm_List_Item *)elm_list_last_item_get(obj);
-                            if (!_elm_config->item_select_on_focus_disable)
-                              elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
-                            else
-                              elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
-                         }
-                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                       return EINA_TRUE;
-                    }
-               }
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
           }
-        return EINA_FALSE;
+        else
+          return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Right")) ||
             ((!strcmp(ev->key, "KP_Right")) && !ev->string))
      {
-        it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_content_focus_set(
-           it, ELM_FOCUS_RIGHT, sd->h_mode);
-
-        if (sd->h_mode && !focused)
+        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_RIGHT, ev))
           {
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-                    sel_ret = _item_multi_select_down(sd);
-                  else
-                    sel_ret = _item_single_select_down(sd);
-               }
-             else
-               foc_ret = _item_focused_next(obj, ELM_FOCUS_RIGHT);
-
-             if (sel_ret || foc_ret)
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  return EINA_TRUE;
-               }
-             else
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (minw > v_w)
-                         {
-                            elm_layout_signal_emit(obj, "elm,action,looping,right", "elm");
-                         }
-                       else
-                         {
-                            it = (Elm_List_Item *)elm_list_first_item_get(obj);
-                            if (!_elm_config->item_select_on_focus_disable)
-                              elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
-                            else
-                              elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
-                         }
-                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                       return EINA_TRUE;
-                    }
-               }
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
           }
-        return EINA_FALSE;
+        else
+          return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Up")) ||
             ((!strcmp(ev->key, "KP_Up")) && !ev->string))
      {
-        it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_content_focus_set(
-           it, ELM_FOCUS_UP, sd->h_mode);
-
-        if (!sd->h_mode && !focused)
+        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_UP, ev))
           {
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-                    sel_ret = _item_multi_select_up(sd);
-                  else
-                    sel_ret = _item_single_select_up(sd);
-               }
-             else
-               foc_ret = _item_focused_next(obj, ELM_FOCUS_UP);
-
-             if (sel_ret || foc_ret)
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  return EINA_TRUE;
-               }
-             else
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (minh > v_h)
-                         {
-                            elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
-                         }
-                       else
-                         {
-                            it = (Elm_List_Item *)elm_list_last_item_get(obj);
-                            if (!_elm_config->item_select_on_focus_disable)
-                              elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
-                            else
-                              elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
-                         }
-                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                       return EINA_TRUE;
-                    }
-               }
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
           }
-        return EINA_FALSE;
+        else
+          return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Down")) ||
             ((!strcmp(ev->key, "KP_Down")) && !ev->string))
      {
-        it = (Elm_List_Item *)elm_list_selected_item_get(obj);
-        Eina_Bool focused = _elm_list_item_content_focus_set(
-           it, ELM_FOCUS_DOWN, sd->h_mode);
-
-        if (!sd->h_mode && !focused)
+        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, ev))
           {
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-                    sel_ret = _item_multi_select_down(sd);
-                  else
-                    sel_ret = _item_single_select_down(sd);
-               }
-             else
-               foc_ret = _item_focused_next(obj, ELM_FOCUS_DOWN);
-
-             if (sel_ret || foc_ret)
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  return EINA_TRUE;
-               }
-             else
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (minh > v_h)
-                         {
-                            elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
-                         }
-                       else
-                         {
-                            it = (Elm_List_Item *)elm_list_first_item_get(obj);
-                            if (!_elm_config->item_select_on_focus_disable)
-                              elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
-                            else
-                              elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
-                         }
-                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                       return EINA_TRUE;
-                    }
-               }
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
           }
-        return EINA_FALSE;
+        else
+          return EINA_FALSE;
      }
    else if ((!strcmp(ev->key, "Home")) ||
             ((!strcmp(ev->key, "KP_Home")) && !ev->string))
