@@ -31,15 +31,15 @@ end
 
 ffi.metatype("Eina_Iterator", {
     __index = {
-        free = function(self) C.eina_iterator_free(self) end,
+        free = function(self) eina.eina_iterator_free(ffi.gc(self, nil)) end,
         next = function(self)
             local data = ffi.new("void*[1]")
-            local r = C.eina_iterator_next(self, data)
+            local r = eina.eina_iterator_next(self, data)
             if r == 0 then return nil end
             return data[0]
         end,
-        lock   = function(self) return C.eina_iterator_lock  (self) == 1 end,
-        unlock = function(self) return C.eina_iterator_unlock(self) == 1 end
+        lock   = function(self) return eina.eina_iterator_lock  (self) == 1 end,
+        unlock = function(self) return eina.eina_iterator_unlock(self) == 1 end
     }
 })
 
@@ -48,9 +48,9 @@ cutil.init_module(init, shutdown)
 M.Iterator = util.Object:clone {
     __ctor = function(self, iter)
         self.__iterator = iter
-        if self.__iterator then ffi.gc(self.__iterator, function(iter)
-            iter:free()
-        end) end
+        if self.__iterator then
+            ffi.gc(self.__iterator, self.__iterator.free)
+        end
         self.__eq = function(self, other)
             return self.__iterator == other.__iterator
         end
@@ -61,7 +61,7 @@ M.Iterator = util.Object:clone {
 
     free = function(self)
         if not self.__iterator then return end
-        self.__iterator.free(ffi.gc(self.__iterator, nil))
+        self.__iterator:free()
         self.__iterator = nil
     end,
 
