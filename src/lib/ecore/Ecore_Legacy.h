@@ -9,24 +9,6 @@ extern "C" {
  */
 
 /**
- * @brief Changes the polling interval rate of @p poller.
- * @param poller The Ecore_Poller to change the interval of.
- * @param interval The tick interval to set; must be a power of 2 and <= 32768.
- * @return Returns true on success, false on failure.
- *
- * This allows the changing of a poller's polling interval. It is useful when
- * you want to alter a poll rate without deleting and re-creating a poller.
- */
-EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval);
-/**
- * @brief Gets the polling interval rate of @p poller.
- * @param poller The Ecore_Poller to change the interval of.
- * @return Returns the interval, in ticks, that @p poller polls at.
- *
- * This returns a poller's polling interval, or 0 on error.
- */
-EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *poller);
-/**
  * @brief Creates a poller to call the given function at a particular tick interval.
  * @param type The ticker type to attach the poller to. Must be ECORE_POLLER_CORE.
  * @param interval The poll interval.
@@ -62,6 +44,8 @@ EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_
  * returned 0, the handle is no longer valid (and does not need to be deleted).
  */
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
+
+#include "ecore_poll.eo.legacy.h"
 
 /**
  * @}
@@ -164,6 +148,8 @@ EAPI void ecore_animator_freeze(Ecore_Animator *animator);
  */
 EAPI void ecore_animator_thaw(Ecore_Animator *animator);
 
+#include "ecore_animator.eo.legacy.h"
+
 /**
  * @}
  */
@@ -176,14 +162,12 @@ EAPI void ecore_animator_thaw(Ecore_Animator *animator);
 EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
 EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data);
 EAPI void *ecore_timer_del(Ecore_Timer *timer);
-EAPI void ecore_timer_interval_set(Ecore_Timer *timer, double in);
-EAPI double ecore_timer_interval_get(const Ecore_Timer *timer);
 EAPI void ecore_timer_freeze(Ecore_Timer *timer);
 EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
 EAPI void ecore_timer_thaw(Ecore_Timer *timer);
-EAPI void ecore_timer_delay(Ecore_Timer *timer, double add);
-EAPI void ecore_timer_reset(Ecore_Timer *timer);
-EAPI double ecore_timer_pending_get(const Ecore_Timer *timer);
+
+#include "ecore_timer.eo.legacy.h"
+
 /**
  * @}
  */
@@ -223,6 +207,9 @@ EAPI void *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
 EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data);
 EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
+
+#include "ecore_idler.eo.legacy.h"
+
 /**
  * @}
  */
@@ -234,6 +221,9 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  */
 EAPI Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
 EAPI void *ecore_job_del(Ecore_Job *obj);
+
+#include "ecore_job.eo.legacy.h"
+
 /**
  * @}
  */
