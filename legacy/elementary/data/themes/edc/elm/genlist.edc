@@ -3,7 +3,7 @@
       inherit: _SRC; \
       parts { \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -15,44 +15,44 @@
       inherit: _SRC; \
       parts { \
          part { name: "elm.text"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
@@ -63,49 +63,49 @@
       inherit: _SRC; \
       parts { \
          part { name: "elm.text"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -126,7 +126,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
    
    parts {
       part { name: "shadow_vbar";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -3 -2;
             rel1.to: "base_vbar";
             rel2.offset: 2 4;
@@ -137,7 +137,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
          }
       }
       part { name: "base_vbar";
-         description { state: "default" 0.0;
+         description { state: "default";
             image.normal: "vgrad_med_lighter.png";
             fill.smooth: 0;
             min: 5 13;
@@ -145,7 +145,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
          }
       }
       part { name: "bevel_vbar";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "base_vbar";
             rel2.to: "base_vbar";
             image.normal: "bevel_out.png";
@@ -159,7 +159,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
@@ -174,14 +174,14 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
                text_class: "list_group_item";
             }
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             color: FN_COL_DISABLE;
             color_class: "list_group_item_disabled";
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -190,7 +190,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.pad";
@@ -202,7 +202,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 1.0 0.5;
             rel1.offset: -3 2;
@@ -211,7 +211,7 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
          }
       }
       part { name: "bar";
-         description { state: "default" 0.0;
+         description { state: "default";
             image.normal: "horizontal_separated_bar_small_glow.png";
             image.border: 4 4 4 4;
             fill.smooth: 0;
@@ -219,20 +219,20 @@ group { name: "elm/genlist/item/group_index/default"; nomouse;
             rel1.offset: -3 -6;
             rel2.offset: 2 3;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
              color: 255 255 255 64;
          }
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "bar";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "bar";
       }
@@ -242,16 +242,16 @@ group { name: "elm/genlist/item_compress/group_index/default"; nomouse;
    inherit: "elm/genlist/item/group_index/default";
    parts {
       part { name: "elm.text";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
@@ -265,20 +265,20 @@ group { name: "genlist_base"; inherit_only: 1; nomouse;
    images.image: "bevel_horiz_out.png" COMP;
    parts {
        part { name: "event"; type: RECT; mouse;
-          description { state: "default" 0.0;
+          description { state: "default";
              color: 0 0 0 0;
           }
-          description { state: "disabled" 0.0;
-             inherit: "default" 0.0;
+          description { state: "disabled";
+             inherit: "default";
              visible: 0;
           }
        }
        part { name: "base"; type: RECT;
-          description { state: "default" 0.0;
+          description { state: "default";
              color: 64 64 64 255;
              color_class: "list_item_base";
           }
-          description { state: "odd" 0.0;
+          description { state: "odd";
              color: 56 56 56 255;
              color_class: "list_item_base_odd";
           }
@@ -290,11 +290,11 @@ group { name: "genlist_base"; inherit_only: 1; nomouse;
        }
        program {
           signal: "elm,state,even"; source: "elm";
-          action: STATE_SET "default" 0.0;
+          action: STATE_SET "default";
           target: "base";
        }
        part { name: "bevel";
-          description { state: "default" 0.0;
+          description { state: "default";
              image.normal: "bevel_curved_horiz_out.png";
              image.border: 0 0 2 2;
              image.middle: 0;
@@ -302,7 +302,7 @@ group { name: "genlist_base"; inherit_only: 1; nomouse;
           }
        }
        part { name: "sel_shadow";
-          description { state: "default" 0.0;
+          description { state: "default";
              image.normal: "shadow_rounded_horiz.png";
              image.border: 0 0 9 9;
              rel1.offset: 0 -4;
@@ -310,58 +310,58 @@ group { name: "genlist_base"; inherit_only: 1; nomouse;
              fill.smooth: 0;
              visible: 0;
           }
-          description { state: "selected" 0.0;
-             inherit: "default" 0.0;
+          description { state: "selected";
+             inherit: "default";
              visible: 1;
           }
        }
        part { name: "sel_base";
-          description { state: "default" 0.0;
+          description { state: "default";
              image.normal: "vgrad_med_dark.png";
              fill.smooth: 0;
              visible: 0;
              TILED_HORIZ(120)
           }
-          description { state: "selected" 0.0;
-             inherit: "default" 0.0;
+          description { state: "selected";
+             inherit: "default";
              visible: 1;
           }
        }
        part { name: "sel_bevel";
-          description { state: "default" 0.0;
+          description { state: "default";
              image.normal: "bevel_horiz_out.png";
              image.border: 0 0 2 2;
              image.middle: 0;
              fill.smooth: 0;
              visible: 0;
           }
-          description { state: "selected" 0.0;
-             inherit: "default" 0.0;
+          description { state: "selected";
+             inherit: "default";
              visible: 1;
           }
        }
        program {
           signal: "elm,state,selected"; source: "elm";
-          action: STATE_SET "selected" 0.0;
+          action: STATE_SET "selected";
           target: "sel_shadow";
           target: "sel_base";
           target: "sel_bevel";
        }
        program {
           signal: "elm,state,unselected"; source: "elm";
-          action: STATE_SET "default" 0.0;
+          action: STATE_SET "default";
           target: "sel_shadow";
           target: "sel_base";
           target: "sel_bevel";
        }
        program {
           signal: "elm,state,disabled"; source: "elm";
-          action: STATE_SET "disabled" 0.0;
+          action: STATE_SET "disabled";
           target: "event";
        }
        program {
           signal: "elm,state,enabled"; source: "elm";
-          action: STATE_SET "default" 0.0;
+          action: STATE_SET "default";
           target: "event";
        }
    }
@@ -371,7 +371,7 @@ group { name: "genlist_top"; inherit_only: 1; nomouse;
     images.image: "shine.png" COMP;
     parts {
        part { name: "sel_shine";
-          description { state: "default" 0.0;
+          description { state: "default";
              image.normal: "shine.png";
              rel1.offset: 0 -2;
              rel1.to: "sel_base";
@@ -381,39 +381,39 @@ group { name: "genlist_top"; inherit_only: 1; nomouse;
              visible: 0;
              FIXED_SIZE(69, 5)
           }
-          description { state: "selected" 0.0;
-             inherit: "default" 0.0;
+          description { state: "selected";
+             inherit: "default";
              visible: 1;
           }
        }
        part { name: "event_block"; type: RECT; mouse;
-          description { state: "default" 0.0;
+          description { state: "default";
              color: 0 0 0 0;
              visible: 0;
           }
-          description { state: "disabled" 0.0;
-             inherit: "default" 0.0;
+          description { state: "disabled";
+             inherit: "default";
              visible: 1;
           }
        }
        program {
           signal: "elm,state,selected"; source: "elm";
-          action: STATE_SET "selected" 0.0;
+          action: STATE_SET "selected";
           target: "sel_shine";
        }
        program {
           signal: "elm,state,unselected"; source: "elm";
-          action: STATE_SET "default" 0.0;
+          action: STATE_SET "default";
           target: "sel_shine";
        }
        program {
           signal: "elm,state,disabled"; source: "elm";
-          action: STATE_SET "disabled" 0.0;
+          action: STATE_SET "disabled";
           target: "event_block";
        }
        program {
           signal: "elm,state,enabled"; source: "elm";
-          action: STATE_SET "default" 0.0;
+          action: STATE_SET "default";
           target: "event_block";
        }
     }
@@ -432,7 +432,7 @@ group { name: "elm/genlist/item/default/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
@@ -447,23 +447,23 @@ group { name: "elm/genlist/item/default/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -475,23 +475,23 @@ group { name: "elm/genlist/item/default/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -505,62 +505,62 @@ group { name: "elm/genlist/item/default/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -568,7 +568,7 @@ group { name: "elm/genlist/item/default/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -576,7 +576,7 @@ group { name: "elm/genlist/item/default/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -585,7 +585,7 @@ group { name: "elm/genlist/item/default/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
@@ -596,13 +596,13 @@ group { name: "elm/genlist/item/default/default"; nomouse;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
@@ -610,20 +610,20 @@ group { name: "elm/genlist/item/default/default"; nomouse;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.icon";
          target: "elm.swallow.end";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.icon";
          target: "elm.swallow.end";
       }
@@ -673,7 +673,7 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
       //##//
       part { name: "elm.text"; type: TEXTBLOCK;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 7;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
@@ -688,22 +688,22 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
                style: "genlist_style";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXTBLOCK;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color_class: "list_item_disabled";
@@ -715,22 +715,22 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXTBLOCK;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 0 0;
             rel1.to: "elm.text";
             rel2.offset: -1 -1;
@@ -744,62 +744,62 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -807,7 +807,7 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -815,7 +815,7 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -824,7 +824,7 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
@@ -835,13 +835,13 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
@@ -849,20 +849,20 @@ group { name: "elm/genlist/item/default_style/default"; nomouse;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.icon";
          target: "elm.swallow.end";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.icon";
          target: "elm.swallow.end";
       }
@@ -889,7 +889,7 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
@@ -902,23 +902,23 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -930,23 +930,23 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -960,62 +960,62 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -1023,7 +1023,7 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -1031,7 +1031,7 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -1040,7 +1040,7 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
@@ -1051,19 +1051,19 @@ group { name: "elm/genlist/item/one_icon/default"; nomouse;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.icon";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.icon";
       }
       //##//
@@ -1089,7 +1089,7 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
@@ -1104,23 +1104,23 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -1132,23 +1132,23 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -1162,62 +1162,62 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -1225,7 +1225,7 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -1233,7 +1233,7 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -1242,7 +1242,7 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
@@ -1250,19 +1250,19 @@ group { name: "elm/genlist/item/end_icon/default"; nomouse;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.icon";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.icon";
       }
       //##//
@@ -1287,7 +1287,7 @@ group { name: "elm/genlist/item/no_icon/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
@@ -1300,23 +1300,23 @@ group { name: "elm/genlist/item/no_icon/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -1328,23 +1328,23 @@ group { name: "elm/genlist/item/no_icon/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -1358,62 +1358,62 @@ group { name: "elm/genlist/item/no_icon/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -1421,7 +1421,7 @@ group { name: "elm/genlist/item/no_icon/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -1429,7 +1429,7 @@ group { name: "elm/genlist/item/no_icon/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -1458,7 +1458,7 @@ group { name: "elm/genlist/item/full/default"; nomouse;
       //##//
       part { name: "elm.swallow.content"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             min: 19 19;
             rel1.offset: -1 2;
             rel1.relative: 1.0 0.0;
@@ -1468,7 +1468,7 @@ group { name: "elm/genlist/item/full/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -1514,13 +1514,13 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
    TREEIMGS()
    parts {
       part { name: "elm.swallow.icon";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
             rel2.offset: 1 -3;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
@@ -1532,7 +1532,7 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
          clip_to: "arrow_clip_l"; \
          scale: 1; \
          ignore_flags: ON_HOLD; \
-         description { state: "default" 0.0; \
+         description { state: "default"; \
             fixed: 1 1; \
             min: 15 15; \
             max: 15 15; \
@@ -1540,24 +1540,24 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
             rel2.to: "arrow"; \
             image.normal: "sym_right_light_normal.png"; \
          } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
+         description { state: "selected"; \
+            inherit: "default"; \
             image.normal: "sym_right_glow_normal.png"; \
          } \
-         description { state: "disabled" 0.0; \
-            inherit: "default" 0.0; \
+         description { state: "disabled"; \
+            inherit: "default"; \
             image.normal: "sym_right_dark_normal.png"; \
          } \
          description { state: "default" 1.0; \
-            inherit: "default" 0.0; \
+            inherit: "default"; \
             image.normal: "sym_down_light_normal.png"; \
          } \
          description { state: "selected" 1.0; \
-            inherit: "default" 0.0; \
+            inherit: "default"; \
             image.normal: "sym_down_glow_normal.png"; \
          } \
          description { state: "disabled" 1.0; \
-            inherit: "default" 0.0; \
+            inherit: "default"; \
             image.normal: "sym_down_dark_normal.png"; \
          } \
       } \
@@ -1565,7 +1565,7 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
          clip_to: "arrow_clip_r"; \
          scale: 1; \
          ignore_flags: ON_HOLD; \
-         description { state: "default" 0.0; \
+         description { state: "default"; \
             fixed: 1 1; \
             min: 15 15; \
             max: 15 15; \
@@ -1573,29 +1573,29 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
             rel2.to: "arrow"; \
             image.normal: "sym_left_light_normal.png"; \
          } \
-         description { state: "selected" 0.0; \
-            inherit: "default" 0.0; \
+         description { state: "selected"; \
+            inherit: "default"; \
             image.normal: "sym_left_glow_normal.png"; \
          } \
-         description { state: "disabled" 0.0; \
-            inherit: "default" 0.0; \
+         description { state: "disabled"; \
+            inherit: "default"; \
             image.normal: "sym_left_dark_normal.png"; \
          } \
          description { state: "default" 1.0; \
-            inherit: "default" 0.0; \
+            inherit: "default"; \
             image.normal: "sym_down_light_normal.png"; \
          } \
          description { state: "selected" 1.0; \
-            inherit: "default" 0.0; \
+            inherit: "default"; \
             image.normal: "sym_down_glow_normal.png"; \
          } \
          description { state: "disabled" 1.0; \
-            inherit: "default" 0.0; \
+            inherit: "default"; \
             image.normal: "sym_down_dark_normal.png"; \
          } \
       } \
       part { name: "arrow"; type: RECT; insert_before: "sel_shine"; mouse; \
-         description { state: "default" 0.0; \
+         description { state: "default"; \
             fixed: 1 0; \
             min: 15 15; \
             aspect: 1.0 1.0; \
@@ -1610,22 +1610,22 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
          } \
       } \
       part { name: "arrow_clip_l"; type: RECT; \
-         description { state: "default" 0.0; \
+         description { state: "default"; \
             rel1.to: "arrow_img_l"; \
             rel2.to: "arrow_img_l"; \
             visible: 1; \
          } \
-         description { state: "rtl" 0.0; \
+         description { state: "rtl"; \
             visible: 0; \
          } \
       } \
       part { name: "arrow_clip_r"; type: RECT; \
-         description { state: "default" 0.0; \
+         description { state: "default"; \
             rel1.to: "arrow_img_r"; \
             rel2.to: "arrow_img_r"; \
             visible: 0; \
          } \
-         description { state: "rtl" 0.0; \
+         description { state: "rtl"; \
             visible: 1; \
          } \
       } \
@@ -1689,13 +1689,13 @@ group { name: "elm/genlist/tree/default/default"; nomouse;
       } \
       program { \
          signal: "edje,state,rtl"; source: "edje"; \
-         action: STATE_SET "rtl" 0.0; \
+         action: STATE_SET "rtl"; \
          target: "arrow_clip_l"; \
          target: "arrow_clip_r"; \
       } \
       program { \
          signal: "edje,state,ltr"; source: "edje"; \
-         action: STATE_SET "default" 0.0; \
+         action: STATE_SET "default"; \
          target: "arrow_clip_l"; \
          target: "arrow_clip_r"; \
       }
@@ -1711,13 +1711,13 @@ group { name: "elm/genlist/tree/default_style/default";
    TREEIMGS()
    parts {
       part { name: "elm.swallow.icon";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
             rel2.offset: 1 -3;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
@@ -1736,13 +1736,13 @@ group { name: "elm/genlist/tree/one_icon/default";
    TREEIMGS()
    parts {
       part { name: "elm.swallow.icon";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
             rel2.offset: 1 -3;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
@@ -1761,19 +1761,19 @@ group { name: "elm/genlist/tree/end_icon/default";
    TREEIMGS()
    parts {
       part { name: "elm.text";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
@@ -1790,19 +1790,19 @@ group { name: "elm/genlist/tree/no_icon/default";
    TREEIMGS()
    parts {
       part { name: "elm.text";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
@@ -1819,19 +1819,19 @@ group { name: "elm/genlist/tree/full/default";
    TREEIMGS()
    parts {
       part { name: "elm.swallow.content";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
@@ -1848,8 +1848,8 @@ group { name: "elm/genlist/tree_compress_odd/full/default";
 }
 
 #define GENLIST_PART_MAP_START(param_x, param_y, param_z) \
-   description { state: "map_transition" 0.0; \
-      inherit: "default" 0.0; \
+   description { state: "map_transition"; \
+      inherit: "default"; \
       color: 50 50 50 255; \
       map { \
          perspective: "point"; \
@@ -1865,14 +1865,14 @@ group { name: "elm/genlist/tree_compress_odd/full/default";
          } \
       } \
    } \
-   description { state: "hide" 0.0; \
-      inherit: "default" 0.0; \
+   description { state: "hide"; \
+      inherit: "default"; \
       visible: 0; \
    }
 
 #define GENLIST_PART_MAP_FINISH(param_x, param_y, param_z) \
-   description { state: "map_rotate" 0.0; \
-      inherit: "default" 0.0; \
+   description { state: "map_rotate"; \
+      inherit: "default"; \
       map { \
          perspective: "point"; \
          on: 1; \
@@ -1903,20 +1903,20 @@ group { name: "elm/genlist/tree/tree_effect/default"; nomouse;
       alias: "elm.text" "group:elm.text";
       part { name: "point"; type: RECT; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             color: 0 0 0 0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 0.0;
          }
       }
       part { name: "event"; type: RECT; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             color: 0 0 0 0;
          }
       }
       part { name: "group"; type: GROUP; mouse;
          source: "elm/genlist/tree/default/default";
-         description { state: "default" 0.0;
+         description { state: "default";
          }
          GENLIST_PART_MAP_START(-90.0, 0, 0)
          GENLIST_PART_MAP_FINISH(0, 0, 0)
@@ -1925,46 +1925,46 @@ group { name: "elm/genlist/tree/tree_effect/default"; nomouse;
    programs {
       program {
          signal: "elm,action,flip_item"; source: "elm";
-         action: STATE_SET "map_transition" 0.0;
+         action: STATE_SET "map_transition";
          target: "group";
          after: "rot2";
       }
       program { name: "rot2";
-         action: STATE_SET "map_rotate" 0.0;
+         action: STATE_SET "map_rotate";
          transition: LINEAR 0.2;
          target: "group";
          after: "rot3";
       }
       program { name: "rot3";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "group";
       }
       
       program {
          signal: "elm,state,contract_flip"; source: "elm";
-         action: STATE_SET "map_rotate" 0.0;
+         action: STATE_SET "map_rotate";
          target: "group";
          after: "rotb2";
       }
       program { name: "rotb2";
-         action: STATE_SET "map_transition" 0.0;
+         action: STATE_SET "map_transition";
          transition: LINEAR 0.5;
          target: "group";
          after: "rotb3";
       }
       program { name: "rotb3";
-         action: STATE_SET "hide" 0.0;
+         action: STATE_SET "hide";
          target: "group";
       }
       
       program {
          signal: "elm,state,show"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "group";
       }
       program {
          signal: "elm,state,hide"; source: "elm";
-         action: STATE_SET "hide" 0.0;
+         action: STATE_SET "hide";
          target: "group";
       }
       program {
@@ -1998,7 +1998,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
@@ -2012,23 +2012,23 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -2040,23 +2040,23 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 0 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -2070,62 +2070,62 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2133,7 +2133,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2142,7 +2142,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
       //##//
       part { name: "sizer.content"; type: TEXT;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 1;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
@@ -2161,7 +2161,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -2170,25 +2170,25 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 1;
             aspect: 1.0 1.0;
             rel1.to: "sizer.content";
             rel2.to: "sizer.content";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.icon";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.icon";
       }
       //##//
@@ -2205,17 +2205,17 @@ group { name: "elm/genlist/tree/icon_top_text_bottom/default";
    TREEIMGS()
    parts {
       part { name: "sizer.content";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
       }
       part { name: "elm.text";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
@@ -2232,87 +2232,87 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
       inherit: _SRC; \
       parts { \
          part { name: "elm.text"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.text.sub"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label4"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label5"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                fixed: 0 1; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
@@ -2323,91 +2323,91 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
       inherit: _SRC; \
       parts { \
          part { name: "elm.text"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.text.sub"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label4"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label5"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -2428,7 +2428,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.icon";
@@ -2445,23 +2445,23 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -2473,23 +2473,23 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -2503,35 +2503,35 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "elm.text.sub"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 0 1;
             rel1.offset: 2 -3;
             rel1.relative: 1.0 1.0;
@@ -2548,23 +2548,23 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
                text_class: "list_item_sub";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.sub";
             rel2.to: "elm.text.sub";
             color: FN_COL_DISABLE;
@@ -2576,23 +2576,23 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -4;
             rel1.to: "elm.text.sub";
             rel2.offset: -1 0;
@@ -2606,22 +2606,22 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2631,7 +2631,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2641,7 +2641,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2651,7 +2651,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2661,7 +2661,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2672,7 +2672,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -2683,7 +2683,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -2692,7 +2692,7 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
@@ -2703,13 +2703,13 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 1.0 0.5;
             aspect: 1.0 1.0;
@@ -2717,20 +2717,20 @@ group { name: "elm/genlist/item/double_label/default"; nomouse;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.icon";
          target: "elm.swallow.end";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.icon";
          target: "elm.swallow.end";
       }
@@ -2748,13 +2748,13 @@ group { name: "elm/genlist/tree/double_label/default";
    TREEIMGS()
    parts {
       part { name: "elm.swallow.icon";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
             rel2.offset: 1 -3;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
             rel2.to_x: "arrow";
@@ -2773,128 +2773,128 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
       inherit: _SRC; \
       parts { \
          part { name: "elm.text"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.title.1"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label4"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label5"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.title.2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label6"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label7"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
@@ -2905,133 +2905,133 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
       inherit: _SRC; \
       parts { \
          part { name: "elm.text"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.title.1"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label4"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label5"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.title.2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label6"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label7"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -3052,7 +3052,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
@@ -3068,23 +3068,23 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             fixed: 0 1;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 1;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
@@ -3097,23 +3097,23 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 1;
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
@@ -3128,28 +3128,28 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
@@ -3157,7 +3157,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       part { name: "elm.title.1"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
@@ -3173,23 +3173,23 @@ group { name: "elm/genlist/item/message/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.title.1";
             rel2.to: "elm.title.1";
             color: FN_COL_DISABLE;
@@ -3201,23 +3201,23 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.title.1";
             rel2.offset: -1 1;
@@ -3231,16 +3231,16 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
@@ -3248,7 +3248,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       part { name: "elm.title.2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 -3;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
@@ -3263,23 +3263,23 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             fixed: 0 1;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label6"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.title.2";
             rel2.to: "elm.title.2";
             color: FN_COL_DISABLE;
@@ -3291,23 +3291,23 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label7"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.title.2";
             rel2.offset: -1 2;
@@ -3321,22 +3321,22 @@ group { name: "elm/genlist/item/message/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -3349,7 +3349,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -3362,7 +3362,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -3375,7 +3375,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -3388,7 +3388,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -3402,7 +3402,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -3416,7 +3416,7 @@ group { name: "elm/genlist/item/message/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -3446,7 +3446,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       part { name: "elm.text.title"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
@@ -3462,23 +3462,23 @@ group { name: "elm/genlist/item/media/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.title";
             rel2.to: "elm.text.title";
             color: FN_COL_DISABLE;
@@ -3490,23 +3490,23 @@ group { name: "elm/genlist/item/media/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text.title";
             rel2.offset: -1 1;
@@ -3520,35 +3520,35 @@ group { name: "elm/genlist/item/media/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text.title";
             rel2.to_y: "elm.text.title";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "elm.text.album-artist"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 0 1;
             rel1.offset: 2 -3;
             rel1.relative: 1.0 1.0;
@@ -3564,23 +3564,23 @@ group { name: "elm/genlist/item/media/default"; nomouse;
                text_class: "list_item_sub";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.album-artist";
             rel2.to: "elm.text.album-artist";
             color: FN_COL_DISABLE;
@@ -3592,23 +3592,23 @@ group { name: "elm/genlist/item/media/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -4;
             rel1.to: "elm.text.album-artist";
             rel2.offset: -1 0;
@@ -3622,22 +3622,22 @@ group { name: "elm/genlist/item/media/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text.title";
          target: "label2";
          target: "label3";
@@ -3647,7 +3647,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.title";
          target: "label2";
          target: "label3";
@@ -3657,7 +3657,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text.title";
          target: "label2";
          target: "label3";
@@ -3667,7 +3667,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.title";
          target: "label2";
          target: "label3";
@@ -3677,7 +3677,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text.title";
          target: "label2";
          target: "label3";
@@ -3688,7 +3688,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.title";
          target: "label2";
          target: "label3";
@@ -3699,7 +3699,7 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -3717,86 +3717,86 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       inherit: _SRC; \
       parts { \
          part { name: "elm.text.title"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.text.album-artist"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label4"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label5"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
@@ -3807,91 +3807,91 @@ group { name: "elm/genlist/item/media/default"; nomouse;
       inherit: _SRC; \
       parts { \
          part { name: "elm.text.title"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "elm.text.album-artist"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label4"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label5"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -3915,7 +3915,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       part { name: "elm.text.trackno"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
@@ -3933,23 +3933,23 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             fixed: 1 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.trackno";
             rel2.to: "elm.text.trackno";
             color: FN_COL_DISABLE;
@@ -3961,23 +3961,23 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text.trackno";
             rel2.offset: -1 1;
@@ -3991,34 +3991,34 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text.trackno";
             rel2.to_y: "elm.text.trackno";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "dot"; type: TEXT;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             fixed: 1 1;
             align: 0.0 0.0;
@@ -4033,14 +4033,14 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
                text: ":";
             }
          }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+         description { state: "visible";
+            inherit: "default";
          }
       }
       part { name: "elm.text.title"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 0;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "dot";
@@ -4057,23 +4057,23 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label6"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.title";
             rel2.to: "elm.text.title";
             color: FN_COL_DISABLE;
@@ -4085,23 +4085,23 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label7"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text.title";
             rel2.offset: -1 1;
@@ -4115,16 +4115,16 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
@@ -4132,7 +4132,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       part { name: "elm.text.length"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 0 1;
             rel1.offset: 2 -3;
             rel1.relative: 1.0 1.0;
@@ -4148,23 +4148,23 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
                text_class: "list_item_sub";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.length";
             rel2.to: "elm.text.length";
             color: FN_COL_DISABLE;
@@ -4176,23 +4176,23 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -4;
             rel1.to: "elm.text.length";
             rel2.offset: -1 0;
@@ -4206,22 +4206,22 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text.trackno";
          target: "label2";
          target: "label3";
@@ -4234,7 +4234,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.trackno";
          target: "label2";
          target: "label3";
@@ -4247,7 +4247,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text.trackno";
          target: "label2";
          target: "label3";
@@ -4260,7 +4260,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.trackno";
          target: "label2";
          target: "label3";
@@ -4273,7 +4273,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text.trackno";
          target: "label2";
          target: "label3";
@@ -4287,7 +4287,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.trackno";
          target: "label2";
          target: "label3";
@@ -4301,7 +4301,7 @@ group { name: "elm/genlist/item/media-album/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -4319,86 +4319,86 @@ group { name: "elm/genlist/item_compress/media-album/default";
    inherit: "elm/genlist/item/media-album/default";
    parts {
       part { name: "elm.text.title";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label2";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label3";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "elm.text.length";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label4";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label5";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
@@ -4408,86 +4408,86 @@ group { name: "elm/genlist/item_compress_odd/media-album/default";
    inherit: "elm/genlist/item_odd/media-album/default";
    parts {
       part { name: "elm.text.title";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label2";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label3";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "elm.text.length";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label4";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label5";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
@@ -4508,7 +4508,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.preview";
@@ -4524,23 +4524,23 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text";
             rel2.to: "elm.text";
             color: FN_COL_DISABLE;
@@ -4552,23 +4552,23 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: -1 1;
@@ -4582,35 +4582,35 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "elm.text.artist"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 0 1;
             rel1.offset: 2 -3;
             rel1.relative: 1.0 1.0;
@@ -4626,23 +4626,23 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
                text_class: "list_item_sub";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.artist";
             rel2.to: "elm.text.artist";
             color: FN_COL_DISABLE;
@@ -4654,23 +4654,23 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -4;
             rel1.to: "elm.text.artist";
             rel2.offset: -1 0;
@@ -4684,22 +4684,22 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -4709,7 +4709,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -4719,7 +4719,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -4729,7 +4729,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -4739,7 +4739,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -4750,7 +4750,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text";
          target: "label2";
          target: "label3";
@@ -4761,7 +4761,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -4770,7 +4770,7 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
          }
       }
       part { name: "elm.swallow.preview"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             aspect: 1.0 1.0;
@@ -4781,19 +4781,19 @@ group { name: "elm/genlist/item/media-preview/default"; nomouse;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.swallow.preview";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.preview";
       }
       //##//
@@ -4806,86 +4806,86 @@ group { name: "elm/genlist/item_compress/media-preview/default";
    inherit: "elm/genlist/item/media-preview/default";
    parts {
       part { name: "elm.text";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label2";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label3";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "elm.text.artist";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label4";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label5";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
@@ -4895,86 +4895,86 @@ group { name: "elm/genlist/item_odd_compress/media-preview/default";
    inherit: "elm/genlist/item_odd/media-preview/default";
    parts {
       part { name: "elm.text";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label2";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label3";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "elm.text.artist";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label4";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
       part { name: "label5";
-         description { state: "default" 0.0;
+         description { state: "default";
             text.min: 0 1;
          }
-         description { state: "selected" 0.0;
+         description { state: "selected";
             text.min: 0 1;
          }
-         description { state: "disabled" 0.0;
+         description { state: "disabled";
             text.min: 0 1;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             text.min: 0 1;
          }
       }
@@ -4986,44 +4986,44 @@ group { name: "elm/genlist/item_odd_compress/media-preview/default";
       inherit: _SRC; \
       parts { \
          part { name: "elm.text.mode"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
@@ -5034,49 +5034,49 @@ group { name: "elm/genlist/item_odd_compress/media-preview/default";
       inherit: _SRC; \
       parts { \
          part { name: "elm.text.mode"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label2"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "label3"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                text.min: 0 1; \
             } \
-            description { state: "selected" 0.0; \
+            description { state: "selected"; \
                text.min: 0 1; \
             } \
-            description { state: "disabled" 0.0; \
+            description { state: "disabled"; \
                text.min: 0 1; \
             } \
-            description { state: "flip_enabled" 0.0; \
+            description { state: "flip_enabled"; \
                text.min: 0 1; \
             } \
          } \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -5097,7 +5097,7 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
       part { name: "elm.text.mode"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: 2 3;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
@@ -5110,23 +5110,23 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
                text_class: "list_item";
             }
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "elm.text.mode";
             rel2.to: "elm.text.mode";
             color: FN_COL_DISABLE;
@@ -5138,23 +5138,23 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.offset: -2 -3;
             rel1.to: "elm.text.mode";
             rel2.offset: -1 1;
@@ -5168,62 +5168,62 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
             }
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.text.mode.flip"; type: SWALLOW; mouse;
          scale: 1;
-         description { state: "default" 0.0;
+         description { state: "default";
             visible: 0;
             rel1.to_y: "elm.text.mode";
             rel2.to_y: "elm.text.mode";
          }
-         description { state: "flip_enabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "flip_enabled";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "elm.text.mode";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.mode";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "disabled" 0.0;
+         action: STATE_SET "disabled";
          target: "elm.text.mode";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.mode";
          target: "label2";
          target: "label3";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
-         action: STATE_SET "flip_enabled" 0.0;
+         action: STATE_SET "flip_enabled";
          target: "elm.text.mode";
          target: "label2";
          target: "label3";
@@ -5231,7 +5231,7 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.text.mode";
          target: "label2";
          target: "label3";
@@ -5239,7 +5239,7 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
       }
       //##//
       part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.offset: 2 2;
@@ -5249,33 +5249,33 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
       }
       //##//
       part { name: "event_block_layer"; type: RECT; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to: "base";
             rel2.to: "base";
             color: 0 0 0 0;
          }
-         description { state: "repeat_events" 0.0;
-            inherit: "default" 0.0;
+         description { state: "repeat_events";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "pers"; type: SPACER;
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.relative: 0.0 1.0;
          }
       }
       part { name: "elm.swallow.original"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
          }
-         description { state: "slide" 0.0;
-            inherit: "default" 0.0;
+         description { state: "slide";
+            inherit: "default";
             rel1.relative: 1.0 0.0;
             rel2.relative: 2.0 1.0;
          }
-         description { state: "rotate" 0.0;
-            inherit: "default" 0.0;
+         description { state: "rotate";
+            inherit: "default";
             map {
                perspective: "pers";
                on: 1;
@@ -5287,30 +5287,30 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
                }
             }
          }
-         description { state: "rotate2" 0.0;
-            inherit: "rotate" 0.0;
+         description { state: "rotate2";
+            inherit: "rotate";
             map.rotation.x: 90.0;
          }
       }
       program {
          signal: "elm,state,slide,active"; source: "elm";
-         action: STATE_SET "slide" 0.0;
+         action: STATE_SET "slide";
          target: "elm.swallow.original";
          transition: ACCELERATE 0.5 CURRENT;
          after: "unblock_event";
       }
       program { name: "unblock_event";
-         action: STATE_SET "repeat_events" 0.0;
+         action: STATE_SET "repeat_events";
          target: "event_block_layer";
       }
       program {
          signal: "elm,state,slide,passive"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "event_block_layer";
          after: "slide_left2";
       }
       program { name: "slide_left2";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.original";
          transition: DECELERATE 0.5 CURRENT;
          after: "slide_left_finished";
@@ -5320,30 +5320,30 @@ group { name: "elm/genlist/item/mode/default"; nomouse;
       }
       program {      
          signal: "elm,state,rotate,active"; source: "elm";
-         action: STATE_SET "rotate" 0.0;
+         action: STATE_SET "rotate";
          target: "elm.swallow.original";
          after: "rotate_on2";
       }
       program { name: "rotate_on2";
-         action: STATE_SET "rotate2" 0.0;
+         action: STATE_SET "rotate2";
          target: "elm.swallow.original";
          transition: LINEAR 0.5;
          after: "unblock_event";
       }
       program {
          signal: "elm,state,rotate,passive"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "event_block_layer";
          after: "rotate_off2";
       }
       program { name: "rotate_off2";
-         action: STATE_SET "rotate" 0.0;
+         action: STATE_SET "rotate";
          transition: LINEAR 0.5;
          target: "elm.swallow.original";
          after: "rotate_off3";
       }
       program { name: "rotate_off3";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.original";
          after: "rotate_off_finished";
       }
@@ -5363,11 +5363,11 @@ group { name: "elm/genlist/tree/mode/default";
    TREEIMGS()
    parts {
       part { name: "elm.text.mode";
-         description { state: "default" 0.0;
+         description { state: "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
-         description { state: "flip_enabled" 0.0;
+         description { state: "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
@@ -5407,7 +5407,7 @@ COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tre
       inherit: _SRC; \
       parts { \
          part { name: "base"; \
-            description { state: "default" 0.0; \
+            description { state: "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
             } \
@@ -5423,11 +5423,11 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
    images.image: "shadow_horiz.png" COMP;
    parts {
       part { name: "base"; type: RECT;
-         description { state: "default" 0.0;
+         description { state: "default";
             color: 64 64 64 255;
             color_class: "list_item_base";
          }
-         description { state: "odd" 0.0;
+         description { state: "odd";
             color: 56 56 56 255;
             color_class: "list_item_base_odd";
          }
@@ -5439,12 +5439,12 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
       }
       program {
          signal: "elm,state,even"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "base";
       }
       
       part { name: "sel_shadow1";
-         description { state: "default" 0.0;
+         description { state: "default";
             image.normal: "shadow_horiz.png";
             image.border: 0 0 9 9;
             rel1.offset: 0 -4;
@@ -5454,13 +5454,13 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
             fill.smooth: 0;
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "sel_shadow2";
-         description { state: "default" 0.0;
+         description { state: "default";
             image.normal: "shadow_horiz.png";
             image.border: 0 0 9 9;
             rel1.to_x: "elm.swallow.decorate.content";
@@ -5470,39 +5470,39 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
             fill.smooth: 0;
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "sel_base";
-         description { state: "default" 0.0;
+         description { state: "default";
             image.normal: "vgrad_med_dark.png";
             fill.smooth: 0;
             visible: 0;
             TILED_HORIZ(120)
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
       }
       part { name: "sel_bevel";
-         description { state: "default" 0.0;
+         description { state: "default";
             image.normal: "bevel_horiz_out.png";
             image.border: 0 0 2 2;
             image.middle: 0;
             fill.smooth: 0;
             visible: 0;
          }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
+         description { state: "selected";
+            inherit: "default";
             visible: 1;
          }
       }
       program {
          signal: "elm,state,selected"; source: "elm";
-         action: STATE_SET "selected" 0.0;
+         action: STATE_SET "selected";
          target: "sel_base";
          target: "sel_bevel";
          target: "sel_shadow1";
@@ -5510,7 +5510,7 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "sel_base";
          target: "sel_bevel";
          target: "sel_shadow1";
@@ -5518,49 +5518,49 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
       }
 
       part { name: "elm.edit.icon.1"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 1.0 0.5;
             rel2.relative: 0.0 1.0;
             rel1.offset: -1 2;
             rel2.offset: -1 -3;
          }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
+         description { state: "on";
+            inherit: "default";
             align: 0.0 0.5;
             rel1.offset: 2 2;
             rel2.offset: 2 -3;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
       }
       part { name: "elm.edit.icon.2"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
             fixed: 1 0;
             align: 0.0 0.5;
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 2;
             rel2.offset: 1 -3;
          }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
+         description { state: "on";
+            inherit: "default";
             align: 1.0 0.5;
             rel1.offset: -3 2;
             rel2.offset: -3 -3;
          }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
+         description { state: "disabled";
+            inherit: "default";
             visible: 0;
          }
       }
       
       part { name: "elm.swallow.decorate.content"; type: SWALLOW; mouse;
-         description { state: "default" 0.0;
+         description { state: "default";
          }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
+         description { state: "on";
+            inherit: "default";
             rel1.to_x: "elm.edit.icon.1";
             rel1.relative: 1.0 0.0;
             rel1.offset: 3 0;
@@ -5571,7 +5571,7 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
       }
       program {
          signal: "elm,state,decorate,enabled,effect"; source: "elm";
-         action: STATE_SET "on" 0.0;
+         action: STATE_SET "on";
          target: "elm.swallow.decorate.content";
          target: "elm.edit.icon.1";
          target: "elm.edit.icon.2";
@@ -5579,7 +5579,7 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
       }
       program {
          signal: "elm,state,decorate,disabled,effect"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.decorate.content";
          target: "elm.edit.icon.1";
          target: "elm.edit.icon.2";
@@ -5587,14 +5587,14 @@ group { name: "elm/genlist/item/edit/default"; nomouse;
       }
       program {
          signal: "elm,state,decorate,enabled"; source: "elm";
-         action: STATE_SET "on" 0.0;
+         action: STATE_SET "on";
          target: "elm.swallow.decorate.content";
          target: "elm.edit.icon.1";
          target: "elm.edit.icon.2";
       }
       program {
          signal: "elm,state,decorate,disabled"; source: "elm";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "default";
          target: "elm.swallow.decorate.content";
          target: "elm.edit.icon.1";
          target: "elm.edit.icon.2";
