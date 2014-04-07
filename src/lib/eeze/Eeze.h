@@ -314,6 +314,16 @@ EAPI int             eeze_init(void);
  */
 EAPI int             eeze_shutdown(void);
 
+/**
+ * @return the main udev context used by the library
+ * This allows for external reuse of the udev context, reducing direct dependency
+ * on libudev.
+ * @warning DO NOT CLOSE THIS CONTEXT.
+ * @since 1.10
+ */
+EAPI void           *eeze_udev_get(void);
+
+
    /**
     * @addtogroup Eeze_Find Find
     *

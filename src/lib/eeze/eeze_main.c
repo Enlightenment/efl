@@ -126,3 +126,8 @@ eeze_shutdown(void)
    return _eeze_init_count;
 }
 
+EAPI void *
+eeze_udev_get(void)
+{
+   return udev;
+}
