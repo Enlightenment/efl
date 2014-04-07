@@ -115,7 +115,7 @@
 
 #define TREEPAD 19
 
-group { name: "elm/genlist/item/group_index/default";
+group { name: "elm/genlist/item/group_index/default"; nomouse;
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    data.item: "treesize" TREEPAD;
@@ -125,7 +125,7 @@ group { name: "elm/genlist/item/group_index/default";
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
    
    parts {
-      part { name: "shadow_vbar"; mouse_events: 0;
+      part { name: "shadow_vbar";
          description { state: "default" 0.0;
             rel1.offset: -3 -2;
             rel1.to: "base_vbar";
@@ -136,7 +136,7 @@ group { name: "elm/genlist/item/group_index/default";
             fill.smooth: 0;
          }
       }
-      part { name: "base_vbar"; mouse_events: 0;
+      part { name: "base_vbar";
          description { state: "default" 0.0;
             image.normal: "vgrad_med_lighter.png";
             fill.smooth: 0;
@@ -144,7 +144,7 @@ group { name: "elm/genlist/item/group_index/default";
             TILED_HORIZ(120)
          }
       }
-      part { name: "bevel_vbar"; mouse_events: 0;
+      part { name: "bevel_vbar";
          description { state: "default" 0.0;
             rel1.to: "base_vbar";
             rel2.to: "base_vbar";
@@ -156,7 +156,7 @@ group { name: "elm/genlist/item/group_index/default";
          }
       }
       
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -180,7 +180,7 @@ group { name: "elm/genlist/item/group_index/default";
             color_class: "list_group_item_disabled";
          }
       }
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -189,7 +189,7 @@ group { name: "elm/genlist/item/group_index/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -201,7 +201,7 @@ group { name: "elm/genlist/item/group_index/default";
             rel2.offset: -1 -3;
          }
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "elm.swallow.end"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -210,7 +210,7 @@ group { name: "elm/genlist/item/group_index/default";
             rel2.offset: -3 -3;
          }
       }
-      part { name: "bar"; mouse_events: 0;
+      part { name: "bar";
          description { state: "default" 0.0;
             image.normal: "horizontal_separated_bar_small_glow.png";
             image.border: 4 4 4 4;
@@ -238,7 +238,7 @@ group { name: "elm/genlist/item/group_index/default";
       }
    }
 }
-group { name: "elm/genlist/item_compress/group_index/default";
+group { name: "elm/genlist/item_compress/group_index/default"; nomouse;
    inherit: "elm/genlist/item/group_index/default";
    parts {
       part { name: "elm.text";
@@ -258,13 +258,13 @@ group { name: "elm/genlist/item_compress/group_index/default";
    }
 }
 
-group { name: "genlist_base"; inherit_only: 1;
+group { name: "genlist_base"; inherit_only: 1; nomouse;
    images.image: "bevel_curved_horiz_out.png" COMP;
    images.image: "shadow_rounded_horiz.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_horiz_out.png" COMP;
    parts {
-       part { name: "event"; type: RECT;
+       part { name: "event"; type: RECT; mouse;
           description { state: "default" 0.0;
              color: 0 0 0 0;
           }
@@ -273,7 +273,7 @@ group { name: "genlist_base"; inherit_only: 1;
              visible: 0;
           }
        }
-       part { name: "base"; type: RECT; mouse_events: 0;
+       part { name: "base"; type: RECT;
           description { state: "default" 0.0;
              color: 64 64 64 255;
              color_class: "list_item_base";
@@ -293,7 +293,7 @@ group { name: "genlist_base"; inherit_only: 1;
           action: STATE_SET "default" 0.0;
           target: "base";
        }
-       part { name: "bevel"; mouse_events: 0;
+       part { name: "bevel";
           description { state: "default" 0.0;
              image.normal: "bevel_curved_horiz_out.png";
              image.border: 0 0 2 2;
@@ -301,7 +301,7 @@ group { name: "genlist_base"; inherit_only: 1;
              fill.smooth: 0;
           }
        }
-       part { name: "sel_shadow"; mouse_events: 0;
+       part { name: "sel_shadow";
           description { state: "default" 0.0;
              image.normal: "shadow_rounded_horiz.png";
              image.border: 0 0 9 9;
@@ -315,7 +315,7 @@ group { name: "genlist_base"; inherit_only: 1;
              visible: 1;
           }
        }
-       part { name: "sel_base"; mouse_events: 0;
+       part { name: "sel_base";
           description { state: "default" 0.0;
              image.normal: "vgrad_med_dark.png";
              fill.smooth: 0;
@@ -327,7 +327,7 @@ group { name: "genlist_base"; inherit_only: 1;
              visible: 1;
           }
        }
-       part { name: "sel_bevel"; mouse_events: 0;
+       part { name: "sel_bevel";
           description { state: "default" 0.0;
              image.normal: "bevel_horiz_out.png";
              image.border: 0 0 2 2;
@@ -367,10 +367,10 @@ group { name: "genlist_base"; inherit_only: 1;
    }
 }
 
-group { name: "genlist_top"; inherit_only: 1;
+group { name: "genlist_top"; inherit_only: 1; nomouse;
     images.image: "shine.png" COMP;
     parts {
-       part { name: "sel_shine"; mouse_events: 0;
+       part { name: "sel_shine";
           description { state: "default" 0.0;
              image.normal: "shine.png";
              rel1.offset: 0 -2;
@@ -386,7 +386,7 @@ group { name: "genlist_top"; inherit_only: 1;
              visible: 1;
           }
        }
-       part { name: "event_block"; type: RECT;
+       part { name: "event_block"; type: RECT; mouse;
           description { state: "default" 0.0;
              color: 0 0 0 0;
              visible: 0;
@@ -419,7 +419,7 @@ group { name: "genlist_top"; inherit_only: 1;
     }
 }
 
-group { name: "elm/genlist/item/default/default";
+group { name: "elm/genlist/item/default/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -429,7 +429,7 @@ group { name: "elm/genlist/item/default/default";
    inherit: "genlist_base";
    parts {
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -460,7 +460,7 @@ group { name: "elm/genlist/item/default/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -488,7 +488,7 @@ group { name: "elm/genlist/item/default/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -518,7 +518,7 @@ group { name: "elm/genlist/item/default/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -575,7 +575,7 @@ group { name: "elm/genlist/item/default/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -584,7 +584,7 @@ group { name: "elm/genlist/item/default/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -601,7 +601,7 @@ group { name: "elm/genlist/item/default/default";
             visible: 0;
          }
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "elm.swallow.end"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -635,7 +635,7 @@ ODD("elm/genlist/item_odd/default/default", "elm/genlist/item/default/default")
 COMPRESS("elm/genlist/item_compress/default/default", "elm/genlist/item/default/default")
 COMPRESS_ODD("elm/genlist/item_compress_odd/default/default", "elm/genlist/item/default/default")
 
-group { name: "elm/genlist/item/default_style/default";
+group { name: "elm/genlist/item/default_style/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -671,7 +671,7 @@ group { name: "elm/genlist/item/default_style/default";
    parts {
         
       //##//
-      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+      part { name: "elm.text"; type: TEXTBLOCK;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 7;
@@ -701,7 +701,7 @@ group { name: "elm/genlist/item/default_style/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+      part { name: "label2"; type: TEXTBLOCK;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
@@ -728,7 +728,7 @@ group { name: "elm/genlist/item/default_style/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
+      part { name: "label3"; type: TEXTBLOCK;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 0 0;
@@ -757,7 +757,7 @@ group { name: "elm/genlist/item/default_style/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -814,7 +814,7 @@ group { name: "elm/genlist/item/default_style/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -823,7 +823,7 @@ group { name: "elm/genlist/item/default_style/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -840,7 +840,7 @@ group { name: "elm/genlist/item/default_style/default";
             visible: 0;
          }
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "elm.swallow.end"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -875,7 +875,7 @@ ODD("elm/genlist/item_odd/default_style/default", "elm/genlist/item/default_styl
 COMPRESS("elm/genlist/item_compress/default_style/default", "elm/genlist/item/default_style/default")
 COMPRESS_ODD("elm/genlist/item_compress_odd/default_style/default", "elm/genlist/item/default_style/default")
 
-group { name: "elm/genlist/item/one_icon/default";
+group { name: "elm/genlist/item/one_icon/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -886,7 +886,7 @@ group { name: "elm/genlist/item/one_icon/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -915,7 +915,7 @@ group { name: "elm/genlist/item/one_icon/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -943,7 +943,7 @@ group { name: "elm/genlist/item/one_icon/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -973,7 +973,7 @@ group { name: "elm/genlist/item/one_icon/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -1030,7 +1030,7 @@ group { name: "elm/genlist/item/one_icon/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -1039,7 +1039,7 @@ group { name: "elm/genlist/item/one_icon/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -1075,7 +1075,7 @@ ODD("elm/genlist/item_odd/one_icon/default", "elm/genlist/item/one_icon/default"
 COMPRESS("elm/genlist/item_compress/one_icon/default", "elm/genlist/item/one_icon/default")
 COMPRESS_ODD("elm/genlist/item_compress_odd/one_icon/default", "elm/genlist/item/one_icon/default")
 
-group { name: "elm/genlist/item/end_icon/default";
+group { name: "elm/genlist/item/end_icon/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -1086,7 +1086,7 @@ group { name: "elm/genlist/item/end_icon/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -1117,7 +1117,7 @@ group { name: "elm/genlist/item/end_icon/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -1145,7 +1145,7 @@ group { name: "elm/genlist/item/end_icon/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -1175,7 +1175,7 @@ group { name: "elm/genlist/item/end_icon/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -1232,7 +1232,7 @@ group { name: "elm/genlist/item/end_icon/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -1241,7 +1241,7 @@ group { name: "elm/genlist/item/end_icon/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -1274,7 +1274,7 @@ ODD("elm/genlist/item_odd/end_icon/default", "elm/genlist/item/end_icon/default"
 COMPRESS("elm/genlist/item_compress/end_icon/default", "elm/genlist/item/end_icon/default")
 COMPRESS_ODD("elm/genlist/item_compress_odd/end_icon/default", "elm/genlist/item/end_icon/default")
 
-group { name: "elm/genlist/item/no_icon/default";
+group { name: "elm/genlist/item/no_icon/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -1284,7 +1284,7 @@ group { name: "elm/genlist/item/no_icon/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -1313,7 +1313,7 @@ group { name: "elm/genlist/item/no_icon/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -1341,7 +1341,7 @@ group { name: "elm/genlist/item/no_icon/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -1371,7 +1371,7 @@ group { name: "elm/genlist/item/no_icon/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -1428,7 +1428,7 @@ group { name: "elm/genlist/item/no_icon/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -1446,7 +1446,7 @@ ODD("elm/genlist/item_odd/no_icon/default", "elm/genlist/item/no_icon/default")
 COMPRESS("elm/genlist/item_compress/no_icon/default", "elm/genlist/item/no_icon/default")
 COMPRESS_ODD("elm/genlist/item_compress_odd/no_icon/default", "elm/genlist/item/no_icon/default")
 
-group { name: "elm/genlist/item/full/default";
+group { name: "elm/genlist/item/full/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "contents" "elm.swallow.content";
@@ -1456,7 +1456,7 @@ group { name: "elm/genlist/item/full/default";
    parts {
 
       //##//
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "elm.swallow.content"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             min: 19 19;
@@ -1467,7 +1467,7 @@ group { name: "elm/genlist/item/full/default";
          }
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -1494,7 +1494,7 @@ group { name: "elm/genlist/item_compress_odd/full/default";
 //-- tree_odd
 //-- tree_compress
 //-- tree_compress_odd
-group { name: "elm/genlist/tree/default/default";
+group { name: "elm/genlist/tree/default/default"; nomouse;
    inherit: "elm/genlist/item/default/default";
    // XXX: these need to be... done specially.
 //   alias: "elm/genlist/tree/tree_effect/default";
@@ -1528,7 +1528,7 @@ group { name: "elm/genlist/tree/default/default";
          }
       }
 #define ARROW() \
-      part { name: "arrow_img_l"; mouse_events: 0; insert_after: "sel_bevel"; \
+      part { name: "arrow_img_l"; insert_after: "sel_bevel"; \
          clip_to: "arrow_clip_l"; \
          scale: 1; \
          ignore_flags: ON_HOLD; \
@@ -1561,7 +1561,7 @@ group { name: "elm/genlist/tree/default/default";
             image.normal: "sym_down_dark_normal.png"; \
          } \
       } \
-      part { name: "arrow_img_r"; mouse_events: 0; \
+      part { name: "arrow_img_r"; \
          clip_to: "arrow_clip_r"; \
          scale: 1; \
          ignore_flags: ON_HOLD; \
@@ -1594,7 +1594,7 @@ group { name: "elm/genlist/tree/default/default";
             image.normal: "sym_down_dark_normal.png"; \
          } \
       } \
-      part { name: "arrow"; type: RECT; insert_before: "sel_shine"; \
+      part { name: "arrow"; type: RECT; insert_before: "sel_shine"; mouse; \
          description { state: "default" 0.0; \
             fixed: 1 0; \
             min: 15 15; \
@@ -1888,7 +1888,7 @@ group { name: "elm/genlist/tree_compress_odd/full/default";
       } \
    }
 
-group { name: "elm/genlist/tree/tree_effect/default";
+group { name: "elm/genlist/tree/tree_effect/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -1901,7 +1901,7 @@ group { name: "elm/genlist/tree/tree_effect/default";
       alias: "elm.swallow.icon" "group:elm.swallow.icon";
       alias: "elm.swallow.end" "group:elm.swallow.end";
       alias: "elm.text" "group:elm.text";
-      part { name: "point"; type: RECT;
+      part { name: "point"; type: RECT; mouse;
          scale: 1;
          description { state: "default" 0.0;
             color: 0 0 0 0;
@@ -1909,12 +1909,12 @@ group { name: "elm/genlist/tree/tree_effect/default";
             rel2.relative: 1.0 0.0;
          }
       }
-      part { name: "event"; type: RECT;
+      part { name: "event"; type: RECT; mouse;
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
-      part { name: "group"; type: GROUP;
+      part { name: "group"; type: GROUP; mouse;
          source: "elm/genlist/tree/default/default";
          description { state: "default" 0.0;
          }
@@ -1984,7 +1984,7 @@ group { name: "elm/genlist/item/tree_effect/default";
    }
 }
 
-group { name: "elm/genlist/item/icon_top_text_bottom/default";
+group { name: "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text";
@@ -1995,7 +1995,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -2025,7 +2025,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -2053,7 +2053,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -2083,7 +2083,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -2140,7 +2140,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "sizer.content"; type: TEXT; mouse_events: 0;
+      part { name: "sizer.content"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -2160,7 +2160,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
             visible: 0;
          }
       }
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -2169,7 +2169,7 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 1;
             aspect: 1.0 1.0;
@@ -2414,7 +2414,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
          } \
       } \
    }
-group { name: "elm/genlist/item/double_label/default";
+group { name: "elm/genlist/item/double_label/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.text.sub";
@@ -2425,7 +2425,7 @@ group { name: "elm/genlist/item/double_label/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -2458,7 +2458,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -2486,7 +2486,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -2516,7 +2516,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -2528,7 +2528,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 1;
          }
       }
-      part { name: "elm.text.sub"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.sub"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -2561,7 +2561,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 0;
          }
       }
-      part { name: "label4"; type: TEXT; mouse_events: 0;
+      part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -2589,7 +2589,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 0;
          }
       }
-      part { name: "label5"; type: TEXT; mouse_events: 0;
+      part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -2682,7 +2682,7 @@ group { name: "elm/genlist/item/double_label/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -2691,7 +2691,7 @@ group { name: "elm/genlist/item/double_label/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -2708,7 +2708,7 @@ group { name: "elm/genlist/item/double_label/default";
             visible: 0;
          }
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "elm.swallow.end"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -3038,7 +3038,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
          } \
       } \
    }
-group { name: "elm/genlist/item/message/default";
+group { name: "elm/genlist/item/message/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.title.1 elm.title.2";
@@ -3049,7 +3049,7 @@ group { name: "elm/genlist/item/message/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3081,7 +3081,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3110,7 +3110,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -3141,7 +3141,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -3154,7 +3154,7 @@ group { name: "elm/genlist/item/message/default";
          }
       }
       //##//
-      part { name: "elm.title.1"; type: TEXT; mouse_events: 0;
+      part { name: "elm.title.1"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3186,7 +3186,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "label4"; type: TEXT; mouse_events: 0;
+      part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3214,7 +3214,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "label5"; type: TEXT; mouse_events: 0;
+      part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -3245,7 +3245,7 @@ group { name: "elm/genlist/item/message/default";
          }
       }
       //##//
-      part { name: "elm.title.2"; type: TEXT; mouse_events: 0;
+      part { name: "elm.title.2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3276,7 +3276,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "label6"; type: TEXT; mouse_events: 0;
+      part { name: "label6"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3304,7 +3304,7 @@ group { name: "elm/genlist/item/message/default";
             visible: 0;
          }
       }
-      part { name: "label7"; type: TEXT; mouse_events: 0;
+      part { name: "label7"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -3415,7 +3415,7 @@ group { name: "elm/genlist/item/message/default";
          target: "label7";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -3433,7 +3433,7 @@ ODD("elm/genlist/item_odd/message/default", "elm/genlist/item/message/default")
 COMPRESS_T1T2("elm/genlist/item_compress/message/default", "elm/genlist/item/message/default")
 COMPRESS_T1T2_ODD("elm/genlist/item_compress_odd/message/default", "elm/genlist/item/message/default")
 
-group { name: "elm/genlist/item/media/default";
+group { name: "elm/genlist/item/media/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text.title elm.text.album-artist";
@@ -3443,7 +3443,7 @@ group { name: "elm/genlist/item/media/default";
    parts {
 
       //##//
-      part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.title"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3475,7 +3475,7 @@ group { name: "elm/genlist/item/media/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3503,7 +3503,7 @@ group { name: "elm/genlist/item/media/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -3533,7 +3533,7 @@ group { name: "elm/genlist/item/media/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -3545,7 +3545,7 @@ group { name: "elm/genlist/item/media/default";
             visible: 1;
          }
       }
-      part { name: "elm.text.album-artist"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.album-artist"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3577,7 +3577,7 @@ group { name: "elm/genlist/item/media/default";
             visible: 0;
          }
       }
-      part { name: "label4"; type: TEXT; mouse_events: 0;
+      part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3605,7 +3605,7 @@ group { name: "elm/genlist/item/media/default";
             visible: 0;
          }
       }
-      part { name: "label5"; type: TEXT; mouse_events: 0;
+      part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -3698,7 +3698,7 @@ group { name: "elm/genlist/item/media/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -3902,7 +3902,7 @@ ODD("elm/genlist/item_odd/media/default", "elm/genlist/item/media/default")
 COMPRESS_MEDIA("elm/genlist/item_compress/media/default", "elm/genlist/item/media/default")
 COMPRESS_MEDIA_ODD("elm/genlist/item_compress_odd/media/default", "elm/genlist/item/media/default")
       
-group { name: "elm/genlist/item/media-album/default";
+group { name: "elm/genlist/item/media-album/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text.title elm.text.trackno elm.text.length";
@@ -3912,7 +3912,7 @@ group { name: "elm/genlist/item/media-album/default";
    parts {
 
       //##//
-      part { name: "elm.text.trackno"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.trackno"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3946,7 +3946,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -3974,7 +3974,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -4004,7 +4004,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -4016,7 +4016,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 1;
          }
       }
-      part { name: "dot"; type: TEXT; mouse_events: 0;
+      part { name: "dot"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -4037,7 +4037,7 @@ group { name: "elm/genlist/item/media-album/default";
             inherit: "default" 0.0;
          }
       }
-      part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.title"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4070,7 +4070,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "label6"; type: TEXT; mouse_events: 0;
+      part { name: "label6"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4098,7 +4098,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "label7"; type: TEXT; mouse_events: 0;
+      part { name: "label7"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -4129,7 +4129,7 @@ group { name: "elm/genlist/item/media-album/default";
          }
       }
       
-      part { name: "elm.text.length"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.length"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4161,7 +4161,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "label4"; type: TEXT; mouse_events: 0;
+      part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4189,7 +4189,7 @@ group { name: "elm/genlist/item/media-album/default";
             visible: 0;
          }
       }
-      part { name: "label5"; type: TEXT; mouse_events: 0;
+      part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -4300,7 +4300,7 @@ group { name: "elm/genlist/item/media-album/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -4494,7 +4494,7 @@ group { name: "elm/genlist/item_compress_odd/media-album/default";
    }
 }
 
-group { name: "elm/genlist/item/media-preview/default";
+group { name: "elm/genlist/item/media-preview/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text elm.text.artist";
@@ -4505,7 +4505,7 @@ group { name: "elm/genlist/item/media-preview/default";
    parts {
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4537,7 +4537,7 @@ group { name: "elm/genlist/item/media-preview/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4565,7 +4565,7 @@ group { name: "elm/genlist/item/media-preview/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -4595,7 +4595,7 @@ group { name: "elm/genlist/item/media-preview/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.flip"; type: SWALLOW;
+      part { name: "elm.text.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -4607,7 +4607,7 @@ group { name: "elm/genlist/item/media-preview/default";
             visible: 1;
          }
       }
-      part { name: "elm.text.artist"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.artist"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4639,7 +4639,7 @@ group { name: "elm/genlist/item/media-preview/default";
             visible: 0;
          }
       }
-      part { name: "label4"; type: TEXT; mouse_events: 0;
+      part { name: "label4"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -4667,7 +4667,7 @@ group { name: "elm/genlist/item/media-preview/default";
             visible: 0;
          }
       }
-      part { name: "label5"; type: TEXT; mouse_events: 0;
+      part { name: "label5"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -4760,7 +4760,7 @@ group { name: "elm/genlist/item/media-preview/default";
          target: "elm.text.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -4769,7 +4769,7 @@ group { name: "elm/genlist/item/media-preview/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "elm.swallow.preview"; type: SWALLOW;
+      part { name: "elm.swallow.preview"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -5083,7 +5083,7 @@ group { name: "elm/genlist/item_odd_compress/media-preview/default";
          } \
       } \
    }
-group { name: "elm/genlist/item/mode/default";
+group { name: "elm/genlist/item/mode/default"; nomouse;
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    data.item: "texts" "elm.text.mode";
@@ -5094,7 +5094,7 @@ group { name: "elm/genlist/item/mode/default";
    parts {
 
       //##//
-      part { name: "elm.text.mode"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.mode"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -5123,7 +5123,7 @@ group { name: "elm/genlist/item/mode/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
+      part { name: "label2"; type: TEXT;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -5151,7 +5151,7 @@ group { name: "elm/genlist/item/mode/default";
             visible: 0;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
+      part { name: "label3"; type: TEXT;
          effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -5181,7 +5181,7 @@ group { name: "elm/genlist/item/mode/default";
             visible: 0;
          }
       }
-      part { name: "elm.text.mode.flip"; type: SWALLOW;
+      part { name: "elm.text.mode.flip"; type: SWALLOW; mouse;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
@@ -5238,7 +5238,7 @@ group { name: "elm/genlist/item/mode/default";
          target: "elm.text.mode.flip";
       }
       //##//
-      part { name: "elm.swallow.pad"; type: SWALLOW;
+      part { name: "elm.swallow.pad"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -5248,7 +5248,7 @@ group { name: "elm/genlist/item/mode/default";
          }
       }
       //##//
-      part { name: "event_block_layer"; type: RECT;
+      part { name: "event_block_layer"; type: RECT; mouse;
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
@@ -5264,7 +5264,7 @@ group { name: "elm/genlist/item/mode/default";
             rel1.relative: 0.0 1.0;
          }
       }
-      part { name: "elm.swallow.original"; type: SWALLOW;
+      part { name: "elm.swallow.original"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -5414,7 +5414,7 @@ COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tre
          } \
       } \
    }
-group { name: "elm/genlist/item/edit/default";
+group { name: "elm/genlist/item/edit/default"; nomouse;
    data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
@@ -5422,7 +5422,7 @@ group { name: "elm/genlist/item/edit/default";
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shadow_horiz.png" COMP;
    parts {
-      part { name: "base"; type: RECT; mouse_events: 0;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             color: 64 64 64 255;
             color_class: "list_item_base";
@@ -5443,7 +5443,7 @@ group { name: "elm/genlist/item/edit/default";
          target: "base";
       }
       
-      part { name: "sel_shadow1"; mouse_events: 0;
+      part { name: "sel_shadow1";
          description { state: "default" 0.0;
             image.normal: "shadow_horiz.png";
             image.border: 0 0 9 9;
@@ -5459,7 +5459,7 @@ group { name: "elm/genlist/item/edit/default";
             visible: 1;
          }
       }
-      part { name: "sel_shadow2"; mouse_events: 0;
+      part { name: "sel_shadow2";
          description { state: "default" 0.0;
             image.normal: "shadow_horiz.png";
             image.border: 0 0 9 9;
@@ -5475,7 +5475,7 @@ group { name: "elm/genlist/item/edit/default";
             visible: 1;
          }
       }
-      part { name: "sel_base"; mouse_events: 0;
+      part { name: "sel_base";
          description { state: "default" 0.0;
             image.normal: "vgrad_med_dark.png";
             fill.smooth: 0;
@@ -5487,7 +5487,7 @@ group { name: "elm/genlist/item/edit/default";
             visible: 1;
          }
       }
-      part { name: "sel_bevel"; mouse_events: 0;
+      part { name: "sel_bevel";
          description { state: "default" 0.0;
             image.normal: "bevel_horiz_out.png";
             image.border: 0 0 2 2;
@@ -5517,7 +5517,7 @@ group { name: "elm/genlist/item/edit/default";
          target: "sel_shadow2";
       }
 
-      part { name: "elm.edit.icon.1"; type: SWALLOW;
+      part { name: "elm.edit.icon.1"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 1.0 0.5;
@@ -5536,7 +5536,7 @@ group { name: "elm/genlist/item/edit/default";
             visible: 0;
          }
       }
-      part { name: "elm.edit.icon.2"; type: SWALLOW;
+      part { name: "elm.edit.icon.2"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
@@ -5556,7 +5556,7 @@ group { name: "elm/genlist/item/edit/default";
          }
       }
       
-      part { name: "elm.swallow.decorate.content"; type: SWALLOW;
+      part { name: "elm.swallow.decorate.content"; type: SWALLOW; mouse;
          description { state: "default" 0.0;
          }
          description { state: "on" 0.0;
