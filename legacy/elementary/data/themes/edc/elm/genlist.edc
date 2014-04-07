@@ -270,7 +270,7 @@ group { "genlist_base"; inherit_only: 1; nomouse;
           }
           desc { "disabled";
              inherit: "default";
-             visible: 0;
+             hid;
           }
        }
        rect { "base";
@@ -308,23 +308,23 @@ group { "genlist_base"; inherit_only: 1; nomouse;
              rel1.offset: 0 -4;
              rel2.offset: -1 5;
              fill.smooth: 0;
-             visible: 0;
+             hid;
           }
           desc { "selected";
              inherit: "default";
-             visible: 1;
+             vis;
           }
        }
        part { "sel_base";
           desc { "default";
              image.normal: "vgrad_med_dark.png";
              fill.smooth: 0;
-             visible: 0;
+             hid;
              TILED_HORIZ(120)
           }
           desc { "selected";
              inherit: "default";
-             visible: 1;
+             vis;
           }
        }
        part { "sel_bevel";
@@ -333,11 +333,11 @@ group { "genlist_base"; inherit_only: 1; nomouse;
              image.border: 0 0 2 2;
              image.middle: 0;
              fill.smooth: 0;
-             visible: 0;
+             hid;
           }
           desc { "selected";
              inherit: "default";
-             visible: 1;
+             vis;
           }
        }
        program {
@@ -378,22 +378,22 @@ group { "genlist_top"; inherit_only: 1; nomouse;
              rel2.relative: 1.0 0.0;
              rel2.offset: -1 2;
              rel2.to: "sel_base";
-             visible: 0;
+             hid;
              FIXED_SIZE(69, 5)
           }
           desc { "selected";
              inherit: "default";
-             visible: 1;
+             vis;
           }
        }
        rect { "event_block"; mouse;
           desc { "default";
              color: 0 0 0 0;
-             visible: 0;
+             hid;
           }
           desc { "disabled";
              inherit: "default";
-             visible: 1;
+             vis;
           }
        }
        program {
@@ -449,15 +449,15 @@ group { "elm/genlist/item/default/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -473,19 +473,19 @@ group { "elm/genlist/item/default/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -503,31 +503,31 @@ group { "elm/genlist/item/default/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -598,7 +598,7 @@ group { "elm/genlist/item/default/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.swallow.end"; mouse;
@@ -612,7 +612,7 @@ group { "elm/genlist/item/default/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -690,15 +690,15 @@ group { "elm/genlist/item/default_style/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       textblock { "label2";
@@ -713,19 +713,19 @@ group { "elm/genlist/item/default_style/default"; nomouse;
                text_class: "list_item";
                style: "genlist_style_disabled";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       textblock { "label3";
@@ -742,31 +742,31 @@ group { "elm/genlist/item/default_style/default"; nomouse;
                text_class: "list_item";
                style: "genlist_style_selected";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -837,7 +837,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.swallow.end"; mouse;
@@ -851,7 +851,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -904,15 +904,15 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -928,19 +928,19 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -958,31 +958,31 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -1053,7 +1053,7 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -1106,15 +1106,15 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -1130,19 +1130,19 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -1160,31 +1160,31 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -1252,7 +1252,7 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -1302,15 +1302,15 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -1326,19 +1326,19 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -1356,31 +1356,31 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -1613,20 +1613,20 @@ group { "elm/genlist/tree/default/default"; nomouse;
          desc { "default"; \
             rel1.to: "arrow_img_l"; \
             rel2.to: "arrow_img_l"; \
-            visible: 1; \
+            vis; \
          } \
          desc { "rtl"; \
-            visible: 0; \
+            hid; \
          } \
       } \
       rect { "arrow_clip_r"; \
          desc { "default"; \
             rel1.to: "arrow_img_r"; \
             rel2.to: "arrow_img_r"; \
-            visible: 0; \
+            hid; \
          } \
          desc { "rtl"; \
-            visible: 1; \
+            vis; \
          } \
       } \
       program { \
@@ -1867,7 +1867,7 @@ group { "elm/genlist/tree_compress_odd/full/default";
    } \
    desc { "hide"; \
       inherit: "default"; \
-      visible: 0; \
+      hid; \
    }
 
 #define GENLIST_PART_MAP_FINISH(param_x, param_y, param_z) \
@@ -2014,15 +2014,15 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -2038,19 +2038,19 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
                align: 0.5 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -2068,31 +2068,31 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
                align: 0.5 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -2157,7 +2157,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
                text_class: "list_item";
                text: "M";
             }
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.swallow.pad"; mouse;
@@ -2178,7 +2178,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -2447,15 +2447,15 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -2471,19 +2471,19 @@ group { "elm/genlist/item/double_label/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -2501,31 +2501,31 @@ group { "elm/genlist/item/double_label/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       text { "elm.text.sub";
@@ -2550,15 +2550,15 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label4";
@@ -2574,19 +2574,19 @@ group { "elm/genlist/item/double_label/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label5";
@@ -2604,19 +2604,19 @@ group { "elm/genlist/item/double_label/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -2705,7 +2705,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.swallow.end"; mouse;
@@ -2719,7 +2719,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -3070,15 +3070,15 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -3095,19 +3095,19 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -3126,31 +3126,31 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       //##//
@@ -3175,15 +3175,15 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label4";
@@ -3199,19 +3199,19 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label5";
@@ -3229,19 +3229,19 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       //##//
@@ -3265,15 +3265,15 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label6";
@@ -3289,19 +3289,19 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label7";
@@ -3319,19 +3319,19 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -3464,15 +3464,15 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -3488,19 +3488,19 @@ group { "elm/genlist/item/media/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -3518,31 +3518,31 @@ group { "elm/genlist/item/media/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text.title";
             rel2.to_y: "elm.text.title";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       text { "elm.text.album-artist";
@@ -3566,15 +3566,15 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label4";
@@ -3590,19 +3590,19 @@ group { "elm/genlist/item/media/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label5";
@@ -3620,19 +3620,19 @@ group { "elm/genlist/item/media/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -3935,15 +3935,15 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -3959,19 +3959,19 @@ group { "elm/genlist/item/media-album/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -3989,37 +3989,37 @@ group { "elm/genlist/item/media-album/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text.trackno";
             rel2.to_y: "elm.text.trackno";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       text { "dot";
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             fixed: 1 1;
             align: 0.0 0.0;
             rel1.to: "elm.text.trackno";
@@ -4059,15 +4059,15 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label6";
@@ -4083,19 +4083,19 @@ group { "elm/genlist/item/media-album/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label7";
@@ -4113,19 +4113,19 @@ group { "elm/genlist/item/media-album/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       
@@ -4150,15 +4150,15 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label4";
@@ -4174,19 +4174,19 @@ group { "elm/genlist/item/media-album/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label5";
@@ -4204,19 +4204,19 @@ group { "elm/genlist/item/media-album/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -4526,15 +4526,15 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -4550,19 +4550,19 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -4580,31 +4580,31 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       text { "elm.text.artist";
@@ -4628,15 +4628,15 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label4";
@@ -4652,19 +4652,19 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label5";
@@ -4682,19 +4682,19 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -4783,7 +4783,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       program {
@@ -5112,15 +5112,15 @@ group { "elm/genlist/item/mode/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label2";
@@ -5136,19 +5136,19 @@ group { "elm/genlist/item/mode/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       text { "label3";
@@ -5166,31 +5166,31 @@ group { "elm/genlist/item/mode/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.text.mode.flip"; mouse;
          scale: 1;
          desc { "default";
-            visible: 0;
+            hid;
             rel1.to_y: "elm.text.mode";
             rel2.to_y: "elm.text.mode";
          }
          desc { "flip_enabled";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -5256,7 +5256,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
          }
          desc { "repeat_events";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       spacer { "pers";
@@ -5452,11 +5452,11 @@ group { "elm/genlist/item/edit/default"; nomouse;
             rel2.to_x: "elm.swallow.decorate.content";
             rel2.relative: 0.0 1.0;
             fill.smooth: 0;
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       part { "sel_shadow2";
@@ -5468,23 +5468,23 @@ group { "elm/genlist/item/edit/default"; nomouse;
             rel1.offset: 0 -4;
             rel2.offset: -1 5;
             fill.smooth: 0;
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       part { "sel_base";
          desc { "default";
             image.normal: "vgrad_med_dark.png";
             fill.smooth: 0;
-            visible: 0;
+            hid;
             TILED_HORIZ(120)
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       part { "sel_bevel";
@@ -5493,11 +5493,11 @@ group { "elm/genlist/item/edit/default"; nomouse;
             image.border: 0 0 2 2;
             image.middle: 0;
             fill.smooth: 0;
-            visible: 0;
+            hid;
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            vis;
          }
       }
       program {
@@ -5533,7 +5533,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       swallow { "elm.edit.icon.2"; mouse;
@@ -5552,7 +5552,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
          }
          desc { "disabled";
             inherit: "default";
-            visible: 0;
+            hid;
          }
       }
       
