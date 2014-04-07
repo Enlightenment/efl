@@ -29,13 +29,27 @@ local shutdown = function()
     util.lib_unload("eina")
 end
 
+ffi.metatype("Eina_Iterator", {
+    __index = {
+        free = function(self) C.eina_iterator_free(self) end,
+        next = function(self)
+            local data = ffi.new("void*[1]")
+            local r = C.eina_iterator_next(self, data)
+            if r == 0 then return nil end
+            return data[0]
+        end,
+        lock   = function(self) return C.eina_iterator_lock  (self) == 1 end,
+        unlock = function(self) return C.eina_iterator_unlock(self) == 1 end
+    }
+})
+
 cutil.init_module(init, shutdown)
 
 M.Iterator = util.Object:clone {
     __ctor = function(self, iter)
         self.__iterator = iter
         if self.__iterator then ffi.gc(self.__iterator, function(iter)
-            eina.eina_iterator_free(iter)
+            iter:free()
         end) end
         self.__eq = function(self, other)
             return self.__iterator == other.__iterator
@@ -47,7 +61,7 @@ M.Iterator = util.Object:clone {
 
     free = function(self)
         if not self.__iterator then return end
-        eina.eina_iterator_free(ffi.gc(self.__iterator, nil))
+        self.__iterator.free(ffi.gc(self.__iterator, nil))
         self.__iterator = nil
     end,
 
@@ -64,19 +78,17 @@ M.Iterator = util.Object:clone {
 
     next = function(self)
         if not self.__iterator then return end
-        local data = ffi.new("void*[1]")
-        local r = C.eina_iterator_next(self.__iterator, data)
-        return data[0]
+        return self.__iterator:next()
     end,
 
     lock = function(self)
         if not self.__iterator then return end
-        C.eina_iterator_lock(self.__iterator)
+        return self.__iterator:lock()
     end,
 
     unlock = function(self)
         if not self.__iterator then return end
-        C.eina_iterator_lock(self.__iterator)
+        return self.__iterator:unlock()
     end
 }
 
