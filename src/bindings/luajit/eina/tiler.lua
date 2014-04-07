@@ -74,7 +74,7 @@ M.Tiler_Iterator = Iterator:clone {
     end
 }
 
-M.Grid_Slicer_Iterator = Iterator:clone {
+M.Tile_Grid_Slicer_Iterator = Iterator:clone {
     __ctor = function(self, x, y, w, h, tile_w, tile_h)
         return Iterator.__ctor(self, eina.eina_tile_grid_slicer_iterator_new(
             x, y, w, h, tile_w, tile_h))
@@ -154,7 +154,7 @@ M.Tile_Grid_Slicer = ffi.metatype("Eina_Tile_Grid_Slicer", {
             end
         end,
 
-        Iterator = M.Grid_Slicer_Iterator
+        Iterator = M.Tile_Grid_Slicer_Iterator
     }
 })
 
