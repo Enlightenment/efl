@@ -38,20 +38,25 @@ lbl:text_set("Lua runtime test")
 bx:pack_end(lbl)
 lbl:show()
 
-local counter = nil
-local step = 5
+local entry
 
 local btn = elm.Button(win)
 btn:text_set("Reset counter")
 bx:pack_end(btn)
 btn:smart_callback_add("clicked", function()
-    if not counter then
-        btn:text_set("Add " .. step)
-    end
-    counter = counter and (counter + step) or 0
-    lbl:text_set(tostring(counter))
+    lbl:text_set(entry:entry_get())
 end)
 btn:show()
+
+entry = elm.Entry(win)
+entry:single_line_set(true)
+entry:scrollable_set(true)
+entry:focus_set(true)
+entry:entry_set("Hello world")
+entry:size_hint_weight_set(1.0, 1.0)
+entry:size_hint_align_set(-1.0, -1.0)
+entry:show()
+bx:pack_end(entry)
 
 win:resize(360, 360)
 win:show()
