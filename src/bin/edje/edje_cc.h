@@ -140,9 +140,16 @@ struct _Edje_Part_Parser
    Eina_Bool can_override;
 };
 
+typedef struct Edje_Target_Group
+{
+   char *name;
+   char **targets;
+} Edje_Target_Group;
+
 struct _Edje_Part_Collection_Parser
 {
    Edje_Part_Collection common;
+   Eina_List *target_groups;
    Eina_Bool default_mouse_events;
    Eina_Bool inherit_only;
 };

@@ -398,8 +398,10 @@ static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
 static void st_collections_group_programs_program_target(void);
 static void st_collections_group_programs_program_targets(void);
+static void st_collections_group_programs_program_target_groups(void);
 static void st_collections_group_programs_program_after(void);
 static void st_collections_group_programs_program_api(void);
+static void st_collections_group_target_group(void);
 
 static void ob_collections_group_programs_program_sequence(void);
 
@@ -474,6 +476,8 @@ static void st_collections_group_nobroadcast(void);
      PROGRAM_SEQUENCE(PREFIX, "action", st_collections_group_programs_program_action) \
      PROGRAM_SEQUENCE(PREFIX, "transition", st_collections_group_programs_program_transition) \
      PROGRAM_SEQUENCE(PREFIX, "target", st_collections_group_programs_program_target) \
+     PROGRAM_SEQUENCE(PREFIX, "target_groups", st_collections_group_programs_program_target_groups) \
+     PROGRAM_SEQUENCE(PREFIX, "groups", st_collections_group_programs_program_target_groups) \
      PROGRAM_SEQUENCE(PREFIX, "targets", st_collections_group_programs_program_targets) \
      PROGRAM_SEQUENCE(PREFIX, "after", st_collections_group_programs_program_after) \
      PROGRAM_SEQUENCE(PREFIX, "api", st_collections_group_programs_program_api) \
@@ -515,6 +519,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.inherit_only", st_collections_group_inherit_only},
+     {"collections.group.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.part_remove", st_collections_group_part_remove},
      {"collections.group.program_remove", st_collections_group_program_remove},
      {"collections.group.script_only", st_collections_group_script_only},
@@ -529,6 +534,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
      {"collections.group.limits.vertical", st_collections_group_limits_vertical},
      {"collections.group.externals.external", st_externals_external}, /* dup */
+     {"collections.group.programs.target_group", st_collections_group_target_group}, /* dup */
      IMAGE_SET_STATEMENTS("collections.group")
      IMAGE_STATEMENTS("collections.group.")
      {"collections.group.font", st_fonts_font}, /* dup */
@@ -538,7 +544,9 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_STATEMENTS("collections.group.parts.")
      {"collections.group.parts.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.")
+     {"collections.group.parts.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
+     {"collections.group.parts.part.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.parts.part.inherit", st_collections_group_parts_part_inherit},
      {"collections.group.parts.part.api", st_collections_group_parts_part_api},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
@@ -604,6 +612,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.table.items.item.options", st_collections_group_parts_part_box_items_item_options}, /* dup */
      {"collections.group.parts.part.table.items.item.position", st_collections_group_parts_part_table_items_item_position},
      {"collections.group.parts.part.table.items.item.span", st_collections_group_parts_part_table_items_item_span},
+     {"collections.group.parts.part.description.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.source", st_collections_group_parts_part_description_source},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
@@ -3059,6 +3068,51 @@ st_collections_group_inherit_only(void)
 /**
     @page edcref
     @property
+        target_group
+    @parameters
+        [name] [part/program1] [part/program2] [part/program3] ...
+    @effect
+        This creates a group of parts/programs which can then be referenced
+        by a single 'groups' or 'target_groups' statement inside a program.
+        The resulting program will have all of the parts/programs within the specified
+        group added as targets.
+        At least one part/program MUST be specified.
+    @endproperty
+    @since 1.10
+*/
+static void
+st_collections_group_target_group(void)
+{
+   int n, argc;
+   Edje_Part_Collection_Parser *pc;
+   char *name;
+   Eina_List *l;
+   Edje_Target_Group *tg;
+
+   check_min_arg_count(2);
+
+   pc = eina_list_last_data_get(edje_collections);
+   name = parse_str(0);
+   EINA_LIST_FOREACH(pc->target_groups, l, tg)
+     if (!strcmp(tg->name, name))
+       {
+          ERR("parse error %s:%i. There is already a target_group with the name '%s'",
+                     file_in, line - 1, name);
+          exit(-1);
+       }
+   tg = malloc(sizeof(Edje_Target_Group));
+   pc->target_groups = eina_list_append(pc->target_groups, tg);
+   tg->name = name;
+   argc = get_arg_count();
+   tg->targets = calloc(argc, sizeof(char*));
+
+   for (n = 1; n < argc; n++)
+     tg->targets[n - 1] = parse_str(n);
+}
+
+/**
+    @page edcref
+    @property
         inherit
     @parameters
         [parent group name]
@@ -3175,6 +3229,14 @@ st_collections_group_inherit(void)
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp2 = (Edje_Part_Collection_Parser *)pc2;
    pcp->default_mouse_events = pcp2->default_mouse_events;
+
+   /* as of 7 April 2014, target groups cannot be modified and are not freed.
+    * this code will break if that ever changes.
+    *
+    * BORKER CERTIFICATION: BRONZE
+    */
+   if (pcp2->target_groups)
+     pcp->target_groups = eina_list_clone(pcp2->target_groups);
 
    if (pc2->limits.vertical_count || pc2->limits.horizontal_count)
      {
@@ -10447,6 +10509,56 @@ st_collections_group_programs_program_targets(void)
 
    for (n = 0, argc = get_arg_count(); n < argc; n++)
      _program_target_add(parse_str(n));
+}
+
+/**
+    @page edcref
+    @property
+        target_groups
+        groups
+    @parameters
+        [group1] [group2] [group3] ...
+    @since 1.10
+    @effect
+        Groups of programs or parts upon which the specified action will act. Multiple 'groups', 'target',
+        and 'targets' keywords may be specified. SIGNAL_EMITs can have targets.
+    @endproperty
+*/
+static void
+st_collections_group_programs_program_target_groups(void)
+{
+   int n, argc;
+   Edje_Part_Collection_Parser *pc;
+
+   check_min_arg_count(1);
+
+   pc = eina_list_last_data_get(edje_collections);
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        Eina_List *l;
+        Edje_Target_Group *tg;
+        char *name;
+        Eina_Bool found = EINA_FALSE;
+
+        name = parse_str(n);
+        EINA_LIST_FOREACH(pc->target_groups, l, tg)
+          if (!strcmp(tg->name, name))
+            {
+               char **t;
+
+               for (t = tg->targets; *t; t++)
+                 _program_target_add(strdup(*t));
+               found = EINA_TRUE;
+            }
+        if (found)
+          {
+             free(name);
+             continue;
+          }
+        ERR("parse error %s:%i. There is no target_group with the name '%s'",
+                   file_in, line - 1, name);
+        exit(-1);
+     }
 }
 
 /**
