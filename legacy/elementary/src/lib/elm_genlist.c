@@ -6256,6 +6256,7 @@ _event_block_rect_update(const Evas_Object *obj)
      {
         sd->event_block_rect = evas_object_rectangle_add(
            evas_object_evas_get(sd->obj));
+        evas_object_smart_member_add(sd->event_block_rect, sd->pan_obj);
      }
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
