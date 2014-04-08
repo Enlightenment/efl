@@ -47,7 +47,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
         param.m_quality = rg_etc1_high_quality;
         block = 7;
      }
-   else if (quality < 30)
+   else if (quality > 30)
      {
         param.m_quality = rg_etc1_medium_quality;
         block = 6;
