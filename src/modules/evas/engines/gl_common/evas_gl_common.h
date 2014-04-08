@@ -604,7 +604,7 @@ struct _Evas_GL_Image
    // if im->im == NULL, it's a render-surface so these here are used
    int              w, h;
    struct {
-      int           space;
+      Evas_Colorspace space;
       void         *data;
       unsigned char no_free : 1;
    } cs;
@@ -806,9 +806,9 @@ void              evas_gl_common_image_ref(Evas_GL_Image *im);
 void              evas_gl_common_image_unref(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
 Evas_GL_Image    *evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
-Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace);
-Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace);
-Evas_GL_Image    *evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int cspace);
+Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
+Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
+Evas_GL_Image    *evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_Colorspace cspace);
 Evas_GL_Image    *evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha);
 void              evas_gl_common_image_native_enable(Evas_GL_Image *im);
 void              evas_gl_common_image_native_disable(Evas_GL_Image *im);

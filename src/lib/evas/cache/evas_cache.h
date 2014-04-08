@@ -29,10 +29,10 @@ struct _Evas_Cache_Image_Func
    int          (*size_set)(Image_Entry *dst, const Image_Entry *src, unsigned int w, unsigned int h);
 
    /* The destination surface does not have any surface. */
-   int          (*copied_data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
+   int          (*copied_data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
    /* The destination surface does not have any surface. */
-   int          (*data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
-   int          (*color_space)(Image_Entry *dst, int cspace);
+   int          (*data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+   int          (*color_space)(Image_Entry *dst, Evas_Colorspace cspace);
 
    /* This function need to update im->w and im->h. */
    int          (*load)(Image_Entry *im); /**< return is EVAS_LOAD_ERROR_* or EVAS_LOAD_ERROR_NONE! */
@@ -137,8 +137,8 @@ EAPI Eina_Bool                evas_cache_image_is_loaded(Image_Entry *im);
 EAPI void                     evas_cache_image_unload_all(Evas_Cache_Image *cache);
 EAPI void                     evas_cache_image_surface_alloc(Image_Entry *im, unsigned int w, unsigned int h);
 EAPI DATA32*                  evas_cache_image_pixels(Image_Entry *im);
-EAPI Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
-EAPI Image_Entry*             evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
+EAPI Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+EAPI Image_Entry*             evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
 EAPI void                     evas_cache_image_colorspace(Image_Entry *im, Evas_Colorspace cspace);
 EAPI Image_Entry*             evas_cache_image_empty(Evas_Cache_Image *cache);
 EAPI Image_Entry*             evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h);
@@ -156,9 +156,9 @@ EAPI Engine_Image_Entry*      evas_cache_engine_image_engine(Evas_Cache_Engine_I
 EAPI void                     evas_cache_engine_image_drop(Engine_Image_Entry *eim);
 EAPI Engine_Image_Entry*      evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data);
 EAPI Engine_Image_Entry*      evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace, void *engine_data);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace, void *engine_data);
-EAPI void                     evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, int cspace, void *engine_data);
+EAPI Engine_Image_Entry*      evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data);
+EAPI Engine_Image_Entry*      evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data);
+EAPI void                     evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, Evas_Colorspace cspace, void *engine_data);
 EAPI Engine_Image_Entry*      evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsigned int h);
 
 EAPI void                     evas_cache_engine_image_load_data(Engine_Image_Entry *eim);

@@ -27,10 +27,10 @@ struct _Evas_Cache2_Image_Func
    int          (*size_set)(Image_Entry *dst, const Image_Entry *src, unsigned int w, unsigned int h);
 
    /* The destination surface does not have any surface. */
-   int          (*copied_data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
+   int          (*copied_data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
    /* The destination surface does not have any surface. */
-   int          (*data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
-   int          (*color_space)(Image_Entry *dst, int cspace);
+   int          (*data)(Image_Entry *dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+   int          (*color_space)(Image_Entry *dst, Evas_Colorspace cspace);
 
    /* This function need to update im->w and im->h. */
    // int          (*load)(Image_Entry *im); /**< return is EVAS_LOAD_ERROR_* or EVAS_LOAD_ERROR_NONE! */
@@ -71,8 +71,8 @@ EAPI void evas_cache2_image_cache_key_create(char *hkey, const char *path, size_
 
 EAPI DATA32 * evas_cache2_image_pixels(Image_Entry *im);
 EAPI Image_Entry * evas_cache2_image_writable(Image_Entry *im);
-EAPI Image_Entry * evas_cache2_image_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
-EAPI Image_Entry * evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace);
+EAPI Image_Entry * evas_cache2_image_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+EAPI Image_Entry * evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
 EAPI Image_Entry * evas_cache2_image_size_set(Image_Entry *im, unsigned int w, unsigned h);
 EAPI Image_Entry * evas_cache2_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 EAPI Image_Entry * evas_cache2_image_empty(Evas_Cache2 *cache);

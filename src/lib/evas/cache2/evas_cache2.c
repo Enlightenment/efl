@@ -385,7 +385,7 @@ _evas_cache2_image_entry_preload_remove(Image_Entry *ie, const void *target)
 }
 
 EAPI Image_Entry *
-evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
+evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Image_Entry *im;
 
@@ -415,7 +415,7 @@ evas_cache2_image_copied_data(Evas_Cache2 *cache, unsigned int w, unsigned int h
 }
 
 EAPI Image_Entry *
-evas_cache2_image_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
+evas_cache2_image_data(Evas_Cache2 *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Image_Entry *im;
 

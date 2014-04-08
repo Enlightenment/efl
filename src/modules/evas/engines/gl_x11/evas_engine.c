@@ -1840,7 +1840,7 @@ eng_image_alpha_get(void *data EINA_UNUSED, void *image)
    return im->alpha;
 }
 
-static int
+static Evas_Colorspace
 eng_image_colorspace_get(void *data EINA_UNUSED, void *image)
 {
 //   Render_Engine *re;
@@ -1951,7 +1951,7 @@ eng_image_format_get(void *data EINA_UNUSED, void *image)
 }
 
 static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
+eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
@@ -2638,7 +2638,7 @@ eng_image_mmap(void *data, Eina_File *f, const char *key, int *error, Evas_Image
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Render_Engine *re;
 
@@ -2648,7 +2648,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha,
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Render_Engine *re;
 
@@ -2717,6 +2717,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
          w &= ~0x1;
          break;
+      default: break;
      }
 
    evas_gl_common_image_alloc_ensure(im_old);

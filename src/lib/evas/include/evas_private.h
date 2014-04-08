@@ -817,8 +817,8 @@ struct _Evas_Func
 
    void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
    void *(*image_mmap)                     (void *data, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo);
-   void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
-   void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data, int alpha, int cspace);
+   void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+   void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
    void (*image_free)                      (void *data, void *image);
    void (*image_size_get)                  (void *data, void *image, int *w, int *h);
    void *(*image_size_set)                 (void *data, void *image, int w, int h);
@@ -835,8 +835,8 @@ struct _Evas_Func
    Eina_Bool (*image_draw)                 (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
    char *(*image_comment_get)              (void *data, void *image, char *key);
    char *(*image_format_get)               (void *data, void *image);
-   void (*image_colorspace_set)            (void *data, void *image, int cspace);
-   int  (*image_colorspace_get)            (void *data, void *image);
+   void (*image_colorspace_set)            (void *data, void *image, Evas_Colorspace cspace);
+   Evas_Colorspace (*image_colorspace_get) (void *data, void *image);
    Eina_Bool (*image_can_region_get)       (void *data, void *image);
    void *(*image_native_set)               (void *data, void *image, void *native);
    void *(*image_native_get)               (void *data, void *image);

@@ -140,7 +140,7 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
 {
    Evas_GL_Image *im;
    Eina_List     *l;
-   int cspace = EVAS_COLORSPACE_ARGB8888;
+   Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
 
    /* i'd LOVe to do this, but we can't because we load to load header
     * to get image size to know if its too big or not! so this disallows
@@ -286,7 +286,7 @@ evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_File *f, const char *
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace)
+evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace)
 {
    Evas_GL_Image *im;
    Eina_List *l;
@@ -350,7 +350,7 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace)
+evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace)
 {
    Evas_GL_Image *im;
 
@@ -401,7 +401,7 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
 }
 
 Evas_GL_Image *
-evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int cspace)
+evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_Colorspace cspace)
 {
    Evas_GL_Image *im;
 

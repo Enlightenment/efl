@@ -1038,7 +1038,8 @@ on_error:
 EAPI Image_Entry *
 evas_cache_image_copied_data(Evas_Cache_Image *cache, 
                              unsigned int w, unsigned int h, 
-                             DATA32 *image_data, int alpha, int cspace)
+                             DATA32 *image_data, int alpha,
+                             Evas_Colorspace cspace)
 {
    Image_Entry *im;
 
@@ -1064,7 +1065,8 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache,
 }
 
 EAPI Image_Entry *
-evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace)
+evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h,
+                      DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Image_Entry *im;
 

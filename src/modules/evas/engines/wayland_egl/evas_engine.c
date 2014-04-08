@@ -90,7 +90,7 @@ static void _native_bind_cb(void *data EINA_UNUSED, void *image);
 static void _native_unbind_cb(void *data EINA_UNUSED, void *image);
 static void _native_free_cb(void *data, void *image);
 
-static int eng_image_colorspace_get(void *data EINA_UNUSED, void *image);
+static Evas_Colorspace eng_image_colorspace_get(void *data EINA_UNUSED, void *image);
 static int eng_image_alpha_get(void *data EINA_UNUSED, void *image);
 
 static Eina_Bool eng_gl_preload_make_current(void *data, void *doit);
@@ -1600,7 +1600,7 @@ eng_image_mmap(void *data, Eina_File *f, const char *key, int *error, Evas_Image
 }
 
 static void *
-eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Render_Engine *re;
 
@@ -1610,7 +1610,7 @@ eng_image_new_from_data(void *data, int w, int h, DATA32 *image_data, int alpha,
 }
 
 static void *
-eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    Render_Engine *re;
 
@@ -2065,7 +2065,7 @@ eng_image_format_get(void *data EINA_UNUSED, void *image EINA_UNUSED)
 }
 
 static void
-eng_image_colorspace_set(void *data, void *image, int cspace)
+eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
@@ -2113,7 +2113,7 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    im->cs.space = cspace;
 }
 
-static int
+static Evas_Colorspace
 eng_image_colorspace_get(void *data EINA_UNUSED, void *image)
 {
    Evas_GL_Image *im;

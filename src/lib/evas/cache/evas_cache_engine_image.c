@@ -539,7 +539,7 @@ _evas_cache_engine_image_push_dirty(Evas_Cache_Engine_Image *cache, Image_Entry 
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
+evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data)
 {
    Image_Entry           *im;
 
@@ -551,7 +551,7 @@ evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int
 }
 
 EAPI Engine_Image_Entry *
-evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, int cspace, void *engine_data)
+evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data)
 {
    Image_Entry           *im;
 
@@ -679,7 +679,7 @@ evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data
 }
 
 EAPI void
-evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, int cspace, void *engine_data)
+evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, Evas_Colorspace cspace, void *engine_data)
 {
    Evas_Cache_Engine_Image     *cache = eim->cache;
 

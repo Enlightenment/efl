@@ -829,7 +829,7 @@ eng_image_alpha_get(void *data EINA_UNUSED, void *image)
    return 0;
 }
 
-static int
+static Evas_Colorspace
 eng_image_colorspace_get(void *data EINA_UNUSED, void *image)
 {
    Image_Entry *im;
@@ -902,7 +902,7 @@ eng_image_format_get(void *data EINA_UNUSED, void *image EINA_UNUSED)
 }
 
 static void
-eng_image_colorspace_set(void *data EINA_UNUSED, void *image, int cspace)
+eng_image_colorspace_set(void *data EINA_UNUSED, void *image, Evas_Colorspace cspace)
 {
    Image_Entry *im;
 
@@ -1006,7 +1006,7 @@ use_local_cache:
 }
 
 static void *
-eng_image_new_from_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -1019,7 +1019,7 @@ eng_image_new_from_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data
 }
 
 static void *
-eng_image_new_from_copied_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, int cspace)
+eng_image_new_from_copied_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
