@@ -263,6 +263,7 @@ group { "genlist_base"; inherit_only: 1; nomouse;
    images.image: "shadow_rounded_horiz.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_horiz_out.png" COMP;
+   target_group: "default" "elm.text" "label2" "label3";
    parts {
        rect { "event"; mouse;
           desc { "default";
@@ -524,45 +525,33 @@ group { "elm/genlist/item/default/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         target_groups: "default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       //##//
@@ -752,45 +741,33 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       //##//
@@ -959,45 +936,33 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         target_groups: "default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         target_groups: "default";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         target_groups: "default";
          target: "elm.text.flip";
       }
       //##//
@@ -1161,45 +1126,33 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       //##//
@@ -1357,45 +1310,33 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       //##//
@@ -2069,45 +2010,33 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
       }
       //##//
@@ -2590,66 +2519,37 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             hid;
          }
       }
+      target_group: "subgroup" "elm.text.sub" "label4" "label5";
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.sub";
-         target: "label4";
-         target: "label5";
+         groups: "default" "subgroup";
       }
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.sub";
-         target: "label4";
-         target: "label5";
+         groups: "default" "subgroup";
       }
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.sub";
-         target: "label4";
-         target: "label5";
+         groups: "default" "subgroup";
       }
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.sub";
-         target: "label4";
-         target: "label5";
+         groups: "default" "subgroup";
       }
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.sub";
-         target: "label4";
-         target: "label5";
+         groups: "default" "subgroup";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.sub";
-         target: "label4";
-         target: "label5";
+         groups: "default" "subgroup";
          target: "elm.text.flip";
       }
       //##//
@@ -3308,9 +3208,7 @@ group { "elm/genlist/item/message/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.title.1";
          target: "elm.title.2";
          target: "label4";
@@ -3321,9 +3219,7 @@ group { "elm/genlist/item/message/default"; nomouse;
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.title.1";
          target: "elm.title.2";
          target: "label4";
@@ -3334,9 +3230,7 @@ group { "elm/genlist/item/message/default"; nomouse;
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.title.1";
          target: "elm.title.2";
          target: "label4";
@@ -3347,9 +3241,7 @@ group { "elm/genlist/item/message/default"; nomouse;
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.title.1";
          target: "elm.title.2";
          target: "label4";
@@ -3360,9 +3252,7 @@ group { "elm/genlist/item/message/default"; nomouse;
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
          target: "elm.title.1";
          target: "elm.title.2";
@@ -3374,9 +3264,7 @@ group { "elm/genlist/item/message/default"; nomouse;
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.flip";
          target: "elm.title.1";
          target: "elm.title.2";
@@ -4671,9 +4559,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       program {
          signal: "elm,state,selected"; source: "elm";
          action: STATE_SET "selected";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.artist";
          target: "label4";
          target: "label5";
@@ -4681,9 +4567,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       program {
          signal: "elm,state,unselected"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.artist";
          target: "label4";
          target: "label5";
@@ -4691,9 +4575,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       program {
          signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.artist";
          target: "label4";
          target: "label5";
@@ -4701,9 +4583,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       program {
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.artist";
          target: "label4";
          target: "label5";
@@ -4711,9 +4591,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       program {
          signal: "elm,state,flip,enabled"; source: "elm";
          action: STATE_SET "flip_enabled";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.artist";
          target: "label4";
          target: "label5";
@@ -4722,9 +4600,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
       program {
          signal: "elm,state,flip,disabled"; source: "elm";
          action: STATE_SET "default";
-         target: "elm.text";
-         target: "label2";
-         target: "label3";
+         groups: "default";
          target: "elm.text.artist";
          target: "label4";
          target: "label5";
