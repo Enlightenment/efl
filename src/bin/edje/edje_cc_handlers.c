@@ -200,6 +200,7 @@ static void ob_collections_group(void);
 static void st_collections_group_name(void);
 static void st_collections_group_inherit_only(void);
 static void st_collections_group_inherit(void);
+static void st_collections_group_program_source(void);
 static void st_collections_group_part_remove(void);
 static void st_collections_group_program_remove(void);
 static void st_collections_group_script_only(void);
@@ -517,6 +518,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
      {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
+     {"collections.group.program_source", st_collections_group_program_source},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.inherit_only", st_collections_group_inherit_only},
      {"collections.group.target_group", st_collections_group_target_group}, /* dup */
@@ -3238,6 +3240,12 @@ st_collections_group_inherit(void)
    if (pcp2->target_groups)
      pcp->target_groups = eina_list_clone(pcp2->target_groups);
 
+   if (pcp2->default_source)
+     {
+        free(pcp->default_source);
+        pcp->default_source = strdup(pcp2->default_source);
+     }
+
    if (pc2->limits.vertical_count || pc2->limits.horizontal_count)
      {
         Edje_Limit **elp;
@@ -3710,6 +3718,31 @@ st_collections_group_nomouse(void)
 
    pcp = eina_list_data_get(eina_list_last(edje_collections));
    pcp->default_mouse_events = 0;
+}
+
+/**
+    @page edcref
+    @property
+        program_source
+    @parameters
+        [source name]
+    @effect
+        Change the default value of source for every program in the current group
+        which is declared after this value is set.
+        Defaults to an unset value to maintain compatibility.
+    @since 1.10
+    @endproperty
+ */
+static void
+st_collections_group_program_source(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(1);
+
+   pcp = eina_list_last_data_get(edje_collections);
+   free(pcp->default_source);
+   pcp->default_source = parse_str(0);
 }
 
 /**
@@ -9842,6 +9875,7 @@ static void
 ob_collections_group_programs_program(void)
 {
    Edje_Part_Collection *pc;
+   Edje_Part_Collection_Parser *pcp;
    Edje_Program *ep;
    Edje_Program_Parser *epp;
    char *def_name;
@@ -9849,6 +9883,7 @@ ob_collections_group_programs_program(void)
    current_program_lookups = eina_list_free(current_program_lookups);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
+   pcp = eina_list_data_get(eina_list_last(edje_collections));
 
    ep = mem_alloc(SZ(Edje_Program_Parser));
    ep->id = -1;
@@ -9861,6 +9896,8 @@ ob_collections_group_programs_program(void)
    def_name = alloca(strlen("program_") + strlen("0xFFFFFFFFFFFFFFFF") + 1);
    sprintf(def_name, "program_%p", ep);
    ep->name = strdup(def_name);
+   if (pcp->default_source)
+     ep->source = strdup(pcp->default_source);
    _edje_program_insert(pc, ep);
 
    current_program = ep;
@@ -9959,6 +9996,7 @@ st_collections_group_programs_program_source(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    _edje_program_remove(pc, current_program);
+   free((void*)current_program->source);
    current_program->source = parse_str(0);
    _edje_program_insert(pc, current_program);
 }
