@@ -213,6 +213,7 @@ class Elm_Layout (Elm_Container)
       }
       theme_enable {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Eina_Bool;
       }
       sizing_eval {
@@ -434,6 +435,7 @@ class Elm_Layout (Elm_Container)
       }
       sub_object_add_enable {
          /*@ No description supplied by the EAPI. */
+         legacy null;
          return Eina_Bool;
       }
       data_get {

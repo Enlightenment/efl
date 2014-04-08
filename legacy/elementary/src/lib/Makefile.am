@@ -535,18 +535,22 @@ BUILT_SOURCES = \
 		elm_container.eo.h \
 		elm_layout.eo.c \
 		elm_layout.eo.h \
+		elm_layout.eo.legacy.h \
 		elm_interface_scrollable.eo.c \
 		elm_interface_scrollable.eo.h \
 		elm_pan.eo.c \
 		elm_pan.eo.h \
 		elm_frame.eo.c \
 		elm_frame.eo.h \
+		elm_frame.eo.legacy.h \
 		elm_hover.eo.c \
 		elm_hover.eo.h \
+		elm_hover.eo.legacy.h \
 		elm_access.eo.c \
 		elm_access.eo.h \
 		elm_actionslider.eo.c \
 		elm_actionslider.eo.h \
+		elm_actionslider.eo.legacy.h \
 		elm_app_client.eo.c \
 		elm_app_client.eo.h \
 		elm_app_client_view.eo.c \
@@ -557,6 +561,7 @@ BUILT_SOURCES = \
 		elm_app_server_view.eo.h \
 		elm_atspi_app_object.eo.c \
 		elm_atspi_app_object.eo.h \
+		elm_atspi_app_object.eo.legacy.h \
 		elm_bg.eo.c \
 		elm_bg.eo.h \
 		elm_box.eo.c \
@@ -876,5 +881,9 @@ nodist_includesunstable_HEADERS = \
 				  elm_toolbar.eo.h \
 				  elm_video.eo.h \
 				  elm_web.eo.h \
-				  elm_win.eo.h
-
+				  elm_win.eo.h \
+				  elm_layout.eo.legacy.h \
+				  elm_frame.eo.legacy.h \
+				  elm_hover.eo.legacy.h \
+				  elm_actionslider.eo.legacy.h \
+				  elm_atspi_app_object.eo.legacy.h

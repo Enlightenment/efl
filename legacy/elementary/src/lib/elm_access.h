@@ -9,12 +9,6 @@
  *
  */
 
-#if 0
-#define ELM_OBJ_ACCESS_CLASS elm_obj_access_class_get()
-
-const Eo_Class *elm_obj_access_class_get(void) EINA_CONST;
-#endif
-
 #include "elm_access.eo.h"
 
 enum _Elm_Access_Info_Type
