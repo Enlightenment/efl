@@ -488,22 +488,13 @@ group { "elm/genlist/item/default/default"; nomouse;
             hid;
          }
       }
-      text { "label3";
+      text { "label3"; inherit: "label2";
          effect: GLOW;
-         scale: 1;
          desc { "default";
             rel1.offset: -2 -3;
-            rel1.to: "elm.text";
             rel2.offset: -1 1;
-            rel2.to: "elm.text";
             color: FN_COL_HIGHLIGHT;
             color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
          }
          desc { "selected";
             inherit: "default";
@@ -728,21 +719,10 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             hid;
          }
       }
-      textblock { "label3";
-         scale: 1;
+      textblock { "label3"; inherit: "label2";
          desc { "default";
-            rel1.offset: 0 0;
-            rel1.to: "elm.text";
-            rel2.offset: -1 -1;
-            rel2.to: "elm.text";
             color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-               style: "genlist_style_selected";
-            }
-            hid;
+            text.style: "genlist_style_selected";
          }
          desc { "selected";
             inherit: "default";
@@ -943,22 +923,13 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
             hid;
          }
       }
-      text { "label3";
+      text { "label3"; inherit: "label2";
          effect: GLOW;
-         scale: 1;
          desc { "default";
             rel1.offset: -2 -3;
-            rel1.to: "elm.text";
             rel2.offset: -1 1;
-            rel2.to: "elm.text";
             color: FN_COL_HIGHLIGHT;
             color_class: "list_item_selected";
-            text { font: FN; size: 10;
-               text_source: "elm.text";
-               align: 0.0 0.5;
-               text_class: "list_item";
-            }
-            hid;
          }
          desc { "selected";
             inherit: "default";
