@@ -1828,23 +1828,23 @@ endif
 
 EXTRA_DIST += \
 tests/evas/TestFont.eet \
-HM7Y9233-50.tgv \
-HM7Y9233.jpg \
-Light-50.tgv \
-Light.jpg \
-Pic1-10.tgv \
-Pic1-100.tgv \
-Pic1-50.tgv \
-Pic1.png \
-Pic4-10.tgv \
-Pic4-100.tgv \
-Pic4-50.tgv \
-Pic4.png \
-Sunrise-100.tgv \
-Temple-10.tgv \
-Temple.jpg \
-Temple3-10.tgv \
-Temple3.jpg \
-Train-10.tgv \
-Train.jpg \
-mars_rover_panorama_half-size.jpg
+tests/evas/images/HM7Y9233-50.tgv \
+tests/evas/images/HM7Y9233.jpg \
+tests/evas/images/Light-50.tgv \
+tests/evas/images/Light.jpg \
+tests/evas/images/Pic1-10.tgv \
+tests/evas/images/Pic1-100.tgv \
+tests/evas/images/Pic1-50.tgv \
+tests/evas/images/Pic1.png \
+tests/evas/images/Pic4-10.tgv \
+tests/evas/images/Pic4-100.tgv \
+tests/evas/images/Pic4-50.tgv \
+tests/evas/images/Pic4.png \
+tests/evas/images/Sunrise-100.tgv \
+tests/evas/images/Temple-10.tgv \
+tests/evas/images/Temple.jpg \
+tests/evas/images/Temple3-10.tgv \
+tests/evas/images/Temple3.jpg \
+tests/evas/images/Train-10.tgv \
+tests/evas/images/Train.jpg \
+tests/evas/images/mars_rover_panorama_half-size.jpg
