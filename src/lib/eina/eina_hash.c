@@ -37,6 +37,7 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_hash.h"
+#include "eina_list.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -1351,3 +1352,99 @@ eina_hash_superfast(const char *key, int len)
    return hash;
 }
 
+EAPI void
+eina_hash_list_append(Eina_Hash *hash, const void *key, const void *data)
+{
+   Eina_Hash_Tuple tuple;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
+   int key_length;
+   int key_hash;
+
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash->key_hash_cb);
+   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
+   key_hash = hash->key_hash_cb(key, key_length);
+
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
+      hash_element->tuple.data = eina_list_append(hash_element->tuple.data, data);
+   else
+     eina_hash_add_alloc_by_hash(hash,
+                            key,
+                            key_length,
+                            key_length,
+                            key_hash,
+                            eina_list_append(NULL, data));
+}
+
+EAPI void
+eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *data)
+{
+   Eina_Hash_Tuple tuple;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
+   int key_length;
+   int key_hash;
+
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash->key_hash_cb);
+   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
+   key_hash = hash->key_hash_cb(key, key_length);
+
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (hash_element)
+      hash_element->tuple.data = eina_list_prepend(hash_element->tuple.data, data);
+   else
+     eina_hash_add_alloc_by_hash(hash,
+                            key,
+                            key_length,
+                            key_length,
+                            key_hash,
+                            eina_list_append(NULL, data));
+}
+
+EAPI void
+eina_hash_list_remove(Eina_Hash *hash, const void *key, const void *data)
+{
+   Eina_Hash_Tuple tuple;
+   Eina_Hash_Head *hash_head;
+   Eina_Hash_Element *hash_element;
+   int key_length;
+   int key_hash;
+
+   EINA_SAFETY_ON_NULL_RETURN(hash);
+   EINA_SAFETY_ON_NULL_RETURN(hash->key_hash_cb);
+   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_MAGIC_CHECK_HASH(hash);
+
+   key_length = hash->key_length_cb ? hash->key_length_cb(key) : 0;
+   key_hash = hash->key_hash_cb(key, key_length);
+
+   tuple.key = key;
+   tuple.key_length = key_length;
+   tuple.data = NULL;
+
+   hash_element = _eina_hash_find_by_hash(hash, &tuple, key_hash, &hash_head);
+   if (!hash_element) return;
+   hash_element->tuple.data = eina_list_remove(hash_element->tuple.data, data);
+   if (!hash_element->tuple.data)
+     _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash);
+}
