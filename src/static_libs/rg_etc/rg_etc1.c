@@ -1661,11 +1661,11 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
                        for (index = 0; index < n; index++)
                          {
                             const uint s = *pSelectors++;
-                            const int yd = pInten_table[s];
+                            const int yyd = pInten_table[s];
                             // Compute actual delta being applied to each pixel, taking into account clamping.
-                            delta_sum_r += CLAMP(base_color.comp.r + yd, 0, 255) - base_color.comp.r;
-                            delta_sum_g += CLAMP(base_color.comp.g + yd, 0, 255) - base_color.comp.g;
-                            delta_sum_b += CLAMP(base_color.comp.b + yd, 0, 255) - base_color.comp.b;
+                            delta_sum_r += CLAMP(base_color.comp.r + yyd, 0, 255) - base_color.comp.r;
+                            delta_sum_g += CLAMP(base_color.comp.g + yyd, 0, 255) - base_color.comp.g;
+                            delta_sum_b += CLAMP(base_color.comp.b + yyd, 0, 255) - base_color.comp.b;
                          }
                        if ((!delta_sum_r) && (!delta_sum_g) && (!delta_sum_b))
                          break;
@@ -2251,10 +2251,10 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
                   if ((diff) && (pBase_color5_unscaled))
                     {
                        const int p0 = (x >> 8) & 255;
-                       unsigned char c1 = rg_etc1_color_quad_component_get(pBase_color5_unscaled->m_u32,
+                       unsigned char cc1 = rg_etc1_color_quad_component_get(pBase_color5_unscaled->m_u32,
                                                                            i);
-                       int delta = p0 - (int)(c1);
-                       if ((delta < cETC1ColorDeltaMin) || (delta > cETC1ColorDeltaMax))
+                       int delta1 = p0 - (int)(cc1);
+                       if ((delta1 < cETC1ColorDeltaMin) || (delta1 > cETC1ColorDeltaMax))
                          {
                             if (*pTable == 0xFFFF)
                               break;
@@ -2279,12 +2279,12 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
 
                   if ((diff) && (pBase_color5_unscaled))
                     {
-                       unsigned char c1 = rg_etc1_color_quad_component_get(pBase_color5_unscaled->m_u32,
+                       unsigned char cc1 = rg_etc1_color_quad_component_get(pBase_color5_unscaled->m_u32,
                                                                            s_next_comp[i]);
-                       int delta1 = (p1 & 0xFF) - (int)(c1);
-                       unsigned char c2 = rg_etc1_color_quad_component_get(pBase_color5_unscaled->m_u32,
+                       int delta1 = (p1 & 0xFF) - (int)(cc1);
+                       unsigned char cc2 = rg_etc1_color_quad_component_get(pBase_color5_unscaled->m_u32,
                                                                            s_next_comp[i + 1]);
-                       int delta2 = (p2 & 0xFF) - (int)(c2);
+                       int delta2 = (p2 & 0xFF) - (int)(cc2);
                        if ((delta1 < cETC1ColorDeltaMin) || (delta1 > cETC1ColorDeltaMax) 
                            || (delta2 < cETC1ColorDeltaMin) || (delta2 > cETC1ColorDeltaMax))
                          {
@@ -2627,8 +2627,8 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
         for (subblock = 1; subblock >= 0; --subblock)
           {
              const uint8* pSelectors = best_results[subblock].m_pSelectors + 4;
-             uint i;
-             for (i = 0; i < 2; i++)
+             uint j;
+             for (j = 0; j < 2; j++)
                {
                   uint b;
                   b = rg_etc_selector_index_to_etc1[pSelectors[3]];
