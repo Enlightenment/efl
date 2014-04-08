@@ -1401,6 +1401,192 @@ group { "elm/genlist/item_compress_odd/full/default";
    inherit: "elm/genlist/item_odd/full/default";
 }
 
+group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
+   images.image: "sym_left_light_normal.png" COMP;
+   images.image: "sym_left_glow_normal.png" COMP;
+   images.image: "sym_left_dark_normal.png" COMP;
+   images.image: "sym_right_light_normal.png" COMP;
+   images.image: "sym_right_glow_normal.png" COMP;
+   images.image: "sym_right_dark_normal.png" COMP;
+   images.image: "sym_down_light_normal.png" COMP;
+   images.image: "sym_down_glow_normal.png" COMP;
+   images.image: "sym_down_dark_normal.png" COMP;
+
+   parts {
+      part { "arrow_img_l"; insert_after: "sel_bevel";
+         clip_to: "arrow_clip_l";
+         scale: 1;
+         ignore_flags: ON_HOLD;
+         desc { "default";
+            fixed: 1 1;
+            min: 15 15;
+            max: 15 15;
+            rel1.to: "arrow";
+            rel2.to: "arrow";
+            image.normal: "sym_right_light_normal.png";
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_right_glow_normal.png";
+         }
+         desc { "disabled";
+            inherit: "default";
+            image.normal: "sym_right_dark_normal.png";
+         }
+         desc { state: "default" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_light_normal.png";
+         }
+         desc { state: "selected" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_glow_normal.png";
+         }
+         desc { state: "disabled" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_dark_normal.png";
+         }
+      }
+      part { "arrow_img_r";
+         clip_to: "arrow_clip_r";
+         scale: 1;
+         ignore_flags: ON_HOLD;
+         desc { "default";
+            fixed: 1 1;
+            min: 15 15;
+            max: 15 15;
+            rel1.to: "arrow";
+            rel2.to: "arrow";
+            image.normal: "sym_left_light_normal.png";
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_left_glow_normal.png";
+         }
+         desc { "disabled";
+            inherit: "default";
+            image.normal: "sym_left_dark_normal.png";
+         }
+         desc { state: "default" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_light_normal.png";
+         }
+         desc { state: "selected" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_glow_normal.png";
+         }
+         desc { state: "disabled" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_dark_normal.png";
+         }
+      }
+      rect { "arrow"; insert_before: "sel_shine"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            min: 15 15;
+            aspect: 1.0 1.0;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -2 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -2 -3;
+            color: 0 0 0 0;
+         }
+      }
+      rect { "arrow_clip_l";
+         desc { "default";
+            rel1.to: "arrow_img_l";
+            rel2.to: "arrow_img_l";
+            vis;
+         }
+         desc { "rtl";
+            hid;
+         }
+      }
+      rect { "arrow_clip_r";
+         desc { "default";
+            rel1.to: "arrow_img_r";
+            rel2.to: "arrow_img_r";
+            hid;
+         }
+         desc { "rtl";
+            vis;
+         }
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow";
+         action: SIGNAL_EMIT "elm,action,expand,toggle" "elm";
+      }
+      program { "arr1";
+         signal: "elm,state,expanded";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", st, 1.0);
+            set_state(PART:"arrow_img_r", st, 1.0);
+         }
+      }
+      program { "arr2";
+         signal: "elm,state,contracted";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", st, 0.0);
+            set_state(PART:"arrow_img_r", st, 0.0);
+         }
+      }
+      program { "arr3";
+         signal: "elm,state,selected";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "selected", vl);
+            set_state(PART:"arrow_img_r", "selected", vl);
+         }
+      }
+      program { "arr4";
+         signal: "elm,state,unselected";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "default", vl);
+            set_state(PART:"arrow_img_r", "default", vl);
+         }
+      }
+      program { "arr5";
+         signal: "elm,state,enabled";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "default", vl);
+            set_state(PART:"arrow_img_r", "default", vl);
+         }
+      }
+      program { "arr6";
+         signal: "elm,state,disabled";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "disabled", vl);
+            set_state(PART:"arrow_img_r", "disabled", vl);
+         }
+      }
+      program {
+         signal: "edje,state,rtl"; source: "edje";
+         action: STATE_SET "rtl";
+         target: "arrow_clip_l";
+         target: "arrow_clip_r";
+      }
+      program {
+         signal: "edje,state,ltr"; source: "edje";
+         action: STATE_SET "default";
+         target: "arrow_clip_l";
+         target: "arrow_clip_r";
+      }
+   }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 //-- tree
 //-- tree_odd
@@ -1413,17 +1599,6 @@ group { "elm/genlist/tree/default/default"; nomouse;
 //   alias: "elm/genlist/item/tree_effect/default";
 //   alias: "elm/genlist/tree/effect_parts/default";
 //   alias: "elm/genlist/item/effect_parts/default";
-#define TREEIMGS() \
-   images.image: "sym_left_light_normal.png" COMP; \
-   images.image: "sym_left_glow_normal.png" COMP; \
-   images.image: "sym_left_dark_normal.png" COMP; \
-   images.image: "sym_right_light_normal.png" COMP; \
-   images.image: "sym_right_glow_normal.png" COMP; \
-   images.image: "sym_right_dark_normal.png" COMP; \
-   images.image: "sym_down_light_normal.png" COMP; \
-   images.image: "sym_down_glow_normal.png" COMP; \
-   images.image: "sym_down_dark_normal.png" COMP;
-   TREEIMGS()
    parts {
       part { "elm.swallow.icon";
          desc { "default";
@@ -1439,180 +1614,8 @@ group { "elm/genlist/tree/default/default"; nomouse;
             rel2.offset: 1 -3;
          }
       }
-#define ARROW() \
-      part { "arrow_img_l"; insert_after: "sel_bevel"; \
-         clip_to: "arrow_clip_l"; \
-         scale: 1; \
-         ignore_flags: ON_HOLD; \
-         desc { "default"; \
-            fixed: 1 1; \
-            min: 15 15; \
-            max: 15 15; \
-            rel1.to: "arrow"; \
-            rel2.to: "arrow"; \
-            image.normal: "sym_right_light_normal.png"; \
-         } \
-         desc { "selected"; \
-            inherit: "default"; \
-            image.normal: "sym_right_glow_normal.png"; \
-         } \
-         desc { "disabled"; \
-            inherit: "default"; \
-            image.normal: "sym_right_dark_normal.png"; \
-         } \
-         desc { state: "default" 1.0; \
-            inherit: "default"; \
-            image.normal: "sym_down_light_normal.png"; \
-         } \
-         desc { state: "selected" 1.0; \
-            inherit: "default"; \
-            image.normal: "sym_down_glow_normal.png"; \
-         } \
-         desc { state: "disabled" 1.0; \
-            inherit: "default"; \
-            image.normal: "sym_down_dark_normal.png"; \
-         } \
-      } \
-      part { "arrow_img_r"; \
-         clip_to: "arrow_clip_r"; \
-         scale: 1; \
-         ignore_flags: ON_HOLD; \
-         desc { "default"; \
-            fixed: 1 1; \
-            min: 15 15; \
-            max: 15 15; \
-            rel1.to: "arrow"; \
-            rel2.to: "arrow"; \
-            image.normal: "sym_left_light_normal.png"; \
-         } \
-         desc { "selected"; \
-            inherit: "default"; \
-            image.normal: "sym_left_glow_normal.png"; \
-         } \
-         desc { "disabled"; \
-            inherit: "default"; \
-            image.normal: "sym_left_dark_normal.png"; \
-         } \
-         desc { state: "default" 1.0; \
-            inherit: "default"; \
-            image.normal: "sym_down_light_normal.png"; \
-         } \
-         desc { state: "selected" 1.0; \
-            inherit: "default"; \
-            image.normal: "sym_down_glow_normal.png"; \
-         } \
-         desc { state: "disabled" 1.0; \
-            inherit: "default"; \
-            image.normal: "sym_down_dark_normal.png"; \
-         } \
-      } \
-      rect { "arrow"; insert_before: "sel_shine"; mouse; \
-         desc { "default"; \
-            fixed: 1 0; \
-            min: 15 15; \
-            aspect: 1.0 1.0; \
-            align: 0.0 0.5; \
-            rel1.to_x: "elm.swallow.pad"; \
-            rel1.relative: 1.0 0.0; \
-            rel1.offset: -2 2; \
-            rel2.to_x: "elm.swallow.pad"; \
-            rel2.relative: 1.0 1.0; \
-            rel2.offset: -2 -3; \
-            color: 0 0 0 0; \
-         } \
-      } \
-      rect { "arrow_clip_l"; \
-         desc { "default"; \
-            rel1.to: "arrow_img_l"; \
-            rel2.to: "arrow_img_l"; \
-            vis; \
-         } \
-         desc { "rtl"; \
-            hid; \
-         } \
-      } \
-      rect { "arrow_clip_r"; \
-         desc { "default"; \
-            rel1.to: "arrow_img_r"; \
-            rel2.to: "arrow_img_r"; \
-            hid; \
-         } \
-         desc { "rtl"; \
-            vis; \
-         } \
-      } \
-      program { \
-         signal: "mouse,up,1"; source: "arrow"; \
-         action: SIGNAL_EMIT "elm,action,expand,toggle" "elm"; \
-      } \
-      program { "arr1"; \
-         signal: "elm,state,expanded"; \
-         script { \
-            new st[31], Float:vl; \
-            get_state(PART:"arrow_img_l", st, 30, vl); \
-            set_state(PART:"arrow_img_l", st, 1.0); \
-            set_state(PART:"arrow_img_r", st, 1.0); \
-         } \
-      } \
-      program { "arr2"; \
-         signal: "elm,state,contracted"; \
-         script { \
-            new st[31], Float:vl; \
-            get_state(PART:"arrow_img_l", st, 30, vl); \
-            set_state(PART:"arrow_img_l", st, 0.0); \
-            set_state(PART:"arrow_img_r", st, 0.0); \
-         } \
-      } \
-      program { "arr3"; \
-         signal: "elm,state,selected"; \
-         script { \
-            new st[31], Float:vl; \
-            get_state(PART:"arrow_img_l", st, 30, vl); \
-            set_state(PART:"arrow_img_l", "selected", vl); \
-            set_state(PART:"arrow_img_r", "selected", vl); \
-         } \
-      } \
-      program { "arr4"; \
-         signal: "elm,state,unselected"; \
-         script { \
-            new st[31], Float:vl; \
-            get_state(PART:"arrow_img_l", st, 30, vl); \
-            set_state(PART:"arrow_img_l", "default", vl); \
-            set_state(PART:"arrow_img_r", "default", vl); \
-         } \
-      } \
-      program { "arr5"; \
-         signal: "elm,state,enabled"; \
-         script { \
-            new st[31], Float:vl; \
-            get_state(PART:"arrow_img_l", st, 30, vl); \
-            set_state(PART:"arrow_img_l", "default", vl); \
-            set_state(PART:"arrow_img_r", "default", vl); \
-         } \
-      } \
-      program { "arr6"; \
-         signal: "elm,state,disabled"; \
-         script { \
-            new st[31], Float:vl; \
-            get_state(PART:"arrow_img_l", st, 30, vl); \
-            set_state(PART:"arrow_img_l", "disabled", vl); \
-            set_state(PART:"arrow_img_r", "disabled", vl); \
-         } \
-      } \
-      program { \
-         signal: "edje,state,rtl"; source: "edje"; \
-         action: STATE_SET "rtl"; \
-         target: "arrow_clip_l"; \
-         target: "arrow_clip_r"; \
-      } \
-      program { \
-         signal: "edje,state,ltr"; source: "edje"; \
-         action: STATE_SET "default"; \
-         target: "arrow_clip_l"; \
-         target: "arrow_clip_r"; \
-      }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/default/default", "elm/genlist/tree/default/default")
 COMPRESS("elm/genlist/tree_compress/default/default", "elm/genlist/tree/default/default")
@@ -1620,7 +1623,6 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/default/default", "elm/genlist/tree/
 
 group { "elm/genlist/tree/default_style/default";
    inherit: "elm/genlist/item/default_style/default";
-   TREEIMGS()
    parts {
       part { "elm.swallow.icon";
          desc { "default";
@@ -1636,8 +1638,8 @@ group { "elm/genlist/tree/default_style/default";
             rel2.offset: 1 -3;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/default_style/default", "elm/genlist/tree/default_style/default")
 COMPRESS("elm/genlist/tree_compress/default_style/default", "elm/genlist/tree/default_style/default")
@@ -1645,7 +1647,6 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/default_style/default", "elm/genlist
 
 group { "elm/genlist/tree/one_icon/default";
    inherit: "elm/genlist/item/one_icon/default";
-   TREEIMGS()
    parts {
       part { "elm.swallow.icon";
          desc { "default";
@@ -1661,8 +1662,8 @@ group { "elm/genlist/tree/one_icon/default";
             rel2.offset: 1 -3;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/one_icon/default", "elm/genlist/tree/one_icon/default")
 COMPRESS("elm/genlist/tree_compress/one_icon/default", "elm/genlist/tree/one_icon/default")
@@ -1670,7 +1671,6 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/one_icon/default", "elm/genlist/tree
 
 group { "elm/genlist/tree/end_icon/default";
    inherit: "elm/genlist/item/end_icon/default";
-   TREEIMGS()
    parts {
       part { "elm.text";
          desc { "default";
@@ -1690,8 +1690,8 @@ group { "elm/genlist/tree/end_icon/default";
             rel1.offset: 1 2;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/end_icon/default", "elm/genlist/tree/end_icon/default")
 COMPRESS("elm/genlist/tree_compress/end_icon/default", "elm/genlist/tree/end_icon/default")
@@ -1699,7 +1699,6 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/end_icon/default", "elm/genlist/tree
 
 group { "elm/genlist/tree/no_icon/default";
    inherit: "elm/genlist/item/no_icon/default";
-   TREEIMGS()
    parts {
       part { "elm.text";
          desc { "default";
@@ -1719,8 +1718,8 @@ group { "elm/genlist/tree/no_icon/default";
             rel1.offset: 1 2;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/no_icon/default", "elm/genlist/tree/no_icon/default")
 COMPRESS("elm/genlist/tree_compress/no_icon/default", "elm/genlist/tree/no_icon/default")
@@ -1728,7 +1727,6 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/no_icon/default", "elm/genlist/tree/
 
 group { "elm/genlist/tree/full/default";
    inherit: "elm/genlist/item/full/default";
-   TREEIMGS()
    parts {
       part { "elm.swallow.content";
          desc { "default";
@@ -1748,8 +1746,8 @@ group { "elm/genlist/tree/full/default";
             rel1.offset: 1 2;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/full/default", "elm/genlist/tree/full/default")
 group { "elm/genlist/tree_compress/full/default";
@@ -2103,7 +2101,6 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/icon_top_text_bottom/default", "elm/
 
 group { "elm/genlist/tree/icon_top_text_bottom/default";
    inherit: "elm/genlist/item/icon_top_text_bottom/default";
-   TREEIMGS()
    parts {
       part { "sizer.content";
          desc { "default";
@@ -2121,8 +2118,8 @@ group { "elm/genlist/tree/icon_top_text_bottom/default";
             rel1.offset: 1 2;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
 COMPRESS("elm/genlist/tree_compress/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
@@ -2617,7 +2614,6 @@ COMPRESS_SUB_ODD("elm/genlist/item_compress_odd/double_label/default", "elm/genl
 
 group { "elm/genlist/tree/double_label/default";
    inherit: "elm/genlist/item/double_label/default";
-   TREEIMGS()
    parts {
       part { "elm.swallow.icon";
          desc { "default";
@@ -2633,8 +2629,8 @@ group { "elm/genlist/tree/double_label/default";
             rel2.offset: 1 -3;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/double_label/default", "elm/genlist/tree/double_label/default")
 COMPRESS_SUB("elm/genlist/tree_compress/double_label/default", "elm/genlist/tree/double_label/default")
@@ -5208,7 +5204,6 @@ COMPRESS_MODE_ODD("elm/genlist/item_compress_odd/mode/default", "elm/genlist/ite
 
 group { "elm/genlist/tree/mode/default";
    inherit: "elm/genlist/item/mode/default";
-   TREEIMGS()
    parts {
       part { "elm.text.mode";
          desc { "default";
@@ -5220,8 +5215,8 @@ group { "elm/genlist/tree/mode/default";
             rel1.offset: 1 2;
          }
       }
-      ARROW()
    }
+   inherit: "genlist_arrow";
 }
 ODD("elm/genlist/tree_odd/mode/default", "elm/genlist/tree/mode/default")
 COMPRESS_MODE("elm/genlist/tree_compress/mode/default", "elm/genlist/tree/mode/default")
