@@ -176,7 +176,6 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
      {
         Evas_GL_Texture_Async_Preload *async;
         unsigned int bytes_count;
-        GLuint fmt;
 
         if (!async_loader_standby && async_loader_tex)
           goto get_next;
