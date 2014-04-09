@@ -123,7 +123,7 @@ struct _Ecore_Wl_Window
    struct
      {
         int x, y, w, h;
-     } opaque;
+     } opaque, input;
 
    /* Eina_Bool redraw_scheduled : 1; */
    /* Eina_Bool resize_scheduled : 1; */
