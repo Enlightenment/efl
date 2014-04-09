@@ -129,6 +129,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
          }
          get {
             /*@ This returns whether the entry's selection handlers are disabled. */
+            legacy null;
          }
          values {
             Eina_Bool disabled; /*@ If true, the selection handlers are disabled. */

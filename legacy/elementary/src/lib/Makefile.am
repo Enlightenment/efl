@@ -593,22 +593,31 @@ BUILT_SOURCES = \
 		elc_ctxpopup.eo.legacy.h \
 		elm_datetime.eo.c \
 		elm_datetime.eo.h \
+		elm_datetime.eo.legacy.h \
 		elm_dayselector.eo.c \
 		elm_dayselector.eo.h \
+		elm_dayselector.eo.legacy.h \
 		elm_diskselector.eo.c \
 		elm_diskselector.eo.h \
+		elm_diskselector.eo.legacy.h \
 		elm_entry.eo.c \
 		elm_entry.eo.h \
+		elm_entry.eo.legacy.h \
 		elc_fileselector.eo.c \
 		elc_fileselector.eo.h \
+		elc_fileselector.eo.legacy.h \
 		elc_fileselector_button.eo.c \
 		elc_fileselector_button.eo.h \
+		elc_fileselector_button.eo.legacy.h \
 		elc_fileselector_entry.eo.c \
 		elc_fileselector_entry.eo.h \
+		elc_fileselector_entry.eo.legacy.h \
 		elm_flipselector.eo.c \
 		elm_flipselector.eo.h \
+		elm_flipselector.eo.legacy.h \
 		elm_flip.eo.c \
 		elm_flip.eo.h \
+		elm_flip.eo.legacy.h \
 		elm_gengrid.eo.c \
 		elm_gengrid.eo.h \
 		elm_gengrid_pan.eo.c \
@@ -904,4 +913,13 @@ nodist_includesunstable_HEADERS = \
 				  elm_check.eo.legacy.h \
 				  elm_clock.eo.legacy.h \
 				  elm_colorselector.eo.legacy.h \
-				  elc_ctxpopup.eo.legacy.h
+				  elc_ctxpopup.eo.legacy.h \
+				  elm_datetime.eo.legacy.h \
+				  elm_dayselector.eo.legacy.h \
+				  elm_diskselector.eo.legacy.h \
+				  elm_entry.eo.legacy.h \
+				  elc_fileselector.eo.legacy.h \
+				  elc_fileselector_button.eo.legacy.h \
+				  elc_fileselector_entry.eo.legacy.h \
+				  elm_flipselector.eo.legacy.h \
+				  elm_flip.eo.legacy.h

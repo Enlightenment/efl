@@ -76,37 +76,6 @@ EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Ei
 EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj);
 
 /**
- * Enable/disable the "ok" and "cancel" buttons on a given file
- * selector widget
- *
- * @param obj The file selector object
- * @param buttons @c EINA_TRUE to show buttons, @c EINA_FALSE to hide.
- *
- * @note A file selector without those buttons will never emit the
- * @c "done" smart event, and is only usable if one is just hooking
- * to the other two events.
- *
- * @see elm_fileselector_buttons_ok_cancel_get()
- *
- * @ingroup Fileselector
- */
-EAPI void                  elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons);
-
-/**
- * Get whether the "ok" and "cancel" buttons on a given file
- * selector widget are being shown.
- *
- * @param obj The file selector object
- * @return @c EINA_TRUE if they are being shown, @c EINA_FALSE
- * otherwise (and on errors)
- *
- * @see elm_fileselector_buttons_ok_cancel_set() for more details
- *
- * @ingroup Fileselector
- */
-EAPI Eina_Bool             elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj);
-
-/**
  * Enable/disable a tree view in the given file selector widget,
  * <b>if it's in @c #ELM_FILESELECTOR_LIST mode</b>
  *
@@ -437,3 +406,5 @@ EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *o
  * @ingroup Fileselector
  */
 EAPI void                  elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort method);
+
+#include "elc_fileselector.eo.legacy.h"
