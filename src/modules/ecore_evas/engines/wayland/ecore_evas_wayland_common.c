@@ -69,19 +69,18 @@ _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 
    if ((ee->visible) && (updates))
      {
-        Eina_List *l = NULL;
-        Eina_Rectangle *r;
-        Ecore_Evas_Engine_Wl_Data *wdata;
+        /* Eina_List *l = NULL; */
+        /* Eina_Rectangle *r; */
+        /* Ecore_Evas_Engine_Wl_Data *wdata; */
 
-        if (!(wdata = ee->engine.data)) return 0;
+        /* if (!(wdata = ee->engine.data)) return 0; */
 
-        EINA_LIST_FOREACH(updates, l, r)
-          ecore_wl_window_damage(wdata->win,
-                                 r->x, r->y, r->w, r->h);
+        /* EINA_LIST_FOREACH(updates, l, r) */
+        /*   ecore_wl_window_damage(wdata->win, */
+        /*                          r->x, r->y, r->w, r->h); */
 
-        ecore_wl_window_commit(wdata->win);
-
-        ecore_wl_flush();
+        /* ecore_wl_window_commit(wdata->win); */
+        /* ecore_wl_flush(); */
 
         _ecore_evas_idle_timeout_update(ee);
         rend = 1;
@@ -740,7 +739,11 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
           evas_object_resize(wdata->frame, w, h);
 
         if (wdata->win)
-          ecore_wl_window_update_size(wdata->win, w, h);
+          {
+             ecore_wl_window_update_size(wdata->win, w, h);
+             ecore_wl_window_input_region_set(wdata->win, 0, 0, w, h);
+             ecore_wl_window_opaque_region_set(wdata->win, 0, 0, w, h);
+          }
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
