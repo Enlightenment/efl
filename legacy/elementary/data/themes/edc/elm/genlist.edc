@@ -173,11 +173,13 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
                align: 0.0 0.5;
                text_class: "list_group_item";
             }
+            link.base: "elm,state,enabled";
          }
          desc { "disabled";
             inherit: "default";
             color: FN_COL_DISABLE;
             color_class: "list_group_item_disabled";
+            link.base: "elm,state,disabled";
          }
       }
       swallow { "elm.swallow.pad"; mouse;
@@ -218,23 +220,13 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             rel1.relative: 0.0 1.0;
             rel1.offset: -3 -6;
             rel2.offset: 2 3;
+            link.base: "elm,state,enabled";
          }
          desc { "disabled";
             inherit: "default";
              color: 255 255 255 64;
+             link.base: "elm,state,disabled";
          }
-      }
-      program {
-         signal: "elm,state,disabled";
-         action: STATE_SET "disabled";
-         target: "elm.text";
-         target: "bar";
-      }
-      program {
-         signal: "elm,state,enabled";
-         action: STATE_SET "default";
-         target: "elm.text";
-         target: "bar";
       }
    }
 }
@@ -268,31 +260,25 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
        rect { "event"; mouse;
           desc { "default";
              color: 0 0 0 0;
+             link.base: "elm,state,enabled";
           }
           desc { "disabled";
              inherit: "default";
              hid;
+             link.base: "elm,state,disabled";
           }
        }
        rect { "base";
           desc { "default";
              color: 64 64 64 255;
              color_class: "list_item_base";
+             link.base: "elm,state,even";
           }
           desc { "odd";
              color: 56 56 56 255;
              color_class: "list_item_base_odd";
+             link.base: "elm,state,odd";
           }
-       }
-       program {
-          signal: "elm,state,odd";
-          action: STATE_SET "odd" 1.0;
-          target: "base";
-       }
-       program {
-          signal: "elm,state,even";
-          action: STATE_SET "default";
-          target: "base";
        }
        part { "bevel";
           desc { "default";
@@ -309,10 +295,12 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              rel1.offset: 0 -4;
              rel2.offset: -1 5;
              fill.smooth: 0;
+             link.base: "elm,state,unselected";
              hid;
           }
           desc { "selected";
              inherit: "default";
+             link.base: "elm,state,selected";
              vis;
           }
        }
@@ -322,9 +310,11 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              fill.smooth: 0;
              hid;
              TILED_HORIZ(120)
+             link.base: "elm,state,unselected";
           }
           desc { "selected";
              inherit: "default";
+             link.base: "elm,state,selected";
              vis;
           }
        }
@@ -334,36 +324,14 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              image.border: 0 0 2 2;
              image.middle: 0;
              fill.smooth: 0;
+             link.base: "elm,state,unselected";
              hid;
           }
           desc { "selected";
              inherit: "default";
+             link.base: "elm,state,selected";
              vis;
           }
-       }
-       program {
-          signal: "elm,state,selected";
-          action: STATE_SET "selected";
-          target: "sel_shadow";
-          target: "sel_base";
-          target: "sel_bevel";
-       }
-       program {
-          signal: "elm,state,unselected";
-          action: STATE_SET "default";
-          target: "sel_shadow";
-          target: "sel_base";
-          target: "sel_bevel";
-       }
-       program {
-          signal: "elm,state,disabled";
-          action: STATE_SET "disabled";
-          target: "event";
-       }
-       program {
-          signal: "elm,state,enabled";
-          action: STATE_SET "default";
-          target: "event";
        }
    }
 }
@@ -381,41 +349,25 @@ group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
              rel2.to: "sel_base";
              hid;
              FIXED_SIZE(69, 5)
+             link.base: "elm,state,unselected";
           }
           desc { "selected";
              inherit: "default";
              vis;
+             link.base: "elm,state,selected";
           }
        }
        rect { "event_block"; mouse;
           desc { "default";
              color: 0 0 0 0;
              hid;
+             link.base: "elm,state,enabled";
           }
           desc { "disabled";
              inherit: "default";
              vis;
+             link.base: "elm,state,disabled";
           }
-       }
-       program {
-          signal: "elm,state,selected";
-          action: STATE_SET "selected";
-          target: "sel_shine";
-       }
-       program {
-          signal: "elm,state,unselected";
-          action: STATE_SET "default";
-          target: "sel_shine";
-       }
-       program {
-          signal: "elm,state,disabled";
-          action: STATE_SET "disabled";
-          target: "event_block";
-       }
-       program {
-          signal: "elm,state,enabled";
-          action: STATE_SET "default";
-          target: "event_block";
        }
     }
 }
@@ -575,10 +527,12 @@ group { "elm/genlist/item/default/default"; nomouse;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
       }
       swallow { "elm.swallow.end"; mouse;
@@ -589,23 +543,13 @@ group { "elm/genlist/item/default/default"; nomouse;
             rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.icon";
-         target: "elm.swallow.end";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.icon";
-         target: "elm.swallow.end";
       }
       //##//
    }
@@ -791,10 +735,12 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
       }
       swallow { "elm.swallow.end"; mouse;
@@ -805,23 +751,13 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.icon";
-         target: "elm.swallow.end";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.icon";
-         target: "elm.swallow.end";
       }
       //##//
       
@@ -986,21 +922,13 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.icon";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.icon";
       }
       //##//
 
@@ -1173,21 +1101,13 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
             rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.icon";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.icon";
       }
       //##//
 
@@ -1499,9 +1419,11 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             rel1.to: "arrow_img_l";
             rel2.to: "arrow_img_l";
             vis;
+            link.base: "edje,state,ltr" "edje";
          }
          desc { "rtl";
             hid;
+            link.base: "edje,state,rtl" "edje";
          }
       }
       rect { "arrow_clip_r";
@@ -1509,9 +1431,11 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             rel1.to: "arrow_img_r";
             rel2.to: "arrow_img_r";
             hid;
+            link.base: "edje,state,ltr" "edje";
          }
          desc { "rtl";
             vis;
+            link.base: "edje,state,rtl" "edje";
          }
       }
       program {
@@ -1571,18 +1495,6 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             set_state(PART:"arrow_img_l", "disabled", vl);
             set_state(PART:"arrow_img_r", "disabled", vl);
          }
-      }
-      program {
-         signal: "edje,state,rtl"; source: "edje";
-         action: STATE_SET "rtl";
-         target: "arrow_clip_l";
-         target: "arrow_clip_r";
-      }
-      program {
-         signal: "edje,state,ltr"; source: "edje";
-         action: STATE_SET "default";
-         target: "arrow_clip_l";
-         target: "arrow_clip_r";
       }
    }
 }
@@ -1757,46 +1669,6 @@ group { "elm/genlist/tree_compress_odd/full/default";
    inherit: "elm/genlist/tree_odd/full/default";
 }
 
-#define GENLIST_PART_MAP_START(param_x, param_y, param_z) \
-   desc { "map_transition"; \
-      inherit: "default"; \
-      color: 50 50 50 255; \
-      map { \
-         perspective: "point"; \
-         on: 1; \
-         smooth: 1; \
-         perspective_on: 1; \
-         backface_cull: 1; \
-         rotation { \
-            center: "point"; \
-            x: param_x; \
-            y: param_y; \
-            z: param_z; \
-         } \
-      } \
-   } \
-   desc { "hide"; \
-      inherit: "default"; \
-      hid; \
-   }
-
-#define GENLIST_PART_MAP_FINISH(param_x, param_y, param_z) \
-   desc { "map_rotate"; \
-      inherit: "default"; \
-      map { \
-         perspective: "point"; \
-         on: 1; \
-         smooth: 1; \
-         perspective_on: 1; \
-         backface_cull: 1; \
-         rotation { \
-            center: "point"; \
-            x: param_x; \
-            y: param_y; \
-            z: param_z; \
-         } \
-      } \
-   }
 
 group { "elm/genlist/tree/tree_effect/default"; nomouse;
    data.item: "selectraise" "on";
@@ -1821,25 +1693,46 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          }
       }
       rect { "event"; mouse;
-         desc { "default";
-            color: 0 0 0 0;
-         }
+         desc { color: 0 0 0 0; }
       }
       group { "group"; mouse;
          source: "elm/genlist/tree/default/default";
          desc { "default";
+            link.base: "elm,state,show";
          }
-         GENLIST_PART_MAP_START(-90.0, 0, 0)
-         GENLIST_PART_MAP_FINISH(0, 0, 0)
+         desc { "hide";
+            hid;
+            link.base: "elm,state,hide";
+         }
+         desc { "map_transition";
+            color: 50 50 50 255;
+            map {
+               perspective: "point";
+               on: 1;
+               smooth: 1;
+               perspective_on: 1;
+               backface_cull: 1;
+               rotation {
+                  center: "point";
+                  x: -90;
+                  y: 0;
+                  z: 0;
+               }
+            }
+            link { base: "elm,action,flip_item";
+               after: "rot2";
+            }
+         }
+         desc { "map_rotate";
+            inherit: "map_transition";
+            map.rotation.x: 0;
+            link { base: "elm,state,contract_flip";
+               after: "rotb2";
+            }
+         }
       }
    }
    programs {
-      program {
-         signal: "elm,action,flip_item";
-         action: STATE_SET "map_transition";
-         target: "group";
-         after: "rot2";
-      }
       program { "rot2";
          action: STATE_SET "map_rotate";
          transition: LINEAR 0.2;
@@ -1850,13 +1743,6 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          action: STATE_SET "default";
          target: "group";
       }
-      
-      program {
-         signal: "elm,state,contract_flip";
-         action: STATE_SET "map_rotate";
-         target: "group";
-         after: "rotb2";
-      }
       program { "rotb2";
          action: STATE_SET "map_transition";
          transition: LINEAR 0.5;
@@ -1864,17 +1750,6 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          after: "rotb3";
       }
       program { "rotb3";
-         action: STATE_SET "hide";
-         target: "group";
-      }
-      
-      program {
-         signal: "elm,state,show";
-         action: STATE_SET "default";
-         target: "group";
-      }
-      program {
-         signal: "elm,state,hide";
          action: STATE_SET "hide";
          target: "group";
       }
@@ -2074,21 +1949,13 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             aspect: 1.0 1.0;
             rel1.to: "sizer.content";
             rel2.to: "sizer.content";
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.icon";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.icon";
       }
       //##//
 
@@ -2571,10 +2438,12 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
       }
       swallow { "elm.swallow.end"; mouse;
@@ -2585,23 +2454,13 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.icon";
-         target: "elm.swallow.end";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.icon";
-         target: "elm.swallow.end";
       }
       //##//
 
@@ -3202,73 +3061,38 @@ group { "elm/genlist/item/message/default"; nomouse;
             hid;
          }
       }
+      target_group: "message" "elm.title.1" "elm.title.2" "label4" "label5" "label6" "label7";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
-         groups: "default";
-         target: "elm.title.1";
-         target: "elm.title.2";
-         target: "label4";
-         target: "label5";
-         target: "label6";
-         target: "label7";
+         groups: "default" "message";
       }
       program {
          signal: "elm,state,unselected";
          action: STATE_SET "default";
-         groups: "default";
-         target: "elm.title.1";
-         target: "elm.title.2";
-         target: "label4";
-         target: "label5";
-         target: "label6";
-         target: "label7";
+         groups: "default" "message";
       }
       program {
          signal: "elm,state,disabled";
          action: STATE_SET "disabled";
-         groups: "default";
-         target: "elm.title.1";
-         target: "elm.title.2";
-         target: "label4";
-         target: "label5";
-         target: "label6";
-         target: "label7";
+         groups: "default" "message";
       }
       program {
          signal: "elm,state,enabled";
          action: STATE_SET "default";
-         groups: "default";
-         target: "elm.title.1";
-         target: "elm.title.2";
-         target: "label4";
-         target: "label5";
-         target: "label6";
-         target: "label7";
+         groups: "default" "message";
       }
       program {
          signal: "elm,state,flip,enabled";
          action: STATE_SET "flip_enabled";
-         groups: "default";
+         groups: "default" "message";
          target: "elm.text.flip";
-         target: "elm.title.1";
-         target: "elm.title.2";
-         target: "label4";
-         target: "label5";
-         target: "label6";
-         target: "label7";
       }
       program {
          signal: "elm,state,flip,disabled";
          action: STATE_SET "default";
-         groups: "default";
+         groups: "default" "message";
          target: "elm.text.flip";
-         target: "elm.title.1";
-         target: "elm.title.2";
-         target: "label4";
-         target: "label5";
-         target: "label6";
-         target: "label7";
       }
       //##//
       swallow { "elm.swallow.pad"; mouse;
@@ -3491,66 +3315,37 @@ group { "elm/genlist/item/media/default"; nomouse;
             hid;
          }
       }
+      target_group: "media" "elm.text.title" "label2" "label3" "elm.text.album-artist" "label4" "label5";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
-         target: "elm.text.title";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.album-artist";
-         target: "label4";
-         target: "label5";
+         groups: "media";
       }
       program {
          signal: "elm,state,unselected";
          action: STATE_SET "default";
-         target: "elm.text.title";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.album-artist";
-         target: "label4";
-         target: "label5";
+         groups: "media";
       }
       program {
          signal: "elm,state,disabled";
          action: STATE_SET "disabled";
-         target: "elm.text.title";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.album-artist";
-         target: "label4";
-         target: "label5";
+         groups: "media";
       }
       program {
          signal: "elm,state,enabled";
          action: STATE_SET "default";
-         target: "elm.text.title";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.album-artist";
-         target: "label4";
-         target: "label5";
+         groups: "media";
       }
       program {
          signal: "elm,state,flip,enabled";
          action: STATE_SET "flip_enabled";
-         target: "elm.text.title";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.album-artist";
-         target: "label4";
-         target: "label5";
+         groups: "media";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled";
          action: STATE_SET "default";
-         target: "elm.text.title";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.album-artist";
-         target: "label4";
-         target: "label5";
+         groups: "media";
          target: "elm.text.flip";
       }
       //##//
@@ -4075,84 +3870,37 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             hid;
          }
       }
+      target_group: "media-album" "elm.text.trackno" "label2" "label3" "elm.text.title" "label6" "label7" "elm.text.length" "label4" "label5";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
-         target: "elm.text.trackno";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.title";
-         target: "label6";
-         target: "label7";
-         target: "elm.text.length";
-         target: "label4";
-         target: "label5";
+         groups: "media-album";
       }
       program {
          signal: "elm,state,unselected";
          action: STATE_SET "default";
-         target: "elm.text.trackno";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.title";
-         target: "label6";
-         target: "label7";
-         target: "elm.text.length";
-         target: "label4";
-         target: "label5";
+         groups: "media-album";
       }
       program {
          signal: "elm,state,disabled";
          action: STATE_SET "disabled";
-         target: "elm.text.trackno";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.title";
-         target: "label6";
-         target: "label7";
-         target: "elm.text.length";
-         target: "label4";
-         target: "label5";
+         groups: "media-album";
       }
       program {
          signal: "elm,state,enabled";
          action: STATE_SET "default";
-         target: "elm.text.trackno";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.title";
-         target: "label6";
-         target: "label7";
-         target: "elm.text.length";
-         target: "label4";
-         target: "label5";
+         groups: "media-album";
       }
       program {
          signal: "elm,state,flip,enabled";
          action: STATE_SET "flip_enabled";
-         target: "elm.text.trackno";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.title";
-         target: "label6";
-         target: "label7";
-         target: "elm.text.length";
-         target: "label4";
-         target: "label5";
+         groups: "media-album";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled";
          action: STATE_SET "default";
-         target: "elm.text.trackno";
-         target: "label2";
-         target: "label3";
-         target: "elm.text.title";
-         target: "label6";
-         target: "label7";
-         target: "elm.text.length";
-         target: "label4";
-         target: "label5";
+         groups: "media-album";
          target: "elm.text.flip";
       }
       //##//
@@ -4553,54 +4301,37 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             hid;
          }
       }
+      target_group: "media-preview" "elm.text.artist" "label4" "label5";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
-         groups: "default";
-         target: "elm.text.artist";
-         target: "label4";
-         target: "label5";
+         groups: "default" "media-preview";
       }
       program {
          signal: "elm,state,unselected";
          action: STATE_SET "default";
-         groups: "default";
-         target: "elm.text.artist";
-         target: "label4";
-         target: "label5";
+         groups: "default" "media-preview";
       }
       program {
          signal: "elm,state,disabled";
          action: STATE_SET "disabled";
-         groups: "default";
-         target: "elm.text.artist";
-         target: "label4";
-         target: "label5";
+         groups: "default" "media-preview";
       }
       program {
          signal: "elm,state,enabled";
          action: STATE_SET "default";
-         groups: "default";
-         target: "elm.text.artist";
-         target: "label4";
-         target: "label5";
+         groups: "default" "media-preview";
       }
       program {
          signal: "elm,state,flip,enabled";
          action: STATE_SET "flip_enabled";
-         groups: "default";
-         target: "elm.text.artist";
-         target: "label4";
-         target: "label5";
+         groups: "default" "media-preview";
          target: "elm.text.flip";
       }
       program {
          signal: "elm,state,flip,disabled";
          action: STATE_SET "default";
-         groups: "default";
-         target: "elm.text.artist";
-         target: "label4";
-         target: "label5";
+         groups: "default" "media-preview";
          target: "elm.text.flip";
       }
       //##//
@@ -4624,21 +4355,13 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
             inherit: "default";
             hid;
+            link.base: "elm,state,flip,enabled";
          }
-      }
-      program {
-         signal: "elm,state,flip,enabled";
-         action: STATE_SET "flip_enabled";
-         target: "elm.swallow.preview";
-      }
-      program {
-         signal: "elm,state,flip,disabled";
-         action: STATE_SET "default";
-         target: "elm.swallow.preview";
       }
       //##//
 
@@ -5037,48 +4760,37 @@ group { "elm/genlist/item/mode/default"; nomouse;
             vis;
          }
       }
+      target_group: "mode" "elm.text.mode" "label2" "label3";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
-         target: "elm.text.mode";
-         target: "label2";
-         target: "label3";
+         groups: "mode";
       }
       program {
          signal: "elm,state,unselected";
          action: STATE_SET "default";
-         target: "elm.text.mode";
-         target: "label2";
-         target: "label3";
+         groups: "mode";
       }
       program {
          signal: "elm,state,disabled";
          action: STATE_SET "disabled";
-         target: "elm.text.mode";
-         target: "label2";
-         target: "label3";
+         groups: "mode";
       }
       program {
          signal: "elm,state,enabled";
          action: STATE_SET "default";
-         target: "elm.text.mode";
-         target: "label2";
-         target: "label3";
+         groups: "mode";
       }
       program {
          signal: "elm,state,flip,enabled";
          action: STATE_SET "flip_enabled";
-         target: "elm.text.mode";
-         target: "label2";
-         target: "label3";
+         groups: "mode";
          target: "elm.text.mode.flip";
       }
       program {
          signal: "elm,state,flip,disabled";
          action: STATE_SET "default";
-         target: "elm.text.mode";
-         target: "label2";
-         target: "label3";
+         groups: "mode";
          target: "elm.text.mode.flip";
       }
       //##//
@@ -5344,21 +5056,16 @@ group { "elm/genlist/item/edit/default"; nomouse;
             vis;
          }
       }
+      target_group: "edit" "sel_base" "sel_bevel" "sel_shadow1" "sel_shadow2";
       program {
          signal: "elm,state,selected";
          action: STATE_SET "selected";
-         target: "sel_base";
-         target: "sel_bevel";
-         target: "sel_shadow1";
-         target: "sel_shadow2";
+         groups: "edit";
       }
       program {
          signal: "elm,state,unselected";
          action: STATE_SET "default";
-         target: "sel_base";
-         target: "sel_bevel";
-         target: "sel_shadow1";
-         target: "sel_shadow2";
+         groups: "edit";
       }
 
       swallow { "elm.edit.icon.1"; mouse;
@@ -5413,35 +5120,28 @@ group { "elm/genlist/item/edit/default"; nomouse;
             rel2.offset: -2 -1;
          }
       }
+      target_group: "decorate" "elm.swallow.decorate.content" "elm.edit.icon.1" "elm.edit.icon.2";
       program {
          signal: "elm,state,decorate,enabled,effect";
          action: STATE_SET "on";
-         target: "elm.swallow.decorate.content";
-         target: "elm.edit.icon.1";
-         target: "elm.edit.icon.2";
+         groups: "decorate";
          transition: DECELERATE 0.5;
       }
       program {
          signal: "elm,state,decorate,disabled,effect";
          action: STATE_SET "default";
-         target: "elm.swallow.decorate.content";
-         target: "elm.edit.icon.1";
-         target: "elm.edit.icon.2";
+         groups: "decorate";
          transition: ACCELERATE 0.5;
       }
       program {
          signal: "elm,state,decorate,enabled";
          action: STATE_SET "on";
-         target: "elm.swallow.decorate.content";
-         target: "elm.edit.icon.1";
-         target: "elm.edit.icon.2";
+         groups: "decorate";
       }
       program {
          signal: "elm,state,decorate,disabled";
          action: STATE_SET "default";
-         target: "elm.swallow.decorate.content";
-         target: "elm.edit.icon.1";
-         target: "elm.edit.icon.2";
+         groups: "decorate";
       }
    }
 }
