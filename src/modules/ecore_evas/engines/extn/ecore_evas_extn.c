@@ -909,6 +909,7 @@ _ipc_server_del(void *data, int type EINA_UNUSED, void *event)
    if (!extn) return ECORE_CALLBACK_PASS_ON;
    if (extn->ipc.server != e->server) return ECORE_CALLBACK_PASS_ON;
    evas_object_image_data_set(bdata->image, NULL);
+   evas_object_image_pixels_dirty_set(bdata->image, EINA_TRUE);
    bdata->pixels = NULL;
    extn->ipc.server = NULL;
 
