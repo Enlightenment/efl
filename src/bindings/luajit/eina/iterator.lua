@@ -8,10 +8,11 @@ ffi.cdef [[
     typedef struct _Eina_Iterator Eina_Iterator;
     typedef unsigned char Eina_Bool;
 
-    void      eina_iterator_free  (Eina_Iterator *iterator);
-    Eina_Bool eina_iterator_next  (Eina_Iterator *iterator, void **data);
-    Eina_Bool eina_iterator_lock  (Eina_Iterator *iterator);
-    Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator);
+    void      eina_iterator_free         (Eina_Iterator *iterator);
+    Eina_Bool eina_iterator_next         (Eina_Iterator *iterator, void **data);
+    Eina_Bool eina_iterator_lock         (Eina_Iterator *iterator);
+    Eina_Bool eina_iterator_unlock       (Eina_Iterator *iterator);
+    void     *eina_iterator_container_get(Eina_Iterator *iterator);
 ]]
 
 local cutil = require("cutil")
@@ -39,7 +40,12 @@ ffi.metatype("Eina_Iterator", {
             return data[0]
         end,
         lock   = function(self) return eina.eina_iterator_lock  (self) == 1 end,
-        unlock = function(self) return eina.eina_iterator_unlock(self) == 1 end
+        unlock = function(self) return eina.eina_iterator_unlock(self) == 1 end,
+        container_get = function(self)
+            local v = eina.eina_iterator_container_get(self)
+            if v == nil then return nil end
+            return v
+        end
     }
 })
 
@@ -89,6 +95,11 @@ M.Iterator = util.Object:clone {
     unlock = function(self)
         if not self.__iterator then return end
         return self.__iterator:unlock()
+    end,
+
+    container_get = function(self)
+        if not self.__iterator then return end
+        return self.__iterator:container_get()
     end
 }
 

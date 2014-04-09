@@ -8,7 +8,7 @@ static int require_ref = LUA_REFNIL;
 int el_log_domain = -1;
 
 enum {
-    ARG_CODE = 0, ARG_MODULE, ARG_LIBRARY
+    ARG_CODE = 0, ARG_LIBRARY
 };
 
 typedef struct Arg_Data {
@@ -41,8 +41,6 @@ static Ecore_Getopt opt = {
 
         ECORE_GETOPT_CALLBACK_ARGS('e', "execute", "Execute string "
             "'code'.", "CODE", append_cb, (void*)ARG_CODE),
-        ECORE_GETOPT_CALLBACK_ARGS('m', "module", "Include module 'module'.",
-            "MODULE", append_cb, (void*)ARG_MODULE),
         ECORE_GETOPT_CALLBACK_ARGS('l', "library", "Require library 'library'.",
             "LIBRARY", append_cb, (void*)ARG_LIBRARY),
         ECORE_GETOPT_STORE_TRUE('E', "noenv", "Ignore environment vars."),
@@ -268,8 +266,6 @@ static int lua_main(lua_State *L) {
                     m->status = 1;
                     return 0;
                 }
-                break;
-            case ARG_MODULE:
                 break;
             case ARG_LIBRARY:
                 if (dolib(L, data->value)) {
