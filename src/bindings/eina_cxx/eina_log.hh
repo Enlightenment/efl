@@ -79,47 +79,45 @@ inline void _log(std::stringstream const& stream, int domain, ::Eina_Log_Level l
                    , "%s", stream.str().c_str());
 }
 
-#define EINA_CXX_DOM_LOG(DOMAIN, LEVEL, EXPR)                           \
-    if( ::eina_log_domain_level_check((DOMAIN), LEVEL))                 \
-      {                                                                 \
-        std::stringstream stream;                                       \
-        stream << EXPR;                                                 \
-        ::efl::eina::_log(std::move(stream), (DOMAIN), LEVEL            \
-                          , __FILE__, __FUNCTION__, __LINE__);          \
-      }
+#define EINA_CXX_DOM_LOG(DOMAIN, LEVEL)                                 \
+    if( bool run = ::eina_log_domain_level_check((DOMAIN), LEVEL) )     \
+      for(std::stringstream stream; run ;                               \
+          ::efl::eina::_log(std::move(stream), (DOMAIN), LEVEL          \
+                            , __FILE__, __FUNCTION__, __LINE__), run = false) \
+        stream
 
-#define EINA_CXX_DOM_LOG_CRIT(DOMAIN, EXPR)                     \
-    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_CRITICAL, EXPR)
+#define EINA_CXX_DOM_LOG_CRIT(DOMAIN)                     \
+    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_CRITICAL)
 
-#define EINA_CXX_DOM_LOG_ERR(DOMAIN, EXPR)                      \
-    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_ERR, EXPR)
+#define EINA_CXX_DOM_LOG_ERR(DOMAIN)                      \
+    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_ERR)
 
-#define EINA_CXX_DOM_LOG_INFO(DOMAIN, EXPR)                      \
-    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_INFO, EXPR)
+#define EINA_CXX_DOM_LOG_INFO(DOMAIN)                      \
+    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_INFO)
 
-#define EINA_CXX_DOM_LOG_DBG(DOMAIN, EXPR)                      \
-    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_DBG, EXPR)
+#define EINA_CXX_DOM_LOG_DBG(DOMAIN)                      \
+    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_DBG)
 
-#define EINA_CXX_DOM_LOG_WARN(DOMAIN, EXPR)                      \
-    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_WARN, EXPR)
+#define EINA_CXX_DOM_LOG_WARN(DOMAIN)                      \
+    EINA_CXX_DOM_LOG(DOMAIN.domain_raw(), ::EINA_LOG_LEVEL_WARN)
 
-#define EINA_CXX_LOG(LEVEL, EXPR)                               \
-    EINA_CXX_DOM_LOG(EINA_LOG_DOMAIN_DEFAULT, LEVEL, EXPR)
+#define EINA_CXX_LOG(LEVEL)                               \
+    EINA_CXX_DOM_LOG(EINA_LOG_DOMAIN_DEFAULT, LEVEL)
 
-#define EINA_CXX_LOG_CRIT(EXPR)                 \
-    EINA_CXX_LOG(EINA_LOG_LEVEL_CRITICAL, EXPR)
+#define EINA_CXX_LOG_CRIT()                 \
+    EINA_CXX_LOG(EINA_LOG_LEVEL_CRITICAL)
 
-#define EINA_CXX_LOG_ERR(EXPR)                  \
-    EINA_CXX_LOG(EINA_LOG_LEVEL_ERR, EXPR)
+#define EINA_CXX_LOG_ERR()                  \
+    EINA_CXX_LOG(EINA_LOG_LEVEL_ERR)
 
-#define EINA_CXX_LOG_INFO(EXPR)                 \
-    EINA_CXX_LOG(EINA_LOG_LEVEL_INFO, EXPR)
+#define EINA_CXX_LOG_INFO()                 \
+    EINA_CXX_LOG(EINA_LOG_LEVEL_INFO)
 
-#define EINA_CXX_LOG_DBG(EXPR)                  \
-    EINA_CXX_LOG(EINA_LOG_LEVEL_DBG, EXPR)
+#define EINA_CXX_LOG_DBG()                  \
+    EINA_CXX_LOG(EINA_LOG_LEVEL_DBG)
 
-#define EINA_CXX_LOG_WARN(EXPR)                 \
-    EINA_CXX_LOG(EINA_LOG_LEVEL_WARN, EXPR)
+#define EINA_CXX_LOG_WARN()                 \
+    EINA_CXX_LOG(EINA_LOG_LEVEL_WARN)
 
 } }
 
