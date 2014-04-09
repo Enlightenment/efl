@@ -283,6 +283,27 @@ M.Xattr_Value_Iterator = Iterator:clone {
     end
 }
 
+M.populate     = {
+    RANDOM     = 0,
+    SEQUENTIAL = 1,
+    WILLNEED   = 2,
+    POPULATE   = 3,
+    DONTNEED   = 4,
+    REMOVE     = 5
+}
+
+M.Line_Iterator = Iterator:clone {
+    __ctor = function(self, file)
+        return Iterator.__ctor(self, eina.eina_file_map_lines(file))
+    end,
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        v = ffi.cast(v, "Eina_File_Line*")
+        return ffi.string(v.start, v.length), tonumber(v.index)
+    end
+}
+
 M.File = ffi.metatype("Eina_File", {
     __new = function(self, name, shared)
         return self.open(name, shared)
@@ -327,7 +348,37 @@ M.File = ffi.metatype("Eina_File", {
         end,
 
         xattr_get = M.Xattr_Iterator,
-        xattr_value_get = M.Xattr_Value_Iterator
+        xattr_value_get = M.Xattr_Value_Iterator,
+
+        map_all = function(self, rule, copy)
+            local v = ffi.cast("char*", eina.eina_file_map_all(self, rule or 0))
+            if v == nil then return nil end
+            if copy then return ffi.string(v) end
+            return v
+        end,
+
+        map_new = function(self, rule, offset, length, copy)
+            local v = ffi.cast("char*", eina.eina_file_map_new(self, rule or 0,
+                offset or 0, length))
+            if v == nil then return nil end
+            if copy then return ffi.string(v, length) end
+            return v
+        end,
+
+        map_free = function(self, map)
+            return eina.eina_file_map_free(self, map)
+        end,
+
+        map_populate = function(self, rule, map, offset, length)
+            return eina.eina_file_map_populate(self, rule or 0, offset or 0,
+                length)
+        end,
+
+        map_faulted = function(self, map)
+            return eina.eina_file_map_faulted(self, map) == 1
+        end,
+
+        lines = M.Line_Iterator
     }
 })
 
