@@ -153,7 +153,7 @@ typename std::result_of<F()>::type
 main_loop_thread_safe_call_sync(F&& f)
 {
   typedef typename std::result_of<F()>::type result_type;
-  _data<F> data {f};
+  _data<F> data {f, nullptr, {}};
   ::ecore_main_loop_thread_safe_call_sync
       (&ecore::_ecore_main_loop_thread_safe_call_sync_callback<F>, &data);
   return _get_return_value(data, _identity<result_type>());

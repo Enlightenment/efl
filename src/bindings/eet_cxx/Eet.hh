@@ -185,16 +185,10 @@ typename _detail::descriptor_type
   typedef typename _detail::descriptor_type
     <object_type, _detail::member_info<F, D, OArgs...>, Args...>::type descriptor_type;
 
-  ::Eet_Data_Descriptor_Class cls
-  {
-      EET_DATA_DESCRIPTOR_CLASS_VERSION
-    , name
-    , sizeof(object_type)
-    , {
-        & _detail::_allocate<object_type>
-      , & _detail::_deallocate<object_type>
-      }
-  };
+  ::Eet_Data_Descriptor_Class cls;
+  eet_eina_file_data_descriptor_class_set(&cls, sizeof(cls), name, sizeof(object_type));
+  cls.func.mem_alloc = & _detail::_allocate<object_type>;
+  cls.func.mem_free = & _detail::_deallocate<object_type>;
   ::Eet_Data_Descriptor* native_handle = eet_data_descriptor_stream_new(&cls);
   if(!native_handle)
     throw std::runtime_error("");

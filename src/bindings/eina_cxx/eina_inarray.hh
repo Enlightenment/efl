@@ -523,7 +523,7 @@ public:
               new (&*dest++) T(*src);
           }
         iterator j = i;
-        for(size_type i = 0;i != n;++i)
+        for(size_type k = 0;k != n;++k)
           {
             if(j < end)
                 *j = t;
@@ -552,7 +552,7 @@ public:
             new (&*first++) T(*old_first);
             old_first++->~T();
           }
-        for(size_type i = 0;i != n;++i)
+        for(size_type j = 0;j != n;++j)
           new (&*first++) T(t);
         std::size_t diff = last - first;
         assert(diff == _array->len - index - n);
