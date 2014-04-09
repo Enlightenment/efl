@@ -50,6 +50,40 @@ static const Elm_Win_Trap *trap = NULL;
   if (!obj || !eo_isa(obj, MY_CLASS)) \
     return
 
+#define DECREMENT_MODALITY()                                    \
+  EINA_LIST_FOREACH(_elm_win_list, l, current)                  \
+    {                                                           \
+       ELM_WIN_DATA_GET_OR_RETURN(current, cursd);              \
+       if ((obj != current) && (cursd->modal_count > 0))        \
+         {                                                      \
+            cursd->modal_count--;                               \
+         }                                                      \
+       if (cursd->modal_count == 0)                             \
+         {                                                      \
+            edje_object_signal_emit(cursd->layout, \
+                        "elm,action,hide_blocker", "elm");      \
+            evas_object_smart_callback_call(cursd->main_menu, \
+                        "elm,action,unblock_menu", NULL);       \
+         }                                                      \
+    }
+
+#define INCREMENT_MODALITY()                                    \
+  EINA_LIST_FOREACH(_elm_win_list, l, current)                  \
+    {                                                           \
+       ELM_WIN_DATA_GET_OR_RETURN(current, cursd);              \
+       if (obj != current)                                      \
+         {                                                      \
+            cursd->modal_count++;                               \
+         }                                                      \
+       if (cursd->modal_count > 0)                              \
+         {                                                      \
+            edje_object_signal_emit(cursd->layout, \
+                             "elm,action,show_blocker", "elm"); \
+            evas_object_smart_callback_call(cursd->main_menu, \
+                             "elm,action,block_menu", NULL);    \
+         }                                                      \
+    }
+
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : (_elm_config->engine ? _elm_config->engine : ""))
 #define ENGINE_COMPARE(name) (!strcmp(ENGINE_GET(), name))
 
@@ -158,6 +192,7 @@ struct _Elm_Win_Data
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
    int          norender;
+   int          modal_count;
    Eina_Bool    urgent : 1;
    Eina_Bool    modal : 1;
    Eina_Bool    demand_attention : 1;
@@ -858,7 +893,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    Evas_Object *obj;
    unsigned int order = 0;
 
-   if (!sd) return;
+   if ((!sd) || (sd->modal_count)) return;
 
    obj = sd->obj;
 
@@ -1249,9 +1284,18 @@ _deferred_ecore_evas_free(void *data)
 EOLIAN static void
 _elm_win_evas_smart_show(Eo *obj, Elm_Win_Data *sd)
 {
+   if (sd->modal_count) return;
+   const Eina_List *l;
+   Evas_Object *current;
+
    if (!evas_object_visible_get(obj))
      _elm_win_state_eval_queue();
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+
+   if ((sd->modal) && (!evas_object_visible_get(obj)))
+     {
+        INCREMENT_MODALITY()
+     }
 
    TRAP(sd, show);
 
@@ -1261,9 +1305,18 @@ _elm_win_evas_smart_show(Eo *obj, Elm_Win_Data *sd)
 EOLIAN static void
 _elm_win_evas_smart_hide(Eo *obj, Elm_Win_Data *sd)
 {
+   if (sd->modal_count) return;
+   const Eina_List *l;
+   Evas_Object *current;
+
    if (evas_object_visible_get(obj))
      _elm_win_state_eval_queue();
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+
+   if ((sd->modal) && (evas_object_visible_get(obj)))
+     {
+        DECREMENT_MODALITY()
+     }
 
    TRAP(sd, hide);
 
@@ -1512,6 +1565,17 @@ _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
 EOLIAN static void
 _elm_win_evas_smart_del(Eo *obj, Elm_Win_Data *sd)
 {
+   const Eina_List *l;
+   Evas_Object *current;
+
+   if ((sd->modal) && (evas_object_visible_get(obj)))
+     {
+       DECREMENT_MODALITY()
+     }
+
+   if ((sd->modal) && (sd->modal_count > 0)) 
+     ERR("Deleted modal win was blocked by another modal win which was created after creation of that win.");
+
    evas_object_event_callback_del_full(sd->layout,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints,
@@ -3111,6 +3175,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 
    sd->type = type;
    sd->parent = parent;
+   sd->modal_count = 0;
 
    if (sd->parent)
      evas_object_event_callback_add
@@ -3834,8 +3899,22 @@ _elm_win_demand_attention_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 EOLIAN static void
-_elm_win_modal_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool modal)
+_elm_win_modal_set(Eo *obj, Elm_Win_Data *sd, Eina_Bool modal)
 {
+   if (sd->modal_count) return;
+
+   const Eina_List *l;
+   Evas_Object *current;
+
+   if ((modal) && (!sd->modal) && (evas_object_visible_get(obj)))
+     {
+       INCREMENT_MODALITY()
+     }
+   else if ((!modal) && (sd->modal) && (evas_object_visible_get(obj)))
+     {
+       DECREMENT_MODALITY()
+     }
+
    sd->modal = modal;
    TRAP(sd, modal_set, modal);
 #ifdef HAVE_ELEMENTARY_X

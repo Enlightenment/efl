@@ -53,6 +53,8 @@ struct _Elm_Menu_Item
    Eina_Bool      separator : 1;
    Eina_Bool      selected : 1;
    Eina_Bool      object_item : 1;
+   Eina_Bool      was_enabled : 1;
+   Eina_Bool      blocked : 1;
 };
 
 /**

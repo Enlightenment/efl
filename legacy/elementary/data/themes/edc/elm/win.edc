@@ -28,6 +28,18 @@ group { name: "elm/win/base/default";
             }
          }
       }
+      part { name: "blocker"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.relative : 0.0 0.0;
+            rel2.relative : 1.0 1.0;
+            color: 64 64 64 150;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
    }
    programs {
       program { name: "show_menu";
@@ -41,6 +53,18 @@ group { name: "elm/win/base/default";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.menu";
+      }
+      program { name: "hide_blocker";
+         signal: "elm,action,hide_blocker";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "blocker";
+      }
+      program { name: "show_blocker";
+         signal: "elm,action,show_blocker";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "blocker";
       }
    }
 }

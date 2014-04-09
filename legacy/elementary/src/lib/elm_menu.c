@@ -492,6 +492,33 @@ _menu_item_inactivate_cb(void *data,
    if (item->submenu.open) _submenu_hide(item);
 }
 
+static void
+_block_menu(Elm_Menu_Data * sd, Evas_Object *obj EINA_UNUSED, ...)
+{
+   const Eina_List *l;
+   Elm_Menu_Item *current;
+   Eina_List *items = sd->items;
+   EINA_LIST_FOREACH(items, l, current)
+     {
+        if (!current->blocked) current->was_enabled = !elm_widget_item_disabled_get(current);
+        current->blocked = EINA_TRUE;
+        elm_object_item_disabled_set(current, EINA_TRUE);
+     }
+}
+ 
+static void
+_unblock_menu(Elm_Menu_Data * sd, Evas_Object *obj EINA_UNUSED, ...)
+{
+   const Eina_List *l;
+   Elm_Menu_Item *current;
+   Eina_List *items = sd->items;
+   EINA_LIST_FOREACH(items, l, current)
+     {
+        elm_object_item_disabled_set(current, !current->was_enabled);
+        current->blocked = EINA_FALSE;
+     }
+}
+
 EOLIAN static void
 _elm_menu_evas_smart_show(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
@@ -736,6 +763,10 @@ _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
        (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
 
    _sizing_eval(obj);
+   evas_object_smart_callback_add(obj, "elm,action,block_menu",
+                                  _block_menu, sd);
+   evas_object_smart_callback_add(obj, "elm,action,unblock_menu",
+                                  _unblock_menu, sd);
 }
 
 EAPI void
