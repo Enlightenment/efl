@@ -127,6 +127,8 @@ ffi.cdef [[
 local cutil = require("cutil")
 local util  = require("util")
 
+local Object = util.Object
+
 local M = {}
 
 local eina
@@ -181,7 +183,7 @@ local file_type_map = {
     [C.EINA_FILE_WHT]     = "wht",
 }
 
-local Direct_Info = util.Object:clone {
+local Direct_Info = Object:clone {
     __ctor = function(self, path, name_start, name_length, tp)
         self.path        = path
         self.name_start  = name_start
@@ -217,7 +219,6 @@ M.Stat_Ls_Iterator = Iterator:clone {
     __ctor = function(self, dir)
         return Iterator.__ctor(self, eina.eina_file_stat_ls(dir))
     end,
-
     next = direct_info_iterator_next
 }
 
@@ -227,7 +228,6 @@ M.Direct_Ls_Iterator = Iterator:clone {
     __ctor = function(self, dir)
         return Iterator.__ctor(self, eina.eina_file_direct_ls(dir))
     end,
-
     next = direct_info_iterator_next
 }
 
@@ -240,5 +240,68 @@ M.path_sanitize = function(path)
     C.free(v)
     return r
 end
+
+M.copy_flags = {
+    DATA = 0, PERMISION = 1, XATTR = 2
+}
+
+M.copy = function(source, destination, flags, cb)
+    if not source or not destination then return false end
+    flags = flags or 0
+    local cbp
+    if cb then
+        cbp = ffi.cast("Eina_File_Copy_Progress", function(data, done, total)
+            return not not cb(done, total)
+        end)
+    end
+    local v = eina.eina_file_copy(source, destination, flags, cbp, nil)
+    if cbp then cbp:free() end
+    return v == 1
+end
+
+M.File = ffi.metatype("Eina_File", {
+    __new = function(self, name, shared)
+        return self.open(name, shared)
+    end,
+    __len = function(self)
+        return self:size_get()
+    end,
+    __index = {
+        open = function(name, shared)
+            return eina.eina_file_open(name, shared)
+        end,
+        virtualize = function(vname, data, length, copy)
+            return eina.eina_file_virtualize(vname, data, length,
+                copy or false)
+        end,
+
+        close = function(self)
+            return eina.eina_file_close(self)
+        end,
+
+        dup = function(self)
+            return eina.eina_file_dup(self)
+        end,
+
+        is_virtual = function(self)
+            return eina.eina_file_virtual(self) == 1
+        end,
+        refresh = function(self)
+            return eina.eina_file_refresh(self) == 1
+        end,
+
+        size_get = function(self)
+            return tonumber(eina.eina_file_size_get(self))
+        end,
+
+        mtime_get = function(self)
+            return tonumber(eina.eina_file_mtime_get(self))
+        end,
+
+        filename_get = function(self)
+            return ffi.string(eina.eina_file_filename_get(self))
+        end
+    }
+})
 
 return M
