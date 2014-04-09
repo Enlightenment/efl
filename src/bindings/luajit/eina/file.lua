@@ -350,18 +350,26 @@ M.File = ffi.metatype("Eina_File", {
         xattr_get = M.Xattr_Iterator,
         xattr_value_get = M.Xattr_Value_Iterator,
 
-        map_all = function(self, rule, copy)
+        map_all = function(self, rule, raw)
             local v = ffi.cast("char*", eina.eina_file_map_all(self, rule or 0))
             if v == nil then return nil end
-            if copy then return ffi.string(v) end
+            if not raw then
+                local r = ffi.string(v)
+                self:map_free(v)
+                return r
+            end
             return v
         end,
 
-        map_new = function(self, rule, offset, length, copy)
+        map_new = function(self, rule, offset, length, raw)
             local v = ffi.cast("char*", eina.eina_file_map_new(self, rule or 0,
                 offset or 0, length))
             if v == nil then return nil end
-            if copy then return ffi.string(v, length) end
+            if not raw then
+                local r = ffi.string(v, length)
+                self:map_free(v)
+                return r
+            end
             return v
         end,
 
