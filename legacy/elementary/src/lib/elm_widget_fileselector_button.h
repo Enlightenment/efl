@@ -31,10 +31,16 @@ struct _Elc_Fileselector_Button_Data
 
    struct
    {
-      const char *path;
-      Eina_Bool   expandable : 1;
-      Eina_Bool   folder_only : 1;
-      Eina_Bool   is_save : 1;
+      const char             *path;
+      const char             *selection;
+      Evas_Coord_Size         thumbnail_size;
+      Elm_Fileselector_Mode   mode;
+      Elm_Fileselector_Sort   sort_type;
+      Eina_Bool               expandable : 1;
+      Eina_Bool               folder_only : 1;
+      Eina_Bool               is_save : 1;
+      Eina_Bool               multi : 1;
+      Eina_Bool               hidden_visible : 1;
    } fsd;
 
    Eina_Bool             inwin_mode : 1;

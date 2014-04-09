@@ -12,6 +12,9 @@
 #define MY_CLASS_NAME "Elm_Fileselector_Button"
 #define MY_CLASS_NAME_LEGACY "elm_fileselector_button"
 
+/* FIXME: need a way to find a gap between the size of item and thumbnail */
+#define GENGRID_PADDING 16
+
 #define DEFAULT_WINDOW_TITLE "Select a file"
 
 #define ELM_PRIV_FILESELECTOR_BUTTON_SIGNALS(cmd) \
@@ -188,6 +191,7 @@ _elc_fileselector_button_evas_smart_del(Eo *obj, Elc_Fileselector_Button_Data *s
 {
    eina_stringshare_del(sd->window_title);
    eina_stringshare_del(sd->fsd.path);
+   eina_stringshare_del(sd->fsd.selection);
    evas_object_del(sd->fsw);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
@@ -371,6 +375,121 @@ EOLIAN static Eina_Bool
 _elc_fileselector_button_elm_interface_fileselector_is_save_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
 {
    return sd->fsd.is_save;
+}
+
+EOLIAN static void
+_elc_fileselector_button_elm_interface_fileselector_mode_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, Elm_Fileselector_Mode mode)
+{
+   sd->fsd.mode = mode;
+
+   if (sd->fs) elm_fileselector_mode_set(sd->fs, mode);
+}
+
+EOLIAN static Elm_Fileselector_Mode
+_elc_fileselector_button_elm_interface_fileselector_mode_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
+{
+   return sd->fsd.mode;
+}
+
+EOLIAN static void
+_elc_fileselector_button_elm_interface_fileselector_sort_method_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, Elm_Fileselector_Sort sort)
+{
+   sd->fsd.sort_type = sort;
+
+   if (sd->fs) elm_fileselector_sort_method_set(sd->fs, sort);
+}
+
+EOLIAN static Elm_Fileselector_Sort
+_elc_fileselector_button_elm_interface_fileselector_sort_method_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
+{
+   return sd->fsd.sort_type;
+}
+
+EOLIAN static void
+_elc_fileselector_button_elm_interface_fileselector_multi_select_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, Eina_Bool value)
+{
+   sd->fsd.multi = value;
+
+   if (sd->fs) elm_fileselector_multi_select_set(sd->fs, sd->fsd.multi);
+}
+
+EOLIAN static Eina_Bool
+_elc_fileselector_button_elm_interface_fileselector_multi_select_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
+{
+   return sd->fsd.multi;
+}
+
+EOLIAN static const Eina_List*
+_elc_fileselector_button_elm_interface_fileselector_selected_paths_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
+{
+   if (sd->fs) return elm_fileselector_selected_paths_get(sd->fs);
+
+   return NULL;
+}
+
+EOLIAN static const char*
+_elc_fileselector_button_elm_interface_fileselector_selected_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
+{
+   if (sd->fs) return elm_fileselector_selected_get(sd->fs);
+
+   return sd->fsd.selection;
+}
+
+EOLIAN static Eina_Bool
+_elc_fileselector_button_elm_interface_fileselector_selected_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, const char *_path)
+{
+   Eina_Bool ret = EINA_TRUE;
+
+   if (sd->fs) ret = elm_fileselector_selected_set(sd->fs, _path);
+   else
+     {
+        char *path = ecore_file_realpath(_path);
+        if (!ecore_file_is_dir(path) && !ecore_file_exists(path))
+          {
+             free(path);
+             return EINA_FALSE;
+          }
+     }
+
+   eina_stringshare_replace(&sd->fsd.selection, _path);
+
+   return ret;
+}
+
+EOLIAN static void
+_elc_fileselector_button_elm_interface_fileselector_thumbnail_size_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, Evas_Coord w, Evas_Coord h)
+{
+   if (sd->fs)
+     {
+        elm_fileselector_thumbnail_size_set(sd->fs, w, h);
+        elm_fileselector_thumbnail_size_get(sd->fs, &w, &h);
+     }
+   else if (!w || !h)
+     w = h = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
+
+   sd->fsd.thumbnail_size.w = w;
+   sd->fsd.thumbnail_size.h = h;
+}
+
+EOLIAN static void
+_elc_fileselector_button_elm_interface_fileselector_thumbnail_size_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, Evas_Coord *w, Evas_Coord *h)
+{
+   if (w) *w = sd->fsd.thumbnail_size.w;
+   if (h) *h = sd->fsd.thumbnail_size.h;
+}
+
+EOLIAN static void
+_elc_fileselector_button_elm_interface_fileselector_hidden_visible_set(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd, Eina_Bool visible)
+{
+   sd->fsd.hidden_visible = visible;
+
+   if (sd->fs) elm_fileselector_hidden_visible_set(sd->fs, visible);
+}
+
+EOLIAN static Eina_Bool
+_elc_fileselector_button_elm_interface_fileselector_hidden_visible_get(Eo *obj EINA_UNUSED, Elc_Fileselector_Button_Data *sd)
+{
+   return sd->fsd.hidden_visible;
 }
 
 EOLIAN static void
