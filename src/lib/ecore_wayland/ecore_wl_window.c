@@ -602,6 +602,17 @@ ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int 
 
    if (!win) return;
 
+   win->input.x = x;
+   win->input.y = y;
+   if ((w > 0) && (h > 0))
+     {
+        if ((win->input.w == w) && (win->input.h == h))
+          return;
+
+        win->input.w = w;
+        win->input.h = h;
+     }
+
    if ((win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) || 
        (win->type != ECORE_WL_WINDOW_TYPE_DND))
      {
