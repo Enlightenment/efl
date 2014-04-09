@@ -416,8 +416,11 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 
    if (!win) return;
    win->transparent = transparent;
-   ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 
-                                     win->opaque.w, win->opaque.h);
+   if (!win->transparent)
+     ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 
+                                       win->opaque.w, win->opaque.h);
+   else
+     ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 0, 0);
 }
 
 EAPI Eina_Bool
@@ -437,8 +440,11 @@ ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
 
    if (!win) return;
    win->alpha = alpha;
-   ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 
-                                     win->opaque.w, win->opaque.h);
+   if (!win->alpha)
+     ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 
+                                       win->opaque.w, win->opaque.h);
+   else
+     ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 0, 0);
 }
 
 EAPI Eina_Bool
@@ -613,7 +619,7 @@ ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int 
           wl_surface_set_input_region(win->surface, NULL);
      }
 
-   ecore_wl_window_commit(win);
+   /* ecore_wl_window_commit(win); */
 }
 
 /* @since 1.8 */
@@ -626,10 +632,16 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
 
    win->opaque.x = x;
    win->opaque.y = y;
-   win->opaque.w = w;
-   win->opaque.h = h;
+   if ((w > 0) && (h > 0))
+     {
+        if ((win->opaque.w == w) && (win->opaque.h == h))
+          return;
 
-   if ((!win->transparent) && (!win->alpha))
+        win->opaque.w = w;
+        win->opaque.h = h;
+     }
+
+   if (((w > 0) && (h > 0)) && ((!win->transparent) && (!win->alpha)))
      {
         struct wl_region *region = NULL;
 
@@ -658,7 +670,7 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
    else
      wl_surface_set_opaque_region(win->surface, NULL);
 
-   ecore_wl_window_commit(win);
+   /* ecore_wl_window_commit(win); */
 }
 
 /* @since 1.8 */
