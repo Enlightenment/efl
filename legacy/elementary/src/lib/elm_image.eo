@@ -30,9 +30,11 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       smooth_scale {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             Eina_Bool smooth;
@@ -41,9 +43,11 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       resize_down {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             Eina_Bool resize_down;
@@ -52,9 +56,11 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       load_size {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             int size;
@@ -107,9 +113,11 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       resize_up {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             Eina_Bool resize_up;
@@ -216,9 +224,11 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       scale {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             double scale;
@@ -264,9 +274,11 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       fill_inside {
          set {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             Eina_Bool fill_inside;
@@ -517,6 +529,7 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
    methods {
       sizing_eval {
          /*@ No description supplied by the EAPI. */
+         legacy null;
       }
    }
    implements {
