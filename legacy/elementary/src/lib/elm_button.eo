@@ -89,6 +89,7 @@ class Elm_Button (Elm_Layout, Evas_Clickable_Interface,
       admits_autorepeat {
          get {
             /*@ No description supplied by the EAPI. */
+            legacy null;
          }
          values {
             Eina_Bool ret;

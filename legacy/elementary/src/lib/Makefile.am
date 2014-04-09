@@ -564,24 +564,33 @@ BUILT_SOURCES = \
 		elm_atspi_app_object.eo.legacy.h \
 		elm_bg.eo.c \
 		elm_bg.eo.h \
+		elm_bg.eo.legacy.h \
 		elm_box.eo.c \
 		elm_box.eo.h \
+		elm_box.eo.legacy.h \
 		elm_bubble.eo.c \
 		elm_bubble.eo.h \
+		elm_bubble.eo.legacy.h \
 		elm_button.eo.c \
 		elm_button.eo.h \
+		elm_button.eo.legacy.h \
 		elm_calendar.eo.c \
 		elm_calendar.eo.h \
+		elm_calendar.eo.legacy.h \
 		elm_check.eo.c \
 		elm_check.eo.h \
+		elm_check.eo.legacy.h \
 		elm_clock.eo.c \
 		elm_clock.eo.h \
+		elm_clock.eo.legacy.h \
 		elm_colorselector.eo.c \
 		elm_colorselector.eo.h \
+		elm_colorselector.eo.legacy.h \
 		elm_conformant.eo.c \
 		elm_conformant.eo.h \
 		elc_ctxpopup.eo.c \
 		elc_ctxpopup.eo.h \
+		elc_ctxpopup.eo.legacy.h \
 		elm_datetime.eo.c \
 		elm_datetime.eo.h \
 		elm_dayselector.eo.c \
@@ -886,4 +895,13 @@ nodist_includesunstable_HEADERS = \
 				  elm_frame.eo.legacy.h \
 				  elm_hover.eo.legacy.h \
 				  elm_actionslider.eo.legacy.h \
-				  elm_atspi_app_object.eo.legacy.h
+				  elm_atspi_app_object.eo.legacy.h \
+				  elm_bg.eo.legacy.h \
+				  elm_box.eo.legacy.h \
+				  elm_bubble.eo.legacy.h \
+				  elm_button.eo.legacy.h \
+				  elm_calendar.eo.legacy.h \
+				  elm_check.eo.legacy.h \
+				  elm_clock.eo.legacy.h \
+				  elm_colorselector.eo.legacy.h \
+				  elc_ctxpopup.eo.legacy.h
