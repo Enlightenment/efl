@@ -86,6 +86,7 @@
  *            <li>@ref sec_collections_group_parts_description "Description"</li>
  *            <ul>
  *              <li>@ref sec_collections_group_parts_description_relatives "Relatives (rel1/rel2)"</li>
+ *              <li>@ref sec_collections_group_parts_description_links "Links"</li>
  *              <li>@ref sec_collections_group_parts_description_image "Image"</li>
  *              <ul>
  *                <li>@ref sec_collections_group_parts_description_image_fill "Fill"</li>
@@ -166,6 +167,10 @@ static Edje_Part *edje_cc_handlers_hierarchy_parent_get(void);
 static void edje_cc_handlers_hierarchy_push(Edje_Part *ep, Edje_Part *cp);
 static void edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new);
 static void edje_cc_handlers_hierarchy_pop(void);
+
+static void _program_target_add(char *name);
+static void _program_after(const char *name);
+static void _program_free(Edje_Program *pr);
 
 static void st_externals_external(void);
 
@@ -278,6 +283,8 @@ static void st_collections_group_parts_part_table_items_item_span(void);
 static void ob_collections_group_parts_part_description(void);
 static void ob_collections_group_parts_part_desc(void);
 static void st_collections_group_parts_part_description_inherit(void);
+static void ob_collections_group_parts_part_description_link(void);
+static void st_collections_group_parts_part_description_link_base(void);
 static void st_collections_group_parts_part_description_source(void);
 static void st_collections_group_parts_part_description_state(void);
 static void st_collections_group_parts_part_description_visible(void);
@@ -616,6 +623,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.table.items.item.span", st_collections_group_parts_part_table_items_item_span},
      {"collections.group.parts.part.description.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
+     {"collections.group.parts.part.description.link.base", st_collections_group_parts_part_description_link_base},
+     {"collections.group.parts.part.description.link.transition", st_collections_group_programs_program_transition},
+     {"collections.group.parts.part.description.link.after", st_collections_group_programs_program_after},
+     {"collections.group.parts.part.description.link.in", st_collections_group_programs_program_in},
      {"collections.group.parts.part.description.source", st_collections_group_parts_part_description_source},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
@@ -989,6 +1000,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.table.items", NULL},
      {"collections.group.parts.part.table.items.item", ob_collections_group_parts_part_box_items_item}, /* dup */
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
+     {"collections.group.parts.part.description.link", ob_collections_group_parts_part_description_link},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
      {"collections.group.parts.part.description.image", NULL}, /* dup */
@@ -2772,6 +2784,68 @@ st_collections_group_vibration_sample_source(void)
    check_arg_count(1);
 }
 
+static void
+_link_combine(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part_Collection_Parser *pcp;
+   Eina_Iterator *it;
+   Eina_Hash_Tuple *tup;
+
+   pc = eina_list_last_data_get(edje_collections);
+   pcp = eina_list_last_data_get(edje_collections);
+
+   if (!pcp->link_hash) return;
+   it = eina_hash_iterator_tuple_new(pcp->link_hash);
+   EINA_ITERATOR_FOREACH(it, tup)
+     {
+        while (tup->data)
+          {
+             Edje_Part_Description_Link *el, *ell;
+             Eina_List *l, *ll, *combine = NULL;
+
+             el = eina_list_data_get(tup->data);
+             tup->data = eina_list_remove_list(tup->data, tup->data);
+             EINA_LIST_FOREACH_SAFE(tup->data, l, ll, ell)
+               {
+                  if (ell->pr->tween.mode != el->pr->tween.mode) continue;
+                  if (fabs(ell->pr->tween.time - el->pr->tween.time) > DBL_EPSILON) continue;
+                  if (fabs(ell->pr->tween.v1 - el->pr->tween.v1) > DBL_EPSILON) continue;
+                  if (fabs(ell->pr->tween.v2 - el->pr->tween.v2) > DBL_EPSILON) continue;
+                  if (fabs(ell->pr->tween.v3 - el->pr->tween.v3) > DBL_EPSILON) continue;
+                  if (fabs(ell->pr->tween.v4 - el->pr->tween.v4) > DBL_EPSILON) continue;
+                  if (fabs(ell->ed->state.value - el->ed->state.value) > DBL_EPSILON) continue;
+                  if ((!!ell->ed->state.name) != (!!el->ed->state.name))
+                    {
+                      if (((!!ell->ed->state.name) && strcmp(el->ed->state.name, "default")) ||
+                         ((!!el->ed->state.name) && strcmp(ell->ed->state.name, "default")))
+                           continue;
+                    }
+                  else if (ell->ed->state.name && strcmp(ell->ed->state.name, el->ed->state.name))
+                    continue;
+                  eina_list_move_list(&combine, (Eina_List**)&tup->data, l);
+               }
+             current_program = el->pr;
+             _program_target_add(strdup(el->epp->common.name));
+             EINA_LIST_FREE(combine, ell)
+               {
+                  char *name;
+
+                  _program_target_add(strdup(ell->epp->common.name));
+                  EINA_LIST_FOREACH(ell->pr->after, l, name)
+                    _program_after(name);
+                  _program_free(ell->pr);
+                  free(ell);
+               }
+             _edje_program_insert(pc, current_program);
+          }
+     }
+   eina_iterator_free(it);
+   eina_hash_free(pcp->link_hash);
+   pcp->links = eina_list_free(pcp->links);
+   current_program = NULL;
+}
+
 /**
    @edcsubsection{collections_group,Group}
  */
@@ -2817,6 +2891,9 @@ ob_collections_group(void)
    current_program = NULL;
    current_part = NULL;
    current_desc = NULL;
+
+   if (current_de)
+     _link_combine();
 
    current_group_inherit = EINA_FALSE;
 
@@ -4156,6 +4233,28 @@ st_collections_group_parts_part_inherit(void)
    free(name);
 }
 
+static void
+_program_free(Edje_Program *pr)
+{
+   Edje_Program_Target *prt;
+   Edje_Program_After *pa;
+
+   free((void*)pr->name);
+   free((void*)pr->signal);
+   free((void*)pr->source);
+   free((void*)pr->filter.part);
+   free((void*)pr->filter.state);
+   free((void*)pr->state);
+   free((void*)pr->state2);
+   free((void*)pr->sample_name);
+   free((void*)pr->tone_name);
+   EINA_LIST_FREE(pr->targets, prt);
+      free(prt);
+   EINA_LIST_FREE(pr->after, pa)
+      free(pa);
+   free(pr);
+}
+
 static Eina_Bool
 _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
 {
@@ -4167,26 +4266,11 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
    for (i = 0; i < count; ++i)
      if (pgrms[i]->name && (!strcmp(name, pgrms[i]->name)))
        {
-          Edje_Program_Target *prt;
-          Edje_Program_After *pa;
           Edje_Program *pr = pgrms[i];
 
-          _edje_program_remove(pc, pgrms[i]);
+          _edje_program_remove(pc, pr);
 
-          free((void*)pr->name);
-          free((void*)pr->signal);
-          free((void*)pr->source);
-          free((void*)pr->filter.part);
-          free((void*)pr->filter.state);
-          free((void*)pr->state);
-          free((void*)pr->state2);
-          free((void*)pr->sample_name);
-          free((void*)pr->tone_name);
-          EINA_LIST_FREE(pr->targets, prt);
-             free(prt);
-          EINA_LIST_FREE(pr->after, pa)
-             free(pa);
-          free(pr);
+          _program_free(pr);
           return EINA_TRUE;
        }
    return EINA_FALSE;
@@ -5904,6 +5988,113 @@ ob_collections_group_parts_part_desc(void)
    stack_pop_quick(EINA_TRUE, EINA_TRUE);
    stack_push_quick("description");
    ob_collections_group_parts_part_description();
+}
+
+static void
+ob_collections_group_parts_part_description_link(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+   Edje_Part_Parser *epp;
+   Edje_Part_Description_Link *el;
+
+   pcp = eina_list_last_data_get(edje_collections);
+   epp = (Edje_Part_Parser*)current_part;
+
+   ob_collections_group_programs_program();
+   _edje_program_remove((Edje_Part_Collection*)pcp, current_program);
+   el = mem_alloc(SZ(Edje_Part_Description_Link));
+   el->pr = current_program;
+   el->ed = current_desc;
+   el->epp = epp;
+   pcp->links = eina_list_append(pcp->links, el);
+   current_program->action = EDJE_ACTION_TYPE_STATE_SET;
+	  current_program->state = strdup(current_desc->state.name ?: "default");
+   current_program->value = current_desc->state.value;
+}
+
+/**
+   @edcsubsection{collections_group_parts_description_links,Links}
+ */
+
+/**
+    @page edcref
+    @block
+        link
+    @context
+        desc { "default";
+            ..
+            link {
+                base: "edje,signal" "edje";
+                transition: LINEAR 0.2;
+                in: 0.5 0.1;
+                after: "some_program";
+            }
+            ..
+        }
+    @description
+        The link block can be used to create transitions to the enclosing part description state.
+        The result of the above block is identical to creating a program with
+        action: STATE_SET "default";
+        signal: "edje,signal"; source: "edje";
+    @since 1.10
+    @endblock
+
+    @property
+        base
+    @parameters
+        [signal] [source]
+    @effect
+        Defines the signal and source which will trigger the transition to this state.
+        The source parameter is optional here and will be filled with the current group's
+        default value if it is not provided.
+    @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_link_base(void)
+{
+   char *name;
+   char buf[4096];
+   Edje_Part_Collection_Parser *pcp;
+   Edje_Part_Description_Link *el, *ell;
+   Eina_List *l;
+
+   pcp = eina_list_last_data_get(edje_collections);
+   el = eina_list_last_data_get(pcp->links);
+
+   if ((!el) || (el->pr != current_program) || (el->ed != current_desc) || (el->epp != (Edje_Part_Parser*)current_part))
+     ob_collections_group_parts_part_description_link();
+   el = eina_list_last_data_get(pcp->links);
+
+   check_min_arg_count(1);
+   name = parse_str(0);
+   if (current_program->signal && pcp->link_hash)
+     {
+        snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
+        eina_hash_list_remove(pcp->link_hash, buf, el);
+     }
+   if (!pcp->link_hash)
+     pcp->link_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
+   free((void*)current_program->signal);
+   current_program->signal = name;
+   if (get_arg_count() == 2)
+     {
+        name = parse_str(1);
+        free((void*)current_program->source);
+        current_program->source = name;
+     }
+   snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
+   EINA_LIST_FOREACH(eina_hash_find(pcp->link_hash, buf), l, ell)
+     {
+        if (ell->epp == el->epp)
+          {
+             ERR("parse error %s:%i. "
+                 "cannot have multiple links with the same signal on the same part",
+                 file_in, line - 1);
+             exit(-1);
+          }
+     }
+   eina_hash_list_append(pcp->link_hash, buf, el);
 }
 
 /**
@@ -10347,6 +10538,9 @@ st_collections_group_programs_program_transition(void)
 
    _program_sequence_check();
 
+   current_program->tween.v1 = current_program->tween.v2 =
+   current_program->tween.v3 = current_program->tween.v4 = 0.0;
+
    current_program->tween.mode = parse_enum(0,
                                             // short names
 					    "LIN", EDJE_TWEEN_MODE_LINEAR,
@@ -10951,13 +11145,17 @@ st_collections_group_physics_world_z(void)
 void
 edje_cc_handlers_pop_notify(const char *token)
 {
-   if ((!sequencing) || strcmp(token, "sequence")) return;
-   current_program = sequencing;
-   ((Edje_Program_Parser*)sequencing)->can_override = EINA_TRUE;
-   current_program_lookups = eina_list_free(current_program_lookups);
-   current_program_lookups = sequencing_lookups;
-   sequencing_lookups = NULL;
-   sequencing = NULL;
+   if (sequencing && (!strcmp(token, "sequence")))
+     {
+        current_program = sequencing;
+        ((Edje_Program_Parser*)sequencing)->can_override = EINA_TRUE;
+        current_program_lookups = eina_list_free(current_program_lookups);
+        current_program_lookups = sequencing_lookups;
+        sequencing_lookups = NULL;
+        sequencing = NULL;
+     }
+   else if (current_program && (!strcmp(token, "link")))
+     current_program = NULL;
 }
 
 static void

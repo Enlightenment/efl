@@ -146,11 +146,20 @@ typedef struct Edje_Target_Group
    char **targets;
 } Edje_Target_Group;
 
+typedef struct Edje_Part_Description_Link
+{
+   Edje_Program *pr;
+   Edje_Part_Description_Common *ed;
+   Edje_Part_Parser *epp;
+} Edje_Part_Description_Link;
+
 struct _Edje_Part_Collection_Parser
 {
    Edje_Part_Collection common;
    char *default_source;
    Eina_List *target_groups;
+   Eina_List *links;
+   Eina_Hash *link_hash;
    Eina_Bool default_mouse_events;
    Eina_Bool inherit_only;
 };
