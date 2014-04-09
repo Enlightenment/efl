@@ -656,7 +656,7 @@ eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map
 EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
 
 /**
- * @brief Tell if their was an IO error during the life of a mmaped file
+ * @brief Tell if there was an IO error during the life of a mmaped file
  *
  * @param file The file handler to the mmaped file.
  * @param map Memory map to check if an error occurred on it.
