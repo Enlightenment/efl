@@ -5,6 +5,7 @@ local ffi = require("ffi")
 local C = ffi.C
 
 local iterator = require("eina.iterator")
+require("eina.xattr")
 
 ffi.cdef [[
     typedef unsigned char Eina_Bool;
@@ -259,6 +260,29 @@ M.copy = function(source, destination, flags, cb)
     return v == 1
 end
 
+M.Xattr_Iterator = Iterator:clone {
+    __ctor = function(self, file)
+        return Iterator.__ctor(self, eina.eina_file_xattr_get(file))
+    end,
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        return ffi.string(v)
+    end
+}
+
+M.Xattr_Value_Iterator = Iterator:clone {
+    __ctor = function(self, file)
+        return Iterator.__ctor(self, eina.eina_file_xattr_value_get(file))
+    end,
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        v = ffi.cast(v, "Eina_Xattr*")
+        return ffi.string(v.name), ffi.string(v.value, v.length)
+    end
+}
+
 M.File = ffi.metatype("Eina_File", {
     __new = function(self, name, shared)
         return self.open(name, shared)
@@ -300,7 +324,10 @@ M.File = ffi.metatype("Eina_File", {
 
         filename_get = function(self)
             return ffi.string(eina.eina_file_filename_get(self))
-        end
+        end,
+
+        xattr_get = M.Xattr_Iterator,
+        xattr_value_get = M.Xattr_Value_Iterator
     }
 })
 
