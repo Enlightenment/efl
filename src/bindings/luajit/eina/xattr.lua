@@ -7,6 +7,8 @@ local C = ffi.C
 local iterator = require("eina.iterator")
 
 ffi.cdef [[
+    typedef unsigned char Eina_Bool;
+
     typedef enum {
         EINA_XATTR_INSERT,
         EINA_XATTR_REPLACE,
@@ -38,6 +40,8 @@ ffi.cdef [[
     EAPI Eina_Bool eina_xattr_double_get(const char *file, const char *attribute, double *value);
     EAPI Eina_Bool eina_xattr_int_set(const char *file, const char *attribute, int value, Eina_Xattr_Flags flags);
     EAPI Eina_Bool eina_xattr_int_get(const char *file, const char *attribute, int *value);
+
+    void free(void*);
 ]]
 
 local cutil = require("cutil")
@@ -56,5 +60,97 @@ local shutdown = function()
 end
 
 cutil.init_module(init, shutdown)
+
+local Iterator = iterator.Iterator
+
+M.Iterator = Iterator:clone {
+    __ctor = function(self, file)
+        return Iterator.__ctor(self, eina.eina_xattr_ls(file))
+    end,
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        return ffi.string(v)
+    end
+}
+
+M.ls = M.Iterator
+
+M.Value_Iterator = Iterator:clone {
+    __ctor = function(self, file)
+        return Iterator.__ctor(self, eina.eina_xattr_value_ls(file))
+    end,
+    next = function(self)
+        local  v = Iterator.next(self)
+        if not v then return nil end
+        v = ffi.cast(v, "Eina_Xattr*")
+        return ffi.string(v.name), ffi.string(v.value, v.length)
+    end
+}
+
+M.value_ls = M.Value_Iterator
+
+M.copy = function(src, dst)
+    return eina.eina_xatr_copy(src, dst) == 1
+end
+
+M.get = function(file, attribute)
+    local size = ffi.new("size_t[1]")
+    local v = eina.eina_xattr_get(file, attribute, size)
+    if v == nil then return nil end
+    local r = ffi.string(v, size[0])
+    C.free(v)
+    return r
+end
+
+M.flags = {
+    INSERT  = 0,
+    REPLACE = 1,
+    CREATED = 2
+}
+
+M.set = function(file, attribute, data, flags)
+    if not data then return false end
+    return eina.eina_xattr_set(file, attribute, data, #data, flags or 0) == 1
+end
+
+M.del = function(file, attribute)
+    return eina.eina_xattr_del(file, attribute) == 1
+end
+
+M.string_set = function(file, attribute, data, flags)
+    return eina.eina_xattr_set(file, attribute, data, #data + 1,
+        flags or 0) == 1
+end
+
+M.string_get = function(file, attribute)
+    local v = eina.eina_xattr_string_get(file, attribute)
+    if v == nil then return nil end
+    local r = ffi.string(v)
+    C.free(v)
+    return r
+end
+
+M.double_set = function(file, attribute, value, flags)
+    return eina.eina_xattr_double_set(file, attribute, value, flags) == 1
+end
+
+M.double_get = function(file, attribute)
+    local v = ffi.new("double[1]")
+    local r = eina.eina_xattr_double_get(file, attribute, v)
+    if r == 0 then return false end
+    return true, tonumber(v[0])
+end
+
+M.int_set = function(file, attribute, value, flags)
+    return eina.eina_xattr_int_set(file, attribute, value, flags) == 1
+end
+
+M.int_get = function(file, attribute)
+    local v = ffi.new("int[1]")
+    local r = eina.eina_xattr_int_get(file, attribute, v)
+    if r == 0 then return false end
+    return true, tonumber(v[0])
+end
 
 return M

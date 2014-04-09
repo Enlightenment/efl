@@ -122,7 +122,7 @@ ffi.cdef [[
     extern int errno;
     char *strerror(int);
 
-    void free(void *ptr);
+    void free(void*);
 ]]
 
 local cutil = require("cutil")
