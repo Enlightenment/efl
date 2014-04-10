@@ -91,7 +91,7 @@ _elm_video_elm_layout_sizing_eval(Eo *obj, Elm_Video_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Evas_Coord minw = -1, minh = -1;
-   Evas_Coord w, h;
+   Evas_Coord w = 0, h = 0;
 
    evas_object_size_hint_request_get(sd->emotion, &minw, &minh);
    evas_object_size_hint_aspect_set
