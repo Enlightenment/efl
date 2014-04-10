@@ -53,7 +53,7 @@ handle_cmd(char *cmd, size_t bread)
    else if (!strncmp(cmd, "n", bread))
      {
         in = eina_list_data_get(out_inputs);
-        eo_do(out, ecore_audio_obj_out_input_detach(in, &ret));
+        eo_do(out, ret = ecore_audio_obj_out_input_detach(in));
         if (!ret)
           printf("Could not detach input\n");
 
@@ -67,7 +67,7 @@ handle_cmd(char *cmd, size_t bread)
                    ecore_audio_obj_in_length_get(&length));
 
              printf("Start: %s (%0.2fs)\n", name, length);
-             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+             eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
              if (!ret)
                printf("Could not attach input %s\n", name);
           }
@@ -88,7 +88,7 @@ handle_cmd(char *cmd, size_t bread)
                    ecore_audio_obj_in_length_get(&length));
 
              printf("Start: %s (%0.2fs)\n", name, length);
-             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+             eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
              if (!ret)
                printf("Could not attach input %s\n", name);
           }
@@ -200,7 +200,7 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_D
   printf("Done: %s\n", name);
 
   inputs = eina_list_remove(inputs, in);
-  eo_do(out, ecore_audio_obj_out_input_detach(in, &ret));
+  eo_do(out, ret = ecore_audio_obj_out_input_detach(in));
   eo_del(in);
 
   if (!ret)
@@ -214,7 +214,7 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_D
 
       eo_do(in, ecore_audio_obj_name_get(&name));
       printf("Start: %s\n", name);
-      eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+      eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
       if (!ret)
         printf("Could not attach input %s\n", name);
     }
@@ -285,7 +285,7 @@ main(int argc, const char *argv[])
             tmp = strdup(argv[i]);
             eo_do(in, ecore_audio_obj_name_set(basename(tmp)));
             free(tmp);
-            eo_do(in, ecore_audio_obj_source_set(argv[i], &ret));
+            eo_do(in, ret = ecore_audio_obj_source_set(argv[i]));
             if (!ret) {
               printf("Could not set %s as input\n", argv[i]);
               continue;
@@ -308,7 +308,7 @@ main(int argc, const char *argv[])
    printf("Start: %s (%0.2fs)\n", name, length);
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
-   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
    if (!ret)
      printf("Could not attach input %s\n", name);
 

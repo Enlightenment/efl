@@ -294,7 +294,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    fail_if(fmt != ECORE_AUDIO_FORMAT_WAV);
 
 
-//   eo_do(out, ecore_audio_obj_source_set("/tmp/file/does/not/exist/hopefully.wav", &ret));
+//   eo_do(out, ret = ecore_audio_obj_source_set("/tmp/file/does/not/exist/hopefully.wav"));
 //   fail_if(ret);
 
    eo_do(out, ret = ecore_audio_obj_source_set(TESTS_BUILD_DIR"/tmp.wav"));

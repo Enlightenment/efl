@@ -70,7 +70,7 @@ main(int argc, const char *argv[])
    eo_do(in, ecore_audio_obj_volume_set(0.7));
    eo_do(in, ecore_audio_obj_vio_set(&vio, NULL, NULL));
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
    if (!ret) {
      printf("Could not attach input");
      goto end;

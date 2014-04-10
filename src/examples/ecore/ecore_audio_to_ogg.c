@@ -51,7 +51,7 @@ main(int argc, char *argv[])
 
    in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
    eo_do(in, ecore_audio_obj_name_set(basename(argv[1])));
-   eo_do(in, ecore_audio_obj_source_set(argv[1], &ret));
+   eo_do(in, ret = ecore_audio_obj_source_set(argv[1]));
    if (!ret) {
      printf("Could not set %s as input\n", argv[1]);
      eo_del(in);
@@ -61,7 +61,7 @@ main(int argc, char *argv[])
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
    out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
-   eo_do(out, ecore_audio_obj_source_set(argv[2], &ret));
+   eo_do(out, ret = ecore_audio_obj_source_set(argv[2]));
    if (!ret) {
      printf("Could not set %s as output\n", argv[2]);
      eo_del(in);
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
      return 1;
    }
 
-   eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+   eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
    if (!ret) {
      printf("Could not attach input\n");
      eo_del(out);
