@@ -173,9 +173,8 @@ M.default_domain = M.Domain_Default
 
 M.Domain = M.Domain_Base:clone {
     __ctor = function(self, name, color)
-        self.__domain = ffi.cast("Domain*", ffi.new("Domain_Private",
-            eina.eina_log_domain_register(name, color)))
-        ffi.gc(self.__domain, unregister_dom)
+        self.__domain = ffi.gc(ffi.cast("Domain*", ffi.new("Domain_Private",
+            eina.eina_log_domain_register(name, color))), unregister_dom)
     end,
 
     unregister = function(self)
