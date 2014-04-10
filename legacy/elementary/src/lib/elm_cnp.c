@@ -216,8 +216,12 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
           {
              cbs = EINA_INLIST_CONTAINER_GET(dropable->cbs_list, Dropable_Cbs);
              elm_drop_target_del(obj, cbs->types,
-                   cbs->entercb, cbs->enterdata, cbs->leavecb, cbs->leavedata,
-                   cbs->poscb, cbs->posdata, cbs->dropcb, cbs->dropdata);
+                                 cbs->entercb, cbs->enterdata, cbs->leavecb, cbs->leavedata,
+                                 cbs->poscb, cbs->posdata, cbs->dropcb, cbs->dropdata);
+             // If elm_drop_target_del() happened to delete dropabale, then
+             // re-fetch it each loop to make sure it didn't
+             eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+             if (!dropable) break;
           }
      }
 }
