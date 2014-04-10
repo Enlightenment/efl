@@ -62,6 +62,7 @@
  * @li @ref progressbar_example
  */
 
+#include "elm_progressbar_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_progressbar_eo.h"
 #endif

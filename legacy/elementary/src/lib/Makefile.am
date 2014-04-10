@@ -329,6 +329,7 @@ elm_prefs_eo.h \
 elm_prefs_legacy.h \
 elm_prefs_data.h \
 elm_progressbar.h \
+elm_progressbar_common.h \
 elm_progressbar_eo.h \
 elm_progressbar_legacy.h \
 elm_radio.h \
@@ -700,32 +701,44 @@ BUILT_SOURCES = \
 		elm_notify.eo.legacy.h \
 		elm_panes.eo.c \
 		elm_panes.eo.h \
+		elm_panes.eo.legacy.h \
 		elm_photocam.eo.c \
 		elm_photocam.eo.h \
+		elm_photocam.eo.legacy.h \
 		elm_photocam_pan.eo.c \
 		elm_photocam_pan.eo.h \
 		elm_photo.eo.c \
 		elm_photo.eo.h \
+		elm_photo.eo.legacy.h \
 		elc_player.eo.c \
 		elc_player.eo.h \
 		elm_plug.eo.c \
 		elm_plug.eo.h \
+		elm_plug.eo.legacy.h \
 		elc_popup.eo.c \
 		elc_popup.eo.h \
+		elc_popup.eo.legacy.h \
 		elm_prefs.eo.c \
 		elm_prefs.eo.h \
+		elm_prefs.eo.legacy.h \
 		elm_progressbar.eo.c \
 		elm_progressbar.eo.h \
+		elm_progressbar.eo.legacy.h \
 		elm_radio.eo.c \
 		elm_radio.eo.h \
+		elm_radio.eo.legacy.h \
 		elm_route.eo.c \
 		elm_route.eo.h \
+		elm_route.eo.legacy.h \
 		elm_scroller.eo.c \
 		elm_scroller.eo.h \
+		elm_scroller.eo.legacy.h \
 		elm_segment_control.eo.c \
 		elm_segment_control.eo.h \
+		elm_segment_control.eo.legacy.h \
 		elm_separator.eo.c \
 		elm_separator.eo.h \
+		elm_separator.eo.legacy.h \
 		elm_slider.eo.c \
 		elm_slider.eo.h \
 		elm_slideshow.eo.c \
@@ -965,4 +978,16 @@ nodist_includesunstable_HEADERS = \
 		          elc_naviframe.eo.legacy.h \
 		          elm_panel.eo.legacy.h \
 		          elm_mapbuf.eo.legacy.h \
-		          elm_notify.eo.legacy.h
+		          elm_notify.eo.legacy.h \
+                  elm_panes.eo.legacy.h \
+		          elm_photocam.eo.legacy.h \
+		          elm_photo.eo.legacy.h \
+		          elm_plug.eo.legacy.h \
+		          elc_popup.eo.legacy.h \
+		          elm_prefs.eo.legacy.h \
+		          elm_progressbar.eo.legacy.h \
+		          elm_radio.eo.legacy.h \
+		          elm_route.eo.legacy.h \
+		          elm_scroller.eo.legacy.h \
+		          elm_segment_control.eo.legacy.h \
+		          elm_separator.eo.legacy.h

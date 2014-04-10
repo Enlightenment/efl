@@ -274,38 +274,6 @@ EAPI void                          elm_scroller_page_size_set(Evas_Object *obj, 
 EAPI void                          elm_scroller_page_size_get(const Evas_Object *obj, Evas_Coord *h_pagesize, Evas_Coord *v_pagesize);
 
 /**
- * @brief Set the maxium of the movable page at a flicking.
- *
- * @param obj The scroller object
- * @param page_limit_h The maxium of the movable horizontal page
- * @param page_limit_v The maxium of the movable vertical page
- *
- * The value of maxium movable page should be more than 1.
- *
- * @see elm_scroller_page_scroll_limit_get()
- *
- * @since 1.8
- *
- * @ingroup Scroller
- */
-EAPI void                          elm_scroller_page_scroll_limit_set(const Evas_Object *obj, Evas_Coord page_limit_h, Evas_Coord page_limit_v);
-
-/**
- * @brief Get the maxium of the movable page at a flicking.
- *
- * @param obj The scroller object
- * @param page_limit_h The maxium of the movable horizontal page
- * @param page_limit_v The maxium of the movable vertical page
- *
- * @see elm_scroller_page_scroll_limit_set()
- *
- * @since 1.8
- *
- * @ingroup Scroller
- */
-EAPI void                          elm_scroller_page_scroll_limit_get(const Evas_Object *obj, Evas_Coord *page_limit_h, Evas_Coord *page_limit_v);
-
-/**
  * @brief Get scroll current page number.
  *
  * @param obj The scroller object
@@ -419,34 +387,6 @@ EAPI void                          elm_scroller_page_bring_in(Evas_Object *obj, 
 EAPI void                          elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
 /**
- * @brief Set event propagation on a scroller
- *
- * @param obj The scroller object
- * @param propagation If propagation is enabled or not
- *
- * This enables or disables event propagation from the scroller
- * content to the scroller and its parent. By default event
- * propagation is @b enabled.
- *
- * @ingroup Scroller
- */
-EAPI void                          elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation);
-
-/**
- * @brief Get event propagation for a scroller
- *
- * @param obj The scroller object
- * @return The propagation state
- *
- * This gets the event propagation for a scroller.
- *
- * @see elm_scroller_propagate_events_set()
- *
- * @ingroup Scroller
- */
-EAPI Eina_Bool                     elm_scroller_propagate_events_get(const Evas_Object *obj);
-
-/**
  * @brief Set scrolling gravity on a scroller
  *
  * @param obj The scroller object
@@ -521,3 +461,5 @@ EAPI void                         elm_scroller_movement_block_set(Evas_Object *o
  * @ingroup Scroller
  */
 EAPI Elm_Scroller_Movement_Block  elm_scroller_movement_block_get(const Evas_Object *obj);
+
+#include "elm_scroller.eo.legacy.h"
