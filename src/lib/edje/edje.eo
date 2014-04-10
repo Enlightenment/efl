@@ -16,12 +16,12 @@ class Edje (Evas_Smart_Clipped)
          }
          get {
             /*@
-            @brief Wether or not Edje will update size hints on itself.
+            @brief Whether or not Edje will update size hints on itself.
 
             @return @c true if does, @c false if it doesn't. */
          }
          values {
-            Eina_Bool update; /*@ Wether or not update the size hints. */
+            Eina_Bool update; /*@ Whether or not update the size hints. */
          }
       }
       mirrored {

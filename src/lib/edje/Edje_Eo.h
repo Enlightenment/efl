@@ -1595,7 +1595,7 @@ enum
  * @def edje_obj_update_hints_get
  * @since 1.8
  *
- * @brief Wether or not Edje will update size hints on itself.
+ * @brief Whether or not Edje will update size hints on itself.
  *
  * @param[out] ret
  *

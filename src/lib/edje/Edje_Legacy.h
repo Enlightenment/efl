@@ -173,7 +173,7 @@ EAPI void         edje_object_size_min_get            (const Evas_Object *obj, E
  * @brief Edje will automatically update the size hints on itself.
  *
  * @param obj A handle to an Edje object.
- * @param update Wether or not update the size hints.
+ * @param update Whether or not update the size hints.
  *
  * By default edje doesn't set size hints on itself. With this function
  * call, it will do so if update is true. Be carefully, it cost a lot to
@@ -183,7 +183,7 @@ EAPI void         edje_object_size_min_get            (const Evas_Object *obj, E
 EAPI void edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update);
 
 /**
- * @brief Wether or not Edje will update size hints on itself.
+ * @brief Whether or not Edje will update size hints on itself.
  *
  * @param obj A handle to an Edje object.
  * @return @c true if does, @c false if it doesn't.

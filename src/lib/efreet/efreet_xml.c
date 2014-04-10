@@ -235,11 +235,11 @@ efreet_xml_parse(char **data, int *size, int *error)
     xml->tag = tag;
     efreet_xml_attributes_parse(data, size, &(xml->attributes), error);
 
-    /* Check wether element is empty */
+    /* Check whether element is empty */
     if (efreet_xml_tag_empty(data, size, error)) return xml;
     efreet_xml_text_parse(data, size, &(xml->text));
 
-    /* Check wether element is closed */
+    /* Check whether element is closed */
     if (efreet_xml_tag_close(data, size, xml->tag, error)) return xml;
 
     while ((sub_xml = efreet_xml_parse(data, size, error)))

@@ -589,7 +589,7 @@ EAPI Eio_File *eio_file_xattr(const char *path,
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_int The value to link the attribute with.
- * @param flags Wether to insert, replace or create the attribute.
+ * @param flags Whether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Unmodified user data passed to callbacks
@@ -611,7 +611,7 @@ EAPI Eio_File *eio_file_xattr_int_set(const char *path,
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_double The value to link the attribute with.
- * @param flags Wether to insert, replace or create the attribute.
+ * @param flags Whether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Unmodified user data passed to callbacks
@@ -632,7 +632,7 @@ EAPI Eio_File *eio_file_xattr_double_set(const char *path,
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_string The string to link the attribute with.
- * @param flags Wether to insert, replace or create the attribute.
+ * @param flags Whether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Unmodified user data passed to callbacks
@@ -654,7 +654,7 @@ EAPI Eio_File *eio_file_xattr_string_set(const char *path,
  * @param attribute The name of the attribute to define.
  * @param xattr_data The data to link the attribute with.
  * @param xattr_size The size of the data to set.
- * @param flags Wether to insert, replace or create the attribute.
+ * @param flags Whether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Unmodified user data passed to callbacks
