@@ -119,9 +119,7 @@ ffi.cdef [[
     void eina_stringshare_del   (const char *str);
     int  eina_stringshare_strlen(const char *str);
 
-    extern int errno;
     char *strerror(int);
-
     void free(void*);
 ]]
 
@@ -199,7 +197,7 @@ local Direct_Info = Object:clone {
             C["EINA_FILE_" .. self.type:upper()], self.path)
         local buf = ffi.new("Eina_Stat")
         if eina.eina_file_statat(container, info, buf) ~= 0 then
-            return false, ffi.string(C.strerror(C.errno))
+            return false, ffi.string(C.strerror(ffi.errno()))
         end
         return buf
     end
