@@ -446,8 +446,7 @@ ecore_x_init(const char *name)
    _ecore_x_event_handlers[KeyPress] = _ecore_x_event_handle_key_press;
    _ecore_x_event_handlers[KeyRelease] = _ecore_x_event_handle_key_release;
    _ecore_x_event_handlers[ButtonPress] = _ecore_x_event_handle_button_press;
-   _ecore_x_event_handlers[ButtonRelease] =
-     _ecore_x_event_handle_button_release;
+   _ecore_x_event_handlers[ButtonRelease] = _ecore_x_event_handle_button_release;
    _ecore_x_event_handlers[MotionNotify] = _ecore_x_event_handle_motion_notify;
    _ecore_x_event_handlers[EnterNotify] = _ecore_x_event_handle_enter_notify;
    _ecore_x_event_handlers[LeaveNotify] = _ecore_x_event_handle_leave_notify;
@@ -455,84 +454,56 @@ ecore_x_init(const char *name)
    _ecore_x_event_handlers[FocusOut] = _ecore_x_event_handle_focus_out;
    _ecore_x_event_handlers[KeymapNotify] = _ecore_x_event_handle_keymap_notify;
    _ecore_x_event_handlers[Expose] = _ecore_x_event_handle_expose;
-   _ecore_x_event_handlers[GraphicsExpose] =
-     _ecore_x_event_handle_graphics_expose;
-   _ecore_x_event_handlers[VisibilityNotify] =
-     _ecore_x_event_handle_visibility_notify;
+   _ecore_x_event_handlers[GraphicsExpose] = _ecore_x_event_handle_graphics_expose;
+   _ecore_x_event_handlers[VisibilityNotify] = _ecore_x_event_handle_visibility_notify;
    _ecore_x_event_handlers[CreateNotify] = _ecore_x_event_handle_create_notify;
-   _ecore_x_event_handlers[DestroyNotify] =
-     _ecore_x_event_handle_destroy_notify;
+   _ecore_x_event_handlers[DestroyNotify] = _ecore_x_event_handle_destroy_notify;
    _ecore_x_event_handlers[UnmapNotify] = _ecore_x_event_handle_unmap_notify;
    _ecore_x_event_handlers[MapNotify] = _ecore_x_event_handle_map_notify;
    _ecore_x_event_handlers[MapRequest] = _ecore_x_event_handle_map_request;
-   _ecore_x_event_handlers[ReparentNotify] =
-     _ecore_x_event_handle_reparent_notify;
-   _ecore_x_event_handlers[ConfigureNotify] =
-     _ecore_x_event_handle_configure_notify;
-   _ecore_x_event_handlers[ConfigureRequest] =
-     _ecore_x_event_handle_configure_request;
-   _ecore_x_event_handlers[GravityNotify] =
-     _ecore_x_event_handle_gravity_notify;
-   _ecore_x_event_handlers[ResizeRequest] =
-     _ecore_x_event_handle_resize_request;
-   _ecore_x_event_handlers[CirculateNotify] =
-     _ecore_x_event_handle_circulate_notify;
-   _ecore_x_event_handlers[CirculateRequest] =
-     _ecore_x_event_handle_circulate_request;
-   _ecore_x_event_handlers[PropertyNotify] =
-     _ecore_x_event_handle_property_notify;
-   _ecore_x_event_handlers[SelectionClear] =
-     _ecore_x_event_handle_selection_clear;
-   _ecore_x_event_handlers[SelectionRequest] =
-     _ecore_x_event_handle_selection_request;
-   _ecore_x_event_handlers[SelectionNotify] =
-     _ecore_x_event_handle_selection_notify;
-   _ecore_x_event_handlers[ColormapNotify] =
-     _ecore_x_event_handle_colormap_notify;
-   _ecore_x_event_handlers[ClientMessage] =
-     _ecore_x_event_handle_client_message;
-   _ecore_x_event_handlers[MappingNotify] =
-     _ecore_x_event_handle_mapping_notify;
+   _ecore_x_event_handlers[ReparentNotify] = _ecore_x_event_handle_reparent_notify;
+   _ecore_x_event_handlers[ConfigureNotify] = _ecore_x_event_handle_configure_notify;
+   _ecore_x_event_handlers[ConfigureRequest] = _ecore_x_event_handle_configure_request;
+   _ecore_x_event_handlers[GravityNotify] = _ecore_x_event_handle_gravity_notify;
+   _ecore_x_event_handlers[ResizeRequest] = _ecore_x_event_handle_resize_request;
+   _ecore_x_event_handlers[CirculateNotify] = _ecore_x_event_handle_circulate_notify;
+   _ecore_x_event_handlers[CirculateRequest] = _ecore_x_event_handle_circulate_request;
+   _ecore_x_event_handlers[PropertyNotify] = _ecore_x_event_handle_property_notify;
+   _ecore_x_event_handlers[SelectionClear] = _ecore_x_event_handle_selection_clear;
+   _ecore_x_event_handlers[SelectionRequest] = _ecore_x_event_handle_selection_request;
+   _ecore_x_event_handlers[SelectionNotify] = _ecore_x_event_handle_selection_notify;
+   _ecore_x_event_handlers[ColormapNotify] = _ecore_x_event_handle_colormap_notify;
+   _ecore_x_event_handlers[ClientMessage] = _ecore_x_event_handle_client_message;
+   _ecore_x_event_handlers[MappingNotify] = _ecore_x_event_handle_mapping_notify;
 #ifdef GenericEvent
    _ecore_x_event_handlers[GenericEvent] = _ecore_x_event_handle_generic_event;
 #endif /* ifdef GenericEvent */
 
    if (_ecore_x_event_shape_id)
-     _ecore_x_event_handlers[_ecore_x_event_shape_id] =
-       _ecore_x_event_handle_shape_change;
-
+     _ecore_x_event_handlers[_ecore_x_event_shape_id] = _ecore_x_event_handle_shape_change;
    if (_ecore_x_event_screensaver_id)
-     _ecore_x_event_handlers[_ecore_x_event_screensaver_id] =
-       _ecore_x_event_handle_screensaver_notify;
-
+     _ecore_x_event_handlers[_ecore_x_event_screensaver_id] = _ecore_x_event_handle_screensaver_notify;
    if (_ecore_x_event_sync_id)
      {
-        _ecore_x_event_handlers[_ecore_x_event_sync_id + XSyncCounterNotify] =
-          _ecore_x_event_handle_sync_counter;
-        _ecore_x_event_handlers[_ecore_x_event_sync_id + XSyncAlarmNotify] =
-          _ecore_x_event_handle_sync_alarm;
+        _ecore_x_event_handlers[_ecore_x_event_sync_id + XSyncCounterNotify] = _ecore_x_event_handle_sync_counter;
+        _ecore_x_event_handlers[_ecore_x_event_sync_id + XSyncAlarmNotify] = _ecore_x_event_handle_sync_alarm;
      }
 
 #ifdef ECORE_XRANDR
    if (_ecore_x_event_randr_id)
      {
-        _ecore_x_event_handlers[_ecore_x_event_randr_id +
-                                RRScreenChangeNotify] =
-          _ecore_x_event_handle_randr_change;
-        _ecore_x_event_handlers[_ecore_x_event_randr_id +
-                                RRNotify] = _ecore_x_event_handle_randr_notify;
+        _ecore_x_event_handlers[_ecore_x_event_randr_id + RRScreenChangeNotify] = _ecore_x_event_handle_randr_change;
+        _ecore_x_event_handlers[_ecore_x_event_randr_id + RRNotify] = _ecore_x_event_handle_randr_notify;
      }
 #endif /* ifdef ECORE_XRANDR */
 #ifdef ECORE_XFIXES
    if (_ecore_x_event_fixes_selection_id)
-     _ecore_x_event_handlers[_ecore_x_event_fixes_selection_id] =
-       _ecore_x_event_handle_fixes_selection_notify;
+     _ecore_x_event_handlers[_ecore_x_event_fixes_selection_id] = _ecore_x_event_handle_fixes_selection_notify;
 
 #endif /* ifdef ECORE_XFIXES */
 #ifdef ECORE_XDAMAGE
    if (_ecore_x_event_damage_id)
-     _ecore_x_event_handlers[_ecore_x_event_damage_id] =
-       _ecore_x_event_handle_damage_notify;
+     _ecore_x_event_handlers[_ecore_x_event_damage_id] = _ecore_x_event_handle_damage_notify;
 
 #endif /* ifdef ECORE_XDAMAGE */
 #ifdef ECORE_XKB
@@ -553,20 +524,13 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XGESTURE
    if (_ecore_x_event_gesture_id)
      {
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] =
-          _ecore_x_event_handle_gesture_notify_flick;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] =
-          _ecore_x_event_handle_gesture_notify_pan;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] =
-          _ecore_x_event_handle_gesture_notify_pinchrotation;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] =
-          _ecore_x_event_handle_gesture_notify_tap;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] =
-          _ecore_x_event_handle_gesture_notify_tapnhold;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] =
-          _ecore_x_event_handle_gesture_notify_hold;
-        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] =
-          _ecore_x_event_handle_gesture_notify_group;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] = _ecore_x_event_handle_gesture_notify_flick;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] = _ecore_x_event_handle_gesture_notify_pan;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] = _ecore_x_event_handle_gesture_notify_pinchrotation;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] = _ecore_x_event_handle_gesture_notify_tap;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] = _ecore_x_event_handle_gesture_notify_tapnhold;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] = _ecore_x_event_handle_gesture_notify_hold;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] = _ecore_x_event_handle_gesture_notify_group;
      }
 
 #endif /* ifdef ECORE_XGESTURE */
