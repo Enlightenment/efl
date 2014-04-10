@@ -139,7 +139,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    Edje_Sound_Sample *sample;
    char snd_id_str[255];
    int i;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
    if (_channel_mute(ed, channel)) return EINA_FALSE;
    
@@ -215,7 +215,7 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
                  eo_del(in);
                  return EINA_FALSE;
               }
-            eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+            eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
             if (!ret)
               {
                  ERR("Could not attach input");
@@ -241,7 +241,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
 #ifdef ENABLE_MULTISENSE
    unsigned int i;
    Edje_Sound_Tone *tone;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
    Eo *in;
    if (!tone_name)
@@ -275,7 +275,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
                   if (out) outs++;
                }
 
-             eo_do(out, ecore_audio_obj_out_input_attach(in, &ret));
+             eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
              if (!ret) {
                ERR("Could not attach input");
                eo_del(in);
