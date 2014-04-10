@@ -181,12 +181,15 @@ static Eina_List *cont_drag_tg = NULL; /* List of Item_Container_Drag_Info */
 static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _all_drop_targets_cbs_del(void *data, Evas *e, Evas_Object *obj, void *info);
+static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 
 static Eina_Bool
 _drag_cancel_animate(void *data EINA_UNUSED, double pos)
 {  /* Animation to "move back" drag-window */
    if (pos >= 0.99)
      {
+        Ecore_X_Window xdragwin = _x11_elm_widget_xwin_get(data);
+        ecore_x_window_ignore_set(xdragwin, 0);
         evas_object_del(data);
         return ECORE_CALLBACK_CANCEL;
      }
@@ -1775,6 +1778,8 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                }
              else
                {  /* No animation drop was committed */
+                  Ecore_X_Window xdragwin = _x11_elm_widget_xwin_get(dragwin);
+                  ecore_x_window_ignore_set(xdragwin, 0);
                   evas_object_del(dragwin);
                }
 
@@ -2154,6 +2159,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                     Elm_Drag_State dragdone, void *donecbdata)
 {
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+   Ecore_X_Window xdragwin;
    X11_Cnp_Selection *sel;
    Elm_Sel_Type xdnd = ELM_SEL_TYPE_XDND;
    Ecore_Evas *ee;
@@ -2224,6 +2230,8 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    dragwin = elm_win_add(NULL, "Elm-Drag", ELM_WIN_UTILITY);
    elm_win_alpha_set(dragwin, EINA_TRUE);
    elm_win_override_set(dragwin, EINA_TRUE);
+   xdragwin = _x11_elm_widget_xwin_get(dragwin);
+   ecore_x_window_ignore_set(xdragwin, 1);
 
    /* dragwin has to be rotated as the main window is */
    if (elm_widget_is(obj))
