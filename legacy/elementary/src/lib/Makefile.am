@@ -668,26 +668,36 @@ BUILT_SOURCES = \
 		elm_interface_fileselector.eo.h \
 		elm_inwin.eo.c \
 		elm_inwin.eo.h \
+		elm_inwin.eo.legacy.h \
 		elm_label.eo.c \
 		elm_label.eo.h \
+		elm_label.eo.legacy.h \
 		elm_list.eo.c \
 		elm_list.eo.h \
+		elm_list.eo.legacy.h \
 		elm_map_pan.eo.c \
 		elm_map_pan.eo.h \
 		elm_map.eo.c \
 		elm_map.eo.h \
+		elm_map.eo.legacy.h \
 		elm_menu.eo.c \
 		elm_menu.eo.h \
+		elm_menu.eo.legacy.h \
 		elc_multibuttonentry.eo.c \
 		elc_multibuttonentry.eo.h \
+		elc_multibuttonentry.eo.legacy.h \
 		elc_naviframe.eo.c \
 		elc_naviframe.eo.h \
+		elc_naviframe.eo.legacy.h \
 		elm_panel.eo.c \
 		elm_panel.eo.h \
+		elm_panel.eo.legacy.h \
 		elm_mapbuf.eo.c \
 		elm_mapbuf.eo.h \
+		elm_mapbuf.eo.legacy.h \
 		elm_notify.eo.c \
 		elm_notify.eo.h \
+		elm_notify.eo.legacy.h \
 		elm_panes.eo.c \
 		elm_panes.eo.h \
 		elm_photocam.eo.c \
@@ -945,4 +955,14 @@ nodist_includesunstable_HEADERS = \
 		          elc_hoversel.eo.legacy.h \
 		          elm_image.eo.legacy.h \
                   elm_icon.eo.legacy.h \
-		          elm_index.eo.legacy.h
+		          elm_index.eo.legacy.h \
+		          elm_inwin.eo.legacy.h \
+		          elm_label.eo.legacy.h  \
+		          elm_list.eo.legacy.h \
+		          elm_map.eo.legacy.h \
+		          elm_menu.eo.legacy.h \
+		          elc_multibuttonentry.eo.legacy.h \
+		          elc_naviframe.eo.legacy.h \
+		          elm_panel.eo.legacy.h \
+		          elm_mapbuf.eo.legacy.h \
+		          elm_notify.eo.legacy.h

@@ -19,23 +19,6 @@
 EAPI Evas_Object *elm_win_inwin_add(Evas_Object *parent);
 
 /**
- * Activates an inwin object, ensuring its visibility
- *
- * This function will make sure that the inwin @p obj is completely visible
- * by calling evas_object_show() and evas_object_raise() on it, to bring it
- * to the front. It also sets the keyboard focus to it, which will be passed
- * onto its content.
- *
- * The object's theme will also receive the signal "elm,action,show" with
- * source "elm".
- *
- * @param obj The inwin to activate
- *
- * @ingroup Inwin
- */
-EAPI void         elm_win_inwin_activate(Evas_Object *obj);
-
-/**
  * Set the content of an inwin object.
  *
  * Once the content object is set, a previously set one will be deleted.
@@ -80,3 +63,4 @@ EAPI Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
  */
 EAPI Evas_Object *elm_win_inwin_content_unset(Evas_Object *obj);
 
+#include "elm_inwin.eo.legacy.h"
