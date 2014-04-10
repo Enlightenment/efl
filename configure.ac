@@ -1439,6 +1439,14 @@ if test "${have_wince}" = "yes"; then
    want_evas_image_loader_webp="no"
 fi
 
+if test "${want_lua_old}" = "yes"; then
+   EFL_CHECK_LUA_OLD([EVAS])
+else
+   EFL_DEPEND_PKG([EVAS], [LUAJIT], [luajit >= 2.0.0])
+fi
+
+EFL_ADD_FEATURE([EVAS], [lua-old])
+
 EFL_CHECK_FUNC([EVAS], [dlsym])
 
 if test "x${efl_func_dlsym}" = "xno" && test "${with_opengl}" != "none"; then
@@ -3826,8 +3834,10 @@ EFL_ADD_FEATURE([EDJE], [lua-old])
 
 if test "${want_lua_old}" = "yes"; then
    EFL_CHECK_LUA_OLD([EDJE])
+   EFL_CHECK_LUA_OLD([EVAS])
 else
    EFL_DEPEND_PKG([EDJE], [LUAJIT], [luajit >= 2.0.0])
+   EFL_DEPEND_PKG([EVAS], [LUAJIT], [luajit >= 2.0.0])
 fi
 
 EFL_ADD_LIBS([EDJE], [-lm])
