@@ -347,7 +347,7 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
    else
      next_sz = sz >> 1;
 
-   DBG("resize from %lu to %lu", sz, next_sz);
+   DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
    stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
    if(!stack->frames)
      {
