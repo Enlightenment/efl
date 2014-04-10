@@ -16,10 +16,12 @@ local eina
 
 local init = function()
     eina = util.lib_load("eina")
+    return true
 end
 
 local shutdown = function()
     util.lib_unload("eina")
+    return true
 end
 
 cutil.init_module(init, shutdown)

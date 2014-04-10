@@ -50,11 +50,13 @@ local init = function()
     eina = util.lib_load("eina")
     global_domain  = ffi.new("Domain_Private", eina.EINA_LOG_DOMAIN_GLOBAL)
     default_domain = global_domain
+    return true
 end
 
 local shutdown = function()
     util.lib_unload("eina")
     default_domain, global_domain = nil, nil
+    return true
 end
 
 cutil.init_module(init, shutdown)
@@ -70,6 +72,7 @@ M.level = {
 }
 
 M.color = {
+    DEFAULT   = "\x1B[36m",
     LIGHTRED  = "\x1B[31;1m",
     RED       = "\x1B[31m",
     LIGHTBLUE = "\x1B[34;1m",
@@ -122,7 +125,7 @@ local logfuncs = {
 }
 
 for i, v in ipairs(logfuncs) do
-    M["log_" .. v[1]] = function(msg)
+    M[v[1]] = function(msg)
         if not default_domain then return end
         local info = getinfo(2, "nlSf")
         local dom = ffi.cast("Domain_Private*", default_domain).domain
@@ -152,6 +155,10 @@ M.Domain_Base = util.Object:clone {
 
     log = function(self, level, msg, loff)
         log(self, level, msg, (loff or 0) + 1)
+    end,
+
+    is_valid = function(self)
+        return self:__get_domain() ~= nil
     end
 }
 
@@ -173,8 +180,10 @@ M.default_domain = M.Domain_Default
 
 M.Domain = M.Domain_Base:clone {
     __ctor = function(self, name, color)
+        local dom = eina.eina_log_domain_register(name, color or "\x1B[36m")
+        if dom < 0 then return end
         self.__domain = ffi.gc(ffi.cast("Domain*", ffi.new("Domain_Private",
-            eina.eina_log_domain_register(name, color))), unregister_dom)
+            dom)), unregister_dom)
     end,
 
     unregister = function(self)
@@ -189,7 +198,9 @@ M.Domain = M.Domain_Base:clone {
 }
 
 M.set_default_domain = function(dom)
-    default_domain = dom:__get_domain()
+    dom = dom:__get_domain()
+    if not dom then return end
+    default_domain = dom
 end
 
 return M

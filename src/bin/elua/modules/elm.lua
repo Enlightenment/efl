@@ -49,8 +49,10 @@ local smart_cb_wrapper = ffi.cast("Evas_Smart_Cb",
 cutil.init_module(function()
     elm, evas = ffi.load("elementary"), ffi.load("evas")
     elm.elm_init(0, nil)
+    return true
 end, function()
     elm.elm_exit()
+    return true
 end)
 
 local Evas_Object = util.Object:clone {

@@ -11,7 +11,7 @@ log.log_err("test with default log domain")
 
 local foo = function()
     for i = 1, 4 do
-        log.log_err("testing: " .. i)
+        log.err("testing: " .. i)
     end
 end
 
