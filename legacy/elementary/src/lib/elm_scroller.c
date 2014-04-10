@@ -46,12 +46,18 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_SCROLLER_SIGNALS
 
-EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_event(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   ELM_SCROLLER_DATA_GET(obj, sd);
+   const char *dir = params;
    Evas_Coord x = 0;
    Evas_Coord y = 0;
    Evas_Coord c_x = 0;
@@ -64,10 +70,13 @@ _elm_scroller_elm_widget_event(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *src,
    Evas_Coord page_y = 0;
    Evas_Coord step_x = 0;
    Evas_Coord step_y = 0;
-
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   Evas_Object *current_focus = NULL;
+   Eina_List *can_focus_list = NULL;
+   Evas_Object *new_focus = NULL;
+   Evas_Coord f_x = 0;
+   Evas_Coord f_y = 0;
+   Evas_Coord f_w = 0;
+   Evas_Coord f_h = 0;
 
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
@@ -78,150 +87,118 @@ _elm_scroller_elm_widget_event(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *src,
          evas_obj_position_get(&c_x, &c_y),
          evas_obj_size_get(&max_x, &max_y));
 
-   if (((!strcmp(ev->key, "Left")) ||
-        (!strcmp(ev->key, "KP_Left")) ||
-        (!strcmp(ev->key, "Right")) ||
-        (!strcmp(ev->key, "KP_Right")) ||
-        (!strcmp(ev->key, "Up")) ||
-        (!strcmp(ev->key, "KP_Up")) ||
-        (!strcmp(ev->key, "Down")) ||
-        (!strcmp(ev->key, "KP_Down"))) && (!ev->string))
+   current_focus = elm_widget_focused_object_get(obj);
+   evas_object_geometry_get(current_focus, &f_x, &f_y, &f_w, &f_h);
+   can_focus_list = elm_widget_can_focus_child_list_get(obj);
+
+   if ((current_focus == obj) ||
+       (!ELM_RECTS_INTERSECT
+        (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h)))
      {
-        Evas_Object *current_focus = NULL;
-        Eina_List *can_focus_list = NULL;
-        Evas_Object *new_focus = NULL;
-        Evas_Coord f_x = 0;
-        Evas_Coord f_y = 0;
-        Evas_Coord f_w = 0;
-        Evas_Coord f_h = 0;
+        Eina_List *l;
+        Evas_Object *cur;
+        double weight = 0.0;
 
-        current_focus = elm_widget_focused_object_get(obj);
-        evas_object_geometry_get(current_focus, &f_x, &f_y, &f_w, &f_h);
-        can_focus_list = elm_widget_can_focus_child_list_get(obj);
-        if ((current_focus == obj) ||
-            (!ELM_RECTS_INTERSECT
-               (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h)))
+        EINA_LIST_FOREACH(can_focus_list, l, cur)
           {
-             Eina_List *l;
-             Evas_Object *cur;
-             double weight = 0.0;
+             double cur_weight = 0.0;
 
-             EINA_LIST_FOREACH(can_focus_list, l, cur)
+             evas_object_geometry_get(cur, &f_x, &f_y, &f_w, &f_h);
+             if (ELM_RECTS_INTERSECT
+                 (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h))
                {
-                  double cur_weight = 0.0;
-
-                  evas_object_geometry_get(cur, &f_x, &f_y, &f_w, &f_h);
-                  if (ELM_RECTS_INTERSECT
-                        (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h))
+                  if ((f_x - c_x) > x)
+                    cur_weight += ((f_x - c_x) - x) * ((f_x - c_x) - x);
+                  if ((f_y - c_y) > y)
+                    cur_weight += ((f_y - c_y) - y) * ((f_y - c_y) - y);
+                  if (cur_weight == 0.0)
                     {
-                       if ((f_x - c_x) > x)
-                         cur_weight += ((f_x - c_x) - x) * ((f_x - c_x) - x);
-                       if ((f_y - c_y) > y)
-                         cur_weight += ((f_y - c_y) - y) * ((f_y - c_y) - y);
-                       if (cur_weight == 0.0)
-                         {
-                            elm_widget_focus_steal(cur);
-                            ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                            return EINA_TRUE;
-                         }
-                       cur_weight = 1.0 / cur_weight;
-                       if (cur_weight > weight)
-                         {
-                            new_focus = cur;
-                            weight = cur_weight;
-                         }
+                       elm_widget_focus_steal(cur);
+                       return EINA_TRUE;
+                    }
+                  cur_weight = 1.0 / cur_weight;
+                  if (cur_weight > weight)
+                    {
+                       new_focus = cur;
+                       weight = cur_weight;
                     }
                }
-             if (new_focus)
+          }
+        if (new_focus)
+          {
+             elm_widget_focus_steal(new_focus);
+             return EINA_TRUE;
+          }
+     }
+   else
+     {
+        Eina_Bool r = EINA_FALSE;
+
+        if (!strcmp(dir, "left"))
+          r = elm_widget_focus_next_get(obj, ELM_FOCUS_LEFT, &new_focus);
+        else if (!strcmp(dir, "right"))
+          r = elm_widget_focus_next_get(obj, ELM_FOCUS_RIGHT, &new_focus);
+        else if (!strcmp(dir, "up"))
+          r = elm_widget_focus_next_get(obj, ELM_FOCUS_UP, &new_focus);
+        else if (!strcmp(dir, "down"))
+          r = elm_widget_focus_next_get(obj, ELM_FOCUS_DOWN, &new_focus);
+
+        if (r && new_focus)
+          {
+             Evas_Coord l_x = 0;
+             Evas_Coord l_y = 0;
+             Evas_Coord l_w = 0;
+             Evas_Coord l_h = 0;
+
+             evas_object_geometry_get(new_focus, &f_x, &f_y, &f_w, &f_h);
+             l_x = f_x - c_x - step_x;
+             l_y = f_y - c_y - step_y;
+             l_w = f_w + (step_x * 2);
+             l_h = f_h + (step_y * 2);
+
+             if (ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
                {
                   elm_widget_focus_steal(new_focus);
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                   return EINA_TRUE;
                }
           }
-        else
-          {
-             Eina_Bool r = EINA_FALSE;
-
-             if ((!strcmp(ev->key, "Left")) ||
-                 (!strcmp(ev->key, "KP_Left")))
-               r = elm_widget_focus_next_get(obj, ELM_FOCUS_LEFT, &new_focus);
-             else if ((!strcmp(ev->key, "Right")) ||
-                      (!strcmp(ev->key, "KP_Right")))
-               r = elm_widget_focus_next_get(obj, ELM_FOCUS_RIGHT, &new_focus);
-             else if ((!strcmp(ev->key, "Up")) ||
-                      (!strcmp(ev->key, "KP_Up")))
-               r = elm_widget_focus_next_get(obj, ELM_FOCUS_UP, &new_focus);
-             else if ((!strcmp(ev->key, "Down")) ||
-                      (!strcmp(ev->key, "KP_Down")))
-               r = elm_widget_focus_next_get(obj, ELM_FOCUS_DOWN, &new_focus);
-
-             if (r && new_focus)
-               {
-                  Evas_Coord l_x = 0;
-                  Evas_Coord l_y = 0;
-                  Evas_Coord l_w = 0;
-                  Evas_Coord l_h = 0;
-
-                  evas_object_geometry_get(new_focus, &f_x, &f_y, &f_w, &f_h);
-                  l_x = f_x - c_x - step_x;
-                  l_y = f_y - c_y - step_y;
-                  l_w = f_w + (step_x * 2);
-                  l_h = f_h + (step_y * 2);
-
-                  if (ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
-                    {
-                       elm_widget_focus_steal(new_focus);
-                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                       return EINA_TRUE;
-                    }
-               }
-          }
      }
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   if (!strcmp(dir, "left"))
      {
         if (x <= 0) return EINA_FALSE;
         x -= step_x;
      }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if (!strcmp(dir, "right"))
      {
         if (x >= (max_x - v_w)) return EINA_FALSE;
         x += step_x;
      }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+   else if (!strcmp(dir, "up"))
      {
         if (y == 0) return EINA_FALSE;
         y -= step_y;
      }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+   else if (!strcmp(dir, "down"))
      {
         if (y >= (max_y - v_h)) return EINA_FALSE;
         y += step_y;
      }
-   else if ((!strcmp(ev->key, "Home")) ||
-            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
+   else if (!strcmp(dir, "first"))
      {
         y = 0;
      }
-   else if ((!strcmp(ev->key, "End")) ||
-            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
+   else if (!strcmp(dir, "last"))
      {
         y = max_y - v_h;
      }
-   else if ((!strcmp(ev->key, "Prior")) ||
-            ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
+   else if (!strcmp(dir, "prior"))
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if ((!strcmp(ev->key, "Next")) ||
-            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
+   else if (!strcmp(dir, "next"))
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;
@@ -230,9 +207,24 @@ _elm_scroller_elm_widget_event(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *src,
      }
    else return EINA_FALSE;
 
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+   return EINA_TRUE;
+}
 
+EOLIAN static Eina_Bool
+_elm_scroller_elm_widget_event(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   (void) src;
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
