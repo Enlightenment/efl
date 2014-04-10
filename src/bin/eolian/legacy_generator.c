@@ -159,7 +159,7 @@ _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_F
             if (ftype == EOLIAN_PROP_SET) pdir = EOLIAN_IN_PARAM;
             leg_param_idx++;
             eina_strbuf_append_printf(fparam, ", %s%s%s%s%s",
-                  eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const":"",
+                  eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const ":"",
                   ptype, had_star?"":" ", add_star?"*":"", pname);
             const char *dir_str = str_dir[(int)pdir];
             eina_strbuf_append_printf(descparam, " * @param[%s] %s %s\n", dir_str, pname, pdesc?pdesc:"No description supplied.");
