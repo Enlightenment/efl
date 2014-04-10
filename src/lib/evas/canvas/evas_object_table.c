@@ -861,13 +861,16 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Table_Data *pri
      }
 
  end:
-   if (cols != c->sizes.h)
+   if (priv->cache)
      {
-        if (cols) free(cols);
-     }
-   if (rows != c->sizes.v)
-     {
-        if (rows) free(rows);
+        if (cols != c->sizes.h)
+          {
+             if (cols) free(cols);
+          }
+        if (rows != c->sizes.v)
+          {
+             if (rows) free(rows);
+          }
      }
 }
 
