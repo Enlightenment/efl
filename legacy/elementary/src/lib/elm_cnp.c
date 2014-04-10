@@ -220,7 +220,7 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
                                  cbs->poscb, cbs->posdata, cbs->dropcb, cbs->dropdata);
              // If elm_drop_target_del() happened to delete dropabale, then
              // re-fetch it each loop to make sure it didn't
-             eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+             eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
              if (!dropable) break;
           }
      }
