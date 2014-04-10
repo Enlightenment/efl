@@ -264,7 +264,7 @@ START_TEST(eo_wrong_override)
         NULL
    };
 
-   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': Can't find api func description in class hierarchy (%p->%p).");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
