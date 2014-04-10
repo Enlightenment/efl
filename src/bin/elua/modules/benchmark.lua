@@ -16,13 +16,11 @@ cutil.init_module(function()
     dom = log.Domain("elua_benchmark")
     if not dom:is_valid() then
         log.err("Could not register log domain: elua_benchmark")
-        return false
+        error("could not register log domain: elua_benchmark")
     end
-    return true
 end, function()
     dom:unregister()
     dom = nil
-    return true
 end)
 
 local PLOT_MASK = "bench_%s_%s.gnuplot"

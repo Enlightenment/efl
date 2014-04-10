@@ -50,13 +50,11 @@ local init = function()
     eina = util.lib_load("eina")
     global_domain  = ffi.new("Domain_Private", eina.EINA_LOG_DOMAIN_GLOBAL)
     default_domain = global_domain
-    return true
 end
 
 local shutdown = function()
     util.lib_unload("eina")
     default_domain, global_domain = nil, nil
-    return true
 end
 
 cutil.init_module(init, shutdown)
