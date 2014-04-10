@@ -5,8 +5,6 @@ local ffi = require("ffi")
 local C = ffi.C
 
 ffi.cdef [[
-    int eina_hamster_count(void);
-
     typedef struct _Eina_Counter Eina_Counter;
     Eina_Counter *eina_counter_new  (const char   *name);
     void          eina_counter_free (Eina_Counter *counter);
