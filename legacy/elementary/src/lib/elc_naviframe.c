@@ -39,6 +39,13 @@ static const char SIG_CLICKED[] = "clicked";
 
 static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
 
+static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"top_item_get", _key_action_top_item_get},
+   {NULL, NULL}
+};
+
 static void
 _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item *it)
 {
@@ -1370,28 +1377,33 @@ _elc_naviframe_evas_smart_show(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED)
      evas_object_show(VIEW(top));
 }
 
-EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_event(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool
+_key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    Elm_Naviframe_Item *it;
-   (void)src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (strcmp(ev->key, "BackSpace")) return EINA_FALSE;
-
    eo_do(obj, elm_obj_naviframe_top_item_get((Elm_Object_Item **)&it));
    if (!it) return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
    //FIXME: Replace this below code to elm_naviframe_item_pop() at elm 2.0.
    ///Leave for compatibility.
    if (it->title_prev_btn)
      evas_object_smart_callback_call(it->title_prev_btn, SIG_CLICKED, NULL);
 
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elc_naviframe_elm_widget_event(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   (void)src;
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (!_elm_config_key_binding_call(obj, ev, key_actions)) return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 

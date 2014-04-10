@@ -648,5 +648,19 @@ group "Elm_Config" struct {
            }
         }
      }
+     group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elc_Naviframe";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "modifiers" string: "None";
+              value "key" string: "BackSpace";
+              value "action" string: "top_item_get";
+              value "params" string: "";
+              value "any_mod" uchar: 1;
+              value "no_string" uchar: 0;
+           }
+        }
+     }
   }
 }
