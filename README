@@ -488,7 +488,6 @@ Recommended requirements (highly recommended):
 Enable these with configure options:
 
     --enable-xinput22 \
-    --enable-multisense \
     --enable-systemd \
     --enable-image-loader-webp \
     --enable-harfbuzz

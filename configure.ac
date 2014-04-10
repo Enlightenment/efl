@@ -3767,7 +3767,7 @@ EFL_LIB_START([Edje])
 ### Additional options to configure
 
 ### Default values
-want_multisense="no" # TODO: move to ecore_audio and enable
+want_multisense="yes"
 AC_ARG_ENABLE([multisense],
    [AC_HELP_STRING([--enable-multisense],
        [Enable multisense support. @<:@default=disabled@:>@])],
