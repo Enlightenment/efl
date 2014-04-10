@@ -258,7 +258,6 @@ group "Elm_Config" struct {
               value "action" string: "activate";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -267,7 +266,6 @@ group "Elm_Config" struct {
               value "action" string: "activate";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -276,7 +274,6 @@ group "Elm_Config" struct {
               value "action" string: "activate";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
         }
      }
@@ -290,7 +287,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prior";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -299,7 +295,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prior";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -308,7 +303,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -317,7 +311,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -326,7 +319,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "left";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -335,7 +327,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "left";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -344,7 +335,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "right";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -353,7 +343,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "right";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -362,7 +351,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "up";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -371,7 +359,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "up";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -380,7 +367,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -389,7 +375,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
         }
      }
@@ -403,7 +388,6 @@ group "Elm_Config" struct {
               value "action" string: "activate";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -412,7 +396,6 @@ group "Elm_Config" struct {
               value "action" string: "activate";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -421,7 +404,6 @@ group "Elm_Config" struct {
               value "action" string: "activate";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
         }
      }
@@ -435,7 +417,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "left";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -444,7 +425,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "left";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -453,7 +433,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "right";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -462,7 +441,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "right";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -471,7 +449,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "up";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -480,7 +457,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "up";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -489,7 +465,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -498,7 +473,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
         }
      }
@@ -512,7 +486,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prev";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -521,7 +494,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prev";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -530,7 +502,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prev";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -539,7 +510,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prev";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -548,7 +518,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -557,7 +526,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -566,7 +534,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -575,7 +542,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -584,7 +550,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "first";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -593,7 +558,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "first";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -602,7 +566,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "last";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -611,7 +574,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "last";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
         }
      }
@@ -625,7 +587,6 @@ group "Elm_Config" struct {
               value "action" string: "toggle";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -634,7 +595,6 @@ group "Elm_Config" struct {
               value "action" string: "toggle";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -643,7 +603,6 @@ group "Elm_Config" struct {
               value "action" string: "toggle";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
         }
      }
@@ -657,7 +616,6 @@ group "Elm_Config" struct {
               value "action" string: "top_item_get";
               value "params" string: "";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
         }
      }
@@ -671,7 +629,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "left";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -680,7 +637,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "left";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -689,7 +645,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "right";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -698,7 +653,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "right";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -707,7 +661,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "up";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -716,7 +669,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "up";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -725,7 +677,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -734,7 +685,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "down";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -743,7 +693,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "first";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -752,7 +701,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "first";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -761,7 +709,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "last";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -770,7 +717,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "last";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -779,7 +725,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prior";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -788,7 +733,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "prior";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -797,7 +741,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 0;
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -806,7 +749,6 @@ group "Elm_Config" struct {
               value "action" string: "move";
               value "params" string: "next";
               value "any_mod" uchar: 1;
-              value "no_string" uchar: 1;
            }
         }
      }

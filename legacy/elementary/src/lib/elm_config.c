@@ -452,7 +452,6 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, action, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, params, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, any_mod, EET_T_UCHAR);
-   ELM_CONFIG_VAL(D, T, no_string, EET_T_UCHAR);
 #undef T
 #undef D
 
@@ -2166,11 +2165,10 @@ _elm_config_key_binding_call(Evas_Object *obj,
      {
         EINA_LIST_FOREACH(binding_list, l, binding)
           {
-             if (binding->key && (!strcmp(binding->key, ev->keyname))
+             if (binding->key && (!strcmp(binding->key, ev->key))
                  && ((evas_key_modifier_is_set
                       (ev->modifiers, binding->modifiers)
-                      || (binding->any_mod)))
-                 && !(ev->string && binding->no_string))
+                      || (binding->any_mod))))
                {
                   while (actions[i].name)
                     {
