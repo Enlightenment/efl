@@ -43,7 +43,7 @@ _method_close(const Eldbus_Service_Interface *iface, const Eldbus_Message *messa
    Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
-   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL, NULL));
+   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL));
 
    return eldbus_message_method_return_new(message);
 }
@@ -55,7 +55,7 @@ _method_pause(const Eldbus_Service_Interface *iface, const Eldbus_Message *messa
    Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
-   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL, NULL));
+   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL));
 
    return eldbus_message_method_return_new(message);
 }
@@ -67,7 +67,7 @@ _method_resume(const Eldbus_Service_Interface *iface, const Eldbus_Message *mess
    Elm_App_Server_View_Data *data = eo_data_scope_get(eo, MY_CLASS);
 
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
-   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL, NULL));
+   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL));
 
    return eldbus_message_method_return_new(message);
 }
@@ -170,28 +170,28 @@ EOLIAN static void
 _elm_app_server_view_resume(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_LIVE);
-   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_RESUMED, NULL));
 }
 
 EOLIAN static void
 _elm_app_server_view_pause(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_PAUSED);
-   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_PAUSED, NULL));
 }
 
 EOLIAN static void
 _elm_app_server_view_close(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_CLOSED);
-   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_CLOSED, NULL));
 }
 
 EOLIAN static void
 _elm_app_server_view_shallow(Eo *obj, Elm_App_Server_View_Data *data)
 {
    _state_set(data, ELM_APP_VIEW_STATE_SHALLOW);
-   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_SHALLOW, NULL, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_SHALLOW, NULL));
 }
 
 EOLIAN static Elm_App_View_State
@@ -301,13 +301,13 @@ _elm_app_server_view_path_get(Eo *obj EINA_UNUSED, Elm_App_Server_View_Data *dat
 EOLIAN static void
 _elm_app_server_view_constructor(Eo *obj, Elm_App_Server_View_Data *data, const char *id)
 {
-   Elm_App_Server *server;
-   const char *server_path;
+   Elm_App_Server *server = NULL;
+   const char *server_path = NULL;
    char view_path[PATH_MAX];
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
-   eo_do(obj, eo_parent_get(&server));
+   eo_do(obj, server = eo_parent_get());
    EINA_SAFETY_ON_TRUE_GOTO(!server || !eo_isa(server, ELM_APP_SERVER_CLASS), error);
 
    if (!id)
@@ -316,10 +316,10 @@ _elm_app_server_view_constructor(Eo *obj, Elm_App_Server_View_Data *data, const 
         for (i = 1; i < 99999; i++)
           {
              char buf[64];
-             Eina_Bool valid;
+             Eina_Bool valid = EINA_FALSE;
 
              snprintf(buf, sizeof(buf), "view_%d", i);
-             eo_do(server, elm_app_server_view_check(buf, &valid));
+             eo_do(server, valid = elm_app_server_view_check(buf));
              if (valid)
                {
                   data->id = eina_stringshare_add(buf);
@@ -329,15 +329,15 @@ _elm_app_server_view_constructor(Eo *obj, Elm_App_Server_View_Data *data, const 
      }
    else
      {
-        Eina_Bool valid;
-        eo_do(server, elm_app_server_view_check(id, &valid));
+        Eina_Bool valid = EINA_FALSE;
+        eo_do(server, valid = elm_app_server_view_check(id));
         if (valid)
           data->id = eina_stringshare_add(id);
      }
 
    EINA_SAFETY_ON_NULL_GOTO(data->id, error);
 
-   eo_do(server, elm_app_server_path_get(&server_path));
+   eo_do(server, server_path = elm_app_server_path_get());
    snprintf(view_path, sizeof(view_path), "%s/%s", server_path, data->id);
 
    eldbus_init();

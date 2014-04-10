@@ -39,9 +39,9 @@ _view_del_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, 
 static Eina_Bool
 _view_append(Elm_App_Server_Data *data, Elm_App_Server_View *view)
 {
-   Eina_Stringshare *view_id;
+   Eina_Stringshare *view_id = NULL;
 
-   eo_do(view, elm_app_server_view_id_get(&view_id));
+   eo_do(view, view_id = elm_app_server_view_id_get());
 
    if (eina_hash_find(data->views, view_id))
      {
@@ -61,7 +61,7 @@ _method_create_view(const Eldbus_Service_Interface *iface, const Eldbus_Message 
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
    Elm_App_Server_Data *data = eo_data_scope_get(eo, MY_CLASS);
    Eina_Value *args;
-   Eina_Stringshare *error_name, *error_message, *view_path;
+   Eina_Stringshare *error_name, *error_message, *view_path = NULL;
    Elm_App_Server_View *view;
    Eldbus_Message *reply;
 
@@ -87,7 +87,7 @@ _method_create_view(const Eldbus_Service_Interface *iface, const Eldbus_Message 
                                          NULL);
         return reply;
      }
-   eo_do(view, elm_app_server_view_path_get(&view_path));
+   eo_do(view, view_path = elm_app_server_view_path_get());
 
    reply = eldbus_message_method_return_new(message);
    eldbus_message_arguments_append(reply, "o", view_path);
@@ -131,7 +131,7 @@ _method_terminate(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 {
    Eo *eo = eldbus_service_object_data_get(iface, MY_CLASS_NAME);
 
-   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_EVENT_TERMINATE, NULL, NULL));
+   eo_do(eo, eo_event_callback_call(ELM_APP_SERVER_EVENT_TERMINATE, NULL));
 
    return eldbus_message_method_return_new(message);
 }
@@ -300,16 +300,16 @@ _elm_app_server_save(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
    EINA_ITERATOR_FOREACH(iter, view)
      {
         Elm_App_Server_View_Props *view_props;
-        const char *id, *title, *icon_name;
-        int new_events;
-        short progress;
+        const char *id = NULL, *title = NULL, *icon_name = NULL;
+        int new_events = 0;
+        short progress = 0;
 
-        eo_do(view, elm_app_server_view_id_get(&id),
-              elm_app_server_view_title_get(&title),
-              elm_app_server_view_icon_get(&icon_name),
-              elm_app_server_view_new_events_get(&new_events),
-              elm_app_server_view_progress_get(&progress),
-              eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL, NULL));
+        eo_do(view, id = elm_app_server_view_id_get(),
+              title = elm_app_server_view_title_get(),
+              icon_name = elm_app_server_view_icon_get(),
+              new_events = elm_app_server_view_new_events_get(),
+              progress = elm_app_server_view_progress_get(),
+              eo_event_callback_call(ELM_APP_SERVER_VIEW_EVENT_SAVE, NULL));
 
         view_props = elm_app_server_view_props_new(id, title, icon_name,
                                                    new_events, progress);

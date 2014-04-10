@@ -362,7 +362,7 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
 
    if (recursion_depth > 0)
      {
-        eo_do(dbus_menu->menu, elm_obj_menu_items_get(&ret));
+        eo_do(dbus_menu->menu, ret = elm_obj_menu_items_get());
         items = (Eina_List *)ret;
         EINA_LIST_FOREACH (items, l, item)
           {
@@ -444,7 +444,7 @@ _elm_dbus_menu_add(Eo *menu)
 
    dbus_menu->menu = menu;
 
-   eo_do(menu, elm_obj_menu_items_get(&ret));
+   eo_do(menu, ret = elm_obj_menu_items_get());
    items = (Eina_List *)ret;
    EINA_LIST_FOREACH (items, l, item)
      {

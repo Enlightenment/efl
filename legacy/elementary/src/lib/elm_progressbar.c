@@ -139,7 +139,7 @@ EOLIAN static Eina_Bool
 _elm_progressbar_elm_widget_sub_object_del(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if(!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -154,7 +154,7 @@ EOLIAN static Eina_Bool
 _elm_progressbar_elm_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
    if(!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -173,7 +173,7 @@ _elm_progressbar_elm_widget_theme_apply(Eo *obj, Elm_Progressbar_Data *sd)
      eina_stringshare_replace(&ld->group, "horizontal");
    else eina_stringshare_replace(&ld->group, "vertical");
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (sd->pulse)
@@ -332,7 +332,7 @@ _elm_progressbar_eo_base_constructor(Eo *obj, Elm_Progressbar_Data *_pd EINA_UNU
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -343,7 +343,7 @@ _elm_progressbar_pulse_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, Eina_B
 
    sd->pulse = pulse;
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool
@@ -508,7 +508,7 @@ _elm_progressbar_horizontal_set(Eo *obj, Elm_Progressbar_Data *sd, Eina_Bool hor
    if (sd->horizontal == horizontal) return;
 
    sd->horizontal = horizontal;
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool

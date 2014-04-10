@@ -114,7 +114,7 @@ _elm_bubble_elm_layout_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
    if (!int_ret) return EINA_FALSE;
 
    if (part && (!strcmp(part, "info") || !strcmp(part, "elm.info")))
@@ -228,7 +228,7 @@ _elm_bubble_eo_base_constructor(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -244,7 +244,7 @@ _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
    eina_stringshare_replace
      (&ld->group, corner_string[sd->pos]);
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Elm_Bubble_Pos

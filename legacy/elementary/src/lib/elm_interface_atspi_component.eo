@@ -38,7 +38,7 @@ mixin Elm_Interface_Atspi_Component ()
       }
    }
    methods {
-      extents_set {
+      protected extents_set {
          params {
             @in int x;
             @in int y;
@@ -48,7 +48,7 @@ mixin Elm_Interface_Atspi_Component ()
          }
          return Eina_Bool;
       }
-      extents_get {
+      protected extents_get {
          params {
             @out int x;
             @out int y;
@@ -57,7 +57,7 @@ mixin Elm_Interface_Atspi_Component ()
             @in AtspiCoordType type;
          }
       }
-      contains {
+      protected contains {
          params {
             @in int x;
             @in int y;
@@ -68,7 +68,7 @@ mixin Elm_Interface_Atspi_Component ()
       focus_grab {
          return Eina_Bool;
       }
-      accessible_at_point_get {
+      protected accessible_at_point_get {
          params {
             @in int x;
             @in int y;
@@ -76,7 +76,7 @@ mixin Elm_Interface_Atspi_Component ()
          }
          return Elm_Atspi_Object *;
       }
-      position_set {
+      protected position_set {
          params {
             @in int x;
             @in int y;
@@ -84,7 +84,7 @@ mixin Elm_Interface_Atspi_Component ()
          }
          return Eina_Bool;
       }
-      position_get {
+      protected position_get {
          params {
             @out int x;
             @out int y;

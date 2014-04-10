@@ -36,7 +36,7 @@ class Elm_Atspi_Object (Eo_Base, Elm_Interface_Atspi_Component)
          get {
          }
       }
-      role {
+      protected role {
          get {
          }
          values {

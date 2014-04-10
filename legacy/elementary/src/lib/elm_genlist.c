@@ -2730,7 +2730,7 @@ _elm_genlist_elm_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSE
     * creation, thus issuing TOO MANY sizing_eval()'s here. they are
     * not needed at here anyway, so let's skip listening to those
     * hints changes */
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_add(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_add(sobj));
    if (!int_ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -2748,7 +2748,7 @@ _elm_genlist_elm_widget_sub_object_del(Eo *obj, Elm_Genlist_Data *sd, Evas_Objec
     * about too many recalculations */
    sd->on_sub_del = EINA_TRUE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    sd->on_sub_del = EINA_FALSE;
@@ -2818,7 +2818,7 @@ _elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd)
    Elm_Object_Item *it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && (sd->items) && (sd->selected) &&
@@ -2942,7 +2942,7 @@ _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
    Eina_List *l;
    Elm_Gen_Item *it;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -4103,7 +4103,7 @@ _item_process_post(Elm_Genlist_Data *sd,
     */
    if (sd->selected && it->item->before)
      {
-        int y, h;
+        int y = 0, h;
         Elm_Gen_Item *it2;
 
         it2 = sd->selected->data;
@@ -5262,7 +5262,7 @@ _elm_genlist_eo_base_constructor(Eo *obj, Elm_Genlist_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 static void

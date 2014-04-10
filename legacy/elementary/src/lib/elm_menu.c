@@ -208,7 +208,7 @@ _elm_menu_elm_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
    const char *s;
    char style[1024];
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (sd->menu_bar)
@@ -733,7 +733,7 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
           }
      }
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EAPI Evas_Object *
@@ -748,13 +748,13 @@ elm_menu_add(Evas_Object *parent)
 EOLIAN static void
 _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
 {
-   Eo *parent;
+   Eo *parent = NULL;
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL),
-         eo_parent_get(&parent));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
+         parent = eo_parent_get());
 
    elm_menu_parent_set(obj, parent);
    elm_hover_target_set(sd->hv, sd->location);
@@ -824,7 +824,7 @@ elm_menu_parent_get(const Evas_Object *obj)
 {
    ELM_MENU_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_widget_parent_get(&ret));
+   eo_do((Eo *) obj, ret = elm_obj_widget_parent_get());
    return ret;
 }
 

@@ -1205,7 +1205,7 @@ EOLIAN static Eina_Bool
 _elm_win_elm_widget_on_focus(Eo *obj, Elm_Win_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_TRUE;
 
    if (sd->img_obj)
@@ -2883,7 +2883,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 {
    sd->obj = obj; // in ctor
 
-   Evas_Object *parent;
+   Evas_Object *parent = NULL;
    Evas *e;
    const Eina_List *l;
    const char *fontpath, *engine = NULL, *enginelist[32], *disp;
@@ -2891,7 +2891,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 
    Elm_Win_Data tmp_sd;
 
-   eo_do(obj, eo_parent_get(&parent));
+   eo_do(obj, parent = eo_parent_get());
 
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Elm_Win_Data));
@@ -3105,7 +3105,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 
    if (getenv("ELM_FIRST_FRAME"))
      evas_event_callback_add(ecore_evas_get(tmp_sd.ee), EVAS_CALLBACK_RENDER_POST,
@@ -4563,7 +4563,7 @@ EOLIAN static Eina_Bool
 _elm_win_elm_widget_theme_apply(Eo *obj, Elm_Win_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_TRUE;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
@@ -4644,7 +4644,7 @@ elm_win_wl_window_get(const Evas_Object *obj)
 
    ELM_WIN_CHECK(obj) NULL;
    Ecore_Wl_Window *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_win_wl_window_get(&ret));
+   eo_do((Eo *) obj, ret = elm_obj_win_wl_window_get());
    return ret;
 }
 
@@ -4761,7 +4761,7 @@ elm_win_window_id_get(const Evas_Object *obj)
 
    ELM_WIN_CHECK(obj) 0;
    Ecore_Window ret = 0;
-   eo_do((Eo *) obj, elm_obj_win_window_id_get(&ret));
+   eo_do((Eo *) obj, ret = elm_obj_win_window_id_get());
    return ret;
 }
 

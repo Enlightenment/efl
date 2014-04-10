@@ -113,7 +113,7 @@ _elm_actionslider_elm_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA
 
    mirrored = elm_object_mirrored_get(obj);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (elm_object_mirrored_get(obj) != mirrored)
@@ -435,7 +435,7 @@ _elm_actionslider_elm_layout_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
    Eina_Bool int_ret = EINA_FALSE;
 
    _mirrored_part_fix(obj, &part);
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, text, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, text));
 
    return int_ret;
 }
@@ -443,11 +443,11 @@ _elm_actionslider_elm_layout_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
 EOLIAN static const char*
 _elm_actionslider_elm_layout_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part)
 {
-   const char *text;
+   const char *text = NULL;
 
    _mirrored_part_fix(obj, &part);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, &text));
+   eo_do_super(obj, MY_CLASS, text = elm_obj_layout_text_get(part));
 
    return text;
 }
@@ -526,7 +526,7 @@ _elm_actionslider_eo_base_constructor(Eo *obj, Elm_Actionslider_Data *_pd EINA_U
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void

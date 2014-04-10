@@ -379,7 +379,7 @@ _elm_icon_elm_image_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const
    if (!sd->is_video)
      {
         Eina_Bool int_ret = EINA_FALSE;
-        eo_do_super(obj, MY_CLASS, elm_obj_image_file_set(file, key, &int_ret));
+        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_image_file_set(file, key));
         return int_ret;
      }
 
@@ -428,7 +428,7 @@ _elm_icon_elm_image_memfile_set(Eo *obj, Elm_Icon_Data *sd, const void *img, siz
 
    _edje_signals_free(sd);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_image_memfile_set(img, size, format, key, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_image_memfile_set(img, size, format, key));
    return int_ret;
 }
 
@@ -440,7 +440,7 @@ _elm_icon_elm_widget_theme_apply(Eo *obj, Elm_Icon_Data *sd)
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -697,7 +697,7 @@ _elm_icon_eo_base_constructor(Eo *obj, Elm_Icon_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EAPI Eina_Bool
@@ -710,7 +710,7 @@ elm_icon_memfile_set(Evas_Object *obj,
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_image_memfile_set(img, size, format, key, &ret));
+   eo_do(obj, ret = elm_obj_image_memfile_set(img, size, format, key));
    return ret;
 }
 
@@ -723,7 +723,7 @@ elm_icon_file_set(Evas_Object *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_image_file_set(file, group, &ret));
+   eo_do(obj, ret = elm_obj_image_file_set(file, group));
    return ret;
 }
 

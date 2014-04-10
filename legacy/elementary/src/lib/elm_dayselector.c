@@ -72,7 +72,7 @@ _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data 
         elm_object_text_set(VIEW(it), buf);
      }
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -128,7 +128,7 @@ _elm_dayselector_elm_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
    char buf[1024];
    Elm_Dayselector_Item *it;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, it)
@@ -237,7 +237,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
      {
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(buf, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(buf, content));
         if (!int_ret) return EINA_FALSE;
 
         if (!content) return EINA_TRUE; /* item deletion already handled */
@@ -252,7 +252,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
 
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(buf, content, &int_ret));
+        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(buf, content));
         if (!int_ret)
           {
              elm_widget_item_free(it);
@@ -301,7 +301,7 @@ _elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, 
 
    content = VIEW(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(buf, &content));
+   eo_do_super(obj, MY_CLASS, content = elm_obj_container_content_unset(buf));
    if (!content) return NULL;
 
    sd->items = eina_list_remove(sd->items, it);
@@ -450,7 +450,7 @@ _elm_dayselector_eo_base_constructor(Eo *obj, Elm_Dayselector_Data *_pd EINA_UNU
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void

@@ -90,7 +90,7 @@ EOLIAN static Eina_Bool
 _elm_route_elm_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    //TODO

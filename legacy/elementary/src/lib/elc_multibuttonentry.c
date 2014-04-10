@@ -48,7 +48,7 @@ _elc_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Multibuttone
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -68,8 +68,8 @@ _elc_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elc_Multibuttonentry_Data 
    Eina_List *l;
    Elm_Multibuttonentry_Item *item;
 
-   Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, item)
@@ -1385,7 +1385,7 @@ _view_init(Evas_Object *obj, Elc_Multibuttonentry_Data *sd)
 EOLIAN static Eina_Bool
 _elc_multibuttonentry_elm_layout_text_set(Eo *obj, Elc_Multibuttonentry_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    if (!part || !strcmp(part, "default"))
      {
@@ -1398,7 +1398,7 @@ _elc_multibuttonentry_elm_layout_text_set(Eo *obj, Elc_Multibuttonentry_Data *sd
         int_ret = EINA_TRUE;
      }
    else
-     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_set(part, label, &int_ret));
+     eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
 
    return int_ret;
 }
@@ -1417,7 +1417,7 @@ _elc_multibuttonentry_elm_layout_text_get(Eo *obj, Elc_Multibuttonentry_Data *sd
         text = sd->guide_text_str;
      }
    else
-     eo_do_super(obj, MY_CLASS, elm_obj_layout_text_get(part, &text));
+     eo_do_super(obj, MY_CLASS, text = elm_obj_layout_text_get(part));
 
    return text;
 }
@@ -1616,7 +1616,7 @@ _elc_multibuttonentry_eo_base_constructor(Eo *obj, Elc_Multibuttonentry_Data *sd
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static Evas_Object*

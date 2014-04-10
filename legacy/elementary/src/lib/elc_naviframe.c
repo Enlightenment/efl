@@ -82,7 +82,7 @@ _elc_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
    EINA_INLIST_FOREACH(sd->stack, it)
      elm_widget_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate(NULL));
+   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
 
    return EINA_TRUE;
 }
@@ -343,13 +343,13 @@ EOLIAN static Eina_Bool
 _elc_naviframe_elm_widget_theme_apply(Eo *obj, Elc_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item *it;
-   const char *style, *sstyle;
+   const char *style = NULL, *sstyle = NULL;
 
-   eo_do(obj, elm_obj_widget_style_get(&style));
+   eo_do(obj, style = elm_obj_widget_style_get());
 
    EINA_INLIST_FOREACH(sd->stack, it)
      {
-        eo_do(VIEW(it), elm_obj_widget_style_get(&sstyle));
+        eo_do(VIEW(it), sstyle = elm_obj_widget_style_get());
         if ((style && sstyle) && strcmp(style, sstyle))
           _item_style_set(it, it->style);
         _item_signals_emit(it);
@@ -1380,8 +1380,8 @@ _elc_naviframe_evas_smart_show(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED)
 static Eina_Bool
 _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Elm_Naviframe_Item *it;
-   eo_do(obj, elm_obj_naviframe_top_item_get((Elm_Object_Item **)&it));
+   Elm_Naviframe_Item *it = NULL;
+   eo_do(obj, it = (Elm_Naviframe_Item *) elm_obj_naviframe_top_item_get());
    if (!it) return EINA_FALSE;
 
    //FIXME: Replace this below code to elm_naviframe_item_pop() at elm 2.0.
@@ -1497,7 +1497,7 @@ _elc_naviframe_eo_base_constructor(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static Elm_Object_Item*

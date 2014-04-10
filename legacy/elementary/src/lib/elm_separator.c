@@ -16,7 +16,7 @@
 EOLIAN static Eina_Bool
 _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
    ELM_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->horizontal)
@@ -24,7 +24,7 @@ _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
    else
      eina_stringshare_replace(&ld->group, "vertical");
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -81,7 +81,7 @@ _elm_separator_horizontal_set(Eo *obj, Elm_Separator_Data *sd, Eina_Bool horizon
 
    sd->horizontal = horizontal;
 
-   eo_do(obj, elm_obj_widget_theme_apply(NULL));
+   eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EOLIAN static Eina_Bool

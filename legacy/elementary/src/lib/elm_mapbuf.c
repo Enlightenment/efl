@@ -33,7 +33,7 @@ EOLIAN static Eina_Bool
 _elm_mapbuf_elm_widget_theme_apply(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -72,7 +72,7 @@ EOLIAN static Eina_Bool
 _elm_mapbuf_elm_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)

@@ -208,7 +208,7 @@ static void
 _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
    Dropable *dropable = NULL;
-   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
    if (dropable)
      {
         Dropable_Cbs *cbs;
@@ -1218,7 +1218,7 @@ _x11_dropable_list_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
          */
         while (object)
           {
-             eo_do(object, eo_base_data_get("__elm_dropable", (void **)&dropable));
+             eo_do(object, dropable = eo_key_data_get("__elm_dropable"));
              if (dropable)
                {
                   Eina_Bool exist = EINA_FALSE;
@@ -2029,7 +2029,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    cbs->dropdata = dropdata;
    cbs->types = format;
 
-   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
    if (!dropable)
      {
         /* Create new drop */
@@ -2039,7 +2039,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
-        eo_do(obj, eo_base_data_set("__elm_dropable", dropable, NULL));
+        eo_do(obj, eo_key_data_set("__elm_dropable", dropable, NULL));
      }
    dropable->cbs_list = eina_inlist_append(dropable->cbs_list, EINA_INLIST_GET(cbs));
 
@@ -2075,14 +2075,14 @@ _x11_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                          Elm_Drag_Pos poscb, void *posdata,
                          Elm_Drop_Cb dropcb, void *dropdata)
 {
-   Dropable *dropable;
+   Dropable *dropable = NULL;
    Eina_List *l;
    Ecore_X_Window xwin;
    Eina_Bool have_drops = EINA_FALSE;
 
    _x11_elm_cnp_init();
 
-   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
    if (dropable)
      {
         Eina_Inlist *itr;
@@ -2103,7 +2103,7 @@ _x11_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         if (!dropable->cbs_list)
           {
              drops = eina_list_remove(drops, dropable);
-             eo_do(obj, eo_base_data_del("__elm_dropable"));
+             eo_do(obj, eo_key_data_del("__elm_dropable"));
              free(dropable);
              dropable = NULL;
              evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
@@ -2753,7 +2753,7 @@ _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State 
    cbs->dropdata = dropdata;
    cbs->types = format;
 
-   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
    if (!dropable)
      {
         /* Create new drop */
@@ -2762,7 +2762,7 @@ _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State 
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
-        eo_do(obj, eo_base_data_set("__elm_dropable", dropable, NULL));
+        eo_do(obj, eo_key_data_set("__elm_dropable", dropable, NULL));
      }
    dropable->cbs_list = eina_inlist_append(dropable->cbs_list, EINA_INLIST_GET(cbs));
 
@@ -2799,9 +2799,9 @@ _wl_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                         Elm_Drag_Pos poscb, void *posdata,
                         Elm_Drop_Cb dropcb, void *dropdata)
 {
-   Dropable *dropable;
+   Dropable *dropable = NULL;
 
-   eo_do(obj, eo_base_data_get("__elm_dropable", (void **)&dropable));
+   eo_do(obj, dropable = eo_key_data_get("__elm_dropable"));
    if (dropable)
      {
         Eina_Inlist *itr;
@@ -2822,7 +2822,7 @@ _wl_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         if (!dropable->cbs_list)
           {
              drops = eina_list_remove(drops, dropable);
-             eo_do(obj, eo_base_data_del("__elm_dropable"));
+             eo_do(obj, eo_key_data_del("__elm_dropable"));
              ELM_SAFE_FREE(dropable, free);
              evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                    _all_drop_targets_cbs_del);

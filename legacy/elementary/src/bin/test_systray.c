@@ -16,11 +16,11 @@ _ev_handler(void *data EINA_UNUSED,
             int type EINA_UNUSED,
             void *event EINA_UNUSED)
 {
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
    printf("systray ready event\n");
 
-   eo_do(item, elm_obj_systray_register(&ret));
+   eo_do(item, ret = elm_obj_systray_register());
 
    printf("Item Registration: ");
    if (ret)

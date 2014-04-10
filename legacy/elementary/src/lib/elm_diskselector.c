@@ -791,7 +791,7 @@ _elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
    Evas *evas;
    const char *style = elm_widget_style_get(obj);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    evas = evas_object_evas_get(obj);
@@ -849,7 +849,7 @@ _elm_diskselector_elm_widget_sub_object_del(Eo *obj, Elm_Diskselector_Data *sd, 
    Elm_Diskselector_Item *it;
    const Eina_List *l;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, it)
@@ -872,7 +872,7 @@ _elm_diskselector_elm_widget_on_focus(Eo *obj, Elm_Diskselector_Data *_pd EINA_U
    Eina_Bool int_ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_on_focus(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
@@ -1270,7 +1270,7 @@ _elm_diskselector_evas_smart_add(Eo *obj, Elm_Diskselector_Data *priv)
 
    eo_do(obj,
          elm_interface_scrollable_objects_set(edje, priv->hit_rect),
-         elm_obj_widget_theme_apply(NULL),
+         elm_obj_widget_theme_apply(),
          elm_interface_scrollable_policy_set(ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF),
          elm_interface_scrollable_bounce_allow_set(EINA_TRUE, EINA_FALSE),
          elm_interface_scrollable_animate_start_cb_set(_scroll_animate_start_cb),
@@ -1435,7 +1435,7 @@ _elm_diskselector_eo_base_constructor(Eo *obj, Elm_Diskselector_Data *_pd EINA_U
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static Eina_Bool

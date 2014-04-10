@@ -345,7 +345,7 @@ EOLIAN static Eina_Bool
 _elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -427,7 +427,7 @@ EOLIAN static Eina_Bool
 _elm_scroller_elm_widget_sub_object_del(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
@@ -595,8 +595,8 @@ _elm_scroller_elm_container_content_set(Eo *obj, Elm_Scroller_Data *sd, const ch
 {
    if (part && strcmp(part, "default"))
      {
-        Eina_Bool int_ret;
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(part, content, &int_ret));
+        Eina_Bool int_ret = EINA_FALSE;
+        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
         return int_ret;
      }
 
@@ -624,8 +624,8 @@ _elm_scroller_elm_container_content_get(Eo *obj, Elm_Scroller_Data *sd, const ch
 {
    if (part && strcmp(part, "default"))
      {
-        Evas_Object *ret;
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(part, &ret));
+        Evas_Object *ret = NULL;
+        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(part));
         return ret;
      }
 
@@ -638,7 +638,7 @@ _elm_scroller_elm_container_content_unset(Eo *obj, Elm_Scroller_Data *sd, const 
    Evas_Object *ret = NULL;
    if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset(part, &ret));
+        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset(part));
         return ret;
      }
 
@@ -771,7 +771,7 @@ _elm_scroller_eo_base_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 /* deprecated */
@@ -785,7 +785,7 @@ _elm_scroller_custom_widget_base_theme_set(Eo *obj, Elm_Scroller_Data *_pd EINA_
 
    if (eina_stringshare_replace(&(ld->klass), klass) ||
        eina_stringshare_replace(&(ld->group), group))
-      eo_do(obj, elm_obj_widget_theme_apply(NULL));
+      eo_do(obj, elm_obj_widget_theme_apply());
 }
 
 EAPI void
@@ -861,9 +861,9 @@ EAPI Elm_Scroller_Single_Direction
 elm_scroller_single_direction_get(const Evas_Object *obj)
 {
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
-   Elm_Scroller_Single_Direction single_dir;
+   Elm_Scroller_Single_Direction single_dir = ELM_SCROLLER_SINGLE_DIRECTION_NONE;
 
-   eo_do((Eo *) obj, elm_interface_scrollable_single_direction_get(&single_dir));
+   eo_do((Eo *) obj, single_dir = elm_interface_scrollable_single_direction_get());
    return single_dir;
 }
 
@@ -872,7 +872,7 @@ _elm_scroller_elm_interface_scrollable_single_direction_get(Eo *obj, Elm_Scrolle
 {
    Elm_Scroller_Single_Direction ret = ELM_SCROLLER_SINGLE_DIRECTION_NONE;
    eo_do_super(obj, MY_CLASS,
-               elm_interface_scrollable_single_direction_get(&ret));
+               ret = elm_interface_scrollable_single_direction_get());
    return ret;
 }
 
@@ -1091,11 +1091,11 @@ elm_scroller_movement_block_set(Evas_Object *obj,
 EAPI Elm_Scroller_Movement_Block
 elm_scroller_movement_block_get(const Evas_Object *obj)
 {
-   Elm_Scroller_Movement_Block block;
+   Elm_Scroller_Movement_Block block = ELM_SCROLLER_MOVEMENT_NO_BLOCK;
 
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
 
-   eo_do((Eo *) obj, elm_interface_scrollable_movement_block_get(&block));
+   eo_do((Eo *) obj, block = elm_interface_scrollable_movement_block_get());
 
    return block;
 }

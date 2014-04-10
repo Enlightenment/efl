@@ -288,8 +288,8 @@ _hov_show_do(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _elm_hover_elm_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
-   Eina_Bool int_ret;
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_theme_apply(&int_ret));
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
@@ -343,11 +343,11 @@ _on_smt_sub_changed(void *data,
 EOLIAN static Eina_Bool
 _elm_hover_elm_widget_sub_object_add(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
    if (evas_object_data_get(sobj, "elm-parent") == obj) return EINA_TRUE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_add(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_add(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sd->smt_sub && sd->smt_sub->obj == sobj)
@@ -360,9 +360,9 @@ _elm_hover_elm_widget_sub_object_add(Eo *obj, Elm_Hover_Data *sd, Evas_Object *s
 EOLIAN static Eina_Bool
 _elm_hover_elm_widget_sub_object_del(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_sub_object_del(sobj, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
    if (sd->smt_sub && sd->smt_sub->obj == sobj)
@@ -435,7 +435,7 @@ _elm_hover_elm_container_content_set(Eo *obj, Elm_Hover_Data *sd, const char *sw
           }
      }
 
-   eo_do_super(obj, MY_CLASS, elm_obj_container_content_set(swallow, content, &int_ret));
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(swallow, content));
    if (!int_ret) return EINA_FALSE;
 
    if (strstr(swallow, "elm.swallow.slot."))
@@ -464,9 +464,9 @@ _elm_hover_elm_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *sw
    if (!swallow) return ret;
 
    if (!strcmp(swallow, "smart"))
-      eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(sd->smt_sub->swallow, &ret));
+      eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(sd->smt_sub->swallow));
    else
-      eo_do_super(obj, MY_CLASS, elm_obj_container_content_get(swallow, &ret));
+      eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_get(swallow));
 
    return ret;
 }
@@ -474,16 +474,16 @@ _elm_hover_elm_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *sw
 EOLIAN static Evas_Object*
 _elm_hover_elm_container_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
-   Evas_Object *int_ret;
+   Evas_Object *int_ret = NULL;
 
    if (!swallow) return NULL;
 
    if (!strcmp(swallow, "smart"))
-      eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset
-            (sd->smt_sub->swallow, &int_ret));
+      eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_unset
+            (sd->smt_sub->swallow));
    else
-      eo_do_super(obj, MY_CLASS, elm_obj_container_content_unset
-            (swallow, &int_ret));
+      eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_unset
+            (swallow));
    return int_ret;
 }
 
@@ -635,7 +635,7 @@ _elm_hover_eo_base_constructor(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
 }
 
 EOLIAN static void
@@ -705,7 +705,7 @@ elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_HOVER_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, elm_obj_widget_parent_get(&ret));
+   eo_do((Eo *) obj, ret = elm_obj_widget_parent_get());
    return ret;
 }
 

@@ -103,9 +103,9 @@ elm_win_inwin_add(Evas_Object *parent)
 EOLIAN static void
 _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Evas_Object *parent;
+   Evas_Object *parent = NULL;
 
-   eo_do(obj, eo_parent_get(&parent));
+   eo_do(obj, parent = eo_parent_get());
 
    if (parent && !eo_isa(parent, ELM_OBJ_WIN_CLASS))
      {
@@ -136,7 +136,7 @@ elm_win_inwin_content_set(Evas_Object *obj,
                           Evas_Object *content)
 {
    ELM_INWIN_CHECK(obj);
-   eo_do(obj, elm_obj_container_content_set(NULL, content, NULL));
+   eo_do(obj, elm_obj_container_content_set(NULL, content));
 }
 
 EAPI Evas_Object *
@@ -144,7 +144,7 @@ elm_win_inwin_content_get(const Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *)obj, elm_obj_container_content_get(NULL, &ret));
+   eo_do((Eo *)obj, ret = elm_obj_container_content_get(NULL));
    return ret;
 }
 
@@ -153,7 +153,7 @@ elm_win_inwin_content_unset(Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do(obj, elm_obj_container_content_unset(NULL, &ret));
+   eo_do(obj, ret = elm_obj_container_content_unset(NULL));
    return ret;
 }
 
