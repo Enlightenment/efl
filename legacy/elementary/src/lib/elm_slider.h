@@ -74,6 +74,7 @@
  * @{
  */
 
+#include "elm_slider_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_slider_eo.h"
 #endif

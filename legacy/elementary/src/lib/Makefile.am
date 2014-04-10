@@ -352,6 +352,7 @@ elm_separator.h \
 elm_separator_eo.h \
 elm_separator_legacy.h \
 elm_slider.h \
+elm_slider_common.h \
 elm_slider_eo.h \
 elm_slider_legacy.h \
 elm_slideshow.h \
@@ -741,24 +742,33 @@ BUILT_SOURCES = \
 		elm_separator.eo.legacy.h \
 		elm_slider.eo.c \
 		elm_slider.eo.h \
+		elm_slider.eo.legacy.h \
 		elm_slideshow.eo.c \
 		elm_slideshow.eo.h \
+		elm_slideshow.eo.legacy.h \
 		elm_spinner.eo.c \
 		elm_spinner.eo.h \
+		elm_spinner.eo.legacy.h \
 		elm_systray.eo.c \
 		elm_systray.eo.h \
 		elm_table.eo.c \
 		elm_table.eo.h \
+		elm_table.eo.legacy.h \
 		elm_thumb.eo.c \
 		elm_thumb.eo.h \
+		elm_thumb.eo.legacy.h \
 		elm_toolbar.eo.c \
 		elm_toolbar.eo.h \
+		elm_toolbar.eo.legacy.h \
 		elm_video.eo.c \
 		elm_video.eo.h \
+		elm_video.eo.legacy.h \
 		elm_web.eo.c \
 		elm_web.eo.h \
+		elm_web.eo.legacy.h \
 		elm_win.eo.c \
-		elm_win.eo.h
+		elm_win.eo.h \
+		elm_win.eo.legacy.h
 
 EXTRA_DIST += \
 	     elm_widget.eo \
@@ -990,4 +1000,13 @@ nodist_includesunstable_HEADERS = \
 		          elm_route.eo.legacy.h \
 		          elm_scroller.eo.legacy.h \
 		          elm_segment_control.eo.legacy.h \
-		          elm_separator.eo.legacy.h
+		          elm_separator.eo.legacy.h \
+                  elm_slider.eo.legacy.h \
+		          elm_slideshow.eo.legacy.h \
+		          elm_spinner.eo.legacy.h \
+		          elm_table.eo.legacy.h \
+		          elm_thumb.eo.legacy.h \
+		          elm_toolbar.eo.legacy.h \
+		          elm_video.eo.legacy.h \
+		          elm_web.eo.legacy.h \
+		          elm_win.eo.legacy.h
