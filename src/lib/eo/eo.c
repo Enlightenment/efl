@@ -28,7 +28,7 @@ static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *k
 static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj);
 static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 static const _Eo_Class *_eo_op_class_get(Eo_Op op);
-static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
+static const char * _eo_op_id_name_get(Eo_Op op);
 
 /* Start of Dich */
 
@@ -96,22 +96,27 @@ _dich_func_get(const _Eo_Class *klass, Eo_Op op)
    return &chain1->funcs[DICH_CHAIN_LAST(op)];
 }
 
-static inline void
+static inline Eina_Bool
 _dich_func_set(_Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
+   op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &klass->chain[idx1];
    _dich_chain_alloc(chain1);
-   if (chain1->funcs[DICH_CHAIN_LAST(op)].src == klass)
+   fsrc = &chain1->funcs[DICH_CHAIN_LAST(op)];
+   if (fsrc->src == klass)
      {
         const _Eo_Class *op_kls = _eo_op_class_get(op);
-        const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
-        ERR("Already set function for op 0x%x (%s:%s). Overriding with func %p",
-              op, op_kls->desc->name, op_desc->name, func);
+        const char *op_name = _eo_op_id_name_get(op);
+        ERR("Class '%s': Overriding func %p for op %d (%s:'%s') with %p.",
+              klass->desc->name, fsrc->func, op, op_kls->desc->name, op_name, func);
+        return EINA_FALSE;
      }
 
-   chain1->funcs[DICH_CHAIN_LAST(op)].func = func;
-   chain1->funcs[DICH_CHAIN_LAST(op)].src = klass;
+   fsrc->func = func;
+   fsrc->src = klass;
+
+   return EINA_TRUE;
 }
 
 static inline void
@@ -131,20 +136,16 @@ _dich_func_clean_all(_Eo_Class *klass)
 
 /* END OF DICH */
 
-static const Eo_Op_Description noop_desc =
-        EO_OP_DESCRIPTION(EO_NOOP, "No operation.");
-
-
 static inline Eina_Bool
-_eo_is_a_class(const Eo *obj_id)
+_eo_is_a_class(const Eo *eo_id)
 {
    Eo_Id oid;
 #ifdef HAVE_EO_ID
-   oid = (Eo_Id) obj_id;
+   oid = (Eo_Id) eo_id;
 #else
-   /* fortunately EO_OBJ_POINTER_RETURN* will handle NULL obj_id */
-   if (!obj_id) return EINA_FALSE;
-   oid = ((Eo_Base *) obj_id)->id;
+   /* fortunately EO_OBJ_POINTER_RETURN* will handle NULL eo_id */
+   if (!eo_id) return EINA_FALSE;
+   oid = ((Eo_Base *) eo_id)->id;
 #endif
    return (((oid >> REF_TAG_SHIFT) & 0x1) == 0x0);
 }
@@ -186,18 +187,24 @@ _eo_op_class_get(Eo_Op op)
 static const Eo_Op_Description *
 _eo_op_id_desc_get(Eo_Op op)
 {
+   unsigned int i;
    const _Eo_Class *klass;
+   const Eo_Op_Description *op_descs;
 
    if (op == EO_NOOP)
-      return &noop_desc;
+      return NULL;
 
    klass = _eo_op_class_get(op);
+   DBG("klass %p %s", klass, klass->desc->name);
 
    if (klass)
      {
-        Eo_Op sub_id = op - klass->base_id;
-       if (sub_id < klass->desc->ops.count)
-          return klass->desc->ops.descs + sub_id;
+        op_descs = klass->desc->ops.descs2;
+        for (i = 0; i <  klass->desc->ops.count; i++)
+          {
+             if (op_descs[i].op == op)
+               return &op_descs[i];
+          }
      }
 
    return NULL;
@@ -207,10 +214,10 @@ static const char *
 _eo_op_id_name_get(Eo_Op op)
 {
    const Eo_Op_Description *desc = _eo_op_id_desc_get(op);
-   return (desc) ? desc->name : NULL;
+   return (desc) ? desc->doc : NULL;
 }
 
-static inline const _Eo_Class *
+static inline const op_type_funcs *
 _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op)
 {
    const _Eo_Class **kls_itr = NULL;
@@ -231,29 +238,585 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
                   kls_itr++;
                   continue;
                }
-             return fsrc->src;
+             return fsrc;
           }
      }
 
    return NULL;
 }
 
-static inline const op_type_funcs *
-_eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
+/************************************ EO ************************************/
+
+EAPI Eo_Hook_Call eo_hook_call_pre = NULL;
+EAPI Eo_Hook_Call eo_hook_call_post = NULL;
+
+// FIXME: Thread Local Storage
+#define EO_INVALID_DATA (void *) -1
+#define EO_CALL_STACK_DEPTH 30
+
+typedef struct _Eo_Stack_Frame
 {
-   const _Eo_Class *klass = cur_klass;
+   const Eo          *eo_id;
+   union {
+        _Eo_Object        *obj;
+        const _Eo_Class   *kls;
+   } o;
+   const _Eo_Class   *cur_klass;
+   void              *obj_data;
+} Eo_Stack_Frame;
+
+static Eina_TLS _eo_call_stack_key = 0;
+
+typedef struct _Eo_Call_Stack {
+     Eo_Stack_Frame *frames;
+     Eo_Stack_Frame *frame_ptr;
+     Eo_Stack_Frame *last_frame;
+     Eo_Stack_Frame *shrink_frame;
+} Eo_Call_Stack;
+
+static Eo_Call_Stack *
+_eo_call_stack_create()
+{
+   Eo_Call_Stack *stack;
+
+   stack = calloc(1, sizeof(Eo_Call_Stack));
+   if (!stack)
+     return NULL;
+
+   stack->frames = calloc(EO_CALL_STACK_DEPTH, sizeof(Eo_Stack_Frame));
+   if (!stack->frames)
+     {
+        free(stack);
+        return NULL;
+     }
+
+   // first frame is never used
+   stack->frame_ptr = stack->frames;
+   stack->last_frame = &stack->frames[EO_CALL_STACK_DEPTH - 1];
+   stack->shrink_frame = stack->frames;
+
+   return stack;
+}
+
+static void
+_eo_call_stack_free(void *ptr)
+{
+   Eo_Call_Stack *stack = (Eo_Call_Stack *) ptr;
+
+   if (!stack) return;
+
+   if (stack->frames)
+     free(stack->frames);
+   free(stack);
+}
+
+static inline Eo_Call_Stack *
+_eo_call_stack_get()
+{
+   Eo_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
+
+   if (stack) return stack;
+
+   stack = _eo_call_stack_create();
+   if (!stack)
+     {
+        EINA_LOG_ERR("Could not alloc eo call stack.");
+        return NULL;
+     }
+
+   if (!eina_tls_set(_eo_call_stack_key, stack))
+     {
+        EINA_LOG_ERR("Could not set eo call stack in TLS key.");
+        _eo_call_stack_free(stack);
+        return NULL;
+     }
+
+   return stack;
+}
+
+static inline void
+_eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
+{
+   size_t sz, next_sz;
+   int frame_offset;
+
+   frame_offset = stack->frame_ptr - stack->frames;
+   sz = stack->last_frame - stack->frames + 1;
+   if (grow)
+     next_sz = sz << 1;
+   else
+     next_sz = sz >> 1;
+
+   DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
+   stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
+   if(!stack->frames)
+     {
+        CRI("unable to resize call stack, abort.");
+        abort();
+     }
+
+   stack->frame_ptr = &stack->frames[frame_offset];
+   stack->last_frame = &stack->frames[next_sz - 1];
+
+   if (grow)
+     frame_offset = (sz >> 1);
+   if (next_sz == EO_CALL_STACK_DEPTH)
+     frame_offset = 0;
+   else
+     frame_offset = (next_sz >> 1);
+   stack->shrink_frame = &stack->frames[frame_offset];
+}
+
+static inline Eina_Bool
+_eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
+                 Eina_Bool is_super, Eo_Stack_Frame *fptr, Eo_Stack_Frame *pfptr)
+{
+   Eina_Bool is_klass = _eo_is_a_class(eo_id);
+
+   /* If we are already in the same object context, we inherit info from it. */
+   if (pfptr)
+     {
+        memcpy(fptr, pfptr, sizeof(Eo_Stack_Frame));
+        if (!is_klass)
+          _eo_ref(fptr->o.obj);
+     }
+   else
+     {
+        fptr->eo_id = eo_id;
+        fptr->obj_data = EO_INVALID_DATA;
+        if (is_klass)
+          {
+             EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+             fptr->o.kls = _klass;
+          }
+        else
+          {
+             EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+             fptr->o.obj = _obj;
+             _eo_ref(_obj);
+          }
+     }
+
+   if (is_super)
+     {
+        EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
+        if (fptr->cur_klass == cur_klass)
+          fptr->obj_data = EO_INVALID_DATA;
+        fptr->cur_klass = cur_klass;
+     }
+   else
+     {
+        fptr->cur_klass = NULL;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+{
+   Eo_Stack_Frame *fptr, *pfptr;
+   Eo_Call_Stack *stack = _eo_call_stack_get();
+
+   if (stack->frame_ptr == stack->last_frame)
+     _eo_call_stack_resize(stack, EINA_TRUE);
+
+   fptr = stack->frame_ptr;
+
+   pfptr = ((eo_id) && (fptr->eo_id == eo_id) ? fptr : NULL);
+   fptr++;
+
+   if (!_eo_do_internal(eo_id, cur_klass_id, is_super, fptr, pfptr))
+     return EINA_FALSE;
+
+   stack->frame_ptr++;
+
+   return EINA_TRUE;
+}
+
+EAPI void
+_eo_do_end(const Eo **eo_id EINA_UNUSED)
+{
+   Eo_Stack_Frame *fptr;
+   Eo_Call_Stack *stack = _eo_call_stack_get();
+
+   fptr = stack->frame_ptr;
+
+   if (!_eo_is_a_class(fptr->eo_id) && fptr->o.obj)
+     _eo_unref(fptr->o.obj);
+
+   fptr->obj_data = EO_INVALID_DATA;
+
+   if (fptr == stack->frames)
+     {
+        CRI("call stack underflow, abort.");
+        abort();
+     }
+
+   stack->frame_ptr--;
+
+   if (fptr == stack->shrink_frame)
+     _eo_call_stack_resize(stack, EINA_FALSE);
+}
+
+EAPI Eina_Bool
+_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line)
+{
+   Eo_Stack_Frame *fptr;
+   const _Eo_Class *klass;
+   const op_type_funcs *func;
+   Eina_Bool is_obj;
+
+   if (op == EO_NOOP) return EINA_FALSE;
+
+   fptr = _eo_call_stack_get()->frame_ptr;
+   is_obj = !_eo_is_a_class(fptr->eo_id);
+
+   klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
+
+   /* If we have a current class, we need to itr to the next. */
+   if (fptr->cur_klass)
+     {
+        func = _eo_kls_itr_next(klass, fptr->cur_klass, op);
+
+        if (!func)
+          goto end;
+
+        klass = func->src;
+     }
+   else
+     {
+        func = _dich_func_get(klass, op);
+     }
+
+   if (EINA_UNLIKELY(func == NULL))
+     {
+        ERR("in %s:%d: you called func '%s' (%d) which is unknown in class '%s'.",
+            file, line, func_name, op, klass->desc->name);
+        return EINA_FALSE;
+     }
+
+   if (EINA_LIKELY(func->func && func->src))
+     {
+        call->func = func->func;
+        call->klass = _eo_class_id_get(klass);
+
+        if (is_obj)
+          {
+             call->obj = (Eo *)fptr->eo_id;
+             if (func->src == fptr->o.obj->klass)
+               {
+                  if (fptr->obj_data == EO_INVALID_DATA)
+                    fptr->obj_data = _eo_data_scope_get(fptr->o.obj, func->src);
+
+                  call->data = fptr->obj_data;
+               }
+             else
+               call->data = _eo_data_scope_get(fptr->o.obj, func->src);
+          }
+        else
+          {
+             call->obj = call->klass;
+             call->data = NULL;
+          }
+
+        return EINA_TRUE;
+     }
+
+   if (func->src != NULL)
+     {
+        ERR("in %s:%d: you called a pure virtual func '%s' (%d).",
+            file, line, func_name, op);
+        return EINA_FALSE;
+     }
+
+
+end:
+   /* Try composite objects */
+   if (is_obj)
+     {
+        const _Eo_Object **comp_itr = fptr->o.obj->composites;
+        if (!comp_itr) goto end2;
+
+        for (unsigned int i = 0; i < fptr->o.obj->klass->composites_count; i++, comp_itr++)
+          {
+             const _Eo_Object *emb_obj = *comp_itr;
+
+             func = _dich_func_get(emb_obj->klass, op);
+             if (func == NULL)
+               continue;
+
+             if (EINA_LIKELY(func->func && func->src))
+               {
+                  call->obj = _eo_id_get(emb_obj);
+                  call->klass = _eo_class_id_get(emb_obj->klass);
+                  call->func = func->func;
+                  call->data = _eo_data_scope_get(emb_obj, func->src);
+
+                  return EINA_TRUE;
+               }
+          }
+     }
+
+end2:
+     {
+        const _Eo_Class *main_klass;
+        main_klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
+
+        /* If it's a do_super call. */
+        if (fptr->cur_klass)
+          {
+             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
+                 file, line, func_name, op, main_klass->desc->name,
+                 fptr->cur_klass->desc->name);
+          }
+        else
+          {
+             /* we should not be able to take this branch */
+             ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
+                 file, line, func_name, op, main_klass->desc->name);
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+
+static inline const Eo_Op_Description *
+_eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns)
+{
+   int imin, imax, imid;
+   const _Eo_Class *cur_klass;
+   const _Eo_Class **kls_itr = NULL;
+   const Eo_Op_Description *op_desc;
+   const Eo_Op_Description *op_descs;
+
    if (klass)
      {
-        const op_type_funcs *func = _dich_func_get(klass, op);
-
-        if (func && func->func)
+        for (kls_itr = klass->mro ; *kls_itr ; kls_itr++)
           {
-             return func;
+             cur_klass = *kls_itr;
+             imin = 0;
+             imax = cur_klass->desc->ops.count - 1;
+             op_descs = cur_klass->desc->ops.descs2;
+
+             while (imax >= imin)
+               {
+                  imid = (imax + imin) / 2;
+                  op_desc = op_descs + imid;
+
+                  if (op_desc->api_func > api_func)
+                    imin = imid + 1;
+                  else if (op_desc->api_func < api_func)
+                    imax = imid - 1;
+                  else
+                    return op_desc;
+               }
+
+          }
+     }
+
+   if (extns)
+     {
+        for (kls_itr = extns ; *kls_itr ; kls_itr++)
+          {
+             cur_klass = *kls_itr;
+             op_desc = _eo_api_desc_get(api_func, cur_klass, NULL);
+             if (op_desc) return op_desc;
           }
      }
 
    return NULL;
 }
+
+EAPI Eo_Op
+_eo_api_op_id_get(const void *api_func, const char *file, int line)
+{
+   const Eo_Op_Description *desc;
+   const _Eo_Class *klass;
+   Eo_Call_Stack *stack = _eo_call_stack_get();
+
+   Eina_Bool class_ref = _eo_is_a_class(stack->frame_ptr->eo_id);
+
+   if (class_ref)
+     klass = stack->frame_ptr->o.kls;
+   else
+     klass = stack->frame_ptr->o.obj->klass;
+
+   desc = _eo_api_desc_get(api_func, klass, klass->extensions);
+
+   if (desc == NULL)
+     {
+        ERR("in %s:%d: unable to resolve %s api func %p.",
+            file, line, (class_ref ? "class" : "regular"), api_func);
+        return EO_NOOP;
+     }
+
+   return desc->op;
+}
+
+static int
+eo_api_funcs_cmp(const void *p1, const void *p2)
+{
+   const Eo_Op_Description *op1, *op2;
+   op1 = (Eo_Op_Description *) p1;
+   op2 = (Eo_Op_Description *) p2;
+   if (op1->api_func > op2->api_func) return -1;
+   else if (op1->api_func < op2->api_func) return 1;
+   else return 0;
+}
+
+static Eina_Bool
+_eo_class_funcs_set(_Eo_Class *klass)
+{
+   int op_id;
+   const void *last_api_func;
+   const Eo_Op_Description *api_desc;
+   Eo_Op_Description *op_desc;
+   Eo_Op_Description *op_descs;
+
+   op_id = klass->base_id;
+   op_descs = klass->desc->ops.descs2;
+
+   DBG("Set functions for class '%s':%p", klass->desc->name, klass);
+
+   if (!op_descs) return EINA_TRUE;
+
+   qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo_Op_Description), eo_api_funcs_cmp);
+
+   last_api_func = NULL;
+   for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
+     {
+        if(op_desc->api_func == NULL)
+          {
+             ERR("Class '%s': NULL API not allowed (%d NULL->%p '%s').",
+                 klass->desc->name, op_desc->op, op_desc->func, op_desc->doc);
+             return EINA_FALSE;
+          }
+
+        if (op_desc->op == EO_NOOP)
+          {
+             if (op_desc->api_func == last_api_func)
+               {
+                  ERR("Class '%s': API previously defined (%d %p->%p '%s').",
+                      klass->desc->name, op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+                  return EINA_FALSE;
+               }
+             op_desc->op = op_id;
+             op_id++;
+          }
+        else if (op_desc->op == EO_OP_OVERRIDE)
+          {
+             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
+
+             if (api_desc == NULL)
+               {
+                  ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).",
+                      klass->desc->name, op_desc->api_func, op_desc->func, op_desc->doc);
+                  return EINA_FALSE;
+               }
+
+             op_desc->op = api_desc->op;
+             op_desc->doc = api_desc->doc;
+          }
+
+        DBG(" %4d %p->%p '%s'", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+
+        if (!_dich_func_set(klass, op_desc->op, op_desc->func))
+          return EINA_FALSE;
+
+        last_api_func = op_desc->api_func;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eo *
+_eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id)
+{
+   _Eo_Object *obj;
+
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
+
+   if (parent_id)
+     {
+        EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, NULL);
+     }
+
+   if (EINA_UNLIKELY(klass->desc->type != EO_CLASS_TYPE_REGULAR))
+     {
+        ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
+        return NULL;
+     }
+
+   eina_spinlock_take(&klass->objects.trash_lock);
+   obj = eina_trash_pop(&klass->objects.trash);
+   if (obj)
+     {
+        memset(obj, 0, klass->obj_size);
+        klass->objects.trash_count--;
+     }
+   else
+     {
+        obj = calloc(1, klass->obj_size);
+     }
+   eina_spinlock_release(&klass->objects.trash_lock);
+
+   obj->refcount++;
+   obj->klass = klass;
+   if (klass->composites_count == 0)
+     obj->composites = NULL;
+   else
+     obj->composites = (const _Eo_Object **)
+        ((char *) obj + klass->obj_size - (klass->composites_count * sizeof(_Eo_Object *)));
+
+#ifndef HAVE_EO_ID
+   EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
+#endif
+   Eo_Id eo_id = _eo_id_allocate(obj);
+   obj->header.id = eo_id;
+
+   _eo_condtor_reset(obj);
+
+   _eo_ref(obj);
+
+   eo_do(_eo_id_get(obj), eo_parent_set(parent_id));
+
+   return _eo_id_get(obj);
+}
+
+EAPI Eo *
+_eo_add_internal_end(const char *file, int line, const Eo *eo_id)
+{
+   Eo_Stack_Frame *fptr;
+   Eo_Call_Stack *stack = _eo_call_stack_get();
+
+   fptr = stack->frame_ptr;
+
+   if ((fptr == NULL) || (fptr->eo_id != eo_id))
+     {
+        ERR("in %s:%d - Something very wrong happend to the call stack.", file, line);
+        return NULL;
+     }
+
+   if (!fptr->o.obj->condtor_done || fptr->o.obj->do_error)
+     {
+        const _Eo_Class *klass = (fptr->cur_klass) ?
+           fptr->cur_klass : fptr->o.obj->klass;
+        ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
+            file, line, klass->desc->name);
+        /* Unref twice, once for the ref in _eo_add_internal_start, and once for the basic object ref. */
+        _eo_unref(fptr->o.obj);
+        _eo_unref(fptr->o.obj);
+        return NULL;
+     }
+
+   _eo_unref(fptr->o.obj);
+
+   return (Eo *)eo_id;
+}
+
+/*****************************************************************************/
 
 #define _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass) \
    do \
@@ -266,206 +829,16 @@ _eo_kls_itr_func_get(const _Eo_Class *cur_klass, Eo_Op op)
       } \
    while (0)
 
-static inline Eina_Bool
-_eo_op_internal(const char *file, int line, Eo_Base *eo_ptr, const _Eo_Class *cur_klass,
-                Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
-{
-#ifdef EO_DEBUG
-   const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
-
-   if (op_desc && (op_type != op_desc->op_type))
-     {
-        if (op_type == EO_OP_TYPE_REGULAR)
-          {
-             ERR("in %s:%d: Tried calling a class op '%s' (0x%x) from a non-class context.",
-                 file, line, op_desc->name, op);
-          }
-        else
-          {
-             ERR("in %s:%d: Tried calling an instance op '%s' (0x%x) from a class context.",
-                 file, line, op_desc->name, op);
-          }
-        return EINA_FALSE;
-     }
-#endif
-
-     {
-        const op_type_funcs *func = _eo_kls_itr_func_get(cur_klass, op);
-        if (EINA_LIKELY(func != NULL))
-          {
-             void *func_data = NULL;
-             Eo *calling_obj;
-             if (op_type == EO_OP_TYPE_REGULAR)
-               {
-                  func_data = _eo_data_scope_get((_Eo_Object *) eo_ptr, func->src);
-                  calling_obj = _eo_id_get((_Eo_Object *) eo_ptr);
-               }
-             else
-               {
-                  calling_obj = _eo_class_id_get(cur_klass);
-               }
-             func->func(calling_obj, func_data, p_list);
-             return EINA_TRUE;
-          }
-     }
-
-   /* Try composite objects */
-   if (op_type == EO_OP_TYPE_REGULAR)
-     {
-        const _Eo_Object **comp_itr = ((_Eo_Object *) eo_ptr)->composites;
-        if (!comp_itr) return EINA_FALSE;
-
-        for (unsigned int i = 0; i < ((_Eo_Object *) eo_ptr)->klass->composites_count; i++, comp_itr++)
-          if (*comp_itr)
-            {
-               if (_eo_op_internal(file, line, (Eo_Base *) (*comp_itr), (*comp_itr)->klass, op_type, op, p_list))
-                 {
-                    return EINA_TRUE;
-                 }
-            }
-     }
-
-   return EINA_FALSE;
-}
-
-static inline Eina_Bool
-_eo_dov_internal(const char *file, int line, Eo_Base *obj, const _Eo_Class *klass, Eo_Op_Type op_type, va_list *p_list)
-{
-   Eina_Bool ret = EINA_TRUE;
-   Eo_Op op = EO_NOOP;
-
-   op = va_arg(*p_list, Eo_Op);
-   while (op)
-     {
-        if (!_eo_op_internal(file, line, obj, klass, op_type, op, p_list))
-          {
-             _EO_OP_ERR_NO_OP_PRINT(file, line, op, klass);
-             ret = EINA_FALSE;
-             break;
-          }
-        op = va_arg(*p_list, Eo_Op);
-     }
-
-   return ret;
-}
-
-static inline Eina_Bool
-_eo_obj_dov_internal(const char *file, int line, _Eo_Object *obj, va_list *p_list)
-{
-   Eina_Bool prev_error;
-   Eina_Bool ret = EINA_TRUE;
-
-   prev_error = obj->do_error;
-   _eo_ref(obj);
-
-   ret = _eo_dov_internal(file, line, (Eo_Base *) obj, obj->klass, EO_OP_TYPE_REGULAR, p_list);
-
-   if (obj->do_error)
-     ret = EINA_FALSE;
-
-   obj->do_error = prev_error;
-   _eo_unref(obj);
-
-   return ret;
-}
-
-static inline Eina_Bool
-_eo_class_dov_internal(const char *file, int line, _Eo_Class *klass, va_list *p_list)
-{
-   return _eo_dov_internal(file, line, (Eo_Base *) klass, klass, EO_OP_TYPE_CLASS, p_list);
-}
-
-EAPI Eina_Bool
-eo_do_internal(const char *file, int line, const Eo *obj_id, ...)
-{
-   Eina_Bool ret = EINA_TRUE;
-   va_list p_list;
-   Eina_Bool class_ref = _eo_is_a_class(obj_id);
-
-   if (class_ref)
-     {
-        EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
-
-        va_start(p_list, obj_id);
-        ret = _eo_class_dov_internal(file, line, klass, &p_list);
-        va_end(p_list);
-     }
-   else
-     {
-        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-
-        va_start(p_list, obj_id);
-        ret = _eo_obj_dov_internal(file, line, obj, &p_list);
-        va_end(p_list);
-     }
-
-   return ret;
-}
-
-EAPI Eina_Bool
-eo_vdo_internal(const char *file, int line, const Eo *obj_id, va_list *ops)
-{
-   Eina_Bool class_ref = _eo_is_a_class(obj_id);
-
-   if (class_ref)
-     {
-        EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
-        return _eo_class_dov_internal(file, line, klass, ops);
-     }
-   else
-     {
-        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-        return _eo_obj_dov_internal(file, line, obj, ops);
-     }
-}
-
-EAPI Eina_Bool
-eo_do_super_internal(const char *file, int line, const Eo *obj_id, const Eo_Class *cur_klass_id, Eo_Op op, ...)
-{
-   const _Eo_Class *nklass;
-   Eina_Bool op_ret = EINA_TRUE;
-   Eina_Bool ret = EINA_TRUE;
-   va_list p_list;
-
-   EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
-
-   if (_eo_is_a_class(obj_id))
-     {
-        EO_CLASS_POINTER_RETURN_VAL(obj_id, klass, EINA_FALSE);
-
-        va_start(p_list, op);
-        nklass = _eo_kls_itr_next(klass, cur_klass, op);
-        op_ret = _eo_op_internal(file, line, (Eo_Base *) klass, nklass, EO_OP_TYPE_CLASS, op, &p_list);
-        va_end(p_list);
-     }
-   else
-     {
-        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-
-        va_start(p_list, op);
-        nklass = _eo_kls_itr_next(obj->klass, cur_klass, op);
-        op_ret = _eo_op_internal(file, line, (Eo_Base *) obj, nklass, EO_OP_TYPE_REGULAR, op, &p_list);
-        if (obj->do_error)
-          ret = EINA_FALSE;
-        va_end(p_list);
-     }
-
-   if (!op_ret)
-     _EO_OP_ERR_NO_OP_PRINT(file, line, op, nklass);
-
-   return (ret & op_ret);
-}
-
 EAPI const Eo_Class *
-eo_class_get(const Eo *obj_id)
+eo_class_get(const Eo *eo_id)
 {
-   if (_eo_is_a_class(obj_id))
+   if (_eo_is_a_class(eo_id))
      {
-        EO_CLASS_POINTER_RETURN_VAL(obj_id, _klass, NULL);
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
         return eo_class_class_get();
      }
 
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
 
    if (obj->klass)
       return _eo_class_id_get(obj->klass);
@@ -473,18 +846,18 @@ eo_class_get(const Eo *obj_id)
 }
 
 EAPI const char *
-eo_class_name_get(const Eo_Class *obj_id)
+eo_class_name_get(const Eo_Class *eo_id)
 {
    const _Eo_Class *klass;
 
-   if (_eo_is_a_class(obj_id))
+   if (_eo_is_a_class(eo_id))
      {
-        EO_CLASS_POINTER_RETURN_VAL(obj_id, _klass, NULL);
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
         klass = _klass;
      }
      else
      {
-        EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+        EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
         klass = obj->klass;
      }
 
@@ -497,9 +870,6 @@ _eo_class_base_op_init(_Eo_Class *klass)
    const Eo_Class_Description *desc = klass->desc;
 
    klass->base_id = _eo_ops_last_id;
-
-   if (desc->ops.base_op_id)
-      *(desc->ops.base_op_id) = klass->base_id;
 
    _eo_ops_last_id += desc->ops.count + 1;
 
@@ -632,46 +1002,12 @@ static void
 _eo_class_constructor(_Eo_Class *klass)
 {
    if (klass->constructed)
-      return;
+     return;
 
    klass->constructed = EINA_TRUE;
 
    if (klass->desc->class_constructor)
-      klass->desc->class_constructor(_eo_class_id_get(klass));
-}
-
-EAPI void
-eo_class_funcs_set(Eo_Class *klass_id, const Eo_Op_Func_Description *func_descs)
-{
-   EO_CLASS_POINTER_RETURN(klass_id, klass);
-
-   const Eo_Op_Func_Description *itr;
-   itr = func_descs;
-   if (itr)
-     {
-        for ( ; itr->op_type != EO_OP_TYPE_INVALID ; itr++)
-          {
-             const Eo_Op_Description *op_desc = _eo_op_id_desc_get(itr->op);
-
-             if (EINA_UNLIKELY(!op_desc || (itr->op == EO_NOOP)))
-               {
-                  ERR("Setting implementation for non-existent op 0x%x for class '%s'. Func index: %lu", itr->op, klass->desc->name, (unsigned long) (itr - func_descs));
-               }
-             else if (EINA_LIKELY(itr->op_type == op_desc->op_type))
-               {
-                  _dich_func_set(klass, itr->op, itr->func);
-               }
-             else
-               {
-                  ERR("Set function's op type (0x%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %lu",
-                        itr->op_type,
-                        (op_desc) ? op_desc->op_type : EO_OP_TYPE_REGULAR,
-                        klass->desc->name,
-                        (op_desc) ? op_desc->name : NULL,
-                        (unsigned long) (itr - func_descs));
-               }
-          }
-     }
+     klass->desc->class_constructor(_eo_class_id_get(klass));
 }
 
 static void
@@ -699,59 +1035,9 @@ eo_class_free(_Eo_Class *klass)
    free(klass);
 }
 
-/* DEVCHECK */
-static Eina_Bool
-_eo_class_check_op_descs(const Eo_Class_Description *desc)
-{
-   const Eo_Op_Description *itr;
-   size_t i;
-
-   if (desc->ops.count > 0)
-     {
-        if (!desc->ops.base_op_id)
-          {
-             ERR("Class '%s' has a non-zero ops count, but base_id is NULL.",
-                   desc->name);
-             return EINA_FALSE;
-          }
-
-        if (!desc->ops.descs)
-          {
-             ERR("Class '%s' has a non-zero ops count, but there are no descs.",
-                   desc->name);
-             return EINA_FALSE;
-          }
-     }
-
-   itr = desc->ops.descs;
-   for (i = 0 ; i < desc->ops.count ; i++, itr++)
-     {
-        if (itr->sub_op != i)
-          {
-             if (itr->name)
-               {
-                  ERR("Wrong order in Ops description for class '%s'. Expected 0x%lx and got 0x%lx", desc->name, (unsigned long) i, (unsigned long) itr->sub_op);
-               }
-             else
-               {
-                  ERR("Found too few Ops description for class '%s'. Expected 0x%lx descriptions, but found 0x%lx.", desc->name, (unsigned long) desc->ops.count, (unsigned long) i);
-               }
-             return EINA_FALSE;
-          }
-     }
-
-   if (itr && itr->name)
-     {
-        ERR("Found extra Ops description for class '%s'. Expected %lu descriptions, but found more.", desc->name, (unsigned long) desc->ops.count);
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
 /* Not really called, just used for the ptr... */
 static void
-_eo_class_isa_func(Eo *obj_id EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_eo_class_isa_func(Eo *eo_id EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    /* Do nonthing. */
 }
@@ -766,11 +1052,6 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
-
-   DBG("Started building class '%s'", desc->name);
-
-   if (!_eo_class_check_op_descs(desc))
-     return NULL;
 
    _Eo_Class *parent = _eo_class_pointer_get(parent_id);
 #ifndef HAVE_EO_ID
@@ -972,6 +1253,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
      }
 
    _eo_class_base_op_init(klass);
+
    /* Flatten the function array */
      {
         const _Eo_Class **mro_itr = klass->mro;
@@ -1008,6 +1290,15 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           }
      }
 
+   if (!_eo_class_funcs_set(klass))
+     {
+        eina_spinlock_free(&klass->objects.trash_lock);
+        eina_spinlock_free(&klass->iterators.trash_lock);
+        _dich_func_clean_all(klass);
+        free(klass);
+             return NULL;
+     }
+
    eina_spinlock_take(&_eo_class_creation_lock);
    klass->header.id = ++_eo_classes_last_id | MASK_CLASS_TAG;
      {
@@ -1033,9 +1324,9 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 }
 
 EAPI Eina_Bool
-eo_isa(const Eo *obj_id, const Eo_Class *klass_id)
+eo_isa(const Eo *eo_id, const Eo_Class *klass_id)
 {
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EINA_FALSE);
    const op_type_funcs *func = _dich_func_get(obj->klass,
          klass->base_id + klass->desc->ops.count);
@@ -1043,103 +1334,6 @@ eo_isa(const Eo *obj_id, const Eo_Class *klass_id)
    /* Currently implemented by reusing the LAST op id. Just marking it with
     * _eo_class_isa_func. */
    return (func && (func->func == _eo_class_isa_func));
-}
-
-// A little bit hacky, but does the job
-static void
-_eo_parent_internal_set(_Eo_Object *obj, ...)
-{
-   va_list p_list;
-
-   va_start(p_list, obj);
-   _eo_op_internal(__FILE__, __LINE__, (Eo_Base *) obj, obj->klass,
-                   EO_OP_TYPE_REGULAR, EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET),
-                   &p_list);
-   va_end(p_list);
-}
-
-EAPI Eo *
-eo_add_internal(const char *file, int line, const Eo_Class *klass_id, Eo *parent_id, ...)
-{
-   Eina_Bool do_err;
-   _Eo_Object *obj;
-   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, NULL);
-
-   if (parent_id)
-     {
-        EO_OBJ_POINTER_RETURN_VAL(parent_id, parent, NULL);
-     }
-
-   if (EINA_UNLIKELY(klass->desc->type != EO_CLASS_TYPE_REGULAR))
-     {
-        ERR("in %s:%d: Class '%s' is not instantiate-able. Aborting.", file, line, klass->desc->name);
-        return NULL;
-     }
-
-   eina_spinlock_take(&klass->objects.trash_lock);
-   obj = eina_trash_pop(&klass->objects.trash);
-   if (obj)
-     {
-        memset(obj, 0, klass->obj_size);
-        klass->objects.trash_count--;
-     }
-   else
-     {
-        obj = calloc(1, klass->obj_size);
-     }
-   eina_spinlock_release(&klass->objects.trash_lock);
-
-   obj->refcount++;
-   obj->klass = klass;
-   if (klass->composites_count == 0)
-     obj->composites = NULL;
-   else
-     obj->composites = (const _Eo_Object **)
-        ((char *) obj + klass->obj_size - (klass->composites_count * sizeof(_Eo_Object *)));
-
-#ifndef HAVE_EO_ID
-   EINA_MAGIC_SET((Eo_Base *) obj, EO_EINA_MAGIC);
-#endif
-   Eo_Id obj_id = _eo_id_allocate(obj);
-   obj->header.id = obj_id;
-
-   _eo_condtor_reset(obj);
-
-   _eo_ref(obj);
-
-   _eo_parent_internal_set(obj, parent_id);
-
-   /* Run the relevant do stuff. */
-     {
-        va_list p_list;
-        va_start(p_list, parent_id);
-        do_err = !_eo_obj_dov_internal(file, line, obj, &p_list);
-        va_end(p_list);
-     }
-
-   if (EINA_UNLIKELY(do_err))
-     {
-        ERR("in %s:%d, Object of class '%s' - One of the object constructors have failed.",
-            file, line, klass->desc->name);
-        goto fail;
-     }
-
-   if (!obj->condtor_done)
-     {
-        ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
-            file, line, klass->desc->name);
-        goto fail;
-     }
-
-   _eo_unref(obj);
-
-   return _eo_id_get(obj);
-
-fail:
-   /* Unref twice, once for the ref above, and once for the basic object ref. */
-   _eo_unref(obj);
-   _eo_unref(obj);
-   return NULL;
 }
 
 EAPI Eo *
@@ -1213,6 +1407,7 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
+   EO_OBJ_POINTER_RETURN(obj, _obj);
    eo_do((Eo *) obj, eo_parent_set(NULL));
    eo_unref(obj);
 }
@@ -1230,7 +1425,7 @@ eo_error_set_internal(const Eo *obj_id, const char *file, int line)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
-   ERR("Error with obj '%p' at %s:%d", obj, file, line);
+   ERR("Error with obj '%p' at %s:%d.", obj, file, line);
 
    obj->do_error = EINA_TRUE;
 }
@@ -1370,7 +1565,7 @@ eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
 #ifdef EO_DEBUG
    if (!ret && (klass->desc->data_size == 0))
      {
-        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+        ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
      }
 #endif
 
@@ -1403,7 +1598,7 @@ eo_data_xref_internal(const char *file, int line, const Eo *obj_id, const Eo_Cla
 #ifdef EO_DEBUG
    if (klass && !ret && (klass->desc->data_size == 0))
      {
-        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+        ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
      }
 #endif
 
@@ -1436,7 +1631,7 @@ eo_init(void)
    _eo_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eo_log_dom < 0)
      {
-        EINA_LOG_ERR("Could not register log domain: %s", log_dom);
+        EINA_LOG_ERR("Could not register log domain: %s.", log_dom);
         return EINA_FALSE;
      }
 
@@ -1465,6 +1660,18 @@ eo_init(void)
    /* bootstrap EO_CLASS_CLASS */
    (void) eo_class_class_get();
 
+   if (_eo_call_stack_key != 0)
+     WRN("_eo_call_stack_key already set, this should not happen.");
+   else
+     {
+        if (!eina_tls_cb_new(&_eo_call_stack_key, _eo_call_stack_free))
+          {
+             EINA_LOG_ERR("Could not create TLS key for call stack.");
+             return EINA_FALSE;
+
+          }
+     }
+
    return EINA_TRUE;
 }
 
@@ -1491,6 +1698,9 @@ eo_shutdown(void)
      free(_eo_classes);
 
    eina_spinlock_free(&_eo_class_creation_lock);
+
+   if (_eo_call_stack_key != 0)
+     eina_tls_free(_eo_call_stack_key);
 
    _eo_free_ids_tables();
 
@@ -1532,6 +1742,7 @@ eo_composite_attach(Eo *comp_obj_id, Eo *parent_id)
 
    comp_obj->composite = EINA_TRUE;
    *comp_dst = comp_obj;
+
    eo_do(comp_obj_id, eo_parent_set(parent_id));
 
    return EINA_TRUE;

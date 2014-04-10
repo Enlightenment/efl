@@ -109,6 +109,9 @@ struct _Eo_Object
      /* [composite*] */
 };
 
+/* FIXME: Change the type to something generic that makes sense for eo */
+typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
+
 typedef struct _Dich_Chain1 Dich_Chain1;
 
 typedef struct
@@ -207,22 +210,16 @@ _eo_condtor_reset(_Eo_Object *obj)
 static inline void
 _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 {
-   Eina_Bool do_err;
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
-   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL, NULL));
-
    const _Eo_Class *klass = obj->klass;
+
+   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL));
 
    _eo_condtor_reset(obj);
 
-   do_err = eo_do(_eo_id_get(obj), eo_destructor());
-   if (EINA_UNLIKELY(!do_err))
-     {
-        ERR("in %s:%d: Object of class '%s' - One of the object destructors have failed.",
-            file, line, klass->desc->name);
-     }
+   eo_do(_eo_id_get(obj), eo_destructor(););
 
    if (!obj->condtor_done)
      {

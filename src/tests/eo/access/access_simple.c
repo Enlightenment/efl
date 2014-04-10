@@ -6,8 +6,6 @@
 #include "access_simple.h"
 #include "access_simple_protected.h"
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 typedef struct
 {
    Simple_Protected_Data protected;
@@ -20,34 +18,23 @@ EAPI const Eo_Event_Description _EV_A_CHANGED =
 #define MY_CLASS SIMPLE_CLASS
 
 static void
-_a_set(Eo *obj, void *class_data, va_list *list)
+_a_set(Eo *obj, void *class_data, int a)
 {
    Private_Data *pd = class_data;
-   int a;
-   a = va_arg(*list, int);
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
 
    pd->protected.protected_x1 = a + 1;
    pd->protected.public.public_x2 = a + 2;
 
-   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a, NULL));
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a));
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC_SENTINEL
-   };
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Event_Description *event_desc[] = {
@@ -59,12 +46,12 @@ static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Private_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, NULL)
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL)
 

@@ -75,4 +75,4 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, INTERFACE_CLASS, MIXIN_CLASS, NULL);
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, INTERFACE_CLASS, MIXIN_CLASS, NULL);

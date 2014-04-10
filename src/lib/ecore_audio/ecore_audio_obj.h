@@ -175,7 +175,7 @@ enum Ecore_Audio_Obj_Sub_Ids
  * @param[in] free_func This function takes care to clean up @ref data when
  * the VIO is destroyed. NULL means do nothing.
  */
-#define ecore_audio_obj_vio_set(vio, data, free_func) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), EO_TYPECHECK(Ecore_Audio_Vio *, vio), EO_TYPECHECK(void *, data), EO_TYPECHECK(eo_base_data_free_func, free_func)
+#define ecore_audio_obj_vio_set(vio, data, free_func) ECORE_AUDIO_OBJ_ID(ECORE_AUDIO_OBJ_SUB_ID_VIO_SET), EO_TYPECHECK(Ecore_Audio_Vio *, vio), EO_TYPECHECK(void *, data), EO_TYPECHECK(eo_key_data_free_func, free_func)
 
 #endif
 /**

@@ -131,7 +131,7 @@ _on_child_del(void *data, Eo *o, const Eo_Event_Description *desc EINA_UNUSED, v
    Evas_Object *box = data;
 
    Evas_Object *ret = NULL;
-   eo_do(box, evas_obj_box_internal_remove(o, &ret));
+   eo_do(box, ret = evas_obj_box_internal_remove(o));
    if (!ret)
      ERR("child removal failed");
    evas_object_smart_changed(box);
@@ -163,7 +163,7 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
 {
    Evas_Object_Box_Option *opt = NULL;
 
-   eo_do(o, evas_obj_box_internal_option_new(child, &opt));
+   eo_do(o, opt = evas_obj_box_internal_option_new(child));
    if (!opt)
      {
         ERR("option_new failed");
@@ -464,7 +464,7 @@ _evas_box_eo_base_constructor(Eo *obj, Evas_Object_Box_Data *class_data EINA_UNU
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
-         evas_obj_smart_callbacks_descriptions_set(_signals, NULL),
+         evas_obj_smart_callbacks_descriptions_set(_signals),
          evas_obj_type_set(MY_CLASS_NAME_LEGACY));
 }
 
@@ -1686,7 +1686,7 @@ _evas_box_append(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child)
    if (!child)
      return NULL;
 
-   eo_do(o, evas_obj_box_internal_append(child, &opt));
+   eo_do(o, opt = evas_obj_box_internal_append(child));
 
    if (opt)
      {
@@ -1705,7 +1705,7 @@ _evas_box_prepend(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child)
    if (!child)
      return NULL;
 
-   eo_do(o, evas_obj_box_internal_prepend(child, &opt));
+   eo_do(o, opt = evas_obj_box_internal_prepend(child));
 
    if (opt)
      {
@@ -1723,7 +1723,7 @@ _evas_box_insert_before(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child, c
    if (!child)
      return NULL;
 
-   eo_do(o, evas_obj_box_internal_insert_before(child, reference, &opt));
+   eo_do(o, opt = evas_obj_box_internal_insert_before(child, reference));
 
    if (opt)
      {
@@ -1742,7 +1742,7 @@ _evas_box_insert_after(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child, co
    if (!child)
      return NULL;
 
-   eo_do(o, evas_obj_box_internal_insert_after(child, reference, &opt));
+   eo_do(o, opt = evas_obj_box_internal_insert_after(child, reference));
 
    if (opt)
      {
@@ -1761,7 +1761,7 @@ _evas_box_insert_at(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child, unsig
    if (!child)
      return NULL;
 
-   eo_do(o, evas_obj_box_internal_insert_at(child, pos, &opt));
+   eo_do(o, opt = evas_obj_box_internal_insert_at(child, pos));
 
    if (opt)
      {
@@ -1778,7 +1778,7 @@ _evas_box_remove(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Object *chil
 {
    Evas_Object *obj = NULL;
 
-   eo_do(o, evas_obj_box_internal_remove(child, &obj));
+   eo_do(o, obj = evas_obj_box_internal_remove(child));
 
    if (obj)
      {
@@ -1796,7 +1796,7 @@ _evas_box_remove_at(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, unsigned int p
 {
    Evas_Object *obj = NULL;
 
-   eo_do(o, evas_obj_box_internal_remove_at(pos, &obj));
+   eo_do(o, obj = evas_obj_box_internal_remove_at(pos));
 
    if (obj)
      {
@@ -1819,7 +1819,7 @@ _evas_box_remove_all(Eo *o, Evas_Object_Box_Data *priv, Eina_Bool clear)
         Evas_Object_Box_Option *opt = priv->children->data;
         Evas_Object *obj = NULL;
 
-        eo_do(o, evas_obj_box_internal_remove(opt->obj, &obj));
+        eo_do(o, obj = evas_obj_box_internal_remove(opt->obj));
         if (obj)
           {
              _evas_object_box_child_callbacks_unregister(obj, o);
@@ -1921,7 +1921,7 @@ EAPI Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do(o, evas_obj_box_option_property_vset(opt, property, (va_list *) &args, &ret));
+   eo_do(o, ret = evas_obj_box_option_property_vset(opt, property, (va_list *) &args));
    return ret;
 }
 
@@ -1948,7 +1948,7 @@ EAPI Eina_Bool
 evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)o, evas_obj_box_option_property_vget(opt, property, (va_list *) &args, &ret));
+   eo_do((Eo *)o, ret = evas_obj_box_option_property_vget(opt, property, (va_list *) &args));
    return ret;
 }
 

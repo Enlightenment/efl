@@ -1,25 +1,18 @@
 #ifndef SIMPLE_H
 #define SIMPLE_H
 
-extern EAPI Eo_Op SIMPLE_BASE_ID;
-
-enum {
-     SIMPLE_SUB_ID_A_SET,
-     SIMPLE_SUB_ID_A_PRINT,
-     SIMPLE_SUB_ID_CLASS_HI_PRINT,
-     SIMPLE_SUB_ID_LAST
-};
-
 typedef struct
 {
    int a;
 } Simple_Public_Data;
 
-#define SIMPLE_ID(sub_id) (SIMPLE_BASE_ID + sub_id)
-
-#define simple_a_set(a) SIMPLE_ID(SIMPLE_SUB_ID_A_SET), EO_TYPECHECK(int, a)
-#define simple_a_print() SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT)
-#define simple_class_hi_print() SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT)
+EAPI void simple_a_set(int a);
+EAPI int simple_a_get(void);
+EAPI Eina_Bool simple_a_print(void);
+EAPI Eina_Bool simple_class_hi_print(void);
+EAPI void simple_recursive(int n);
+EAPI void simple_pure_virtual(void);
+EAPI void simple_no_implementation(void);
 
 extern const Eo_Event_Description _EV_A_CHANGED;
 #define EV_A_CHANGED (&(_EV_A_CHANGED))

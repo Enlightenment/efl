@@ -547,7 +547,7 @@ _evas_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNU
 {
    Evas_Object_Protected_Data *obj;
    Evas_Smart_Data *smart;
-   Eo *parent;
+   Eo *parent = NULL;
 
    smart = class_data;
    smart->object = eo_obj;
@@ -556,7 +556,7 @@ _evas_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNU
    evas_object_smart_init(eo_obj);
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
-   eo_do(eo_obj, eo_parent_get(&parent));
+   eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
    eo_do(eo_obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
@@ -797,7 +797,7 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
    if (!event) return;
    const _Evas_Event_Description *event_desc = eina_hash_find(signals_hash_table, event);
    if (event_desc)
-      eo_do(eo_obj, eo_event_callback_call(event_desc->eo_desc, event_info, NULL));
+      eo_do(eo_obj, eo_event_callback_call(event_desc->eo_desc, event_info));
 }
 
 EOLIAN static Eina_Bool

@@ -52,8 +52,8 @@ _edje_eo_base_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Eo_Dbg_Info *root)
    EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
    EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
-   Edje_Load_Error error;
-   eo_do(eo_obj, edje_obj_load_error_get(&error));
+   Edje_Load_Error error = EDJE_LOAD_ERROR_NONE;
+   eo_do(eo_obj, error = edje_obj_load_error_get());
    if (error != EDJE_LOAD_ERROR_NONE)
      {
         EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,

@@ -1065,14 +1065,14 @@ evas_object_textgrid_add(Evas *e)
 EOLIAN static void
 _evas_textgrid_eo_base_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EINA_UNUSED)
 {
-   Eo *eo_parent;
+   Eo *eo_parent = NULL;
 
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_textgrid_init(eo_obj);
 
-   eo_do(eo_obj, eo_parent_get(&eo_parent));
+   eo_do(eo_obj, eo_parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
 }
 
@@ -1497,7 +1497,7 @@ _evas_textgrid_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSE
    EO_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
    EO_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
-   eo_do(eo_obj, evas_obj_textgrid_font_source_get(&text));
+   eo_do(eo_obj, text = evas_obj_textgrid_font_source_get());
    EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
 
      {

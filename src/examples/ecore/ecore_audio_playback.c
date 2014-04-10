@@ -266,7 +266,7 @@ main(int argc, const char *argv[])
               {
                  if (!strncmp(val, "freq=", 5)) {
                    freq = atoi(&val[5]);
-                   eo_do(in, eo_base_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+                   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
                  } else if (!strncmp(val, "duration=", 9)) {
                    eo_do(in, ecore_audio_obj_in_length_set(atof(&val[9])));
                  }

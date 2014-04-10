@@ -15,7 +15,7 @@ static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Mixin4",
      EO_CLASS_TYPE_MIXIN,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO_CLASS_DESCRIPTION_NOOPS(),
      NULL,
      0,
      NULL,

@@ -110,7 +110,7 @@ class Ecore_Audio (Eo_Base)
          params {
               Ecore_Audio_Vio *vio; /*The @ref Ecore_Audio_Vio struct with the function callbacks*/
               void *data; /*User data to pass to the VIO functions*/
-              eo_base_data_free_func free_func; /*This function takes care to clean up @ref data when he VIO is destroyed. NULL means do nothing.*/
+              eo_key_data_free_func free_func; /*This function takes care to clean up @ref data when he VIO is destroyed. NULL means do nothing.*/
          }
       }
    }

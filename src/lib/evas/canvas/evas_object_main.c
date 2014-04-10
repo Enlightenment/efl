@@ -1418,7 +1418,7 @@ evas_object_evas_get(const Evas_Object *eo_obj)
    return NULL;
    MAGIC_CHECK_END();
    Evas *eo_evas = NULL;
-   eo_do((Eo *)eo_obj, evas_common_evas_get(&eo_evas));
+   eo_do((Eo *)eo_obj, eo_evas = evas_common_evas_get());
    return eo_evas;
 }
 
@@ -1448,24 +1448,24 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    Eina_Bool clipees_has;
 
    eo_do(eo_obj,
-         evas_obj_visibility_get(&visible),
-         evas_obj_layer_get(&layer),
-         evas_obj_name_get(&name),
+         visible = evas_obj_visibility_get(),
+         layer = evas_obj_layer_get(),
+         name = evas_obj_name_get(),
          evas_obj_position_get(&x, &y),
          evas_obj_size_get(&w, &h),
-         evas_obj_scale_get(&scale),
+         scale = evas_obj_scale_get(),
          evas_obj_size_hint_min_get(&minw, &minh),
          evas_obj_size_hint_max_get(&maxw, &maxh),
          evas_obj_size_hint_request_get(&requestw, &requesth),
          evas_obj_size_hint_align_get(&dblx, &dbly),
          evas_obj_size_hint_weight_get(&dblw, &dblh),
          evas_obj_color_get(&r, &g, &b, &a),
-         evas_obj_focus_get(&focus),
-         evas_obj_pointer_mode_get(&m),
-         evas_obj_pass_events_get(&pass_event),
-         evas_obj_repeat_events_get(&repeat_event),
-         evas_obj_propagate_events_get(&propagate_event),
-         evas_obj_clipees_has(&clipees_has));
+         focus = evas_obj_focus_get(),
+         m = evas_obj_pointer_mode_get(),
+         pass_event = evas_obj_pass_events_get(),
+         repeat_event = evas_obj_repeat_events_get(),
+         propagate_event = evas_obj_propagate_events_get(),
+         clipees_has = evas_obj_clipees_has());
 
    EO_DBG_INFO_APPEND(group, "Visibility", EINA_VALUE_TYPE_CHAR, visible);
 
@@ -1540,7 +1540,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    EO_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
 
    Evas_Object *clipper = NULL;
-   eo_do(eo_obj, evas_obj_clip_get(&clipper));
+   eo_do(eo_obj, clipper = evas_obj_clip_get());
    EO_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_UINT64, (uintptr_t) clipper);
 
    const Evas_Map *map = evas_object_map_get(eo_obj);
@@ -1616,8 +1616,8 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CLASS);
    Evas_Object *ret = NULL;
    if (!e) return NULL;
-   eo_do((Eo *)eo_e, evas_canvas_object_top_at_xy_get(e->pointer.x, e->pointer.y, EINA_TRUE,
-                                    EINA_TRUE, &ret));
+   eo_do((Eo *)eo_e, ret = evas_canvas_object_top_at_xy_get(e->pointer.x, e->pointer.y, EINA_TRUE,
+                                    EINA_TRUE));
    return ret;
 }
 

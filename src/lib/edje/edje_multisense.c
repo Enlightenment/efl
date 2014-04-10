@@ -264,7 +264,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
           {
              in = eo_add(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
              eo_do(in, ecore_audio_obj_name_set("tone"));
-             eo_do(in, eo_base_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &tone->value, NULL));
+             eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &tone->value, NULL));
              eo_do(in, ecore_audio_obj_in_length_set(duration));
              eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
 

@@ -8,8 +8,6 @@
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 
-EAPI Eo_Op EO_BASE_BASE_ID = 0;
-
 static int event_freeze_count = 0;
 
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
@@ -33,7 +31,7 @@ typedef struct
    EINA_INLIST;
    Eina_Stringshare *key;
    void *data;
-   eo_base_data_free_func free_func;
+   eo_key_data_free_func free_func;
 } Eo_Generic_Data_Node;
 
 static void
@@ -61,19 +59,16 @@ _eo_generic_data_del_all(Private_Data *pd)
 }
 
 static void
-_data_set(Eo *obj, void *class_data, va_list *list)
+_data_set(Eo *obj, void *class_data,
+          const char *key, const void *data, eo_key_data_free_func free_func)
 {
    Private_Data *pd = class_data;
-
-   EO_PARAMETER_GET(const char *, key, list);
-   EO_PARAMETER_GET(const void *, data, list);
-   EO_PARAMETER_GET(eo_base_data_free_func, free_func, list);
 
    Eo_Generic_Data_Node *node;
 
    if (!key) return;
 
-   eo_do(obj, eo_base_data_del(key));
+   eo_do(obj, eo_key_data_del(key); );
 
    node = malloc(sizeof(Eo_Generic_Data_Node));
    if (!node) return;
@@ -83,21 +78,17 @@ _data_set(Eo *obj, void *class_data, va_list *list)
    pd->generic_data = eina_inlist_prepend(pd->generic_data,
          EINA_INLIST_GET(node));
 }
+EAPI EO_VOID_FUNC_BODYV(eo_key_data_set, EO_FUNC_CALL(key, data, free_func),
+                        const char *key, const void *data, eo_key_data_free_func free_func);
 
-static void
-_data_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+static void *
+_data_get(Eo *obj EINA_UNUSED, void *class_data, const char *key)
 {
    /* We don't really change it... */
    Eo_Generic_Data_Node *node;
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(const char *, key, list);
-   EO_PARAMETER_GET(void **, data, list);
-
-   if (!data) return;
-   *data = NULL;
-
-   if (!key) return;
+   if (!key) return NULL;
 
    EINA_INLIST_FOREACH(pd->generic_data, node)
      {
@@ -105,21 +96,21 @@ _data_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
           {
              pd->generic_data =
                 eina_inlist_promote(pd->generic_data, EINA_INLIST_GET(node));
-             *data = node->data;
-             return;
+             return node->data;
           }
      }
+
+   return NULL;
 }
+EAPI EO_FUNC_BODYV(eo_key_data_get, void*, NULL, EO_FUNC_CALL(key), const char *key);
 
 static void
-_parent_set(Eo *obj, void *class_data, va_list *list)
+_parent_set(Eo *obj, void *class_data, Eo *parent_id)
 {
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(Eo *, parent_id, list);
-
    if (pd->parent == parent_id)
-     return ;
+     return;
 
    if (eo_composite_is(obj) && pd->parent)
      {
@@ -130,11 +121,11 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
      {
         Private_Data *old_parent_pd;
 
-        old_parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
+        old_parent_pd = eo_data_scope_get(pd->parent, EO_CLASS);
         if (old_parent_pd)
           {
              old_parent_pd->children = eina_list_remove(old_parent_pd->children,
-                   obj);
+                                                        obj);
           }
         else
           {
@@ -149,7 +140,7 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
    if (parent_id)
      {
         Private_Data *parent_pd = NULL;
-        parent_pd = eo_data_scope_get(parent_id, EO_BASE_CLASS);
+        parent_pd = eo_data_scope_get(parent_id, EO_CLASS);
 
         if (EINA_LIKELY(parent_pd != NULL))
           {
@@ -170,18 +161,16 @@ _parent_set(Eo *obj, void *class_data, va_list *list)
         pd->parent = NULL;
      }
 }
+EAPI EO_VOID_FUNC_BODYV(eo_parent_set, EO_FUNC_CALL(parent_id), Eo *parent_id);
 
-static void
-_parent_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+static Eo *
+_parent_get(Eo *obj EINA_UNUSED, void *class_data)
 {
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(Eo **, parent_id, list);
-
-   if (!parent_id) return ;
-   *parent_id = pd->parent;
+   return pd->parent;
 }
-
+EAPI EO_FUNC_BODY(eo_parent_get, Eo *, NULL);
 
 /* Children accessor */
 typedef struct _Eo_Children_Iterator Eo_Children_Iterator;
@@ -191,7 +180,6 @@ struct _Eo_Children_Iterator
    Eina_List *current;
    _Eo_Object *obj;
    Eo *obj_id;
-   
 };
 
 static Eina_Bool
@@ -231,64 +219,62 @@ _eo_children_iterator_free(Eo_Children_Iterator *it)
         free(it);
      }
    eina_spinlock_release(&klass->iterators.trash_lock);
-   
+
    _eo_unref(obj);
 }
 
-static void
-_children_iterator_new(Eo *obj_id, void *class_data, va_list *list)
+static Eina_Iterator *
+_children_iterator_new(Eo *obj_id, void *class_data)
 {
    Private_Data *pd = class_data;
    _Eo_Class *klass;
+   Eo_Children_Iterator *it;
 
-   EO_PARAMETER_GET(Eo_Children_Iterator **, it, list);
-   EO_OBJ_POINTER_RETURN(obj_id, obj);
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
 
-   if (!it) return ;
-   *it = NULL;
-
-   if (!pd->children) return ;
+   if (!pd->children) return NULL;
 
    klass = (_Eo_Class *) obj->klass;
 
    eina_spinlock_take(&klass->iterators.trash_lock);
-   *it = eina_trash_pop(&klass->iterators.trash);
-   if (*it)
+   it = eina_trash_pop(&klass->iterators.trash);
+   if (it)
      {
         klass->iterators.trash_count--;
-        memset(*it, 0, sizeof (Eo_Children_Iterator));
+        memset(it, 0, sizeof (Eo_Children_Iterator));
      }
    else
      {
-        *it = calloc(1, sizeof (Eo_Children_Iterator));
+        it = calloc(1, sizeof (Eo_Children_Iterator));
      }
    eina_spinlock_release(&klass->iterators.trash_lock);
-   if (!*it) return ;
+   if (!it) return NULL;
 
-   EINA_MAGIC_SET(&(*it)->iterator, EINA_MAGIC_ITERATOR);
-   (*it)->current = obj->children;
-   (*it)->obj = _eo_ref(obj);
-   (*it)->obj_id = obj_id;
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->current = obj->children;
+   it->obj = _eo_ref(obj);
+   it->obj_id = obj_id;
 
-   (*it)->iterator.next = FUNC_ITERATOR_NEXT(_eo_children_iterator_next);
-   (*it)->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eo_children_iterator_container);
-   (*it)->iterator.free = FUNC_ITERATOR_FREE(_eo_children_iterator_free);
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eo_children_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eo_children_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eo_children_iterator_free);
+
+   return (Eina_Iterator *)it;
 }
+EAPI EO_FUNC_BODY(eo_children_iterator_new, Eina_Iterator *, NULL);
 
 static void
-_dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED,
-      va_list *data EINA_UNUSED)
+_dbg_info_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo_Dbg_Info *root_node EINA_UNUSED)
 {  /* No info required in the meantime */
    return;
 }
+EAPI EO_VOID_FUNC_BODYV(eo_dbg_info_get, EO_FUNC_CALL(root_node), Eo_Dbg_Info *root_node);
 
 static void
-_data_del(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_data_del(Eo *obj EINA_UNUSED, void *class_data, const char *key)
 {
    Eo_Generic_Data_Node *node;
    Private_Data *pd = class_data;
-
-   EO_PARAMETER_GET(const char *, key, list);
 
    if (!key) return;
 
@@ -303,6 +289,7 @@ _data_del(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
           }
      }
 }
+EAPI EO_VOID_FUNC_BODYV(eo_key_data_del, EO_FUNC_CALL(key), const char *key);
 
 /* Weak reference. */
 
@@ -314,40 +301,37 @@ _wref_count(Private_Data *pd)
       return 0;
 
    Eo ***itr;
-   for (itr = pd->wrefs ; *itr ; itr++)
+   for (itr = pd->wrefs; *itr; itr++)
       count++;
 
    return count;
 }
 
 static void
-_wref_add(Eo *obj, void *class_data, va_list *list)
+_wref_add(Eo *obj, void *class_data, Eo **wref)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
    Eo ***tmp;
 
-   EO_PARAMETER_GET(Eo **, wref, list);
-
    count = _wref_count(pd);
    count += 1; /* New wref. */
 
    tmp = realloc(pd->wrefs, sizeof(*pd->wrefs) * (count + 1));
-   if (!tmp) return ;
+   if (!tmp) return;
    pd->wrefs = tmp;
 
    pd->wrefs[count - 1] = wref;
    pd->wrefs[count] = NULL;
    *wref = obj;
 }
+EAPI EO_VOID_FUNC_BODYV(eo_wref_add, EO_FUNC_CALL(wref), Eo **wref);
 
 static void
-_wref_del(Eo *obj, void *class_data, va_list *list)
+_wref_del(Eo *obj, void *class_data, Eo **wref)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
-
-   EO_PARAMETER_GET(Eo **, wref, list);
 
    if (*wref != obj)
      {
@@ -368,7 +352,7 @@ _wref_del(Eo *obj, void *class_data, va_list *list)
 
      {
         Eo ***itr;
-        for (itr = pd->wrefs ; *itr ; itr++)
+        for (itr = pd->wrefs; *itr; itr++)
           {
              if (*itr == wref)
                {
@@ -390,7 +374,7 @@ _wref_del(Eo *obj, void *class_data, va_list *list)
         Eo ***tmp;
         // No count--; because of the NULL that is not included in the count. */
         tmp = realloc(pd->wrefs, sizeof(*pd->wrefs) * count);
-        if (!tmp) return ;
+        if (!tmp) return;
         pd->wrefs = tmp;
         pd->wrefs[count - 1] = NULL;
      }
@@ -402,6 +386,7 @@ _wref_del(Eo *obj, void *class_data, va_list *list)
 
    *wref = NULL;
 }
+EAPI EO_VOID_FUNC_BODYV(eo_wref_del, EO_FUNC_CALL(wref), Eo **wref);
 
 static inline void
 _wref_destruct(Private_Data *pd)
@@ -410,7 +395,7 @@ _wref_destruct(Private_Data *pd)
    if (!pd->wrefs)
       return;
 
-   for (itr = pd->wrefs ; *itr ; itr++)
+   for (itr = pd->wrefs; *itr; itr++)
      {
         **itr = NULL;
      }
@@ -445,11 +430,13 @@ struct _Eo_Callback_Description
 static void
 _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
 {
-   Eo_Callback_Description *itr, *pitr = NULL;
+   Eo_Callback_Description *itr, *pitr;
 
-   itr = pd->callbacks;
+   itr = pitr = pd->callbacks;
+   if (pd->callbacks == cb)
+      pd->callbacks = cb->next;
 
-   for ( ; itr ; )
+   for ( ; itr; )
      {
         Eo_Callback_Description *titr = itr;
         itr = itr->next;
@@ -459,10 +446,6 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
              if (pitr)
                {
                   pitr->next = titr->next;
-               }
-             else
-               {
-                  pd->callbacks = titr->next;
                }
              free(titr);
           }
@@ -485,7 +468,7 @@ _eo_callback_remove_all(Private_Data *pd)
      }
 }
 
-static inline void
+static void
 _eo_callbacks_clear(Private_Data *pd)
 {
    Eo_Callback_Description *cb = NULL;
@@ -500,7 +483,7 @@ _eo_callbacks_clear(Private_Data *pd)
 
    pd->deletions_waiting = EINA_FALSE;
 
-   for (cb = pd->callbacks ; cb ; )
+   for (cb = pd->callbacks; cb; )
      {
         Eo_Callback_Description *titr = cb;
         cb = cb->next;
@@ -516,7 +499,7 @@ static void
 _eo_callbacks_sorted_insert(Private_Data *pd, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *itrp = NULL;
-   for (itr = pd->callbacks ; itr && (itr->priority < cb->priority) ;
+   for (itr = pd->callbacks; itr && (itr->priority < cb->priority);
          itr = itr->next)
      {
         itrp = itr;
@@ -535,41 +518,45 @@ _eo_callbacks_sorted_insert(Private_Data *pd, Eo_Callback_Description *cb)
 }
 
 static void
-_ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
+_ev_cb_priority_add(Eo *obj, void *class_data,
+                    const Eo_Event_Description *desc,
+                    Eo_Callback_Priority priority,
+                    Eo_Event_Cb func,
+                    const void *user_data)
 {
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
-   EO_PARAMETER_ENUM_GET(Eo_Callback_Priority, priority, list);
-   EO_PARAMETER_GET(Eo_Event_Cb, func, list);
-   EO_PARAMETER_GET(const void *, data, list);
-
    cb = calloc(1, sizeof(*cb));
-   if (!cb) return ;
+   if (!cb) return;
    cb->items.item.desc = desc;
    cb->items.item.func = func;
-   cb->func_data = (void *) data;
+   cb->func_data = (void *) user_data;
    cb->priority = priority;
    _eo_callbacks_sorted_insert(pd, cb);
 
      {
         const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
-        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, arr, NULL));
+        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, (void *)arr));
      }
 }
+EAPI EO_VOID_FUNC_BODYV(eo_event_callback_priority_add,
+                        EO_FUNC_CALL(desc, priority, func, user_data),
+                        const Eo_Event_Description *desc,
+                        Eo_Callback_Priority priority,
+                        Eo_Event_Cb func,
+                        const void *user_data);
 
 static void
-_ev_cb_del(Eo *obj, void *class_data, va_list *list)
+_ev_cb_del(Eo *obj, void *class_data,
+                    const Eo_Event_Description *desc,
+                    Eo_Event_Cb func,
+                    void *user_data)
 {
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
-   EO_PARAMETER_GET(Eo_Event_Cb, func, list);
-   EO_PARAMETER_GET(void *, user_data, list);
-
-   for (cb = pd->callbacks ; cb ; cb = cb->next)
+   for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if ((cb->items.item.desc == desc) && (cb->items.item.func == func) &&
               (cb->func_data == user_data))
@@ -579,47 +566,55 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
              cb->delete_me = EINA_TRUE;
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, arr, NULL));
+             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, (void *)arr); );
              return;
           }
      }
 
    DBG("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
 }
+EAPI EO_VOID_FUNC_BODYV(eo_event_callback_del,
+                        EO_FUNC_CALL(desc, func, user_data),
+                        const Eo_Event_Description *desc,
+                        Eo_Event_Cb func,
+                        const void *user_data);
 
 static void
-_ev_cb_array_priority_add(Eo *obj, void *class_data, va_list *list)
+_ev_cb_array_priority_add(Eo *obj, void *class_data,
+                          const Eo_Callback_Array_Item *array,
+                          Eo_Callback_Priority priority,
+                          const void *user_data)
 {
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(const Eo_Callback_Array_Item *, array, list);
-   EO_PARAMETER_ENUM_GET(Eo_Callback_Priority, priority, list);
-   EO_PARAMETER_GET(const void *, data, list);
-
    cb = calloc(1, sizeof(*cb));
-   if (!cb) return ;
-   cb->func_data = (void *) data;
+   if (!cb) return;
+   cb->func_data = (void *) user_data;
    cb->priority = priority;
    cb->items.item_array = array;
    cb->func_array = EINA_TRUE;
    _eo_callbacks_sorted_insert(pd, cb);
 
      {
-        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, array, NULL));
+        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, (void *)array); );
      }
 }
+EAPI EO_VOID_FUNC_BODYV(eo_event_callback_array_priority_add,
+                        EO_FUNC_CALL(array, priority, user_data),
+                        const Eo_Callback_Array_Item *array,
+                        Eo_Callback_Priority priority,
+                        const void *user_data);
 
 static void
-_ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
+_ev_cb_array_del(Eo *obj, void *class_data,
+                 const Eo_Callback_Array_Item *array,
+                 void *user_data)
 {
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(const Eo_Callback_Array_Item *, array, list);
-   EO_PARAMETER_GET(void *, user_data, list);
-
-   for (cb = pd->callbacks ; cb ; cb = cb->next)
+   for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if ((cb->items.item_array == array) && (cb->func_data == user_data))
           {
@@ -627,32 +622,35 @@ _ev_cb_array_del(Eo *obj, void *class_data, va_list *list)
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
 
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, array, NULL));
+             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, (void *)array); );
              return;
           }
      }
 
    DBG("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
 }
+EAPI EO_VOID_FUNC_BODYV(eo_event_callback_array_del,
+                        EO_FUNC_CALL(array, user_data),
+                        const Eo_Callback_Array_Item *array,
+                        const void *user_data);
 
-static void
-_ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
+static Eina_Bool
+_ev_cb_call(Eo *obj_id, void *class_data,
+            const Eo_Event_Description *desc,
+            void *event_info)
 {
+   Eina_Bool ret;
    Eo_Callback_Description *cb;
    Private_Data *pd = (Private_Data *) class_data;
 
-   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
-   EO_PARAMETER_GET(void *, event_info, list);
-   EO_PARAMETER_GET(Eina_Bool *, ret, list);
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
 
-   EO_OBJ_POINTER_RETURN(obj_id, obj);
-
-   if (ret) *ret = EINA_TRUE;
+   ret = EINA_TRUE;
 
    _eo_ref(obj);
    pd->walking_list++;
 
-   for (cb = pd->callbacks ; cb ; cb = cb->next)
+   for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if (!cb->delete_me)
           {
@@ -660,7 +658,7 @@ _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
                {
                   const Eo_Callback_Array_Item *it;
 
-                  for (it = cb->items.item_array ; it->func ; it++)
+                  for (it = cb->items.item_array; it->func; it++)
                     {
                        if (it->desc != desc)
                           continue;
@@ -672,7 +670,7 @@ _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
                        if (!it->func((void *) cb->func_data, obj_id, desc,
                                 (void *) event_info))
                          {
-                            if (ret) *ret = EINA_FALSE;
+                            ret = EINA_FALSE;
                             goto end;
                          }
                     }
@@ -690,7 +688,7 @@ _ev_cb_call(Eo *obj_id, void *class_data, va_list *list)
                   if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
                                            (void *) event_info))
                     {
-                       if (ret) *ret = EINA_FALSE;
+                       ret = EINA_FALSE;
                        goto end;
                     }
                }
@@ -701,52 +699,68 @@ end:
    pd->walking_list--;
    _eo_callbacks_clear(pd);
    _eo_unref(obj);
+
+   return ret;
 }
+EAPI EO_FUNC_BODYV(eo_event_callback_call, Eina_Bool,
+                   EINA_FALSE,
+                   EO_FUNC_CALL(desc, event_info),
+                   const Eo_Event_Description *desc,
+                   void *event_info);
 
 static Eina_Bool
 _eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
 {
    (void) obj;
    Eo *new_obj = (Eo *) data;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
 
-   eo_do(new_obj, eo_event_callback_call(desc, event_info, &ret));
+   eo_do(new_obj, ret = eo_event_callback_call(desc, (void *)event_info); );
 
    return ret;
 }
 
 /* FIXME: Change default priority? Maybe call later? */
 static void
-_ev_cb_forwarder_add(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+_ev_cb_forwarder_add(Eo *obj, void *class_data EINA_UNUSED,
+                     const Eo_Event_Description *desc,
+                     Eo *new_obj)
 {
-   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
-   EO_PARAMETER_GET(Eo *, new_obj, list);
 
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
-   eo_do(obj, eo_event_callback_add(desc, _eo_event_forwarder_callback, new_obj));
+   eo_do(obj, eo_event_callback_add(desc, _eo_event_forwarder_callback, new_obj); );
 }
+EAPI EO_VOID_FUNC_BODYV(eo_event_callback_forwarder_add,
+                        EO_FUNC_CALL(desc, new_obj),
+                        const Eo_Event_Description *desc,
+                        Eo *new_obj);
 
 static void
-_ev_cb_forwarder_del(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+_ev_cb_forwarder_del(Eo *obj, void *class_data EINA_UNUSED,
+                     const Eo_Event_Description *desc,
+                     Eo *new_obj)
 {
-   EO_PARAMETER_GET(const Eo_Event_Description *, desc, list);
-   EO_PARAMETER_GET(Eo *, new_obj, list);
 
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
-   eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj));
+   eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj); );
 }
+EAPI EO_VOID_FUNC_BODYV(eo_event_callback_forwarder_del,
+                        EO_FUNC_CALL(desc, new_obj),
+                        const Eo_Event_Description *desc,
+                        Eo *new_obj);
 
 static void
-_ev_freeze(Eo *obj EINA_UNUSED, void *class_data, va_list *list EINA_UNUSED)
+_ev_freeze(Eo *obj EINA_UNUSED, void *class_data)
 {
    Private_Data *pd = (Private_Data *) class_data;
    pd->event_freeze_count++;
 }
+EAPI EO_VOID_FUNC_BODY(eo_event_freeze);
 
 static void
-_ev_thaw(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+_ev_thaw(Eo *obj, void *class_data)
 {
    Private_Data *pd = (Private_Data *) class_data;
    if (pd->event_freeze_count > 0)
@@ -758,24 +772,26 @@ _ev_thaw(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
         ERR("Events for object %p have already been thawed.", obj);
      }
 }
+EAPI EO_VOID_FUNC_BODY(eo_event_thaw);
 
-static void
-_ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+static int
+_ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data)
 {
    Private_Data *pd = (Private_Data *) class_data;
-   EO_PARAMETER_GET(int *, ret, list);
 
-   *ret = pd->event_freeze_count;
+   return pd->event_freeze_count;
 }
+EAPI EO_FUNC_BODY(eo_event_freeze_get, int, 0);
 
 static void
-_ev_global_freeze(Eo_Class *klass EINA_UNUSED, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
+_ev_global_freeze(const Eo_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED)
 {
    event_freeze_count++;
 }
+EAPI EO_VOID_FUNC_BODY(eo_event_global_freeze);
 
 static void
-_ev_global_thaw(Eo_Class *klass EINA_UNUSED, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
+_ev_global_thaw(const Eo_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED)
 {
    if (event_freeze_count > 0)
      {
@@ -786,14 +802,14 @@ _ev_global_thaw(Eo_Class *klass EINA_UNUSED, void *data EINA_UNUSED, va_list *li
         ERR("Global events have already been thawed.");
      }
 }
+EAPI EO_VOID_FUNC_BODY(eo_event_global_thaw);
 
-static void
-_ev_global_freeze_get(Eo_Class *klass EINA_UNUSED, void *data EINA_UNUSED, va_list *list)
+static int
+_ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED)
 {
-   EO_PARAMETER_GET(int *, ret, list);
-
-   *ret = event_freeze_count;
+   return event_freeze_count;
 }
+EAPI EO_FUNC_BODY(eo_event_global_freeze_get, int, 0);
 
 /* Eo_Dbg */
 EAPI void
@@ -849,6 +865,8 @@ _eo_dbg_info_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Valu
         free(inner_val);
         return ret;
      }
+
+   eina_error_set(EINA_ERROR_VALUE_FAILED);
    return EINA_FALSE;
 }
 
@@ -891,10 +909,9 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 /* EOF event callbacks */
 
 
-/* EO_BASE_CLASS stuff */
-#define MY_CLASS EO_BASE_CLASS
+/* EO_CLASS stuff */
+#define MY_CLASS EO_CLASS
 
-/* FIXME: Set proper type descriptions. */
 EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD =
    EO_EVENT_DESCRIPTION("callback,add", "A callback was added.");
 EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL =
@@ -903,15 +920,16 @@ EAPI const Eo_Event_Description _EO_EV_DEL =
    EO_HOT_EVENT_DESCRIPTION("del", "Obj is being deleted.");
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
    _eo_condtor_done(obj);
 }
+EAPI EO_VOID_FUNC_BODY(eo_constructor);
 
 static void
-_destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+_destructor(Eo *obj, void *class_data)
 {
    Private_Data *pd = class_data;
    Eo *child;
@@ -927,71 +945,43 @@ _destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 
    _eo_condtor_done(obj);
 }
+EAPI EO_VOID_FUNC_BODY(eo_destructor);
 
 static void
-_class_constructor(Eo_Class *klass)
+_class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    event_freeze_count = 0;
-
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_PARENT_SET), _parent_set),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_PARENT_GET), _parent_get),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW), _children_iterator_new),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), _data_del),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_WREF_ADD), _wref_add),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), _wref_del),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), _ev_cb_priority_add),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), _ev_cb_del),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD), _ev_cb_array_priority_add),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL), _ev_cb_array_del),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), _ev_cb_forwarder_add),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), _ev_cb_forwarder_del),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE), _ev_freeze),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW), _ev_thaw),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), _ev_freeze_get),
-        EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE), _ev_global_freeze),
-        EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW), _ev_global_thaw),
-        EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), _ev_global_freeze_get),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DBG_INFO_GET), _dbg_info_get),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
 }
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_CONSTRUCTOR, "Constructor"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DESTRUCTOR, "Destructor"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_PARENT_SET, "Set parent"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_PARENT_GET, "Get parent"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_CHILDREN_ITERATOR_NEW, "Children Iterator"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_SET, "Set data for key."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_GET, "Get data for key."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "Del key."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_WREF_ADD, "Add a weak ref to the object."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_WREF_DEL, "Delete the weak ref."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "Add an event callback with a priority."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "Delete an event callback"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_PRIORITY_ADD, "Add an event callback array with a priority."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_ARRAY_DEL, "Delete an event callback array"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "Call the event callbacks for an event."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "Add an event forwarder."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "Delete an event forwarder."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE, "Freezes events."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_THAW, "Thaws events."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE_GET, "Get event freeze counter."),
-     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE, "Freezes events globally."),
-     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW, "Thaws events globally."),
-     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET, "Get global event freeze counter."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DBG_INFO_GET, "Get debug info list for obj."),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo_Op_Description op_descs [] = {
+       EO_OP_FUNC(eo_constructor, _constructor, "Constructor."),
+       EO_OP_FUNC(eo_destructor, _destructor, "Destructor."),
+       EO_OP_FUNC(eo_parent_set, _parent_set, "Set parent."),
+       EO_OP_FUNC(eo_parent_get, _parent_get, "Get parent."),
+       EO_OP_FUNC(eo_children_iterator_new, _children_iterator_new, "Get Children Iterator."),
+       EO_OP_FUNC(eo_key_data_set, _data_set, "Set data for key."),
+       EO_OP_FUNC(eo_key_data_get, _data_get, "Get data for key."),
+       EO_OP_FUNC(eo_key_data_del, _data_del, "Del key."),
+       EO_OP_FUNC(eo_wref_add, _wref_add, "Add a weak ref to the object."),
+       EO_OP_FUNC(eo_wref_del, _wref_del, "Delete the weak ref."),
+       EO_OP_FUNC(eo_event_callback_priority_add, _ev_cb_priority_add, "Add an event callback with a priority."),
+       EO_OP_FUNC(eo_event_callback_del, _ev_cb_del, "Delete an event callback"),
+       EO_OP_FUNC(eo_event_callback_array_priority_add, _ev_cb_array_priority_add, "Add an event callback array with a priority."),
+       EO_OP_FUNC(eo_event_callback_array_del, _ev_cb_array_del, "Delete an event callback array"),
+       EO_OP_FUNC(eo_event_callback_call, _ev_cb_call, "Call the event callbacks for an event."),
+       EO_OP_FUNC(eo_event_callback_forwarder_add, _ev_cb_forwarder_add, "Add an event forwarder."),
+       EO_OP_FUNC(eo_event_callback_forwarder_del, _ev_cb_forwarder_del, "Delete an event forwarder."),
+       EO_OP_FUNC(eo_event_freeze, _ev_freeze, "Freezes events."),
+       EO_OP_FUNC(eo_event_thaw, _ev_thaw, "Thaws events."),
+       EO_OP_FUNC(eo_event_freeze_get, _ev_freeze_get, "Get event freeze counter."),
+       EO_OP_FUNC(eo_event_global_freeze, _ev_global_freeze, "Freezes events globally."),
+       EO_OP_FUNC(eo_event_global_thaw, _ev_global_thaw, "Thaws events globally."),
+       EO_OP_FUNC(eo_event_global_freeze_get, _ev_global_freeze_get, "Get global event freeze counter."),
+       EO_OP_FUNC(eo_dbg_info_get, _dbg_info_get, "Get debug info list for obj."),
+       EO_OP_SENTINEL
 };
 
+// FIXME: eo
 static const Eo_Event_Description *event_desc[] = {
      EO_EV_CALLBACK_ADD,
      EO_EV_CALLBACK_DEL,
@@ -1003,7 +993,7 @@ static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Eo_Base",
      EO_CLASS_TYPE_REGULAR_NO_INSTANT,
-     EO_CLASS_DESCRIPTION_OPS(&EO_BASE_BASE_ID, op_desc, EO_BASE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      event_desc,
      sizeof(Private_Data),
      _class_constructor,

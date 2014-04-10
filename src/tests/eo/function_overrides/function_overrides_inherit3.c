@@ -10,33 +10,25 @@
 #define MY_CLASS INHERIT3_CLASS
 
 static void
-_a_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+_a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 {
-   int a;
-   a = va_arg(*list, int);
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    eo_do_super(obj, MY_CLASS, simple_a_set(a + 1));
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+     EO_OP_SENTINEL
+};
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Inherit3",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      0,
-     _class_constructor,
+     NULL,
      NULL
 };
 

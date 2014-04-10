@@ -167,7 +167,6 @@ eo1_fundef_generate(const char *classname, Eolian_Function func, Eolian_Function
 
    char *fsuffix = "";
    rettype = eolian_function_return_type_get(func, ftype);
-   if (rettype && !strcmp(rettype, "void")) rettype = NULL;
    if (ftype == EOLIAN_PROP_GET)
      {
         fsuffix = "_get";
@@ -468,7 +467,6 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
    Eina_Strbuf *full_params = eina_strbuf_new(); /* variables types + names */
 
    rettype = eolian_function_return_type_get(funcid, ftype);
-   if (rettype && !strcmp(rettype, "void")) rettype = NULL;
    retname = "ret";
    if (ftype == EOLIAN_PROP_GET)
      {

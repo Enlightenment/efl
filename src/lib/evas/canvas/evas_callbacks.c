@@ -238,7 +238,7 @@ evas_event_callback_cleanup(Evas *eo_e)
 void
 evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
-   eo_do(eo_e, eo_event_callback_call(_legacy_evas_callback_table[type], event_info, NULL));
+   eo_do(eo_e, eo_event_callback_call(_legacy_evas_callback_table[type], event_info));
 }
 
 void
@@ -299,7 +299,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
               break;
           }
 
-        eo_do(eo_obj, eo_event_callback_call(_legacy_evas_callback_table[type], event_info, NULL));
+        eo_do(eo_obj, eo_event_callback_call(_legacy_evas_callback_table[type], event_info));
 
         if (type == EVAS_CALLBACK_MOUSE_DOWN)
           {

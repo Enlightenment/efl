@@ -1,5 +1,7 @@
 abstract Eo_Base ()
 {
+   eo_prefix: eo;
+
    constructors {
       constructor {
          /*@ Call the object's constructor.
@@ -75,15 +77,15 @@ Prevents event callbacks from being called for the object. */
          /*@ Call the object's destructor.
 Should not be used with #eo_do. Only use it with #eo_do_super. */
       }
-      data_set {
+      key_data_set {
          /*@ Set generic data to object. */
          params {
             @in const char* key; /*@ the key associated with the data */
             @in const void* data; /*@ the data to set */
-            @in eo_base_data_free_func free_func; /*@ the func to free data with (NULL means */
+            @in eo_key_data_free_func free_func; /*@ the func to free data with (NULL means */
          }
       }
-      data_get {
+      key_data_get {
          /*@ Get generic data from object. */
          params {
             @in const char* key; /*@ the key associated with the data */
@@ -102,7 +104,7 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
          /*@ thaw events of object.
 Lets event callbacks be called for the object. */
       }
-      data_del {
+      key_data_del {
          /*@ Del generic data from object. */
          params {
             @in const char* key; /*@ the key associated with the data */

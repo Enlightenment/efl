@@ -30,8 +30,10 @@ main(int argc, char *argv[])
 
    eo_do(obj, simple_a_set(1), simple_b_set(2));
 
-   int a, b;
-   eo_do(obj, simple_a_get(&a), simple_b_get(&b),  mixin_add_and_print(5));
+   int a = 0, b = 0;
+   eo_do(obj, a = simple_a_get(), b = simple_b_get(), mixin_add_and_print(5));
+   fail_if(a != 1);
+   fail_if(b != 2);
 
    eo_unref(obj);
 
@@ -68,7 +70,7 @@ main(int argc, char *argv[])
    fail_if(!obj);
 
    fail_if(my_init_count != 2);
-   eo_do(obj, simple_a_get(&a));
+   eo_do(obj, a = simple_a_get());
    fail_if(a != 7);
 
    eo_unref(obj);

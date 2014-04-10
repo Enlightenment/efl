@@ -27,7 +27,7 @@ _ecore_audio_in_speed_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj, double
 
   obj->speed = speed;
 
-  eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, NULL, NULL));
+  eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, NULL));
 }
 
 EOLIAN static double
@@ -41,7 +41,7 @@ _ecore_audio_in_samplerate_set(Eo *eo_obj EINA_UNUSED, Ecore_Audio_Input *obj, i
 {
   obj->samplerate = samplerate;
 
-  eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, NULL, NULL));
+  eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, NULL));
 }
 
 EOLIAN static int
@@ -88,8 +88,8 @@ _ecore_audio_in_remaining_get(Eo *eo_obj, Ecore_Audio_Input *obj)
 {
   if (!obj->seekable) return -1;
   else {
-       double ret;
-       eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_CUR, &ret));
+       double ret = 0.0;
+       eo_do(eo_obj, ret = ecore_audio_obj_in_seek(0, SEEK_CUR));
        return obj->length - ret;
   }
 }
@@ -104,14 +104,14 @@ _ecore_audio_in_read(Eo *eo_obj, Ecore_Audio_Input *obj, void *buf, size_t len)
     memset(buf, 0, len);
     len_read = len;
   } else {
-      eo_do(eo_obj, ecore_audio_obj_in_read_internal(buf, len, &len_read));
+      eo_do(eo_obj, len_read = ecore_audio_obj_in_read_internal(buf, len));
       if (len_read == 0) {
           if (!obj->looped || !obj->seekable) {
-              eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_STOPPED, NULL, NULL));
+              eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_STOPPED, NULL));
           } else {
-              eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_SET, NULL));
-              eo_do(eo_obj, ecore_audio_obj_in_read_internal(buf, len, &len_read));
-              eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_LOOPED, NULL, NULL));
+              eo_do(eo_obj, ecore_audio_obj_in_seek(0, SEEK_SET));
+              eo_do(eo_obj, len_read = ecore_audio_obj_in_read_internal(buf, len));
+              eo_do(eo_obj, eo_event_callback_call(ECORE_AUDIO_IN_EVENT_IN_LOOPED, NULL));
           }
       }
 
@@ -149,7 +149,7 @@ static void _free_vio(Ecore_Audio_Object *ea_obj)
 }
 
 EOLIAN static void
-_ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Audio_Vio *vio, void *data, eo_base_data_free_func free_func)
+_ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Audio_Vio *vio, void *data, eo_key_data_free_func free_func)
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OBJ_CLASS);
 
@@ -182,7 +182,7 @@ EOLIAN static void
 _ecore_audio_in_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Input *obj)
 {
   if(obj->output)
-    eo_do(obj->output, ecore_audio_obj_out_input_detach(eo_obj, NULL));
+    eo_do(obj->output, ecore_audio_obj_out_input_detach(eo_obj));
 
   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }

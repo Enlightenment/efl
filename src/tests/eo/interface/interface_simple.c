@@ -7,8 +7,6 @@
 #include "interface_interface2.h"
 #include "interface_simple.h"
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 typedef struct
 {
    int a;
@@ -18,83 +16,63 @@ typedef struct
 #define MY_CLASS SIMPLE_CLASS
 
 #define _GET_SET_FUNC(name) \
-static void \
-_##name##_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list) \
+static int \
+_##name##_get(Eo *obj EINA_UNUSED, void *class_data) \
 { \
    const Private_Data *pd = class_data; \
-   int *name; \
-   name = va_arg(*list, int *); \
-   *name = pd->name; \
    printf("%s %d\n", __func__, pd->name); \
+   return pd->name; \
 } \
 static void \
-_##name##_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list) \
+_##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
 { \
    Private_Data *pd = class_data; \
-   int name; \
-   name = va_arg(*list, int); \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
-}
+} \
+EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
+EO_FUNC_BODY(simple_##name##_get, int, 0);
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
 
-static void
-_ab_sum_get(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+static int
+_ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
-   int a, b;
-   eo_do(obj, simple_a_get(&a), simple_b_get(&b));
-   int *sum = va_arg(*list, int *);
-   if (sum)
-      *sum = a + b;
+   int a = 0, b = 0;
+   eo_do(obj, a = simple_a_get(), b = simple_b_get());
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   return a + b;
 }
 
-static void
-_ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+static int
+_ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
 {
-   int a, b;
-   eo_do(obj, simple_a_get(&a), simple_b_get(&b));
-   int *sum = va_arg(*list, int *);
-   if (sum)
-      *sum = a + b + 1;
+   int a = 0, b = 0;
+   eo_do(obj, a = simple_a_get(), b = simple_b_get());
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   return a + b + 1;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_SET), _b_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_GET), _b_get),
-        EO_OP_FUNC(INTERFACE_ID(INTERFACE_SUB_ID_AB_SUM_GET), _ab_sum_get),
-        EO_OP_FUNC(INTERFACE2_ID(INTERFACE2_SUB_ID_AB_SUM_GET2), _ab_sum_get2),
-        EO_OP_FUNC_SENTINEL
-   };
-
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "Get property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "Set property B"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_GET, "Get property B"),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo_Op_Description op_descs[] = {
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property a"),
+     EO_OP_FUNC(simple_a_get, _a_get, "Get property a"),
+     EO_OP_FUNC(simple_b_set, _b_set, "Set property b"),
+     EO_OP_FUNC(simple_b_get, _b_get, "Get property b"),
+     EO_OP_FUNC_OVERRIDE(interface_ab_sum_get, _ab_sum_get),
+     EO_OP_FUNC_OVERRIDE(interface2_ab_sum_get2, _ab_sum_get2),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(op_descs),
      NULL,
      sizeof(Private_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_BASE_CLASS, INTERFACE2_CLASS, NULL);
+EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, INTERFACE2_CLASS, NULL);

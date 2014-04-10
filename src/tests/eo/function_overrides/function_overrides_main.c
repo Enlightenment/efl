@@ -17,6 +17,7 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
+   Eina_Bool called = EINA_FALSE;
    Eo *obj = eo_add(INHERIT2_CLASS, NULL);
 
    eo_do(obj, simple_a_set(1));
@@ -34,24 +35,36 @@ main(int argc, char *argv[])
    eo_unref(obj);
 
    obj = eo_add(INHERIT2_CLASS, NULL);
-   fail_if(!eo_do(obj, inherit2_print()));
-   fail_if(!eo_do(obj, inherit2_print(), inherit2_print()));
+   eo_do(obj, called = inherit2_print());
+   fail_if(!called);
+   eo_do(obj, called = inherit2_print(), called = inherit2_print());
+   fail_if(!called);
    eo_unref(obj);
 
    obj = eo_add(SIMPLE_CLASS, NULL);
-   fail_if(eo_do(obj, inherit2_print2()));
+   eo_do(obj, called = inherit2_print());
+   fail_if(called);
 
 #ifdef EO_DEBUG
-   fail_if(eo_do(obj, simple_class_print()));
+   eo_do(obj, called = simple_class_print());
+   fail_if(called);
 #endif
 
-   fail_if(!eo_do(SIMPLE_CLASS, simple_class_print()));
-   fail_if(!eo_do(INHERIT_CLASS, simple_class_print()));
-   fail_if(!eo_do(INHERIT2_CLASS, simple_class_print()));
-   fail_if(!eo_do(INHERIT3_CLASS, simple_class_print()));
+   eo_do(SIMPLE_CLASS, called = simple_class_print());
+   fail_if(!called);
+
+   eo_do(INHERIT_CLASS, called = simple_class_print());
+   fail_if(!called);
+
+   eo_do(INHERIT2_CLASS, called = simple_class_print());
+   fail_if(!called);
+
+   eo_do(INHERIT3_CLASS, called = simple_class_print());
+   fail_if(!called);
 
 #ifdef EO_DEBUG
-   fail_if(eo_do(SIMPLE_CLASS, simple_a_print()));
+   eo_do(SIMPLE_CLASS, called = simple_a_print());
+   fail_if(called);
 #endif
 
    eo_do_super(obj, SIMPLE_CLASS, eo_constructor());

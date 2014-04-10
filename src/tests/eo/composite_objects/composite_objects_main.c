@@ -36,16 +36,16 @@ main(int argc, char *argv[])
    fail_if(!eo_isa(obj, COMP_CLASS));
    fail_if(!eo_isa(obj, SIMPLE_CLASS));
 
-   int a;
+   int a = 0;
    eo_do(obj, simple_a_set(1));
    fail_if(!cb_called);
 
-   eo_do(obj, simple_a_get(&a));
+   eo_do(obj, a = simple_a_get());
    fail_if(a != 1);
 
    /* disable the callback forwarder, and fail if it's still called. */
-   Eo *simple;
-   eo_do(obj, eo_base_data_get("simple-obj", (void **) &simple));
+   Eo *simple = NULL;
+   eo_do(obj, simple = eo_key_data_get("simple-obj"));
    eo_ref(simple);
    eo_do(simple, eo_event_callback_forwarder_del(EV_A_CHANGED, obj));
 

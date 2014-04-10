@@ -37,7 +37,7 @@ extern "C"
 /**
  * @brief The frequency of the tone in Hz
  *
- * Set with @ref eo_base_data_set()
+ * Set with @ref eo_key_data_set()
  */
 #define ECORE_AUDIO_ATTR_TONE_FREQ "ecore_audio_freq"
 

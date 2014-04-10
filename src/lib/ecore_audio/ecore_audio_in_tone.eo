@@ -3,8 +3,8 @@ class Ecore_Audio_In_Tone (Ecore_Audio_In)
    eo_prefix: ecore_audio_obj_in_tone;
    implements {
       Eo_Base::constructor;
-      Eo_Base::data_set;
-      Eo_Base::data_get;
+      Eo_Base::key_data_set;
+      Eo_Base::key_data_get;
       Ecore_Audio_In::length::set;
       Ecore_Audio_In::seek;
       Ecore_Audio_In::read_internal;

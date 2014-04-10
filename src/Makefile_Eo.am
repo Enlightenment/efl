@@ -10,8 +10,8 @@ lib_eo_libeo_la_SOURCES = \
 lib/eo/eo.c \
 lib/eo/eo_ptr_indirection.c \
 lib/eo/eo_ptr_indirection.h \
-lib/eo/eo_class_class.c \
 lib/eo/eo_base_class.c \
+lib/eo/eo_class_class.c \
 lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
@@ -91,9 +91,13 @@ tests/eo/suite/eo_test_class_simple.c \
 tests/eo/suite/eo_test_class_simple.h \
 tests/eo/suite/eo_suite.c \
 tests/eo/suite/eo_suite.h \
+tests/eo/suite/eo_error_msgs.h \
+tests/eo/suite/eo_error_msgs.c \
 tests/eo/suite/eo_test_class_errors.c \
+tests/eo/suite/eo_test_call_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_value.c \
+tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo\" \
