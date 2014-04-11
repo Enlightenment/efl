@@ -4,6 +4,7 @@
 local ffi = require("ffi")
 
 local iterator = require("eina.iterator")
+local accessor = require("eina.accessor")
 
 ffi.cdef [[
     typedef unsigned char Eina_Bool;
@@ -54,7 +55,7 @@ ffi.cdef [[
     void                 *eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
     Eina_Iterator        *eina_list_iterator_new(const Eina_List *list);
     Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list);
-//  Eina_Accessor        *eina_list_accessor_new(const Eina_List *list);
+    Eina_Accessor        *eina_list_accessor_new(const Eina_List *list);
 ]]
 
 local cutil = require("cutil")
@@ -98,6 +99,21 @@ M.Reverse_Iterator = Iterator:clone {
 
     next = function(self)
         local  v = Iterator.next(self)
+        if not v then return nil end
+        return self.__list:data_get(v)
+    end
+}
+
+local Accessor = accessor.Accessor
+
+M.Accessor = Accessor:clone {
+    __ctor = function(self, list)
+        self.__list = list
+        return Accessor.__ctor(self, eina.eina_list_accessor_new(list.__list))
+    end,
+
+    data_get = function(self, pos)
+        local  v = Accessor.data_get(self, pos)
         if not v then return nil end
         return self.__list:data_get(v)
     end

@@ -36,7 +36,7 @@ ffi.metatype("Eina_Iterator", {
         next = function(self)
             local data = ffi.new("void*[1]")
             local r = eina.eina_iterator_next(self, data)
-            if r == nil then return nil end
+            if r == 0 then return nil end
             return data[0]
         end,
         lock   = function(self) return eina.eina_iterator_lock  (self) ~= 0 end,
@@ -83,22 +83,22 @@ M.Iterator = util.Object:clone {
     end,
 
     next = function(self)
-        if not self.__iterator then return end
+        if not self.__iterator then return nil end
         return self.__iterator:next()
     end,
 
     lock = function(self)
-        if not self.__iterator then return end
+        if not self.__iterator then return false end
         return self.__iterator:lock()
     end,
 
     unlock = function(self)
-        if not self.__iterator then return end
+        if not self.__iterator then return false end
         return self.__iterator:unlock()
     end,
 
     container_get = function(self)
-        if not self.__iterator then return end
+        if not self.__iterator then return nil end
         return self.__iterator:container_get()
     end
 }
