@@ -149,7 +149,7 @@ M.dir_list = function(dir, recursive, cb)
     end)
     local v = eina.eina_file_dir_list(dir, recursive or false, cbp, nil)
     cbp:free()
-    return v == 1
+    return v ~= 0
 end
 
 local Iterator = iterator.Iterator
@@ -255,7 +255,7 @@ M.copy = function(source, destination, flags, cb)
     end
     local v = eina.eina_file_copy(source, destination, flags, cbp, nil)
     if cbp then cbp:free() end
-    return v == 1
+    return v ~= 0
 end
 
 M.Xattr_Iterator = Iterator:clone {
@@ -327,10 +327,10 @@ M.File = ffi.metatype("Eina_File", {
         end,
 
         is_virtual = function(self)
-            return eina.eina_file_virtual(self) == 1
+            return eina.eina_file_virtual(self) ~= 0
         end,
         refresh = function(self)
-            return eina.eina_file_refresh(self) == 1
+            return eina.eina_file_refresh(self) ~= 0
         end,
 
         size_get = function(self)
@@ -381,7 +381,7 @@ M.File = ffi.metatype("Eina_File", {
         end,
 
         map_faulted = function(self, map)
-            return eina.eina_file_map_faulted(self, map) == 1
+            return eina.eina_file_map_faulted(self, map) ~= 0
         end,
 
         lines = M.Line_Iterator

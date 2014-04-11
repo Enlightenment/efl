@@ -113,11 +113,11 @@ M.Tiler = ffi.metatype("Eina_Tiler", {
         end,
 
         is_empty = function(self)
-            return eina.eina_tiler_empty(self) == 1
+            return eina.eina_tiler_empty(self) ~= 0
         end,
 
         rect_add = function(self, r)
-            return eina.eina_tiler_rect_add(self, r) == 1
+            return eina.eina_tiler_rect_add(self, r) ~= 0
         end,
         rect_del = function(self, r)
             eina.eina_tiler_rect_del(self, r)
@@ -137,7 +137,7 @@ M.Tile_Grid_Slicer = ffi.metatype("Eina_Tile_Grid_Slicer", {
     __index = {
         setup = function(self, x, y, w, h, tile_w, tile_h)
             return eina.eina_tile_grid_slicer_setup(x, y, w, h,
-                tile_w, tile_h) == 1
+                tile_w, tile_h) ~= 0
         end,
 
         next = function(self)

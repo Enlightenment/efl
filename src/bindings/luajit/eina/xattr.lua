@@ -91,7 +91,7 @@ M.Value_Iterator = Iterator:clone {
 M.value_ls = M.Value_Iterator
 
 M.copy = function(src, dst)
-    return eina.eina_xatr_copy(src, dst) == 1
+    return eina.eina_xatr_copy(src, dst) ~= 0
 end
 
 M.get = function(file, attribute)
@@ -111,16 +111,16 @@ M.flags = {
 
 M.set = function(file, attribute, data, flags)
     if not data then return false end
-    return eina.eina_xattr_set(file, attribute, data, #data, flags or 0) == 1
+    return eina.eina_xattr_set(file, attribute, data, #data, flags or 0) ~= 0
 end
 
 M.del = function(file, attribute)
-    return eina.eina_xattr_del(file, attribute) == 1
+    return eina.eina_xattr_del(file, attribute) ~= 0
 end
 
 M.string_set = function(file, attribute, data, flags)
     return eina.eina_xattr_set(file, attribute, data, #data + 1,
-        flags or 0) == 1
+        flags or 0) ~= 0
 end
 
 M.string_get = function(file, attribute)
@@ -132,7 +132,7 @@ M.string_get = function(file, attribute)
 end
 
 M.double_set = function(file, attribute, value, flags)
-    return eina.eina_xattr_double_set(file, attribute, value, flags) == 1
+    return eina.eina_xattr_double_set(file, attribute, value, flags) ~= 0
 end
 
 M.double_get = function(file, attribute)
@@ -143,7 +143,7 @@ M.double_get = function(file, attribute)
 end
 
 M.int_set = function(file, attribute, value, flags)
-    return eina.eina_xattr_int_set(file, attribute, value, flags) == 1
+    return eina.eina_xattr_int_set(file, attribute, value, flags) ~= 0
 end
 
 M.int_get = function(file, attribute)
