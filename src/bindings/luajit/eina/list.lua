@@ -207,6 +207,22 @@ M.List = util.Object:clone {
         local l = self.__list
         if l == nil then return nil end
         return l:data_get(ptr)
+    end,
+
+    to_array = function(self)
+        local l = self.__list
+        if l == nil then return {}, 0 end
+        local n = 0
+        local r = {}
+        while l ~= nil do
+            n = n + 1
+            local d = l:data_get()
+            if d ~= nil then
+                r[n] = self:data_get(d)
+            end
+            l = l:next()
+        end
+        return r, n
     end
 }
 
