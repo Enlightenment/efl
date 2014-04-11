@@ -2396,7 +2396,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
         if (svr->fd_handler)
           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }
-   else if ((count < num) && svr->fd_handler)
+   else if (((unsigned int)count < num) && svr->fd_handler)
      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
 }
 
