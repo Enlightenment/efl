@@ -468,7 +468,6 @@ evas_drm_outbuf_setup(Outbuf *ob)
    drmModeConnector *conn;
    drmModePlaneResPtr pres;
    int i = 0;
-   uint64_t dumb;
 
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
@@ -716,8 +715,6 @@ evas_drm_framebuffer_destroy(int fd, Buffer *buffer)
 Eina_Bool 
 evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
 {
-   int ret;
-
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
 
