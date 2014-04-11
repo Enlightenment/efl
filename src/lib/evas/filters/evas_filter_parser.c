@@ -1,7 +1,22 @@
 #include "evas_filter_private.h"
 #include <stdarg.h>
 
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
+#if LUA_VERSION_NUM == 502
+# define LUA52 1
+#endif
+
+//#ifdef DEBUG
+# define FILTERS_DEBUG
+//#endif
+
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
+#define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+2)
+
+// FIXME: The documentation must be updated to respect the Lua language
 
 /* Note on the documentation:
  * To keep it simple, I'm not using any fancy features, only <ul>/<li> lists
@@ -181,35 +196,6 @@
   by rendering the Evas Object into this buffer. This is how it will be
   possible to load external images, textures and even animations into a buffer.
 
-
-  @subsection sec_buffers_cmd Buffer command
-
-  @code
-    buffer : name;
-    buffer : name (alpha);
-    buffer : name (rgba);
-    buffer : name (src = partname);
-  @endcode
-
-  The "buffer" instruction is a @a special command used to declare a new buffer
-  in the filters context. This buffer can be either ALPHA, RGBA or based on
-  an other Evas Object (proxy source).
-  If no option is given, an RGBA buffer will be created.
-
-  @param name      An alpha-numerical name, starting with a letter (a-z, A-Z).
-                   Can not be @c input or @c output, as these are reserved names.
-                   Must be unique.
-
-  @param (args)    [alpha] OR [rgba] OR [src = partname] <br>
-    Create a new named buffer, specify its colorspace or source. Possible options:
-    @li @c alpha: Create an alpha-only buffer (1 channel, no color)
-    @li @c rgba: Create an RGBA buffer (4 channels, full color)
-    @li <tt>src = partname</tt>: Use another <tt>Evas Object</tt> as source for this
-      buffer's pixels. The name can either be an Edje part name or the one
-      specified in evas_obj_text_filter_source_set.
-
-  @see evas_obj_text_filter_source_set
-
   @since 1.9
  */
 
@@ -303,8 +289,10 @@ struct _Evas_Filter_Instruction
 {
    EINA_INLIST;
    Eina_Stringshare *name;
-   int /* Evas_Filter_Mode */ type;
+   int /*Evas_Filter_Mode*/ type;
    Eina_Inlist /* Instruction_Param */ *params;
+   int return_count;
+   Eina_Bool (* parse_run) (lua_State *L, Evas_Filter_Program *, Evas_Filter_Instruction *);
    struct
    {
       void (* update) (Evas_Filter_Program *, Evas_Filter_Instruction *, int *, int *, int *, int *);
@@ -411,6 +399,18 @@ _instruction_del(Evas_Filter_Instruction *instr)
    free(instr);
 }
 
+static Instruction_Param *
+_instruction_param_get(Evas_Filter_Instruction *instr, const char *name)
+{
+   Instruction_Param *param;
+
+   EINA_INLIST_FOREACH(instr->params, param)
+     if (!strcasecmp(name, param->name))
+       return param;
+
+   return NULL;
+}
+
 static int
 _instruction_param_geti(Evas_Filter_Instruction *instr, const char *name,
                         Eina_Bool *isset)
@@ -501,6 +501,7 @@ _instruction_param_gets(Evas_Filter_Instruction *instr, const char *name,
 
 /* Parsing format: func ( arg , arg2 , argname=val1, argname2 = val2 ) */
 
+#if 0
 #define CHARS_ALPHABET "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ"
 #define CHARS_NUMS "0123456789"
 #define CHARS_DELIMS "=-(),;#.:_"
@@ -636,6 +637,7 @@ _is_valid_keyval(const char *str)
    *equal = '=';
    return ok;
 }
+#endif
 
 static Eina_Bool
 _bool_parse(const char *str, Eina_Bool *b)
@@ -709,6 +711,7 @@ end:
    return success;
 }
 
+#if 0
 static Eina_Bool
 _value_parse(Instruction_Param *param, const char *value)
 {
@@ -847,6 +850,7 @@ end:
    instr->valid = success;
    return success;
 }
+#endif
 
 /* Buffers */
 static Buffer *
@@ -920,6 +924,87 @@ _buffer_del(Buffer *buf)
 }
 
 /* Instruction definitions */
+
+/**
+  @page evasfiltersref
+
+  @subsection sec_buffers_cmd Buffer command
+
+  Create a new buffer.
+
+  @code
+    name1 = buffer();
+    name2 = buffer("alpha");
+    name3 = buffer("rgba");
+    name4 = buffer{src = "partname"};
+  @endcode
+
+  @param type   Buffer type: @c rgba (default) or @c alpha
+  @param src    An optional source. If set, @a type will be @c rgba.
+  @return A new buffer. This value must not be saved to a variable.
+
+  This creates a new named buffer, specify its colorspace or source. Possible options:
+    @li @c alpha: Create an alpha-only buffer (1 channel, no color)
+    @li @c rgba: Create an RGBA buffer (4 channels, full color)
+    @li <tt>{src = "partname"}</tt>: Use another <tt>Evas Object</tt> as source for this
+      buffer's pixels. The name can either be an Edje part name or the one
+      specified in @c evas_obj_text_filter_source_set.
+
+  If no option is given, an RGBA buffer will be created. All buffers have the
+  same size, unless they are based on an external source.
+
+  @see evas_obj_text_filter_source_set
+
+  @since 1.10
+ */
+
+static Eina_Bool
+_buffer_instruction_parse_run(lua_State *L,
+                              Evas_Filter_Program *pgm,
+                              Evas_Filter_Instruction *instr)
+{
+   char bufname[32] = {0};
+   const char *src, *rgba;
+   Eina_Bool ok, alpha = EINA_FALSE;
+   int cnt;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+
+   // FIXME: Buffers are still referred to internally by name.
+   // This is pretty bad with the switch to Lua.
+
+   rgba = _instruction_param_gets(instr, "type", NULL);
+   src = _instruction_param_gets(instr, "src", NULL);
+
+   alpha = (rgba && !strcasecmp(rgba, "alpha"));
+
+   cnt = (pgm->buffers ? eina_inlist_count(pgm->buffers) : 0) + 1;
+   snprintf(bufname, sizeof(bufname), "__buffer%02d", cnt);
+   ok = _buffer_add(pgm, bufname, alpha, src);
+
+   if (!ok) return EINA_FALSE;
+
+   lua_pushstring(L, bufname);
+   instr->return_count = 1;
+
+   return ok;
+}
+
+static Eina_Bool
+_buffer_instruction_prepare(Evas_Filter_Instruction *instr)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "buffer"), EINA_FALSE);
+
+   instr->type = EVAS_FILTER_MODE_BUFFER;
+   instr->parse_run = _buffer_instruction_parse_run;
+   _instruction_param_seq_add(instr, "type", VT_BUFFER, "rgba");
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, NULL);
+
+   return EINA_TRUE;
+}
 
 static void
 _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
@@ -1727,6 +1812,7 @@ _padding_set_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
+#if 0
 static Evas_Filter_Instruction *
 _instruction_create(const char *name)
 {
@@ -1735,7 +1821,9 @@ _instruction_create(const char *name)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(name && *name, NULL);
 
-   if (!strcasecmp(name, "blend"))
+   if (!strcasecmp(name, "buffer"))
+     prepare = _buffer_instruction_prepare;
+   else if (!strcasecmp(name, "blend"))
      prepare = _blend_instruction_prepare;
    else if (!strcasecmp(name, "blur"))
      prepare = _blur_instruction_prepare;
@@ -1773,6 +1861,7 @@ _instruction_create(const char *name)
      }
    return instr;
 }
+#endif
 
 /* Evas_Filter_Parser entry points */
 
@@ -1803,6 +1892,7 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
    free(pgm);
 }
 
+#if 0
 static Eina_Bool
 _instruction_buffer_parse(Evas_Filter_Program *pgm, char *command)
 {
@@ -1849,23 +1939,474 @@ _instruction_buffer_parse(Evas_Filter_Program *pgm, char *command)
 end:
    return success;
 }
+#endif
+
+static const int this_is_not_a_cat = 42;
+
+static Evas_Filter_Program *
+_lua_program_get(lua_State *L)
+{
+   Evas_Filter_Program *pgm;
+   lua_pushlightuserdata(L, (void *) &this_is_not_a_cat);
+   lua_gettable(L, LUA_REGISTRYINDEX);
+   pgm = lua_touserdata(L, -1);
+   lua_pop(L, 1);
+   return pgm;
+}
+
+static int
+_lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
+{
+   Eina_Bool ok;
+   int retc = 0;
+
+   if (!param) goto fail;
+   if (param->set)
+     {
+        ERR("Parameter %s has already been set", param->name);
+        luaL_error(L, "Parameter %s has already been set", param->name);
+        return 0;
+     }
+
+   switch (param->type)
+     {
+      case VT_BOOL:
+        if (lua_type(L, i) == LUA_TSTRING)
+          {
+             const char *str = lua_tostring(L, i);
+             Eina_Bool val = _bool_parse(str, &ok);
+             if (!ok) goto fail;
+             eina_value_set(param->value, val);
+          }
+        else if (lua_isboolean(L, i) || lua_isnumber(L, i))
+          eina_value_set(param->value, lua_toboolean(L, i));
+        else goto fail;
+        break;
+      case VT_INT:
+        if (!lua_isnumber(L, i)) goto fail;
+        eina_value_set(param->value, lua_tointeger(L, i));
+        break;
+      case VT_REAL:
+        if (!lua_isnumber(L, i)) goto fail;
+        eina_value_set(param->value, lua_tonumber(L, i));
+        break;
+      case VT_STRING:
+        if (lua_type(L, i) != LUA_TSTRING) goto fail;
+        eina_value_set(param->value, lua_tostring(L, i));
+        break;
+      case VT_COLOR:
+        if (lua_isnumber(L, i))
+          eina_value_set(param->value, (DATA32) lua_tonumber(L, i));
+        else if (lua_type(L, i) == LUA_TSTRING)
+          {
+             DATA32 color;
+             ok = _color_parse(lua_tostring(L, i), &color);
+             if (!ok) goto fail;
+             eina_value_set(param->value, color);
+          }
+        else goto fail;
+        break;
+      case VT_BUFFER:
+        if (lua_type(L, i) != LUA_TSTRING) goto fail;
+        eina_value_set(param->value, lua_tostring(L, i));
+        break;
+      case VT_NONE:
+      default:
+        // This should not happen
+        CRI("Invalid function declaration");
+        goto fail;
+     }
+
+   param->set = EINA_TRUE;
+
+   return retc;
+
+fail:
+   ERR("Invalid value for parameter %s", param->name);
+   luaL_error(L, "Invalid value for parameter %s", param->name);
+   return 0;
+}
+
+static Eina_Bool
+_lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
+{
+   const unsigned int argc = lua_gettop(L);
+   Evas_Filter_Program *pgm = _lua_program_get(L);
+   Instruction_Param *param;
+   unsigned int i = 0;
+
+   if (!instr) goto fail;
+
+   if (eina_inlist_count(instr->params) < argc)
+     {
+        ERR("Too many arguments passed to the instruction %s", instr->name);
+        goto fail;
+     }
+
+   if (lua_istable(L, 1))
+     {
+        Eina_Bool seqmode = EINA_TRUE;
+
+        if (argc > 1)
+          {
+             ERR("Too many arguments passed to the instruction %s (in table mode)", instr->name);
+             goto fail;
+          }
+        lua_pushnil(L);
+        param = EINA_INLIST_CONTAINER_GET(instr->params, Instruction_Param);
+
+        while (lua_next(L, 1))
+          {
+             if (!lua_isnumber(L, -2) && (lua_type(L, -2) == LUA_TSTRING))
+               {
+                  const char *name = lua_tostring(L, -2);
+                  seqmode = EINA_FALSE;
+                  param = _instruction_param_get(instr, name);
+                  if (!param)
+                    {
+                       ERR("Parameter %s does not exist", name);
+                       goto fail;
+                    }
+               }
+             else if (!seqmode)
+               {
+                  ERR("Unnamed parameter can not come after a named parameter");
+                  goto fail;
+               }
+             else if (param && !param->allow_seq)
+               {
+                  ERR("The parameter %s must be refered to by name", param->name);
+                  goto fail;
+               }
+
+             _lua_parameter_parse(L, param, -1);
+             lua_pop(L, 1);
+
+             if (seqmode)
+               param = EINA_INLIST_GET(param)->next ?
+                        _EINA_INLIST_CONTAINER(param, EINA_INLIST_GET(param)->next) :
+                        NULL;
+          }
+     }
+   else
+     {
+        EINA_INLIST_FOREACH(instr->params, param)
+          {
+             if ((++i) >= argc) break;
+             _lua_parameter_parse(L, param, i);
+          }
+     }
+
+   if (instr->parse_run)
+     {
+        if (!instr->parse_run(L, pgm, instr))
+          {
+             ERR("Failed to run instruction '%s'", instr->name);
+             return EINA_FALSE;
+          }
+     }
+
+   return EINA_TRUE;
+
+fail:
+   ERR("Invalid parameters for instruction %s", instr->name);
+   luaL_error(L, "Invalid parameters for instruction %s", instr->name);
+   return EINA_FALSE;
+}
+
+static int
+_lua_generic_function(lua_State *L, const char *name,
+                      Eina_Bool (* prepare) (Evas_Filter_Instruction *))
+{
+   Evas_Filter_Program *pgm = _lua_program_get(L);
+   Evas_Filter_Instruction *instr;
+   Eina_Bool ok;
+
+   instr = _instruction_new(name);
+   prepare(instr);
+   ok = _lua_instruction_run(L, instr);
+
+   if (!ok)
+     {
+        ERR("Instruction parsing failed");
+        _instruction_del(instr);
+        lua_error(L);
+        return 0;
+     }
+   else
+     {
+        pgm->instructions = eina_inlist_append(pgm->instructions, EINA_INLIST_GET(instr));
+     }
+
+   return instr->return_count;
+}
+
+#define LUA_GENERIC_FUNCTION(name) \
+static int \
+_lua_##name(lua_State *L) \
+{ \
+   return _lua_generic_function(L, #name, _##name##_instruction_prepare); \
+}
+
+#define PUSH_LUA_FUNCTION(name) \
+   lua_pushcfunction(L, _lua_##name); \
+   lua_setglobal(L, #name);
+
+LUA_GENERIC_FUNCTION(buffer)
+LUA_GENERIC_FUNCTION(blend)
+LUA_GENERIC_FUNCTION(blur)
+LUA_GENERIC_FUNCTION(bump)
+LUA_GENERIC_FUNCTION(curve)
+LUA_GENERIC_FUNCTION(displace)
+LUA_GENERIC_FUNCTION(fill)
+LUA_GENERIC_FUNCTION(grow)
+LUA_GENERIC_FUNCTION(mask)
+LUA_GENERIC_FUNCTION(padding_set)
+LUA_GENERIC_FUNCTION(transform)
+
+static lua_State *
+_lua_state_create(Evas_Filter_Program *pgm)
+{
+   lua_State *L;
+
+   L = luaL_newstate();
+   if (!L)
+     {
+        ERR("Could not create a new Lua state");
+        return NULL;
+     }
+
+   luaopen_base(L);
+   luaopen_table(L);
+   luaopen_string(L);
+   luaopen_math(L);
+
+   // Store program
+   lua_pushlightuserdata(L, (void *) &this_is_not_a_cat);
+   lua_pushlightuserdata(L, pgm);
+   lua_settable(L, LUA_REGISTRYINDEX);
+
+   // Register functions
+   PUSH_LUA_FUNCTION(buffer)
+   PUSH_LUA_FUNCTION(blend)
+   PUSH_LUA_FUNCTION(blur)
+   PUSH_LUA_FUNCTION(bump)
+   PUSH_LUA_FUNCTION(curve)
+   PUSH_LUA_FUNCTION(displace)
+   PUSH_LUA_FUNCTION(fill)
+   PUSH_LUA_FUNCTION(grow)
+   PUSH_LUA_FUNCTION(mask)
+   PUSH_LUA_FUNCTION(padding_set)
+   PUSH_LUA_FUNCTION(transform)
+
+   // Register special variables
+   for (unsigned k = 0; k < (sizeof(color_map) / sizeof(color_map[0])); k++)
+     {
+        lua_pushnumber(L, color_map[k].value);
+        lua_setglobal(L, color_map[k].name);
+     }
+
+   for (unsigned k = 0; k < (sizeof(fill_modes) / sizeof(fill_modes[0])); k++)
+     {
+        if (strcmp("repeat", fill_modes[k].name))
+          {
+             lua_pushstring(L, fill_modes[k].name);
+             lua_setglobal(L, fill_modes[k].name);
+          }
+     }
+
+   lua_pushstring(L, "rgba");
+   lua_setglobal(L, "rgba");
+
+   lua_pushstring(L, "alpha");
+   lua_setglobal(L, "alpha");
+
+   static const struct { Eina_Bool b; const char *name; } booleans[] =
+   {
+      { EINA_TRUE, "on" },
+      { EINA_TRUE, "yes" },
+      { EINA_TRUE, "enable" },
+      { EINA_TRUE, "enabled" },
+      { EINA_FALSE, "off" },
+      { EINA_FALSE, "no" },
+      { EINA_FALSE, "disnable" },
+      { EINA_FALSE, "disabled" }
+   };
+
+   for (unsigned k = 0; k < (sizeof(booleans) / sizeof(booleans[0])); k++)
+     {
+        lua_pushnumber(L, booleans[k].b);
+        lua_setglobal(L, booleans[k].name);
+     }
+
+   // Register proxies
+   if (pgm->proxies)
+     {
+        Eina_Iterator *it = eina_hash_iterator_key_new(pgm->proxies);
+        const char *source;
+
+        EINA_ITERATOR_FOREACH(it, source)
+          if (_buffer_get(pgm, source))
+            {
+               lua_pushstring(L, source);
+               lua_setglobal(L, source);
+            }
+
+        eina_iterator_free(it);
+     }
+
+   return L;
+}
+
+// This function is here to avoid breaking the ABI too much.
+// It should not stay here long, only until all client apps have changed the filters' code to Lua.
+static char *
+_legacy_strdup(const char *str)
+{
+   Eina_Strbuf *dst;
+
+   dst = eina_strbuf_new();
+   for (const char *ptr = str; ptr && *ptr; ptr++)
+     {
+        if (ptr[0] == '/' && ptr[1] == '/')
+          // Comments
+          ptr = strchr(ptr, '\n');
+        else if (ptr[0] == '/' && ptr[1] == '*')
+          {
+             /* Comments */
+             ptr = strstr(ptr + 2, "*/");
+             if (ptr) ptr++;
+          }
+        else if (*ptr == '(')
+          eina_strbuf_append_char(dst, '{');
+        else if (*ptr == ')')
+          eina_strbuf_append_char(dst, '}');
+        else if (*ptr == '#')
+          {
+             // Colors: #RGBA becomes "#RGBA"
+             ptr++;
+             eina_strbuf_append_length(dst, "\"#", 2);
+             while (*ptr && *ptr != ',' && *ptr != ')')
+               eina_strbuf_append_char(dst, *ptr++);
+             eina_strbuf_append_char(dst, '"');
+             ptr--;
+          }
+        else if (!strncasecmp("buffer", ptr, 6))
+          {
+             // Buffers: "buffer : a (rgba)" into "local a = buffer (rgba)"
+             ptr = strchr(ptr, ':');
+             if (!ptr) break;
+             eina_strbuf_append(dst, "local ");
+             for (ptr++; ptr && *ptr; ptr++)
+               {
+                  if (*ptr != '(')
+                    eina_strbuf_append_char(dst, *ptr);
+                  else
+                    {
+                       eina_strbuf_append(dst, " = buffer{");
+                       break;
+                    }
+               }
+          }
+        else if (!strncasecmp("points", ptr, 6))
+          {
+             // Color curves: points = 0:0 - 255:255 becomes points = "0:0-255:255"
+             ptr = strchr(ptr, '=');
+             if (!ptr) break;
+             ptr++;
+             eina_strbuf_append(dst, "points = \"");
+             while (*ptr && *ptr != ',' && *ptr != ')')
+               {
+                  if (isspace(*ptr))
+                    {
+                       ptr++;
+                       continue;
+                    }
+                  eina_strbuf_append_char(dst, *ptr++);
+               }
+             eina_strbuf_append_char(dst, '"');
+             ptr--;
+          }
+        else if (!strncasecmp("curve", ptr, 5))
+          {
+             // Color curves: curve (0:0 - 255:255, becomes curve { points = "0:0-255:255",
+             const char *end = strchr(ptr, ')');
+             const char *points = strstr(ptr, "points");
+             if (!end || (points > end)) break;
+             if (!points)
+               {
+                  while (*ptr != '(') ptr++;
+                  ptr++;
+                  eina_strbuf_append(dst, "curve { points = \"");
+                  while (*ptr && *ptr != ',' && *ptr != ')')
+                    {
+                       if (isspace(*ptr))
+                         {
+                            ptr++;
+                            continue;
+                         }
+                       eina_strbuf_append_char(dst, *ptr++);
+                    }
+                  eina_strbuf_append_char(dst, '"');
+                  ptr--;
+               }
+          }
+        else if (!strncasecmp("repeat", ptr, 6))
+          {
+             // repeat is a Lua keyword, replace all occurences by "repeat_xy"
+             if (ptr[-1] != '_' && ptr[6] != '_')
+               {
+                  eina_strbuf_append(dst, "\"repeat_xy\"");
+                  ptr += 5;
+               }
+             else
+               eina_strbuf_append_char(dst, *ptr);
+          }
+        else
+          eina_strbuf_append_char(dst, *ptr);
+     }
+
+   return eina_strbuf_string_steal(dst);
+}
 
 /** Parse a style program */
 
 EAPI Eina_Bool
 evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 {
-   Evas_Filter_Instruction *instr = NULL;
-   Instruction_Param *param;
-   Eina_Bool success = EINA_FALSE, ok;
-   char *token, *next, *code, *instrname;
-   int count = 0;
-   size_t spn;
+   //   Evas_Filter_Instruction *instr = NULL;
+   //   Instruction_Param *param;
+   //   Eina_Bool success = EINA_FALSE, ok;
+   //   char *token, *next, *code, *instrname;
+   //   int count = 0;
+   //   size_t spn;
+   lua_State *L;
+   Eina_Bool ok;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(*str != 0, EINA_FALSE);
 
+   L = _lua_state_create(pgm);
+   if (!L) return EINA_FALSE;
+
+   ok = !luaL_loadstring(L, str);
+   if (!ok)
+     {
+        char *code = _legacy_strdup(str);
+        INF("Fallback to transformed legacy code:\n%s", code);
+        ok = !luaL_loadstring(L, code);
+        free(code);
+     }
+   if (ok) ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
+   lua_close(L);
+
+   pgm->valid = ok;
+   pgm->padding_calc = EINA_FALSE;
+
+   return ok;
+
+#if 0
    code = _whitespace_ignore_strdup(str);
    EINA_SAFETY_ON_NULL_RETURN_VAL(code, EINA_FALSE);
 
@@ -1939,6 +2480,7 @@ end:
 
    pgm->valid = success;
    return success;
+#endif
 }
 
 /** Evaluate required padding to correctly apply an effect */
@@ -2048,6 +2590,7 @@ _fill_mode_get(Evas_Filter_Instruction *instr)
 
    if (!instr) return EVAS_FILTER_FILL_MODE_NONE;
    fill = _instruction_param_gets(instr, "fillmode", NULL);
+   if (!fill) return EVAS_FILTER_FILL_MODE_NONE;
 
    for (k = 0; k < sizeof(fill_modes) / sizeof(fill_modes[0]); k++)
      {
@@ -2077,6 +2620,8 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    fillmode = _fill_mode_get(instr);
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
 
    if (isset) SETCOLOR(color);
    cmdid = evas_filter_command_blend_add(ctx, dc, in->cid, out->cid, ox, oy,
@@ -2109,6 +2654,8 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    count = _instruction_param_geti(instr, "count", &cntset);
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
 
    if (typestr)
      {
@@ -2175,6 +2722,9 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
    bump = _buffer_get(pgm, map);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(bump, -1);
 
    cmdid = evas_filter_command_bump_map_add(ctx, dc, in->cid, bump->cid, out->cid,
                                             azimuth, elevation, depth, specular,
@@ -2218,6 +2768,9 @@ _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
    mask = _buffer_get(pgm, map);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mask, -1);
 
    cmdid = evas_filter_command_displacement_map_add(ctx, dc, in->cid, out->cid,
                                                     mask->cid, flags, intensity,
@@ -2246,6 +2799,7 @@ _instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    b = _instruction_param_geti(instr, "b", NULL);
 
    buf = _buffer_get(pgm, bufname);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, -1);
 
    SETCOLOR(color);
    cmdid = evas_filter_command_fill_add(ctx, dc, buf->cid);
@@ -2282,6 +2836,8 @@ _instr2cmd_grow(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
 
    cmdid = evas_filter_command_grow_add(ctx, dc, in->cid, out->cid,
                                         radius, smooth);
@@ -2311,6 +2867,9 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
    mask = _buffer_get(pgm, msk);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mask, -1);
 
    SETCOLOR(color);
    cmdid = evas_filter_command_mask_add(ctx, dc, in->cid, mask->cid, out->cid, fillmode);
@@ -2398,6 +2957,9 @@ interpolated:
 
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+
    cmdid = evas_filter_command_curve_add(ctx, dc, in->cid, out->cid, values, channel);
 
    return cmdid;
@@ -2428,6 +2990,9 @@ _instr2cmd_transform(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    in = _buffer_get(pgm, src);
    out = _buffer_get(pgm, dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+
    return evas_filter_command_transform_add(ctx, dc, in->cid, out->cid, flags, ox, oy);
 }
 
@@ -2468,6 +3033,7 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         instr2cmd = _instr2cmd_transform;
         break;
       case EVAS_FILTER_MODE_PADDING_SET:
+      case EVAS_FILTER_MODE_BUFFER:
         return EINA_TRUE;
       default:
         CRI("Invalid instruction type: %d", instr->type);
@@ -2476,6 +3042,63 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    return instr2cmd(ctx, pgm, instr, dc);
 }
+
+#ifdef FILTERS_DEBUG
+static void
+_instruction_dump(Evas_Filter_Instruction *instr)
+{
+   Eina_Strbuf *str;
+   const char *comma = "";
+   Instruction_Param *param;
+
+   if (!instr) return;
+
+   str = eina_strbuf_new();
+   eina_strbuf_append(str, instr->name);
+   eina_strbuf_append(str, "({ ");
+   EINA_INLIST_FOREACH(instr->params, param)
+     {
+        int i;
+        DATA32 c;
+        const char *s;
+        double d;
+
+        switch (param->type)
+          {
+           case VT_BOOL:
+           case VT_INT:
+             eina_value_get(param->value, &i);
+             eina_strbuf_append_printf(str, "%s%s = %d", comma, param->name, i);
+             break;
+           case VT_COLOR:
+             eina_value_get(param->value, &c);
+             eina_strbuf_append_printf(str, "%s%s = 0x%08x", comma, param->name, c);
+             break;
+           case VT_REAL:
+             eina_value_get(param->value, &d);
+             eina_strbuf_append_printf(str, "%s%s = %f", comma, param->name, d);
+             break;
+           case VT_STRING:
+           case VT_BUFFER:
+             eina_value_get(param->value, &s);
+             if (s) eina_strbuf_append_printf(str, "%s%s = \"%s\"", comma, param->name, s);
+             else eina_strbuf_append_printf(str, "%s%s = nil", comma, param->name);
+             break;
+           case VT_NONE:
+           default:
+             eina_strbuf_append_printf(str, "%s%s = <INVALID>", comma, param->name);
+             break;
+          }
+
+        comma = ", ";
+     }
+   eina_strbuf_append(str, "})");
+   DBG("%s", eina_strbuf_string_get(str));
+   eina_strbuf_free(str);
+}
+#else
+# define _instruction_dump(a) do {} while(0)
+#endif
 
 Eina_Bool
 evas_filter_context_program_use(Evas_Filter_Context *ctx,
@@ -2523,6 +3146,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    // Apply all commands
    EINA_INLIST_FOREACH(pgm->instructions, instr)
      {
+        _instruction_dump(instr);
         cmdid = _command_from_instruction(ctx, pgm, instr, dc);
         if (cmdid <= 0)
           goto end;
