@@ -152,12 +152,13 @@ local List = ffi.metatype("Eina_List", {
     }
 })
 
-M.List = util.Object:clone {
+local List_Base = util.Object:clone {
     __ctor = function(self, list, freefunc)
         if list and freefunc then
             list = ffi.gc(list, freefunc)
             self.__free = freefunc
         end
+        if list == nil then return end
         self.__list = list
     end,
 
@@ -223,6 +224,14 @@ M.List = util.Object:clone {
             l = l:next()
         end
         return r, n
+    end
+}
+M.List_Base = List_Base
+
+M.String_List = List_Base:clone {
+    data_get = function(self, ptr)
+        ptr = List_Base:data_get(ptr)
+        return ffi.string(ptr)
     end
 }
 
