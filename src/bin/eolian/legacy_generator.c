@@ -30,6 +30,15 @@ EAPI @#ret_type\n\
    return @#ret_val;\n\
 }\n\
 ";
+static const char
+tmpl_eapi_body_void[] ="\
+\n\
+EAPI void\n\
+@#eapi_prefix_@#func(@#is_constEo *obj@#full_params)\n\
+{\n\
+   eo_do((Eo *) obj, @#eoprefix_@#func(@#eo_params));\n\
+}\n\
+";
 
 static void
 _eapi_decl_func_generate(const char *classname, Eolian_Function funcid, Eolian_Function_Type ftype, Eina_Strbuf *buf)
@@ -242,7 +251,10 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
    func_lpref = (func_lpref) ? func_lpref : eolian_function_data_get(funcid, EOLIAN_LEGACY);
    if (func_lpref && !strcmp(func_lpref, "null")) goto end;
 
-   _template_fill(fbody, tmpl_eapi_body, classname, NULL, EINA_FALSE);
+   if (rettype && (!ret_is_void))
+     _template_fill(fbody, tmpl_eapi_body, classname, NULL, EINA_FALSE);
+   else
+     _template_fill(fbody, tmpl_eapi_body_void, classname, NULL, EINA_FALSE);
    eina_strbuf_replace_all(fbody, "@#eoprefix", current_eo_prefix_lower);
 
    if (func_lpref)
@@ -299,31 +311,33 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
          }
    }
 
-   char tmp_ret_str[0xFF];
-   sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype?rettype:"void");
-   if (rettype && !ret_is_void)
+   if (rettype && (!ret_is_void))
      {
+        char tmp_ret_str[0xFF];
+        sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype?rettype:"void");
 #ifndef EO
-        if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
-        eina_strbuf_append_printf(eoparam, "&%s", retname);
+             if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
+             eina_strbuf_append_printf(eoparam, "&%s", retname);
 #endif
-        const char *dflt_ret_val =
-           eolian_function_return_dflt_value_get(funcid, ftype);
-        Eina_Bool had_star = !!strchr(rettype, '*');
-        sprintf (tmpstr, "   %s%s%s%s = %s;\n",
-              ret_const?"const ":"", rettype, had_star?"":" ", retname,
-              dflt_ret_val?dflt_ret_val:"0");
+             const char *dflt_ret_val =
+                eolian_function_return_dflt_value_get(funcid, ftype);
+             Eina_Bool had_star = !!strchr(rettype, '*');
+             sprintf (tmpstr, "   %s%s%s%s = %s;\n",
+                   ret_const?"const ":"", rettype, had_star?"":" ", retname,
+                   dflt_ret_val?dflt_ret_val:"0");
+
+             eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
+             eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);
+             tmp_ret_str[0] = '\0';
+#ifdef EO
+             if (rettype && !ret_is_void) sprintf(tmp_ret_str, "%s = ", retname);
+#endif
+             eina_strbuf_replace_all(fbody, "@#eo_ret_assign", tmp_ret_str);
      }
 
    eina_strbuf_replace_all(fbody, "@#full_params", eina_strbuf_string_get(fparam));
    eina_strbuf_replace_all(fbody, "@#eo_params", eina_strbuf_string_get(eoparam));
-   eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
-   eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);
-   tmp_ret_str[0] = '\0';
-#ifdef EO
-   if (rettype && !ret_is_void) sprintf(tmp_ret_str, "%s = ", retname);
-#endif
-   eina_strbuf_replace_all(fbody, "@#eo_ret_assign", tmp_ret_str);
+
    eina_strbuf_replace_all(fbody, "@#ret_val", (rettype && !ret_is_void) ? retname : "");
    eina_strbuf_replace_all(fbody, "@#is_const", (ftype == EOLIAN_PROP_GET || eolian_function_object_is_const(funcid)) ? "const " : "");
 
