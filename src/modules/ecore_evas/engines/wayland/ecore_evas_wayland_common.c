@@ -739,11 +739,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
           evas_object_resize(wdata->frame, w, h);
 
         if (wdata->win)
-          {
-             ecore_wl_window_update_size(wdata->win, w, h);
-             ecore_wl_window_input_region_set(wdata->win, 0, 0, w, h);
-             ecore_wl_window_opaque_region_set(wdata->win, 0, 0, w, h);
-          }
+          ecore_wl_window_update_size(wdata->win, w, h);
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
