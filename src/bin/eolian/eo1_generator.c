@@ -513,7 +513,8 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
               is_const?"const ":"", ptype, pname,
               is_const?"const ":"", _varg_upgr(ptype));
 #endif
-        eina_strbuf_append_printf(params, ", %s", pname);
+        if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
+        eina_strbuf_append_printf(params, "%s", pname);
         eina_strbuf_append_printf(full_params, ", %s%s %s",
               is_const?"const ":"",
               ptype, pname);
@@ -596,9 +597,8 @@ eo1_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Fun
      {
         Eina_Strbuf *eo_func_decl = eina_strbuf_new();
         Eina_Bool has_params =
-           !var_as_ret &&
-           (eina_list_count(eolian_parameters_list_get(funcid)) != 0 ||
-           eina_list_count(eolian_property_keys_list_get(funcid)));
+           eina_list_count(eolian_property_keys_list_get(funcid)) ||
+           (!var_as_ret && eina_list_count(eolian_parameters_list_get(funcid)) != 0);
         Eina_Bool ret_is_void = (!rettype || !strcmp(rettype, "void"));
         eina_strbuf_append_printf(eo_func_decl,
               "EAPI EO_%sFUNC_BODY%s(%s_%s%s",
