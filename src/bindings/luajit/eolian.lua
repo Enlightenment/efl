@@ -7,12 +7,12 @@ ffi.cdef [[
     typedef unsigned char Eina_Bool;
     typedef struct _Eina_List Eina_List;
 
-    typedef struct _Function_Id* Eolian_Function;
-    typedef struct _Parameter_Desc* Eolian_Function_Parameter;
-    typedef struct _Implement_Desc* Eolian_Implement;
-    typedef struct _Implement_Legacy_Desc* Eolian_Implement_Legacy;
-    typedef struct _Implement_Legacy_Param* Eolian_Implement_Legacy_Parameter;
-    typedef struct _Event_Desc* Eolian_Event;
+    typedef struct _Eolian_Function Eolian_Function;
+    typedef struct _Eolian_Function_Parameter Eolian_Function_Parameter;
+    typedef struct _Eolian_Implement Eolian_Implement;
+    typedef struct _Eolian_Implement_Legacy Eolian_Implement_Legacy;
+    typedef struct _Eolian_Implement_Legacy_Parameter Eolian_Implement_Legacy_Parameter;
+    typedef struct _Eolian_Event Eolian_Event;
 
     typedef enum
     {
