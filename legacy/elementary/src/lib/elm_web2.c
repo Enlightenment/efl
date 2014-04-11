@@ -228,6 +228,44 @@ elm_need_web(void)
    return EINA_TRUE;
 }
 
+EOLIAN static Eina_Bool
+_elm_web_elm_widget_theme_apply(Eo *obj, Elm_Web_Data *sd EINA_UNUSED)
+{
+   (void)obj;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
+{
+   (void)obj;
+   (void)sd;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_elm_widget_event(Eo *obj, Elm_Web_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   (void)obj;
+   (void)sd;
+   (void)src;
+   (void)type;
+   (void)event_info;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_web_tab_propagate_get(Eo *obj EINA_UNUSED, Elm_Web_Data *sd)
+{
+   return sd->tab_propagate;
+}
+
+EOLIAN static void
+_elm_web_tab_propagate_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Eina_Bool propagate)
+{
+   sd->tab_propagate = propagate;
+}
+
 EOLIAN static void
 _elm_web_evas_smart_add(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 {
