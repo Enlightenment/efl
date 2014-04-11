@@ -493,28 +493,30 @@ _menu_item_inactivate_cb(void *data,
 }
 
 static void
-_block_menu(Elm_Menu_Data * sd, Evas_Object *obj EINA_UNUSED, ...)
+_block_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Menu_Item *current;
+   Elm_Menu_Data *sd = _sd;
    Eina_List *items = sd->items;
    EINA_LIST_FOREACH(items, l, current)
      {
         if (!current->blocked) current->was_enabled = !elm_widget_item_disabled_get(current);
         current->blocked = EINA_TRUE;
-        elm_object_item_disabled_set(current, EINA_TRUE);
+        elm_object_item_disabled_set((Elm_Object_Item *)current, EINA_TRUE);
      }
 }
- 
+
 static void
-_unblock_menu(Elm_Menu_Data * sd, Evas_Object *obj EINA_UNUSED, ...)
+_unblock_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Menu_Item *current;
+   Elm_Menu_Data *sd = _sd;
    Eina_List *items = sd->items;
    EINA_LIST_FOREACH(items, l, current)
      {
-        elm_object_item_disabled_set(current, !current->was_enabled);
+        elm_object_item_disabled_set((Elm_Object_Item *)current, !current->was_enabled);
         current->blocked = EINA_FALSE;
      }
 }
