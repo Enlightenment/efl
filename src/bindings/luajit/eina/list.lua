@@ -11,7 +11,7 @@ ffi.cdef [[
     typedef struct _Eina_List            Eina_List;
     typedef struct _Eina_List_Accounting Eina_List_Accounting;
 
-    struct _Eina_List_T {
+    typedef struct _Eina_List_T {
         void                 *data;
         Eina_List            *next;
         Eina_List            *prev;
