@@ -168,65 +168,76 @@ local List = ffi.metatype("Eina_List", {
     }
 })
 
-local List_Base = util.Object:clone {
-    __ctor = function(self, list, freefunc)
+local dgetmt = debug.getmetatable
+
+local List_Base = util.Readonly_Object:clone {
+    __ctor = function(self, selfmt, list, freefunc)
         if list and freefunc then
             list = ffi.gc(list, freefunc)
-            self.__free = freefunc
+            selfmt.__free = freefunc
         end
         if list == nil then return end
-        self.__list = list
+        selfmt.__list = list
     end,
 
     free = function(self)
+        self = dgetmt(self)
         local  ffunc, l = self.__free, self.__list
         if not ffunc or l == nil then return end
         ffunc(ffi.gc(self.__list, nil))
     end,
 
     count = function(self)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return 0 end
         return #l
     end,
 
     nth = function(self, n)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return nil end
         return l:nth()
     end,
 
     nth_list = function(self, n)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return nil end
         return self.__index(l:nth_list())
     end,
 
     last = function(self, n)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return nil end
         return self.__index(l:last())
     end,
 
     next = function(self, n)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return nil end
         return self.__index(l:next())
     end,
 
     prev = function(self, n)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return nil end
         return self.__index(l:prev())
     end,
 
     data_get = function(self, ptr)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return nil end
         return l:data_get(ptr)
     end,
 
     to_array = function(self)
+        self = dgetmt(self)
         local l = self.__list
         if l == nil then return {}, 0 end
         local n = 0
@@ -246,7 +257,7 @@ M.List_Base = List_Base
 
 M.String_List = List_Base:clone {
     data_get = function(self, ptr)
-        ptr = List_Base:data_get(ptr)
+        ptr = List_Base.data_get(self, ptr)
         return ffi.string(ptr)
     end
 }

@@ -4,6 +4,8 @@ local ffi = require("ffi")
 
 local M = {}
 
+local getmetatable, setmetatable = getmetatable, setmetatable
+
 M.Object = {
     __call = function(self, ...)
         local r = {
@@ -38,6 +40,20 @@ M.Object = {
 
     __tostring = function(self)
         return ("Object: %s"):format(self.name or "unnamed")
+    end
+}
+
+local newproxy = newproxy
+
+M.Readonly_Object = Object:clone {
+    __call = function(self, ...)
+        local r = newproxy(true)
+        local rmt = getmetatable(r)
+        rmt.__index = self
+        rmt.__tostring = self.__tostring
+        rmt.__metatable = false
+        if self.__ctor then self.__ctor(r, rmt, ...) end
+        return r
     end
 }
 

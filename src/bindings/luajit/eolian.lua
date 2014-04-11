@@ -183,7 +183,7 @@ local List_Base = list.List_Base
 
 local Eolian_Functions_List = List_Base:clone {
     data_get = function(self, ptr)
-        ptr = List_Base:data_get(ptr)
+        ptr = List_Base.data_get(self, ptr)
         return ffi.cast("Eolian_Function", ptr)
     end
 }
@@ -224,7 +224,7 @@ end
 
 local Eolian_Parameters_List = List_Base:clone {
     data_get = function(self, ptr)
-        ptr = List_Base:data_get(ptr)
+        ptr = List_Base.data_get(self, ptr)
         return ffi.cast("Eolian_Function_Parameter", ptr)
     end
 }
@@ -367,7 +367,7 @@ ffi.metatype("Eolian_Function_Parameter", {
 
 local Eolian_Implements_List = List_Base:clone {
     data_get = function(self, ptr)
-        ptr = List_Base:data_get(ptr)
+        ptr = List_Base.data_get(self, ptr)
         return ffi.cast("Eolian_Implement", ptr)
     end
 }
@@ -393,7 +393,7 @@ end
 
 local Eolian_Events_List = List_Base:clone {
     data_get = function(self, ptr)
-        ptr = List_Base:data_get(ptr)
+        ptr = List_Base.data_get(self, ptr)
         return ffi.cast("Eolian_Event", ptr)
     end
 }
