@@ -3770,7 +3770,7 @@ EFL_LIB_START([Edje])
 want_multisense="yes"
 AC_ARG_ENABLE([multisense],
    [AC_HELP_STRING([--enable-multisense],
-       [Enable multisense support. @<:@default=disabled@:>@])],
+       [Enable multisense support. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_multisense="yes"
