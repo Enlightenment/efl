@@ -2870,7 +2870,7 @@ EOLIAN static void
 _elm_widget_parents_bounce_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool *horiz, Eina_Bool *vert)
 {
    Evas_Object *parent_obj = obj;
-   Eina_Bool h, v;
+   Eina_Bool h = EINA_FALSE, v = EINA_FALSE;
 
    *horiz = EINA_FALSE;
    *vert = EINA_FALSE;
