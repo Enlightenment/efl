@@ -1023,7 +1023,7 @@ static Elm_Genlist_Item_Class itc5;
 char *gl5_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    const Testitem *tit = data;
-   char buf[256];
+   char buf[256] = { 0 };
    if (!strcmp(part, "elm.text"))
      {
         snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
