@@ -344,7 +344,7 @@ _mirrored_set(Evas_Object *obj,
 EOLIAN static Eina_Bool
 _elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
@@ -426,7 +426,7 @@ _changed_size_hints_cb(void *data,
 EOLIAN static Eina_Bool
 _elm_scroller_elm_widget_sub_object_del(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *sobj)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
 
@@ -971,7 +971,7 @@ elm_scroller_page_size_set(Evas_Object *obj,
 EOLIAN static void
 _elm_scroller_elm_interface_scrollable_page_size_set(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED, Evas_Coord h_pagesize, Evas_Coord v_pagesize)
 {
-   double pagerel_h, pagerel_v;
+   double pagerel_h = 0.0, pagerel_v = 0.0;
 
    eo_do(obj, elm_interface_scrollable_paging_get(&pagerel_h, &pagerel_v, NULL, NULL));
 
