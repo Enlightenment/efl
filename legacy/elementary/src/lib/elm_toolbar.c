@@ -289,7 +289,7 @@ _elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item *item,
                                    Evas_Coord *w,
                                    Evas_Coord *h)
 {
-   Evas_Coord ix, iy, iw, ih, bx, by, vw, vh;
+   Evas_Coord ix, iy, iw, ih, bx, by, vw = 0, vh = 0;
 
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
