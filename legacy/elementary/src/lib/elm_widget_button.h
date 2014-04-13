@@ -21,8 +21,8 @@
 typedef struct _Elm_Button_Data
 {
    /* auto-repeat stuff */
-   double                ar_threshold; /**< Time to wait until first auto-repeated click is generated */
-   double                ar_interval; /**< Time frame for subsequent auto-repeated clicks, after the first automatic one is triggerred */
+   double                ar_initial_timeout; /**< Time to wait until first auto-repeated click is generated */
+   double                ar_gap_timeout; /**< Time frame for subsequent auto-repeated clicks, after the first automatic one is triggerred */
 
    Ecore_Timer          *timer; /**< Internal timer object for auto-repeat behavior */
 

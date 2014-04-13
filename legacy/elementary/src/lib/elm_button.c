@@ -212,7 +212,7 @@ _autorepeat_initial_send(void *data)
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->repeating = EINA_TRUE;
    _autorepeat_send(data);
-   sd->timer = ecore_timer_add(sd->ar_interval, _autorepeat_send, data);
+   sd->timer = ecore_timer_add(sd->ar_gap_timeout, _autorepeat_send, data);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -227,11 +227,11 @@ _on_pressed_signal(void *data,
 
    if ((sd->autorepeat) && (!sd->repeating))
      {
-        if (sd->ar_threshold <= 0.0)
+        if (sd->ar_initial_timeout <= 0.0)
           _autorepeat_initial_send(data);  /* call immediately */
         else
           sd->timer = ecore_timer_add
-              (sd->ar_threshold, _autorepeat_initial_send, data);
+              (sd->ar_initial_timeout, _autorepeat_initial_send, data);
      }
 
    evas_object_smart_callback_call(data, SIG_PRESSED, NULL);
@@ -371,9 +371,9 @@ _elm_button_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double 
         return;
      }
 
-   if (sd->ar_threshold == t) return;
+   if (sd->ar_initial_timeout == t) return;
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
-   sd->ar_threshold = t;
+   sd->ar_initial_timeout = t;
 }
 
 EOLIAN static double
@@ -382,7 +382,7 @@ _elm_button_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
    if (!_AR_CAPABLE(obj))
       return 0.0;
    else
-      return sd->ar_threshold;
+      return sd->ar_initial_timeout;
 }
 
 EOLIAN static void
@@ -394,16 +394,16 @@ _elm_button_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
         return;
      }
 
-   if (sd->ar_interval == t) return;
+   if (sd->ar_gap_timeout == t) return;
 
-   sd->ar_interval = t;
+   sd->ar_gap_timeout = t;
    if ((sd->repeating) && (sd->timer)) ecore_timer_interval_set(sd->timer, t);
 }
 
 EOLIAN static double
 _elm_button_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Elm_Button_Data *sd)
 {
-   return sd->ar_interval;
+   return sd->ar_gap_timeout;
 }
 
 EOLIAN static Eina_Bool
