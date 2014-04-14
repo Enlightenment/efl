@@ -247,8 +247,7 @@ local List_Base = util.Readonly_Object:clone {
     end,
 
     to_array = function(self)
-        self = dgetmt(self)
-        local l = self.__list
+        local l = dgetmt(self).__list
         if l == nil then return {}, 0 end
         local n = 0
         local r = {}

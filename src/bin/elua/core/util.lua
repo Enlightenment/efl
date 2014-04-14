@@ -45,17 +45,16 @@ M.Object = {
 
 local newproxy = newproxy
 
-M.Readonly_Object = M.Object:clone {
-    __call = function(self, ...)
-        local r = newproxy(true)
-        local rmt = getmetatable(r)
-        rmt.__index = self
-        rmt.__tostring = self.__tostring
-        rmt.__metatable = false
-        if self.__ctor then self.__ctor(r, rmt, ...) end
-        return r
-    end
-}
+M.Readonly_Object = M.Object:clone {}
+M.Readonly_Object.__call = function(self, ...)
+    local r = newproxy(true)
+    local rmt = getmetatable(r)
+    rmt.__index = self
+    rmt.__tostring = self.__tostring
+    rmt.__metatable = false
+    if self.__ctor then self.__ctor(r, rmt, ...) end
+    return r
+end
 
 local loaded_libs = {}
 local loaded_libc = {}
