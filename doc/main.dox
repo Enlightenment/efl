@@ -2,27 +2,27 @@
  * @mainpage EFL
  *
  * The Enlightenment Project covers more than simple window management. It
- * also includes the EFL(Enlightenment Foundation Libraries), the EFL is a set
- * of libraries each providing a great deal of functionality. Below you can
- * find documentation auto-generated daily from SVN source for these
+ * also includes the EFL, or Enlightenment Foundation Libraries: a framework
+ * which provides a great deal of functionality. Below you can
+ * find documentation auto-generated daily from GIT source for these
  * libraries:
  *
- * @li @ref eina_main data types and low-level/basic abstractions.
- * @li @ref eo_main generic object system.
- * @li @ref evas_main drawing canvas.
- * @li @ref eet_main binary data parser and serializer.
- * @li @ref embryo_main embedded script language.
  * @li @ref ecore_main operating system abstraction and integration.
- * @li @ref escape_main playstation3 portability layer.
- * @li @ref evil_main microsoft windows portability layer.
+ * @li @ref edje_main layout and theme library with super powers.
+ * @li @ref eet_main binary data parser and serializer.
+ * @li @ref eeze_main hardware device manipulation and notification.
+ * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
+ * @li @ref eina_main data types and low-level/basic abstractions.
  * @li @ref eio_main asynchronous input/output
  * @li @ref eldbus_main d-bus integration.
- * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
- * @li @ref eeze_main hardware device manipulation and notification.
- * @li @ref ephysics_main physics simulation integration and visual effects.
- * @li @ref edje_main layout and theme library with super powers.
+ * @li @ref embryo_main embedded script language.
  * @li @ref emotion_main to play music and videos.
+ * @li @ref eo_main generic object system.
+ * @li @ref ephysics_main physics simulation integration and visual effects.
+ * @li @ref escape_main playstation3 portability layer.
  * @li @ref ethumb_main to generate thumbnail images of files.
+ * @li @ref evas_main drawing canvas.
+ * @li @ref evil_main microsoft windows portability layer.
  *
  */
 
