@@ -92,7 +92,7 @@ local List_Iterator = Iterator:clone {
     next = function(self)
         local  v = Iterator.next(self)
         if not v then return nil end
-        return self.__list:data_get(v)
+        return dgetmt(self).__list:data_get(v)
     end
 }
 

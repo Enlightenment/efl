@@ -206,8 +206,8 @@ M.function_scope = {
 }
 
 M.class_functions_list_get = function(cname, func_type)
-    return Eolian_Functions_List(eolian.eolian_class_functions_list_get(cname),
-        func_type):to_array()
+    return Eolian_Functions_List(eolian.eolian_class_functions_list_get(cname,
+        func_type)):to_array()
 end
 
 M.class_default_constructor_get = function(cname)
