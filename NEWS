@@ -1,6 +1,21 @@
 =========
-EFL 1.9.2
+EFL 1.9.3
 =========
+
+Changes since 1.9.2:
+--------------------
+
+Fixes:
+
+   * build: Disallow non-working sdl + opengl ES combination (T856)
+   * evas/proxy - redraw proxy source properly.
+   * edje_cc: Fix the crash when compiled wrong edc file containing empty part
+   * evas - fix incorrect object reset.
+   * ecore-evas - fix object cursor to not delete the same cursor when set
+   * Evas cserve2: Fix crash in elm_test GLView
+   * ecore-con - deal with internal buffer growing over 2g in size
+   * fix swap buffers with damage to not detect if ext str is not there
+
 
 Changes since 1.9.1:
 --------------------
