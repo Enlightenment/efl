@@ -23,15 +23,17 @@ static int _eo_tokenizer_log_dom = -1;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_eo_tokenizer_log_dom, __VA_ARGS__)
 
+#define INF_ENABLED EINA_FALSE
 #ifdef INF
 #undef INF
 #endif
-#define INF(...) EINA_LOG_DOM_INFO(_eo_tokenizer_log_dom, __VA_ARGS__)
+#define INF(...) if (INF_ENABLED) EINA_LOG_DOM_INFO(_eo_tokenizer_log_dom, __VA_ARGS__)
 
+#define DBG_ENABLED EINA_FALSE
 #ifdef DBG
 #undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eo_tokenizer_log_dom, __VA_ARGS__)
+#define DBG(...) if (DBG_ENABLED) EINA_LOG_DOM_DBG(_eo_tokenizer_log_dom, __VA_ARGS__)
 
 #define FUNC_PUBLIC 0
 #define FUNC_PROTECTED 1
@@ -603,8 +605,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    action end_property {
       if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
-      if (eina_list_count(toknz->tmp.prop->values) == 0)
-        WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
         WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
       INF("    }");
@@ -709,8 +709,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action end_method {
       Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (eina_list_count(toknz->tmp.meth->params) == 0)
-        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
       INF("    }");
       switch (toknz->current_methods_type) {
         case METH_CONSTRUCTOR:

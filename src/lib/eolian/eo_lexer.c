@@ -25,15 +25,17 @@ static int _eo_tokenizer_log_dom = -1;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_eo_tokenizer_log_dom, __VA_ARGS__)
 
+#define INF_ENABLED EINA_FALSE
 #ifdef INF
 #undef INF
 #endif
-#define INF(...) EINA_LOG_DOM_INFO(_eo_tokenizer_log_dom, __VA_ARGS__)
+#define INF(...) if (INF_ENABLED) EINA_LOG_DOM_INFO(_eo_tokenizer_log_dom, __VA_ARGS__)
 
+#define DBG_ENABLED EINA_FALSE
 #ifdef DBG
 #undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eo_tokenizer_log_dom, __VA_ARGS__)
+#define DBG(...) if (DBG_ENABLED) EINA_LOG_DOM_DBG(_eo_tokenizer_log_dom, __VA_ARGS__)
 
 #define FUNC_PUBLIC 0
 #define FUNC_PROTECTED 1
@@ -376,11 +378,11 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 }
 
 
-#line 453 "lib/eolian/eo_lexer.rl"
+#line 455 "lib/eolian/eo_lexer.rl"
 
 
 
-#line 384 "lib/eolian/eo_lexer.c"
+#line 386 "lib/eolian/eo_lexer.c"
 static const char _eo_tokenizer_actions[] = {
 	0, 1, 0, 1, 2, 1, 6, 1, 
 	10, 1, 15, 1, 16, 1, 17, 1, 
@@ -1309,7 +1311,7 @@ static const int eo_tokenizer_en_tokenize_class = 347;
 static const int eo_tokenizer_en_main = 296;
 
 
-#line 1055 "lib/eolian/eo_lexer.rl"
+#line 1053 "lib/eolian/eo_lexer.rl"
 
 
 Eina_Bool
@@ -1333,7 +1335,7 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
      }
 
    
-#line 1337 "lib/eolian/eo_lexer.c"
+#line 1339 "lib/eolian/eo_lexer.c"
 	{
 	 toknz->cs = eo_tokenizer_start;
 	 toknz->ts = 0;
@@ -1341,7 +1343,7 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
 	 toknz->act = 0;
 	}
 
-#line 1078 "lib/eolian/eo_lexer.rl"
+#line 1076 "lib/eolian/eo_lexer.rl"
 
    while (!done)
      {
@@ -1368,7 +1370,7 @@ eo_tokenizer_walk(Eo_Tokenizer *toknz, const char *source)
           }
 
         
-#line 1372 "lib/eolian/eo_lexer.c"
+#line 1374 "lib/eolian/eo_lexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -1387,7 +1389,7 @@ _resume:
 #line 1 "NONE"
 	{ toknz->ts = ( toknz->p);}
 	break;
-#line 1391 "lib/eolian/eo_lexer.c"
+#line 1393 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -1454,28 +1456,28 @@ _eof_trans:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 384 "lib/eolian/eo_lexer.rl"
+#line 386 "lib/eolian/eo_lexer.rl"
 	{
       toknz->current_line += 1;
       DBG("inc[%d] %d", toknz->cs, toknz->current_line);
    }
 	break;
 	case 1:
-#line 389 "lib/eolian/eo_lexer.rl"
+#line 391 "lib/eolian/eo_lexer.rl"
 	{
       toknz->saved.line = toknz->current_line;
       DBG("save line[%d] %d", toknz->cs, toknz->current_line);
    }
 	break;
 	case 2:
-#line 394 "lib/eolian/eo_lexer.rl"
+#line 396 "lib/eolian/eo_lexer.rl"
 	{
       toknz->saved.tok = ( toknz->p);
       DBG("save token[%d] %p %c", toknz->cs, ( toknz->p), *( toknz->p));
    }
 	break;
 	case 3:
-#line 471 "lib/eolian/eo_lexer.rl"
+#line 473 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->ret != NULL)
@@ -1484,7 +1486,7 @@ _eof_trans:
    }
 	break;
 	case 4:
-#line 478 "lib/eolian/eo_lexer.rl"
+#line 480 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (!toknz->tmp.accessor->ret) ABORT(toknz, "No ret!!!");
@@ -1495,20 +1497,20 @@ _eof_trans:
    }
 	break;
 	case 5:
-#line 487 "lib/eolian/eo_lexer.rl"
+#line 489 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       toknz->tmp.accessor->legacy = _eo_tokenizer_token_get(toknz, ( toknz->p));
    }
 	break;
 	case 6:
-#line 501 "lib/eolian/eo_lexer.rl"
+#line 503 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.accessor_param = _eo_tokenizer_accessor_param_get(toknz, ( toknz->p));
    }
 	break;
 	case 7:
-#line 505 "lib/eolian/eo_lexer.rl"
+#line 507 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor_param)
          ABORT(toknz, "No accessor param!!!");
@@ -1519,7 +1521,7 @@ _eof_trans:
    }
 	break;
 	case 8:
-#line 534 "lib/eolian/eo_lexer.rl"
+#line 536 "lib/eolian/eo_lexer.rl"
 	{
       const char *c = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
       if (toknz->tmp.param == NULL)
@@ -1529,7 +1531,7 @@ _eof_trans:
    }
 	break;
 	case 9:
-#line 542 "lib/eolian/eo_lexer.rl"
+#line 544 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.param = _eo_tokenizer_param_get(toknz, ( toknz->p));
       if (toknz->tmp.params)
@@ -1583,7 +1585,7 @@ _eof_trans:
    }
 	break;
 	case 15:
-#line 765 "lib/eolian/eo_lexer.rl"
+#line 763 "lib/eolian/eo_lexer.rl"
 	{
       if (toknz->tmp.meth != NULL)
         ABORT(toknz, "there is a pending method definition %s", toknz->tmp.meth->name);
@@ -1591,14 +1593,14 @@ _eof_trans:
    }
 	break;
 	case 16:
-#line 797 "lib/eolian/eo_lexer.rl"
+#line 795 "lib/eolian/eo_lexer.rl"
 	{
       const char *base = _eo_tokenizer_token_get(toknz, ( toknz->p));
       toknz->tmp.str_items = eina_list_append(toknz->tmp.str_items, base);
    }
 	break;
 	case 17:
-#line 802 "lib/eolian/eo_lexer.rl"
+#line 800 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       toknz->tmp.kls->inherits = toknz->tmp.str_items;
@@ -1606,7 +1608,7 @@ _eof_trans:
    }
 	break;
 	case 18:
-#line 850 "lib/eolian/eo_lexer.rl"
+#line 848 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       toknz->tmp.event = _eo_tokenizer_event_get(toknz, ( toknz->p));
@@ -1614,7 +1616,7 @@ _eof_trans:
    }
 	break;
 	case 19:
-#line 856 "lib/eolian/eo_lexer.rl"
+#line 854 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
       if (toknz->tmp.event->type != NULL)
@@ -1623,7 +1625,7 @@ _eof_trans:
    }
 	break;
 	case 20:
-#line 863 "lib/eolian/eo_lexer.rl"
+#line 861 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
       if (toknz->tmp.event->comment != NULL)
@@ -1633,7 +1635,7 @@ _eof_trans:
    }
 	break;
 	case 21:
-#line 871 "lib/eolian/eo_lexer.rl"
+#line 869 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->legacy_prefix != NULL)
@@ -1642,7 +1644,7 @@ _eof_trans:
    }
 	break;
 	case 22:
-#line 880 "lib/eolian/eo_lexer.rl"
+#line 878 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->eo_prefix != NULL)
@@ -1651,7 +1653,7 @@ _eof_trans:
    }
 	break;
 	case 23:
-#line 889 "lib/eolian/eo_lexer.rl"
+#line 887 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->data_type != NULL)
@@ -1660,7 +1662,7 @@ _eof_trans:
    }
 	break;
 	case 24:
-#line 902 "lib/eolian/eo_lexer.rl"
+#line 900 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
         toknz->tmp.impl = _eo_tokenizer_implement_get(toknz, ( toknz->p));
@@ -1668,7 +1670,7 @@ _eof_trans:
    }
 	break;
 	case 25:
-#line 908 "lib/eolian/eo_lexer.rl"
+#line 906 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (toknz->tmp.impl->legacy)
@@ -1677,7 +1679,7 @@ _eof_trans:
    }
 	break;
 	case 26:
-#line 915 "lib/eolian/eo_lexer.rl"
+#line 913 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
@@ -1686,7 +1688,7 @@ _eof_trans:
    }
 	break;
 	case 27:
-#line 922 "lib/eolian/eo_lexer.rl"
+#line 920 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         toknz->tmp.impl_leg_param = calloc(1, sizeof(Eo_Implement_Legacy_Param_Def));
@@ -1697,7 +1699,7 @@ _eof_trans:
    }
 	break;
 	case 28:
-#line 931 "lib/eolian/eo_lexer.rl"
+#line 929 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl_leg_param)
            ABORT(toknz, "No implement legacy param!!!");
@@ -1705,7 +1707,7 @@ _eof_trans:
    }
 	break;
 	case 29:
-#line 937 "lib/eolian/eo_lexer.rl"
+#line 935 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl_leg_param)
            ABORT(toknz, "No implement legacy param!!!");
@@ -1713,7 +1715,7 @@ _eof_trans:
    }
 	break;
 	case 30:
-#line 943 "lib/eolian/eo_lexer.rl"
+#line 941 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
@@ -1722,7 +1724,7 @@ _eof_trans:
    }
 	break;
 	case 31:
-#line 950 "lib/eolian/eo_lexer.rl"
+#line 948 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
@@ -1731,31 +1733,31 @@ _eof_trans:
    }
 	break;
 	case 32:
-#line 1021 "lib/eolian/eo_lexer.rl"
+#line 1019 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_REGULAR;
    }
 	break;
 	case 33:
-#line 1024 "lib/eolian/eo_lexer.rl"
+#line 1022 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_ABSTRACT;
    }
 	break;
 	case 34:
-#line 1027 "lib/eolian/eo_lexer.rl"
+#line 1025 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_MIXIN;
    }
 	break;
 	case 35:
-#line 1030 "lib/eolian/eo_lexer.rl"
+#line 1028 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_INTERFACE;
    }
 	break;
 	case 36:
-#line 1034 "lib/eolian/eo_lexer.rl"
+#line 1032 "lib/eolian/eo_lexer.rl"
 	{
       if (toknz->tmp.kls != NULL)
         ABORT(toknz, "there is a pending class definition %s", toknz->tmp.kls->name);
@@ -1768,7 +1770,7 @@ _eof_trans:
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 40:
-#line 463 "lib/eolian/eo_lexer.rl"
+#line 465 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->comment != NULL)
@@ -1778,22 +1780,22 @@ _eof_trans:
    }}
 	break;
 	case 41:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 42:
-#line 526 "lib/eolian/eo_lexer.rl"
+#line 528 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 43:
-#line 527 "lib/eolian/eo_lexer.rl"
+#line 529 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 44:
-#line 492 "lib/eolian/eo_lexer.rl"
+#line 494 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      }");
       if (!toknz->tmp.prop) ABORT(toknz, "No prop!!!");
@@ -1804,7 +1806,7 @@ _eof_trans:
    }}
 	break;
 	case 45:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -1823,15 +1825,15 @@ _eof_trans:
    }}
 	break;
 	case 46:
-#line 522 "lib/eolian/eo_lexer.rl"
+#line 524 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 47:
-#line 525 "lib/eolian/eo_lexer.rl"
+#line 527 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 48:
-#line 492 "lib/eolian/eo_lexer.rl"
+#line 494 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       INF("      }");
       if (!toknz->tmp.prop) ABORT(toknz, "No prop!!!");
@@ -1842,7 +1844,7 @@ _eof_trans:
    }}
 	break;
 	case 49:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -1861,11 +1863,11 @@ _eof_trans:
    }}
 	break;
 	case 50:
-#line 525 "lib/eolian/eo_lexer.rl"
+#line 527 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}}
 	break;
 	case 51:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -1884,14 +1886,14 @@ _eof_trans:
    }}
 	break;
 	case 52:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 53:
-#line 551 "lib/eolian/eo_lexer.rl"
+#line 553 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      }");
       toknz->tmp.param = NULL;
@@ -1905,7 +1907,7 @@ _eof_trans:
    }}
 	break;
 	case 54:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -1924,15 +1926,15 @@ _eof_trans:
    }}
 	break;
 	case 55:
-#line 567 "lib/eolian/eo_lexer.rl"
-	{ toknz->te = ( toknz->p);( toknz->p)--;}
-	break;
-	case 56:
 #line 569 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
+	case 56:
+#line 571 "lib/eolian/eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
 	case 57:
-#line 551 "lib/eolian/eo_lexer.rl"
+#line 553 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       INF("      }");
       toknz->tmp.param = NULL;
@@ -1946,7 +1948,7 @@ _eof_trans:
    }}
 	break;
 	case 58:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -1965,11 +1967,11 @@ _eof_trans:
    }}
 	break;
 	case 59:
-#line 569 "lib/eolian/eo_lexer.rl"
+#line 571 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}}
 	break;
 	case 60:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -1988,14 +1990,14 @@ _eof_trans:
    }}
 	break;
 	case 61:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 62:
-#line 576 "lib/eolian/eo_lexer.rl"
+#line 578 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      get {");
       toknz->tmp.accessor = _eo_tokenizer_accessor_get(toknz, GETTER);
@@ -2004,7 +2006,7 @@ _eof_trans:
    }}
 	break;
 	case 63:
-#line 583 "lib/eolian/eo_lexer.rl"
+#line 585 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      set {");
       toknz->tmp.accessor = _eo_tokenizer_accessor_get(toknz, SETTER);
@@ -2013,7 +2015,7 @@ _eof_trans:
    }}
 	break;
 	case 64:
-#line 590 "lib/eolian/eo_lexer.rl"
+#line 592 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      keys {");
       toknz->current_nesting++;
@@ -2022,7 +2024,7 @@ _eof_trans:
    }}
 	break;
 	case 65:
-#line 597 "lib/eolian/eo_lexer.rl"
+#line 599 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      values {");
       toknz->current_nesting++;
@@ -2031,11 +2033,9 @@ _eof_trans:
    }}
 	break;
 	case 66:
-#line 604 "lib/eolian/eo_lexer.rl"
+#line 606 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
-      if (eina_list_count(toknz->tmp.prop->values) == 0)
-        WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
         WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
       INF("    }");
@@ -2046,7 +2046,7 @@ _eof_trans:
    }}
 	break;
 	case 67:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2069,11 +2069,9 @@ _eof_trans:
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 69:
-#line 604 "lib/eolian/eo_lexer.rl"
+#line 606 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
-      if (eina_list_count(toknz->tmp.prop->values) == 0)
-        WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
         WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
       INF("    }");
@@ -2084,7 +2082,7 @@ _eof_trans:
    }}
 	break;
 	case 70:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2103,7 +2101,7 @@ _eof_trans:
    }}
 	break;
 	case 71:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2122,7 +2120,7 @@ _eof_trans:
    }}
 	break;
 	case 72:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
@@ -2146,7 +2144,7 @@ _eof_trans:
    }}
 	break;
 	case 75:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2177,7 +2175,7 @@ _eof_trans:
    }}
 	break;
 	case 78:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2196,7 +2194,7 @@ _eof_trans:
    }}
 	break;
 	case 79:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2225,7 +2223,7 @@ _eof_trans:
    }}
 	break;
 	case 81:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
@@ -2242,11 +2240,11 @@ _eof_trans:
    }}
 	break;
 	case 83:
-#line 750 "lib/eolian/eo_lexer.rl"
+#line 748 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 84:
-#line 751 "lib/eolian/eo_lexer.rl"
+#line 749 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 85:
@@ -2254,8 +2252,6 @@ _eof_trans:
 	{ toknz->te = ( toknz->p)+1;{
       Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (eina_list_count(toknz->tmp.meth->params) == 0)
-        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
       INF("    }");
       switch (toknz->current_methods_type) {
         case METH_CONSTRUCTOR:
@@ -2278,7 +2274,7 @@ _eof_trans:
    }}
 	break;
 	case 86:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2297,11 +2293,11 @@ _eof_trans:
    }}
 	break;
 	case 87:
-#line 745 "lib/eolian/eo_lexer.rl"
+#line 743 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 88:
-#line 749 "lib/eolian/eo_lexer.rl"
+#line 747 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 89:
@@ -2309,8 +2305,6 @@ _eof_trans:
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (eina_list_count(toknz->tmp.meth->params) == 0)
-        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
       INF("    }");
       switch (toknz->current_methods_type) {
         case METH_CONSTRUCTOR:
@@ -2333,7 +2327,7 @@ _eof_trans:
    }}
 	break;
 	case 90:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2352,11 +2346,11 @@ _eof_trans:
    }}
 	break;
 	case 91:
-#line 749 "lib/eolian/eo_lexer.rl"
+#line 747 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}}
 	break;
 	case 92:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2375,14 +2369,14 @@ _eof_trans:
    }}
 	break;
 	case 93:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 94:
-#line 758 "lib/eolian/eo_lexer.rl"
+#line 756 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       INF("    %s {", toknz->tmp.meth->name);
@@ -2391,7 +2385,7 @@ _eof_trans:
    }}
 	break;
 	case 95:
-#line 771 "lib/eolian/eo_lexer.rl"
+#line 769 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  }");
       toknz->current_methods_type = METH_TYPE_LAST;
@@ -2400,7 +2394,7 @@ _eof_trans:
    }}
 	break;
 	case 96:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2419,11 +2413,11 @@ _eof_trans:
    }}
 	break;
 	case 97:
-#line 781 "lib/eolian/eo_lexer.rl"
+#line 779 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 98:
-#line 771 "lib/eolian/eo_lexer.rl"
+#line 769 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       INF("  }");
       toknz->current_methods_type = METH_TYPE_LAST;
@@ -2432,7 +2426,7 @@ _eof_trans:
    }}
 	break;
 	case 99:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2451,7 +2445,7 @@ _eof_trans:
    }}
 	break;
 	case 100:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2470,7 +2464,7 @@ _eof_trans:
    }}
 	break;
 	case 101:
-#line 790 "lib/eolian/eo_lexer.rl"
+#line 788 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->comment != NULL)
@@ -2479,24 +2473,24 @@ _eof_trans:
    }}
 	break;
 	case 102:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 103:
-#line 808 "lib/eolian/eo_lexer.rl"
+#line 806 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
    }}
 	break;
 	case 104:
-#line 811 "lib/eolian/eo_lexer.rl"
+#line 809 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
    }}
 	break;
 	case 105:
-#line 814 "lib/eolian/eo_lexer.rl"
+#line 812 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  constructors {");
       toknz->current_methods_type = METH_CONSTRUCTOR;
@@ -2505,7 +2499,7 @@ _eof_trans:
    }}
 	break;
 	case 106:
-#line 821 "lib/eolian/eo_lexer.rl"
+#line 819 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  destructors {");
       toknz->current_methods_type = METH_DESTRUCTOR;
@@ -2514,7 +2508,7 @@ _eof_trans:
    }}
 	break;
 	case 107:
-#line 828 "lib/eolian/eo_lexer.rl"
+#line 826 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  properties {");
       toknz->current_nesting++;
@@ -2522,7 +2516,7 @@ _eof_trans:
    }}
 	break;
 	case 108:
-#line 834 "lib/eolian/eo_lexer.rl"
+#line 832 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  begin methods");
       toknz->current_methods_type = METH_REGULAR;
@@ -2531,7 +2525,7 @@ _eof_trans:
    }}
 	break;
 	case 109:
-#line 841 "lib/eolian/eo_lexer.rl"
+#line 839 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("end class: %s", toknz->tmp.kls->name);
@@ -2542,7 +2536,7 @@ _eof_trans:
    }}
 	break;
 	case 110:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2561,33 +2555,33 @@ _eof_trans:
    }}
 	break;
 	case 111:
-#line 996 "lib/eolian/eo_lexer.rl"
+#line 994 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 112:
-#line 999 "lib/eolian/eo_lexer.rl"
+#line 997 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 113:
-#line 1000 "lib/eolian/eo_lexer.rl"
+#line 998 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 114:
-#line 1001 "lib/eolian/eo_lexer.rl"
+#line 999 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 115:
-#line 808 "lib/eolian/eo_lexer.rl"
+#line 806 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
    }}
 	break;
 	case 116:
-#line 811 "lib/eolian/eo_lexer.rl"
+#line 809 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
    }}
 	break;
 	case 117:
-#line 841 "lib/eolian/eo_lexer.rl"
+#line 839 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("end class: %s", toknz->tmp.kls->name);
@@ -2598,7 +2592,7 @@ _eof_trans:
    }}
 	break;
 	case 118:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2617,7 +2611,7 @@ _eof_trans:
    }}
 	break;
 	case 119:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2636,14 +2630,14 @@ _eof_trans:
    }}
 	break;
 	case 120:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 121:
-#line 1014 "lib/eolian/eo_lexer.rl"
+#line 1012 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("begin class: %s", toknz->tmp.kls->name);
@@ -2652,7 +2646,7 @@ _eof_trans:
    }}
 	break;
 	case 122:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2671,11 +2665,11 @@ _eof_trans:
    }}
 	break;
 	case 123:
-#line 1049 "lib/eolian/eo_lexer.rl"
+#line 1047 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 124:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2694,7 +2688,7 @@ _eof_trans:
    }}
 	break;
 	case 125:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -2712,7 +2706,7 @@ _eof_trans:
       {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
    }}
 	break;
-#line 2716 "lib/eolian/eo_lexer.c"
+#line 2710 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -2725,7 +2719,7 @@ _again:
 #line 1 "NONE"
 	{ toknz->ts = 0;}
 	break;
-#line 2729 "lib/eolian/eo_lexer.c"
+#line 2723 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -2743,12 +2737,12 @@ _again:
 	_out: {}
 	}
 
-#line 1104 "lib/eolian/eo_lexer.rl"
+#line 1102 "lib/eolian/eo_lexer.rl"
 
         if ( toknz->cs == 
-#line 2750 "lib/eolian/eo_lexer.c"
+#line 2744 "lib/eolian/eo_lexer.c"
 -1
-#line 1105 "lib/eolian/eo_lexer.rl"
+#line 1103 "lib/eolian/eo_lexer.rl"
  )
           {
              ERR("%s: wrong termination", source);
@@ -2794,7 +2788,7 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
    Eina_Bool ret = EINA_TRUE;
 
    
-#line 2798 "lib/eolian/eo_lexer.c"
+#line 2792 "lib/eolian/eo_lexer.c"
 	{
 	 toknz->cs = eo_tokenizer_start;
 	 toknz->ts = 0;
@@ -2802,7 +2796,7 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
 	 toknz->act = 0;
 	}
 
-#line 1150 "lib/eolian/eo_lexer.rl"
+#line 1148 "lib/eolian/eo_lexer.rl"
 
    toknz->p = buffer;
 
@@ -2811,7 +2805,7 @@ eo_tokenizer_mem_walk(Eo_Tokenizer *toknz, const char *source, char *buffer, uns
    toknz->eof = toknz->pe;
 
    
-#line 2815 "lib/eolian/eo_lexer.c"
+#line 2809 "lib/eolian/eo_lexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -2830,7 +2824,7 @@ _resume:
 #line 1 "NONE"
 	{ toknz->ts = ( toknz->p);}
 	break;
-#line 2834 "lib/eolian/eo_lexer.c"
+#line 2828 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -2897,28 +2891,28 @@ _eof_trans:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 384 "lib/eolian/eo_lexer.rl"
+#line 386 "lib/eolian/eo_lexer.rl"
 	{
       toknz->current_line += 1;
       DBG("inc[%d] %d", toknz->cs, toknz->current_line);
    }
 	break;
 	case 1:
-#line 389 "lib/eolian/eo_lexer.rl"
+#line 391 "lib/eolian/eo_lexer.rl"
 	{
       toknz->saved.line = toknz->current_line;
       DBG("save line[%d] %d", toknz->cs, toknz->current_line);
    }
 	break;
 	case 2:
-#line 394 "lib/eolian/eo_lexer.rl"
+#line 396 "lib/eolian/eo_lexer.rl"
 	{
       toknz->saved.tok = ( toknz->p);
       DBG("save token[%d] %p %c", toknz->cs, ( toknz->p), *( toknz->p));
    }
 	break;
 	case 3:
-#line 471 "lib/eolian/eo_lexer.rl"
+#line 473 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->ret != NULL)
@@ -2927,7 +2921,7 @@ _eof_trans:
    }
 	break;
 	case 4:
-#line 478 "lib/eolian/eo_lexer.rl"
+#line 480 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (!toknz->tmp.accessor->ret) ABORT(toknz, "No ret!!!");
@@ -2938,20 +2932,20 @@ _eof_trans:
    }
 	break;
 	case 5:
-#line 487 "lib/eolian/eo_lexer.rl"
+#line 489 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       toknz->tmp.accessor->legacy = _eo_tokenizer_token_get(toknz, ( toknz->p));
    }
 	break;
 	case 6:
-#line 501 "lib/eolian/eo_lexer.rl"
+#line 503 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.accessor_param = _eo_tokenizer_accessor_param_get(toknz, ( toknz->p));
    }
 	break;
 	case 7:
-#line 505 "lib/eolian/eo_lexer.rl"
+#line 507 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.accessor_param)
          ABORT(toknz, "No accessor param!!!");
@@ -2962,7 +2956,7 @@ _eof_trans:
    }
 	break;
 	case 8:
-#line 534 "lib/eolian/eo_lexer.rl"
+#line 536 "lib/eolian/eo_lexer.rl"
 	{
       const char *c = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
       if (toknz->tmp.param == NULL)
@@ -2972,7 +2966,7 @@ _eof_trans:
    }
 	break;
 	case 9:
-#line 542 "lib/eolian/eo_lexer.rl"
+#line 544 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.param = _eo_tokenizer_param_get(toknz, ( toknz->p));
       if (toknz->tmp.params)
@@ -3026,7 +3020,7 @@ _eof_trans:
    }
 	break;
 	case 15:
-#line 765 "lib/eolian/eo_lexer.rl"
+#line 763 "lib/eolian/eo_lexer.rl"
 	{
       if (toknz->tmp.meth != NULL)
         ABORT(toknz, "there is a pending method definition %s", toknz->tmp.meth->name);
@@ -3034,14 +3028,14 @@ _eof_trans:
    }
 	break;
 	case 16:
-#line 797 "lib/eolian/eo_lexer.rl"
+#line 795 "lib/eolian/eo_lexer.rl"
 	{
       const char *base = _eo_tokenizer_token_get(toknz, ( toknz->p));
       toknz->tmp.str_items = eina_list_append(toknz->tmp.str_items, base);
    }
 	break;
 	case 17:
-#line 802 "lib/eolian/eo_lexer.rl"
+#line 800 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       toknz->tmp.kls->inherits = toknz->tmp.str_items;
@@ -3049,7 +3043,7 @@ _eof_trans:
    }
 	break;
 	case 18:
-#line 850 "lib/eolian/eo_lexer.rl"
+#line 848 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       toknz->tmp.event = _eo_tokenizer_event_get(toknz, ( toknz->p));
@@ -3057,7 +3051,7 @@ _eof_trans:
    }
 	break;
 	case 19:
-#line 856 "lib/eolian/eo_lexer.rl"
+#line 854 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
       if (toknz->tmp.event->type != NULL)
@@ -3066,7 +3060,7 @@ _eof_trans:
    }
 	break;
 	case 20:
-#line 863 "lib/eolian/eo_lexer.rl"
+#line 861 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.event) ABORT(toknz, "No event!!!");
       if (toknz->tmp.event->comment != NULL)
@@ -3076,7 +3070,7 @@ _eof_trans:
    }
 	break;
 	case 21:
-#line 871 "lib/eolian/eo_lexer.rl"
+#line 869 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->legacy_prefix != NULL)
@@ -3085,7 +3079,7 @@ _eof_trans:
    }
 	break;
 	case 22:
-#line 880 "lib/eolian/eo_lexer.rl"
+#line 878 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->eo_prefix != NULL)
@@ -3094,7 +3088,7 @@ _eof_trans:
    }
 	break;
 	case 23:
-#line 889 "lib/eolian/eo_lexer.rl"
+#line 887 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->data_type != NULL)
@@ -3103,7 +3097,7 @@ _eof_trans:
    }
 	break;
 	case 24:
-#line 902 "lib/eolian/eo_lexer.rl"
+#line 900 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
         toknz->tmp.impl = _eo_tokenizer_implement_get(toknz, ( toknz->p));
@@ -3111,7 +3105,7 @@ _eof_trans:
    }
 	break;
 	case 25:
-#line 908 "lib/eolian/eo_lexer.rl"
+#line 906 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (toknz->tmp.impl->legacy)
@@ -3120,7 +3114,7 @@ _eof_trans:
    }
 	break;
 	case 26:
-#line 915 "lib/eolian/eo_lexer.rl"
+#line 913 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
@@ -3129,7 +3123,7 @@ _eof_trans:
    }
 	break;
 	case 27:
-#line 922 "lib/eolian/eo_lexer.rl"
+#line 920 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         toknz->tmp.impl_leg_param = calloc(1, sizeof(Eo_Implement_Legacy_Param_Def));
@@ -3140,7 +3134,7 @@ _eof_trans:
    }
 	break;
 	case 28:
-#line 931 "lib/eolian/eo_lexer.rl"
+#line 929 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl_leg_param)
            ABORT(toknz, "No implement legacy param!!!");
@@ -3148,7 +3142,7 @@ _eof_trans:
    }
 	break;
 	case 29:
-#line 937 "lib/eolian/eo_lexer.rl"
+#line 935 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl_leg_param)
            ABORT(toknz, "No implement legacy param!!!");
@@ -3156,7 +3150,7 @@ _eof_trans:
    }
 	break;
 	case 30:
-#line 943 "lib/eolian/eo_lexer.rl"
+#line 941 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
@@ -3165,7 +3159,7 @@ _eof_trans:
    }
 	break;
 	case 31:
-#line 950 "lib/eolian/eo_lexer.rl"
+#line 948 "lib/eolian/eo_lexer.rl"
 	{
         if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
         if (!toknz->tmp.impl->legacy)
@@ -3174,31 +3168,31 @@ _eof_trans:
    }
 	break;
 	case 32:
-#line 1021 "lib/eolian/eo_lexer.rl"
+#line 1019 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_REGULAR;
    }
 	break;
 	case 33:
-#line 1024 "lib/eolian/eo_lexer.rl"
+#line 1022 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_ABSTRACT;
    }
 	break;
 	case 34:
-#line 1027 "lib/eolian/eo_lexer.rl"
+#line 1025 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_MIXIN;
    }
 	break;
 	case 35:
-#line 1030 "lib/eolian/eo_lexer.rl"
+#line 1028 "lib/eolian/eo_lexer.rl"
 	{
       toknz->tmp.kls_type = EOLIAN_CLASS_INTERFACE;
    }
 	break;
 	case 36:
-#line 1034 "lib/eolian/eo_lexer.rl"
+#line 1032 "lib/eolian/eo_lexer.rl"
 	{
       if (toknz->tmp.kls != NULL)
         ABORT(toknz, "there is a pending class definition %s", toknz->tmp.kls->name);
@@ -3211,7 +3205,7 @@ _eof_trans:
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 40:
-#line 463 "lib/eolian/eo_lexer.rl"
+#line 465 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.accessor) ABORT(toknz, "No accessor!!!");
       if (toknz->tmp.accessor->comment != NULL)
@@ -3221,22 +3215,22 @@ _eof_trans:
    }}
 	break;
 	case 41:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 42:
-#line 526 "lib/eolian/eo_lexer.rl"
+#line 528 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 43:
-#line 527 "lib/eolian/eo_lexer.rl"
+#line 529 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 44:
-#line 492 "lib/eolian/eo_lexer.rl"
+#line 494 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      }");
       if (!toknz->tmp.prop) ABORT(toknz, "No prop!!!");
@@ -3247,7 +3241,7 @@ _eof_trans:
    }}
 	break;
 	case 45:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3266,15 +3260,15 @@ _eof_trans:
    }}
 	break;
 	case 46:
-#line 522 "lib/eolian/eo_lexer.rl"
+#line 524 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 47:
-#line 525 "lib/eolian/eo_lexer.rl"
+#line 527 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 48:
-#line 492 "lib/eolian/eo_lexer.rl"
+#line 494 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       INF("      }");
       if (!toknz->tmp.prop) ABORT(toknz, "No prop!!!");
@@ -3285,7 +3279,7 @@ _eof_trans:
    }}
 	break;
 	case 49:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3304,11 +3298,11 @@ _eof_trans:
    }}
 	break;
 	case 50:
-#line 525 "lib/eolian/eo_lexer.rl"
+#line 527 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}}
 	break;
 	case 51:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3327,14 +3321,14 @@ _eof_trans:
    }}
 	break;
 	case 52:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 53:
-#line 551 "lib/eolian/eo_lexer.rl"
+#line 553 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      }");
       toknz->tmp.param = NULL;
@@ -3348,7 +3342,7 @@ _eof_trans:
    }}
 	break;
 	case 54:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3367,15 +3361,15 @@ _eof_trans:
    }}
 	break;
 	case 55:
-#line 567 "lib/eolian/eo_lexer.rl"
-	{ toknz->te = ( toknz->p);( toknz->p)--;}
-	break;
-	case 56:
 #line 569 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
+	case 56:
+#line 571 "lib/eolian/eo_lexer.rl"
+	{ toknz->te = ( toknz->p);( toknz->p)--;}
+	break;
 	case 57:
-#line 551 "lib/eolian/eo_lexer.rl"
+#line 553 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       INF("      }");
       toknz->tmp.param = NULL;
@@ -3389,7 +3383,7 @@ _eof_trans:
    }}
 	break;
 	case 58:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3408,11 +3402,11 @@ _eof_trans:
    }}
 	break;
 	case 59:
-#line 569 "lib/eolian/eo_lexer.rl"
+#line 571 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}}
 	break;
 	case 60:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3431,14 +3425,14 @@ _eof_trans:
    }}
 	break;
 	case 61:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 62:
-#line 576 "lib/eolian/eo_lexer.rl"
+#line 578 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      get {");
       toknz->tmp.accessor = _eo_tokenizer_accessor_get(toknz, GETTER);
@@ -3447,7 +3441,7 @@ _eof_trans:
    }}
 	break;
 	case 63:
-#line 583 "lib/eolian/eo_lexer.rl"
+#line 585 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      set {");
       toknz->tmp.accessor = _eo_tokenizer_accessor_get(toknz, SETTER);
@@ -3456,7 +3450,7 @@ _eof_trans:
    }}
 	break;
 	case 64:
-#line 590 "lib/eolian/eo_lexer.rl"
+#line 592 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      keys {");
       toknz->current_nesting++;
@@ -3465,7 +3459,7 @@ _eof_trans:
    }}
 	break;
 	case 65:
-#line 597 "lib/eolian/eo_lexer.rl"
+#line 599 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("      values {");
       toknz->current_nesting++;
@@ -3474,11 +3468,9 @@ _eof_trans:
    }}
 	break;
 	case 66:
-#line 604 "lib/eolian/eo_lexer.rl"
+#line 606 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
-      if (eina_list_count(toknz->tmp.prop->values) == 0)
-        WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
         WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
       INF("    }");
@@ -3489,7 +3481,7 @@ _eof_trans:
    }}
 	break;
 	case 67:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3512,11 +3504,9 @@ _eof_trans:
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 69:
-#line 604 "lib/eolian/eo_lexer.rl"
+#line 606 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       if (!toknz->tmp.prop) ABORT(toknz, "No property!!!");
-      if (eina_list_count(toknz->tmp.prop->values) == 0)
-        WRN("property '%s' has no values.", toknz->tmp.prop->name);
       if (eina_list_count(toknz->tmp.prop->accessors) == 0)
         WRN("property '%s' has no accessors.", toknz->tmp.prop->name);
       INF("    }");
@@ -3527,7 +3517,7 @@ _eof_trans:
    }}
 	break;
 	case 70:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3546,7 +3536,7 @@ _eof_trans:
    }}
 	break;
 	case 71:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3565,7 +3555,7 @@ _eof_trans:
    }}
 	break;
 	case 72:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
@@ -3589,7 +3579,7 @@ _eof_trans:
    }}
 	break;
 	case 75:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3620,7 +3610,7 @@ _eof_trans:
    }}
 	break;
 	case 78:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3639,7 +3629,7 @@ _eof_trans:
    }}
 	break;
 	case 79:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3668,7 +3658,7 @@ _eof_trans:
    }}
 	break;
 	case 81:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
@@ -3685,11 +3675,11 @@ _eof_trans:
    }}
 	break;
 	case 83:
-#line 750 "lib/eolian/eo_lexer.rl"
+#line 748 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 84:
-#line 751 "lib/eolian/eo_lexer.rl"
+#line 749 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;}
 	break;
 	case 85:
@@ -3697,8 +3687,6 @@ _eof_trans:
 	{ toknz->te = ( toknz->p)+1;{
       Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (eina_list_count(toknz->tmp.meth->params) == 0)
-        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
       INF("    }");
       switch (toknz->current_methods_type) {
         case METH_CONSTRUCTOR:
@@ -3721,7 +3709,7 @@ _eof_trans:
    }}
 	break;
 	case 86:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3740,11 +3728,11 @@ _eof_trans:
    }}
 	break;
 	case 87:
-#line 745 "lib/eolian/eo_lexer.rl"
+#line 743 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 88:
-#line 749 "lib/eolian/eo_lexer.rl"
+#line 747 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 89:
@@ -3752,8 +3740,6 @@ _eof_trans:
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       Eina_List **l = NULL;
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (eina_list_count(toknz->tmp.meth->params) == 0)
-        WRN("method '%s' has no parameters.", toknz->tmp.meth->name);
       INF("    }");
       switch (toknz->current_methods_type) {
         case METH_CONSTRUCTOR:
@@ -3776,7 +3762,7 @@ _eof_trans:
    }}
 	break;
 	case 90:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3795,11 +3781,11 @@ _eof_trans:
    }}
 	break;
 	case 91:
-#line 749 "lib/eolian/eo_lexer.rl"
+#line 747 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}}
 	break;
 	case 92:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3818,14 +3804,14 @@ _eof_trans:
    }}
 	break;
 	case 93:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 94:
-#line 758 "lib/eolian/eo_lexer.rl"
+#line 756 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
       INF("    %s {", toknz->tmp.meth->name);
@@ -3834,7 +3820,7 @@ _eof_trans:
    }}
 	break;
 	case 95:
-#line 771 "lib/eolian/eo_lexer.rl"
+#line 769 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  }");
       toknz->current_methods_type = METH_TYPE_LAST;
@@ -3843,7 +3829,7 @@ _eof_trans:
    }}
 	break;
 	case 96:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3862,11 +3848,11 @@ _eof_trans:
    }}
 	break;
 	case 97:
-#line 781 "lib/eolian/eo_lexer.rl"
+#line 779 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 98:
-#line 771 "lib/eolian/eo_lexer.rl"
+#line 769 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       INF("  }");
       toknz->current_methods_type = METH_TYPE_LAST;
@@ -3875,7 +3861,7 @@ _eof_trans:
    }}
 	break;
 	case 99:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3894,7 +3880,7 @@ _eof_trans:
    }}
 	break;
 	case 100:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -3913,7 +3899,7 @@ _eof_trans:
    }}
 	break;
 	case 101:
-#line 790 "lib/eolian/eo_lexer.rl"
+#line 788 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       if (toknz->tmp.kls->comment != NULL)
@@ -3922,24 +3908,24 @@ _eof_trans:
    }}
 	break;
 	case 102:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 103:
-#line 808 "lib/eolian/eo_lexer.rl"
+#line 806 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
    }}
 	break;
 	case 104:
-#line 811 "lib/eolian/eo_lexer.rl"
+#line 809 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
    }}
 	break;
 	case 105:
-#line 814 "lib/eolian/eo_lexer.rl"
+#line 812 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  constructors {");
       toknz->current_methods_type = METH_CONSTRUCTOR;
@@ -3948,7 +3934,7 @@ _eof_trans:
    }}
 	break;
 	case 106:
-#line 821 "lib/eolian/eo_lexer.rl"
+#line 819 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  destructors {");
       toknz->current_methods_type = METH_DESTRUCTOR;
@@ -3957,7 +3943,7 @@ _eof_trans:
    }}
 	break;
 	case 107:
-#line 828 "lib/eolian/eo_lexer.rl"
+#line 826 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  properties {");
       toknz->current_nesting++;
@@ -3965,7 +3951,7 @@ _eof_trans:
    }}
 	break;
 	case 108:
-#line 834 "lib/eolian/eo_lexer.rl"
+#line 832 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       INF("  begin methods");
       toknz->current_methods_type = METH_REGULAR;
@@ -3974,7 +3960,7 @@ _eof_trans:
    }}
 	break;
 	case 109:
-#line 841 "lib/eolian/eo_lexer.rl"
+#line 839 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("end class: %s", toknz->tmp.kls->name);
@@ -3985,7 +3971,7 @@ _eof_trans:
    }}
 	break;
 	case 110:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -4004,33 +3990,33 @@ _eof_trans:
    }}
 	break;
 	case 111:
-#line 996 "lib/eolian/eo_lexer.rl"
+#line 994 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 112:
-#line 999 "lib/eolian/eo_lexer.rl"
+#line 997 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 113:
-#line 1000 "lib/eolian/eo_lexer.rl"
+#line 998 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 114:
-#line 1001 "lib/eolian/eo_lexer.rl"
+#line 999 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 115:
-#line 808 "lib/eolian/eo_lexer.rl"
+#line 806 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
    }}
 	break;
 	case 116:
-#line 811 "lib/eolian/eo_lexer.rl"
+#line 809 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
    }}
 	break;
 	case 117:
-#line 841 "lib/eolian/eo_lexer.rl"
+#line 839 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("end class: %s", toknz->tmp.kls->name);
@@ -4041,7 +4027,7 @@ _eof_trans:
    }}
 	break;
 	case 118:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -4060,7 +4046,7 @@ _eof_trans:
    }}
 	break;
 	case 119:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -4079,14 +4065,14 @@ _eof_trans:
    }}
 	break;
 	case 120:
-#line 399 "lib/eolian/eo_lexer.rl"
+#line 401 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
    }}
 	break;
 	case 121:
-#line 1014 "lib/eolian/eo_lexer.rl"
+#line 1012 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       if (!toknz->tmp.kls) ABORT(toknz, "No class!!!");
       INF("begin class: %s", toknz->tmp.kls->name);
@@ -4095,7 +4081,7 @@ _eof_trans:
    }}
 	break;
 	case 122:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p)+1;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -4114,11 +4100,11 @@ _eof_trans:
    }}
 	break;
 	case 123:
-#line 1049 "lib/eolian/eo_lexer.rl"
+#line 1047 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;}
 	break;
 	case 124:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{ toknz->te = ( toknz->p);( toknz->p)--;{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -4137,7 +4123,7 @@ _eof_trans:
    }}
 	break;
 	case 125:
-#line 408 "lib/eolian/eo_lexer.rl"
+#line 410 "lib/eolian/eo_lexer.rl"
 	{{( toknz->p) = (( toknz->te))-1;}{
       DBG("error[%d]", toknz->cs);
       char *s, *d;
@@ -4155,7 +4141,7 @@ _eof_trans:
       {( toknz->p)++; goto _out; }  /* necessary to stop scanners */
    }}
 	break;
-#line 4159 "lib/eolian/eo_lexer.c"
+#line 4145 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -4168,7 +4154,7 @@ _again:
 #line 1 "NONE"
 	{ toknz->ts = 0;}
 	break;
-#line 4172 "lib/eolian/eo_lexer.c"
+#line 4158 "lib/eolian/eo_lexer.c"
 		}
 	}
 
@@ -4186,12 +4172,12 @@ _again:
 	_out: {}
 	}
 
-#line 1158 "lib/eolian/eo_lexer.rl"
+#line 1156 "lib/eolian/eo_lexer.rl"
 
    if ( toknz->cs == 
-#line 4193 "lib/eolian/eo_lexer.c"
+#line 4179 "lib/eolian/eo_lexer.c"
 -1
-#line 1159 "lib/eolian/eo_lexer.rl"
+#line 1157 "lib/eolian/eo_lexer.rl"
  )
      {
         ERR("%s: wrong termination", source);
