@@ -8,7 +8,7 @@ static int require_ref = LUA_REFNIL;
 int el_log_domain = -1;
 
 enum {
-    ARG_CODE = 0, ARG_LIBRARY
+    ARG_CODE = 0, ARG_LIBRARY, ARG_LIBDIR
 };
 
 typedef struct Arg_Data {
@@ -39,10 +39,15 @@ static Ecore_Getopt opt = {
         ECORE_GETOPT_VERSION('v', "version"),
         ECORE_GETOPT_HELP('h', "help"),
 
+        ECORE_GETOPT_STORE_STR('C', "core-dir", "Elua core directory path."),
+        ECORE_GETOPT_STORE_STR('M', "modules-dir", "Elua modules directory path."),
+
         ECORE_GETOPT_CALLBACK_ARGS('e', "execute", "Execute string "
             "'code'.", "CODE", append_cb, (void*)ARG_CODE),
         ECORE_GETOPT_CALLBACK_ARGS('l', "library", "Require library 'library'.",
             "LIBRARY", append_cb, (void*)ARG_LIBRARY),
+        ECORE_GETOPT_CALLBACK_ARGS('L', "lib-dir", "Append an additional "
+            "require path 'LIBDIR'.", "LIBDIR", append_cb, (void*)ARG_LIBDIR),
         ECORE_GETOPT_STORE_TRUE('E', "noenv", "Ignore environment vars."),
 
         ECORE_GETOPT_SENTINEL
@@ -117,12 +122,30 @@ static int init_module(lua_State *L) {
 }
 
 static int register_require(lua_State *L) {
+    const char *corepath = lua_touserdata(L, lua_upvalueindex(1));
+    const char *modpath  = lua_touserdata(L, lua_upvalueindex(2));
+    Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(3)), *l = NULL;
+    Arg_Data   *data     = NULL;
+    int n = 2;
     lua_pushvalue(L, 1);
     require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pushliteral(L, ELUA_DATA_DIR "/core/?.lua;");
-    lua_pushliteral(L, ELUA_DATA_DIR "/modules/?.lua;");
+    if (!corepath) {
+        if (!(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
+              corepath = ELUA_CORE_DIR;
+    }
+    if (!modpath) {
+        if (!(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
+              modpath = ELUA_MODULES_DIR;
+    }
+    lua_pushfstring(L, "%s/?.lua;", corepath);
+    EINA_LIST_FOREACH(largs, l, data) {
+        if (data->type != ARG_LIBDIR) continue;
+        lua_pushstring(L, data->value);
+        ++n;
+    }
+    lua_pushfstring(L, "%s/?.lua;", modpath);
     lua_pushvalue(L, 2);
-    lua_concat(L, 3);
+    lua_concat(L, n + 1);
     return 1;
 }
 
@@ -208,11 +231,12 @@ const luaL_reg cutillib[] = {
 
 /* protected main */
 static int lua_main(lua_State *L) {
-    Eina_Bool     quit   = EINA_FALSE,
-                 noenv   = EINA_FALSE,
-                 hasexec = EINA_FALSE;
-    Eina_List *largs     = NULL, *l = NULL;
-    Arg_Data  *data      = NULL;
+    Eina_Bool     quit    = EINA_FALSE,
+                 noenv    = EINA_FALSE,
+                 hasexec  = EINA_FALSE;
+    Eina_List  *largs     = NULL, *l = NULL;
+    Arg_Data   *data      = NULL;
+    char       *coredir   = NULL, *moddir = NULL;
 
     int nonopt;
 
@@ -223,6 +247,24 @@ static int lua_main(lua_State *L) {
 
     if (argv[0] && argv[0][0]) opt.prog = argv[0];
 
+    nonopt = ecore_getopt_parse(&opt, (Ecore_Getopt_Value[]){
+        ECORE_GETOPT_VALUE_BOOL(quit), /* license */
+        ECORE_GETOPT_VALUE_BOOL(quit), /* copyright */
+        ECORE_GETOPT_VALUE_BOOL(quit), /* version */
+        ECORE_GETOPT_VALUE_BOOL(quit), /* help */
+
+        ECORE_GETOPT_VALUE_STR(coredir),
+        ECORE_GETOPT_VALUE_STR( moddir),
+
+        ECORE_GETOPT_VALUE_LIST(largs),
+        ECORE_GETOPT_VALUE_LIST(largs),
+        ECORE_GETOPT_VALUE_LIST(largs),
+        ECORE_GETOPT_VALUE_LIST(largs),
+        ECORE_GETOPT_VALUE_BOOL(noenv)
+    }, argc, argv);
+
+    INF("arguments parsed");
+
     lua_gc(L, LUA_GCSTOP, 0);
 
     luaL_openlibs(L);
@@ -231,7 +273,10 @@ static int lua_main(lua_State *L) {
         m->status = 1;
         return 0;
     }
-    lua_pushcfunction(L, register_require);
+    lua_pushlightuserdata(L, coredir);
+    lua_pushlightuserdata(L, moddir);
+    lua_pushlightuserdata(L, largs);
+    lua_pushcclosure(L, register_require, 3);
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, cutillib);
     lua_call(L, 2, 0);
@@ -240,20 +285,6 @@ static int lua_main(lua_State *L) {
     lua_gc(L, LUA_GCRESTART, 0);
 
     INF("elua lua state initialized");
-
-    nonopt = ecore_getopt_parse(&opt, (Ecore_Getopt_Value[]){
-        ECORE_GETOPT_VALUE_BOOL(quit), /* license */
-        ECORE_GETOPT_VALUE_BOOL(quit), /* copyright */
-        ECORE_GETOPT_VALUE_BOOL(quit), /* version */
-        ECORE_GETOPT_VALUE_BOOL(quit), /* help */
-
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_BOOL(noenv)
-    }, argc, argv);
-
-    INF("arguments parsed");
 
     if (quit) return 0;
 
