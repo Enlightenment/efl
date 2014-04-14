@@ -77,10 +77,14 @@ cutil.init_module(init, shutdown)
 
 local Iterator = iterator.Iterator
 
+local dgetmt = debug.getmetatable
+
 M.Iterator = Iterator:clone {
-    __ctor = function(self, list)
-        self.__list = list
-        return Iterator.__ctor(self, eina.eina_list_iterator_new(list.__list))
+    __ctor = function(self, selfmt, list)
+        if list == nil then return Iterator.__ctor(self, selfmt, nil) end
+        selfmt.__list = list
+        return Iterator.__ctor(self, selfmt,
+            eina.eina_list_iterator_new(dgetmt(list).__list))
     end,
 
     next = function(self)
@@ -91,10 +95,11 @@ M.Iterator = Iterator:clone {
 }
 
 M.Reverse_Iterator = Iterator:clone {
-    __ctor = function(self, list)
-        self.__list = list
-        return Iterator.__ctor(self, eina.eina_list_iterator_reversed_new(
-            list.__list))
+    __ctor = function(self, selfmt, list)
+        if list == nil then return Iterator.__ctor(self, selfmt, nil) end
+        selfmt.__list = list
+        return Iterator.__ctor(self, selfmt,
+            eina.eina_list_iterator_reversed_new(dgetmt(list).__list))
     end,
 
     next = function(self)
@@ -107,9 +112,11 @@ M.Reverse_Iterator = Iterator:clone {
 local Accessor = accessor.Accessor
 
 M.Accessor = Accessor:clone {
-    __ctor = function(self, list)
-        self.__list = list
-        return Accessor.__ctor(self, eina.eina_list_accessor_new(list.__list))
+    __ctor = function(self, selfmt, list)
+        if list == nil then return Accessor.__ctor(self, selfmt, nil) end
+        selfmt.__list = list
+        return Accessor.__ctor(self, selfmt,
+            eina.eina_list_accessor_new(dgetmt(list).__list))
     end,
 
     data_get = function(self, pos)
@@ -167,8 +174,6 @@ local List = ffi.metatype("Eina_List", {
         end
     }
 })
-
-local dgetmt = debug.getmetatable
 
 local List_Base = util.Readonly_Object:clone {
     __ctor = function(self, selfmt, list, freefunc)

@@ -60,11 +60,14 @@ end
 
 cutil.init_module(init, shutdown)
 
+local dgetmt = debug.getmetatable
+
 local Iterator = iterator.Iterator
 
 M.Tiler_Iterator = Iterator:clone {
-    __ctor = function(self, tiler)
-        return Iterator.__ctor(self, eina.eina_tiler_iterator_new(tiler))
+    __ctor = function(self, selfmt, tiler)
+        return Iterator.__ctor(self, selfmt,
+            eina.eina_tiler_iterator_new(tiler))
     end,
 
     next = function(self)
@@ -75,9 +78,9 @@ M.Tiler_Iterator = Iterator:clone {
 }
 
 M.Tile_Grid_Slicer_Iterator = Iterator:clone {
-    __ctor = function(self, x, y, w, h, tile_w, tile_h)
-        return Iterator.__ctor(self, eina.eina_tile_grid_slicer_iterator_new(
-            x, y, w, h, tile_w, tile_h))
+    __ctor = function(self, selfmt, x, y, w, h, tile_w, tile_h)
+        return Iterator.__ctor(self, selfmt,
+            eina.eina_tile_grid_slicer_iterator_new(x, y, w, h, tile_w, tile_h))
     end,
 
     next = function(self)

@@ -64,8 +64,8 @@ cutil.init_module(init, shutdown)
 local Iterator = iterator.Iterator
 
 M.Iterator = Iterator:clone {
-    __ctor = function(self, file)
-        return Iterator.__ctor(self, eina.eina_xattr_ls(file))
+    __ctor = function(self, selfmt, file)
+        return Iterator.__ctor(self, selfmt, eina.eina_xattr_ls(file))
     end,
     next = function(self)
         local  v = Iterator.next(self)
@@ -77,8 +77,8 @@ M.Iterator = Iterator:clone {
 M.ls = M.Iterator
 
 M.Value_Iterator = Iterator:clone {
-    __ctor = function(self, file)
-        return Iterator.__ctor(self, eina.eina_xattr_value_ls(file))
+    __ctor = function(self, selfmt, file)
+        return Iterator.__ctor(self, selfmt, eina.eina_xattr_value_ls(file))
     end,
     next = function(self)
         local  v = Iterator.next(self)

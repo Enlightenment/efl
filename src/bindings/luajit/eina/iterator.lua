@@ -51,53 +51,49 @@ ffi.metatype("Eina_Iterator", {
 
 cutil.init_module(init, shutdown)
 
-M.Iterator = util.Object:clone {
-    __ctor = function(self, iter)
+local dgetmt = debug.getmetatable
+
+M.Iterator = util.Readonly_Object:clone {
+    __ctor = function(self, selfmt, iter)
         -- prevent null stuff
         if iter == nil then iter = nil end
         if iter then ffi.gc(iter, iter.free) end
-        self.__eq = function(self, other)
-            return self.__iterator == other.__iterator
+        selfmt.__eq = function(self, other)
+            return selfmt.__iterator == dgetmt(other).__iterator
         end
-        self.__call = function(self)
+        selfmt.__call = function(self)
             return self:next()
         end
-        self.__iterator = iter
+        selfmt.__iterator = iter
     end,
 
     free = function(self)
+        self = dgetmt(self)
         if not self.__iterator then return end
         self.__iterator:free()
         self.__iterator = nil
     end,
 
-    disown = function(self)
-        local iter = self.__iterator
-        self.__iterator = nil
-        return ier
-    end,
-
-    rebase = function(self, iter)
-        self:free()
-        self.__iterator = iter:disown()
-    end,
-
     next = function(self)
+        self = dgetmt(self)
         if not self.__iterator then return nil end
         return self.__iterator:next()
     end,
 
     lock = function(self)
+        self = dgetmt(self)
         if not self.__iterator then return false end
         return self.__iterator:lock()
     end,
 
     unlock = function(self)
+        self = dgetmt(self)
         if not self.__iterator then return false end
         return self.__iterator:unlock()
     end,
 
     container_get = function(self)
+        self = dgetmt(self)
         if not self.__iterator then return nil end
         return self.__iterator:container_get()
     end

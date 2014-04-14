@@ -155,8 +155,8 @@ end
 local Iterator = iterator.Iterator
 
 M.Ls_Iterator = Iterator:clone {
-    __ctor = function(self, dir)
-        return Iterator.__ctor(self, eina.eina_file_ls(dir))
+    __ctor = function(self, selfmt, dir)
+        return Iterator.__ctor(self, selfmt, eina.eina_file_ls(dir))
     end,
 
     next = function(self)
@@ -215,8 +215,8 @@ local direct_info_iterator_next = function(self)
 end
 
 M.Stat_Ls_Iterator = Iterator:clone {
-    __ctor = function(self, dir)
-        return Iterator.__ctor(self, eina.eina_file_stat_ls(dir))
+    __ctor = function(self, selfmt, dir)
+        return Iterator.__ctor(self, selfmt, eina.eina_file_stat_ls(dir))
     end,
     next = direct_info_iterator_next
 }
@@ -224,8 +224,8 @@ M.Stat_Ls_Iterator = Iterator:clone {
 M.stat_ls = M.Stat_Ls_Iterator
 
 M.Direct_Ls_Iterator = Iterator:clone {
-    __ctor = function(self, dir)
-        return Iterator.__ctor(self, eina.eina_file_direct_ls(dir))
+    __ctor = function(self, selfmt, dir)
+        return Iterator.__ctor(self, selfmt, eina.eina_file_direct_ls(dir))
     end,
     next = direct_info_iterator_next
 }
@@ -259,8 +259,8 @@ M.copy = function(source, destination, flags, cb)
 end
 
 M.Xattr_Iterator = Iterator:clone {
-    __ctor = function(self, file)
-        return Iterator.__ctor(self, eina.eina_file_xattr_get(file))
+    __ctor = function(self, selfmt, file)
+        return Iterator.__ctor(self, selfmt, eina.eina_file_xattr_get(file))
     end,
     next = function(self)
         local  v = Iterator.next(self)
@@ -270,8 +270,9 @@ M.Xattr_Iterator = Iterator:clone {
 }
 
 M.Xattr_Value_Iterator = Iterator:clone {
-    __ctor = function(self, file)
-        return Iterator.__ctor(self, eina.eina_file_xattr_value_get(file))
+    __ctor = function(self, selfmt, file)
+        return Iterator.__ctor(self, selfmt,
+            eina.eina_file_xattr_value_get(file))
     end,
     next = function(self)
         local  v = Iterator.next(self)
@@ -291,8 +292,8 @@ M.populate     = {
 }
 
 M.Line_Iterator = Iterator:clone {
-    __ctor = function(self, file)
-        return Iterator.__ctor(self, eina.eina_file_map_lines(file))
+    __ctor = function(self, selfmt, file)
+        return Iterator.__ctor(self, selfmt, eina.eina_file_map_lines(file))
     end,
     next = function(self)
         local  v = Iterator.next(self)
