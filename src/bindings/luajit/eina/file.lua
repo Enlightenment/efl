@@ -154,7 +154,7 @@ end
 
 local Iterator = iterator.Iterator
 
-M.Ls_Iterator = Iterator:clone {
+local Ls_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, dir)
         return Iterator.__ctor(self, selfmt, eina.eina_file_ls(dir))
     end,
@@ -168,7 +168,7 @@ M.Ls_Iterator = Iterator:clone {
     end
 }
 
-M.ls = M.Ls_Iterator
+M.ls = function(dir) return Ls_Iterator(dir) end
 
 local file_type_map = {
     [C.EINA_FILE_UNKNOWN] = "unknown",
@@ -214,23 +214,23 @@ local direct_info_iterator_next = function(self)
     return Direct_Info(path, ns, nl, tp), self:container_get()
 end
 
-M.Stat_Ls_Iterator = Iterator:clone {
+local Stat_Ls_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, dir)
         return Iterator.__ctor(self, selfmt, eina.eina_file_stat_ls(dir))
     end,
     next = direct_info_iterator_next
 }
 
-M.stat_ls = M.Stat_Ls_Iterator
+M.stat_ls = function(dir) return Stat_Ls_Iterator(dir) end
 
-M.Direct_Ls_Iterator = Iterator:clone {
+local Direct_Ls_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, dir)
         return Iterator.__ctor(self, selfmt, eina.eina_file_direct_ls(dir))
     end,
     next = direct_info_iterator_next
 }
 
-M.direct_ls = M.Direct_Ls_Iterator
+M.direct_ls = function(dir) return Direct_Ls_Iterator(dir) end
 
 M.path_sanitize = function(path)
     local v = eina.eina_file_path_sanitize(path)
@@ -258,7 +258,7 @@ M.copy = function(source, destination, flags, cb)
     return v ~= 0
 end
 
-M.Xattr_Iterator = Iterator:clone {
+local Xattr_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, file)
         return Iterator.__ctor(self, selfmt, eina.eina_file_xattr_get(file))
     end,
@@ -269,7 +269,7 @@ M.Xattr_Iterator = Iterator:clone {
     end
 }
 
-M.Xattr_Value_Iterator = Iterator:clone {
+local Xattr_Value_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, file)
         return Iterator.__ctor(self, selfmt,
             eina.eina_file_xattr_value_get(file))
@@ -291,7 +291,7 @@ M.populate     = {
     REMOVE     = 5
 }
 
-M.Line_Iterator = Iterator:clone {
+local Line_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, file)
         return Iterator.__ctor(self, selfmt, eina.eina_file_map_lines(file))
     end,
@@ -346,8 +346,8 @@ M.File = ffi.metatype("Eina_File", {
             return ffi.string(eina.eina_file_filename_get(self))
         end,
 
-        xattr_get = M.Xattr_Iterator,
-        xattr_value_get = M.Xattr_Value_Iterator,
+        xattr_get = function(self) return Xattr_Iterator(self) end,
+        xattr_value_get = function(self) Xattr_Value_Iterator(self) end,
 
         map_all = function(self, rule, raw)
             local v = ffi.cast("char*", eina.eina_file_map_all(self, rule or 0))
@@ -385,7 +385,7 @@ M.File = ffi.metatype("Eina_File", {
             return eina.eina_file_map_faulted(self, map) ~= 0
         end,
 
-        lines = M.Line_Iterator
+        lines = function(self) return Line_Iterator(self) end
     }
 })
 

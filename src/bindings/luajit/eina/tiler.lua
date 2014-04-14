@@ -64,7 +64,7 @@ local dgetmt = debug.getmetatable
 
 local Iterator = iterator.Iterator
 
-M.Tiler_Iterator = Iterator:clone {
+local Tiler_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, tiler)
         return Iterator.__ctor(self, selfmt,
             eina.eina_tiler_iterator_new(tiler))
@@ -77,7 +77,7 @@ M.Tiler_Iterator = Iterator:clone {
     end
 }
 
-M.Tile_Grid_Slicer_Iterator = Iterator:clone {
+local Tile_Grid_Slicer_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, x, y, w, h, tile_w, tile_h)
         return Iterator.__ctor(self, selfmt,
             eina.eina_tile_grid_slicer_iterator_new(x, y, w, h, tile_w, tile_h))
@@ -128,11 +128,9 @@ M.Tiler = ffi.metatype("Eina_Tiler", {
 
         clear = function(self) eina.eina_tiler_clear(self) end,
 
-        each = function(self)
+        iterator = function(self)
             return M.Tiler_Iterator(self)
-        end,
-
-        Iterator = M.Tiler_Iterator
+        endd
     }
 })
 
@@ -157,7 +155,9 @@ M.Tile_Grid_Slicer = ffi.metatype("Eina_Tile_Grid_Slicer", {
             end
         end,
 
-        Iterator = M.Tile_Grid_Slicer_Iterator
+        Iterator = function(x, y, w, h, tw, th)
+            return Tile_Grid_Slicer_Iterator(x, y, w, h, tw, th)
+        end
     }
 })
 
