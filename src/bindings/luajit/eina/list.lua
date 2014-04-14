@@ -79,7 +79,7 @@ local Iterator = iterator.Iterator
 
 local dgetmt = debug.getmetatable
 
-M.Iterator = Iterator:clone {
+local List_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, list)
         if list == nil then return Iterator.__ctor(self, selfmt, nil) end
         selfmt.__list = list
@@ -94,7 +94,7 @@ M.Iterator = Iterator:clone {
     end
 }
 
-M.Reverse_Iterator = Iterator:clone {
+local List_Reverse_Iterator = Iterator:clone {
     __ctor = function(self, selfmt, list)
         if list == nil then return Iterator.__ctor(self, selfmt, nil) end
         selfmt.__list = list
@@ -111,7 +111,7 @@ M.Reverse_Iterator = Iterator:clone {
 
 local Accessor = accessor.Accessor
 
-M.Accessor = Accessor:clone {
+local List_Accessor = Accessor:clone {
     __ctor = function(self, selfmt, list)
         if list == nil then return Accessor.__ctor(self, selfmt, nil) end
         selfmt.__list = list
@@ -259,6 +259,18 @@ local List_Base = util.Readonly_Object:clone {
             l = l:next()
         end
         return r, n
+    end,
+
+    iterator = function(self)
+        return List_Iterator(self)
+    end,
+
+    reverse_iterator = function(self)
+        return List_Reverse_Iterator(self)
+    end,
+
+    accessor = function(self)
+        return List_Accessor(self)
     end
 }
 M.List_Base = List_Base
@@ -266,6 +278,7 @@ M.List_Base = List_Base
 M.String_List = List_Base:clone {
     data_get = function(self, ptr)
         ptr = List_Base.data_get(self, ptr)
+        if ptr == nil then return nil end
         return ffi.string(ptr)
     end
 }
