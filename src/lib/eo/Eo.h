@@ -570,16 +570,11 @@ EAPI void _eo_do_end(const Eo **ojb);
 // eo object method calls batch,
 
 #define _eo_do_common(eoid, clsid, is_super, ...)                         \
-  do                                                                       \
-    {                                                                      \
-       const Eo *_eoid_ = eoid;                                            \
-       if (_eo_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__))  \
-         {                                                                 \
-            const Eo *_id_clean_ EO_DO_CLEANUP = _eoid_;                  \
-            __VA_ARGS__;                                                   \
-            (void) _id_clean_;                                             \
-         }                                                                 \
-    } while (0)
+    ({                                                                      \
+       const Eo *_eoid_ EO_DO_CLEANUP = eoid;                             \
+       _eo_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__);  \
+       __VA_ARGS__;                                                   \
+    })
 
 
 #define eo_do(eoid, ...) _eo_do_common(eoid, NULL, EINA_FALSE, __VA_ARGS__)

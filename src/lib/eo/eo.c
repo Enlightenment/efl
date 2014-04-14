@@ -416,6 +416,7 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 EAPI Eina_Bool
 _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
+   Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr, *pfptr;
    Eo_Call_Stack *stack = _eo_call_stack_get();
 
@@ -428,11 +429,16 @@ _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
    fptr++;
 
    if (!_eo_do_internal(eo_id, cur_klass_id, is_super, fptr, pfptr))
-     return EINA_FALSE;
+     {
+        fptr->o.obj = NULL;
+        fptr->cur_klass = NULL;
+
+        ret = EINA_FALSE;
+     }
 
    stack->frame_ptr++;
 
-   return EINA_TRUE;
+   return ret;
 }
 
 EAPI void
@@ -471,6 +477,10 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
    if (op == EO_NOOP) return EINA_FALSE;
 
    fptr = _eo_call_stack_get()->frame_ptr;
+
+   if (EINA_UNLIKELY(!fptr->o.obj))
+      return EINA_FALSE;
+
    is_obj = !_eo_is_a_class(fptr->eo_id);
 
    klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
@@ -639,6 +649,9 @@ _eo_api_op_id_get(const void *api_func, const char *file, int line)
 
    Eina_Bool class_ref = _eo_is_a_class(stack->frame_ptr->eo_id);
 
+   if (EINA_UNLIKELY(!stack->frame_ptr->o.obj))
+      return EO_NOOP;
+
    if (class_ref)
      klass = stack->frame_ptr->o.kls;
    else
@@ -799,6 +812,9 @@ _eo_add_internal_end(const char *file, int line, const Eo *eo_id)
         ERR("in %s:%d - Something very wrong happend to the call stack.", file, line);
         return NULL;
      }
+
+   if (EINA_UNLIKELY(!fptr->o.obj))
+      return NULL;
 
    if (!fptr->o.obj->condtor_done || fptr->o.obj->do_error)
      {
