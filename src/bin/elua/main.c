@@ -125,17 +125,18 @@ static int register_require(lua_State *L) {
     const char *corepath = lua_touserdata(L, lua_upvalueindex(1));
     const char *modpath  = lua_touserdata(L, lua_upvalueindex(2));
     Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(3)), *l = NULL;
+    Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(4));
     Arg_Data   *data     = NULL;
     int n = 2;
     lua_pushvalue(L, 1);
     require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
     if (!corepath) {
-        if (!(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
-              corepath = ELUA_CORE_DIR;
+        if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
+            corepath = ELUA_CORE_DIR;
     }
     if (!modpath) {
-        if (!(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
-              modpath = ELUA_MODULES_DIR;
+        if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
+            modpath = ELUA_MODULES_DIR;
     }
     lua_pushfstring(L, "%s/?.lua;", corepath);
     EINA_LIST_FOREACH(largs, l, data) {
@@ -276,6 +277,7 @@ static int lua_main(lua_State *L) {
     lua_pushlightuserdata(L, coredir);
     lua_pushlightuserdata(L, moddir);
     lua_pushlightuserdata(L, largs);
+    lua_pushboolean      (L, noenv);
     lua_pushcclosure(L, register_require, 3);
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, cutillib);
