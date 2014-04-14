@@ -308,7 +308,7 @@ _elm_web_eo_base_constructor(Eo *obj, Elm_Web_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_elm_web_smart_callbacks, NULL));
+         evas_obj_smart_callbacks_descriptions_set(_elm_web_smart_callbacks));
 }
 
 EOLIAN static Evas_Object*
@@ -427,7 +427,7 @@ elm_web_uri_set(Evas_Object *obj,
 {
    ELM_WEB_CHECK(obj) EINA_FALSE;
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, elm_obj_web_url_set(url, &ret));
+   eo_do(obj, ret = elm_obj_web_url_set(url));
    return ret;
 }
 
