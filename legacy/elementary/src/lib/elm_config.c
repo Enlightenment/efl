@@ -21,6 +21,7 @@ static Eet_Data_Descriptor *_config_color_palette_edd = NULL;
 static Eet_Data_Descriptor *_config_color_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_bindings_widget_edd = NULL;
 static Eet_Data_Descriptor *_config_binding_key_edd = NULL;
+static Eet_Data_Descriptor *_config_binding_modifier_edd = NULL;
 const char *_elm_preferred_engine = NULL;
 const char *_elm_accel_preference = NULL;
 Eina_List  *_font_overlays_del = NULL;
@@ -365,6 +366,7 @@ _desc_init(void)
         return;
      }
 
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config_Bindings_Widget);
    eddc.func.str_direct_alloc = NULL;
    eddc.func.str_direct_free = NULL;
@@ -384,6 +386,19 @@ _desc_init(void)
 
    _config_binding_key_edd = eet_data_descriptor_stream_new(&eddc);
    if (!_config_binding_key_edd)
+     {
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config_Binding_Modifier);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_binding_modifier_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_binding_modifier_edd)
      {
         ERR("EEEK! eet_data_descriptor_stream_new() failed.");
         eet_data_descriptor_free(_config_edd);
@@ -447,11 +462,17 @@ _desc_init(void)
 #define T        Elm_Config_Binding_Key
 #define D        _config_binding_key_edd
    ELM_CONFIG_VAL(D, T, context, EET_T_INT);
-   ELM_CONFIG_VAL(D, T, modifiers, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, key, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, action, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, params, EET_T_STRING);
-   ELM_CONFIG_VAL(D, T, any_mod, EET_T_UCHAR);
+   ELM_CONFIG_LIST(D, T, modifiers, _config_binding_modifier_edd);
+#undef T
+#undef D
+
+#define T        Elm_Config_Binding_Modifier
+#define D        _config_binding_modifier_edd
+   ELM_CONFIG_VAL(D, T, mod, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, flag, EET_T_UCHAR);
 #undef T
 #undef D
 
@@ -614,6 +635,12 @@ _desc_shutdown(void)
      {
         eet_data_descriptor_free(_config_binding_key_edd);
         _config_binding_key_edd = NULL;
+     }
+
+   if (_config_binding_modifier_edd)
+     {
+        eet_data_descriptor_free(_config_binding_modifier_edd);
+        _config_binding_modifier_edd = NULL;
      }
 }
 
@@ -1258,6 +1285,7 @@ _config_free(Elm_Config *cfg)
    char *color_class;
    Elm_Config_Bindings_Widget *wb;
    Elm_Config_Binding_Key *kb;
+   Elm_Config_Binding_Modifier *mb;
 
    if (!cfg) return;
    EINA_LIST_FREE(cfg->font_dirs, fontdir)
@@ -1289,10 +1317,11 @@ _config_free(Elm_Config *cfg)
         eina_stringshare_del(wb->name);
         EINA_LIST_FREE(wb->key_bindings, kb)
           {
-             eina_stringshare_del(kb->modifiers);
              eina_stringshare_del(kb->key);
              eina_stringshare_del(kb->action);
              eina_stringshare_del(kb->params);
+             EINA_LIST_FREE(kb->modifiers, mb)
+                eina_stringshare_del(mb->mod);
              free(kb);
           }
         free(wb);
@@ -1805,12 +1834,27 @@ _config_update(void)
                          kb2 = calloc(1, sizeof(Elm_Config_Binding_Key));
                          if (kb2)
                            {
+                              Elm_Config_Binding_Modifier *mb;
+                              Eina_List *l3;
+
 #define DUPSHARE(x) if (kb->x) kb2->x = eina_stringshare_add(kb->x)
-                              DUPSHARE(modifiers);
                               DUPSHARE(key);
                               DUPSHARE(action);
                               DUPSHARE(params);
 #undef DUPSHARE
+                              EINA_LIST_FOREACH(kb2->modifiers, l3, mb)
+                                {
+                                   Elm_Config_Binding_Modifier *mb2;
+
+                                   mb2 = calloc(1, sizeof(Elm_Config_Bindings_Widget));
+                                   if (mb2)
+                                     {
+#define DUPSHARE(x) if (mb->x) mb2->x = eina_stringshare_add(mb->x)
+                                        DUPSHARE(mod);
+#undef DUPSHARE
+                                        kb->modifiers = eina_list_append(kb->modifiers, mb2);
+                                     }
+                                }
                               wb->key_bindings = eina_list_append(wb->key_bindings, kb2);
                            }
                       }
@@ -2151,6 +2195,20 @@ _elm_config_key_binding_hash(void)
 }
 
 Eina_Bool
+_elm_config_modifier_check(const Evas_Modifier *m,
+                           Eina_List *mod_list)
+{
+   Eina_List *l;
+   Elm_Config_Binding_Modifier *mod;
+   EINA_LIST_FOREACH(mod_list, l, mod)
+     {
+        if ((evas_key_modifier_is_set(m, mod->mod)) ^ (mod->flag))
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool
 _elm_config_key_binding_call(Evas_Object *obj,
                              const Evas_Event_Key_Down *ev,
                              const Elm_Action *actions)
@@ -2166,9 +2224,7 @@ _elm_config_key_binding_call(Evas_Object *obj,
         EINA_LIST_FOREACH(binding_list, l, binding)
           {
              if (binding->key && (!strcmp(binding->key, ev->key))
-                 && ((evas_key_modifier_is_set
-                      (ev->modifiers, binding->modifiers)
-                      || (binding->any_mod))))
+                 && _elm_config_modifier_check(ev->modifiers, binding->modifiers))
                {
                   while (actions[i].name)
                     {

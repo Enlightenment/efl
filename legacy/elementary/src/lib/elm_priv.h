@@ -81,6 +81,7 @@ typedef struct _Edje_Signal_Data         Edje_Signal_Data;
 typedef struct _Elm_Config               Elm_Config;
 typedef struct _Elm_Config_Bindings_Widget   Elm_Config_Bindings_Widget;
 typedef struct _Elm_Config_Binding_Key   Elm_Config_Binding_Key;
+typedef struct _Elm_Config_Binding_Modifier  Elm_Config_Binding_Modifier;
 typedef struct _Elm_Module               Elm_Module;
 typedef struct _Elm_Datetime_Module_Data Elm_Datetime_Module_Data;
 
@@ -301,11 +302,16 @@ struct _Elm_Config_Bindings_Widget
 struct _Elm_Config_Binding_Key
 {
    int           context;
-   const char   *modifiers;
    const char   *key;
    const char   *action;
    const char   *params;
-   unsigned char any_mod;
+   Eina_List    *modifiers;
+};
+
+struct _Elm_Config_Binding_Modifier
+{
+   const char   *mod;
+   unsigned char flag;
 };
 
 struct _Elm_Module
