@@ -1,0 +1,548 @@
+class EO_Evas_3D_Node (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_node;
+   data: Evas_3D_Node_Data;
+   constructors {
+      constructor {
+         /*@ Contructor. */
+         params {
+            @in Evas_3D_Node_Type type;
+         }
+      }
+   }
+   methods {
+      type_get {
+         /*
+           Get the type of the given node.
+
+           @return     The type of the given node.
+
+           @see evas_3d_node_add()
+
+           @ingroup Evas_3D_Node
+          */
+         const;
+         return Evas_3D_Node_Type ;
+      }
+      member_add {
+         /*
+           Add a member node to the given node.
+
+           Nodes can be constructed into N-ary tree structure like other ordinary scene
+           graph. Basically a node inherit transforms from its parent.
+
+           @see evas_3d_node_parent_get()
+
+           @ingroup Evas_3D_Node
+          */
+
+         params {
+            @in Evas_3D_Node *member;  /*@ Node object to be added. */
+         }
+      }
+      member_del {
+         /*
+           Delete a member node from the given node.
+
+           @see evas_3d_node_member_add()
+
+           @ingroup Evas_3D_Node
+          */
+
+         params {
+            @in Evas_3D_Node *member;  /*@ Member node to be deleted from the given node. */
+         }
+      }
+
+      parent_get {
+         /*
+           Get the parent node of the given node.
+
+           @return        The parent node of the given node.
+
+           @see evas_3d_node_member_add()
+
+           @ingroup Evas_3D_Node
+          */
+          const;
+         return Evas_3D_Node * ;
+      }
+
+      member_list_get {
+         /*
+           Get the list of member nodes of the given node.
+
+           @return        The list of member nodes if any or @c NULL if there are none.
+
+           @see evas_3d_node_member_add()
+
+           @ingroup Evas_3D_Node
+          */
+          const;
+         return const Eina_List * ;
+      }
+      position_set {
+
+         /*
+           Set the position of the given node.
+
+           According to the inheritance flag, (x, y, z) can be a world space position or
+           parent space position.
+
+           Default position is (0.0, 0.0, 0.0).
+
+           @see evas_3d_node_position_inherit_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+         params {
+            @in Evas_Real x;  /*@ X coordinate of the position. */
+            @in Evas_Real y;  /*@ Y coordinate of the position. */
+            @in Evas_Real z;  /*@ Z coordinate of the position. */
+         }
+      }
+      orientation_set {
+         /*
+           Set the orientation of the given node using quaternion.
+
+           According the the inheritance flag, (w, x, y, z) can be a world space
+           orientation or parent space orientation.
+
+           Default orientation is (1.0, 0.0, 0.0, 0.0) (identity quaternion).
+
+           @see evas_3d_node_orientation_inherit_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+         params {
+            @in Evas_Real x;  /*@ X term of the orientation quaternion (w, x, y, z) */
+            @in Evas_Real y;  /*@ Y term of the orientation quaternion (w, x, y, z) */
+            @in Evas_Real z;  /*@ Z term of the orientation quaternion (w, x, y, z) */
+            @in Evas_Real w;  /*@ W term of the orientation quaternion (w, x, y, z) */
+         }
+      }
+
+      orientation_angle_axis_set {
+         /*
+           Set the orientation of the given node using axis-angle.
+
+           @param node    The given node.
+           @param angle   Rotation angle.
+           @param x       X term of the rotation axis.
+           @param y       Y term of the rotation axis.
+           @param z       Z term of the rotation axis.
+
+           @see evas_3d_node_orientation_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+         params {
+            @in Evas_Real angle;  /*@ Rotation angle.*/
+            @in Evas_Real x;      /*@ X term of the rotation axis.*/
+            @in Evas_Real y;      /*@ Y term of the rotation axis.*/
+            @in Evas_Real z;      /*@ Z term of the rotation axis.*/
+         }
+      }
+
+      scale_set {
+         /*
+           Set the scale of the given node.
+
+           @param node    The given node.
+           @param x       Scale factor along X-axis.
+           @param y       Scale factor along Y-axis.
+           @param z       Scale factor along Z-axis.
+
+           According to the inheritance flag, (x, y, z) can be a world space scale or
+           parent space scale. Be careful when using non-uniform scale factor with
+           inheritance, each transform attributes are not affected by other attributes.
+
+           Default scale is (1.0, 1.0, 1.0).
+
+           @see evas_3d_node_scale_inherit_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+         params {
+            @in Evas_Real x;      /*@ Scale factor along X-axis.*/
+            @in Evas_Real y;      /*@ Scale factor along Y-axis.*/
+            @in Evas_Real z;      /*@ Scale factor along Z-axis.*/
+         }
+      }
+
+      position_get {
+         /*
+           Get the position of the given node.
+
+           @param node    The given node.
+           @param x       Pointer to receive X coordinate of the position.
+           @param y       Pointer to receive Y coordinate of the position.
+           @param z       Pointer to receive Z coordinate of the position.
+
+           @see evas_3d_node_position_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+          const;
+         params {
+            @in Evas_3D_Space space; /*@  */
+            @out Evas_Real x;      /*@ Pointer to receive X coordinate of the position.*/
+            @out Evas_Real y;      /*@ Pointer to receive Y coordinate of the position.*/
+            @out Evas_Real z;      /*@ Pointer to receive Z coordinate of the position.*/
+         }
+      }
+
+      orientation_get {
+         /*
+           Get the orientation of the given node as quaternion.
+
+           @param node    The given node.
+           @param x       Pointer to receive X term of the orientation quaternion.
+           @param y       Pointer to receive Y term of the orientation quaternion.
+           @param z       Pointer to receive Z term of the orientation quaternion.
+           @param w       Pointer to receive W term of the orientation quaternion.
+
+           @see evas_3d_node_orientation_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+          const;
+         params {
+            @in Evas_3D_Space space; /*@  */
+            @out Evas_Real x;      /*@ Pointer to receive X term of the orientation quaternion.*/
+            @out Evas_Real y;      /*@ Pointer to receive Y term of the orientation quaternion.*/
+            @out Evas_Real z;      /*@ Pointer to receive Z term of the orientation quaternion.*/
+            @out Evas_Real w;      /*@ Pointer to receive W term of the orientation quaternion.*/
+         }
+      }
+
+      scale_get {
+         /*
+           Get the scale of the given node.
+
+           @param node    The given node.
+           @param x       Pointer to receive Scale factor along X-axis.
+           @param y       Pointer to receive Scale factor along Y-axis.
+           @param z       Pointer to receive Scale factor along Z-axis.
+
+           @see evas_3d_node_scale_get()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+          const;
+         params {
+            @in Evas_3D_Space space; /*@  */
+            @out Evas_Real x;      /*@ Pointer to receive Scale factor along X-axis.*/
+            @out Evas_Real y;      /*@ Pointer to receive Scale factor along X-axis.*/
+            @out Evas_Real z;      /*@ Pointer to receive Scale factor along X-axis.*/
+         }
+      }
+
+      look_at_set {
+         /*
+           Rotate the given node to look at desired position.
+
+           @param node          The given node.
+           @param target_space  Space where the target position belongs to.
+           @param x             X coordinate of the target position.
+           @param y             Y coordinate of the target position.
+           @param z             Z coordinate of the target position.
+           @param up_space      Space where the up vector belongs to.
+           @param ux            X term of the up vector.
+           @param uy            Y term of the up vector.
+           @param uz            Z term of the up vector.
+
+           This function rotate the given node so that its forward vector (negative
+           Z-axis) points to the desired position and the up vector coincide with the
+           given up vector.
+
+           @see evas_3d_node_orientation_set()
+
+           @ingroup Evas_3D_Node_Transform
+          */
+
+         params {
+            @in Evas_3D_Space target_space;  /*@ Space where the target position belongs to. */
+            @in Evas_Real x;                 /*@ X coordinate of the target position. */
+            @in Evas_Real y;                 /*@ Y coordinate of the target position. */
+            @in Evas_Real z;                 /*@ Z coordinate of the target position. */
+            @in Evas_3D_Space up_space;      /*@ Space where the up vector belongs to. */
+            @in Evas_Real ux;                /*@ X term of the up vector. */
+            @in Evas_Real uy;                /*@ Y term of the up vector. */
+            @in Evas_Real uz;                /*@ Z term of the up vector. */
+         }
+      }
+
+      mesh_add {
+         /*
+           Add a mesh to the given node.
+
+           @param node          The given node.
+           @param mesh          The mesh to be added.
+
+           If the node is not of type EVAS_3D_NODE_TYPE_MESH, error message will be
+           generated and nothing happens.
+
+           @see evas_3d_node_add()
+
+           @ingroup Evas_3D_Node
+          */
+         params {
+            @in Evas_3D_Mesh *mesh;      /*@ The mesh to be added.*/
+         }
+      }
+
+      mesh_del {
+         /*
+           Delete a mesh from the given node.
+
+           @param node          The given node.
+           @param mesh          The mesh to be deleted.
+
+           If the node is not of type EVAS_3D_NODE_TYPE_MESH or the given mesh does not
+           belong to the given node, error message will be gnerated and nothing happens.
+
+           @see evas_3d_node_mesh_add()
+
+           @ingroup Evas_3D_Node
+          */
+         params {
+            @in Evas_3D_Mesh *mesh;      /*@ The mesh to be deleted.*/
+         }
+      }
+
+      mesh_list_get {
+         /*
+           Get the list of meshes of the given node.
+
+           @param node          The given node.
+           @return              The list of meshes if any, or @c NULL if there're none.
+
+           If the node is not of type EVAS_3D_NODE_TYPE_MESH, error message will be
+           generated and @c NULL will be returned. If there're no meshes in the given
+           node, @c NULL will be returned.
+
+           @see evas_3d_node_mesh_add()
+
+           @ingroup Evas_3D_Node
+          */
+          const;
+         return const Eina_List *;
+      }
+
+   }
+
+   properties {
+
+      position_inherit {
+         set {
+            /*
+              Set the position inheritance flag of the given node.
+
+              @param node    The given node.
+              @param inherit Whether to inherit parent position @c EINA_TRUE or not @c EINA_FALSE.
+
+              When inheritance is enabled, a node's world space position is determined by
+              adding the parent node's world position and the node's position, otherwise,
+              the node's position will be the world space position.
+
+              @ingroup Evas_3D_Node_Transform
+             */
+         }
+         get {
+            /*
+              Get the position inheritance flag of the given node.
+
+              @param node    The given node.
+              @return        @c EINA_TRUE if inheritance is enabled, or @c EINA_FALSE if not.
+
+              @see evas_3d_node_position_inherit_set()
+
+              @ingroup Evas_3D_Node_Transform
+             */
+         }
+         values {
+            Eina_Bool inherit; /*@ Whether to inherit parent position*/
+         }
+      }
+
+      orientation_inherit {
+         set {
+            /*
+              Set the orientation inheritance flag of the given node.
+
+              @param node    The given node.
+              @param inherit Whether to inherit parent orientation @c EINA_TRUE or not @c EINA_FALSE.
+
+              When inheritance is enabled, a node's world space orientation is determined
+              by multiplying the parent node's world orientation and the node's
+              orientation, otherwise, the node's orientation will be the world space
+              orientation.
+
+              @ingroup Evas_3D_Node_Transform
+            */
+         }
+         get {
+            /*
+              Get the orientation inheritance flag of the given node.
+
+              @param node    The given node.
+              @return        @c EINA_TRUE if inheritance is enabled, or @c EINA_FALSE if not.
+
+              @see evas_3d_node_orientation_inherit_set()
+
+              @ingroup Evas_3D_Node_Transform
+             */
+         }
+         values {
+            Eina_Bool inherit; /*@ Whether to inherit parent orientation*/
+         }
+      }
+
+      scale_inherit {
+         set {
+            /*
+              Set the scale inheritance flag of the given node.
+
+              @param node    The given node.
+              @param inherit Whether to inherit parent scale @c EINA_TRUE or not @c EINA_FALSE.
+
+              When inheritance is enabled, a node's world space scale is determined by
+              multiplying the parent node's world scale and the node's scale, otherwise,
+              the node's scale will be the world space scale.
+
+              @ingroup Evas_3D_Node_Transform
+             */
+         }
+         get {
+            /*
+              Get the scale inheritance flag of the given node.
+
+              @param node    The given node.
+              @return        @c EINA_TRUE if inheritance is enabled, or @c EINA_FALSE if not.
+
+              @see evas_3d_node_scale_inherit_set()
+
+              @ingroup Evas_3D_Node_Transform
+             */
+         }
+         values {
+            Eina_Bool inherit; /*@ Whether to inherit parent scale*/
+         }
+      }
+
+      camera {
+         set {
+            /*
+              Set a camera to the given node.
+
+              @param node          The given node.
+              @param camera        The camera to be set.
+
+              If the node is not of type EVAS_3D_NODE_TYPE_CAMERA, error message will be
+              generated and nothing happens.
+
+              @see evas_3d_node_add()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         get {
+            /*
+              Get the camera of the given node.
+
+              @param node          The given node.
+              @return              The camera of the given node if any, or @c NULL if there're none.
+
+              @see evas_3d_node_camera_set()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         values {
+            Evas_3D_Camera *camera; /*@ The camera */
+         }
+      }
+
+      light {
+         set {
+            /*
+              Set the light of the given node.
+
+              @param node          The given node.
+              @param light         The light to be set.
+
+              If the node is not of type EVAS_3D_NODE_TYPE_LIGHT, error message will be
+              generated and nothing happens.
+
+              @see evas_3d_node_add()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         get {
+            /*
+              Get the light of the given node.
+
+              @param node          The given node.
+              @return              The light of the given node if any, or @c NULL if there're none.
+
+              @see evas_3d_node_light_set()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         values {
+            Evas_3D_Light *light; /*@ The light */
+         }
+      }
+
+      mesh_frame {
+         set {
+            /*
+              Set the animation frame number of the given node for the given mesh.
+
+              @param node          The given node.
+              @param mesh          The given mesh.
+              @param frame         The animation frame number.
+
+              If the node is not of type EVAS_3D_NODE_TYPE_MESH or the given mesh does not
+              belong to the given mesh error mesh will be generated and nothing happens.
+
+              Default mesh frame is 0.
+
+              @see evas_3d_node_mesh_add()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         get {
+            /*
+              Set the animation frame number of the given node for the given mesh.
+
+              @param node          The given node.
+              @param mesh          The given mesh.
+              @param frame         The animation frame number.
+
+              If the node is not of type EVAS_3D_NODE_TYPE_MESH or the given mesh does not
+              belong to the given mesh error mesh will be generated and nothing happens.
+
+              @see evas_3d_node_mesh_add()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         keys {
+            Evas_3D_Mesh *mesh; /*@ The given mesh.*/
+         }
+         values {
+            int frame; /*@ The animation frame number.*/
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+}

@@ -1,0 +1,156 @@
+class EO_Evas_3D_Material (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_material;
+   data: Evas_3D_Material_Data;
+   methods {
+      color_set {
+         /*
+           Set the material attribute color of the given material.
+
+           Material color is used also when texture map is enabled. The colors will be
+           modulated (multiplied). To controll the color contribution of a material
+           attribute, use gray color. Setting color value for normal attribute has no
+           effect.
+
+           Default color is as follows.
+
+           Ambient  : (0.2, 0.2, 0.2, 1.0)
+           Diffuse  : (0.8, 0.8, 0.8, 1.0)
+           Specular : (1.0, 1.0, 1.0, 1.0)
+           Emission : (0.0, 0.0, 0.0, 1.0)
+           Normal   : Not used
+
+           @ingroup Evas_3D_Material
+          */
+
+         params {
+            @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
+            @in Evas_Real r; /*@ Red component of the color. */
+            @in Evas_Real g; /*@ Green component of the color. */
+            @in Evas_Real b; /*@ Blue component of the color. */
+            @in Evas_Real a; /*@ Alpha component of the color. */
+         }
+      }
+
+      color_get {
+         /*
+           Get the material attribute color of the given material.
+
+           @see evas_3d_material_color_set()
+
+           @ingroup Evas_3D_Material
+          */
+
+         const;
+         params {
+            @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
+            @out Evas_Real r; /*@ Pointer to receive red component of the color. */
+            @out Evas_Real g; /*@ Pointer to receive green component of the color. */
+            @out Evas_Real b; /*@ Pointer to receive blue component of the color. */
+            @out Evas_Real a; /*@ Pointer to receive alpha component of the color. */
+         }
+      }
+   }
+
+   properties {
+      enable {
+         set {
+            /*
+              Set the material attribute enable flag of the given material.
+
+              You might want to disable some material reflection contribution. For
+              example,Emission attribute is rarely used. Disabling unused attributes
+              might help the shading less complex so that can get speed up.
+
+              By default, diffuse and specular is enabled.
+
+              @ingroup Evas_3D_Material
+             */
+         }
+         get {
+            /*
+              Get the material attribute enable flag of the given material.
+
+              @see evas_3d_material_enable_set()
+
+              @return              @c EINA_TRUE if enabled, or @c EINA_FALSE if not.
+              @ingroup Evas_3D_Material
+            */
+         }
+         keys {
+            Evas_3D_Material_Attrib attrib;  /*@ Material attribute ID. */
+         }
+         values {
+            Eina_Bool enable; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
+         }
+      }
+
+      shininess {
+         set {
+            /*
+              Set the shininess of the given material.
+
+              Shininess is only used when specular attribute is enabled. Higher shininess
+              value will make the object more shiny.
+
+              Default shininess value is 150.0.
+
+              @see evas_3d_material_enable_set()
+
+              @ingroup Evas_3D_Material
+             */
+         }
+         get {
+            /*
+              Get the shininess of the given material.
+
+              @see evas_3d_material_shininess_set()
+
+              @return              The shininess value.
+              @ingroup Evas_3D_Material
+             */
+         }
+         values {
+            Evas_Real shininess; /*@ Shininess value. */
+         }
+      }
+
+      texture {
+         set {
+            /*@
+              Set the texture of the given material.
+
+              You have to enable the desired attribute first.
+
+              @see evas_3d_material_enable_set()
+
+              @ingroup Evas_3D_Material
+             */
+         }
+         get {
+            /*
+              Get the texture of the given material.
+
+              @see evas_3d_material_texture_set()
+
+              @return              The texture that is set to the given material attribute.
+
+              @ingroup Evas_3D_Material
+             */
+         }
+
+         keys {
+            @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
+         }
+         values {
+            Evas_3D_Texture *texture;
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+
+}

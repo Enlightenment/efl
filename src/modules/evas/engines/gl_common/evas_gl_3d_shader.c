@@ -1251,15 +1251,27 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
 {
    switch (u)
      {
-      case E3D_UNIFORM_MATRIX_MVP:
-         glUniformMatrix4fv(loc, 1, EINA_FALSE, &data->matrix_mvp.m[0]);
+      case E3D_UNIFORM_MATRIX_MVP: {
+         float   m[16];
+         for(int i = 0 ; i <16 ; i++)
+            m[i] = data->matrix_mvp.m[i];
+         glUniformMatrix4fv(loc, 1, EINA_FALSE, &m[0]);
          break;
-      case E3D_UNIFORM_MATRIX_MV:
-         glUniformMatrix4fv(loc, 1, EINA_FALSE, &data->matrix_mv.m[0]);
+      }
+      case E3D_UNIFORM_MATRIX_MV: {
+         float   m[16];
+         for(int i = 0 ; i <16 ; i++)
+            m[i] = data->matrix_mv.m[i];
+         glUniformMatrix4fv(loc, 1, EINA_FALSE, &m[0]);
          break;
-      case E3D_UNIFORM_MATRIX_NORMAL:
-         glUniformMatrix3fv(loc, 1, EINA_FALSE, &data->matrix_normal.m[0]);
+      }
+      case E3D_UNIFORM_MATRIX_NORMAL: {
+         float   m[9];
+         for(int i = 0 ; i <9 ; i++)
+            m[i] = data->matrix_normal.m[i];
+         glUniformMatrix3fv(loc, 1, EINA_FALSE, &m[0]);
          break;
+      }
       case E3D_UNIFORM_POSITION_WEIGHT:
          glUniform1f(loc, data->vertices[EVAS_3D_VERTEX_POSITION].weight);
          break;

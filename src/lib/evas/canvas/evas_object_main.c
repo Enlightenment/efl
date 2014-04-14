@@ -246,7 +246,8 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH(obj->proxy->proxy_textures, l, texture)
      {
-        evas_3d_object_change(&texture->base, EVAS_3D_STATE_TEXTURE_DATA, NULL);
+        Evas_3D_Texture_Data *pd = eo_data_scope_get(texture, EO_EVAS_3D_TEXTURE_CLASS);
+        evas_3d_object_change(&pd->base, EVAS_3D_STATE_TEXTURE_DATA, NULL);
      }
    if (obj->smart.parent)
      {

@@ -61,7 +61,21 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_zoomable_interface.eo.h \
                  lib/evas/canvas/evas_box.eo.c \
                  lib/evas/canvas/evas_box.eo.h \
-                 lib/evas/canvas/evas_box.eo.legacy.h
+                 lib/evas/canvas/evas_box.eo.legacy.h \
+                 lib/evas/canvas/evas_3d_camera.eo.c\
+                 lib/evas/canvas/evas_3d_camera.eo.h\
+                 lib/evas/canvas/evas_3d_texture.eo.c\
+                 lib/evas/canvas/evas_3d_texture.eo.h\
+                 lib/evas/canvas/evas_3d_material.eo.c\
+                 lib/evas/canvas/evas_3d_material.eo.h\
+                 lib/evas/canvas/evas_3d_light.eo.c\
+                 lib/evas/canvas/evas_3d_light.eo.h\
+                 lib/evas/canvas/evas_3d_mesh.eo.c\
+                 lib/evas/canvas/evas_3d_mesh.eo.h\
+                 lib/evas/canvas/evas_3d_node.eo.c\
+                 lib/evas/canvas/evas_3d_node.eo.h\
+                 lib/evas/canvas/evas_3d_scene.eo.c\
+                 lib/evas/canvas/evas_3d_scene.eo.h
 
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = \
@@ -86,8 +100,15 @@ evaseolianfiles_DATA = \
               lib/evas/canvas/evas_scrollable_interface.eo \
               lib/evas/canvas/evas_selectable_interface.eo \
               lib/evas/canvas/evas_zoomable_interface.eo \
-              lib/evas/canvas/evas_box.eo
-              
+              lib/evas/canvas/evas_box.eo\
+              lib/evas/canvas/evas_3d_camera.eo\
+              lib/evas/canvas/evas_3d_texture.eo\
+              lib/evas/canvas/evas_3d_material.eo\
+              lib/evas/canvas/evas_3d_light.eo\
+              lib/evas/canvas/evas_3d_mesh.eo\
+              lib/evas/canvas/evas_3d_node.eo\
+              lib/evas/canvas/evas_3d_scene.eo
+
 EXTRA_DIST += \
               ${evaseolianfiles_DATA}
 

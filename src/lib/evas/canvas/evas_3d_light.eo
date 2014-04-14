@@ -1,0 +1,264 @@
+class EO_Evas_3D_LIGHT (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_light;
+   data: Evas_3D_Light_Data;
+
+   properties {
+      directional {
+         set {
+            /*@
+              Set the directional flag of the given light.
+
+              Directional light is a type of light which is infinitely far away with no
+              attenuation. The light direction is determined by the containing node's
+              forward vector (negative Z-axis).
+
+              By default, directional is not enabled.
+
+              @see evas_3d_node_look_at_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         get {
+            /*@
+              Get the directional flag of the given light.
+
+              @see evas_3d_light_directional_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         values {
+            Eina_Bool directional; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
+         }
+      }
+
+      spot_exponent {
+         set {
+            /*@
+              Set the spot exponent of the given light.
+
+              Higher spot exponent means intensity at the center of the cone is relatively
+              stronger. Zero exponent means the light intensity is evenly distibuted. The
+              spot exponent has no effect when the light is not spot light (spot cutoff
+              angle is less than 180 degree).
+
+              Default spot exponent is 0.
+
+              @see evas_3d_light_spot_cutoff_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         get {
+            /*@
+              Get the spot exponent of the given light.
+
+              @see evas_3d_light_spot_exponent_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         values {
+            Evas_Real exponent; /*@ Spot exponent value..*/
+         }
+      }
+
+      spot_cutoff {
+         set {
+            /*@
+              Set the spot cutoff angle of the given light.
+
+              Only angle less than 180 degree will make it spot light, so that other spot
+              light attribute will take effect.
+
+              Default spot cutoff angle is 180.
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         get {
+            /*@
+              Get the spot cutoff angle of the given light.
+
+              @see evas_3d_light_spot_cutoff_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         values {
+            Evas_Real cutoff; /*@ Cutoff angle in degree..*/
+         }
+      }
+
+      attenuation_enable {
+         set {
+            /*@
+              Set the attenuation enable flag of the given light.
+
+              By default, light attenuation is not enabled.
+
+              @see evas_3d_light_attenuation_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         get {
+            /*@
+              Get the attenuation enable flag of the given light.
+
+              @see evas_3d_light_attenuation_enable_set()
+
+              @ingroup Evas_3D_Light
+             */
+         }
+         values {
+            Eina_Bool enable; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
+         }
+      }
+   }
+   methods {
+      ambient_set {
+         /*@
+           Set the ambient color of the given light.
+
+           Default ambient color is (0.0, 0.0, 0.0, 1.0).
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+           @in Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
+           @in Evas_Real g; /*@ Green component of the ambient color between [0.0, 1.0]. */
+           @in Evas_Real b; /*@ Blue component of the ambient color between [0.0, 1.0]. */
+           @in Evas_Real a; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
+         }
+      }
+      ambient_get {
+         /*@
+           Get the ambient color of the given light.
+
+           @see evas_3d_light_ambient_set()
+
+           @ingroup Evas_3D_Light
+          */
+         const;
+         params {
+           @out Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
+           @out Evas_Real g; /*@ Green component of the ambient color between [0.0, 1.0]. */
+           @out Evas_Real b; /*@ Blue component of the ambient color between [0.0, 1.0]. */
+           @out Evas_Real a; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
+         }
+      }
+
+      diffuse_set {
+         /*@
+           Set the diffuse color of the given light.
+
+           Default diffuse color is (1.0, 1.0, 1.0, 1.0).
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+           @in Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
+           @in Evas_Real g; /*@ Green component of the diffuse color between [0.0, 1.0]. */
+           @in Evas_Real b; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
+           @in Evas_Real a; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
+         }
+      }
+      diffuse_get {
+         /*@
+           Get the diffuse color of the given light.
+
+           @see evas_3d_light_diffuse_set()
+
+           @ingroup Evas_3D_Light
+          */
+         const;
+         params {
+           @out Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
+           @out Evas_Real g; /*@ Green component of the diffuse color between [0.0, 1.0]. */
+           @out Evas_Real b; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
+           @out Evas_Real a; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
+         }
+      }
+
+      specular_set {
+         /*@
+           Set the specular color of the given light.
+
+           Default specular color is (1.0, 1.0, 1.0, 1.0).
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+           @in Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
+           @in Evas_Real g; /*@ Green component of the specular color between [0.0, 1.0]. */
+           @in Evas_Real b; /*@ Blue component of the specular color between [0.0, 1.0]. */
+           @in Evas_Real a; /*@ Alpha component of the specular color between [0.0, 1.0]. */
+         }
+      }
+      specular_get {
+         /*@
+           Get the specular color of the given light.
+
+           @see evas_3d_light_specular_set()
+
+           @ingroup Evas_3D_Light
+          */
+         const;
+         params {
+           @out Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
+           @out Evas_Real g; /*@ Green component of the specular color between [0.0, 1.0]. */
+           @out Evas_Real b; /*@ Blue component of the specular color between [0.0, 1.0]. */
+           @out Evas_Real a; /*@ Alpha component of the specular color between [0.0, 1.0]. */
+         }
+      }
+
+      attenuation_set {
+         /*@
+           Set the attenuation of the given light.
+
+           Light attenuation has no effect with directional light. And the attenuation
+           should be enabled first to take effect. The attenuation factor is calculated
+           as follows.
+
+           atten = 1.0 / constant + linear * distance + quadratic * distance * distance
+
+           Default attenuation is constant = 1.0, linear = 0.0, quadratic = 0.0.
+
+           @see evas_3d_light_attenuation_enable_set()
+
+           @ingroup Evas_3D_Light
+          */
+         params {
+            @in Evas_Real constant; /*@ Constant attenuation term..*/
+            @in Evas_Real linear; /*@ Linear attenuation term..*/
+            @in Evas_Real quadratic; /*@ Quadratic attenuation term..*/
+         }
+      }
+
+      attenuation_get {
+         /*@
+           Get the attenuation of the given light.
+
+           @see evas_3d_light_attenuation_set()
+
+           @ingroup Evas_3D_Light
+          */
+         const;
+         params {
+            @out Evas_Real constant; /*@ Constant attenuation term..*/
+            @out Evas_Real linear; /*@ Linear attenuation term..*/
+            @out Evas_Real quadratic; /*@ Quadratic attenuation term..*/
+         }
+      }
+   }
+
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+
+}

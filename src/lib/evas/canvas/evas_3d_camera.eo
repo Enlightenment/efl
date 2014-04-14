@@ -1,0 +1,108 @@
+class EO_Evas_3D_Camera (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_camera;
+   data: Evas_3D_Camera_Data;
+   methods {
+      projection_matrix_set {
+         /*@
+          Set the projection matrix of the given camera.
+
+           @param camera     The given camera.
+           @param matrix     Pointer to the array of 16 Evas_Real values in column major order.
+
+           Default projection matrix is identity matrix.
+
+           @see evas_3d_camera_projection_perspective_set()
+           @see evas_3d_camera_projection_ortho_set()
+           @see evas_3d_camera_projection_frustum_set()
+
+           @ingroup Evas_3D_Camera
+          */
+         params {
+           @in const Evas_Real *matrix; /*@ Projection Matrix */
+         }
+      }
+
+      projection_matrix_get {
+         /*@
+          Get the projection matrix of the given camera.
+
+          @param camera     The given camera.
+          @param matrix     Pointer to receive the 16 Evas_Real values in column major order.
+
+          @see evas_3d_camera_projection_matrix_set()
+
+          @ingroup Evas_3D_Camera
+         */
+         const;
+         params {
+           @out Evas_Real matrix; /*@ Projection Matrix */
+         }
+      }
+
+      projection_perspective_set {
+         /*@
+           Set the projection matrix of the given camera with perspective projection.
+
+           @param camera     The given camera.
+           @param fovy       Field of view angle in Y direction.
+           @param aspect     Aspect ratio.
+           @param near       Distance to near clipping plane.
+           @param far        Distance to far clipping plane.
+
+           @see evas_3d_camera_projection_matrix_set()
+
+           @ingroup Evas_3D_Camera
+          */
+
+         params {
+            Evas_Real fovy; /*@ Field of view angle in Y direction. */
+            Evas_Real aspect; /*@ Aspect ratio.*/
+            Evas_Real near; /*@ Distance to near clipping plane. */
+            Evas_Real far; /*@ Distance to far clipping plane. */
+         }
+      }
+
+      projection_frustum_set {
+         /*@
+           Set the projection matrix of the given camera with frustum projection.
+
+           @see evas_3d_camera_projection_matrix_set()
+
+           @ingroup Evas_3D_Camera
+          */
+         params {
+            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
+            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
+            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
+            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
+            Evas_Real near; /*@ Distance to near clipping plane. */
+            Evas_Real far; /*@ Distance to far clipping plane. */
+         }
+      }
+      projection_ortho_set {
+         /*@
+           Set the projection matrix of the given camera with orthogonal projection.
+
+           @see evas_3d_camera_projection_matrix_set()
+
+           @ingroup Evas_3D_Camera
+          */
+         params {
+            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
+            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
+            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
+            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
+            Evas_Real near; /*@ Distance to near clipping plane. */
+            Evas_Real far; /*@ Distance to far clipping plane. */
+         }
+      }
+   }
+
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+
+}

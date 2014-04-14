@@ -27,7 +27,7 @@ void                 e3d_texture_filter_get(const E3D_Texture *texture, Evas_3D_
 /* Drawable */
 E3D_Drawable        *e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_format);
 void                 e3d_drawable_free(E3D_Drawable *drawable);
-void                 e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_Scene_Data *data);
+void                 e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_Scene_Public_Data *data);
 void                 e3d_drawable_size_get(E3D_Drawable *drawable, int *w, int *h);
 GLuint               e3d_drawable_texture_id_get(E3D_Drawable *drawable);
 GLenum               e3d_drawable_format_get(E3D_Drawable *drawable);

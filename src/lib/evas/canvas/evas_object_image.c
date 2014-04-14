@@ -442,7 +442,7 @@ _image_init_set(const Eina_File *f, const char *file, const char *key,
           }
         EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, state_write);
      }
-   
+
    if (o->engine_data)
      {
         if (o->preloading)
@@ -1371,7 +1371,7 @@ _evas_image_data_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w,
           if (r) pixi_write->pixel_updates = eina_list_append(pixi_write->pixel_updates, r);
         EINA_COW_PIXEL_WRITE_END(o, pixi_write);
      }
-   
+
    o->changed = EINA_TRUE;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    evas_object_change(eo_obj, obj);
@@ -2421,6 +2421,7 @@ _3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
 
    evas_object_image_file_set(eo_obj, NULL, NULL);
 
@@ -2429,7 +2430,7 @@ _3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene)
         data->surface = NULL;
         data->w = 0;
         data->h = 0;
-        evas_3d_object_reference(&scene->base);
+        evas_3d_object_reference(&pd_scene->base);
      }
    EINA_COW_WRITE_END(evas_object_3d_cow, obj->data_3d, data);
 
@@ -2439,7 +2440,7 @@ _3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene)
      }
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
-   scene->images = eina_list_append(scene->images, eo_obj);
+   pd_scene->images = eina_list_append(pd_scene->images, eo_obj);
 }
 
 static void
@@ -2449,9 +2450,11 @@ _3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas
 
    if (o->cur->scene)
      {
+        Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(o->cur->scene, EO_EVAS_3D_SCENE_CLASS);
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-           o->cur->scene->images = eina_list_remove(o->cur->scene->images, eo_obj);
-           evas_3d_object_unreference(&state_write->scene->base);
+           pd_scene->images = eina_list_remove(pd_scene->images, eo_obj);
+           Evas_3D_Scene_Data *pd_scene_state_write = eo_data_scope_get(state_write->scene, EO_EVAS_3D_SCENE_CLASS);
+           evas_3d_object_unreference(&pd_scene_state_write->base);
            state_write->scene = NULL;
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
@@ -2487,35 +2490,36 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
 {
    Evas_Public_Data    *e;
    Eina_Bool            need_native_set = EINA_FALSE;
-   Evas_3D_Scene_Data   scene_data;
+   Evas_3D_Scene_Public_Data   scene_data;
 
    if (scene == NULL)
     return;
+   Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
 
-   if((scene->w == 0) || (scene->h == 0))
+   if((pd_scene->w == 0) || (pd_scene->h == 0))
      return;
 
    e = eo_data_scope_get(eo_e, EVAS_CLASS);
 
-   if (scene->surface != NULL)
+   if (pd_scene->surface != NULL)
      {
         int  w, h;
 
-        e->engine.func->drawable_size_get(e->engine.data.output, scene->surface, &w, &h);
+        e->engine.func->drawable_size_get(e->engine.data.output, pd_scene->surface, &w, &h);
 
-        if ((w != scene->w) || (h != scene->h))
+        if ((w != pd_scene->w) || (h != pd_scene->h))
           {
-             e->engine.func->drawable_free(e->engine.data.output, scene->surface);
-             scene->surface = NULL;
+             e->engine.func->drawable_free(e->engine.data.output, pd_scene->surface);
+             pd_scene->surface = NULL;
              need_native_set = EINA_TRUE;
           }
      }
 
-   if (scene->surface == NULL)
+   if (pd_scene->surface == NULL)
      {
         /* TODO: Hard-coded alpha on. */
-        scene->surface = e->engine.func->drawable_new(e->engine.data.output,
-                                                      scene->w, scene->h, 1);
+        pd_scene->surface = e->engine.func->drawable_new(e->engine.data.output,
+                                                      pd_scene->w, pd_scene->h, 1);
         need_native_set = EINA_TRUE;
      }
 
@@ -2524,32 +2528,32 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
         if (need_native_set)
           {
              data->surface = e->engine.func->image_drawable_set(e->engine.data.output,
-                                                                data->surface, scene->surface);
+                                                                data->surface, pd_scene->surface);
           }
 
-        data->w = scene->w;
-        data->h = scene->h;
+        data->w = pd_scene->w;
+        data->h = pd_scene->h;
      }
    EINA_COW_WRITE_END(evas_object_3d_cow, obj->data_3d, data);
 
    evas_3d_scene_data_init(&scene_data);
 
-   scene_data.bg_color = scene->bg_color;
-   scene_data.camera_node = scene->camera_node;
+   scene_data.bg_color = pd_scene->bg_color;
+   scene_data.camera_node = pd_scene->camera_node;
 
    /* Phase 1 - Update scene graph tree. */
-   evas_3d_object_update(&scene->base);
+   evas_3d_object_update(&pd_scene->base);
 
    /* Phase 2 - Do frustum culling and get visible model nodes. */
-   evas_3d_node_tree_traverse(scene->root_node, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
+   evas_3d_node_tree_traverse(pd_scene->root_node, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
                               evas_3d_node_mesh_collect, &scene_data);
 
    /* Phase 3 - Collect active light nodes in the scene graph tree. */
-   evas_3d_node_tree_traverse(scene->root_node, EVAS_3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
+   evas_3d_node_tree_traverse(pd_scene->root_node, EVAS_3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
                               evas_3d_node_light_collect, &scene_data);
 
    /* Phase 5 - Draw the scene. */
-   e->engine.func->drawable_scene_render(e->engine.data.output, scene->surface, &scene_data);
+   e->engine.func->drawable_scene_render(e->engine.data.output, pd_scene->surface, &scene_data);
 
    /* Clean up temporary resources. */
    evas_3d_scene_data_fini(&scene_data);
@@ -2900,17 +2904,17 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                              (direct_override)) &&
                             (!direct_force_off) )
                          {
-                            
+
                             if (obj->layer->evas->engine.func->gl_get_pixels_set)
                               {
                                  obj->layer->evas->engine.func->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
                               }
-                            
+
                             o->direct_render = EINA_TRUE;
                          }
                        else
                          o->direct_render = EINA_FALSE;
-                       
+
                     }
 
                   if ( (ns) &&
@@ -2924,7 +2928,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
              x = obj->cur->geometry.x;
              y = obj->cur->geometry.y;
              w = obj->cur->geometry.w;
-             h = obj->cur->geometry.h;             
+             h = obj->cur->geometry.h;
 
              if (!o->direct_render)
                o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
@@ -3371,8 +3375,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    else if (o->cur->scene)
      {
         Evas_3D_Scene *scene = o->cur->scene;
-
-        if (evas_3d_object_dirty_get(&scene->base, EVAS_3D_STATE_ANY))
+        Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
+        if (evas_3d_object_dirty_get(&pd_scene->base, EVAS_3D_STATE_ANY))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
@@ -4181,7 +4185,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
                                  break;
                               }
                             // |
-                            // .## 
+                            // .##
                             inx = bl; iny = imh - bb;
                             inw = imw - bl - br; inh = bb;
                             outx = ox + bsl; outy = oy + ih - bsb;

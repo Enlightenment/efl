@@ -1,0 +1,199 @@
+class EO_Evas_3D_Texture (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_texture;
+   data : Evas_3D_Texture_Data;
+   properties {
+      source_visible {
+         set {
+            /*
+              Set the visibility flag of the source evas object of the given texture.
+
+              Recommend to call evas_object_show() on the source object and controll the
+              visibility using this function.
+
+              By default, source object is visible.
+
+              @see evas_3d_texture_source_set()
+
+              @ingroup Evas_3D_Texture
+             */
+         }
+         get {
+            /*
+              Get the visibility flag of the source evas object of the given texture.
+
+              @see evas_3d_texture_source_visible_set()
+
+              @ingroup Evas_3D_Texture
+             */
+         }
+         values {
+            Eina_Bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
+         }
+      }
+   }
+   methods {
+      data_set {
+         /*
+           Set the data of the given texture.
+
+           @see evas_3d_texture_file_set()
+
+           @ingroup Evas_3D_Texture
+          */
+
+         params {
+            @in Evas_3D_Color_Format color_format; /*@ Color format of the texture. */
+            @in Evas_3D_Pixel_Format pixel_format; /*@ Pixel format of the data. */
+            @in int w; /*@ Width of the data. */
+            @in int h; /*@ Height of the data. */
+            @in const void *data; /*@ Pointer to the data. */
+         }
+      }
+
+      file_set {
+         /*
+           Set the data of the given texture from file.
+
+           Only PNG format is supported.
+
+           @ingroup Evas_3D_Texture
+          */
+
+         return void ;
+         params {
+            @in const char *file; /*@ Path to the image file. */
+            @in const char *key; /*@ Key in the image file. */
+         }
+      }
+
+      source_set {
+         /*
+           Set the data of the given texture from an evas object.
+
+           Evas 3D support using existing evas object as a texture source. This feature
+           make it possible using any exisiting evas object inside 3D scene.
+
+           @see evas_3d_texture_source_visible_set
+
+           @ingroup Evas_3D_Texture
+          */
+
+         return void ;
+         params {
+            @in Evas_Object *source; /*@ Source evas object to be used as the texture data. */
+         }
+      }
+
+      color_format_get {
+         /*
+           Get the color format of the given texture.
+
+           EVAS_3D_COLOR_FORMAT_RGBA will be returned if the texture has source object.
+           Otherwise, the color format of the data will be returned.
+
+           @see evas_3d_texture_data_set()
+           @see evas_3d_texture_file_set()
+           @see evas_3d_texture_source_set()
+
+           @ingroup Evas_3D_Texture
+          */
+         const;
+         return Evas_3D_Color_Format ;
+      }
+
+      size_get {
+         /*
+           Get the size of the given texture.
+
+           If the texture has source object, the size of the source object will be
+           returned. Otherwise, the size of the data (or image file) will be returned.
+
+           @see evas_3d_texture_data_set()
+           @see evas_3d_texture_file_set()
+           @see evas_3d_texture_source_set()
+
+           @ingroup Evas_3D_Texture
+          */
+         const;
+         params {
+            @out int w; /*@ Pointer to receive the width of the texture size. */
+            @out int h; /*@ Pointer to receive the height of the texture size. */
+         }
+      }
+
+      wrap_set {
+         /*
+           Set the wrap mode of the given texture.
+           If the texture coordinate exceed range [0.0, 1.0] the values are modified
+           according to the wrap mode.
+
+           Default wrap modes are both EVAS_3D_WRAP_MODE_CLAMP for s and t.
+
+           @ingroup Evas_3D_Texture
+          */
+         params {
+            @in Evas_3D_Wrap_Mode s; /*@ Wrap mode for S-axis. */
+            @in Evas_3D_Wrap_Mode t; /*@ Wrap mode for T-axis. */
+         }
+      }
+
+      wrap_get {
+         /*
+           Get the wrap mode of the given texture.
+
+           @see evas_3d_texture_wrap_set()
+
+           @ingroup Evas_3D_Texture
+          */
+
+         return void ;
+         params {
+            @out Evas_3D_Wrap_Mode s; /*@ Pointer to receive S-axis wrap mode. */
+            @out Evas_3D_Wrap_Mode t; /*@ Pointer to receive T-axis wrap mode. */
+         }
+      }
+
+      filter_set {
+         /*
+           Set the filter of the given texture.
+
+           Default filters are both EVAS_3D_TEXTURE_FILTER_NEAREST for s and t.
+
+           @ingroup Evas_3D_Texture
+          */
+
+         params {
+            @in Evas_3D_Texture_Filter min; /*@ Minification filter used when down-scaling. */
+            @in Evas_3D_Texture_Filter mag; /*@ Magnification filter used when up-scaling. */
+         }
+      }
+
+      filter_get {
+         /*
+           Get the filter of the given texture.
+
+           @param texture       The given texture.
+           @param min           Pointer to receive the minification filter.
+           @param mag           Pointer to receive the magnification filter.
+
+           @see evas_3d_texture_filter_set()
+
+           @ingroup Evas_3D_Texture
+          */
+
+         const;
+         params {
+            @out Evas_3D_Texture_Filter min; /*@ Pointer to receive the minification filter. */
+            @out Evas_3D_Texture_Filter mag; /*@ Pointer to receive the magnification filter. */
+         }
+      }
+   }
+
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+
+}

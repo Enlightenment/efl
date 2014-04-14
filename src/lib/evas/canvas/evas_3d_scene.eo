@@ -1,0 +1,145 @@
+class EO_Evas_3D_Scene (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_scene;
+   data: Evas_3D_Scene_Data;
+   methods {
+      size_set {
+         /*
+           Set the resolution of a scene.
+
+           A scene should be rendered to be displayed through an image objects. The
+           resolution defines size of the internal surface holding the rendered result.
+
+           @ingroup Evas_3D_Scene
+          */
+         params {
+            @in int w;  /*@ Width of the resolution. */
+            @in int h; /*@ Height of the resolution. */
+         }
+      }
+
+      size_get {
+         /*
+           Get the internal resolution of a scene.
+
+           @ingroup Evas_3D_Scene
+          */
+         const;
+         params {
+            @out int w;  /*@ Pointer to receive width of the resolution. */
+            @out int h; /*@ Pointer to receive height of the resolution. */
+         }
+      }
+
+      background_color_set {
+         /*
+           Set the background color of a scene.
+
+           Background color defines initial color of pixels before a scene is rendered.
+           If you want to display a scene with background evas objects are still
+           remaining as if it was the background, set the alpha term to 0.0.
+
+           Default background color is (0.0, 0.0, 0.0, 0.0).
+
+           @ingroup Evas_3D_Scene
+          */
+         params {
+            @in Evas_Real r; /*@ Red component of the background color. */
+            @in Evas_Real g; /*@ Green component of the background color. */
+            @in Evas_Real b; /*@ Blue component of the background color. */
+            @in Evas_Real a; /*@ Alpha component of the background color. */
+         }
+      }
+
+      background_color_get {
+         /*
+           Get the background color of a scene.
+
+           @ingroup Evas_3D_Scene
+          */
+
+         const;
+         params {
+            @out Evas_Real r; /*@ Pointer to receive red component of the background color.*/
+            @out Evas_Real g; /*@ Pointer to receive green component of the background color. */
+            @out Evas_Real b; /*@ Pointer to receive blue component of the background color. */
+            @out Evas_Real a; /*@ Pointer to receive alpha component of the background color. */
+         }
+      }
+
+      pick {
+         /*
+           Get information on the most front visible mesh for the given position.
+
+           (x, y) is the screen coordinate of the given scene. That is, left-top is
+           (0, 0) and right-bottom is (w, h) where (w, h) is the size of the scene.
+           The texture coordinate is useful when using proxy texture source.
+
+           @ingroup Evas_3D_Scene
+          */
+          const;
+         return Eina_Bool ;
+         params {
+            @in Evas_Real x;         /*@ X coordinate of the picking position. */
+            @in Evas_Real y;         /*@ Y coordinate of the picking position. */
+            @out Evas_3D_Node *node; /*@ Pointer to receive the node contains the picked mesh. */
+            @out Evas_3D_Mesh *mesh; /*@ Pointer to receive the picked mesh. */
+            @out Evas_Real s;        /*@ Pointer to receive the texture "s" coordinate. */
+            @out Evas_Real t;        /*@ Pointer to receive the texture "t" coordinate. */
+         }
+      }
+
+   }
+   properties {
+
+      root_node {
+         set {
+            /*
+              Set the root node of a scene.
+
+              @ingroup Evas_3D_Scene
+             */
+         }
+         get {
+            /*
+              Get the root node of a scene.
+
+              @return        The root node of the given scene.
+
+              @ingroup Evas_3D_Scene
+             */
+         }
+         values {
+            Evas_3D_Node *node; /*@ A node which will be used as a root node for the scene. */
+         }
+      }
+
+      camera_node {
+         set {
+            /*
+              Set the camera node of a scene.
+
+              @ingroup Evas_3D_Scene
+             */
+         }
+         get {
+            /*
+              Get the camera node of a scene.
+
+              @return        The camera node of the given scene.
+
+              @ingroup Evas_3D_Scene
+             */
+         }
+         values {
+            Evas_3D_Node *node; /*@ A node which will be used as a camera node for the scene. */
+         }
+      }
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+
+}

@@ -6,8 +6,12 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "Eo.h"
+
+#define MY_CLASS EO_EVAS_3D_SCENE_CLASS
+
 void
-evas_3d_scene_data_init(Evas_3D_Scene_Data *data)
+evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data)
 {
    data->camera_node = NULL;
    data->light_nodes = NULL;
@@ -15,7 +19,7 @@ evas_3d_scene_data_init(Evas_3D_Scene_Data *data)
 }
 
 void
-evas_3d_scene_data_fini(Evas_3D_Scene_Data *data)
+evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data)
 {
    if (data->light_nodes)
      eina_list_free(data->light_nodes);
@@ -27,7 +31,7 @@ evas_3d_scene_data_fini(Evas_3D_Scene_Data *data)
 static void
 _scene_change(Evas_3D_Object *obj, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
-   Evas_3D_Scene *scene = (Evas_3D_Scene *)obj;
+   Evas_3D_Scene_Data *scene = (Evas_3D_Scene_Data *)obj;
    Eina_List *l;
    Evas_Object *eo;
 
@@ -41,36 +45,45 @@ _scene_change(Evas_3D_Object *obj, Evas_3D_State state EINA_UNUSED, Evas_3D_Obje
 static void
 _scene_update(Evas_3D_Object *obj)
 {
-   Evas_3D_Scene *scene = (Evas_3D_Scene *)obj;
+   Evas_3D_Scene_Data *scene = (Evas_3D_Scene_Data *)obj;
 
    if (scene->root_node)
-     evas_3d_object_update(&scene->root_node->base);
+     {
+        Evas_3D_Node_Data *pd_root_node = eo_data_scope_get(scene->root_node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_object_update(&pd_root_node->base);
+     }
 
    if (scene->camera_node)
-     evas_3d_object_update(&scene->camera_node->base);
+     {
+        Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(scene->camera_node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_object_update(&pd_camera_node->base);
+     }
 }
 
 static void
 _scene_free(Evas_3D_Object *obj)
 {
-   Evas_3D_Scene *scene = (Evas_3D_Scene *)obj;
+   Evas_3D_Scene_Data *scene = (Evas_3D_Scene_Data *)obj;
 
    if (scene->root_node)
      {
-        evas_3d_node_scene_root_del(scene->root_node, scene);
-        evas_3d_object_unreference(&scene->root_node->base);
+        Evas_3D_Node_Data *pd_root_node = eo_data_scope_get(scene->root_node, EO_EVAS_3D_NODE_CLASS);
+        //@FIXME
+        evas_3d_node_scene_root_del(scene->root_node, scene->hack_this);
+        evas_3d_object_unreference(&pd_root_node->base);
      }
 
    if (scene->camera_node)
      {
-        evas_3d_node_scene_camera_del(scene->camera_node, scene);
-        evas_3d_object_unreference(&scene->camera_node->base);
+        Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(scene->camera_node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_node_scene_camera_del(scene->camera_node, scene->hack_this);
+        evas_3d_object_unreference(&pd_camera_node->base);
      }
 
    if (scene->images)
      eina_list_free(scene->images);
-
-   free(scene);
+    eo_del(scene->hack_this);
+   //free(scene);
 }
 
 static const Evas_3D_Object_Func scene_func =
@@ -80,132 +93,132 @@ static const Evas_3D_Object_Func scene_func =
    _scene_update,
 };
 
-Evas_3D_Scene *
-evas_3d_scene_new(Evas *e)
-{
-   Evas_3D_Scene *scene = NULL;
-
-   scene = (Evas_3D_Scene *)calloc(1, sizeof(Evas_3D_Scene));
-
-   if (scene == NULL)
-     {
-        ERR("Failed to allocate memory.");
-        return NULL;
-     }
-
-   evas_3d_object_init(&scene->base, e, EVAS_3D_OBJECT_TYPE_SCENE, &scene_func);
-   evas_color_set(&scene->bg_color, 0.0, 0.0, 0.0, 0.0);
-
-   return scene;
-}
-
 EAPI Evas_3D_Scene *
 evas_3d_scene_add(Evas *e)
 {
-   return evas_3d_scene_new(e);
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   eo_unref(eo_obj);
+   return eo_obj;
 }
 
-EAPI void
-evas_3d_scene_del(Evas_3D_Scene *scene)
+EOLIAN static void
+_eo_evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
 {
-   evas_3d_object_unreference(&scene->base);
+   Eo *e;
+   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_do(obj, e = eo_parent_get());
+   evas_3d_object_init(&pd->base, e, EVAS_3D_OBJECT_TYPE_SCENE, &scene_func);
+   evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
 }
 
-EAPI Evas *
-evas_3d_scene_evas_get(const Evas_3D_Scene *scene)
+EOLIAN static void
+_eo_evas_3d_scene_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
-   return scene->base.evas;
+   //evas_3d_object_unreference(&pd->base);
 }
 
-EAPI void
-evas_3d_scene_root_node_set(Evas_3D_Scene *scene, Evas_3D_Node *node)
+EOLIAN static Evas *
+_eo_evas_3d_scene_evas_common_interface_evas_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
-   if (scene->root_node == node)
+   return pd->base.evas;
+}
+
+EOLIAN static void
+_eo_evas_3d_scene_root_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
+{
+   if (pd->root_node == node)
      return;
 
-   if (scene->root_node)
+   if (pd->root_node)
      {
-        evas_3d_node_scene_root_del(scene->root_node, scene);
-        evas_3d_object_unreference(&scene->root_node->base);
+        Evas_3D_Node_Data *pd_root_node = eo_data_scope_get(pd->root_node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_node_scene_root_del(pd->root_node, obj);
+        evas_3d_object_unreference(&pd_root_node->base);
      }
 
-   scene->root_node = node;
+   pd->root_node = node;
 
    if (node)
      {
-        evas_3d_object_reference(&node->base);
-        evas_3d_node_scene_root_add(node, scene);
+        Evas_3D_Node_Data *pd_node = eo_data_scope_get(node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_object_reference(&pd_node->base);
+        evas_3d_node_scene_root_add(node, obj);
      }
 
-   evas_3d_object_change(&scene->base, EVAS_3D_STATE_SCENE_ROOT_NODE, NULL);
+   evas_3d_object_change(&pd->base, EVAS_3D_STATE_SCENE_ROOT_NODE, NULL);
 }
 
-EAPI Evas_3D_Node *
-evas_3d_scene_root_node_get(const Evas_3D_Scene *scene)
+EOLIAN static Evas_3D_Node *
+_eo_evas_3d_scene_root_node_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
-   return scene->root_node;
+   return pd->root_node;
 }
 
-EAPI void
-evas_3d_scene_camera_node_set(Evas_3D_Scene *scene, Evas_3D_Node *node)
+EOLIAN static void
+_eo_evas_3d_scene_camera_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
 {
-   if (scene->camera_node == node)
+   if (pd->camera_node == node)
      return;
 
-   if (scene->camera_node)
+   if (pd->camera_node)
      {
-        evas_3d_node_scene_camera_del(scene->camera_node, scene);
-        evas_3d_object_unreference(&scene->camera_node->base);
+        Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(pd->camera_node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_node_scene_camera_del(pd->camera_node, obj);
+        evas_3d_object_unreference(&pd_camera_node->base);
      }
 
-   scene->camera_node = node;
+   pd->camera_node = node;
 
    if (node)
      {
-        evas_3d_object_reference(&node->base);
-        evas_3d_node_scene_camera_add(node, scene);
+         Evas_3D_Node_Data *pd_node = eo_data_scope_get(node, EO_EVAS_3D_NODE_CLASS);
+        evas_3d_object_reference(&pd_node->base);
+        evas_3d_node_scene_camera_add(node, obj);
      }
 
-   evas_3d_object_change(&scene->base, EVAS_3D_STATE_SCENE_CAMERA_NODE, NULL);
+   evas_3d_object_change(&pd->base, EVAS_3D_STATE_SCENE_CAMERA_NODE, NULL);
 }
 
-EAPI Evas_3D_Node *
-evas_3d_scene_camera_node_get(const Evas_3D_Scene *scene)
+EOLIAN static Evas_3D_Node *
+_eo_evas_3d_scene_camera_node_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
-   return scene->camera_node;
+   return pd->camera_node;
 }
 
-EAPI void
-evas_3d_scene_size_set(Evas_3D_Scene *scene, int w, int h)
+EOLIAN static void
+_eo_evas_3d_scene_size_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, int w, int h)
 {
-   scene->w = w;
-   scene->h = h;
-   evas_3d_object_change(&scene->base, EVAS_3D_STATE_SCENE_SIZE, NULL);
+   pd->w = w;
+   pd->h = h;
+   evas_3d_object_change(&pd->base, EVAS_3D_STATE_SCENE_SIZE, NULL);
 }
 
-EAPI void
-evas_3d_scene_size_get(const Evas_3D_Scene *scene, int *w, int *h)
+EOLIAN static void
+_eo_evas_3d_scene_size_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, int *w, int *h)
 {
-   if (w) *w = scene->w;
-   if (h) *h = scene->h;
+   if (w) *w = pd->w;
+   if (h) *h = pd->h;
 }
 
-EAPI void
-evas_3d_scene_background_color_set(Evas_3D_Scene *scene,
+EOLIAN static void
+_eo_evas_3d_scene_background_color_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
                                    Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
-   evas_color_set(&scene->bg_color, r, g, b, a);
-   evas_3d_object_change(&scene->base, EVAS_3D_STATE_SCENE_BACKGROUND_COLOR, NULL);
+   evas_color_set(&pd->bg_color, r, g, b, a);
+   evas_3d_object_change(&pd->base, EVAS_3D_STATE_SCENE_BACKGROUND_COLOR, NULL);
 }
 
-EAPI void
-evas_3d_scene_background_color_get(const Evas_3D_Scene *scene,
+EOLIAN static void
+_eo_evas_3d_scene_background_color_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
                                    Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
-   if (r) *r = scene->bg_color.r;
-   if (g) *g = scene->bg_color.g;
-   if (b) *b = scene->bg_color.b;
-   if (a) *a = scene->bg_color.a;
+   if (r) *r = pd->bg_color.r;
+   if (g) *g = pd->bg_color.g;
+   if (b) *b = pd->bg_color.b;
+   if (a) *a = pd->bg_color.a;
 }
 
 static inline Eina_Bool
@@ -362,26 +375,26 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
    evas_3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_3D_VERTEX_TEXCOORD,
                                               &tex0, &tex1, &tex_weight);
-
-   if (mesh->indices)
+   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EO_EVAS_3D_MESH_CLASS);
+   if (pdmesh->indices)
      {
         unsigned int i0, i1, i2;
 
-        if (mesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES)
+        if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES)
           {
-             for (i = 0; i < mesh->index_count; i += 3)
+             for (i = 0; i < pdmesh->index_count; i += 3)
                {
-                  if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+                  if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
                     {
-                       i0 = ((unsigned short *)mesh->indices)[i];
-                       i1 = ((unsigned short *)mesh->indices)[i + 1];
-                       i2 = ((unsigned short *)mesh->indices)[i + 2];
+                       i0 = ((unsigned short *)pdmesh->indices)[i];
+                       i1 = ((unsigned short *)pdmesh->indices)[i + 1];
+                       i2 = ((unsigned short *)pdmesh->indices)[i + 2];
                     }
                   else
                     {
-                       i0 = ((unsigned char *)mesh->indices)[i];
-                       i1 = ((unsigned char *)mesh->indices)[i + 1];
-                       i2 = ((unsigned char *)mesh->indices)[i + 2];
+                       i0 = ((unsigned char *)pdmesh->indices)[i];
+                       i1 = ((unsigned char *)pdmesh->indices)[i + 1];
+                       i2 = ((unsigned char *)pdmesh->indices)[i + 2];
                     }
 
                   _position_get(&tri.p0, &pos0, &pos1, pos_weight, i0);
@@ -396,45 +409,45 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                     }
                }
           }
-        else if (mesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
+        else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
           {
-             if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+             if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
                {
-                  i1 = ((unsigned short *)mesh->indices)[0];
-                  i2 = ((unsigned short *)mesh->indices)[1];
+                  i1 = ((unsigned short *)pdmesh->indices)[0];
+                  i2 = ((unsigned short *)pdmesh->indices)[1];
                }
              else
                {
-                  i1 = ((unsigned char *)mesh->indices)[0];
-                  i2 = ((unsigned char *)mesh->indices)[1];
+                  i1 = ((unsigned char *)pdmesh->indices)[0];
+                  i2 = ((unsigned char *)pdmesh->indices)[1];
                }
 
              _position_get(&tri.p1, &pos0, &pos1, pos_weight, i1);
              _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
-             for (i = 0; i < mesh->index_count - 2; i++)
+             for (i = 0; i < pdmesh->index_count - 2; i++)
                {
                   tri.p0 = tri.p1;
                   tri.p1 = tri.p2;
 
-                  if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
-                    i2 = ((unsigned short *)mesh->indices)[i + 2];
+                  if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+                    i2 = ((unsigned short *)pdmesh->indices)[i + 2];
                   else
-                    i2 = ((unsigned char *)mesh->indices)[i + 2];
+                    i2 = ((unsigned char *)pdmesh->indices)[i + 2];
 
                   _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+                       if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
                          {
-                            i0 = ((unsigned short *)mesh->indices)[i];
-                            i1 = ((unsigned short *)mesh->indices)[i + 1];
+                            i0 = ((unsigned short *)pdmesh->indices)[i];
+                            i1 = ((unsigned short *)pdmesh->indices)[i + 1];
                          }
                        else
                          {
-                            i0 = ((unsigned char *)mesh->indices)[i];
-                            i1 = ((unsigned char *)mesh->indices)[i + 1];
+                            i0 = ((unsigned char *)pdmesh->indices)[i];
+                            i1 = ((unsigned char *)pdmesh->indices)[i + 1];
                          }
 
                        _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
@@ -443,39 +456,39 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                     }
                }
           }
-        else if (mesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
+        else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
           {
-             if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+             if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
                {
-                  i0 = ((unsigned short *)mesh->indices)[0];
-                  i2 = ((unsigned short *)mesh->indices)[1];
+                  i0 = ((unsigned short *)pdmesh->indices)[0];
+                  i2 = ((unsigned short *)pdmesh->indices)[1];
                }
              else
                {
-                  i0 = ((unsigned char *)mesh->indices)[0];
-                  i2 = ((unsigned char *)mesh->indices)[1];
+                  i0 = ((unsigned char *)pdmesh->indices)[0];
+                  i2 = ((unsigned char *)pdmesh->indices)[1];
                }
 
              _position_get(&tri.p0, &pos0, &pos1, pos_weight, i0);
              _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
-             for (i = 1; i < mesh->index_count - 1; i++)
+             for (i = 1; i < pdmesh->index_count - 1; i++)
                {
                   tri.p1 = tri.p2;
 
-                  if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
-                    i2 = ((unsigned short *)mesh->indices)[i + 1];
+                  if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+                    i2 = ((unsigned short *)pdmesh->indices)[i + 1];
                   else
-                    i2 = ((unsigned char *)mesh->indices)[i + 1];
+                    i2 = ((unsigned char *)pdmesh->indices)[i + 1];
 
                   _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
-                         i1 = ((unsigned short *)mesh->indices)[i];
+                       if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+                         i1 = ((unsigned short *)pdmesh->indices)[i];
                        else
-                         i1 = ((unsigned char *)mesh->indices)[i];
+                         i1 = ((unsigned char *)pdmesh->indices)[i];
 
                        _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
                        data->mesh = mesh;
@@ -484,11 +497,11 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                }
           }
      }
-   else if (mesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_BYTE)
+   else if (pdmesh->index_format == EVAS_3D_INDEX_FORMAT_UNSIGNED_BYTE)
      {
-        if (mesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES)
+        if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES)
           {
-             for (i = 0; i < mesh->index_count; i += 3)
+             for (i = 0; i < pdmesh->index_count; i += 3)
                {
                   _position_get(&tri.p0, &pos0, &pos1, pos_weight, i);
                   _position_get(&tri.p1, &pos0, &pos1, pos_weight, i + 1);
@@ -502,12 +515,12 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                     }
                }
           }
-        else if (mesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
+        else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
           {
              _position_get(&tri.p1, &pos0, &pos1, pos_weight, 0);
              _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
 
-             for (i = 0; i < mesh->index_count - 2; i++)
+             for (i = 0; i < pdmesh->index_count - 2; i++)
                {
                   tri.p0 = tri.p1;
                   tri.p1 = tri.p2;
@@ -522,12 +535,12 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                     }
                }
           }
-        else if (mesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
+        else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
           {
              _position_get(&tri.p0, &pos0, &pos1, pos_weight, 0);
              _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
 
-             for (i = 1; i < mesh->index_count - 1; i++)
+             for (i = 1; i < pdmesh->index_count - 1; i++)
                {
                   tri.p1 = tri.p2;
 
@@ -550,23 +563,24 @@ _node_pick(Evas_3D_Node *node, void *data)
    Evas_Ray3            ray;
    Evas_3D_Pick_Data   *pick = (Evas_3D_Pick_Data *)data;
    Evas_Mat4            mvp;
+   Evas_3D_Node_Data *pd_node = eo_data_scope_get(node, EO_EVAS_3D_NODE_CLASS);
 
-   if (! evas_box3_ray3_intersect(&node->aabb, &pick->ray_world))
+   if (! evas_box3_ray3_intersect(&pd_node->aabb, &pick->ray_world))
      {
         /* Skip entire subtree. */
         return EINA_FALSE;
      }
 
-   if (node->type == EVAS_3D_NODE_TYPE_MESH)
+   if (pd_node->type == EVAS_3D_NODE_TYPE_MESH)
      {
         Eina_Iterator *itr;
         void          *ptr;
 
         /* Transform ray into local coordinate space. */
-        evas_mat4_multiply(&mvp, &pick->matrix_vp, &node->data.mesh.matrix_local_to_world);
+        evas_mat4_multiply(&mvp, &pick->matrix_vp, &pd_node->data.mesh.matrix_local_to_world);
         evas_ray3_init(&ray, pick->x, pick->y, &mvp);
 
-        itr = eina_hash_iterator_data_new(node->data.mesh.node_meshes);
+        itr = eina_hash_iterator_data_new(pd_node->data.mesh.node_meshes);
 
         while (eina_iterator_next(itr, &ptr))
           {
@@ -578,16 +592,16 @@ _node_pick(Evas_3D_Node *node, void *data)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-evas_3d_scene_pick(const Evas_3D_Scene *scene, Evas_Real x, Evas_Real y,
+EOLIAN static Eina_Bool
+_eo_evas_3d_scene_pick(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
                    Evas_3D_Node **node, Evas_3D_Mesh **mesh,
                    Evas_Real *s, Evas_Real *t)
 {
    /* TODO: Use H/W picking if availabe. */
    Evas_3D_Pick_Data data;
 
-   data.x      = ((x * 2.0) / (Evas_Real)scene->w) - 1.0;
-   data.y      = (((scene->h - y - 1) * 2.0) / ((Evas_Real)scene->h)) - 1.0;
+   data.x      = ((x * 2.0) / (Evas_Real)pd->w) - 1.0;
+   data.y      = (((pd->h - y - 1) * 2.0) / ((Evas_Real)pd->h)) - 1.0;
 
    data.picked = EINA_FALSE;
    data.z      = 1.0;
@@ -597,17 +611,18 @@ evas_3d_scene_pick(const Evas_3D_Scene *scene, Evas_Real x, Evas_Real y,
    data.t      = 0.0;
 
    /* Update the scene graph. */
-   evas_3d_object_update((Evas_3D_Object *)&scene->base);
-
+   evas_3d_object_update((Evas_3D_Object *)&pd->base);
+   Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(pd->camera_node, EO_EVAS_3D_NODE_CLASS);
+   Evas_3D_Camera_Data *pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EO_EVAS_3D_CAMERA_CLASS);
    evas_mat4_multiply(&data.matrix_vp,
-                      &scene->camera_node->data.camera.camera->projection,
-                      &scene->camera_node->data.camera.matrix_world_to_eye);
+                      &pd_camera->projection,
+                      &pd_camera_node->data.camera.matrix_world_to_eye);
 
    evas_ray3_init(&data.ray_world, data.x, data.y, &data.matrix_vp);
 
 
    /* Traverse tree while adding meshes into pick data structure. */
-   evas_3d_node_tree_traverse(scene->root_node, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
+   evas_3d_node_tree_traverse(pd->root_node, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
                               _node_pick, &data);
 
    if (!data.picked)
@@ -620,3 +635,5 @@ evas_3d_scene_pick(const Evas_3D_Scene *scene, Evas_Real x, Evas_Real y,
 
    return EINA_TRUE;
 }
+
+#include "canvas/evas_3d_scene.eo.c"

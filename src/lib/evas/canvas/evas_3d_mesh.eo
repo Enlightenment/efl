@@ -1,0 +1,388 @@
+class EO_Evas_3D_Mesh (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_mesh;
+   data: Evas_3D_Mesh_Data;
+
+   methods {
+      file_set {
+         /**
+          * Load mesh data from file.
+          *
+          * Loading a mesh from existing file is supported. Currently, only MD2 file
+          * format is supported.
+          *
+          * @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
+            @in const char *file; /*@ Path to the mesh file. */
+            @in const char *key; /*@ Key in the mesh file. */
+         }
+      }
+
+      frame_vertex_data_set {
+         /*@
+           Set the vertex data of the key frame of the given mesh.
+
+           This function make evas read from the given buffer whenever it requires.
+           If you want to release the buffer after calling this functions, use
+           evas_3d_mesh_frame_vertex_data_copy_set() instead.
+
+           After setting the vertex data, further modifications should be protected
+           by map/unmap pair.
+
+           @see evas_3d_mesh_frame_vertex_data_copy_set()
+           @see evas_3d_mesh_frame_vertex_data_map()
+           @see evas_3d_mesh_frame_vertex_data_unmap()
+
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in int frame; /*@ The number of the key frame. */
+            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+            @in int stride; /*@ Stride to go to the next vertex (in bytes). */
+            @in const void *data; /*@ Pointer to the vertex data buffer. */
+         }
+      }
+
+      frame_vertex_data_copy_set {
+         /*@
+           Set the vertex data of the key frame of the given mesh by copying from a buffer.
+           This function allocates internal vertex buffer and copy from the given
+           buffer. So you can release the buffer. If you want to modify the vertex data
+           use evas_3d_mesh_frame_vertex_data_map(). After finishing the modifications,
+           you should call evas_3d_mesh_frame_vertex_data_unmap().
+
+           @see evas_3d_mesh_frame_vertex_data_set()
+           @see evas_3d_mesh_frame_vertex_data_map()
+           @see evas_3d_mesh_frame_vertex_data_unmap()
+
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in int frame; /*@ The number of the key frame. */
+            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+            @in int stride; /*@ Stride to go to the next vertex (in bytes). */
+            @in const void *data; /*@ Pointer to the vertex data buffer. */
+         }
+      }
+
+      frame_vertex_data_map {
+         /*@
+           Map the vertex buffer of the key frame of the given mesh.
+
+           After manipulating the mapped buffer, evas_3d_mesh_frame_vertex_data_unmap()
+           should be called to properly download the data to the engine. If the data
+           was set using evas_3d_mesh_frame_vertex_data_set(), pointer to the original
+           buffer will be returned. Otherwise, the returned pointer can differ every
+           time calling this function.
+
+           @see evas_3d_mesh_frame_vertex_data_unmap()
+           @return Starting address of the mapped vertex buffer.
+
+           @ingroup Evas_3D_Mesh
+          */
+
+         return void *;
+         params {
+            @in int frame; /*@ The number of the key frame. */
+            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+         }
+      }
+
+      frame_vertex_data_unmap {
+         /*
+           Unmap the vertex buffer of the key frame of the given mesh.
+
+           @see evas_3d_mesh_frame_vertex_data_map()
+
+           @ingroup Evas_3D_Mesh
+          */
+
+         params {
+            @in int frame; /*@ The number of the key frame. */
+            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+         }
+      }
+
+      frame_vertex_stride_get {
+         /*
+           Get the vertex buffer stride of the key frame of the given mesh.
+
+           This function returns valid stride only when the vertex buffer is mapped.
+           If the data was set with evas_3d_mesh_frame_vertex_data_set(), the original
+           stride will be returned unchanged.
+
+           @see evas_3d_mesh_frame_vertex_data_map()
+
+           @return           Stride to go to the next vertex (in bytes).
+
+           @ingroup Evas_3D_Mesh
+          */
+         const;
+         return int ;
+         params {
+            @in int frame; /*@ The number of the key frame. */
+            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+         }
+      }
+
+      index_data_set {
+         /*
+           Set the vertex index data of the given mesh.
+
+           When the index data is set, Evas 3D assembles vertices using the index data.
+           If you want to free the data buffer, use evas_3d_mesh_index_data_copy_set().
+           Further modifications should be made within map/unmap pair.
+
+           @see evas_3d_mesh_index_data_copy_set()
+           @see evas_3d_mesh_index_data_map()
+           @see evas_3d_mesh_index_data_unmap()
+
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
+            @in int count; /*@ Vertex index count. */
+            @in const void *indices; /*@ Pointer to the index data. */
+         }
+      }
+
+
+      index_data_copy_set {
+         /*
+           Set the vertex index data of the given mesh by copying from a buffer.
+
+           This function allocates internal index buffer any copy data from the given
+           buffer. Futher modifications can be made within map/unmap pair.
+
+           @see evas_3d_mesh_index_data_set()
+
+           @ingroup Evas_3D_Mesh
+          */
+         return void ;
+         params {
+            @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
+            @in int count; /*@ Vertex index count. */
+            @in const void *indices; /*@ Pointer to the index data. */
+         }
+      }
+
+      index_format_get {
+         /*
+           Get the format of the index data of the given mesh.
+
+
+           Returns valid format only when the index buffer is mapped. First map the
+           index buffer and then query the properties of the mapped buffer. If the index
+           data was set by evas_3d_mesh_index_data_set(), the original format will be
+           returned. Otherwise the format can differ every time you call the
+           evas_3d_mesh_index_data_map() function.
+
+           @see evas_3d_mesh_index_data_map()
+
+           @return           Format of the index data.
+
+           @ingroup Evas_3D_Mesh
+          */
+          const;
+         return Evas_3D_Index_Format ;
+      }
+
+      index_count_get {
+         /*
+           Get the count of the index data of the given mesh.
+
+           This function returns the index count of the last called data_set function.
+
+           @see evas_3d_mesh_index_data_set()
+           @see evas_3d_mesh_index_data_copy_set()
+
+           @return           Index data count.
+
+           @ingroup Evas_3D_Mesh
+          */
+          const;
+         return int ;
+      }
+
+      index_data_map {
+         /*
+           Map the index buffer of the given mesh.
+
+           evas_3d_mesh_index_data_unmap() should be called after modifications. If the
+           data was set using evas_3d_mesh_index_data_set(), the original pointer will
+           be returned, otherwise, the returned pointer may differ every time you call
+           this function.
+
+           @see evas_3d_mesh_index_data_unmap()
+
+           @return           Pointer to the mapped buffer.
+
+           @ingroup Evas_3D_Mesh
+          */
+         return void * ;
+      }
+
+      index_data_unmap {
+         /*
+           Unmap the index buffer of the given mesh.
+
+           @see evas_3d_mesh_index_data_map()
+
+           @ingroup Evas_3D_Mesh
+          */
+      }
+
+      frame_add {
+         /*
+           Add a key frame to the given mesh.
+
+           @param mesh    The given mesh.
+           @param frame   The number of the key frame to be added.
+
+           If specified frame is already exist, error message will be generated.
+
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in int frame; /*@ The number of the key frame to be added. */
+         }
+      }
+
+      frame_del {
+         /*
+           Delete a key frame from the given mesh.
+
+           @param mesh    The given mesh.
+           @param frame   The number of the key frame to be deleted.
+
+           @see evas_3d_mesh_frame_add()
+
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in int frame; /*@ The number of the key frame to be added. */
+         }
+      }
+
+      vertex_count_set {
+         /*@
+           Set the vertex count of the given mesh.
+
+           Each key frame should have same vertex count to be properly interpolated.
+           Key frames have their own vertex data and the data should have more vertices
+           than the mesh's vertex count.
+
+           Default vertex count is 0.
+
+           @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in unsigned int count; /*@ Vertex count.*/
+         }
+      }
+
+      vertex_count_get {
+         /*@
+           Get the vertex count of the given mesh.
+
+           @see evas_3d_mesh_vertex_count_set()
+
+           @ingroup Evas_3D_Mesh
+          */
+          const;
+          return int;
+      }
+
+   }
+   properties {
+      shade_mode {
+         set {
+            /**
+             * Set the shade mode of the given mesh.
+             *
+             * Default shade mode is EVAS_3D_SHADE_MODE_VERTEX_COLOR.
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+         }
+         get {
+            /**
+             * Get the shade mode of the given mesh.
+             *
+             * @see eavs_3d_mesh_shade_mode_set()
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+         }
+         values {
+            Evas_3D_Shade_Mode mode; /*@ The shade mode.*/
+         }
+      }
+
+      frame_material {
+         set {
+            /**
+              Set the material of the key frame of the given mesh.
+
+              Setting different materials for each key frame is useful for doing animations
+              like GIF images or color changing animationas.
+
+              @ingroup Evas_3D_Mesh
+             */
+         }
+         get {
+            /**
+              Get the material of the key frame of the given mesh.
+
+              @see evas_3d_mesh_frame_material_set()
+
+              @ingroup Evas_3D_Mesh
+             */
+         }
+         keys {
+            int frame; /*@ The number of the key frame.*/
+         }
+         values {
+            Evas_3D_Material *material; /*@ The material to be set to the key frame.*/
+         }
+      }
+
+      vertex_assembly {
+         set {
+            /*
+              Set the vertex assembly of the given mesh.
+
+              Vertex assembly defines how the engine organizes vertices into geometric
+              primitives.
+
+              Default vertex assembly is EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES.
+
+              @ingroup Evas_3D_Mesh
+             */
+         }
+         get {
+            /*
+              Get the vertex assembly of the given mesh.
+
+              @see evas_3d_mesh_vertex_assembly_set()
+
+              @return  The vertex assembly.
+
+              @ingroup Evas_3D_Mesh
+             */
+         }
+         values {
+            Evas_3D_Vertex_Assembly assembly; /*@ Vertex assembly.*/
+         }
+      }
+
+   }
+   implements {
+      Eo_Base::constructor;
+      Eo_Base::destructor;
+      Evas_Common_Interface::evas::get;
+   }
+
+}
