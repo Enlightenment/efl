@@ -177,6 +177,9 @@ local List_Base = util.Readonly_Object:clone {
             selfmt.__free = freefunc
         end
         if list == nil then return end
+        selfmt.__eq = function(self, other)
+            return selfmt.__list == dgetmt(other).__list
+        end
         selfmt.__list = list
     end,
 
