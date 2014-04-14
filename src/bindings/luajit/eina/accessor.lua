@@ -59,69 +59,66 @@ ffi.metatype("Eina_Accessor", {
 
 cutil.init_module(init, shutdown)
 
-M.Accessor = util.Object:clone {
-    __ctor = function(self, acc)
+local dgetmt = debug.getmetatable
+
+M.Accessor = util.Readonly_Object:clone {
+    __ctor = function(self, selfmt, acc)
         -- prevent null stuff
         if acc == nil then acc = nil end
         if acc then ffi.gc(acc, acc.free) end
-        self.__eq = function(self, other)
-            return self.__accessor == other.__accessor
+        selfmt.__eq = function(self, other)
+            return selfmt.__accessor == dgetmt(other).__accessor
         end
-        self.__call = function(self)
+        selfmt.__call = function(self)
             return self:next()
         end
-        local oi = self.__index
-        self.__index = function(self, name)
+        local oi = selfmt.__index
+        selfmt.__index = function(self, name)
             if type(name) == "number" then return self:data_get(name) end
             return oi[name]
         end
-        self.__accessor = acc
+        selfmt.__accessor = acc
     end,
 
     free = function(self)
+        self = dgetmt(self)
         if not self.__accessor then return end
         self.__accessor:free()
-        self._accessor = nil
-    end,
-
-    disown = function(self)
-        local acc = self.__accessor
         self.__accessor = nil
-        return acc
-    end,
-
-    rebase = function(self, acc)
-        self:free()
-        self.__accessor = acc:disown()
     end,
 
     lock = function(self)
+        self = dgetmt(self)
         if not self.__accessor then return false end
         return self.__accessor:lock()
     end,
 
     unlock = function(self)
+        self = dgetmt(self)
         if not self.__accessor then return false end
         return self.__accessor:unlock()
     end,
 
     clone = function(self)
+        self = dgetmt(self)
         if not self.__accessor then return nil end
         return self.__proto(self.__accessor:clone())
     end,
 
     data_get = function(self, pos)
+        self = dgetmt(self)
         if not self.__accessor then return nil end
         return self.__accessor:data_get(pos)
     end,
 
     container_get = function(self)
+        self = dgetmt(self)
         if not self.__accessor then return end
         return self.__accessor:container_get()
     end,
 
     each = function(self)
-        local  acc = self.__accessor
+        local  acc = dgetmt(self).__accessor
         if not acc then return nil end
         local cnt = 0
         return function()
