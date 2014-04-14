@@ -10,74 +10,37 @@
 
 #define MY_CLASS EO_EVAS_3D_MATERIAL_CLASS
 
-static void
-_material_free(Evas_3D_Object *obj)
-{
-   int i;
-   Evas_3D_Material_Data *material = (Evas_3D_Material_Data *)obj;
-
-   if (material->meshes)
-     eina_hash_free(material->meshes);
-
-   for (i = 0; i < EVAS_3D_MATERIAL_ATTRIB_COUNT; i++)
-     {
-        if (material->attribs[i].texture)
-          {
-               //@FIXME
-             //evas_3d_texture_material_del(material->attribs[i].texture, material);
-             Evas_3D_Texture_Data *pd = eo_data_scope_get(material->attribs[i].texture, EO_EVAS_3D_TEXTURE_CLASS);
-             evas_3d_object_unreference(&pd->base);
-          }
-     }
-
-   //free(material);
-}
-
 static Eina_Bool
 _material_mesh_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
                         void *data EINA_UNUSED, void *fdata)
 {
    Evas_3D_Mesh *m = *(Evas_3D_Mesh **)key;
-   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(m, EO_EVAS_3D_MESH_CLASS);
-   evas_3d_object_change(&pdmesh->base, EVAS_3D_STATE_MESH_MATERIAL, (Evas_3D_Object *)fdata);
+   evas_3d_object_change(m, EVAS_3D_STATE_MESH_MATERIAL, (Evas_3D_Object *)fdata);
    return EINA_TRUE;
 }
 
-static void
-_material_change(Evas_3D_Object *obj, Evas_3D_State state EINA_UNUSED,
-                 Evas_3D_Object *ref EINA_UNUSED)
+EOLIAN static void
+_eo_evas_3d_material_eo_evas_3d_object_change_notify(Eo *obj, Evas_3D_Material_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
-   Evas_3D_Material_Data *material = (Evas_3D_Material_Data *)obj;
-
-   if (material->meshes)
-     eina_hash_foreach(material->meshes, _material_mesh_change_notify, obj);
+   if (pd->meshes)
+     eina_hash_foreach(pd->meshes, _material_mesh_change_notify, obj);
 }
 
-static void
-_material_update(Evas_3D_Object *obj)
+EOLIAN static void
+_eo_evas_3d_material_eo_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd)
 {
    int i;
-   Evas_3D_Material_Data *material = (Evas_3D_Material_Data *)obj;
-
    for (i = 0; i < EVAS_3D_MATERIAL_ATTRIB_COUNT; i++)
      {
-        if (material->attribs[i].enable)
+        if (pd->attribs[i].enable)
           {
-             if (material->attribs[i].texture)
+             if (pd->attribs[i].texture)
                {
-                  Evas_3D_Texture_Data *pd = eo_data_scope_get(material->attribs[i].texture, EO_EVAS_3D_TEXTURE_CLASS);
-                  evas_3d_object_update(&pd->base);
+                  evas_3d_object_update(pd->attribs[i].texture);
                }
           }
      }
 }
-
-static const Evas_3D_Object_Func material_func =
-{
-   _material_free,
-   _material_change,
-   _material_update,
-};
 
 void
 evas_3d_material_mesh_add(Evas_3D_Material *material, Evas_3D_Mesh *mesh)
@@ -136,10 +99,8 @@ evas_3d_material_add(Evas *e)
 EOLIAN static void
 _eo_evas_3d_material_eo_base_constructor(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd)
 {
-   Eo *e;
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, e = eo_parent_get());
-   evas_3d_object_init(&pd->base, e, EVAS_3D_OBJECT_TYPE_MATERIAL, &material_func);
+   eo_do(obj, eo_evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_MATERIAL));
 
    evas_color_set(&pd->attribs[EVAS_3D_MATERIAL_AMBIENT].color, 0.2, 0.2, 0.2, 1.0);
    evas_color_set(&pd->attribs[EVAS_3D_MATERIAL_DIFFUSE].color, 0.8, 0.8, 0.8, 1.0);
@@ -149,15 +110,21 @@ _eo_evas_3d_material_eo_base_constructor(Eo *obj EINA_UNUSED, Evas_3D_Material_D
 }
 
 EOLIAN static void
-_eo_evas_3d_material_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd)
+_eo_evas_3d_material_eo_base_destructor(Eo *obj, Evas_3D_Material_Data *pd)
 {
-   evas_3d_object_unreference(&pd->base);
-}
+   int i;
 
-EOLIAN static Evas *
-_eo_evas_3d_material_evas_common_interface_evas_get(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd)
-{
-   return pd->base.evas;
+   if (pd->meshes)
+     eina_hash_free(pd->meshes);
+
+   for (i = 0; i < EVAS_3D_MATERIAL_ATTRIB_COUNT; i++)
+     {
+        if (pd->attribs[i].texture)
+          {
+             evas_3d_texture_material_del(pd->attribs[i].texture, obj);
+             //eo_unref(pd->attribs[i].texture);
+          }
+     }
 }
 
 EOLIAN static void
@@ -173,10 +140,10 @@ _eo_evas_3d_material_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd, 
 }
 
 EOLIAN static void
-_eo_evas_3d_material_color_set(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd, Evas_3D_Material_Attrib attrib, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
+_eo_evas_3d_material_color_set(Eo *obj, Evas_3D_Material_Data *pd, Evas_3D_Material_Attrib attrib, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
    evas_color_set(&pd->attribs[attrib].color, r, g, b, a);
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MATERIAL_COLOR, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MATERIAL_COLOR, NULL);
 }
 
 EOLIAN static void
@@ -208,17 +175,15 @@ _eo_evas_3d_material_texture_set(Eo *obj, Evas_3D_Material_Data *pd, Evas_3D_Mat
         if (pd->attribs[attrib].texture)
           {
              evas_3d_texture_material_del(pd->attribs[attrib].texture, obj);
-             Evas_3D_Texture_Data *pdt = eo_data_scope_get(pd->attribs[attrib].texture, EO_EVAS_3D_TEXTURE_CLASS);
-             evas_3d_object_unreference(&pdt->base);
+             eo_unref(pd->attribs[attrib].texture);
           }
 
         pd->attribs[attrib].texture = texture;
         evas_3d_texture_material_add(texture, obj);
-        Evas_3D_Texture_Data *pdt = eo_data_scope_get(texture, EO_EVAS_3D_TEXTURE_CLASS);
-        evas_3d_object_reference(&pdt->base);
+        eo_ref(texture);
      }
 
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MATERIAL_TEXTURE, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MATERIAL_TEXTURE, NULL);
 }
 
 EOLIAN static Evas_3D_Texture *

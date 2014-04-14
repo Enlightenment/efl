@@ -1,4 +1,4 @@
-class EO_Evas_3D_Camera (Eo_Base, Evas_Common_Interface)
+class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
 {
    legacy_prefix: evas_3d_camera;
    data: Evas_3D_Camera_Data;
@@ -102,7 +102,8 @@ class EO_Evas_3D_Camera (Eo_Base, Evas_Common_Interface)
    implements {
       Eo_Base::constructor;
       Eo_Base::destructor;
-      Evas_Common_Interface::evas::get;
+      EO_Evas_3D_Object::update_notify;
+      EO_Evas_3D_Object::change_notify;
    }
 
 }

@@ -36,8 +36,7 @@ evas_3d_mesh_frame_free(Evas_3D_Mesh_Frame *frame)
    if (frame->material)
      {
         evas_3d_material_mesh_del(frame->material, frame->mesh);
-        Evas_3D_Material_Data *pd = eo_data_scope_get(frame->material, EO_EVAS_3D_MATERIAL_CLASS);
-        evas_3d_object_unreference(&pd->base);
+        eo_unref(frame->mesh);
      }
 
    for (i = 0; i < EVAS_3D_VERTEX_ATTRIB_COUNT; i++)
@@ -103,21 +102,12 @@ _mesh_fini(Evas_3D_Mesh_Data *pd)
      eina_hash_free(pd->nodes);
 }
 
-static void
-_mesh_free(Evas_3D_Object *obj)
-{
-   Evas_3D_Mesh_Data *mesh = (Evas_3D_Mesh_Data *)obj;
-   _mesh_fini(mesh);
-   //ree(mesh);
-}
-
 static Eina_Bool
 _mesh_node_geometry_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
                                   void *data EINA_UNUSED, void *fdata)
 {
    Evas_3D_Node *n = *(Evas_3D_Node **)key;
-   Evas_3D_Node_Data *pdnode = eo_data_scope_get(n, EO_EVAS_3D_NODE_CLASS);
-   evas_3d_object_change(&pdnode->base, EVAS_3D_STATE_NODE_MESH_GEOMETRY, (Evas_3D_Object *)fdata);
+   evas_3d_object_change(n, EVAS_3D_STATE_NODE_MESH_GEOMETRY, (Evas_3D_Object *)fdata);
    return EINA_TRUE;
 }
 
@@ -126,51 +116,40 @@ _mesh_node_material_change_notify(const Eina_Hash *hash EINA_UNUSED, const void 
                                   void *data EINA_UNUSED, void *fdata)
 {
    Evas_3D_Node *n = *(Evas_3D_Node **)key;
-   Evas_3D_Node_Data *pdnode = eo_data_scope_get(n, EO_EVAS_3D_NODE_CLASS);
-   evas_3d_object_change(&pdnode->base, EVAS_3D_STATE_NODE_MESH_MATERIAL, (Evas_3D_Object *)fdata);
+   evas_3d_object_change(n, EVAS_3D_STATE_NODE_MESH_MATERIAL, (Evas_3D_Object *)fdata);
    return EINA_TRUE;
 }
 
 static void
-_mesh_change(Evas_3D_Object *obj, Evas_3D_State state, Evas_3D_Object *ref EINA_UNUSED)
+_eo_evas_3d_mesh_eo_evas_3d_object_change_notify(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_State state, Evas_3D_Object *ref EINA_UNUSED)
 {
-   Evas_3D_Mesh_Data *mesh = (Evas_3D_Mesh_Data *)obj;
-
    if (state == EVAS_3D_STATE_MESH_MATERIAL)
      {
-        if (mesh->nodes)
-          eina_hash_foreach(mesh->nodes, _mesh_node_material_change_notify, obj);
+        if (pd->nodes)
+          eina_hash_foreach(pd->nodes, _mesh_node_material_change_notify, obj);
      }
    else
      {
-        if (mesh->nodes)
-          eina_hash_foreach(mesh->nodes, _mesh_node_geometry_change_notify, obj);
+        if (pd->nodes)
+          eina_hash_foreach(pd->nodes, _mesh_node_geometry_change_notify, obj);
      }
 }
 
-static void
-_mesh_update(Evas_3D_Object *obj)
+EOLIAN static void
+_eo_evas_3d_mesh_eo_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
    Eina_List *l;
    Evas_3D_Mesh_Frame *f;
-   Evas_3D_Mesh_Data *mesh = (Evas_3D_Mesh_Data *)obj;
 
-   EINA_LIST_FOREACH(mesh->frames, l, f)
+   EINA_LIST_FOREACH(pd->frames, l, f)
      {
         if (f->material)
          {
-            Evas_3D_Material_Data *pdm = eo_data_scope_get(f->material, EO_EVAS_3D_MATERIAL_CLASS);
-            evas_3d_object_update(&pdm->base);
+            evas_3d_object_update(f->material);
          }
      }
 }
 
-static const Evas_3D_Object_Func mesh_func =
-{
-   _mesh_free,
-   _mesh_change,
-   _mesh_update,
-};
 
 void
 evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node)
@@ -227,23 +206,16 @@ evas_3d_mesh_add(Evas *e)
 EOLIAN static void
 _eo_evas_3d_mesh_eo_base_constructor(Eo *obj, Evas_3D_Mesh_Data *pd)
 {
-   Eo *e;
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, e = eo_parent_get());
-   evas_3d_object_init(&pd->base, e, EVAS_3D_OBJECT_TYPE_MESH, &mesh_func);
+   eo_do (obj, eo_evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_MESH));
    _mesh_init(pd);
 }
 
 EOLIAN static void
 _eo_evas_3d_mesh_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
-   evas_3d_object_unreference(&pd->base);
-}
-
-EOLIAN static Evas *
- _eo_evas_3d_mesh_evas_common_interface_evas_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
-{
-   return pd->base.evas;
+   //evas_3d_object_unreference(&pd->base);
+   _mesh_fini(pd);
 }
 
 EOLIAN static void
@@ -252,7 +224,7 @@ _eo_evas_3d_mesh_shade_mode_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas
    if (pd->shade_mode != mode)
      {
         pd->shade_mode = mode;
-        evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_SHADE_MODE, NULL);
+        evas_3d_object_change(obj, EVAS_3D_STATE_MESH_SHADE_MODE, NULL);
      }
 }
 
@@ -263,10 +235,10 @@ _eo_evas_3d_mesh_shade_mode_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
-_eo_evas_3d_mesh_vertex_count_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, unsigned int count)
+_eo_evas_3d_mesh_vertex_count_set(Eo *obj, Evas_3D_Mesh_Data *pd, unsigned int count)
 {
    pd->vertex_count = count;
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_VERTEX_COUNT, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_VERTEX_COUNT, NULL);
 }
 
 EOLIAN static int
@@ -293,11 +265,11 @@ _eo_evas_3d_mesh_frame_add(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
 
    f->frame = frame;
    pd->frames = eina_list_append(pd->frames, f);
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_FRAME, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_FRAME, NULL);
 }
 
 EOLIAN static void
-_eo_evas_3d_mesh_frame_del(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame)
+_eo_evas_3d_mesh_frame_del(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
 {
    Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
 
@@ -309,7 +281,7 @@ _eo_evas_3d_mesh_frame_del(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame
 
    pd->frames = eina_list_remove(pd->frames, f);
    evas_3d_mesh_frame_free(f);
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_FRAME, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_FRAME, NULL);
 }
 
 EOLIAN static void
@@ -329,14 +301,12 @@ _eo_evas_3d_mesh_frame_material_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
    if (f->material)
      {
         evas_3d_material_mesh_del(f->material, obj);
-        Evas_3D_Material_Data *pdm = eo_data_scope_get(f->material, EO_EVAS_3D_MATERIAL_CLASS);
-        evas_3d_object_unreference(&pdm->base);
+        eo_unref(f->material);
      }
 
    f->material = material;
-   Evas_3D_Material_Data *pdm = eo_data_scope_get(material, EO_EVAS_3D_MATERIAL_CLASS);
-   evas_3d_object_reference(&pdm->base);
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_MATERIAL, NULL);
+   eo_ref(material);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_MATERIAL, NULL);
    evas_3d_material_mesh_add(material, obj);
 }
 
@@ -355,7 +325,7 @@ _eo_evas_3d_mesh_frame_material_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, 
 }
 
 EOLIAN static void
-_eo_evas_3d_mesh_frame_vertex_data_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib, int stride, const void *data)
+_eo_evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib, int stride, const void *data)
 {
    Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
    int element_count;
@@ -401,11 +371,11 @@ _eo_evas_3d_mesh_frame_vertex_data_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *p
    f->vertices[attrib].owns_data = EINA_FALSE;
    f->vertices[attrib].element_count = element_count;
 
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_VERTEX_DATA, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_VERTEX_DATA, NULL);
 }
 
 EOLIAN static void
-_eo_evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib, int stride, const void *data)
+_eo_evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib, int stride, const void *data)
 {
    Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
    Evas_3D_Vertex_Buffer *vb;
@@ -528,7 +498,7 @@ _eo_evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Da
           }
      }
 
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_VERTEX_DATA, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_VERTEX_DATA, NULL);
 }
 
 EOLIAN static void *
@@ -587,7 +557,7 @@ _eo_evas_3d_mesh_frame_vertex_stride_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data 
 }
 
 EOLIAN static void
-_eo_evas_3d_mesh_index_data_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas_3D_Index_Format format, int count, const void *indices)
+_eo_evas_3d_mesh_index_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Index_Format format, int count, const void *indices)
 {
    if (pd->owns_indices && pd->indices)
      free(pd->indices);
@@ -598,7 +568,7 @@ _eo_evas_3d_mesh_index_data_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas
    pd->indices = (void *)indices;
    pd->owns_indices = EINA_FALSE;
 
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_INDEX_DATA, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_INDEX_DATA, NULL);
 }
 
 EOLIAN static void
@@ -682,10 +652,10 @@ _eo_evas_3d_mesh_index_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
-_eo_evas_3d_mesh_vertex_assembly_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas_3D_Vertex_Assembly assembly)
+_eo_evas_3d_mesh_vertex_assembly_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Vertex_Assembly assembly)
 {
    pd->assembly = assembly;
-   evas_3d_object_change(&pd->base, EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY, NULL);
+   evas_3d_object_change(obj, EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY, NULL);
 }
 
 EOLIAN static Evas_3D_Vertex_Assembly

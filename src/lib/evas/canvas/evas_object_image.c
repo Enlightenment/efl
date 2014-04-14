@@ -2430,7 +2430,7 @@ _3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene)
         data->surface = NULL;
         data->w = 0;
         data->h = 0;
-        evas_3d_object_reference(&pd_scene->base);
+        eo_ref(scene);
      }
    EINA_COW_WRITE_END(evas_object_3d_cow, obj->data_3d, data);
 
@@ -2453,8 +2453,7 @@ _3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas
         Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(o->cur->scene, EO_EVAS_3D_SCENE_CLASS);
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
            pd_scene->images = eina_list_remove(pd_scene->images, eo_obj);
-           Evas_3D_Scene_Data *pd_scene_state_write = eo_data_scope_get(state_write->scene, EO_EVAS_3D_SCENE_CLASS);
-           evas_3d_object_unreference(&pd_scene_state_write->base);
+           eo_unref(state_write->scene);
            state_write->scene = NULL;
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
@@ -2542,7 +2541,7 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
    scene_data.camera_node = pd_scene->camera_node;
 
    /* Phase 1 - Update scene graph tree. */
-   evas_3d_object_update(&pd_scene->base);
+   evas_3d_object_update(scene);
 
    /* Phase 2 - Do frustum culling and get visible model nodes. */
    evas_3d_node_tree_traverse(pd_scene->root_node, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
@@ -3375,8 +3374,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    else if (o->cur->scene)
      {
         Evas_3D_Scene *scene = o->cur->scene;
-        Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
-        if (evas_3d_object_dirty_get(&pd_scene->base, EVAS_3D_STATE_ANY))
+        //Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
+        if (evas_3d_object_dirty_get(scene, EVAS_3D_STATE_ANY))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;

@@ -75,7 +75,9 @@ BUILT_SOURCES += \
                  lib/evas/canvas/evas_3d_node.eo.c\
                  lib/evas/canvas/evas_3d_node.eo.h\
                  lib/evas/canvas/evas_3d_scene.eo.c\
-                 lib/evas/canvas/evas_3d_scene.eo.h
+                 lib/evas/canvas/evas_3d_scene.eo.h\
+                 lib/evas/canvas/evas_3d_object.eo.c\
+                 lib/evas/canvas/evas_3d_object.eo.h
 
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = \
@@ -107,7 +109,8 @@ evaseolianfiles_DATA = \
               lib/evas/canvas/evas_3d_light.eo\
               lib/evas/canvas/evas_3d_mesh.eo\
               lib/evas/canvas/evas_3d_node.eo\
-              lib/evas/canvas/evas_3d_scene.eo
+              lib/evas/canvas/evas_3d_scene.eo\
+              lib/evas/canvas/evas_3d_object.eo
 
 EXTRA_DIST += \
               ${evaseolianfiles_DATA}

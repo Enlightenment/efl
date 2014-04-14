@@ -223,3 +223,5 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
 #include "canvas/evas_3d_node.eo.h"
 
 #include "canvas/evas_3d_scene.eo.h"
+
+#include "canvas/evas_3d_object.eo.h"

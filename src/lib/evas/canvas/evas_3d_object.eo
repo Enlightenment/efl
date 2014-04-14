@@ -1,0 +1,74 @@
+class EO_Evas_3D_Object (Eo_Base, Evas_Common_Interface)
+{
+   legacy_prefix: evas_3d_object;
+   data: Evas_3D_Object_Data;
+   methods {
+      change {
+         /*@
+           Notify the object regarding its  state change.
+          */
+         params {
+           @in Evas_3D_State state; /*@ State that is changed */
+           @in Evas_3D_Object *ref; /*@ The Object that caused the change */
+         }
+      }
+      type_get {
+         /*@
+           Returns the type of the object.
+          */
+          const;
+          return Evas_3D_Object_Type;
+      }
+
+      type_set {
+         /*@
+           Returns the type of the object.
+          */
+          params{
+            @in Evas_3D_Object_Type type;
+          }
+      }
+
+      dirty_get {
+         /*@
+           Returns the status of a particular state of the object.
+          */
+          const;
+          return Eina_Bool;
+         params {
+           @in Evas_3D_State state; /*@ State whose status is being asked */
+         }
+      }
+
+      update {
+         /*@
+           Update request for the object.
+          */
+      }
+      update_notify {
+         /*@
+           Pure virtual update_notify function..
+           Update request for the object.
+          */
+      }
+
+      change_notify {
+         /*@
+           Pure virtual change_notify function..
+           Update request for the object.
+          */
+         params {
+           @in Evas_3D_State state; /*@ State that is changed */
+           @in Evas_3D_Object *ref; /*@ The Object that caused the change */
+         }
+      }
+   }
+
+   implements {
+      Eo_Base::constructor;
+      Evas_Common_Interface::evas::get;
+      virtual::update_notify;
+      virtual::change_notify;
+   }
+
+}

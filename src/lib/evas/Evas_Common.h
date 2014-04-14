@@ -134,6 +134,71 @@ typedef enum _Evas_Callback_Type
  */
 typedef Eo_Callback_Priority Evas_Callback_Priority;
 
+// 3D Stuff
+typedef enum _Evas_3D_Object_Type
+{
+   EVAS_3D_OBJECT_TYPE_INVALID = 0,
+   EVAS_3D_OBJECT_TYPE_SCENE,
+   EVAS_3D_OBJECT_TYPE_NODE,
+   EVAS_3D_OBJECT_TYPE_CAMERA,
+   EVAS_3D_OBJECT_TYPE_LIGHT,
+   EVAS_3D_OBJECT_TYPE_MODEL,
+   EVAS_3D_OBJECT_TYPE_MESH,
+   EVAS_3D_OBJECT_TYPE_TEXTURE,
+   EVAS_3D_OBJECT_TYPE_MATERIAL,
+} Evas_3D_Object_Type;
+
+typedef enum _Evas_3D_State
+{
+   EVAS_3D_STATE_MAX = 16,
+
+   EVAS_3D_STATE_ANY = 0,
+
+   EVAS_3D_STATE_SCENE_ROOT_NODE = 1,
+   EVAS_3D_STATE_SCENE_CAMERA_NODE,
+   EVAS_3D_STATE_SCENE_BACKGROUND_COLOR,
+   EVAS_3D_STATE_SCENE_SIZE,
+
+   EVAS_3D_STATE_TEXTURE_DATA = 1,
+   EVAS_3D_STATE_TEXTURE_WRAP,
+   EVAS_3D_STATE_TEXTURE_FILTER,
+
+   EVAS_3D_STATE_MATERIAL_ID = 1,
+   EVAS_3D_STATE_MATERIAL_COLOR,
+   EVAS_3D_STATE_MATERIAL_TEXTURE,
+
+   EVAS_3D_STATE_MESH_VERTEX_COUNT = 1,
+   EVAS_3D_STATE_MESH_FRAME,
+   EVAS_3D_STATE_MESH_MATERIAL,
+   EVAS_3D_STATE_MESH_TRANSFORM,
+   EVAS_3D_STATE_MESH_VERTEX_DATA,
+   EVAS_3D_STATE_MESH_INDEX_DATA,
+   EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY,
+   EVAS_3D_STATE_MESH_SHADE_MODE,
+
+   EVAS_3D_STATE_CAMERA_PROJECTION = 1,
+
+   EVAS_3D_STATE_LIGHT_AMBIENT = 1,
+   EVAS_3D_STATE_LIGHT_DIFFUSE,
+   EVAS_3D_STATE_LIGHT_SPECULAR,
+   EVAS_3D_STATE_LIGHT_SPOT_DIR,
+   EVAS_3D_STATE_LIGHT_SPOT_EXP,
+   EVAS_3D_STATE_LIGHT_SPOT_CUTOFF,
+   EVAS_3D_STATE_LIGHT_ATTENUATION,
+
+   EVAS_3D_STATE_NODE_TRANSFORM = 1,
+   EVAS_3D_STATE_NODE_MESH_GEOMETRY,
+   EVAS_3D_STATE_NODE_MESH_MATERIAL,
+   EVAS_3D_STATE_NODE_MESH_FRAME,
+   EVAS_3D_STATE_NODE_MESH_SHADE_MODE,
+   EVAS_3D_STATE_NODE_MESH_MATERIAL_ID,
+   EVAS_3D_STATE_NODE_LIGHT,
+   EVAS_3D_STATE_NODE_CAMERA,
+   EVAS_3D_STATE_NODE_PARENT,
+   EVAS_3D_STATE_NODE_MEMBER,
+} Evas_3D_State;
+
+
 /**
  * Flags for Mouse Button events
  */
@@ -5469,6 +5534,9 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
  */
 typedef double   Evas_Real;
 
+
+typedef Eo    Evas_3D_Object;
+
 /**
  * @typedef Evas_3D_Scene
  *
@@ -5742,7 +5810,7 @@ EAPI void               evas_3d_scene_del(Evas_3D_Scene *scene) EINA_ARG_NONNULL
  *
  * @ingroup Evas_3D_Scene
  */
-EAPI Evas              *evas_3d_scene_evas_get(const Evas_3D_Scene *scene) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_scene_evas_get(const Evas_3D_Scene *scene) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the root node of a scene.
@@ -5904,7 +5972,7 @@ EAPI Evas_3D_Node_Type  evas_3d_node_type_get(const Evas_3D_Node *node) EINA_WAR
  *
  * @ingroup Evas_3D_Node
  */
-EAPI Evas              *evas_3d_node_evas_get(const Evas_3D_Node *node) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_node_evas_get(const Evas_3D_Node *node) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Add a member node to the given node.
@@ -6355,7 +6423,7 @@ EAPI void               evas_3d_camera_del(Evas_3D_Camera *camera) EINA_ARG_NONN
  *
  * @ingroup Evas_3D_Camera
  */
-EAPI Evas              *evas_3d_camera_evas_get(const Evas_3D_Camera *camera) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_camera_evas_get(const Evas_3D_Camera *camera) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the projection matrix of the given camera.
@@ -6465,7 +6533,7 @@ EAPI void               evas_3d_light_del(Evas_3D_Light *light) EINA_ARG_NONNULL
  *
  * @ingroup Evas_3D_Light
  */
-EAPI Evas              *evas_3d_light_evas_get(const Evas_3D_Light *light) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_light_evas_get(const Evas_3D_Light *light) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the directional flag of the given light.
@@ -6738,7 +6806,7 @@ EAPI void               evas_3d_mesh_del(Evas_3D_Mesh *mesh) EINA_ARG_NONNULL(1)
  *
  * @ingroup Evas_3D_Mesh
  */
-EAPI Evas              *evas_3d_mesh_evas_get(const Evas_3D_Mesh *mesh) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_mesh_evas_get(const Evas_3D_Mesh *mesh) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the shade mode of the given mesh.
@@ -7111,7 +7179,7 @@ EAPI void               evas_3d_texture_del(Evas_3D_Texture *texture) EINA_ARG_N
  *
  * @ingroup Evas_3D_Texture
  */
-EAPI Evas              *evas_3d_texture_evas_get(const Evas_3D_Texture *texture) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_texture_evas_get(const Evas_3D_Texture *texture) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the data of the given texture.
@@ -7307,7 +7375,7 @@ EAPI void               evas_3d_material_del(Evas_3D_Material *material) EINA_AR
  *
  * @ingroup Evas_3D_Material
  */
-EAPI Evas              *evas_3d_material_evas_get(const Evas_3D_Material *material) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+//EAPI Evas              *evas_3d_material_evas_get(const Evas_3D_Material *material) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Set the material attribute enable flag of the given material.

@@ -1,129 +1,68 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define REF_COUNT_CHECK(obj)                    \
-   do {                                         \
-        if ((obj)->ref_count < 1)               \
-          {                                     \
-             ERR("Invalid reference count.")
+#include "Eo.h"
 
-#define REF_COUNT_CHECK_END()                   \
-          }                                     \
-   } while (0)
+#define MY_CLASS EO_EVAS_3D_OBJECT_CLASS
 
-#define OBJ_TYPE_CHECK(obj, type)               \
-   do {                                         \
-        if ((obj)->type != type)                \
-          {                                     \
-             ERR("3D object type check failed.")
-
-#define OBJ_TYPE_CHECK_END()                    \
-          }                                     \
-   } while (0)
-
-void
-evas_3d_object_init(Evas_3D_Object *obj,
-                    Evas *e, Evas_3D_Object_Type type, const Evas_3D_Object_Func *func)
+EOLIAN static void
+_eo_evas_3d_object_eo_base_constructor(Eo *obj, Evas_3D_Object_Data *pd)
 {
-   obj->evas = e;
-   obj->type = type;
-   obj->ref_count = 1;
-   obj->func = *func;
-   memset(&obj->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
+   Eo *e = NULL;
+   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_do(obj, e = eo_parent_get());
+   pd->evas = e;
+   pd->type = EVAS_3D_OBJECT_TYPE_INVALID;
+   memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
 }
 
-void
-evas_3d_object_reference(Evas_3D_Object *obj)
-{
-   REF_COUNT_CHECK(obj);
-   return;
-   REF_COUNT_CHECK_END();
 
-   obj->ref_count++;
+EOLIAN static Evas *
+ _eo_evas_3d_object_evas_common_interface_evas_get(Eo *obj EINA_UNUSED, Evas_3D_Object_Data *pd)
+{
+   return pd->evas;
 }
 
-void
-evas_3d_object_unreference(Evas_3D_Object *obj)
+EOLIAN static void
+_eo_evas_3d_object_type_set(Eo *obj EINA_UNUSED, Evas_3D_Object_Data *pd, Evas_3D_Object_Type type)
 {
-   if (obj->ref_count < 1)
-     {
-        printf("gotcha\n");
-     }
-
-   REF_COUNT_CHECK(obj);
-   return;
-   REF_COUNT_CHECK_END();
-
-   obj->ref_count--;
-
-   if (obj->ref_count == 0)
-     obj->func.free(obj);
+   pd->type = type;
 }
 
-int
-evas_3d_object_reference_count_get(const Evas_3D_Object *obj)
+EOLIAN static Evas_3D_Object_Type
+_eo_evas_3d_object_type_get(Eo *obj EINA_UNUSED, Evas_3D_Object_Data *pd)
 {
-   REF_COUNT_CHECK(obj);
-   return 0;
-   REF_COUNT_CHECK_END();
-
-   return obj->ref_count;
+   return pd->type;
 }
 
-Evas *
-evas_3d_object_evas_get(const Evas_3D_Object *obj)
+EOLIAN static Eina_Bool
+_eo_evas_3d_object_dirty_get(Eo *obj EINA_UNUSED, Evas_3D_Object_Data *pd, Evas_3D_State state)
 {
-   REF_COUNT_CHECK(obj);
-   return NULL;
-   REF_COUNT_CHECK_END();
-
-   return obj->evas;
+   return pd->dirty[state];
 }
 
-Evas_3D_Object_Type
-evas_3d_object_type_get(const Evas_3D_Object *obj)
-{
-   REF_COUNT_CHECK(obj);
-   return EVAS_3D_OBJECT_TYPE_INVALID;
-   REF_COUNT_CHECK_END();
-
-   return obj->type;
-}
-
-Eina_Bool
-evas_3d_object_dirty_get(const Evas_3D_Object *obj, Evas_3D_State state)
-{
-   return obj->dirty[state];
-}
-
-void
-evas_3d_object_change(Evas_3D_Object *obj, Evas_3D_State state, Evas_3D_Object *ref)
+EOLIAN static void
+_eo_evas_3d_object_change(Eo *obj, Evas_3D_Object_Data *pd, Evas_3D_State state, Evas_3D_Object *ref)
 {
    /* Skip already dirty properties. */
-   if (obj->dirty[state])
+   if (pd->dirty[state])
      return;
 
-   obj->dirty[state] = EINA_TRUE;
-   obj->dirty[EVAS_3D_STATE_ANY] = EINA_TRUE;
+   pd->dirty[state] = EINA_TRUE;
+   pd->dirty[EVAS_3D_STATE_ANY] = EINA_TRUE;
 
-   if (obj->func.change)
-     obj->func.change(obj, state, ref);
+   eo_do(obj, eo_evas_3d_object_change_notify(state, ref));
 }
 
-void
-evas_3d_object_update(Evas_3D_Object *obj)
+EOLIAN static void
+_eo_evas_3d_object_update(Eo *obj, Evas_3D_Object_Data *pd)
 {
-   if (!obj->dirty[EVAS_3D_STATE_ANY])
+   if (!pd->dirty[EVAS_3D_STATE_ANY])
      return;
 
-   if (obj->func.update)
-     obj->func.update(obj);
+   eo_do(obj, eo_evas_3d_object_update_notify());
 
-   evas_3d_object_update_done(obj);
+   memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
 }
 
-void
-evas_3d_object_update_done(Evas_3D_Object *obj)
-{
-   memset(&obj->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
-}
+#include "canvas/evas_3d_object.eo.c"

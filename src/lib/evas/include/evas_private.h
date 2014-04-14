@@ -57,7 +57,7 @@ typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 #define EVAS_3D_VERTEX_ATTRIB_COUNT    5
 #define EVAS_3D_MATERIAL_ATTRIB_COUNT  5
 
-typedef struct _Evas_3D_Object                Evas_3D_Object;
+typedef struct _Evas_3D_Object                Evas_3D_Object_Data;
 typedef struct _Evas_3D_Scene_Public_Data     Evas_3D_Scene_Public_Data;
 typedef struct _Evas_3D_Vertex_Buffer         Evas_3D_Vertex_Buffer;
 typedef struct _Evas_3D_Mesh_Frame            Evas_3D_Mesh_Frame;
@@ -79,68 +79,6 @@ typedef struct _Evas_3D_Texture          Evas_3D_Texture_Data;
 
 typedef Eina_Bool (*Evas_3D_Node_Func)(Evas_3D_Node *, void *data);
 
-typedef enum _Evas_3D_Object_Type
-{
-   EVAS_3D_OBJECT_TYPE_INVALID = 0,
-   EVAS_3D_OBJECT_TYPE_SCENE,
-   EVAS_3D_OBJECT_TYPE_NODE,
-   EVAS_3D_OBJECT_TYPE_CAMERA,
-   EVAS_3D_OBJECT_TYPE_LIGHT,
-   EVAS_3D_OBJECT_TYPE_MODEL,
-   EVAS_3D_OBJECT_TYPE_MESH,
-   EVAS_3D_OBJECT_TYPE_TEXTURE,
-   EVAS_3D_OBJECT_TYPE_MATERIAL,
-} Evas_3D_Object_Type;
-
-typedef enum _Evas_3D_State
-{
-   EVAS_3D_STATE_MAX = 16,
-
-   EVAS_3D_STATE_ANY = 0,
-
-   EVAS_3D_STATE_SCENE_ROOT_NODE = 1,
-   EVAS_3D_STATE_SCENE_CAMERA_NODE,
-   EVAS_3D_STATE_SCENE_BACKGROUND_COLOR,
-   EVAS_3D_STATE_SCENE_SIZE,
-
-   EVAS_3D_STATE_TEXTURE_DATA = 1,
-   EVAS_3D_STATE_TEXTURE_WRAP,
-   EVAS_3D_STATE_TEXTURE_FILTER,
-
-   EVAS_3D_STATE_MATERIAL_ID = 1,
-   EVAS_3D_STATE_MATERIAL_COLOR,
-   EVAS_3D_STATE_MATERIAL_TEXTURE,
-
-   EVAS_3D_STATE_MESH_VERTEX_COUNT = 1,
-   EVAS_3D_STATE_MESH_FRAME,
-   EVAS_3D_STATE_MESH_MATERIAL,
-   EVAS_3D_STATE_MESH_TRANSFORM,
-   EVAS_3D_STATE_MESH_VERTEX_DATA,
-   EVAS_3D_STATE_MESH_INDEX_DATA,
-   EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY,
-   EVAS_3D_STATE_MESH_SHADE_MODE,
-
-   EVAS_3D_STATE_CAMERA_PROJECTION = 1,
-
-   EVAS_3D_STATE_LIGHT_AMBIENT = 1,
-   EVAS_3D_STATE_LIGHT_DIFFUSE,
-   EVAS_3D_STATE_LIGHT_SPECULAR,
-   EVAS_3D_STATE_LIGHT_SPOT_DIR,
-   EVAS_3D_STATE_LIGHT_SPOT_EXP,
-   EVAS_3D_STATE_LIGHT_SPOT_CUTOFF,
-   EVAS_3D_STATE_LIGHT_ATTENUATION,
-
-   EVAS_3D_STATE_NODE_TRANSFORM = 1,
-   EVAS_3D_STATE_NODE_MESH_GEOMETRY,
-   EVAS_3D_STATE_NODE_MESH_MATERIAL,
-   EVAS_3D_STATE_NODE_MESH_FRAME,
-   EVAS_3D_STATE_NODE_MESH_SHADE_MODE,
-   EVAS_3D_STATE_NODE_MESH_MATERIAL_ID,
-   EVAS_3D_STATE_NODE_LIGHT,
-   EVAS_3D_STATE_NODE_CAMERA,
-   EVAS_3D_STATE_NODE_PARENT,
-   EVAS_3D_STATE_NODE_MEMBER,
-} Evas_3D_State;
 
 typedef enum _Evas_3D_Node_Traverse_Type
 {
@@ -156,32 +94,20 @@ typedef enum _Evas_3D_Tree_Traverse_Type
    EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER,
 } Evas_3D_Tree_Traverse_Type;
 
-struct _Evas_3D_Object_Func
-{
-   void  (*free)(Evas_3D_Object *obj);
-   void  (*change)(Evas_3D_Object *obj, Evas_3D_State state, Evas_3D_Object *ref);
-   void  (*update)(Evas_3D_Object *obj);
-};
 
 struct _Evas_3D_Object
 {
    Evas                *evas;
 
    Evas_3D_Object_Type  type;
-   int                  ref_count;
-   Evas_3D_Object_Func  func;
 
    Eina_Bool            dirty[EVAS_3D_STATE_MAX];
 };
 
 struct _Evas_3D_Scene
 {
-   Evas_3D_Object    base;
-
    Evas_3D_Node     *root_node;
    Evas_3D_Node     *camera_node;
-   //@FIXME
-   Evas_3D_Scene    *hack_this;
    Evas_Color        bg_color;
 
    void             *surface;
@@ -198,12 +124,8 @@ struct _Evas_3D_Node_Mesh
 
 struct _Evas_3D_Node
 {
-   Evas_3D_Object    base;
-
    Eina_List        *members;
    Evas_3D_Node     *parent;
-   //@FIXME
-   Evas_3D_Node     *hack_this;
 
    Evas_Vec3         position;
    Evas_Vec4         orientation;
@@ -249,16 +171,12 @@ struct _Evas_3D_Node
 
 struct _Evas_3D_Camera
 {
-   Evas_3D_Object base;
-
    Evas_Mat4      projection;
    Eina_Hash     *nodes;
 };
 
 struct _Evas_3D_Light
 {
-   Evas_3D_Object base;
-
    Evas_Color     ambient;
    Evas_Color     diffuse;
    Evas_Color     specular;
@@ -312,8 +230,6 @@ struct _Evas_3D_Mesh_Frame
 
 struct _Evas_3D_Mesh
 {
-   Evas_3D_Object          base;
-
    Evas_3D_Shade_Mode      shade_mode;
 
    int                     vertex_count;
@@ -334,8 +250,6 @@ struct _Evas_3D_Mesh
 
 struct _Evas_3D_Texture
 {
-   Evas_3D_Object    base;
-
    /* List of materials using this texture. */
    Eina_Hash        *materials;
 
@@ -350,8 +264,6 @@ struct _Evas_3D_Texture
 
 struct _Evas_3D_Material
 {
-   Evas_3D_Object    base;
-
    struct {
         Eina_Bool         enable;
         Evas_Color        color;
