@@ -1246,6 +1246,46 @@ EAPI void evas_event_feed_key_down(Evas *e, const char *keyname, const char *key
 EAPI void evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data) EINA_ARG_NONNULL(1);
 
 /**
+ * Key down event feed with keycode
+ *
+ * @param e The canvas to thaw out
+ * @param keyname  Name of the key
+ * @param key The key pressed.
+ * @param string A String
+ * @param compose The compose string
+ * @param timestamp Timestamp of the mouse up event
+ * @param data Data for canvas.
+ * @param keycode Key scan code numeric value for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * a key is pressed. It prepares information to be treated by the
+ * callback function.
+ *
+ * @since 1.10
+ */
+EAPI void evas_event_feed_key_down_with_keycode(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode) EINA_ARG_NONNULL(1);
+
+/**
+ * Key up event feed with keycode
+ *
+ * @param e The canvas to thaw out
+ * @param keyname  Name of the key
+ * @param key The key released.
+ * @param string string
+ * @param compose compose
+ * @param timestamp Timestamp of the mouse up event
+ * @param data Data for canvas.
+ * @param keycode Key scan code numeric value for canvas.
+ *
+ * This function will set some evas properties that is necessary when
+ * a key is released. It prepares information to be treated by the
+ * callback function.
+ *
+ * @since 1.10
+ */
+EAPI void evas_event_feed_key_up_with_keycode(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode) EINA_ARG_NONNULL(1);
+
+/**
  * Hold event feed
  *
  * @param e The given canvas pointer.

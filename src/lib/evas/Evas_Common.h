@@ -733,6 +733,8 @@ struct _Evas_Event_Key_Down /** Key press event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+
+   unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 };
 
 struct _Evas_Event_Key_Up /** Key release event */
@@ -748,6 +750,8 @@ struct _Evas_Event_Key_Up /** Key release event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
+
+   unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 };
 
 struct _Evas_Event_Render_Post /** Send when the frame rendering is done @since 1.8 */

@@ -2445,10 +2445,18 @@ _evas_event_feed_multi_move(Eo *eo_e, Evas_Public_Data *e, int d, int x, int y, 
                                           pres, ang, fx, fy, timestamp, data);
 }
 
-EOLIAN void
-_evas_event_feed_key_down(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
+static void
+_canvas_event_feed_key_down_internal(Eo *eo_e,
+                                     void *_pd,
+                                     const char *keyname,
+                                     const char *key,
+                                     const char *string,
+                                     const char *compose,
+                                     unsigned int timestamp,
+                                     const void *data,
+                                     unsigned int keycode)
 {
-
+   Evas_Public_Data *e = _pd;
    int event_id = 0;
 
    if (!keyname) return;
@@ -2473,6 +2481,7 @@ _evas_event_feed_key_down(Eo *eo_e, Evas_Public_Data *e, const char *keyname, co
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
+   ev.keycode = keycode;
    if (ev.dev) _evas_device_ref(ev.dev);
    
    if (e->grabs)
@@ -2542,10 +2551,18 @@ _evas_event_feed_key_down(Eo *eo_e, Evas_Public_Data *e, const char *keyname, co
    _evas_unwalk(e);
 }
 
-EOLIAN void
-_evas_event_feed_key_up(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
+static void
+_canvas_event_feed_key_up_internal(Eo *eo_e,
+                                   void *_pd,
+                                   const char *keyname,
+                                   const char *key,
+                                   const char *string,
+                                   const char *compose,
+                                   unsigned int timestamp,
+                                   const void *data,
+                                   unsigned int keycode)
 {
-
+   Evas_Public_Data *e = _pd;
    int event_id = 0;
    if (!keyname) return;
    if (e->is_frozen) return;
@@ -2569,6 +2586,7 @@ _evas_event_feed_key_up(Eo *eo_e, Evas_Public_Data *e, const char *keyname, cons
    ev.timestamp = timestamp;
    ev.event_flags = e->default_event_flags;
    ev.dev = _evas_device_top_get(eo_e);
+   ev.keycode = keycode;
    if (ev.dev) _evas_device_ref(ev.dev);
    
    if (e->grabs)
@@ -2637,6 +2655,34 @@ _evas_event_feed_key_up(Eo *eo_e, Evas_Public_Data *e, const char *keyname, cons
    _evas_post_event_callback_call(eo_e, e);
    if (ev.dev) _evas_device_unref(ev.dev);
    _evas_unwalk(e);
+}
+
+EOLIAN void
+_evas_event_feed_key_down(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
+{
+   _canvas_event_feed_key_down_internal(eo_e, e, keyname, key, string,
+                                        compose, timestamp, data, 0);
+}
+
+EOLIAN void
+_evas_event_feed_key_up(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
+{
+   _canvas_event_feed_key_up_internal(eo_e, e, keyname, key, string,
+                                      compose, timestamp, data, 0);
+}
+
+EOLIAN void
+_evas_event_feed_key_down_with_keycode(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode)
+{
+   _canvas_event_feed_key_down_internal(eo_e, e, keyname, key, string,
+                                        compose, timestamp, data, keycode);
+}
+
+EOLIAN void
+_evas_event_feed_key_up_with_keycode(Eo *eo_e, Evas_Public_Data *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode)
+{
+   _canvas_event_feed_key_up_internal(eo_e, e, keyname, key, string,
+                                      compose, timestamp, data, keycode);
 }
 
 EOLIAN void

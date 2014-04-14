@@ -1730,6 +1730,46 @@ class Evas (Eo_Base, Evas_Common_Interface)
             @in Evas_Coord y; /*@ The canvas y co-ordinate */
          }
       }
+      event_feed_key_down_with_keycode {
+         /*@
+         Key down event feed with keycode
+
+         This function will set some evas properties that is necessary when
+         a key is pressed. It prepares information to be treated by the
+         callback function.
+
+         @since 1.10 */
+
+         params {
+            @in const char *keyname; /*@ Name of the key */
+            @in const char *key; /*@ The key pressed. */
+            @in const char *string; /*@ A String */
+            @in const char *compose; /*@ The compose string */
+            @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
+            @in const void *data; /*@ Data for canvas. */
+            @in unsigned int keycode; /*@ Key scan code numeric value for canvas. */
+         }
+      }
+      event_feed_key_up_with_keycode {
+         /*@
+         Key up event feed with keycode
+
+         This function will set some evas properties that is necessary when
+         a key is released. It prepares information to be treated by the
+         callback function.
+
+         @since 1.10 */
+
+         params {
+            @in const char *keyname; /*@ Name of the key */
+            @in const char *key; /*@ The key released. */
+            @in const char *string; /*@ string */
+            @in const char *compose; /*@ compose */
+            @in unsigned int timestamp; /*@ Timestamp of the mouse up event */
+            @in const void *data; /*@ Data for canvas. */
+            @in unsigned int keycode; /*@ Key scan code numeric value for canvas. */
+         }
+      }
    }
    implements {
       Eo_Base::constructor;

@@ -119,6 +119,10 @@ extern "C" {
         unsigned int     modifiers;
         
         int              same_screen;
+
+        unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
+
+        void            *data; /**< User data associated with an Ecore_Event_Key @since 1.10 */
      };
 
    struct _Ecore_Event_Mouse_Button
