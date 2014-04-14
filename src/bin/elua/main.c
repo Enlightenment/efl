@@ -46,7 +46,7 @@ static Ecore_Getopt opt = {
             "'code'.", "CODE", append_cb, (void*)ARG_CODE),
         ECORE_GETOPT_CALLBACK_ARGS('l', "library", "Require library 'library'.",
             "LIBRARY", append_cb, (void*)ARG_LIBRARY),
-        ECORE_GETOPT_CALLBACK_ARGS('L', "lib-dir", "Append an additional "
+        ECORE_GETOPT_CALLBACK_ARGS('I', "lib-dir", "Append an additional "
             "require path 'LIBDIR'.", "LIBDIR", append_cb, (void*)ARG_LIBDIR),
         ECORE_GETOPT_STORE_TRUE('E', "noenv", "Ignore environment vars."),
 
@@ -141,7 +141,7 @@ static int register_require(lua_State *L) {
     lua_pushfstring(L, "%s/?.lua;", corepath);
     EINA_LIST_FOREACH(largs, l, data) {
         if (data->type != ARG_LIBDIR) continue;
-        lua_pushstring(L, data->value);
+        lua_pushfstring(L, "%s/?.lua;", data->value);
         ++n;
     }
     lua_pushfstring(L, "%s/?.lua;", modpath);
@@ -237,7 +237,9 @@ static int lua_main(lua_State *L) {
                  hasexec  = EINA_FALSE;
     Eina_List  *largs     = NULL, *l = NULL;
     Arg_Data   *data      = NULL;
+    const char *coref     = NULL;
     char       *coredir   = NULL, *moddir = NULL;
+    char        modfile[1024];
 
     int nonopt;
 
@@ -264,13 +266,22 @@ static int lua_main(lua_State *L) {
         ECORE_GETOPT_VALUE_BOOL(noenv)
     }, argc, argv);
 
+    if (quit) return 0;
+
     INF("arguments parsed");
 
     lua_gc(L, LUA_GCSTOP, 0);
 
     luaL_openlibs(L);
 
-    if (report(L, elua_loadfile(L, ELUA_DATA_DIR "/core/module.lua"))) {
+    if (!(coref = coredir)) {
+        if (noenv || !(coref = getenv("ELUA_CORE_DIR")) || !coref[0]) {
+            coref = ELUA_CORE_DIR;
+        }
+    }
+    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
+
+    if (report(L, elua_loadfile(L, modfile))) {
         m->status = 1;
         return 0;
     }
@@ -278,7 +289,7 @@ static int lua_main(lua_State *L) {
     lua_pushlightuserdata(L, moddir);
     lua_pushlightuserdata(L, largs);
     lua_pushboolean      (L, noenv);
-    lua_pushcclosure(L, register_require, 3);
+    lua_pushcclosure(L, register_require, 4);
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, cutillib);
     lua_call(L, 2, 0);
@@ -287,8 +298,6 @@ static int lua_main(lua_State *L) {
     lua_gc(L, LUA_GCRESTART, 0);
 
     INF("elua lua state initialized");
-
-    if (quit) return 0;
 
     /* load all the things */
     EINA_LIST_FOREACH(largs, l, data) {

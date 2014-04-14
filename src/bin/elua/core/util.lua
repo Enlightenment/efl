@@ -45,7 +45,7 @@ M.Object = {
 
 local newproxy = newproxy
 
-M.Readonly_Object = Object:clone {
+M.Readonly_Object = M.Object:clone {
     __call = function(self, ...)
         local r = newproxy(true)
         local rmt = getmetatable(r)

@@ -22,7 +22,7 @@ ffi.cdef [[
         } *accounting;
     } Eina_List_T;
 
-    Eina_List            *eina_list_append(Eina_List *list, const void *data);
+/*  Eina_List            *eina_list_append(Eina_List *list, const void *data);
     Eina_List            *eina_list_prepend(Eina_List *list, const void *data);
     Eina_List            *eina_list_append_relative(Eina_List *list, const void *data, const void *relative);
     Eina_List            *eina_list_append_relative_list(Eina_List *list, const void *data, Eina_List *relative);
@@ -38,9 +38,10 @@ ffi.cdef [[
     Eina_Bool             eina_list_move(Eina_List **to, Eina_List **from, void *data);
     Eina_Bool             eina_list_move_list(Eina_List **to, Eina_List **from, Eina_List *data);
     Eina_List            *eina_list_free(Eina_List *list);
+*/
     void                 *eina_list_nth(const Eina_List *list, unsigned int n);
     Eina_List            *eina_list_nth_list(const Eina_List *list, unsigned int n);
-    Eina_List            *eina_list_reverse(Eina_List *list);
+/*  Eina_List            *eina_list_reverse(Eina_List *list);
     Eina_List            *eina_list_reverse_clone(const Eina_List *list);
     Eina_List            *eina_list_clone(const Eina_List *list);
     Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, Eina_Compare_Cb func);
@@ -53,6 +54,7 @@ ffi.cdef [[
     void                 *eina_list_search_sorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
     Eina_List            *eina_list_search_unsorted_list(const Eina_List *list, Eina_Compare_Cb func, const void *data);
     void                 *eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
+*/
     Eina_Iterator        *eina_list_iterator_new(const Eina_List *list);
     Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list);
     Eina_Accessor        *eina_list_accessor_new(const Eina_List *list);

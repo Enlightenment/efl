@@ -5,8 +5,12 @@
 # include <config.h>
 #endif
 
-#ifndef ELUA_DATA_DIR
-#define ELUA_DATA_DIR "."
+#ifndef ELUA_CORE_DIR
+#define ELUA_CORE_DIR "."
+#endif
+
+#ifndef ELUA_MODULES_DIR
+#define ELUA_MODULES_DIR "."
 #endif
 
 #include <stdio.h>
