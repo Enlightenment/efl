@@ -15,22 +15,28 @@ bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
 eluamodulesdir = $(datadir)/elua/modules
 
 eluamodules_DATA = \
-    bin/elua/modules/elm.lua
+    bin/elua/modules/*.lua
 
 EXTRA_DIST += $(eluamodules_DATA)
 
 eluaeinadir = $(eluamodulesdir)/eina
 
 eluaeina_DATA = \
-    bindings/luajit/eina/log.lua
+    bindings/luajit/eina/*.lua
 
 EXTRA_DIST += $(eluaeina_DATA)
+
+eluaeoliandir = $(eluamodulesdir)
+
+eluaeolian_DATA = \
+    bindings/luajit/eolian.lua
+
+EXTRA_DIST += $(eluaeolian_DATA)
 
 eluacoredir = $(datadir)/elua/core
 
 eluacore_DATA = \
-    bin/elua/core/module.lua \
-    bin/elua/core/util.lua
+    bin/elua/core/*.lua
 
 EXTRA_DIST += $(eluacore_DATA)
 
