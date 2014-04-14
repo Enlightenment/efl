@@ -4168,6 +4168,8 @@ cmakeconfig/EezeConfig.cmake
 cmakeconfig/EezeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EoConfig.cmake
 cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EolianConfig.cmake
+cmakeconfig/EolianConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EetConfig.cmake
 cmakeconfig/EetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EvasConfig.cmake

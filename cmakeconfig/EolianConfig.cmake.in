@@ -1,0 +1,32 @@
+# - Try to find eolian
+# Once done this will define
+#  EOLIAN_FOUND - System has eolian
+#  EOLIAN_INCLUDE_DIRS - The eolian include directories
+#  EOLIAN_LIBRARIES - The libraries needed to use eolian
+#  EOLIAN_DEFINITIONS - Compiler switches required for using eolian
+
+set(MY_PKG eolian)
+
+find_package(PkgConfig)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEOLIAN ${_QUIET} ${MY_PKG})
+
+find_library(EOLIAN_LIBRARY
+             NAMES ${PC_LIBEOLIAN_LIBRARIES}
+             HINTS ${PC_LIBEOLIAN_LIBDIR} ${PC_LIBEOLIAN_LIBRARY_DIRS} )
+
+set(EOLIAN_DEFINITIONS ${PC_LIBEOLIAN_CFLAGS_OTHER})
+set(EOLIAN_LIBRARIES ${EOLIAN_LIBRARY})
+set(EOLIAN_INCLUDE_DIRS ${PC_LIBEOLIAN_INCLUDE_DIRS})
+
+include(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set EOLIAN_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
+   EOLIAN_LIBRARIES EOLIAN_INCLUDE_DIRS)
+
+mark_as_advanced(EOLIAN_INCLUDE_DIRS EOLIAN_LIBRARY EOLIAN_LIBRARIES EOLIAN_DEFINITIONS)
+

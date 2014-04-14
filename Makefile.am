@@ -258,6 +258,11 @@ eo_cmakeconfig_DATA = \
 cmakeconfig/EoConfig.cmake \
 cmakeconfig/EoConfigVersion.cmake
 
+eolian_cmakeconfigdir = $(libdir)/cmake/Eolian/
+eolian_cmakeconfig_DATA = \
+cmakeconfig/EolianConfig.cmake \
+cmakeconfig/EolianConfigVersion.cmake
+
 eet_cmakeconfigdir = $(libdir)/cmake/Eet/
 eet_cmakeconfig_DATA = \
 cmakeconfig/EetConfig.cmake \
