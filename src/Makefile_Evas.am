@@ -275,9 +275,6 @@ lib/evas/file/evas_path.h
 lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
 
-# 3D
-dist_installed_evasmainheaders_DATA += lib/evas/Evas_3D.h
-
 noinst_HEADERS += \
 lib/evas/include/evas_3d_utils.h \
 lib/evas/include/evas_3d_private.h

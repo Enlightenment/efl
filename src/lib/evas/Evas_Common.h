@@ -5771,7 +5771,7 @@ typedef enum _Evas_3D_Pick_Type
  *
  * @ingroup Evas_3D_Scene
  */
-EAPI void               evas_object_image_t3d_scene_set(Evas_Object *obj, Evas_3D_Scene *scene) EINA_ARG_NONNULL(1);
+EAPI void               evas_object_image_3d_scene_set(Evas_Object *obj, Evas_3D_Scene *scene) EINA_ARG_NONNULL(1);
 
 /**
  * Get the current scene of an image object.
@@ -5781,7 +5781,7 @@ EAPI void               evas_object_image_t3d_scene_set(Evas_Object *obj, Evas_3
  *
  * @ingroup Evas_3D_Scene
  */
-EAPI Evas_3D_Scene     *evas_object_image_t3d_scene_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI Evas_3D_Scene     *evas_object_image_3d_scene_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Create a new scene on the given Evas @p e canvas.
