@@ -322,8 +322,7 @@ if test "${want_coverage}" = "yes" ; then
       if test "x${prefer_assert}" = "xno"; then
          EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -DNDEBUG"
       else
-         # Add -DDEBUG again once eolian is fixed
-         EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -g -O0"
+         EFL_COV_CFLAGS="${EFL_COV_CFLAGS} -g -O0 -DDEBUG"
       fi
    else
       AC_MSG_ERROR([lcov is not found])
