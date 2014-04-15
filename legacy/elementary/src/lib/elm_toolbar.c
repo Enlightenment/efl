@@ -44,6 +44,15 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"select", _key_action_select},
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
 static void _item_select(Elm_Toolbar_Item *it);
 
 static int
@@ -832,6 +841,48 @@ _item_focused_next( Evas_Object *obj,
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (sd->focused_item)
+     _item_select(sd->focused_item);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   const char *dir = params;
+
+   if (!strcmp(dir, "left"))
+     {
+        if (!_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_LEFT))
+          return EINA_FALSE;
+     }
+   else if (!strcmp(dir, "right"))
+     {
+        if (!_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_RIGHT))
+          return EINA_FALSE;
+     }
+   else if (!strcmp(dir, "up"))
+     {
+        if (!_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_UP))
+          return EINA_FALSE;
+     }
+   else if (!strcmp(dir, "down"))
+     {
+        if (!_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_DOWN))
+          return EINA_FALSE;
+     }
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+
+}
+
 EOLIAN static Eina_Bool
 _elm_toolbar_elm_widget_event(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -844,57 +895,9 @@ _elm_toolbar_elm_widget_event(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *src, E
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
-   if ((!strcmp(ev->key, "Return")) ||
-       (!strcmp(ev->key, "KP_Enter")) ||
-       (!strcmp(ev->key, "space")))
-     {
-         if (sd->focused_item)
-           _item_select(sd->focused_item);
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Left")) ||
-            ((!strcmp(ev->key, "KP_Left")) && !ev->string))
-     {
-        if (_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_LEFT))
-          {
-             goto success;
-          }
-        else
-           return EINA_FALSE;
-     }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && !ev->string))
-     {
-        if (_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_RIGHT))
-          {
-             goto success;
-          }
-        else
-           return EINA_FALSE;
-     }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && !ev->string))
-     {
-        if (_item_focused_next(obj, EINA_TRUE, ELM_FOCUS_UP))
-          {
-             goto success;
-          }
-        else
-           return EINA_FALSE;
-     }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && !ev->string))
-     {
-        if (_item_focused_next(obj, EINA_FALSE, ELM_FOCUS_DOWN))
-          {
-             goto success;
-          }
-        else
-           return EINA_FALSE;
-     }
-
-success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
