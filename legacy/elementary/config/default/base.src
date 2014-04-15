@@ -655,6 +655,29 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elm_Image";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "activate";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "activate";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "space";
+              value "action" string: "activate";
+              value "params" string: "";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
         value "name" string: "Elm_List";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
