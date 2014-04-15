@@ -10,6 +10,7 @@
 #endif /* ifdef _WIN32 */
 
 #include "lz4.h"
+#include "lz4hc.h"
 #include "rg_etc1.h"
 
 static int
@@ -162,7 +163,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
              if (compress)
                {
-                  wlen = LZ4_compress(buffer, comp, block_count * 8);
+                  wlen = LZ4_compressHC(buffer, comp, block_count * 8);
                }
              else
                {
