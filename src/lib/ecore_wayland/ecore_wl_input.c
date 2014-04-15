@@ -354,8 +354,6 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                                             input->seat);
    wl_data_device_add_listener(input->data_device, 
                                &_ecore_wl_data_listener, input);
-   input->cursor_surface = 
-     wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
 
    ewd->input = input;
 }
@@ -447,14 +445,24 @@ _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum 
 
    if (!(input = data)) return;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if ((caps & WL_SEAT_CAPABILITY_POINTER) && (!input->pointer))
      {
         input->pointer = wl_seat_get_pointer(seat);
         wl_pointer_set_user_data(input->pointer, input);
         wl_pointer_add_listener(input->pointer, &pointer_listener, input);
+
+        if (!input->cursor_surface)
+          {
+             input->cursor_surface = 
+               wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
+          }
      }
    else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && (input->pointer))
      {
+        if (input->cursor_surface) wl_surface_destroy(input->cursor_surface);
+        input->cursor_surface = NULL;
         wl_pointer_destroy(input->pointer);
         input->pointer = NULL;
      }
