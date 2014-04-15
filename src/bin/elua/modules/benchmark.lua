@@ -1,5 +1,4 @@
 -- Elua benchmark module
--- Dependencies: eina.counter, eina.log, util, cutil
 
 local cutil   = require("cutil")
 local util    = require("util")

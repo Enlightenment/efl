@@ -139,7 +139,7 @@ M.class_type = {
 }
 
 M.class_type_get = function(cname)
-    return eolian.eo_class_type_get(cname)
+    return eolian.eolian_class_type_get(cname)
 end
 
 M.class_names_list_get = function()
