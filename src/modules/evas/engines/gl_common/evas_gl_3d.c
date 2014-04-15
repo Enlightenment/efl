@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <png.h>
 #include "evas_gl_private.h"
 #include "evas_gl_3d_private.h"
 
@@ -76,7 +74,7 @@ e3d_texture_data_set(E3D_Texture *texture,
    if (color_format == EVAS_3D_COLOR_FORMAT_RGBA)
      {
         format = GL_RGBA;
-        iformat = GL_RGBA;
+        iformat = GL_BGRA;
 
         if (pixel_format == EVAS_3D_PIXEL_FORMAT_8888)
           type = GL_UNSIGNED_BYTE;
@@ -93,7 +91,7 @@ e3d_texture_data_set(E3D_Texture *texture,
    else if (color_format == EVAS_3D_COLOR_FORMAT_RGB)
      {
         format = GL_RGB;
-        iformat = GL_RGB;
+        iformat = GL_BGR;
 
         if (pixel_format == EVAS_3D_PIXEL_FORMAT_565)
           type = GL_UNSIGNED_SHORT_5_6_5;
@@ -152,135 +150,33 @@ e3d_texture_data_set(E3D_Texture *texture,
    texture->format = format;
 }
 
+#if 1
 void
-e3d_texture_file_set(E3D_Texture *texture, const char *file, const char *key EINA_UNUSED)
+e3d_texture_file_set(E3D_Texture *texture, const char *file, const char *key)
 {
+   Evas_Image_Load_Opts lo;
+   int error;
    Evas_3D_Color_Format color_format;
    Evas_3D_Pixel_Format pixel_format;
 
-   FILE          *fp;
-   png_structp    png_ptr = NULL;
-   png_infop      info_ptr = NULL;
-   void          *buffer = NULL;
-   png_bytep     *row_pointers = NULL;
+   memset(&lo, 0x0, sizeof(Evas_Image_Load_Opts));
+   RGBA_Image *im = evas_common_load_image_from_file(file, key, &lo, &error);
+   if (!im) return;
 
-   int            w, h;
-   png_byte       color_type;
-   png_byte       bit_depth;
-   png_byte       header[8];
-   int            ret;
-   int            y;
-   int            stride;
+   error = evas_cache_image_load_data(&im->cache_entry);
 
-   fp = fopen(file, "rb");
-
-   if (fp == NULL)
+   switch(im->cache_entry.space)
      {
-        ERR("Failed to open file %s", file);
-        goto done;
+        case EVAS_COLORSPACE_ARGB8888:
+          pixel_format = EVAS_3D_PIXEL_FORMAT_8888;
+          color_format = EVAS_3D_COLOR_FORMAT_RGBA;
+          break;
+        default:
+          break;
      }
-
-   ret = fread(header, 1, 8, fp);
-
-   if (ret < 8)
-     goto done;
-
-   if (png_sig_cmp(header, 0, 8))
-     {
-        ERR("%s does not seem to be a png file.", file);
-        goto done;
-     }
-
-   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
-   if (png_ptr == NULL)
-     goto done;
-
-   info_ptr = png_create_info_struct(png_ptr);
-
-   if (info_ptr == NULL)
-     goto done;
-
-   if (setjmp(png_jmpbuf(png_ptr)))
-     goto done;
-
-   png_init_io(png_ptr, fp);
-   png_set_sig_bytes(png_ptr, 8);
-
-   png_read_info(png_ptr, info_ptr);
-
-   bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-
-   if (bit_depth != 8)
-     {
-        ERR("Unsupported bit depth %d.", bit_depth);
-        goto done;
-     }
-
-   w = png_get_image_width(png_ptr, info_ptr);
-   h = png_get_image_height(png_ptr, info_ptr);
-
-   if (w < 1 || h < 1 || w > IMG_MAX_SIZE || h > IMG_MAX_SIZE || IMG_TOO_BIG(w, h))
-     {
-        ERR("Image %s(%d x %d)  is too big for texture.", file, w, h);
-        goto done;
-     }
-
-   color_type = png_get_color_type(png_ptr, info_ptr);
-
-   if (color_type == PNG_COLOR_TYPE_GRAY)
-     {
-        color_format = EVAS_3D_COLOR_FORMAT_ALPHA;
-        pixel_format = EVAS_3D_PIXEL_FORMAT_8;
-        stride = (w + 3) & ~3;
-     }
-   else if (color_type == PNG_COLOR_TYPE_RGB)
-     {
-        color_format = EVAS_3D_COLOR_FORMAT_RGB;
-        pixel_format = EVAS_3D_PIXEL_FORMAT_888;
-        stride = (w * 3 + 3) & ~3;
-     }
-   else if (color_type == PNG_COLOR_TYPE_RGBA)
-     {
-        color_format = EVAS_3D_COLOR_FORMAT_RGBA;
-        pixel_format = EVAS_3D_PIXEL_FORMAT_8888;
-        stride = w * 4;
-     }
-   else
-     {
-        ERR("Unsupported color format.");
-        goto done;
-     }
-
-   row_pointers = (png_bytep *)malloc(sizeof(png_bytep) * h);
-
-   if (row_pointers == NULL)
-     goto done;
-
-   buffer = malloc(stride * h);
-
-   if (buffer == NULL)
-     goto done;
-
-   for (y = 0; y < h; y++)
-     row_pointers[y] = ((png_byte *)buffer) + (h - y - 1)* stride;
-
-   png_read_image(png_ptr, row_pointers);
-
-   e3d_texture_data_set(texture, color_format, pixel_format, w, h, buffer);
-
-done:
-   if (png_ptr)
-     png_destroy_read_struct(&png_ptr, info_ptr ? &info_ptr : NULL, NULL);
-
-   if (fp)
-     fclose(fp);
-
-   if (row_pointers)
-     free(row_pointers);
-
-   if (buffer)
-     free(buffer);
+   e3d_texture_data_set(texture, color_format, pixel_format, im->cache_entry.w,
+                        im->cache_entry.h, im->image.data);
+   evas_cache_image_unload_data(&im->cache_entry);
 }
 
 Evas_3D_Color_Format
