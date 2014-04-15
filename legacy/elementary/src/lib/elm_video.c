@@ -24,18 +24,21 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
-_elm_video_elm_widget_event(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {"play", _key_action_play},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
+   const char *dir = params;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   if (!strcmp(dir, "left"))
      {
         double current, last;
 
@@ -47,11 +50,8 @@ _elm_video_elm_widget_event(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED, Evas_Objec
              current += last / 100;
              elm_video_play_position_set(obj, current);
           }
-
-        goto success;
      }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if (!strcmp(dir, "right"))
      {
         double current, last;
 
@@ -64,23 +64,39 @@ _elm_video_elm_widget_event(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED, Evas_Objec
              if (current < 0) current = 0;
              elm_video_play_position_set(obj, current);
           }
-
-        goto success;
      }
-   else if (!strcmp(ev->key, "space"))
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   if (elm_video_is_playing_get(obj))
+     elm_video_pause(obj);
+   else
+     elm_video_play(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_video_elm_widget_event(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   (void) src;
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
      {
-        if (elm_video_is_playing_get(obj))
-          elm_video_pause(obj);
-        else
-          elm_video_play(obj);
-
-        goto success;
+        INF("keyname: '%s' not handled", ev->key);
+        return EINA_FALSE;
      }
 
-   INF("keyname: '%s' not handled", ev->key);
-   return EINA_FALSE;
-
-success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
