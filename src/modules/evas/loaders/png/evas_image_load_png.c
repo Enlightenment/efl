@@ -218,9 +218,9 @@ evas_image_load_file_data_png(void *loader_data,
    unsigned int pack_offset;
    int w, h;
    int bit_depth, color_type, interlace_type;
-   char hasa;
-   int i, j;
-   int scale_ratio = 1, image_w = 0;
+   char hasa, passes;
+   int i, j, p, k;
+   int scale_ratio = 1, image_w = 0, image_h = 0;
    Eina_Bool r = EINA_FALSE;
 
    opts = loader->opts;
@@ -278,6 +278,7 @@ evas_image_load_file_data_png(void *loader_data,
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
    image_w = w32;
+   image_h = h32;
    if (opts->scale_down_by > 1)
      {
         scale_ratio = opts->scale_down_by;
@@ -348,32 +349,65 @@ evas_image_load_file_data_png(void *loader_data,
       default: abort();
      }
 
+   passes = png_set_interlace_handling(png_ptr);
+   
    /* we read image line by line if scale down was set */
    if (scale_ratio == 1)
      {
-        for (i = 0; i < h; i++)
-          png_read_row(png_ptr, surface + (i * w * pack_offset), NULL);
+        for (p = 0; p < passes; p++)
+          {
+             for (i = 0; i < h; i++)
+               png_read_row(png_ptr, surface + (i * w * pack_offset), NULL);
+          }
         png_read_end(png_ptr, info_ptr);
      }
    else
      {
         unsigned char *src_ptr, *dst_ptr;
 
-        tmp_line = (unsigned char *) alloca(image_w * pack_offset);
         dst_ptr = surface;
-        for (i = 0; i < h; i++)
+        if (passes == 1)
           {
-             png_read_row(png_ptr, tmp_line, NULL);
-             src_ptr = tmp_line;
-             for (j = 0; j < w; j++)
-               {
-                  *dst_ptr = *src_ptr;
-                  dst_ptr += pack_offset;
-                  src_ptr += scale_ratio * pack_offset;
-               }
-             for (j = 0; j < (scale_ratio - 1); j++)
+             tmp_line = (unsigned char *) alloca(image_w * pack_offset);
+             for (i = 0; i < h; i++)
                {
                   png_read_row(png_ptr, tmp_line, NULL);
+                  src_ptr = tmp_line;
+                  for (j = 0; j < w; j++)
+                    {
+                       for (k = 0; k < (int)pack_offset; k++)
+                         dst_ptr[k] = src_ptr[k];
+                       dst_ptr += pack_offset;
+                       src_ptr += scale_ratio * pack_offset;
+                    }
+                  for (j = 0; j < (scale_ratio - 1); j++)
+                    png_read_row(png_ptr, tmp_line, NULL);
+               }
+          }
+        else
+          {
+             unsigned char *pixels2 = malloc(image_w * image_h * pack_offset);
+
+             if (pixels2)
+               {
+                  for (p = 0; p < passes; p++)
+                    {
+                       for (i = 0; i < image_h; i++)
+                         png_read_row(png_ptr, pixels2 + (i * image_w * pack_offset), NULL);
+                    }
+                  
+                  for (i = 0; i < h; i++)
+                    {
+                       src_ptr = pixels2 + (i * scale_ratio * image_w * pack_offset);
+                       for (j = 0; j < w; j++)
+                         {
+                            for (k = 0; k < (int)pack_offset; k++)
+                              dst_ptr[k] = src_ptr[k];
+                            src_ptr += scale_ratio * pack_offset;
+                            dst_ptr += pack_offset;
+                         }
+                    }
+                  free(pixels2);
                }
           }
      }
