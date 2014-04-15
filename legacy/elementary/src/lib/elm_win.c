@@ -2866,13 +2866,19 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
 static Eina_Bool
 _accel_is_gl(void)
 {
-   if ((_elm_accel_preference) &&
-       ((!strcasecmp(_elm_accel_preference, "gl")) ||
-        (!strcasecmp(_elm_accel_preference, "opengl")) ||
-        (!strcasecmp(_elm_accel_preference, "3d")) ||
-        (!strcasecmp(_elm_accel_preference, "hw")) ||
-        (!strcasecmp(_elm_accel_preference, "accel")) ||
-        (!strcasecmp(_elm_accel_preference, "hardware"))
+   const char *env = NULL;
+   const char *str;
+   
+   str = _elm_accel_preference;
+   env = getenv("ELM_ACCEL");
+   if (env) str = env;
+   if ((str) &&
+       ((!strcasecmp(str, "gl")) ||
+        (!strcasecmp(str, "opengl")) ||
+        (!strcasecmp(str, "3d")) ||
+        (!strcasecmp(str, "hw")) ||
+        (!strcasecmp(str, "accel")) ||
+        (!strcasecmp(str, "hardware"))
        ))
      return EINA_TRUE;
    return EINA_FALSE;
