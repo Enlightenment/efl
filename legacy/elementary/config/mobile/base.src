@@ -329,6 +329,83 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elc_Popup";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Tap";
+              value "action" string: "move";
+              value "params" string: "previous";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Shift";
+                    value "flag" uchar: 1;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Tap";
+              value "action" string: "move";
+              value "params" string: "next";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Shift";
+                    value "flag" uchar: 0;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Left";
+              value "action" string: "move";
+              value "params" string: "left";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Left";
+              value "action" string: "move";
+              value "params" string: "left";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Right";
+              value "action" string: "move";
+              value "params" string: "right";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Right";
+              value "action" string: "move";
+              value "params" string: "right";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Up";
+              value "action" string: "move";
+              value "params" string: "up";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Up";
+              value "action" string: "move";
+              value "params" string: "up";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Down";
+              value "action" string: "move";
+              value "params" string: "down";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Down";
+              value "action" string: "move";
+              value "params" string: "down";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
         value "name" string: "Elm_Button";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {

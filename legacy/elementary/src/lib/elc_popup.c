@@ -36,6 +36,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
 static void  _on_content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 EOLIAN static Eina_Bool
@@ -1431,6 +1438,29 @@ _elc_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elc_Popup_Data *sd, c
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   const char *dir = params;
+
+   if (!strcmp(dir, "previous"))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
+   else if (!strcmp(dir, "next"))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+   else if (!strcmp(dir, "left"))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
+   else if (!strcmp(dir, "right"))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
+   else if (!strcmp(dir, "up"))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
+   else if (!strcmp(dir, "down"))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+
+}
+
 EOLIAN static Eina_Bool
 _elc_popup_elm_widget_event(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -1441,43 +1471,9 @@ _elc_popup_elm_widget_event(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, Evas_Objec
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if (!strcmp(ev->key, "Tab"))
-     {
-        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-          elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
-        else
-          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Left")) ||
-            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
-     {
-        elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
-     {
-        elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-     {
-        elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-     {
-        elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
-        goto success;
-     }
-
-   return EINA_FALSE;
-
-success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
