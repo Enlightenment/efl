@@ -25,8 +25,50 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_pause(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {"pause", _key_action_pause},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   const char *dir = params;
+
+   if (!strcmp(dir, "left"))
+     {
+        elm_slideshow_previous(obj);
+     }
+   else if (!strcmp(dir, "right"))
+     {
+        elm_slideshow_next(obj);
+     }
+   else return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_pause(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_SLIDESHOW_DATA_GET(obj, sd);
+
+   if (sd->timeout)
+     {
+        if (sd->timer)
+          ELM_SAFE_FREE(sd->timer, ecore_timer_del);
+        else
+          elm_slideshow_timeout_set(obj, sd->timeout);
+     }
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
-_elm_slideshow_elm_widget_event(Eo *obj, Elm_Slideshow_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_slideshow_elm_widget_event(Eo *obj, Elm_Slideshow_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    (void) src;
@@ -35,35 +77,9 @@ _elm_slideshow_elm_widget_event(Eo *obj, Elm_Slideshow_Data *sd, Evas_Object *sr
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
-     {
-        elm_slideshow_previous(obj);
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Right")) ||
-       ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
-     {
-        elm_slideshow_next(obj);
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Return")) ||
-            (!strcmp(ev->key, "KP_Enter")) ||
-            (!strcmp(ev->key, "space")))
-     {
-        if (sd->timeout)
-          {
-             if (sd->timer)
-               ELM_SAFE_FREE(sd->timer, ecore_timer_del);
-             else
-               elm_slideshow_timeout_set(obj, sd->timeout);
-          }
-        goto success;
-     }
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
-   return EINA_FALSE;
-
-success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
