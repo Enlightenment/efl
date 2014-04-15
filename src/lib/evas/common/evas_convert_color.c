@@ -47,17 +47,26 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
 EAPI void
 evas_common_convert_argb_unpremul(DATA32 *data, unsigned int len)
 {
-   DATA32  *de = data + len;
+   DATA32 *de = data + len;
+   DATA32 p_val = 0x00000000, p_res = 0x00000000;
 
    while (data < de)
      {
-	DATA32  a = (*data >> 24);
+	DATA32  a = (*data >> 24) + 1;
 
-	if ((a > 0) && (a < 255))
-	   *data = ARGB_JOIN(a,
-			     (R_VAL(data) * 255) / a,
-			     (G_VAL(data) * 255) / a,
-			     (B_VAL(data) * 255) / a);
+        if (p_val == *data) *data = p_res;
+        else
+          {
+             p_val = *data;
+             if ((a > 1) && (a < 256))
+               *data = ARGB_JOIN(a,
+                                 (R_VAL(data) * 255) / a,
+                                 (G_VAL(data) * 255) / a,
+                                 (B_VAL(data) * 255) / a);
+             else if (a == 1)
+               *data = 0x00000000;
+             p_res = *data;
+          }
 	data++;
      }
 
