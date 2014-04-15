@@ -54,19 +54,22 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { NULL, NULL }
 };
 
-EOLIAN static Eina_Bool
-_elm_player_elm_widget_event(Eo *obj, Elm_Player_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {"play", _key_action_play},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
+   ELM_PLAYER_DATA_GET(obj, sd);
+   const char *dir = params;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   if (!strcmp(dir, "left"))
      {
         double current, last;
 
@@ -78,11 +81,8 @@ _elm_player_elm_widget_event(Eo *obj, Elm_Player_Data *sd, Evas_Object *src, Eva
              current -= last / 100;
              elm_video_play_position_set(sd->video, current);
           }
-
-        goto success;
      }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if (!strcmp(dir, "right"))
      {
         double current, last;
 
@@ -95,22 +95,39 @@ _elm_player_elm_widget_event(Eo *obj, Elm_Player_Data *sd, Evas_Object *src, Eva
              if (current < 0) current = 0;
              elm_video_play_position_set(sd->video, current);
           }
-
-        goto success;
      }
-   else if (!strcmp(ev->key, "space"))
-     {
-        if (elm_video_is_playing_get(sd->video))
-          elm_video_pause(sd->video);
-        else
-          elm_video_play(sd->video);
+   else return EINA_FALSE;
 
-        goto success;
-     }
+   return EINA_TRUE;
+}
 
-   return EINA_FALSE;
+static Eina_Bool
+_key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_PLAYER_DATA_GET(obj, sd);
 
-success:
+   if (elm_video_is_playing_get(sd->video))
+     elm_video_pause(sd->video);
+   else
+     elm_video_play(sd->video);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_player_elm_widget_event(Eo *obj, Elm_Player_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   (void) src;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (!sd->video) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
+
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
