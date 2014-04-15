@@ -333,7 +333,7 @@ group "Elm_Config" struct {
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
-              value "key" string: "Tap";
+              value "key" string: "Tab";
               value "action" string: "move";
               value "params" string: "previous";
               group "modifiers" list {
@@ -345,7 +345,7 @@ group "Elm_Config" struct {
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
-              value "key" string: "Tap";
+              value "key" string: "Tab";
               value "action" string: "move";
               value "params" string: "next";
               group "modifiers" list {
