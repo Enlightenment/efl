@@ -2,7 +2,7 @@
 #include <Ecore_Evas.h>
 #include <stdio.h>
 #include <math.h>
-#include <Evas_3D.h>
+#include <Evas.h>
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
