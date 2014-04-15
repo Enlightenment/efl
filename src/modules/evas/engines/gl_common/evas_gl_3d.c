@@ -150,7 +150,6 @@ e3d_texture_data_set(E3D_Texture *texture,
    texture->format = format;
 }
 
-#if 1
 void
 e3d_texture_file_set(E3D_Texture *texture, const char *file, const char *key)
 {
