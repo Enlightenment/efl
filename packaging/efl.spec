@@ -2,7 +2,7 @@
 %bcond_with x
 
 Name:           efl
-Version:        1.9.1
+Version:        1.9.2
 Release:        0
 License:        LGPL-2.1
 Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
