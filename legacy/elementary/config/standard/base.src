@@ -250,6 +250,29 @@ group "Elm_Config" struct {
   }
   group "bindings" list {
      group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elc_Fileselector";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "select";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "select";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Escape";
+              value "action" string: "escape";
+              value "params" string: "";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
         value "name" string: "Elm_Button";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {

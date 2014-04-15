@@ -42,6 +42,15 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_FILESELECTOR_SIGNALS
 
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"select", _key_action_select},
+   {"escape", _key_action_escape},
+   {NULL, NULL}
+};
+
 static void _ok(void *data, Evas_Object *obj, void *event_info);
 static void _canc(void *data, Evas_Object *obj, void *event_info);
 
@@ -137,6 +146,20 @@ _elc_fileselector_elm_widget_theme_apply(Eo *obj, Elc_Fileselector_Data *sd)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   _ok(obj, NULL, NULL);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   _canc(obj, NULL, NULL);
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elc_fileselector_elm_widget_event(Eo *obj, Elc_Fileselector_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -147,12 +170,7 @@ _elc_fileselector_elm_widget_event(Eo *obj, Elc_Fileselector_Data *sd EINA_UNUSE
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if ((!strcmp(ev->key, "Return")) ||
-       (!strcmp(ev->key, "KP_Enter")))
-     _ok(obj, NULL, NULL);
-   else if (!strcmp(ev->key, "Escape"))
-     _canc(obj, NULL, NULL);
-   else
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
      return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
