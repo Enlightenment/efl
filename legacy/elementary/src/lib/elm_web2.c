@@ -464,19 +464,9 @@ _elm_web_title_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_web_bg_color_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)obj;
-   (void)r;
-   (void)g;
-   (void)b;
-   (void)a;
-#else
-   (void)obj;
-   (void)r;
-   (void)g;
-   (void)b;
-   (void)a;
-#endif
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   ewk_view_bg_color_set(wd->resize_obj, r, g, b, a);
 }
 
 EOLIAN static void
@@ -486,11 +476,10 @@ _elm_web_bg_color_get(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, int *r, int *g, in
    if (g) *g = 0;
    if (b) *b = 0;
    if (a) *a = 0;
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)obj;
-#else
-   (void)obj;
-#endif
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   return ewk_view_bg_color_get(wd->resize_obj, r, g, b, a);
 }
 
 EOLIAN static const char*
@@ -813,29 +802,17 @@ _elm_web_history_enabled_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, Eina_Bool e
 EOLIAN static void
 _elm_web_zoom_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, double zoom)
 {
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)obj;
-   (void)_pd;
-   (void)zoom;
-#else
-   (void)obj;
-   (void)_pd;
-   (void)zoom;
-#endif
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   ewk_view_page_zoom_set(wd->resize_obj, zoom);
 }
 
 EOLIAN static double
 _elm_web_zoom_get(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED)
 {
-   double ret;
-   ret = -1.0;
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)_pd;
-#else
-   (void)_pd;
-#endif
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, -1);
 
-   return ret;
+   return ewk_view_page_zoom_get(wd->resize_obj);
 }
 
 EOLIAN static void
