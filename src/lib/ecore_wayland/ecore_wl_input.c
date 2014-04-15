@@ -349,11 +349,14 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 
    wl_array_init(&input->data_types);
 
-   input->data_device = 
-     wl_data_device_manager_get_data_device(ewd->wl.data_device_manager, 
-                                            input->seat);
-   wl_data_device_add_listener(input->data_device, 
-                               &_ecore_wl_data_listener, input);
+   if (ewd->wl.data_device_manager)
+     {
+        input->data_device = 
+          wl_data_device_manager_get_data_device(ewd->wl.data_device_manager, 
+                                                 input->seat);
+        wl_data_device_add_listener(input->data_device, 
+                                    &_ecore_wl_data_listener, input);
+     }
 
    ewd->input = input;
 }
