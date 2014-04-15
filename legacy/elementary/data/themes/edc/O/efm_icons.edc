@@ -1,6 +1,8 @@
-   // EFM icons //
+// EFM icons //
 
-#define EFM_MIME_ICON(_NAME, _IMAGE, _STRING, _SIZE) \
+//Base 1//
+
+#define EFM_MIME_ICON(_NAME, _IMAGE, _ASPMIN, _ASPMAX, _STRING, _SIZE, _VALIGN) \
    group { name: "e/icons/fileman/mime/"_NAME; \
       max: _SIZE _SIZE; \
       images.image: "efm_generic_icon_shadow.png" COMP; \
@@ -37,7 +39,8 @@
                rel1.relative: (28/180) (28/210); \
                rel2.to: "base"; \
                rel2.relative: (152/180) (182/210); \
-               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               align: 0.5 _VALIGN; \
+               aspect: _ASPMIN _ASPMAX; aspect_preference: BOTH; \
                image.normal: _IMAGE; \
             } \
          } \
@@ -64,8 +67,146 @@
          } \
       } \
    }
+//Python//
 
-#define EFM_MIME_ICON_SIMPLE(_NAME, _IMAGE, _SIZE) \
+   EFM_MIME_ICON("application/x-python-bytecode", "efm_generic_icon_content_python.png", (114/115), (114/115), ".PYC", 240, 0.5);
+   EFM_MIME_ICON("application/x-python", "efm_generic_icon_content_python.png", (114/115), (114/115), ".PY", 240, 0.5);
+   
+   //.pyo .pyd??????????????????//
+
+//Audio//
+
+   EFM_MIME_ICON("audio/mpeg", "efm_generic_icon_content_audio.png", (54/154), (54/154), ".MP3", 240, 0.5);
+   EFM_MIME_ICON("audio/x-wav","efm_generic_icon_content_audio.png", (54/154), (54/154), ".WAV", 240, 0.5);
+   EFM_MIME_ICON("audio/x-flac","efm_generic_icon_content_audio.png", (54/154), (54/154), ".FLAC", 240, 0.5);
+   EFM_MIME_ICON("audio/flac","efm_generic_icon_content_audio.png", (54/154), (54/154), ".FLAC", 240, 0.5);
+   EFM_MIME_ICON("audio/x-musepack","efm_generic_icon_content_audio.png", (54/154), (54/154), ".MPC", 240, 0.5);
+   EFM_MIME_ICON("audio/x-vorbis+ogg","efm_generic_icon_content_audio.png",(54/154), (54/154), ".OGG", 240, 0.5);
+   EFM_MIME_ICON("application/x-audacity-project","efm_generic_icon_content_audio.png",(54/154), (54/154), ".AUP", 240, 0.5);
+   EFM_MIME_ICON("audio/x-ms-wma","efm_generic_icon_content_audio.png", (54/154), (54/154),".WMA", 240, 0.5);
+   EFM_MIME_ICON("audio/opus","efm_generic_icon_content_audio.png", (54/154), (54/154),".OPUS", 240, 0.5);
+   EFM_MIME_ICON("audio/ape","efm_generic_icon_content_audio.png", (54/154), (54/154), ".APE", 240, 0.5);
+   EFM_MIME_ICON("audio/webm","efm_generic_icon_content_audio.png", (54/154), (54/154), ".WEBA", 240, 0.5);
+   EFM_MIME_ICON("audio/mp4","efm_generic_icon_content_audio.png", (54/154), (54/154), ".MP4", 240, 0.5);
+   EFM_MIME_ICON("audio/midi","efm_generic_icon_content_audio.png", (54/154), (54/154),".MIDI", 240, 0.5);
+   EFM_MIME_ICON("audio/speex","efm_generic_icon_content_audio.png",(54/154), (54/154), ".SPX", 240, 0.5);
+   EFM_MIME_ICON("audio/aac","efm_generic_icon_content_audio.png", (54/154), (54/154),".AAC", 240, 0.5);
+   EFM_MIME_ICON("audio/vnd.rn-realaudio","efm_generic_icon_content_audio.png", (54/154), (54/154),".RA", 240, 0.5);
+
+//Code//
+
+   EFM_MIME_ICON("text/x-csrc","efm_generic_icon_content_code.png", (114/88), (114/88), ".C", 240, 0.3);
+   EFM_MIME_ICON("text/x-chdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".H", 240, 0.3);
+   EFM_MIME_ICON("text/x-c++src","efm_generic_icon_content_code.png", (114/88), (114/88), ".C++", 240, 0.3);
+   EFM_MIME_ICON("text/x-csharp","efm_generic_icon_content_code.png", (114/88), (114/88), ".C#", 240, 0.3);
+   EFM_MIME_ICON("application/x-awk","efm_generic_icon_content_code.png", (114/88), (114/88), ".AWK", 240, 0.3);
+   
+   //add moreeeeeee//
+
+//Text//   
+
+   EFM_MIME_ICON("text/x-patch","efm_generic_icon_content_text.png", (114/126), (114/126), ".PATCH", 240, 0.5);
+   EFM_MIME_ICON("text/plain","efm_generic_icon_content_text.png", (114/126), (114/126), ".TXT", 240, 0.5);
+   EFM_MIME_ICON("text/x-log","efm_generic_icon_content_text.png",  (114/126), (114/126), ".LOG", 240, 0.5);
+
+//Web//
+
+   EFM_MIME_ICON("text/css","efm_generic_icon_content_web.png", (114/68), (114/68), ".CSS", 240, 0.3);
+   EFM_MIME_ICON("text/html","efm_generic_icon_content_web.png", (114/68), (114/68), ".HTML", 240, 0.3);
+
+//Enlightenment//
+   
+   EFM_MIME_ICON("application/edje","efm_generic_icon_content_logo.png", (114/154), (114/154), ".EDJ", 240, 0.5);
+   EFM_MIME_ICON("text/edje","efm_generic_icon_content_logo.png", (114/154), (114/154), ".EDC", 240, 0.5);
+
+//Document//
+
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.text","efm_generic_icon_content_doc.png", (114/154), (114/154), ".ODT", 240, 0.5);
+   EFM_MIME_ICON("application/x-msword","efm_generic_icon_content_doc.png", (114/154), (114/154), ".DOC", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.document","efm_generic_icon_content_doc.png", (114/154), (114/154), ".DOCX", 240, 0.5);
+   EFM_MIME_ICON("application/x-abiword","efm_generic_icon_content_doc.png", (114/154), (114/154), ".ABW", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.scribus","efm_generic_icon_content_doc.png", (114/154), (114/154), ".SLA", 240, 0.5);
+   EFM_MIME_ICON("application/x-lyx","efm_generic_icon_content_doc.png", (114/154), (114/154), ".LYX", 240, 0.5);
+
+//Spreadsheet//
+
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.spreadsheet","efm_generic_icon_content_spread.png", (114/80), (114/80), ".ODS", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.ms-excel","efm_generic_icon_content_spread.png", (114/80), (114/80), ".XLS", 240, 0.5);
+
+//Presentation//
+
+   EFM_MIME_ICON("application/vnd.ms-powerpoint","efm_generic_icon_content_pres.png", (114/95), (114/95), ".PPT", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.presentation","efm_generic_icon_content_pres.png", (114/95), (114/95), ".ODP", 240, 0.5);
+
+//Drawing//
+
+   EFM_MIME_ICON("application/x-vnd.oasis.opendocument.graphics","efm_generic_icon_content_draw.png", (114/96), (114/96), ".ODG", 240, 0.5);
+
+//Data Base//
+
+   EFM_MIME_ICON("application/vnd.ms-binder","efm_generic_icon_content_db.png", (114/128), (114/128), ".ODB", 240, 0.5);
+
+//Formula//
+
+   EFM_MIME_ICON("application/x-vnd.oasis.opendocument.formula","efm_generic_icon_content_formula.png", (114/85), (114/85), ".ODF", 240, 0.5);
+
+//Template//
+
+   EFM_MIME_ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.template","efm_generic_icon_content_template.png", (114/130), (114/130), ".DOTX", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.openxmlformats-officedocument.spreadsheetml.template","efm_generic_icon_content_template.png", (114/130), (114/130),".XLTX", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.openxmlformats-officedocument.presentationml.template","efm_generic_icon_content_template.png", (114/130), (114/130),".POTX", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.chart-template","efm_generic_icon_content_template.png", (114/130), (114/130),".OTC", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.formula-template","efm_generic_icon_content_template.png", (114/130), (114/130), ".OTF", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.graphics-template","efm_generic_icon_content_template.png", (114/130), (114/130), ".OTG", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.image-template","efm_generic_icon_content_template.png", (114/130), (114/130), ".OTI", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.presentation-template","efm_generic_icon_content_template.png", (114/130), (114/130), ".OTP", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.spreadsheet-template","efm_generic_icon_content_template.png", (114/130), (114/130), ".ODS", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.oasis.opendocument.text-template","efm_generic_icon_content_template.png",  (114/130), (114/130), ".OTT", 240, 0.5);
+
+//Video (fallback)//
+
+   EFM_MIME_ICON("video/mpeg","efm_generic_icon_content_video.png", (114/83), (114/83), ".MPEG", 240, 0.5);
+   EFM_MIME_ICON("application/ogg","efm_generic_icon_content_video.png",(114/83), (114/83), ".OGG", 240, 0.5);
+   EFM_MIME_ICON("video/x-theora+ogg","efm_generic_icon_content_video.png",(114/83), (114/83), ".OGG", 240, 0.5);
+   EFM_MIME_ICON("video/x-msvideo","efm_generic_icon_content_video.png", (114/83), (114/83), ".AVI", 240, 0.5);
+   EFM_MIME_ICON("video/ogg","efm_generic_icon_content_video.png",(114/83), (114/83), ".OGG", 240, 0.5);
+   EFM_MIME_ICON("video/mp4","efm_generic_icon_content_video.png",(114/83), (114/83), ".MP4", 240, 0.5);
+   EFM_MIME_ICON("video/quicktime","efm_generic_icon_content_video.png",(114/83), (114/83), ".MOV", 240, 0.5);
+   EFM_MIME_ICON("video/x-matroska","efm_generic_icon_content_video.png",(114/83), (114/83), ".MKV", 240, 0.5);
+   EFM_MIME_ICON("video/x-flv","efm_generic_icon_content_video.png", (114/83), (114/83), ".FLV", 240, 0.5);
+   EFM_MIME_ICON("application/vnd.rn-realmedia","efm_generic_icon_content_video.png",(114/83), (114/83), ".REAL", 240, 0.5);
+   EFM_MIME_ICON("video/x-ms-wmv","efm_generic_icon_content_video.png",(114/83), (114/83), ".WMV", 240, 0.5);
+   EFM_MIME_ICON("video/webm","efm_generic_icon_content_video.png",(114/83), (114/83), ".WEBM", 240, 0.5);
+
+
+//Image (fallback)//
+
+   EFM_MIME_ICON("image/png","efm_generic_icon_content_image.png", (114/128), (114/128), ".PNG", 240, 0.5);
+   EFM_MIME_ICON("image/jpeg","efm_generic_icon_content_image.png", (114/128), (114/128),".JPEG", 240, 0.5);
+   EFM_MIME_ICON("image/gif","efm_generic_icon_content_image.png", (114/128), (114/128),".GIF", 240, 0.5);
+   EFM_MIME_ICON("image/bmp","efm_generic_icon_content_image.png", (114/128), (114/128),".BMP", 240, 0.5);
+   EFM_MIME_ICON("application/x-xcf","efm_generic_icon_content_image.png", (114/128), (114/128),".XCF", 240, 0.5);
+   EFM_MIME_ICON("application/x-cbz","efm_generic_icon_content_image.png", (114/128), (114/128),".CBZ", 240, 0.5);
+   EFM_MIME_ICON("application/x-cbr","efm_generic_icon_content_image.png",(114/128), (114/128), ".CBR", 240, 0.5);
+   EFM_MIME_ICON("image/webp","efm_generic_icon_content_image.png", (114/128), (114/128),".WEBP", 240, 0.5);
+
+//Font//
+   
+   EFM_MIME_ICON("application/x-font-ttf","efm_generic_icon_content_image.png", (114/93), (114/93), ".TTF", 240, 0.5);
+   EFM_MIME_ICON("application/x-font-pcf","efm_generic_icon_content_image.png", (114/93), (114/93), ".PCF", 240, 0.5);
+   EFM_MIME_ICON("application/x-font-bdf","efm_generic_icon_content_image.png", (114/93), (114/93), ".BDF", 240, 0.5);
+
+//PS (fallback)//
+   
+   EFM_MIME_ICON("application/postscript","efm_generic_icon_content_ps.png", (114/104), (114/104), ".PS", 240, 0.5);
+
+//PDF (fallback)//
+
+   EFM_MIME_ICON("application/pdf","efm_generic_icon_content_pdf.png", (114/101), (114/101), ".PDF", 240, 0.5);
+
+
+//Base 2//
+#define EFM_MIME_ICON_SIMPLE(_NAME, _IMAGE, _ASPMIN, _ASPMAX, _SIZE, _VALIGN) \
    group { name: "e/icons/fileman/mime/"_NAME; \
       max: _SIZE _SIZE; \
       images.image: "efm_generic_icon_shadow_empty.png" COMP; \
@@ -102,7 +243,8 @@
                rel1.relative: (28/180) (28/210); \
                rel2.to: "base"; \
                rel2.relative: (152/180) (182/210); \
-               aspect: 1.0 1.0; aspect_preference: BOTH; \
+               align: 0.5 _VALIGN; \
+               aspect: _ASPMIN _ASPMAX; aspect_preference: BOTH; \
                image.normal: _IMAGE; \
             } \
          } \
@@ -116,64 +258,25 @@
       } \
    }
 
-   EFM_MIME_ICON("audio/mpeg", "efm_generic_icon_content_audio.png", "MP3", 240);
-   EFM_MIME_ICON("audio/x-wav","efm_generic_icon_content_audio.png", "WAV", 240);
-   EFM_MIME_ICON("audio/x-flac","efm_generic_icon_content_audio.png", "FLAC", 240);
-   EFM_MIME_ICON("audio/x-musepack","efm_generic_icon_content_audio.png", "MPC", 240);
-   EFM_MIME_ICON("audio/x-vorbis+ogg","efm_generic_icon_content_audio.png", "OGG", 240);
-   EFM_MIME_ICON("application/x-audacity-project","efm_generic_icon_content_audio.png", "AUP", 240);
-   EFM_MIME_ICON("audio/x-ms-wma","efm_generic_icon_content_audio.png", "WMA", 240);
+//Script//
+   
+   EFM_MIME_ICON_SIMPLE("application/x-shellscript","efm_generic_icon_content_script.png", (114/126), (114/126), 240, 0.5);
 
-   EFM_MIME_ICON("text/css", "efm_generic_icon_content_web.png", "CSS", 240);
-   EFM_MIME_ICON("text/html", "efm_generic_icon_content_web.png", "HTML", 240);
+//Executable//
 
-   EFM_MIME_ICON("text/x-csrc", "efm_generic_icon_content_code.png", "C", 240);
-   EFM_MIME_ICON("text/x-chdr", "efm_generic_icon_content_code.png", "H", 240);
-   EFM_MIME_ICON("text/x-c++src", "efm_generic_icon_content_code.png", "C++", 240);
-   EFM_MIME_ICON("text/x-csharp", "efm_generic_icon_content_code.png", "C#", 240);
-   EFM_MIME_ICON("text/x-patch", "efm_generic_icon_content_code.png", "DIFF", 240);
+   EFM_MIME_ICON_SIMPLE("application/x-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
+   EFM_MIME_ICON_SIMPLE("application/x-ms-dos-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
 
-   EFM_MIME_ICON("text/plain", "efm_generic_icon_content_text.png", "TXT", 240);
-   EFM_MIME_ICON("application/x-awk", "efm_generic_icon_content_text.png", "AWK", 240);
-   EFM_MIME_ICON("application/x-lyx", "efm_generic_icon_content_text.png", "LYX", 240);
+//Unknown//
+   
+   EFM_MIME_ICON_SIMPLE("application/x-object","efm_generic_icon_content_unknown.png", (100/154), (100/154), 240, 0.5);
 
-   EFM_MIME_ICON("text/x-python", "efm_generic_icon_content_python.png", "PY", 240);
-
-   EFM_MIME_ICON_SIMPLE("application/octet-stream", "efm_generic_icon_content_unknown.png", 240);
-
-   EFM_MIME_ICON_SIMPLE("application/x-executable", "efm_generic_icon_content_executable.png", 240);
-   EFM_MIME_ICON_SIMPLE("application/x-ms-dos-executable", "efm_generic_icon_content_executable.png", 240);
-
-   EFM_MIME_ICON("application/x-msword", "efm_generic_icon_content_lo.png", "DOC", 240);
-   EFM_MIME_ICON("application/vnd.ms-powerpoint", "efm_generic_icon_content_lo.png", "PPT", 240);
-   EFM_MIME_ICON("application/vnd.ms-excel", "efm_generic_icon_content_lo.png", "XLS", 240);
-   EFM_MIME_ICON("application/x-abiword", "efm_generic_icon_content_lo.png", "ABW", 240);
-   EFM_MIME_ICON("application/vnd.scribus", "efm_generic_icon_content_lo.png", "SLA", 240);
-   EFM_MIME_ICON("application/vnd.oasis.opendocument.spreadsheet", "efm_generic_icon_content_lo.png", "ODS", 240);
-   EFM_MIME_ICON("application/vnd.oasis.opendocument.text", "efm_generic_icon_content_lo.png", "ODT", 240);
-   EFM_MIME_ICON("application/vnd.oasis.opendocument.presentation", "efm_generic_icon_content_lo.png", "ODP", 240);
-
-   EFM_MIME_ICON_SIMPLE("application/x-shellscript", "efm_generic_icon_content_script.png", 240);
-
-   EFM_MIME_ICON("application/x-object", "efm_generic_icon_content_logo.png", "O", 240);
+//Octet-Stream//
+   
+   EFM_MIME_ICON_SIMPLE("application/octet-stream","efm_generic_icon_content_text.png",(114/126), (114/126), 240, 0.5);
 
 #undefine EFM_MIME_ICON
 #undefine EFM_MIME_ICON_SIMPLE
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////
-// below - old icons. replace with new proper looking ones. as the above
-// replace the old from below, comment them out so we know
-//////////////////////
 
    /* #define EFMICON(NAME, FILE, SIZE)                    \
     * group { name: "e/icons/fileman/"NAME;                \
@@ -224,7 +327,7 @@
       }                                               \
    }
 
-   MIMEICON("application/pdf","icon_mime_pdf.png", 128);
+
    MIMEICON("application/x-deb","icon_mime_deb.png", 128);
    MIMEICON("application/x-bzip","icon_mime_package.png", 128);
    MIMEICON("application/zip","icon_mime_package.png", 128);
@@ -240,97 +343,7 @@
    MIMEICON("inode/socket","icon_efm_file.png", 128);
    MIMEICON("inode/directory","icon_efm_folder.png", 128);
    MIMEICON("inode/file","icon_efm_file.png", 128);
-//   MIMEICON("application/octet-stream","icon_efm_file.png", 128);
-//   MIMEICON("application/x-executable","icon_mime_executable_generic.png", 128);
-//   MIMEICON("application/x-ms-dos-executable","icon_mime_executable_generic.png", 128);
+
    MIMEICON("application/x-7z-compressed","icon_mime_package.png", 128);
    MIMEICON("application/vnd.ms-cab-compressed","icon_mime_package.png", 128);
-   
-   // Dynamic MIME Icons //
-   #define MIMEBASE(MIME, FILE, NAME, SIZE)           \
-   group {                                            \
-      name: "e/icons/fileman/mime/"MIME;              \
-      max: SIZE SIZE;                                \
-      parts {                                         \
-         part {                                       \
-            name: "base";                             \
-            mouse_events: 0;                          \
-            description {                             \
-               state: "default" 0.0;                  \
-               aspect: 1.0 1.0;                       \
-               aspect_preference: BOTH;               \
-               image.image: "O/"FILE COMP;                \
-               image.normal: "O/"FILE;                    \
-            }                                         \
-         }                                            \
-         part {                                       \
-            name: "name";                             \
-            type: TEXT;                               \
-            mouse_events: 0;                          \
-            description {                             \
-               state: "default" 0.0;                  \
-               rel1.relative: 0.2444 0.6797;          \
-               rel2.relative: 0.7478 0.8894;          \
-               color: 245 245 245 255;                \
-               text {                                 \
-                  text: NAME;                       \
-                  font: FNBD;          \
-                  size: 4;                          \
-                  fit: 1 1;                         \
-                  min: 1 1;                         \
-                  align: 0.5 0.0;                   \
-               }                                      \
-            }                                         \
-         }                                            \
-      }                                               \
-   }
 
-   MIMEBASE("video/mpeg","icon_mime_video_generic.png", ".MPEG", 128);
-   MIMEBASE("application/ogg","icon_mime_video_generic.png", ".OGG", 128);
-   MIMEBASE("video/x-theora+ogg","icon_mime_video_generic.png", ".OGG", 128);
-   MIMEBASE("video/x-msvideo","icon_mime_video_generic.png", ".AVI", 128);
-   MIMEBASE("video/ogg","icon_mime_video_generic.png", ".OGG", 128);
-   MIMEBASE("video/mp4","icon_mime_video_generic.png", ".MP4", 128);
-   MIMEBASE("video/quicktime","icon_mime_video_generic.png", ".MOV", 128);
-   MIMEBASE("video/x-matroska","icon_mime_video_generic.png", ".MKV", 128);
-   MIMEBASE("video/x-flv","icon_mime_video_generic.png", ".FLV", 128);
-   MIMEBASE("application/vnd.rn-realmedia","icon_mime_video_generic.png", ".REAL", 128);
-   MIMEBASE("video/x-ms-wmv","icon_mime_video_generic.png", ".WMV", 128);
-   MIMEBASE("image/png","icon_mime_image_generic.png", ".PNG", 128);
-   MIMEBASE("image/jpeg","icon_mime_image_generic.png", ".JPEG", 128);
-   MIMEBASE("image/gif","icon_mime_image_generic.png", ".GIF", 128);
-   MIMEBASE("image/bmp","icon_mime_image_generic.png", ".BMP", 128);
-   MIMEBASE("application/x-xcf","icon_mime_image_generic.png", ".XCF", 128);
-   MIMEBASE("application/x-cbz","icon_mime_image_generic.png", ".CBZ", 128);
-   MIMEBASE("application/x-cbr","icon_mime_image_generic.png", ".CBR", 128);
-//   MIMEBASE("audio/mpeg","icon_mime_audio_generic.png", ".MP3", 128);
-//   MIMEBASE("audio/x-wav","icon_mime_audio_generic.png", ".WAV", 128);
-//   MIMEBASE("audio/x-flac","icon_mime_audio_generic.png", ".FLAC", 128);
-//   MIMEBASE("audio/x-musepack","icon_mime_audio_generic.png", ".MPC", 128);
-//   MIMEBASE("audio/x-vorbis+ogg","icon_mime_audio_generic.png", ".OGG", 128);
-//   MIMEBASE("application/x-audacity-project","icon_mime_audio_generic.png", ".AUP", 128);
-//   MIMEBASE("audio/x-ms-wma","icon_mime_audio_generic.png", ".WMA", 128);
-//   MIMEBASE("text/css","icon_mime_text_generic.png", ".CSS", 128);
-//   MIMEBASE("text/html","icon_mime_text_generic.png", ".HTML", 128);
-//   MIMEBASE("text/x-csrc","icon_mime_text_generic.png", ".C", 128);
-//   MIMEBASE("text/x-chdr","icon_mime_text_generic.png", ".H", 128);
-//   MIMEBASE("text/x-c++src","icon_mime_text_generic.png", ".C++", 128);
-//   MIMEBASE("text/x-csharp","icon_mime_text_generic.png", ".C#", 128);
-//   MIMEBASE("text/x-patch","icon_mime_text_generic.png", ".PATCH", 128);
-//   MIMEBASE("text/plain","icon_mime_text_generic.png", ".TXT", 128);
-//   MIMEBASE("application/x-msword","icon_mime_text_generic.png", ".DOC", 128);
-//   MIMEBASE("application/vnd.ms-powerpoint","icon_mime_text_generic.png", ".PPT", 128);
-//   MIMEBASE("application/vnd.ms-excel","icon_mime_text_generic.png", ".XLS", 128);
-//   MIMEBASE("application/x-abiword","icon_mime_text_generic.png", ".ABW", 128);
-//   MIMEBASE("application/vnd.scribus","icon_mime_text_generic.png", ".SLA", 128);
-//   MIMEBASE("text/x-python","icon_mime_text_generic.png", ".PY", 128);
-//   MIMEBASE("application/x-awk","icon_mime_text_generic.png", ".AWK", 128);
-//   MIMEBASE("application/x-lyx","icon_mime_text_generic.png", ".LYX", 128);
-//   MIMEBASE("application/vnd.oasis.opendocument.spreadsheet","icon_mime_text_generic.png", ".ODS", 128);
-//   MIMEBASE("application/vnd.oasis.opendocument.text","icon_mime_text_generic.png", ".ODT", 128);
-//   MIMEBASE("application/vnd.oasis.opendocument.presentation","icon_mime_text_generic.png", ".ODP", 128);
-//   MIMEBASE("application/x-object","icon_efm_file.png", "", 128);
-//   MIMEBASE("application/x-shellscript","icon_applications.png", "", 128);
-   MIMEBASE("application/x-font-ttf","icon_mime_font_generic.png", ".TTF", 128);
-   MIMEBASE("application/x-font-pcf","icon_mime_font_generic.png", ".PCF", 128);
-   MIMEBASE("application/x-font-bdf","icon_mime_font_generic.png", ".BDF", 128);
