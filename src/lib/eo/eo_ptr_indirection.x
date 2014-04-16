@@ -266,6 +266,13 @@ _eo_obj_pointer_get(const Eo_Id obj_id)
    Generation_Counter generation;
    Table_Index mid_table_id, table_id, entry_id;
 
+   // NULL objects will just be sensibly ignored. not worth complaining
+   // every single time.
+   if (!obj_id)
+     {
+        DBG("obj_id is NULL. Possibly unintended access?");
+        return NULL;
+     }
    EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
 
    /* Check the validity of the entry */
