@@ -3275,33 +3275,6 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
           }
 
      }
-   /* if it changed geometry - and obviously not visibility or color */
-   /* calculate differences since we have a constant color fill */
-   /* we really only need to update the differences */
-#if 0 // XXX: maybe buggy?
-   if (((obj->cur->geometry.x != obj->prev->geometry.x) ||
-	(obj->cur->geometry.y != obj->prev->geometry.y) ||
-	(obj->cur->geometry.w != obj->prev->geometry.w) ||
-	(obj->cur->geometry.h != obj->prev->geometry.h)) &&
-       (o->cur->fill.w == o->prev->fill.w) &&
-       (o->cur->fill.h == o->prev->fill.h) &&
-       ((o->cur->fill.x + obj->cur->geometry.x) == (o->prev->fill.x + obj->prev->geometry.x)) &&
-       ((o->cur->fill.y + obj->cur->geometry.y) == (o->prev->fill.y + obj->prev->geometry.y)) &&
-       (!o->pixels->pixel_updates)
-       )
-     {
-	evas_rects_return_difference_rects(&e->clip_changes,
-					   obj->cur->geometry.x,
-					   obj->cur->geometry.y,
-					   obj->cur->geometry.w,
-					   obj->cur->geometry.h,
-					   obj->prev->geometry.x,
-					   obj->prev->geometry.y,
-					   obj->prev->geometry.w,
-					   obj->prev->geometry.h);
-	if (!o->pixels->pixel_updates) goto done;
-     }
-#endif
    if (((obj->cur->geometry.x != obj->prev->geometry.x) ||
         (obj->cur->geometry.y != obj->prev->geometry.y) ||
         (obj->cur->geometry.w != obj->prev->geometry.w) ||
