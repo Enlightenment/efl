@@ -166,13 +166,15 @@ _edje_evas_smart_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x, Evas_Coord y)
         ep = ed->table_parts[i];
         if ((ep->type == EDJE_RP_TYPE_TEXT) && (ep->typedata.text))
           {
-             evas_object_move(ep->object,
-                              ed->x + ep->x + ep->typedata.text->offset.x,
-                              ed->y + ep->y + ep->typedata.text->offset.y);
+             if (ep->object)
+               evas_object_move(ep->object,
+                                ed->x + ep->x + ep->typedata.text->offset.x,
+                                ed->y + ep->y + ep->typedata.text->offset.y);
           }
         else
           {
-             evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
+             if (ep->object)
+               evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
              if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
                  (ep->typedata.swallow))
                {
