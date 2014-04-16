@@ -25,9 +25,10 @@ local Node = util.Object:clone {
     end,
 
     gen_children = function(self, s)
+        local len = #self.children
         for i, v in ipairs(self.children) do
             v.parent_node = self
-            v:generate(s)
+            v:generate(s, i == len)
         end
     end
 }
@@ -43,19 +44,20 @@ local Property = Node:clone {
         self.property = prop
     end,
 
-    generate = function(self, s)
+    generate = function(self, s, last)
         local prop   = self.property
         local par    = self.parent_node
         local name   = prop:name_get()
         local isget  = prop:type_get() == eolian.function_type.PROP_GET
         local suffix = isget and "_get" or "_set"
         local ret    = isget and "return " or ""
+        local comma  = last  and "" or ","
         s:write(([[
     %s%s = function(self)
-        %slibname.%s_%s%s()
-    end
+        %s__lib.%s_%s%s()
+    end%s
 
-]]):format(name, suffix, ret, par.prefix, name, suffix))
+]]):format(name, suffix, ret, par.prefix, name, suffix, comma))
     end
 }
 
@@ -112,9 +114,10 @@ M.%s = Parent:clone {
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, cname, ch)
-        self.fname = fname
-        self.cname = cname
+    __ctor = function(self, fname, cname, libname, ch)
+        self.fname    = fname:match(".+/(.+)") or fname
+        self.cname    = cname
+        self.libname  = libname
         self.children = ch
     end,
 
@@ -125,11 +128,25 @@ local File = Node:clone {
 -- EFL LuaJIT bindings: %s (class %s)
 -- For use with Elua; automatically generated, do not modify
 
-local eo = require("eo")
+local cutil = require("cutil")
+local util  = require("util")
+local eo    = require("eo")
 
-local M = {}
+local M     = {}
 
-]]):format(self.fname, self.cname))
+local __lib
+
+local init = function()
+    __lib = util.lib_load("%s")
+end
+
+local shutdown = function()
+    util.lib_unload("%s")
+end
+
+cutil.init_module(init, shutdown)
+
+]]):format(self.fname, self.cname, self.libname, self.libname))
 
         self:gen_children(s)
 
@@ -188,12 +205,12 @@ M.generate = function(files, include_files, fstream)
         end
     end
     for i, file in ipairs(files) do
-        if not eolian.eo_file_parse(file) then
-            error("Failed parsing file: " .. file)
+        if not eolian.eo_file_parse(file[1]) then
+            error("Failed parsing file: " .. file[1])
         end
     end
     for i, file in ipairs(files) do
-        local fname = files[i]
+        local fname = file[1]
         local classn = eolian.class_find_by_file(fname)
         local tp = eolian.class_type_get(classn)
         local ct = eolian.class_type
@@ -205,7 +222,7 @@ M.generate = function(files, include_files, fstream)
         else
             error(classn .. ": unknown type")
         end
-        File(fname, classn, { cl }):generate(fstream)
+        File(fname, classn, file[2], { cl }):generate(fstream)
     end
 end
 
