@@ -242,16 +242,29 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj,
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
- /*
    if (evas_object_is_visible(eo_obj) &&
        evas_object_is_opaque(eo_obj) &&
        (!obj->clip.clipees))
-     obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
-							    obj->cur->cache.clip.x,
-							    obj->cur->cache.clip.y,
-							    obj->cur->cache.clip.w,
-							    obj->cur->cache.clip.h);
-  */
+     {
+        Evas_Coord x, y, w, h;
+        
+        x = obj->cur->cache.clip.x;
+        y = obj->cur->cache.clip.y;
+        w = obj->cur->cache.clip.w;
+        h = obj->cur->cache.clip.h;
+        if (obj->cur->clipper)
+          {
+             RECTS_CLIP_TO_RECT(x, y, w, h,
+                                obj->cur->clipper->cur->cache.clip.x,
+                                obj->cur->clipper->cur->cache.clip.y,
+                                obj->cur->clipper->cur->cache.clip.w,
+                                obj->cur->clipper->cur->cache.clip.h);
+          }
+        e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                x + e->framespace.x,
+                                                y + e->framespace.y,
+                                                w, h);
+     }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
 }
