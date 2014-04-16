@@ -264,7 +264,9 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                   state_write->have_clipees = 0;
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
-             
+/* i know this was to handle a case where a clip stops having children and
+ * becomes a solid colored box - no one ever does that... they hide the clip
+ * so dont add damages
              if ((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible))
                {
                   if (obj->cur->clipper->layer)
@@ -277,6 +279,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                                                  obj->cur->clipper->cur->geometry.h);
                     }
                }
+ */
           }
         evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
         evas_object_change(eo_obj, obj);
@@ -294,10 +297,14 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
         clip->changed = 1;
         e = clip->layer->evas;
         e->changed = 1;
+/* i know this was to handle a case where a clip starts having children and
+ * stops being a solid colored box - no one ever does that... they hide the clp
+ * so dont add damages
         evas_damage_rectangle_add(e->evas,
                                   clip->cur->geometry.x + e->framespace.x,
                                   clip->cur->geometry.y + e->framespace.y,
                                   clip->cur->geometry.w, clip->cur->geometry.h);
+ */
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
@@ -376,7 +383,9 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                   state_write->have_clipees = 0;
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
-
+/* i know this was to handle a case where a clip stops having children and
+ * becomes a solid colored box - no one ever does that... they hide the clip
+ * so dont add damages
              if ((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible))
                {
                   if (obj->cur->clipper->layer)
@@ -389,6 +398,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                                                  obj->cur->clipper->cur->geometry.h);
                     }
                }
+ */
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
      }
