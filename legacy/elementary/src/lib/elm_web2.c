@@ -76,6 +76,137 @@ _view_smart_window_close(Ewk_View_Smart_Data *sd)
 }
 
 static void
+_popup_item_selected(void *data,
+                     Evas_Object *obj,
+                     void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
+   const Eina_List *itr, *list = elm_list_items_get(obj);
+   Ewk_Popup_Menu *menu = data;
+   int i = 0;
+   void *d;
+
+   EINA_LIST_FOREACH(list, itr, d)
+     {
+        if (d == list_it)
+          break;
+
+        i++;
+     }
+
+   ewk_popup_menu_selected_index_set(menu, i);
+   ewk_popup_menu_close(menu);
+
+   evas_object_del(evas_object_data_get(obj, "_notify"));
+}
+
+static void
+_popup_dismiss_cb(void *data,
+                  Evas_Object *obj,
+                  void *event_info EINA_UNUSED)
+{
+   ewk_popup_menu_close(data);
+   evas_object_del(obj);
+}
+
+static Eina_Bool
+_view_smart_popup_menu_show(Ewk_View_Smart_Data *sd,
+                            Eina_Rectangle r,
+                            Ewk_Text_Direction dir EINA_UNUSED,
+                            double scale EINA_UNUSED,
+                            Ewk_Popup_Menu *menu)
+{
+   Evas_Object *notify, *list, *grid, *win;
+   const Eina_List* items = ewk_popup_menu_items_get(menu);
+   Evas_Object *obj = evas_object_smart_parent_get(sd->self);
+   int h, ww, wh;
+
+   Elm_Object_Item *lit;
+   Eina_Bool disabled;
+   const char *txt;
+   Ewk_Popup_Menu_Item *it;
+   const Eina_List *itr;
+
+   Evas_Object *popup = evas_object_data_get(sd->self, "_select_popup");
+   if (popup) evas_object_del(popup);
+
+   win = elm_widget_top_get(obj);
+
+   notify = elm_notify_add(win);
+   elm_notify_allow_events_set(notify, EINA_FALSE);
+   elm_notify_align_set(notify, 0.5, 1.0);
+
+   list = elm_list_add(notify);
+   evas_object_data_set(list, "_notify", notify);
+   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_scroller_bounce_set(list, EINA_FALSE, EINA_FALSE);
+   elm_list_mode_set(list, ELM_LIST_EXPAND);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(list);
+
+   EINA_LIST_FOREACH(items, itr, it)
+     {
+        switch (ewk_popup_menu_item_type_get(it))
+          {
+           case EWK_POPUP_MENU_SEPARATOR:
+             // TODO:
+             break;
+           case EWK_POPUP_MENU_ITEM:
+             txt = ewk_popup_menu_item_text_get(it);
+             if (ewk_popup_menu_item_is_label_get(it))
+               {
+                  lit = elm_list_item_append(list, txt, NULL, NULL, NULL, NULL);
+                  disabled = EINA_TRUE;
+               }
+             else
+               {
+                  lit = elm_list_item_append(list, txt, NULL, NULL, _popup_item_selected, menu);
+                  disabled = !ewk_popup_menu_item_enabled_get(it);
+               }
+
+             elm_object_item_disabled_set(lit, disabled);
+             break;
+           default:
+             break;
+          }
+     }
+   elm_list_go(list);
+
+   grid = elm_grid_add(win);
+   elm_grid_size_set(grid, 1, 1);
+   elm_grid_pack(grid, list, 0, 0, 1, 1);
+   evas_object_geometry_get(win, NULL, NULL, &ww, &wh);
+
+   //FIXME: it should be the real height of items in the list.
+   h = r.h * eina_list_count(items);
+   evas_object_size_hint_min_set(grid, ww, h < wh / 2 ? h : wh / 2);
+   elm_object_content_set(notify, grid);
+   evas_object_show(grid);
+
+   evas_object_show(notify);
+
+   evas_object_data_set(sd->self, "_select_popup", notify);
+
+   evas_object_smart_callback_add
+     (notify, "block,clicked", _popup_dismiss_cb, menu);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_view_smart_popup_menu_hide(Ewk_View_Smart_Data *sd)
+{
+   Evas_Object *popup = evas_object_data_get(sd->self, "_select_popup");
+   if (!popup) return EINA_FALSE;
+
+   evas_object_del(popup);
+   evas_object_data_del(sd->self, "_select_popup");
+
+   return EINA_TRUE;
+}
+
+static void
 _fullscreen_accept(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Evas_Object *ewk = data;
@@ -173,6 +304,8 @@ _view_add(Evas_Object *parent)
         api.sc.del = _view_smart_del;
         api.window_create = _view_smart_window_create;
         api.window_close = _view_smart_window_close;
+        api.popup_menu_show = _view_smart_popup_menu_show;
+        api.popup_menu_hide = _view_smart_popup_menu_hide;
         api.fullscreen_enter = _view_smart_fullscreen_enter;
         api.fullscreen_exit = _view_smart_fullscreen_exit;
 
