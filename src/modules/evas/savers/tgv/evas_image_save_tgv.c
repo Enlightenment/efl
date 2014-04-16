@@ -42,8 +42,10 @@ evas_image_save_file_tgv(RGBA_Image *im,
    width = htonl(im->cache_entry.w);
    height = htonl(im->cache_entry.h);
 
-   param.m_dithering = 1;
-   if (quality > 70)
+   // Disable dithering, as it will deteriorate the quality of flat surfaces
+   param.m_dithering = 0;
+
+   if (quality > 95)
      {
         param.m_quality = rg_etc1_high_quality;
         block = 7;
