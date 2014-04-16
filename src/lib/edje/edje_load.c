@@ -1224,7 +1224,7 @@ _edje_object_collect(Edje *ed)
                    break;
                 }
            case EDJE_USER_SWALLOW:
-              edje_object_part_unswallow(ed->obj, eud->u.swallow.child);
+              edje_object_part_unswallow(NULL, eud->u.swallow.child);
               break;
            case EDJE_USER_DRAG_STEP:
            case EDJE_USER_DRAG_PAGE:
