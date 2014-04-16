@@ -428,7 +428,7 @@ _flip_down(Elm_Flipselector_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_flipselector_elm_widget_event(Eo *obj, Elm_Flipselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_flipselector_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Eina_Bool is_up = EINA_TRUE;
 
