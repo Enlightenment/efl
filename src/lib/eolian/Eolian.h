@@ -44,6 +44,12 @@ extern "C" {
  */
 typedef struct _Function_Id* Eolian_Function;
 
+/* Parameter/return type.
+ *
+ * @ingroup Eolian
+ */
+typedef Eina_Inlist* Eolian_Type;
+
 /* Class function parameter information
  *
  * @ingroup Eolian
@@ -403,7 +409,21 @@ EAPI const Eina_List *eolian_parameters_list_get(Eolian_Function function_id);
  *
  * @ingroup Eolian
  */
-EAPI void eolian_parameter_information_get(Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
+EAPI void eolian_parameter_information_get(const Eolian_Function_Parameter param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
+
+/*
+ * @brief Get information on given type.
+ *
+ * An Eolian type is an inlist of basic C types. For example:
+ * Eina_List * <Eo *> contains two basic types.
+ * The first Eolian type of the list stores Eina_List *, the next one Eo *.
+ *
+ * @param[in] etype Eolian type
+ * @param[out] type C type
+ * @param[out] own indicates if the ownership has to pass to the caller/callee.
+ * @return the next type of the list.
+ */
+EAPI Eolian_Type eolian_type_information_get(Eolian_Type etype, const char **type, Eina_Bool *own);
 
 /*
  * @brief Get type of a parameter
@@ -414,6 +434,16 @@ EAPI void eolian_parameter_information_get(Eolian_Function_Parameter param_desc,
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_parameter_type_get(const Eolian_Function_Parameter param);
+
+/*
+ * @brief Get a list of all the types of a parameter
+ *
+ * @param[in] param_desc parameter handle
+ * @return the types of the parameter
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type eolian_parameter_types_list_get(const Eolian_Function_Parameter param);
 
 /*
  * @brief Get name of a parameter
@@ -450,16 +480,6 @@ EAPI Eina_Bool eolian_parameter_const_attribute_get(Eolian_Function_Parameter pa
 EAPI Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter param_desc);
 
 /*
- * @brief Indicates if the ownership of tha parameter passes to the caller/callee..
- *
- * @param[in] param_desc parameter handle
- * @return EINA_TRUE if cannot be NULL, EINA_FALSE otherwise
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_parameter_is_own(Eolian_Function_Parameter param_desc);
-
-/*
  * @brief Get the return type of a function.
  *
  * @param[in] function_id id of the function
@@ -472,6 +492,18 @@ EAPI Eina_Bool eolian_parameter_is_own(Eolian_Function_Parameter param_desc);
  * @ingroup Eolian
  */
 EAPI const char *eolian_function_return_type_get(Eolian_Function function_id, Eolian_Function_Type ftype);
+
+/*
+ * @brief Get a list of all the types of a function return
+ *
+ * @param[in] foo_id Function Id
+ * @param[in] ftype Function Type
+ * @return the types of the function return
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type
+eolian_function_return_types_list_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get the return default value of a function.
@@ -517,21 +549,6 @@ eolian_function_return_comment_get(Eolian_Function foo_id, Eolian_Function_Type 
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id, Eolian_Function_Type ftype);
-
-/*
- * @brief returns the own flag of a function
- *
- * @param[in] function_id id of the function
- * @param[in] ftype type of the function
- * @return the own flag.
- *
- * The type of the function is needed because a given function can represent a
- * property, that can be set and get functions.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool
-eolian_function_return_own_get(Eolian_Function foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.

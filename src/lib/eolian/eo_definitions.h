@@ -12,7 +12,6 @@ typedef struct _eo_ret_def
    const char *comment;
    char *dflt_ret_val;
    Eina_Bool warn_unused:1;
-   Eina_Bool own:1;
 } Eo_Ret_Def;
 
 /* PARAM */
@@ -32,7 +31,6 @@ typedef struct _eo_param_def
    const char *name;
    const char *comment;
    Eina_Bool nonull:1;
-   Eina_Bool own:1;
 } Eo_Param_Def;
 
 /* ACCESSOR */

@@ -222,12 +222,6 @@ _eo_tokenizer_param_get(Eo_Tokenizer *toknz, char *p)
         param->nonull = EINA_TRUE;
         memset(s, ' ', 7);
      }
-   s = strstr(toknz->saved.tok, "@own");
-   if (s)
-     {
-        param->own = EINA_TRUE;
-        memset(s, ' ', 4);
-     }
    *p = ';';
    s = p - 1; /* Don't look at the character ';' */
    /* Remove any space between the param name and ';'/@nonull
@@ -283,12 +277,6 @@ _eo_tokenizer_return_get(Eo_Tokenizer *toknz, char *p)
      {
         ret->warn_unused = EINA_TRUE;
         memset(s, ' ', 12);
-     }
-   s = strstr(toknz->saved.tok, "@own");
-   if (s)
-     {
-        ret->own = EINA_TRUE;
-        memset(s, ' ', 4);
      }
    s = strchr(toknz->saved.tok, '(');
    if (s)
@@ -450,7 +438,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    colon             = ':';
 
    # chars allowed on the return line.
-   return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-');
+   return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-' | '<' | '>');
    func_name         = (alnum >save_fpc (alnum | '_')+ (ws (alnum | '_')+)?);
 }%%
 
@@ -563,7 +551,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    param_comment = ws* eo_comment %end_param_comment;
-   param = ('@'|alpha+) >save_fpc (alnum_u | '*' | '@' | ws )+ %end_param end_statement param_comment?;
+   param = ('@'|alpha+) >save_fpc (alnum_u | '*' | '@' | '<' | '>' | ws )+ %end_param end_statement param_comment?;
 
    tokenize_params := |*
       ignore+;    #=> show_ignore;
@@ -1287,6 +1275,108 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
 
 }
 
+static Eina_Inlist *
+_types_extract(const char *buf, int len)
+{
+   const char *save_buf = buf;
+   Eolian_Type types = NULL;
+   long depth = 0;
+   char *tmp_type = malloc(2 * len + 1);
+
+   while (len > 0)
+     {
+        char *d = tmp_type;
+        Eina_Bool end_type = EINA_FALSE;
+        Eina_Bool is_own = EINA_FALSE;
+        char c;
+        Eina_Bool in_spaces = EINA_TRUE, in_stars = EINA_FALSE;
+        while (len > 0 && !end_type)
+          {
+             switch (c = *buf++)
+               {
+                /* @own */
+                case '@':
+                     {
+                        if (!strncmp(buf, "own", 3))
+                          {
+                             is_own = EINA_TRUE;
+                             buf += 3; len -= 3;
+                          }
+                        break;
+                     }
+                /* if '*', we have to add a space. We set in_spaces to true in
+                 * case spaces are between stars, to be sure we remove them.
+                 */
+                case '*':
+                     {
+                        if (!in_stars && !in_spaces)
+                          {
+                             *d++ = ' ';
+                             in_stars = EINA_TRUE;
+                             in_spaces = EINA_TRUE;
+                          }
+                        *d++ = c;
+                        break;
+                     }
+                /* Only the first space is inserted. */
+                case ' ':
+                     {
+                        if (!in_spaces) *d++ = c;
+                        in_spaces = EINA_TRUE;
+                        break;
+                     }
+                case '<':
+                     {
+                        if (depth < 0)
+                          {
+                             ERR("%s: Cannot reopen < after >", save_buf);
+                             return NULL;
+                          }
+                        depth++;
+                        end_type = EINA_TRUE;
+                        break;
+                     }
+                case '>':
+                     {
+                        if (depth == 0)
+                          {
+                             ERR("%s: Too much >", save_buf);
+                             return NULL;
+                          }
+                        if (d == tmp_type)
+                          {
+                             ERR("%s: empty type inside <>", save_buf);
+                             return NULL;
+                          }
+                        if (depth > 0) depth *= -1;
+                        depth++;
+                        end_type = EINA_TRUE;
+                        break;
+                     }
+                default:
+                     {
+                        *d++ = c;
+                        in_spaces = EINA_FALSE;
+                        in_stars = EINA_FALSE;
+                     }
+               }
+             len--;
+          }
+        if (d != tmp_type)
+          {
+             *d = '\0';
+             types = database_type_append(types, tmp_type, is_own);
+          }
+     }
+   if (depth)
+     {
+        types = NULL;
+        ERR("%s: < and > are not well used.", save_buf);
+     }
+   free(tmp_type);
+   return types;
+}
+
 Eina_Bool
 eo_tokenizer_database_fill(const char *filename)
 {
@@ -1378,7 +1468,8 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
+                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, type, param->name, param->comment);
                }
           }
 
@@ -1390,7 +1481,8 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
-                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
+                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, type, param->name, param->comment);
                }
           }
 
@@ -1400,17 +1492,17 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_scope_set(foo_id, prop->scope);
              EINA_LIST_FOREACH(prop->keys, m, param)
                {
+                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
                   Eolian_Function_Parameter p = database_property_key_add(
-                        foo_id, param->type, param->name, param->comment);
+                        foo_id, type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
-                  database_parameter_own_set(p, param->own);
                }
              EINA_LIST_FOREACH(prop->values, m, param)
                {
+                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
                   Eolian_Function_Parameter p = database_property_value_add(
-                        foo_id, param->type, param->name, param->comment);
+                        foo_id, type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
-                  database_parameter_own_set(p, param->own);
                }
              EINA_LIST_FOREACH(prop->accessors, m, accessor)
                {
@@ -1419,14 +1511,12 @@ eo_tokenizer_database_fill(const char *filename)
                     {
                        Eolian_Function_Type ftype =
                           accessor->type == SETTER?EOLIAN_PROP_SET:EOLIAN_PROP_GET;
-                       database_function_return_type_set(foo_id,
-                             ftype, accessor->ret->type);
+                       Eolian_Type types = _types_extract(accessor->ret->type, strlen(accessor->ret->type));
+                       database_function_return_type_set(foo_id, ftype, types);
                        database_function_return_comment_set(foo_id,
                              ftype, accessor->ret->comment);
                        database_function_return_flag_set_as_warn_unused(foo_id,
                              ftype, accessor->ret->warn_unused);
-                       database_function_return_flag_set_own(foo_id,
-                             ftype, accessor->ret->own);
                        database_function_return_dflt_val_set(foo_id,
                              ftype, accessor->ret->dflt_ret_val);
                     }
@@ -1465,11 +1555,11 @@ eo_tokenizer_database_fill(const char *filename)
              database_class_function_add(kls->name, foo_id);
              if (meth->ret)
                {
-                  database_function_return_type_set(foo_id, EOLIAN_METHOD, meth->ret->type);
+                  Eolian_Type types = _types_extract(meth->ret->type, strlen(meth->ret->type));
+                  database_function_return_type_set(foo_id, EOLIAN_METHOD, types);
                   database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
                   database_function_return_flag_set_as_warn_unused(foo_id,
                         EOLIAN_METHOD, meth->ret->warn_unused);
-                  database_function_return_flag_set_own(foo_id, EOLIAN_METHOD, meth->ret->own);
                   database_function_return_dflt_val_set(foo_id,
                         EOLIAN_METHOD, meth->ret->dflt_ret_val);
                }
@@ -1478,10 +1568,10 @@ eo_tokenizer_database_fill(const char *filename)
              database_function_object_set_as_const(foo_id, meth->obj_const);
              EINA_LIST_FOREACH(meth->params, m, param)
                {
+                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
                   Eolian_Function_Parameter p = database_method_parameter_add(foo_id,
-                        (Eolian_Parameter_Dir)param->way, param->type, param->name, param->comment);
+                        (Eolian_Parameter_Dir)param->way, type, param->name, param->comment);
                   database_parameter_nonull_set(p, param->nonull);
-                  database_parameter_own_set(p, param->own);
                }
           }
 

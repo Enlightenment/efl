@@ -78,21 +78,21 @@ void database_function_data_set(Eolian_Function function_id, const char *key, co
 #define database_function_description_set(foo_id, key, desc) database_function_data_set((foo_id), (key), (desc))
 
 /* Add a key to a property */
-Eolian_Function_Parameter database_property_key_add(Eolian_Function foo_id, const char *type, const char *name, const char *description);
+Eolian_Function_Parameter database_property_key_add(Eolian_Function foo_id, Eolian_Type type, const char *name, const char *description);
 
 /* Add a value to a property */
-Eolian_Function_Parameter database_property_value_add(Eolian_Function foo_id, const char *type, const char *name, const char *description);
+Eolian_Function_Parameter database_property_value_add(Eolian_Function foo_id, Eolian_Type type, const char *name, const char *description);
 
 /* Add a parameter to a method */
-Eolian_Function_Parameter database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, const char *type, const char *name, const char *description);
+Eolian_Function_Parameter database_method_parameter_add(Eolian_Function foo_id, Eolian_Parameter_Dir param_dir, Eolian_Type type, const char *name, const char *description);
+
+Eolian_Type database_type_append(Eolian_Type types, const char *name, Eina_Bool own);
 
 void database_parameter_const_attribute_set(Eolian_Function_Parameter param_desc, Eina_Bool is_get, Eina_Bool is_const);
 
 void database_parameter_nonull_set(Eolian_Function_Parameter, Eina_Bool nonull);
 
-void database_parameter_own_set(Eolian_Function_Parameter, Eina_Bool own);
-
-void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_type);
+void database_function_return_type_set(Eolian_Function foo_id, Eolian_Function_Type ftype, Eolian_Type ret_type);
 
 void database_function_return_comment_set(Eolian_Function foo_id, Eolian_Function_Type ftype, const char *ret_comment);
 
@@ -100,9 +100,6 @@ void database_function_return_dflt_val_set(Eolian_Function foo_id, Eolian_Functi
 
 void database_function_return_flag_set_as_warn_unused(Eolian_Function foo_id,
       Eolian_Function_Type ftype, Eina_Bool warn_unused);
-
-void database_function_return_flag_set_own(Eolian_Function foo_id,
-      Eolian_Function_Type ftype, Eina_Bool own);
 
 void database_function_object_set_as_const(Eolian_Function foo_id, Eina_Bool is_const);
 
