@@ -335,16 +335,6 @@ _val_inc_start(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
-_val_inc_stop(Evas_Object *obj)
-{
-   ELM_SPINNER_DATA_GET(obj, sd);
-
-   sd->interval = sd->first_interval;
-   sd->spin_speed = 0;
-   ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
-}
-
 static Eina_Bool
 _val_dec_start(void *data)
 {
@@ -360,7 +350,7 @@ _val_dec_start(void *data)
 }
 
 static void
-_val_dec_stop(Evas_Object *obj)
+_spin_stop(Evas_Object *obj)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
 
@@ -400,7 +390,7 @@ _button_inc_stop_cb(void *data,
          sd->spin_speed = sd->step;
          _spin_value(data);
       }
-   _val_inc_stop(data);
+   _spin_stop(data);
 }
 
 static void
@@ -434,7 +424,7 @@ _button_dec_stop_cb(void *data,
         sd->spin_speed = -sd->step;
         _spin_value(data);
      }
-   _val_dec_stop(data);
+   _spin_stop(data);
 }
 
 EOLIAN static void
@@ -505,13 +495,12 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
         if (!strcmp(ev->key, "Right") ||
             ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
             !strcmp(ev->key, "Up") ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-          _val_inc_stop(obj);
-        else if (!strcmp(ev->key, "Left") ||
-                 ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
-                 !strcmp(ev->key, "Down") ||
-                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-          _val_dec_stop(obj);
+            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)) ||
+            !strcmp(ev->key, "Left") ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
+            !strcmp(ev->key, "Down") ||
+            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+          _spin_stop(obj);
         else return EINA_FALSE;
 
         goto success;
@@ -602,14 +591,14 @@ _access_activate_cb(void *data,
      {
         _val_dec_start(data);
         elm_layout_signal_emit(data, "elm,left,anim,activate", "elm");
-        _val_dec_stop(data);
+        _spin_stop(data);
         text = "decremented";
      }
    else
      {
         _val_inc_start(data);
         elm_layout_signal_emit(data, "elm,right,anim,activate", "elm");
-        _val_inc_stop(data);
+        _spin_stop(data);
         text = "incremented";
      }
 
