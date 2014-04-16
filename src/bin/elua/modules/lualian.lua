@@ -39,7 +39,6 @@ local Method = Node:clone {
     end,
 
     gen_ffi = function(self, s)
-        s:write("    void butt();\n")
     end
 }
 
@@ -47,58 +46,119 @@ local Property = Node:clone {
     __ctor = function(self, prop, ftype)
         self.property = prop
         self.isget    = (ftype == eolian.function_type.PROP_GET)
+        self.ftype    = ftype
     end,
 
     gen_proto = function(self)
+        if self.cached_proto then return self.cached_proto end
+
         local prop = self.property
         local keys = prop:property_keys_list_get()
         local vals = prop:property_values_list_get()
-        local rett = prop:return_type_get()
+        local rett = prop:return_type_get(self.ftype)
+
+        local proto = {
+            returns = self.isget or not not rett,
+            name    = prop:name_get(),
+            suffix  = (self.isget and "_get" or "_set")
+        }
+        proto.ret_type = rett or "void"
+        local args, cargs, vargs = { "self" }, {}, {}
+        proto.args, proto.cargs, proto.vargs = args, cargs, vargs
+        local rets = {}
+        proto.rets = rets
+        local allocs = {}
+        proto.allocs = allocs
+
+        proto.full_name = self.parent_node.prefix .. "_" .. proto.name
+            .. proto.suffix
+
+        local dirs = eolian.parameter_dir
+
+        if #keys > 0 then
+            local argn = (#keys > 1) and "keys" or "key"
+            args[#args + 1] = argn
+            for i, v in ipairs(keys) do
+                local dir, tp, nm = v:information_get()
+                if dir == dirs.OUT or dir == dirs.INOUT then
+                    cargs [#cargs  + 1] = tp .. " *" .. nm
+                    vargs [#vargs  + 1] = nm
+                    allocs[#allocs + 1] = { tp, nm }
+                    rets  [#rets   + 1] = nm .. "[0]"
+                else
+                    cargs [#cargs  + 1] = tp .. " " .. nm
+                    vargs [#vargs  + 1] = argn .. "[" .. i .. "]"
+                end
+            end
+        end
+
+        if #vals > 0 then
+            if self.isget then
+                if #vals == 1 and not rett then
+                    rets[#rets + 1] = "v"
+                    proto.ret_type = vals[1]:type_get()
+                else
+                    for i, v in ipairs(vals) do
+                        local dir, tp, nm = v:information_get()
+                        cargs [#cargs  + 1] = tp .. " *" .. nm
+                        vargs [#vargs  + 1] = nm
+                        allocs[#allocs + 1] = { tp, nm }
+                        rets  [#rets   + 1] = nm .. "[0]"
+                    end
+                end
+            else
+                local argn = (#keys > 1) and "vals" or "val"
+                args[#args + 1] = argn
+                for i, v in ipairs(vals) do
+                    local dir, tp, nm = v:information_get()
+                    cargs[#cargs + 1] = tp .. " " .. nm
+                    vargs[#vargs + 1] = argn .. "[" .. i .. "]"
+                end
+            end
+        end
+
+        if #cargs == 0 then cargs[1] = "void" end
+
+        self.cached_proto = proto
+
+        return proto
     end,
 
     generate = function(self, s, last)
-        local prop   = self.property
-        local par    = self.parent_node
-        local name   = prop:name_get()
-        local isget  = self.isget
-        local suffix = isget and "_get" or "_set"
-        local ret    = isget and "local v = " or ""
-        local retr   = isget and "\n        return v" or ""
-        local comma  = last  and "" or ","
-
-        local keys   = prop:property_keys_list_get()
-        local vals   = prop:property_values_list_get()
-
-        local argsf = { "self" }
-        local argsv = {}
-        if #keys > 0 then
-            local argn = (#keys > 1) and "keys" or "key"
-            argsf[#argsf + 1] = argn
-            for i, v in ipairs(keys) do
-                argsv[#argsv + 1] = argn .. "[" .. i .. "]"
-            end
+        local proto = self:gen_proto()
+        local lproto = {
+            "    ", proto.name, proto.suffix, " = function(",
+            table.concat(proto.args, ", "), ")\n"
+        }
+        s:write(table.concat(lproto))
+        s:write( "        self:__do_start()\n")
+        for i, v in ipairs(proto.allocs) do
+            s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
-        if not isget and #vals > 0 then
-            local argn = (#vals > 1) and "vals" or "val"
-            argsf[#argsf + 1] = argn
-            for i, v in ipairs(vals) do
-                argsv[#argsv + 1] = argn .. "[" .. i .. "]"
-            end
+        local genv = (proto.ret_type ~= "void")
+        local lcall = {
+            "        ", genv and "local v = " or "", "__lib.", proto.full_name,
+            "(", table.concat(proto.vargs, ", "), ")\n"
+        }
+        s:write(table.concat(lcall))
+        s:write("        self:__do_end()\n")
+        if #proto.rets > 0 then
+            s:write("        return ", table.concat(proto.rets, ", "), "\n")
         end
-
-        s:write(([[
-    %s%s = function(%s)
-        self:__do_start()
-        %s__lib.%s_%s%s(%s)
-        self:__do_end()%s
-    end%s
-
-]]):format(name, suffix, table.concat(argsf, ", "), ret, par.prefix, name,
-        suffix, table.concat(argsv, ", "), retr, comma))
+        s:write("    end", last and "" or ",", "\n\n")
     end,
 
     gen_ffi = function(self, s)
-        s:write("    void butt();\n")
+        local proto = self:gen_proto()
+        local cproto = {
+            "    ", proto.ret_type, " ", proto.full_name, "(",
+            table.concat(proto.cargs, ", "), ");\n"
+        }
+        s:write(table.concat(cproto))
+    end,
+
+    gen_lua = function(self, s)
+        local proto = self:gen_proto()
     end
 }
 
@@ -132,6 +192,7 @@ local Mixin = Node:clone {
 
     gen_ffi = function(self, s)
         for i, v in ipairs(self.children) do
+            v.parent_node = self
             v:gen_ffi(s)
         end
     end
@@ -171,6 +232,7 @@ M.%s = Parent:clone {
 
     gen_ffi = function(self, s)
         for i, v in ipairs(self.children) do
+            v.parent_node = self
             v:gen_ffi(s)
         end
     end

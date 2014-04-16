@@ -321,9 +321,9 @@ M.Function = ffi.metatype("Eolian_Function", {
 })
 
 M.parameter_dir = {
-    IN_PARAM    = 0,
-    OUT_PARAM   = 1,
-    INOUT_PARAM = 2
+    IN    = 0,
+    OUT   = 1,
+    INOUT = 2
 }
 
 ffi.metatype("Eolian_Function_Parameter", {
@@ -331,7 +331,8 @@ ffi.metatype("Eolian_Function_Parameter", {
         information_get = function(self)
             local dir = ffi.new("Eolian_Parameter_Dir[1]")
             local str = ffi.new("const char*[3]")
-            eolian.eolian_parameter_get(self, dir, str, str + 1, str + 1)
+            eolian.eolian_parameter_information_get(self, dir, str, str + 1,
+                str + 2)
             local tp, nm, dsc = str[0], str[1], str[2]
             tp, nm, dsc = (tp  ~= nil) and ffi.string(tp ) or nil,
                           (nm  ~= nil) and ffi.string(nm ) or nil,
