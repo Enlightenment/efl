@@ -77,6 +77,13 @@ static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { NULL, NULL }
 };
 
+static Eina_Bool _key_action_return(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"return", _key_action_return},
+   {NULL, NULL}
+};
+
 #ifdef HAVE_ELEMENTARY_WEB
 static char *
 _webkit_theme_find(const Eina_List *list)
@@ -173,6 +180,20 @@ _elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_key_action_return(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+#ifdef HAVE_ELEMENTARY_WEB
+   ELM_WEB_DATA_GET(obj, sd);
+
+   if (!sd->tab_propagate) return EINA_TRUE;
+   else return EINA_FALSE;
+#else
+   (void)obj;
+#endif
+   return EINA_FALSE;
+}
+
 EOLIAN static Eina_Bool
 _elm_web_elm_widget_event(Eo *obj, Elm_Web_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -183,11 +204,11 @@ _elm_web_elm_widget_event(Eo *obj, Elm_Web_Data *sd, Evas_Object *src, Evas_Call
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if ((!strcmp(ev->key, "Tab")) && (!sd->tab_propagate))
-     {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        return EINA_TRUE;
-     }
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
 #else
    (void)obj;
    (void)sd;
