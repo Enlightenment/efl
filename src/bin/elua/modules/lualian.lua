@@ -36,28 +36,69 @@ local Node = util.Object:clone {
 local Method = Node:clone {
     __ctor = function(self, meth)
         self.method = meth
+    end,
+
+    gen_ffi = function(self, s)
+        s:write("    void butt();\n")
     end
 }
 
 local Property = Node:clone {
-    __ctor = function(self, prop)
+    __ctor = function(self, prop, ftype)
         self.property = prop
+        self.isget    = (ftype == eolian.function_type.PROP_GET)
+    end,
+
+    gen_proto = function(self)
+        local prop = self.property
+        local keys = prop:property_keys_list_get()
+        local vals = prop:property_values_list_get()
+        local rett = prop:return_type_get()
     end,
 
     generate = function(self, s, last)
         local prop   = self.property
         local par    = self.parent_node
         local name   = prop:name_get()
-        local isget  = prop:type_get() == eolian.function_type.PROP_GET
+        local isget  = self.isget
         local suffix = isget and "_get" or "_set"
-        local ret    = isget and "return " or ""
+        local ret    = isget and "local v = " or ""
+        local retr   = isget and "\n        return v" or ""
         local comma  = last  and "" or ","
+
+        local keys   = prop:property_keys_list_get()
+        local vals   = prop:property_values_list_get()
+
+        local argsf = { "self" }
+        local argsv = {}
+        if #keys > 0 then
+            local argn = (#keys > 1) and "keys" or "key"
+            argsf[#argsf + 1] = argn
+            for i, v in ipairs(keys) do
+                argsv[#argsv + 1] = argn .. "[" .. i .. "]"
+            end
+        end
+        if not isget and #vals > 0 then
+            local argn = (#vals > 1) and "vals" or "val"
+            argsf[#argsf + 1] = argn
+            for i, v in ipairs(vals) do
+                argsv[#argsv + 1] = argn .. "[" .. i .. "]"
+            end
+        end
+
         s:write(([[
-    %s%s = function(self)
-        %s__lib.%s_%s%s()
+    %s%s = function(%s)
+        self:__do_start()
+        %s__lib.%s_%s%s(%s)
+        self:__do_end()%s
     end%s
 
-]]):format(name, suffix, ret, par.prefix, name, suffix, comma))
+]]):format(name, suffix, table.concat(argsf, ", "), ret, par.prefix, name,
+        suffix, table.concat(argsv, ", "), retr, comma))
+    end,
+
+    gen_ffi = function(self, s)
+        s:write("    void butt();\n")
     end
 }
 
@@ -77,11 +118,22 @@ local Mixin = Node:clone {
     generate = function(self, s)
         dom:log(log.level.INFO, "  Generating for interface/mixin: "
             .. self.cname)
+
+        s:write("ffi.cdef [[\n")
+        self:gen_ffi(s)
+        s:write("]]\n\n")
+
         s:write(("M.%s = {\n"):format(self.cname))
 
         self:gen_children(s)
 
         s:write("\n}\n")
+    end,
+
+    gen_ffi = function(self, s)
+        for i, v in ipairs(self.children) do
+            v:gen_ffi(s)
+        end
     end
 }
 
@@ -97,6 +149,11 @@ local Class = Node:clone {
 
     generate = function(self, s)
         dom:log(log.level.INFO, "  Generating for class: " .. self.cname)
+
+        s:write("ffi.cdef [[\n")
+        self:gen_ffi(s)
+        s:write("]]\n\n")
+
         s:write(([[
 local Parent = eo.class_get("%s")
 M.%s = Parent:clone {
@@ -109,6 +166,12 @@ M.%s = Parent:clone {
         for i, v in ipairs(self.mixins) do
             s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
                 :format(self.cname, v))
+        end
+    end,
+
+    gen_ffi = function(self, s)
+        for i, v in ipairs(self.children) do
+            v:gen_ffi(s)
         end
     end
 }
@@ -163,7 +226,15 @@ local gen_contents = function(classn)
     -- first try properties
     local props = eolian.class_functions_list_get(classn, ft.PROPERTY)
     for i, v in ipairs(props) do
-        cnt[#cnt + 1] = Property(v)
+        local ftype  = v:type_get()
+        local fread  = (ftype == ft.PROPERTY or ftype == ft.PROP_GET)
+        local fwrite = (ftype == ft.PROPERTY or ftype == ft.PROP_SET)
+        if fwrite then
+            cnt[#cnt + 1] = Property(v, ft.PROP_SET)
+        end
+        if fread then
+            cnt[#cnt + 1] = Property(v, ft.PROP_GET)
+        end
     end
     -- then methods
     local meths = eolian.class_functions_list_get(classn, ft.METHOD)

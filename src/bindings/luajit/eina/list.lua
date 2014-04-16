@@ -187,6 +187,7 @@ local List_Base = util.Readonly_Object:clone {
         selfmt.__eq = function(self, other)
             return selfmt.__list == dgetmt(other).__list
         end
+        selfmt.__len = self.count
         selfmt.__list = list
     end,
 

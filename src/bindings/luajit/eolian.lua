@@ -274,12 +274,12 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         property_keys_list_get = function(self)
             return Eolian_Parameters_List(
-                eolian.eolian_propety_keys_list_get(self)):to_array()
+                eolian.eolian_property_keys_list_get(self)):to_array()
         end,
 
         property_values_list_get = function(self)
             return Eolian_Parameters_List(
-                eolian.eolian_propety_values_list_get(self)):to_array()
+                eolian.eolian_property_values_list_get(self)):to_array()
         end,
 
         parameters_list_get = function(self)
