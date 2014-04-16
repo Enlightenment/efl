@@ -102,6 +102,18 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_GENLIST_SIGNALS
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {"select", _key_action_select},
+   {"escape", _key_action_escape},
+   {NULL, NULL}
+};
+
 static void      _calc_job(void *);
 static Eina_Bool _item_block_recalc(Item_Block *, int, Eina_Bool);
 static void      _item_mouse_callbacks_add(Elm_Gen_Item *, Evas_Object *);
@@ -2562,11 +2574,11 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
    elm_object_focus_set(eina_list_data_get(l), EINA_TRUE);
 }
 
-EOLIAN static Eina_Bool
-_elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
+   ELM_GENLIST_DATA_GET(obj, sd);
+   const char *dir = params;
 
    Evas_Coord x = 0;
    Evas_Coord y = 0;
@@ -2578,11 +2590,6 @@ _elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, E
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
    Evas_Coord pan_max_x = 0, pan_max_y = 0;
-   Eina_Bool sel_ret = EINA_FALSE;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd->items) return EINA_FALSE;
 
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
@@ -2590,8 +2597,7 @@ _elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, E
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
          elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
 
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   if (!strcmp(dir, "left"))
      {
         x -= step_x;
 
@@ -2600,8 +2606,7 @@ _elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, E
 
         return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if (!strcmp(dir, "right"))
      {
         x += step_x;
 
@@ -2610,94 +2615,62 @@ _elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, E
 
         return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+   else if (!strcmp(dir, "up"))
      {
-        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-          sel_ret = _item_multi_select_up(sd);
-        if (!sel_ret)
-          sel_ret = _item_single_select_up(sd);
-
-        if (sel_ret)
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             return EINA_TRUE;
-          }
-
-        return EINA_FALSE;
+        if (_item_single_select_up(sd)) return EINA_TRUE;
+        else return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+   else if (!strcmp(dir, "up_multi"))
      {
-        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-          sel_ret = _item_multi_select_down(sd);
-        if (!sel_ret)
-          sel_ret = _item_single_select_down(sd);
-
-        if (sel_ret)
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             return EINA_TRUE;
-          }
-
-        return EINA_FALSE;
+        if (_item_multi_select_up(sd)) return EINA_TRUE;
+        else if (_item_single_select_up(sd)) return EINA_TRUE;
+        else return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Home")) ||
-            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
+   else if (!strcmp(dir, "down"))
+     {
+        if (_item_single_select_down(sd)) return EINA_TRUE;
+        else return EINA_FALSE;
+     }
+   else if (!strcmp(dir, "down_multi"))
+     {
+        if (_item_multi_select_down(sd)) return EINA_TRUE;
+        else if (_item_single_select_down(sd)) return EINA_TRUE;
+        else return EINA_FALSE;
+     }
+   else if (!strcmp(dir, "first"))
      {
         it = elm_genlist_first_item_get(obj);
         if (it)
           {
              elm_genlist_item_selected_set(it, EINA_TRUE);
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
      }
-   else if ((!strcmp(ev->key, "End")) ||
-            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
+   else if (!strcmp(dir, "last"))
      {
         it = elm_genlist_last_item_get(obj);
         if (it)
           {
              elm_genlist_item_selected_set(it, EINA_TRUE);
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
      }
-   else if ((!strcmp(ev->key, "Prior")) ||
-            ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
+   else if (!strcmp(dir, "prior"))
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if ((!strcmp(ev->key, "Next")) ||
-            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
+   else if (!strcmp(dir, "next"))
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;
         else
           y += page_y;
      }
-   else if (!strcmp(ev->key, "Escape"))
-     {
-        if (!_all_items_deselect(sd)) return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        return EINA_TRUE;
-     }
-   else if (((!strcmp(ev->key, "Return")) ||
-             (!strcmp(ev->key, "KP_Enter")) ||
-             (!strcmp(ev->key, "space")))
-            && (!sd->multi) && (sd->selected))
-     {
-        it = elm_genlist_selected_item_get(obj);
-        elm_genlist_item_expanded_set(it, !elm_genlist_item_expanded_get(it));
-        evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
-     }
    else return EINA_FALSE;
 
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    eo_do(sd->pan_obj, elm_obj_pan_pos_max_get(&pan_max_x, &pan_max_y));
    if (x < 0) x = 0;
    if (x > pan_max_x) x = pan_max_x;
@@ -2706,6 +2679,44 @@ _elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, E
 
    eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
 
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   Elm_Object_Item *it = NULL;
+
+   it = elm_genlist_selected_item_get(obj);
+   elm_genlist_item_expanded_set(it, !elm_genlist_item_expanded_get(it));
+   evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   if (!_all_items_deselect(sd)) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   (void) src;
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (!sd->items) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
