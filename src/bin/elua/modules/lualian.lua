@@ -26,6 +26,7 @@ local Node = util.Object:clone {
 
     gen_children = function(self, s)
         for i, v in ipairs(self.children) do
+            v.parent_node = self
             v:generate(s)
         end
     end
@@ -43,7 +44,18 @@ local Property = Node:clone {
     end,
 
     generate = function(self, s)
-        
+        local prop   = self.property
+        local par    = self.parent_node
+        local name   = prop:name_get()
+        local isget  = prop:type_get() == eolian.function_type.PROP_GET
+        local suffix = isget and "_get" or "_set"
+        local ret    = isget and "return " or ""
+        s:write(([[
+    %s%s = function(self)
+        %slibname.%s_%s%s()
+    end
+
+]]):format(name, suffix, ret, par.prefix, name, suffix))
     end
 }
 
@@ -56,6 +68,7 @@ local Destructor = Node:clone {
 local Mixin = Node:clone {
     __ctor = function(self, cname, ch)
         self.cname    = cname
+        self.prefix   = eolian.class_eo_prefix_get(cname)
         self.children = ch
     end,
 
@@ -76,6 +89,7 @@ local Class = Node:clone {
         self.parent     = parent
         self.interfaces = interfaces
         self.mixins     = mixins
+        self.prefix     = eolian.class_eo_prefix_get(cname)
         self.children   = ch
     end,
 
@@ -91,7 +105,8 @@ M.%s = Parent:clone {
         s:write("\n}\n")
 
         for i, v in ipairs(self.mixins) do
-            s:write("\nM.%s:mixin(eo.class_get(\"%s\"))\n", self.cname, v)
+            s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
+                :format(self.cname, v))
         end
     end
 }
@@ -160,28 +175,38 @@ local gen_class = function(classn)
         elseif tp == ct.MIXIN or tp == ct.INTERFACE then
             mixins[#mixins + 1] = v
         else
-            error(classn .. ": unknown inherit")
+            error(classn .. ": unknown inherit " .. v)
         end
     end
     return Class(classn, parent, mixins, gen_contents(classn))
 end
 
-M.generate = function(fname, fstream)
-    if not eolian.eo_file_parse(fname) then
-        error("Failed parsing file: " .. fname)
+M.generate = function(files, include_files, fstream)
+    for i, file in ipairs(include_files) do
+        if not eolian.eo_file_parse(file) then
+            error("Failed parsing include file: " .. file)
+        end
     end
-    local classn = eolian.class_find_by_file(fname)
-    local tp = eolian.class_type_get(classn)
-    local ct = eolian.class_type
-    local cl
-    if tp == ct.MIXIN or tp == ct.INTERFACE then
-        cl = gen_mixin(classn)
-    elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
-        cl = gen_class(classn)
-    else
-        error(classn .. ": unknown type")
+    for i, file in ipairs(files) do
+        if not eolian.eo_file_parse(file) then
+            error("Failed parsing file: " .. file)
+        end
     end
-    File(fname, classn, { cl }):generate(fstream)
+    for i, file in ipairs(files) do
+        local fname = files[i]
+        local classn = eolian.class_find_by_file(fname)
+        local tp = eolian.class_type_get(classn)
+        local ct = eolian.class_type
+        local cl
+        if tp == ct.MIXIN or tp == ct.INTERFACE then
+            cl = gen_mixin(classn)
+        elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
+            cl = gen_class(classn)
+        else
+            error(classn .. ": unknown type")
+        end
+        File(fname, classn, { cl }):generate(fstream)
+    end
 end
 
 return M

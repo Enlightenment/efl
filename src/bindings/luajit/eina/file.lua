@@ -9,6 +9,7 @@ require("eina.xattr")
 
 ffi.cdef [[
     typedef unsigned char Eina_Bool;
+    typedef long time_t;
 
     typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
     typedef struct _Eina_Stat             Eina_Stat;
@@ -77,14 +78,14 @@ ffi.cdef [[
        unsigned long long length;
     };
 
-    EAPI Eina_Bool eina_file_dir_list(const char *dir, Eina_Bool recursive,
+    Eina_Bool eina_file_dir_list(const char *dir, Eina_Bool recursive,
         Eina_File_Dir_List_Cb cb, void *data);
-    EAPI Eina_Iterator *eina_file_ls(const char *dir);
-    EAPI Eina_Iterator *eina_file_stat_ls(const char *dir);
-    EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info,
+    Eina_Iterator *eina_file_ls(const char *dir);
+    Eina_Iterator *eina_file_stat_ls(const char *dir);
+    int eina_file_statat(void *container, Eina_File_Direct_Info *info,
         Eina_Stat *buf);
-    EAPI Eina_Iterator *eina_file_direct_ls(const char *dir);
-    EAPI char *eina_file_path_sanitize(const char *path);
+    Eina_Iterator *eina_file_direct_ls(const char *dir);
+    char *eina_file_path_sanitize(const char *path);
 
     typedef enum {
         EINA_FILE_COPY_DATA       = 0,
@@ -92,29 +93,29 @@ ffi.cdef [[
         EINA_FILE_COPY_XATTR      = (1 << 1)
     } Eina_File_Copy_Flags;
 
-    EAPI Eina_Bool eina_file_copy(const char *src, const char *dst,
+    Eina_Bool eina_file_copy(const char *src, const char *dst,
         Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb,
         const void *cb_data);
-    EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared);
-    EAPI Eina_File *eina_file_virtualize(const char *virtual_name,
+    Eina_File *eina_file_open(const char *name, Eina_Bool shared);
+    Eina_File *eina_file_virtualize(const char *virtual_name,
         const void *data, unsigned long long length, Eina_Bool copy);
-    EAPI Eina_Bool eina_file_virtual(Eina_File *file);
-    EAPI Eina_Bool eina_file_refresh(Eina_File *file);
-    EAPI Eina_File *eina_file_dup(const Eina_File *file);
-    EAPI void eina_file_close(Eina_File *file);
-    EAPI size_t eina_file_size_get(const Eina_File *file);
-    EAPI time_t eina_file_mtime_get(const Eina_File *file);
-    EAPI const char *eina_file_filename_get(const Eina_File *file);
-    EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file);
-    EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file);
-    EAPI void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
-    EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
+    Eina_Bool eina_file_virtual(Eina_File *file);
+    Eina_Bool eina_file_refresh(Eina_File *file);
+    Eina_File *eina_file_dup(const Eina_File *file);
+    void eina_file_close(Eina_File *file);
+    size_t eina_file_size_get(const Eina_File *file);
+    time_t eina_file_mtime_get(const Eina_File *file);
+    const char *eina_file_filename_get(const Eina_File *file);
+    Eina_Iterator *eina_file_xattr_get(Eina_File *file);
+    Eina_Iterator *eina_file_xattr_value_get(Eina_File *file);
+    void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
+    void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         unsigned long int offset, unsigned long int length);
-    EAPI void eina_file_map_free(Eina_File *file, void *map);
-    EAPI void eina_file_map_populate(Eina_File *file, Eina_File_Populate rule,
+    void eina_file_map_free(Eina_File *file, void *map);
+    void eina_file_map_populate(Eina_File *file, Eina_File_Populate rule,
         const void *map, unsigned long int offset, unsigned long int length);
-    EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
-    EAPI Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
+    Eina_Iterator *eina_file_map_lines(Eina_File *file);
+    Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
 
     void eina_stringshare_del   (const char *str);
     int  eina_stringshare_strlen(const char *str);
