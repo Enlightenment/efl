@@ -1488,59 +1488,53 @@ void _canvas_smart_objects_calculate(Eo *e, void *_pd, va_list *list);
 void _canvas_smart_objects_calculate_count_get(Eo *e, void *_pd, va_list *list);
 
 /* Object generic functions.  3D function*/
-void                 evas_3d_object_init(Evas_3D_Object *obj, Evas *e, Evas_3D_Object_Type type, const Evas_3D_Object_Func *func);
-Evas                *evas_3d_object_evas_get(const Evas_3D_Object *obj);
+void evas_3d_object_init(Evas_3D_Object *obj, Evas *e, Evas_3D_Object_Type type, const Evas_3D_Object_Func *func);
+Evas *evas_3d_object_evas_get(const Evas_3D_Object *obj);
 Evas_3D_Object_Type  evas_3d_object_type_get(const Evas_3D_Object *obj);
-
-void                 evas_3d_object_reference(Evas_3D_Object *obj);
-void                 evas_3d_object_unreference(Evas_3D_Object *obj);
-int                  evas_3d_object_reference_count_get(const Evas_3D_Object *obj);
-
-void                 evas_3d_object_change(Evas_3D_Object *obj, Evas_3D_State state, Evas_3D_Object *ref);
-Eina_Bool            evas_3d_object_dirty_get(const Evas_3D_Object *obj, Evas_3D_State state);
-void                 evas_3d_object_update(Evas_3D_Object *obj);
-void                 evas_3d_object_update_done(Evas_3D_Object *obj);
+void evas_3d_object_reference(Evas_3D_Object *obj);
+void evas_3d_object_unreference(Evas_3D_Object *obj);
+int  evas_3d_object_reference_count_get(const Evas_3D_Object *obj);
+void evas_3d_object_change(Evas_3D_Object *obj, Evas_3D_State state, Evas_3D_Object *ref);
+Eina_Bool evas_3d_object_dirty_get(const Evas_3D_Object *obj, Evas_3D_State state);
+void evas_3d_object_update(Evas_3D_Object *obj);
+void evas_3d_object_update_done(Evas_3D_Object *obj);
 
 /* Node functions. */
-void                 evas_3d_node_traverse(Evas_3D_Node *from, Evas_3D_Node *to, Evas_3D_Node_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
-void                 evas_3d_node_tree_traverse(Evas_3D_Node *root, Evas_3D_Tree_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
-Eina_Bool            evas_3d_node_mesh_collect(Evas_3D_Node *node, void *data);
-Eina_Bool            evas_3d_node_light_collect(Evas_3D_Node *node, void *data);
-
-void                 evas_3d_node_scene_root_add(Evas_3D_Node *node, Evas_3D_Scene *scene);
-void                 evas_3d_node_scene_root_del(Evas_3D_Node *node, Evas_3D_Scene *scene);
-void                 evas_3d_node_scene_camera_add(Evas_3D_Node *node, Evas_3D_Scene *scene);
-void                 evas_3d_node_scene_camera_del(Evas_3D_Node *node, Evas_3D_Scene *scene);
+void evas_3d_node_traverse(Evas_3D_Node *from, Evas_3D_Node *to, Evas_3D_Node_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
+void evas_3d_node_tree_traverse(Evas_3D_Node *root, Evas_3D_Tree_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
+Eina_Bool evas_3d_node_mesh_collect(Evas_3D_Node *node, void *data);
+Eina_Bool evas_3d_node_light_collect(Evas_3D_Node *node, void *data);
+void evas_3d_node_scene_root_add(Evas_3D_Node *node, Evas_3D_Scene *scene);
+void evas_3d_node_scene_root_del(Evas_3D_Node *node, Evas_3D_Scene *scene);
+void evas_3d_node_scene_camera_add(Evas_3D_Node *node, Evas_3D_Scene *scene);
+void evas_3d_node_scene_camera_del(Evas_3D_Node *node, Evas_3D_Scene *scene);
 
 /* Camera functions. */
-void                      evas_3d_camera_node_add(Evas_3D_Camera *camera, Evas_3D_Node *node);
-void                      evas_3d_camera_node_del(Evas_3D_Camera *camera, Evas_3D_Node *node);
-
+void evas_3d_camera_node_add(Evas_3D_Camera *camera, Evas_3D_Node *node);
+void evas_3d_camera_node_del(Evas_3D_Camera *camera, Evas_3D_Node *node);
 
 /* Light functions. */
-void                 evas_3d_light_node_add(Evas_3D_Light *light, Evas_3D_Node *node);
-void                 evas_3d_light_node_del(Evas_3D_Light *light, Evas_3D_Node *node);
+void evas_3d_light_node_add(Evas_3D_Light *light, Evas_3D_Node *node);
+void evas_3d_light_node_del(Evas_3D_Light *light, Evas_3D_Node *node);
 
 /* Mesh functions. */
-void                 evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
-void                 evas_3d_mesh_node_del(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
-
-void                 evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame, Evas_3D_Vertex_Attrib attrib, Evas_3D_Vertex_Buffer *buffer0, Evas_3D_Vertex_Buffer *buffer1, Evas_Real *weight);
-
-void                 evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file);
+void evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
+void evas_3d_mesh_node_del(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
+void evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame, Evas_3D_Vertex_Attrib attrib, Evas_3D_Vertex_Buffer *buffer0, Evas_3D_Vertex_Buffer *buffer1, Evas_Real *weight);
+void evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file);
 
 /* Texture functions. */
-void                       evas_3d_texture_material_add(Evas_3D_Texture *texture, Evas_3D_Material *material);
-void                       evas_3d_texture_material_del(Evas_3D_Texture *texture, Evas_3D_Material *material);
+void evas_3d_texture_material_add(Evas_3D_Texture *texture, Evas_3D_Material *material);
+void evas_3d_texture_material_del(Evas_3D_Texture *texture, Evas_3D_Material *material);
 
 
 /* Material functions. */
-void                 evas_3d_material_mesh_add(Evas_3D_Material *material, Evas_3D_Mesh *mesh);
-void                 evas_3d_material_mesh_del(Evas_3D_Material *material, Evas_3D_Mesh *mesh);
+void evas_3d_material_mesh_add(Evas_3D_Material *material, Evas_3D_Mesh *mesh);
+void evas_3d_material_mesh_del(Evas_3D_Material *material, Evas_3D_Mesh *mesh);
 
 /* Scene functions. */
-void                 evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data);
-void                 evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data);
+void evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data);
+void evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data);
 
 
 
