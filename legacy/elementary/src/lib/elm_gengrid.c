@@ -83,6 +83,18 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_GENGRID_SIGNALS
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {"select", _key_action_select},
+   {"escape", _key_action_escape},
+   {NULL, NULL}
+};
+
 static void
 _item_show_region(void *data)
 {
@@ -1889,11 +1901,11 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
+   ELM_GENGRID_DATA_GET(obj, sd);
+   const char *dir = params;
 
    Evas_Coord x = 0;
    Evas_Coord y = 0;
@@ -1904,12 +1916,6 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
-   Eina_Bool sel_ret = EINA_FALSE;
-   Eina_Bool edge_ret = EINA_FALSE;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd->items) return EINA_FALSE;
 
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
@@ -1917,152 +1923,147 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
          elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
 
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   if (!strcmp(dir, "left"))
      {
-        if (!sd->horizontal)
-          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
-                                                  ELM_FOCUS_LEFT);
-        if (edge_ret)
-          return EINA_FALSE;
-
         if (sd->horizontal)
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_up(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_up(sd);
+             if (_item_single_select_up(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
         else
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_left(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_left(sd);
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
+               return EINA_FALSE;
+             if (_item_single_select_left(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
-
-        if (sel_ret)
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             return EINA_TRUE;
-          }
-
-        return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+   else if (!strcmp(dir, "left_multi"))
      {
-        if (!sd->horizontal)
-          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
-                                                  ELM_FOCUS_RIGHT);
-        if (edge_ret)
-          return EINA_FALSE;
-
         if (sd->horizontal)
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_down(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_down(sd);
+             if (_item_multi_select_up(sd)) return EINA_TRUE;
+             else if (_item_single_select_up(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
         else
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_right(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_right(sd);
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
+               return EINA_FALSE;
+             if (_item_multi_select_left(sd)) return EINA_TRUE;
+             else if (_item_single_select_left(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
-
-        if (sel_ret)
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             return EINA_TRUE;
-          }
-
-        return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+   else if (!strcmp(dir, "right"))
      {
         if (sd->horizontal)
-          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
-                                                  ELM_FOCUS_UP);
-        if (edge_ret)
-          return EINA_FALSE;
-
-        if (sd->horizontal)
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_left(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_left(sd);
+             if (_item_single_select_down(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
         else
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_up(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_up(sd);
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
+               return EINA_FALSE;
+             if (_item_single_select_right(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
-
-        if (sel_ret)
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             return EINA_TRUE;
-          }
-
-        return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+   else if (!strcmp(dir, "right_multi"))
      {
         if (sd->horizontal)
-          edge_ret = _elm_gengrid_item_edge_check(sd->focused_item,
-                                                  ELM_FOCUS_DOWN);
-        if (edge_ret)
-          return EINA_FALSE;
-
-        if (sd->horizontal)
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_right(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_right(sd);
+             if (_item_multi_select_down(sd)) return EINA_TRUE;
+             else if (_item_single_select_down(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
         else
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               sel_ret = _item_multi_select_down(sd);
-             if (!sel_ret)
-               sel_ret = _item_single_select_down(sd);
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
+               return EINA_FALSE;
+             if (_item_multi_select_right(sd)) return EINA_TRUE;
+             else if (_item_single_select_right(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
           }
-
-        if (sel_ret)
-          {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-             return EINA_TRUE;
-          }
-
-        return EINA_FALSE;
      }
-   else if ((!strcmp(ev->key, "Home")) ||
-            ((!strcmp(ev->key, "KP_Home")) && (!ev->string)))
+   else if (!strcmp(dir, "up"))
+     {
+        if (sd->horizontal)
+          {
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
+               return EINA_FALSE;
+             if (_item_single_select_left(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+        else
+          {
+             if (_item_single_select_up(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+     }
+   else if (!strcmp(dir, "up_multi"))
+     {
+        if (sd->horizontal)
+          {
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
+               return EINA_FALSE;
+             if (_item_multi_select_left(sd)) return EINA_TRUE;
+             else if (_item_single_select_left(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+        else
+          {
+             if (_item_multi_select_up(sd)) return EINA_TRUE;
+             else if (_item_single_select_up(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+     }
+   else if (!strcmp(dir, "down"))
+     {
+        if (sd->horizontal)
+          {
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
+               return EINA_FALSE;
+             if (_item_single_select_right(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+        else
+          {
+             if (_item_single_select_down(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+     }
+   else if (!strcmp(dir, "down_multi"))
+     {
+        if (sd->horizontal)
+          {
+             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
+               return EINA_FALSE;
+             if (_item_multi_select_right(sd)) return EINA_TRUE;
+             else if (_item_single_select_right(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+        else
+          {
+             if (_item_multi_select_down(sd)) return EINA_TRUE;
+             else if (_item_single_select_down(sd)) return EINA_TRUE;
+             else return EINA_FALSE;
+          }
+     }
+   else if (!strcmp(dir, "first"))
      {
         it = elm_gengrid_first_item_get(obj);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->key, "End")) ||
-            ((!strcmp(ev->key, "KP_End")) && (!ev->string)))
+   else if (!strcmp(dir, "last"))
      {
         it = elm_gengrid_last_item_get(obj);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->key, "Prior")) ||
-            ((!strcmp(ev->key, "KP_Prior")) && (!ev->string)))
+   else if (!strcmp(dir, "prior"))
      {
         if (sd->horizontal)
           {
@@ -2079,8 +2080,7 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
                y -= page_y;
           }
      }
-   else if ((!strcmp(ev->key, "Next")) ||
-            ((!strcmp(ev->key, "KP_Next")) && (!ev->string)))
+   else if (!strcmp(dir, "next"))
      {
         if (sd->horizontal)
           {
@@ -2097,24 +2097,50 @@ _elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, E
                y += page_y;
           }
      }
-   else if (!strcmp(ev->key, "Escape"))
-     {
-        if (!_all_items_deselect(sd)) return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        return EINA_TRUE;
-     }
-   else if (((!strcmp(ev->key, "Return")) ||
-             (!strcmp(ev->key, "KP_Enter")) ||
-             (!strcmp(ev->key, "space")))
-            && (!sd->multi) && (sd->selected))
+   else return EINA_FALSE;
+
+   eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_GENGRID_DATA_GET(obj, sd);
+   Elm_Object_Item *it = NULL;
+
+   if ((!sd->multi) && (sd->selected))
      {
         it = elm_gengrid_selected_item_get(obj);
         evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
+        return EINA_TRUE;
      }
-   else return EINA_FALSE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   if (!_all_items_deselect(sd)) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_event(Eo *obj, Elm_Gengrid_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   (void) src;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (!sd->items) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
    return EINA_TRUE;
 }
 
