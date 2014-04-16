@@ -47,6 +47,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_flip(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"flip", _key_action_flip},
+   {NULL, NULL}
+};
+
 EOLIAN static void
 _elm_flipselector_elm_layout_sizing_eval(Eo *obj, Elm_Flipselector_Data *sd)
 {
@@ -427,21 +434,11 @@ _flip_down(Elm_Flipselector_Data *sd)
    _send_msg(sd, MSG_FLIP_DOWN, (char *)item->label);
 }
 
-EOLIAN static Eina_Bool
-_elm_flipselector_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+static Eina_Bool
+_key_action_flip(Evas_Object *obj, const char *params)
 {
-   Eina_Bool is_up = EINA_TRUE;
-
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if ((!strcmp(ev->key, "Down")) || (!strcmp(ev->key, "KP_Down")))
-     is_up = EINA_FALSE;
-   else if ((strcmp(ev->key, "Up")) && (strcmp(ev->key, "KP_Up")))
-     return EINA_FALSE;
+   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   const char *dir = params;
 
    ELM_SAFE_FREE(sd->spin, ecore_timer_del);
 
@@ -449,10 +446,25 @@ _elm_flipselector_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *s
       these calls by flip_{next,prev} */
    _flipselector_walk(sd);
 
-   if (is_up) _flip_up(sd);
-   else _flip_down(sd);
+   if (!strcmp(dir, "up")) _flip_up(sd);
+   else if (!strcmp(dir, "down")) _flip_down(sd);
+   else return EINA_FALSE;
 
    _flipselector_unwalk(sd);
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_flipselector_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   (void) src;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+     return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;

@@ -655,6 +655,35 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elm_Flipselector";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Up";
+              value "action" string: "flip";
+              value "params" string: "up";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Up";
+              value "action" string: "flip";
+              value "params" string: "up";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Down";
+              value "action" string: "flip";
+              value "params" string: "down";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Down";
+              value "action" string: "flip";
+              value "params" string: "down";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
         value "name" string: "Elm_Gengrid";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
