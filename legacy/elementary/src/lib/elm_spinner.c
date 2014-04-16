@@ -460,7 +460,6 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
 
    Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if (type == EVAS_CALLBACK_KEY_DOWN)

@@ -435,7 +435,6 @@ _elm_flipselector_elm_widget_event(Eo *obj, Elm_Flipselector_Data *sd, Evas_Obje
    Evas_Event_Key_Down *ev = event_info;
    (void) src;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 

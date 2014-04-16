@@ -1467,7 +1467,6 @@ _elc_popup_elm_widget_event(Eo *obj, Elc_Popup_Data *_pd EINA_UNUSED, Evas_Objec
    (void)src;
    Evas_Event_Key_Down *ev = event_info;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 

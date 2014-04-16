@@ -2580,7 +2580,6 @@ _elm_genlist_elm_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *src, E
    Evas_Coord pan_max_x = 0, pan_max_y = 0;
    Eina_Bool sel_ret = EINA_FALSE;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;

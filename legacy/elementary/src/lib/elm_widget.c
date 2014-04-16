@@ -1518,6 +1518,13 @@ _elm_widget_event_propagate(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eva
         Elm_Widget_Smart_Data *sd = eo_data_scope_get(parent, MY_CLASS);
 
         Eina_Bool int_ret = EINA_FALSE;
+
+        if (elm_widget_disabled_get(obj))
+          {
+             parent = sd->parent_obj;
+             continue;
+          }
+
         eo_do(parent, int_ret = elm_obj_widget_event(obj, type, event_info));
         if (int_ret) return EINA_TRUE;
 

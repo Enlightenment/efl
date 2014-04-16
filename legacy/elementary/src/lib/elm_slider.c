@@ -358,8 +358,6 @@ _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Eva
 
    (void) src;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-
    if (type == EVAS_CALLBACK_KEY_DOWN) goto key_down;
    else if (type == EVAS_CALLBACK_KEY_UP)
      {

@@ -913,7 +913,6 @@ _elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_
    (void) src;
    Evas_Event_Key_Down *ev = event_info;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
 
    if (!_elm_config_key_binding_call(obj, ev, key_actions))

@@ -971,7 +971,6 @@ _elm_diskselector_elm_widget_event(Eo *obj, Elm_Diskselector_Data *sd, Evas_Obje
 
    (void) src;
 
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
