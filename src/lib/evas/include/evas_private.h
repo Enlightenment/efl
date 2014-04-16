@@ -135,10 +135,6 @@ struct _Evas_3D_Node
    Evas_Vec4         orientation_world;
    Evas_Vec3         scale_world;
 
-   Eina_Bool         position_inherit;
-   Eina_Bool         orientation_inherit;
-   Eina_Bool         scale_inherit;
-
    Evas_Box3         aabb;
 
    Evas_3D_Node_Type type;
@@ -167,6 +163,10 @@ struct _Evas_3D_Node
 
    /* Scene using this node as camera. */
    Eina_Hash        *scenes_camera;
+
+   Eina_Bool         position_inherit : 1;
+   Eina_Bool         orientation_inherit : 1;
+   Eina_Bool         scale_inherit : 1;
 };
 
 struct _Evas_3D_Camera

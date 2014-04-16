@@ -622,11 +622,12 @@ evas_mat4_copy(Evas_Mat4 *dst, const Evas_Mat4 *src)
 }
 
 static inline void
-evas_mat4_nocheck_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a, const Evas_Mat4 *mat_b)
+evas_mat4_nocheck_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a,
+                           const Evas_Mat4 *mat_b)
 {
-   Evas_Real        *d = &out->m[0];
-   const Evas_Real  *a = &mat_a->m[0];
-   const Evas_Real  *b = &mat_b->m[0];
+   Evas_Real *d = out->m;
+   const Evas_Real *a = mat_a->m;
+   const Evas_Real *b = mat_b->m;
 
    if (mat_a->flags & EVAS_MATRIX_IS_IDENTITY)
      {
@@ -664,7 +665,8 @@ evas_mat4_nocheck_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a, const Evas_Ma
 }
 
 static inline void
-evas_mat4_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a, const Evas_Mat4 *mat_b)
+evas_mat4_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a,
+                   const Evas_Mat4 *mat_b)
 {
    if (out != mat_a && out != mat_b)
      {
@@ -785,9 +787,9 @@ evas_mat4_ortho_set(Evas_Mat4 *m,
 static inline void
 evas_mat4_nocheck_inverse(Evas_Mat4 *out, const Evas_Mat4 *mat)
 {
-   Evas_Real        *d = &out->m[0];
-   const Evas_Real  *m = &mat->m[0];
-   Evas_Real         det;
+   Evas_Real *d = out->m;
+   const Evas_Real *m = mat->m;
+   Evas_Real det;
 
    if (mat->flags & EVAS_MATRIX_IS_IDENTITY)
      {
@@ -909,8 +911,7 @@ evas_mat4_nocheck_inverse(Evas_Mat4 *out, const Evas_Mat4 *mat)
 
    det = m[0] * d[0] + m[1] * d[4] + m[2] * d[8] + m[3] * d[12];
 
-   if (det == 0.0)
-     return;
+   if (det == 0.0) return;
 
    det = 1.0 / det;
 
@@ -1016,9 +1017,9 @@ evas_mat3_copy(Evas_Mat3 *dst, const Evas_Mat3 *src)
 static inline void
 evas_mat3_nocheck_multiply(Evas_Mat3 *out, const Evas_Mat3 *mat_a, const Evas_Mat3 *mat_b)
 {
-   Evas_Real        *d = &out->m[0];
-   const Evas_Real  *a = &mat_a->m[0];
-   const Evas_Real  *b = &mat_b->m[0];
+   Evas_Real *d = out->m;
+   const Evas_Real *a = mat_a->m;
+   const Evas_Real *b = mat_b->m;
 
    if (mat_a->flags & EVAS_MATRIX_IS_IDENTITY)
      {
@@ -1236,7 +1237,8 @@ evas_mat2_invserse(Evas_Mat2 *out, const Evas_Mat2 *mat)
 }
 
 static inline void
-evas_box2_set(Evas_Box2 *box, Evas_Real x0, Evas_Real y0, Evas_Real x1, Evas_Real y1)
+evas_box2_set(Evas_Box2 *box, Evas_Real x0, Evas_Real y0, Evas_Real x1,
+              Evas_Real y1)
 {
    box->p0.x = x0;
    box->p0.y = y0;
@@ -1245,7 +1247,8 @@ evas_box2_set(Evas_Box2 *box, Evas_Real x0, Evas_Real y0, Evas_Real x1, Evas_Rea
 }
 
 static inline void
-evas_box3_set(Evas_Box3 *box, Evas_Real x0, Evas_Real y0, Evas_Real z0, Evas_Real x1, Evas_Real y1, Evas_Real z1)
+evas_box3_set(Evas_Box3 *box, Evas_Real x0, Evas_Real y0, Evas_Real z0,
+              Evas_Real x1, Evas_Real y1, Evas_Real z1)
 {
    box->p0.x = x0;
    box->p0.y = y0;
@@ -1481,17 +1484,18 @@ evas_color_blend(Evas_Color *dst, const Evas_Color *c0, const Evas_Color *c1, Ev
 static inline void
 evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
 {
-   Evas_Mat4   mat;
-   Evas_Vec4   near, far;
+   Evas_Mat4 mat;
+   Evas_Vec4 near, far;
 
-   /* Get the matrix which transforms from normalized device coordinate to modeling coodrinate. */
+   /* Get the matrix which transforms from normalized device coordinate to
+      modeling coodrinate. */
    evas_mat4_inverse(&mat, mvp);
 
    /* Transform near point. */
-   near.x =    x;
-   near.y =    y;
+   near.x = x;
+   near.y = y;
    near.z = -1.0;
-   near.w =  1.0;
+   near.w = 1.0;
 
    evas_vec4_transform(&near, &near, &mat);
 
@@ -1503,10 +1507,10 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
    evas_vec3_set(&ray->org, near.x, near.y, near.z);
 
    /* Transform far point. */
-   far.x =     x;
-   far.y =     y;
-   far.z =   1.0;
-   far.w =   1.0;
+   far.x = x;
+   far.y = y;
+   far.z = 1.0;
+   far.w = 1.0;
 
    evas_vec4_transform(&far, &far, &mat);
 

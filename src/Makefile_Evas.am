@@ -284,8 +284,7 @@ lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
 
 noinst_HEADERS += \
-lib/evas/include/evas_3d_utils.h \
-lib/evas/include/evas_3d_private.h
+lib/evas/include/evas_3d_utils.h
 
 lib_evas_libevas_la_SOURCES += \
 lib/evas/canvas/evas_3d_object.c \
