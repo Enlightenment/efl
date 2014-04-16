@@ -13,6 +13,8 @@
 # define FILTERS_DEBUG
 //#endif
 
+#define FILTERS_LEGACY_COMPAT
+
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
 #define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+2)
 
@@ -499,146 +501,6 @@ _instruction_param_gets(Evas_Filter_Instruction *instr, const char *name,
    return NULL;
 }
 
-/* Parsing format: func ( arg , arg2 , argname=val1, argname2 = val2 ) */
-
-#if 0
-#define CHARS_ALPHABET "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ"
-#define CHARS_NUMS "0123456789"
-#define CHARS_DELIMS "=-(),;#.:_"
-static const char *allowed_chars = CHARS_ALPHABET CHARS_NUMS "_";
-static const char *allowed_delim = CHARS_DELIMS;
-
-static char *
-_whitespace_ignore_strdup(const char *str)
-{
-   Eina_Bool inword = EINA_FALSE, wasword = EINA_FALSE;
-   char *dst, *ptr, *next;
-   int len;
-
-   if (!str) return NULL;
-   len = strlen(str);
-   dst = calloc(len + 1, 1);
-
-   // TODO: Support quoted strings ("string" or 'string')
-
-   ptr = dst;
-   for (; *str; str++)
-     {
-        if (isspace(*str))
-          {
-             wasword = inword;
-             inword = EINA_FALSE;
-          }
-        else if (isalpha(*str) || isdigit(*str))
-          {
-             if (wasword)
-               {
-                  ERR("Invalid space found in program code");
-                  goto invalid;
-               }
-             inword = EINA_TRUE;
-             *ptr++ = *str;
-          }
-        else if (*str == '/')
-          {
-             if (str[1] == '*')
-               {
-                  next = strstr(str + 2, "*/");
-                  if (!next)
-                    {
-                       ERR("Unterminated comment section, \"*/\" was not found");
-                       goto invalid;
-                    }
-                  str = next + 1;
-               }
-             else if (str[1] == '/')
-               {
-                  next = strchr(str + 2, '\n');
-                  if (!next) break;
-                  str = next;
-               }
-             else
-               {
-                  ERR("Character '/' not followed by '/' or '*' is invalid");
-                  goto invalid;
-               }
-          }
-        else
-          {
-             if (!strchr(allowed_delim, *str))
-               {
-                  ERR("Character '%1.1s' is not allowed", str);
-                  goto invalid;
-               }
-             wasword = inword = EINA_FALSE;
-             *ptr++ = *str;
-          }
-     }
-
-   *ptr = 0;
-   return dst;
-
-invalid:
-   free(dst);
-   return NULL;
-}
-
-// "key", alphanumeric chars only, starting with a letter
-static Eina_Bool
-_is_valid_string(const char *str)
-{
-   if (!str)
-     return EINA_FALSE;
-   if (!isalpha(*str++))
-     return EINA_FALSE;
-   for (; *str; str++)
-     if (!isalpha(*str) && !isdigit(*str) && (*str != '_'))
-       return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-// valid number:
-static Eina_Bool
-_is_valid_number(const char *str)
-{
-   Eina_Bool dot = EINA_FALSE;
-   if (!str || !*str) return EINA_FALSE;
-   for (; *str; str++)
-     {
-        if (!isdigit(*str))
-          {
-             if (dot) return EINA_FALSE;
-             if (*str == '.') dot = EINA_TRUE;
-          }
-     }
-   return EINA_TRUE;
-}
-
-// FIXME/TODO: Add support for strings with "" AND/OR ''
-
-// "key=val"
-static Eina_Bool
-_is_valid_keyval(const char *str)
-{
-   char *equal;
-   Eina_Bool ok = EINA_TRUE;
-
-   if (!str) return EINA_FALSE;
-   equal = strchr(str, '=');
-   if (!equal) return EINA_FALSE;
-   *equal = 0;
-   if (!_is_valid_string(str))
-     ok = EINA_FALSE;
-   else if (!_is_valid_string(equal + 1))
-     {
-        if (!_is_valid_number(equal + 1))
-          ok = EINA_FALSE;
-     }
-   *equal = '=';
-   return ok;
-}
-#endif
-
 static Eina_Bool
 _bool_parse(const char *str, Eina_Bool *b)
 {
@@ -710,147 +572,6 @@ _color_parse(const char *word, DATA32 *color)
 end:
    return success;
 }
-
-#if 0
-static Eina_Bool
-_value_parse(Instruction_Param *param, const char *value)
-{
-   Eina_Bool b;
-   DATA32 color;
-   double d;
-   int i;
-
-   switch (param->type)
-     {
-      case VT_BOOL:
-        PARSE_CHECK(_bool_parse(value, &b));
-        eina_value_set(param->value, b ? 1 : 0);
-        return EINA_TRUE;
-      case VT_INT:
-        PARSE_CHECK(sscanf(value, "%d", &i) == 1);
-        eina_value_set(param->value, i);
-        return EINA_TRUE;
-      case VT_REAL:
-        PARSE_CHECK(sscanf(value, "%lf", &d) == 1);
-        eina_value_set(param->value, d);
-        return EINA_TRUE;
-      case VT_STRING:
-      case VT_BUFFER:
-        if (!param->allow_any_string) PARSE_CHECK(_is_valid_string(value));
-        eina_value_set(param->value, value);
-        return EINA_TRUE;
-      case VT_COLOR:
-        PARSE_CHECK(_color_parse(value, &color));
-        eina_value_set(param->value, color);
-        return EINA_TRUE;
-      case VT_NONE:
-      default:
-        PARSE_CHECK(!"invalid value type");
-     }
-
-end:
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_instruction_parse(Evas_Filter_Instruction *instr, const char *string)
-{
-   Instruction_Param *param = NULL;
-   char *str = NULL, *token = NULL, *next = NULL, *optval = NULL, *optname = NULL;
-   Eina_Bool last = EINA_FALSE, namedargs = EINA_FALSE, success = EINA_FALSE;
-   int seqorder = 0;
-
-   instr->valid = EINA_FALSE;
-   PARSE_CHECK(string);
-
-   EINA_INLIST_FOREACH(instr->params, param)
-     param->set = EINA_FALSE;
-
-   // Copy and remove whitespaces now
-   str = _whitespace_ignore_strdup(string);
-   PARSE_CHECK(str);
-   token = str;
-
-   // Check instruction matches function name
-   next = strchr(token, '(');
-   PARSE_CHECK(next);
-   *next++ = 0;
-   PARSE_CHECK(!strcasecmp(token, instr->name));
-
-   // Read arguments
-   while (((token = strsep(&next, ",")) != NULL) && (!last))
-     {
-        Eina_Bool found = EINA_FALSE;
-
-        // Last argument
-        if (!next)
-          {
-             // ',' was not found, find ')'
-             next = strchr(token, ')');
-             PARSE_CHECK(next);
-             last = EINA_TRUE;
-             *next++ = 0;
-             PARSE_CHECK(!*next);
-          }
-
-        // Named arguments
-        if (_is_valid_keyval(token))
-          {
-             namedargs = EINA_TRUE;
-
-             optval = strchr(token, '=');
-             PARSE_CHECK(optval); // assert
-             *optval++ = 0;
-
-             optname = token;
-             EINA_INLIST_FOREACH(instr->params, param)
-               {
-                  if (!strcasecmp(param->name, optname))
-                    {
-                       found = EINA_TRUE;
-                       PARSE_CHECK(!param->set);
-                       PARSE_CHECK(_value_parse(param, optval));
-                       param->set = EINA_TRUE;
-                    }
-               }
-             PARSE_CHECK(found);
-          }
-        // Sequential arguments
-        else if (!namedargs &&
-                 (_is_valid_string(token) || _is_valid_number(token)))
-          {
-             int order = 0;
-
-             // Go to the nth argument
-             EINA_INLIST_FOREACH(instr->params, param)
-               {
-                  if (order < seqorder)
-                    order++;
-                  else
-                    {
-                       found = EINA_TRUE;
-                       break;
-                    }
-               }
-
-             PARSE_CHECK(found);
-             PARSE_CHECK(param->allow_seq);
-             PARSE_CHECK(_value_parse(param, token));
-             param->set = EINA_TRUE;
-             seqorder++;
-          }
-        else if (!last)
-          PARSE_CHECK(!"invalid argument list");
-     }
-   PARSE_CHECK(last);
-   success = EINA_TRUE;
-
-end:
-   free(str);
-   instr->valid = success;
-   return success;
-}
-#endif
 
 /* Buffers */
 static Buffer *
@@ -1812,57 +1533,6 @@ _padding_set_instruction_prepare(Evas_Filter_Instruction *instr)
    return EINA_TRUE;
 }
 
-#if 0
-static Evas_Filter_Instruction *
-_instruction_create(const char *name)
-{
-   Evas_Filter_Instruction *instr;
-   Eina_Bool (* prepare) (Evas_Filter_Instruction *) = NULL;
-
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(name && *name, NULL);
-
-   if (!strcasecmp(name, "buffer"))
-     prepare = _buffer_instruction_prepare;
-   else if (!strcasecmp(name, "blend"))
-     prepare = _blend_instruction_prepare;
-   else if (!strcasecmp(name, "blur"))
-     prepare = _blur_instruction_prepare;
-   else if (!strcasecmp(name, "bump"))
-     prepare = _bump_instruction_prepare;
-   else if (!strcasecmp(name, "curve"))
-     prepare = _curve_instruction_prepare;
-   else if (!strcasecmp(name, "displace"))
-     prepare = _displace_instruction_prepare;
-   else if (!strcasecmp(name, "fill"))
-     prepare = _fill_instruction_prepare;
-   else if (!strcasecmp(name, "grow"))
-     prepare = _grow_instruction_prepare;
-   else if (!strcasecmp(name, "mask"))
-     prepare = _mask_instruction_prepare;
-   else if (!strcasecmp(name, "transform"))
-     prepare = _transform_instruction_prepare;
-   else if (!strcasecmp(name, "padding_set"))
-     prepare = _padding_set_instruction_prepare;
-
-   if (!prepare)
-     {
-        ERR("Invalid instruction name '%s'", name);
-        return NULL;
-     }
-
-   instr = _instruction_new(name);
-   if (!instr) return NULL;
-
-   if (!prepare(instr))
-     {
-        CRI("Failed to prepare instruction '%s'. Check the code.", name);
-        _instruction_del(instr);
-        return NULL;
-     }
-   return instr;
-}
-#endif
-
 /* Evas_Filter_Parser entry points */
 
 #undef PARSE_CHECK
@@ -1891,55 +1561,6 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
    eina_stringshare_del(pgm->name);
    free(pgm);
 }
-
-#if 0
-static Eina_Bool
-_instruction_buffer_parse(Evas_Filter_Program *pgm, char *command)
-{
-   Eina_Bool success = EINA_FALSE;
-   char *bufname = NULL, *src = NULL, *tok, *tok2;
-   Eina_Bool alpha = EINA_FALSE;
-   size_t sz;
-
-   tok = strchr(command, ':');
-   PARSE_CHECK(tok);
-   PARSE_CHECK(!strncasecmp("buffer:", command, tok - command));
-
-   tok++;
-   tok2 = strchr(tok, '(');
-   if (!tok2)
-     bufname = tok;
-   else
-     {
-        *tok2++ = 0;
-        bufname = tok;
-        tok = strchr(tok2, ')');
-        PARSE_CHECK(tok);
-        *tok = 0;
-        if (!*tok2)
-          alpha = EINA_FALSE;
-        else if (!strcasecmp(tok2, "rgba"))
-          alpha = EINA_FALSE;
-        else if (!strcasecmp(tok2, "alpha"))
-          alpha = EINA_TRUE;
-        else if (!strncasecmp("src=", tok2, 4))
-          {
-             src = tok2 + 4;
-             alpha = EINA_FALSE;
-          }
-        else
-          PARSE_CHECK(!"Invalid buffer type");
-     }
-
-   sz = strspn(bufname, allowed_chars);
-   PARSE_CHECK(sz == strlen(bufname));
-   PARSE_CHECK(_buffer_add(pgm, bufname, (alpha != 0), src));
-   success = EINA_TRUE;
-
-end:
-   return success;
-}
-#endif
 
 static const int this_is_not_a_cat = 42;
 
@@ -2258,6 +1879,7 @@ _lua_state_create(Evas_Filter_Program *pgm)
    return L;
 }
 
+#ifdef FILTERS_LEGACY_COMPAT
 // This function is here to avoid breaking the ABI too much.
 // It should not stay here long, only until all client apps have changed the filters' code to Lua.
 static char *
@@ -2350,6 +1972,11 @@ _legacy_strdup(const char *str)
                   eina_strbuf_append_char(dst, '"');
                   ptr--;
                }
+             else
+               {
+                  eina_strbuf_append_length(dst, "curve", 5);
+                  ptr += 4;
+               }
           }
         else if (!strncasecmp("repeat", ptr, 6))
           {
@@ -2368,18 +1995,13 @@ _legacy_strdup(const char *str)
 
    return eina_strbuf_string_steal(dst);
 }
+#endif
 
 /** Parse a style program */
 
 EAPI Eina_Bool
 evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 {
-   //   Evas_Filter_Instruction *instr = NULL;
-   //   Instruction_Param *param;
-   //   Eina_Bool success = EINA_FALSE, ok;
-   //   char *token, *next, *code, *instrname;
-   //   int count = 0;
-   //   size_t spn;
    lua_State *L;
    Eina_Bool ok;
 
@@ -2391,13 +2013,17 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    if (!L) return EINA_FALSE;
 
    ok = !luaL_loadstring(L, str);
+
+#ifdef FILTERS_LEGACY_COMPAT
    if (!ok)
      {
         char *code = _legacy_strdup(str);
-        INF("Fallback to transformed legacy code:\n%s", code);
+        DBG("Fallback to transformed legacy code:\n%s", code);
         ok = !luaL_loadstring(L, code);
         free(code);
      }
+#endif
+
    if (ok) ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
    lua_close(L);
 
@@ -2405,82 +2031,6 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    pgm->padding_calc = EINA_FALSE;
 
    return ok;
-
-#if 0
-   code = _whitespace_ignore_strdup(str);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(code, EINA_FALSE);
-
-   // NOTE: '' or "" strings will be broken by strsep if they contain ';'.
-   // But we don't support them anyway :)
-
-   next = code;
-   while ((token = strsep(&next, ";")) != NULL)
-     {
-        if (!next)
-          {
-             // Semicolon is mandatory.
-             DBG("End of processing");
-             PARSE_CHECK(!*token);
-             break;
-          }
-
-        // Empty command
-        if (next == token + 1) continue;
-
-        // Parse "instrname(options)" or "buffer:a(options)"
-        spn = strcspn(token, "(:");
-        PARSE_CHECK(spn);
-        if (token[spn] == ':')
-          PARSE_CHECK(_instruction_buffer_parse(pgm, token));
-        else if (token[spn] == '(')
-          {
-             instrname = token;
-             instrname[spn] = 0;
-
-             instr = _instruction_create(instrname);
-             PARSE_CHECK(instr);
-
-             instrname[spn] = '(';
-             ok = _instruction_parse(instr, token);
-             PARSE_CHECK(ok);
-
-             // Check buffers validity
-             EINA_INLIST_FOREACH(instr->params, param)
-               {
-                  const char *bufname = NULL;
-
-                  if (param->type != VT_BUFFER) continue;
-                  PARSE_CHECK(eina_value_get(param->value, &bufname));
-                  if (!_buffer_get(pgm, bufname))
-                    {
-                       ERR("Buffer '%s' does not exist!", bufname);
-                       goto end;
-                    }
-               }
-
-             // Add to the queue
-             pgm->instructions = eina_inlist_append(pgm->instructions, EINA_INLIST_GET(instr));
-             pgm->padding_calc = EINA_FALSE;
-             instr = NULL;
-             count++;
-          }
-        else PARSE_CHECK(!"invalid command");
-     }
-   success = (count > 0);
-
-   DBG("Program successfully compiled with %d instruction(s)", count);
-
-end:
-   if (!success)
-     {
-        ERR("Failed to parse program");
-        _instruction_del(instr);
-     }
-   free(code);
-
-   pgm->valid = success;
-   return success;
-#endif
 }
 
 /** Evaluate required padding to correctly apply an effect */
