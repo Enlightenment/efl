@@ -32,9 +32,19 @@ local Node = util.Object:clone {
 }
 
 local Method = Node:clone {
+    __ctor = function(self, meth)
+        self.method = meth
+    end
 }
 
 local Property = Node:clone {
+    __ctor = function(self, prop)
+        self.property = prop
+    end,
+
+    generate = function(self, s)
+        
+    end
 }
 
 local Constructor = Node:clone {
@@ -72,7 +82,7 @@ local Class = Node:clone {
     generate = function(self, s)
         dom:log(log.level.INFO, "  Generating for class: " .. self.cname)
         s:write(([[
-local Parent = eo_get("%s")
+local Parent = eo.class_get("%s")
 M.%s = Parent:clone {
 ]]):format(self.parent, self.cname))
 
@@ -81,7 +91,7 @@ M.%s = Parent:clone {
         s:write("\n}\n")
 
         for i, v in ipairs(self.mixins) do
-            s:write("\nM.%s:mixin(eo_get(\"%s\"))\n", self.cname, v)
+            s:write("\nM.%s:mixin(eo.class_get(\"%s\"))\n", self.cname, v)
         end
     end
 }
@@ -100,6 +110,8 @@ local File = Node:clone {
 -- EFL LuaJIT bindings: %s (class %s)
 -- For use with Elua; automatically generated, do not modify
 
+local eo = require("eo")
+
 local M = {}
 
 ]]):format(self.fname, self.cname))
@@ -114,7 +126,19 @@ return M
 }
 
 local gen_contents = function(classn)
-    return {}
+    local cnt = {}
+    local ft  = eolian.function_type
+    -- first try properties
+    local props = eolian.class_functions_list_get(classn, ft.PROPERTY)
+    for i, v in ipairs(props) do
+        cnt[#cnt + 1] = Property(v)
+    end
+    -- then methods
+    local meths = eolian.class_functions_list_get(classn, ft.METHOD)
+    for i, v in ipairs(meths) do
+        cnt[#cnt + 1] = Method(v)
+    end
+    return cnt
 end
 
 local gen_mixin = function(classn)
@@ -128,7 +152,7 @@ local gen_class = function(classn)
     local ct = eolian.class_type
     for i, v in ipairs(inherits) do
         local tp = eolian.class_type_get(v)
-        if tp == ct.REGULAR or tp == ct.ABSTRACT then
+        if tp == ct.REGULAR or tp == ct.ABSTRACT or v == "Eo_Base" then
             if parent then
                 error(classn .. ": more than 1 parent!")
             end
