@@ -97,6 +97,10 @@ M.Object = {
         init_getters(self)[propname] = function(self, n) return proxy end
     end,
 
+    mixin = function(self, obj)
+        for k, v in pairs(obj) do self[k] = v end
+    end,
+
     __tostring = function(self)
         return ("Object: %s"):format(self.name or "unnamed")
     end
