@@ -196,10 +196,11 @@ _eo_op_id_desc_get(Eo_Op op)
       return NULL;
 
    klass = _eo_op_class_get(op);
-   DBG("klass %p %s", klass, klass->desc->name);
 
    if (klass)
      {
+        DBG("klass %p %s", klass, klass->desc->name);
+
         op_descs = klass->desc->ops.descs2;
         for (i = 0; i <  klass->desc->ops.count; i++)
           {
