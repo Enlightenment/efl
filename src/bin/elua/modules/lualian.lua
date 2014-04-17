@@ -26,6 +26,71 @@ local strip_name = function(self, cn, cp)
     return nm or cp
 end
 
+-- char not included - manual disambiguation needed
+local isnum = {
+    ["short"   ] = true, ["int"      ] = true, ["long"       ] = true,
+    ["size_t"  ] = true, ["ptrdiff_t"] = true, ["int8_t"     ] = true,
+    ["int16_t" ] = true, ["int32_t"  ] = true, ["int64_t"    ] = true,
+    ["uint8_t" ] = true, ["uint16_t" ] = true, ["uint32_t"   ] = true,
+    ["uint64_t"] = true, ["intptr_t" ] = true, ["uintptr_t"  ] = true,
+    ["float"   ] = true, ["double"   ] = true, ["long double"] = true
+}
+
+local known_out = {
+    ["Eina_Bool"] = function(expr) return ("((%s) ~= 0)"):format(expr) end
+}
+
+local known_in = {
+    ["Eina_Bool"] = function(expr) return expr end
+}
+
+local typeconv_in = function(tp, expr, isconst, isptr)
+    if isptr then
+        error("invalid type (pointer) [in]: " .. tp)
+    end
+    if isnum[tp] then
+        return expr
+    end
+
+    local f = known_in[tp]
+    if f then
+        return f(expr)
+    end
+
+    error("invalid type [in]: " .. tp)
+end
+
+local typeconv = function(tp, expr, isin)
+    -- strip type qualifiers
+    local isconst, tpr = (tp:match("^(const)[ ]+(.+)$"))
+    isconst = not not isconst
+    if tpr then tp = tpr end
+
+    -- check if it's a pointer
+    local basetype = (tp:match("(.+)[ ]+%*$"))
+
+    -- out val
+    if isin then return typeconv_in(tp, expr, isconst, basetype) end
+
+    -- pointer type
+    if basetype then
+        error("invalid type (pointer): " .. tp)
+    end
+
+    -- number?
+    if isnum[tp] then
+        return ("tonumber(%s)"):format(expr)
+    end
+
+    -- known primitive EFL type?
+    local f = known_out[tp]
+    if f then
+        return f(expr)
+    end
+
+    error("invalid type: " .. tp)
+end
+
 local Node = util.Object:clone {
     generate = function(self, s)
     end,
@@ -74,14 +139,14 @@ local Method = Node:clone {
                         args[#args + 1] = nm
                     end
                     cargs [#cargs  + 1] = tp .. " *" .. nm
-                    vargs [#vargs  + 1] = nm
+                    vargs [#vargs  + 1] = typeconv(tp, nm, true)
                     allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
                         and nm or nil }
-                    rets  [#rets   + 1] = nm .. "[0]"
+                    rets  [#rets   + 1] = typeconv(tp, nm .. "[0]", false)
                 else
                     args  [#args   + 1] = nm
                     cargs [#cargs  + 1] = tp .. " " .. nm
-                    vargs [#vargs  + 1] = nm
+                    vargs [#vargs  + 1] = typeconv(tp, nm, true)
                 end
             end
         end
@@ -170,14 +235,15 @@ local Property = Method:clone {
                 if dir == dirs.OUT or dir == dirs.INOUT then
                     if dir == dirs.INOUT then kprop = true end
                     cargs [#cargs  + 1] = tp .. " *" .. nm
-                    vargs [#vargs  + 1] = nm
+                    vargs [#vargs  + 1] = typeconv(tp, nm, true)
                     allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
                         and (argn .. "[" .. i .. "]") or nil }
-                    rets  [#rets   + 1] = nm .. "[0]"
+                    rets  [#rets   + 1] = typeconv(tp, nm .. "[0]", false)
                 else
                     kprop = true
                     cargs [#cargs  + 1] = tp .. " " .. nm
-                    vargs [#vargs  + 1] = argn .. "[" .. i .. "]"
+                    vargs [#vargs  + 1] = typeconv(tp, argn .. "[" .. i .. "]",
+                        true)
                 end
             end
             if kprop then args[#args + 1] = argn end
@@ -188,15 +254,15 @@ local Property = Method:clone {
         if #vals > 0 then
             if self.isget then
                 if #vals == 1 and not rett then
-                    rets[#rets + 1] = "v"
                     proto.ret_type = vals[1]:type_get()
+                    rets[#rets + 1] = typeconv(proto.ret_type, "v", false)
                 else
                     for i, v in ipairs(vals) do
                         local dir, tp, nm = v:information_get()
                         cargs [#cargs  + 1] = tp .. " *" .. nm
-                        vargs [#vargs  + 1] = nm
+                        vargs [#vargs  + 1] = typeconv(tp, nm, true)
                         allocs[#allocs + 1] = { tp, nm }
-                        rets  [#rets   + 1] = nm .. "[0]"
+                        rets  [#rets   + 1] = typeconv(tp, nm .. "[0]", false)
                     end
                 end
             else
@@ -205,7 +271,8 @@ local Property = Method:clone {
                 for i, v in ipairs(vals) do
                     local dir, tp, nm = v:information_get()
                     cargs[#cargs + 1] = tp .. " " .. nm
-                    vargs[#vargs + 1] = argn .. "[" .. i .. "]"
+                    vargs[#vargs + 1] = typeconv(tp, argn .. "[" .. i .. "]",
+                        true)
                 end
             end
         end
