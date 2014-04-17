@@ -456,12 +456,14 @@ _key_action_spin(Evas_Object *obj, const char *params)
    const char *dir = params;
    Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
 
-   if ((!strcmp(dir, "dec")) && horz)
+   if (((!strcmp(dir, "left")) && horz) ||
+       ((!strcmp(dir, "down")) && !horz))
      {
         _val_dec_start(obj);
         elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
      }
-   else if ((!strcmp(dir, "inc")) && horz)
+   else if (((!strcmp(dir, "right")) && horz) ||
+            ((!strcmp(dir, "up")) && !horz))
      {
         _val_inc_start(obj);
         elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
