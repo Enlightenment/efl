@@ -38,11 +38,93 @@ local Method = Node:clone {
         self.method = meth
     end,
 
+    gen_proto = function(self)
+        if self.cached_proto then return self.cached_proto end
+
+        local meth = self.method
+        local pars = meth:parameters_list_get()
+        local rett = meth:return_type_get(eolian.function_type.METHOD)
+
+        local proto = {
+            name    = meth:name_get()
+        }
+        proto.ret_type = rett or "void"
+        local args, cargs, vargs = { "self" }, {}, {}
+        proto.args, proto.cargs, proto.vargs = args, cargs, vargs
+        local rets = {}
+        proto.rets = rets
+        local allocs = {}
+        proto.allocs = allocs
+
+        proto.full_name = self.parent_node.prefix .. "_" .. proto.name
+
+        local dirs = eolian.parameter_dir
+
+        if #pars > 0 then
+            for i, v in ipairs(pars) do
+                local dir, tp, nm = v:information_get()
+                if dir == dirs.OUT or dir == dirs.INOUT then
+                    if dir == dirs.INOUT then
+                        args[#args + 1] = nm
+                    end
+                    cargs [#cargs  + 1] = tp .. " *" .. nm
+                    vargs [#vargs  + 1] = nm
+                    allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
+                        and nm or nil }
+                    rets  [#rets   + 1] = nm .. "[0]"
+                else
+                    args  [#args   + 1] = nm
+                    cargs [#cargs  + 1] = tp .. " " .. nm
+                    vargs [#vargs  + 1] = nm
+                end
+            end
+        end
+
+        if #cargs == 0 then cargs[1] = "void" end
+
+        self.cached_proto = proto
+
+        return proto
+    end,
+
+    generate = function(self, s, last)
+        local proto = self:gen_proto()
+        local lproto = {
+            "    ", proto.name, proto.suffix or "", " = function(",
+            table.concat(proto.args, ", "), ")\n"
+        }
+        s:write(table.concat(lproto))
+        s:write( "        self:__do_start()\n")
+        for i, v in ipairs(proto.allocs) do
+            s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
+        end
+        local genv = (proto.ret_type ~= "void")
+        local lcall = {
+            "        ", genv and "local v = " or "", "__lib.", proto.full_name,
+            "(", table.concat(proto.vargs, ", "), ")\n"
+        }
+        s:write(table.concat(lcall))
+        s:write("        self:__do_end()\n")
+        if #proto.rets > 0 then
+            s:write("        return ", table.concat(proto.rets, ", "), "\n")
+        end
+        s:write("    end", last and "" or ",", last and "\n" or "\n\n")
+    end,
+
     gen_ffi = function(self, s)
+        local proto = self:gen_proto()
+        local cproto = {
+            "    ", proto.ret_type, " ", proto.full_name, "(",
+            table.concat(proto.cargs, ", "), ");\n"
+        }
+        s:write(table.concat(cproto))
+    end,
+
+    gen_ctor = function(self, s)
     end
 }
 
-local Property = Node:clone {
+local Property = Method:clone {
     __ctor = function(self, prop, ftype)
         self.property = prop
         self.isget    = (ftype == eolian.function_type.PROP_GET)
@@ -58,7 +140,6 @@ local Property = Node:clone {
         local rett = prop:return_type_get(self.ftype)
 
         local proto = {
-            returns = self.isget or not not rett,
             name    = prop:name_get(),
             suffix  = (self.isget and "_get" or "_set")
         }
@@ -75,22 +156,28 @@ local Property = Node:clone {
 
         local dirs = eolian.parameter_dir
 
+        local kprop = false
         if #keys > 0 then
             local argn = (#keys > 1) and "keys" or "key"
-            args[#args + 1] = argn
             for i, v in ipairs(keys) do
                 local dir, tp, nm = v:information_get()
                 if dir == dirs.OUT or dir == dirs.INOUT then
+                    if dir == dirs.INOUT then kprop = true end
                     cargs [#cargs  + 1] = tp .. " *" .. nm
                     vargs [#vargs  + 1] = nm
-                    allocs[#allocs + 1] = { tp, nm }
+                    allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
+                        and (argn .. "[" .. i .. "]") or nil }
                     rets  [#rets   + 1] = nm .. "[0]"
                 else
+                    kprop = true
                     cargs [#cargs  + 1] = tp .. " " .. nm
                     vargs [#vargs  + 1] = argn .. "[" .. i .. "]"
                 end
             end
+            if kprop then args[#args + 1] = argn end
         end
+
+        proto.kprop = kprop
 
         if #vals > 0 then
             if self.isget then
@@ -124,45 +211,21 @@ local Property = Node:clone {
         return proto
     end,
 
-    generate = function(self, s, last)
+    gen_ctor = function(self, s)
         local proto = self:gen_proto()
-        local lproto = {
-            "    ", proto.name, proto.suffix, " = function(",
-            table.concat(proto.args, ", "), ")\n"
-        }
-        s:write(table.concat(lproto))
-        s:write( "        self:__do_start()\n")
-        for i, v in ipairs(proto.allocs) do
-            s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
+        s:write("        ", "self:define_property",
+            proto.kprop and "_key(" or "(", '"', proto.name, '", ')
+        if self.isget then
+            s:write("self.", proto.name, "_get, nil)\n")
+        else
+            s:write("nil, self.", proto.name, "_set)\n")
         end
-        local genv = (proto.ret_type ~= "void")
-        local lcall = {
-            "        ", genv and "local v = " or "", "__lib.", proto.full_name,
-            "(", table.concat(proto.vargs, ", "), ")\n"
-        }
-        s:write(table.concat(lcall))
-        s:write("        self:__do_end()\n")
-        if #proto.rets > 0 then
-            s:write("        return ", table.concat(proto.rets, ", "), "\n")
-        end
-        s:write("    end", last and "" or ",", "\n\n")
-    end,
-
-    gen_ffi = function(self, s)
-        local proto = self:gen_proto()
-        local cproto = {
-            "    ", proto.ret_type, " ", proto.full_name, "(",
-            table.concat(proto.cargs, ", "), ");\n"
-        }
-        s:write(table.concat(cproto))
-    end,
-
-    gen_lua = function(self, s)
-        local proto = self:gen_proto()
     end
 }
 
 local Constructor = Node:clone {
+    gen_ffi = function(self, s)
+    end
 }
 
 local Destructor = Node:clone {
@@ -187,7 +250,7 @@ local Mixin = Node:clone {
 
         self:gen_children(s)
 
-        s:write("\n}\n")
+        s:write("}\n")
     end,
 
     gen_ffi = function(self, s)
@@ -222,7 +285,7 @@ M.%s = Parent:clone {
 
         self:gen_children(s)
 
-        s:write("\n}\n")
+        s:write("}\n")
 
         for i, v in ipairs(self.mixins) do
             s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
@@ -302,6 +365,15 @@ local gen_contents = function(classn)
     local meths = eolian.class_functions_list_get(classn, ft.METHOD)
     for i, v in ipairs(meths) do
         cnt[#cnt + 1] = Method(v)
+    end
+    -- and constructors
+    local dflt_ctor = eolian.class_default_constructor_get(classn)
+    if dflt_ctor then
+        cnt[#cnt + 1] = Constructor(dflt_ctor)
+    end
+    local ctors = eolian.class_functions_list_get(classn, ft.CTOR)
+    for i, v in ipairs(ctors) do
+        cnt[#cnt + 1] = Constructor(v)
     end
     return cnt
 end
