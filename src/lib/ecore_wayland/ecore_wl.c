@@ -535,7 +535,14 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 
    if (!(ewd = data)) return ECORE_CALLBACK_RENEW;
 
-   /* FIXME: This should also catch ECORE_FD_ERROR and exit */
+   if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_ERROR))
+     {
+        ERR("Received error on wayland display fd");
+        _ecore_wl_fatal_error = EINA_TRUE;
+        _ecore_wl_signal_exit();
+
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    /* wl_display_dispatch_pending(ewd->wl.display); */
 
