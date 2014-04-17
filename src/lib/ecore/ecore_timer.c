@@ -300,7 +300,7 @@ _ecore_timer_interval_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
    double ret = -1.0;
 
-   EINA_MAIN_LOOP_CHECK_RETURN;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(ret);
    _ecore_lock();
    ret = timer->in;
    _ecore_unlock();
@@ -365,7 +365,7 @@ _ecore_timer_pending_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
    double now;
    double ret = 0.0;
 
-   EINA_MAIN_LOOP_CHECK_RETURN;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(ret);
 
    _ecore_lock();
 
@@ -438,7 +438,7 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 EOLIAN static int
 _ecore_timer_eo_base_event_freeze_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
 
    return timer->frozen;
 }

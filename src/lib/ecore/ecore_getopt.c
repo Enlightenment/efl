@@ -793,7 +793,7 @@ _ecore_getopt_help_prepare(const Ecore_Getopt *parser)
 {
    const char *var;
 
-   EINA_MAIN_LOOP_CHECK_RETURN;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
    if (!parser) return EINA_FALSE;
 
    if (_argc < 1)

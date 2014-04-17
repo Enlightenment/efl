@@ -297,7 +297,7 @@ _ecore_poller_constructor(Eo *obj, Ecore_Poller_Data *poller, Ecore_Poller_Type 
 EOLIAN static Eina_Bool
 _ecore_poller_interval_set(Eo *obj EINA_UNUSED, Ecore_Poller_Data *poller, int interval)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
 
    int ibit;
 
@@ -330,7 +330,7 @@ _ecore_poller_interval_get(Eo *obj EINA_UNUSED, Ecore_Poller_Data *poller)
 {
    int ibit, interval = 1;
 
-   EINA_MAIN_LOOP_CHECK_RETURN;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(interval);
 
    ibit = poller->ibit;
    while (ibit != 0)
