@@ -74,6 +74,12 @@ evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 {
    Evas_Loader_Internal *loader;
 
+   if (eina_file_size_get(f) <= 16)
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return NULL;
+     }
+
    loader = calloc(1, sizeof (Evas_Loader_Internal));
    if (!loader)
      {
@@ -81,16 +87,11 @@ evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
         return NULL;
      }
 
-   if (eina_file_size_get(f) <= 16)
-     {
-        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return NULL;
-     }
-
    loader->f = eina_file_dup(f);
    if (!loader->f)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        free(loader);
         return NULL;
      }
 
