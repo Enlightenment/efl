@@ -36,6 +36,9 @@ ffi.cdef [[
     } Domain_Private;
 
     typedef struct _Domain Domain;
+
+    void *malloc(size_t);
+    void    free(void*);
 ]]
 
 local cutil = require("cutil")
@@ -92,7 +95,9 @@ local get_dom = function(dom)
 end
 
 local unregister_dom = function(dom)
-    eina.eina_log_domain_unregister(ffi.cast("Domain_Private*", dom).domain)
+    local dompri = ffi.cast("Domain_Private*", dom)
+    eina.eina_log_domain_unregister(dompri.domain)
+    C.free(dompri)
 end
 
 local log_full = function(dom, level, file, func, line, msg)
@@ -180,8 +185,10 @@ M.Domain = M.Domain_Base:clone {
     __ctor = function(self, name, color)
         local dom = eina.eina_log_domain_register(name, color or "\x1B[36m")
         if dom < 0 then return end
-        self.__domain = ffi.gc(ffi.cast("Domain*", ffi.new("Domain_Private",
-            dom)), unregister_dom)
+        local dompri = ffi.cast("Domain_Private*",
+            C.malloc(ffi.sizeof("Domain_Private")))
+        dompri.domain = dom
+        self.__domain = ffi.gc(ffi.cast("Domain*", dompri), unregister_dom)
     end,
 
     unregister = function(self)
