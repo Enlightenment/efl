@@ -70,9 +70,9 @@ evas_image_save_file_tgv(RGBA_Image *im,
    if (!f) return 0;
 
    // Write header
-   fwrite(header, sizeof (uint8_t), 8, f);
-   fwrite(&width, sizeof (uint32_t), 1, f);
-   fwrite(&height, sizeof (uint32_t), 1, f);
+   if (fwrite(header, sizeof (uint8_t), 8, f) != 8) goto on_error;
+   if (fwrite(&width, sizeof (uint32_t), 1, f) != 1) goto on_error;
+   if (fwrite(&height, sizeof (uint32_t), 1, f) != 1) goto on_error;
 
    block = 4 << block;
 
@@ -185,15 +185,19 @@ evas_image_save_file_tgv(RGBA_Image *im,
                        blen = blen >> 7;
 
                        if (blen) plen = 0x80 | plen;
-                       fwrite(&plen, 1, 1, f);
+                       if (fwrite(&plen, 1, 1, f) != 1) goto on_error;
                     }
-                  fwrite(comp, wlen, 1, f);
+                  if (fwrite(comp, wlen, 1, f) != 1) goto on_error;
                }
           }
      }
    fclose(f);
 
    return 1;
+
+ on_error:
+   fclose(f);
+   return 0;
 }
 
 static Evas_Image_Save_Func evas_image_save_tgv_func =
