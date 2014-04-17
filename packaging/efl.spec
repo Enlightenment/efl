@@ -186,6 +186,7 @@ Requires: eo = %{version}-%{release}
 %description -n eo-devel
 Development files for eo
 
+
 ############ Evas
 %package -n evas
 Summary: Multi-platform canvas library
@@ -479,6 +480,24 @@ Requires: ethumb = %{version}-%{release}
 Development files for emotion
 
 
+%package -n eolian
+Summary: EO object parser and C code generator
+Group:    Graphics & UI Framework/Development
+Requires: %{name}-data = %{version}-%{release}
+
+%description -n eolian
+Tool that parses Enlightenment's meta-data (.eo) filesg
+and can then generate C code along with header files.
+
+%package -n eolian-devel
+Summary: Development components for the eolian package
+Group:    Graphics & UI Framework/Development
+Requires: eolian = %{version}-%{release}
+
+%description -n eolian-devel
+Development files for eolian
+
+
 %prep
 %setup -q
 cp %{SOURCE1001} .
@@ -499,6 +518,7 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --with-tests=regular \
 %if %{with wayland}
     --enable-wayland \
+    --enable-drm \
     --enable-egl \
     --with-opengl=es \
     --enable-tile-rotate \
@@ -591,8 +611,8 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n eina-devel
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_includedir}/eina-1/*.h
-%{_includedir}/eina-1/eina/*
+%{_includedir}/eina*-1/*.h*
+%{_includedir}/eina*-1/eina*/*
 %{_libdir}/libeina.so
 %{_libdir}/pkgconfig/eina*.pc
 %{_libdir}/cmake/Eina/*.cmake
@@ -606,6 +626,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %files -n eet-tools
 %manifest %{name}.manifest
 %{_bindir}/eet
+%{_bindir}/vieet
 
 %files -n eet-examples
 %manifest %{name}.manifest
@@ -665,6 +686,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_includedir}/evas-1/*.h
+%{_includedir}/evas-1/*/*.h
 %{_libdir}/libevas.so
 %{_libdir}/pkgconfig/evas*.pc
 %{_libdir}/cmake/Evas/*.cmake
@@ -674,7 +696,6 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %defattr(-,root,root,-)
 %license COPYING
 %{_libdir}/libecore.so.*
-%{_libdir}/libecore_avahi.so.*
 %{_libdir}/libecore_audio.so.*
 %{_libdir}/libecore_avahi.so.*
 %{_libdir}/libecore_con.so.*
@@ -687,6 +708,8 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_libdir}/libecore_ipc.so.*
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so.*
+%{_libdir}/libecore_drm.so.*
+%{_libdir}/ecore_drm/bin/v-*/ecore_drm_*
 %endif
 %if %{with x}
 %{_libdir}/libecore_x.so.*
@@ -709,6 +732,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_includedir}/ecore*/*.h
+%{_includedir}/ecore*cxx*/*.hh
 %{_libdir}/libecore.so
 %{_libdir}/libecore_audio.so
 %{_libdir}/libecore_avahi.so
@@ -722,6 +746,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_libdir}/libecore_ipc.so
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so
+%{_libdir}/libecore_drm.so
 %endif
 %if %{with x}
 %{_libdir}/libecore_x.so
@@ -837,6 +862,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %defattr(-,root,root,-)
 %license COPYING
 %{_datadir}/dbus-1/services/org.enlightenment.Efreet.service
+%{_userunitdir}/efreet.service
 %{_bindir}/efreetd
 %{_libdir}/efreet/*/efreet_desktop_cache_create
 %{_libdir}/efreet/*/efreet_icon_cache_create
@@ -886,6 +912,7 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 %{_libdir}/libethumb.so.*
 %{_libdir}/libethumb_client.so.*
 %{_datadir}/dbus-1/services/org.enlightenment.Ethumb.service
+%{_userunitdir}/ethumb.service
 %{_datadir}/ethumb/*
 %{_datadir}/ethumb_client/*
 #%{_datadir}/ethumb_client/*/*
@@ -923,3 +950,14 @@ rm -rf %{buildroot}%{_libdir}/ecore/system/upower
 
 %files -n ephysics-examples
 %{_datadir}/ephysics/examples/*
+
+
+%files -n eolian
+%{_bindir}/eolian_gen
+%{_libdir}/libeolian.so.*
+
+%files -n eolian-devel
+%{_includedir}/eolian-1/Eolian.h
+%{_datadir}/eolian/include/*/*.eo
+%{_libdir}/libeolian.so*
+
