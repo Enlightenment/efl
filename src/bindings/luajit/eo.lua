@@ -60,7 +60,7 @@ local getfuncname = function(info)
 end
 
 M.Eo_Base = util.Object:clone {
-    __ctor = function(self, klass, parent, ctor, loff, ...)
+    __ctor_common = function(self, klass, parent, ctor, loff, ...)
         local info    = getinfo(2 + (loff or 0), "nlSf")
         local source  = info.source
         local func    = getfuncname(info)
