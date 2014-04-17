@@ -753,6 +753,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if ((iw->data) && (iw->w > 0) && (iw->h > 0))
      {
+        Eet_Image_Encoding lossy = EET_IMAGE_LOSSLESS;
         int mode, qual;
 
         snprintf(buf, sizeof(buf), "edje/images/%i", iw->img->id);
@@ -785,6 +786,8 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
              qual = iw->img->source_param;
              if (qual < min_quality) qual = min_quality;
              if (qual > max_quality) qual = max_quality;
+             if (!allow_etc1 || (iw->alpha)) lossy = EET_IMAGE_JPEG;
+             else lossy = EET_IMAGE_ETC1;
           }
         if (iw->alpha)
           {
@@ -816,7 +819,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
           bytes = eet_data_image_write(iw->ef, buf,
                                        iw->data, iw->w, iw->h,
                                        iw->alpha,
-                                       0, qual, 1);
+                                       0, qual, lossy);
         if (bytes <= 0)
           {
              snprintf(buf2, sizeof(buf2),

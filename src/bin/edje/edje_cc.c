@@ -36,7 +36,8 @@ int        min_quality = 0;
 int        max_quality = 100;
 int        compress_mode = EET_COMPRESSION_HI;
 int        threads = 0;
-int	   anotate = 0;
+int        anotate = 0;
+int        allow_etc1 = 0;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -92,7 +93,7 @@ main_help(void)
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
-      "-vd vbiration/directory  Add a directory to look in for relative path vibration samples\n"
+      "-vd vibration/directory  Add a directory to look in for relative path vibration samples\n"
       "-dd data/directory       Add a directory to look in for relative path data.file entries\n"
       "-td temp/directory       Directory to store temporary files\n"
       "-l license               Specify the license of a theme\n"
@@ -101,6 +102,7 @@ main_help(void)
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be stored with lossless compression\n"
       "-no-raw                  Do NOT allow images to be stored with zero compression (raw)\n"
+      "-etc1                    Allow images to be stored as ETC1 in the EDJ file (incompatible with -no-lossy, default: no)\n"
       "-no-save                 Do NOT store the input EDC file in the EDJ file\n"
       "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
       "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
@@ -170,6 +172,10 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-no-raw"))
 	  {
 	     no_raw = 1;
+	  }
+	else if (!strcmp(argv[i], "-etc1") || !strcmp(argv[i], "--allow-etc1"))
+	  {
+	     allow_etc1 = 1;
 	  }
 	else if (!strcmp(argv[i], "-no-save"))
 	  {
@@ -282,7 +288,11 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
-   
+   if (allow_etc1 && no_lossy)
+     {
+        WRN("-etc1 and -no-lossy are not compatible, discarded -etc1");
+        allow_etc1 = 0;
+     }
 
    pfx = eina_prefix_new(argv[0],            /* argv[0] value (optional) */
                          main,               /* an optional symbol to check path of */
