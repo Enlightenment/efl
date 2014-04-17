@@ -2970,7 +2970,7 @@ _ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 static void
 _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
-   int x, y;
+   int x = 0, y = 0;
    Evas_Object *old;
 
    old = ee->prop.cursor.object;
