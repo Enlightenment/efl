@@ -487,20 +487,14 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
                  (!strcmp(ev->key, "KP_Enter")) ||
                  (!strcmp(ev->key, "space")))
           {
-             _entry_toggle_cb(NULL, obj, NULL, NULL);
+             if (sd->spin_timer) _spin_stop(obj);
+             else _entry_toggle_cb(NULL, obj, NULL, NULL);
           }
+        else if (sd->spin_timer) _spin_stop(obj);
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
-        if (!strcmp(ev->key, "Right") ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)) ||
-            !strcmp(ev->key, "Up") ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)) ||
-            !strcmp(ev->key, "Left") ||
-            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)) ||
-            !strcmp(ev->key, "Down") ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-          _spin_stop(obj);
+        if (sd->spin_timer) _spin_stop(obj);
         else return EINA_FALSE;
 
         goto success;
