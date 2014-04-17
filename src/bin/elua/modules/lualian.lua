@@ -37,11 +37,13 @@ local isnum = {
 }
 
 local known_out = {
-    ["Eina_Bool"] = function(expr) return ("((%s) ~= 0)"):format(expr) end
+    ["Eina_Bool" ] = function(expr) return ("((%s) ~= 0)"):format(expr) end,
+    ["Evas_Coord"] = function(expr) return ("tonumber(%s)"):format(expr) end
 }
 
 local known_in = {
-    ["Eina_Bool"] = function(expr) return expr end
+    ["Eina_Bool" ] = function(expr) return expr end,
+    ["Evas_Coord"] = function(expr) return expr end
 }
 
 local known_ptr_out = {
