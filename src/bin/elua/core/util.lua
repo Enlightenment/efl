@@ -48,6 +48,15 @@ local init_setters = function(self)
     return strs
 end
 
+local wrap_retvals = function(f)
+    return function()
+        local vals = { f() }
+        if #vals == 0 then return end
+        if #vals  > 1 then return vals end
+        return vals[1]
+    end
+end
+
 M.Object = {
     __call = function(self, ...)
         local r = self:clone()
@@ -78,14 +87,16 @@ M.Object = {
 
     define_property = function(self, propname, get, set)
         if get then
-            init_getters(self)[propname] = get
+            init_getters(self)[propname] = wrap_retvals(get)
         end
         if set then
-            init_setters(self)[propname] = set
+            init_setters(self)[propname] = wrap_retvals(set)
         end
     end,
 
     define_property_key = function(self, propname, get, set)
+        if get then get = wrap_retvals(get) end
+        if set then set = wrap_retvals(set) end
         local proxy = setmetatable({}, {
             __index = function(proxy, key)
                 if get then return get(self, key) end
