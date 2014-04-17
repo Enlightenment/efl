@@ -28,6 +28,7 @@ Eina_List  *_font_overlays_del = NULL;
 Eina_List  *_color_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
+static void _elm_config_key_binding_hash(void);
 
 Eina_Hash *_elm_key_bindings = NULL;
 
@@ -224,6 +225,7 @@ _prop_config_get(void)
    _elm_rescale();
    _elm_recache();
    _elm_clouseau_reload();
+   _elm_config_key_binding_hash();
    _elm_win_access(_elm_config->access_mode);
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
    return EINA_TRUE;
@@ -2178,7 +2180,7 @@ _env_get(void)
    if (s) _elm_config->magnifier_scale = _elm_atof(s);
 }
 
-void
+static void
 _elm_config_key_binding_hash(void)
 {
    Elm_Config_Bindings_Widget *wb;
