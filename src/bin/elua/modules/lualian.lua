@@ -360,20 +360,24 @@ local gen_contents = function(classn)
     -- first try properties
     local props = eolian.class_functions_list_get(classn, ft.PROPERTY)
     for i, v in ipairs(props) do
-        local ftype  = v:type_get()
-        local fread  = (ftype == ft.PROPERTY or ftype == ft.PROP_GET)
-        local fwrite = (ftype == ft.PROPERTY or ftype == ft.PROP_SET)
-        if fwrite then
-            cnt[#cnt + 1] = Property(v, ft.PROP_SET)
-        end
-        if fread then
-            cnt[#cnt + 1] = Property(v, ft.PROP_GET)
+        if v:scope_get() == eolian.function_scope.PUBLIC then
+            local ftype  = v:type_get()
+            local fread  = (ftype == ft.PROPERTY or ftype == ft.PROP_GET)
+            local fwrite = (ftype == ft.PROPERTY or ftype == ft.PROP_SET)
+            if fwrite then
+                cnt[#cnt + 1] = Property(v, ft.PROP_SET)
+            end
+            if fread then
+                cnt[#cnt + 1] = Property(v, ft.PROP_GET)
+            end
         end
     end
     -- then methods
     local meths = eolian.class_functions_list_get(classn, ft.METHOD)
     for i, v in ipairs(meths) do
-        cnt[#cnt + 1] = Method(v)
+        if v:scope_get() == eolian.function_scope.PUBLIC then
+            cnt[#cnt + 1] = Method(v)
+        end
     end
     -- and constructors
     local dflt_ctor = eolian.class_default_constructor_get(classn)
