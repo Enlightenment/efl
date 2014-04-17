@@ -90,7 +90,8 @@ local typeconv = function(tp, expr, fulln, n, isin)
 
     -- out val
     if isin then
-        return typeconv_in(basetype, expr, fulln, n, isconst, not not basetype)
+        return typeconv_in(basetype or tp, expr, fulln, n, isconst,
+            not not basetype)
     end
 
     -- pointer type
@@ -169,10 +170,9 @@ local Method = Node:clone {
                         args[#args + 1] = nm
                     end
                     cargs [#cargs  + 1] = tp .. " *" .. nm
-                    vargs [#vargs  + 1] = typeconv(tp, nm, fulln, #vargs + 1,
-                        true)
+                    vargs [#vargs  + 1] = nm
                     allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
-                        and nm or nil }
+                        and typeconv(tp, nm, fulln, #vargs, true) or nil }
                     rets  [#rets   + 1] = typeconv(tp, nm .. "[0]", fulln,
                         #rets + 1, false)
                 else
@@ -269,10 +269,10 @@ local Property = Method:clone {
                 if dir == dirs.OUT or dir == dirs.INOUT then
                     if dir == dirs.INOUT then kprop = true end
                     cargs [#cargs  + 1] = tp .. " *" .. nm
-                    vargs [#vargs  + 1] = typeconv(tp, nm, fulln, #vargs + 1,
-                        true)
+                    vargs [#vargs  + 1] = nm
                     allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
-                        and (argn .. "[" .. i .. "]") or nil }
+                        and typeconv(tp, (argn .. "[" .. i .. "]"),
+                            fulln, #vargs, true) or nil }
                     rets  [#rets   + 1] = typeconv(tp, nm .. "[0]", fulln,
                         #rets + 1, false)
                 else
@@ -297,8 +297,7 @@ local Property = Method:clone {
                     for i, v in ipairs(vals) do
                         local dir, tp, nm = v:information_get()
                         cargs [#cargs  + 1] = tp .. " *" .. nm
-                        vargs [#vargs  + 1] = typeconv(tp, nm, fulln,
-                            #vargs + 1, true)
+                        vargs [#vargs  + 1] = nm
                         allocs[#allocs + 1] = { tp, nm }
                         rets  [#rets   + 1] = typeconv(tp, nm .. "[0]", fulln,
                             #rets + 1, false)
