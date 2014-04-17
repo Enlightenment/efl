@@ -439,7 +439,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    # chars allowed on the return line.
    return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-' | '<' | '>');
-   func_name         = (alnum >save_fpc (alnum | '_')+ (ws (alnum | '_')+)?);
+   func_name         = (alnum >save_fpc (alnum | '_')* (ws (alnum | '_')+)?);
 }%%
 
 %%{
