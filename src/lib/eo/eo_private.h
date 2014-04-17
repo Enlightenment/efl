@@ -86,8 +86,6 @@ struct _Eo_Base
 struct _Eo_Object
 {
      Eo_Base header;
-     Eo *parent;
-     Eina_List *children;
      const _Eo_Class *klass;
 #ifdef EO_DEBUG
      Eina_Inlist *xrefs;

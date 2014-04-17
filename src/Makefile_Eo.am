@@ -38,7 +38,17 @@ tests/eo/test_function_overrides \
 tests/eo/test_interface \
 tests/eo/test_mixin \
 tests/eo/test_signals \
+tests/eo/test_children \
 tests/eo/eo_suite
+
+tests_eo_test_children_SOURCES = \
+tests/eo/children/children_main.c \
+tests/eo/children/children_simple.c \
+tests/eo/children/children_simple.h
+tests_eo_test_children_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EO_CFLAGS@
+tests_eo_test_children_LDADD = @USE_EO_LIBS@
+tests_eo_test_children_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
+TESTS += tests/eo/test_children
 
 tests_eo_test_access_SOURCES = \
 tests/eo/access/access_inherit.c \

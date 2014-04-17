@@ -251,7 +251,7 @@ _children_iterator_new(Eo *obj_id, void *class_data)
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->current = obj->children;
+   it->current = pd->children;
    it->obj = _eo_ref(obj);
    it->obj_id = obj_id;
 
