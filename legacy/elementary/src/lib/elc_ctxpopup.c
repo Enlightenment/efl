@@ -131,7 +131,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   evas_object_hide(obj);
+   elm_ctxpopup_dismiss(obj);
    return EINA_TRUE;
 }
 
