@@ -1244,6 +1244,14 @@ efreet_mime_magic_check_priority(const char *file,
    const char *last_mime = NULL;
    int c;
    char v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
+   struct stat s;
+
+#ifdef _WIN32
+   if (stat(file, &s) || s.st_size == 0)
+#else
+   if (lstat(file, &s) || s.st_size == 0)
+#endif
+      return NULL;
 
    f = fopen(file, "rb");
    if (!f) return NULL;
