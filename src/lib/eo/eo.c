@@ -350,7 +350,7 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
 
    DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
    stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
-   if(!stack->frames)
+   if (!stack->frames)
      {
         CRI("unable to resize call stack, abort.");
         abort();
@@ -370,7 +370,7 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
 
 static inline Eina_Bool
 _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
-                 Eina_Bool is_super, Eo_Stack_Frame *fptr, Eo_Stack_Frame *pfptr)
+                Eina_Bool is_super, Eo_Stack_Frame *fptr, Eo_Stack_Frame *pfptr)
 {
    Eina_Bool is_klass = _eo_is_a_class(eo_id);
 
