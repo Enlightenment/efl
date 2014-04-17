@@ -34,6 +34,15 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool _key_action_spin(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_toggle(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"spin", _key_action_spin},
+   {"toggle", _key_action_toggle},
+   {NULL, NULL}
+};
+
 static void
 _entry_show(Elm_Spinner_Data *sd)
 {
@@ -441,6 +450,38 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
+static Eina_Bool
+_key_action_spin(Evas_Object *obj, const char *params)
+{
+   const char *dir = params;
+   Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
+
+   if ((!strcmp(dir, "dec")) && horz)
+     {
+        _val_dec_start(obj);
+        elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
+     }
+   else if ((!strcmp(dir, "inc")) && horz)
+     {
+        _val_inc_start(obj);
+        elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
+     }
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->spin_timer) _spin_stop(obj);
+   else _entry_toggle_cb(NULL, obj, NULL, NULL);
+
+   return EINA_FALSE;
+}
+
 EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -448,56 +489,22 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
    Evas_Event_Mouse_Wheel *mev;
    (void) src;
 
-   Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
-
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
-        if (( (!strcmp(ev->key, "Left") ||
-              ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
-             && horz )
-           ||
-           ( (!strcmp(ev->key, "Down") ||
-              ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-             && !horz )
-           )
-          {
-             _val_dec_start(obj);
-             elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
-
-             goto success;
-          }
-        else if (
-           ( (!strcmp(ev->key, "Right") ||
-              ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
-             && horz )
-           ||
-           ( (!strcmp(ev->key, "Up") ||
-              ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-             && !horz )
-           )
-          {
-             _val_inc_start(obj);
-             elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
-
-             goto success;
-          }
-        else if ((!strcmp(ev->key, "Return")) ||
-                 (!strcmp(ev->key, "KP_Enter")) ||
-                 (!strcmp(ev->key, "space")))
+        Eina_Bool ret;
+        ret = _elm_config_key_binding_call(obj, ev, key_actions);
+        if (!ret)
           {
              if (sd->spin_timer) _spin_stop(obj);
-             else _entry_toggle_cb(NULL, obj, NULL, NULL);
+             else return EINA_FALSE;
           }
-        else if (sd->spin_timer) _spin_stop(obj);
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
         if (sd->spin_timer) _spin_stop(obj);
         else return EINA_FALSE;
-
-        goto success;
      }
    else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
@@ -515,10 +522,8 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
           }
         _spin_value(obj);
      }
+   else return EINA_FALSE;
 
-   return EINA_FALSE;
-
-success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
