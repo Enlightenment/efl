@@ -1267,7 +1267,7 @@ rg_etc1_indirect_radix_sort(unsigned int num_indices, unsigned int pIndices0[8],
    unsigned int pass;
 
    // ERROR CASE NO ASSERT IN EVAS CODE
-   if (!(key_ofs < sizeof(pIndices0))) return NULL;
+   if (!(key_ofs < sizeof(unsigned int) * 8)) return NULL;
    if (!((key_size >= 1) && (key_size <= 4))) return NULL;
 
    if (init_indices)
