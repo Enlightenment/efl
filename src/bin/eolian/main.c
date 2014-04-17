@@ -49,7 +49,7 @@ _generate_eo_h_file(char *filename, const char *classname)
 {
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *hfile = eina_strbuf_new();
-   if (!eo1_header_generate(classname, hfile))
+   if (!eo_header_generate(classname, hfile))
      {
         ERR("Failed to generate header for %s", classname);
         goto end;
@@ -249,7 +249,7 @@ int main(int argc, char **argv)
         printf("       --help/-h Print that help\n");
         printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
         printf("       --output/-o Force output filename to 'outfile'\n");
-        printf("       --eo1/--eo Set generator to eo1/eo mode. Must be specified\n");
+        printf("       --eo Set generator to eo mode. Must be specified\n");
         printf("       --gh Generate c header file [.h]\n");
         printf("       --gc Generate c source file [.c]\n");
         printf("       --ah Append eo class definitions to an existing c header file [.h]\n");
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 
    if (!eo_version && !(gen_opt==H_GEN && legacy_support))
      {
-        ERR("No eo version specified (use --eo1 or --eo). Aborting eo generation.\n");
+        ERR("No eo version specified (use --eo). Aborting eo generation.\n");
         goto end;
      }
 

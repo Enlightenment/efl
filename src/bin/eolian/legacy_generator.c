@@ -315,10 +315,6 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
      {
         char tmp_ret_str[0xFF];
         sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype?rettype:"void");
-#ifndef EO
-             if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
-             eina_strbuf_append_printf(eoparam, "&%s", retname);
-#endif
              const char *dflt_ret_val =
                 eolian_function_return_dflt_value_get(funcid, ftype);
              Eina_Bool had_star = !!strchr(rettype, '*');
@@ -329,9 +325,7 @@ _eapi_func_generate(const char *classname, Eolian_Function funcid, Eolian_Functi
              eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);
              eina_strbuf_replace_all(fbody, "@#ret_init_val", tmpstr);
              tmp_ret_str[0] = '\0';
-#ifdef EO
              if (rettype && !ret_is_void) sprintf(tmp_ret_str, "%s = ", retname);
-#endif
              eina_strbuf_replace_all(fbody, "@#eo_ret_assign", tmp_ret_str);
      }
 

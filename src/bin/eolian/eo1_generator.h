@@ -29,7 +29,7 @@ eo_source_generate(const char *classname, int eo_version, Eina_Strbuf *buf);
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
-Eina_Bool eo1_header_generate(const char *classname, Eina_Strbuf *buf);
+Eina_Bool eo_header_generate(const char *classname, Eina_Strbuf *buf);
 
 #endif
 
