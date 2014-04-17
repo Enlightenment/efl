@@ -1010,7 +1010,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
         for (i = 0; i < (int)im->cache_entry.h; i++)
           {
              memcpy(pd, ps, bytes_count);
-             pd++;
+             pd += bytes_count;
              ps += im->cache_entry.w * bytes_count;
           }
         // |xxx
@@ -1025,7 +1025,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
         for (i = 0; i < (int)im->cache_entry.h; i++)
           {
              memcpy(pd, ps, bytes_count);
-             pd++;
+             pd += bytes_count;
              ps += im->cache_entry.w * bytes_count;
           }
         //  xxx|
