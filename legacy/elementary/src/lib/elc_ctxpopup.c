@@ -29,6 +29,15 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_CTXPOPUP_SIGNALS
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {"escape", _key_action_escape},
+   {NULL, NULL}
+};
+
 EOLIAN static Eina_Bool
 _elc_ctxpopup_elm_widget_translate(Eo *obj, Elc_Ctxpopup_Data *sd)
 {
@@ -94,8 +103,40 @@ _elc_ctxpopup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elc_Ctxpopup_Data 
    return int_ret;
 }
 
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   ELM_CTXPOPUP_DATA_GET(obj, sd);
+   const char *dir = params;
+
+   if (!sd->box) return EINA_FALSE;
+
+   if (!strcmp(dir, "previous"))
+     elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
+   else if (!strcmp(dir, "next"))
+     elm_widget_focus_cycle(sd->box, ELM_FOCUS_NEXT);
+   else if (!strcmp(dir, "left"))
+     elm_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
+   else if (!strcmp(dir, "right"))
+     elm_widget_focus_cycle(sd->box, ELM_FOCUS_RIGHT);
+   else if (!strcmp(dir, "up"))
+     elm_widget_focus_cycle(sd->box, ELM_FOCUS_UP);
+   else if (!strcmp(dir, "down"))
+     elm_widget_focus_cycle(sd->box, ELM_FOCUS_DOWN);
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   evas_object_hide(obj);
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
-_elc_ctxpopup_elm_widget_event(Eo *obj, Elc_Ctxpopup_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elc_ctxpopup_elm_widget_event(Eo *obj, Elc_Ctxpopup_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    (void)src;
@@ -103,37 +144,9 @@ _elc_ctxpopup_elm_widget_event(Eo *obj, Elc_Ctxpopup_Data *sd, Evas_Object *src,
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if (sd->box)
-     {
-        if (!strcmp(ev->key, "Tab"))
-          {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
-             else
-               elm_widget_focus_cycle(sd->box, ELM_FOCUS_NEXT);
-          }
-        else if ((!strcmp(ev->key, "Left")) ||
-            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
-          elm_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
-        else if ((!strcmp(ev->key, "Right")) ||
-                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
-          elm_widget_focus_cycle(sd->box, ELM_FOCUS_RIGHT);
-        else if ((!strcmp(ev->key, "Up")) ||
-                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-          elm_widget_focus_cycle(sd->box, ELM_FOCUS_UP);
-        else if ((!strcmp(ev->key, "Down")) ||
-                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-          elm_widget_focus_cycle(sd->box, ELM_FOCUS_DOWN);
-
-        goto success;
-     }
-
-   if (!strcmp(ev->key, "Escape"))
-     evas_object_hide(obj);
-   else
+   if (!_elm_config_key_binding_call(obj, ev, key_actions))
      return EINA_FALSE;
 
-success:
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
