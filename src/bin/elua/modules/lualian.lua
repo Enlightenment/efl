@@ -20,6 +20,12 @@ end, function()
     dom = nil
 end)
 
+local strip_name = function(self, cn, cp)
+    if not cp or #cp == 0 then return cn end
+    local  nm = cn:match("^" .. cp .. "_(.*)$")
+    return nm or cp
+end
+
 local Node = util.Object:clone {
     generate = function(self, s)
     end,
@@ -246,7 +252,8 @@ local Mixin = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        s:write(("M.%s = {\n"):format(self.cname))
+        s:write(("M.%s = {\n"):format(strip_name(self, self.cname,
+            self.parent_node.cprefix)))
 
         self:gen_children(s)
 
@@ -281,7 +288,8 @@ local Class = Node:clone {
         s:write(([[
 local Parent = eo.class_get("%s")
 M.%s = Parent:clone {
-]]):format(self.parent, self.cname))
+]]):format(self.parent, strip_name(self, self.cname,
+            self.parent_node.cprefix)))
 
         self:gen_children(s)
 
@@ -302,10 +310,11 @@ M.%s = Parent:clone {
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, cname, libname, ch)
+    __ctor = function(self, fname, cname, libname, cprefix, ch)
         self.fname    = fname:match(".+/(.+)") or fname
         self.cname    = cname
         self.libname  = libname
+        self.cprefix  = cprefix
         self.children = ch
     end,
 
@@ -427,7 +436,7 @@ M.generate = function(files, include_files, fstream)
         else
             error(classn .. ": unknown type")
         end
-        File(fname, classn, file[2], { cl }):generate(fstream)
+        File(fname, classn, file[2], file[3], { cl }):generate(fstream)
     end
 end
 
