@@ -5069,8 +5069,10 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
 
    EINA_ITERATOR_FOREACH(it, pce)
     {
+      if (!pce->ref) continue;
       for (i = 0; i < pce->ref->parts_count; i++)
          {
+            if (!pce->ref->parts) continue;
             part = pce->ref->parts[i];
             if (part->type == EDJE_PART_TYPE_IMAGE)
               {
@@ -5175,6 +5177,50 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
            eet_delete(eetf, last_entry);
            eet_write(eetf, entry, data, size, 0);
         }
+
+      _edje_if_string_free(ed, de->entry);
+      --ed->file->image_dir->entries_count;
+
+      if (de_last->id != de->id)
+        {
+           Edje_Part *part;
+           Edje_Part_Description_Image *part_desc_image;
+
+           de->entry = de_last->entry;
+           it = eina_hash_iterator_data_new(ed->file->collection);
+           EINA_ITERATOR_FOREACH(it, pce)
+            {
+              if (!pce->ref) continue;
+              for (i = 0; i < pce->ref->parts_count; i++)
+                 {
+                    if (!pce->ref->parts) continue;
+                    part = pce->ref->parts[i];
+                    if (part->type == EDJE_PART_TYPE_IMAGE)
+                      {
+                         part_desc_image = (Edje_Part_Description_Image *)part->default_desc;
+                         if (part_desc_image->image.id == de_last->id)
+                            part_desc_image->image.id = de->id;
+                         for (k = 0; k < part_desc_image->image.tweens_count; k++)
+                            if (part_desc_image->image.id == de_last->id)
+                               part_desc_image->image.id = de->id;
+
+                         for (j = 0; j < part->other.desc_count; j++)
+                            {
+                               part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
+                               if (part_desc_image->image.id == de_last->id)
+                                  part_desc_image->image.id = de->id;
+                               for (k = 0; k < part_desc_image->image.tweens_count; k++)
+                                  if (part_desc_image->image.id == de_last->id)
+                                     part_desc_image->image.id = de->id;
+                            }
+                      }
+                 }
+             }
+           eina_iterator_free(it);
+        }
+      ed->file->image_dir->entries = realloc(ed->file->image_dir->entries,
+                                             sizeof(Edje_Image_Directory_Entry) *
+                                             ed->file->image_dir->entries_count);
       /* write the edje_file */
       if (!_edje_edit_edje_file_save(eetf, ed->file))
         {
@@ -5184,49 +5230,6 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
 
       eet_close(eetf);
    }
-
-
-   _edje_if_string_free(ed, de->entry);
-   --ed->file->image_dir->entries_count;
-
-   if (de_last->id != de->id)
-     {
-        Edje_Part *part;
-        Edje_Part_Description_Image *part_desc_image;
-
-        de->entry = de_last->entry;
-        it = eina_hash_iterator_data_new(ed->file->collection);
-        EINA_ITERATOR_FOREACH(it, pce)
-         {
-           for (i = 0; i < pce->ref->parts_count; i++)
-              {
-                 part = pce->ref->parts[i];
-                 if (part->type == EDJE_PART_TYPE_IMAGE)
-                   {
-                      part_desc_image = (Edje_Part_Description_Image *)part->default_desc;
-                      if (part_desc_image->image.id == de_last->id)
-                         part_desc_image->image.id = de->id;
-                      for (k = 0; k < part_desc_image->image.tweens_count; k++)
-                         if (part_desc_image->image.id == de_last->id)
-                            part_desc_image->image.id = de->id;
-
-                      for (j = 0; j < part->other.desc_count; j++)
-                         {
-                            part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
-                            if (part_desc_image->image.id == de_last->id)
-                               part_desc_image->image.id = de->id;
-                            for (k = 0; k < part_desc_image->image.tweens_count; k++)
-                               if (part_desc_image->image.id == de_last->id)
-                                  part_desc_image->image.id = de->id;
-                         }
-                   }
-              }
-          }
-        eina_iterator_free(it);
-     }
-   ed->file->image_dir->entries = realloc(ed->file->image_dir->entries,
-                                          sizeof(Edje_Image_Directory_Entry) *
-                                          ed->file->image_dir->entries_count);
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
 
    return EINA_TRUE;
