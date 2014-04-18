@@ -393,20 +393,9 @@ _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Eva
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
-         Evas_Event_Key_Up *ev_up =  event_info;
-
-         if ((!ev_up->string) &&
-             ((!strcmp(ev_up->key, "Left")) ||
-              (!strcmp(ev_up->key, "KP_Left")) ||
-              (!strcmp(ev_up->key, "Right")) ||
-              (!strcmp(ev_up->key, "KP_Right")) ||
-              (!strcmp(ev_up->key, "Up")) ||
-              (!strcmp(ev_up->key, "KP_Up")) ||
-              (!strcmp(ev_up->key, "Down")) ||
-              (!strcmp(ev_up->key, "KP_Down"))))
-             _popup_hide(obj, NULL, NULL, NULL);
-
-         return EINA_FALSE;
+        if (evas_object_visible_get(sd->popup))
+          _popup_hide(obj, NULL, NULL, NULL);
+        return EINA_FALSE;
      }
    else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
