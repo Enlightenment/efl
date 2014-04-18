@@ -45,21 +45,16 @@ evas_image_save_file_tgv(RGBA_Image *im,
    // Disable dithering, as it will deteriorate the quality of flat surfaces
    param.m_dithering = 0;
 
+   // FIXME: Depending on the block size, we have some distortion of the image
+   // Usually, one or two pixels on the top & left borders are removed
+   block = 6;
+
    if (quality > 95)
-     {
-        param.m_quality = rg_etc1_high_quality;
-        block = 7;
-     }
+     param.m_quality = rg_etc1_high_quality;
    else if (quality > 30)
-     {
-        param.m_quality = rg_etc1_medium_quality;
-        block = 6;
-     }
+     param.m_quality = rg_etc1_medium_quality;
    else
-     {
-        param.m_quality = rg_etc1_low_quality;
-        block = 5;
-     }
+     param.m_quality = rg_etc1_low_quality;
 
    header[4] = (block << 4) | block;
    header[5] = 0;
