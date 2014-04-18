@@ -412,6 +412,35 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elc_Multibuttonentry";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "BackSpace";
+              value "action" string: "delete";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Delete";
+              value "action" string: "delete";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "enter";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "enter";
+              value "params" string: "";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
         value "name" string: "Elc_Popup";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
