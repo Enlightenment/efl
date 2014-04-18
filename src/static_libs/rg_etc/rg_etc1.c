@@ -2088,8 +2088,11 @@ void rg_etc1_pack_block_init()
                                    break;
                               }
                          }
-                       // ERROR CASE NO ASSERT IN EVAS CODE
-                       if (!(best_error <= 255)) return ;
+                       if (!(best_error <= 255))
+                         {
+                            fprintf(stderr, "ETC1: Failed to write the inverse lookup table!\n");
+                            return;
+                         }
                        rg_etc1_inverse_lookup[inverse_table_index][color] = (uint16)(best_packed_c | (best_error << 8));
                     }
                }
@@ -2111,8 +2114,14 @@ void rg_etc1_pack_block_init()
 static uint64
 rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED)
 {
-   // ERROR CASE NO ASSERT IN EVAS CODE
-   if (!rg_etc1_inverse_lookup[0][255]) return 0;
+   if (!rg_etc1_inverse_lookup[0][255])
+     rg_etc1_pack_block_init();
+
+   if (!rg_etc1_inverse_lookup[0][255])
+     {
+        fprintf(stderr, "ETC1: Inverse lookup table not set!\n");
+        return 0;
+     }
 
    static uint s_next_comp[4] = { 1, 2, 0, 1 };
 
@@ -2181,6 +2190,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
       uint best_packed_c0;
       uint selector_val;
 
+      block[0] = block[1] = block[2] = 0;
       block[3] = (uint8)(((inten | (inten << 3)) << 2) | (diff << 1));
 
       etc1_selector = rg_etc_selector_index_to_etc1[(best_x >> 4) & 3];
