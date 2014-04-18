@@ -995,7 +995,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
 
 static void *
 eet_data_image_etc1_compressed_convert(int         *size,
-                                       const unsigned char *data,
+                                       const unsigned char *data8,
                                        unsigned int w,
                                        unsigned int h,
                                        int          quality,
@@ -1009,6 +1009,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
    unsigned int x, y;
    unsigned int compress_length;
    unsigned int real_x, real_y;
+   unsigned int *data = (unsigned int *) data8;
    char *comp;
    char *buffer;
    void *result;
@@ -1106,7 +1107,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
                        if (lmax > 0)
                          {
-                            for (k = duplicate_h[0]; k < kmax; k++)
+                            for (k = 0; k < kmax; k++)
                               memcpy(&todo[(k + duplicate_h[0]) * 16 + duplicate_w[0] * 4],
                                      &data[(real_y + i + k) * w + real_x + j],
                                      4 * lmax);
@@ -1147,7 +1148,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
              if (compression)
                {
-                  wlen = LZ4_compress(buffer, comp, block_count * 8);
+                  wlen = LZ4_compressHC(buffer, comp, block_count * 8);
                }
              else
                {
