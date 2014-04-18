@@ -2119,7 +2119,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
 
    if (!rg_etc1_inverse_lookup[0][255])
      {
-        fprintf(stderr, "ETC1: Inverse lookup table not set!\n");
+        fprintf(stderr, "ETC1: Inverse lookup table not set (in %s)!\n", __FUNCTION__);
         return 0;
      }
 
@@ -2226,8 +2226,14 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
    int best_x = 0, best_packed_c1 = 0, best_packed_c2 = 0;
    uint i;
 
-   // ERROR CASE NO ASSERT IN EVAS CODE
-   if (!rg_etc1_inverse_lookup[0][255]) return 0;
+   if (!rg_etc1_inverse_lookup[0][255])
+     rg_etc1_pack_block_init();
+
+   if (!rg_etc1_inverse_lookup[0][255])
+     {
+        fprintf(stderr, "ETC1: Inverse lookup table not set (in %s)!\n", __FUNCTION__);
+        return 0;
+     }
 
    // For each possible 8-bit value, there is a precomputed list of diff/inten/selector configurations
    // that allow that 8-bit value to be encoded with no error.
@@ -2398,9 +2404,9 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
    uint best_use_color4=EINA_FALSE;
    uint best_flip=EINA_FALSE;
    uint8 best_selectors[2][8];
-   rg_etc1_optimizer optimizer;
+   rg_etc1_optimizer optimizer = { 0 };
    rg_etc1_optimizer_results best_results[2] = { { 0 } };
-   rg_etc1_optimizer_results results[3];
+   rg_etc1_optimizer_results results[3] = { { 0 } };
    rg_etc1_optimizer_params params;
    uint i, flip;
    uint8 selectors[3][8];
@@ -2427,6 +2433,8 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
        break;
    if (!r)
      return (unsigned int)(16 * rg_etc1_pack_block_solid_color(dst_block, &pSrc_pixels[0].comp.r, pack_params));
+
+   // Dithering gives mitigated results... It would be nice to know when to use it.
    if (pack_params->m_dithering)
      {
         rg_etc1_dither_block_555(dithered_pixels, pSrc_pixels);
@@ -2450,20 +2458,25 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
    params.m_num_src_pixels = 8;
    params.m_pSrc_pixels = subblock_pixels;
 
+   // try horizontal VS. vertical split
    for (flip = 0; flip < 2; flip++)
      {
+        // try two color types: RGB555 + diff333 or RGB444 & RGB444
         uint use_color4;
         for (use_color4 = 0; use_color4 < 2; use_color4++)
           {
              uint64 trial_error = 0;
 
+             // subblock is either top/bottom or left/right
              uint subblock;
              for (subblock = 0; subblock < 2; subblock++)
                {
                   if (flip)
+                    // subblock is top or bottom, copy source
                     memcpy(subblock_pixels, pSrc_pixels + subblock * 8, sizeof(color_quad_u8) * 8);
                   else
                     {
+                       // subblock = 1 : left, subblock = 2 : right, copy source
                        const color_quad_u8* pSrc_col = pSrc_pixels + subblock * 2;
                        rg_etc1_color_quad_u8_copy(&subblock_pixels[0], &pSrc_col[0]);
                        rg_etc1_color_quad_u8_copy(&subblock_pixels[1], &pSrc_col[4]);
@@ -2479,11 +2492,12 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
                   if ((params.base_params->m_quality >= rg_etc1_medium_quality) && ((subblock) || (use_color4)))
                     {
                        const uint32 subblock_pixel0_u32 = subblock_pixels[0].m_u32;
-                       for (r = 7; r >= 1; --r)
+                       for (r = 7; r >= 0; --r)
                          if (subblock_pixels[r].m_u32 != subblock_pixel0_u32)
                            break;
                        if (!r)
                          {
+                            // all pixels in subblock have the same color
                             rg_etc1_pack_block_solid_color_constrained(&results[2], 8, &subblock_pixels[0].comp.r,
                                                                        pack_params, !use_color4,
                                                                        (subblock && !use_color4) ? &results[0].m_block_color_unscaled : NULL);
