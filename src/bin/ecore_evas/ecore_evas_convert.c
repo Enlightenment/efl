@@ -43,7 +43,7 @@ main(int argc, char *argv[])
    Evas *e;
    Evas_Object *im;
    int arg_index;
-   int quality = 100;
+   int quality = -1;
    int r = -1;
    Eina_Bool compress = 1;
    Eina_Bool quit_option = EINA_FALSE;
@@ -86,7 +86,10 @@ main(int argc, char *argv[])
         goto end;
      }
 
-   snprintf(flags, sizeof (flags), "compress=%i quality=%i", compress, quality);
+   if (quality >= 0)
+     snprintf(flags, sizeof (flags), "compress=%i quality=%i", compress, quality);
+   else
+     snprintf(flags, sizeof (flags), "compress=%i", compress);
 
    im = evas_object_image_add(e);
    evas_object_image_file_set(im, argv[arg_index], NULL);
