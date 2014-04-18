@@ -973,7 +973,7 @@ _entry_clicked_cb(void *data,
 }
 
 static void
-_layout_key_up_cb(void *data,
+_layout_key_down_cb(void *data,
                   Evas *e EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info)
@@ -1056,8 +1056,8 @@ _callbacks_register(Evas_Object *obj)
      (obj, "mouse,clicked,1", "*", _mouse_clicked_signal_cb, sd);
 
    evas_object_event_callback_add
-     (wd->resize_obj, EVAS_CALLBACK_KEY_UP,
-     _layout_key_up_cb, obj);
+     (wd->resize_obj, EVAS_CALLBACK_KEY_DOWN,
+     _layout_key_down_cb, obj);
 
    evas_object_event_callback_add
      (sd->box, EVAS_CALLBACK_RESIZE, _box_resize_cb, obj);
