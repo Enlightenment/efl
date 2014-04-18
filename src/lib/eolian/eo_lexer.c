@@ -4360,7 +4360,7 @@ _types_extract(const char *buf, int len)
                         if (depth < 0)
                           {
                              ERR("%s: Cannot reopen < after >", save_buf);
-                             return NULL;
+                             goto error;
                           }
                         depth++;
                         end_type = EINA_TRUE;
@@ -4371,12 +4371,12 @@ _types_extract(const char *buf, int len)
                         if (depth == 0)
                           {
                              ERR("%s: Too much >", save_buf);
-                             return NULL;
+                             goto error;
                           }
                         if (d == tmp_type)
                           {
                              ERR("%s: empty type inside <>", save_buf);
-                             return NULL;
+                             goto error;
                           }
                         if (depth > 0) depth *= -1;
                         depth++;
@@ -4400,9 +4400,14 @@ _types_extract(const char *buf, int len)
      }
    if (depth)
      {
-        types = NULL;
         ERR("%s: < and > are not well used.", save_buf);
+        goto error;
      }
+   goto success;
+error:
+   database_type_del(types);
+   types = NULL;
+success:
    free(tmp_type);
    return types;
 }

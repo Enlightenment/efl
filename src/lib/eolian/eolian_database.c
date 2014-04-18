@@ -108,14 +108,20 @@ _param_del(_Parameter_Desc *pdesc)
 {
    eina_stringshare_del(pdesc->name);
 
-   while (pdesc->type)
-     {
-        _Parameter_Type *type = (_Parameter_Type *) pdesc->type;
-        eina_stringshare_del(type->name);
-        pdesc->type = eina_inlist_remove(pdesc->type, EINA_INLIST_GET(type));
-     }
+   database_type_del(pdesc->type);
    eina_stringshare_del(pdesc->description);
    free(pdesc);
+}
+
+void
+database_type_del(Eolian_Type type)
+{
+   while (type)
+     {
+        _Parameter_Type *ptype = (_Parameter_Type *) type;
+        eina_stringshare_del(ptype->name);
+        type = eina_inlist_remove(type, EINA_INLIST_GET(ptype));
+     }
 }
 
 static void
