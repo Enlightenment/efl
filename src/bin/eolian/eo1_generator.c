@@ -245,6 +245,7 @@ eo_header_generate(const char *classname, Eina_Strbuf *buf)
      {
         ERR ("Class \"%s\" not found in database", classname);
         free(tmpstr);
+        eina_strbuf_free(str_hdr);
         return EINA_FALSE;
      }
 
@@ -412,7 +413,7 @@ eo_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Func
         eina_strbuf_append_printf(fbody, "%s%s _%s_%s%s(Eo *obj, @#Datatype_Data *pd@#full_params);\n\n",
               ret_const?"const ":"", rettype?rettype:"void",
               lowclass,
-              eolian_function_name_get(funcid), suffix?suffix:"");
+              eolian_function_name_get(funcid), suffix);
 
         eina_strbuf_replace_all(fbody, "@#return_ret", tmpstr);
         eina_strbuf_free(ret_param);
@@ -428,7 +429,7 @@ eo_bind_func_generate(const char *classname, Eolian_Function funcid, Eolian_Func
               "EAPI EO_%sFUNC_BODY%s(%s_%s%s",
               ret_is_void?"VOID_":"", has_params?"V":"",
               current_eo_prefix_lower, eolian_function_name_get(funcid),
-              suffix?suffix:"");
+              suffix);
         if (!ret_is_void)
           {
              const char *dflt_ret_val =
