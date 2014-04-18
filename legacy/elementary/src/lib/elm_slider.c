@@ -46,6 +46,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static void _min_max_set(Evas_Object *obj);
 
+static Eina_Bool _key_action_drag(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"drag", _key_action_drag},
+   {NULL, NULL}
+};
+
 static Eina_Bool
 _delay_change(void *data)
 {
@@ -355,6 +362,41 @@ _popup_emit(void *data,
      }
 }
 
+static Eina_Bool
+_key_action_drag(Evas_Object *obj, const char *params)
+{
+   ELM_SLIDER_DATA_GET(obj, sd);
+   const char *dir = params;
+
+   if (!strcmp(dir, "left"))
+     {
+        if (!sd->horizontal) return EINA_FALSE;
+        if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        else _drag_up(obj, NULL, NULL, NULL);
+     }
+   else if (!strcmp(dir, "right"))
+     {
+        if (!sd->horizontal) return EINA_FALSE;
+        if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        else _drag_down(obj, NULL, NULL, NULL);
+     }
+   else if (!strcmp(dir, "up"))
+     {
+        if (sd->horizontal) return EINA_FALSE;
+        if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        else _drag_down(obj, NULL, NULL, NULL);
+     }
+   else if (!strcmp(dir, "down"))
+     {
+        if (sd->horizontal) return EINA_FALSE;
+        if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        else _drag_up(obj, NULL, NULL, NULL);
+     }
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -365,35 +407,8 @@ _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Eva
         Evas_Event_Key_Down *ev = event_info;
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-        if ((!strcmp(ev->key, "Left")) ||
-            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
-          {
-             if (!sd->horizontal) return EINA_FALSE;
-             if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
-             else _drag_up(obj, NULL, NULL, NULL);
-          }
-        else if ((!strcmp(ev->key, "Right")) ||
-                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
-          {
-             if (!sd->horizontal) return EINA_FALSE;
-             if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
-             else _drag_down(obj, NULL, NULL, NULL);
-          }
-        else if ((!strcmp(ev->key, "Up")) ||
-                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-          {
-             if (sd->horizontal) return EINA_FALSE;
-             if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
-             else _drag_down(obj, NULL, NULL, NULL);
-          }
-        else if ((!strcmp(ev->key, "Down")) ||
-                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-          {
-             if (sd->horizontal) return EINA_FALSE;
-             if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
-             else _drag_up(obj, NULL, NULL, NULL);
-          }
-        else return EINA_FALSE;
+        if (!_elm_config_key_binding_call(obj, ev, key_actions))
+          return EINA_FALSE;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
