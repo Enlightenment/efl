@@ -353,12 +353,44 @@ _popup_emit(void *data,
 EOLIAN static Eina_Bool
 _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Event_Mouse_Wheel *mev;
-   Evas_Event_Key_Down *ev;
-
    (void) src;
 
-   if (type == EVAS_CALLBACK_KEY_DOWN) goto key_down;
+   if (type == EVAS_CALLBACK_KEY_DOWN)
+     {
+        Evas_Event_Key_Down *ev = event_info;
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+        if ((!strcmp(ev->key, "Left")) ||
+            ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+          {
+             if (!sd->horizontal) return EINA_FALSE;
+             if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+             else _drag_up(obj, NULL, NULL, NULL);
+          }
+        else if ((!strcmp(ev->key, "Right")) ||
+                 ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
+          {
+             if (!sd->horizontal) return EINA_FALSE;
+             if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+             else _drag_down(obj, NULL, NULL, NULL);
+          }
+        else if ((!strcmp(ev->key, "Up")) ||
+                 ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
+          {
+             if (sd->horizontal) return EINA_FALSE;
+             if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+             else _drag_down(obj, NULL, NULL, NULL);
+          }
+        else if ((!strcmp(ev->key, "Down")) ||
+                 ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
+          {
+             if (sd->horizontal) return EINA_FALSE;
+             if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+             else _drag_up(obj, NULL, NULL, NULL);
+          }
+        else return EINA_FALSE;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
          Evas_Event_Key_Up *ev_up =  event_info;
@@ -376,61 +408,17 @@ _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Eva
 
          return EINA_FALSE;
      }
-   else if (type != EVAS_CALLBACK_MOUSE_WHEEL)
-     return EINA_FALSE;
-
-   mev = event_info;
-   if (mev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (mev->z < 0) _drag_up(obj, NULL, NULL, NULL);
-   else _drag_down(obj, NULL, NULL, NULL);
-   mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
-   goto success;
-
-key_down:
-   ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if ((!strcmp(ev->key, "Left")) ||
-       ((!strcmp(ev->key, "KP_Left")) && (!ev->string)))
+   else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
-        if (!sd->horizontal) return EINA_FALSE;
-        if (!sd->inverted) _drag_down(obj, NULL, NULL, NULL);
-        else _drag_up(obj, NULL, NULL, NULL);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Right")) ||
-            ((!strcmp(ev->key, "KP_Right")) && (!ev->string)))
-     {
-        if (!sd->horizontal) return EINA_FALSE;
-        if (!sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        Evas_Event_Mouse_Wheel *mev = event_info;
+        if (mev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+        if (mev->z < 0) _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Up")) ||
-            ((!strcmp(ev->key, "KP_Up")) && (!ev->string)))
-     {
-        if (sd->horizontal) return EINA_FALSE;
-        if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
-        else _drag_down(obj, NULL, NULL, NULL);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        goto success;
-     }
-   else if ((!strcmp(ev->key, "Down")) ||
-            ((!strcmp(ev->key, "KP_Down")) && (!ev->string)))
-     {
-        if (sd->horizontal) return EINA_FALSE;
-        if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
-        else _drag_up(obj, NULL, NULL, NULL);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        goto success;
+        mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else return EINA_FALSE;
 
-success:
    _popup_show(obj, NULL, NULL, NULL);
    _slider_update(obj, EINA_TRUE);
 
