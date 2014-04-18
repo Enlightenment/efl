@@ -45,6 +45,7 @@ struct _Elm_Slider_Data
    /* this flag is to set the visiblity of slider indicator
       if this flag is set  then the indicator always show */
    Eina_Bool             always_popup_show : 1;
+   Eina_Bool             popup_visible : 1;
 };
 
 /**
