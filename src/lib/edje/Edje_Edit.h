@@ -39,7 +39,8 @@ typedef enum _Edje_Edit_Image_Comp
    EDJE_EDIT_IMAGE_COMP_RAW,
    EDJE_EDIT_IMAGE_COMP_USER,
    EDJE_EDIT_IMAGE_COMP_COMP,
-   EDJE_EDIT_IMAGE_COMP_LOSSY
+   EDJE_EDIT_IMAGE_COMP_LOSSY,
+   EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1
 } Edje_Edit_Image_Comp;
 
 struct _Edje_Edit_Script_Error
@@ -2986,7 +2987,7 @@ EAPI int edje_edit_image_id_get(Evas_Object *obj, const char *image_name);
  * @param image The name of the image.
  *
  * @return One of Image Compression types.
- * (EDJE_EDIT_IMAGE_COMP_RAW, EDJE_EDIT_IMAGE_COMP_USER, EDJE_EDIT_IMAGE_COMP_COMP, EDJE_EDIT_IMAGE_COMP_LOSSY).
+ * (EDJE_EDIT_IMAGE_COMP_RAW, EDJE_EDIT_IMAGE_COMP_USER, EDJE_EDIT_IMAGE_COMP_COMP, EDJE_EDIT_IMAGE_COMP_LOSSY[_ETC1]).
  */
 EAPI Edje_Edit_Image_Comp edje_edit_image_compression_type_get(Evas_Object *obj, const char *image);
 
@@ -2996,7 +2997,7 @@ EAPI Edje_Edit_Image_Comp edje_edit_image_compression_type_get(Evas_Object *obj,
  * @param image The name of the image.
  *
  * @return The compression rate (if the imnage is @c
- *         EDJE_EDIT_IMAGE_COMP_LOSSY) or < 0, on errors.
+ *         EDJE_EDIT_IMAGE_COMP_LOSSY[_ETC1]) or < 0, on errors.
  */
 EAPI int edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image);
 

@@ -37,7 +37,7 @@ int        max_quality = 100;
 int        compress_mode = EET_COMPRESSION_HI;
 int        threads = 0;
 int        anotate = 0;
-int        allow_etc1 = 0;
+int        no_etc1 = 0;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -102,7 +102,7 @@ main_help(void)
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be stored with lossless compression\n"
       "-no-raw                  Do NOT allow images to be stored with zero compression (raw)\n"
-      "-etc1                    Allow images to be stored as ETC1 in the EDJ file (incompatible with -no-lossy, default: no)\n"
+      "-no-etc1                 Do NOT allow images to be stored as ETC1 (LOSSY_ETC1 will be then stored as JPEG)\n"
       "-no-save                 Do NOT store the input EDC file in the EDJ file\n"
       "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
       "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
@@ -173,9 +173,9 @@ main(int argc, char **argv)
 	  {
 	     no_raw = 1;
 	  }
-	else if (!strcmp(argv[i], "-etc1") || !strcmp(argv[i], "--allow-etc1"))
+        else if (!strcmp(argv[i], "-no-etc1"))
 	  {
-	     allow_etc1 = 1;
+             no_etc1 = 1;
 	  }
 	else if (!strcmp(argv[i], "-no-save"))
 	  {
@@ -286,12 +286,6 @@ main(int argc, char **argv)
 	ERR("no input file specified.");
 	main_help();
 	exit(-1);
-     }
-
-   if (allow_etc1 && no_lossy)
-     {
-        WRN("-etc1 and -no-lossy are not compatible, discarded -etc1");
-        allow_etc1 = 0;
      }
 
    pfx = eina_prefix_new(argv[0],            /* argv[0] value (optional) */

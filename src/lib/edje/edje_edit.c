@@ -5302,18 +5302,17 @@ edje_edit_image_compression_type_get(Evas_Object *obj, const char *image)
 
    switch(de->source_type)
      {
-	case EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT:
-		if (de->source_param == 0) // RAW
-		  return EDJE_EDIT_IMAGE_COMP_RAW;
-		else // COMP
-		  return EDJE_EDIT_IMAGE_COMP_COMP;
-		break;
-	case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY: // LOSSY
-		return EDJE_EDIT_IMAGE_COMP_LOSSY;
-		break;
-	case EDJE_IMAGE_SOURCE_TYPE_EXTERNAL: // USER
-		return EDJE_EDIT_IMAGE_COMP_USER;
-		break;
+      case EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT:
+        if (de->source_param == 0) // RAW
+          return EDJE_EDIT_IMAGE_COMP_RAW;
+        else // COMP
+          return EDJE_EDIT_IMAGE_COMP_COMP;
+      case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY: // LOSSY
+        return EDJE_EDIT_IMAGE_COMP_LOSSY;
+      case EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1: // LOSSY_ETC1
+        return EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1;
+      case EDJE_IMAGE_SOURCE_TYPE_EXTERNAL: // USER
+        return EDJE_EDIT_IMAGE_COMP_USER;
      }
 
    return -1;
@@ -5337,7 +5336,9 @@ edje_edit_image_compression_rate_get(Evas_Object *obj, const char *image)
      }
 
    if (i == ed->file->image_dir->entries_count) return -1;
-   if (de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return -2;
+   if ((de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY)
+       && (de->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1))
+     return -2;
 
    return de->source_param;
 }
@@ -7088,6 +7089,9 @@ _edje_generate_image_source(Evas_Object *obj, const char *entry)
 
    if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY)
      BUF_APPENDF("LOSSY %d;\n",
+                 edje_edit_image_compression_rate_get(obj, entry));
+   else if (comp == EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1)
+     BUF_APPENDF("LOSSY_ETC1 %d;\n",
                  edje_edit_image_compression_rate_get(obj, entry));
    else if (comp == EDJE_EDIT_IMAGE_COMP_RAW)
      BUF_APPEND("RAW;\n");

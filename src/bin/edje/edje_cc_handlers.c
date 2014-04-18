@@ -1269,6 +1269,7 @@ st_externals_external(void)
         images {
             image: "filename1.ext" COMP;
             image: "filename2.ext" LOSSY 99;
+            image: "filename2.ext" LOSSY_ETC1 50;
 	    set {
 	       name: "image_name_used";
                image {
@@ -1309,7 +1310,8 @@ st_externals_external(void)
         Compression methods:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [0-100]: Lossy compression with quality from 0 to 100.
+        @li LOSSY [0-100]: JPEG lossy compression with quality from 0 to 100.
+        @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
         @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
  */
@@ -1356,11 +1358,12 @@ st_images_image(void)
    img->entry = tmp;
    img->id = edje_file->image_dir->entries_count - 1;
    v = parse_enum(1,
-		  "RAW", 0,
-		  "COMP", 1,
-		  "LOSSY", 2,
-		  "USER", 3,
-		  NULL);
+                  "RAW", 0,
+                  "COMP", 1,
+                  "LOSSY", 2,
+                  "LOSSY_ETC1", 3,
+                  "USER", 4,
+                  NULL);
    if (v == 0)
      {
 	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
@@ -1373,15 +1376,21 @@ st_images_image(void)
      }
    else if (v == 2)
      {
-	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY;
-	img->source_param = 0;
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY;
+        img->source_param = 0;
      }
    else if (v == 3)
+     {
+        img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1;
+        img->source_param = 0;
+     }
+   else if (v == 4)
      {
 	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
 	img->source_param = 0;
      }
-   if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY)
+   if ((img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY)
+       && (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1))
 	check_arg_count(2);
    else
      {
@@ -1509,7 +1518,8 @@ ob_images_set_image(void)
         Compression methods:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [0-100]: Lossy compression with quality from 0 to 100.
+        @li LOSSY [0-100]: JPEG lossy compression with quality from 0 to 100.
+        @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
         @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
 **/
