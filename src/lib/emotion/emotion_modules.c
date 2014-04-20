@@ -356,16 +356,14 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
         m = _find_mod(name);
         if (m) eina_module_load(m);
      }
-   else
+
+   if (!_emotion_engine_registry)
      {
-        if (!_emotion_engine_registry)
-          {
-             m = _find_mod("generic");
-             if (!m) m = _find_mod("xine");
-             if (!m) m = _find_mod("gstreamer");
-             if (!m) m = _find_mod("gstreamer1");
-             if (m) eina_module_load(m);
-          }
+        m = _find_mod("generic");
+        if (!m) m = _find_mod("xine");
+        if (!m) m = _find_mod("gstreamer");
+        if (!m) m = _find_mod("gstreamer1");
+        if (m) eina_module_load(m);
      }
 
    if (name)
