@@ -3315,7 +3315,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    evas_object_event_callback_add(sd->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _elm_win_on_resize_obj_changed_size_hints, obj);
 
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+   if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
      {
         eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
         elm_interface_atspi_accessible_children_changed_added_signal_emit(_elm_atspi_root_get(), obj);

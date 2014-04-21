@@ -1648,7 +1648,7 @@ _elm_atspi_bridge_init(void)
    Eldbus_Message *msg;
    Eldbus_Connection *session_bus;
 
-   if (!_init_count && (_elm_config->access_mode != ELM_ACCESS_MODE_OFF))
+   if (!_init_count && (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF))
      {
         _elm_atspi_init();
 

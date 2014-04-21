@@ -162,6 +162,9 @@ extern const char *_elm_engines[];
 #define ELM_ACCESS_MODE_OFF   EINA_FALSE
 #define ELM_ACCESS_MODE_ON    EINA_TRUE
 
+#define ELM_ATSPI_MODE_OFF   EINA_FALSE
+#define ELM_ATSPI_MODE_ON    EINA_TRUE
+
 /* convenience macro to compress code and avoid typos */
 #undef MIN
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -287,6 +290,7 @@ struct _Elm_Config
    unsigned char audio_mute_alert;
    unsigned char audio_mute_all;
    Eina_List    *bindings;
+   Eina_Bool     atspi_mode;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

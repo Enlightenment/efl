@@ -1549,6 +1549,49 @@ EAPI Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
 EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
+ * @defgroup ATSPI AT-SPI2 Accessibility
+ * @ingroup Elementary
+ *
+ * Elementary widgets support Linux Accessibility standard. For more
+ * information please visit:
+ * http://www.linuxfoundation.org/collaborate/workgroups/accessibility/atk/at-spi/at-spi_on_d-bus
+ *
+ * @{
+ */
+
+/**
+ * Gets ATSPI mode
+ *
+ * @return the ATSPI mode
+ *
+ * @since 1.10
+ *
+ * @ingroup ATSPI
+ *
+ * @see elm_config_atspi_mode_set()
+ */
+EAPI Eina_Bool        elm_config_atspi_mode_get(void);
+
+/**
+ * Sets ATSPI mode
+ *
+ * @param is_atspi If @c EINA_TRUE, enables ATSPI2 mode
+ *
+ * @note Enables Linux Accessibility support for Elementary widgets.
+ *
+ * @since 1.10
+ *
+ * @ingroup ATSPI
+ *
+ * @see elm_config_atspi_mode_get()
+ */
+EAPI void             elm_config_atspi_mode_set(Eina_Bool is_atspi);
+
+/**
+ * @}
+ */
+
+/**
  * @}
  */
 
