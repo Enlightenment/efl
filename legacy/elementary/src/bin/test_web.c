@@ -363,6 +363,36 @@ _useragent_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
+_dialog_test_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Web_Test *wt = data;
+   const char *selected = elm_object_item_text_get(event_info);
+   const char dialog_html[] = "<!doctype html><body>"
+       "<script>"
+       "var confirm_test = function() {"
+       " if (window.confirm('confirm') == true) {"
+       "   document.getElementById('r').innerHTML = 'You pressed OK';"
+       " } else {"
+       "   document.getElementById('r').innerHTML = 'You pressed Cancel';"
+       " }"
+       "};"
+       "var prompt_test = function() {"
+       " document.getElementById('r').innerHTML = window.prompt('Enter your name', 'EFL');"
+       "};"
+       "</script>"
+       "Result: <div id='r'> </div>"
+       "<input type='button' value='alert' onclick=\"window.alert('alert pressed');\">"
+       "<input type='button' value='confirm' onclick=\"confirm_test();\">"
+       "<input type='button' value='prompt' onclick=\"prompt_test();\">"
+       "</body>";
+
+   printf("selected test : %s\n", selected);
+   elm_object_text_set(obj, selected);
+
+   elm_web_html_string_load(wt->web, dialog_html, NULL, NULL);
+}
+
+static void
 _select_tag_test_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Web_Test *wt = data;
@@ -629,6 +659,8 @@ test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_hoversel_hover_parent_set(hoversel, win);
    elm_object_text_set(hoversel, "Test cases");
 
+   elm_hoversel_item_add(hoversel, "alert/confirm/prompt", NULL, ELM_ICON_NONE,
+                         _dialog_test_cb, wt);
    elm_hoversel_item_add(hoversel, "<select> tag", NULL, ELM_ICON_NONE,
                          _select_tag_test_cb, wt);
    elm_hoversel_item_add(hoversel, "new window", NULL, ELM_ICON_NONE,

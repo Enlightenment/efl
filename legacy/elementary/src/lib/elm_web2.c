@@ -272,6 +272,238 @@ _view_smart_fullscreen_exit(Ewk_View_Smart_Data *sd)
    return EINA_TRUE;
 }
 
+static void
+_bt_close(void *data,
+          Evas_Object *obj,
+          void *event_info EINA_UNUSED)
+{
+   Dialog_Data *d = data;
+
+   if (d->type == DIALOG_ALERT) goto end;
+
+   *d->response = (obj == d->bt_ok);
+   if (d->type == DIALOG_CONFIRM) goto end;
+
+   if (d->type == DIALOG_PROMPT)
+     *d->entry_value = strdup(elm_entry_entry_get(d->entry));
+
+end:
+   evas_object_del(d->dialog);
+}
+
+static Dialog_Data *
+_dialog_new(Evas_Object *web, Eina_Bool inwin_mode)
+{
+   Dialog_Data *d;
+
+   d = calloc(1, sizeof(Dialog_Data));
+   if (!d) return NULL;
+
+   if (!web || inwin_mode)
+     {
+        Evas_Object *bg;
+
+        d->dialog = elm_win_add(NULL, "elm-web-popup", ELM_WIN_DIALOG_BASIC);
+        evas_object_smart_callback_add
+          (d->dialog, "delete,request", _bt_close, d);
+
+        bg = elm_bg_add(d->dialog);
+        evas_object_size_hint_weight_set
+          (bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_resize_object_add(d->dialog, bg);
+        evas_object_show(bg);
+
+        d->box = elm_box_add(d->dialog);
+        evas_object_size_hint_weight_set
+          (d->box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_resize_object_add(d->dialog, d->box);
+        evas_object_show(d->box);
+     }
+   else
+     {
+        Evas_Object *win = elm_widget_top_get(web);
+
+        d->dialog = elm_win_inwin_add(win);
+        elm_object_style_set(d->dialog, "minimal");
+        evas_object_size_hint_weight_set
+          (d->dialog, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+        d->box = elm_box_add(win);
+        evas_object_size_hint_weight_set
+          (d->box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_inwin_content_set(d->dialog, d->box);
+        evas_object_show(d->box);
+     }
+
+   return d;
+}
+
+static void
+_dialog_ok_cancel_buttons_add(Dialog_Data *dialog_data)
+{
+   Evas_Object *bx, *bt;
+   bx = elm_box_add(dialog_data->box);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_pack_end(dialog_data->box, bx);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bx);
+
+   dialog_data->bt_cancel = bt = elm_button_add(bx);
+   elm_object_text_set(bt, "Cancel");
+   elm_box_pack_end(bx, bt);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, dialog_data);
+   evas_object_show(bt);
+
+   dialog_data->bt_ok = bt = elm_button_add(bx);
+   elm_object_text_set(bt, "Ok");
+   elm_box_pack_end(bx, bt);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(bt, "clicked", _bt_close, dialog_data);
+   evas_object_show(bt);
+}
+
+static void
+_dialog_del_cb(void *data EINA_UNUSED,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+}
+
+static void
+_exec_dialog(Evas_Object *dialog)
+{
+   evas_object_event_callback_add
+     (dialog, EVAS_CALLBACK_DEL, _dialog_del_cb, NULL);
+   ecore_main_loop_begin();
+}
+
+static void
+_view_smart_run_javascript_alert(Ewk_View_Smart_Data *vsd, const char *message)
+{
+   Evas_Object *obj = evas_object_smart_parent_get(vsd->self);
+   Evas_Object *dialog = NULL;
+
+   ELM_WEB_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->hook.alert)
+     dialog = sd->hook.alert(sd->hook.alert_data, obj, message);
+   else
+     {
+        Evas_Object *lb;
+        Dialog_Data *dialog_data = _dialog_new(obj, sd->inwin_mode);
+        dialog_data->type = DIALOG_ALERT;
+        dialog = dialog_data->dialog;
+
+        lb = elm_label_add(dialog_data->box);
+        elm_object_text_set(lb, message);
+        elm_box_pack_end(dialog_data->box, lb);
+        evas_object_show(lb);
+
+        dialog_data->bt_ok = elm_button_add(dialog_data->box);
+        elm_object_text_set(dialog_data->bt_ok, "Close");
+        elm_box_pack_end(dialog_data->box, dialog_data->bt_ok);
+        evas_object_size_hint_align_set
+          (dialog_data->bt_ok, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_smart_callback_add
+          (dialog_data->bt_ok, "clicked", _bt_close, dialog_data);
+        evas_object_show(dialog_data->bt_ok);
+
+        evas_object_show(dialog);
+     }
+
+   if (dialog) _exec_dialog(dialog);
+}
+
+static Eina_Bool
+_view_smart_run_javascript_confirm(Ewk_View_Smart_Data *vsd, const char *message)
+{
+   Evas_Object *obj = evas_object_smart_parent_get(vsd->self);
+   Eina_Bool response = EINA_FALSE;
+   Evas_Object *dialog = NULL;
+
+   ELM_WEB_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   if (sd->hook.confirm)
+     dialog = sd->hook.confirm(sd->hook.confirm_data, obj, message, &response);
+   else
+     {
+        Evas_Object *lb;
+        Dialog_Data *dialog_data = _dialog_new(obj, sd->inwin_mode);
+        dialog_data->type = DIALOG_CONFIRM;
+        dialog_data->response = &response;
+        dialog = dialog_data->dialog;
+
+        lb = elm_label_add(dialog_data->box);
+        elm_object_text_set(lb, message);
+        elm_box_pack_end(dialog_data->box, lb);
+        evas_object_show(lb);
+
+        _dialog_ok_cancel_buttons_add(dialog_data);
+
+        evas_object_show(dialog);
+     }
+
+   if (dialog) _exec_dialog(dialog);
+
+   return response;
+}
+
+static const char *
+_view_smart_run_javascript_prompt(Ewk_View_Smart_Data *vsd, const char *message, const char *default_value)
+{
+   Evas_Object *obj = evas_object_smart_parent_get(vsd->self);
+   Eina_Bool response = EINA_FALSE;
+   Evas_Object *dialog = NULL;
+   char *value = NULL;
+   const char *ret;
+
+   ELM_WEB_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   if (sd->hook.prompt)
+     dialog = sd->hook.prompt(sd->hook.prompt_data, obj, message, default_value, (const char**)&value, &response);
+   else
+     {
+        Evas_Object *lb, *entry;
+        Dialog_Data *dialog_data = _dialog_new(obj, sd->inwin_mode);
+        dialog_data->type = DIALOG_PROMPT;
+        dialog_data->response = &response;
+        dialog_data->entry_value = (const char**)&value;
+        dialog = dialog_data->dialog;
+
+        lb = elm_label_add(dialog_data->box);
+        elm_object_text_set(lb, message);
+        elm_box_pack_end(dialog_data->box, lb);
+        evas_object_show(lb);
+
+        dialog_data->entry = entry = elm_entry_add(dialog_data->box);
+        elm_entry_single_line_set(entry, EINA_TRUE);
+        elm_entry_scrollable_set(entry, EINA_TRUE);
+        elm_entry_entry_set(entry, default_value);
+        evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_box_pack_end(dialog_data->box, entry);
+        evas_object_show(entry);
+
+        _dialog_ok_cancel_buttons_add(dialog_data);
+
+        evas_object_show(dialog);
+     }
+
+   if (dialog) _exec_dialog(dialog);
+
+   if (!value) return NULL;
+
+   ret = eina_stringshare_add(value);
+   free(value);
+   return ret;
+}
+
 /**
  * Creates a new view object given the parent.
  *
@@ -308,6 +540,9 @@ _view_add(Evas_Object *parent)
         api.popup_menu_hide = _view_smart_popup_menu_hide;
         api.fullscreen_enter = _view_smart_fullscreen_enter;
         api.fullscreen_exit = _view_smart_fullscreen_exit;
+        api.run_javascript_alert = _view_smart_run_javascript_alert;
+        api.run_javascript_confirm = _view_smart_run_javascript_confirm;
+        api.run_javascript_prompt = _view_smart_run_javascript_prompt;
 
         smart = evas_smart_class_new(&api.sc);
         if (!smart)
@@ -459,45 +694,24 @@ _elm_web_window_create_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_W
 }
 
 EOLIAN static void
-_elm_web_dialog_alert_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED, Elm_Web_Dialog_Alert func, void *data)
+_elm_web_dialog_alert_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Dialog_Alert func, void *data)
 {
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)func;
-   (void)data;
-   (void)_pd;
-#else
-   (void)func;
-   (void)data;
-   (void)_pd;
-#endif
+   sd->hook.alert = func;
+   sd->hook.alert_data = data;
 }
 
 EOLIAN static void
-_elm_web_dialog_confirm_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED, Elm_Web_Dialog_Confirm func, void *data)
+_elm_web_dialog_confirm_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Dialog_Confirm func, void *data)
 {
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)func;
-   (void)data;
-   (void)_pd;
-#else
-   (void)func;
-   (void)data;
-   (void)_pd;
-#endif
+   sd->hook.confirm = func;
+   sd->hook.confirm_data = data;
 }
 
 EOLIAN static void
-_elm_web_dialog_prompt_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED, Elm_Web_Dialog_Prompt func, void *data)
+_elm_web_dialog_prompt_hook_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Elm_Web_Dialog_Prompt func, void *data)
 {
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)func;
-   (void)data;
-   (void)_pd;
-#else
-   (void)func;
-   (void)data;
-   (void)_pd;
-#endif
+   sd->hook.prompt = func;
+   sd->hook.prompt_data = data;
 }
 
 EOLIAN static void
@@ -1015,29 +1229,15 @@ _elm_web_region_bring_in(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, int x, int y, i
 }
 
 EOLIAN static void
-_elm_web_inwin_mode_set(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED, Eina_Bool value)
+_elm_web_inwin_mode_set(Eo *obj EINA_UNUSED, Elm_Web_Data *sd, Eina_Bool value)
 {
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)_pd;
-   (void)value;
-#else
-   (void)_pd;
-   (void)value;
-#endif
+   sd->inwin_mode = value;
 }
 
 EOLIAN static Eina_Bool
-_elm_web_inwin_mode_get(Eo *obj EINA_UNUSED, Elm_Web_Data *_pd EINA_UNUSED)
+_elm_web_inwin_mode_get(Eo *obj EINA_UNUSED, Elm_Web_Data *sd)
 {
-   Eina_Bool ret;
-   ret = EINA_FALSE;
-#ifdef HAVE_ELEMENTARY_WEB
-   (void)_pd;
-#else
-   (void)_pd;
-#endif
-
-   return ret;
+   return sd->inwin_mode;
 }
 
 EAPI void
