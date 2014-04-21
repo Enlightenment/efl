@@ -456,7 +456,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
      {
         ERR("Programs recursing up to recursion limit of %i in '%s' with sig='%s', src='%s' from '%s', '%s'. Disabled.",
             64, pr->name, ssig, ssrc, ed->path, ed->group);
-        if (pr->action == EDJE_ACTION_TYPE_STATE_SET && ((pr->tween.time > ZERO) && (!ed->no_anim)))
+        if (pr->action == EDJE_ACTION_TYPE_STATE_SET && ((pr->tween.time == ZERO) || (ed->no_anim)))
           ERR("Possible solution: try adding transition time to prevent Schrödinger's part state");
         recursion_limit = 1;
         return;
