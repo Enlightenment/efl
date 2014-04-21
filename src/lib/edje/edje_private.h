@@ -967,6 +967,8 @@ struct _Edje_Part_Collection
 
    unsigned char    physics_enabled; /* will be 1 if a body is declared */
 
+   unsigned char    script_recursion; /* permits unsafe Embryo->EDC->Embryo scripting */
+
    unsigned char    checked : 1;
 };
 

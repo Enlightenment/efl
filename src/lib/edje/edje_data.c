@@ -1077,6 +1077,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "physics.world.depth", physics.world.depth, EET_T_INT);
 #endif
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "physics_enabled", physics_enabled, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "script_recursion", script_recursion, EET_T_UCHAR);
 }
 
 EAPI void

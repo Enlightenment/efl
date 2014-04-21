@@ -3871,7 +3871,7 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
         /* will likely end up being much longer than 0.016 seconds - more */
         /* like 0.03 - 0.05 seconds or even more */
         embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
-        if (embryo_program_recursion_get(ed->collection->script))
+        if (embryo_program_recursion_get(ed->collection->script) && (!ed->collection->script_recursion))
           ERR("You are running Embryo->EDC->Embryo with script program '%s';\nBy the power of Grayskull, your previous Embryo stack is now broken!", fname);
         ret = embryo_program_run(ed->collection->script, fn);
         if (ret == EMBRYO_PROGRAM_FAIL)

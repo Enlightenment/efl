@@ -209,6 +209,7 @@ static void st_collections_group_program_source(void);
 static void st_collections_group_part_remove(void);
 static void st_collections_group_program_remove(void);
 static void st_collections_group_script_only(void);
+static void st_collections_group_script_recursion(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
@@ -532,6 +533,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.part_remove", st_collections_group_part_remove},
      {"collections.group.program_remove", st_collections_group_program_remove},
      {"collections.group.script_only", st_collections_group_script_only},
+     {"collections.group.script_recursion", st_collections_group_script_recursion},
      {"collections.group.lua_script_only", st_collections_group_script_only},
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
@@ -3472,6 +3474,32 @@ st_collections_group_script_only(void)
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->lua_script_only = parse_bool(0);
+}
+
+/**
+    @page edcref
+    @property
+        script_recursion
+    @parameters
+        [1/0]
+    @effect
+        This flag (1/0) determines whether to error on unsafe calls when
+        recursively running Embryo programs.
+        For example, running an Embryo script which calls EDC which has a
+        script{} block is unsafe, and the outer-most (first) Embryo stack is GUARANTEED
+        to be corrupted. Only use this flag if you are sure that you know what you are doing.
+        @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_script_recursion(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->script_recursion = parse_bool(0);
 }
 
 /**
