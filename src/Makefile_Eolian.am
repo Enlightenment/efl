@@ -55,3 +55,31 @@ am__v_RAGEL_0 = @echo "  RAGEL   " $@;
 
 lib/eolian/eo_lexer.c: lib/eolian/eo_lexer.rl
 endif
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+check_PROGRAMS += \
+tests/eolian/eolian_suite
+
+tests_eolian_eolian_suite_SOURCES = \
+tests/eolian/eolian_suite.c \
+tests/eolian/eolian_suite.h
+
+tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
+-DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/eolian\" \
+@CHECK_CFLAGS@ \
+@EOLIAN_CFLAGS@
+TESTS += tests/eolian/eolian_suite
+
+tests_eolian_eolian_suite_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
+tests_eolian_eolian_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+eoliandatafilesdir = $(datadir)/eolian/data
+eoliandatafiles_DATA = tests/eolian/data/class_simple.eo
+
+endif
+
+EXTRA_DIST += \
+tests/eolian/data/class_simple.eo

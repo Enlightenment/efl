@@ -1,0 +1,31 @@
+class Simple {
+   /*@ Class Desc Simple */
+   legacy_prefix: evas_object_simple;
+   eo_prefix: evas_obj_simple;
+   data: Evas_Simple_Data;
+   properties {
+      a {
+         set {
+            /*@
+            comment a::set */
+            return Eina_Bool (EINA_TRUE);
+         }
+         get {
+         }
+         values {
+            int value; /*@ Value description */
+         }
+      }
+   }
+   methods {
+      foo {
+         /*@ comment foo */
+         params {
+            @in int a; /*@ a */
+            @inout char *b;
+            @out double c;
+         }
+         return char *(NULL);
+      }
+   }
+};
