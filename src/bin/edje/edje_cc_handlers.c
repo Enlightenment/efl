@@ -3965,13 +3965,16 @@ st_collections_group_limits_horizontal(void)
     @context
         group {
             parts {
-                alias: "theme_part_path" "real_part_path";
-                ..
+                alias: "theme_part_path" "somegroup:real_part_path";
+                group { "theme_part_path"; }
             }
         }
     @description
-        Alias of part give a chance to let the designer put the real one
-	in a box or reuse one from a GROUP or inside a BOX.
+        Allows for a part to be referenced externally as though
+        it had the name of the alias.
+        In the above example, swallowing an object into part "theme_part_path"
+        will result in the object actually being swallowed into the part
+        "real_part_path" in the "somegroup" group.
     @endblock
 */
 static void
