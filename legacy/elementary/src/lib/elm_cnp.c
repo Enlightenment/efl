@@ -2170,8 +2170,10 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    int x, y, x2 = 0, y2 = 0, x3, y3;
    Evas_Object *icon = NULL;
    int w = 0, h = 0;
+   int ex, ey, ew, eh;
    Ecore_X_Atom actx;
    int i;
+   int xr, yr, rot;
 
    _x11_elm_cnp_init();
 
@@ -2268,20 +2270,40 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 
    /* Position subwindow appropriately */
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-   ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-   x += x2;
-   y += y2;
-   dragwin_x_start = dragwin_x_end = x;
-   dragwin_y_start = dragwin_y_end = y;
+   ecore_evas_geometry_get(ee, &ex, &ey, &ew, &eh);
    evas_object_resize(dragwin, w, h);
 
    evas_object_show(icon);
    evas_object_show(dragwin);
-   evas_object_move(dragwin, x, y);
-
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x3, &y3);
    _dragx = x3 - x2;
    _dragy = y3 - y2;
+
+   rot = ecore_evas_rotation_get(ee);
+   switch (rot)
+     {
+      case 90:
+         xr = y3;
+         yr = ew - x3;
+         break;
+      case 180:
+         xr = ew - x3;
+         yr = eh - y3;
+         break;
+      case 270:
+         xr = eh - y3;
+         yr = x3;
+         break;
+      default:
+         xr = x3;
+         yr = y3;
+         break;
+     }
+   x = ex + xr - _dragx;
+   y = ey + yr - _dragy;
+   evas_object_move(dragwin, x, y);
+   dragwin_x_start = dragwin_x_end = x;
+   dragwin_y_start = dragwin_y_end = y;
 
    return EINA_TRUE;
 }
