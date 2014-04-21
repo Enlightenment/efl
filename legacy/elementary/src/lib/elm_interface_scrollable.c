@@ -45,6 +45,10 @@ static void
 _elm_scroll_scroll_to_y(Elm_Scrollable_Smart_Interface_Data *sid,
                         double t_in,
                         Evas_Coord pos_y);
+static void
+_elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
+                                      Evas_Coord x,
+                                      Evas_Coord y);
 static double
 _round(double value, int pos)
 {
@@ -889,6 +893,7 @@ _elm_scroll_scroll_bar_read_and_update(
    x = _round(vx * (double)mx + minx, 1);
    y = _round(vy * (double)my + miny, 1);
    eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+   _elm_scroll_wanted_coordinates_update(sid, x, y);
 }
 
 static void
