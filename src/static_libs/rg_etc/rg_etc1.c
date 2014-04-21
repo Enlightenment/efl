@@ -2216,6 +2216,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
    return best_error;
 }
 
+#if 0
 static uint
 rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,uint num_colors,
                                            const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED,
@@ -2344,6 +2345,7 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
    }
    return best_error;
 }
+#endif
 
 // Function originally from RYG's public domain real-time DXT1 compressor, modified for 555.
 static void
@@ -2489,10 +2491,13 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
                     }
 
                   results[2].m_error = cUINT64_MAX;
+
+#if 0
+                  // This feature is disabled because it will produce some visual artifacts
                   if ((params.base_params->m_quality >= rg_etc1_medium_quality) && ((subblock) || (use_color4)))
                     {
                        const uint32 subblock_pixel0_u32 = subblock_pixels[0].m_u32;
-                       for (r = 7; r >= 0; --r)
+                       for (r = 7; r >= 1; --r)
                          if (subblock_pixels[r].m_u32 != subblock_pixel0_u32)
                            break;
                        if (!r)
@@ -2503,6 +2508,7 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
                                                                        (subblock && !use_color4) ? &results[0].m_block_color_unscaled : NULL);
                          }
                     }
+#endif
 
                   params.m_use_color4 = (use_color4 != 0);
                   params.m_constrain_against_base_color5 = EINA_FALSE;
