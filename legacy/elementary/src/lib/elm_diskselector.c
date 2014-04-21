@@ -292,7 +292,8 @@ _resize_cb(void *data EINA_UNUSED,
    if ((sd->minw == -1) && (sd->minh == -1))
      elm_coords_finger_size_adjust(6, &sd->minw, 1, &sd->minh);
 
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
    if (sd->items)
      {
         Elm_Diskselector_Item *it = sd->items->data;
@@ -1000,7 +1001,8 @@ _scroll_cb(Evas_Object *obj,
    _string_check(obj);
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
-         elm_interface_scrollable_content_viewport_size_get(&w, &h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
    if (sd->round)
      {
         evas_object_geometry_get(sd->main_box, NULL, NULL, &bw, NULL);

@@ -434,11 +434,13 @@ mixin Elm_Interface_Scrollable(Evas_Scrollable_Interface, Evas_Smart)
             int pagenumber_v;
          }
       }
-      content_viewport_size {
+      content_viewport_geometry {
          get {
             /*@ No description supplied by the EAPI. */
          }
          values {
+            Evas_Coord x;
+            Evas_Coord y;
             Evas_Coord w;
             Evas_Coord h;
          }

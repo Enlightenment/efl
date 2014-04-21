@@ -342,13 +342,15 @@ _elm_list_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, 
    if ((dir == ELM_FOCUS_LEFT) || (dir == ELM_FOCUS_RIGHT))
      {
         eo_do(obj,
-              elm_interface_scrollable_content_viewport_size_get(&v, NULL),
+              elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &v, NULL),
               elm_interface_scrollable_content_size_get(&min, NULL));
      }
    else
      {
         eo_do(obj,
-              elm_interface_scrollable_content_viewport_size_get(NULL, &v),
+              elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, NULL, &v),
               elm_interface_scrollable_content_size_get(NULL, &min));
      }
 
@@ -427,7 +429,8 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &v_w, &v_h));
 
    /* TODO: fix logic for horizontal mode */
    if (!strcmp(dir, "left"))
@@ -635,7 +638,8 @@ _elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
    evas_object_size_hint_max_get(sd->box, &maxw, &maxh);
    evas_object_size_hint_weight_get(sd->box, &xw, &yw);
 
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
    if (xw > 0.0)
      {
         if ((minw > 0) && (vw < minw)) vw = minw;

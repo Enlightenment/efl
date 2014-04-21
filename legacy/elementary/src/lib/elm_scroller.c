@@ -82,7 +82,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &v_w, &v_h));
    eo_do(sd->content,
          evas_obj_position_get(&c_x, &c_y),
          evas_obj_size_get(&max_x, &max_y));
@@ -243,7 +244,8 @@ _elm_scroller_elm_widget_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, E
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &v_w, &v_h));
 
    if (act == ELM_ACTIVATE_UP)
      {
@@ -295,7 +297,8 @@ _elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
         evas_object_size_hint_weight_get(sd->content, &xw, &yw);
      }
 
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
    if (xw > 0.0)
      {
         if ((minw > 0) && (vw < minw))

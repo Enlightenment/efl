@@ -303,7 +303,8 @@ _elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item *item,
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    eo_do(WIDGET(item),
-         elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
    evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(VIEW(item), &ix, &iy, &iw, &ih);
 
@@ -356,7 +357,8 @@ _resize_job(void *data)
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    sd->resize_job = NULL;
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
    evas_object_size_hint_min_get(sd->bx, &mw, &mh);
    evas_object_geometry_get(sd->bx, NULL, NULL, &w, &h);
 
@@ -1274,7 +1276,8 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(wd->resize_obj, w, h);
 
    evas_object_size_hint_min_get(sd->bx, &minw_bx, &minh_bx);
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
 
    if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE)
      {

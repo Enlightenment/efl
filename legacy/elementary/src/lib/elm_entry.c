@@ -394,7 +394,8 @@ _viewport_region_get(Evas_Object *obj)
    Evas_Object *parent;
 
    if (sd->scroll)
-     evas_object_geometry_get(sd->scr_edje, &rect->x, &rect->y, &rect->w, &rect->h);
+     eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+           (&rect->x, &rect->y, &rect->w, &rect->h));
    else
      evas_object_geometry_get(sd->entry_edje, &rect->x, &rect->y, &rect->w, &rect->h);
 
@@ -893,7 +894,8 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
                {
                   Evas_Coord vw = 0, vh = 0, w = 0, h = 0;
 
-                  eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+                  eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+                        (NULL, NULL, &vw, &vh));
 
                   w = sd->ent_mw;
                   h = sd->ent_mh;
@@ -916,7 +918,8 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
 
              evas_object_resize(sd->scr_edje, resw, resh);
              edje_object_size_min_calc(sd->scr_edje, &vmw, &vmh);
-             eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+             eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+                   (NULL, NULL, &vw, &vh));
              edje_object_size_min_restricted_calc
                (sd->entry_edje, &minw, &minh, vw, 0);
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -974,7 +977,8 @@ _elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
              sd->ent_mh = minh;
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
-             eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+             eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+                   (NULL, NULL, &vw, &vh));
 
              if (minw > vw) vw = minw;
              if (minh > vh) vh = minh;
@@ -3035,7 +3039,8 @@ _elm_entry_resize_internal(Evas_Object *obj)
      {
         Evas_Coord vw = 0, vh = 0;
 
-        eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+        eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &vw, &vh));
         if (vw < sd->ent_mw) vw = sd->ent_mw;
         if (vh < sd->ent_mh) vh = sd->ent_mh;
         evas_object_resize(sd->entry_edje, vw, vh);

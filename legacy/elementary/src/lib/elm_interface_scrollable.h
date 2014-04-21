@@ -184,7 +184,7 @@ enum
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_REGION_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_SIZE_GET,
-   ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_SIZE_GET,
+   ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_GEOMETRY_GET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_MIN_LIMIT,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_STEP_SIZE_SET,
    ELM_SCROLLABLE_INTERFACE_SUB_ID_STEP_SIZE_GET,
@@ -575,16 +575,18 @@ enum
 #define elm_scrollable_interface_content_size_get(w, h) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_SIZE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
 
 /**
- * @def elm_scrollable_interface_content_viewport_size_get
- * @since 1.8
+ * @def elm_scrollable_interface_content_viewport_geometry_get
+ * @since 1.10
  *
  * No description supplied by the EAPI.
  *
+ * @param[out] x
+ * @param[out] y
  * @param[out] w
  * @param[out] h
  *
  */
-#define elm_scrollable_interface_content_viewport_size_get(w, h) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_SIZE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+#define elm_scrollable_interface_content_viewport_geometry_get(x, y) ELM_SCROLLABLE_INTERFACE_ID(ELM_SCROLLABLE_INTERFACE_SUB_ID_CONTENT_VIEWPORT_GEOMETRY_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
 
 /**
  * @def elm_scrollable_interface_content_min_limit

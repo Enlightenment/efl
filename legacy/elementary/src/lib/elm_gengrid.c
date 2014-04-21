@@ -155,10 +155,12 @@ _item_show_region(void *data)
           switch (sd->scroll_to_type)
             {
                case ELM_GENGRID_ITEM_SCROLLTO_TOP:
-                  eo_do(WIDGET(it), elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+                  eo_do(WIDGET(it), elm_interface_scrollable_content_viewport_geometry_get
+                        (NULL, NULL, &vw, &vh));
                   break;
                case ELM_GENGRID_ITEM_SCROLLTO_MIDDLE:
-                  eo_do(WIDGET(it), elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+                  eo_do(WIDGET(it), elm_interface_scrollable_content_viewport_geometry_get
+                        (NULL, NULL, &vw, &vh));
                   it_xpos = it_xpos - ((vw - sd->item_width) / 2);
                   it_ypos = it_ypos - ((vh - sd->item_height) / 2);
                   break;
@@ -1921,7 +1923,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &v_w, &v_h));
 
    if (!strcmp(dir, "left"))
      {

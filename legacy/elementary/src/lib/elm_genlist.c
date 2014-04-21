@@ -403,8 +403,8 @@ _calc_job(void *data)
 
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &ow, &sd->h);
    if (sd->mode == ELM_LIST_COMPRESS)
-      eo_do(sd->obj, elm_interface_scrollable_content_viewport_size_get
-            (&vw, NULL));
+      eo_do(sd->obj, elm_interface_scrollable_content_viewport_geometry_get
+            (NULL, NULL, &vw, NULL));
 
    if (sd->w != ow) sd->w = ow;
 
@@ -564,7 +564,8 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
      {
         Evas_Coord vw = 0, vh = 0;
 
-        eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+        eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &vw, &vh));
         if ((vw != 0) && (vw != sd->prev_viewport_w))
           {
              Item_Block *itb;
@@ -2248,7 +2249,8 @@ _elm_genlist_pan_evas_smart_calculate(Eo *obj EINA_UNUSED, Elm_Genlist_Pan_Data 
 
    eo_do((sd)->obj,
          elm_interface_scrollable_content_pos_get(&vx, &vy),
-         elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
 
    if (sd->reorder_fast == 1)
       eo_do((sd)->obj, elm_interface_scrollable_content_region_show(vx, vy - 10, vw, vh));
@@ -2595,7 +2597,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(&v_w, &v_h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &v_w, &v_h));
 
    if (!strcmp(dir, "left"))
      {

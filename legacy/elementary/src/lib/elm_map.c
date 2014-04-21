@@ -493,7 +493,8 @@ _viewport_coord_get(Elm_Map_Data *sd,
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    eo_do(sd->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-   eo_do(sd->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
+   eo_do(sd->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
 
    if (w > sd->size.w) x -= ((w - sd->size.w) / 2);
    if (h > sd->size.h) y -= ((h - sd->size.h) / 2);
@@ -3827,7 +3828,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(NULL, &vh));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, NULL, &vh));
 
    if (!strcmp(dir, "left"))
      {

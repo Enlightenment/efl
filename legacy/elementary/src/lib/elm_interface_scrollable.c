@@ -1138,12 +1138,17 @@ _elm_interface_scrollable_content_size_get(Eo *obj EINA_UNUSED, Elm_Scrollable_S
 }
 
 EOLIAN static void
-_elm_interface_scrollable_content_viewport_size_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Coord *w, Evas_Coord *h)
+_elm_interface_scrollable_content_viewport_geometry_get(Eo *obj EINA_UNUSED,
+                                                        Elm_Scrollable_Smart_Interface_Data *sid,
+                                                        Evas_Coord *x,
+                                                        Evas_Coord *y,
+                                                        Evas_Coord *w,
+                                                        Evas_Coord *h)
 {
    if (!sid->pan_obj || !sid->edje_obj) return;
 
    edje_object_calc_force(sid->edje_obj);
-   evas_object_geometry_get(sid->pan_obj, NULL, NULL, w, h);
+   evas_object_geometry_get(sid->pan_obj, x, y, w, h);
 }
 
 EOLIAN static void
@@ -1173,7 +1178,8 @@ _elm_scroll_x_mirrored_get(const Evas_Object *obj,
 
    if (!sid->pan_obj) return 0;
 
-   eo_do((Eo *)obj, elm_interface_scrollable_content_viewport_size_get(&w, NULL));
+   eo_do((Eo *)obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, NULL));
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    ret = (cw - (x + w));
 
@@ -1195,8 +1201,8 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
 
    /* Update wx/y/w/h - and if the requested positions aren't legal
     * adjust a bit. */
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get
-         (&sid->ww, &sid->wh));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &sid->ww, &sid->wh));
    if (x < 0)
      sid->wx = 0;
    else if ((x + sid->ww) > cw)
@@ -1248,8 +1254,8 @@ _elm_scroll_bounce_x_animator(void *data)
      {
         dt = dt / _elm_config->thumbscroll_bounce_friction;
         odx = sid->down.b2x - sid->down.bx;
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get
-              (&w, NULL));
+        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &w, NULL));
         if (!sid->down.momentum_animator && (w > abs(odx)))
           {
              pd = (double)odx / (double)w;
@@ -1304,8 +1310,8 @@ _elm_scroll_bounce_y_animator(void *data)
      {
         dt = dt / _elm_config->thumbscroll_bounce_friction;
         ody = sid->down.b2y - sid->down.by;
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get
-              (NULL, &h));
+        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, NULL, &h));
         if (!sid->down.momentum_animator && (h > abs(ody)))
           {
              pd = (double)ody / (double)h;
@@ -1723,7 +1729,8 @@ EOLIAN static void
 _elm_interface_scrollable_content_region_get(Eo *obj, Elm_Scrollable_Smart_Interface_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    eo_do(obj, elm_interface_scrollable_content_pos_get(x, y));
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(w, h));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, w, h));
 }
 
 /* Set should be used for calculated positions, for example, when we move
@@ -1784,8 +1791,8 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
 
    if (sid->ww == -1)
      {
-        eo_do(obj, elm_interface_scrollable_content_viewport_size_get
-              (&ww, &wh));
+        eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &ww, &wh));
      }
    else
      {
@@ -1846,7 +1853,8 @@ _elm_scroll_wheel_event_cb(void *data,
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get(&vw, &vh));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &vw, &vh));
    if (sid->pan_obj)
      eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    if (!_paging_is_enabled(sid))
@@ -2020,7 +2028,8 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
    if (!sid->pan_obj) return 0;
 
    eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, NULL));
 
@@ -2060,7 +2069,8 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
    if (!sid->pan_obj) return 0;
 
    eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(NULL, &miny));
 
@@ -2180,8 +2190,8 @@ _elm_scroll_scroll_to_y(Elm_Scrollable_Smart_Interface_Data *sid,
    if (t_in <= 0.0)
      {
         eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get
-              (&w, &h));
+        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &w, &h));
         y = pos_y;
         eo_do(sid->obj, elm_interface_scrollable_content_region_set(x, y, w, h));
         return;
@@ -2223,8 +2233,8 @@ _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
    if (t_in <= 0.0)
      {
         eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get
-              (&w, &h));
+        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &w, &h));
         x = pos_x;
         eo_do(sid->obj, elm_interface_scrollable_content_region_set
               (x, y, w, h));
@@ -3306,7 +3316,8 @@ _elm_scroll_page_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 
    if (!_paging_is_enabled(sid)) return;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
 
    x = _elm_scroll_page_x_get(sid, 0, EINA_TRUE);
    y = _elm_scroll_page_y_get(sid, 0, EINA_TRUE);
@@ -3615,8 +3626,8 @@ _elm_scroll_pan_resized_cb(void *data,
 
    if (sid->cb_func.content_viewport_resize)
      {
-        eo_do(sid->obj,
-              elm_interface_scrollable_content_viewport_size_get(&w, &h));
+        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+              (NULL, NULL, &w, &h));
         sid->cb_func.content_viewport_resize(sid->obj, w, h);
      }
 }
@@ -4190,7 +4201,8 @@ _elm_interface_scrollable_page_show(Eo *obj, Elm_Scrollable_Smart_Interface_Data
    sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
    sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
 
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
    if (pagenumber_h >= 0) x = sid->pagesize_h * pagenumber_h;
    if (pagenumber_v >= 0) y = sid->pagesize_v * pagenumber_v;
 
@@ -4219,7 +4231,8 @@ _elm_interface_scrollable_page_bring_in(Eo *obj, Elm_Scrollable_Smart_Interface_
    sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
    sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
 
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_size_get(&w, &h));
+   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &w, &h));
    if (pagenumber_h >= 0) x = sid->pagesize_h * pagenumber_h;
    if (pagenumber_v >= 0) y = sid->pagesize_v * pagenumber_v;
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))

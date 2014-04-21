@@ -707,7 +707,8 @@ _zoom_do(Evas_Object *obj,
 
    sd->size.w = (sd->size.ow * (1.0 - t)) + (sd->size.nw * t);
    sd->size.h = (sd->size.oh * (1.0 - t)) + (sd->size.nh * t);
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&ow, &oh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &ow, &oh));
    xx = (sd->size.spos.x * sd->size.w) - (ow / 2);
    yy = (sd->size.spos.y * sd->size.h) - (oh / 2);
    if (xx < 0) xx = 0;
@@ -929,7 +930,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_pos_get(&x, &y),
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
-         elm_interface_scrollable_content_viewport_size_get(NULL, &v_h));
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, NULL, &v_h));
 
    if (!strcmp(dir, "left"))
      {
@@ -1079,7 +1081,8 @@ _g_layer_zoom_do(Evas_Object *obj,
    sd->size.ow = sd->size.w;
    sd->size.oh = sd->size.h;
    eo_do(obj, elm_interface_scrollable_content_pos_get(&rx, &ry));
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&rw, &rh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &rw, &rh));
    if ((rw <= 0) || (rh <= 0)) return;
 
    sd->size.nw = (double)sd->size.imw / sd->zoom;
@@ -1141,7 +1144,8 @@ _g_layer_zoom_start_cb(void *data,
    eo_do(obj, elm_interface_scrollable_freeze_set(EINA_TRUE));
 
    elm_photocam_image_region_get(obj, &x, &y, &w, &h);
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&rw, &rh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &rw, &rh));
 
    if (rw > sd->size.nw)
      marginx = (rw - sd->size.nw) / 2;
@@ -1178,7 +1182,8 @@ _g_layer_zoom_end_cb(void *data,
    ELM_PHOTOCAM_DATA_GET(obj, sd);
    Evas_Coord rw, rh;
 
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&rw, &rh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &rw, &rh));
    sd->g_layer_start = 1.0;
 
    if (sd->g_layer_zoom.imx || sd->g_layer_zoom.imy)
@@ -1604,7 +1609,8 @@ _elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
    sd->size.ow = sd->size.w;
    sd->size.oh = sd->size.h;
    eo_do(obj, elm_interface_scrollable_content_pos_get(&rx, &ry));
-   eo_do(obj, elm_interface_scrollable_content_viewport_size_get(&rw, &rh));
+   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &rw, &rh));
    if ((rw <= 0) || (rh <= 0)) return;
 
    if (sd->mode == ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
@@ -1846,7 +1852,8 @@ _elm_photocam_image_region_get(Eo *obj, Elm_Photocam_Data *sd, int *x, int *y, i
    Evas_Coord sx, sy, sw, sh;
 
    eo_do((Eo *)obj, elm_interface_scrollable_content_pos_get(&sx, &sy));
-   eo_do((Eo *)obj, elm_interface_scrollable_content_viewport_size_get(&sw, &sh));
+   eo_do((Eo *)obj, elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, &sw, &sh));
    if (sd->size.w > 0)
      {
         if (x)
