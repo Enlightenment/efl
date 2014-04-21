@@ -9,6 +9,10 @@
 
 #define MY_CLASS ELM_OBJ_BUTTON_CLASS
 
+// ATSPI Accessibility
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#include "elm_interface_atspi_widget_action.eo.h"
+
 #define MY_CLASS_NAME "Elm_Button"
 #define MY_CLASS_NAME_LEGACY "elm_button"
 
@@ -416,6 +420,12 @@ EOLIAN static Eina_Bool
 _elm_button_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
+}
+
+EOLIAN const Elm_Action *
+_elm_button_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Button_Data *pd EINA_UNUSED)
+{
+   return &key_actions[0];
 }
 
 static void

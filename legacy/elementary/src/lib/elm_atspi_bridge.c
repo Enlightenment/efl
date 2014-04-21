@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
@@ -15,6 +16,7 @@
 #include "elm_interface_atspi_accessible.eo.h"
 #include "elm_interface_atspi_component.eo.h"
 #include "elm_interface_atspi_window.eo.h"
+#include "elm_interface_atspi_action.eo.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -550,6 +552,158 @@ static const Eldbus_Method accessible_methods[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
+static Eldbus_Message *
+_action_description_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *description, *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, description = elm_interface_atspi_action_description_get(idx));
+   description = description ? description : "";
+   eldbus_message_arguments_append(ret, "s", description);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_action_name_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *name, *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, name = elm_interface_atspi_action_name_get(idx));
+   name = name ? name : "";
+   eldbus_message_arguments_append(ret, "s", name);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_action_localized_name_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *name, *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, name = elm_interface_atspi_action_localized_name_get(idx));
+   name = name ? name : "";
+   eldbus_message_arguments_append(ret, "s", name);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_action_key_binding_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *key, *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, key = elm_interface_atspi_action_keybinding_get(idx));
+   key = key ? key : "";
+   eldbus_message_arguments_append(ret, "s", key);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_action_actions_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *action, *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eina_List *actions;
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *iter_array;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
+
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "sss");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_array, NULL);
+
+   eo_do(obj, actions = elm_interface_atspi_action_actions_get());
+
+   int id = 0;
+   EINA_LIST_FREE(actions, action)
+     {
+        const char *key, *descr;
+        eo_do(obj, key = elm_interface_atspi_action_keybinding_get(id));
+        key = key ? key : "";
+        eo_do(obj, descr = elm_interface_atspi_action_description_get(id));
+        descr = descr ? descr : "";
+        eldbus_message_iter_arguments_append(iter_array, "sss", action, descr, key);
+        id++;
+     }
+
+  eldbus_message_iter_container_close(iter, iter_array);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_action_action_do(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+   Eina_Bool result;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_action_action_do(idx));
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static const Eldbus_Method action_methods[] = {
+   { "GetDescription", ELDBUS_ARGS({"i", "index"}), ELDBUS_ARGS({"s", "description"}), _action_description_get, 0 },
+   { "GetName", ELDBUS_ARGS({"i", "index"}), ELDBUS_ARGS({"s", "name"}), _action_name_get, 0 },
+   { "GetLocalizedName", ELDBUS_ARGS({"i", "index"}), ELDBUS_ARGS({"s", "name"}), _action_localized_name_get, 0 },
+   { "GetKeyBinding", ELDBUS_ARGS({"i", "index"}), ELDBUS_ARGS({"s", "key"}), _action_key_binding_get, 0 },
+   { "GetActions", NULL, ELDBUS_ARGS({"a(sss)", "actions"}), _action_actions_get, 0 },
+   { "DoAction", ELDBUS_ARGS({"i", "index"}), ELDBUS_ARGS({"b", "result"}), _action_action_do, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
 static Eo *
 _access_object_from_path(const char *path)
 {
@@ -633,11 +787,37 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_action_property_get(const Eldbus_Service_Interface *interface, const char *property,
+                         Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED,
+                         Eldbus_Message **error EINA_UNUSED)
+{
+   Eina_List *actions;
+   const char *obj_path = eldbus_service_object_path_get(interface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!strcmp(property, "NActions"))
+     {
+        eo_do(obj, actions = elm_interface_atspi_action_actions_get());
+        eldbus_message_iter_basic_append(iter, 'i', eina_list_count(actions));
+        eina_list_free(actions);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static const Eldbus_Property accessible_properties[] = {
    { "Name", "s", _accessible_property_get, NULL, 0 },
    { "Description", "s", _accessible_property_get, NULL, 0 },
    { "Parent", "(so)", _accessible_property_get, NULL, 0 },
    { "ChildCount", "i", _accessible_property_get, NULL, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const Eldbus_Property action_properties[] = {
+   { "NActions", "i", _action_property_get, NULL, 0 },
    { NULL, NULL, NULL, NULL, 0 }
 };
 
@@ -651,6 +831,10 @@ static const Eldbus_Service_Interface_Desc event_iface_desc = {
 
 static const Eldbus_Service_Interface_Desc window_iface_desc = {
    ATSPI_DBUS_INTERFACE_EVENT_WINDOW, NULL, _window_obj_signals, NULL, NULL, NULL
+};
+
+static const Eldbus_Service_Interface_Desc action_iface_desc = {
+   ATSPI_DBUS_INTERFACE_ACTION, action_methods, NULL, action_properties, NULL, NULL
 };
 
 static void
@@ -727,6 +911,8 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
   if (eo_isa(data, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
+  if (eo_isa(data, ELM_INTERFACE_ATSPI_ACTION_CLASS))
+    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
 
@@ -1615,6 +1801,10 @@ static void _object_register(Eo *obj, char *path)
              eo_do(obj, eo_key_data_set("window_interface", infc, NULL));
 
              eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
+          }
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
+          {
+             infc = eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
           }
      }
 }

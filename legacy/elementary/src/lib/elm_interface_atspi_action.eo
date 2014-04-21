@@ -1,0 +1,78 @@
+mixin Elm_Interface_Atspi_Action ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_action;
+   data: null;
+   properties {
+      protected name {
+         get {
+            /*@ Gets action name for given id */
+         }
+         values {
+            const char *name;
+         }
+         keys {
+            int id;
+         }
+      }
+      protected localized_name {
+         get {
+            /*@ Gets localized action name for given id */
+         }
+         values {
+            const char *;
+         }
+         keys {
+            int id;
+         }
+      }
+      protected description {
+         get {
+            /*@ Gets action description for given id */
+         }
+         set {
+            /*@ Sets action description for given id */
+            return Eina_Bool;
+         }
+         values {
+            const char *description;
+         }
+         keys {
+            int id;
+         }
+      }
+      protected actions {
+         get {
+            /*@ Get list of available widget actions */
+         }
+         values {
+            Eina_List *actions; /*@ contains statically allocated strings */
+         }
+      }
+   }
+   methods {
+      protected action_do {
+         /*@ Performs action on given widget. */
+         params {
+            @in int id;
+         }
+         return Eina_Bool;
+      }
+      protected keybinding_get {
+         /*@ Gets configured keybinding for specific action and widget. */
+         params {
+            @in  int id;
+         }
+         return const char *;
+      }
+   }
+   implements {
+      virtual::action_do;
+      virtual::keybinding_get;
+      virtual::name::get;
+      virtual::name::set;
+      virtual::description::get;
+      virtual::description::set;
+      virtual::actions::get;
+   }
+}

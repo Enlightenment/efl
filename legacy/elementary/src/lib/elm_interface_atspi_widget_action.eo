@@ -1,0 +1,25 @@
+mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_widget_action;
+   data: null;
+   properties {
+      protected elm_actions {
+         get {
+         }
+         values {
+            const Elm_Action *actions; /*@ NULL-terminated array of Elm_Actions
+                                         */
+         }
+      }
+   }
+   implements {
+      Elm_Interface_Atspi_Action::action_do;
+      Elm_Interface_Atspi_Action::keybinding_get;
+      Elm_Interface_Atspi_Action::name::get;
+      Elm_Interface_Atspi_Action::description::set;
+      Elm_Interface_Atspi_Action::description::get;
+      Elm_Interface_Atspi_Action::actions::get;
+      virtual::elm_actions::get;
+   }
+}

@@ -447,8 +447,10 @@ elm_icon.c \
 elm_image.c \
 elm_index.c \
 elm_interface_atspi_accessible.c \
+elm_interface_atspi_action.c \
 elm_interface_atspi_component.c \
 elm_interface_atspi_widget.c \
+elm_interface_atspi_widget_action.c \
 elm_interface_atspi_window.c \
 elm_interface_fileselector.c \
 elm_interface_scrollable.c \
@@ -616,10 +618,14 @@ BUILT_SOURCES = \
 		elm_index.eo.h \
 		elm_interface_atspi_accessible.eo.c \
 		elm_interface_atspi_accessible.eo.h \
+		elm_interface_atspi_action.eo.c \
+		elm_interface_atspi_action.eo.h \
 		elm_interface_atspi_component.eo.c \
 		elm_interface_atspi_component.eo.h \
 		elm_interface_atspi_widget.eo.c \
 		elm_interface_atspi_widget.eo.h \
+		elm_interface_atspi_widget_action.eo.c \
+		elm_interface_atspi_widget_action.eo.h \
 		elm_interface_atspi_window.eo.c \
 		elm_interface_atspi_window.eo.h \
 		elm_interface_fileselector.eo.c \
@@ -711,8 +717,10 @@ EXTRA_DIST += \
 	     elm_app_server_view.eo \
 	     elm_atspi_app_object.eo \
 	     elm_interface_atspi_accessible.eo \
+	     elm_interface_atspi_action.eo \
 	     elm_interface_atspi_component.eo \
 	     elm_interface_atspi_widget.eo \
+	     elm_interface_atspi_widget_action.eo \
 	     elm_interface_atspi_window.eo \
 	     elm_bg.eo \
 	     elm_box.eo \
@@ -797,8 +805,10 @@ nodist_includesunstable_HEADERS = \
 				  elm_app_server_view.eo.h \
 				  elm_atspi_app_object.eo.h \
 				  elm_interface_atspi_accessible.eo.h \
+				  elm_interface_atspi_action.eo.h \
 				  elm_interface_atspi_component.eo.h \
 				  elm_interface_atspi_widget.eo.h \
+				  elm_interface_atspi_widget_action.eo.h \
 				  elm_interface_atspi_window.eo.h \
 				  elm_box.eo.h \
 				  elm_bg.eo.h \
