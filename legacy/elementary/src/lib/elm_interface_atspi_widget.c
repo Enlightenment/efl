@@ -125,13 +125,22 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_interface_atspi_widget_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Interface_Atspi_Widget_Data *pd EINA_UNUSED)
 {
    Elm_Atspi_State_Set states = 0;
+   Evas *evas = NULL;
 
    eo_do_super(obj, ELM_INTERFACE_ATSPI_WIDGET_CLASS, states = elm_interface_atspi_accessible_state_set_get());
 
    if (evas_object_visible_get(obj))
+     STATE_TYPE_SET(states, ELM_ATSPI_STATE_VISIBLE);
+   evas = evas_object_evas_get(obj);
+   if (evas)
      {
-        STATE_TYPE_SET(states, ELM_ATSPI_STATE_VISIBLE);
-        STATE_TYPE_SET(states, ELM_ATSPI_STATE_SHOWING);
+        Evas_Coord x, y, w, h, wx, wy, ww, wh;
+
+        evas_output_viewport_get(evas, &x, &y, &w, &h);
+        evas_object_geometry_get(obj, &wx, &wy, &ww, &wh);
+        if (!(((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
+              ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h))))
+          STATE_TYPE_SET(states, ELM_ATSPI_STATE_SHOWING);
      }
    if (elm_object_focus_get(obj))
      STATE_TYPE_SET(states, ELM_ATSPI_STATE_FOCUSED);
