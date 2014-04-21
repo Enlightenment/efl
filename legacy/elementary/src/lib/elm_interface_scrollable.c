@@ -1198,27 +1198,26 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
                                       Evas_Coord x,
                                       Evas_Coord y)
 {
-   Evas_Coord cw, ch;
+   Evas_Coord mx = 0, my = 0, minx = 0, miny = 0;
 
    if (!sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
+   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
+   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
 
    /* Update wx/y/w/h - and if the requested positions aren't legal
     * adjust a bit. */
    eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &sid->ww, &sid->wh));
-   if (x < 0)
-     sid->wx = 0;
-   else if ((x + sid->ww) > cw)
-     sid->wx = cw - sid->ww;
+
+   if (x < minx) sid->wx = minx;
+   else if (x > mx) sid->wx = mx;
    else if (sid->is_mirrored)
      sid->wx = _elm_scroll_x_mirrored_get(sid->obj, x);
-   else
-     sid->wx = x;
-   if (y < 0) sid->wy = 0;
-   else if ((y + sid->wh) > ch)
-     sid->wy = ch - sid->wh;
+   else sid->wx = x;
+
+   if (y < miny) sid->wy = miny;
+   else if (y > my) sid->wy = my;
    else sid->wy = y;
 }
 
