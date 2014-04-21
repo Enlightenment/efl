@@ -3,13 +3,18 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
-#define ELM_ATSPI_OBJECT_PROTECTED
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
 #include <Elementary.h>
 #include "elm_priv.h"
 #include <assert.h>
+
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+#include "elm_interface_atspi_component.eo.h"
+#include "elm_interface_atspi_window.eo.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -26,10 +31,14 @@
 #define ELM_ACCESS_OBJECT_PATH_PREFIX  "/org/a11y/atspi/accessible/"
 #define ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE ELM_ACCESS_OBJECT_PATH_PREFIX "%llu"
 
+#define SIZE(x) sizeof(x)/sizeof(x[0])
+
 static int _init_count = 0;
 
 static Eldbus_Connection *_a11y_bus = NULL;
-static Elm_Atspi_Object *_root;
+static Eo *_root;
+static Ecore_Idler *_cache_update_idler;
+static Eina_List *_pending_objects;
 static Eina_Hash *_cache;
 static Eldbus_Service_Interface *_cache_interface = NULL;
 static Eldbus_Signal_Handler *_register_hdl;
@@ -39,14 +48,30 @@ static unsigned short _object_children_broadcast_mask;
 static unsigned long long _object_state_broadcast_mask;
 static unsigned long long _window_signal_broadcast_mask;
 
-static void _cache_update(void);
-static Elm_Atspi_Object * _access_object_from_path(const char *path);
-static char * _path_from_access_object(Elm_Atspi_Object *eo);
-static void object_append_reference(Eldbus_Message_Iter *iter,  Elm_Atspi_Object *obj);
-static void object_append_desktop_reference(Eldbus_Message_Iter *iter);
-static const Eldbus_Service_Interface_Desc accessible_iface_desc;
-static void _cache_object_register(Elm_Atspi_Object *node, Eina_Bool rec);
+static Eina_Bool _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+static Eina_Bool _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+static Eina_Bool _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eo * _access_object_from_path(const char *path);
+static char * _path_from_access_object(Eo *eo);
+static void _object_append_reference(Eldbus_Message_Iter *iter,  Eo *obj);
+static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
+static void _cache_build(void *obj);
+static void _object_register(Eo *obj, char *path);
 
+EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
+   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
+   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, _children_changed_signal_send},
+   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_STATE_CHANGED, _state_changed_signal_send},
+   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_VISIBLE_DATA_CHANGED, NULL },
+   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANTS_CHANGED, NULL }
+);
+
+EO_CALLBACKS_ARRAY_DEFINE(_window_cb,
+   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, _window_signal_send},
+   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, _window_signal_send},
+   { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, _window_signal_send}
+);
 
 enum _Atspi_Object_Child_Event_Type
 {
@@ -61,10 +86,11 @@ enum _Atspi_Object_Property
    ATSPI_OBJECT_PROPERTY_VALUE,
    ATSPI_OBJECT_PROPERTY_ROLE,
    ATSPI_OBJECT_PROPERTY_PARENT,
+   ATSPI_OBJECT_PROPERTY_LAST
 };
 
 enum _Atspi_Object_Signals {
-   ATSPI_OBJECT_EVENT_PROPERTY_CHANGED,
+   ATSPI_OBJECT_EVENT_PROPERTY_CHANGED = 0,
    ATSPI_OBJECT_EVENT_BOUNDS_CHANGED,
    ATSPI_OBJECT_EVENT_LINK_SELECTED,
    ATSPI_OBJECT_EVENT_STATE_CHANGED,
@@ -89,7 +115,7 @@ enum _Atspi_Object_Signals {
 
 enum _Atspi_Window_Signals
 {
-   ATSPI_WINDOW_EVENT_PROPERTY_CHANGE,
+   ATSPI_WINDOW_EVENT_PROPERTY_CHANGE = 0,
    ATSPI_WINDOW_EVENT_MINIMIZE,
    ATSPI_WINDOW_EVENT_MAXIMIZE,
    ATSPI_WINDOW_EVENT_RESTORE,
@@ -154,19 +180,178 @@ static const Eldbus_Signal _window_obj_signals[] = {
    [ATSPI_WINDOW_EVENT_SHADE] = {"Shade", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_WINDOW_EVENT_UUSHADE] = {"uUshade", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_WINDOW_EVENT_RESTYLE] = {"Restyle", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
+   {NULL, ELDBUS_ARGS({NULL, NULL}), 0}
+};
+
+
+const int elm_roles_to_atspi_roles[][2] = {
+   { ELM_ATSPI_ROLE_INVALID, ATSPI_ROLE_INVALID },
+   { ELM_ATSPI_ROLE_ACCELERATOR_LABEL, ATSPI_ROLE_ACCELERATOR_LABEL },
+   { ELM_ATSPI_ROLE_ALERT, ATSPI_ROLE_ALERT },
+   { ELM_ATSPI_ROLE_ANIMATION, ATSPI_ROLE_ANIMATION },
+   { ELM_ATSPI_ROLE_ARROW, ATSPI_ROLE_ARROW },
+   { ELM_ATSPI_ROLE_CALENDAR, ATSPI_ROLE_CALENDAR },
+   { ELM_ATSPI_ROLE_CANVAS, ATSPI_ROLE_CANVAS },
+   { ELM_ATSPI_ROLE_CHECK_BOX, ATSPI_ROLE_CHECK_BOX },
+   { ELM_ATSPI_ROLE_CHECK_MENU_ITEM, ATSPI_ROLE_CHECK_MENU_ITEM },
+   { ELM_ATSPI_ROLE_COLOR_CHOOSER, ATSPI_ROLE_COLOR_CHOOSER },
+   { ELM_ATSPI_ROLE_COLUMN_HEADER, ATSPI_ROLE_COLUMN_HEADER },
+   { ELM_ATSPI_ROLE_COMBO_BOX, ATSPI_ROLE_COMBO_BOX },
+   { ELM_ATSPI_ROLE_DATE_EDITOR, ATSPI_ROLE_DATE_EDITOR },
+   { ELM_ATSPI_ROLE_DESKTOP_ICON, ATSPI_ROLE_DESKTOP_ICON },
+   { ELM_ATSPI_ROLE_DESKTOP_FRAME, ATSPI_ROLE_DESKTOP_FRAME },
+   { ELM_ATSPI_ROLE_DIAL, ATSPI_ROLE_DIAL },
+   { ELM_ATSPI_ROLE_DIALOG, ATSPI_ROLE_DIALOG },
+   { ELM_ATSPI_ROLE_DIRECTORY_PANE, ATSPI_ROLE_DIRECTORY_PANE },
+   { ELM_ATSPI_ROLE_DRAWING_AREA, ATSPI_ROLE_DRAWING_AREA },
+   { ELM_ATSPI_ROLE_FILE_CHOOSER, ATSPI_ROLE_FILE_CHOOSER },
+   { ELM_ATSPI_ROLE_FILLER, ATSPI_ROLE_FILLER },
+   { ELM_ATSPI_ROLE_FOCUS_TRAVERSABLE, ATSPI_ROLE_FOCUS_TRAVERSABLE },
+   { ELM_ATSPI_ROLE_FONT_CHOOSER, ATSPI_ROLE_FONT_CHOOSER },
+   { ELM_ATSPI_ROLE_FRAME, ATSPI_ROLE_FRAME },
+   { ELM_ATSPI_ROLE_GLASS_PANE, ATSPI_ROLE_GLASS_PANE },
+   { ELM_ATSPI_ROLE_HTML_CONTAINER, ATSPI_ROLE_HTML_CONTAINER },
+   { ELM_ATSPI_ROLE_ICON, ATSPI_ROLE_ICON },
+   { ELM_ATSPI_ROLE_IMAGE, ATSPI_ROLE_IMAGE },
+   { ELM_ATSPI_ROLE_INTERNAL_FRAME, ATSPI_ROLE_INTERNAL_FRAME },
+   { ELM_ATSPI_ROLE_LABEL, ATSPI_ROLE_LABEL },
+   { ELM_ATSPI_ROLE_LAYERED_PANE, ATSPI_ROLE_LAYERED_PANE },
+   { ELM_ATSPI_ROLE_LIST, ATSPI_ROLE_LIST },
+   { ELM_ATSPI_ROLE_LIST_ITEM, ATSPI_ROLE_LIST_ITEM },
+   { ELM_ATSPI_ROLE_MENU, ATSPI_ROLE_MENU },
+   { ELM_ATSPI_ROLE_MENU_BAR, ATSPI_ROLE_MENU_BAR },
+   { ELM_ATSPI_ROLE_MENU_ITEM, ATSPI_ROLE_MENU_ITEM },
+   { ELM_ATSPI_ROLE_OPTION_PANE, ATSPI_ROLE_OPTION_PANE },
+   { ELM_ATSPI_ROLE_PAGE_TAB, ATSPI_ROLE_PAGE_TAB },
+   { ELM_ATSPI_ROLE_PAGE_TAB_LIST, ATSPI_ROLE_PAGE_TAB_LIST },
+   { ELM_ATSPI_ROLE_PANEL, ATSPI_ROLE_PANEL },
+   { ELM_ATSPI_ROLE_PASSWORD_TEXT, ATSPI_ROLE_PASSWORD_TEXT },
+   { ELM_ATSPI_ROLE_POPUP_MENU, ATSPI_ROLE_POPUP_MENU },
+   { ELM_ATSPI_ROLE_PROGRESS_BAR, ATSPI_ROLE_PROGRESS_BAR },
+   { ELM_ATSPI_ROLE_PUSH_BUTTON, ATSPI_ROLE_PUSH_BUTTON },
+   { ELM_ATSPI_ROLE_RADIO_BUTTON, ATSPI_ROLE_RADIO_BUTTON },
+   { ELM_ATSPI_ROLE_RADIO_MENU_ITEM, ATSPI_ROLE_RADIO_MENU_ITEM },
+   { ELM_ATSPI_ROLE_ROOT_PANE, ATSPI_ROLE_ROOT_PANE },
+   { ELM_ATSPI_ROLE_ROW_HEADER, ATSPI_ROLE_ROW_HEADER },
+   { ELM_ATSPI_ROLE_SCROLL_BAR, ATSPI_ROLE_SCROLL_BAR },
+   { ELM_ATSPI_ROLE_SCROLL_PANE, ATSPI_ROLE_SCROLL_PANE },
+   { ELM_ATSPI_ROLE_SEPARATOR, ATSPI_ROLE_SEPARATOR },
+   { ELM_ATSPI_ROLE_SLIDER, ATSPI_ROLE_SLIDER },
+   { ELM_ATSPI_ROLE_SPIN_BUTTON, ATSPI_ROLE_SPIN_BUTTON },
+   { ELM_ATSPI_ROLE_SPLIT_PANE, ATSPI_ROLE_SPLIT_PANE },
+   { ELM_ATSPI_ROLE_STATUS_BAR, ATSPI_ROLE_STATUS_BAR },
+   { ELM_ATSPI_ROLE_TABLE, ATSPI_ROLE_TABLE },
+   { ELM_ATSPI_ROLE_TABLE_CELL, ATSPI_ROLE_TABLE_CELL },
+   { ELM_ATSPI_ROLE_TABLE_COLUMN_HEADER, ATSPI_ROLE_TABLE_COLUMN_HEADER },
+   { ELM_ATSPI_ROLE_TABLE_ROW_HEADER, ATSPI_ROLE_TABLE_ROW_HEADER },
+   { ELM_ATSPI_ROLE_TEAROFF_MENU_ITEM, ATSPI_ROLE_TEAROFF_MENU_ITEM },
+   { ELM_ATSPI_ROLE_TERMINAL, ATSPI_ROLE_TERMINAL },
+   { ELM_ATSPI_ROLE_TEXT, ATSPI_ROLE_TEXT },
+   { ELM_ATSPI_ROLE_TOGGLE_BUTTON, ATSPI_ROLE_TOGGLE_BUTTON },
+   { ELM_ATSPI_ROLE_TOOL_BAR, ATSPI_ROLE_TOOL_BAR },
+   { ELM_ATSPI_ROLE_TOOL_TIP, ATSPI_ROLE_TOOL_TIP },
+   { ELM_ATSPI_ROLE_TREE, ATSPI_ROLE_TREE },
+   { ELM_ATSPI_ROLE_TREE_TABLE, ATSPI_ROLE_TREE_TABLE },
+   { ELM_ATSPI_ROLE_UNKNOWN, ATSPI_ROLE_UNKNOWN },
+   { ELM_ATSPI_ROLE_VIEWPORT, ATSPI_ROLE_VIEWPORT },
+   { ELM_ATSPI_ROLE_WINDOW, ATSPI_ROLE_WINDOW },
+   { ELM_ATSPI_ROLE_EXTENDED, ATSPI_ROLE_EXTENDED },
+   { ELM_ATSPI_ROLE_HEADER, ATSPI_ROLE_HEADER },
+   { ELM_ATSPI_ROLE_FOOTER, ATSPI_ROLE_FOOTER },
+   { ELM_ATSPI_ROLE_PARAGRAPH, ATSPI_ROLE_PARAGRAPH },
+   { ELM_ATSPI_ROLE_RULER, ATSPI_ROLE_RULER },
+   { ELM_ATSPI_ROLE_APPLICATION, ATSPI_ROLE_APPLICATION },
+   { ELM_ATSPI_ROLE_AUTOCOMPLETE, ATSPI_ROLE_AUTOCOMPLETE },
+   { ELM_ATSPI_ROLE_EDITBAR, ATSPI_ROLE_EDITBAR },
+   { ELM_ATSPI_ROLE_EMBEDDED, ATSPI_ROLE_EMBEDDED },
+   { ELM_ATSPI_ROLE_ENTRY, ATSPI_ROLE_ENTRY },
+   { ELM_ATSPI_ROLE_CHART, ATSPI_ROLE_CHART },
+   { ELM_ATSPI_ROLE_CAPTION, ATSPI_ROLE_CAPTION },
+   { ELM_ATSPI_ROLE_DOCUMENT_FRAME, ATSPI_ROLE_DOCUMENT_FRAME },
+   { ELM_ATSPI_ROLE_HEADING, ATSPI_ROLE_HEADING },
+   { ELM_ATSPI_ROLE_PAGE, ATSPI_ROLE_PAGE },
+   { ELM_ATSPI_ROLE_SECTION, ATSPI_ROLE_SECTION },
+   { ELM_ATSPI_ROLE_REDUNDANT_OBJECT, ATSPI_ROLE_REDUNDANT_OBJECT },
+   { ELM_ATSPI_ROLE_FORM, ATSPI_ROLE_FORM },
+   { ELM_ATSPI_ROLE_LINK, ATSPI_ROLE_LINK },
+   { ELM_ATSPI_ROLE_INPUT_METHOD_WINDOW, ATSPI_ROLE_INPUT_METHOD_WINDOW },
+   { ELM_ATSPI_ROLE_TABLE_ROW, ATSPI_ROLE_TABLE_ROW },
+   { ELM_ATSPI_ROLE_TREE_ITEM, ATSPI_ROLE_TREE_ITEM },
+   { ELM_ATSPI_ROLE_DOCUMENT_SPREADSHEET, ATSPI_ROLE_DOCUMENT_SPREADSHEET },
+   { ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION, ATSPI_ROLE_DOCUMENT_PRESENTATION },
+   { ELM_ATSPI_ROLE_DOCUMENT_TEXT, ATSPI_ROLE_DOCUMENT_TEXT },
+   { ELM_ATSPI_ROLE_DOCUMENT_WEB, ATSPI_ROLE_DOCUMENT_WEB },
+   { ELM_ATSPI_ROLE_DOCUMENT_EMAIL, ATSPI_ROLE_DOCUMENT_EMAIL },
+   { ELM_ATSPI_ROLE_COMMENT, ATSPI_ROLE_COMMENT },
+   { ELM_ATSPI_ROLE_LIST_BOX, ATSPI_ROLE_LIST_BOX },
+   { ELM_ATSPI_ROLE_GROUPING, ATSPI_ROLE_GROUPING },
+   { ELM_ATSPI_ROLE_IMAGE_MAP, ATSPI_ROLE_IMAGE_MAP },
+   { ELM_ATSPI_ROLE_NOTIFICATION, ATSPI_ROLE_NOTIFICATION },
+   { ELM_ATSPI_ROLE_INFO_BAR, ATSPI_ROLE_INFO_BAR },
+   { ELM_ATSPI_ROLE_LAST_DEFINED, ATSPI_ROLE_LAST_DEFINED },
+}; 
+
+
+const int elm_states_to_atspi_state[][2] = {
+   { ELM_ATSPI_STATE_INVALID, ATSPI_STATE_INVALID },
+   { ELM_ATSPI_STATE_ACTIVE, ATSPI_STATE_ACTIVE },
+   { ELM_ATSPI_STATE_ARMED, ATSPI_STATE_ARMED },
+   { ELM_ATSPI_STATE_BUSY, ATSPI_STATE_BUSY },
+   { ELM_ATSPI_STATE_CHECKED, ATSPI_STATE_CHECKED },
+   { ELM_ATSPI_STATE_COLLAPSED, ATSPI_STATE_COLLAPSED },
+   { ELM_ATSPI_STATE_DEFUNCT, ATSPI_STATE_DEFUNCT },
+   { ELM_ATSPI_STATE_EDITABLE, ATSPI_STATE_EDITABLE },
+   { ELM_ATSPI_STATE_ENABLED, ATSPI_STATE_ENABLED },
+   { ELM_ATSPI_STATE_EXPANDABLE, ATSPI_STATE_EXPANDABLE },
+   { ELM_ATSPI_STATE_EXPANDED, ATSPI_STATE_EXPANDED },
+   { ELM_ATSPI_STATE_FOCUSABLE, ATSPI_STATE_FOCUSABLE },
+   { ELM_ATSPI_STATE_FOCUSED, ATSPI_STATE_FOCUSED },
+   { ELM_ATSPI_STATE_HAS_TOOLTIP, ATSPI_STATE_HAS_TOOLTIP },
+   { ELM_ATSPI_STATE_HORIZONTAL, ATSPI_STATE_HORIZONTAL },
+   { ELM_ATSPI_STATE_ICONIFIED, ATSPI_STATE_ICONIFIED },
+   { ELM_ATSPI_STATE_MODAL, ATSPI_STATE_MODAL },
+   { ELM_ATSPI_STATE_MULTI_LINE, ATSPI_STATE_MULTI_LINE },
+   { ELM_ATSPI_STATE_MULTISELECTABLE, ATSPI_STATE_MULTISELECTABLE },
+   { ELM_ATSPI_STATE_OPAQUE, ATSPI_STATE_OPAQUE },
+   { ELM_ATSPI_STATE_PRESSED, ATSPI_STATE_PRESSED },
+   { ELM_ATSPI_STATE_RESIZABLE, ATSPI_STATE_RESIZABLE },
+   { ELM_ATSPI_STATE_SELECTABLE, ATSPI_STATE_SELECTABLE },
+   { ELM_ATSPI_STATE_SELECTED, ATSPI_STATE_SELECTED },
+   { ELM_ATSPI_STATE_SENSITIVE, ATSPI_STATE_SENSITIVE },
+   { ELM_ATSPI_STATE_SHOWING, ATSPI_STATE_SHOWING },
+   { ELM_ATSPI_STATE_SINGLE_LINE, ATSPI_STATE_SINGLE_LINE },
+   { ELM_ATSPI_STATE_STALE, ATSPI_STATE_STALE },
+   { ELM_ATSPI_STATE_TRANSIENT, ATSPI_STATE_TRANSIENT },
+   { ELM_ATSPI_STATE_VERTICAL, ATSPI_STATE_VERTICAL },
+   { ELM_ATSPI_STATE_VISIBLE, ATSPI_STATE_VISIBLE },
+   { ELM_ATSPI_STATE_MANAGES_DESCENDANTS, ATSPI_STATE_MANAGES_DESCENDANTS },
+   { ELM_ATSPI_STATE_INDETERMINATE, ATSPI_STATE_INDETERMINATE },
+   { ELM_ATSPI_STATE_REQUIRED, ATSPI_STATE_REQUIRED },
+   { ELM_ATSPI_STATE_TRUNCATED, ATSPI_STATE_TRUNCATED },
+   { ELM_ATSPI_STATE_ANIMATED, ATSPI_STATE_ANIMATED },
+   { ELM_ATSPI_STATE_INVALID_ENTRY, ATSPI_STATE_INVALID_ENTRY },
+   { ELM_ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, ATSPI_STATE_SUPPORTS_AUTOCOMPLETION },
+   { ELM_ATSPI_STATE_SELECTABLE_TEXT, ATSPI_STATE_SELECTABLE_TEXT },
+   { ELM_ATSPI_STATE_IS_DEFAULT, ATSPI_STATE_IS_DEFAULT },
+   { ELM_ATSPI_STATE_VISITED, ATSPI_STATE_VISITED },
+   { ELM_ATSPI_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED },
 };
 
 static Eldbus_Message *
 _accessible_get_role(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
-   AtspiRole role = ATSPI_ROLE_INVALID;
+   Eo *obj = _access_object_from_path(obj_path);
+   AtspiRole atspi_role = ATSPI_ROLE_INVALID;
+   Elm_Atspi_Role role;
 
-   eo_do(obj, role = elm_atspi_obj_role_get());
+   eo_do(obj, role = elm_interface_atspi_accessible_role_get());
+
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-   eldbus_message_arguments_append(ret, "u", role);
+
+   atspi_role = role > ELM_ATSPI_ROLE_LAST_DEFINED ? ATSPI_ROLE_LAST_DEFINED : elm_roles_to_atspi_roles[role][1];
+   eldbus_message_arguments_append(ret, "u", atspi_role);
    return ret;
 }
 
@@ -174,9 +359,10 @@ static Eldbus_Message *
 _accessible_get_role_name(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    const char *role_name = NULL, *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
 
-   eo_do(obj, role_name = elm_atspi_obj_role_name_get());
+   eo_do(obj, role_name = elm_interface_atspi_accessible_role_name_get());
+
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    eldbus_message_arguments_append(ret, "s", role_name);
@@ -188,9 +374,10 @@ static Eldbus_Message *
 _accessible_get_localized_role_name(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    const char *l_role_name = NULL, *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
 
-   eo_do(obj, l_role_name = elm_atspi_obj_localized_role_name_get());
+   eo_do(obj, l_role_name = elm_interface_atspi_accessible_localized_role_name_get());
+
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    eldbus_message_arguments_append(ret, "s", l_role_name);
@@ -202,14 +389,14 @@ static Eldbus_Message *
 _accessible_get_children(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    Eina_List *children_list = NULL, *l;
    Eldbus_Message *ret;
 
    Eldbus_Message_Iter *iter, *iter_array;
-   Elm_Atspi_Object *children;
+   Eo *children;
 
-   eo_do(obj, children_list = elm_atspi_obj_children_get());
+   eo_do(obj, children_list = elm_interface_atspi_accessible_children_get());
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -219,7 +406,7 @@ _accessible_get_children(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
    EINA_LIST_FOREACH(children_list, l, children)
-      object_append_reference(iter_array, children);
+      _object_append_reference(iter_array, children);
 
    eldbus_message_iter_container_close(iter, iter_array);
    eina_list_free(children_list);
@@ -237,8 +424,22 @@ _accessible_get_application(const Eldbus_Service_Interface *iface EINA_UNUSED, c
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   object_append_reference(iter, _root);
+   _object_append_reference(iter, _root);
 
+   return ret;
+}
+
+static uint64_t 
+_elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
+{
+   uint64_t ret = 0;
+   unsigned int i = 0;
+
+   for (i = 0; i < SIZE(elm_states_to_atspi_state); i++)
+     {
+        if (STATE_TYPE_GET(states, elm_states_to_atspi_state[i][0]))
+          STATE_TYPE_SET(ret, elm_states_to_atspi_state[i][1]);
+     }
    return ret;
 }
 
@@ -247,10 +448,11 @@ _accessible_get_state(const Eldbus_Service_Interface *iface, const Eldbus_Messag
 {
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
-   Elm_Atspi_State states = 0;
+   Elm_Atspi_State_Set states;
+   uint64_t atspi_states = 0;
 
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
 
    if (!obj)
      {
@@ -265,10 +467,12 @@ _accessible_get_state(const Eldbus_Service_Interface *iface, const Eldbus_Messag
    iter_array = eldbus_message_iter_container_new(iter, 'a', "u");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   eo_do(obj, states = elm_atspi_obj_state_get());
+   eo_do(obj, states = elm_interface_atspi_accessible_state_set_get());
 
-   unsigned int s1 = states & 0xFFFFFFFF;
-   unsigned int s2 = (states >> 32) & 0xFFFFFFFF;
+   atspi_states = _elm_atspi_state_set_to_atspi_state_set(states);
+
+   unsigned int s1 = atspi_states & 0xFFFFFFFF;
+   unsigned int s2 = (atspi_states >> 32) & 0xFFFFFFFF;
 
    eldbus_message_iter_basic_append(iter_array, 'u', s1);
    eldbus_message_iter_basic_append(iter_array, 'u', s2);
@@ -285,14 +489,15 @@ static Eldbus_Message *
 _accessible_get_index_in_parent(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    Eldbus_Message *ret;
-   unsigned int idx = 0;
+   int idx = -1;
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   eo_do(obj, idx = elm_atspi_obj_index_in_parent_get());
+   eo_do(obj, idx = elm_interface_atspi_accessible_index_in_parent_get());
+
    eldbus_message_arguments_append(ret, "i", idx);
 
    return ret;
@@ -302,8 +507,9 @@ static Eldbus_Message *
 _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
-   Elm_Atspi_Object *child = NULL;
+   Eo *obj = _access_object_from_path(obj_path);
+   Eo *child = NULL;
+   Eina_List *children = NULL;
    int idx;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
@@ -315,8 +521,11 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    iter = eldbus_message_iter_get(ret);
-   eo_do(obj, child = elm_atspi_obj_child_at_index_get(idx));
-   object_append_reference(iter, child);
+   eo_do(obj, children = elm_interface_atspi_accessible_children_get());
+
+   child = eina_list_nth(children, idx);
+   _object_append_reference(iter, child);
+   eina_list_free(children);
 
    return ret;
 }
@@ -341,12 +550,12 @@ static const Eldbus_Method accessible_methods[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
-static Elm_Atspi_Object *
+static Eo *
 _access_object_from_path(const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
    unsigned long long eo_ptr = 0;
-   Elm_Atspi_Object *eo = NULL;
+   Eo *eo = NULL;
    const char *tmp = path;
 
    int len = strlen(ELM_ACCESS_OBJECT_PATH_PREFIX);
@@ -359,12 +568,12 @@ _access_object_from_path(const char *path)
      return _root;
 
    sscanf(tmp, "%llu", &eo_ptr);
-   eo = (Elm_Atspi_Object *) (uintptr_t) eo_ptr;
-   return eo_isa(eo, ELM_ATSPI_OBJ_CLASS) ? eo : NULL;
+   eo = (Eo *) (uintptr_t) eo_ptr;
+   return eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS) ? eo : NULL;
 }
 
 static char *
-_path_from_access_object(Elm_Atspi_Object *eo)
+_path_from_access_object(Eo *eo)
 {
    char path[256];
 
@@ -372,7 +581,7 @@ _path_from_access_object(Elm_Atspi_Object *eo)
    if (eo == _root)
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
    else
-     snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long)eo);
+     snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long) (uintptr_t)eo);
    return strdup(path);
 }
 
@@ -382,12 +591,13 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
                          Eldbus_Message **error EINA_UNUSED)
 {
    const char *ret = NULL, *obj_path = eldbus_service_object_path_get(interface);
-   Elm_Atspi_Object *ret_obj = NULL, *obj = _access_object_from_path(obj_path);
+   Eo *ret_obj = NULL, *obj = _access_object_from_path(obj_path);
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
    if (!strcmp(property, "Name"))
      {
-        eo_do(obj, ret = elm_atspi_obj_name_get());
+        eo_do(obj, ret = elm_interface_atspi_accessible_name_get());
         if (!ret)
           ret = "";
         eldbus_message_iter_basic_append(iter, 's', ret);
@@ -395,7 +605,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
      }
    else if (!strcmp(property, "Description"))
      {
-        eo_do(obj, ret = elm_atspi_obj_description_get());
+        eo_do(obj, ret = elm_interface_atspi_accessible_description_get());
         if (!ret)
           ret = "";
         eldbus_message_iter_basic_append(iter, 's', ret);
@@ -403,19 +613,19 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
      }
    else if (!strcmp(property, "Parent"))
      {
-       eo_do(obj, ret_obj = elm_atspi_obj_parent_get());
-       AtspiRole role = ATSPI_ROLE_INVALID;
-       eo_do(obj, role = elm_atspi_obj_role_get());
-       if ((!ret_obj) && (ATSPI_ROLE_APPLICATION == role))
-         object_append_desktop_reference(iter);
+       eo_do(obj, ret_obj = elm_interface_atspi_accessible_parent_get());
+       Elm_Atspi_Role role = ELM_ATSPI_ROLE_INVALID;
+       eo_do(obj, role = elm_interface_atspi_accessible_role_get());
+       if ((!ret_obj) && (ELM_ATSPI_ROLE_APPLICATION == role))
+         _object_append_desktop_reference(iter);
        else
-         object_append_reference(iter, ret_obj);
+         _object_append_reference(iter, ret_obj);
        return EINA_TRUE;
      }
    else if (!strcmp(property, "ChildCount"))
      {
         Eina_List *l = NULL;
-        eo_do(obj, l = elm_atspi_obj_children_get());
+        eo_do(obj, l = elm_interface_atspi_accessible_children_get());
         eldbus_message_iter_basic_append(iter, 'i', eina_list_count(l));
         eina_list_free(l);
         return EINA_TRUE;
@@ -444,7 +654,7 @@ static const Eldbus_Service_Interface_Desc window_iface_desc = {
 };
 
 static void
-object_append_reference(Eldbus_Message_Iter *iter, Elm_Atspi_Object *obj)
+_object_append_reference(Eldbus_Message_Iter *iter, Eo *obj)
 {
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
@@ -456,7 +666,7 @@ object_append_reference(Eldbus_Message_Iter *iter, Elm_Atspi_Object *obj)
 }
 
 static void
-object_append_desktop_reference(Eldbus_Message_Iter *iter)
+_object_append_desktop_reference(Eldbus_Message_Iter *iter)
 {
   Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN(iter);
@@ -474,38 +684,38 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
 
   Eldbus_Message_Iter *iter_struct, *iter_sub_array;
   Eldbus_Message_Iter *iter_array = fdata;
-  Elm_Atspi_State states = 0;
-  AtspiRole role = ATSPI_ROLE_INVALID;
+  Elm_Atspi_State_Set states;
+  Elm_Atspi_Role role;
 
-  eo_do(data, role = elm_atspi_obj_role_get());
+  eo_do(data, role = elm_interface_atspi_accessible_role_get());
 
   iter_struct = eldbus_message_iter_container_new(iter_array, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_struct, EINA_TRUE);
 
   /* Marshall object path */
-  object_append_reference(iter_struct, data);
+  _object_append_reference(iter_struct, data);
 
   /* Marshall application */
-  object_append_reference(iter_struct, _root);
+  _object_append_reference(iter_struct, _root);
 
-  Elm_Atspi_Object *parent = NULL;
-  eo_do(data, parent = elm_atspi_obj_parent_get());
+  Eo *parent = NULL;
+  eo_do(data, parent = elm_interface_atspi_accessible_parent_get());
   /* Marshall parent */
-  if ((!parent) && (ATSPI_ROLE_APPLICATION == role))
-    object_append_desktop_reference(iter_struct);
+  if ((!parent) && (ELM_ATSPI_ROLE_APPLICATION == role))
+    _object_append_desktop_reference(iter_struct);
   else
-    object_append_reference(iter_struct, parent);
+    _object_append_reference(iter_struct, parent);
 
   /* Marshall children  */
   Eina_List *children_list = NULL, *l;
-  Elm_Atspi_Object *child;
+  Eo *child;
 
-  eo_do(data, children_list = elm_atspi_obj_children_get());
+  eo_do(data, children_list = elm_interface_atspi_accessible_children_get());
   iter_sub_array = eldbus_message_iter_container_new(iter_struct, 'a', "(so)");
   EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
 
   EINA_LIST_FOREACH(children_list, l, child)
-     object_append_reference(iter_sub_array, child);
+     _object_append_reference(iter_sub_array, child);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
   eina_list_free(children_list);
@@ -522,7 +732,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
 
   /* Marshall name */
   const char *name = NULL;
-  eo_do(data, name = elm_atspi_obj_name_get());
+  eo_do(data, name = elm_interface_atspi_accessible_name_get());
   if (!name)
     name = "";
   eldbus_message_iter_basic_append(iter_struct, 's', name);
@@ -532,7 +742,7 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
 
   /* Marshall description */
   const char* descritpion = NULL;
-  eo_do(data, descritpion = elm_atspi_obj_description_get());
+  eo_do(data, descritpion = elm_interface_atspi_accessible_description_get());
   if (!descritpion)
     descritpion = "";
   eldbus_message_iter_basic_append(iter_struct, 's', descritpion);
@@ -541,7 +751,8 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   iter_sub_array = eldbus_message_iter_container_new(iter_struct, 'a', "u");
   EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
 
-  eo_do(data, states = elm_atspi_obj_state_get());
+  eo_do(data, states = elm_interface_atspi_accessible_state_set_get());
+
   unsigned int s1 = states & 0xFFFFFFFF;
   unsigned int s2 = (states >> 32) & 0xFFFFFFFF;
   eldbus_message_iter_basic_append(iter_sub_array, 'u', s1);
@@ -563,8 +774,6 @@ _cache_get_items(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus
    Eldbus_Message_Iter *iter, *iter_array;
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
-
-   _cache_update();
 
    iter = eldbus_message_iter_get(ret);
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
@@ -599,7 +808,7 @@ static Eldbus_Message *
 _component_contains(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y;
    Eina_Bool contains = EINA_FALSE;
    AtspiCoordType coord_type;
@@ -608,7 +817,8 @@ _component_contains(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eld
    if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
-   eo_do(obj, contains = elm_interface_atspi_component_contains(x, y, coord_type));
+   Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, contains = elm_interface_atspi_component_contains(type, x, y));
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -622,9 +832,9 @@ static Eldbus_Message *
 _component_get_accessible_at_point(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y;
-   Elm_Atspi_Object *accessible = NULL;
+   Eo *accessible = NULL;
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
@@ -636,8 +846,9 @@ _component_get_accessible_at_point(const Eldbus_Service_Interface *iface EINA_UN
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    iter = eldbus_message_iter_get(ret);
-   eo_do(obj, accessible = elm_interface_atspi_component_accessible_at_point_get(x, y, coord_type));
-   object_append_reference(iter, accessible);
+   Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, accessible = elm_interface_atspi_component_accessible_at_point_get(type, x, y));
+   _object_append_reference(iter, accessible);
 
    return ret;
 }
@@ -646,7 +857,7 @@ static Eldbus_Message *
 _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y, w, h;
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
@@ -659,7 +870,8 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
 
    iter = eldbus_message_iter_get(ret);
 
-   eo_do(obj, elm_interface_atspi_component_extents_get(&x, &y, &w, &h, coord_type));
+   Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, elm_interface_atspi_component_extents_get(type, &x, &y, &w, &h));
    iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
    EINA_SAFETY_ON_NULL_GOTO(iter_struct, fail);
 
@@ -680,7 +892,7 @@ static Eldbus_Message *
 _component_get_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y;
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
@@ -688,7 +900,8 @@ _component_get_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const
    if (!eldbus_message_arguments_get(msg, "u", &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
-   eo_do(obj, elm_interface_atspi_component_position_get(&x, &y, coord_type));
+   Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, elm_interface_atspi_component_position_get(type, &x, &y));
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -703,7 +916,7 @@ static Eldbus_Message *
 _component_get_size(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y;
    Eldbus_Message *ret;
 
@@ -718,20 +931,32 @@ _component_get_size(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eld
    return ret;
 }
 
+static AtspiComponentLayer
+_elm_layer_2_atspi_layer(int layer)
+{
+   if (layer <= ELM_OBJECT_LAYER_BACKGROUND) return ATSPI_LAYER_CANVAS;
+   if (layer < ELM_OBJECT_LAYER_FOCUS) return ATSPI_LAYER_WIDGET;
+   if (layer <= ELM_OBJECT_LAYER_TOOLTIP) return ATSPI_LAYER_POPUP;
+
+   return ATSPI_LAYER_OVERLAY;
+}
+
 static Eldbus_Message *
 _component_get_layer(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int layer = 0;
    Eldbus_Message *ret;
+   AtspiComponentLayer atspi_layer;
 
    eo_do(obj, layer = elm_interface_atspi_component_layer_get());
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   eldbus_message_arguments_append(ret, "u", layer);
+   atspi_layer = _elm_layer_2_atspi_layer(layer);
+   eldbus_message_arguments_append(ret, "u", atspi_layer);
 
    return ret;
 }
@@ -740,7 +965,7 @@ static Eldbus_Message *
 _component_grab_focus(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    Eldbus_Message *ret;
    Eina_Bool focus = EINA_FALSE;
 
@@ -758,7 +983,7 @@ static Eldbus_Message *
 _component_get_alpha(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    Eldbus_Message *ret;
    double alpha = 0;
 
@@ -776,16 +1001,17 @@ static Eldbus_Message *
 _component_set_extends(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y, w, h;
-   Eina_Bool result = EINA_FALSE;
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
+   Eina_Bool result = EINA_FALSE;
 
    if (!eldbus_message_arguments_get(msg, "iiiiu", &x, &y, &w, &h, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
-   eo_do(obj, result = elm_interface_atspi_component_extents_set(x, y, w, h, coord_type));
+   Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, result = elm_interface_atspi_component_extents_set(type, x, y, w, h));
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -799,7 +1025,7 @@ static Eldbus_Message *
 _component_set_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int x, y;
    Eina_Bool result = EINA_FALSE;
    AtspiCoordType coord_type;
@@ -808,7 +1034,8 @@ _component_set_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const
    if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
-   eo_do(obj, result = elm_interface_atspi_component_position_set(x, y, coord_type));
+   Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, result = elm_interface_atspi_component_position_set(type, x, y));
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -822,7 +1049,7 @@ static Eldbus_Message *
 _component_set_size(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
-   Elm_Atspi_Object *obj = _access_object_from_path(obj_path);
+   Eo *obj = _access_object_from_path(obj_path);
    int w, h;
    Eina_Bool result;
    Eldbus_Message *ret;
@@ -860,78 +1087,8 @@ static const Eldbus_Service_Interface_Desc component_iface_desc = {
    ATSPI_DBUS_INTERFACE_COMPONENT, component_methods, NULL, NULL, NULL, NULL
 };
 
-static Eina_Bool
-_cache_object_del_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter;
-   char* path;
-
-   msg = eldbus_service_signal_new(_cache_interface, ATSPI_OBJECT_CHILD_REMOVED);
-   iter = eldbus_message_iter_get(msg);
-   object_append_reference(iter, obj);
-   path = _path_from_access_object(obj);
-
-   eldbus_service_signal_send(_cache_interface, msg);
-   eina_hash_del(_cache, path, obj);
-
-   eldbus_service_object_unregister(data);
-
-   free(path);
-   return EO_CALLBACK_CONTINUE;
-}
-
 static void
-_cache_object_register_interfaces(const char *path, Elm_Atspi_Object *node)
-{
-   Eldbus_Service_Interface *accessible = NULL;
-   Eldbus_Service_Interface *events = NULL;
-   Eldbus_Service_Interface *window = NULL;
-
-   if (eina_hash_find(_cache, path))
-     return;
-   else
-     eina_hash_add(_cache, path, node);
-
-   if (!eo_isa(node, ELM_ATSPI_OBJ_CLASS)) return;
-
-   accessible = eldbus_service_interface_register(_a11y_bus, path, &accessible_iface_desc);
-   events = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
-   eo_do(node, eo_key_data_set("atspi_event_interface", events, NULL));
-   eo_do(node, eo_event_callback_add(EO_EV_DEL, _cache_object_del_cb, accessible));
-
-   if (eo_isa(node, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
-     eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
-
-   if (eo_isa(node, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
-     {
-        window = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
-        eo_do(node, eo_key_data_set("window_event_interface", window, NULL));
-     }
-}
-
-static void
-_cache_object_register(Elm_Atspi_Object *node, Eina_Bool rec)
-{
-   EINA_SAFETY_ON_NULL_RETURN(node);
-   Eina_List *children_list = NULL, *l;
-   Elm_Atspi_Object *child;
-   char* path = _path_from_access_object(node);
-
-   _cache_object_register_interfaces(path, node);
-   free(path);
-
-   if (!rec) return;
-
-   eo_do(node, children_list = elm_atspi_obj_children_get());
-   EINA_LIST_FOREACH(children_list, l, child)
-      _cache_object_register(child, rec);
-
-   eina_list_free(children_list);
-}
-
-static void
-_on_app_register(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_on_elm_atspi_bridge_app_register(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
 
@@ -943,29 +1100,40 @@ _on_app_register(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pendi
    DBG("Application successfuly registered at ATSPI2 bus.");
 }
 
-static Eina_Bool
-_app_register(void)
+EAPI Eina_Bool
+_elm_atspi_bridge_app_register(void)
 {
+   if (!_a11y_bus || !_root) return EINA_FALSE;
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
                                     ATSPI_DBUS_PATH_ROOT,
                                     ATSPI_DBUS_INTERFACE_SOCKET,
                                     "Embed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   object_append_reference(iter, _root);
-   eldbus_connection_send(_a11y_bus, message, _on_app_register, NULL, -1);
+   _object_append_reference(iter, _root);
+   eldbus_connection_send(_a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+_elm_atspi_bridge_app_unregister(void)
+{
+   if (!_a11y_bus || !_root) return EINA_FALSE;
+   Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
+                                    ATSPI_DBUS_PATH_ROOT,
+                                    ATSPI_DBUS_INTERFACE_SOCKET,
+                                    "Unembed");
+   Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
+
+   _object_append_reference(iter, _root);
+   eldbus_connection_send(_a11y_bus, message, NULL, NULL, -1);
 
    return EINA_TRUE;
 }
 
 static void
-_cache_update(void)
-{
-   _cache_object_register(_root, EINA_TRUE);
-}
-
-static void
-_bus_objects_register(void)
+_cache_register(void)
 {
    _cache_interface = eldbus_service_interface_register(_a11y_bus, CACHE_INTERFACE_PATH, &cache_iface_desc);
 }
@@ -987,33 +1155,33 @@ _set_broadcast_flag(const char *event)
              if (!tokens[2] || *tokens[2] == '\0')
                _object_state_broadcast_mask = -1; // broadcast all
              else if (!strcmp(tokens[2], "Focused"))
-               BIT_FLAG_SET(_object_state_broadcast_mask, ATSPI_STATE_FOCUSED);
+               STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_FOCUSED);
              else if (!strcmp(tokens[2], "Showing"))
-               BIT_FLAG_SET(_object_state_broadcast_mask, ATSPI_STATE_SHOWING);
+               STATE_TYPE_SET(_object_state_broadcast_mask, ATSPI_STATE_SHOWING);
           }
         else if (!strcmp(tokens[1], "PropertyChange"))
           {
              if (!tokens[2] || *tokens[2] == '\0')
                _object_property_broadcast_mask = -1; //broadcast all
              else if (!strcmp(tokens[2], "AccessibleValue"))
-               BIT_FLAG_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_VALUE);
+               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_VALUE);
              else if (!strcmp(tokens[2], "AccessibleName"))
-               BIT_FLAG_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_NAME);
+               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_NAME);
              else if (!strcmp(tokens[2], "AccessibleDescription"))
-               BIT_FLAG_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_DESCRIPTION);
+               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_DESCRIPTION);
              else if (!strcmp(tokens[2], "AccessibleParent"))
-               BIT_FLAG_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_PARENT);
+               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_PARENT);
              else if (!strcmp(tokens[2], "AccessibleRole"))
-               BIT_FLAG_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_ROLE);
+               STATE_TYPE_SET(_object_property_broadcast_mask, ATSPI_OBJECT_PROPERTY_ROLE);
           }
         else if (!strcmp(tokens[1], "ChildrenChanged"))
           {
              if (!tokens[2] || *tokens[2] == '\0')
                _object_children_broadcast_mask = -1; // broadcast all
              else if (!strcmp(tokens[2], "add"))
-               BIT_FLAG_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
+               STATE_TYPE_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
              else if (!strcmp(tokens[2], "remove"))
-               BIT_FLAG_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
+               STATE_TYPE_SET(_object_children_broadcast_mask, ATSPI_OBJECT_CHILD_ADDED);
           }
      }
    else if (!strcmp(tokens[0], "Window"))
@@ -1021,11 +1189,11 @@ _set_broadcast_flag(const char *event)
         if (!tokens[1] || *tokens[1] == '\0')
           _window_signal_broadcast_mask = -1; // broadcast all
         else if (!strcmp(tokens[1], "Create"))
-          BIT_FLAG_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_CREATE);
+          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_CREATE);
         else if (!strcmp(tokens[1], "Activate"))
-          BIT_FLAG_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_ACTIVATE);
+          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_ACTIVATE);
         else if (!strcmp(tokens[1], "Deactivate"))
-          BIT_FLAG_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DEACTIVATE);
+          STATE_TYPE_SET(_window_signal_broadcast_mask, ATSPI_WINDOW_EVENT_DEACTIVATE);
      }
 
    free(tokens[0]);
@@ -1035,7 +1203,7 @@ _set_broadcast_flag(const char *event)
 static void
 _registered_listeners_get(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
-   DBG("Updating ATSPI2 clients registered events list.");
+   DBG("Updating registered ATSPI signals list.");
    _object_children_broadcast_mask = 0;
    _object_property_broadcast_mask = 0;
    _object_state_broadcast_mask = 0;
@@ -1075,234 +1243,264 @@ _handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg)
    _registered_events_list_update();
 }
 
-static void
-_send_signal_state_changed(Elm_Atspi_Object *obj, AtspiStateType type, Eina_Bool new_value)
+static Eina_Bool
+_state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *viter;
-   Eldbus_Service_Interface *events = NULL;
-   char *desc;
+   Eldbus_Service_Interface *events = data;
+   Elm_Atspi_Event_State_Changed_Data *state_data = event_info;
+   char *type_desc;
 
-   if (!BIT_FLAG_GET(_object_state_broadcast_mask, type))
+   if (!STATE_TYPE_GET(_object_state_broadcast_mask, state_data->type))
      {
-        DBG("Masking event: %d", type);
-        return;
+        DBG("Masking event: %d", state_data->type);
+        return EINA_FALSE;
      }
 
-   switch (type) {
-        case ATSPI_STATE_FOCUSED:
-         desc = "focused";
-         break;
-        case ATSPI_STATE_SHOWING:
-         desc = "showing";
-         break;
-        case ATSPI_STATE_VISIBLE:
-         desc = "visible";
-         break;
-        default:
-         desc = NULL;
-   }
-
-   eo_do(obj, events = eo_key_data_get("atspi_event_interface"));
    if (!events)
      {
         ERR("Atspi object does not have event interface!");
-        return;
+        return EINA_FALSE;
      }
+
+   switch (state_data->type) {
+        case ELM_ATSPI_STATE_FOCUSED:
+         type_desc = "focused";
+         break;
+        case ELM_ATSPI_STATE_SHOWING:
+         type_desc = "showing";
+         break;
+        case ELM_ATSPI_STATE_VISIBLE:
+         type_desc = "visible";
+         break;
+        default:
+         return EINA_FALSE;
+   }
+
    msg = eldbus_service_signal_new(events, ATSPI_OBJECT_EVENT_STATE_CHANGED);
    iter = eldbus_message_iter_get(msg);
 
-   eldbus_message_iter_arguments_append(iter, "sii", desc, new_value, 0);
+   eldbus_message_iter_arguments_append(iter, "sii", type_desc, state_data->new_value, 0);
 
    viter = eldbus_message_iter_container_new(iter, 'v', "i");
-   EINA_SAFETY_ON_NULL_RETURN(viter);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
 
    eldbus_message_iter_arguments_append(viter, "i", 0);
    eldbus_message_iter_container_close(iter, viter);
 
-   object_append_reference(iter, obj);
+   _object_append_reference(iter, obj);
 
    eldbus_service_signal_send(events, msg);
-   DBG("signal sent StateChanged:%s:%d", desc, new_value);
+   DBG("signal sent StateChanged:%s:%d", type_desc, state_data->new_value);
+
+   return EINA_TRUE;
 }
 
-static void
-_send_signal_property_changed(Elm_Atspi_Object *ao, enum _Atspi_Object_Property prop)
+static Eina_Bool
+_property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
-   const char *desc;
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *siter, *viter;
-   Eldbus_Service_Interface *events = NULL;
+   Eldbus_Service_Interface *events = data;
+   const char *property = event_info;
+   char *path, *atspi_desc;
+   enum _Atspi_Object_Property prop = ATSPI_OBJECT_PROPERTY_LAST;
 
-   if (!BIT_FLAG_GET(_object_property_broadcast_mask, prop))
-     return;
-
-   switch(prop)
-    {
-     case ATSPI_OBJECT_PROPERTY_NAME:
-        desc = "accessible-name";
-        break;
-     case ATSPI_OBJECT_PROPERTY_DESCRIPTION:
-        desc = "accessible-description";
-        break;
-     case ATSPI_OBJECT_PROPERTY_ROLE:
-        desc = "accessible-role";
-        break;
-     case ATSPI_OBJECT_PROPERTY_PARENT:
-        desc = "accessible-parent";
-        break;
-     case ATSPI_OBJECT_PROPERTY_VALUE:
-        desc = "accessible-value";
-        break;
-     default:
-        desc = NULL;
-    }
-   eo_do(ao, events = eo_key_data_get("atspi_event_interface"));
    if (!events)
      {
         ERR("Atspi object does not have event interface!");
-        return;
+        return EINA_FALSE;
      }
+
+   if (!strcmp(property, "parent"))
+     {
+        prop = ATSPI_OBJECT_PROPERTY_PARENT;
+        atspi_desc = "accessible-parent";
+     }
+   else if (!strcmp(property, "name"))
+     {
+        prop = ATSPI_OBJECT_PROPERTY_NAME;
+        atspi_desc = "accessible-name";
+     }
+   else if (!strcmp(property, "description"))
+     {
+        prop = ATSPI_OBJECT_PROPERTY_PARENT;
+        atspi_desc = "accessible-description";
+     }
+   else if (!strcmp(property, "role"))
+     {
+        prop = ATSPI_OBJECT_PROPERTY_PARENT;
+        atspi_desc = "accessible-role";
+     }
+
+   if (prop == ATSPI_OBJECT_PROPERTY_LAST)
+     {
+        ERR("Unrecognized property name!");
+        return EINA_FALSE;
+     }
+   if (!STATE_TYPE_GET(_object_property_broadcast_mask, prop))
+     {
+        DBG("Masking property %s changed event.", property);
+        return EINA_FALSE;
+     }
+
    msg = eldbus_service_signal_new(events, ATSPI_OBJECT_EVENT_PROPERTY_CHANGED);
-   EINA_SAFETY_ON_NULL_RETURN(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
 
    iter = eldbus_message_iter_get(msg);
    siter = eldbus_message_iter_container_new(iter, 'r', NULL);
-   EINA_SAFETY_ON_NULL_RETURN(siter);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(siter, EINA_FALSE);
 
-   eldbus_message_iter_arguments_append(siter, "suu", desc, 0, 0);
+   eldbus_message_iter_arguments_append(siter, "suu", atspi_desc, 0, 0);
 
    viter = eldbus_message_iter_container_new(siter, 'v', "s");
-   EINA_SAFETY_ON_NULL_RETURN(viter);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
 
-   eldbus_message_iter_arguments_append(viter, "s", _path_from_access_object(ao));
+   path = _path_from_access_object(obj);
+   eldbus_message_iter_arguments_append(viter, "s", path);
+   free(path);
 
    eldbus_message_iter_arguments_append(siter, "v", viter);
    eldbus_message_iter_container_close(siter, viter);
 
    eldbus_message_iter_container_close(iter, siter);
    eldbus_service_signal_send(events, msg);
-   DBG("signal sent PropertyChanged:%s", desc);
+   DBG("signal sent PropertyChanged:%s", property);
+
+   return EINA_TRUE;
 }
 
-static void
-_send_signal_children_changed(Elm_Atspi_Object *parent, Elm_Atspi_Object *child, enum _Atspi_Object_Child_Event_Type type)
+static Eina_Bool
+_idler_cb(void *data EINA_UNUSED)
 {
-   Eldbus_Service_Interface *events = NULL;
+   Eo *obj;
+   EINA_LIST_FREE(_pending_objects, obj)
+      _cache_build(obj);
+   _pending_objects = NULL;
+   _cache_update_idler = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   Eldbus_Service_Interface *events = data;
    Eldbus_Message_Iter *iter, *viter;
    Eldbus_Message *msg;
-   const char *desc = NULL;
-   unsigned int idx = 0;
+   const char *atspi_desc = NULL;
+   Elm_Atspi_Event_Children_Changed_Data *ev_data = event_info;
+   int idx;
+   enum _Atspi_Object_Child_Event_Type type;
 
-   if (!BIT_FLAG_GET(_object_children_broadcast_mask, type))
-     return;
+   type = ev_data->is_added ? ATSPI_OBJECT_CHILD_ADDED : ATSPI_OBJECT_CHILD_REMOVED;
 
-   _cache_object_register(parent, EINA_FALSE);
-   _cache_object_register(child, EINA_FALSE);
+   // update cached objects
+   if (ev_data->is_added)
+     {
+        _pending_objects = eina_list_append(_pending_objects, obj);
+        if (!_cache_update_idler)
+          _cache_update_idler = ecore_idler_add(_idler_cb, NULL);
+     }
 
-   eo_do(parent, events = eo_key_data_get("atspi_event_interface"));
+   if (!STATE_TYPE_GET(_object_children_broadcast_mask, type))
+     return EINA_FALSE;
+
    if (!events)
      {
-        ERR("Atspi object does not have event interface! %p %p %s", parent, _root, eo_class_name_get(eo_class_get(parent)));
-        return;
+        ERR("Atspi object does not have event interface! %p %s", obj, eo_class_name_get(eo_class_get(obj)));
+        return EINA_FALSE;
      }
 
    switch(type)
     {
      case ATSPI_OBJECT_CHILD_ADDED:
-        desc = "add";
-        eo_do(child, idx = elm_atspi_obj_index_in_parent_get());
+        atspi_desc = "add";
+        eo_do(ev_data->child, idx = elm_interface_atspi_accessible_index_in_parent_get());
         break;
      case ATSPI_OBJECT_CHILD_REMOVED:
-        desc = "remove";
+        atspi_desc = "remove";
         idx = -1;
         break;
     }
+
+   if (!atspi_desc) return EINA_FALSE;
+
    msg = eldbus_service_signal_new(events, ATSPI_OBJECT_EVENT_CHILDREN_CHANGED);
-   EINA_SAFETY_ON_NULL_RETURN(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
 
    iter = eldbus_message_iter_get(msg);
-   eldbus_message_iter_arguments_append(iter, "sii", desc, idx, 0);
+   eldbus_message_iter_arguments_append(iter, "sii", atspi_desc, idx, 0);
 
    viter = eldbus_message_iter_container_new(iter, 'v', "(so)");
-   EINA_SAFETY_ON_NULL_RETURN(viter);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
 
-   object_append_reference(viter, child);
+   _object_append_reference(viter, ev_data->child);
    eldbus_message_iter_container_close(iter, viter);
 
-   object_append_reference(iter, _root);
+   _object_append_reference(iter, _root);
 
    eldbus_service_signal_send(events, msg);
-   DBG("signal sent childrenChanged:%s:%d", desc, idx);
+   DBG("signal sent childrenChanged:%s:%d", atspi_desc, idx);
+
+   return EINA_TRUE;
 }
 
-static void
-_send_signal_window(Elm_Atspi_Object *eo, enum _Atspi_Window_Signals type)
+static Eina_Bool
+_window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
-   const char *desc;
+   const char *event_desc;
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter, *viter;
-   Eldbus_Service_Interface *window = NULL;
+   Eldbus_Service_Interface *window = data;
+   enum _Atspi_Window_Signals type;
 
-   if (!BIT_FLAG_GET(_window_signal_broadcast_mask, type))
-     return;
-
-   eo_do(eo, window = eo_key_data_get("window_event_interface"));
-   if (!window)
+   if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED)
      {
-        ERR("Atspi object does not have window interface!");
-        return;
+        event_desc = "Created";
+        type = ATSPI_WINDOW_EVENT_CREATE;
+     }
+   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED)
+     {
+        event_desc = "Deactivate";
+        type = ATSPI_WINDOW_EVENT_DEACTIVATE;
+     }
+   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
+     {
+        event_desc = "Activate";
+        type = ATSPI_WINDOW_EVENT_ACTIVATE;
+     }
+   else
+     {
+        WRN("ATSPI Window event not handled");
+        return EINA_FALSE;
      }
 
-   switch(type)
+   if (!STATE_TYPE_GET(_window_signal_broadcast_mask, type))
+     return EINA_FALSE;
+
+   if (!window || !_a11y_bus)
      {
-      case ATSPI_WINDOW_EVENT_DEACTIVATE:
-         desc = "Deactivate";
-         break;
-      case ATSPI_WINDOW_EVENT_ACTIVATE:
-         desc = "Activate";
-         break;
-      default:
-         desc = "";
+        ERR("A11Y connection closed. Unable to send ATSPI event.");
+        return EINA_FALSE;
      }
 
    msg = eldbus_service_signal_new(window, type);
-   EINA_SAFETY_ON_NULL_RETURN(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
 
    iter = eldbus_message_iter_get(msg);
-   eldbus_message_iter_arguments_append(iter, "sii", desc, 0, 0);
+   eldbus_message_iter_arguments_append(iter, "sii", event_desc, 0, 0);
 
    viter = eldbus_message_iter_container_new(iter, 'v', "i");
-   EINA_SAFETY_ON_NULL_RETURN(viter);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
 
    eldbus_message_iter_arguments_append(viter, "i", 0);
    eldbus_message_iter_container_close(iter, viter);
 
-   object_append_reference(iter, eo);
+   _object_append_reference(iter, obj);
 
    eldbus_service_signal_send(window, msg);
-   DBG("signal sent Window:%s", desc);
-}
-
-static Eina_Bool
-_handle_atspi_event(void *data EINA_UNUSED, Elm_Atspi_Object *ao, const Eo_Event_Description *desc, void *event_info)
-{
-   if (desc == ELM_ATSPI_OBJECT_EVENT_NAME_CHANGED)
-     _send_signal_property_changed(ao, ATSPI_OBJECT_PROPERTY_NAME);
-   else if (desc == ELM_ATSPI_OBJECT_EVENT_STATE_CHANGED)
-     {
-        int *event_data = event_info;
-        _send_signal_state_changed(ao, (AtspiStateType)event_data[0], (Eina_Bool)event_data[1]);
-     }
-   else if (desc == ELM_ATSPI_OBJECT_EVENT_CHILD_ADDED)
-     _send_signal_children_changed(ao, event_info, ATSPI_OBJECT_CHILD_ADDED);
-   else if (desc == ELM_ATSPI_OBJECT_EVENT_CHILD_REMOVED)
-     _send_signal_children_changed(ao, event_info, ATSPI_OBJECT_CHILD_REMOVED);
-   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
-     _send_signal_window(ao, ATSPI_WINDOW_EVENT_ACTIVATE);
-   else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED)
-     _send_signal_window(ao, ATSPI_WINDOW_EVENT_DEACTIVATE);
-
+   DBG("signal sent Window:%s", event_desc);
    return EINA_TRUE;
 }
 
@@ -1314,9 +1512,41 @@ _event_handlers_register(void)
    // register signal handlers in order to update list of registered listeners of ATSPI-Clients
    _register_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerRegistered", _handle_listener_change, NULL);
    _unregister_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerDeregistered", _handle_listener_change, NULL);
+}
 
-   // handle incoming events from Elm_Atspi_Objects
-   _elm_atspi_object_global_callback_add(_handle_atspi_event, NULL);
+static Eina_Bool
+_on_cache_item_del(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *event EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   char *path;
+   path = _path_from_access_object(obj);
+   eina_hash_del(_cache, path, obj);
+   free(path);
+
+   return EINA_TRUE;
+}
+
+static void
+_cache_build(void *obj)
+{
+   Eina_List *children;
+   Eo *child;
+   char *path = NULL;
+
+   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+     return;
+
+   path = _path_from_access_object(obj);
+   if (!eina_hash_find(_cache, path))
+     {
+        eina_hash_add(_cache, path, obj);
+        _object_register(obj, path);
+        eo_do(obj, eo_event_callback_add(EO_EV_DEL, _on_cache_item_del, NULL));
+     }
+   free(path);
+
+   eo_do(obj, children = elm_interface_atspi_accessible_children_get());
+   EINA_LIST_FREE(children, child)
+      _cache_build(child);
 }
 
 static void
@@ -1324,10 +1554,10 @@ _a11y_bus_initialize(const char *socket_addr)
 {
    _a11y_bus = eldbus_address_connection_get(socket_addr);
 
-   _cache_update();
-   _bus_objects_register();
-   _app_register();
+   _cache_register();
    _event_handlers_register();
+   _elm_atspi_bridge_app_register();
+   _cache_build(_root);
 }
 
 static void
@@ -1354,26 +1584,91 @@ end:
    eldbus_connection_unref(session_bus);
 }
 
+static void _object_register(Eo *obj, char *path)
+{
+   Eldbus_Service_Interface *infc = NULL;
+
+   if (!eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+     {
+        WRN("Unable to register class w/o Elm_Interface_Atspi_Accessible!");
+        return;
+     }
+
+   if (_a11y_bus)
+     {
+        eldbus_service_interface_register(_a11y_bus, path, &accessible_iface_desc);
+
+        infc = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
+        eo_do(obj, eo_key_data_set("event_interface", infc, NULL));
+
+        eo_do(obj, eo_event_callback_array_add(_events_cb(), infc));
+
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_CLASS))
+          {
+             infc = eldbus_service_interface_register(_a11y_bus, path, &component_iface_desc);
+             eo_do(obj, eo_key_data_set("component_interface", infc, NULL));
+          }
+
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
+          {
+             infc = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
+             eo_do(obj, eo_key_data_set("window_interface", infc, NULL));
+
+             eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
+          }
+     }
+}
+
+static void _object_unregister(void *obj)
+{
+   Eldbus_Service_Interface *infc = NULL;
+
+   eo_do(obj, infc = eo_key_data_get("event_interface"));
+   if (_a11y_bus && infc)
+     {
+        eldbus_service_object_unregister(infc);
+        eo_do(obj, eo_key_data_set("event_interface", NULL, NULL));
+     }
+
+   eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, NULL));
+
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+      eo_do(obj, eo_event_callback_array_del(_events_cb(), infc));
+
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_CLASS))
+     {
+        eo_do(obj, infc = eo_key_data_get("window_interface"));
+        eo_do(obj, eo_event_callback_array_del(_window_cb(), infc));
+     }
+}
+
 void
 _elm_atspi_bridge_init(void)
 {
    Eldbus_Message *msg;
    Eldbus_Connection *session_bus;
 
-   if (!_init_count && _elm_config->access_mode == ELM_ACCESS_MODE_ON)
+   if (!_init_count && (_elm_config->access_mode != ELM_ACCESS_MODE_OFF))
      {
-        _elm_atspi_object_init();
+        _elm_atspi_init();
+
+        _root = _elm_atspi_root_get();
+        if (!_root)
+          {
+             ERR("Unable to get root object");
+             return;
+          }
+
         session_bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-		EINA_SAFETY_ON_NULL_RETURN(session_bus);
+        EINA_SAFETY_ON_NULL_RETURN(session_bus);
         msg = eldbus_message_method_call_new(A11Y_DBUS_NAME, A11Y_DBUS_PATH, A11Y_DBUS_INTERFACE, "GetAddress");
-		if (!msg)
-		  {
-			 eldbus_connection_unref(session_bus);
-			 return;
-		  }
+        if (!msg)
+          {
+             eldbus_connection_unref(session_bus);
+             return;
+          }
         eldbus_connection_send(session_bus, msg, _a11y_bus_address_get, session_bus, -1);
-        _cache = eina_hash_string_superfast_new(NULL);
-        _root = _elm_atspi_root_object_get();
+        _cache = eina_hash_string_superfast_new(_object_unregister);
         _init_count = 1;
      }
 }
@@ -1383,28 +1678,25 @@ _elm_atspi_bridge_shutdown(void)
 {
    if (_init_count)
      {
-        _elm_atspi_object_shutdown();
+        _elm_atspi_shutdown();
 
-        if (_register_hdl)
-          eldbus_signal_handler_del(_register_hdl);
-        _register_hdl = NULL;
+        if (_cache_update_idler)
+          ecore_idler_del(_cache_update_idler);
+        _cache_update_idler = NULL;
 
-        if (_unregister_hdl)
-          eldbus_signal_handler_del(_unregister_hdl);
-        _unregister_hdl = NULL;
-
-        if (_cache_interface)
-          eldbus_service_object_unregister(_cache_interface);
-        _cache_interface = NULL;
-
-        if (_a11y_bus)
-          eldbus_connection_unref(_a11y_bus);
-        _a11y_bus = NULL;
+        if (_pending_objects)
+          eina_list_free(_pending_objects);
+        _pending_objects = NULL;
 
         if (_cache)
           eina_hash_free(_cache);
         _cache = NULL;
 
+        if (_a11y_bus)
+          eldbus_connection_unref(_a11y_bus);
+        _a11y_bus = NULL;
+
         _init_count = 0;
+        _root = NULL;
      }
 }

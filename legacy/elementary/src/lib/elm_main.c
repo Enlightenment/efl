@@ -330,10 +330,11 @@ elm_shutdown(void)
    ecore_event_handler_del(system_handlers[1]);
 
    _elm_win_shutdown();
+   _elm_atspi_bridge_shutdown();
+
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
    _elm_clouseau_unload();
-   _elm_atspi_bridge_shutdown();
 // wrningz :(
 //   _prefix_shutdown();
    ELM_SAFE_FREE(app_name, eina_stringshare_del);

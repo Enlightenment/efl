@@ -4,102 +4,111 @@ mixin Elm_Interface_Atspi_Component ()
    eo_prefix: elm_interface_atspi_component;
    data: null;
    properties {
-      size {
+      protected size {
          set {
+            /*@ Sets size of accessible widget. */
             return Eina_Bool;
          }
          get {
+            /*@ Gets size of accessible widget. */
+         }
+         values {
+            int w;
+            int h;
+         }
+      }
+      protected layer {
+         get {
+            /*@ Sets evas layer of accessible widget. */
+         }
+         values {
+            int layer;
+         }
+      }
+      protected alpha {
+         get {
+            /*@ Gets alpha of accessible widget. */
+         }
+         values {
+            double alpha; /*@ alpha value in [0, 1] range. */
+         }
+      }
+      protected z_order {
+         get {
+            /*@ Gets the depth at which the component is shown in relation to
+             * other components in the same container. */
+         }
+         values {
+            int z_order;
+         }
+      }
+      protected extents {
+         get {
+            /*@ Gets geometry of accessible widget. */
+         }
+         set {
+            /*@ Sets geometry of accessible widget. */
+            return Eina_Bool;
+         }
+         keys {
+            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+                                       to screen origin, otherwise relative to
+                                       canvas */
+         }
+         values {
+            int x;
+            int y;
+            int w;
+            int h;
+         }
+      }
+      protected position {
+         set {
+            /*@ Sets position of accessible widget. */
+            return Eina_Bool;
+         }
+         get {
+            /*@ Gets position of accessible widget. */
+         }
+         keys {
+            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+                                       to screen origin, otherwise relative to
+                                       canvas */
          }
          values {
             int x;
             int y;
          }
       }
-      layer {
-         get {
-         }
-         values {
-            int ret;
-         }
-      }
-      alpha {
-         get {
-         }
-         values {
-            double ret; /*@ alpha */
-         }
-      }
-      z_order {
-         get {
-         }
-         values {
-            int ret;
-         }
-      }
    }
    methods {
-      protected extents_set {
-         params {
-            @in int x;
-            @in int y;
-            @in int w;
-            @in int h;
-            @in AtspiCoordType type;
-         }
-         return Eina_Bool;
-      }
-      protected extents_get {
-         params {
-            @out int x;
-            @out int y;
-            @out int w;
-            @out int h;
-            @in AtspiCoordType type;
-         }
-      }
       protected contains {
          params {
+            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+                                       to screen origin, otherwise relative to
+                                       canvas */
             @in int x;
             @in int y;
-            @in AtspiCoordType type;
          }
          return Eina_Bool;
       }
       focus_grab {
+         /*@ Focuses accessible widget.
+
+         @return true if focus grab focus has successed, false otherwise. */
+
          return Eina_Bool;
       }
       protected accessible_at_point_get {
+         /*@ Gets top component object occupying space at given coordinates. */
          params {
+            Eina_Bool screen_coords; /*@ If true x and y values will be relative
+                                       to screen origin, otherwise relative to
+                                       canvas */
             @in int x;
             @in int y;
-            @in AtspiCoordType type;
          }
-         return Elm_Atspi_Object *;
-      }
-      protected position_set {
-         params {
-            @in int x;
-            @in int y;
-            @in AtspiCoordType type;
-         }
-         return Eina_Bool;
-      }
-      protected position_get {
-         params {
-            @out int x;
-            @out int y;
-            @in AtspiCoordType type;
-         }
+         return Evas_Object *;
       }
    }
-   implements {
-      virtual::z_order::get;
-      virtual::layer::get;
-      virtual::extents_set;
-      virtual::extents_get;
-      virtual::accessible_at_point_get;
-      virtual::focus_grab;
-      virtual::alpha::get;
-   }
-
 }

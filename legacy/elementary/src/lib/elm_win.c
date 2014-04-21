@@ -8,6 +8,13 @@
 #include "elm_priv.h"
 #include "elm_widget_menu.h"
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+
+#include "elm_interface_atspi_accessible.h"
+#include "elm_interface_atspi_accessible.eo.h"
+#include "elm_interface_atspi_window.eo.h"
+#include "elm_interface_atspi_widget.eo.h"
+
 #define MY_CLASS ELM_OBJ_WIN_CLASS
 
 #define MY_CLASS_NAME "Elm_Win"
@@ -3307,6 +3314,14 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    edje_object_update_hints_set(sd->layout, EINA_TRUE);
    evas_object_event_callback_add(sd->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _elm_win_on_resize_obj_changed_size_hints, obj);
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     {
+        eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
+        elm_interface_atspi_accessible_children_changed_added_signal_emit(_elm_atspi_root_get(), obj);
+        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
+     }
+
    evas_object_show(sd->layout);
 }
 
@@ -4770,6 +4785,13 @@ EOLIAN static void
 _elm_win_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo*
+_elm_win_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
+{
+   // attach all kinds of windows directly to ATSPI application root object
+   return _elm_atspi_root_get();
 }
 
 #include "elm_win.eo.c"

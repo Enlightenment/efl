@@ -162,10 +162,6 @@ elm_app_client.h \
 elm_app_client_view_eo.h \
 elm_app_client_view.h \
 elm_app.h \
-elm_atspi_object.h \
-elm_atspi_object_common.h \
-elm_atspi_object_eo.h \
-elm_atspi_object_legacy.h \
 elm_authors.h \
 elm_bg.h \
 elm_bg_eo.h \
@@ -417,7 +413,7 @@ elm_app_server.c \
 elm_app_server_view.c \
 elm_app_client.c \
 elm_app_client_view.c \
-elm_atspi_object.c \
+elm_atspi_app_object.c \
 elm_atspi_bridge.c \
 elm_bg.c \
 elm_box.c \
@@ -450,7 +446,10 @@ elm_hover.c \
 elm_icon.c \
 elm_image.c \
 elm_index.c \
+elm_interface_atspi_accessible.c \
 elm_interface_atspi_component.c \
+elm_interface_atspi_widget.c \
+elm_interface_atspi_window.c \
 elm_interface_fileselector.c \
 elm_interface_scrollable.c \
 elm_inwin.c \
@@ -545,8 +544,6 @@ BUILT_SOURCES = \
 		elm_access.eo.h \
 		elm_actionslider.eo.c \
 		elm_actionslider.eo.h \
-		elm_app_access_object.eo.c \
-		elm_app_access_object.eo.h \
 		elm_app_client.eo.c \
 		elm_app_client.eo.h \
 		elm_app_client_view.eo.c \
@@ -555,12 +552,8 @@ BUILT_SOURCES = \
 		elm_app_server.eo.h \
 		elm_app_server_view.eo.c \
 		elm_app_server_view.eo.h \
-		elm_interface_atspi_component.eo.c \
-		elm_interface_atspi_component.eo.h \
-		elm_interface_atspi_window.eo.c \
-		elm_interface_atspi_window.eo.h \
-		elm_atspi_object.eo.c \
-		elm_atspi_object.eo.h \
+		elm_atspi_app_object.eo.c \
+		elm_atspi_app_object.eo.h \
 		elm_bg.eo.c \
 		elm_bg.eo.h \
 		elm_box.eo.c \
@@ -621,6 +614,14 @@ BUILT_SOURCES = \
 		elm_icon.eo.h \
 		elm_index.eo.c \
 		elm_index.eo.h \
+		elm_interface_atspi_accessible.eo.c \
+		elm_interface_atspi_accessible.eo.h \
+		elm_interface_atspi_component.eo.c \
+		elm_interface_atspi_component.eo.h \
+		elm_interface_atspi_widget.eo.c \
+		elm_interface_atspi_widget.eo.h \
+		elm_interface_atspi_window.eo.c \
+		elm_interface_atspi_window.eo.h \
 		elm_interface_fileselector.eo.c \
 		elm_interface_fileselector.eo.h \
 		elm_inwin.eo.c \
@@ -691,10 +692,6 @@ BUILT_SOURCES = \
 		elm_video.eo.h \
 		elm_web.eo.c \
 		elm_web.eo.h \
-		elm_widget_access_object.eo.c \
-		elm_widget_access_object.eo.h \
-		elm_win_access_object.eo.c \
-		elm_win_access_object.eo.h \
 		elm_win.eo.c \
 		elm_win.eo.h
 
@@ -708,14 +705,15 @@ EXTRA_DIST += \
 	     elm_hover.eo \
 	     elm_access.eo \
 	     elm_actionslider.eo \
-	     elm_app_access_object.eo \
 	     elm_app_client.eo \
 	     elm_app_client_view.eo \
 	     elm_app_server.eo \
 	     elm_app_server_view.eo \
+	     elm_atspi_app_object.eo \
+	     elm_interface_atspi_accessible.eo \
 	     elm_interface_atspi_component.eo \
+	     elm_interface_atspi_widget.eo \
 	     elm_interface_atspi_window.eo \
-	     elm_atspi_object.eo \
 	     elm_bg.eo \
 	     elm_box.eo \
 	     elm_bubble.eo \
@@ -781,8 +779,6 @@ EXTRA_DIST += \
 	     elm_toolbar.eo \
 	     elm_video.eo \
 	     elm_web.eo \
-	     elm_widget_access_object.eo \
-	     elm_win_access_object.eo \
 	     elm_win.eo
 
 nodist_includesunstable_HEADERS = \
@@ -795,14 +791,15 @@ nodist_includesunstable_HEADERS = \
 				  elm_access.eo.h \
 				  elm_hover.eo.h \
 				  elm_actionslider.eo.h \
-				  elm_app_access_object.eo.h \
 				  elm_app_client.eo.h \
 				  elm_app_client_view.eo.h \
 				  elm_app_server.eo.h \
 				  elm_app_server_view.eo.h \
+				  elm_atspi_app_object.eo.h \
+				  elm_interface_atspi_accessible.eo.h \
 				  elm_interface_atspi_component.eo.h \
+				  elm_interface_atspi_widget.eo.h \
 				  elm_interface_atspi_window.eo.h \
-				  elm_atspi_object.eo.h \
 				  elm_box.eo.h \
 				  elm_bg.eo.h \
 				  elm_bubble.eo.h \
@@ -868,7 +865,5 @@ nodist_includesunstable_HEADERS = \
 				  elm_toolbar.eo.h \
 				  elm_video.eo.h \
 				  elm_web.eo.h \
-				  elm_widget_access_object.eo.h \
-				  elm_win_access_object.eo.h \
 				  elm_win.eo.h
 

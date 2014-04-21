@@ -7,6 +7,7 @@
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
+#include "elm_interface_atspi_widget.eo.h"
 
 #define MY_CLASS ELM_OBJ_WIDGET_CLASS
 
@@ -5278,19 +5279,6 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
-static Eina_Bool
-_atspi_obj_create(void *data)
-{
-   Elm_Atspi_Object *parent = NULL;
-   Elm_Atspi_Object *obj = _elm_atspi_factory_construct(data);
-   if (obj)
-     {
-       eo_do(obj, parent = elm_atspi_obj_parent_get());
-       eo_do(parent, eo_event_callback_call(ELM_ATSPI_OBJECT_EVENT_CHILD_ADDED, obj));
-     }
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
@@ -5303,9 +5291,6 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
          parent = eo_parent_get());
    eo_do(obj, elm_obj_widget_parent_set(parent));
    sd->on_create = EINA_FALSE;
-
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     ecore_idle_enterer_add(_atspi_obj_create, obj);
 }
 
 EOLIAN static Eina_Bool

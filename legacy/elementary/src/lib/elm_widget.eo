@@ -1,4 +1,4 @@
-abstract Elm_Widget (Evas_Smart)
+abstract Elm_Widget (Evas_Smart, Elm_Interface_Atspi_Widget)
 {
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;
@@ -827,5 +827,4 @@ abstract Elm_Widget (Evas_Smart)
       virtual::focus_next;
       virtual::parent_widget::get;
    }
-
 }

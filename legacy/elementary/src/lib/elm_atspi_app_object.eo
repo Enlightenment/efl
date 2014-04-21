@@ -1,0 +1,10 @@
+class Elm_Atspi_App_Object (Eo_Base, Elm_Interface_Atspi_Accessible)
+{
+   data: null;
+   implements {
+      Elm_Interface_Atspi_Accessible::name::get;
+      Elm_Interface_Atspi_Accessible::description::get;
+      Elm_Interface_Atspi_Accessible::role::get;
+      Elm_Interface_Atspi_Accessible::children::get;
+   }
+}

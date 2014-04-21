@@ -1,4 +1,4 @@
-class Elm_Win (Elm_Widget)
+class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window)
 {
    eo_prefix: elm_obj_win;
    constructors {
@@ -1315,6 +1315,7 @@ class Elm_Win (Elm_Widget)
       Elm_Widget::theme_apply;
       Elm_Widget::on_focus;
       Elm_Widget::event;
+      Elm_Interface_Atspi_Accessible::parent::get;
    }
    events {
       delete,request;

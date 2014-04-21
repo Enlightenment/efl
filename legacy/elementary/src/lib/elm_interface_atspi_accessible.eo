@@ -1,0 +1,112 @@
+mixin Elm_Interface_Atspi_Accessible ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_accessible;
+   data: null;
+   properties {
+      protected localized_role_name {
+         get {
+            /*@ Gets an localized string describing ATSPI widget role name. */
+         }
+         values {
+            const char *localized_name;
+         }
+      }
+      protected name {
+         get {
+            /*@ Gets an string describing ATSPI widget role name. */
+         }
+         set {
+         }
+         values {
+            const char *name; /*@ obj name */
+         }
+      }
+      protected relation_set {
+         get {
+            /*@ Gets an string describing ATSPI widget role name. */
+         }
+      }
+      protected role {
+         get {
+            /*@ Gets the role of the widget in ATSPI Accessibility domain. */
+         }
+         set {
+         }
+         values {
+            Elm_Atspi_Role role;
+         }
+      }
+      protected children {
+         get {
+            /*@ Gets widget's accessible children. */
+         }
+         values {
+            Eina_List *children;
+         }
+      }
+      protected role_name {
+         get {
+            /*@ Gets human-readable string indentifying widget accessibility
+             * role. */
+         }
+         values {
+            const char *role_name;
+         }
+      }
+      protected attributes {
+         get {
+            /*@ Gets human-readable string indentifying widget accessibility
+             * role. */
+         }
+      }
+      protected index_in_parent {
+         get {
+            /*@ Gets index of the child in parent's children list. */
+         }
+         values {
+            int idx;
+         }
+      }
+      description {
+         get {
+            /*@ Gets widget contextual information. */
+         }
+         set {
+            /*@ Sets contextual information about widget. */
+         }
+         values {
+            const char *description;
+         }
+      }
+      protected parent {
+         get {
+            /*@ Gets widget accessible parent. */
+         }
+         set {
+            /*@ Sets widget accessible parent. */
+         }
+         values {
+            Eo *parent;
+         }
+      }
+      protected state_set {
+         get {
+            /*@ Gets set describing widget accessible states. */
+         }
+         values {
+            Elm_Atspi_State_Set states;
+         }
+      }
+   }
+   implements {
+      virtual::relation_set::get;
+   }
+   events {
+      property,changed (const char *);
+      children,changed (Elm_Atspi_Event_Children_Changed_Data);
+      state,changed (Elm_Atspi_Event_State_Changed_Data);
+      visible,data,changed;
+      active,descendants,changed;
+   }
+}
