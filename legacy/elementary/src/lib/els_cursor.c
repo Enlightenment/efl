@@ -190,7 +190,8 @@ _elm_cursor_set_hot_spots(Elm_Cursor *cur)
    str = edje_object_data_get(cur->obj, "hot_y");
    if (str) cur->hot_y = atoi(str);
    
-   if ((prev_hot_x != cur->hot_x) || (prev_hot_y != cur->hot_y))
+   if ((cur->visible) &&
+       ((prev_hot_x != cur->hot_x) || (prev_hot_y != cur->hot_y)))
      ecore_evas_object_cursor_set(cur->ee, cur->obj, ELM_OBJECT_LAYER_CURSOR,
                                   cur->hot_x, cur->hot_y);
 }
