@@ -334,6 +334,21 @@ local Property = Method:clone {
     end
 }
 
+local Event = Node:clone {
+    __ctor = function(self, event)
+        self.event = event
+    end,
+
+    generate = function(self, s, last)
+    end,
+
+    gen_ffi = function(self, s)
+    end,
+
+    gen_ctor = function(self, s)
+    end
+}
+
 local Constructor = Node:clone {
     gen_ffi = function(self, s)
     end
@@ -485,13 +500,14 @@ local gen_contents = function(classn)
         end
     end
     -- and constructors
-    local dflt_ctor = eolian.class_default_constructor_get(classn)
-    if dflt_ctor then
-        cnt[#cnt + 1] = Constructor(dflt_ctor)
-    end
     local ctors = eolian.class_functions_list_get(classn, ft.CTOR)
     for i, v in ipairs(ctors) do
         cnt[#cnt + 1] = Constructor(v)
+    end
+    -- events
+    local events = eolian.class_events_list_get(classn)
+    for i, v in ipairs(events) do
+        cnt[#cnt + 1] = Event(v)
     end
     return cnt
 end
