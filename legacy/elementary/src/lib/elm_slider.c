@@ -398,7 +398,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
 
