@@ -387,7 +387,7 @@ local Destructor = Node:clone {
 }
 
 local Mixin = Node:clone {
-    __ctor = function(self, cname, ch)
+    __ctor = function(self, cname, ch, evs)
         self.cname    = cname
         self.prefix   = eolian.class_eo_prefix_get(cname)
         self.children = ch
