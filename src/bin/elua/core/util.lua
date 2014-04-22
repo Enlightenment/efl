@@ -60,7 +60,7 @@ end
 M.Object = {
     __call = function(self, ...)
         local r = self:clone()
-        if self.__ctor then self.__ctor(r, ...) end
+        if self.__ctor then return r, self.__ctor(r, ...) end
         return r
     end,
 
@@ -126,7 +126,7 @@ M.Readonly_Object.__call = function(self, ...)
     rmt.__index = self
     rmt.__tostring = self.__tostring
     rmt.__metatable = false
-    if self.__ctor then self.__ctor(r, rmt, ...) end
+    if self.__ctor then return r, self.__ctor(r, rmt, ...) end
     return r
 end
 
