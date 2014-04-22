@@ -198,7 +198,8 @@ EOLIAN static Eina_Bool
 _elm_web_elm_widget_event(Eo *obj, Elm_Web_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
-   (void) src;
+   (void)sd;
+   (void)src;
 
 #ifdef HAVE_ELEMENTARY_WEB
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
@@ -211,7 +212,6 @@ _elm_web_elm_widget_event(Eo *obj, Elm_Web_Data *sd, Evas_Object *src, Evas_Call
    return EINA_TRUE;
 #else
    (void)obj;
-   (void)sd;
    (void)type;
    (void)ev;
 #endif
