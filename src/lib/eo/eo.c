@@ -254,7 +254,9 @@ EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 
 // FIXME: Thread Local Storage
 #define EO_INVALID_DATA (void *) -1
-#define EO_CALL_STACK_DEPTH 30
+// 1024 entries == 8k or 16k (32 or 64bit) for eo call stack. that's 1024
+// recursion entires it can handle before barfing. i'd say that's ok
+#define EO_CALL_STACK_DEPTH 1024
 
 typedef struct _Eo_Stack_Frame
 {
@@ -276,6 +278,62 @@ typedef struct _Eo_Call_Stack {
      Eo_Stack_Frame *shrink_frame;
 } Eo_Call_Stack;
 
+#define MEM_PAGE_SIZE 4096
+
+static void *
+_eo_call_stack_mem_alloc(size_t maxsize)
+{
+#ifdef __linux__
+   // allocate eo call stack via mmped anon segment if on linux - more
+   // secure and safe. also gives page aligned memory allowing madvise
+   void *ptr;
+   size_t newsize;
+   newsize = MEM_PAGE_SIZE * ((maxsize + MEM_PAGE_SIZE - 1) /
+                              MEM_PAGE_SIZE);
+   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+   if (ptr == MAP_FAILED)
+     {
+        ERR("mmap of eo callstack failed!");
+        return NULL;
+     }
+   return ptr;
+#else
+   //in regular cases just use malloc
+   return malloc(maxsize);
+#endif   
+}
+
+static void
+_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize)
+{
+#ifdef __linux__
+   // resize call stack down - currently won't ever be called
+   if (newsize > maxsize)
+     {
+        ERR("eo callstack overflow");
+        abort();
+     }
+   size_t addr = MEM_PAGE_SIZE * ((newsize + MEM_PAGE_SIZE - 1) /
+                                  MEM_PAGE_SIZE);
+   madvise(((unsigned char *)*ptr) + addr, maxsize - addr, MADV_DONTNEED);
+#else
+   // just grow in regular cases
+#endif
+}
+
+static void
+_eo_call_stack_mem_free(void *ptr, size_t maxsize)
+{
+#ifdef __linux__
+   // free mmaped memory
+   munmap(ptr, maxsize);
+#else
+   // free regular memory
+   free(ptr);
+#endif
+}
+
 static Eo_Call_Stack *
 _eo_call_stack_create()
 {
@@ -285,7 +343,10 @@ _eo_call_stack_create()
    if (!stack)
      return NULL;
 
-   stack->frames = calloc(EO_CALL_STACK_DEPTH, sizeof(Eo_Stack_Frame));
+// XXX: leave in for noew in case this breaks, but remove later when ok
+//   stack->frames = calloc(EO_CALL_STACK_DEPTH, sizeof(Eo_Stack_Frame));
+   stack->frames = _eo_call_stack_mem_alloc(EO_CALL_STACK_DEPTH *
+                                            sizeof(Eo_Stack_Frame));
    if (!stack->frames)
      {
         free(stack);
@@ -308,7 +369,13 @@ _eo_call_stack_free(void *ptr)
    if (!stack) return;
 
    if (stack->frames)
-     free(stack->frames);
+     {
+// XXX: leave in for noew in case this breaks, but remove later when ok
+//        free(stack->frames);
+        _eo_call_stack_mem_free(stack->frames,
+                                (stack->last_frame - stack->frames + 1) *
+                                sizeof(Eo_Stack_Frame));
+     }
    free(stack);
 }
 
@@ -350,7 +417,11 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
      next_sz = sz >> 1;
 
    DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
-   stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
+// XXX: leave in for noew in case this breaks, but remove later when ok
+//   stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
+   _eo_call_stack_mem_resize((void **)&(stack->frames),
+                             next_sz * sizeof(Eo_Stack_Frame),
+                             sz * sizeof(Eo_Stack_Frame));
    if (!stack->frames)
      {
         CRI("unable to resize call stack, abort.");
