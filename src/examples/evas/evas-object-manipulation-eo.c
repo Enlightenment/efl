@@ -122,7 +122,7 @@ _on_keydown(void        *data EINA_UNUSED,
         fprintf(stdout, "Toggling clipping ");
 
         Evas_Object *clip = NULL;
-        eo_do(d.img, evas_obj_clip_get(&clip));
+        clip = eo_do(d.img, evas_obj_clip_get());
         if (clip == d.clipper)
           {
              eo_do(d.img, evas_obj_clip_unset());
@@ -141,7 +141,7 @@ _on_keydown(void        *data EINA_UNUSED,
         Eina_Bool visibility;
         /* Don't use "get"-"set" expressions in one eo_do call,
          * if you pass parameter to "set" by value. */
-        eo_do(d.clipper, evas_obj_visibility_get(&visibility));
+        visibility = eo_do(d.clipper, evas_obj_visibility_get());
         eo_do(d.clipper, evas_obj_visibility_set(!visibility));
         fprintf(stdout, "Clipper is now %s\n", visibility ? "hidden" : "visible");
         return;
@@ -193,7 +193,7 @@ main(void)
 
    eo_do(d.img, evas_obj_image_filled_set(EINA_TRUE),
                 evas_obj_image_file_set(img_path, NULL),
-                evas_obj_image_load_error_get(&err));
+                err = evas_obj_image_load_error_get());
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -206,7 +206,7 @@ main(void)
                      evas_obj_visibility_set(EINA_TRUE));
 
         const char *type = NULL;
-        eo_do(d.img, evas_obj_type_get(&type));
+        eo_do(d.img, type = evas_obj_type_get());
         fprintf(stdout, "Image object added, type is: %s\n", type);
      }
 
@@ -214,7 +214,7 @@ main(void)
    d.clipper_border = eo_add(EVAS_OBJ_IMAGE_CLASS, d.canvas);
    eo_do(d.clipper_border, evas_obj_image_filled_set(EINA_TRUE),
                            evas_obj_image_file_set(border_img_path, NULL),
-                           evas_obj_image_load_error_get(&err));
+                           err = evas_obj_image_load_error_get());
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {

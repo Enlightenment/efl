@@ -5,20 +5,20 @@
 #include "Eo.h"
 #include "simple_interface.h"
 
-EAPI Eo_Op INTERFACE_BASE_ID = 0;
-
 #define MY_CLASS INTERFACE_CLASS
 
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(INTERFACE_SUB_ID_A_POWER_3_GET, "Get the a^3"),
-     EO_OP_DESCRIPTION_SENTINEL
+EAPI EO_FUNC_BODY(interface_a_power_3_get, int, 0);
+
+static Eo_Op_Description op_desc[] = {
+     EO_OP_FUNC(interface_a_power_3_get, NULL, "Get the a^3"),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Interface",
      EO_CLASS_TYPE_INTERFACE,
-     EO_CLASS_DESCRIPTION_OPS(&INTERFACE_BASE_ID, op_desc, INTERFACE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(op_desc),
      NULL,
      0,
      NULL,

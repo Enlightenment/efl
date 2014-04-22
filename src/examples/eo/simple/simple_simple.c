@@ -5,8 +5,6 @@
 #include "Eo.h"
 #include "simple_simple.h"
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 typedef struct
 {
    int a;
@@ -14,64 +12,48 @@ typedef struct
 
 #define MY_CLASS SIMPLE_CLASS
 
-static void
-_a_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+static int
+_a_get(Eo *obj EINA_UNUSED, void *class_data)
 {
    const Private_Data *pd = class_data;
-   int *a;
-   a = va_arg(*list, int *);
-   *a = pd->a;
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   return pd->a;
 }
 
 static void
-_a_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
 {
    Private_Data *pd = class_data;
-   int a;
-   a = va_arg(*list, int);
    pd->a = a;
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
 }
 
-static void
-_a_power_3_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+static int
+_a_power_3_get(Eo *obj EINA_UNUSED, void *class_data)
 {
    const Private_Data *pd = class_data;
-   int *ret;
-   ret = va_arg(*list, int *);
-   if (ret)
-      *ret = pd->a * pd->a * pd->a;
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   return pd->a * pd->a * pd->a;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
-        EO_OP_FUNC(INTERFACE_ID(INTERFACE_SUB_ID_A_POWER_3_GET), _a_power_3_get),
-        EO_OP_FUNC_SENTINEL
-   };
+EAPI EO_FUNC_BODY(simple_a_get, int, 0);
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "Get property A"),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo_Op_Description op_desc[] = {
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO_OP_FUNC(simple_a_get, _a_get, "Get property A"),
+     EO_OP_FUNC_OVERRIDE(interface_a_power_3_get, _a_power_3_get),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(op_desc),
      NULL,
      sizeof(Private_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 
