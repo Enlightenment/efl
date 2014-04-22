@@ -411,6 +411,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                                 text, font, size,
                                 sw, sh, &free_text);
      }
+   else
+     eo_do(ep->object,
+           evas_obj_text_ellipsis_set(params->type.text.elipsis));
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
    ep->typedata.text->cache.in_w = sw;
