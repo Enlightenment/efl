@@ -335,14 +335,19 @@ local Property = Method:clone {
 }
 
 local Event = Node:clone {
-    __ctor = function(self, event)
-        self.event = event
+    __ctor = function(self, ename, etype, edesc)
+        self.ename = ename
+        self.etype = etype
+        self.edesc = edesc
     end,
 
     generate = function(self, s, last)
     end,
 
     gen_ffi = function(self, s)
+        s:write("    extern const Eo_Event_Description _",
+            self.parent_node.cname:upper(), "_EVENT_",
+            self.ename:gsub("%W", "_"):upper(), ";\n")
     end,
 
     gen_ctor = function(self, s)
@@ -507,7 +512,8 @@ local gen_contents = function(classn)
     -- events
     local events = eolian.class_events_list_get(classn)
     for i, v in ipairs(events) do
-        cnt[#cnt + 1] = Event(v)
+        local en, et, ed = v:information_get()
+        cnt[#cnt + 1] = Event(en, et, ed)
     end
     return cnt
 end
