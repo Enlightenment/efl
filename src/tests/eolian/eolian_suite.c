@@ -16,6 +16,35 @@ struct _Eolian_Test_Case
    void      (*build)(TCase *tc);
 };
 
+START_TEST(eolian_scope)
+{
+   Eolian_Function fid = NULL;
+   const char *class_name = "Simple";
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/scope.eo"));
+
+   /* Property scope */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "a", EOLIAN_PROPERTY)));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PROTECTED);
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "b", EOLIAN_PROPERTY)));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PUBLIC);
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "c", EOLIAN_PROPERTY)));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PUBLIC);
+
+   /* Method scope */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "foo", EOLIAN_METHOD)));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PUBLIC);
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "bar", EOLIAN_METHOD)));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PROTECTED);
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "foobar", EOLIAN_METHOD)));
+   fail_if(eolian_function_scope_get(fid) != EOLIAN_SCOPE_PUBLIC);
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_simple_parsing)
 {
    Eolian_Function fid = NULL;
@@ -111,6 +140,7 @@ END_TEST
 static void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
+   tcase_add_test(tc, eolian_scope);
 }
 
 static const Eolian_Test_Case etc[] = {

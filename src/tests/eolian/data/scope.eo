@@ -1,0 +1,24 @@
+class Simple {
+   properties {
+      protected a {
+         get {
+         }
+      }
+      b {
+         get {
+         }
+      }
+      public   c  {
+         get {
+         }
+      }
+   }
+   methods {
+      foo {
+      }
+      protected  bar  {
+      }
+      public foobar {
+      }
+   }
+};
