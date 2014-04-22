@@ -157,21 +157,12 @@ _eo_tokenizer_class_get(Eo_Tokenizer *toknz, char *p)
 static Eo_Property_Def*
 _eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
 {
-   Eo_Property_Def *prop = NULL;
-   if (!strncmp(toknz->saved.tok, "protected ", 10))
-     {
-        toknz->saved.tok += 10;
-        toknz->tmp.fscope = FUNC_PROTECTED;
-     }
-   else
-     {
-        prop = calloc(1, sizeof(Eo_Property_Def));
-        if (prop == NULL) ABORT(toknz, "calloc Eo_Property_Def failure");
+   Eo_Property_Def *prop = calloc(1, sizeof(Eo_Property_Def));
+   if (prop == NULL) ABORT(toknz, "calloc Eo_Property_Def failure");
 
-        prop->name = _eo_tokenizer_token_get(toknz, p);
-        prop->scope = toknz->tmp.fscope;
-        toknz->tmp.fscope = FUNC_PUBLIC;
-     }
+   prop->name = _eo_tokenizer_token_get(toknz, p);
+   prop->scope = toknz->tmp.fscope;
+   toknz->tmp.fscope = FUNC_PUBLIC;
 
    return prop;
 }
@@ -179,23 +170,23 @@ _eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
 static Eo_Method_Def*
 _eo_tokenizer_method_get(Eo_Tokenizer *toknz, char *p)
 {
-   Eo_Method_Def *meth = NULL;
-   if (!strncmp(toknz->saved.tok, "protected ", 10))
-     {
-        toknz->saved.tok += 10;
-        toknz->tmp.fscope = FUNC_PROTECTED;
-     }
-   else
-     {
-        meth = calloc(1, sizeof(Eo_Method_Def));
-        if (meth == NULL) ABORT(toknz, "calloc Eo_Method_Def failure");
+   Eo_Method_Def *meth = calloc(1, sizeof(Eo_Method_Def));
+   if (meth == NULL) ABORT(toknz, "calloc Eo_Method_Def failure");
 
-        meth->name = _eo_tokenizer_token_get(toknz, p);
-        meth->scope = toknz->tmp.fscope;
-        toknz->tmp.fscope = FUNC_PUBLIC;
-     }
+   meth->name = _eo_tokenizer_token_get(toknz, p);
+   meth->scope = toknz->tmp.fscope;
+   toknz->tmp.fscope = FUNC_PUBLIC;
 
    return meth;
+}
+
+static int
+_eo_tokenizer_scope_get(Eo_Tokenizer *toknz, EINA_UNUSED char *p)
+{
+   if (!strncmp(toknz->saved.tok, "protected ", 10))
+     return FUNC_PROTECTED;
+
+   return FUNC_PUBLIC;
 }
 
 static Eo_Param_Def*
@@ -386,6 +377,11 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       DBG("save token[%d] %p %c", toknz->cs, fpc, *fpc);
    }
 
+   action move_ts {
+      DBG("move ts %d chars forward", (int)(fpc - toknz->ts));
+      toknz->ts = fpc;
+   }
+
    action show_comment {
       DBG("comment[%d] line%03d:%03d", toknz->cs,
           toknz->saved.line, toknz->current_line);
@@ -439,7 +435,9 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    # chars allowed on the return line.
    return_char       = (alnum_u | '*' | ws | '@' | '(' | ')' | '.' | '-' | '<' | '>');
-   func_name         = (alnum >save_fpc (alnum | '_')* (ws (alnum | '_')+)?);
+   scope             = ('public' | 'protected');
+   scope_def         = scope >save_fpc ws+ %move_ts;
+   func_name         = ((alnum (alnum | '_')?)+ - scope) >save_fpc;
 }%%
 
 %%{
@@ -598,6 +596,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       INF("    }");
       toknz->tmp.kls->properties = eina_list_append(toknz->tmp.kls->properties, toknz->tmp.prop);
       toknz->tmp.prop = NULL;
+      toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting--;
       fgoto tokenize_properties;
    }
@@ -633,13 +632,17 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.prop = _eo_tokenizer_property_get(toknz, fpc);
    }
 
+   action end_property_scope {
+      toknz->tmp.fscope = _eo_tokenizer_scope_get(toknz, fpc);
+   }
+
    action end_properties {
       INF("  }");
       toknz->current_nesting--;
       fgoto tokenize_class;
    }
 
-   begin_property = func_name %end_property_name ignore* begin_def;
+   begin_property = (scope_def %end_property_scope)? func_name %end_property_name ignore* begin_def;
 
    tokenize_properties := |*
       ignore+;       #=> show_ignore;
@@ -714,6 +717,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.meth->type = toknz->current_methods_type;
       *l = eina_list_append(*l, toknz->tmp.meth);
       toknz->tmp.meth = NULL;
+      toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting--;
       fgoto tokenize_methods;
    }
@@ -754,6 +758,10 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.meth = _eo_tokenizer_method_get(toknz, fpc);
    }
 
+   action end_method_scope {
+      toknz->tmp.fscope = _eo_tokenizer_scope_get(toknz, fpc);
+   }
+
    action end_methods {
       INF("  }");
       toknz->current_methods_type = METH_TYPE_LAST;
@@ -761,7 +769,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       fgoto tokenize_class;
    }
 
-   begin_method = func_name %end_method_name ignore* begin_def;
+   begin_method = (scope_def %end_method_scope)? func_name %end_method_name ignore* begin_def;
 
    tokenize_methods := |*
       ignore+;       #=> show_ignore;
@@ -800,6 +808,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action begin_constructors {
       INF("  constructors {");
       toknz->current_methods_type = METH_CONSTRUCTOR;
+      toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting++;
       fgoto tokenize_methods;
    }
@@ -807,12 +816,14 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action begin_destructors {
       INF("  destructors {");
       toknz->current_methods_type = METH_DESTRUCTOR;
+      toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting++;
       fgoto tokenize_methods;
    }
 
    action begin_properties {
       INF("  properties {");
+      toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting++;
       fgoto tokenize_properties;
    }
@@ -820,6 +831,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action begin_methods {
       INF("  begin methods");
       toknz->current_methods_type = METH_REGULAR;
+      toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting++;
       fgoto tokenize_methods;
    }
