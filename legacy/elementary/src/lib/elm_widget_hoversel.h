@@ -19,8 +19,8 @@
 /**
  * Base button smart data extended with hoversel instance data.
  */
-typedef struct _Elc_Hoversel_Data Elc_Hoversel_Data;
-struct _Elc_Hoversel_Data
+typedef struct _Elm_Hoversel_Data Elm_Hoversel_Data;
+struct _Elm_Hoversel_Data
 {
    /* aggregates a hover */
    Evas_Object          *hover;
@@ -50,7 +50,7 @@ struct _Elm_Hoversel_Item
  */
 
 #define ELM_HOVERSEL_DATA_GET(o, sd) \
-  Elc_Hoversel_Data * sd = eo_data_scope_get(o, ELM_OBJ_HOVERSEL_CLASS)
+  Elm_Hoversel_Data * sd = eo_data_scope_get(o, ELM_OBJ_HOVERSEL_CLASS)
 
 #define ELM_HOVERSEL_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_HOVERSEL_DATA_GET(o, ptr);                     \

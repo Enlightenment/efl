@@ -1,7 +1,6 @@
-class Elc_Ctxpopup (Elm_Layout)
+class Elm_Ctxpopup (Elm_Layout)
 {
    eo_prefix: elm_obj_ctxpopup;
-   legacy_prefix: elm_ctxpopup;
    properties {
       horizontal {
          set {

@@ -1,6 +1,5 @@
-class Elc_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
+class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector)
 {
-   legacy_prefix: elm_fileselector;
    eo_prefix: elm_obj_fileselector;
    properties {
       buttons_ok_cancel {

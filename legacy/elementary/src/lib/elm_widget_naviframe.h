@@ -17,8 +17,8 @@
 /**
  * Base layout smart data extended with naviframe instance data.
  */
-typedef struct _Elc_Naviframe_Data Elc_Naviframe_Data;
-struct _Elc_Naviframe_Data
+typedef struct _Elm_Naviframe_Data Elm_Naviframe_Data;
+struct _Elm_Naviframe_Data
 {
    Eina_Inlist          *stack; /* top item is the list's LAST item */
    Eina_List            *popping;
@@ -82,7 +82,7 @@ struct _Elm_Naviframe_Text_Item_Pair
  */
 
 #define ELM_NAVIFRAME_DATA_GET(o, sd) \
-  Elc_Naviframe_Data * sd = eo_data_scope_get(o, ELM_OBJ_NAVIFRAME_CLASS)
+  Elm_Naviframe_Data * sd = eo_data_scope_get(o, ELM_OBJ_NAVIFRAME_CLASS)
 
 #define ELM_NAVIFRAME_DATA_GET_OR_RETURN(o, ptr)     \
   ELM_NAVIFRAME_DATA_GET(o, ptr);                    \

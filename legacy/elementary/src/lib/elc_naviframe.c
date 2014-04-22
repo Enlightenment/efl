@@ -75,7 +75,7 @@ _prev_page_focus_recover(Elm_Naviframe_Item *it)
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item *it;
 
@@ -340,7 +340,7 @@ _item_title_enabled_update(Elm_Naviframe_Item *nit, Eina_Bool transition)
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_theme_apply(Eo *obj, Elc_Naviframe_Data *sd)
+_elm_naviframe_elm_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item *it;
    const char *style = NULL, *sstyle = NULL;
@@ -871,7 +871,7 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 }
 
 EOLIAN static void
-_elc_naviframe_elm_layout_sizing_eval(Eo *obj, Elc_Naviframe_Data *sd)
+_elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Elm_Naviframe_Item *it, *top;
@@ -954,7 +954,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
 }
 
 EOLIAN static void
-_elc_naviframe_elm_layout_signal_emit(Eo *obj, Elc_Naviframe_Data *sd, const char *emission, const char *source)
+_elm_naviframe_elm_layout_signal_emit(Eo *obj, Elm_Naviframe_Data *sd, const char *emission, const char *source)
 {
    if (!sd->stack) return;
 
@@ -964,7 +964,7 @@ _elc_naviframe_elm_layout_signal_emit(Eo *obj, Elc_Naviframe_Data *sd, const cha
 /* content/text smart functions proxying things to the top item, which
  * is the resize object of the layout */
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_layout_text_set(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char *part, const char *label)
+_elm_naviframe_elm_layout_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
    Elm_Object_Item *it;
 
@@ -976,7 +976,7 @@ _elc_naviframe_elm_layout_text_set(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, 
 }
 
 EOLIAN static const char*
-_elc_naviframe_elm_layout_text_get(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_elm_layout_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
    if (!it) return NULL;
@@ -987,7 +987,7 @@ _elc_naviframe_elm_layout_text_get(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, 
 /* we have to keep a "manual" set here because of the callbacks on the
  * children */
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_container_content_set(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char *part, Evas_Object *content)
+_elm_naviframe_elm_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, Evas_Object *content)
 {
    Elm_Object_Item *it;
 
@@ -1003,7 +1003,7 @@ _elc_naviframe_elm_container_content_set(Eo *obj, Elc_Naviframe_Data *sd EINA_UN
 }
 
 EOLIAN static Evas_Object*
-_elc_naviframe_elm_container_content_get(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_elm_container_content_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
 
@@ -1013,7 +1013,7 @@ _elc_naviframe_elm_container_content_get(Eo *obj, Elc_Naviframe_Data *sd EINA_UN
 }
 
 EOLIAN static Evas_Object*
-_elc_naviframe_elm_container_content_unset(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_elm_container_content_unset(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
 
@@ -1234,7 +1234,7 @@ _on_obj_size_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_focus_next(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_naviframe_elm_widget_focus_next(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Evas_Object *ao;
 
@@ -1272,13 +1272,13 @@ end:
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_naviframe_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
 {
    Eina_Bool int_ret;
 
@@ -1302,7 +1302,7 @@ _elc_naviframe_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elc_Naviframe_Dat
 }
 
 EOLIAN static void
-_elc_naviframe_evas_smart_add(Eo *obj, Elc_Naviframe_Data *priv)
+_elm_naviframe_evas_smart_add(Eo *obj, Elm_Naviframe_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1342,7 +1342,7 @@ _pop_transition_cb(void *data)
 }
 
 EOLIAN static void
-_elc_naviframe_evas_smart_del(Eo *obj, Elc_Naviframe_Data *sd)
+_elm_naviframe_evas_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item *it;
 
@@ -1368,7 +1368,7 @@ _elc_naviframe_evas_smart_del(Eo *obj, Elc_Naviframe_Data *sd)
 
 //Show only the top item view
 EOLIAN static void
-_elc_naviframe_evas_smart_show(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_evas_smart_show(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
 {
    Elm_Naviframe_Item *top;
 
@@ -1393,7 +1393,7 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_event(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_naviframe_elm_widget_event(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void)src;
    Evas_Event_Key_Down *ev = event_info;
@@ -1407,7 +1407,7 @@ _elc_naviframe_elm_widget_event(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, Eva
 }
 
 EOLIAN static void
-_elc_naviframe_elm_widget_access(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, Eina_Bool is_access)
+_elm_naviframe_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool is_access)
 {
    Elm_Naviframe_Item *it;
 
@@ -1491,7 +1491,7 @@ elm_naviframe_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elc_naviframe_eo_base_constructor(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_eo_base_constructor(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -1500,7 +1500,7 @@ _elc_naviframe_eo_base_constructor(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static Elm_Object_Item*
-_elc_naviframe_item_push(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style)
+_elm_naviframe_item_push(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style)
 {
    Elm_Naviframe_Item *top_item, *item;
 
@@ -1513,7 +1513,7 @@ _elc_naviframe_item_push(Eo *obj, Elc_Naviframe_Data *sd EINA_UNUSED, const char
 }
 
 EOLIAN static Elm_Object_Item*
-_elc_naviframe_item_insert_before(Eo *obj, Elc_Naviframe_Data *sd, Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style)
+_elm_naviframe_item_insert_before(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style)
 {
    Elm_Naviframe_Item *it, *prev_it = NULL;
 
@@ -1539,7 +1539,7 @@ _elc_naviframe_item_insert_before(Eo *obj, Elc_Naviframe_Data *sd, Elm_Object_It
 }
 
 EOLIAN static Elm_Object_Item*
-_elc_naviframe_item_insert_after(Eo *obj, Elc_Naviframe_Data *sd, Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style)
+_elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style)
 {
    Elm_Naviframe_Item *it;
    Eina_Bool top_inserted = EINA_FALSE;
@@ -1577,7 +1577,7 @@ _elc_naviframe_item_insert_after(Eo *obj, Elc_Naviframe_Data *sd, Elm_Object_Ite
 }
 
 EOLIAN static Evas_Object*
-_elc_naviframe_item_pop(Eo *obj, Elc_Naviframe_Data *sd)
+_elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item *it, *prev_it = NULL;
    Evas_Object *content = NULL;
@@ -1703,7 +1703,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 }
 
 EOLIAN static void
-_elc_naviframe_item_simple_promote(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, Evas_Object *content)
+_elm_naviframe_item_simple_promote(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Evas_Object *content)
 {
    Elm_Naviframe_Item *itr;
 
@@ -1718,19 +1718,19 @@ _elc_naviframe_item_simple_promote(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, 
 }
 
 EOLIAN static void
-_elc_naviframe_content_preserve_on_pop_set(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, Eina_Bool preserve)
+_elm_naviframe_content_preserve_on_pop_set(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool preserve)
 {
    sd->preserve = !!preserve;
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_content_preserve_on_pop_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_content_preserve_on_pop_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    return sd->preserve;
 }
 
 EOLIAN static Elm_Object_Item*
-_elc_naviframe_top_item_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_top_item_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    if (!sd->stack) return NULL;
    return (Elm_Object_Item *)(EINA_INLIST_CONTAINER_GET
@@ -1738,7 +1738,7 @@ _elc_naviframe_top_item_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item*
-_elc_naviframe_bottom_item_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_bottom_item_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    if (!sd->stack) return NULL;
    return (Elm_Object_Item *)(EINA_INLIST_CONTAINER_GET
@@ -1826,19 +1826,19 @@ elm_naviframe_item_pop_cb_set(Elm_Object_Item *it, Elm_Naviframe_Item_Pop_Cb fun
 }
 
 EOLIAN static void
-_elc_naviframe_prev_btn_auto_pushed_set(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, Eina_Bool auto_pushed)
+_elm_naviframe_prev_btn_auto_pushed_set(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool auto_pushed)
 {
    sd->auto_pushed = !!auto_pushed;
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_prev_btn_auto_pushed_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_prev_btn_auto_pushed_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    return sd->auto_pushed;
 }
 
 EOLIAN static Eina_List*
-_elc_naviframe_items_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_items_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    Eina_List *ret = NULL;
    Elm_Naviframe_Item *itr;
@@ -1850,7 +1850,7 @@ _elc_naviframe_items_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
 }
 
 EOLIAN static void
-_elc_naviframe_event_enabled_set(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, Eina_Bool enabled)
+_elm_naviframe_event_enabled_set(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool enabled)
 {
    enabled = !!enabled;
    if (sd->freeze_events == !enabled) return;
@@ -1858,19 +1858,19 @@ _elc_naviframe_event_enabled_set(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd, Ei
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_event_enabled_get(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd)
+_elm_naviframe_event_enabled_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    return !sd->freeze_events;
 }
 
 EOLIAN static Eina_Bool
-_elc_naviframe_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elc_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 static void
-_elc_naviframe_class_constructor(Eo_Class *klass)
+_elm_naviframe_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

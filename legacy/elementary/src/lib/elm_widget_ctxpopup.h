@@ -19,7 +19,7 @@ typedef struct _Elm_Ctxpopup_Item       Elm_Ctxpopup_Item;
 /**
  * Base widget smart data extended with ctxpopup instance data.
  */
-typedef struct _Elc_Ctxpopup_Data Elc_Ctxpopup_Data;
+typedef struct _Elm_Ctxpopup_Data Elm_Ctxpopup_Data;
 struct _Elm_Ctxpopup_Item
 {
    ELM_WIDGET_ITEM;
@@ -34,7 +34,7 @@ struct _Elm_Ctxpopup_Item
      } wcb;
 };
 
-struct _Elc_Ctxpopup_Data
+struct _Elm_Ctxpopup_Data
 {
    Evas_Object           *parent;
    Evas_Object           *list;
@@ -61,7 +61,7 @@ struct _Elc_Ctxpopup_Data
  */
 
 #define ELM_CTXPOPUP_DATA_GET(o, sd) \
-  Elc_Ctxpopup_Data * sd = eo_data_scope_get(o, ELM_OBJ_CTXPOPUP_CLASS)
+  Elm_Ctxpopup_Data * sd = eo_data_scope_get(o, ELM_OBJ_CTXPOPUP_CLASS)
 
 #define ELM_CTXPOPUP_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_CTXPOPUP_DATA_GET(o, ptr);                     \

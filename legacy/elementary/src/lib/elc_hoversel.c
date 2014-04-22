@@ -37,7 +37,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static Eina_Bool
-_elc_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
+_elm_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Elm_Hoversel_Item *it;
    Eina_List *l;
@@ -51,7 +51,7 @@ _elc_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elc_hoversel_elm_widget_theme_apply(Eo *obj, Elc_Hoversel_Data *sd)
+_elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -277,7 +277,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 }
 
 EOLIAN static void
-_elc_hoversel_evas_smart_add(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED)
+_elm_hoversel_evas_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -291,7 +291,7 @@ _elc_hoversel_evas_smart_add(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elc_hoversel_evas_smart_del(Eo *obj, Elc_Hoversel_Data *sd)
+_elm_hoversel_evas_smart_del(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Hoversel_Item *item;
 
@@ -308,27 +308,27 @@ _elc_hoversel_evas_smart_del(Eo *obj, Elc_Hoversel_Data *sd)
 }
 
 EOLIAN static void
-_elc_hoversel_evas_smart_show(Eo *obj, Elc_Hoversel_Data *sd)
+_elm_hoversel_evas_smart_show(Eo *obj, Elm_Hoversel_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
    evas_object_show(sd->hover);
 }
 
 EOLIAN static void
-_elc_hoversel_evas_smart_hide(Eo *obj, Elc_Hoversel_Data *sd)
+_elm_hoversel_evas_smart_hide(Eo *obj, Elm_Hoversel_Data *sd)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    evas_object_hide(sd->hover);
 }
 
 EOLIAN static void
-_elc_hoversel_elm_widget_parent_set(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
+_elm_hoversel_elm_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
 {
    elm_hoversel_hover_parent_set(obj, parent);
 }
 
 EOLIAN static Eina_Bool
-_elc_hoversel_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd EINA_UNUSED)
+_elm_hoversel_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -343,7 +343,7 @@ elm_hoversel_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elc_hoversel_eo_base_constructor(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED)
+_elm_hoversel_eo_base_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
@@ -352,7 +352,7 @@ _elc_hoversel_eo_base_constructor(Eo *obj, Elc_Hoversel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elc_hoversel_hover_parent_set(Eo *obj, Elc_Hoversel_Data *sd, Evas_Object *parent)
+_elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *parent)
 {
    if (sd->hover_parent)
      evas_object_event_callback_del_full
@@ -365,13 +365,13 @@ _elc_hoversel_hover_parent_set(Eo *obj, Elc_Hoversel_Data *sd, Evas_Object *pare
 }
 
 EOLIAN static Evas_Object*
-_elc_hoversel_hover_parent_get(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
+_elm_hoversel_hover_parent_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->hover_parent;
 }
 
 EOLIAN static void
-_elc_hoversel_horizontal_set(Eo *obj, Elc_Hoversel_Data *sd, Eina_Bool horizontal)
+_elm_hoversel_horizontal_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bool horizontal)
 {
    sd->horizontal = !!horizontal;
 
@@ -379,13 +379,13 @@ _elc_hoversel_horizontal_set(Eo *obj, Elc_Hoversel_Data *sd, Eina_Bool horizonta
 }
 
 EOLIAN static Eina_Bool
-_elc_hoversel_horizontal_get(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
+_elm_hoversel_horizontal_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->horizontal;
 }
 
 EOLIAN static void
-_elc_hoversel_hover_begin(Eo *obj, Elc_Hoversel_Data *sd)
+_elm_hoversel_hover_begin(Eo *obj, Elm_Hoversel_Data *sd)
 {
    if (sd->hover) return;
 
@@ -393,7 +393,7 @@ _elc_hoversel_hover_begin(Eo *obj, Elc_Hoversel_Data *sd)
 }
 
 EOLIAN static void
-_elc_hoversel_hover_end(Eo *obj, Elc_Hoversel_Data *sd)
+_elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -412,13 +412,13 @@ _elc_hoversel_hover_end(Eo *obj, Elc_Hoversel_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elc_hoversel_expanded_get(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
+_elm_hoversel_expanded_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return (sd->hover) ? EINA_TRUE : EINA_FALSE;
 }
 
 EOLIAN static void
-_elc_hoversel_clear(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
+_elm_hoversel_clear(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l, *ll;
@@ -430,13 +430,13 @@ _elc_hoversel_clear(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elc_hoversel_items_get(Eo *obj EINA_UNUSED, Elc_Hoversel_Data *sd)
+_elm_hoversel_items_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->items;
 }
 
 EOLIAN static Elm_Object_Item*
-_elc_hoversel_item_add(Eo *obj, Elc_Hoversel_Data *sd, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
+_elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
 {
    Elm_Hoversel_Item *item = elm_widget_item_new(obj, Elm_Hoversel_Item);
    if (!item) return NULL;
@@ -490,7 +490,7 @@ elm_hoversel_item_icon_get(const Elm_Object_Item *it,
 }
 
 static Elm_Hoversel_Item *
-item_focused_get(Elc_Hoversel_Data *sd)
+item_focused_get(Elm_Hoversel_Data *sd)
 {
    Elm_Hoversel_Item *item;
    Eina_List *l;
@@ -555,7 +555,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elc_hoversel_elm_widget_event(Eo *obj, Elc_Hoversel_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_hoversel_elm_widget_event(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Eina_Bool int_ret = EINA_FALSE;
@@ -576,7 +576,7 @@ _elc_hoversel_elm_widget_event(Eo *obj, Elc_Hoversel_Data *sd, Evas_Object *src,
 }
 
 static void
-_elc_hoversel_class_constructor(Eo_Class *klass)
+_elm_hoversel_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }

@@ -1,6 +1,5 @@
-class Elc_Naviframe (Elm_Layout)
+class Elm_Naviframe (Elm_Layout)
 {
-   legacy_prefix: elm_naviframe;
    eo_prefix: elm_obj_naviframe;
    properties {
       event_enabled {

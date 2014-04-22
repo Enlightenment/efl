@@ -1,6 +1,5 @@
-class Elc_Multibuttonentry (Elm_Layout)
+class Elm_Multibuttonentry (Elm_Layout)
 {
-   legacy_prefix: elm_multibuttonentry;
    eo_prefix: elm_obj_multibuttonentry;
    properties {
       editable {

@@ -1,7 +1,6 @@
-class Elc_Popup (Elm_Layout)
+class Elm_Popup (Elm_Layout)
 {
    eo_prefix: elm_obj_popup;
-   legacy_prefix: elm_popup;
    properties {
       align {
          set {

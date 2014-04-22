@@ -1,6 +1,5 @@
-class Elc_Fileselector_Entry (Elm_Layout, Elm_Interface_Fileselector)
+class Elm_Fileselector_Entry (Elm_Layout, Elm_Interface_Fileselector)
 {
-   legacy_prefix: elm_fileselector_entry;
    eo_prefix: elm_obj_fileselector_entry;
    properties {
       inwin_mode {

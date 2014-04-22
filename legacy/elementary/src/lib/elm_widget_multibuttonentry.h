@@ -65,9 +65,9 @@ typedef struct _Elm_Multibuttonentry_Item_Filter
    void                               *data;
 } Elm_Multibuttonentry_Item_Filter;
 
-typedef struct _Elc_Multibuttonentry_Data
-  Elc_Multibuttonentry_Data;
-struct _Elc_Multibuttonentry_Data
+typedef struct _Elm_Multibuttonentry_Data
+  Elm_Multibuttonentry_Data;
+struct _Elm_Multibuttonentry_Data
 {
    Evas_Object                        *parent;
    Evas_Object                        *box;
@@ -106,7 +106,7 @@ struct _Elc_Multibuttonentry_Data
  */
 
 #define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(o, ptr) \
-  Elc_Multibuttonentry_Data *ptr = eo_data_scope_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
+  Elm_Multibuttonentry_Data *ptr = eo_data_scope_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
        CRI("No widget data for object %p (%s)",         \
@@ -115,7 +115,7 @@ struct _Elc_Multibuttonentry_Data
     }
 
 #define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  Elc_Multibuttonentry_Data * ptr = eo_data_scope_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
+  Elm_Multibuttonentry_Data * ptr = eo_data_scope_get(o, ELM_OBJ_MULTIBUTTONENTRY_CLASS); \
   if (EINA_UNLIKELY(!ptr))                                       \
     {                                                            \
        CRI("No widget data for object %p (%s)",                  \

@@ -1,7 +1,6 @@
-class Elc_Hoversel (Elm_Button, Evas_Selectable_Interface)
+class Elm_Hoversel (Elm_Button, Evas_Selectable_Interface)
 {
    eo_prefix: elm_obj_hoversel;
-   legacy_prefix: elm_hoversel;
    properties {
       horizontal {
          set {
