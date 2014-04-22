@@ -256,7 +256,7 @@ EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 #define EO_INVALID_DATA (void *) -1
 // 1024 entries == 8k or 16k (32 or 64bit) for eo call stack. that's 1024
 // recursion entires it can handle before barfing. i'd say that's ok
-#define EO_CALL_STACK_DEPTH 1024
+#define EO_CALL_STACK_DEPTH 16
 
 typedef struct _Eo_Stack_Frame
 {
@@ -272,10 +272,12 @@ typedef struct _Eo_Stack_Frame
 static Eina_TLS _eo_call_stack_key = 0;
 
 typedef struct _Eo_Call_Stack {
-     Eo_Stack_Frame *frames;
-     Eo_Stack_Frame *frame_ptr;
-     Eo_Stack_Frame *last_frame;
-     Eo_Stack_Frame *shrink_frame;
+   Eo_Stack_Frame *frames;
+   Eo_Stack_Frame *frame_ptr;
+   Eo_Stack_Frame *last_frame;
+   Eo_Stack_Frame *shrink_frame;
+   size_t max_size;
+   int dropcount;
 } Eo_Call_Stack;
 
 #define MEM_PAGE_SIZE 4096
@@ -345,8 +347,8 @@ _eo_call_stack_create()
 
 // XXX: leave in for noew in case this breaks, but remove later when ok
 //   stack->frames = calloc(EO_CALL_STACK_DEPTH, sizeof(Eo_Stack_Frame));
-   stack->frames = _eo_call_stack_mem_alloc(EO_CALL_STACK_DEPTH *
-                                            sizeof(Eo_Stack_Frame));
+   stack->max_size = 8192 * sizeof(Eo_Stack_Frame);
+   stack->frames = _eo_call_stack_mem_alloc(stack->max_size);
    if (!stack->frames)
      {
         free(stack);
@@ -372,9 +374,7 @@ _eo_call_stack_free(void *ptr)
      {
 // XXX: leave in for noew in case this breaks, but remove later when ok
 //        free(stack->frames);
-        _eo_call_stack_mem_free(stack->frames,
-                                (stack->last_frame - stack->frames + 1) *
-                                sizeof(Eo_Stack_Frame));
+        _eo_call_stack_mem_free(stack->frames, stack->max_size);
      }
    free(stack);
 }
@@ -409,19 +409,34 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
    size_t sz, next_sz;
    int frame_offset;
 
-   frame_offset = stack->frame_ptr - stack->frames;
    sz = stack->last_frame - stack->frames + 1;
    if (grow)
-     next_sz = sz << 1;
+     {
+        next_sz = sz * 2;
+        // reset drop counter to avoid dropping stack for up to 2 ^ 18
+        // requests/tries
+        stack->dropcount = 1 << 18;
+     }
    else
-     next_sz = sz >> 1;
+     {
+        // if we want to drop - delay if dropcounter still > 0 and drop it
+        if (stack->dropcount > 0)
+          {
+             stack->dropcount--;
+             return;
+          }
+        // actually drop
+        next_sz = sz / 2;
+     }
+   frame_offset = stack->frame_ptr - stack->frames;
 
    DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
 // XXX: leave in for noew in case this breaks, but remove later when ok
 //   stack->frames = realloc(stack->frames, next_sz * sizeof(Eo_Stack_Frame));
-   _eo_call_stack_mem_resize((void **)&(stack->frames),
-                             next_sz * sizeof(Eo_Stack_Frame),
-                             sz * sizeof(Eo_Stack_Frame));
+   if (!grow)
+     _eo_call_stack_mem_resize((void **)&(stack->frames),
+                               next_sz * sizeof(Eo_Stack_Frame),
+                               stack->max_size);
    if (!stack->frames)
      {
         CRI("unable to resize call stack, abort.");
@@ -534,7 +549,7 @@ _eo_do_end(const Eo **eo_id EINA_UNUSED)
 
    stack->frame_ptr--;
 
-   if (fptr == stack->shrink_frame)
+   if (fptr <= stack->shrink_frame)
      _eo_call_stack_resize(stack, EINA_FALSE);
 }
 
