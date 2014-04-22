@@ -31,7 +31,6 @@ typedef struct _Part_Lookup_Key Part_Lookup_Key;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Group_Lookup Group_Lookup;
 typedef struct _Image_Lookup Image_Lookup;
-typedef struct _Slave_Lookup Slave_Lookup;
 typedef struct _Code_Lookup Code_Lookup;
 
 
@@ -93,12 +92,6 @@ struct _Image_Lookup
    char *name;
    int *dest;
    Eina_Bool *set;
-};
-
-struct _Slave_Lookup
-{
-   int *master;
-   int *slave;
 };
 
 struct _Code_Lookup
@@ -219,8 +212,6 @@ static Eina_List *program_lookups = NULL;
 static Eina_List *group_lookups = NULL;
 static Eina_List *face_group_lookups = NULL;
 static Eina_List *image_lookups = NULL;
-static Eina_List *part_slave_lookups = NULL;
-static Eina_List *image_slave_lookups= NULL;
 
 static Eina_Hash *part_dest_lookup = NULL;
 static Eina_Hash *part_pc_dest_lookup = NULL;
@@ -2462,38 +2453,6 @@ data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set)
           data_queue_image_lookup(il->name, dest, set);
      }
 }
-void
-data_queue_part_slave_lookup(int *master, int *slave)
-{
-   Slave_Lookup *sl;
-
-   sl = mem_alloc(SZ(Slave_Lookup));
-   part_slave_lookups = eina_list_append(part_slave_lookups, sl);
-   sl->master = master;
-   sl->slave = slave;
-}
-
-void
-data_queue_image_slave_lookup(int *master, int *slave)
-{
-   Slave_Lookup *sl;
-
-   sl = mem_alloc(SZ(Slave_Lookup));
-   image_slave_lookups = eina_list_append(image_slave_lookups, sl);
-   sl->master = master;
-   sl->slave = slave;
-}
-
-void
-handle_slave_lookup(Eina_List *list, int *master, int value)
-{
-   Eina_List *l;
-   Slave_Lookup *sl;
-
-   EINA_LIST_FOREACH(list, l, sl)
-     if (sl->master == master)
-       *sl->slave = value;
-}
 
 static void
 data_process_part_set(Part_Lookup *target, int value)
@@ -2574,7 +2533,6 @@ data_process_lookups(void)
    Eina_List *l2;
    Eina_List *l;
    Eina_Hash *images_in_use;
-   void *data;
    char *group_name;
    Eina_Bool is_lua = EINA_FALSE;
    Image_Unused_Ids *iui;
@@ -2673,20 +2631,6 @@ data_process_lookups(void)
 
                   if ((ep->name) && (!strcmp(ep->name, alias)))
                     {
-                       int *master;
-
-                       if (part->key.stable)
-                         {
-                            master = part->key.mem.dest;
-                         }
-                       else
-                         {
-                            master = (int*)(*part->key.mem.reallocated.base +
-                                            part->key.mem.reallocated.offset);
-                         }
-                       handle_slave_lookup(part_slave_lookups,
-                                           master,
-                                           ep->id);
                        data_process_part_set(part, ep->id);
                        break;
                     }
@@ -2832,7 +2776,6 @@ free_group:
 
                   if ((de->entry) && (!strcmp(de->entry, image->name)))
                     {
-                       handle_slave_lookup(image_slave_lookups, image->dest, de->id);
                        if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
                          *(image->dest) = -de->id - 1;
                        else
@@ -2859,7 +2802,6 @@ free_group:
                             Edje_Image_Directory_Set_Entry *child;
                             Eina_List *lc;
 
-                            handle_slave_lookup(image_slave_lookups, image->dest, set->id);
                             *(image->dest) = set->id;
                             *(image->set) = EINA_TRUE;
                             find = EINA_TRUE;
@@ -2945,12 +2887,6 @@ free_group:
      }
 
    eina_hash_free(images_in_use);
-
-   EINA_LIST_FREE(part_slave_lookups, data)
-     free(data);
-
-   EINA_LIST_FREE(image_slave_lookups, data)
-     free(data);
 }
 
 static void

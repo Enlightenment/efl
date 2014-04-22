@@ -182,8 +182,6 @@ void    data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, i
 void    data_queue_image_lookup(char *name, int *dest, Eina_Bool *set);
 void    data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set);
 void    data_queue_image_remove(int *dest, Eina_Bool *set);
-void    data_queue_part_slave_lookup(int *master, int *slave);
-void    data_queue_image_slave_lookup(int *master, int *slave);
 void    data_queue_spectrum_lookup(char *name, int *dest);
 void    data_queue_spectrum_slave_lookup(int *master, int *slave);
 void    data_process_lookups(void);
