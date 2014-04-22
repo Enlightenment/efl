@@ -2832,6 +2832,8 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_GRY8:
          if (to_write)
            {
               if (im->references > 1)
@@ -2863,6 +2865,11 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
          *image_data = im->cs.data;
+         break;
+      case EVAS_COLORSPACE_ETC1:
+         ERR("This image is encoded in ETC1, not returning any data");
+         *err = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+         *image_data = NULL;
          break;
       default:
          abort();
@@ -3213,7 +3220,24 @@ eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
    if ((im->tex) && (im->tex->pt->dyn.img))
      *stride = im->tex->pt->dyn.stride;
    else
-     *stride = im->w * 4;
+     {
+        switch (im->cs.space)
+          {
+           case EVAS_COLORSPACE_ARGB8888:
+             *stride = im->w * 4;
+             return;
+           case EVAS_COLORSPACE_AGRY88:
+             *stride = im->w * 2;
+             return;
+           case EVAS_COLORSPACE_GRY8:
+             *stride = im->w * 1;
+             return;
+           default:
+             ERR("Requested stride on an invalid format %d", im->cs.space);
+             *stride = 0;
+             return;
+          }
+     }
 }
 
 static Eina_Bool
