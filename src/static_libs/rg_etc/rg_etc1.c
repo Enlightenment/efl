@@ -46,6 +46,14 @@ typedef unsigned char DATA8;
 #define cUINT64_MAX ULLONG_MAX
 #define RG_ETC1_ARRAY_SIZE(X) (sizeof(X) / sizeof((X)[0]))
 
+// Some configuration defines
+
+// Disable this constrained function, it produces artifacts (in black areas mostly)
+#define RG_ETC1_CONSTRAINED_SUBBLOCK 0
+// Disable dithering. It uses invalid RGBA order and isn't great visually
+// Dithering should happen AFTER the color selection, not before
+#define RG_ETC1_DITHERING 0
+
 enum RG_Etc_Constants
   {
     cETC1BytesPerBlock = 8U,
@@ -105,26 +113,48 @@ enum RG_Etc_Constants
     // 0   1   2   3   -4  -3  -2  -1
   };
 
+/*
+ * IMPORTANT NOTE:
+ *
+ * rg_etc1 originally works only on R,G,B,A data
+ * evas works on B,G,R,A data
+ *
+ * ARGB_JOIN() is used for unpacking, so it will directly produce BGRA.
+ *
+ * Upon packing, we convert BGRA to RGBA so we can use the precomputed tables,
+ * so we must use the X_VAL_GET() macros.
+ * Upon unpacking, we directly output BGRA data using ARGB_JOIN() and X_VAL_SET()
+ *
+ * Yes, this is a mess. Maybe a clear BGRA API is needed
+ */
+
 #ifndef WORDS_BIGENDIAN
-/* x86 */
-#define R_VAL(p) (((DATA8 *)(p))[0])
-#define G_VAL(p) (((DATA8 *)(p))[1])
-#define B_VAL(p) (((DATA8 *)(p))[2])
-#define A_VAL(p) (((DATA8 *)(p))[3])
-#define BA_VAL(p) ((DATA16 *)(p)[1])
-#define RG_VAL(p) ((DATA16 *)(p)[0])
+// BGRA
+#define A_VAL_SET(p) (((DATA8 *)(p))[3])
+#define R_VAL_SET(p) (((DATA8 *)(p))[2])
+#define G_VAL_SET(p) (((DATA8 *)(p))[1])
+#define B_VAL_SET(p) (((DATA8 *)(p))[0])
+// RGBA
+#define A_VAL_GET(p) (((DATA8 *)(p))[3])
+#define R_VAL_GET(p) (((DATA8 *)(p))[0])
+#define G_VAL_GET(p) (((DATA8 *)(p))[1])
+#define B_VAL_GET(p) (((DATA8 *)(p))[2])
 #else
-/* ppc */
-#define R_VAL(p) (((DATA8 *)(p))[3])
-#define G_VAL(p) (((DATA8 *)(p))[2])
-#define B_VAL(p) (((DATA8 *)(p))[1])
-#define A_VAL(p) (((DATA8 *)(p))[0])
-#define BA_VAL(p) ((DATA16 *)(p)[0])
-#define RG_VAL(p) ((DATA16 *)(p)[1])
+// BIGENDIAN is untested
+#define A_VAL_SET(p) (((DATA8 *)(p))[0])
+#define R_VAL_SET(p) (((DATA8 *)(p))[1])
+#define G_VAL_SET(p) (((DATA8 *)(p))[2])
+#define B_VAL_SET(p) (((DATA8 *)(p))[3])
+#define A_VAL_GET(p) (((DATA8 *)(p))[0])
+#define R_VAL_GET(p) (((DATA8 *)(p))[3])
+#define G_VAL_GET(p) (((DATA8 *)(p))[2])
+#define B_VAL_GET(p) (((DATA8 *)(p))[1])
 #endif
 
-#define ARGB_JOIN(a,r,g,b)                              \
-  (((a) << 24) + ((b) << 16) + ((g) << 8) + (r))
+// For unpacking and writing BGRA output data
+#define ARGB_JOIN(a,r,g,b) \
+        (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+
 static unsigned char rg_etc_quant5_tab[256 + 16];
 
 static const int rg_etc1_inten_tables[cETC1IntenModifierValues][cETC1SelectorValues] = {
@@ -428,14 +458,16 @@ typedef union
       unsigned char a;
    } comp;
 
-   unsigned char c[4];
-
    unsigned int m_u32;
 } color_quad_u8;
 
 static inline int
 rg_etc1_color_quad_u8_clamp(int v)
 {
+   /* FIXME: (From Wikipedia)
+    * "In C, the result of right-shifting a negative value is implementation-defined"
+    * The following code assumes right-shift will duplicate the sign bit.
+    */
    if (v & 0xFFFFFF00U)
      v = ((~v) >> 31) & 0xFF;
    return v;
@@ -464,14 +496,13 @@ rg_etc1_color_quad_u8_clear(color_quad_u8 *color)
 static inline unsigned int
 rg_etc1_color_quad_u8_rgb_squared_distance(color_quad_u8 color1, color_quad_u8 color2)
 {
-
    return SQUARE((color1.comp.r - color2.comp.r)) + SQUARE((color1.comp.g - color2.comp.g)) + SQUARE((color1.comp.b - color2.comp.b));
 }
 
+#if RG_ETC1_CONSTRAINED_SUBBLOCK
 static inline void
 rg_etc1_color_quad_u8_component_set(color_quad_u8 *color, unsigned char idx, unsigned char value)
 {
-
    switch (idx)
      {
       case 0: color->comp.r = value; break;
@@ -480,14 +511,16 @@ rg_etc1_color_quad_u8_component_set(color_quad_u8 *color, unsigned char idx, uns
       case 3: color->comp.a = value; break;
       default: abort();
      }
-
 }
+#endif
 
+#if 0
 static inline unsigned int
 rg_etc1_color_quad_duplicate_init(unsigned char y, unsigned char alpha)
 {
    return ARGB_JOIN(alpha, y, y, y);
 }
+#endif
 
 static inline unsigned int
 rg_etc1_color_quad_init(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)
@@ -502,10 +535,11 @@ rg_etc1_color_quad_set(unsigned int old_color, unsigned int new_color, unsigned 
      {
         unsigned char r, g, b, a;
 
-        a = A_VAL(&old_color);
-        r = R_VAL(&new_color);
-        g = G_VAL(&new_color);
-        b = B_VAL(&new_color);
+        // Used for UNPACKING
+        a = A_VAL_SET(&old_color);
+        r = R_VAL_SET(&new_color);
+        g = G_VAL_SET(&new_color);
+        b = B_VAL_SET(&new_color);
 
         return ARGB_JOIN(a, r, g, b);
      }
@@ -515,26 +549,31 @@ rg_etc1_color_quad_set(unsigned int old_color, unsigned int new_color, unsigned 
 static inline void
 rg_etc1_color_quad_get(unsigned int color, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *alpha)
 {
-   if (r) *r = R_VAL(&color);
-   if (g) *g = G_VAL(&color);
-   if (b) *b = B_VAL(&color);
-   if (alpha) *alpha = A_VAL(&color);
+   // Used for PACKING
+   if (r) *r = R_VAL_GET(&color);
+   if (g) *g = G_VAL_GET(&color);
+   if (b) *b = B_VAL_GET(&color);
+   if (alpha) *alpha = A_VAL_GET(&color);
 }
 
+#if RG_ETC1_CONSTRAINED_SUBBLOCK
 static inline unsigned char
 rg_etc1_color_quad_component_get(unsigned int color, unsigned char idx)
 {
    switch (idx)
      {
-      case 0: return R_VAL(&color);
-      case 1: return G_VAL(&color);
-      case 2: return B_VAL(&color);
-      case 3: return A_VAL(&color);
+      // FIXME: Untested code (RGBA vs BGRA)
+      case 0: return R_VAL_GET(&color);
+      case 1: return G_VAL_GET(&color);
+      case 2: return B_VAL_GET(&color);
+      case 3: return A_VAL_GET(&color);
       default: abort();
      }
    return 0;
 }
+#endif
 
+#if 0
 static inline unsigned int
 rg_etc1_color_quad_component_set(unsigned int color, unsigned char idx, unsigned char value)
 {
@@ -559,7 +598,7 @@ rg_etc1_color_quad_grayscale_set(unsigned int color, unsigned char l)
 {
    unsigned char a;
 
-   a = A_VAL(&color);
+   a = A_VAL_SET(&color);
 
    return rg_etc1_color_quad_init(l, l, l, a);
 }
@@ -635,8 +674,8 @@ rg_etc1_color_quad_argb_squared_distance(unsigned int color1, unsigned int color
 static inline unsigned char
 rg_etc1_color_quad_rgb_equals(unsigned int color1, unsigned int color2)
 {
-   A_VAL(&color1) = 0;
-   A_VAL(&color2) = 0;
+   A_VAL_SET(&color1) = 0;
+   A_VAL_SET(&color2) = 0;
 
    return color1 == color2;
 }
@@ -676,6 +715,7 @@ rg_etc1_color_quad_del(unsigned int color1, unsigned int color2)
 
    return color1;
 }
+#endif
 
 static inline void
 rg_etc1_vec_init(float v[3], float s)
@@ -1162,7 +1202,7 @@ rg_etc1_block_subblock_color4_abs_get(unsigned int dst[4], unsigned short packed
 
 // This is the exported function to unpack a block
 bool
-rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pixels, bool preserve_alpha)
+rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pDst_pixels_BGRA, bool preserve_alpha)
 {
    unsigned char diff_flag, flip_flag, table_index0, table_index1;
    unsigned int subblock_colors0[4] = { 0 };
@@ -1216,19 +1256,19 @@ rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pixels, bool preserve
         for (y = 0; y < 2; y++)
           {
              for (x = 0; x < 4; x++)
-               pixels[x] = rg_etc1_color_quad_set(pixels[x],
+               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
                                                   subblock_colors0[rg_etc1_block_selector_get(ETC1_block, x, y)],
                                                   preserve_alpha);
-             pixels += 4;
+             pDst_pixels_BGRA += 4;
           }
 
         for (y = 2; y < 4; y++)
           {
              for (x = 0; x < 4; x++)
-               pixels[x] = rg_etc1_color_quad_set(pixels[x],
+               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
                                                   subblock_colors1[rg_etc1_block_selector_get(ETC1_block, x, y)],
                                                   preserve_alpha);
-             pixels += 4;
+             pDst_pixels_BGRA += 4;
           }
      }
    else
@@ -1236,15 +1276,15 @@ rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pixels, bool preserve
         for (y = 0; y < 4; y++)
           {
              for (x = 0; x < 2; x++)
-               pixels[x] = rg_etc1_color_quad_set(pixels[x],
+               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
                                                   subblock_colors0[rg_etc1_block_selector_get(ETC1_block, x, y)],
                                                   preserve_alpha);
              for (; x < 4; x++)
-               pixels[x] = rg_etc1_color_quad_set(pixels[x],
+               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
                                                   subblock_colors1[rg_etc1_block_selector_get(ETC1_block, x, y)],
                                                   preserve_alpha);
 
-             pixels += 4;
+             pDst_pixels_BGRA += 4;
           }
      }
 
@@ -1438,9 +1478,7 @@ rg_etc1_solution_coordinates_get_scaled_color(color_quad_u8 *color, const Etc1_S
    unsigned char br, bg, bb;
 
    rg_etc1_solution_coordinates_component_get(coords, &br, &bg, &bb);
-
-   rg_etc1_color_quad_u8_init(color,br, bg, bb, 255);
-
+   rg_etc1_color_quad_u8_init(color, br, bg, bb, 255);
 }
 
 static inline void
@@ -2112,8 +2150,10 @@ void rg_etc1_pack_block_init()
 // Packs solid color blocks efficiently using a set of small precomputed tables.
 // For random 888 inputs, MSE results are better than Erricson's ETC1 packer in "slow" mode ~9.5% of the time, is slightly worse only ~.01% of the time, and is equal the rest of the time.
 static uint64
-rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED)
+rg_etc1_pack_block_solid_color(unsigned char *block, const color_quad_u8 *color, rg_etc1_pack_params *pack_params EINA_UNUSED)
 {
+   const uint8 *pColor = (uint8 *) &color->m_u32;
+
    if (!rg_etc1_inverse_lookup[0][255])
      rg_etc1_pack_block_init();
 
@@ -2123,8 +2163,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
         return 0;
      }
 
-   static uint s_next_comp[4] = { 1, 2, 0, 1 };
-
+   const uint s_next_comp[4] = { 1, 2, 0, 1 };
    uint best_error = cUINT32_MAX, best_i = 0;
    int best_x = 0, best_packed_c1 = 0, best_packed_c2 = 0;
    uint i;
@@ -2133,13 +2172,15 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
    // that allow that 8-bit value to be encoded with no error.
    for (i = 0; i < 3; i++)
      {
-        const uint c1 = pColor[s_next_comp[i]], c2 = pColor[s_next_comp[i + 1]];
+        const int c0 = pColor[i];
+        const int c1 = pColor[s_next_comp[i]];
+        const int c2 = pColor[s_next_comp[i + 1]];
 
         const int delta_range = 1;
         int delta;
         for (delta = -delta_range; delta <= delta_range; delta++)
           {
-             const int c_plus_delta = CLAMP(pColor[i] + delta, 0, 255);
+             const int c_plus_delta = CLAMP(c0 + delta, 0, 255);
 
              uint16* pTable;
              if (!c_plus_delta)
@@ -2168,7 +2209,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
                   pInverse_table = rg_etc1_inverse_lookup[x & 0xFF];
                   p1 = pInverse_table[c1];
                   p2 = pInverse_table[c2];
-                  trial_error = SQUARE((c_plus_delta - pColor[i])) + SQUARE((p1 >> 8)) + SQUARE((p2 >> 8));
+                  trial_error = SQUARE((c_plus_delta - c0)) + SQUARE((p1 >> 8)) + SQUARE((p2 >> 8));
                   if (trial_error < best_error)
                     {
                        best_error = trial_error;
@@ -2216,7 +2257,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const uint8* pColor, rg_etc
    return best_error;
 }
 
-#if 0
+#if RG_ETC1_CONSTRAINED_SUBBLOCK
 static uint
 rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,uint num_colors,
                                            const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED,
@@ -2347,6 +2388,7 @@ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,ui
 }
 #endif
 
+#if RG_ETC1_DITHERING
 // Function originally from RYG's public domain real-time DXT1 compressor, modified for 555.
 static void
 rg_etc1_dither_block_555(color_quad_u8* dest, color_quad_u8* block)
@@ -2393,15 +2435,33 @@ rg_etc1_dither_block_555(color_quad_u8* dest, color_quad_u8* block)
           }
      }
 }
+#endif
+
+static inline unsigned int
+_bgra_to_rgba(unsigned int val)
+{
+   //(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+   return ARGB_JOIN(A_VAL_GET(&val), R_VAL_GET(&val), G_VAL_GET(&val), B_VAL_GET(&val));
+}
+
+static void
+_bgra_to_rgba_block(color_quad_u8 *output, const unsigned int *input, int len)
+{
+   for (int k = len; k; --k)
+     {
+        output->m_u32 = _bgra_to_rgba(*input++);
+        output++;
+     }
+}
 
 unsigned int
-rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_etc1_pack_params *pack_params)
+rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_etc1_pack_params *pack_params)
 {
-   color_quad_u8* pSrc_pixels = (color_quad_u8 *)pSrc_pixels_rgba;
+   color_quad_u8 pSrc_pixels[16];
    unsigned char *dst_block = (unsigned char *)pETC1_block;
    unsigned int first_pixel_u32;
    int r;
-   color_quad_u8 dithered_pixels[16], subblock_pixels[8];
+   color_quad_u8 subblock_pixels[8];
    uint64 best_error = cUINT64_MAX;
    uint best_use_color4=EINA_FALSE;
    uint best_flip=EINA_FALSE;
@@ -2417,7 +2477,6 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
    static const int s_scan_delta_0_to_4[] = { -4, -3, -2, -1, 0, 1, 2, 3, 4 };
    static const int s_scan_delta_0_to_1[] = { -1, 0, 1 };
    static const int s_scan_delta_0[] = { 0 };
-   first_pixel_u32 = *pSrc_pixels_rgba;
 
 #ifdef RG_ETC1_BUILD_DEBUG
    // Ensure all alpha values are 0xFF.
@@ -2429,19 +2488,26 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
 #endif
    rg_etc1_optimizer_clear(&optimizer);
 
+   // Convert evas BGRA to rg_etc1 RGBA
+   _bgra_to_rgba_block(pSrc_pixels, pSrc_pixels_BGRA, 16);
+   first_pixel_u32 = pSrc_pixels[0].m_u32;
+
    // Check for solid block.
    for (r = 15; r >= 1; --r)
      if (pSrc_pixels[r].m_u32 != first_pixel_u32)
        break;
    if (!r)
-     return (unsigned int)(16 * rg_etc1_pack_block_solid_color(dst_block, &pSrc_pixels[0].comp.r, pack_params));
+     return (unsigned int)(16 * rg_etc1_pack_block_solid_color(dst_block, &pSrc_pixels[0], pack_params));
 
+#if RG_ETC1_DITHERING
    // Dithering gives mitigated results... It would be nice to know when to use it.
+   color_quad_u8 dithered_pixels[16];
    if (pack_params->m_dithering)
      {
         rg_etc1_dither_block_555(dithered_pixels, pSrc_pixels);
         pSrc_pixels = dithered_pixels;
      }
+#endif
 
    for (i = 0; i < 2; i++)
      {
@@ -2473,6 +2539,8 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
              uint subblock;
              for (subblock = 0; subblock < 2; subblock++)
                {
+                  results[2].m_error = cUINT64_MAX;
+
                   if (flip)
                     // subblock is top or bottom, copy source
                     memcpy(subblock_pixels, pSrc_pixels + subblock * 8, sizeof(color_quad_u8) * 8);
@@ -2490,10 +2558,7 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_e
                        rg_etc1_color_quad_u8_copy(&subblock_pixels[7], &pSrc_col[13]);
                     }
 
-                  results[2].m_error = cUINT64_MAX;
-
-#if 0
-                  // This feature is disabled because it will produce some visual artifacts
+#if RG_ETC1_CONSTRAINED_SUBBLOCK
                   if ((params.base_params->m_quality >= rg_etc1_medium_quality) && ((subblock) || (use_color4)))
                     {
                        const uint32 subblock_pixel0_u32 = subblock_pixels[0].m_u32;
