@@ -4467,6 +4467,46 @@ _edje_real_part_table_clear(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear)
      }
 }
 
+Edje_Part_Description_Text *
+_edje_real_part_text_source_description_get(Edje_Real_Part *ep, Edje_Real_Part **rp2)
+{
+   Edje_Part_Description_Text *et;
+   Edje_Real_Part *rp = ep->typedata.text->source;
+   if (ep->typedata.text->source->type == EDJE_RP_TYPE_SWALLOW)
+     {
+        Edje *ed2;
+
+        et = (Edje_Part_Description_Text *)ep->param1.description;
+        ed2 = _edje_fetch(ep->typedata.text->source->typedata.swallow->swallowed_object);
+        rp = _edje_real_part_recursive_get(&ed2, et->text.id_source_part);
+        et = (Edje_Part_Description_Text *)rp->chosen_description;
+     }
+   else
+     et = (Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description;
+   if (rp2) *rp2 = rp;
+   return et;
+}
+
+Edje_Part_Description_Text *
+_edje_real_part_text_text_source_description_get(Edje_Real_Part *ep, Edje_Real_Part **rp2)
+{
+   Edje_Part_Description_Text *et;
+   Edje_Real_Part *rp = ep->typedata.text->text_source;
+   if (ep->typedata.text->text_source->type == EDJE_RP_TYPE_SWALLOW)
+     {
+        Edje *ed2;
+
+        et = (Edje_Part_Description_Text *)ep->param1.description;
+        ed2 = _edje_fetch(ep->typedata.text->text_source->typedata.swallow->swallowed_object);
+        rp = _edje_real_part_recursive_get(&ed2, et->text.id_text_source_part);
+        et = (Edje_Part_Description_Text *)rp->chosen_description;
+     }
+   else
+     et = (Edje_Part_Description_Text *)ep->typedata.text->text_source->chosen_description;
+   if (rp2) *rp2 = rp;
+   return et;
+}
+
 Edje_Real_Part *
 _edje_real_part_recursive_get(Edje **ed, const char *part)
 {

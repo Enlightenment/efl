@@ -6273,8 +6273,8 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.font.str = STRDUP(ted->text.font.str);
               ted->text.filter.str = STRDUP(ted->text.filter.str);
 
-              data_queue_copied_part_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source));
-              data_queue_copied_part_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source));
+              data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
+              data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
 
               break;
            }
@@ -8312,7 +8312,7 @@ st_collections_group_parts_part_description_text_source(void)
       char *name;
 
       name = parse_str(0);
-      data_queue_part_lookup(pc, name, &(ed->text.id_source));
+      data_queue_part_nest_lookup(pc, name, &(ed->text.id_source), &ed->text.id_source_part);
       free(name);
    }
 }
@@ -8353,7 +8353,7 @@ st_collections_group_parts_part_description_text_text_source(void)
       char *name;
 
       name = parse_str(0);
-      data_queue_part_lookup(pc, name, &(ed->text.id_text_source));
+      data_queue_part_nest_lookup(pc, name, &(ed->text.id_text_source), &ed->text.id_text_source_part);
       free(name);
    }
 }

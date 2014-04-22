@@ -1225,9 +1225,12 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
         if (chosen_desc->text.id_source >= 0)
           {
+             Edje_Part_Description_Text *et;
+
              ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
 
-             tmp = edje_string_get(&((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.style);
+             et = _edje_real_part_text_source_description_get(ep, NULL);
+             tmp = edje_string_get(&et->text.style);
              if (tmp) style = tmp;
           }
         else
@@ -1240,10 +1243,15 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
         if (chosen_desc->text.id_text_source >= 0)
           {
-             ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
-             text = edje_string_get(&((Edje_Part_Description_Text*)ep->typedata.text->text_source->chosen_description)->text.text);
+             Edje_Part_Description_Text *et;
+             Edje_Real_Part *rp;
 
-             if (ep->typedata.text->text_source->typedata.text->text) text = ep->typedata.text->text_source->typedata.text->text;
+             ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+
+             et = _edje_real_part_text_text_source_description_get(ep, &rp);
+             text = edje_string_get(&et->text.text);
+
+             if (rp->typedata.text->text) text = rp->typedata.text->text;
           }
         else
           {
@@ -1519,44 +1527,45 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
         const char *font;
         Evas_Coord tw, th;
         int inlined_font = 0;
+        Edje_Real_Part *source, *text_source;
 
         /* Update a object_text part */
 
         if (chosen_desc->text.id_source >= 0)
           ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
         else
-          ep->text.source = NULL;
+          source = ep->text.source = NULL;
 
         if (chosen_desc->text.id_text_source >= 0)
           ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
         else
-          ep->text.text_source = NULL;
+          text_source = ep->text.text_source = NULL;
 
         if (ep->text.text_source)
-          text = edje_string_get(&(((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text));
+          text = edje_string_get(&_edje_real_part_text_text_source_description_get(ep, &text_source)->text.text));
         else
           text = edje_string_get(&chosen_desc->text.text);
 
         if (ep->text.source)
-          font = _edje_text_class_font_get(ed, ((Edje_Part_Description_Text*)ep->text.source->chosen_description), &size, &sfont);
+          font = _edje_text_class_font_get(ed, _edje_real_part_text_source_description_get(ep, &source)), &size, &sfont);
         else
           font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
 
         if (!font) font = "";
 
-        if (ep->text.text_source)
+        if (text_source)
           {
-             if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
+             if (text_source->text.text) text = text_source->text.text;
           }
         else
           {
              if (ep->text.text) text = ep->text.text;
           }
 
-        if (ep->text.source)
+        if (source)
           {
-             if (ep->text.source->text.font) font = ep->text.source->text.font;
-             if (ep->text.source->text.size > 0) size = ep->text.source->text.size;
+             if (source->text.font) font = source->text.font;
+             if (source->text.size > 0) size = source->text.size;
           }
         else
           {

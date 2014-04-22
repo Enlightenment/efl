@@ -50,6 +50,7 @@ struct _Part_Lookup_Key
          int offset;
       } reallocated;
    } mem;
+   char **dest2;
 
    Eina_Bool stable : 1;
 };
@@ -2164,6 +2165,12 @@ data_queue_face_group_lookup(const char *name)
 void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
+   data_queue_part_nest_lookup(pc, name, dest, NULL);
+}
+
+void
+data_queue_part_nest_lookup(Edje_Part_Collection *pc, const char *name, int *dest, char **dest2)
+{
    Part_Lookup_Key key;
    Part_Lookup *pl = NULL;
    Eina_List *list;
@@ -2195,6 +2202,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    pl->name = mem_strdup(name);
    pl->key.pc = pc;
    pl->key.mem.dest = dest;
+   pl->key.dest2 = dest2;
    pl->key.stable = EINA_TRUE;
 
    eina_hash_add(part_pc_dest_lookup, &key, pl);
@@ -2253,6 +2261,12 @@ data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
 void
 data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
+   data_queue_copied_part_nest_lookup(pc, src, dest, NULL);
+}
+
+void
+data_queue_copied_part_nest_lookup(Edje_Part_Collection *pc, int *src, int *dest, char **dest2)
+{
    Eina_List *list;
    Eina_List *l;
    Part_Lookup *pl;
@@ -2265,7 +2279,7 @@ data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
    list = eina_hash_find(part_dest_lookup, &key);
    EINA_LIST_FOREACH(list, l, pl)
      if (pl->key.stable)
-       data_queue_part_lookup(pc, pl->name, dest);
+       data_queue_part_nest_lookup(pc, pl->name, dest, dest2);
 }
 
 void
@@ -2454,18 +2468,20 @@ data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set)
      }
 }
 
-static void
+static Eina_Bool
 data_process_part_set(Part_Lookup *target, int value)
 {
    if (target->key.stable)
      {
         *(target->key.mem.dest) = value;
+        if (target->key.dest2) return EINA_TRUE;
      }
    else
      {
         *((int*)(*target->key.mem.reallocated.base +
                  target->key.mem.reallocated.offset)) = value;
      }
+   return EINA_FALSE;
 }
 
 static void
@@ -2621,17 +2637,30 @@ data_process_lookups(void)
           }
         else
           {
-             char *alias;
+             char *alias, *ap;
+
              alias = eina_hash_find(part->key.pc->alias, part->name);
              if (!alias)
                alias = part->name;
+             ap = strchr(alias, EDJE_PART_PATH_SEPARATOR);
+             if (ap)
+               {
+                  char *tmp;
+
+                  tmp = alloca(strlen(alias) + 1);
+                  memcpy(tmp, alias, ap - alias);
+                  tmp[ap - alias] = 0;
+                  ap += 1;
+                  alias = tmp;
+               }
              for (i = 0; i < part->key.pc->parts_count; ++i)
                {
                   ep = part->key.pc->parts[i];
 
                   if ((ep->name) && (!strcmp(ep->name, alias)))
                     {
-                       data_process_part_set(part, ep->id);
+                       if (data_process_part_set(part, ep->id))
+                         *part->key.dest2 = ap;
                        break;
                     }
                }

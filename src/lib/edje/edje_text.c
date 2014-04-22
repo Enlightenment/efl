@@ -198,15 +198,23 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (ep->typedata.text->text_source)
      {
-        text = edje_string_get(&(((Edje_Part_Description_Text *)ep->typedata.text->text_source->chosen_description)->text.text));
-        if (ep->typedata.text->text_source->typedata.text->text) text = ep->typedata.text->text_source->typedata.text->text;
+        Edje_Part_Description_Text *et;
+        Edje_Real_Part *rp2;
+
+        et = _edje_real_part_text_text_source_description_get(ep, &rp2);
+        text = edje_string_get(&(et->text.text));
+        if (rp2->typedata.text->text) text = rp2->typedata.text->text;
      }
    if (ep->typedata.text->source)
      {
-        font = edje_string_get(&(((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.font));
-        size = ((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.size;
-        if (ep->typedata.text->source->typedata.text->font) font = ep->typedata.text->source->typedata.text->font;
-        if (ep->typedata.text->source->typedata.text->size > 0) size = ep->typedata.text->source->typedata.text->size;
+        Edje_Part_Description_Text *et;
+        Edje_Real_Part *rp2;
+
+        et = _edje_real_part_text_source_description_get(ep, &rp2);
+        font = edje_string_get(&(et->text.font));
+        size = et->text.size;
+        if (rp2->typedata.text->font) font = rp2->typedata.text->font;
+        if (rp2->typedata.text->size > 0) size = rp2->typedata.text->size;
      }
 
    if (!text) text = "";

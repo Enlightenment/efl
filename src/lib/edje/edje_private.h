@@ -1205,7 +1205,9 @@ struct _Edje_Part_Description_Spec_Text
    double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
    int            size; /* 0 = use user set size */
    int            id_source; /* -1 if none */
+   char          *id_source_part;
    int            id_text_source; /* -1 if none */
+   char          *id_text_source_part;
 
    unsigned char  fit_x; /* resize font size down to fit in x dir */
    unsigned char  fit_y; /* resize font size down to fit in y dir */
@@ -2100,6 +2102,8 @@ void              _edje_box_layout_remove_child(Edje_Real_Part *rp, Evas_Object 
 Edje_Part_Box_Animation * _edje_box_layout_anim_new(Evas_Object *box);
 void              _edje_box_layout_free_data(void *data);
 
+Edje_Part_Description_Text *_edje_real_part_text_source_description_get(Edje_Real_Part *ep, Edje_Real_Part **rp2);
+Edje_Part_Description_Text *_edje_real_part_text_text_source_description_get(Edje_Real_Part *ep, Edje_Real_Part **rp2);
 Eina_Bool         _edje_real_part_box_append(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
 Eina_Bool         _edje_real_part_box_prepend(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj);
 Eina_Bool         _edje_real_part_box_insert_before(Edje *ed, Edje_Real_Part *rp, Evas_Object *child_obj, const Evas_Object *ref);

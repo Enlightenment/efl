@@ -170,6 +170,8 @@ void    data_write(void);
 void    data_queue_face_group_lookup(const char *name);
 void    data_queue_group_lookup(const char *name, Edje_Part *part);
 void    data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
+void    data_queue_part_nest_lookup(Edje_Part_Collection *pc, const char *name, int *dest, char **dest2);
+void    data_queue_copied_part_nest_lookup(Edje_Part_Collection *pc, int *src, int *dest, char **dest2);
 void    data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
 					   unsigned char **base, int offset);
 void    data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest);
