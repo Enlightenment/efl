@@ -255,7 +255,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
         sh = TO_INT(params->eval.h);
      }
 
-   size = params->type.text.size;
+   if (params->type.text.size)
+     size = params->type.text.size;
    if (!text) text = "";
 
    if ((text == ep->typedata.text->cache.in_str)
