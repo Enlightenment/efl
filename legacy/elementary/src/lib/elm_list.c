@@ -1199,7 +1199,7 @@ _elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd)
           it = sd->last_focused_item;
         else if (sd->last_selected_item)
           it = sd->last_selected_item;
-        else
+        else if (elm_widget_focus_highlight_enabled_get(obj))
           {
              it = eina_list_data_get(sd->items);
              is_sel = EINA_TRUE;
