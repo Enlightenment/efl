@@ -62,9 +62,11 @@ struct _Ecore_Fb_Ts_Flite
 
 static Eina_Bool _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_fb_ts_fd = -1;
-static int _ecore_fb_ts_event_byte_count = 0;
 static int _ecore_fb_ts_apply_cal = 0;
+#ifndef HAVE_TSLIB
+static int _ecore_fb_ts_event_byte_count = 0;
 static Ecore_Fb_Ts_Event _ecore_fb_ts_event;
+#endif
 static Ecore_Fb_Ts_Calibrate _ecore_fb_ts_cal = {1,1,0,0,0};
 static Ecore_Fd_Handler *_ecore_fb_ts_fd_handler_handle = NULL;
 
@@ -228,7 +230,6 @@ _ecore_fb_ts_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EIN
      {
         int x, y, pressure;
         int num;
-        char *ptr;
         double t = 0.0;
         static int did_double = 0;
         static int did_triple = 0;
@@ -244,6 +245,7 @@ _ecore_fb_ts_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EIN
         pressure = _ecore_fb_tslib_event.pressure;
         v = 1; /* loop, there might be more samples */
 #else
+        char *ptr;
         ptr = (char *)&(_ecore_fb_ts_event);
         ptr += _ecore_fb_ts_event_byte_count;
         num = sizeof(Ecore_Fb_Ts_Event) - _ecore_fb_ts_event_byte_count;
