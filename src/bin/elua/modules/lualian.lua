@@ -205,21 +205,15 @@ local Method = Node:clone {
 
     generate = function(self, s, last)
         local proto = self:gen_proto()
-        local lproto = {
-            "    ", proto.name, proto.suffix or "", " = function(",
-            table.concat(proto.args, ", "), ")\n"
-        }
-        s:write(table.concat(lproto))
+        s:write("    ", proto.name, proto.suffix or "", " = function(",
+            table.concat(proto.args, ", "), ")\n")
         s:write( "        self:__do_start()\n")
         for i, v in ipairs(proto.allocs) do
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
         local genv = (proto.ret_type ~= "void")
-        local lcall = {
-            "        ", genv and "local v = " or "", "__lib.", proto.full_name,
-            "(", table.concat(proto.vargs, ", "), ")\n"
-        }
-        s:write(table.concat(lcall))
+        s:write("        ", genv and "local v = " or "", "__lib.",
+            proto.full_name, "(", table.concat(proto.vargs, ", "), ")\n")
         s:write("        self:__do_end()\n")
         if #proto.rets > 0 then
             s:write("        return ", table.concat(proto.rets, ", "), "\n")
@@ -378,12 +372,26 @@ local Event = Node:clone {
     end
 }
 
-local Constructor = Node:clone {
-    gen_ffi = function(self, s)
+local Constructor = Method:clone {
+    generate = function(self, s, last)
+        local proto   = self:gen_proto()
+        local name    = proto.name
+        local defctor = name == "constructor"
+        table.insert(proto.args, 2, "parent")
+        s:write( "    ", defctor and "__ctor" or name, " = function(",
+            table.concat(proto.args, ", "), ")\n")
+        for i, v in ipairs(proto.allocs) do
+            s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
+        end
+        local genv = (proto.ret_type ~= "void")
+        s:write("        ", genv and "local v = " or "", "self:__ctor_common(",
+            "butts, parent, __lib.", proto.full_name,
+            ", ", table.concat(proto.vargs, ", "), ")\n")
+        if #proto.rets > 0 then
+            s:write("        return ", table.concat(proto.rets, ", "), "\n")
+        end
+        s:write("    end", last and "" or ",", last and "\n" or "\n\n")
     end
-}
-
-local Destructor = Node:clone {
 }
 
 local Mixin = Node:clone {
