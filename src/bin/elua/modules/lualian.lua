@@ -433,12 +433,12 @@ local Mixin = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        s:write(("M.%s = {\n"):format(strip_name(self, self.cname,
-            self.parent_node.cprefix)))
+        s:write(("M.%s = eo.class_register(\"%s\", {\n"):format(
+            strip_name(self, self.cname, self.parent_node.cprefix), self.cname))
 
         self:gen_children(s)
 
-        s:write("}\n")
+        s:write("})\n")
     end,
 
     gen_ffi = function(self, s)
@@ -481,19 +481,21 @@ local Class = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
+        local name_stripped = strip_name(self, self.cname,
+            self.parent_node.cprefix)
+
         s:write(([[
 local Parent = eo.class_get("%s")
-M.%s = Parent:clone {
-]]):format(self.parent, strip_name(self, self.cname,
-            self.parent_node.cprefix)))
+M.%s = eo.class_register("%s", Parent:clone {
+]]):format(self.parent, name_stripped, self.cname))
 
         self:gen_children(s)
 
-        s:write("}\n")
+        s:write("})")
 
         for i, v in ipairs(self.mixins) do
             s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
-                :format(self.cname, v))
+                :format(name_stripped, v))
         end
     end,
 
