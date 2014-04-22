@@ -130,7 +130,7 @@ local Node = util.Object:clone {
             v.parent_node = self
             v:generate(s, (not hasevs) and (i == len))
         end
-        if evs then
+        if hasevs then
             s:write("    events = {\n")
             for i, v in ipairs(evs) do
                 v.parent_node = self
@@ -380,6 +380,9 @@ local Constructor = Method:clone {
         table.insert(proto.args, 2, "parent")
         s:write( "    ", defctor and "__ctor" or name, " = function(",
             table.concat(proto.args, ", "), ")\n")
+        if not defctor then
+            s:write("        self = self:clone()\n")
+        end
         for i, v in ipairs(proto.allocs) do
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
@@ -387,6 +390,9 @@ local Constructor = Method:clone {
         s:write("        ", genv and "local v = " or "", "self:__ctor_common(",
             "butts, parent, __lib.", proto.full_name,
             ", ", table.concat(proto.vargs, ", "), ")\n")
+        if not defctor then
+            table.insert(proto.rets, 1, "self")
+        end
         if #proto.rets > 0 then
             s:write("        return ", table.concat(proto.rets, ", "), "\n")
         end
