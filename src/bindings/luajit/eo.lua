@@ -67,9 +67,10 @@ M.Eo_Base = util.Object:clone {
         local line    = info.currentline
         local tmp_obj = eo._eo_add_internal_start(source, line, klass,
             parent.__obj)
+        local retval
         if eo._eo_do_start(tmp_obj, nil, false, source, func, line) ~= 0 then
             if ctor then
-                ctor(...)
+                retval = ctor(...)
             else
                 eo.eo_constructor()
             end
@@ -78,6 +79,7 @@ M.Eo_Base = util.Object:clone {
         end
         self.__obj    = tmp_obj
         self.__parent = parent
+        return retval
     end,
 
     __do_start = function(self)
