@@ -389,8 +389,8 @@ local Constructor = Method:clone {
         end
         local genv = (proto.ret_type ~= "void")
         s:write("        ", genv and "local v = " or "", "self:__ctor_common(",
-            "butts, parent, __lib.", proto.full_name,
-            ", ", table.concat(proto.vargs, ", "), ")\n")
+            "__lib.", self.parent_node.prefix, "_class_get(), parent, __lib.",
+            proto.full_name, ", ", table.concat(proto.vargs, ", "), ")\n")
         if not defctor then
             table.insert(proto.rets, 1, "self")
         end
@@ -405,7 +405,8 @@ local Default_Constructor = Node:clone {
     generate = function(self, s, last)
         s:write( "    __ctor = function(self, parent)\n")
         self.parent_node:gen_ctor(s)
-        s:write("        self:__ctor_common(butts, parent)\n")
+        s:write("        self:__ctor_common(__lib.", self.parent_node.prefix,
+            "_class_get(), parent)\n")
         s:write("    end", last and "" or ",", last and "\n" or "\n\n")
     end,
 
@@ -441,6 +442,7 @@ local Mixin = Node:clone {
     end,
 
     gen_ffi = function(self, s)
+        s:write("    const Eo_Class *", self.prefix, "_class_get(void);\n")
         for i, v in ipairs(self.children) do
             v.parent_node = self
             v:gen_ffi(s)
