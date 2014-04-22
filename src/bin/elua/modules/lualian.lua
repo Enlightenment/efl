@@ -122,9 +122,21 @@ local Node = util.Object:clone {
 
     gen_children = function(self, s)
         local len = #self.children
+        local evs =  self.events
+        local evslen
+        if evs then evslen = #evs end
+        local hasevs = evs and evslen > 0
         for i, v in ipairs(self.children) do
             v.parent_node = self
-            v:generate(s, i == len)
+            v:generate(s, (not hasevs) and (i == len))
+        end
+        if evs then
+            s:write("    events = {\n")
+            for i, v in ipairs(evs) do
+                v.parent_node = self
+                v:generate(s, i == evslen)
+            end
+            s:write("    }\n")
         end
     end
 }
@@ -341,13 +353,25 @@ local Event = Node:clone {
         self.edesc = edesc
     end,
 
+    gen_ffi_name = function(self)
+        local ffin = self.cached_ffi_name
+        if ffin then return ffin end
+        ffin = table.concat {
+            "_", self.parent_node.cname:upper(), "_EVENT_",
+            self.ename:gsub("%W", "_"):upper()
+        }
+        self.cached_ffi_name = ffin
+        return ffin
+    end,
+
     generate = function(self, s, last)
+        s:write("        [\"", self.ename, "\"] = __lib.",
+            self:gen_ffi_name(), last and "\n" or ",\n")
     end,
 
     gen_ffi = function(self, s)
-        s:write("    extern const Eo_Event_Description _",
-            self.parent_node.cname:upper(), "_EVENT_",
-            self.ename:gsub("%W", "_"):upper(), ";\n")
+        s:write("    extern const Eo_Event_Description ",
+            self:gen_ffi_name(), ";\n")
     end,
 
     gen_ctor = function(self, s)
@@ -367,6 +391,7 @@ local Mixin = Node:clone {
         self.cname    = cname
         self.prefix   = eolian.class_eo_prefix_get(cname)
         self.children = ch
+        self.events   = evs
     end,
 
     generate = function(self, s)
@@ -390,17 +415,24 @@ local Mixin = Node:clone {
             v.parent_node = self
             v:gen_ffi(s)
         end
+        if self.events then
+            for i, v in ipairs(self.events) do
+                v.parent_node = self
+                v:gen_ffi(s)
+            end
+        end
     end
 }
 
 local Class = Node:clone {
-    __ctor = function(self, cname, parent, mixins, ch)
+    __ctor = function(self, cname, parent, mixins, ch, evs)
         self.cname      = cname
         self.parent     = parent
         self.interfaces = interfaces
         self.mixins     = mixins
         self.prefix     = eolian.class_eo_prefix_get(cname)
         self.children   = ch
+        self.events     = evs
     end,
 
     generate = function(self, s)
@@ -426,12 +458,7 @@ M.%s = Parent:clone {
         end
     end,
 
-    gen_ffi = function(self, s)
-        for i, v in ipairs(self.children) do
-            v.parent_node = self
-            v:gen_ffi(s)
-        end
-    end
+    gen_ffi = Mixin.gen_ffi
 }
 
 local File = Node:clone {
@@ -510,12 +537,13 @@ local gen_contents = function(classn)
         cnt[#cnt + 1] = Constructor(v)
     end
     -- events
+    local evs = {}
     local events = eolian.class_events_list_get(classn)
     for i, v in ipairs(events) do
         local en, et, ed = v:information_get()
-        cnt[#cnt + 1] = Event(en, et, ed)
+        evs[#evs + 1] = Event(en, et, ed)
     end
-    return cnt
+    return cnt, evs
 end
 
 local gen_mixin = function(classn)
