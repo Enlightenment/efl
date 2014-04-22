@@ -383,6 +383,7 @@ local Constructor = Method:clone {
         if not defctor then
             s:write("        self = self:clone()\n")
         end
+        self.parent_node:gen_ctor(s)
         for i, v in ipairs(proto.allocs) do
             s:write("        local ", v[2], " = ffi.new(\"", v[1], "[1]\")\n")
         end
@@ -397,6 +398,21 @@ local Constructor = Method:clone {
             s:write("        return ", table.concat(proto.rets, ", "), "\n")
         end
         s:write("    end", last and "" or ",", last and "\n" or "\n\n")
+    end
+}
+
+local Default_Constructor = Node:clone {
+    generate = function(self, s, last)
+        s:write( "    __ctor = function(self, parent)\n")
+        self.parent_node:gen_ctor(s)
+        s:write("        self:__ctor_common(butts, parent)\n")
+        s:write("    end", last and "" or ",", last and "\n" or "\n\n")
+    end,
+
+    gen_ffi = function(self, s)
+    end,
+
+    gen_ctor = function(self)
     end
 }
 
@@ -435,6 +451,13 @@ local Mixin = Node:clone {
                 v:gen_ffi(s)
             end
         end
+    end,
+
+    gen_ctor = function(self, s)
+        for i, v in ipairs(self.children) do
+            v.parent_node = self
+            v:gen_ctor(s)
+        end
     end
 }
 
@@ -472,7 +495,8 @@ M.%s = Parent:clone {
         end
     end,
 
-    gen_ffi = Mixin.gen_ffi
+    gen_ffi = Mixin.gen_ffi,
+    gen_ctor = Mixin.gen_ctor
 }
 
 local File = Node:clone {
@@ -549,6 +573,9 @@ local gen_contents = function(classn)
     local ctors = eolian.class_functions_list_get(classn, ft.CTOR)
     for i, v in ipairs(ctors) do
         cnt[#cnt + 1] = Constructor(v)
+    end
+    if #ctors == 0 then
+        cnt[#cnt + 1] = Default_Constructor()
     end
     -- events
     local evs = {}
