@@ -9,9 +9,6 @@
 
 #define EO_SUFFIX ".eo"
 
-static int eo_version = 0;
-static Eina_Bool legacy_support = EINA_FALSE;
-
 static char*
 _include_guard_enclose(const char *fname, const char *fbody)
 {
@@ -82,21 +79,21 @@ end:
 }
 
 static Eina_Bool
-_generate_c_file(char *filename, const char *classname)
+_generate_c_file(char *filename, const char *classname, Eina_Bool legacy_support)
 {
    Eina_Bool ret = EINA_FALSE;
 
    Eina_Strbuf *eo_buf = eina_strbuf_new();
    Eina_Strbuf *legacy_buf = eina_strbuf_new();
 
-   if (!eo_source_generate(classname, eo_version, eo_buf))
+   if (!eo_source_generate(classname, eo_buf))
      {
         ERR("Failed to generate source for %s", classname);
         goto end;
      }
 
    if (legacy_support)
-      if (!legacy_source_generate(classname, eo_version, legacy_buf))
+      if (!legacy_source_generate(classname, legacy_buf))
         {
            ERR("Failed to generate source for %s", classname);
            goto end;
@@ -131,7 +128,7 @@ _generate_legacy_header_file(char *filename, const char *classname)
 
    Eina_Strbuf *lfile = eina_strbuf_new();
 
-   if (!legacy_header_generate(classname, eo_version, lfile))
+   if (!legacy_header_generate(classname, lfile))
      {
         ERR("Failed to generate header for %s", classname);
         goto end;
@@ -167,7 +164,9 @@ enum
    H_GEN,
    C_GEN
 };
-int gen_opt = NO_WAY_GEN;
+static int gen_opt = NO_WAY_GEN;
+static int eo_needed = 0;
+static Eina_Bool legacy_support = EINA_FALSE;
 
 int main(int argc, char **argv)
 {
@@ -196,8 +195,8 @@ int main(int argc, char **argv)
    static struct option long_options[] =
      {
         /* These options set a flag. */
-          {"eo1",        no_argument,         &eo_version, 1},
-          {"eo",        no_argument,         &eo_version, 2},
+          {"eo1",        no_argument,         &eo_needed, 1},
+          {"eo",         no_argument,         &eo_needed, 1},
           {"verbose",    no_argument,         0, 'v'},
           {"help",       no_argument,         0, 'h'},
           {"gh",         no_argument,         &gen_opt, H_GEN},
@@ -293,9 +292,9 @@ int main(int argc, char **argv)
           }
      }
 
-   if (!eo_version && !(gen_opt==H_GEN && legacy_support))
+   if (!eo_needed && !(gen_opt == H_GEN && legacy_support))
      {
-        ERR("No eo version specified (use --eo). Aborting eo generation.\n");
+        ERR("Eo flag is not specified (use --eo). Aborting eo generation.\n");
         goto end;
      }
 
@@ -324,7 +323,7 @@ int main(int argc, char **argv)
            case C_GEN:
                 {
                    INF("Generating source file %s\n", output_filename);
-                   ret = _generate_c_file(output_filename, classname)?0:1;
+                   ret = _generate_c_file(output_filename, classname, legacy_support)?0:1;
                    break;
                 }
            default:

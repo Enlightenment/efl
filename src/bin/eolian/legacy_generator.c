@@ -344,7 +344,7 @@ end:
 }
 
 Eina_Bool
-legacy_header_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
+legacy_header_generate(const char *classname, Eina_Strbuf *buf)
 {
    const Eolian_Function_Type ftype_order[] = {EOLIAN_PROPERTY, EOLIAN_METHOD};
    const Eina_List *l;
@@ -381,7 +381,7 @@ legacy_header_generate(const char *classname, int eo_version EINA_UNUSED, Eina_S
 }
 
 Eina_Bool
-legacy_source_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
+legacy_source_generate(const char *classname, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;

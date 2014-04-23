@@ -876,7 +876,7 @@ end:
 }
 
 Eina_Bool
-eo_source_generate(const char *classname, int eo_version EINA_UNUSED, Eina_Strbuf *buf)
+eo_source_generate(const char *classname, Eina_Strbuf *buf)
 {
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;

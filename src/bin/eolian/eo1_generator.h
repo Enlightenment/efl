@@ -9,14 +9,13 @@
  * This function generates all the source code for Eo.
  *
  * @param[in] classname class name
- * @param[in] eo_version Eo version to generate
  * @param[inout] buf buffer to fill
  *
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
 Eina_Bool
-eo_source_generate(const char *classname, int eo_version, Eina_Strbuf *buf);
+eo_source_generate(const char *classname, Eina_Strbuf *buf);
 
 /*
  * @brief Generate the header code for a specific Eo class.
