@@ -12,6 +12,9 @@ local preload = {
 local loaded = {
 }
 
+M.loaded  = loaded
+M.preload = preload
+
 for k, v in pairs(package.loaded) do loaded[k] = v end
 
 M.path  = "./?.lua;/?/init.lua"

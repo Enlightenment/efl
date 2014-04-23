@@ -59,6 +59,16 @@ local getfuncname = function(info)
     return info.name or "<" .. tostring(info.func) .. ">"
 end
 
+local classes = {}
+
+M.class_get = function(name)
+    return classes[name]
+end
+
+M.class_register = function(name, val)
+    classes[name] = val
+end
+
 M.Eo_Base = util.Object:clone {
     __ctor_common = function(self, klass, parent, ctor, loff, ...)
         local info    = getinfo(2 + (loff or 0), "nlSf")

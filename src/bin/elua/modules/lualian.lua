@@ -504,9 +504,10 @@ M.%s = eo.class_register("%s", Parent:clone {
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, cname, libname, cprefix, ch)
+    __ctor = function(self, fname, cname, modname, libname, cprefix, ch)
         self.fname    = fname:match(".+/(.+)") or fname
         self.cname    = cname
+        self.modname  = (modname and #modname > 0) and modname or nil
         self.libname  = libname
         self.cprefix  = cprefix
         self.children = ch
@@ -515,6 +516,14 @@ local File = Node:clone {
     generate = function(self, s)
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
         dom:log(log.level.INFO, "  Class            : " .. self.cname)
+
+        local modn = self.modname
+        if    modn then
+              modn = ("require(\"%s\")"):format(modn)
+        else
+              modn = "{}"
+        end
+
         s:write(([[
 -- EFL LuaJIT bindings: %s (class %s)
 -- For use with Elua; automatically generated, do not modify
@@ -523,7 +532,7 @@ local cutil = require("cutil")
 local util  = require("util")
 local eo    = require("eo")
 
-local M     = {}
+local M     = %s
 
 local __lib
 
@@ -537,7 +546,7 @@ end
 
 cutil.init_module(init, shutdown)
 
-]]):format(self.fname, self.cname, self.libname, self.libname))
+]]):format(self.fname, self.cname, modn, self.libname, self.libname))
 
         self:gen_children(s)
 
@@ -640,7 +649,7 @@ M.generate = function(files, include_files, fstream)
         else
             error(classn .. ": unknown type")
         end
-        File(fname, classn, file[2], file[3], { cl }):generate(fstream)
+        File(fname, classn, file[2], file[3], file[4], { cl }):generate(fstream)
     end
 end
 
