@@ -949,7 +949,6 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 	   ed->text.align.y = FROM_DOUBLE(0.5);
 	   ed->text.id_source = -1;
 	   ed->text.id_text_source = -1;
-    ed->text.elipsis = -1;
 
 	   result = &ed->common;
 	   break;
