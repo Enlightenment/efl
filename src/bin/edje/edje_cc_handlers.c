@@ -6272,6 +6272,14 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
               ted->text.filter.str = STRDUP(ted->text.filter.str);
+              {
+                 Eina_List *l;
+                 Eina_Stringshare *name;
+                 static int part_key = 0;
+
+                 EINA_LIST_FOREACH(ted->text.filter_sources, l, name)
+                   data_queue_part_lookup(pc, name, &part_key);
+              }
 
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
@@ -8428,12 +8436,20 @@ st_collections_group_parts_part_description_text_filter(void)
      }
 
    ed = (Edje_Part_Description_Text*) current_desc;
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   if (ed->text.filter.str)
+     {
+        EINA_LIST_FREE(ed->text.filter_sources, name)
+          {
+             part_lookup_delete(pc, name, &part_key, NULL);
+             eina_stringshare_del(name);
+          }
+        free((void*)ed->text.filter.str);
+     }
    ed->text.filter_sources = NULL;
 
    ed->text.filter.str = parse_str(0);
    if (!ed->text.filter.str) return;
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
 
    // Parse list of buffers that have a source
    // note: does not support comments

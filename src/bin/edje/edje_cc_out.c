@@ -2259,6 +2259,29 @@ data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
 }
 
 void
+part_lookup_delete(Edje_Part_Collection *pc, const char *name, int *dest, char **dest2)
+{
+   Part_Lookup_Key key;
+   Part_Lookup *pl = NULL;
+   Eina_List *list, *l, *ll;
+   key.pc = pc;
+   key.mem.dest = dest;
+   key.stable = EINA_TRUE;
+
+   pl = eina_hash_find(part_pc_dest_lookup, &key);
+   if (!pl) return;
+   list = eina_hash_find(part_dest_lookup, &pl->key);
+   EINA_LIST_FOREACH_SAFE(list, l, ll, pl)
+     {
+        if (strcmp(pl->name, name) || (pl->key.dest2 != dest2)) continue;
+        free(pl->name);
+        list = eina_list_remove_list(list, l);
+        free(pl);
+     }
+   eina_hash_set(part_dest_lookup, &pl->key, list);
+}
+
+void
 data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
    data_queue_copied_part_nest_lookup(pc, src, dest, NULL);
