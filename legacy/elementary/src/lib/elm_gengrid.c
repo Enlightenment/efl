@@ -2080,7 +2080,7 @@ _item_move_cb(void *data, double pos)
    Evas_Coord x1, y1, x2, y2;
    double dx, dy;
 
-   switch(sd->reorder.tween_mode)
+   switch (sd->reorder.tween_mode)
      {
       case ECORE_POS_MAP_LINEAR:
          frame = ecore_animator_pos_map(frame, sd->reorder.tween_mode, 0, 0);
