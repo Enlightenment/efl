@@ -1732,7 +1732,7 @@ _item_realize(Elm_Gen_Item *it,
              Evas_Object* eobj;
              Eina_List* l;
              EINA_LIST_FOREACH(it->content_objs, l, eobj)
-                if (elm_object_focus_allow_get(eobj))
+                if (elm_widget_is(eobj) && elm_object_focus_allow_get(eobj))
                   it->item_focus_chain = eina_list_append
                       (it->item_focus_chain, eobj);
 
@@ -6508,7 +6508,7 @@ elm_genlist_item_fields_update(Elm_Object_Item *item,
              Eina_List* l;
              it->item_focus_chain = eina_list_free(it->item_focus_chain);
              EINA_LIST_FOREACH(it->content_objs, l, eobj)
-               if (elm_object_focus_allow_get(eobj))
+               if (elm_widget_is(eobj) && elm_object_focus_allow_get(eobj))
                  it->item_focus_chain = eina_list_append(it->item_focus_chain, eobj);
           }
 
