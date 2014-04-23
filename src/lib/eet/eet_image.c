@@ -37,6 +37,11 @@
 #define OFFSET_HEIGHT 12
 #define OFFSET_BLOCKS 16
 
+#undef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+#undef MAX
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
 
 /*---*/
 
@@ -993,160 +998,186 @@ eet_data_image_lossless_compressed_convert(int         *size,
    }
 }
 
+static int
+_block_size_get(int size)
+{
+   static const int MAX_BLOCK = 6; // 256 pixels
+
+   int k = 0;
+   while ((4 << k) < size) k++;
+   k = MAX(0, k - 1);
+   if ((size * 3 / 2) >= (4 << k)) return MAX(0, MIN(k - 1, MAX_BLOCK));
+   return MIN(k, MAX_BLOCK);
+}
+
 static void *
 eet_data_image_etc1_compressed_convert(int         *size,
                                        const unsigned char *data8,
                                        unsigned int w,
                                        unsigned int h,
                                        int          quality,
-                                       int          compression)
+                                       int          compress)
 {
-   Eina_Binbuf *r;
    rg_etc1_pack_params param;
-   unsigned char header[8] = "TGV1";
-   unsigned int nw, nh;
-   unsigned int block, block_count;
-   unsigned int x, y;
-   unsigned int compress_length;
-   unsigned int real_x, real_y;
-   unsigned int *data = (unsigned int *) data8;
    char *comp;
    char *buffer;
+   uint32_t *data;
+   uint32_t width, height;
+   uint8_t header[8] = "TGV1";
+   int block_width, block_height, macro_block_width, macro_block_height;
+   int block_count, image_stride, image_height;
+   Eina_Binbuf *r;
    void *result;
 
    r = eina_binbuf_new();
    if (!r) return NULL;
 
-   nw = htonl(w);
-   nh = htonl(h);
+   image_stride = w;
+   image_height = h;
+   data = (uint32_t *) data8;
+   width = htonl(image_stride);
+   height = htonl(image_height);
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
    param.m_dithering = 0;
 
    if (quality > 95)
-     {
-        param.m_quality = rg_etc1_high_quality;
-        block = 7;
-     }
+     param.m_quality = rg_etc1_high_quality;
    else if (quality > 30)
-     {
-        param.m_quality = rg_etc1_medium_quality;
-        block = 6;
-     }
+     param.m_quality = rg_etc1_medium_quality;
    else
-     {
-        param.m_quality = rg_etc1_low_quality;
-        block = 5;
-     }
+     param.m_quality = rg_etc1_low_quality;
 
-   header[4] = (block << 4) | block;
+   // header[4]: 4 bit block width, 4 bit block height
+   block_width = _block_size_get(image_stride + 2);
+   block_height = _block_size_get(image_height + 2);
+   header[4] = (block_height << 4) | block_width;
+
+   // header[5]: 0 for ETC1
    header[5] = 0;
-   header[6] = (!!compression & 0x1); // For now only LZ4 compression
+
+   // header[6]: 0 for raw, 1, for LZ4 compressed
+   header[6] = (!!compress & 0x1);
+
+   // header[7]: options (unused)
    header[7] = 0;
 
+   // Write header
    eina_binbuf_append_length(r, header, sizeof (header));
-   eina_binbuf_append_length(r, (unsigned char*) &nw, sizeof (nw));
-   eina_binbuf_append_length(r, (unsigned char*) &nh, sizeof (nh));
+   eina_binbuf_append_length(r, (unsigned char*) &width, sizeof (width));
+   eina_binbuf_append_length(r, (unsigned char*) &height, sizeof (height));
 
-   block = 4 << block;
-   block_count = (block * block) / (4 * 4);
+   // Real block size in pixels, obviously a multiple of 4
+   macro_block_width = 4 << block_width;
+   macro_block_height = 4 << block_height;
+
+   // Number of ETC1 blocks in a compressed block
+   block_count = (macro_block_width * macro_block_height) / (4 * 4);
    buffer = alloca(block_count * 8);
 
-   if (compression)
+   if (compress)
      {
-        compress_length = LZ4_compressBound(block_count * 8);
-        comp = alloca(compress_length);
+        comp = alloca(LZ4_compressBound(block_count * 8));
      }
    else
      {
         comp = NULL;
      }
 
-   // Write block
-   for (y = 0; y < h + 2; y += block)
+   // Write macro block
+   for (int y = 0; y < image_height + 2; y += macro_block_height)
      {
-        real_y = y > 0 ? y - 1 : 0;
+        uint32_t *input, *last_col, *last_row, *last_pix;
+        int real_y;
+        int wlen;
 
-        for (x = 0; x < w + 2; x += block)
+        if (y == 0) real_y = 0;
+        else if (y < image_height + 1) real_y = y - 1;
+        else real_y = image_height - 1;
+
+        for (int x = 0; x < image_stride + 2; x += macro_block_width)
           {
-             unsigned int i, j;
-             unsigned char duplicate_w[2], duplicate_h[2];
-             int wlen;
              char *offset = buffer;
+             int real_x = x;
 
-             real_x = x > 0 ? x - 1 : 0;
+             if (x == 0) real_x = 0;
+             else if (x < image_stride + 1) real_x = x - 1;
+             else real_x = image_stride - 1;
 
-             for (i = 0; i < block; i += 4)
+             input = data + real_y * image_stride + real_x;
+             last_row = data + image_stride * (image_height - 1) + real_x;
+             last_col = data + (real_y + 1) * image_stride - 1;
+             last_pix = data + image_height * image_stride - 1;
+
+             for (int by = 0; by < macro_block_height; by += 4)
                {
-                  unsigned char block_h;
-                  int kmax;
+                  int dup_top = ((y + by) == 0) ? 1 : 0;
+                  int max_row = MAX(0, MIN(4, image_height - real_y - by));
+                  int oy = (y == 0) ? 1 : 0;
 
-                  duplicate_h[0] = !!((real_y + i) == 0);
-                  duplicate_h[1] = !!((real_y + i + (4 - duplicate_h[0])) >= h);
-                  block_h = 4 - duplicate_h[0] - duplicate_h[1];
-
-                  kmax = real_y + i + block_h < h ?
-                    block_h : h - real_y - i - 1;
-
-                  for (j = 0; j < block; j += 4)
+                  for (int bx = 0; bx < macro_block_width; bx += 4)
                     {
-                       unsigned char todo[64] = { 0 };
-                       unsigned char block_w;
-                       int block_length;
-                       int k, lmax;
+                       int dup_left = ((x + bx) == 0) ? 1 : 0;
+                       int max_col = MAX(0, MIN(4, image_stride - real_x - bx));
+                       uint32_t todo[16] = { 0 };
+                       int row, col;
+                       int ox = (x == 0) ? 1 : 0;
 
-
-                       duplicate_w[0] = !!((real_x + j) == 0);
-                       duplicate_w[1] = !!(((real_x + j + (4 - duplicate_w[0]))) >= w);
-                       block_w = 4 - duplicate_w[0] - duplicate_w[1];
-
-                       lmax = real_x + j + block_w < w ?
-                         block_w : w - real_x - j - 1;
-                       block_length = real_x + j + 4 < w ?
-                         4 : w - real_x - j - 1;
-
-                       if (lmax > 0)
+                       if (dup_left)
                          {
-                            for (k = 0; k < kmax; k++)
-                              memcpy(&todo[(k + duplicate_h[0]) * 16 + duplicate_w[0] * 4],
-                                     &data[(real_y + i + k) * w + real_x + j],
-                                     4 * lmax);
+                            // Duplicate left column
+                            for (row = 0; row < max_row; row++)
+                              todo[row * 4] = input[row * image_stride];
+                            for (row = max_row; row < 4; row++)
+                              todo[row * 4] = last_row[0];
                          }
 
-
-                       if (duplicate_h[0] && block_length > 0) // Duplicate first line
-                         memcpy(&todo[0],
-                                &data[(real_y + i) * w + real_x + j],
-                                block_length * 4);
-
-                       if (duplicate_h[1] && block_length > 0 && kmax >= 0) // Duplicate last line
-                         memcpy(&todo[kmax * 16],
-                                &data[(real_y + i + kmax) * w + real_x + j],
-                                block_length * 4);
-
-                       if (duplicate_w[0]) // Duplicate first row
+                       if (dup_top)
                          {
-                            for (k = 0; k < kmax; k++)
-                              memcpy(&todo[(k + duplicate_h[0]) * 16],
-                                     &data[(real_y + i + k) * w + real_x + j],
-                                     4); // Copy a pixel at a time
+                            // Duplicate top row
+                            for (col = 0; col < max_col; col++)
+                              todo[col] = input[MAX(col + bx - ox, 0)];
+                            for (col = max_col; col < 4; col++)
+                              todo[col] = last_col[0];
                          }
 
-                       if (duplicate_w[1] && lmax >= 0) // Duplicate last row
+                       for (row = dup_top; row < 4; row++)
                          {
-                            for (k = 0; k < kmax; k++)
-                              memcpy(&todo[(k + duplicate_h[0]) * 16 + (duplicate_w[0] + lmax) * 4],
-                                     &data[(real_y + i + k) * w + real_x + j + lmax],
-                                     4); // Copy a pixel at a time
+                            for (col = dup_left; col < max_col; col++)
+                              {
+                                 if (row < max_row)
+                                   {
+                                      // Normal copy
+                                      todo[row * 4 + col] = input[(row + by - oy) * image_stride + bx + col - ox];
+                                   }
+                                 else
+                                   {
+                                      // Copy last line
+                                      todo[row * 4 + col] = last_row[col + bx - ox];
+                                   }
+                              }
+                            for (col = max_col; col < 4; col++)
+                              {
+                                 // Right edge
+                                 if (row < max_row)
+                                   {
+                                      // Duplicate last column
+                                      todo[row * 4 + col] = last_col[MAX(row + by - oy, 0) * image_stride];
+                                   }
+                                 else
+                                   {
+                                      // Duplicate very last pixel again and again
+                                      todo[row * 4 + col] = *last_pix;
+                                   }
+                              }
                          }
-
 
                        rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
                        offset += 8;
                     }
                }
 
-             if (compression)
+             if (compress)
                {
                   wlen = LZ4_compressHC(buffer, comp, block_count * 8);
                }

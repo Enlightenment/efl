@@ -14,6 +14,18 @@
 #include "rg_etc1.h"
 
 static int
+_block_size_get(int size)
+{
+   static const int MAX_BLOCK = 6; // 256 pixels
+
+   int k = 0;
+   while ((4 << k) < size) k++;
+   k = MAX(0, k - 1);
+   if ((size * 3 / 2) >= (4 << k)) return MAX(0, MIN(k - 1, MAX_BLOCK));
+   return MIN(k, MAX_BLOCK);
+}
+
+static int
 evas_image_save_file_tgv(RGBA_Image *im,
                          const char *file, const char *key EINA_UNUSED,
                          int quality, int compress)
@@ -25,11 +37,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
    uint32_t *data;
    uint32_t width, height;
    uint8_t header[8] = "TGV1";
-   unsigned int block;
-   unsigned int x, y;
-   unsigned int compress_length;
-   unsigned int block_count;
-   unsigned int real_x, real_y;
+   int block_width, block_height, macro_block_width, macro_block_height;
+   int block_count, image_stride, image_height;
 
    if (!im || !im->image.data || !file)
      return 0;
@@ -38,16 +47,18 @@ evas_image_save_file_tgv(RGBA_Image *im,
    if (im->cache_entry.flags.alpha)
      return 0;
 
+   // Only RGBA encoding for now. TODO: Direct copy of ETC1/2 blocks.
+   if (im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
+     return 0;
+
+   image_stride = im->cache_entry.w;
+   image_height = im->cache_entry.h;
    data = im->image.data;
-   width = htonl(im->cache_entry.w);
-   height = htonl(im->cache_entry.h);
+   width = htonl(image_stride);
+   height = htonl(image_height);
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
    param.m_dithering = 0;
-
-   // FIXME: Depending on the block size, we have some distortion of the image
-   // Usually, one or two pixels on the top & left borders are removed
-   block = 6;
 
    if (quality > 95)
      param.m_quality = rg_etc1_high_quality;
@@ -56,9 +67,18 @@ evas_image_save_file_tgv(RGBA_Image *im,
    else
      param.m_quality = rg_etc1_low_quality;
 
-   header[4] = (block << 4) | block;
+   // header[4]: 4 bit block width, 4 bit block height
+   block_width = _block_size_get(image_stride + 2);
+   block_height = _block_size_get(image_height + 2);
+   header[4] = (block_height << 4) | block_width;
+
+   // header[5]: 0 for ETC1
    header[5] = 0;
+
+   // header[6]: 0 for raw, 1, for LZ4 compressed
    header[6] = (!!compress & 0x1);
+
+   // header[7]: options (unused)
    header[7] = 0;
 
    f = fopen(file, "w");
@@ -69,88 +89,109 @@ evas_image_save_file_tgv(RGBA_Image *im,
    if (fwrite(&width, sizeof (uint32_t), 1, f) != 1) goto on_error;
    if (fwrite(&height, sizeof (uint32_t), 1, f) != 1) goto on_error;
 
-   block = 4 << block;
+   // Real block size in pixels, obviously a multiple of 4
+   macro_block_width = 4 << block_width;
+   macro_block_height = 4 << block_height;
 
-   block_count = (block * block) / (4 * 4);
+   // Number of ETC1 blocks in a compressed block
+   block_count = (macro_block_width * macro_block_height) / (4 * 4);
    buffer = alloca(block_count * 8);
 
    if (compress)
      {
-        compress_length = LZ4_compressBound(block_count * 8);
-        comp = alloca(compress_length);
+        comp = alloca(LZ4_compressBound(block_count * 8));
      }
    else
      {
         comp = NULL;
      }
 
-   // Write block
-   for (y = 0; y < im->cache_entry.h + 2; y += block)
+   // Write macro block
+   for (int y = 0; y < image_height + 2; y += macro_block_height)
      {
-        real_y = y > 0 ? y - 1 : 0;
+        uint32_t *input, *last_col, *last_row, *last_pix;
+        int real_y;
+        int wlen;
 
-        for (x = 0; x < im->cache_entry.w + 2; x += block)
+        if (y == 0) real_y = 0;
+        else if (y < image_height + 1) real_y = y - 1;
+        else real_y = image_height - 1;
+
+        for (int x = 0; x < image_stride + 2; x += macro_block_width)
           {
-             unsigned int i, j;
-             unsigned char duplicate_w[2], duplicate_h[2];
-             int wlen;
              char *offset = buffer;
+             int real_x = x;
 
-             real_x = x > 0 ? x - 1 : 0;
+             if (x == 0) real_x = 0;
+             else if (x < image_stride + 1) real_x = x - 1;
+             else real_x = image_stride - 1;
 
-             for (i = 0; i < block; i += 4)
+             input = data + real_y * image_stride + real_x;
+             last_row = data + image_stride * (image_height - 1) + real_x;
+             last_col = data + (real_y + 1) * image_stride - 1;
+             last_pix = data + image_height * image_stride - 1;
+
+             for (int by = 0; by < macro_block_height; by += 4)
                {
-                  unsigned char block_h;
-                  int kmax;
+                  int dup_top = ((y + by) == 0) ? 1 : 0;
+                  int max_row = MAX(0, MIN(4, image_height - real_y - by));
+                  int oy = (y == 0) ? 1 : 0;
 
-                  duplicate_h[0] = !!((real_y + i) == 0);
-                  duplicate_h[1] = !!((real_y + i + (4 - duplicate_h[0])) >= im->cache_entry.h);
-                  block_h = 4 - duplicate_h[0] - duplicate_h[1];
-
-                  kmax = real_y + i + block_h < im->cache_entry.h ?
-                    block_h : im->cache_entry.h - real_y - i - 1;
-
-                  for (j = 0; j < block; j += 4)
+                  for (int bx = 0; bx < macro_block_width; bx += 4)
                     {
-                       unsigned char todo[64] = { 0 };
-                       unsigned char block_w;
-                       int block_length;
-                       int k, lmax;
+                       int dup_left = ((x + bx) == 0) ? 1 : 0;
+                       int max_col = MAX(0, MIN(4, image_stride - real_x - bx));
+                       uint32_t todo[16] = { 0 };
+                       int row, col;
+                       int ox = (x == 0) ? 1 : 0;
 
-                       duplicate_w[0] = !!((real_x + j) == 0);
-                       duplicate_w[1] = !!(((real_x + j + (4 - duplicate_w[0]))) >= im->cache_entry.w);
-                       block_w = 4 - duplicate_w[0] - duplicate_w[1];
-
-                       lmax = real_x + j + block_w < im->cache_entry.w ?
-                         block_w : im->cache_entry.w - real_x - j - 1;
-                       block_length = real_x + j + 4 < im->cache_entry.w ?
-                         4 : im->cache_entry.w - real_x - j - 1;
-
-                       if (lmax > 0)
+                       if (dup_left)
                          {
-                            for (k = 0; k < kmax; k++)
-                              memcpy(&todo[(k + duplicate_h[0]) * 16 + duplicate_w[0] * 4],
-                                     &data[(real_y + i + k) * im->cache_entry.w + real_x + j],
-                                     4 * lmax);
+                            // Duplicate left column
+                            for (row = 0; row < max_row; row++)
+                              todo[row * 4] = input[row * image_stride];
+                            for (row = max_row; row < 4; row++)
+                              todo[row * 4] = last_row[0];
                          }
 
-                       if (duplicate_h[0] && block_length > 0) // Duplicate first line
-                         memcpy(&todo[0], &data[(real_y + i) * im->cache_entry.w + real_x + j], block_length * 4);
-                       if (duplicate_h[1] && block_length > 0 && kmax >= 0) // Duplicate last line
-                         memcpy(&todo[kmax * 16], &data[(real_y + i + kmax) * im->cache_entry.w + real_x + j], block_length * 4);
-                       if (duplicate_w[0]) // Duplicate first row
+                       if (dup_top)
                          {
-                            for (k = 0; k < kmax; k++)
-                              memcpy(&todo[(k + duplicate_h[0]) * 16],
-                                     &data[(real_y + i + k) * im->cache_entry.w + real_x + j],
-                                     4); // Copy a pixel at a time
+                            // Duplicate top row
+                            for (col = 0; col < max_col; col++)
+                              todo[col] = input[MAX(col + bx - ox, 0)];
+                            for (col = max_col; col < 4; col++)
+                              todo[col] = last_col[0];
                          }
-                       if (duplicate_w[1] && lmax >= 0) // Duplicate last row
+
+                       for (row = dup_top; row < 4; row++)
                          {
-                            for (k = 0; k < kmax; k++)
-                              memcpy(&todo[(k + duplicate_h[0]) * 16 + (duplicate_w[0] + lmax) * 4],
-                                     &data[(real_y + i + k) * im->cache_entry.w + real_x + j + lmax],
-                                     4); // Copy a pixel at a time
+                            for (col = dup_left; col < max_col; col++)
+                              {
+                                 if (row < max_row)
+                                   {
+                                      // Normal copy
+                                      todo[row * 4 + col] = input[(row + by - oy) * image_stride + bx + col - ox];
+                                   }
+                                 else
+                                   {
+                                      // Copy last line
+                                      todo[row * 4 + col] = last_row[col + bx - ox];
+                                   }
+                              }
+                            for (col = max_col; col < 4; col++)
+                              {
+                                 // Right edge
+                                 if (row < max_row)
+                                   {
+                                      // Duplicate last column
+                                      todo[row * 4 + col] = last_col[MAX(row + by - oy, 0) * image_stride];
+                                   }
+                                 else
+                                   {
+                                      // Duplicate very last pixel again and again
+                                      todo[row * 4 + col] = *last_pix;
+                                   }
+                              }
                          }
 
                        rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
