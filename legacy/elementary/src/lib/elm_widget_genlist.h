@@ -133,6 +133,7 @@ struct _Elm_Genlist_Data
    Elm_Gen_Item                         *expanded_next_item;
    Ecore_Animator                       *tree_effect_animator;
    Elm_Genlist_Item_Move_Effect_Mode     move_effect_mode;
+   int                                   reorder_fast;
 
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
@@ -183,7 +184,6 @@ struct _Elm_Genlist_Data
                                                      * selection */
 
    Eina_Bool                             swipe : 1;
-   int                                   reorder_fast;
 };
 
 typedef struct _Item_Block Item_Block;
