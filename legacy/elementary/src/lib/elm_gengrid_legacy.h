@@ -931,3 +931,28 @@ EAPI Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned 
  */
 EAPI Elm_Object_Item             *elm_gengrid_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret);
 
+/**
+ * Enable the gengrid widget mode reordered with keys
+ *
+ * @param obj The gengrid object
+ * @param tween_mode Position mappings for animation
+ * @see _Ecore_Map_Pos
+ *
+ * @see elm_gengrid_reorder_mode_stop()
+ * @since 1.10
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                        elm_gengrid_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode);
+
+/**
+ * Stop the gengrid widget mode reorder.
+ *
+ * @param obj The gengrid object
+ *
+ * @see elm_gengrid_reorder_mode_start()
+ * @since 1.10
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                        elm_gengrid_reorder_mode_stop(Evas_Object *obj);

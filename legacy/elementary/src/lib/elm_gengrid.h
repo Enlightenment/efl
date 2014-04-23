@@ -239,6 +239,12 @@
  * - @c "unfocused" - When the gengrid has lost focus. (since 1.8)
  * - @c "item,focused" - When the gengrid item has received focus. (since 1.10)
  * - @c "item,unfocused" - When the gengrid item has lost focus. (since 1.10)
+ * - @c "item,reorder,anim,start" - This is called when a gengrid item movement
+     has just started by keys in reorder mode. The %c event_info parameter
+ *   is the item that is going to move. (since 1.10)
+ * - @c "item,reorder,anim,stop" - This is called when a gengrid item movement just
+     stopped in reorder mode. The %c event_info parameter is the item
+     that was moved. (since 1.10)
  *
  * Supported elm_object common APIs
  * @li elm_object_signal_emit()
