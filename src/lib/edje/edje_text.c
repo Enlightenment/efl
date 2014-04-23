@@ -425,9 +425,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
     * the edje file minor version and then check it here to ignore "unset" ellipsis
     * values from old file versions.
     * the downside is that this will break old files which have text.min_x set to 0...maybe.
-    * it also breaks documentation since the default value for edje has "become" -1.0 in order
-    * to preserve the expected behavior of leaving it alone permanently except for the initial
-    * set to 0.0.
     *
     * -zmike
     * 22 April 2014
