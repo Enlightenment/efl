@@ -26,6 +26,121 @@ _block_size_get(int size)
 }
 
 static int
+_save_direct_tgv(RGBA_Image *im, const char *file, int compress)
+{
+   // In case we are directly copying ETC1/2 data, we can't properly
+   // duplicate the 1 pixel borders. So we just assume the image contains
+   // them already.
+
+   // TODO: Add block by block compression.
+
+   int image_width, image_height;
+   uint32_t width, height;
+   uint8_t header[8] = "TGV1";
+   int etc_block_size, etc_data_size, buffer_size, data_size, remain;
+   uint8_t *buffer = NULL;
+   uint8_t *data, *ptr;
+   FILE *f;
+
+   image_width = im->cache_entry.w;
+   image_height = im->cache_entry.h;
+   data = im->image.data8;
+   width = htonl(image_width);
+   height = htonl(image_height);
+   compress = !!compress;
+
+   if ((image_width & 0x3) || (image_height & 0x3))
+     return 0;
+
+   // header[4]: block size info, unused
+   header[4] = 0;
+
+   // header[5]: 0 for ETC1
+   switch (im->cache_entry.space)
+     {
+      case EVAS_COLORSPACE_ETC1:
+        etc_block_size = 8;
+        header[5] = 0;
+        break;
+      case EVAS_COLORSPACE_RGB8_ETC2:
+        etc_block_size = 8;
+        header[5] = 1;
+        break;
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        etc_block_size = 16;
+        header[5] = 2;
+        break;
+      default:
+        return 0;
+     }
+
+   // header[6]: 0 for raw, 1, for LZ4 compressed, 2 for block-less mode
+   header[6] = compress | 0x2;
+
+   // header[7]: options (unused)
+   header[7] = 0;
+
+   f = fopen(file, "w");
+   if (!f) return 0;
+
+   // Write header
+   if (fwrite(header, sizeof (uint8_t), 8, f) != 8) goto on_error;
+   if (fwrite(&width, sizeof (uint32_t), 1, f) != 1) goto on_error;
+   if (fwrite(&height, sizeof (uint32_t), 1, f) != 1) goto on_error;
+
+   etc_data_size = image_width * image_height * etc_block_size / 16;
+   if (compress)
+     {
+        buffer_size = LZ4_compressBound(etc_data_size);
+        buffer = malloc(buffer_size);
+        if (!buffer) goto on_error;
+        data_size = LZ4_compressHC((char *) data, (char *) buffer, etc_data_size);
+     }
+   else
+     {
+        data_size = buffer_size = etc_data_size;
+        buffer = data;
+     }
+
+   // Write block length header -- We keep this even in block-less mode
+   if (data_size > 0)
+     {
+        unsigned int blen = data_size;
+
+        while (blen)
+          {
+             unsigned char plen;
+
+             plen = blen & 0x7F;
+             blen = blen >> 7;
+
+             if (blen) plen = 0x80 | plen;
+             if (fwrite(&plen, 1, 1, f) != 1) goto on_error;
+          }
+     }
+
+   // Write data
+   ptr = buffer;
+   remain = data_size;
+   while (remain > 0)
+     {
+        int written = fwrite(ptr, 1, remain, f);
+        if (written < 0) goto on_error;
+        remain -= written;
+        ptr += written;
+     }
+
+   if (compress) free(buffer);
+   fclose(f);
+   return 1;
+
+on_error:
+   if (compress) free(buffer);
+   fclose(f);
+   return 0;
+}
+
+static int
 evas_image_save_file_tgv(RGBA_Image *im,
                          const char *file, const char *key EINA_UNUSED,
                          int quality, int compress)
@@ -43,13 +158,19 @@ evas_image_save_file_tgv(RGBA_Image *im,
    if (!im || !im->image.data || !file)
      return 0;
 
-   // Surface with alpha are not supported
-   if (im->cache_entry.flags.alpha)
-     return 0;
-
-   // Only RGBA encoding for now. TODO: Direct copy of ETC1/2 blocks.
-   if (im->cache_entry.space != EVAS_COLORSPACE_ARGB8888)
-     return 0;
+   switch (im->cache_entry.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+        if (im->cache_entry.flags.alpha)
+          return 0;
+        break;
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        return _save_direct_tgv(im, file, compress);
+      default:
+        return 0;
+     }
 
    image_stride = im->cache_entry.w;
    image_height = im->cache_entry.h;
@@ -231,7 +352,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
    return 1;
 
- on_error:
+on_error:
    fclose(f);
    return 0;
 }
