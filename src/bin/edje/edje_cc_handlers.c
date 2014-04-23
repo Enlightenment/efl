@@ -949,6 +949,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 	   ed->text.align.y = FROM_DOUBLE(0.5);
 	   ed->text.id_source = -1;
 	   ed->text.id_text_source = -1;
+    ed->text.elipsis = -1;
 
 	   result = &ed->common;
 	   break;
@@ -7566,7 +7567,7 @@ st_collections_group_parts_part_description_text_text_source(void)
     @effect
         Used to balance the text in a relative point from 0.0 to 1.0, this
         point is the last section of the string to be cut out in case of a
-        resize that is smaller than the text itself. The default value is 0.0.
+        resize that is smaller than the text itself. The default value is -1.0.
     @endproperty
 */
 static void

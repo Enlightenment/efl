@@ -165,7 +165,7 @@ EAPI extern int _edje_default_log_dom ;
 /* increment this when you add new feature to edje file format without
  * breaking backward compatibility.
  */
-#define EDJE_FILE_MINOR 5
+#define EDJE_FILE_MINOR 6
 
 /* FIXME:
  *

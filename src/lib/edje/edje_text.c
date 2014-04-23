@@ -411,7 +411,29 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                                 text, font, size,
                                 sw, sh, &free_text);
      }
-   else
+   /* when evas ellipsis support was added in efl 1.8 and used to replace
+    * previous support, SOMEONE, who I shall call "cedric", borked ellipsis
+    * defaults. as a result, edje_cc continued using 0.0 (left-most) as its default value
+    * for ellipsis while evas used -1.0 (no ellipsizing).
+    * this was moderately okay for a time because nobody was using it or GROUP parts
+    * with text in them very frequently, and so nobody noticed that the mismatch was breaking
+    * sizing in some cases when the edje ellipsis value failed to be applied,
+    * which ocurred any time text.min_x was set; in this case, ellipsis would NEVER be
+    * correctly applied, and instead the text object would only ever get the first
+    * ellipsis_set(0), permanently breaking the part.
+    * the only way to fix this while preserving previous behavior was to bump
+    * the edje file minor version and then check it here to ignore "unset" ellipsis
+    * values from old file versions.
+    * the downside is that this will break old files which have text.min_x set to 0...maybe.
+    * it also breaks documentation since the default value for edje has "become" -1.0 in order
+    * to preserve the expected behavior of leaving it alone permanently except for the initial
+    * set to 0.0.
+    *
+    * -zmike
+    * 22 April 2014
+    */
+   else if (((ed->file->version >= 3) && (ed->file->minor >= 6)) ||
+            params->type.text.elipsis)
      eo_do(ep->object,
            evas_obj_text_ellipsis_set(params->type.text.elipsis));
 
