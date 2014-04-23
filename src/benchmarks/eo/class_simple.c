@@ -7,42 +7,28 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-EAPI Eo_Op SIMPLE_BASE_ID = 0;
-
 static void
-_a_set(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
+_a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
 {
    Simple_Public_Data *pd = class_data;
-   int a;
-   a = va_arg(*list, int);
-
    pd->a = a;
 }
 
-static void
-_class_constructor(Eo_Class *klass)
-{
-   const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC_SENTINEL
-   };
+EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
-   eo_class_funcs_set(klass, func_desc);
-}
-
-static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION_SENTINEL
+static Eo_Op_Description op_desc[] = {
+     EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
+     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(op_desc),
      NULL,
      sizeof(Simple_Public_Data),
-     _class_constructor,
+     NULL,
      NULL
 };
 
