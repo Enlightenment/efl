@@ -25,8 +25,6 @@ typedef struct
    Eina_Stringshare *legacy_prefix;
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *data_type;
-   Eolian_Function dflt_ctor;
-   Eolian_Function dflt_dtor;
    Eina_List *inherits; /* List Eina_Stringshare * */
    Eina_List *properties; /* List prop_name -> _Function_Id */
    Eina_List *methods; /* List meth_name -> _Function_Id */
@@ -160,8 +158,6 @@ _class_del(Class_desc *class)
    EINA_LIST_FREE(class->methods, fid) _fid_del(fid);
    EINA_LIST_FREE(class->properties, fid) _fid_del(fid);
    EINA_LIST_FREE(class->events, ev) database_event_free(ev);
-   _fid_del((_Function_Id *)class->dflt_ctor);
-   _fid_del((_Function_Id *)class->dflt_dtor);
 
    eina_stringshare_del(class->name);
    eina_stringshare_del(class->file);
@@ -452,14 +448,8 @@ Eina_Bool database_class_function_add(const char *class_name, Eolian_Function fo
       case EOLIAN_CTOR:
          desc->constructors = eina_list_append(desc->constructors, foo_id);
          break;
-      case EOLIAN_DFLT_CTOR:
-         desc->dflt_ctor = foo_id;
-         break;
       case EOLIAN_DTOR:
          desc->destructors = eina_list_append(desc->destructors, foo_id);
-         break;
-      case EOLIAN_DFLT_DTOR:
-         desc->dflt_dtor = foo_id;
          break;
       default:
          ERR("Bad function type %d.", fid->type);
@@ -642,22 +632,6 @@ eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type foo
          return desc->destructors;
       default: return NULL;
      }
-}
-
-EAPI Eolian_Function
-eolian_class_default_constructor_get(const char *class_name)
-{
-   Class_desc *desc = _class_get(class_name);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
-   return desc->dflt_ctor;
-}
-
-EAPI Eolian_Function
-eolian_class_default_destructor_get(const char *class_name)
-{
-   Class_desc *desc = _class_get(class_name);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
-   return desc->dflt_dtor;
 }
 
 EAPI Eolian_Function_Type
@@ -1330,18 +1304,6 @@ static Eina_Bool _class_print(const Eina_Hash *hash EINA_UNUSED, const void *key
    if (desc->data_type)
      {
         printf("  Data type: <%s>\n", desc->data_type);
-     }
-
-   // Default constructor
-   if (desc->dflt_ctor)
-     {
-        printf("  default constructor: present - description <%s>\n", eolian_function_description_get(desc->dflt_ctor, "comment"));
-     }
-
-   // Default destructor
-   if (desc->dflt_dtor)
-     {
-        printf("  default destructor: present - description <%s>\n", eolian_function_description_get(desc->dflt_dtor, "comment"));
      }
 
    // Constructors

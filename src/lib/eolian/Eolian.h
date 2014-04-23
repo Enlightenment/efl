@@ -95,9 +95,7 @@ typedef enum
    EOLIAN_PROP_GET,
    EOLIAN_METHOD,
    EOLIAN_CTOR,
-   EOLIAN_DTOR,
-   EOLIAN_DFLT_CTOR,
-   EOLIAN_DFLT_DTOR
+   EOLIAN_DTOR
 } Eolian_Function_Type;
 
 typedef enum
@@ -262,26 +260,6 @@ EAPI const Eina_List *eolian_class_inherits_list_get(const char *class_name);
  * @ingroup Eolian
  */
 EAPI const Eina_List *eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type func_type);
-
-/*
- * @brief Returns the Function Id for the default constructor.
- *
- * @param[in] class_name name of the class
- * @return a Function Id
- *
- * @ingroup Eolian
- */
-EAPI Eolian_Function eolian_class_default_constructor_get(const char *class_name);
-
-/*
- * @brief Returns the Function Id for the default destructor.
- *
- * @param[in] class_name name of the class
- * @return a Function Id
- *
- * @ingroup Eolian
- */
-EAPI Eolian_Function eolian_class_default_destructor_get(const char *class_name);
 
 /*
  * @brief Returns the type of a function

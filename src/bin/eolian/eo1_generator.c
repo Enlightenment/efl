@@ -618,19 +618,6 @@ eo_source_end_generate(const char *classname, Eina_Strbuf *buf)
 
    eina_strbuf_reset(tmpbuf);
 
-   // default constructor
-   Eolian_Function ctor_fn = eolian_class_default_constructor_get(classname);
-   if (ctor_fn)
-     {
-        eo_bind_func_generate(classname, ctor_fn, EOLIAN_UNRESOLVED, str_bodyf, NULL);
-     }
-   // default destructor
-   Eolian_Function dtor_fn = eolian_class_default_destructor_get(classname);
-   if (dtor_fn)
-     {
-        eo_bind_func_generate(classname, dtor_fn, EOLIAN_UNRESOLVED, str_bodyf, NULL);
-     }
-
    //Implements - TODO one generate func def for all
    Eolian_Implement impl_desc;
    EINA_LIST_FOREACH(eolian_class_implements_list_get(classname), itr, impl_desc)
