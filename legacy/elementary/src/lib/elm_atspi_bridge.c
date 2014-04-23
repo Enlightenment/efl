@@ -1803,9 +1803,7 @@ static void _object_register(Eo *obj, char *path)
              eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
-          {
-             infc = eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
-          }
+          eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
      }
 }
 
