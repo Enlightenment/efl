@@ -82,4 +82,5 @@ eoliandatafiles_DATA = tests/eolian/data/class_simple.eo
 endif
 
 EXTRA_DIST += \
-tests/eolian/data/class_simple.eo
+tests/eolian/data/class_simple.eo \
+tests/eolian/data/scope.eo
