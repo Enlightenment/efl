@@ -486,80 +486,6 @@ eolian_implement_information_get(Eolian_Implement impl, const char **class_name,
    return EINA_TRUE;
 }
 
-Eolian_Implement_Legacy
-database_implement_legacy_add(Eolian_Implement impl, const char *legacy_function_name)
-{
-   _Implement_Desc *_impl = (_Implement_Desc *)impl;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, NULL);
-   _impl->leg_desc = calloc(1, sizeof(_Implement_Legacy_Desc));
-   _Implement_Legacy_Desc *leg_desc = (_Implement_Legacy_Desc *)_impl->leg_desc;
-   if (leg_desc && legacy_function_name) leg_desc->legacy_function_name = legacy_function_name;
-   return _impl->leg_desc;
-}
-
-Eolian_Implement_Legacy_Parameter
-database_implement_legacy_param_add(Eolian_Implement_Legacy leg,
-      Eina_Stringshare *eo_param, Eina_Stringshare *leg_param,
-      Eina_Stringshare *comment)
-{
-   _Implement_Legacy_Desc *_leg = (_Implement_Legacy_Desc *)leg;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_leg, NULL);
-
-   _Implement_Legacy_Param *param = calloc(1, sizeof(_Implement_Legacy_Param));
-   param->eo_param = eo_param;
-   param->leg_param = leg_param;
-   param->comment = comment;
-
-   _leg->params = eina_list_append(_leg->params, param);
-   return (Eolian_Implement_Legacy_Parameter) param;
-}
-
-EAPI Eina_Bool
-eolian_implement_legacy_param_info_get(Eolian_Implement_Legacy_Parameter param,
-      Eina_Stringshare **eo_param, Eina_Stringshare **leg_param,
-      Eina_Stringshare **comment)
-{
-   _Implement_Legacy_Param *_param = (_Implement_Legacy_Param *)param;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_param, EINA_FALSE);
-
-   if (eo_param) *eo_param = _param->eo_param;
-   if (leg_param) *leg_param = _param->leg_param;
-   if (comment) *comment = _param->comment;
-   return EINA_TRUE;
-}
-
-Eina_Bool
-database_implement_legacy_return_add(Eolian_Implement_Legacy leg, Eina_Stringshare *ret_type, Eina_Stringshare *ret_value)
-{
-   _Implement_Legacy_Desc *_leg = (_Implement_Legacy_Desc *)leg;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_leg, EINA_FALSE);
-   _leg->ret_type = ret_type;
-   _leg->ret_value = ret_value;
-   return EINA_TRUE;
-}
-
-EAPI Eolian_Implement_Legacy
-eolian_implement_legacy_desc_get(Eolian_Implement impl)
-{
-   _Implement_Desc *_impl = (_Implement_Desc *)impl;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, NULL);
-   return (Eolian_Implement_Legacy) (_impl->leg_desc);
-}
-
-EAPI Eina_Bool
-eolian_implement_legacy_information_get(const Eolian_Implement_Legacy leg_desc,
-      Eina_Stringshare **leg_func_name, Eina_List **params,
-      Eina_Stringshare **ret_type, Eina_Stringshare **ret_value)
-{
-   _Implement_Legacy_Desc *_leg = (_Implement_Legacy_Desc *)leg_desc;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_leg, EINA_FALSE);
-   if (leg_func_name) *leg_func_name = _leg->legacy_function_name;
-   if (params) *params = _leg->params;
-   if (ret_type) *ret_type = _leg->ret_type;
-   if (ret_value) *ret_value = _leg->ret_value;
-   return EINA_TRUE;
-}
-
 EAPI Eolian_Function
 eolian_class_function_find_by_name(const char *class_name, const char *func_name, Eolian_Function_Type f_type)
 {
@@ -1101,29 +1027,6 @@ _implements_print(Eolian_Implement impl, int nb_spaces)
          return;
      }
    printf("%*s <%s :: %s> <%s>\n", nb_spaces + 5, "", cl, fn, t);
-   Eolian_Implement_Legacy leg_desc = eolian_implement_legacy_desc_get(impl);
-   if (leg_desc)
-     {
-        Eina_Stringshare *func_name, *ret_type, *ret_value;
-        Eina_List *params = NULL;
-        eolian_implement_legacy_information_get(leg_desc, &func_name, &params, &ret_type, &ret_value);
-        printf("%*s Legacy\n", nb_spaces + 8, "");
-        if (func_name) printf("%*s Function name: %s\n", nb_spaces + 11, "", func_name);
-        if (ret_type && ret_value)
-           printf("%*s Return %s::%s\n", nb_spaces + 11, "", ret_type, ret_value);
-        if (params)
-          {
-             printf("%*s Params:\n", nb_spaces + 11, "");
-             Eina_List *itr;
-             Eolian_Implement_Legacy_Parameter p;
-             EINA_LIST_FOREACH(params, itr, p)
-               {
-                  Eina_Stringshare *eo_param, *leg_param, *comment;
-                  eolian_implement_legacy_param_info_get(p, &eo_param, &leg_param, &comment);
-                  printf("%*s %s -> %s <%s>\n", nb_spaces + 14, "", eo_param, leg_param, comment);
-               }
-          }
-     }
 }
 
 static void

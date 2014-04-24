@@ -116,17 +116,6 @@ database_function_scope_set(Eolian_Function function_id, Eolian_Function_Scope s
 Eolian_Implement
 database_implement_new(const char *class_name, const char *func_name, Eolian_Function_Type type);
 
-Eolian_Implement_Legacy
-database_implement_legacy_add(Eolian_Implement impl, const char *legacy_func_name);
-
-Eolian_Implement_Legacy_Parameter
-database_implement_legacy_param_add(Eolian_Implement_Legacy leg,
-      Eina_Stringshare *eo_param, Eina_Stringshare *leg_param,
-      Eina_Stringshare *comment);
-
-Eina_Bool
-database_implement_legacy_return_add(Eolian_Implement_Legacy leg, Eina_Stringshare *ret_type, Eina_Stringshare *ret_value);
-
 Eina_Bool
 database_class_implement_add(const char *class_name, Eolian_Implement impl_id);
 

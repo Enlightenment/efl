@@ -108,8 +108,6 @@ eo_definitions_impl_def_free(Eo_Implement_Def *impl)
 {
    if (impl->meth_name)
      eina_stringshare_del(impl->meth_name);
-   if (impl->legacy)
-      free(impl->legacy);
 
    free(impl);
 }

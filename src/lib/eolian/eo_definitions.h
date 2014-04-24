@@ -107,18 +107,9 @@ typedef struct _eo_implement_legacy_param_def
    const char *comment;
 } Eo_Implement_Legacy_Param_Def;
 
-typedef struct _eo_implement_legacy_def
-{
-   const char *function_name;
-   Eina_List *params; /* List of Eo_Implement_Legacy_Param_Def * */
-   const char *ret_type;
-   const char *ret_value;
-} Eo_Implement_Legacy_Def;
-
 typedef struct _eo_implement_def
 {
    const char *meth_name;
-   Eo_Implement_Legacy_Def *legacy;
 } Eo_Implement_Def;
 
 /* CLASS */

@@ -892,80 +892,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
         toknz->tmp.kls->implements = eina_list_append(toknz->tmp.kls->implements, toknz->tmp.impl);
    }
 
-   action impl_legacy_create {
-        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
-        if (toknz->tmp.impl->legacy)
-           ABORT(toknz, "Legacy section already allocated for implement item");
-        toknz->tmp.impl->legacy = calloc(1, sizeof(Eo_Implement_Legacy_Def));
-   }
-
-   action impl_legacy_function_name_store {
-        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
-        if (!toknz->tmp.impl->legacy)
-           ABORT(toknz, "No legacy section");
-        toknz->tmp.impl->legacy->function_name = _eo_tokenizer_token_get(toknz, fpc);
-   }
-
-   action impl_legacy_eo_param_store {
-        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
-        toknz->tmp.impl_leg_param = calloc(1, sizeof(Eo_Implement_Legacy_Param_Def));
-        toknz->tmp.impl->legacy->params = eina_list_append(
-              toknz->tmp.impl->legacy->params, toknz->tmp.impl_leg_param);
-
-        toknz->tmp.impl_leg_param->eo_name = _eo_tokenizer_token_get(toknz, fpc);
-   }
-
-   action impl_legacy_leg_param_store {
-        if (!toknz->tmp.impl_leg_param)
-           ABORT(toknz, "No implement legacy param!!!");
-        toknz->tmp.impl_leg_param->legacy_name = _eo_tokenizer_token_get(toknz, fpc);
-   }
-
-   action impl_legacy_param_comment_store {
-        if (!toknz->tmp.impl_leg_param)
-           ABORT(toknz, "No implement legacy param!!!");
-        toknz->tmp.impl_leg_param->comment = _eo_tokenizer_token_get(toknz, fpc-2);
-   }
-
-   action impl_legacy_return_type_store {
-        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
-        if (!toknz->tmp.impl->legacy)
-           ABORT(toknz, "No legacy section");
-        toknz->tmp.impl->legacy->ret_type= _eo_tokenizer_token_get(toknz, fpc);
-   }
-
-   action impl_legacy_return_val_store {
-        if (!toknz->tmp.impl) ABORT(toknz, "No implement!!!");
-        if (!toknz->tmp.impl->legacy)
-           ABORT(toknz, "No legacy section");
-        toknz->tmp.impl->legacy->ret_value = _eo_tokenizer_token_get(toknz, fpc);
-   }
-
-#  legacy legacy_function_name
-#    {
-#       params {
-#         grp: NULL; /*@ in case 'grp' is in Eo but not in legacy, have to give default */
-#         file; /*@ in case the 'file' parameter is the same */
-#         :index; /*@ in case the param is in legacy but not in Eo */
-#       };
-#       return Eina_Bool::EINA_TRUE;
-#    };
-
-   impl_legacy_param_comment = ws* eo_comment %impl_legacy_param_comment_store;
-   impl_legacy_eo_param = ident %impl_legacy_eo_param_store;
-   impl_legacy_leg_param = ws* colon ws* ident %impl_legacy_leg_param_store ignore*;
-   impl_legacy_param = impl_legacy_eo_param? ws* impl_legacy_leg_param? end_statement impl_legacy_param_comment? ignore*;
-   impl_legacy_params = impl_legacy_param+;
-
-   impl_legacy_return = 'return' ws+ ident %impl_legacy_return_type_store '::' ident %impl_legacy_return_val_store end_statement ignore*;
-
-   impl_legacy_body = 'params' ignore* begin_def ignore* impl_legacy_params ignore* end_def ignore* impl_legacy_return? ignore*;
-
-   impl_legacy_function_name = ident %impl_legacy_function_name_store;
-   impl_legacy_token = 'legacy' %impl_legacy_create;
-   impl_body = impl_legacy_token ws* impl_legacy_function_name? ignore* (end_statement | (begin_def ignore* impl_legacy_body ignore* end_def)) ignore*;
-# class::func ; or { ... }
-   impl_it = class_meth %impl_meth_store ignore* (end_statement | (begin_def ignore* impl_body ignore* end_def)) ignore*;
+   impl_it = class_meth %impl_meth_store ignore* end_statement ignore*;
 # implements { ... }
    implements = 'implements' ignore* begin_def ignore* impl_it* end_def;
 
@@ -1592,21 +1519,6 @@ eo_tokenizer_database_fill(const char *filename)
                   continue;
                }
              Eolian_Implement impl_desc = database_implement_new(class, func, ftype);
-             if (impl->legacy)
-               {
-                  Eo_Implement_Legacy_Def *eo_leg = impl->legacy;
-                  Eolian_Implement_Legacy leg = database_implement_legacy_add(
-                        impl_desc, eo_leg->function_name);
-                  database_implement_legacy_return_add(leg, eo_leg->ret_type, eo_leg->ret_value);
-                  if (eo_leg->params)
-                    {
-                       Eina_List *itr;
-                       Eo_Implement_Legacy_Param_Def *p;
-                       EINA_LIST_FOREACH(eo_leg->params, itr, p)
-                          database_implement_legacy_param_add(leg, p->eo_name,
-                                p->legacy_name, p->comment);
-                    }
-               }
              database_class_implement_add(kls->name, impl_desc);
           }
 
