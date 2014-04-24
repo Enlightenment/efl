@@ -86,12 +86,30 @@ local getopt_u = function(args, short, long)
     return opts, args
 end
 
-M.getopt = function(args, short, long)
+local getopt = function(args, short, long)
     local ret, opts, args = pcall(getopt_u, args, short, long)
     if not ret then
         return nil, opts
     end
     return opts, args
+end
+M.getopt = getopt
+
+M.getopt_desc = function(parser)
+    local args = parser.args
+    local short, long = {}, {}
+    for i, desc in ipairs(parser.descs) do
+        if desc[1] then short[#short + 1] = desc[1] end
+        local buf
+        if desc[2] then buf = desc[2] end
+        if desc[3] then
+            if buf then buf = buf .. "=" end
+            short[#short + 1] = ":"
+        end
+        if buf then long[#long + 1] = buf end
+    end
+    short = table.concat(short)
+    return getopt(args, short, long)
 end
 
 return M
