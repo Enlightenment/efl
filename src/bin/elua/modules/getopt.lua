@@ -112,4 +112,58 @@ M.getopt_desc = function(parser)
     return getopt(args, short, long)
 end
 
+M.help = function(parser, f)
+    f = f or io.stderr
+    local usage = parser.usage
+    local progn = parser.prog or parser.args[0] or "program"
+    if usage then
+        usage = usage:gsub("%%prog", progn)
+    else
+        usage = ("Usage: %s [OPTIONS]"):format(progn)
+    end
+    f:write(usage, "\n")
+    if parser.header then
+        f:write("\n", parser.header:gsub("%%prog", progn), "\n")
+    end
+    if #parser.descs > 0 then
+        local ohdr = parser.optheader
+        f:write("\n", ohdr and ohdr:gsub("%%prog", progn)
+            or "The following options are supported:", "\n\n")
+        local lns = {}
+        local lln = 0
+        for i, desc in ipairs(parser.descs) do
+            if desc[1] or desc[2] then
+                local mv = desc.metavar
+                if not mv and desc[3] then
+                    mv = desc[2] and desc[2]:upper() or "VAL"
+                end
+                local ln = {}
+                ln[#ln + 1] = "  "
+                if desc[1] then
+                    ln[#ln + 1] = "-" .. desc[1]
+                    if mv then ln[#ln + 1] = "[" .. mv .. "]" end
+                    if desc[2] then ln[#ln + 1] = ", " end
+                end
+                if desc[2] then
+                    ln[#ln + 1] = "--" .. desc[2]
+                    if mv then ln[#ln + 1] = "=[" .. mv .. "]" end
+                end
+                ln = table.concat(ln)
+                lln = math.max(lln, #ln)
+                lns[#lns + 1] = { ln, desc.help }
+            end
+        end
+        for i, lnt in ipairs(lns) do
+            local ln = lnt[1]
+            local hp = lnt[2]
+            f:write(ln)
+            if hp then f:write((" "):rep(lln - #ln), "  ", hp) end
+            f:write("\n")
+        end
+    end
+    if parser.footer then
+        f:write("\n", parser.footer:gsub("%%prog", progn), "\n")
+    end
+end
+
 return M
