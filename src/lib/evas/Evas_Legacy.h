@@ -1333,6 +1333,15 @@ EAPI char                                    *evas_textblock_text_markup_to_utf8
  */
 EAPI char                                    *evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
+/**
+ * Clear the textblock object.
+ * @note Does *NOT* free the Evas object itself.
+ *
+ * @param obj the object to clear.
+ * @return nothing.
+ */
+EAPI void                                     evas_object_textblock_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
 #include "canvas/evas_textblock.eo.legacy.h"
 
 /**

@@ -284,7 +284,7 @@ class Evas_Textblock (Evas_Object)
 
          @return nothing. */
 
-         legacy evas_object_textblock_clear_all;
+         legacy null;
       }
       style_user_push {
          /*@
