@@ -79,6 +79,8 @@ struct _Mod_Api
    void (*obj_longpress)(Evas_Object *obj);
 };
 
+static void _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd);
+
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
 {
@@ -380,6 +382,8 @@ _hide_selection_handler(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd->start_handler) return;
+
    edje_object_signal_emit(sd->start_handler, "elm,handler,hide", "elm");
    sd->start_handler_shown = EINA_FALSE;
    edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
@@ -435,6 +439,9 @@ _update_selection_handler(Evas_Object *obj)
         Eina_Rectangle *rect;
         Evas_Coord hx, hy;
         Eina_Bool hidden = EINA_FALSE;
+
+        if (!sd->start_handler)
+          _create_selection_handlers(obj, sd);
 
         rect = _viewport_region_get(obj);
         start_pos = edje_object_part_text_cursor_pos_get
@@ -763,10 +770,13 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    else
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
-   elm_widget_theme_object_set(obj, sd->start_handler,
-                               "entry", "handler/start", style);
-   elm_widget_theme_object_set(obj, sd->end_handler,
-                               "entry", "handler/end", style);
+   if (sd->start_handler)
+     {
+        elm_widget_theme_object_set(obj, sd->start_handler,
+                                    "entry", "handler/start", style);
+        elm_widget_theme_object_set(obj, sd->end_handler,
+                                    "entry", "handler/end", style);
+     }
 
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
@@ -3424,29 +3434,36 @@ _elm_entry_evas_smart_add(Eo *obj, Elm_Entry_Data *priv)
    _elm_access_callback_set
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
 
-   priv->start_handler = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, priv->start_handler,
-                         "entry", "handler/start", "default");
-   evas_object_event_callback_add(priv->start_handler, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _start_handler_mouse_down_cb, obj);
-   evas_object_event_callback_add(priv->start_handler, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _start_handler_mouse_move_cb, obj);
-   evas_object_event_callback_add(priv->start_handler, EVAS_CALLBACK_MOUSE_UP,
-                                  _start_handler_mouse_up_cb, obj);
-   evas_object_show(priv->start_handler);
-
-   priv->end_handler = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, priv->end_handler,
-                         "entry", "handler/end", "default");
-   evas_object_event_callback_add(priv->end_handler, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _end_handler_mouse_down_cb, obj);
-   evas_object_event_callback_add(priv->end_handler, EVAS_CALLBACK_MOUSE_MOVE,
-                                  _end_handler_mouse_move_cb, obj);
-   evas_object_event_callback_add(priv->end_handler, EVAS_CALLBACK_MOUSE_UP,
-                                  _end_handler_mouse_up_cb, obj);
-   evas_object_show(priv->end_handler);
    if (_elm_config->desktop_entry)
      priv->sel_handler_disabled = EINA_TRUE;
+}
+
+static void
+_create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd)
+{
+   Evas_Object *handle;
+
+   handle = edje_object_add(evas_object_evas_get(obj));
+   sd->start_handler = handle;
+   _elm_theme_object_set(obj, handle, "entry", "handler/start", "default");
+   evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _start_handler_mouse_down_cb, obj);
+   evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _start_handler_mouse_move_cb, obj);
+   evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_UP,
+                                  _start_handler_mouse_up_cb, obj);
+   evas_object_show(handle);
+
+   handle = edje_object_add(evas_object_evas_get(obj));
+   sd->end_handler = handle;
+   _elm_theme_object_set(obj, handle, "entry", "handler/end", "default");
+   evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _end_handler_mouse_down_cb, obj);
+   evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _end_handler_mouse_move_cb, obj);
+   evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_UP,
+                                  _end_handler_mouse_up_cb, obj);
+   evas_object_show(handle);
 }
 
 EOLIAN static void
@@ -3517,8 +3534,11 @@ _elm_entry_evas_smart_del(Eo *obj, Elm_Entry_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   evas_object_del(sd->start_handler);
-   evas_object_del(sd->end_handler);
+   if (sd->start_handler)
+     {
+        evas_object_del(sd->start_handler);
+        evas_object_del(sd->end_handler);
+     }
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
