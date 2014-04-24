@@ -453,6 +453,7 @@ group { name: "e/modules/everything/list";
                align: 0.0 0.5;
                min: 1 1;
                text_class: "fileman_typebuf";
+               elipsis: -1;
             }
          }
       }
