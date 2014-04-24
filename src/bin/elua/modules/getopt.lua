@@ -2,30 +2,24 @@
 
 local M = {}
 
-local hasval_l = function(opt, long)
-    for i, v in ipairs(long) do
-        if v:sub(1, #opt) == opt then
-            local rest = v:sub(#opt + 1)
-            if #rest == 0 then
-                return false, opt
-            elseif rest == "=" then
-                return true, opt
-            end
+local get_desc = function(opt, j, descs)
+    for i, v in ipairs(descs) do
+        if v[j] == opt then
+            return v
         end
     end
     error("option --" .. opt .. " not recognized", 4)
 end
 
-local parse_l = function(opts, opt, long, args)
+local parse_l = function(opts, opt, descs, args)
     local optval
     local i = opt:find("=")
     if i then
         opt, optval = opt:sub(1, i - 1), opt:sub(i + 1)
     end
 
-    local has_val
-    hasval, opt = hasval_l(opt, long)
-    if hasval then
+    local desc = get_desc(opt, 2, descs)
+    if desc[3] then
         if not optval then
             if #args == 0 then
                 error("option --" .. opt .. " requires an argument", 3)
@@ -35,23 +29,17 @@ local parse_l = function(opts, opt, long, args)
     elseif optval then
         error("option --" .. opt .. " cannot have an argument", 3)
     end
-    opts[#opts + 1] = { "--" .. opt, optval }
+    opts[#opts + 1] = { desc.alias or desc[1] or desc[2], optval }
     return opts, args
 end
 
-local hasval_s = function(opt, short)
-    if short:find(opt, 1, true) then
-        return not not short:find(opt .. ":", 1, true)
-    end
-    error("option -" .. opt .. " not recognized", 4)
-end
-
-local parse_s = function(opts, optstr, short, args)
+local parse_s = function(opts, optstr, descs, args)
     while optstr ~= "" do
         local optval
         local opt = optstr:sub(1, 1)
         optstr = optstr:sub(2)
-        if hasval_s(opt, short) then
+        local desc = get_desc(opt, 1, descs)
+        if desc[3] then
             if optstr == "" then
                 if #args == 0 then
                     error("option -" .. opt .. " requires an argument", 3)
@@ -60,57 +48,39 @@ local parse_s = function(opts, optstr, short, args)
             end
             optval, optstr = optstr, ""
         end
-        opts[#opts + 1] = { "-" .. opt, optval }
+        opts[#opts + 1] = { desc.alias or desc[1] or desc[2], optval }
     end
     return opts, args
 end
 
-local getopt_u = function(args, short, long)
-    local opts = {}
-    if type(long) == "string" then
-        long = { long }
-    end
+local getopt_u  = function(parser)
+    local args  = parser.args
+    local descs = parser.descs
+    local opts  = {}
     while args and #args > 0 and args[1]:sub(1, 1) == "-" and args[1] ~= "-" do
         if args[1] == "--" then
             args = { unpack(args, 2) }
             break
         end
         if args[1]:sub(1, 2) == "--" then
-            opts, args = parse_l(opts, args[1]:sub(3), long,
+            opts, args = parse_l(opts, args[1]:sub(3), descs,
                 { unpack(args, 2) })
         else
-            opts, args = parse_s(opts, args[1]:sub(2), short,
+            opts, args = parse_s(opts, args[1]:sub(2), descs,
                 { unpack(args, 2) })
         end
     end
     return opts, args
 end
 
-M.parse = function(args, short, long)
-    local ret, opts, args = pcall(getopt_u, args, short, long)
+M.parse = function(parser)
+    local ret, opts, args = pcall(getopt_u, parser)
     if not ret then
         return nil, opts
     end
     return opts, args
 end
 local parse = M.parse
-
-M.parse_desc = function(parser)
-    local args = parser.args
-    local short, long = {}, {}
-    for i, desc in ipairs(parser.descs) do
-        if desc[1] then short[#short + 1] = desc[1] end
-        local buf
-        if desc[2] then buf = desc[2] end
-        if desc[3] then
-            if buf then buf = buf .. "=" end
-            short[#short + 1] = ":"
-        end
-        if buf then long[#long + 1] = buf end
-    end
-    short = table.concat(short)
-    return parse(args, short, long)
-end
 
 M.help = function(parser, f)
     f = f or io.stderr

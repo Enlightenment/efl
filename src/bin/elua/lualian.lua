@@ -25,7 +25,7 @@ local arg_parser = {
     }
 }
 
-local opts, args = getopt.parse_desc(arg_parser)
+local opts, args = getopt.parse(arg_parser)
 
 if not opts then
     io.stderr:write(args, "\n")
@@ -41,26 +41,26 @@ local printv = function() end
 
 for i, opt in ipairs(opts) do
     local on = opt[1]
-    if on == "-h" or on == "--help" then
+    if on == "h" then
         getopt.help(arg_parser, io.stdout)
         return
     end
-    if on == "-l" or on == "--license" then
+    if on == "l" then
         print("Copyright (C) 2014 Daniel \"q66\" Kolesa, available under the "
            .. "terms of the MIT license.")
         return
     end
-    if on == "-v" or on == "--verbose" then
+    if on == "v" then
         printv = print
-    elseif on == "-I" or on == "--include" then
+    elseif on == "I" then
         include_dirs[#include_dirs + 1] = opt[2]
-    elseif on == "-L" or on == "--library" then
+    elseif on == "L" then
         libname = opt[2]
-    elseif on == "-M" or on == "--module" then
+    elseif on == "M" then
         modname = opt[2]
-    elseif on == "-P" or on == "--prefix" then
+    elseif on == "P" then
         cprefix = opt[2]
-    elseif on == "-o" or on == "--output" then
+    elseif on == "o" then
         output_files[#output_files + 1] = opt[2]
     end
 end
