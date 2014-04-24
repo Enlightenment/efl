@@ -554,7 +554,7 @@ BUILT_SOURCES = \
 		elm_actionslider.eo.c \
 		elm_actionslider.eo.h \
 		elm_actionslider.eo.legacy.h \
-        elm_app_client.eo.c \
+		elm_app_client.eo.c \
 		elm_app_client.eo.h \
 		elm_app_client_view.eo.c \
 		elm_app_client_view.eo.h \
@@ -651,7 +651,7 @@ BUILT_SOURCES = \
 		elm_icon.eo.legacy.h \
 		elm_index.eo.c \
 		elm_index.eo.h \
-        elm_index.eo.legacy.h \
+		elm_index.eo.legacy.h \
 		elm_interface_atspi_accessible.eo.c \
 		elm_interface_atspi_accessible.eo.h \
 		elm_interface_atspi_action.eo.c \
@@ -948,65 +948,65 @@ nodist_includesunstable_HEADERS = \
 				  elm_web.eo.h \
 				  elm_win.eo.h \
 				  elm_layout.eo.legacy.h \
-		          elm_frame.eo.legacy.h \
-		          elm_hover.eo.legacy.h \
-                  elm_actionslider.eo.legacy.h \
-		          elm_atspi_app_object.eo.legacy.h \
-		          elm_bg.eo.legacy.h \
-                  elm_box.eo.legacy.h \
-                  elm_bubble.eo.legacy.h \
-                  elm_button.eo.legacy.h \
-                  elm_calendar.eo.legacy.h \
-                  elm_check.eo.legacy.h \
-                  elm_clock.eo.legacy.h \
-                  elm_colorselector.eo.legacy.h \
-                  elc_ctxpopup.eo.legacy.h \
-                  elm_datetime.eo.legacy.h \
-		          elm_dayselector.eo.legacy.h \
-		          elm_diskselector.eo.legacy.h \
-                  elm_entry.eo.legacy.h \
-		          elc_fileselector.eo.legacy.h \
-		          elc_fileselector_button.eo.legacy.h \
-		          elc_fileselector_entry.eo.legacy.h \
-		          elm_flipselector.eo.legacy.h \
-		          elm_flip.eo.legacy.h \
-		          elm_gengrid.eo.legacy.h \
-                  elm_genlist.eo.legacy.h \
-		          elm_gesture_layer.eo.legacy.h \
-                  elm_glview.eo.legacy.h \
-		          elm_grid.eo.legacy.h \
-		          elc_hoversel.eo.legacy.h \
-		          elm_image.eo.legacy.h \
-                  elm_icon.eo.legacy.h \
-		          elm_index.eo.legacy.h \
-		          elm_inwin.eo.legacy.h \
-		          elm_label.eo.legacy.h  \
-		          elm_list.eo.legacy.h \
-		          elm_map.eo.legacy.h \
-		          elm_menu.eo.legacy.h \
-		          elc_multibuttonentry.eo.legacy.h \
-		          elc_naviframe.eo.legacy.h \
-		          elm_panel.eo.legacy.h \
-		          elm_mapbuf.eo.legacy.h \
-		          elm_notify.eo.legacy.h \
-                  elm_panes.eo.legacy.h \
-		          elm_photocam.eo.legacy.h \
-		          elm_photo.eo.legacy.h \
-		          elm_plug.eo.legacy.h \
-		          elc_popup.eo.legacy.h \
-		          elm_prefs.eo.legacy.h \
-		          elm_progressbar.eo.legacy.h \
-		          elm_radio.eo.legacy.h \
-		          elm_route.eo.legacy.h \
-		          elm_scroller.eo.legacy.h \
-		          elm_segment_control.eo.legacy.h \
-		          elm_separator.eo.legacy.h \
-                  elm_slider.eo.legacy.h \
-		          elm_slideshow.eo.legacy.h \
-		          elm_spinner.eo.legacy.h \
-		          elm_table.eo.legacy.h \
-		          elm_thumb.eo.legacy.h \
-		          elm_toolbar.eo.legacy.h \
-		          elm_video.eo.legacy.h \
-		          elm_web.eo.legacy.h \
-		          elm_win.eo.legacy.h
+				  elm_frame.eo.legacy.h \
+				  elm_hover.eo.legacy.h \
+				  elm_actionslider.eo.legacy.h \
+				  elm_atspi_app_object.eo.legacy.h \
+				  elm_bg.eo.legacy.h \
+				  elm_box.eo.legacy.h \
+				  elm_bubble.eo.legacy.h \
+				  elm_button.eo.legacy.h \
+				  elm_calendar.eo.legacy.h \
+				  elm_check.eo.legacy.h \
+				  elm_clock.eo.legacy.h \
+				  elm_colorselector.eo.legacy.h \
+				  elc_ctxpopup.eo.legacy.h \
+				  elm_datetime.eo.legacy.h \
+				  elm_dayselector.eo.legacy.h \
+				  elm_diskselector.eo.legacy.h \
+				  elm_entry.eo.legacy.h \
+				  elc_fileselector.eo.legacy.h \
+				  elc_fileselector_button.eo.legacy.h \
+				  elc_fileselector_entry.eo.legacy.h \
+				  elm_flipselector.eo.legacy.h \
+				  elm_flip.eo.legacy.h \
+				  elm_gengrid.eo.legacy.h \
+				  elm_genlist.eo.legacy.h \
+				  elm_gesture_layer.eo.legacy.h \
+				  elm_glview.eo.legacy.h \
+				  elm_grid.eo.legacy.h \
+				  elc_hoversel.eo.legacy.h \
+				  elm_image.eo.legacy.h \
+				  elm_icon.eo.legacy.h \
+				  elm_index.eo.legacy.h \
+				  elm_inwin.eo.legacy.h \
+				  elm_label.eo.legacy.h  \
+				  elm_list.eo.legacy.h \
+				  elm_map.eo.legacy.h \
+				  elm_menu.eo.legacy.h \
+				  elc_multibuttonentry.eo.legacy.h \
+				  elc_naviframe.eo.legacy.h \
+				  elm_panel.eo.legacy.h \
+				  elm_mapbuf.eo.legacy.h \
+				  elm_notify.eo.legacy.h \
+				  elm_panes.eo.legacy.h \
+				  elm_photocam.eo.legacy.h \
+				  elm_photo.eo.legacy.h \
+				  elm_plug.eo.legacy.h \
+				  elc_popup.eo.legacy.h \
+				  elm_prefs.eo.legacy.h \
+				  elm_progressbar.eo.legacy.h \
+				  elm_radio.eo.legacy.h \
+				  elm_route.eo.legacy.h \
+				  elm_scroller.eo.legacy.h \
+				  elm_segment_control.eo.legacy.h \
+				  elm_separator.eo.legacy.h \
+				  elm_slider.eo.legacy.h \
+				  elm_slideshow.eo.legacy.h \
+				  elm_spinner.eo.legacy.h \
+				  elm_table.eo.legacy.h \
+				  elm_thumb.eo.legacy.h \
+				  elm_toolbar.eo.legacy.h \
+				  elm_video.eo.legacy.h \
+				  elm_web.eo.legacy.h \
+				  elm_win.eo.legacy.h
