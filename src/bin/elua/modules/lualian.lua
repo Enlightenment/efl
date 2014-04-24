@@ -625,32 +625,31 @@ local gen_class = function(classn)
     return Class(classn, parent, mixins, gen_contents(classn))
 end
 
-M.generate = function(files, include_files, fstream)
+M.include_files = function(include_files)
     for i, file in ipairs(include_files) do
         if not eolian.eo_file_parse(file) then
             error("Failed parsing include file: " .. file)
         end
     end
-    for i, file in ipairs(files) do
-        if not eolian.eo_file_parse(file[1]) then
-            error("Failed parsing file: " .. file[1])
-        end
+end
+
+M.generate = function(fname, modname, libname, cprefix, fstream)
+    if not eolian.eo_file_parse(fname) then
+        error("Failed parsing file: " .. fname)
     end
-    for i, file in ipairs(files) do
-        local fname = file[1]
-        local classn = eolian.class_find_by_file(fname)
-        local tp = eolian.class_type_get(classn)
-        local ct = eolian.class_type
-        local cl
-        if tp == ct.MIXIN or tp == ct.INTERFACE then
-            cl = gen_mixin(classn)
-        elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
-            cl = gen_class(classn)
-        else
-            error(classn .. ": unknown type")
-        end
-        File(fname, classn, file[2], file[3], file[4], { cl }):generate(fstream)
+    local classn = eolian.class_find_by_file(fname)
+    local tp = eolian.class_type_get(classn)
+    local ct = eolian.class_type
+    local cl
+    if tp == ct.MIXIN or tp == ct.INTERFACE then
+        cl = gen_mixin(classn)
+    elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
+        cl = gen_class(classn)
+    else
+        error(classn .. ": unknown type")
     end
+    File(fname, classn, modname, libname, cprefix, { cl })
+        :generate(fstream or io.stdout)
 end
 
 return M

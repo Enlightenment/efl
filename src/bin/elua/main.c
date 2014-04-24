@@ -1,58 +1,23 @@
 /* The Lua runtime component of the EFL */
 
+#include <getopt.h>
+
 #include "main.h"
-
-static Eina_List *modlist = NULL;
-static int require_ref = LUA_REFNIL;
-
-int el_log_domain = -1;
-
-enum {
-    ARG_CODE = 0, ARG_LIBRARY, ARG_LIBDIR
-};
 
 typedef struct Arg_Data {
     int type;
     const char *value;
 } Arg_Data;
 
-static Eina_Bool append_cb(const Ecore_Getopt      *parser EINA_UNUSED,
-                           const Ecore_Getopt_Desc *desc   EINA_UNUSED,
-                           const char              *str,
-                           void                    *data,
-                           Ecore_Getopt_Value      *val)
-{
-    Eina_List **l = val->listp;
-    Arg_Data   *v = malloc(sizeof(Arg_Data));
-    v->type       = (size_t)data;
-    v->value      = str;
-    *l = eina_list_append(*l, v);
-    return EINA_TRUE;
-}
-
-static Ecore_Getopt opt = {
-    "elua", "%prog [options] [script [args]]", "0.0.1", "See COPYING",
-    "See COPYING", "A main entry for all EFL/LuaJIT powered applications.",
-    0, {
-        ECORE_GETOPT_LICENSE('L', "license"),
-        ECORE_GETOPT_COPYRIGHT('c', "copyright"),
-        ECORE_GETOPT_VERSION('v', "version"),
-        ECORE_GETOPT_HELP('h', "help"),
-
-        ECORE_GETOPT_STORE_STR('C', "core-dir", "Elua core directory path."),
-        ECORE_GETOPT_STORE_STR('M', "modules-dir", "Elua modules directory path."),
-
-        ECORE_GETOPT_CALLBACK_ARGS('e', "execute", "Execute string "
-            "'code'.", "CODE", append_cb, (void*)ARG_CODE),
-        ECORE_GETOPT_CALLBACK_ARGS('l', "library", "Require library 'library'.",
-            "LIBRARY", append_cb, (void*)ARG_LIBRARY),
-        ECORE_GETOPT_CALLBACK_ARGS('I', "lib-dir", "Append an additional "
-            "require path 'LIBDIR'.", "LIBDIR", append_cb, (void*)ARG_LIBDIR),
-        ECORE_GETOPT_STORE_TRUE('E', "noenv", "Ignore environment vars."),
-
-        ECORE_GETOPT_SENTINEL
-    }
+enum {
+    ARG_CODE = 0, ARG_LIBRARY, ARG_LIBDIR
 };
+
+static Eina_List *modlist = NULL;
+static int require_ref = LUA_REFNIL;
+static const char *progname = NULL;
+
+int el_log_domain = -1;
 
 static void errmsg(const char *pname, const char *msg) {
     ERR("%s%s%s", pname ? pname : "", pname ? ": " : "", msg);
@@ -61,7 +26,7 @@ static void errmsg(const char *pname, const char *msg) {
 static int report(lua_State *L, int status) {
     if (status && !lua_isnil(L, -1)) {
         const char *msg = lua_tostring(L, -1);
-        errmsg(opt.prog, msg ? msg : "(non-string error)");
+        errmsg(progname, msg ? msg : "(non-string error)");
         lua_pop(L, 1);
     }
     return status;
@@ -230,43 +195,85 @@ const luaL_reg cutillib[] = {
     { NULL, NULL }
 };
 
+static void print_help(const char *progname, FILE *stream) {
+    fprintf(stream, "Usage: %s [OPTIONS] [SCRIPT [ARGS]]\n\n"
+                    "A main entry for all EFL/LuaJIT powered applications.\n\n"
+                    "The following options are supported:\n\n"
+                    ""
+                    "  -h, --help                          Show this message.\n"
+                    "  -l, --license                       Show a license message.\n"
+                    "  -C[COREDIR], --core-dir=[COREDIR]   Elua core directory path.\n"
+                    "  -M[MODDIR], --modules-dir=[MODDIR]  Elua modules directory path.\n"
+                    "  -e[CODE], --execute=[CODE]          Execute string 'code'.\n"
+                    "  -l[LIBRARY], --library=[LIBRARY]    Require library 'library'.\n"
+                    "  -I[DIR], --lib-dir=[DIR]            Append an additional require path.\n"
+                    "  -E, --noenv                         Ignore environment variables.\n", progname);
+}
+
+static void print_license(FILE *stream) {
+    fprintf(stream, "Copyright (C) 2014 Daniel \"q66\" Kolesa, available under"
+                    " the terms of the MIT license.\n");
+}
+
+static struct option lopt[] = {
+    { "license"    , no_argument      , NULL, 'L' },
+    { "help"       , no_argument      , NULL, 'h' },
+
+    { "core-dir"   , required_argument, NULL, 'C' },
+    { "modules-dir", required_argument, NULL, 'M' },
+
+    { "execute"    , required_argument, NULL, 'e' },
+    { "library"    , required_argument, NULL, 'l' },
+    { "lib-dir"    , required_argument, NULL, 'I' },
+    { "noenv"      , no_argument      , NULL, 'E' },
+    { NULL         , 0                , NULL,   0 }
+};
+
 /* protected main */
 static int lua_main(lua_State *L) {
-    Eina_Bool     quit    = EINA_FALSE,
-                 noenv    = EINA_FALSE,
-                 hasexec  = EINA_FALSE;
-    Eina_List  *largs     = NULL, *l = NULL;
-    Arg_Data   *data      = NULL;
-    const char *coref     = NULL;
-    char       *coredir   = NULL, *moddir = NULL;
+    Eina_Bool   noenv   = EINA_FALSE,
+                hasexec = EINA_FALSE;
+    Eina_List  *largs   = NULL, *l = NULL;
+    Arg_Data   *data    = NULL;
+    const char *coref   = NULL;
+    char       *coredir = NULL, *moddir = NULL;
     char        modfile[1024];
 
-    int nonopt;
+    int ch;
 
     struct Main_Data *m = (struct Main_Data*)lua_touserdata(L, 1);
 
     int    argc = m->argc;
     char **argv = m->argv;
 
-    if (argv[0] && argv[0][0]) opt.prog = argv[0];
+    progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
-    nonopt = ecore_getopt_parse(&opt, (Ecore_Getopt_Value[]){
-        ECORE_GETOPT_VALUE_BOOL(quit), /* license */
-        ECORE_GETOPT_VALUE_BOOL(quit), /* copyright */
-        ECORE_GETOPT_VALUE_BOOL(quit), /* version */
-        ECORE_GETOPT_VALUE_BOOL(quit), /* help */
-
-        ECORE_GETOPT_VALUE_STR(coredir),
-        ECORE_GETOPT_VALUE_STR( moddir),
-
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_LIST(largs),
-        ECORE_GETOPT_VALUE_BOOL(noenv)
-    }, argc, argv);
-
-    if (quit) return 0;
+    while ((ch = getopt_long(argc, argv, "LhC:M:e:l:I:E", lopt, NULL)) != -1) {
+        switch (ch) {
+            case 'L':
+                print_license(stdout);
+                return 0;
+            case 'h':
+                print_help(progname, stdout);
+                return 0;
+            case 'C':
+                coredir = optarg;
+                break;
+            case 'M':
+                moddir = optarg;
+                break;
+            case 'e':
+            case 'l':
+            case 'I': {
+                Arg_Data *v = malloc(sizeof(Arg_Data));
+                v->type = (ch == 'e') ? ARG_CODE : ((ch == 'l')
+                    ? ARG_LIBRARY : ARG_LIBDIR);
+                v->value = optarg;
+                largs = eina_list_append(largs, v);
+                break;
+            }
+        }
+    }
 
     INF("arguments parsed");
 
@@ -324,8 +331,8 @@ static int lua_main(lua_State *L) {
     EINA_LIST_FREE(largs, data) free(data);
 
     /* run script or execute sdin as file */
-    if (nonopt >= 0 && nonopt < argc) {
-        if ((m->status = doscript(L, argc, argv, nonopt))) return 0;
+    if (optind < argc) {
+        if ((m->status = doscript(L, argc, argv, optind))) return 0;
     } else if (!hasexec) {
         dofile(L, NULL);
     }

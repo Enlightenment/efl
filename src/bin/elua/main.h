@@ -18,7 +18,6 @@
 
 #include <Eina.h>
 #include <Ecore.h>
-#include <Ecore_Getopt.h>
 
 #include <lua.h>
 #include <lualib.h>
