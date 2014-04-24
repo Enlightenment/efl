@@ -1,0 +1,18 @@
+class Ctor_Dtor (Base) {
+   constructors {
+      custom_constructor_1 {
+         params {
+            @in int a;
+            @in char b;
+         }
+      }
+      custom_constructor_2 {
+      }
+   }
+   implements {
+      class::constructor;
+      class::destructor;
+      Base::constructor;
+      Base::destructor;
+   }
+}

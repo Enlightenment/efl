@@ -79,5 +79,8 @@ tests_eolian_eolian_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST += \
+tests/eolian/data/base.eo \
 tests/eolian/data/class_simple.eo \
-tests/eolian/data/scope.eo
+tests/eolian/data/scope.eo \
+tests/eolian/data/ctor_dtor.eo
+

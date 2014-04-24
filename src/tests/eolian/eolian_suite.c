@@ -16,6 +16,42 @@ struct _Eolian_Test_Case
    void      (*build)(TCase *tc);
 };
 
+START_TEST(eolian_ctor_dtor)
+{
+   const char *class_name = "Ctor_Dtor";
+   const char *base_name = "Base";
+   const Eina_List *impls = NULL;
+   const char *impl_class = NULL, *impl_func = NULL;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/base.eo"));
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/ctor_dtor.eo"));
+
+   /* Class ctor/dtor */
+   fail_if(!eolian_class_ctor_enable_get(class_name));
+   fail_if(!eolian_class_dtor_enable_get(class_name));
+
+   /* Base ctor/dtor */
+   fail_if(!(impls = eolian_class_implements_list_get(class_name)));
+   fail_if(eina_list_count(impls) != 2);
+   fail_if(!eolian_implement_information_get(eina_list_nth(impls, 0), &impl_class, &impl_func, NULL));
+   fail_if(strcmp(impl_class, base_name));
+   fail_if(strcmp(impl_func, "constructor"));
+   fail_if(!eolian_implement_information_get(eina_list_nth(impls, 1), &impl_class, &impl_func, NULL));
+   fail_if(strcmp(impl_class, base_name));
+   fail_if(strcmp(impl_func, "destructor"));
+
+   /* Custom ctors/dtors */
+   fail_if(!eolian_class_function_find_by_name(base_name, "constructor", EOLIAN_METHOD));
+   fail_if(!eolian_class_function_find_by_name(base_name, "destructor", EOLIAN_METHOD));
+   fail_if(!eolian_class_function_find_by_name(class_name, "custom_constructor_1", EOLIAN_CTOR));
+   fail_if(!eolian_class_function_find_by_name(class_name, "custom_constructor_2", EOLIAN_CTOR));
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_scope)
 {
    Eolian_Function fid = NULL;
@@ -149,6 +185,7 @@ END_TEST
 static void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
+   tcase_add_test(tc, eolian_ctor_dtor);
    tcase_add_test(tc, eolian_scope);
 }
 
