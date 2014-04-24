@@ -1,0 +1,46 @@
+interface Elm_Interface_Atspi_Value ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_value;
+   data: null;
+   properties {
+      protected value_and_text {
+         get {
+            /*@ Gets value displayed by a accessible widget. */
+         }
+         set {
+            return Eina_Bool; /*@ EINA_TRUE if setting widgets value has
+                                successed, EINA_FALSE otherwise. */
+         }
+         values {
+            double value; /*@ Value of widget casted to floating point number. */
+            const char *text; /*@ string describing value in given context
+                               eg. small, enough */
+         }
+      }
+      protected range {
+         get {
+            /* Gets a range of all possible values and its description */
+         }
+         values {
+            double lower_limit;
+            double upper_limit;
+            const char *description;
+         }
+      }
+      protected increment {
+         get {
+            /* Gets an minimal incrementation value */
+         }
+         values {
+            double increment;
+         }
+      }
+   }
+   implements {
+      virtual::value_and_text::get;
+      virtual::value_and_text::set;
+      virtual::range::get;
+      virtual::increment::get;
+   }
+}

@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
+#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
@@ -17,6 +18,7 @@
 #include "elm_interface_atspi_component.eo.h"
 #include "elm_interface_atspi_window.eo.h"
 #include "elm_interface_atspi_action.eo.h"
+#include "elm_interface_atspi_value.eo.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -808,6 +810,71 @@ _action_property_get(const Eldbus_Service_Interface *interface, const char *prop
    return EINA_FALSE;
 }
 
+static Eldbus_Message*
+_value_properties_set(const Eldbus_Service_Interface *interface, const char *property,
+                         Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg)
+{
+   double value;
+   Eina_Bool ret;
+   const char *obj_path = eldbus_service_object_path_get(interface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!eldbus_message_iter_arguments_get(iter, "d", &value))
+     {
+       return eldbus_message_error_new(request_msg, "org.freedesktop.DBus.Error.InvalidArgs", "Expected value of type: double.");
+     }
+
+   if (!strcmp(property, "CurrentValue"))
+     {
+        eo_do(obj, ret = elm_interface_atspi_value_value_and_text_set(value, NULL));
+        Eldbus_Message *answer = eldbus_message_method_return_new(request_msg);
+        eldbus_message_arguments_append(answer, "b", ret);
+        return answer;
+     }
+
+   return NULL;
+}
+
+static Eina_Bool
+_value_properties_get(const Eldbus_Service_Interface *interface, const char *property,
+                         Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED,
+                         Eldbus_Message **error EINA_UNUSED)
+{
+   double value;
+   const char *obj_path = eldbus_service_object_path_get(interface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!strcmp(property, "CurrentValue"))
+     {
+        eo_do(obj, elm_interface_atspi_value_value_and_text_get(&value, NULL));
+        eldbus_message_iter_basic_append(iter, 'd', value);
+        return EINA_TRUE;
+     }
+   if (!strcmp(property, "MinimumValue"))
+     {
+        eo_do(obj, elm_interface_atspi_value_range_get(&value, NULL, NULL));
+        eldbus_message_iter_basic_append(iter, 'd', value);
+        return EINA_TRUE;
+     }
+   if (!strcmp(property, "MaximumValue"))
+     {
+        eo_do(obj, elm_interface_atspi_value_range_get(NULL, &value, NULL));
+        eldbus_message_iter_basic_append(iter, 'd', value);
+        return EINA_TRUE;
+     }
+   if (!strcmp(property, "MinimumIncrement"))
+     {
+        eo_do(obj, value = elm_interface_atspi_value_increment_get());
+        eldbus_message_iter_basic_append(iter, 'd', value);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static const Eldbus_Property accessible_properties[] = {
    { "Name", "s", _accessible_property_get, NULL, 0 },
    { "Description", "s", _accessible_property_get, NULL, 0 },
@@ -818,6 +885,14 @@ static const Eldbus_Property accessible_properties[] = {
 
 static const Eldbus_Property action_properties[] = {
    { "NActions", "i", _action_property_get, NULL, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const Eldbus_Property value_properties[] = {
+   { "MinimumValue", "d", NULL, NULL, 0 },
+   { "MaximumValue", "d", NULL, NULL, 0 },
+   { "MinimumIncrement", "d", NULL, NULL, 0 },
+   { "CurrentValue", "d", NULL, NULL, 0 },
    { NULL, NULL, NULL, NULL, 0 }
 };
 
@@ -835,6 +910,10 @@ static const Eldbus_Service_Interface_Desc window_iface_desc = {
 
 static const Eldbus_Service_Interface_Desc action_iface_desc = {
    ATSPI_DBUS_INTERFACE_ACTION, action_methods, NULL, action_properties, NULL, NULL
+};
+
+static const Eldbus_Service_Interface_Desc value_iface_desc = {
+   ATSPI_DBUS_INTERFACE_VALUE, NULL, NULL, value_properties, _value_properties_get, _value_properties_set
 };
 
 static void
@@ -913,6 +992,8 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
   if (eo_isa(data, ELM_INTERFACE_ATSPI_ACTION_CLASS))
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
+  if (eo_isa(data, ELM_INTERFACE_ATSPI_VALUE_CLASS))
+    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
 
@@ -1804,6 +1885,8 @@ static void _object_register(Eo *obj, char *path)
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_CLASS))
           eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_CLASS))
+          eldbus_service_interface_register(_a11y_bus, path, &value_iface_desc);
      }
 }
 

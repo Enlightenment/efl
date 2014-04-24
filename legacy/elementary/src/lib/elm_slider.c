@@ -8,6 +8,9 @@
 #include "elm_widget_slider.h"
 #include "elm_widget_layout.h"
 
+#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
+#include "elm_interface_atspi_value.eo.h"
+
 #define MY_CLASS ELM_OBJ_SLIDER_CLASS
 
 #define MY_CLASS_NAME "Elm_Slider"
@@ -1185,5 +1188,48 @@ _elm_slider_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+// A11Y Accessibility
+
+EOLIAN static void
+_elm_slider_elm_interface_atspi_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *value, const char **text)
+{
+   if (value) *value = sd->val;
+   if (text) *text = NULL;
+}
+
+EOLIAN static Eina_Bool
+_elm_slider_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Slider_Data *sd, double value, const char *text EINA_UNUSED)
+{
+   double oldval = sd->val;
+
+   if (sd->val_min > value) return EINA_FALSE;
+   if (sd->val_max < value) return EINA_FALSE;
+
+   evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);
+   sd->val = value;
+   _visuals_refresh(obj);
+   sd->val = oldval;
+   _slider_update(obj, EINA_TRUE);
+   evas_object_smart_callback_call(obj, SIG_DRAG_STOP, NULL);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_elm_slider_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *lower, double *upper, const char **descr)
+{
+   if (lower) *lower = sd->val_min;
+   if (upper) *upper = sd->val_max;
+   if (descr) *descr = NULL;
+}
+
+EOLIAN static double
+_elm_slider_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+{
+   return sd->step;
+}
+
+// A11Y Accessibility - END
 
 #include "elm_slider.eo.c"
