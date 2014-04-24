@@ -3615,7 +3615,7 @@ test_genlist_del(void *data EINA_UNUSED,
 }
 
 /*************/
-static unsigned _gl_focus_objects = 5;
+static unsigned _gl_focus_objects = 3;
 static const char *_gl_focus_object_names[] = {"None", "Square", "Button", "Check", "Box"};
 
 static char *
@@ -3672,6 +3672,14 @@ gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
         evas_object_show(cnt);
      }
    return cnt;
+}
+
+static void
+test_genlist_focus_item_loop_enable_check_changed(void *data, Evas_Object *obj,
+                                               void *event_info  EINA_UNUSED)
+{
+   Evas_Object *gl = data;
+   elm_object_scroll_item_loop_enabled_set(gl, elm_check_state_get(obj));
 }
 
 static void
@@ -3944,6 +3952,14 @@ test_genlist_focus(void *data EINA_UNUSED,
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
                                   test_genlist_focus_focus_check_changed, gl);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Item Looping Enalbe");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_genlist_focus_item_loop_enable_check_changed, gl);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 

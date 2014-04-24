@@ -701,6 +701,8 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
       Elm_Widget::sub_object_del;
       Elm_Widget::event;
       Elm_Widget::focused_item::get;
+      Elm_Widget::item_loop_enabled::set;
+      Elm_Widget::item_loop_enabled::get;
       Elm_Layout::sub_object_add_enable;
       Elm_Layout::sizing_eval;
       Elm_Interface_Scrollable::bounce_allow;

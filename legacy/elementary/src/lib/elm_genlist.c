@@ -2577,6 +2577,64 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
 }
 
 static Eina_Bool
+_elm_genlist_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
+{
+   ELM_GENLIST_DATA_GET(obj, sd);
+   Elm_Object_Item *it = NULL;
+   Eina_Bool ret = EINA_FALSE;
+   Evas_Coord v = 0;
+   Evas_Coord min = 0;
+
+   // get content size and viewport size
+   eo_do(obj,
+         elm_interface_scrollable_content_viewport_geometry_get
+         (NULL, NULL, NULL, &v),
+         elm_interface_scrollable_content_size_get(NULL, &min));
+
+   if (multi)
+     {
+        if (dir == ELM_FOCUS_UP)
+          ret = _item_multi_select_up(sd);
+        else if (dir == ELM_FOCUS_DOWN)
+          ret = _item_multi_select_down(sd);
+     }
+   else
+     {
+        if (dir == ELM_FOCUS_UP)
+          ret = _item_single_select_up(sd);
+        else if (dir == ELM_FOCUS_DOWN)
+          ret = _item_single_select_down(sd);
+     }
+   if (ret)
+     return EINA_TRUE;
+
+   // handle item loop feature
+   if (sd->item_loop_enable)
+     {
+        if (min > v)
+          {
+             if (dir == ELM_FOCUS_UP)
+               elm_layout_signal_emit(obj, "elm,action,looping,up", "elm");
+             else if (dir == ELM_FOCUS_DOWN)
+               elm_layout_signal_emit(obj, "elm,action,looping,down", "elm");
+          }
+        else
+          {
+             if (dir == ELM_FOCUS_UP)
+               it = elm_genlist_last_item_get(obj);
+            else if(dir == ELM_FOCUS_DOWN)
+               it = elm_genlist_first_item_get(obj);
+
+             if (it)
+               elm_genlist_item_selected_set(it, EINA_TRUE);
+          }
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    ELM_GENLIST_DATA_GET(obj, sd);
@@ -2620,24 +2678,24 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "up"))
      {
-        if (_item_single_select_up(sd)) return EINA_TRUE;
+        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "up_multi"))
      {
-        if (_item_multi_select_up(sd)) return EINA_TRUE;
-        else if (_item_single_select_up(sd)) return EINA_TRUE;
+        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_TRUE)) return EINA_TRUE;
+        else if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "down"))
      {
-        if (_item_single_select_down(sd)) return EINA_TRUE;
+        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "down_multi"))
      {
-        if (_item_multi_select_down(sd)) return EINA_TRUE;
-        else if (_item_single_select_down(sd)) return EINA_TRUE;
+        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_TRUE)) return EINA_TRUE;
+        else if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "first"))
@@ -5092,6 +5150,31 @@ _decorate_item_unset(Elm_Genlist_Data *sd)
    sd->mode_item = NULL;
 }
 
+static void
+_elm_genlist_looping_up_cb(void *data,
+                          Evas_Object *obj EINA_UNUSED,
+                          const char *emission EINA_UNUSED,
+                          const char *source EINA_UNUSED)
+{
+   Evas_Object *genlist = data;
+   Elm_Object_Item *it = elm_genlist_last_item_get(genlist);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   elm_layout_signal_emit(genlist, "elm,action,looping,up,end", "elm");
+}
+
+static void
+_elm_genlist_looping_down_cb(void *data,
+                          Evas_Object *obj EINA_UNUSED,
+                          const char *emission EINA_UNUSED,
+                          const char *source EINA_UNUSED)
+{
+   Evas_Object *genlist = data;
+   Elm_Object_Item *it = elm_genlist_first_item_get(genlist);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   elm_layout_signal_emit(genlist, "elm,action,looping,down,end", "elm");
+}
+
+
 EOLIAN static void
 _elm_genlist_evas_smart_add(Eo *obj, Elm_Genlist_Data *priv)
 {
@@ -5169,6 +5252,9 @@ _elm_genlist_evas_smart_add(Eo *obj, Elm_Genlist_Data *priv)
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    elm_layout_sizing_eval(obj);
+
+   edje_object_signal_callback_add(wd->resize_obj, "elm,looping,up,done", "elm", _elm_genlist_looping_up_cb, obj);
+   edje_object_signal_callback_add(wd->resize_obj, "elm,looping,down,done", "elm", _elm_genlist_looping_down_cb, obj);
 }
 
 EOLIAN static void
@@ -7371,6 +7457,19 @@ EOLIAN static Elm_Object_Item*
 _elm_genlist_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    return sd->focused_item;
+}
+
+EOLIAN static void
+_elm_genlist_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bool enable)
+{
+   if (sd->item_loop_enable == enable) return;
+   sd->item_loop_enable = !!enable;
+}
+
+EOLIAN static Eina_Bool
+_elm_genlist_elm_widget_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+{
+   return sd->item_loop_enable;
 }
 
 EOLIAN static void
