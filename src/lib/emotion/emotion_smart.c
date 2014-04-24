@@ -661,13 +661,13 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    DBG("play=" FMT_UCHAR ", was=" FMT_UCHAR, play, sd->play);
-   if (play == sd->play) return;
    if (!sd->engine_instance) return;
    if (!sd->open)
      {
         sd->remember_play = play;
         return;
      }
+   if (play == sd->play) return;
    sd->play = play;
    sd->remember_play = play;
    if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
