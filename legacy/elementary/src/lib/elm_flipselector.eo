@@ -135,7 +135,7 @@ class Elm_Flipselector (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in const char *label; /*@ The (text) label of the new item */
-            @in flipselector_func_type func; /*@ Convenience callback function to take place when
+            @in Evas_Smart_Cb func; /*@ Convenience callback function to take place when
             item is selected */
             @in void *data; /*@ Data passed to @p func, above */
          }
@@ -174,7 +174,7 @@ class Elm_Flipselector (Elm_Layout)
          return Elm_Object_Item *;
          params {
             @in const char *label; /*@ The (text) label of the new item */
-            @in flipselector_func_type func; /*@ Convenience callback function to take place when
+            @in Evas_Smart_Cb func; /*@ Convenience callback function to take place when
             item is selected */
             @in const void *data; /*@ Data passed to @p func, above */
          }

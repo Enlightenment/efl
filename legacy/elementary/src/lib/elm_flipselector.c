@@ -629,7 +629,7 @@ _elm_flipselector_flip_prev(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_flipselector_item_append(Eo *obj, Elm_Flipselector_Data *sd, const char *label, flipselector_func_type func, const void *data)
+_elm_flipselector_item_append(Eo *obj, Elm_Flipselector_Data *sd, const char *label, Evas_Smart_Cb func, const void *data)
 {
    Elm_Flipselector_Item *item;
 
@@ -658,7 +658,7 @@ _elm_flipselector_item_append(Eo *obj, Elm_Flipselector_Data *sd, const char *la
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_flipselector_item_prepend(Eo *obj, Elm_Flipselector_Data *sd, const char *label, flipselector_func_type func, void *data)
+_elm_flipselector_item_prepend(Eo *obj, Elm_Flipselector_Data *sd, const char *label, Evas_Smart_Cb func, void *data)
 {
    Elm_Flipselector_Item *item;
 
