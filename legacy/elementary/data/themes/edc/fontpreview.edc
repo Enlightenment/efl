@@ -10,6 +10,7 @@ group { name: "e/widgets/fontpreview";
             color: FN_COL_DEFAULT;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "_e_font_preview";
             }

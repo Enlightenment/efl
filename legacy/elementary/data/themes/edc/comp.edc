@@ -13,6 +13,7 @@ group { name: "e/comp/preview";
                text_class: "fileman_icon";
                align: 0.5 0.5;
                min: 1 1;
+               ellipsis: -1;
             }
             fixed: 0 1;
          }

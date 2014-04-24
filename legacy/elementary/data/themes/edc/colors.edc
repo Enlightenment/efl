@@ -61,6 +61,7 @@ group { name: "e/modules/conf_colors/preview/text";
             text { font: FN; size: 10;
                text: "Text";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }
@@ -72,6 +73,7 @@ group { name: "e/modules/conf_colors/preview/text";
             text { font: FNBD; size: 16;
                text: "Ab";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }

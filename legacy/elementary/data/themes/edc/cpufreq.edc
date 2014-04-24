@@ -224,6 +224,7 @@ group { name: "e/modules/cpufreq/main";
             color3: 255 255 255 255;
             text { font: FN; size: 6;
                min: 1 1;
+               ellipsis: -1;
                text_class: "module_small";
             }
          }

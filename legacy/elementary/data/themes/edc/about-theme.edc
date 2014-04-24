@@ -33,6 +33,7 @@ group { name: "e/theme/about";
             text { font: FNBD; size: 64;
                text: "Dark";
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
          }
@@ -102,6 +103,7 @@ group { name: "e/theme/about";
             min: 85 0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "button";
             }
@@ -139,6 +141,7 @@ group { name: "e/theme/about";
             min: 85 0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "button";
             }

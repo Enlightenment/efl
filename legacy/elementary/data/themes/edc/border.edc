@@ -1242,6 +1242,7 @@ group { name: "e/widgets/border/default/move";
             color3: 255 255 255 255;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                text_class: "move_text";
             }
          }

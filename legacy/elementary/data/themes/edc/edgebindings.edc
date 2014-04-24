@@ -68,6 +68,7 @@ group { name: "e/modules/conf_edgebindings/selection";
             text { font: FN; size: 10;
                text_class: "label";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }
@@ -225,6 +226,7 @@ group { name: "e/modules/conf_edgebindings/selection";
             text {
                style: "edge_binding_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }
