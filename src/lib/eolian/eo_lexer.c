@@ -1748,7 +1748,7 @@ _eof_trans:
 #line 680 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (toknz->tmp.meth->ret != NULL) ABORT(toknz, "No ret!!!");
+      if (toknz->tmp.meth->ret == NULL) ABORT(toknz, "No ret!!!");
       if (toknz->tmp.meth->ret->comment != NULL)
         ABORT(toknz, "method '%s' return type has already a comment", toknz->tmp.meth->name);
       toknz->tmp.meth->ret->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);
@@ -3210,7 +3210,7 @@ _eof_trans:
 #line 680 "lib/eolian/eo_lexer.rl"
 	{
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (toknz->tmp.meth->ret != NULL) ABORT(toknz, "No ret!!!");
+      if (toknz->tmp.meth->ret == NULL) ABORT(toknz, "No ret!!!");
       if (toknz->tmp.meth->ret->comment != NULL)
         ABORT(toknz, "method '%s' return type has already a comment", toknz->tmp.meth->name);
       toknz->tmp.meth->ret->comment = _eo_tokenizer_token_get(toknz, ( toknz->p)-2);

@@ -78,14 +78,20 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(string, "comment a::set"));
    string = eolian_function_description_get(fid, EOLIAN_COMMENT_GET);
    fail_if(string);
-   /* Function return */
+   /* Set return */
    string = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "Eina_Bool"));
    string = eolian_function_return_dflt_value_get(fid, EOLIAN_PROP_SET);
    fail_if(!string);
    fail_if(strcmp(string, "EINA_TRUE"));
+   string = eolian_function_return_comment_get(fid, EOLIAN_PROP_SET);
+   fail_if(!string);
+   fail_if(strcmp(string, "comment for property set return"));
+   /* Get return */
    string = eolian_function_return_type_get(fid, EOLIAN_PROP_GET);
+   fail_if(string);
+   string = eolian_function_return_comment_get(fid, EOLIAN_PROP_GET);
    fail_if(string);
 
    /* Function parameters */
@@ -110,6 +116,9 @@ START_TEST(eolian_simple_parsing)
    string = eolian_function_return_dflt_value_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "NULL"));
+   string = eolian_function_return_comment_get(fid, EOLIAN_METHOD);
+   fail_if(!string);
+   fail_if(strcmp(string, "comment for method return"));
 
    /* Function parameters */
    fail_if(!(list = eolian_parameters_list_get(fid)));

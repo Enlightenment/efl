@@ -679,7 +679,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    action end_method_rettype_comment {
       if (!toknz->tmp.meth) ABORT(toknz, "No method!!!");
-      if (toknz->tmp.meth->ret != NULL) ABORT(toknz, "No ret!!!");
+      if (toknz->tmp.meth->ret == NULL) ABORT(toknz, "No ret!!!");
       if (toknz->tmp.meth->ret->comment != NULL)
         ABORT(toknz, "method '%s' return type has already a comment", toknz->tmp.meth->name);
       toknz->tmp.meth->ret->comment = _eo_tokenizer_token_get(toknz, fpc-2);

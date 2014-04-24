@@ -8,7 +8,7 @@ class Simple {
          set {
             /*@
             comment a::set */
-            return Eina_Bool (EINA_TRUE);
+            return Eina_Bool (EINA_TRUE); /*@ comment for property set return */
          }
          get {
          }
@@ -25,7 +25,7 @@ class Simple {
             @inout char *b;
             @out double c;
          }
-         return char *(NULL);
+         return char *(NULL); /*@ comment for method return */
       }
    }
 };
