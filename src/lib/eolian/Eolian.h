@@ -94,8 +94,7 @@ typedef enum
    EOLIAN_PROP_SET,
    EOLIAN_PROP_GET,
    EOLIAN_METHOD,
-   EOLIAN_CTOR,
-   EOLIAN_DTOR
+   EOLIAN_CTOR
 } Eolian_Function_Type;
 
 typedef enum

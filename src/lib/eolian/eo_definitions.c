@@ -144,9 +144,6 @@ eo_definitions_class_def_free(Eo_Class_Def *kls)
    EINA_LIST_FREE(kls->constructors, meth)
       eo_definitions_method_def_free(meth);
 
-   EINA_LIST_FREE(kls->destructors, meth)
-      eo_definitions_method_def_free(meth);
-
    EINA_LIST_FREE(kls->properties, prop)
       eo_definitions_property_def_free(prop);
 

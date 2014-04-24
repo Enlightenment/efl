@@ -705,9 +705,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
         case METH_CONSTRUCTOR:
           l = &toknz->tmp.kls->constructors;
           break;
-        case METH_DESTRUCTOR:
-          l = &toknz->tmp.kls->destructors;
-          break;
         case METH_REGULAR:
           l = &toknz->tmp.kls->methods;
           break;
@@ -808,14 +805,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    action begin_constructors {
       INF("  constructors {");
       toknz->current_methods_type = METH_CONSTRUCTOR;
-      toknz->tmp.fscope = FUNC_PUBLIC;
-      toknz->current_nesting++;
-      fgoto tokenize_methods;
-   }
-
-   action begin_destructors {
-      INF("  destructors {");
-      toknz->current_methods_type = METH_DESTRUCTOR;
       toknz->tmp.fscope = FUNC_PUBLIC;
       toknz->current_nesting++;
       fgoto tokenize_methods;
@@ -986,7 +975,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    events = 'events' ignore* begin_def ignore* event_it* end_def;
 
    constructors = 'constructors' ignore* begin_def;
-   destructors = 'destructors' ignore* begin_def;
    properties = 'properties' ignore* begin_def;
    methods = 'methods' ignore* begin_def;
 
@@ -1000,7 +988,6 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       implements     => end_implements;
       events        => end_events;
       constructors   => begin_constructors;
-      destructors    => begin_destructors;
       properties     => begin_properties;
       methods        => begin_methods;
       end_def        => end_class;
@@ -1220,20 +1207,6 @@ eo_tokenizer_dump(Eo_Tokenizer *toknz)
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
              printf("  constructors: %s\n", meth->name);
-             if (meth->ret)
-                printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
-             printf("    legacy : %s\n", meth->legacy);
-             EINA_LIST_FOREACH(meth->params, m, param)
-               {
-                  printf("    param: %s %s : %s (%s)\n",
-                         _param_way_str[param->way], param->name,
-                         param->type, param->comment);
-               }
-          }
-
-        EINA_LIST_FOREACH(kls->destructors, l, meth)
-          {
-             printf("  destructors: %s\n", meth->name);
              if (meth->ret)
                 printf("    return: %s (%s)\n", meth->ret->type, meth->ret->comment);
              printf("    legacy : %s\n", meth->legacy);
@@ -1480,19 +1453,6 @@ eo_tokenizer_database_fill(const char *filename)
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
              Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_CTOR);
-             database_class_function_add(kls->name, foo_id);
-             if (meth->ret) database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
-             database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
-             EINA_LIST_FOREACH(meth->params, m, param)
-               {
-                  Eolian_Type type = _types_extract(param->type, strlen(param->type));
-                  database_method_parameter_add(foo_id, (Eolian_Parameter_Dir)param->way, type, param->name, param->comment);
-               }
-          }
-
-        EINA_LIST_FOREACH(kls->destructors, l, meth)
-          {
-             Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_DTOR);
              database_class_function_add(kls->name, foo_id);
              if (meth->ret) database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);

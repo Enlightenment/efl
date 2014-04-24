@@ -29,7 +29,6 @@ typedef struct
    Eina_List *properties; /* List prop_name -> _Function_Id */
    Eina_List *methods; /* List meth_name -> _Function_Id */
    Eina_List *constructors; /* List constructor_name -> _Function_Id */
-   Eina_List *destructors; /* List destructor_name -> _Function_Id */
    Eina_List *implements; /* List implements name -> _Implement_Desc */
    Eina_List *events; /* List event_name -> _Event_Desc */
    Eina_Bool class_ctor_enable:1;
@@ -154,7 +153,6 @@ _class_del(Class_desc *class)
    _Function_Id *fid;
    Eolian_Event ev;
    EINA_LIST_FREE(class->constructors, fid) _fid_del(fid);
-   EINA_LIST_FREE(class->destructors, fid) _fid_del(fid);
    EINA_LIST_FREE(class->methods, fid) _fid_del(fid);
    EINA_LIST_FREE(class->properties, fid) _fid_del(fid);
    EINA_LIST_FREE(class->events, ev) database_event_free(ev);
@@ -448,9 +446,6 @@ Eina_Bool database_class_function_add(const char *class_name, Eolian_Function fo
       case EOLIAN_CTOR:
          desc->constructors = eina_list_append(desc->constructors, foo_id);
          break;
-      case EOLIAN_DTOR:
-         desc->destructors = eina_list_append(desc->destructors, foo_id);
-         break;
       default:
          ERR("Bad function type %d.", fid->type);
          return EINA_FALSE;
@@ -602,16 +597,6 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
           }
      }
 
-   if (f_type == EOLIAN_DTOR)
-     {
-        EINA_LIST_FOREACH(desc->destructors, itr, foo_id)
-          {
-             _Function_Id *fid = (_Function_Id *) foo_id;
-             if (!strcmp(fid->name, func_name))
-                return foo_id;
-          }
-     }
-
    return NULL;
 }
 
@@ -628,8 +613,6 @@ eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type foo
          return desc->methods;
       case EOLIAN_CTOR:
          return desc->constructors;
-      case EOLIAN_DTOR:
-         return desc->destructors;
       default: return NULL;
      }
 }
@@ -1211,7 +1194,6 @@ static Eina_Bool _function_print(const _Function_Id *fid, int nb_spaces)
               break;
            }
       case EOLIAN_CTOR:
-      case EOLIAN_DTOR:
            {
               //char *str = eina_hash_find(fid->data, "comment");
               const char *str = eolian_function_description_get(foo_id, EOLIAN_COMMENT);
