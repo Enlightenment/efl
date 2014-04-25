@@ -28,8 +28,8 @@ evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data)
      eina_list_free(data->mesh_nodes);
 }
 
-static void
-_eo_evas_3d_scene_eo_evas_3d_object_change_notify(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
+EOLIAN static void
+_eo_evas_3d_scene_eo_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *eo;

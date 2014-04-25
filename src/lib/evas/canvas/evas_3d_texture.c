@@ -66,7 +66,7 @@ _texture_proxy_subrender(Evas_3D_Texture *obj)
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
    Evas_3D_Texture_Data *pd = eo_data_scope_get(obj, MY_CLASS);
    Evas_Object_Protected_Data *source;
-   void *ctx, *image;
+   void *ctx;
    int w, h;
    Eina_Bool is_image;
 
@@ -83,7 +83,7 @@ _texture_proxy_subrender(Evas_3D_Texture *obj)
 
         if (is_image)
           {
-             image = source->func->engine_data_get(pd->source);
+             void *image = source->func->engine_data_get(pd->source);
              e->engine.func->image_size_get(e->engine.data.output, image, &w, &h);
           }
         else
