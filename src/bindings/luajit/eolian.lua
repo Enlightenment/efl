@@ -176,6 +176,17 @@ M.class_inherits_list_get = function(cname)
         :to_array()
 end
 
+M.Type = ffi.metatype("Eolian_Type", {
+    __index = {
+        information_get = function(self)
+            local tp = ffi.new("const char*[1]")
+            local on = ffi.new("Eina_Bool[1]")
+            local nx = eolian.eolian_type_information_get(self, tp, on)
+            return nx, (tp[0] ~= nil) and ffi.string(tp[0]) or nil, nx[0] ~= 0
+        end
+    }
+})
+
 local List_Base = list.List_Base
 
 local Eolian_Functions_List = List_Base:clone {
