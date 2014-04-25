@@ -753,9 +753,9 @@ open_file:
                        DGifGetCodeNext(gif, &img);
                     }
                }
-             imgnum++;
              // if we found the image we wanted - get out of here
              if (imgnum >= index) break;
+             imgnum++;
           }
      }
    while (rec != TERMINATE_RECORD_TYPE);
