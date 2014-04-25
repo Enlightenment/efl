@@ -250,7 +250,7 @@ group "Elm_Config" struct {
   }
   group "bindings" list {
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elc_Ctxpopup";
+        value "name" string: "Elm_Ctxpopup";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -333,7 +333,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elc_Fileselector";
+        value "name" string: "Elm_Fileselector";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -356,7 +356,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elc_Hoversel";
+        value "name" string: "Elm_Hoversel";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -409,7 +409,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elc_Multibuttonentry";
+        value "name" string: "Elm_Multibuttonentry";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -438,7 +438,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elc_Popup";
+        value "name" string: "Elm_Popup";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -1756,7 +1756,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elc_Naviframe";
+        value "name" string: "Elm_Naviframe";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
