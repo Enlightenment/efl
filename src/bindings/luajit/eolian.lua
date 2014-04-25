@@ -8,6 +8,7 @@ ffi.cdef [[
     typedef struct _Eina_List Eina_List;
 
     typedef struct _Eolian_Function Eolian_Function;
+    typedef struct _Eolian_Type Eolian_Type;
     typedef struct _Eolian_Function_Parameter Eolian_Function_Parameter;
     typedef struct _Eolian_Implement Eolian_Implement;
     typedef struct _Eolian_Implement_Legacy Eolian_Implement_Legacy;
@@ -70,17 +71,18 @@ ffi.cdef [[
     const Eina_List *eolian_property_keys_list_get(Eolian_Function *foo_id);
     const Eina_List *eolian_property_values_list_get(Eolian_Function *foo_id);
     const Eina_List *eolian_parameters_list_get(Eolian_Function *function_id);
-    void eolian_parameter_information_get(Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
+    void eolian_parameter_information_get(const Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
+    Eolian_Type *eolian_type_information_get(Eolian_Type *etype, const char **type, Eina_Bool *own);
     const char *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
+    Eolian_Type *eolian_parameter_types_list_get(const Eolian_Function_Parameter param);
     const char *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
     Eina_Bool eolian_parameter_const_attribute_get(Eolian_Function_Parameter *param_desc, Eina_Bool is_get);
     Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter *param_desc);
-    Eina_Bool eolian_parameter_is_own(Eolian_Function_Parameter *param_desc);
     const char *eolian_function_return_type_get(Eolian_Function *function_id, Eolian_Function_Type ftype);
+    Eolian_Type *eolian_function_return_types_list_get(Eolian_Function *foo_id, Eolian_Function_Type ftype);
     const char *eolian_function_return_dflt_value_get(Eolian_Function *foo_id, Eolian_Function_Type ftype);
     const char *eolian_function_return_comment_get(Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function *foo_id, Eolian_Function_Type ftype);
-    Eina_Bool eolian_function_return_own_get(Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(Eolian_Function *function_id);
     Eina_Bool eolian_implement_information_get(Eolian_Implement *impl, const char **class_name, const char **func_name, Eolian_Function_Type *type);
     const Eina_List *eolian_class_implements_list_get(const char *class_name);
@@ -205,18 +207,6 @@ M.class_functions_list_get = function(cname, func_type)
         func_type)):to_array()
 end
 
-M.class_default_constructor_get = function(cname)
-    local v = eolian.eolian_class_default_constructor_get(cname)
-    if v == nil then return nil end
-    return v
-end
-
-M.class_default_destructor_get = function(cname)
-    local v = eolian.eolian_class_default_destructor_get(cname)
-    if v == nil then return nil end
-    return v
-end
-
 local Eolian_Parameters_List = List_Base:clone {
     data_get = function(self, ptr)
         ptr = List_Base.data_get(self, ptr)
@@ -305,10 +295,6 @@ M.Function = ffi.metatype("Eolian_Function", {
                 ftype) ~= 0
         end,
 
-        return_own_get = function(self, ftype)
-            return eolian.eolian_function_return_own_get(self, ftype) ~= 0
-        end,
-
         is_const = function(self)
             return eolian.eolian_function_object_is_const(self) ~= 0
         end
@@ -353,10 +339,6 @@ ffi.metatype("Eolian_Function_Parameter", {
 
         is_nonull = function(self)
             return eolian.eolian_parameter_is_nonull(self) ~= 0
-        end,
-
-        is_own = function(self)
-            return eolian.eolian_parameter_is_own(self) ~= 0
         end
     }
 })
