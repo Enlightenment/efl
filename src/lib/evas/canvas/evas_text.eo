@@ -309,6 +309,7 @@ class Evas_Text (Evas_Object)
             please use only for testing purposes.
             @see @ref evasfiltersref "Evas filters reference"
             */
+            legacy null;
          }
          values {
             const char* program; /*@ The program code, as defined
@@ -328,6 +329,7 @@ class Evas_Text (Evas_Object)
             @note EXPERIMENTAL FEATURE. This is an unstable API,
             please use only for testing purposes.
             @see @ref evasfiltersref "Evas filters reference" */
+            legacy null;
          }
          values {
             const char* name; /*@ Object name as used in the program code */

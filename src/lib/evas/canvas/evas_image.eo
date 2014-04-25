@@ -1037,6 +1037,7 @@ class Evas_Image (Evas_Object)
             please use only for testing purposes.
             @see @ref evasfiltersref "Evas filters reference"
             */
+            legacy null;
          }
          values {
             const char* program; /*@ The program code, as defined
@@ -1057,6 +1058,7 @@ class Evas_Image (Evas_Object)
 
             This will create automatically a new RGBA buffer containing
             the source object's pixels (as it is rendered). */
+            legacy null;
          }
          values {
             const char* name; /*@ Object name as used in the program code */
@@ -1067,6 +1069,7 @@ class Evas_Image (Evas_Object)
          get {
             /*@ Get the value of the extra padding set when a filter is used. */
             return Eina_Bool; /*@ Returns false if the filter is invalid and padding is 0 */
+            legacy null;
          }
          values {
             int l; /*@ Left padding in pixels */
