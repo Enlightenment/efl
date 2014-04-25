@@ -448,7 +448,11 @@ END_TEST
 
 void evas_test_filters(TCase *tc)
 {
-#if BUILD_FILTER_TESTS
+#if 0
+// FIXME: The test suite is disabled for now since we should
+// now test with proper Lua language. The legacy script should
+// not even be tested.
+//#if BUILD_FILTER_TESTS
    tcase_add_test(tc, evas_filter_parser);
    tcase_add_test(tc, evas_filter_text_padding_test);
    tcase_add_test(tc, evas_filter_text_render_test);
