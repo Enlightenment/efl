@@ -32,7 +32,12 @@ static const GLenum lum_alpha_ifmt = GL_LUMINANCE_ALPHA;
 static const GLenum rgba8_ifmt     = GL_RGBA;
 static const GLenum rgba8_fmt      = GL_BGRA;
 
+/* FIXME: RGB8_ETC2 is a superset of ETC1,
+ * but is GL_ETC1_RGB8_OES supported whenever GL_COMPRESSED_RGB8_ETC2 is?
+ */
 static const GLenum etc1_fmt       = GL_ETC1_RGB8_OES;
+static const GLenum etc2_rgb_fmt   = GL_COMPRESSED_RGB8_ETC2;
+static const GLenum etc2_rgba_fmt  = GL_COMPRESSED_RGBA8_ETC2_EAC;
 
 static struct {
    struct {
@@ -62,7 +67,11 @@ static const struct {
   { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
   { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
-  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt }
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
+  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
+  { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
+  { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt }
 };
 
 static const GLenum matching_rgba[] = { GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, 0x0 };
@@ -395,7 +404,9 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
       atlas_w = gc->shared->info.max_texture_size;
    if ((w > gc->shared->info.tune.atlas.max_w) ||
        (h > gc->shared->info.tune.atlas.max_h) ||
-       (intformat == etc1_fmt))
+       (intformat == etc1_fmt) ||
+       (intformat == etc2_rgb_fmt) ||
+       (intformat == etc2_rgba_fmt))
      {
         pt = _pool_tex_new(gc, w, h, intformat, format);
         if (!pt) return NULL;
@@ -438,7 +449,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
 {
    Evas_GL_Texture *tex;
    GLsizei w, h;
-   int u = 0, v = 0;
+   int u = 0, v = 0, yoffset = 0;
    int lformat;
 
    tex = evas_gl_common_texture_alloc(gc, im->cache_entry.w, im->cache_entry.h, im->cache_entry.flags.alpha);
@@ -448,18 +459,22 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
 #define TEX_VREP 1
 
    lformat = _evas_gl_texture_search_format(im->cache_entry.flags.alpha, gc->shared->info.bgra, im->cache_entry.space);
-   if (im->cache_entry.space == EVAS_COLORSPACE_ETC1)
+   switch (im->cache_entry.space)
      {
-        // Add border for avoiding artifact
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        // Add border to avoid artifacts
         w = im->cache_entry.w + 2;
         h = im->cache_entry.h + 2;
+        yoffset = 1;
 
-        // Adjust w and h for etc1 format (multiple of 4 pixels on both axis)
+        // Adjust w and h for ETC1/2 formats (multiple of 4 pixels on both axes)
         w = ((w >> 2) + (w & 0x3 ? 1 : 0)) << 2;
         h = ((h >> 2) + (h & 0x3 ? 1 : 0)) << 2;
-     }
-   else
-     {
+        break;
+
+     default:
         /* This need to be adjusted if we do something else than strip allocation */
         w = im->cache_entry.w + TEX_HREP + 2; /* one pixel stop gap and two pixels for the border */
         h = im->cache_entry.h + TEX_VREP; /* only one added border for security down */
@@ -477,10 +492,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
      }
    tex->apt->tex = tex;
    tex->x = u + 1;
-   tex->y = v;
-
-   if (im->cache_entry.space == EVAS_COLORSPACE_ETC1)
-     tex->y++;
+   tex->y = v + yoffset;
 
    tex->pt->references++;
    evas_gl_common_texture_update(tex, im);
@@ -1072,15 +1084,21 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
       case EVAS_COLORSPACE_GRY8: bytes_count = 1; break;
       case EVAS_COLORSPACE_AGRY88: bytes_count = 2; break;
       case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
         {
            /*
-             ETC1 can't be scaled down on the fly and interpolated, like it is
+             ETC1/2 can't be scaled down on the fly and interpolated, like it is
              required for preloading, so we don't take that path. Also as the content
              already have duplicated border and we use a specific function to
              upload the compressed data, there is no need to use the normal path at
              all.
            */
            GLsizei width, height;
+           int etc_block_size = 8;
+
+           if (im->cache_entry.space == EVAS_COLORSPACE_RGBA8_ETC2_EAC)
+             etc_block_size = 16;
 
            width = im->cache_entry.w + 2;
            height = im->cache_entry.h + 2;
@@ -1092,7 +1110,8 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 
            glCompressedTexImage2D(GL_TEXTURE_2D, 0, tex->pt->format,
                                   width, height, 0,
-                                  ((width * height) >> 4) * 8, im->image.data);
+                                  ((width * height) >> 4) * etc_block_size,
+                                  im->image.data);
            GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
            if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)

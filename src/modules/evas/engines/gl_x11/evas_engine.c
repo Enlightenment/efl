@@ -2870,8 +2870,10 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
          *image_data = im->cs.data;
          break;
       case EVAS_COLORSPACE_ETC1:
-         ERR("This image is encoded in ETC1, not returning any data");
-         *err = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+         ERR("This image is encoded in ETC1 or ETC2, not returning any data");
+         error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
          *image_data = NULL;
          break;
       default:

@@ -114,6 +114,12 @@
 #ifndef GL_ETC1_RGB8_OES
 # define GL_ETC1_RGB8_OES 0x8D64
 #endif
+#ifndef GL_COMPRESSED_RGB8_ETC2
+# define GL_COMPRESSED_RGB8_ETC2 0x9274
+#endif
+#ifndef GL_COMPRESSED_RGBA8_ETC2_EAC
+# define GL_COMPRESSED_RGBA8_ETC2_EAC 0x9278
+#endif
 
 
 #ifndef GL_UNPACK_ROW_LENGTH
@@ -363,6 +369,7 @@ struct _Evas_GL_Shared
       Eina_Bool bin_program : 1;
       Eina_Bool unpack_row_length : 1;
       Eina_Bool etc1 : 1;
+      Eina_Bool etc2 : 1;
       // tuning params - per gpu/cpu combo?
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512

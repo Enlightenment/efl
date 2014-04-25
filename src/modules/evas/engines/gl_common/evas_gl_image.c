@@ -135,6 +135,15 @@ static const Evas_Colorspace known_etc1_cspace[] = {
    EVAS_COLORSPACE_ARGB8888
 };
 
+static const Evas_Colorspace known_etc2_cspace[] = {
+   EVAS_COLORSPACE_RGBA8_ETC2_EAC,
+   EVAS_COLORSPACE_RGB8_ETC2,
+   EVAS_COLORSPACE_ETC1,
+   EVAS_COLORSPACE_GRY8,
+   EVAS_COLORSPACE_AGRY88,
+   EVAS_COLORSPACE_ARGB8888
+};
+
 static Evas_GL_Image *
 _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_Load_Opts *lo, int *error)
 {
@@ -187,7 +196,9 @@ _evas_gl_common_image(Evas_Engine_GL_Context *gc, RGBA_Image *im_im, Evas_Image_
         const Evas_Colorspace *cspaces;
         unsigned int i;
 
-        if (gc->shared->info.etc1)
+        if (gc->shared->info.etc2)
+          cspaces = known_etc2_cspace;
+        else if (gc->shared->info.etc1)
           cspaces = known_etc1_cspace;
         else
           cspaces = known_cspace;
@@ -332,8 +343,13 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
       case EVAS_COLORSPACE_AGRY88:
         break;
       case EVAS_COLORSPACE_ETC1:
-        if (gc->shared->info.etc1) break;
+        if (gc->shared->info.etc1 && !gc->shared->info.etc2) break;
         ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
+        break;
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        if (gc->shared->info.etc2) break;
+        ERR("We don't know what to do with ETC2 on this hardware. You need to add a software converter here.");
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -380,8 +396,13 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
       case EVAS_COLORSPACE_AGRY88:
         break;
       case EVAS_COLORSPACE_ETC1:
-        if (gc->shared->info.etc1) break;
+        if (gc->shared->info.etc1 && !gc->shared->info.etc2) break;
         ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
+        break;
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        if (gc->shared->info.etc2) break;
+        ERR("We don't know what to do with ETC2 on this hardware. You need to add a software converter here.");
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -435,8 +456,13 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
       case EVAS_COLORSPACE_AGRY88:
          break;
       case EVAS_COLORSPACE_ETC1:
-        if (gc->shared->info.etc1) break;
+        if (gc->shared->info.etc1 && !gc->shared->info.etc2) break;
         ERR("We don't know what to do with ETC1 on this hardware. You need to add a software converter here.");
+        break;
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        if (gc->shared->info.etc2) break;
+        ERR("We don't know what to do with ETC2 on this hardware. You need to add a software converter here.");
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -574,7 +600,9 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
    if (im->cs.space != EVAS_COLORSPACE_ARGB8888 &&
        im->cs.space != EVAS_COLORSPACE_GRY8 &&
        im->cs.space != EVAS_COLORSPACE_AGRY88 &&
-       im->cs.space != EVAS_COLORSPACE_ETC1) return;
+       im->cs.space != EVAS_COLORSPACE_ETC1 &&
+       im->cs.space != EVAS_COLORSPACE_RGB8_ETC2 &&
+       im->cs.space != EVAS_COLORSPACE_RGBA8_ETC2_EAC) return;
    if (im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC)
      {
         if (im->cs.data)
@@ -752,6 +780,8 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_AGRY88:
       case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
          if ((im->tex) &&
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {

@@ -724,6 +724,39 @@ evas_gl_common_context_new(void)
              if (atoi(s) == 0) shared->info.bin_program = 0;
           }
 
+#ifdef GL_GLES
+        // Detect ECT2 support. We need both RGB and RGBA formats.
+        if (glsym_glCompressedTexImage2d)
+          {
+             GLint texFormatCnt = 0;
+             glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &texFormatCnt);
+             if (texFormatCnt > 0)
+               {
+                  GLenum *texFormats = malloc(texFormatCnt * sizeof(GLenum));
+                  if (texFormats)
+                    {
+                       int k, cnt = 0;
+                       glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS, (GLint *) texFormats);
+                       for (k = 0; k < texFormatCnt && cnt < 2; k++)
+                         {
+                            if (texFormats[k] == GL_COMPRESSED_RGB8_ETC2)
+                              cnt++;
+                            else if (texFormats[k] == GL_COMPRESSED_RGBA8_ETC2_EAC)
+                              cnt++;
+                         }
+                       shared->info.etc2 = (cnt == 2);
+                       free(texFormats);
+
+                       // FIXME: My NVIDIA driver advertises ETC2 texture formats
+                       // but does not support them. Driver bug? Logic bug?
+                       // This is in #ifdef GL_GLES because Khronos recommends
+                       // use of GL_COMPRESSED_TEXTURE_FORMATS but OpenGL 4.x
+                       // does not.
+                    }
+               }
+          }
+#endif
+
         if (getenv("EVAS_GL_INFO"))
            fprintf(stderr,
                    "max tex size %ix%i\n"
@@ -732,6 +765,7 @@ evas_gl_common_context_new(void)
                    "rect tex %i\n"
                    "bgra : %i\n"
                    "etc1 : %i\n"
+                   "etc2 : %i%s\n"
                    "max ansiotropic filtering: %3.3f\n"
                    "egl sec map image: %i\n"
                    "max vertex count: %i\n"
@@ -752,6 +786,7 @@ evas_gl_common_context_new(void)
                    (int)shared->info.tex_rect,
                    (int)shared->info.bgra,
                    (int)shared->info.etc1,
+                   (int)shared->info.etc2, shared->info.etc2 ? " (GL_COMPRESSED_RGB8_ETC2, GL_COMPRESSED_RGBA8_ETC2_EAC)" : "",
                    (double)shared->info.anisotropic,
                    (int)shared->info.sec_image_map,
                    (int)shared->info.max_vertex_elements,

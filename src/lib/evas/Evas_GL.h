@@ -1056,6 +1056,11 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 /* GL_OES_compressed_ETC1_RGB8_texture */
 #define GL_ETC1_RGB8_OES                                        0x8D64
 
+/* The following are OpenGL ES 3.0 definitions for ETC2
+ * Note that RGB8_ETC2 is a superset of GL_OES_compressed_ETC1_RGB8_texture */
+#define GL_COMPRESSED_RGB8_ETC2                                 0x8D64
+#define GL_COMPRESSED_RGBA8_ETC2_EAC                            0x8D64
+
 /* GL_OES_compressed_paletted_texture */
 #define GL_PALETTE4_RGB8_OES                                    0x8B90
 #define GL_PALETTE4_RGBA8_OES                                   0x8B91
