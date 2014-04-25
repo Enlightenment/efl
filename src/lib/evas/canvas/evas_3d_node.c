@@ -316,9 +316,9 @@ evas_3d_node_scene_root_add(Evas_3D_Node *node, Evas_3D_Scene *scene)
           }
      }
    else
-     count = (int)eina_hash_find(pd->scenes_root, &scene);
+     count = (int)(uintptr_t)eina_hash_find(pd->scenes_root, &scene);
 
-   eina_hash_set(pd->scenes_root, &scene, (const void *)(count + 1));
+   eina_hash_set(pd->scenes_root, &scene, (const void *)(uintptr_t)(count + 1));
 }
 
 void
@@ -332,12 +332,12 @@ evas_3d_node_scene_root_del(Evas_3D_Node *node, Evas_3D_Scene *scene)
         return;
      }
 
-   count = (int)eina_hash_find(pd->scenes_root, &scene);
+   count = (int)(uintptr_t)eina_hash_find(pd->scenes_root, &scene);
 
    if (count == 1)
      eina_hash_del(pd->scenes_root, &scene, NULL);
    else
-     eina_hash_set(pd->scenes_root, &scene, (const void *)(count - 1));
+     eina_hash_set(pd->scenes_root, &scene, (const void *)(uintptr_t)(count - 1));
 }
 
 void
@@ -356,9 +356,9 @@ evas_3d_node_scene_camera_add(Evas_3D_Node *node, Evas_3D_Scene *scene)
           }
      }
    else
-     count = (int)eina_hash_find(pd->scenes_camera, &scene);
+     count = (int)(uintptr_t)eina_hash_find(pd->scenes_camera, &scene);
 
-   eina_hash_set(pd->scenes_camera, &scene, (const void *)(count + 1));
+   eina_hash_set(pd->scenes_camera, &scene, (const void *)(uintptr_t)(count + 1));
 }
 
 void
@@ -372,12 +372,12 @@ evas_3d_node_scene_camera_del(Evas_3D_Node *node, Evas_3D_Scene *scene)
         return;
      }
 
-   count = (int)eina_hash_find(pd->scenes_camera, &scene);
+   count = (int)(uintptr_t)eina_hash_find(pd->scenes_camera, &scene);
 
    if (count == 1)
      eina_hash_del(pd->scenes_camera, &scene, NULL);
    else
-     eina_hash_set(pd->scenes_camera, &scene, (const void *)(count - 1));
+     eina_hash_set(pd->scenes_camera, &scene, (const void *)(uintptr_t)(count - 1));
 }
 
 void

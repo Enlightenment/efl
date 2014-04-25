@@ -50,9 +50,9 @@ evas_3d_light_node_add(Evas_3D_Light *light, Evas_3D_Node *node)
           }
      }
    else
-     count = (int)eina_hash_find(pd->nodes, &node);
+     count = (int)(uintptr_t)eina_hash_find(pd->nodes, &node);
 
-   eina_hash_set(pd->nodes, &node, (const void *)(count + 1));
+   eina_hash_set(pd->nodes, &node, (const void *)(uintptr_t)(count + 1));
 }
 
 void
@@ -66,12 +66,12 @@ evas_3d_light_node_del(Evas_3D_Light *light, Evas_3D_Node *node)
         return;
      }
 
-   count = (int)eina_hash_find(pd->nodes, &node);
+   count = (int)(uintptr_t)eina_hash_find(pd->nodes, &node);
 
    if (count == 1)
      eina_hash_del(pd->nodes, &node, NULL);
    else
-     eina_hash_set(pd->nodes, &node, (const void *)(count - 1));
+     eina_hash_set(pd->nodes, &node, (const void *)(uintptr_t)(count - 1));
 }
 
 

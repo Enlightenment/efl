@@ -59,9 +59,9 @@ evas_3d_material_mesh_add(Evas_3D_Material *material, Evas_3D_Mesh *mesh)
           }
      }
    else
-     count = (int)eina_hash_find(pd->meshes, &mesh);
+     count = (int)(uintptr_t)eina_hash_find(pd->meshes, &mesh);
 
-   eina_hash_set(pd->meshes, &mesh, (const void *)(count + 1));
+   eina_hash_set(pd->meshes, &mesh, (const void *)(uintptr_t)(count + 1));
 }
 
 void
@@ -76,12 +76,12 @@ evas_3d_material_mesh_del(Evas_3D_Material *material, Evas_3D_Mesh *mesh)
         return;
      }
 
-   count = (int)eina_hash_find(pd->meshes, &mesh);
+   count = (int)(uintptr_t)eina_hash_find(pd->meshes, &mesh);
 
    if (count == 1)
      eina_hash_del(pd->meshes, &mesh, NULL);
    else
-     eina_hash_set(pd->meshes, &mesh, (const void *)(count - 1));
+     eina_hash_set(pd->meshes, &mesh, (const void *)(uintptr_t)(count - 1));
 }
 
 

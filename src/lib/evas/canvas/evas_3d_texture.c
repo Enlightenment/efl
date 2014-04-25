@@ -262,10 +262,10 @@ evas_3d_texture_material_add(Evas_3D_Texture *texture, Evas_3D_Material *materia
           }
      }
    else
-     count = (int)eina_hash_find(pd->materials, &material);
+     count = (int)(uintptr_t)eina_hash_find(pd->materials, &material);
 
    /* Increase reference count or add new one if not exist. */
-   eina_hash_set(pd->materials, &material, (const void *)(count + 1));
+   eina_hash_set(pd->materials, &material, (const void *)(uintptr_t)(count + 1));
 }
 
 void
@@ -279,12 +279,12 @@ evas_3d_texture_material_del(Evas_3D_Texture *texture, Evas_3D_Material *materia
         return;
      }
 
-   count = (int)eina_hash_find(pd->materials, &material);
+   count = (int)(uintptr_t)eina_hash_find(pd->materials, &material);
 
    if (count == 1)
      eina_hash_del(pd->materials, &material, NULL);
    else
-     eina_hash_set(pd->materials, &material, (const void *)(count - 1));
+     eina_hash_set(pd->materials, &material, (const void *)(uintptr_t)(count - 1));
 }
 
 

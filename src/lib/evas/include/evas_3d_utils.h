@@ -7,77 +7,89 @@
 #define  DEGREE_TO_RADIAN(x)     (((x) * M_PI) / 180.0)
 #define  EVAS_MATRIX_IS_IDENTITY 0x00000001
 
-typedef struct _Evas_Color
+typedef struct _Evas_Color Evas_Color;
+typedef struct _Evas_Vec2 Evas_Vec2;
+typedef struct _Evas_Vec3 Evas_Vec3;
+typedef struct _Evas_Vec4 Evas_Vec4;
+typedef struct _Evas_Mat2 Evas_Mat2;
+typedef struct _Evas_Mat3 Evas_Mat3;
+typedef struct _Evas_Mat4 Evas_Mat4;
+typedef struct _Evas_Box2 Evas_Box2;
+typedef struct _Evas_Box3 Evas_Box3;
+typedef struct _Evas_Triangle3 Evas_Triangle3;
+typedef struct _Evas_Ray3 Evas_Ray3;
+
+struct _Evas_Color
 {
    Evas_Real   r;
    Evas_Real   g;
    Evas_Real   b;
    Evas_Real   a;
-} Evas_Color;
+};
 
-typedef struct _Evas_Vec2
+struct _Evas_Vec2
 {
    Evas_Real   x;
    Evas_Real   y;
-} Evas_Vec2;
+};
 
-typedef struct _Evas_Vec3
+struct _Evas_Vec3
 {
    Evas_Real   x;
    Evas_Real   y;
    Evas_Real   z;
-} Evas_Vec3;
+};
 
-typedef struct _Evas_Vec4
+struct _Evas_Vec4
 {
    Evas_Real   x;
    Evas_Real   y;
    Evas_Real   z;
    Evas_Real   w;
-} Evas_Vec4;
+};
 
-typedef struct _Evas_Mat2
+struct _Evas_Mat2
 {
    Evas_Real   m[4];
    int         flags;
-} Evas_Mat2;
+};
 
-typedef struct _Evas_Mat3
+struct _Evas_Mat3
 {
    Evas_Real   m[9];
    int         flags;
-} Evas_Mat3;
+};
 
-typedef struct _Evas_Mat4
+struct _Evas_Mat4
 {
    Evas_Real   m[16];
    int         flags;
-} Evas_Mat4;
+};
 
-typedef struct _Evas_Box2
+struct _Evas_Box2
 {
    Evas_Vec2   p0;
    Evas_Vec2   p1;
-} Evas_Box2;
+};
 
-typedef struct _Evas_Box3
+struct _Evas_Box3
 {
    Evas_Vec3   p0;
    Evas_Vec3   p1;
-} Evas_Box3;
+};
 
-typedef struct _Evas_Triangle3
+struct _Evas_Triangle3
 {
    Evas_Vec3   p0;
    Evas_Vec3   p1;
    Evas_Vec3   p2;
-} Evas_Triangle3;
+};
 
-typedef struct _Evas_Ray3
+struct _Evas_Ray3
 {
    Evas_Vec3   org;
    Evas_Vec3   dir;
-} Evas_Ray3;
+};
 
 /* 2D vector */
 static inline void
@@ -1486,6 +1498,8 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
 {
    Evas_Mat4 mat;
    Evas_Vec4 near, far;
+
+   memset(&mat, 0, sizeof (mat));
 
    /* Get the matrix which transforms from normalized device coordinate to
       modeling coodrinate. */
