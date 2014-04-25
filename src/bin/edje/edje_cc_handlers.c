@@ -9836,7 +9836,7 @@ st_collections_group_programs_program_transition(void)
         current_program->tween.v1 = FROM_DOUBLE(parse_float_range(2, 0.0, 999999999.0));
         current_program->tween.v2 = FROM_DOUBLE(parse_float_range(3, 0.0, 999999999.0));
      }
-   else if ((current_program->tween.mode == EDJE_TWEEN_MODE_CUBIC_BEZIER))
+   else if (current_program->tween.mode == EDJE_TWEEN_MODE_CUBIC_BEZIER)
      {
         if ((get_arg_count() == 7) && (!strcmp(parse_str(4), "CURRENT")))
           current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
