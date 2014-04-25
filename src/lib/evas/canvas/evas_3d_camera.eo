@@ -47,8 +47,8 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
            @param camera     The given camera.
            @param fovy       Field of view angle in Y direction.
            @param aspect     Aspect ratio.
-           @param near       Distance to near clipping plane.
-           @param far        Distance to far clipping plane.
+           @param dnear      Distance to near clipping plane.
+           @param dfar       Distance to far clipping plane.
 
            @see evas_3d_camera_projection_matrix_set()
 
@@ -58,8 +58,8 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
          params {
             Evas_Real fovy; /*@ Field of view angle in Y direction. */
             Evas_Real aspect; /*@ Aspect ratio.*/
-            Evas_Real near; /*@ Distance to near clipping plane. */
-            Evas_Real far; /*@ Distance to far clipping plane. */
+            Evas_Real dnear; /*@ Distance to near clipping plane. */
+            Evas_Real dfar; /*@ Distance to far clipping plane. */
          }
       }
 
@@ -76,8 +76,8 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
             Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
             Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
             Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
-            Evas_Real near; /*@ Distance to near clipping plane. */
-            Evas_Real far; /*@ Distance to far clipping plane. */
+            Evas_Real dnear; /*@ Distance to near clipping plane. */
+            Evas_Real dfar; /*@ Distance to far clipping plane. */
          }
       }
       projection_ortho_set {
@@ -93,8 +93,8 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
             Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
             Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
             Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
-            Evas_Real near; /*@ Distance to near clipping plane. */
-            Evas_Real far; /*@ Distance to far clipping plane. */
+            Evas_Real dnear; /*@ Distance to near clipping plane. */
+            Evas_Real dfar; /*@ Distance to far clipping plane. */
          }
       }
    }

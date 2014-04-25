@@ -734,12 +734,12 @@ evas_mat4_look_at_set(Evas_Mat4 *m,
 static inline void
 evas_mat4_frustum_set(Evas_Mat4 *m,
                       Evas_Real left, Evas_Real right, Evas_Real bottom, Evas_Real top,
-                      Evas_Real near, Evas_Real far)
+                      Evas_Real dnear, Evas_Real dfar)
 {
    Evas_Real   w = right - left;
    Evas_Real   h = top - bottom;
-   Evas_Real   depth = near - far;
-   Evas_Real   near_2 = 2.0f * near;
+   Evas_Real   depth = dnear - dfar;
+   Evas_Real   near_2 = 2.0f * dnear;
 
    m->m[ 0] = near_2 / w;
    m->m[ 1] = 0.0f;
@@ -753,12 +753,12 @@ evas_mat4_frustum_set(Evas_Mat4 *m,
 
    m->m[ 8] = (right + left) / w;
    m->m[ 9] = (top + bottom) / h;
-   m->m[10] = (far + near) / depth;
+   m->m[10] = (dfar + dnear) / depth;
    m->m[11] = -1.0f;
 
    m->m[12] = 0.0f;
    m->m[13] = 0.0f;
-   m->m[14] = near_2 * far / depth;
+   m->m[14] = near_2 * dfar / depth;
    m->m[15] = 0.0f;
 
    m->flags = 0;
@@ -767,11 +767,11 @@ evas_mat4_frustum_set(Evas_Mat4 *m,
 static inline void
 evas_mat4_ortho_set(Evas_Mat4 *m,
                     Evas_Real left, Evas_Real right, Evas_Real bottom, Evas_Real top,
-                    Evas_Real near, Evas_Real far)
+                    Evas_Real dnear, Evas_Real dfar)
 {
    Evas_Real   w = right - left;
    Evas_Real   h = top - bottom;
-   Evas_Real   depth = near - far;
+   Evas_Real   depth = dnear - dfar;
 
    m->m[ 0] = 2.0f / w;
    m->m[ 1] = 0.0f;
@@ -790,7 +790,7 @@ evas_mat4_ortho_set(Evas_Mat4 *m,
 
    m->m[12] = -(right + left) / w;
    m->m[13] = -(top + bottom) / h;
-   m->m[14] = (far + near) / depth;
+   m->m[14] = (dfar + dnear) / depth;
    m->m[15] = 1.0f;
 
    m->flags = 0;
@@ -1497,7 +1497,7 @@ static inline void
 evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
 {
    Evas_Mat4 mat;
-   Evas_Vec4 near, far;
+   Evas_Vec4 dnear, dfar;
 
    memset(&mat, 0, sizeof (mat));
 
@@ -1506,34 +1506,34 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
    evas_mat4_inverse(&mat, mvp);
 
    /* Transform near point. */
-   near.x = x;
-   near.y = y;
-   near.z = -1.0;
-   near.w = 1.0;
+   dnear.x = x;
+   dnear.y = y;
+   dnear.z = -1.0;
+   dnear.w = 1.0;
 
-   evas_vec4_transform(&near, &near, &mat);
+   evas_vec4_transform(&dnear, &dnear, &mat);
 
-   near.w = 1.0 / near.w;
-   near.x *= near.w;
-   near.y *= near.w;
-   near.z *= near.w;
+   dnear.w = 1.0 / dnear.w;
+   dnear.x *= dnear.w;
+   dnear.y *= dnear.w;
+   dnear.z *= dnear.w;
 
-   evas_vec3_set(&ray->org, near.x, near.y, near.z);
+   evas_vec3_set(&ray->org, dnear.x, dnear.y, dnear.z);
 
    /* Transform far point. */
-   far.x = x;
-   far.y = y;
-   far.z = 1.0;
-   far.w = 1.0;
+   dfar.x = x;
+   dfar.y = y;
+   dfar.z = 1.0;
+   dfar.w = 1.0;
 
-   evas_vec4_transform(&far, &far, &mat);
+   evas_vec4_transform(&dfar, &dfar, &mat);
 
-   far.w = 1.0 / far.w;
-   far.x *= far.w;
-   far.y *= far.w;
-   far.z *= far.w;
+   dfar.w = 1.0 / dfar.w;
+   dfar.x *= dfar.w;
+   dfar.y *= dfar.w;
+   dfar.z *= dfar.w;
 
-   evas_vec3_set(&ray->dir, far.x - near.x, far.y - near.y, far.z - near.z);
+   evas_vec3_set(&ray->dir, dfar.x - dnear.x, dfar.y - dnear.y, dfar.z - dnear.z);
 }
 
 static inline Eina_Bool

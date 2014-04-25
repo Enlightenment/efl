@@ -111,15 +111,15 @@ _eo_evas_3d_camera_projection_matrix_get(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _eo_evas_3d_camera_projection_perspective_set(Eo *obj, Evas_3D_Camera_Data *pd,
                                               Evas_Real fovy, Evas_Real aspect,
-                                              Evas_Real near, Evas_Real far)
+                                              Evas_Real dnear, Evas_Real dfar)
 {
    Evas_Real   xmax;
    Evas_Real   ymax;
 
-   ymax = near * (Evas_Real)tan((double)fovy * M_PI / 360.0);
+   ymax = dnear * (Evas_Real)tan((double)fovy * M_PI / 360.0);
    xmax = ymax * aspect;
 
-   evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, near, far);
+   evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, dnear, dfar);
    evas_3d_object_change(obj, EVAS_3D_STATE_CAMERA_PROJECTION, NULL);
 }
 
@@ -127,9 +127,9 @@ EOLIAN static void
 _eo_evas_3d_camera_projection_frustum_set(Eo *obj, Evas_3D_Camera_Data *pd,
                                           Evas_Real left, Evas_Real right,
                                           Evas_Real bottom, Evas_Real top,
-                                          Evas_Real near, Evas_Real far)
+                                          Evas_Real dnear, Evas_Real dfar)
 {
-   evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, near, far);
+   evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    evas_3d_object_change(obj, EVAS_3D_STATE_CAMERA_PROJECTION, NULL);
 }
 
@@ -137,9 +137,9 @@ EOLIAN static void
 _eo_evas_3d_camera_projection_ortho_set(Eo *obj, Evas_3D_Camera_Data *pd,
                                         Evas_Real left, Evas_Real right,
                                         Evas_Real bottom, Evas_Real top,
-                                        Evas_Real near, Evas_Real far)
+                                        Evas_Real dnear, Evas_Real dfar)
 {
-   evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, near, far);
+   evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    evas_3d_object_change(obj, EVAS_3D_STATE_CAMERA_PROJECTION, NULL);
 }
 
