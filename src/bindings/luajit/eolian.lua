@@ -278,6 +278,12 @@ M.Function = ffi.metatype("Eolian_Function", {
             return ffi.string(v)
         end,
 
+        return_types_list_get = function(self, ftype)
+            local v = eolian.eolian_function_return_types_list_get(self, ftype)
+            if v == nil then return nil end
+            return v
+        end,
+
         return_dflt_value_get = function(self, ftype)
             local v = eolian.eolian_function_return_dflt_value_get(self, ftype)
             if v == nil then return nil end
@@ -325,6 +331,12 @@ ffi.metatype("Eolian_Function_Parameter", {
             local v = eolian.eolian_parameter_type_get(self)
             if v == nil then return nil end
             return ffi.string(v)
+        end,
+
+        types_list_get = function(self)
+            local v = eolian.eolian_parameter_types_list_get(self)
+            if v == nil then return nil end
+            return v
         end,
 
         name_get = function(self)
