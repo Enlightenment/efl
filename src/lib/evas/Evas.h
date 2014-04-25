@@ -286,7 +286,6 @@ extern "C" {
 #endif
 
 #include <Evas_Common.h>
-#include <Evas_3D.h>
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <Evas_Legacy.h>
 #endif
