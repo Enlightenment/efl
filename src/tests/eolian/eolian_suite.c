@@ -52,6 +52,68 @@ START_TEST(eolian_ctor_dtor)
 }
 END_TEST
 
+START_TEST(eolian_complex_type)
+{
+   Eolian_Function fid = NULL;
+   Eolian_Function_Parameter param = NULL;
+   const Eina_List *params_list = NULL;
+   const char *class_name = "Complex_Type";
+   Eolian_Type types_list = NULL;
+   const char *type_name = NULL;
+   Eina_Bool own = EINA_FALSE;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/complex_type.eo"));
+
+   /* Properties return type */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "a", EOLIAN_PROPERTY)));
+   fail_if(!(types_list = eolian_function_return_types_list_get(fid, EOLIAN_PROP_SET)));
+   fail_if(!(types_list = eolian_type_information_get(types_list, &type_name, &own)));
+   fail_if(strcmp(type_name, "Eina_List *"));
+   fail_if(own != EINA_TRUE);
+   fail_if(!(types_list = eolian_type_information_get(types_list, &type_name, &own)));
+   fail_if(strcmp(type_name, "Eina_Array *"));
+   fail_if(own != EINA_FALSE);
+   fail_if(eolian_type_information_get(types_list, &type_name, &own));
+   fail_if(strcmp(type_name, "Eo **"));
+   fail_if(own != EINA_TRUE);
+   /* Properties parameter type */
+   fail_if(!(params_list = eolian_parameters_list_get(fid)));
+   fail_if(eina_list_count(params_list) != 1);
+   fail_if(!(param = eina_list_nth(params_list, 0)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "value"));
+   fail_if(!(types_list = eolian_parameter_types_list_get(param)));
+   fail_if(!(types_list = eolian_type_information_get(types_list, &type_name, &own)));
+   fail_if(strcmp(type_name, "Eina_List *"));
+   fail_if(own != EINA_TRUE);
+   fail_if(eolian_type_information_get(types_list, &type_name, &own));
+   fail_if(strcmp(type_name, "int"));
+   fail_if(own != EINA_FALSE);
+
+   /* Methods return type */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "foo", EOLIAN_METHOD)));
+   fail_if(!(types_list = eolian_function_return_types_list_get(fid, EOLIAN_METHOD)));
+   fail_if(!(types_list = eolian_type_information_get(types_list, &type_name, &own)));
+   fail_if(strcmp(type_name, "Eina_List *"));
+   fail_if(own != EINA_TRUE);
+   fail_if(eolian_type_information_get(types_list, &type_name, &own));
+   fail_if(strcmp(type_name, "Eina_Stringshare *"));
+   fail_if(own != EINA_FALSE);
+   /* Methods parameter type */
+   fail_if(!(params_list = eolian_parameters_list_get(fid)));
+   fail_if(eina_list_count(params_list) != 1);
+   fail_if(!(param = eina_list_nth(params_list, 0)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "buf"));
+   fail_if(!(types_list = eolian_parameter_types_list_get(param)));
+   fail_if(eolian_type_information_get(types_list, &type_name, &own));
+   fail_if(strcmp(type_name, "char *"));
+   fail_if(own != EINA_TRUE);
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_scope)
 {
    Eolian_Function fid = NULL;
@@ -187,6 +249,7 @@ static void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_simple_parsing);
    tcase_add_test(tc, eolian_ctor_dtor);
    tcase_add_test(tc, eolian_scope);
+   tcase_add_test(tc, eolian_complex_type);
 }
 
 static const Eolian_Test_Case etc[] = {

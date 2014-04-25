@@ -500,7 +500,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    }
 
    rettype_comment = ws* eo_comment %end_accessor_rettype_comment;
-   rettype = 'return' ws+ alpha+ >save_fpc return_char+ %end_accessor_return end_statement rettype_comment?;
+   rettype = 'return' ws+ return_char >save_fpc return_char+ %end_accessor_return end_statement rettype_comment?;
 
    legacy = 'legacy' ws+ ident %end_accessor_legacy end_statement;
 
@@ -724,7 +724,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    meth_legacy = 'legacy' ws+ ident %end_method_legacy end_statement;
 
    meth_rettype_comment = ws* eo_comment %end_method_rettype_comment;
-   meth_rettype = 'return' ws+ alpha+ >save_fpc return_char+ %end_method_rettype end_statement meth_rettype_comment?;
+   meth_rettype = 'return' ws+ return_char >save_fpc return_char+ %end_method_rettype end_statement meth_rettype_comment?;
 
    meth_obj_const = 'const' %end_method_obj_const end_statement;
 
@@ -1209,10 +1209,10 @@ _types_extract(const char *buf, int len)
                 /* @own */
                 case '@':
                      {
-                        if (!strncmp(buf, "own", 3))
+                        if (!strncmp(buf, "own ", 4))
                           {
                              is_own = EINA_TRUE;
-                             buf += 3; len -= 3;
+                             buf += 4; len -= 4;
                           }
                         break;
                      }
@@ -1255,7 +1255,7 @@ _types_extract(const char *buf, int len)
                              ERR("%s: Too much >", save_buf);
                              goto error;
                           }
-                        if (d == tmp_type)
+                        if (depth > 0 && d == tmp_type)
                           {
                              ERR("%s: empty type inside <>", save_buf);
                              goto error;
