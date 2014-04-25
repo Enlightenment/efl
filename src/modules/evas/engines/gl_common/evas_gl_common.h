@@ -206,6 +206,11 @@
 #define EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC (1<<1)
 #endif
 
+// Evas_3d require GL_BGR, but that's an extention and will not be necessary once we move to Evas_GL_Image
+#ifndef GL_BGR
+#define GL_BGR 0x80E0
+#endif
+
 #ifndef GL_COLOR_BUFFER_BIT0_QCOM
 // if GL_COLOR_BUFFER_BIT0_QCOM  just assume the rest arent... saves fluff
 #define GL_COLOR_BUFFER_BIT0_QCOM                     0x00000001
