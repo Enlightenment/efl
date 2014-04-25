@@ -1505,7 +1505,7 @@ EAPI int edje_edit_state_rel2_offset_y_get(Evas_Object *obj, const char *part, c
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI Eina_Bool edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, int x);
 
 /** Set the 'rel1 offset Y' value of state.
  *
@@ -1517,7 +1517,7 @@ EAPI Eina_Bool edje_edit_state_rel1_offset_x_set(Evas_Object *obj, const char *p
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI Eina_Bool edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, int y);
 
 /** Set the 'rel2 offset X' value of state.
  *
@@ -1529,7 +1529,7 @@ EAPI Eina_Bool edje_edit_state_rel1_offset_y_set(Evas_Object *obj, const char *p
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI Eina_Bool edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+EAPI Eina_Bool edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *part, const char *state, double value, int x);
 
 /** Set the 'rel2 offset Y' value of state.
  *
@@ -1541,7 +1541,7 @@ EAPI Eina_Bool edje_edit_state_rel2_offset_x_set(Evas_Object *obj, const char *p
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
  */
-EAPI Eina_Bool edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
+EAPI Eina_Bool edje_edit_state_rel2_offset_y_set(Evas_Object *obj, const char *part, const char *state, double value, int y);
 
 /** Get the part name rel1x is relative to.
  *

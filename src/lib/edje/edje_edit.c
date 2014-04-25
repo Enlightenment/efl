@@ -3567,10 +3567,10 @@ FUNC_STATE_RELATIVE_DOUBLE(rel2, y);
      return pd->Sub.offset_##Value; \
   } \
   EAPI Eina_Bool \
-  edje_edit_state_##Sub##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
+  edje_edit_state_##Sub##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, int v) \
   { \
      GET_PD_OR_RETURN(EINA_FALSE); \
-     pd->Sub.offset_##Value = TO_INT(FROM_DOUBLE(v)); \
+     pd->Sub.offset_##Value = v; \
      edje_object_calc_force(obj); \
      return EINA_TRUE; \
   }
@@ -3710,7 +3710,7 @@ edje_edit_state_color3_set(Evas_Object *obj, const char *part, const char *state
   EAPI double								\
   edje_edit_state_##Class##_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
-     GET_PD_OR_RETURN(0);						\
+     GET_PD_OR_RETURN(0);			\
      return TO_DOUBLE(pd->Class.Value);				\
   }									\
   EAPI Eina_Bool								\
