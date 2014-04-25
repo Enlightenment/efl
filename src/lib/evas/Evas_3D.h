@@ -1,8 +1,6 @@
 #ifndef _EVAS_3D_H
 #define _EVAS_3D_H
 
-#include <Evas.h>
-
 typedef float   Evas_Real;
 
 typedef struct _Evas_3D_Scene    Evas_3D_Scene;
