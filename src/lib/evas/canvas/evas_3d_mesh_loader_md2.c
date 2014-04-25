@@ -366,8 +366,9 @@ evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
    s_scale = 1.0 / (float)(loader.skin_width - 1);
    t_scale = 1.0 / (float)(loader.skin_height - 1);
 
-   evas_3d_mesh_vertex_count_set(mesh, loader.triangle_count * 3);
-   evas_3d_mesh_vertex_assembly_set(mesh, EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES);
+   eo_do(mesh,
+         evas_3d_mesh_vertex_count_set(loader.triangle_count * 3),
+         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES));
 
    /* Load frames */
    for (i = 0; i < loader.frame_count; i++)
@@ -375,22 +376,23 @@ evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
         const MD2_Frame *frame = (const MD2_Frame *)(loader.frames + loader.frame_size * i);
         int              f = i * MD2_FRAME_SCALE;
 
-        /* Add a mesh frame. */
-        evas_3d_mesh_frame_add(mesh, f);
+        eo_do(mesh,
+              /* Add a mesh frame. */
+              evas_3d_mesh_frame_add(f),
 
-        /* Allocate vertex buffer for the frame. */
-        evas_3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_3D_VERTEX_POSITION, 0, NULL);
-        evas_3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_3D_VERTEX_NORMAL,   0, NULL);
-        evas_3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_3D_VERTEX_TEXCOORD, 0, NULL);
+              /* Allocate vertex buffer for the frame. */
+              evas_3d_mesh_frame_vertex_data_copy_set(f, EVAS_3D_VERTEX_POSITION, 0, NULL),
+              evas_3d_mesh_frame_vertex_data_copy_set(f, EVAS_3D_VERTEX_NORMAL,   0, NULL),
+              evas_3d_mesh_frame_vertex_data_copy_set(f, EVAS_3D_VERTEX_TEXCOORD, 0, NULL),
 
-        /* Map vertex buffer. */
-        pos = (float *)evas_3d_mesh_frame_vertex_data_map(mesh, f, EVAS_3D_VERTEX_POSITION);
-        nor = (float *)evas_3d_mesh_frame_vertex_data_map(mesh, f, EVAS_3D_VERTEX_NORMAL);
-        tex = (float *)evas_3d_mesh_frame_vertex_data_map(mesh, f, EVAS_3D_VERTEX_TEXCOORD);
+              /* Map vertex buffer. */
+              pos = (float *)evas_3d_mesh_frame_vertex_data_map(f, EVAS_3D_VERTEX_POSITION),
+              nor = (float *)evas_3d_mesh_frame_vertex_data_map(f, EVAS_3D_VERTEX_NORMAL),
+              tex = (float *)evas_3d_mesh_frame_vertex_data_map(f, EVAS_3D_VERTEX_TEXCOORD),
 
-        stride_pos = evas_3d_mesh_frame_vertex_stride_get(mesh, f, EVAS_3D_VERTEX_POSITION);
-        stride_nor = evas_3d_mesh_frame_vertex_stride_get(mesh, f, EVAS_3D_VERTEX_NORMAL);
-        stride_tex = evas_3d_mesh_frame_vertex_stride_get(mesh, f, EVAS_3D_VERTEX_TEXCOORD);
+              stride_pos = evas_3d_mesh_frame_vertex_stride_get(f, EVAS_3D_VERTEX_POSITION),
+              stride_nor = evas_3d_mesh_frame_vertex_stride_get(f, EVAS_3D_VERTEX_NORMAL),
+              stride_tex = evas_3d_mesh_frame_vertex_stride_get(f, EVAS_3D_VERTEX_TEXCOORD));
 
         if (stride_pos == 0)
           stride_pos = sizeof(float) * 3;
@@ -431,9 +433,10 @@ evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
           }
 
         /* Unmap vertex buffer. */
-        evas_3d_mesh_frame_vertex_data_unmap(mesh, f, EVAS_3D_VERTEX_POSITION);
-        evas_3d_mesh_frame_vertex_data_unmap(mesh, f, EVAS_3D_VERTEX_NORMAL);
-        evas_3d_mesh_frame_vertex_data_unmap(mesh, f, EVAS_3D_VERTEX_TEXCOORD);
+        eo_do(mesh,
+              evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_POSITION),
+              evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_NORMAL),
+              evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_TEXCOORD));
      }
 
    _md2_loader_fini(&loader);

@@ -246,7 +246,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH(obj->proxy->proxy_textures, l, texture)
      {
-        evas_3d_object_change(texture, EVAS_3D_STATE_TEXTURE_DATA, NULL);
+        eo_do(texture, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
      }
    if (obj->smart.parent)
      {
@@ -679,7 +679,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
      }
 
    while (obj->proxy->proxy_textures)
-     evas_3d_texture_source_set(obj->proxy->proxy_textures->data, NULL);
+     eo_do(obj->proxy->proxy_textures->data, evas_3d_texture_source_set(NULL));
 
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
    evas_object_map_set(eo_obj, NULL);

@@ -1,4 +1,4 @@
-class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
+class Evas_3D_Node (Evas_3D_Object, Evas_Common_Interface)
 {
    legacy_prefix: evas_3d_node;
    data: Evas_3D_Node_Data;
@@ -21,6 +21,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node
           */
+	     legacy null;
          const;
          return Evas_3D_Node_Type ;
       }
@@ -36,6 +37,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Node
           */
 
+	     legacy null;
          params {
             @in Evas_3D_Node *member;  /*@ Node object to be added. */
          }
@@ -49,6 +51,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Node
           */
 
+	     legacy null;
          params {
             @in Evas_3D_Node *member;  /*@ Member node to be deleted from the given node. */
          }
@@ -64,6 +67,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node
           */
+	     legacy null;
           const;
          return Evas_3D_Node * ;
       }
@@ -78,6 +82,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node
           */
+	     legacy null;
           const;
          return const Eina_List * ;
       }
@@ -95,6 +100,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
          params {
             @in Evas_Real x;  /*@ X coordinate of the position. */
             @in Evas_Real y;  /*@ Y coordinate of the position. */
@@ -114,6 +120,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
          params {
             @in Evas_Real x;  /*@ X term of the orientation quaternion (w, x, y, z) */
             @in Evas_Real y;  /*@ Y term of the orientation quaternion (w, x, y, z) */
@@ -136,6 +143,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
          params {
             @in Evas_Real angle;  /*@ Rotation angle.*/
             @in Evas_Real x;      /*@ X term of the rotation axis.*/
@@ -163,6 +171,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
          params {
             @in Evas_Real x;      /*@ Scale factor along X-axis.*/
             @in Evas_Real y;      /*@ Scale factor along Y-axis.*/
@@ -183,6 +192,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
           const;
          params {
             @in Evas_3D_Space space; /*@  */
@@ -206,6 +216,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
           const;
          params {
             @in Evas_3D_Space space; /*@  */
@@ -229,6 +240,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node_Transform
           */
+	     legacy null;
           const;
          params {
             @in Evas_3D_Space space; /*@  */
@@ -261,6 +273,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
 
+	     legacy null;
          params {
             @in Evas_3D_Space target_space;  /*@ Space where the target position belongs to. */
             @in Evas_Real x;                 /*@ X coordinate of the target position. */
@@ -287,6 +300,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node
           */
+	     legacy null;
          params {
             @in Evas_3D_Mesh *mesh;      /*@ The mesh to be added.*/
          }
@@ -306,6 +320,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node
           */
+	     legacy null;
          params {
             @in Evas_3D_Mesh *mesh;      /*@ The mesh to be deleted.*/
          }
@@ -326,6 +341,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Node
           */
+	     legacy null;
           const;
          return const Eina_List *;
       }
@@ -348,6 +364,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node_Transform
              */
+	     legacy null;
          }
          get {
             /*
@@ -360,6 +377,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node_Transform
              */
+	     legacy null;
          }
          values {
             Eina_Bool inherit; /*@ Whether to inherit parent position*/
@@ -381,6 +399,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node_Transform
             */
+	     legacy null;
          }
          get {
             /*
@@ -393,6 +412,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node_Transform
              */
+	     legacy null;
          }
          values {
             Eina_Bool inherit; /*@ Whether to inherit parent orientation*/
@@ -413,6 +433,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node_Transform
              */
+	     legacy null;
          }
          get {
             /*
@@ -425,6 +446,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node_Transform
              */
+	     legacy null;
          }
          values {
             Eina_Bool inherit; /*@ Whether to inherit parent scale*/
@@ -446,6 +468,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node
              */
+	     legacy null;
          }
          get {
             /*
@@ -458,6 +481,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node
              */
+	     legacy null;
          }
          values {
             Evas_3D_Camera *camera; /*@ The camera */
@@ -479,6 +503,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node
              */
+	     legacy null;
          }
          get {
             /*
@@ -491,6 +516,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node
              */
+	     legacy null;
          }
          values {
             Evas_3D_Light *light; /*@ The light */
@@ -515,6 +541,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node
              */
+	     legacy null;
          }
          get {
             /*
@@ -531,6 +558,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Node
              */
+	     legacy null;
          }
          keys {
             Evas_3D_Mesh *mesh; /*@ The given mesh.*/
@@ -543,7 +571,7 @@ class EO_Evas_3D_Node (EO_Evas_3D_Object, Evas_Common_Interface)
    implements {
       Eo_Base::constructor;
       Eo_Base::destructor;
-      EO_Evas_3D_Object::update_notify;
-      EO_Evas_3D_Object::change_notify;
+      Evas_3D_Object::update_notify;
+      Evas_3D_Object::change_notify;
    }
 }

@@ -1487,18 +1487,6 @@ void _canvas_objects_in_rectangle_get(Eo *obj, void *_pd, va_list *list);
 void _canvas_smart_objects_calculate(Eo *e, void *_pd, va_list *list);
 void _canvas_smart_objects_calculate_count_get(Eo *e, void *_pd, va_list *list);
 
-/* Object generic functions.  3D function*/
-void evas_3d_object_init(Evas_3D_Object *obj, Evas *e, Evas_3D_Object_Type type, const Evas_3D_Object_Func *func);
-Evas *evas_3d_object_evas_get(const Evas_3D_Object *obj);
-Evas_3D_Object_Type  evas_3d_object_type_get(const Evas_3D_Object *obj);
-void evas_3d_object_reference(Evas_3D_Object *obj);
-void evas_3d_object_unreference(Evas_3D_Object *obj);
-int  evas_3d_object_reference_count_get(const Evas_3D_Object *obj);
-void evas_3d_object_change(Evas_3D_Object *obj, Evas_3D_State state, Evas_3D_Object *ref);
-Eina_Bool evas_3d_object_dirty_get(const Evas_3D_Object *obj, Evas_3D_State state);
-void evas_3d_object_update(Evas_3D_Object *obj);
-void evas_3d_object_update_done(Evas_3D_Object *obj);
-
 /* Node functions. */
 void evas_3d_node_traverse(Evas_3D_Node *from, Evas_3D_Node *to, Evas_3D_Node_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
 void evas_3d_node_tree_traverse(Evas_3D_Node *root, Evas_3D_Tree_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);

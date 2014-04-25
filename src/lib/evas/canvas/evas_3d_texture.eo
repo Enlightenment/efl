@@ -1,4 +1,4 @@
-class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
+class Evas_3D_Texture (Evas_3D_Object, Evas_Common_Interface)
 {
    legacy_prefix: evas_3d_texture;
    data : Evas_3D_Texture_Data;
@@ -17,6 +17,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Texture
              */
+	     legacy null;
          }
          get {
             /*
@@ -26,6 +27,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Texture
              */
+	     legacy null;
          }
          values {
             Eina_Bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
@@ -42,6 +44,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
+	 legacy null;
          params {
             @in Evas_3D_Color_Format color_format; /*@ Color format of the texture. */
             @in Evas_3D_Pixel_Format pixel_format; /*@ Pixel format of the data. */
@@ -60,6 +63,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
+	 legacy null;
          return void ;
          params {
             @in const char *file; /*@ Path to the image file. */
@@ -79,6 +83,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
+	 legacy null;
          return void ;
          params {
             @in Evas_Object *source; /*@ Source evas object to be used as the texture data. */
@@ -98,6 +103,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
+	 legacy null;
          const;
          return Evas_3D_Color_Format ;
       }
@@ -115,6 +121,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
+	 legacy null;
          const;
          params {
             @out int w; /*@ Pointer to receive the width of the texture size. */
@@ -132,6 +139,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
+	 legacy null;
          params {
             @in Evas_3D_Wrap_Mode s; /*@ Wrap mode for S-axis. */
             @in Evas_3D_Wrap_Mode t; /*@ Wrap mode for T-axis. */
@@ -147,6 +155,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
+	 legacy null;
          return void ;
          params {
             @out Evas_3D_Wrap_Mode s; /*@ Pointer to receive S-axis wrap mode. */
@@ -163,6 +172,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
+	 legacy null;
          params {
             @in Evas_3D_Texture_Filter min; /*@ Minification filter used when down-scaling. */
             @in Evas_3D_Texture_Filter mag; /*@ Magnification filter used when up-scaling. */
@@ -182,6 +192,7 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Texture
           */
 
+	 legacy null;
          const;
          params {
             @out Evas_3D_Texture_Filter min; /*@ Pointer to receive the minification filter. */
@@ -193,8 +204,8 @@ class EO_Evas_3D_Texture (EO_Evas_3D_Object, Evas_Common_Interface)
    implements {
       Eo_Base::constructor;
       Eo_Base::destructor;
-      EO_Evas_3D_Object::update_notify;
-      EO_Evas_3D_Object::change_notify;
+      Evas_3D_Object::update_notify;
+      Evas_3D_Object::change_notify;
    }
 
 }

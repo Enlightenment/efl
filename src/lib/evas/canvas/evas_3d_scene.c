@@ -8,7 +8,7 @@
 
 #include "Eo.h"
 
-#define MY_CLASS EO_EVAS_3D_SCENE_CLASS
+#define MY_CLASS EVAS_3D_SCENE_CLASS
 
 void
 evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data)
@@ -29,7 +29,7 @@ evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data)
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_eo_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
+_evas_3d_scene_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *eo;
@@ -42,16 +42,16 @@ _eo_evas_3d_scene_eo_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_eo_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
+_evas_3d_scene_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
    if (pd->root_node)
      {
-        evas_3d_object_update(pd->root_node);
+        eo_do(pd->root_node, evas_3d_object_update());
      }
 
    if (pd->camera_node)
      {
-        evas_3d_object_update(pd->camera_node);
+        eo_do(pd->camera_node, evas_3d_object_update());
      }
 }
 
@@ -67,21 +67,21 @@ evas_3d_scene_add(Evas *e)
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
+_evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, eo_evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_SCENE));
+   eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_SCENE));
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd EINA_UNUSED)
+_evas_3d_scene_eo_base_destructor(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd EINA_UNUSED)
 {
    //evas_3d_object_unreference(&pd->base);
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_root_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
+_evas_3d_scene_root_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
 {
    if (pd->root_node == node)
      return;
@@ -100,17 +100,17 @@ _eo_evas_3d_scene_root_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *n
         evas_3d_node_scene_root_add(node, obj);
      }
 
-   evas_3d_object_change(obj, EVAS_3D_STATE_SCENE_ROOT_NODE, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_ROOT_NODE, NULL));
 }
 
 EOLIAN static Evas_3D_Node *
-_eo_evas_3d_scene_root_node_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
+_evas_3d_scene_root_node_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
    return pd->root_node;
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_camera_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
+_evas_3d_scene_camera_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node *node)
 {
    if (pd->camera_node == node)
      return;
@@ -129,40 +129,40 @@ _eo_evas_3d_scene_camera_node_set(Eo *obj, Evas_3D_Scene_Data *pd, Evas_3D_Node 
         evas_3d_node_scene_camera_add(node, obj);
      }
 
-   evas_3d_object_change(obj, EVAS_3D_STATE_SCENE_CAMERA_NODE, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_CAMERA_NODE, NULL));
 }
 
 EOLIAN static Evas_3D_Node *
-_eo_evas_3d_scene_camera_node_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
+_evas_3d_scene_camera_node_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
 {
    return pd->camera_node;
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_size_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, int w, int h)
+_evas_3d_scene_size_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, int w, int h)
 {
    pd->w = w;
    pd->h = h;
-   evas_3d_object_change(obj, EVAS_3D_STATE_SCENE_SIZE, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_SIZE, NULL));
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_size_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, int *w, int *h)
+_evas_3d_scene_size_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, int *w, int *h)
 {
    if (w) *w = pd->w;
    if (h) *h = pd->h;
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_background_color_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
+_evas_3d_scene_background_color_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
                                    Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
    evas_color_set(&pd->bg_color, r, g, b, a);
-   evas_3d_object_change(obj, EVAS_3D_STATE_SCENE_BACKGROUND_COLOR, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_BACKGROUND_COLOR, NULL));
 }
 
 EOLIAN static void
-_eo_evas_3d_scene_background_color_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
+_evas_3d_scene_background_color_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
                                    Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r) *r = pd->bg_color.r;
@@ -325,7 +325,7 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
    evas_3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_3D_VERTEX_TEXCOORD,
                                               &tex0, &tex1, &tex_weight);
-   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EO_EVAS_3D_MESH_CLASS);
+   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
    if (pdmesh->indices)
      {
         unsigned int i0, i1, i2;
@@ -513,7 +513,7 @@ _node_pick(Evas_3D_Node *node, void *data)
    Evas_Ray3            ray;
    Evas_3D_Pick_Data   *pick = (Evas_3D_Pick_Data *)data;
    Evas_Mat4            mvp;
-   Evas_3D_Node_Data *pd_node = eo_data_scope_get(node, EO_EVAS_3D_NODE_CLASS);
+   Evas_3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_3D_NODE_CLASS);
 
    if (! evas_box3_ray3_intersect(&pd_node->aabb, &pick->ray_world))
      {
@@ -543,9 +543,9 @@ _node_pick(Evas_3D_Node *node, void *data)
 }
 
 EOLIAN static Eina_Bool
-_eo_evas_3d_scene_pick(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
-                   Evas_3D_Node **node, Evas_3D_Mesh **mesh,
-                   Evas_Real *s, Evas_Real *t)
+_evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
+                    Evas_3D_Node **node, Evas_3D_Mesh **mesh,
+                    Evas_Real *s, Evas_Real *t)
 {
    /* TODO: Use H/W picking if availabe. */
    Evas_3D_Pick_Data data;
@@ -561,9 +561,9 @@ _eo_evas_3d_scene_pick(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_Real x,
    data.t      = 0.0;
 
    /* Update the scene graph. */
-   evas_3d_object_update((Evas_3D_Object *)obj);
-   Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(pd->camera_node, EO_EVAS_3D_NODE_CLASS);
-   Evas_3D_Camera_Data *pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EO_EVAS_3D_CAMERA_CLASS);
+   eo_do(obj, evas_3d_object_update());
+   Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_3D_NODE_CLASS);
+   Evas_3D_Camera_Data *pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_3D_CAMERA_CLASS);
    evas_mat4_multiply(&data.matrix_vp,
                       &pd_camera->projection,
                       &pd_camera_node->data.camera.matrix_world_to_eye);

@@ -597,7 +597,7 @@ e3d_drawable_format_get(E3D_Drawable *drawable)
 static inline GLuint
 _texture_id_get(Evas_3D_Texture *texture)
 {
-   Evas_3D_Texture_Data *pd = eo_data_scope_get(texture, EO_EVAS_3D_TEXTURE_CLASS);
+   Evas_3D_Texture_Data *pd = eo_data_scope_get(texture, EVAS_3D_TEXTURE_CLASS);
    E3D_Texture *tex = (E3D_Texture *)pd->engine_data;
 
    return tex->tex;
@@ -609,7 +609,7 @@ _mesh_frame_find(Evas_3D_Mesh *mesh, int frame,
 {
    Eina_List *left, *right;
    Evas_3D_Mesh_Frame *f0, *f1;
-   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EO_EVAS_3D_MESH_CLASS);
+   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
 
    left = pdmesh->frames;
    right = eina_list_next(left);
@@ -839,7 +839,7 @@ _material_color_build(E3D_Draw_Data *data, int frame,
 
         if (f0->material)
           {
-             Evas_3D_Material_Data *pdm = eo_data_scope_get(f0->material, EO_EVAS_3D_MATERIAL_CLASS);
+             Evas_3D_Material_Data *pdm = eo_data_scope_get(f0->material, EVAS_3D_MATERIAL_CLASS);
              if (pdm->attribs[attrib].enable)
                 break;
           }
@@ -854,7 +854,7 @@ _material_color_build(E3D_Draw_Data *data, int frame,
 
         if (f1->material)
           {
-             Evas_3D_Material_Data *pdm = eo_data_scope_get(f1->material, EO_EVAS_3D_MATERIAL_CLASS);
+             Evas_3D_Material_Data *pdm = eo_data_scope_get(f1->material, EVAS_3D_MATERIAL_CLASS);
              if (pdm->attribs[attrib].enable)
                 break;
           }
@@ -883,7 +883,7 @@ _material_color_build(E3D_Draw_Data *data, int frame,
              f1 = NULL;
           }
      }
-   Evas_3D_Material_Data *pdmf0 = eo_data_scope_get(f0->material, EO_EVAS_3D_MATERIAL_CLASS);
+   Evas_3D_Material_Data *pdmf0 = eo_data_scope_get(f0->material, EVAS_3D_MATERIAL_CLASS);
    if (f1 == NULL)
      {
         data->materials[attrib].color = pdmf0->attribs[attrib].color;
@@ -894,7 +894,7 @@ _material_color_build(E3D_Draw_Data *data, int frame,
    else
      {
         Evas_Real weight;
-        Evas_3D_Material_Data *pdmf1 = eo_data_scope_get(f1->material, EO_EVAS_3D_MATERIAL_CLASS);
+        Evas_3D_Material_Data *pdmf1 = eo_data_scope_get(f1->material, EVAS_3D_MATERIAL_CLASS);
 
         weight = (f1->frame - frame) / (Evas_Real)(f1->frame - f0->frame);
         evas_color_blend(&data->materials[attrib].color,
@@ -926,7 +926,7 @@ _material_texture_build(E3D_Draw_Data *data, int frame,
 
         if (f0->material)
           {
-             Evas_3D_Material_Data *pdm = eo_data_scope_get(f0->material, EO_EVAS_3D_MATERIAL_CLASS);
+             Evas_3D_Material_Data *pdm = eo_data_scope_get(f0->material, EVAS_3D_MATERIAL_CLASS);
              if (pdm->attribs[attrib].enable && pdm->attribs[attrib].texture != NULL)
                 break;
           }
@@ -941,7 +941,7 @@ _material_texture_build(E3D_Draw_Data *data, int frame,
 
         if (f1->material)
           {
-             Evas_3D_Material_Data *pdm = eo_data_scope_get(f1->material, EO_EVAS_3D_MATERIAL_CLASS);
+             Evas_3D_Material_Data *pdm = eo_data_scope_get(f1->material, EVAS_3D_MATERIAL_CLASS);
              if (pdm->attribs[attrib].enable && pdm->attribs[attrib].texture != NULL)
                 break;
           }
@@ -971,18 +971,18 @@ _material_texture_build(E3D_Draw_Data *data, int frame,
           }
      }
 
-   Evas_3D_Material_Data *pdmf0 = eo_data_scope_get(f0->material, EO_EVAS_3D_MATERIAL_CLASS);
+   Evas_3D_Material_Data *pdmf0 = eo_data_scope_get(f0->material, EVAS_3D_MATERIAL_CLASS);
    data->materials[attrib].sampler0 = data->texture_count++;
-   Evas_3D_Texture_Data *pd = eo_data_scope_get(pdmf0->attribs[attrib].texture, EO_EVAS_3D_TEXTURE_CLASS);
+   Evas_3D_Texture_Data *pd = eo_data_scope_get(pdmf0->attribs[attrib].texture, EVAS_3D_TEXTURE_CLASS);
    data->materials[attrib].tex0 = (E3D_Texture *)pd->engine_data;
 
    if (f1)
      {
-        Evas_3D_Material_Data *pdmf1 = eo_data_scope_get(f1->material, EO_EVAS_3D_MATERIAL_CLASS);
+        Evas_3D_Material_Data *pdmf1 = eo_data_scope_get(f1->material, EVAS_3D_MATERIAL_CLASS);
         Evas_Real weight = (f1->frame - frame) / (Evas_Real)(f1->frame - f0->frame);
 
         data->materials[attrib].sampler1 = data->texture_count++;
-        Evas_3D_Texture_Data *pd = eo_data_scope_get(pdmf1->attribs[attrib].texture, EO_EVAS_3D_TEXTURE_CLASS);
+        Evas_3D_Texture_Data *pd = eo_data_scope_get(pdmf1->attribs[attrib].texture, EVAS_3D_TEXTURE_CLASS);
         data->materials[attrib].tex1 = (E3D_Texture *)pd->engine_data;
 
         data->materials[attrib].texture_weight = weight;
@@ -1011,9 +1011,9 @@ _light_build(E3D_Draw_Data *data,
              const Evas_3D_Node *light,
              const Evas_Mat4    *matrix_eye)
 {
-   Evas_3D_Node_Data *pd_light_node = eo_data_scope_get(light, EO_EVAS_3D_NODE_CLASS);
+   Evas_3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_3D_NODE_CLASS);
    Evas_3D_Light *l = pd_light_node->data.light.light;
-   Evas_3D_Light_Data *pdl = eo_data_scope_get(l, EO_EVAS_3D_LIGHT_CLASS);
+   Evas_3D_Light_Data *pdl = eo_data_scope_get(l, EVAS_3D_LIGHT_CLASS);
    Evas_Vec3      pos, dir;
 
    if (pdl == NULL)
@@ -1083,7 +1083,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
                       const Evas_3D_Node *light)
 {
    Eina_List *l, *r;
-   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EO_EVAS_3D_MESH_CLASS);
+   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
 
    if (pdmesh->frames == NULL)
      return EINA_FALSE;
@@ -1216,10 +1216,10 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
    e3d_renderer_clear(renderer, &data->bg_color);
 
    /* Get eye matrix. */
-   Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(data->camera_node, EO_EVAS_3D_NODE_CLASS);
+   Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(data->camera_node, EVAS_3D_NODE_CLASS);
    matrix_eye = &pd_camera_node->data.camera.matrix_world_to_eye;
 
-   Evas_3D_Camera_Data *pd = eo_data_scope_get(pd_camera_node->data.camera.camera, EO_EVAS_3D_CAMERA_CLASS);
+   Evas_3D_Camera_Data *pd = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_3D_CAMERA_CLASS);
 
    EINA_LIST_FOREACH(data->mesh_nodes, l, n)
      {
@@ -1227,7 +1227,7 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3
         Evas_Mat4          matrix_mvp;
         Eina_Iterator     *it;
         void              *ptr;
-        Evas_3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EO_EVAS_3D_NODE_CLASS);
+        Evas_3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EVAS_3D_NODE_CLASS);
         evas_mat4_multiply(&matrix_mv, matrix_eye, &pd_mesh_node->data.mesh.matrix_local_to_world);
         evas_mat4_multiply(&matrix_mvp, matrix_eye, &matrix_mv);
         evas_mat4_multiply(&matrix_mvp, &pd->projection,

@@ -8,7 +8,7 @@
 
 #include "Eo.h"
 
-#define MY_CLASS EO_EVAS_3D_TEXTURE_CLASS
+#define MY_CLASS EVAS_3D_TEXTURE_CLASS
 
 static inline void
 _texture_proxy_set(Evas_3D_Texture *texture, Evas_Object *eo_src, Evas_Object_Protected_Data *src)
@@ -196,12 +196,12 @@ _texture_material_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *k
                                   void *data EINA_UNUSED, void *fdata)
 {
    Evas_3D_Material *m = *(Evas_3D_Material **)key;
-   evas_3d_object_change(m, EVAS_3D_STATE_MATERIAL_TEXTURE, (Evas_3D_Object *)fdata);
+   eo_do(m, evas_3d_object_change(EVAS_3D_STATE_MATERIAL_TEXTURE, (Evas_3D_Object *)fdata));
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_eo_evas_3d_object_change_notify(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
+_evas_3d_texture_evas_3d_object_change_notify(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
 
    if (pd->materials)
@@ -209,7 +209,7 @@ _eo_evas_3d_texture_eo_evas_3d_object_change_notify(Eo *obj, Evas_3D_Texture_Dat
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_eo_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
+_evas_3d_texture_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
 {
    if (pd->source)
      {
@@ -301,21 +301,21 @@ evas_3d_texture_add(Evas *e)
 
 
 EOLIAN static void
-_eo_evas_3d_texture_eo_base_constructor(Eo *obj, Evas_3D_Texture_Data *pd EINA_UNUSED)
+_evas_3d_texture_eo_base_constructor(Eo *obj, Evas_3D_Texture_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
-   eo_do(obj, eo_evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_TEXTURE));
+   eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_TEXTURE));
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_eo_base_destructor(Eo *obj, Evas_3D_Texture_Data *pd  EINA_UNUSED)
+_evas_3d_texture_eo_base_destructor(Eo *obj, Evas_3D_Texture_Data *pd  EINA_UNUSED)
 {
    //evas_3d_object_unreference(&pd->base);
    _texture_fini(obj);
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_data_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_3D_Color_Format color_format,
+_evas_3d_texture_data_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_3D_Color_Format color_format,
                              Evas_3D_Pixel_Format pixel_format, int w, int h, const void *data)
 {
    Eo *evas = NULL;
@@ -328,11 +328,11 @@ _eo_evas_3d_texture_data_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas
    e->engine.func->texture_data_set(e->engine.data.output, pd->engine_data,
                                     color_format, pixel_format, w, h, data);
 
-   evas_3d_object_change(obj, EVAS_3D_STATE_TEXTURE_DATA, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_file_set(Eo *obj, Evas_3D_Texture_Data *pd, const char *file, const char *key)
+_evas_3d_texture_file_set(Eo *obj, Evas_3D_Texture_Data *pd, const char *file, const char *key)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
@@ -342,11 +342,11 @@ _eo_evas_3d_texture_file_set(Eo *obj, Evas_3D_Texture_Data *pd, const char *file
      pd->engine_data = e->engine.func->texture_new(e->engine.data.output);
 
    e->engine.func->texture_file_set(e->engine.data.output, pd->engine_data, file, key);
-   evas_3d_object_change(obj, EVAS_3D_STATE_TEXTURE_DATA, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
 
 EAPI void
-_eo_evas_3d_texture_source_set(Eo *obj , Evas_3D_Texture_Data *pd, Evas_Object *source)
+_evas_3d_texture_source_set(Eo *obj , Evas_3D_Texture_Data *pd, Evas_Object *source)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
@@ -381,11 +381,11 @@ _eo_evas_3d_texture_source_set(Eo *obj , Evas_3D_Texture_Data *pd, Evas_Object *
      }
 
    _texture_proxy_set(obj, source, src);
-   evas_3d_object_change(obj, EVAS_3D_STATE_TEXTURE_DATA, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_source_visible_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Eina_Bool visible)
+_evas_3d_texture_source_visible_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Eina_Bool visible)
 {
    Evas_Object_Protected_Data *src_obj;
 
@@ -407,7 +407,7 @@ _eo_evas_3d_texture_source_visible_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data
 }
 
 EOLIAN static Eina_Bool
-_eo_evas_3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
+_evas_3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
 {
    Evas_Object_Protected_Data *src_obj;
 
@@ -419,7 +419,7 @@ _eo_evas_3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data
 }
 
 EOLIAN static Evas_3D_Color_Format
-_eo_evas_3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
+_evas_3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
 {
    Evas_3D_Color_Format format;
    Eo *evas = NULL;
@@ -430,7 +430,7 @@ _eo_evas_3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_size_get(Eo *obj, Evas_3D_Texture_Data *pd, int *w, int *h)
+_evas_3d_texture_size_get(Eo *obj, Evas_3D_Texture_Data *pd, int *w, int *h)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
@@ -439,17 +439,17 @@ _eo_evas_3d_texture_size_get(Eo *obj, Evas_3D_Texture_Data *pd, int *w, int *h)
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_wrap_set(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t)
+_evas_3d_texture_wrap_set(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
    e->engine.func->texture_wrap_set(e->engine.data.output, pd->engine_data, s, t);
-   evas_3d_object_change(obj, EVAS_3D_STATE_TEXTURE_WRAP, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_WRAP, NULL));
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_wrap_get(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t)
+_evas_3d_texture_wrap_get(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
@@ -458,17 +458,17 @@ _eo_evas_3d_texture_wrap_get(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mod
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_filter_set(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag)
+_evas_3d_texture_filter_set(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
    e->engine.func->texture_filter_set(e->engine.data.output, pd->engine_data, min, mag);
-   evas_3d_object_change(obj, EVAS_3D_STATE_TEXTURE_FILTER, NULL);
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_FILTER, NULL));
 }
 
 EOLIAN static void
-_eo_evas_3d_texture_filter_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag)
+_evas_3d_texture_filter_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());

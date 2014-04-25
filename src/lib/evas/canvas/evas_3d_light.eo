@@ -1,4 +1,4 @@
-class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
+class Evas_3D_Light (Evas_3D_Object, Evas_Common_Interface)
 {
    legacy_prefix: evas_3d_light;
    data: Evas_3D_Light_Data;
@@ -19,6 +19,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          get {
             /*@
@@ -28,6 +29,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          values {
             Eina_Bool directional; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
@@ -50,6 +52,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          get {
             /*@
@@ -59,6 +62,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          values {
             Evas_Real exponent; /*@ Spot exponent value..*/
@@ -77,6 +81,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          get {
             /*@
@@ -86,6 +91,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          values {
             Evas_Real cutoff; /*@ Cutoff angle in degree..*/
@@ -103,6 +109,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          get {
             /*@
@@ -112,6 +119,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Light
              */
+	     legacy null;
          }
          values {
             Eina_Bool enable; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
@@ -127,6 +135,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          params {
            @in Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
            @in Evas_Real g; /*@ Green component of the ambient color between [0.0, 1.0]. */
@@ -142,6 +151,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          const;
          params {
            @out Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
@@ -159,6 +169,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          params {
            @in Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
            @in Evas_Real g; /*@ Green component of the diffuse color between [0.0, 1.0]. */
@@ -174,6 +185,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          const;
          params {
            @out Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
@@ -191,6 +203,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          params {
            @in Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
            @in Evas_Real g; /*@ Green component of the specular color between [0.0, 1.0]. */
@@ -206,6 +219,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          const;
          params {
            @out Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
@@ -231,6 +245,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          params {
             @in Evas_Real constant; /*@ Constant attenuation term..*/
             @in Evas_Real linear; /*@ Linear attenuation term..*/
@@ -246,6 +261,7 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Light
           */
+	     legacy null;
          const;
          params {
             @out Evas_Real constant; /*@ Constant attenuation term..*/
@@ -258,8 +274,8 @@ class EO_Evas_3D_LIGHT (EO_Evas_3D_Object, Evas_Common_Interface)
    implements {
       Eo_Base::constructor;
       Eo_Base::destructor;
-      EO_Evas_3D_Object::update_notify;
-      EO_Evas_3D_Object::change_notify;
+      Evas_3D_Object::update_notify;
+      Evas_3D_Object::change_notify;
    }
 
 }

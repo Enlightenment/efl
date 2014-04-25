@@ -1,4 +1,4 @@
-class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
+class Evas_3D_Camera (Evas_3D_Object, Evas_Common_Interface)
 {
    legacy_prefix: evas_3d_camera;
    data: Evas_3D_Camera_Data;
@@ -18,6 +18,7 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Camera
           */
+	     legacy null;
          params {
            @in const Evas_Real *matrix; /*@ Projection Matrix */
          }
@@ -34,6 +35,7 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
 
           @ingroup Evas_3D_Camera
          */
+	     legacy null;
          const;
          params {
            @out Evas_Real matrix; /*@ Projection Matrix */
@@ -55,6 +57,7 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Camera
           */
 
+	     legacy null;
          params {
             Evas_Real fovy; /*@ Field of view angle in Y direction. */
             Evas_Real aspect; /*@ Aspect ratio.*/
@@ -71,6 +74,7 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Camera
           */
+	     legacy null;
          params {
             Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
             Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
@@ -88,6 +92,7 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Camera
           */
+	     legacy null;
          params {
             Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
             Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
@@ -102,8 +107,8 @@ class EO_Evas_3D_Camera (EO_Evas_3D_Object, Evas_Common_Interface)
    implements {
       Eo_Base::constructor;
       Eo_Base::destructor;
-      EO_Evas_3D_Object::update_notify;
-      EO_Evas_3D_Object::change_notify;
+      Evas_3D_Object::update_notify;
+      Evas_3D_Object::change_notify;
    }
 
 }

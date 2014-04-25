@@ -2420,7 +2420,7 @@ _3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene,
-                                                    EO_EVAS_3D_SCENE_CLASS);
+                                                    EVAS_3D_SCENE_CLASS);
    EINA_COW_WRITE_BEGIN(evas_object_3d_cow, obj->data_3d, Evas_Object_3D_Data,
                         data)
      {
@@ -2449,7 +2449,7 @@ _3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj,
    if (!o->cur->scene) return;
 
    Evas_3D_Scene_Data *pd_scene =
-      eo_data_scope_get(o->cur->scene, EO_EVAS_3D_SCENE_CLASS);
+      eo_data_scope_get(o->cur->scene, EVAS_3D_SCENE_CLASS);
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
@@ -2494,7 +2494,7 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
    Evas_3D_Scene_Public_Data scene_data;
    Evas_3D_Scene_Data *pd_scene = NULL;
 
-   pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
+   pd_scene = eo_data_scope_get(scene, EVAS_3D_SCENE_CLASS);
 
    if((pd_scene->w == 0) || (pd_scene->h == 0)) return;
 
@@ -2544,7 +2544,7 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
    scene_data.camera_node = pd_scene->camera_node;
 
    /* Phase 1 - Update scene graph tree. */
-   evas_3d_object_update(scene);
+   eo_do(scene, evas_3d_object_update());
 
    /* Phase 2 - Do frustum culling and get visible model nodes. */
    evas_3d_node_tree_traverse(pd_scene->root_node,
@@ -3379,8 +3379,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    else if (o->cur->scene)
      {
         Evas_3D_Scene *scene = o->cur->scene;
-        //Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene, EO_EVAS_3D_SCENE_CLASS);
-        if (evas_3d_object_dirty_get(scene, EVAS_3D_STATE_ANY))
+        Eina_Bool dirty;
+
+        eo_do(scene, dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_ANY));
+        if (dirty)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
