@@ -110,11 +110,7 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 {
    if (obj->parent_cache.src_invisible_valid)
      return obj->parent_cache.src_invisible;
-#ifdef EVAS_3D
    if ((obj->proxy->proxies || obj->proxy->proxy_textures) && obj->proxy->src_invisible) return 1;
-#else
-   if (obj->proxy->proxies && obj->proxy->src_invisible) return 1;
-#endif
    if (!obj->smart.parent) return 0;
    Evas_Object_Protected_Data *smart_parent_pd =
       eo_data_scope_get(obj->smart.parent, EVAS_OBJ_CLASS);

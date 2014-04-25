@@ -279,7 +279,6 @@ _evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
         _evas_proxy_redraw_set(e, proxy, render);
      }
 
-#ifdef EVAS_3D
    if (obj->proxy->proxy_textures)
      {
         /* Flag need redraw on proxy texture source */
@@ -288,7 +287,6 @@ _evas_proxy_redraw_set(Evas_Public_Data *e, Evas_Object_Protected_Data *obj,
            source->redraw = EINA_TRUE;
         EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, source);
      }
-#endif
 }
 
 static void
@@ -309,11 +307,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
            eina_array_data_get(active_objects, i);
 
         if (obj->changed) evas_object_clip_recalc(obj);
-#ifdef EVAS_3D
         if (!obj->proxy->proxies && !obj->proxy->proxy_textures) continue;
-#else
-        if (!obj->proxy->proxies) continue;
-#endif
 
         if (obj->smart.smart)
           changed = evas_object_smart_changed_get(obj->object);
@@ -340,11 +334,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
              obj->func->render_pre(eo_obj, obj, obj->private_data);
              if (obj->proxy->redraw)
                _evas_render_prev_cur_clip_cache_add(e, obj);
-#ifdef EVAS_3D
              if (obj->proxy->proxies || obj->proxy->proxy_textures)
-#else
-             if (obj->proxy->proxies)
-#endif
                {
                   if (!obj->smart.smart || evas_object_smart_changed_get(eo_obj))
                     {
