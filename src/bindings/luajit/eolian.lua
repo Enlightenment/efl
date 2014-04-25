@@ -22,9 +22,7 @@ ffi.cdef [[
        EOLIAN_PROP_GET,
        EOLIAN_METHOD,
        EOLIAN_CTOR,
-       EOLIAN_DTOR,
-       EOLIAN_DFLT_CTOR,
-       EOLIAN_DFLT_DTOR
+       EOLIAN_DTOR
     } Eolian_Function_Type;
 
     typedef enum
@@ -63,8 +61,6 @@ ffi.cdef [[
     const char *eolian_class_data_type_get(const char *class_name);
     const Eina_List *eolian_class_inherits_list_get(const char *class_name);
     const Eina_List *eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type func_type);
-    Eolian_Function *eolian_class_default_constructor_get(const char *class_name);
-    Eolian_Function *eolian_class_default_destructor_get(const char *class_name);
     Eolian_Function_Type eolian_function_type_get(Eolian_Function *function_id);
     Eolian_Function_Scope eolian_function_scope_get(Eolian_Function *function_id);
     const char *eolian_function_name_get(Eolian_Function *function_id);
