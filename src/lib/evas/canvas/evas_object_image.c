@@ -229,7 +229,7 @@ static const Evas_Object_Image_State default_state = {
   { 1.0, 0, 0, 0, 0, 1 }, // border
   NULL, NULL, NULL,  //source, defmap, scene
   { NULL }, //u
-  NULL, //ley
+  NULL, //key
   0, //frame
   EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
