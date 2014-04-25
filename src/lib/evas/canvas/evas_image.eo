@@ -998,25 +998,25 @@ class Evas_Image (Evas_Object)
          }
       }
 
-      3d_scene {
+      scene {
          set {
             /*
-              @def evas_obj_image_3d_scene_set
+              @def evas_obj_image_scene_set
               @since 1.8
              
               Set the 3D scene on an image object.
              
-              @see evas_object_image_3d_scene_set
+              @see evas_object_image_scene_set
              */
          }
          get {
             /*
-              @def evas_obj_image_3d_scene_get
+              @def evas_obj_image_scene_get
               @since 1.8
              
               Get the 3D scene on an image object.
              
-              @see evas_object_image_3d_scene_get
+              @see evas_object_image_scene_get
              */
          }
          values {

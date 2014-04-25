@@ -5377,7 +5377,7 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
  *
  * A scene represents a captured image of a scene graph through its viewing
  * camera. A scene can be set to an image object to be displayed on the Evas
- * canvas by using evas_object_image_3d_scene_set() function.
+ * canvas by using evas_object_image_scene_set() function.
  */
 
 /**

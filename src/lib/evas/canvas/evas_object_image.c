@@ -772,7 +772,7 @@ _evas_image_source_visible_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 
 
 EOLIAN static void
-_evas_image_3d_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
+_evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
@@ -788,7 +788,7 @@ _evas_image_3d_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
 }
 
 EOLIAN static Evas_3D_Scene *
-_evas_image_3d_scene_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_scene_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->scene;
 }
