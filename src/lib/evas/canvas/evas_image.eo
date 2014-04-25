@@ -1000,24 +1000,24 @@ class Evas_Image (Evas_Object)
 
       scene {
          set {
-            /*
-              @def evas_obj_image_scene_set
-              @since 1.8
-             
-              Set the 3D scene on an image object.
-             
-              @see evas_object_image_scene_set
-             */
+            /*@
+            Set the 3D scene of a given image of the canvas.
+
+            This function sets a 3d scene of a given canvas image.
+
+            @see evas_object_image_scene_set
+            @since 1.10 */
          }
          get {
-            /*
-              @def evas_obj_image_scene_get
-              @since 1.8
-             
-              Get the 3D scene on an image object.
-             
-              @see evas_object_image_scene_get
-             */
+            /*@
+            Get the 3D scene of a given image of the canvas.
+
+            @return The 3d scene of the given canvas image.
+
+            This function returns the 3d scene of a given canvas image.
+
+            @see evas_object_image_scene_get
+            @since 1.10 */
          }
          values {
             Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
