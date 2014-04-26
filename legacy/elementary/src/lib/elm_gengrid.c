@@ -2077,7 +2077,7 @@ _item_move_cb(void *data, double pos)
 {
    Elm_Gengrid_Data *sd = data;
    double frame = pos;
-   Evas_Coord x1, y1, x2, y2;
+   Evas_Coord xx1, yy1, xx2, yy2;
    double dx, dy;
 
    switch (sd->reorder.tween_mode)
@@ -2102,14 +2102,14 @@ _item_move_cb(void *data, double pos)
 
    dx = sd->reorder.x2 - sd->reorder.x1;
    dy = sd->reorder.y2 - sd->reorder.y1;
-   x1 = sd->reorder.x1 + dx * pos;
-   y1 = sd->reorder.y1 + dy * pos;
+   xx1 = sd->reorder.x1 + dx * pos;
+   yy1 = sd->reorder.y1 + dy * pos;
 
-   x2 = sd->reorder.x2 - dx * pos;
-   y2 = sd->reorder.y2 - dy * pos;
+   xx2 = sd->reorder.x2 - dx * pos;
+   yy2 = sd->reorder.y2 - dy * pos;
 
-   evas_object_move(VIEW(sd->reorder.it1), x1, y1);
-   evas_object_move(VIEW(sd->reorder.it2), x2, y2);
+   evas_object_move(VIEW(sd->reorder.it1), xx1, yy1);
+   evas_object_move(VIEW(sd->reorder.it2), xx2, yy2);
 
    if (pos == 1.0)
      {
@@ -2129,14 +2129,14 @@ static void
 _swap_items(Elm_Gen_Item *it1, Elm_Gen_Item *it2, Elm_Focus_Direction dir)
 {
    ELM_GENGRID_DATA_GET(WIDGET(it1), sd);
-   Evas_Coord x1, y1, x2, y2;
+   Evas_Coord xx1, yy1, xx2, yy2;
 
-   evas_object_geometry_get(VIEW(it1), &x1, &y1, NULL, NULL);
-   evas_object_geometry_get(VIEW(it2), &x2, &y2, NULL, NULL);
-   sd->reorder.x1 = x1;
-   sd->reorder.y1 = y1;
-   sd->reorder.x2 = x2;
-   sd->reorder.y2 = y2;
+   evas_object_geometry_get(VIEW(it1), &xx1, &yy1, NULL, NULL);
+   evas_object_geometry_get(VIEW(it2), &xx2, &yy2, NULL, NULL);
+   sd->reorder.x1 = xx1;
+   sd->reorder.y1 = yy1;
+   sd->reorder.x2 = xx2;
+   sd->reorder.y2 = yy2;
 
    sd->reorder.running = EINA_TRUE;
    sd->reorder.dir = dir;
