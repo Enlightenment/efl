@@ -934,7 +934,7 @@ _item_disable_hook(Elm_Object_Item *it)
 
    edje_object_signal_emit(VIEW(toolbar_it), emission, "elm");
    if (toolbar_it->icon)
-     edje_object_signal_emit(toolbar_it->icon, emission, "elm");
+     elm_widget_signal_emit(toolbar_it->icon, emission, "elm");
 
    _resize_cb(WIDGET(toolbar_it), NULL, NULL, NULL);
 }
