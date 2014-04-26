@@ -1,6 +1,6 @@
 class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 {
-   legacy_prefix: evas_3d_mesh;
+   legacy_prefix: null;
    data: Evas_3D_Mesh_Data;
 
    methods {
@@ -13,7 +13,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
           *
           * @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in Evas_3D_Mesh_File_Type type; /*@ The type of the mesh file. */
             @in const char *file; /*@ Path to the mesh file. */
@@ -38,7 +37,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
@@ -61,7 +59,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
@@ -86,7 +83,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Mesh
           */
 
-	 legacy null;
          return void *;
          params {
             @in int frame; /*@ The number of the key frame. */
@@ -103,7 +99,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Mesh
           */
 
-	 legacy null;
          params {
             @in int frame; /*@ The number of the key frame. */
             @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
@@ -124,7 +119,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          const;
          return int ;
          params {
@@ -147,7 +141,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
             @in int count; /*@ Vertex index count. */
@@ -167,7 +160,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          return void ;
          params {
             @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
@@ -193,7 +185,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
           const;
          return Evas_3D_Index_Format ;
       }
@@ -211,7 +202,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
           const;
          return int ;
       }
@@ -231,7 +221,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          return void * ;
       }
 
@@ -243,7 +232,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
       }
 
       frame_add {
@@ -257,7 +245,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in int frame; /*@ The number of the key frame to be added. */
          }
@@ -274,7 +261,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in int frame; /*@ The number of the key frame to be added. */
          }
@@ -292,7 +278,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
          params {
             @in unsigned int count; /*@ Vertex count.*/
          }
@@ -306,7 +291,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Mesh
           */
-	 legacy null;
           const;
           return int;
       }
@@ -322,7 +306,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
              *
              * @ingroup Evas_3D_Mesh
              */
- 	     legacy null;
          }
          get {
             /**
@@ -332,7 +315,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
              *
              * @ingroup Evas_3D_Mesh
              */
- 	     legacy null;
          }
          values {
             Evas_3D_Shade_Mode mode; /*@ The shade mode.*/
@@ -349,7 +331,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Mesh
              */
- 	     legacy null;
          }
          get {
             /**
@@ -359,7 +340,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Mesh
              */
- 	     legacy null;
          }
          keys {
             int frame; /*@ The number of the key frame.*/
@@ -381,7 +361,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Mesh
              */
- 	     legacy null;
          }
          get {
             /*
@@ -393,7 +372,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Mesh
              */
- 	     legacy null;
          }
          values {
             Evas_3D_Vertex_Assembly assembly; /*@ Vertex assembly.*/

@@ -1,6 +1,6 @@
 class Evas_3D_Object (Eo_Base, Evas_Common_Interface)
 {
-   legacy_prefix: evas_3d_object;
+   legacy_prefix: null;
    data: Evas_3D_Object_Data;
    methods {
       change {
@@ -11,13 +11,11 @@ class Evas_3D_Object (Eo_Base, Evas_Common_Interface)
            @in Evas_3D_State state; /*@ State that is changed */
            @in Evas_3D_Object *ref; /*@ The Object that caused the change */
          }
-	 legacy null;
       }
       type_get {
          /*@
            Returns the type of the object.
           */
-	  legacy null;
           const;
           return Evas_3D_Object_Type;
       }
@@ -26,7 +24,6 @@ class Evas_3D_Object (Eo_Base, Evas_Common_Interface)
          /*@
            Returns the type of the object.
           */
- 	  legacy null;
           params{
             @in Evas_3D_Object_Type type;
           }
@@ -36,7 +33,6 @@ class Evas_3D_Object (Eo_Base, Evas_Common_Interface)
          /*@
            Returns the status of a particular state of the object.
           */
-	  legacy null;
           const;
           return Eina_Bool;
          params {
@@ -48,14 +44,12 @@ class Evas_3D_Object (Eo_Base, Evas_Common_Interface)
          /*@
            Update request for the object.
           */
-	 legacy null;
       }
       update_notify {
          /*@
            Pure virtual update_notify function..
            Update request for the object.
           */
-	 legacy null;
       }
 
       change_notify {
@@ -63,7 +57,6 @@ class Evas_3D_Object (Eo_Base, Evas_Common_Interface)
            Pure virtual change_notify function..
            Update request for the object.
           */
-	 legacy null;
          params {
            @in Evas_3D_State state; /*@ State that is changed */
            @in Evas_3D_Object *ref; /*@ The Object that caused the change */

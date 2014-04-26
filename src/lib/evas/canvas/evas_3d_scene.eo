@@ -1,6 +1,6 @@
 class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 {
-   legacy_prefix: evas_3d_scene;
+   legacy_prefix: null;
    data: Evas_3D_Scene_Data;
    methods {
       size_set {
@@ -12,7 +12,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Scene
           */
-	 legacy null;
          params {
             @in int w;  /*@ Width of the resolution. */
             @in int h; /*@ Height of the resolution. */
@@ -25,7 +24,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Scene
           */
-	 legacy null;
          const;
          params {
             @out int w;  /*@ Pointer to receive width of the resolution. */
@@ -45,7 +43,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Scene
           */
-	 legacy null;
          params {
             @in Evas_Real r; /*@ Red component of the background color. */
             @in Evas_Real g; /*@ Green component of the background color. */
@@ -61,7 +58,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
            @ingroup Evas_3D_Scene
           */
 
-	 legacy null;
          const;
          params {
             @out Evas_Real r; /*@ Pointer to receive red component of the background color.*/
@@ -81,7 +77,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
            @ingroup Evas_3D_Scene
           */
-	 legacy null;
           const;
          return Eina_Bool ;
          params {
@@ -104,7 +99,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Scene
              */
-	     legacy null;
          }
          get {
             /*
@@ -114,7 +108,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Scene
              */
-	     legacy null;
          }
          values {
             Evas_3D_Node *node; /*@ A node which will be used as a root node for the scene. */
@@ -128,7 +121,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Scene
              */
-	     legacy null;
          }
          get {
             /*
@@ -138,7 +130,6 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
 
               @ingroup Evas_3D_Scene
              */
-	     legacy null;
          }
          values {
             Evas_3D_Node *node; /*@ A node which will be used as a camera node for the scene. */
