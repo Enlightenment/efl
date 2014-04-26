@@ -247,8 +247,9 @@ struct range_inlist : _range_template<T, _inlist_access_traits>
 {
   typedef _range_template<T, _inlist_access_traits> _base_type;
   typedef typename _base_type::value_type value_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
 
-  range_inlist(Eina_Inlist* list)
+  range_inlist(native_handle_type list)
     : _base_type(list) {}
   template <typename Allocator>
   range_inlist(inlist<value_type, Allocator>& list)

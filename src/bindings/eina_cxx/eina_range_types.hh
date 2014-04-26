@@ -78,7 +78,7 @@ struct _const_range_template
     std::swap(_handle, other._handle);
   }
 protected:
-  native_handle_type _handle;  
+  native_handle_type _handle;
 };
 
 template <typename T, typename Traits>
@@ -141,7 +141,7 @@ struct _range_template : private std::conditional
   typedef typename std::remove_const<T>::type value_type;
   typedef typename std::conditional<is_mutable::value, _mutable_range_template<value_type, Traits>
                                     , _const_range_template<value_type, Traits> >::type _base_type;
-  typedef typename Traits::template native_handle<T>::type native_handle_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
 
   typedef value_type& reference;
   typedef value_type const& const_reference;
