@@ -1921,7 +1921,6 @@ _entry_selection_start_signal_cb(void *data,
    const char *txt = elm_entry_selection_get(data);
    Evas_Object *top;
 
-   if (!elm_object_focus_get(data)) elm_object_focus_set(data, EINA_TRUE);
    EINA_LIST_FOREACH(entries, l, entry)
      {
         if (entry != data) elm_entry_select_none(entry);
