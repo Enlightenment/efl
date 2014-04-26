@@ -2174,6 +2174,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &v_w, &v_h));
 
+   if (sd->reorder_mode && sd->reorder.running) return EINA_TRUE;
+
    if (!strcmp(dir, "left"))
      {
         if (sd->reorder_mode)
