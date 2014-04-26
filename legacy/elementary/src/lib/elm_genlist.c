@@ -2306,7 +2306,6 @@ _item_multi_select_up(Elm_Genlist_Data *sd)
    else
      {
         elm_genlist_item_selected_set(prev, EINA_TRUE);
-        elm_genlist_item_show(prev, ELM_GENLIST_ITEM_SCROLLTO_IN);
      }
    return EINA_TRUE;
 }
@@ -2338,7 +2337,6 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    else
      {
         elm_genlist_item_selected_set(next, EINA_TRUE);
-        elm_genlist_item_show(next, ELM_GENLIST_ITEM_SCROLLTO_IN);
      }
 
    return EINA_TRUE;
