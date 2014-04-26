@@ -1126,6 +1126,14 @@ test_toolbar_focus_focus_move_policy_changed(void *data EINA_UNUSED,
      elm_config_focus_move_policy_set(ELM_FOCUS_MOVE_POLICY_IN);
 }
 
+static void
+_test_toolbar_focus_bring_in_changed(void *data EINA_UNUSED,
+                                     Evas_Object *obj,
+                                     void *event_info EINA_UNUSED)
+{
+   elm_config_focus_auto_scroll_bring_in_enabled_set(elm_check_state_get(obj));
+}
+
 void
 test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -1212,6 +1220,16 @@ test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_smart_callback_add(chk, "changed",
                                   _test_toolbar_focus_focus_animate_check_changed,
                                   win);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Focus Auto scroll bring in enable");
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed", _test_toolbar_focus_bring_in_changed,
+                                  NULL);
+   elm_check_state_set(chk, elm_config_focus_auto_scroll_bring_in_enabled_get());
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
    // Focus movement policy
    fr = elm_frame_add(bx);
    elm_object_text_set(fr, "Focus Movement Policy");

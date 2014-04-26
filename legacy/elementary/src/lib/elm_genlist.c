@@ -2432,7 +2432,12 @@ _elm_genlist_item_focused(Elm_Gen_Item *it)
        (elm_widget_item_disabled_get(it)))
      return;
 
-   elm_genlist_item_show((Elm_Object_Item *)it, ELM_GENLIST_ITEM_SCROLLTO_IN);
+   if (!_elm_config->focus_auto_scroll_bring_in_enable)
+     elm_genlist_item_show((Elm_Object_Item *)it,
+                           ELM_GENLIST_ITEM_SCROLLTO_IN);
+   else
+     elm_genlist_item_bring_in((Elm_Object_Item *)it,
+                               ELM_GENLIST_ITEM_SCROLLTO_IN);
    sd->focused_item = (Elm_Object_Item *)it;
 
    if (elm_widget_focus_highlight_enabled_get(obj))

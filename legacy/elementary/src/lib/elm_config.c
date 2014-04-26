@@ -507,6 +507,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, scroll_smooth_history_weight, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scroll_smooth_future_time, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scroll_smooth_time_window, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, focus_auto_scroll_bring_in_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scale, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bgpixmap, T_INT);
    ELM_CONFIG_VAL(D, T, compositing, T_INT);
@@ -2027,6 +2028,9 @@ _env_get(void)
    if (s) _elm_config->scroll_smooth_future_time = _elm_atof(s);
    s = getenv("ELM_SCROLL_SMOOTH_TIME_WINDOW");
    if (s) _elm_config->scroll_smooth_time_window = _elm_atof(s);
+   s = getenv("ELM_FOCUS_AUTO_SCROLL_BRING_IN_ENABLE");
+   if (s) _elm_config->focus_auto_scroll_bring_in_enable = !!atoi(s);
+
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
@@ -2921,6 +2925,18 @@ EAPI void
 elm_config_scroll_thumbscroll_acceleration_weight_set(double weight)
 {
    _elm_config->thumbscroll_acceleration_weight = weight;
+}
+
+EAPI Eina_Bool
+elm_config_focus_auto_scroll_bring_in_enabled_get(void)
+{
+   return _elm_config->focus_auto_scroll_bring_in_enable;
+}
+
+EAPI void
+elm_config_focus_auto_scroll_bring_in_enabled_set(Eina_Bool enabled)
+{
+   _elm_config->focus_auto_scroll_bring_in_enable = !!enabled;
 }
 
 EAPI void

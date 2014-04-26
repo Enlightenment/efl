@@ -551,6 +551,26 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
 EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
 
 /**
+ * Get enable status of focus auto scroll bring in.
+ *
+ * @see elm_config_focus_auto_scroll_bring_in_enabled_set()
+ * @ingroup Focus
+ * @since 1.10
+ */
+EAPI Eina_Bool    elm_config_focus_auto_scroll_bring_in_enabled_get(void);
+
+/**
+ * Set enable status of focus auto scroll bring in.
+ *
+ * @param enabled enable scroll bring in if @c EINA_TRUE, disable otherwise
+ *
+ * @see elm_config_focus_auto_scroll_bring_in_enabled_get()
+ * @ingroup Focus
+ * @since 1.10
+ */
+EAPI void         elm_config_focus_auto_scroll_bring_in_enabled_set(Eina_Bool enabled);
+
+/**
  * @}
  */
 
