@@ -2188,10 +2188,10 @@ _n_long_tap_test(Evas_Object *obj,
  * This momentum value will be sent to widget when gesture is completed.
  *
  * @param momentum pointer to buffer where we record momentum value.
- * @param x1 x coord where user started gesture.
- * @param y1 y coord where user started gesture.
- * @param x2 x coord where user completed gesture.
- * @param y2 y coord where user completed gesture.
+ * @param xx1 x coord where user started gesture.
+ * @param yy1 y coord where user started gesture.
+ * @param xx2 x coord where user completed gesture.
+ * @param yy2 y coord where user completed gesture.
  * @param t1x timestamp for X, when user started gesture.
  * @param t1y timestamp for Y, when user started gesture.
  * @param t2  timestamp when user completed gesture.
@@ -2241,12 +2241,12 @@ _momentum_set(Elm_Gesture_Momentum_Info *momentum,
  *
  * This function is used for computing rotation angle (DEG).
  *
- * @param x1 first finger x location.
- * @param y1 first finger y location.
- * @param x2 second finger x location.
- * @param y2 second finger y location.
+ * @param xx1 first finger x location.
+ * @param yy1 first finger y location.
+ * @param xx2 second finger x location.
+ * @param yy2 second finger y location.
  *
- * @return angle of the line between (x1,y1), (x2,y2) in Deg.
+ * @return angle of the line between (xx1,yy1), (xx2,yy2) in Deg.
  * Angles now are given in DEG, not RAD.
  * ZERO angle at 12-oclock, growing clockwise.
  *
@@ -2309,10 +2309,10 @@ _angle_get(Evas_Coord xx1,
  * This function is used for computing the magnitude and direction
  * of vector between two points.
  *
- * @param x1 first finger x location.
- * @param y1 first finger y location.
- * @param x2 second finger x location.
- * @param y2 second finger y location.
+ * @param xx1 first finger x location.
+ * @param yy1 first finger y location.
+ * @param xx2 second finger x location.
+ * @param yy2 second finger y location.
  * @param l length computed (output)
  * @param a angle computed (output)
  *
@@ -2977,14 +2977,14 @@ _on_rotation_broke_tolerance(Rotate_Type *st)
  * This function is used for computing the gap between fingers.
  * It returns the length and center point between fingers.
  *
- * @param x1 first finger x location.
- * @param y1 first finger y location.
- * @param x2 second finger x location.
- * @param y2 second finger y location.
+ * @param xx1 first finger x location.
+ * @param yy1 first finger y location.
+ * @param xx2 second finger x location.
+ * @param yy2 second finger y location.
  * @param x  Get center point x cord (output)
  * @param y  Get center point y cord (output)
  *
- * @return length of the line between (x1,y1), (x2,y2) in pixels.
+ * @return length of the line between (xx1,yy1), (xx2,yy2) in pixels.
  *
  * @ingroup Elm_Gesture_Layer
  */
@@ -3103,10 +3103,10 @@ _zoom_momentum_get(Zoom_Type *st,
  * This function is used for computing zoom value.
  *
  * @param st Pointer to zoom data based on user input.
- * @param x1 first finger x location.
- * @param y1 first finger y location.
- * @param x2 second finger x location.
- * @param y2 second finger y location.
+ * @param xx1 first finger x location.
+ * @param yy1 first finger y location.
+ * @param xx2 second finger x location.
+ * @param yy2 second finger y location.
  * @param factor zoom-factor, used to determine how fast zoom works.
  *
  * @return zoom value, when 1.0 means no zoom, 0.5 half size...
