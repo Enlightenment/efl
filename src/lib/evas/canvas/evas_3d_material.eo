@@ -140,7 +140,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas_Common_Interface)
          }
 
          keys {
-            @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
+            Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
          }
          values {
             Evas_3D_Texture *texture;
