@@ -6093,7 +6093,9 @@ st_collections_group_parts_part_description_link_base(void)
    pcp = eina_list_last_data_get(edje_collections);
    el = eina_list_last_data_get(pcp->links);
 
-   if ((!el) || (el->pr != current_program) || (el->ed != current_desc) || (el->epp != (Edje_Part_Parser*)current_part))
+   if ((!el) || (el->pr != current_program) ||
+       (el->ed != current_desc) || (el->epp != (Edje_Part_Parser*)current_part) ||
+       el->pr->source)
      ob_collections_group_parts_part_description_link();
    el = eina_list_last_data_get(pcp->links);
 
