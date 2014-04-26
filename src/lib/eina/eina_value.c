@@ -5028,7 +5028,7 @@ eina_value_new(const Eina_Value_Type *type)
 EAPI void
 eina_value_free(Eina_Value *value)
 {
-   EINA_SAFETY_ON_NULL_RETURN(value);
+   if (!value) return;
    eina_value_flush(value);
    eina_mempool_free(_eina_value_mp, value);
 }

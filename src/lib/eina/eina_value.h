@@ -639,7 +639,7 @@ EAPI Eina_Value *eina_value_new(const Eina_Value_Type *type) EINA_ARG_NONNULL(1)
  *
  * @since 1.2
  */
-EAPI void eina_value_free(Eina_Value *value) EINA_ARG_NONNULL(1);
+EAPI void eina_value_free(Eina_Value *value);
 
 
 /**
