@@ -225,9 +225,9 @@ _smart_data_free(Smart_Data *sd)
    sd->job = NULL;
    if (sd->anim) ecore_animator_del(sd->anim);
    sd->anim = NULL;
-   free(sd->progress.info);
+   eina_stringshare_del(sd->progress.info);
    sd->progress.info = NULL;
-   free(sd->ref.file);
+   eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
    free(sd);
 
@@ -341,12 +341,12 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    file = sd->file;
    sd->file = NULL;
 
-   free(sd->title);
+   eina_stringshare_del(sd->title);
    sd->title = NULL;
-   free(sd->progress.info);
+   eina_stringshare_del(sd->progress.info);
    sd->progress.info = NULL;
    sd->progress.stat = 0.0;
-   free(sd->ref.file);
+   eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
    sd->ref.num = 0;
    sd->spu.button_num = 0;
@@ -1565,8 +1565,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   free(sd->title);
-   sd->title = strdup(title);
+   eina_stringshare_replace(&sd->title, title);
    evas_object_smart_callback_call(obj, SIG_TITLE_CHANGE, NULL);
 }
 
@@ -1576,8 +1575,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double st)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   free(sd->progress.info);
-   sd->progress.info = strdup(info);
+   eina_stringshare_replace(&sd->progress.info, info);
    sd->progress.stat = st;
    evas_object_smart_callback_call(obj, SIG_PROGRESS_CHANGE, NULL);
 }
@@ -1588,8 +1586,7 @@ _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   free(sd->ref.file);
-   sd->ref.file = strdup(file);
+   eina_stringshare_replace(&sd->ref.file, file);
    sd->ref.num = num;
    evas_object_smart_callback_call(obj, SIG_REF_CHANGE, NULL);
 }
@@ -1866,9 +1863,9 @@ _smart_del(Evas_Object * obj)
    sd->job = NULL;
    if (sd->anim) ecore_animator_del(sd->anim);
    sd->anim = NULL;
-   free(sd->progress.info);
+   eina_stringshare_del(sd->progress.info);
    sd->progress.info = NULL;
-   free(sd->ref.file);
+   eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
    if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
    sd->smartobj = NULL;
