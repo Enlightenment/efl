@@ -2592,23 +2592,26 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
          (NULL, NULL, NULL, &v),
          elm_interface_scrollable_content_size_get(NULL, &min));
 
-   if (multi && !_elm_config->item_select_on_focus_disable)
-     {
-        if (dir == ELM_FOCUS_UP)
-          ret = _item_multi_select_up(sd);
-        else if (dir == ELM_FOCUS_DOWN)
-          ret = _item_multi_select_down(sd);
-     }
-   else if (!multi && !_elm_config->item_select_on_focus_disable)
-     {
-        if (dir == ELM_FOCUS_UP)
-          ret = _item_single_select_up(sd);
-        else if (dir == ELM_FOCUS_DOWN)
-          ret = _item_single_select_down(sd);
-     }
-   else if (_elm_config->item_select_on_focus_disable)
+   if (_elm_config->item_select_on_focus_disable)
      {
         ret = _item_focused_next(obj, dir);
+     }
+   else
+     {
+        if (multi)
+          {
+             if (dir == ELM_FOCUS_UP)
+               ret = _item_multi_select_up(sd);
+             else if (dir == ELM_FOCUS_DOWN)
+               ret = _item_multi_select_down(sd);
+          }
+        else
+          {
+             if (dir == ELM_FOCUS_UP)
+               ret = _item_single_select_up(sd);
+             else if (dir == ELM_FOCUS_DOWN)
+               ret = _item_single_select_down(sd);
+          }
      }
    if (ret)
      return EINA_TRUE;
