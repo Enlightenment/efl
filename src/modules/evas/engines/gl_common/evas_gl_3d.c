@@ -982,7 +982,7 @@ _material_texture_build(E3D_Draw_Data *data, int frame,
         Evas_Real weight = (f1->frame - frame) / (Evas_Real)(f1->frame - f0->frame);
 
         data->materials[attrib].sampler1 = data->texture_count++;
-        Evas_3D_Texture_Data *pd = eo_data_scope_get(pdmf1->attribs[attrib].texture, EVAS_3D_TEXTURE_CLASS);
+        pd = eo_data_scope_get(pdmf1->attribs[attrib].texture, EVAS_3D_TEXTURE_CLASS);
         data->materials[attrib].tex1 = (E3D_Texture *)pd->engine_data;
 
         data->materials[attrib].texture_weight = weight;
