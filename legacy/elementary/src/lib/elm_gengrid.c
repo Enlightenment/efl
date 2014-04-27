@@ -1536,8 +1536,6 @@ _elm_gengrid_item_unfocused(Elm_Gen_Item *it)
    evas_object_smart_callback_call(obj, SIG_ITEM_UNFOCUSED, it);
 }
 
-/* NOTE: this code will be used later when the item selection on key press
-   becomes optional. So do not remove this.
 static Eina_Bool
 _item_focus_up(Elm_Gengrid_Data *sd)
 {
@@ -1652,7 +1650,6 @@ _item_focus_right(Elm_Gengrid_Data *sd)
 
    return EINA_TRUE;
 }
-*/
 
 static Eina_Bool
 _item_multi_select_left(Elm_Gengrid_Data *sd)
@@ -2200,15 +2197,25 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         if (sd->horizontal)
           {
-             if (_item_single_select_up(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_up(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_up(sd);
           }
         else
           {
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
                return EINA_FALSE;
-             if (_item_single_select_left(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_left(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_left(sd);
           }
      }
    else if (!strcmp(dir, "left_multi"))
@@ -2248,15 +2255,25 @@ _key_action_move(Evas_Object *obj, const char *params)
           }
         if (sd->horizontal)
           {
-             if (_item_single_select_down(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_down(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_down(sd);
           }
         else
           {
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
                return EINA_FALSE;
-             if (_item_single_select_right(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_right(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_right(sd);
           }
      }
    else if (!strcmp(dir, "right_multi"))
@@ -2298,13 +2315,23 @@ _key_action_move(Evas_Object *obj, const char *params)
           {
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
                return EINA_FALSE;
-             if (_item_single_select_left(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_left(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_left(sd);
           }
         else
           {
-             if (_item_single_select_up(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_up(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_up(sd);
           }
      }
    else if (!strcmp(dir, "up_multi"))
@@ -2346,13 +2373,23 @@ _key_action_move(Evas_Object *obj, const char *params)
           {
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
                return EINA_FALSE;
-             if (_item_single_select_right(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_right(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_right(sd);
           }
         else
           {
-             if (_item_single_select_down(sd)) return EINA_TRUE;
-             else return EINA_FALSE;
+             if (!_elm_config->item_select_on_focus_disable)
+               {
+                  if (_item_single_select_down(sd)) return EINA_TRUE;
+                  else return EINA_FALSE;
+               }
+             else
+               return _item_focus_down(sd);
           }
      }
    else if (!strcmp(dir, "down_multi"))
@@ -2375,13 +2412,19 @@ _key_action_move(Evas_Object *obj, const char *params)
    else if (!strcmp(dir, "first"))
      {
         it = elm_gengrid_first_item_get(obj);
-        elm_gengrid_item_selected_set(it, EINA_TRUE);
+        if (!_elm_config->item_select_on_focus_disable)
+          elm_gengrid_item_selected_set(it, EINA_TRUE);
+        else
+          elm_object_item_focus_set(it, EINA_TRUE);
         return EINA_TRUE;
      }
    else if (!strcmp(dir, "last"))
      {
         it = elm_gengrid_last_item_get(obj);
-        elm_gengrid_item_selected_set(it, EINA_TRUE);
+        if (!_elm_config->item_select_on_focus_disable)
+          elm_gengrid_item_selected_set(it, EINA_TRUE);
+        else
+          elm_object_item_focus_set(it, EINA_TRUE);
         return EINA_TRUE;
      }
    else if (!strcmp(dir, "prior"))
@@ -2430,9 +2473,9 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
    ELM_GENGRID_DATA_GET(obj, sd);
    Elm_Object_Item *it = NULL;
 
-   if ((!sd->multi) && (sd->selected))
+   if (!sd->multi)
      {
-        it = elm_gengrid_selected_item_get(obj);
+        it = elm_object_focused_item_get(obj);
         evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
         return EINA_TRUE;
      }
@@ -2551,7 +2594,7 @@ _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd)
              it = _elm_gengrid_nearest_visible_item_get(obj, it);
              if (it)
                {
-                  if (is_sel)
+                  if (!_elm_config->item_select_on_focus_disable && is_sel)
                     elm_gengrid_item_selected_set(it, EINA_TRUE);
                   else
                     elm_object_item_focus_set(it, EINA_TRUE);
