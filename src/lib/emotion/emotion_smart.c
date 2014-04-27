@@ -59,7 +59,7 @@ struct _Smart_Data
 
    Ecore_Job     *job;
 
-   char *title;
+   const char *title;
 
 #ifdef HAVE_EIO
    Eio_File *load_xattr;
@@ -67,11 +67,11 @@ struct _Smart_Data
 #endif
 
    struct {
-      char   *info;
+      const char *info;
       double  stat;
    } progress;
    struct {
-      char *file;
+      const char *file;
       int   num;
    } ref;
    struct {
