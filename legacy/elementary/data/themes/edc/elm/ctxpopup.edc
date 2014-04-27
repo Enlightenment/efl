@@ -23,7 +23,7 @@ group { name: "elm/ctxpopup/bg/default";
    }
    programs {
       program {
-         signal: "mouse,clicked,1"; source: "base";
+         signal: "mouse,clicked,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program {
