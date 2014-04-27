@@ -298,6 +298,12 @@ multi_select_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
+wheel_disable_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   elm_gengrid_wheel_disabled_set(data, elm_check_state_get(obj));
+}
+
+static void
 clear_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    api_data *api = data;
@@ -537,6 +543,15 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_check_state_set(ck, EINA_TRUE);
    elm_gengrid_multi_select_set(api->grid, EINA_TRUE);
    evas_object_smart_callback_add(ck, "changed", multi_select_cb,
+                                  api->grid);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ck, "Wheel Disable");
+   evas_object_smart_callback_add(ck, "changed", wheel_disable_cb,
                                   api->grid);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);

@@ -429,6 +429,37 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interfac
             return Elm_Object_Item *;
          }
       }
+      wheel_disabled {
+         set {
+            /*@
+            Enable or disable mouse wheel to be used to scroll the gengrid.
+
+            Mouse wheel can be used for the user to scroll up and down the gengrid.
+
+            It's enabled by default.
+
+            @see elm_gengrid_wheel_disabled_get()
+
+            @ingroup Gengrid */
+         }
+         get {
+            /*@
+            Get a value whether mouse wheel is enabled or not.
+
+            @return @c EINA_TRUE means gengrid wheel is disabled. @c EINA_FALSE indicates
+            it is enabled.
+
+            Mouse wheel can be used for the user to scroll up and down the gengrid.
+
+            @see elm_gengrid_wheel_disabled_set()
+
+            @ingroup Gengrid */
+         }
+         values {
+            Eina_Bool disabled; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            to enable it. */
+         }
+      }
    }
    methods {
       item_insert_before {

@@ -4341,6 +4341,23 @@ _elm_gengrid_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *
 }
 
 EOLIAN static void
+_elm_gengrid_wheel_disabled_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Bool disabled)
+{
+   disabled = !!disabled;
+   if (sd->wheel_disabled != disabled)
+     eo_do(obj,
+           elm_interface_scrollable_wheel_disabled_set(disabled));
+
+   sd->wheel_disabled = disabled;
+}
+
+EOLIAN static Eina_Bool
+_elm_gengrid_wheel_disabled_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
+{
+   return sd->wheel_disabled;
+}
+
+EOLIAN static void
 _elm_gengrid_class_constructor(Eo_Class *klass)
 {
    if (_elm_config->access_mode)
