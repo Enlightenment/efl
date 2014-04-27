@@ -770,7 +770,8 @@ BUILT_SOURCES = \
 		elm_win.eo.h \
 		elm_win.eo.legacy.h
 
-EXTRA_DIST += \
+elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
+elementaryeolianfiles_DATA = \
 	     elm_widget.eo \
 	     elm_container.eo \
 	     elm_layout.eo \
@@ -858,6 +859,9 @@ EXTRA_DIST += \
 	     elm_video.eo \
 	     elm_web.eo \
 	     elm_win.eo
+
+EXTRA_DIST += \
+              ${elementaryeolianfiles_DATA}
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
