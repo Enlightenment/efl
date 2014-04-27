@@ -4,6 +4,7 @@
 #  EOLIAN_INCLUDE_DIRS - The eolian include directories
 #  EOLIAN_LIBRARIES - The libraries needed to use eolian
 #  EOLIAN_DEFINITIONS - Compiler switches required for using eolian
+#  EOLIAN_EO_DIR - The eolian directory for .eo storage
 
 set(MY_PKG eolian)
 
@@ -30,3 +31,11 @@ find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
 
 mark_as_advanced(EOLIAN_INCLUDE_DIRS EOLIAN_LIBRARY EOLIAN_LIBRARIES EOLIAN_DEFINITIONS)
 
+execute_process(COMMAND pkg-config --variable=eoincludedir eolian
+   OUTPUT_VARIABLE _pkgconfig_invoke_result
+   RESULT_VARIABLE _pkgconfig_failed)
+if(_pkgconfig_failed)
+   BUILD_WARNING ("Failed to find Eolian Eo directory.")
+else()
+   set (EOLIAN_EO_DIR ${_pkgconfig_invoke_result})
+endif()
