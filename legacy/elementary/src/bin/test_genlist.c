@@ -1441,7 +1441,7 @@ gl_sel7(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-test_genlist7_back_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_gl7_back_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    struct genlist7_data *info = data;
    if (!info) return;
@@ -1450,7 +1450,7 @@ test_genlist7_back_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 }
 
 static void
-test_genlist7_swipe(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_gl7_swipe_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    struct genlist7_data *info = data;
    Evas_Object *box, *entry, *button;
@@ -1476,7 +1476,7 @@ test_genlist7_swipe(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    elm_object_text_set(button, "back");
    evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
-   evas_object_smart_callback_add(button, "clicked", test_genlist7_back_cb,
+   evas_object_smart_callback_add(button, "clicked", _gl7_back_cb,
                                   info);
    evas_object_show(button);
 
@@ -1507,7 +1507,7 @@ test_genlist7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    gl = elm_genlist_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_smart_callback_add(gl, "swipe", test_genlist7_swipe, &info);
+   evas_object_smart_callback_add(gl, "swipe", _gl7_swipe_cb, &info);
    evas_object_show(gl);
    elm_naviframe_item_simple_push(naviframe, gl);
 
@@ -3675,16 +3675,16 @@ gl_focus_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-test_genlist_focus_item_loop_enable_check_changed(void *data, Evas_Object *obj,
-                                               void *event_info  EINA_UNUSED)
+_gl_focus_item_loop_enable_changed_cb(void *data, Evas_Object *obj,
+                                      void *event_info  EINA_UNUSED)
 {
    Evas_Object *gl = data;
    elm_object_scroll_item_loop_enabled_set(gl, elm_check_state_get(obj));
 }
 
 static void
-test_genlist_focus_focus_on_selection_set(Evas_Object *gl,
-                                          Evas_Object *chk, Eina_Bool focus)
+_gl_focus_focus_on_selection_set(Evas_Object *gl,
+                                 Evas_Object *chk, Eina_Bool focus)
 {
    elm_genlist_focus_on_selection_set(gl, focus);
    elm_check_state_set(chk, focus);
@@ -3692,33 +3692,33 @@ test_genlist_focus_focus_on_selection_set(Evas_Object *gl,
 }
 
 static void
-test_genlist_focus_focus_check_changed(void *data, Evas_Object *obj,
-                                       void *event_info  EINA_UNUSED)
+_gl_focus_focus_on_selection_changed_cb(void *data, Evas_Object *obj,
+                                        void *event_info  EINA_UNUSED)
 {
    Eina_Bool nextstate = !elm_genlist_focus_on_selection_get(data);
-   test_genlist_focus_focus_on_selection_set(data, obj, nextstate);
+   _gl_focus_focus_on_selection_set(data, obj, nextstate);
 }
 
 static void
-test_genlist_focus_focus_highlight_check_changed(void *data, Evas_Object *obj,
-                                                 void *event_info EINA_UNUSED)
+_gl_focus_focus_highlight_changed_cb(void *data, Evas_Object *obj,
+                                     void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_enabled_set(data,
                                        elm_check_state_get(obj));
 }
 
 static void
-test_genlist_focus_focus_animate_check_changed(void *data, Evas_Object *obj,
-                                               void *event_info EINA_UNUSED)
+_gl_focus_focus_animate_changed_cb(void *data, Evas_Object *obj,
+                                   void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_animate_set(data,
                                        elm_check_state_get(obj));
 }
 
 static void
-_gl_focus_move_policy_changed(void *data EINA_UNUSED,
-                              Evas_Object *obj,
-                              void *event_info EINA_UNUSED)
+_gl_focus_move_policy_changed_cb(void *data EINA_UNUSED,
+                                 Evas_Object *obj,
+                                 void *event_info EINA_UNUSED)
 {
    int val = elm_radio_value_get(obj);
 
@@ -3744,17 +3744,17 @@ _gl_focus_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 
 static Ecore_Timer *timer = NULL;
 static void
-_test_genlist_focus_win_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
-                               Evas_Object *obj EINA_UNUSED,
-                               void *event_info EINA_UNUSED)
+_gl_focus_win_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    ecore_timer_del(timer);
    timer = NULL;
 }
 
 static void
-test_genlist_focus_item_select_on_focus_disable_changed(void *data EINA_UNUSED, Evas_Object *obj,
-                                                        void *event_info  EINA_UNUSED)
+_gl_focus_item_select_on_focus_disable_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                                                  void *event_info  EINA_UNUSED)
 {
    elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
 }
@@ -3808,9 +3808,9 @@ _focus_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_test_genlist_focus_bring_in_changed(void *data EINA_UNUSED,
-                                     Evas_Object *obj,
-                                     void *event_info EINA_UNUSED)
+_gl_focus_bring_in_changed_cb(void *data EINA_UNUSED,
+                              Evas_Object *obj,
+                              void *event_info EINA_UNUSED)
 {
    elm_config_focus_auto_scroll_bring_in_enabled_set(elm_check_state_get(obj));
 }
@@ -3829,7 +3829,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    win = elm_win_util_standard_add("genlist-focus", "Genlist Focus");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
-                                  _test_genlist_focus_win_del_cb, NULL);
+                                  _gl_focus_win_del_cb, NULL);
 
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
@@ -3947,7 +3947,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_check_state_set(chk, EINA_TRUE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_genlist_focus_focus_highlight_check_changed,
+                                  _gl_focus_focus_highlight_changed_cb,
                                   win);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
@@ -3957,7 +3957,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_check_state_set(chk, EINA_TRUE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_genlist_focus_focus_animate_check_changed,
+                                  _gl_focus_focus_animate_changed_cb,
                                   win);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
@@ -3966,7 +3966,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_object_text_set(chk, "Focus on selection");
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_genlist_focus_focus_check_changed, gl);
+                                  _gl_focus_focus_on_selection_changed_cb, gl);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 
@@ -3974,14 +3974,14 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_object_text_set(chk, "Item Looping Enalbe");
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_genlist_focus_item_loop_enable_check_changed, gl);
+                                  _gl_focus_item_loop_enable_changed_cb, gl);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 
    chk = elm_check_add(bx_opt);
    elm_object_text_set(chk, "Focus Auto scroll bring in enable");
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed", _test_genlist_focus_bring_in_changed,
+   evas_object_smart_callback_add(chk, "changed", _gl_focus_bring_in_changed_cb,
                                   NULL);
    elm_check_state_set(chk, elm_config_focus_auto_scroll_bring_in_enabled_get());
    elm_box_pack_end(bx_opt, chk);
@@ -3992,7 +3992,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_check_state_set(chk, elm_config_item_select_on_focus_disabled_get());
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
-                                  test_genlist_focus_item_select_on_focus_disable_changed,
+                                  _gl_focus_item_select_on_focus_disable_changed_cb,
                                   NULL);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
@@ -4015,7 +4015,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_radio_state_value_set(rd, 0);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(rd, "changed",
-                                  _gl_focus_move_policy_changed,
+                                  _gl_focus_move_policy_changed_cb,
                                   NULL);
    elm_box_pack_end(bx_mv, rd);
    evas_object_show(rd);
@@ -4026,7 +4026,7 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_radio_state_value_set(rd, 1);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(rd, "changed",
-                                  _gl_focus_move_policy_changed,
+                                  _gl_focus_move_policy_changed_cb,
                                   NULL);
    elm_box_pack_end(bx_mv, rd);
    evas_object_show(rd);
