@@ -1303,3 +1303,18 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
    return EINA_TRUE;
 }
 
+static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
+{
+   Eina_Bool *ret = fdata;
+   if (*ret) *ret = eolian_eo_file_parse(data);
+   return *ret;
+}
+
+EAPI Eina_Bool
+eolian_all_eo_files_parse()
+{
+   Eina_Bool ret = EINA_TRUE;
+   eina_hash_foreach(_filenames, _file_parse, &ret);
+   return ret;
+}
+

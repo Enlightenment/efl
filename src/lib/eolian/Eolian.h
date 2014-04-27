@@ -158,6 +158,18 @@ EAPI int eolian_shutdown(void);
 EAPI Eina_Bool eolian_directory_scan(const char *dir);
 
 /*
+ * @brief Force parsing of all the files located in the directories
+ * given in eolian_directory_scan..
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see eolian_directory_scan
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_all_eo_files_parse();
+
+/*
  * @brief Show information about a given class.
  *
  * If class_name is NULL, this function will print information of
