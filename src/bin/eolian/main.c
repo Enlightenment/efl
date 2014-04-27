@@ -195,7 +195,6 @@ int main(int argc, char **argv)
    static struct option long_options[] =
      {
         /* These options set a flag. */
-          {"eo1",        no_argument,         &eo_needed, 1},
           {"eo",         no_argument,         &eo_needed, 1},
           {"verbose",    no_argument,         0, 'v'},
           {"help",       no_argument,         0, 'h'},
