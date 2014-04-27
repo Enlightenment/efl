@@ -120,6 +120,7 @@ database_type_del(Eolian_Type type)
         _Parameter_Type *ptype = (_Parameter_Type *) type;
         eina_stringshare_del(ptype->name);
         type = eina_inlist_remove(type, EINA_INLIST_GET(ptype));
+        free(ptype);
      }
 }
 
@@ -132,6 +133,8 @@ _fid_del(_Function_Id *fid)
    eina_hash_free(fid->data);
    EINA_LIST_FREE(fid->keys, param) _param_del(param);
    EINA_LIST_FREE(fid->params, param) _param_del(param);
+   database_type_del(fid->get_ret_type);
+   database_type_del(fid->set_ret_type);
    free(fid);
 }
 
@@ -189,10 +192,8 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   if (!_classes)
-      _classes = eina_hash_stringshared_new(_hash_free_cb);
-   if (!_filenames)
-      _filenames = eina_hash_string_small_new(free);
+   _classes = eina_hash_stringshared_new(_hash_free_cb);
+   _filenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
 }
 

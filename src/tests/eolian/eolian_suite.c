@@ -309,7 +309,6 @@ main(int argc, char **argv)
    Suite *s;
    SRunner *sr;
    int i, failed_count;
-   eolian_init();
    setenv("CK_FORK", "no", 0);
 
    for (i = 1; i < argc; i++)
@@ -338,8 +337,6 @@ main(int argc, char **argv)
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
    srunner_free(sr);
-
-   eolian_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }
