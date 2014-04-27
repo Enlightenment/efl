@@ -9,6 +9,7 @@
 #include "Evas.h"
 #include "evas_tests_helpers.h"
 
+#if 0
 static const char *
 _test_image_get(const char *name)
 {
@@ -18,6 +19,7 @@ _test_image_get(const char *name)
 
    return filename;
 }
+#endif
 
 START_TEST(evas_object_image_loader)
 {
