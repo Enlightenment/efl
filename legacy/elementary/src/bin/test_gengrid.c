@@ -1332,9 +1332,9 @@ _gengrid_focus_key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 }
 
 static void
-test_gengrid_focus_focus_move_policy_changed(void *data EINA_UNUSED,
-                                             Evas_Object *obj,
-                                             void *event_info EINA_UNUSED)
+_gg_focus_focus_move_policy_changed_cb(void *data EINA_UNUSED,
+                                       Evas_Object *obj,
+                                       void *event_info EINA_UNUSED)
 {
    int val = elm_radio_value_get(obj);
 
@@ -1345,27 +1345,27 @@ test_gengrid_focus_focus_move_policy_changed(void *data EINA_UNUSED,
 }
 
 static void
-_test_gengrid_focus_focus_highlight_check_changed(void *data,
-                                                  Evas_Object *obj,
-                                                  void *event_info EINA_UNUSED)
+_gg_focus_focus_highlight_changed_cb(void *data,
+                                     Evas_Object *obj,
+                                     void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_enabled_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
 }
 
 static void
-_test_gengrid_focus_focus_animate_check_changed(void *data,
-                                                Evas_Object *obj,
-                                                void *event_info EINA_UNUSED)
+_gg_focus_focus_animate_changed_cb(void *data,
+                                   Evas_Object *obj,
+                                   void *event_info EINA_UNUSED)
 {
    elm_win_focus_highlight_animate_set((Evas_Object *)data,
                                        elm_check_state_get(obj));
 }
 
 static void
-_test_gengrid_focus_bring_in_changed(void *data EINA_UNUSED,
-                                     Evas_Object *obj,
-                                     void *event_info EINA_UNUSED)
+_gg_focus_bring_in_changed_cb(void *data EINA_UNUSED,
+                              Evas_Object *obj,
+                              void *event_info EINA_UNUSED)
 {
    elm_config_focus_auto_scroll_bring_in_enabled_set(elm_check_state_get(obj));
 }
@@ -1382,10 +1382,10 @@ _grid_reorder_mode(void *data, Evas_Object *obj,
 }
 
 static void
-test_gengrid_focus_item_select_on_focus_disable_changed(void *data EINA_UNUSED,
-                                                        Evas_Object *obj,
-                                                        void *event_info
-                                                        EINA_UNUSED)
+_gg_focus_item_select_on_focus_disable_changed_cb(void *data EINA_UNUSED,
+                                                  Evas_Object *obj,
+                                                  void *event_info
+                                                  EINA_UNUSED)
 {
    elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
 }
@@ -1474,7 +1474,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_check_state_set(ck, EINA_TRUE);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(ck, "changed",
-                                  _test_gengrid_focus_focus_highlight_check_changed,
+                                  _gg_focus_focus_highlight_changed_cb,
                                   win);
    elm_box_pack_end(bx_opt, ck);
    evas_object_show(ck);
@@ -1484,7 +1484,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_check_state_set(ck, EINA_TRUE);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(ck, "changed",
-                                  _test_gengrid_focus_focus_animate_check_changed,
+                                  _gg_focus_focus_animate_changed_cb,
                                   win);
    elm_box_pack_end(bx_opt, ck);
    evas_object_show(ck);
@@ -1506,7 +1506,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
    ck = elm_check_add(bx_opt);
    elm_object_text_set(ck, "Focus Auto scroll bring in enable");
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(ck, "changed", _test_gengrid_focus_bring_in_changed,
+   evas_object_smart_callback_add(ck, "changed", _gg_focus_bring_in_changed_cb,
                                   NULL);
    elm_check_state_set(ck, elm_config_focus_auto_scroll_bring_in_enabled_get());
    elm_box_pack_end(bx_opt, ck);
@@ -1517,7 +1517,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_check_state_set(ck, elm_config_item_select_on_focus_disabled_get());
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(ck, "changed",
-                                  test_gengrid_focus_item_select_on_focus_disable_changed,
+                                  _gg_focus_item_select_on_focus_disable_changed_cb,
                                   NULL);
    elm_box_pack_end(bx_opt, ck);
    evas_object_show(ck);
@@ -1540,7 +1540,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_radio_state_value_set(rd, 0);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(rd, "changed",
-                                  test_gengrid_focus_focus_move_policy_changed,
+                                  _gg_focus_focus_move_policy_changed_cb,
                                   NULL);
    elm_box_pack_end(bx_mv, rd);
    evas_object_show(rd);
@@ -1551,7 +1551,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
    elm_radio_state_value_set(rd, 1);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(rd, "changed",
-                                  test_gengrid_focus_focus_move_policy_changed,
+                                  _gg_focus_focus_move_policy_changed_cb,
                                   NULL);
    elm_box_pack_end(bx_mv, rd);
    evas_object_show(rd);
