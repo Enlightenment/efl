@@ -146,6 +146,18 @@ EAPI int eolian_init(void);
 EAPI int eolian_shutdown(void);
 
 /*
+ * @brief Scan the given directory and search for .eo files.
+ *
+ * The found files are just open to extract the class name.
+ *
+ * @param[in] dir the directory to scan
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_directory_scan(const char *dir);
+
+/*
  * @brief Show information about a given class.
  *
  * If class_name is NULL, this function will print information of

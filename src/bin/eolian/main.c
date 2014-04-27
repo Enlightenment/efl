@@ -7,8 +7,6 @@
 #include "eo1_generator.h"
 #include "common_funcs.h"
 
-#define EO_SUFFIX ".eo"
-
 static char*
 _include_guard_enclose(const char *fname, const char *fbody)
 {
@@ -220,19 +218,11 @@ int main(int argc, char **argv)
            case 'I':
                      {
                         const char *dir = optarg;
-                        Eina_Iterator *dir_files;
-                        char *file;
-                        /* Get all files from directory. Not recursively!!! */
-                        dir_files = eina_file_ls(dir);
-                        EINA_ITERATOR_FOREACH(dir_files, file)
+                        if (!eolian_directory_scan(dir))
                           {
-                             if (eina_str_has_suffix(file, EO_SUFFIX))
-                               {
-                                  /* Allocated string will be freed during deletion of "included_files" list. */
-                                  included_files = eina_list_append(included_files, strdup(file));
-                               }
+                             ERR("Failed to scan %s", dir);
+                             goto end;
                           }
-                        eina_iterator_free(dir_files);
                         break;
                      }
            default: help = EINA_TRUE;
@@ -264,15 +254,6 @@ int main(int argc, char **argv)
      }
 
    const char *filename;
-   EINA_LIST_FOREACH(included_files, itr, filename)
-     {
-        if (!eolian_eo_file_parse(filename))
-          {
-             ERR("Error during parsing file %s\n", filename);
-             goto end;
-          }
-     }
-
    EINA_LIST_FOREACH(files4gen, itr, filename)
      {
         if (!eolian_eo_file_parse(filename))

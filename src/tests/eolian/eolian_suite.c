@@ -25,7 +25,7 @@ START_TEST(eolian_ctor_dtor)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/base.eo"));
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
    fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/ctor_dtor.eo"));
 
    /* Class ctor/dtor */

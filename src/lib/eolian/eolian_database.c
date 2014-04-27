@@ -1,4 +1,5 @@
 #include <Eina.h>
+#include "eo_lexer.h"
 #include "eolian_database.h"
 
 #define PROP_GET_RETURN_DFLT_VAL "property_get_return_dflt_val"
@@ -14,6 +15,7 @@
 #define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
 
 static Eina_Hash *_classes = NULL;
+static Eina_Hash *_filenames = NULL; /* Hash: filename without extension -> full path */
 static int _database_init_count = 0;
 
 typedef struct
@@ -189,6 +191,8 @@ database_init()
    eina_init();
    if (!_classes)
       _classes = eina_hash_stringshared_new(_hash_free_cb);
+   if (!_filenames)
+      _filenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
 }
 
@@ -205,6 +209,7 @@ database_shutdown()
    if (_database_init_count == 0)
      {
         eina_hash_free(_classes);
+        eina_hash_free(_filenames);
         eina_shutdown();
      }
    return _database_init_count;
@@ -1244,3 +1249,56 @@ eolian_show(const char *class_name)
      }
    return EINA_TRUE;
 }
+
+#define EO_SUFFIX ".eo"
+EAPI Eina_Bool
+eolian_directory_scan(const char *dir)
+{
+   if (!dir) return EINA_FALSE;
+   char *file;
+   /* Get all files from directory. Not recursively!!! */
+   Eina_Iterator *dir_files = eina_file_ls(dir);
+   EINA_ITERATOR_FOREACH(dir_files, file)
+     {
+        if (eina_str_has_suffix(file, EO_SUFFIX))
+          {
+             int len = strlen(file);
+             int idx = len - 1;
+             while (idx >= 0 && file[idx] != '/') idx--;
+             eina_hash_add(_filenames, eina_stringshare_add_length(file+idx+1, len - idx - sizeof(EO_SUFFIX)), strdup(file));
+          }
+     }
+   eina_iterator_free(dir_files);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
+{
+   const Eina_List *itr;
+   const char *class_name = eolian_class_find_by_file(filepath);
+   if (!class_name)
+     {
+        if (!eo_tokenizer_database_fill(filepath)) return EINA_FALSE;
+        class_name = eolian_class_find_by_file(filepath);
+        if (!class_name)
+          {
+             ERR("No class for file %s", filepath);
+             return EINA_FALSE;
+          }
+     }
+   EINA_LIST_FOREACH(eolian_class_inherits_list_get(class_name), itr, class_name)
+     {
+        char *filename = strdup(class_name);
+        eina_str_tolower(&filename);
+        filepath = eina_hash_find(_filenames, filename);
+        if (!filepath)
+          {
+             ERR("Unable to find class %s", class_name);
+             return EINA_FALSE;
+          }
+        if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
+        free(filename);
+     }
+   return EINA_TRUE;
+}
+
