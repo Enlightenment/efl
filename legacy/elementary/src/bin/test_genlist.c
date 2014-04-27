@@ -3752,6 +3752,13 @@ _test_genlist_focus_win_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
    timer = NULL;
 }
 
+static void
+test_genlist_focus_item_select_on_focus_disable_changed(void *data EINA_UNUSED, Evas_Object *obj,
+                                                        void *event_info  EINA_UNUSED)
+{
+   elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
+}
+
 static Eina_Bool
 _focus_timer_cb(void *data)
 {
@@ -3977,6 +3984,16 @@ test_genlist_focus(void *data EINA_UNUSED,
    evas_object_smart_callback_add(chk, "changed", _test_genlist_focus_bring_in_changed,
                                   NULL);
    elm_check_state_set(chk, elm_config_focus_auto_scroll_bring_in_enabled_get());
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Item Select on Focus disable");
+   elm_check_state_set(chk, elm_config_item_select_on_focus_disabled_get());
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_genlist_focus_item_select_on_focus_disable_changed,
+                                  NULL);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
 

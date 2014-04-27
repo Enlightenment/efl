@@ -2479,8 +2479,6 @@ _elm_genlist_item_unfocused(Elm_Gen_Item *it)
    evas_object_smart_callback_call(obj, SIG_ITEM_UNFOCUSED, it);
 }
 
-/* NOTE: this code will be used later when the item selection on key press
-   becomes optional. So do not remove this.
 static Eina_Bool
 _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
 {
@@ -2533,7 +2531,6 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
 
    return EINA_TRUE;
 }
-*/
 
 static void
 _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
@@ -2587,6 +2584,7 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
    Eina_Bool ret = EINA_FALSE;
    Evas_Coord v = 0;
    Evas_Coord min = 0;
+   Eina_Bool focus_only = EINA_FALSE;
 
    // get content size and viewport size
    eo_do(obj,
@@ -2594,23 +2592,28 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
          (NULL, NULL, NULL, &v),
          elm_interface_scrollable_content_size_get(NULL, &min));
 
-   if (multi)
+   if (multi && !_elm_config->item_select_on_focus_disable)
      {
         if (dir == ELM_FOCUS_UP)
           ret = _item_multi_select_up(sd);
         else if (dir == ELM_FOCUS_DOWN)
           ret = _item_multi_select_down(sd);
      }
-   else
+   else if (!multi && !_elm_config->item_select_on_focus_disable)
      {
         if (dir == ELM_FOCUS_UP)
           ret = _item_single_select_up(sd);
         else if (dir == ELM_FOCUS_DOWN)
           ret = _item_single_select_down(sd);
      }
+   else if (_elm_config->item_select_on_focus_disable)
+     {
+        ret = _item_focused_next(obj, dir);
+     }
    if (ret)
      return EINA_TRUE;
 
+   focus_only = _elm_config->item_select_on_focus_disable && elm_widget_focus_highlight_enabled_get(obj);
    // handle item loop feature
    if (sd->item_loop_enable)
      {
@@ -2628,7 +2631,9 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
             else if(dir == ELM_FOCUS_DOWN)
                it = elm_genlist_first_item_get(obj);
 
-             if (it)
+             if (it && focus_only)
+               elm_object_item_focus_set(it, EINA_TRUE);
+             else if (it)
                elm_genlist_item_selected_set(it, EINA_TRUE);
           }
         return EINA_TRUE;
@@ -2751,7 +2756,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    Elm_Object_Item *it = NULL;
 
-   it = elm_genlist_selected_item_get(obj);
+   it = elm_object_focused_item_get(obj);
    elm_genlist_item_expanded_set(it, !elm_genlist_item_expanded_get(it));
    evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
 
@@ -2916,7 +2921,7 @@ _elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd)
              it = _elm_genlist_nearest_visible_item_get(obj, it);
              if (it)
                {
-                  if (is_sel)
+                  if (!_elm_config->item_select_on_focus_disable && is_sel)
                     elm_genlist_item_selected_set(it, EINA_TRUE);
                   else
                     elm_object_item_focus_set(it, EINA_TRUE);
@@ -5161,7 +5166,10 @@ _elm_genlist_looping_up_cb(void *data,
 {
    Evas_Object *genlist = data;
    Elm_Object_Item *it = elm_genlist_last_item_get(genlist);
-   elm_genlist_item_selected_set(it, EINA_TRUE);
+   if (!_elm_config->item_select_on_focus_disable)
+     elm_genlist_item_selected_set(it, EINA_TRUE);
+   else
+     elm_object_item_focus_set(it, EINA_TRUE);
    elm_layout_signal_emit(genlist, "elm,action,looping,up,end", "elm");
 }
 
@@ -5173,7 +5181,10 @@ _elm_genlist_looping_down_cb(void *data,
 {
    Evas_Object *genlist = data;
    Elm_Object_Item *it = elm_genlist_first_item_get(genlist);
-   elm_genlist_item_selected_set(it, EINA_TRUE);
+   if (!_elm_config->item_select_on_focus_disable)
+     elm_genlist_item_selected_set(it, EINA_TRUE);
+   else
+     elm_object_item_focus_set(it, EINA_TRUE);
    elm_layout_signal_emit(genlist, "elm,action,looping,down,end", "elm");
 }
 
