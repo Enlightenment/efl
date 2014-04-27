@@ -2580,7 +2580,7 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
 }
 
 static Eina_Bool
-_elm_genlist_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
+_key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
 {
    ELM_GENLIST_DATA_GET(obj, sd);
    Elm_Object_Item *it = NULL;
@@ -2681,24 +2681,24 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "up"))
      {
-        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
+        if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "up_multi"))
      {
-        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_TRUE)) return EINA_TRUE;
-        else if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
+        if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_TRUE)) return EINA_TRUE;
+        else if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "down"))
      {
-        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
+        if (_key_action_move_dir(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "down_multi"))
      {
-        if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_TRUE)) return EINA_TRUE;
-        else if (_elm_genlist_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
+        if (_key_action_move_dir(obj, ELM_FOCUS_DOWN, EINA_TRUE)) return EINA_TRUE;
+        else if (_key_action_move_dir(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "first"))
