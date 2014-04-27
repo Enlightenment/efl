@@ -365,6 +365,25 @@ esac
 AM_CONDITIONAL([HAVE_CRYPTO_GNUTLS], [test "${build_crypto}" = "gnutls"])
 AM_CONDITIONAL([HAVE_CRYPTO_OPENSSL], [test "${build_crypto}" = "openssl"])
 
+# check for lua old
+want_lua_old="no"
+AC_ARG_ENABLE([lua-old],
+   [AC_HELP_STRING([--enable-lua-old],
+       [Enable interpreted Lua support (5.1 or 5.2). @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_lua_old="yes"
+    else
+       want_lua_old="no"
+    fi
+   ],
+   [want_lua_old="no"])
+
+AM_CONDITIONAL([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"])
+AC_DEFINE_IF([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"],
+  [1], [Use interpreted Lua (5.1 or 5.2)])
+AC_SUBST([want_lua_old])
+
 #### Checks for header files
 
 # Common Checks (keep names sorted for ease of use):
@@ -3789,19 +3808,6 @@ AC_ARG_ENABLE([multisense],
    ],
    [want_multisense="no"])
 
-want_lua_old="no"
-AC_ARG_ENABLE([lua-old],
-   [AC_HELP_STRING([--enable-lua-old],
-       [Enable interpreted Lua support (5.1 or 5.2). @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_lua_old="yes"
-    else
-       want_lua_old="no"
-    fi
-   ],
-   [want_lua_old="no"])
-
 # TODO: should we keep or remove these?
 want_edje_program_cache="no"
 want_edje_calc_cache="yes"
@@ -3855,10 +3861,6 @@ AM_CONDITIONAL([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"])
 AC_DEFINE_IF([ENABLE_MULTISENSE], [test "${want_multisense}" = "yes"],
   [1], [Use Multisense])
 AC_SUBST([want_multisense])
-AM_CONDITIONAL([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"])
-AC_DEFINE_IF([ENABLE_LUA_OLD], [test "${want_lua_old}" = "yes"],
-  [1], [Use interpreted Lua (5.1 or 5.2)])
-AC_SUBST([want_lua_old])
 AC_SUBST([want_physics])
 
 ### Checks for header files
