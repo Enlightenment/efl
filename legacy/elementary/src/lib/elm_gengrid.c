@@ -2199,8 +2199,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           {
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_up(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_up(sd);
                }
              else
                return _item_focus_up(sd);
@@ -2211,8 +2210,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                return EINA_FALSE;
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_left(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_left(sd);
                }
              else
                return _item_focus_left(sd);
@@ -2257,8 +2255,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           {
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_down(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_down(sd);
                }
              else
                return _item_focus_down(sd);
@@ -2269,8 +2266,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                return EINA_FALSE;
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_right(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_right(sd);
                }
              else
                return _item_focus_right(sd);
@@ -2327,8 +2323,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           {
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_up(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_up(sd);
                }
              else
                return _item_focus_up(sd);
@@ -2375,8 +2370,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                return EINA_FALSE;
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_right(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_right(sd);
                }
              else
                return _item_focus_right(sd);
@@ -2385,8 +2379,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           {
              if (!_elm_config->item_select_on_focus_disable)
                {
-                  if (_item_single_select_down(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
+                  return _item_single_select_down(sd);
                }
              else
                return _item_focus_down(sd);
