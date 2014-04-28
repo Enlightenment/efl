@@ -1,6 +1,107 @@
-================
-Elementary 1.9.0
-================
+=================
+Elementary 1.10.0
+=================
+
+Changes since Elementary 1.9.0:
+-------------------------------
+
+Features:
+
+   * popup: implemented widget item focus feauture.
+   * list: implemented widget item focus feature.
+   * list: Added descriptions for the newly introduced item,focused/item,unfocused smart callbacks.
+   * popup: Added descriptions for the newly introduced item,focused/item,unfocused smart callbacks.
+   * hoversel: Added "item,focused" and "item,unfocused" smart events for widget items.
+   * win - add accel preference option to elm windows
+   * focus: Added focus highlight clip disable feature. (T1056)
+   * focus: Added optional focus feature - focus movement by mouse_in.
+   * toolbar: implemented widget item focus feature.
+   * elementary: Add support to elementary for creating applications which run in drm.
+   * list: Added focus movement on widget items by mouse in.
+   * genlist: Added focus movement on widget items by mouse in.
+   * gengrid: Added focus movement on widget items by mouse in.
+   * toolbar: Added focus movement on widget items by mouse in.
+   * gengrid: Added feature to move focus out of gengrid if focus is on edge items.
+   * focus: Added optional focus feature - item focus on selection.
+   * Adjust code to use the slightly different Eo2 API.
+   * win - add ELM_ACCEL env var to set acel method that is preferred
+   * theme - improve efm icons provided by ApB (T575)
+   * atspi: Atspi_Action interface implementation @feature
+   * gengrid: item moving feature with keys.
+   * config: Added two APIs to enable/disable focus auto scroll bring in feature.
+   * genlist: Implemented item_select_on_focus feature.
+   * gengrid: Implemented item_select_on_focus feature.
+   * gengrid: Added elm_gengrid_wheel_disabled_set/get() APIs.
+
+Fixes:
+
+   * hover: Made hover itself unfocusable.
+   * elm_list/focus: @bugfix crashes with empty lists and unfocused elements.
+   * @fix homogeneous genlist recalc on theme change (T1023)
+   * @fix slider popup creation with custom themes
+   * @fix broken slider popup hide logic
+   * diskselector: Fix segmentation fault (T988)
+   * object_item: Check null in elm_object_item_del.
+   * naviframe: Emit visible signal to edc theme when first item is pushed
+   * fix ctxpopup getting min size from content immediately on set
+   * Fix bug of moving cursor handler
+   * entry - fix menu to not popup after every time mobile sel handles are clicked
+   * elm: Add Drm Detection
+   * Avoid Month wrapping by ignoring summer time correction.
+   * elm_widget: @fix use of uninitialized values.
+   * naviframe: Fix smart_show function to show only top item view
+   * entry - send selection,cleared signal if a selection is dismissed.
+   * @fix slider overlay parenting
+   * actionslider: Fixed mouse movement issue.
+   * elm_win: Unbreak the ABI break of window type.
+   * Remove silencing of errors when called on non elm widgets.
+   * theme overlays - fix to prepend on overlay to be semantically consistent
+   * entry - fixed calc issue of the wrap none mode.
+   * segment_control, toolbar: Fixed broken scale of widget item.
+   * entry - entry did word wrapping even the mode was ELM_WRAP_NONE.
+   * Focus: fix segfault due to bad call to Eo function.
+   * list/genlist: Fixed Home and End key event handling routine.
+   * Accessibility: unref the object only if it exists.
+   * [Elm_Dnd] Fix type matching of drag and drop target objects in X11.
+   * [Elm_Entry] Update selection handlers position and its visibility when scrolling
+   * diskselector: Compare correct variables. (CID1193236)
+   * atspi_object: Added missing comma. (CID1193238)
+   * index: Set variable to NULL after free. (CID1193250)
+   * access: Fixed memory leak. (CID1193244)
+   * fix scrollbar to be clickable even if vieport is tiny compared to content
+   * naviframe : Fixed the overlap issue during multiple push.
+   * genlist needs to iterate exactly once over a fixed list when deselcting all items
+   * list: Fixed item multi/single selection routine to skip disabled item correctly.
+   * genlist: Fixed item multi/single selection routine to skip disabled item correctly.
+   * panel: check _elm_config_key_binding_call return value
+   * datetime: clip sub components into global clipper
+   * prefs: Add EVIL_LIBS to build to avoid problems with missing regex.h under mingw
+   * elm win - fix tracking of current position to properly store it in win obj
+   * spinner: crash issue on deletion fix
+   * elm win - fix wrong resizing of focus highlight obj.
+   * fix left over soft cursors in elm (T893)
+   * [Elm_Dnd] Correct drag position when rotation
+   * [Elm_Dnd] Fix segmentation fault when deleting object with same registered drop callbacks
+   * elm_map: Fixed a leak when ecore_file_download_full fails
+   * gengrid: Fixed the focus animation in horizontal mode
+   * map: remove memory leak
+   * list/genlist/gengrid/toolbar: Fix - _nearest_visible_item_get() should always return an item.
+   * plug: fix SEGV of elementary_test during reconnecting
+   * list: Fixed _elm_list_item_content_focus_set in case the first content is focused.
+   * dnd: Skip drag window when drag starts
+   * widget: Initialized internal variables. (CID1199625)
+   * scroller: Initialized some internal variables. (CID1199657)
+   * spinner: fixed odd behavior of the spinner
+   * ctxpopup: sd->box null check and event_flag set for previous and next focus move.
+   * entry: wrong viewport value calculation issue fix
+   * elm_interface_scrollable: fix resize after drag bug.
+   * dnd: Correct drag window positon in drag start
+   * tooltips position more accurately in X in xinerama
+   * entry no longer completely breaks focus by focusing itself on selection signal
+   * toolbar: Fixed wrong edje api usage for elm objects.
+   * genlist: Removed unnecessary item show call on multi select.
+   * ctxpopup bg theme should block all mouse events, not just left button
+
 
 Changes since Elementary 1.8.0:
 -------------------------------
