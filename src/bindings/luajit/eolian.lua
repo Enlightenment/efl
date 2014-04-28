@@ -50,8 +50,11 @@ ffi.cdef [[
     Eina_Bool eolian_eo_file_parse(const char *filename);
     int eolian_init(void);
     int eolian_shutdown(void);
+    Eina_Bool eolian_directory_scan(const char *dir);
+    Eina_Bool eolian_all_eo_files_parse();
     Eina_Bool eolian_show(const char *class_name);
     const char *eolian_class_find_by_file(const char *file_name);
+    const char *eolian_class_file_get(const char *class_name);
     Eolian_Class_Type eolian_class_type_get(const char *class_name);
     const Eina_List *eolian_class_names_list_get(void);
     Eina_Bool eolian_class_exists(const char *class_name);
@@ -113,6 +116,14 @@ end
 
 cutil.init_module(init, shutdown)
 
+M.directory_scan = function(dir)
+    return eolian.eolian_directory_scan(dir) ~= 0
+end
+
+M.all_eo_files_parse = function()
+    return eolian.eolian_all_eo_files_parse() ~= 0
+end
+
 M.eo_file_parse = function(fname)
     return eolian.eolian_eo_file_parse(fname) ~= 0
 end
@@ -123,6 +134,12 @@ end
 
 M.class_find_by_file = function(fname)
     local v = eolian.eolian_class_find_by_file(fname)
+    if v == nil then return nil end
+    return ffi.string(v)
+end
+
+M.class_file_get = function(cname)
+    local v = eolian.eolian_class_file_get(cname)
     if v == nil then return nil end
     return ffi.string(v)
 end
