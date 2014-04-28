@@ -156,6 +156,7 @@ START_TEST(eolian_simple_parsing)
    /* Parsing */
    fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/class_simple.eo"));
    fail_if(strcmp(eolian_class_find_by_file(PACKAGE_DATA_DIR"/data/class_simple.eo"), class_name));
+   fail_if(strcmp(eolian_class_file_get(class_name), PACKAGE_DATA_DIR"/data/class_simple.eo"));
 
    /* Class */
    fail_if(!eolian_class_exists(class_name));

@@ -239,6 +239,13 @@ database_class_file_set(const char *class_name, const char *file_name)
 }
 
 EAPI const char *
+eolian_class_file_get(const char *class_name)
+{
+   Class_desc *cl = _class_get(class_name);
+   return cl ? cl->file : NULL;
+}
+
+EAPI const char *
 eolian_class_find_by_file(const char *file_name)
 {
    const Eina_List *names_list = eolian_class_names_list_get();

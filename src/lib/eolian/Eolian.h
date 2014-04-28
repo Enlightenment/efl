@@ -193,6 +193,15 @@ EAPI const char *
 eolian_class_find_by_file(const char *file_name);
 
 /*
+ * @brief Returns the name of the file containing the given class.
+ *
+ * @param[in] class_name name of the class.
+ * @return the name of the file on success or NULL otherwise.
+ */
+EAPI const char *
+eolian_class_file_get(const char *class_name);
+
+/*
  * @brief Returns the class type of the given class
  *
  * @param[in] class_name name of the class
