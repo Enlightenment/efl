@@ -3711,18 +3711,9 @@ eng_context_3d_use(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
-   if (re->context_3d == NULL)
-     {
-        re->context_3d = eng_gl_context_new(re->win);
-
-        if (re->context_3d == NULL)
-          {
-             ERR("Failed to create OpenGL context for 3D.");
-             return;
-          }
-     }
-
-   eng_gl_context_use(re->context_3d);
+   if (!re->context_3d)
+     re->context_3d = eng_gl_context_new(re->win);
+   if (re->context_3d) eng_gl_context_use(re->context_3d);
 }
 
 static E3D_Renderer *
@@ -3730,17 +3721,8 @@ eng_renderer_3d_get(void *data)
 {
    Render_Engine *re = (Render_Engine *)data;
 
-   if (re->renderer_3d == NULL)
-     {
-        re->renderer_3d = e3d_renderer_new();
-
-        if (re->renderer_3d == NULL)
-          {
-             ERR("Failed to create 3D renderer.");
-             return NULL;
-          }
-     }
-
+   if (!re->renderer_3d)
+     re->renderer_3d = e3d_renderer_new();
    return re->renderer_3d;
 }
 
