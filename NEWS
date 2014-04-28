@@ -1,6 +1,201 @@
-=========
-EFL 1.9.0
-=========
+==========
+EFL 1.10.0
+==========
+
+Changes since 1.9.0:
+--------------------
+
+Features:
+
+   * eina: add eina_inarray_resize @feature.
+   * eina: add eina_accessor_clone and update all Eina_Accessor to take advantage of it.
+   * eina: add a C++ bindings to Eina @feature.
+   * @feature - Apply NEON intrisics improvement to rotation
+   * Evas textblock: Implemented mid-contextualization formatting.
+   * evas-drm: Add evas_drm to build order for Evas drm engine
+   * evas-drm: Add Evas Drm Engine (software only currently)
+   * evas-drm: Add option to enable drm hardware acceleration
+   * evas-drm: Start on hardware-accel support for drm
+   * evas-drm: Triple buffer by default.
+   * evas-drm: Fix opening of drm card
+   * evas-drm: Start on hardware Plane support
+   * evas-drm: Add vsync/non-vsync support to evas_drm code
+   * evas-drm: Ddd support for setting vsync with env variable.
+   * edje: @feature to include license in edje file. (T1027)
+   * edje: add support of last input entered in password mode to be always visible in entry.
+   * eio: make it possible to limit the amount of memory used by threads.
+   * eina: make Eina_Error thread safe.
+   * edje: add AUTHORS and more than one license file to Edje.
+   * ecore-drm: Add Ecore_Drm code
+   * ecore-drm: Add configure.ac autofoo for ecore-drm
+   * Eet: Added vieet a tool to edit eet files.
+   * eina-cxx: Added eina_log support for C++, using IOStreams syntax
+   * ecore-drm: Add API function to return the vt fd
+   * ecore-drm: Add dependency on xkbcommon
+   * ecore-drm: Add code pass along key events to ecore_event
+   * ecore-drm: Set the window of the Ecore_Event_Key structure
+   * ecore-drm: Add code to handle modifiers in a key event
+   * ecore-drm: Add code to handle mouse input
+   * evas/font: Added evas_font_path_global_* APIs.
+   * Eo: Made eo id for classes a bit more secure.
+   * ecore-drm: Add API function to return the drm device name
+   * ecore-evas-drm: Add support for resize and move callbacks
+   * ecore-evas-drm: Add support for setting focus_in & focus_out callbacks
+   * ecore-evas-drm: Add support for setting the mouse in & mouse out callbacks of the ecore_evas
+   * ecore-evas-drm: Add support for ecore_evas_move function
+   * ecore-evas-drm: Add support for ecore_evas_move_resize
+   * ecore-evas-drm: Add support for rotation set
+   * ecore-evas-drm: Add support for setting the title of the ecore_evas
+   * ecore-evas-drm: Add support for ecore_evas_name_class_set
+   * ecore-evas-drm: Add support for setting size hints
+   * ecore-evas-drm: Add support for ecore_evas_object_cursor_set
+   * ecore-evas-drm: Add support for ecore_evas_layer_set
+   * ecore-evas-drm: Add support for ecore_evas_iconified_set
+   * ecore-evas-drm: Add support for ecore_evas_borderless_set
+   * ecore-evas-drm: Add support for maximized, fullscreen, withdrawn, and ignore_events settings
+   * ecore-evas-drm: Add support for alpha & transparent setting
+   * ecore-evas-drm: Add support for setting aspect of ecore_evas
+   * edje_cc now supports program.targets keyword for adding N targets in one line
+   * edje_cc now supports group.remove for removing parts from inherited groups
+   * edje_cc now supports part.inherit for copying attributes of parts within a group more easily
+   * eeze_udev gets more helper functions
+   * edje_cc now supports program.sequence for more easily chaining programs together
+   * edje_cc can now use group.program_remove to remove inherited programs
+   * edje_edit: function that will return the source code of the loaded edje edit object.
+   * ecore-drm: Add API function for getting size of an output.
+   * eet-cxx: add implementation for eet C++.
+   * Eina: Fix mistake in a previous patch
+   * +eeze_udev_get()
+   * eina-cxx: Modified eina C++ log use syntax
+   * Move to Eo2 and adjust code accordingly
+   * Eo: eo_do now returns called func's value + default ret fix.
+   * Edje: Use LOSSY_ETC1 instead of LOSSY
+   * Evas TGV: Add direct copy mode for ETC1/ETC2 data
+   * Evas: Add support for ETC2 in the TGV loader
+   * Evas gl_x11: Add ETC2 support to the GL/X11 engine
+   * edje_cc now supports "lazEDC", a more concise version of EDC
+   * edje_cc now supports the group.inherit_only attribute
+   * edje_cc now supports targets for SIGNAL_EMIT actions
+   * edje_cc now has the program.groups and X.target_group keywords for target grouping
+   * edje_cc now supports group.program_source for specifying a default source in programs
+   * eina_hash now has helper functions for managing lists inside hashes
+   * edje_cc now supports part.description.link for single line state changes
+   * edje now has the group.script_recursion flag for permitting unsafe embryo recursion (T905)
+
+Fixes:
+
+   * ecore: @fix race condition when using ecore_main_loop_thread_safe_call_sync.
+   * examples/evas: Set a proper format string for fprintf
+   * evas-drm: Set Magic on the Ecore_Evas
+   * evas-drm: Fix configure.ac typo for drm hw accel argument
+   * evas-drm: Call framebuffer_set earlier in the process so that the screen gets updated sooner.
+   * evas-drm: Fix opening of drm card
+   * evas-drm: Forgot to install the evas drm engine pkgconfig file
+   * evas-drm: cleanup outbuf structure and functions
+   * evas-drm: cleanup evas_engine code for drm sw engine
+   * evas-drm: Add vsync/non-vsync support to evas_drm code
+   * evas-drm: Ddd support for setting vsync with env variable.
+   * Evas: Fix build issue when building without drm
+   * ecore_avahi: @fix timeout to avoid pitfall of forever frozen timer.
+   * evas-drm: Fix evas drawing delay for cedric
+   * Evas filters: Avoid CRI message when using the GL engine
+   * Evas filters: fix black squares with the GL engine
+   * Evas filters: fix random cases of 'dancing text'
+   * Evas filters: fix clip to target calculation
+   * edje: fix edje_watch to not pass the '\n' to eio_monitor.
+   * edje: let's allow to reset escaped text to NULL. (T821)
+   * evas-drm: Don't call framebuffer set from within send function
+   * evas-drm: Check buffer validity in swap function
+   * evas-drm: Fix setting cached image alpha flag
+   * ecore-evas-x: Fix resource leak from eina_str_split_full usage (CID1188012)
+   * eo: memory waste at mixin class elaboration
+   * Edje entry: fix bug preedit text is committed in the next entry when Tab key is pressed.
+   * edje/edje_edit: fix part add bug
+   * edje/edje_edit: Check for NULL
+   * evas-drm: Remove hardware acceleration fields from engine structure
+   * evas-drm: Add headers for hardware acceleration
+   * ecore-drm: Add missing define
+   * ecore-drm: Comment out Gbm Format
+   * efl: Fix installing ecore-drm pkgconfig file
+   * efl: Fix build with drm disabled
+   * evas/fb: avoid crashing it outbuf setup failed.
+   * evas: @fix convert to 24bits so dst_jump is used properly.
+   * evas/fb: expose and call fb_freemode() and fb_cleanup()
+   * ecore_fb: @fix use of uninitialized values reported by valgrind.
+   * evas/fb: use stride instead of width.
+   * eina: Fix bug in eina_convert_itoa (T1062)
+   * edje/entry: fix to not emit "changed" signal in unnecessary cases of password mode.
+   * edje: do not leak in case of error. (CID1191310, CID1191311)
+   * evas-fb: Fix broken build of efl
+   * ecore-drm: Initialize ecore_event on ecore_drm_init
+   * edje - allow lager clipper space.
+   * eina-cxx: Fixes compilation errors and warnings in clang
+   * evas: Replace EINA_LIST_FOREACH_SAFE to while statement.
+   * evas: @fix use the correct composite op on lines with pixman
+   * Evas filters: Fix 1-D blurs on a single buffer
+   * Evas filters: Fix memory leak when destroying the object
+   * ecore-x: Predefine Ecore_X_Atom and Ecore_X_Icon
+   * ecore-evas: Predefine Ecore_X_Atom and Ecore_X_Icon
+   * evas: restore behavior of stack above and below when no rel is specified. (CID1191907, CID1191906)
+   * Ecore x: Add back the two symbols removed in 1.9.
+   * eet: fix tokenizer's escape logic.
+   * Evas textblock: Don't include right margin/padding twice when aligning lines.
+   * edje: check font change in edje text part cache infra.
+   * edje/util: set flag to all_part_change when edje class member is added.
+   * Evas cserve2: Fix client crashes when a file changed
+   * Evas gl: Fix clip in image_draw if it's not set
+   * ecore-drm: Fix ecore_drm_device_window_set to use an unsigned int
+   * ecore-evas-drm: Fix setting of the ecore_evas property window and register the prop.window for events.
+   * evas-drm: Fix engine to use the output's framebuffer as window id
+   * ecore-wayland: Fix ecore_wl_init 'stalling' when used in a server
+   * Eolian/Lexer: increase buffer length for .eo files
+   * Eolian/Generator: Don't generate sub ids structure if not needed.
+   * ecore-drm: Fix absolute motion coordinate calculation
+   * edje_cc no longer fails on collections.group{}
+   * edje_cc now correctly handles lack of state int in STATE_SET action
+   * edje_cc also checks min args correctly for STATE_SET actions
+   * Evas filters: fix potential memory leak
+   * eio monitors no longer trigger a CRI error during free
+   * edje_cc uses macros for some of its handler setup
+   * evas/gl - fill up missed blend mode.
+   * evas: Fixed warning for uninitialized variables
+   * edje_cc now correctly handles group inheriting when the inherit is after a part/program
+   * build: Disallow non-working sdl + opengl ES combination (T856)
+   * Evas Textblock: increase ref of format before work
+   * evas/proxy - redraw proxy source properly.
+   * Eolian: move the beta API ifdef to cover all the H types and functions.
+   * Eolian: fix virtual pure support.
+   * Eolian/Lexer: fix function names parsing.
+   * edje_cc: Fix the crash when compiled wrong edc file containing empty part
+   * evas - fix incorrect object reset.
+   * evas-drm: Add trapping for a canvas below framebuffer size
+   * ecore-evas-drm: Add better support for ecore_evas_fullscreen_set
+   * ecore-drm: Fix mouse wheel to not be inverted
+   * emotion: fix memory leak
+   * edje_cc: fix group inheriting with scripts. (group.script and .program.script)
+   * ecore-evas - fix object cursor to not delete the same cursor when set
+   * ecore_evas_extn: give proper event data to callbacks
+   * ecore_evas_extn: fix doxygen sample
+   * evas-drm: Default async page flip to false as this can cause tearing
+   * evas-drm: Remove all async_page_flip options/references
+   * ecore-con - deal with internal buffer growing over 2g in size
+   * fix swap buffers with damage to not detect if ext str is not there
+   * ecore-wl: Optimize opaque region setting for surface and reduce unnecessary calls to surface commit.
+   * ecore-wl: Optimize setting of window input region
+   * ecore-evas-wl: Reduce useless compositor redraws during render update and update input & opaque regions after resizing.
+   * ecore_evas_extn: initialize server handle on server deletion
+   * ecore_evas_extn: update plug image object after disconnection
+   * Eo: eo_do now returns called func's value + default ret fix.
+   * Fixed a problem with e wl server that sent invalid key value to wl client.
+   * ecore-evas-wl: Ooops, Fix opaque & input regions being set to incorrect values
+   * ecore-wl: Don't create an input cursor surface unless the input has pointer capability.
+   * ecore-wl: Check for existance of data device manager
+   * eo: fix broken children iterator, remove redundant fields.
+   * ecore: Fixed se of EINA_MAIN_LOOP_CHECK_RETURN macros with functions with return types
+   * emotion: fix triggering condition of fallback module loading (T1025)
+   * edje now correctly forces ellipsis setting on text parts
+   * emotion: play set before file open callback bug fix
+   * emotion: use eina stringshare not strdup
 
 Changes since 1.8.0:
 --------------------
