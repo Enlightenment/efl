@@ -5,6 +5,13 @@
 # include <config.h>
 #endif
 
+#ifdef ENABLE_NLS
+#include <libintl.h>
+#define _(x) dgettext(PACKAGE, x)
+#else
+#define _(x) (x)
+#endif
+
 #ifndef ELUA_CORE_DIR
 #define ELUA_CORE_DIR "."
 #endif

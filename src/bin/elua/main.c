@@ -195,6 +195,43 @@ const luaL_reg cutillib[] = {
     { NULL, NULL }
 };
 
+static int gettext_bind_textdomain(lua_State *L) {
+    const char *textdomain = luaL_checkstring(L, 1);
+    const char *dirname    = luaL_checkstring(L, 2);
+    const char *ret;
+    if (!textdomain[0] || !strcmp(textdomain, PACKAGE)) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "invalid textdomain");
+        return 2;
+    }
+    if (!(ret = bindtextdomain(textdomain, dirname))) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+    }
+    bind_textdomain_codeset(textdomain, "UTF-8");
+    lua_pushstring(L, ret);
+    return 1;
+}
+
+static int gettext_dgettext(lua_State *L) {
+    const char *textdomain = luaL_checkstring(L, 1);
+    const char *msgid      = luaL_checkstring(L, 2);
+    const char *lmsgid     = dgettext(textdomain, msgid);
+    if (msgid == lmsgid) {
+        lua_pushvalue(L, 2);
+    } else {
+        lua_pushstring(L, lmsgid);
+    }
+    return 1;
+}
+
+const luaL_reg gettextlib[] = {
+    { "bind_textdomain", gettext_bind_textdomain },
+    { "dgettext"       , gettext_dgettext        },
+    { NULL, NULL }
+};
+
 static void print_help(const char *progname, FILE *stream) {
     fprintf(stream, "Usage: %s [OPTIONS] [SCRIPT [ARGS]]\n\n"
                     "A main entry for all EFL/LuaJIT powered applications.\n\n"
@@ -287,7 +324,6 @@ static int lua_main(lua_State *L) {
         }
     }
     snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
-
     if (report(L, elua_loadfile(L, modfile))) {
         m->status = 1;
         return 0;
@@ -300,6 +336,15 @@ static int lua_main(lua_State *L) {
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, cutillib);
     lua_call(L, 2, 0);
+
+    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
+    if (report(L, elua_loadfile(L, modfile))) {
+        m->status = 1;
+        return 0;
+    }
+    lua_createtable(L, 0, 0);
+    luaL_register(L, NULL, gettextlib);
+    lua_call(L, 1, 0);
 
     elua_register_cache(L);
     lua_gc(L, LUA_GCRESTART, 0);
@@ -345,6 +390,13 @@ static int lua_main(lua_State *L) {
 int main(int argc, char **argv) {
     struct Main_Data m;
     lua_State *L = NULL;
+
+#if ENABLE_NLS
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALE_DIR);
+    bind_textdomain_codeset(PACKAGE, "UTF-8");
+    textdomain(PACKAGE);
+#endif
 
     eina_init();
 

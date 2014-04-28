@@ -8,7 +8,8 @@ bin_elua_elua_SOURCES = \
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
     -DELUA_CORE_DIR="\"$(datadir)/elua/core\"" \
-    -DELUA_MODULES_DIR="\"$(datadir)/elua/modules\"" @ELUA_CFLAGS@
+    -DELUA_MODULES_DIR="\"$(datadir)/elua/modules\"" @ELUA_CFLAGS@ \
+    -DLOCALE_DIR=\"@LOCALE_DIR@\"
 bin_elua_elua_LDADD = @ELUA_LIBS@
 bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
 
