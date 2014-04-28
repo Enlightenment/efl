@@ -616,7 +616,7 @@ local gen_class = function(classn)
     local mixins   = {}
     local ct = eolian.class_type
     for i, v in ipairs(inherits) do
-        local tp = (v ~= "Eo_Base") and eolian.class_type_get(v) or ct.REGULAR
+        local tp = eolian.class_type_get(v)
         if tp == ct.REGULAR or tp == ct.ABSTRACT then
             if parent then
                 error(classn .. ": more than 1 parent!")
