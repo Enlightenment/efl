@@ -1879,7 +1879,6 @@ EFL_ADD_FEATURE([EVAS], [harfbuzz])
 EFL_ADD_FEATURE([EVAS], [cserve], [${want_evas_cserve2}])
 EFL_ADD_FEATURE([EVAS], [tile-rotate])
 EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
-EFL_ADD_FEATURE([EVAS], [evas-3d], [${want_evas_3d}])
 
 EFL_LIB_END([Evas])
 #### End of Evas
