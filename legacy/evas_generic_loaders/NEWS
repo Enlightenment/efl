@@ -1,4 +1,11 @@
-Evas Generic Loaders 1.9.0
+Evas Generic Loaders 1.10.0
+
+Changes since Evas Generic Loaders 1.9.0:
+-----------------------------------------
+
+Fixes:
+
+   * license: update FSF address. (T1042)
 
 Changes since Evas Generic Loaders 1.8.0:
 -----------------------------------------
@@ -44,4 +51,3 @@ Additions:
 Fixes:
 
    * distcheck for parallel builds
-
