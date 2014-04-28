@@ -3,7 +3,6 @@
 
 local lualian = require("lualian")
 local  getopt = require("getopt")
-local    file = require("eina.file")
 
 local arg_parser = {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
@@ -70,17 +69,9 @@ if not libname then
     getopt.help(arg_parser, io.stderr)
 end
 
-local include_files = {}
 for i, v in ipairs(include_dirs) do
-    for f in file.ls(v) do
-        if f:match(".*%.eo$") then
-            printv("Including:", f)
-            include_files[#include_files + 1] = f
-        end
-    end
+    lualian.include_dir(v)
 end
-
-lualian.include_files(include_files)
 
 for i, fname in ipairs(args) do
     printv("Generating for file: " .. fname)

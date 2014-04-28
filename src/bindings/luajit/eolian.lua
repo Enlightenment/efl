@@ -77,7 +77,7 @@ ffi.cdef [[
     void eolian_parameter_information_get(const Eolian_Function_Parameter *param_desc, Eolian_Parameter_Dir *param_dir, const char **type, const char **name, const char **description);
     Eolian_Type *eolian_type_information_get(Eolian_Type *etype, const char **type, Eina_Bool *own);
     const char *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
-    Eolian_Type *eolian_parameter_types_list_get(const Eolian_Function_Parameter param);
+    Eolian_Type *eolian_parameter_types_list_get(const Eolian_Function_Parameter *param);
     const char *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
     Eina_Bool eolian_parameter_const_attribute_get(Eolian_Function_Parameter *param_desc, Eina_Bool is_get);
     Eina_Bool eolian_parameter_is_nonull(Eolian_Function_Parameter *param_desc);
@@ -199,7 +199,7 @@ M.Type = ffi.metatype("Eolian_Type", {
             local tp = ffi.new("const char*[1]")
             local on = ffi.new("Eina_Bool[1]")
             local nx = eolian.eolian_type_information_get(self, tp, on)
-            return nx, (tp[0] ~= nil) and ffi.string(tp[0]) or nil, nx[0] ~= 0
+            return nx, (tp[0] ~= nil) and ffi.string(tp[0]) or nil, on[0] ~= 0
         end
     }
 })
