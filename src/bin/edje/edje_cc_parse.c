@@ -203,7 +203,7 @@ new_object(void)
                sh = eina_hash_find(_new_statement_short_hash, id);
              if (!sh)
                sh = eina_hash_find(_new_statement_short_single_hash, id);
-             if ((!sh) && (!did_wildcard) && (!had_quote) && (!edje_cc_handlers_wildcard()))
+             if ((!sh) && (!did_wildcard) && (!had_quote))
                {
                   ERR("%s:%i unhandled keyword %s",
                       file_in, line - 1,
