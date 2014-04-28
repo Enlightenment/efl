@@ -268,33 +268,20 @@ local Property = Method:clone {
 
         local dirs = eolian.parameter_dir
 
-        local kprop = false
         local fulln = proto.full_name
         if #keys > 0 then
             local argn = (#keys > 1) and "keys" or "key"
             for i, v in ipairs(keys) do
-                local dir, tp, nm = v:information_get()
+                local nm  = v:name_get()
                 local tps = v:types_list_get()
-                if dir == dirs.OUT or dir == dirs.INOUT then
-                    if dir == dirs.INOUT then kprop = true end
-                    cargs [#cargs  + 1] = tp .. " *" .. nm
-                    vargs [#vargs  + 1] = nm
-                    allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
-                        and typeconv(tps, (argn .. "[" .. i .. "]"),
-                            fulln, #vargs, true) or nil }
-                    rets  [#rets   + 1] = typeconv(tps, nm .. "[0]", fulln,
-                        #rets + 1, false)
-                else
-                    kprop = true
-                    cargs [#cargs  + 1] = tp .. " " .. nm
-                    vargs [#vargs  + 1] = typeconv(tps, argn .. "[" .. i
-                        .. "]", fulln, #vargs + 1, true)
-                end
+                local tp  = select(2, tps:information_get())
+                cargs [#cargs  + 1] = tp .. " " .. nm
+                vargs [#vargs  + 1] = typeconv(tps, argn .. "[" .. i
+                    .. "]", fulln, #vargs + 1, true)
             end
-            if kprop then args[#args + 1] = argn end
+            args[#args + 1] = argn
         end
-
-        proto.kprop = kprop
+        proto.kprop = #keys > 0
 
         if #vals > 0 then
             if self.isget then
