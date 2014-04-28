@@ -196,6 +196,7 @@ const luaL_reg cutillib[] = {
 };
 
 static int gettext_bind_textdomain(lua_State *L) {
+#if ENABLE_NLS
     const char *textdomain = luaL_checkstring(L, 1);
     const char *dirname    = luaL_checkstring(L, 2);
     const char *ret;
@@ -212,23 +213,14 @@ static int gettext_bind_textdomain(lua_State *L) {
     bind_textdomain_codeset(textdomain, "UTF-8");
     lua_pushstring(L, ret);
     return 1;
-}
-
-static int gettext_dgettext(lua_State *L) {
-    const char *textdomain = luaL_checkstring(L, 1);
-    const char *msgid      = luaL_checkstring(L, 2);
-    const char *lmsgid     = dgettext(textdomain, msgid);
-    if (msgid == lmsgid) {
-        lua_pushvalue(L, 2);
-    } else {
-        lua_pushstring(L, lmsgid);
-    }
+#else
+    lua_pushliteral(L, "");
     return 1;
+#endif
 }
 
 const luaL_reg gettextlib[] = {
     { "bind_textdomain", gettext_bind_textdomain },
-    { "dgettext"       , gettext_dgettext        },
     { NULL, NULL }
 };
 
@@ -282,6 +274,10 @@ static int lua_main(lua_State *L) {
 
     int    argc = m->argc;
     char **argv = m->argv;
+
+#if ENABLE_NLS
+    char *(*dgettextp)(const char*, const char*) = dgettext;
+#endif
 
     progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
@@ -344,6 +340,10 @@ static int lua_main(lua_State *L) {
     }
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, gettextlib);
+#if ENABLE_NLS
+    lua_pushlightuserdata(L, *((void**)&dgettextp));
+    lua_setfield(L, -2, "dgettext");
+#endif
     lua_call(L, 1, 0);
 
     elua_register_cache(L);
