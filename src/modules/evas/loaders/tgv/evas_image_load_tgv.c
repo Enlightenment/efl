@@ -339,7 +339,7 @@ evas_image_load_file_data_tgv(void *loader_data,
       default: abort();
      }
 
-   // Allocate space for each ETC block (64bytes per 4 * 4 pixels group)
+   // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
    block_count = loader->block.width * loader->block.height / (4 * 4);
    if (loader->compress)
      buffer = alloca(etc_block_size * block_count);
