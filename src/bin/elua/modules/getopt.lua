@@ -160,4 +160,12 @@ M.help = function(parser, f)
     end
 end
 
+M.geometry_parse = function(v)
+    return v:match("^(%d+):(%d+):(%d+):(%d+)$")
+end
+
+M.size_parse = function(v)
+    return v:match("^(%d+)x(%d+)$")
+end
+
 return M
