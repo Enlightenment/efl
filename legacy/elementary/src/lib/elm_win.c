@@ -2944,10 +2944,9 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                }
              else
                {
-                  enginelist[0] = ENGINE_GET();
-                  enginelist[1] = ELM_SOFTWARE_X11;
-                  enginelist[2] = ELM_OPENGL_X11;
-                  enginelist[3] = NULL;
+                  enginelist[0] = ELM_SOFTWARE_X11;
+                  enginelist[1] = ELM_OPENGL_X11;
+                  enginelist[2] = NULL;
                }
           }
         else if ((disp) && (!strcmp(disp, "wl")))
@@ -2960,15 +2959,13 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                }
              else
                {
-                  enginelist[0] = ENGINE_GET();
-                  enginelist[1] = ELM_WAYLAND_SHM;
-                  enginelist[2] = ELM_WAYLAND_EGL;
-                  enginelist[3] = NULL;
+                  enginelist[0] = ELM_WAYLAND_SHM;
+                  enginelist[1] = ELM_WAYLAND_EGL;
+                  enginelist[2] = NULL;
                }
           }
         else if ((disp) && (!strcmp(disp, "win")))
           {
-             enginelist[0] = ENGINE_GET();
              enginelist[1] = ELM_SOFTWARE_WIN32;
              enginelist[2] = NULL;
           }
@@ -2982,42 +2979,36 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                }
              else
                {
-                  enginelist[0] = ENGINE_GET();
-                  enginelist[1] = ELM_SOFTWARE_SDL;
-                  enginelist[2] = ELM_OPENGL_SDL;
-                  enginelist[3] = NULL;
+                  enginelist[0] = ELM_SOFTWARE_SDL;
+                  enginelist[1] = ELM_OPENGL_SDL;
+                  enginelist[2] = NULL;
                }
           }
         else if ((disp) && (!strcmp(disp, "mac")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_OPENGL_COCOA;
-             enginelist[2] = NULL;
+             enginelist[0] = ELM_OPENGL_COCOA;
+             enginelist[1] = NULL;
           }
         else if ((disp) && (!strcmp(disp, "ews")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_EWS;
-             enginelist[2] = NULL;
+             enginelist[0] = ELM_EWS;
+             enginelist[1] = NULL;
           }
         else if ((disp) && (!strcmp(disp, "fb")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_DRM;
-             enginelist[2] = ELM_SOFTWARE_FB;
-             enginelist[3] = NULL;
+             enginelist[0] = ELM_DRM;
+             enginelist[1] = ELM_SOFTWARE_FB;
+             enginelist[2] = NULL;
           }
         else if ((disp) && (!strcmp(disp, "buffer")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_BUFFER;
-             enginelist[2] = NULL;
+             enginelist[0] = ELM_BUFFER;
+             enginelist[1] = NULL;
           }
         else if ((disp) && (!strcmp(disp, "ps3")))
           {
-             enginelist[0] = ENGINE_GET();
-             enginelist[1] = ELM_SOFTWARE_PSL1GHT;
-             enginelist[2] = NULL;
+             enginelist[0] = ELM_SOFTWARE_PSL1GHT;
+             enginelist[1] = NULL;
           }
         else if ((disp) && (!strcmp(disp, "shot")))
           {
