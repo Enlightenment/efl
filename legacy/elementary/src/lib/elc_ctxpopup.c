@@ -392,10 +392,13 @@ _arrow_update(Evas_Object *obj,
      {
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
         edje_object_signal_emit(sd->arrow, "elm,state,left", "elm");
-        edje_object_part_swallow
-           (wd->resize_obj,
+        if (!edje_object_part_swallow(wd->resize_obj,
             (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_right" :
-             "elm.swallow.arrow_left"), sd->arrow);
+             "elm.swallow.arrow_left"), sd->arrow))
+          {
+             evas_object_hide(sd->arrow);
+             break;
+          }
 
         if (base_size.h > 0)
           {
@@ -415,10 +418,13 @@ _arrow_update(Evas_Object *obj,
 
       case ELM_CTXPOPUP_DIRECTION_LEFT:
         edje_object_signal_emit(sd->arrow, "elm,state,right", "elm");
-        edje_object_part_swallow
-           (wd->resize_obj,
+        if (!edje_object_part_swallow(wd->resize_obj,
             (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_left" :
-             "elm.swallow.arrow_right"), sd->arrow);
+             "elm.swallow.arrow_right"), sd->arrow))
+          {
+             evas_object_hide(sd->arrow);
+             break;
+          }
 
         if (base_size.h > 0)
           {
@@ -438,9 +444,11 @@ _arrow_update(Evas_Object *obj,
 
       case ELM_CTXPOPUP_DIRECTION_DOWN:
         edje_object_signal_emit(sd->arrow, "elm,state,top", "elm");
-        edje_object_part_swallow
-          (wd->resize_obj, "elm.swallow.arrow_up",
-          sd->arrow);
+        if (!edje_object_part_swallow(wd->resize_obj, "elm.swallow.arrow_up", sd->arrow))
+          {
+             evas_object_hide(sd->arrow);
+             break;
+          }
 
         if (base_size.w > 0)
           {
@@ -459,9 +467,11 @@ _arrow_update(Evas_Object *obj,
 
       case ELM_CTXPOPUP_DIRECTION_UP:
         edje_object_signal_emit(sd->arrow, "elm,state,bottom", "elm");
-        edje_object_part_swallow
-          (wd->resize_obj, "elm.swallow.arrow_down",
-          sd->arrow);
+        if (!edje_object_part_swallow(wd->resize_obj, "elm.swallow.arrow_down", sd->arrow))
+          {
+             evas_object_hide(sd->arrow);
+             break;
+          }
 
         if (base_size.w > 0)
           {
