@@ -11,6 +11,18 @@ local get_desc = function(opt, j, descs)
     error("option --" .. opt .. " not recognized", 4)
 end
 
+local prefixes = { "-", "--" }
+
+local is_arg = function(opt, j, descs)
+    if opt == "--" then return true end
+    for i, v in ipairs(descs) do
+        if v[j] and opt == (prefixes[j] .. v[j]) then
+            return true
+        end
+    end
+    return false
+end
+
 local parse_l = function(opts, opt, descs, args)
     local optval
     local i = opt:find("=")
@@ -19,12 +31,16 @@ local parse_l = function(opts, opt, descs, args)
     end
 
     local desc = get_desc(opt, 2, descs)
-    if desc[3] then
+    local argr = desc[3]
+    if argr or argr == nil then
         if not optval then
             if #args == 0 then
-                error("option --" .. opt .. " requires an argument", 3)
+                if argr then
+                    error("option --" .. opt .. " requires an argument", 3)
+                end
+            elseif argr or not is_arg(args[1], 2, descs) then
+                optval, args = args[1], { unpack(args, 2) }
             end
-            optval, args = args[1], { unpack(args, 2) }
         end
     elseif optval then
         error("option --" .. opt .. " cannot have an argument", 3)
@@ -39,12 +55,16 @@ local parse_s = function(opts, optstr, descs, args)
         local opt = optstr:sub(1, 1)
         optstr = optstr:sub(2)
         local desc = get_desc(opt, 1, descs)
-        if desc[3] then
+        local argr = desc[3]
+        if argr or argr == nil then
             if optstr == "" then
                 if #args == 0 then
-                    error("option -" .. opt .. " requires an argument", 3)
+                    if argr then
+                        error("option -" .. opt .. " requires an argument", 3)
+                    end
+                elseif argr or not is_arg(args[1], 1, descs) then
+                    optstr, args = args[1], { unpack(args, 2) }
                 end
-                optstr, args = args[1], { unpack(args, 2) }
             end
             optval, optstr = optstr, ""
         end
@@ -104,19 +124,23 @@ M.help = function(parser, f)
         for i, desc in ipairs(parser.descs) do
             if desc[1] or desc[2] then
                 local mv = desc.metavar
-                if not mv and desc[3] then
+                if not mv and (desc[3] or desc[3] == nil) then
                     mv = desc[2] and desc[2]:upper() or "VAL"
+                elseif desc[3] == false then
+                    mv = nil
                 end
                 local ln = {}
                 ln[#ln + 1] = "  "
                 if desc[1] then
                     ln[#ln + 1] = "-" .. desc[1]
-                    if mv then ln[#ln + 1] = "[" .. mv .. "]" end
+                    if mv then ln[#ln + 1] = (desc[3] and "[" or "[?")
+                        .. mv .. "]" end
                     if desc[2] then ln[#ln + 1] = ", " end
                 end
                 if desc[2] then
                     ln[#ln + 1] = "--" .. desc[2]
-                    if mv then ln[#ln + 1] = "=[" .. mv .. "]" end
+                    if mv then ln[#ln + 1] = (desc[3] and "=[" or "=[?")
+                        .. mv .. "]" end
                 end
                 ln = table.concat(ln)
                 lln = math.max(lln, #ln)
