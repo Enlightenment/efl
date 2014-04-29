@@ -421,6 +421,20 @@ abstract Elm_Widget (Evas_Smart, Elm_Interface_Atspi_Widget)
             Evas_Object *parent;
          }
       }
+      part_text {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         keys {
+            const char *part;
+         }
+         values {
+            const char *label;
+         }
+      }
    }
    methods {
       newest_focus_order_get {
@@ -728,21 +742,6 @@ abstract Elm_Widget (Evas_Smart, Elm_Interface_Atspi_Widget)
       focus_mouse_up_handle {
          /*@ No description supplied by the EAPI. */
          legacy null;
-      }
-      part_text_set {
-         /*@ No description supplied by the EAPI. */
-         params {
-            @in const char *part;
-            @in const char *label;
-         }
-      }
-      part_text_get {
-         /*@ No description supplied by the EAPI. */
-         const;
-         return const char *;
-         params {
-            @in const char *part;
-         }
       }
       theme_apply {
          /*@ 'Virtual' function on the widget being re-themed. */
