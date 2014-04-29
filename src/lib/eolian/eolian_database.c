@@ -505,7 +505,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
    Eina_List *itr;
    Eolian_Function foo_id;
    Class_desc *desc = _class_get(class_name);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   if (!desc) return NULL;
 
    if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_METHOD)
       EINA_LIST_FOREACH(desc->methods, itr, foo_id)
@@ -536,6 +536,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
           }
      }
 
+   ERR("Function %s not found in class %s", func_name, class_name);
    return NULL;
 }
 
