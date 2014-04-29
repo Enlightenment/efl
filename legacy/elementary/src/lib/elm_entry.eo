@@ -1187,6 +1187,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
    events {
       language,changed;
       access,changed;
+      activated;
    }
 
 }
