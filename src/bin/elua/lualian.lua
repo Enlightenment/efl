@@ -4,7 +4,7 @@
 local lualian = require("lualian")
 local  getopt = require("getopt")
 
-local arg_parser = {
+local opts, args, arg_parser = getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg, descs = {
         { "h", "help"   , false, help = "Show this message." },
@@ -22,8 +22,6 @@ local arg_parser = {
         }
     }
 }
-
-local opts, args = getopt.parse(arg_parser)
 
 if not opts then
     io.stderr:write(args, "\n")

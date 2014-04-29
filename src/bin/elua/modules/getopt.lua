@@ -98,7 +98,7 @@ M.parse = function(parser)
     if not ret then
         return nil, opts
     end
-    return opts, args
+    return opts, args, parser
 end
 local parse = M.parse
 
