@@ -3237,6 +3237,13 @@ eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
            case EVAS_COLORSPACE_GRY8:
              *stride = im->w * 1;
              return;
+           case EVAS_COLORSPACE_YCBCR422P601_PL:
+           case EVAS_COLORSPACE_YCBCR422P709_PL:
+           case EVAS_COLORSPACE_YCBCR422601_PL:
+           case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+           case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+             *stride = im->w * 1;
+             return;
            default:
              ERR("Requested stride on an invalid format %d", im->cs.space);
              *stride = 0;
