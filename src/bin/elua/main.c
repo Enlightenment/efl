@@ -239,13 +239,7 @@ static void print_help(const char *progname, FILE *stream) {
                     "  -E, --noenv                         Ignore environment variables.\n", progname);
 }
 
-static void print_license(FILE *stream) {
-    fprintf(stream, "Copyright (C) 2014 Daniel \"q66\" Kolesa, available under"
-                    " the terms of the MIT license.\n");
-}
-
 static struct option lopt[] = {
-    { "license"    , no_argument      , NULL, 'L' },
     { "help"       , no_argument      , NULL, 'h' },
 
     { "core-dir"   , required_argument, NULL, 'C' },
@@ -283,9 +277,6 @@ static int lua_main(lua_State *L) {
 
     while ((ch = getopt_long(argc, argv, "LhC:M:e:l:I:E", lopt, NULL)) != -1) {
         switch (ch) {
-            case 'L':
-                print_license(stdout);
-                return 0;
             case 'h':
                 print_help(progname, stdout);
                 return 0;

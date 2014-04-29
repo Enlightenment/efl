@@ -8,7 +8,6 @@ local arg_parser = {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg, descs = {
         { "h", "help"   , false, help = "Show this message." },
-        { "l", "license", false, help = "Show a license message." },
         { "v", "verbose", false, help = "Be verbose." },
         { "I", "include",  true, help = "Include a directory.",
             metavar = "DIR"
@@ -42,11 +41,6 @@ for i, opt in ipairs(opts) do
     local on = opt[1]
     if on == "h" then
         getopt.help(arg_parser, io.stdout)
-        return
-    end
-    if on == "l" then
-        print("Copyright (C) 2014 Daniel \"q66\" Kolesa, available under the "
-           .. "terms of the MIT license.")
         return
     end
     if on == "v" then
