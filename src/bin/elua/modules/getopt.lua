@@ -118,8 +118,12 @@ local repl_prog = function(str, progn)
     return (str:gsub("%f[%%]%%prog", progn):gsub("%%%%prog", "%%prog"))
 end
 
-M.help = function(parser, f)
-    f = f or io.stderr
+local buf_write = function(self, ...)
+    local vs = { ... }
+    for i, v in ipairs(vs) do self[#self + 1] = v end
+end
+
+local help = function(parser, f, category)
     local usage = parser.usage
     local progn = parser.prog or parser.args[0] or "program"
     if usage then
@@ -127,18 +131,21 @@ M.help = function(parser, f)
     else
         usage = ("Usage: %s [OPTIONS]"):format(progn)
     end
-    f:write(usage, "\n")
+    local buf = { write = buf_write }
+    buf:write(usage, "\n")
     if parser.header then
-        f:write("\n", repl_prog(parser.header, progn), "\n")
+        buf:write("\n", repl_prog(parser.header, progn), "\n")
     end
     if #parser.descs > 0 then
         local ohdr = parser.optheader
-        f:write("\n", ohdr and repl_prog(ohdr, progn)
+        buf:write("\n", ohdr and repl_prog(ohdr, progn)
             or "The following options are supported:", "\n\n")
         local lns = {}
         local lln = 0
+        local iscat = false
+        local wascat = false
         for i, desc in ipairs(parser.descs) do
-            if desc[1] or desc[2] then
+            if (not category or iscat) and (desc[1] or desc[2]) then
                 local mv = desc.metavar
                 if not mv and (desc[3] or desc[3] == nil) then
                     mv = desc[2] and desc[2]:upper() or "VAL"
@@ -161,18 +168,50 @@ M.help = function(parser, f)
                 ln = table.concat(ln)
                 lln = math.max(lln, #ln)
                 lns[#lns + 1] = { ln, desc.help }
+            elseif desc.category then
+                iscat = (not category) or (desc.alias    == category)
+                                       or (desc.category == category)
+                if iscat then
+                    wascat = true
+                    lns[#lns + 1] = { false, desc.category }
+                end
             end
         end
+        if category and not wascat then
+            error("no such category: '" .. category .. "'", 0)
+        end
+        local fcat = true
         for i, lnt in ipairs(lns) do
             local ln = lnt[1]
             local hp = lnt[2]
-            f:write(ln)
-            if hp then f:write((" "):rep(lln - #ln), "  ", hp) end
-            f:write("\n")
+            if ln == false then
+                if not fcat then
+                    buf:write("\n")
+                end
+                buf:write(hp, ":\n")
+                fcat = false
+            else
+                buf:write(ln)
+                if hp then buf:write((" "):rep(lln - #ln), "  ", hp) end
+                buf:write("\n")
+            end
         end
     end
     if parser.footer then
-        f:write("\n", repl_prog(parser.footer, progn), "\n")
+        buf:write("\n", repl_prog(parser.footer, progn), "\n")
+    end
+    f:write(table.concat(buf))
+end
+
+M.help = function(parser, category, f)
+    if category and type(category) ~= "string" then
+        f, category = category, f
+    end
+    f = f or io.stderr
+    local ret, err = pcall(help, parser, f, category)
+    if not ret then
+        f:write(err, "\n\n")
+        help(parser, f)
     end
 end
 
