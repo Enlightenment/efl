@@ -212,7 +212,9 @@ M.help = function(parser, category, f)
     if not ret then
         f:write(err, "\n\n")
         help(parser, f)
+        return false, err
     end
+    return true
 end
 
 M.geometry_parse_cb = function(desc, parser, v)
