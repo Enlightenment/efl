@@ -12,10 +12,12 @@ local libname, modname, cprefix = nil, nil, ""
 local printv = function() end
 
 local quit = false
+local args
 
-local opts, args, arg_parser = getopt.parse {
+getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
-    args  = arg, descs = {
+    args  = arg,
+    descs = {
         { "h", "help", false, help = "Show this message.",
             callback = function(d, parser)
                 getopt.help(parser, io.stdout)
@@ -25,8 +27,8 @@ local opts, args, arg_parser = getopt.parse {
         { "v", "verbose", false, help = "Be verbose.",
             callback = function() printv = print end
         },
-        { "I", "include", true, help = "Include a directory.",
-            metavar = "DIR", callback = function(d, p, v)
+        { "I", "include", true, help = "Include a directory.", metavar = "DIR",
+            callback = function(d, p, v)
                 include_dirs[#include_dirs + 1] = v
             end
         },
@@ -41,23 +43,28 @@ local opts, args, arg_parser = getopt.parse {
             callback = function(d, p, v) cprefix = v end
         },
         { "o", "output", true, help = "Specify output file name(s), by "
-            .. "default goes to stdout.", callback = function(d, p, v)
+            .. "default goes to stdout.",
+            callback = function(d, p, v)
                 output_files[#output_files + 1] = v
             end
         }
-    }, error_cb = function(parser, msg)
+    },
+    error_cb = function(parser, msg)
         io.stderr:write(msg, "\n")
         getopt.help(parser, io.stderr)
         quit = true
+    end,
+    done_cb = function(parser, opts, argsv)
+        if not libname and not quit then
+            io.stderr:write("library name not specified\n")
+            getopt.help(parser, io.stderr)
+            quit = true
+        end
+        args = argsv
     end
 }
 
 if quit then return end
-
-if not libname then
-    io.stderr:write("library name not specified\n")
-    getopt.help(arg_parser, io.stderr)
-end
 
 for i, v in ipairs(include_dirs) do
     lualian.include_dir(v)

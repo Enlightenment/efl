@@ -107,6 +107,9 @@ M.parse = function(parser)
         end
         return nil, opts
     end
+    if  parser.done_cb then
+        parser:done_cb(opts, args)
+    end
     return opts, args, parser
 end
 local parse = M.parse
