@@ -17,8 +17,8 @@ local opts, args, arg_parser = getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg, descs = {
         { "h", "help", false, help = "Show this message.",
-            callback = function(d, p)
-                getopt.help_cb(io.stdout)(d, p)
+            callback = function(d, parser)
+                getopt.help(parser, io.stdout)
                 quit = true
             end
         },
@@ -45,14 +45,12 @@ local opts, args, arg_parser = getopt.parse {
                 output_files[#output_files + 1] = v
             end
         }
-    }
+    }, error_cb = function(parser, msg)
+        io.stderr:write(msg, "\n")
+        getopt.help(parser, io.stderr)
+        quit = true
+    end
 }
-
-if not opts then
-    io.stderr:write(args, "\n")
-    getopt.help(arg_parser, io.stderr)
-    return
-end
 
 if quit then return end
 

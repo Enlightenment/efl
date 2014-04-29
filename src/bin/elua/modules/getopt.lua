@@ -2,16 +2,16 @@
 
 local M = {}
 
+local prefixes = { "-", "--" }
+
 local get_desc = function(opt, j, descs)
     for i, v in ipairs(descs) do
         if v[j] == opt then
             return v
         end
     end
-    error("option --" .. opt .. " not recognized", 4)
+    error("option " .. prefixes[j] .. opt .. " not recognized", 4)
 end
-
-local prefixes = { "-", "--" }
 
 local is_arg = function(opt, j, descs)
     if opt == "--" then return true end
@@ -102,6 +102,9 @@ end
 M.parse = function(parser)
     local ret, opts, args = pcall(getopt_u, parser)
     if not ret then
+        if  parser.error_cb then
+            parser:error_cb(opts)
+        end
         return nil, opts
     end
     return opts, args, parser
