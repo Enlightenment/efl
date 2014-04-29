@@ -282,10 +282,10 @@ evas_gl_common_texture_light_free(Evas_GL_Texture *tex)
 }
 
 static Evas_GL_Texture_Pool *
-_pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, GLenum format)
+_pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, GLenum intformat, GLenum format)
 {
    Evas_GL_Texture_Pool *pt;
-   Eina_Bool ok;
+   Eina_Bool ok, no_rounding = EINA_FALSE;
 
    if ((w > gc->shared->info.max_texture_size) ||
        (h > gc->shared->info.max_texture_size))
@@ -295,8 +295,17 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, GLenum fo
      }
    pt = calloc(1, sizeof(Evas_GL_Texture_Pool));
    if (!pt) return NULL;
-   h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
-   _tex_adjust(gc, &w, &h);
+
+   if ((intformat == etc1_fmt) ||
+       (intformat == etc2_rgb_fmt) ||
+       (intformat == etc2_rgba_fmt))
+     no_rounding = EINA_TRUE;
+
+   if (!no_rounding)
+     {
+        h = _tex_round_slot(gc, h) * gc->shared->info.tune.atlas.slot_size;
+        _tex_adjust(gc, &w, &h);
+     }
    pt->gc = gc;
    pt->w = w;
    pt->h = h;
