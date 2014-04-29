@@ -102,22 +102,26 @@ M.parse = function(parser)
 end
 local parse = M.parse
 
+local repl_prog = function(str, progn)
+    return (str:gsub("%f[%%]%%prog", progn):gsub("%%%%prog", "%%prog"))
+end
+
 M.help = function(parser, f)
     f = f or io.stderr
     local usage = parser.usage
     local progn = parser.prog or parser.args[0] or "program"
     if usage then
-        usage = usage:gsub("%%prog", progn)
+        usage = repl_prog(usage, progn)
     else
         usage = ("Usage: %s [OPTIONS]"):format(progn)
     end
     f:write(usage, "\n")
     if parser.header then
-        f:write("\n", parser.header:gsub("%%prog", progn), "\n")
+        f:write("\n", repl_prog(parser.header, progn), "\n")
     end
     if #parser.descs > 0 then
         local ohdr = parser.optheader
-        f:write("\n", ohdr and ohdr:gsub("%%prog", progn)
+        f:write("\n", ohdr and repl_prog(ohdr, progn)
             or "The following options are supported:", "\n\n")
         local lns = {}
         local lln = 0
@@ -156,7 +160,7 @@ M.help = function(parser, f)
         end
     end
     if parser.footer then
-        f:write("\n", parser.footer:gsub("%%prog", progn), "\n")
+        f:write("\n", repl_prog(parser.footer, progn), "\n")
     end
 end
 
