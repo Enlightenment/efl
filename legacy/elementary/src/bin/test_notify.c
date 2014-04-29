@@ -8,6 +8,7 @@ _bt(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *notify = data;
    evas_object_show(notify);
+   elm_object_focus_set(notify, EINA_TRUE);
 }
 
 static void
