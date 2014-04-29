@@ -3,6 +3,9 @@
 #endif
 #include <Elementary.h>
 
+#define FILESEP "file://"
+#define FILESEP_LEN sizeof(FILESEP) - 1
+
 static const char *img[9] =
 {
    "panel_01.jpg",
@@ -51,6 +54,91 @@ _item_ptr_cmp(const void *d1, const void *d2)
 
 static Elm_Genlist_Item_Class *itc1;
 static Elm_Gengrid_Item_Class *gic;
+
+static const char *
+_drag_data_build(Eina_List **items)
+{
+   const char *drag_data = NULL;
+   if (*items)
+     {
+        Eina_List *l;
+        Elm_Object_Item *it;
+        const char *t;
+        unsigned int len = 0;
+
+        EINA_LIST_FOREACH(*items, l, it)
+          {
+             t = (char *)elm_object_item_data_get(it);
+             if (t)
+               len += strlen(t);
+          }
+
+        drag_data = malloc(len + eina_list_count(*items) * (FILESEP_LEN + 1) + 1);
+        strcpy((char *) drag_data, "");
+
+        /* drag data in form: file://URI1\nfile://URI2\n */
+        EINA_LIST_FOREACH(*items, l, it)
+          {
+             t = (char *)elm_object_item_data_get(it);
+             if (t)
+               {
+                  strcat((char *) drag_data, FILESEP);
+                  strcat((char *) drag_data, t);
+                  strcat((char *) drag_data, "\n");
+               }
+          }
+     }
+   return drag_data;
+}
+
+static char *
+_drag_data_extract(char **drag_data)
+{
+   char *uri = NULL;
+   if (!drag_data)
+     return uri;
+
+   char *p = *drag_data;
+   if (!p)
+     return uri;
+   char *s = strstr(p, FILESEP);
+   if (s)
+     {
+        p += FILESEP_LEN;
+        if (!p)
+          return uri;
+     }
+   s = strchr(p, '\n');
+   if (s)
+     {
+        if (s - p > 0)
+          {
+             char *s1 = s - 1;
+             if (s1[0] == '\r')
+               s1[0] = '\0';
+             else
+               {
+                  char *s2 = s + 1;
+                  if (s2[0] == '\r')
+                    {
+                       s[0] = '\0';
+                       s++;
+                    }
+                  else
+                    s[0] = '\0';
+               }
+          }
+        else
+          s[0] = '\0';
+        s++;
+     }
+   else
+     p = NULL;
+   uri = p;
+   *drag_data = s;
+
+   return uri;
+}
 
 static char *
 gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
@@ -125,49 +213,51 @@ _gl_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Se
    printf("<%s> <%d> str=<%s>\n", __func__, __LINE__, (char *) ev->data);
    if (!ev->data)
      return EINA_FALSE;
+   if (ev->len <= 0)
+     return EINA_FALSE;
 
-   char *p = ev->data;
-   p = strchr(p, '#');
-   while (p)
+   char *dd = strndup(ev->data, ev->len);
+   if (!dd) return EINA_FALSE;
+   char *p = dd;
+
+   char *s =  _drag_data_extract(&p);
+   while (s)
      {
-        p++;
-        char *p2 = strchr(p, '#');
-        if (p2)
+        switch(yposret)
           {
-             *p2 = '\0';
-             printf("Item %s\n", p);
-             switch(yposret)
-               {
-                case -1:  /* Dropped on top-part of the it item */
-                     {
-                        elm_genlist_item_insert_before(obj,
-                              itc1, strdup(p), NULL, it,
-                              ELM_GENLIST_ITEM_NONE,
-                              NULL, NULL);
-                        break;
-                     }
-                case  0:  /* Dropped on center of the it item      */
-                case  1:  /* Dropped on botton-part of the it item */
-                     {
-                        if (!it) it = elm_genlist_last_item_get(obj);
-                        if (it) it = elm_genlist_item_insert_after(obj,
-                              itc1, strdup(p), NULL, it,
-                              ELM_GENLIST_ITEM_NONE,
-                              NULL, NULL);
-                        else
-                           it = elm_genlist_item_append(obj,
-                                 itc1, strdup(p), NULL,
-                                 ELM_GENLIST_ITEM_NONE,
-                                 NULL, NULL);
-                        break;
-                     }
-                default:
+           case -1:  /* Dropped on top-part of the it item */
+                {
+                   elm_genlist_item_insert_before(obj,
+                         itc1, strdup(s), NULL, it,
+                         ELM_GENLIST_ITEM_NONE,
+                         NULL, NULL);
+                   break;
+                }
+           case  0:  /* Dropped on center of the it item      */
+           case  1:  /* Dropped on botton-part of the it item */
+                {
+                   if (!it) it = elm_genlist_last_item_get(obj);
+                   if (it) it = elm_genlist_item_insert_after(obj,
+                                      itc1, strdup(s), NULL, it,
+                                      ELM_GENLIST_ITEM_NONE,
+                                                              NULL, NULL);
+                   else
+                     it = elm_genlist_item_append(obj,
+                                itc1, strdup(s), NULL,
+                                ELM_GENLIST_ITEM_NONE,
+                                NULL, NULL);
+                   break;
+                }
+           default:
+                {
+                   free(dd);
                    return EINA_FALSE;
-               }
-             p = p2;
+                }
           }
-        else p = NULL;
+
+        s = _drag_data_extract(&p);
      }
+   free(dd);
 
    return EINA_TRUE;
 }
@@ -178,24 +268,22 @@ _grid_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_
    printf("<%s> <%d> str=<%s>\n", __func__, __LINE__, (char *) ev->data);
    if (!ev->data)
      return EINA_FALSE;
+   if (ev->len <= 0)
+     return EINA_FALSE;
 
-   char *p = ev->data;
-   p = strchr(p, '#');
-   while (p)
+   char *dd = strndup(ev->data, ev->len);
+   if (!dd) return EINA_FALSE;
+   char *p = dd;
+   char *s = _drag_data_extract(&p);
+   while(s)
      {
-        p++;
-        char *p2 = strchr(p, '#');
-        if (p2)
-          {
-             *p2 = '\0';
-             printf("Item %s\n", p);
-             if (!it) it = elm_gengrid_last_item_get(obj);
-             if (it) it = elm_gengrid_item_insert_after(obj, gic, eina_stringshare_add(p), it, NULL, NULL);
-             else it = elm_gengrid_item_append(obj, gic, eina_stringshare_add(p), NULL, NULL);
-             p = p2;
-          }
-        else p = NULL;
+        if (it)
+          it = elm_gengrid_item_insert_after(obj, gic, eina_stringshare_add(s), it, NULL, NULL);
+        else
+          it = elm_gengrid_item_append(obj, gic, eina_stringshare_add(s), NULL, NULL);
+        s = _drag_data_extract(&p);
      }
+   free(dd);
 
    return EINA_TRUE;
 }
@@ -506,36 +594,8 @@ _gl_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
         if (!p)
           *items = eina_list_append(*items, it);
      }
-
-   if (*items)
-     {  /* Now we can actually compose string to send and start dragging */
-        Eina_List *l;
-        const char *t;
-        unsigned int len = 0;
-
-        EINA_LIST_FOREACH(*items, l, it)
-          {
-             t = (char *)elm_object_item_data_get(it);
-             if (t)
-               len += strlen(t);
-          }
-
-        drag_data = malloc(len + eina_list_count(*items) * 2 + 8);
-        strcpy((char *) drag_data, "file://");
-
-        EINA_LIST_FOREACH(*items, l, it)
-          {
-             t = (char *)elm_object_item_data_get(it);
-             if (t)
-               {
-                  strcat((char *) drag_data, "#");
-                  strcat((char *) drag_data, t);
-               }
-          }
-        strcat((char *) drag_data, "#");
-
-        printf("<%s> <%d> Sending <%s>\n", __func__, __LINE__, drag_data);
-     }
+   drag_data = _drag_data_build(items);
+   printf("<%s> <%d> Sending <%s>\n", __func__, __LINE__, drag_data);
 
    return drag_data;
 }
@@ -553,36 +613,8 @@ _grid_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
         if (!p)
           *items = eina_list_append(*items, it);
      }
-
-   if (*items)
-     {  /* Now we can actually compose string to send and start dragging */
-        Eina_List *l;
-        const char *t;
-        unsigned int len = 0;
-
-        EINA_LIST_FOREACH(*items, l, it)
-          {
-             t = (char *)elm_object_item_data_get(it);
-             if (t)
-               len += strlen(t);
-          }
-
-        drag_data = malloc(len + eina_list_count(*items) * 2 + 8);
-        strcpy((char *) drag_data, "file://");
-
-        EINA_LIST_FOREACH(*items, l, it)
-          {
-             t = (char *)elm_object_item_data_get(it);
-             if (t)
-               {
-                  strcat((char *) drag_data, "#");
-                  strcat((char *) drag_data, t);
-               }
-          }
-        strcat((char *) drag_data, "#");
-
-        printf("<%s> <%d> Sending <%s>\n", __func__, __LINE__, drag_data);
-     }
+   drag_data = _drag_data_build(items);
+   printf("<%s> <%d> Sending <%s>\n", __func__, __LINE__, drag_data);
 
    return drag_data;
 }
@@ -706,7 +738,7 @@ _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
    /* Now, collect data to send for drop from ALL selected items */
    /* Save list pointer to remove items after drop and free list on done */
    info->data = _grid_get_drag_data(obj, it, (Eina_List **) &info->donecbdata);
-   printf("%s - data = %s\n", __FUNCTION__, info->data);
+   printf("%s %d- data = %s\n", __FUNCTION__, __LINE__, info->data);
    info->acceptdata = info->donecbdata;
 
    if (info->data)
@@ -931,27 +963,28 @@ test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
 {
    Evas_Object *win = data;
-   char *p = strchr(ev->data, '#');
-   while (p)
+   if (ev->len <= 0)
+     return EINA_FALSE;
+
+   char *dd = strndup(ev->data, ev->len);
+   if (!dd) return EINA_FALSE;
+   char *p = dd;
+   char *s = _drag_data_extract(&p);
+   while (s)
      {
-        p++;
-        char *p2 = strchr(p, '#');
-        if (p2)
-          {
-             *p2 = '\0';
-             Evas_Object *ic = elm_icon_add(win);
-             elm_image_file_set(ic, p, NULL);
-             evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-             Evas_Object *bt = elm_button_add(win);
-             elm_object_text_set(bt, "Dropped button");
-             elm_object_part_content_set(bt, "icon", ic);
-             elm_box_pack_end(obj, bt);
-             evas_object_show(bt);
-             evas_object_show(ic);
-             p = p2;
-          }
-        else p = NULL;
+        Evas_Object *ic = elm_icon_add(win);
+        elm_image_file_set(ic, s, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        Evas_Object *bt = elm_button_add(win);
+        elm_object_text_set(bt, "Dropped button");
+        elm_object_part_content_set(bt, "icon", ic);
+        elm_box_pack_end(obj, bt);
+        evas_object_show(bt);
+        evas_object_show(ic);
+        s = _drag_data_extract(&p);
      }
+   free(dd);
+
    return EINA_TRUE;
 }
 
@@ -964,19 +997,21 @@ static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Sele
 {
    Evas_Object *win = data;
    Evas_Object *ic;
+   if (ev->len <= 0)
+     return EINA_FALSE;
 
-   char *p = strchr(ev->data, '#');
-   if (!p) return EINA_FALSE;
-   p++;
-   char *p2 = strchr(p, '#');
-   if (!p2) return EINA_FALSE;
-   *p2 = '\0';
+   char *dd = strndup(ev->data, ev->len);
+   if (!dd) return EINA_FALSE;
+   char *p = dd;
+   char *s = _drag_data_extract(&p);
    ic = elm_icon_add(win);
-   elm_image_file_set(ic, p, NULL);
+   elm_image_file_set(ic, s, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    evas_object_del(elm_object_part_content_get(obj, "icon"));
    elm_object_part_content_set(obj, "icon", ic);
    evas_object_show(ic);
+   free(dd);
+
    return EINA_TRUE;
 }
 
@@ -990,13 +1025,16 @@ static Eina_Bool _drop_but_cb_remove_cb(void *data EINA_UNUSED, Evas_Object *obj
 
 static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev)
 {
-   char *p = strchr(ev->data, '#');
-   if (!p) return EINA_FALSE;
-   p++;
-   char *p2 = strchr(p, '#');
-   if (!p2) return EINA_FALSE;
-   *p2 = '\0';
-   elm_bg_file_set(obj, p, NULL);
+   if (ev->len <= 0)
+     return EINA_FALSE;
+
+   char *dd = strndup(ev->data, ev->len);
+   if (!dd) return EINA_FALSE;
+   char *p = dd;
+   char *s = _drag_data_extract(&p);
+   elm_bg_file_set(obj, s, NULL);
+   free(dd);
+
    return EINA_TRUE;
 }
 
