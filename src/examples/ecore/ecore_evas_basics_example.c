@@ -20,7 +20,9 @@ _stdin_cb(void *data EINA_UNUSED, Ecore_Fd_Handler *handler EINA_UNUSED)
    Ecore_Evas *ee;
    char c;
 
-   scanf("%c", &c);
+   int ret = scanf("%c", &c);
+   if (ret < 1) return ECORE_CALLBACK_RENEW;
+
    if (c == 'h')
      EINA_LIST_FOREACH(ecore_evas_ecore_evas_list_get(), l, ee)
        ecore_evas_hide(ee);
