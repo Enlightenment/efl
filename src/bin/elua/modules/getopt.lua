@@ -23,7 +23,7 @@ local is_arg = function(opt, j, descs)
     return false
 end
 
-local parse_l = function(opts, opt, descs, args)
+local parse_l = function(opts, opt, descs, args, parser)
     local optval
     local i = opt:find("=")
     if i then
@@ -45,11 +45,14 @@ local parse_l = function(opts, opt, descs, args)
     elseif optval then
         error("option --" .. opt .. " cannot have an argument", 3)
     end
-    opts[#opts + 1] = { desc.alias or desc[1] or desc[2], optval }
+    local rets
+    if desc.callback then rets = { desc:callback(parser, optval) } end
+    if not rets or #rets == 0 then rets = { optval } end
+    opts[#opts + 1] = { desc.alias or desc[1] or desc[2], unpack(rets) }
     return opts, args
 end
 
-local parse_s = function(opts, optstr, descs, args)
+local parse_s = function(opts, optstr, descs, args, parser)
     while optstr ~= "" do
         local optval
         local opt = optstr:sub(1, 1)
@@ -68,7 +71,10 @@ local parse_s = function(opts, optstr, descs, args)
             end
             optval, optstr = optstr, ""
         end
-        opts[#opts + 1] = { desc.alias or desc[1] or desc[2], optval }
+        local rets
+        if desc.callback then rets = { desc:callback(parser, optval) } end
+        if not rets or #rets == 0 then rets = { optval } end
+        opts[#opts + 1] = { desc.alias or desc[1] or desc[2], unpack(rets) }
     end
     return opts, args
 end
@@ -84,10 +90,10 @@ local getopt_u  = function(parser)
         end
         if args[1]:sub(1, 2) == "--" then
             opts, args = parse_l(opts, args[1]:sub(3), descs,
-                { unpack(args, 2) })
+                { unpack(args, 2) }, parser)
         else
             opts, args = parse_s(opts, args[1]:sub(2), descs,
-                { unpack(args, 2) })
+                { unpack(args, 2) }, parser)
         end
     end
     return opts, args
@@ -164,12 +170,18 @@ M.help = function(parser, f)
     end
 end
 
-M.geometry_parse = function(v)
+M.geometry_parse_cb = function(desc, parser, v)
     return v:match("^(%d+):(%d+):(%d+):(%d+)$")
 end
 
-M.size_parse = function(v)
+M.size_parse_cb = function(desc, parser, v)
     return v:match("^(%d+)x(%d+)$")
+end
+
+M.help_cb = function(fstream)
+    return function(desc, parser, v)
+        M.help(parser, fstream)
+    end
 end
 
 return M

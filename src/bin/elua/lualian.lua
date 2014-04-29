@@ -7,7 +7,9 @@ local  getopt = require("getopt")
 local opts, args, arg_parser = getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg, descs = {
-        { "h", "help"   , false, help = "Show this message." },
+        { "h", "help"   , false, help = "Show this message.",
+            callback = getopt.help_cb(io.stdout)
+        },
         { "v", "verbose", false, help = "Be verbose." },
         { "I", "include",  true, help = "Include a directory.",
             metavar = "DIR"
@@ -35,12 +37,11 @@ local libname, modname, cprefix = nil, nil, ""
 
 local printv = function() end
 
+local quits = { ["h"] = true }
+
 for i, opt in ipairs(opts) do
     local on = opt[1]
-    if on == "h" then
-        getopt.help(arg_parser, io.stdout)
-        return
-    end
+    if quits[on] then return end
     if on == "v" then
         printv = print
     elseif on == "I" then
