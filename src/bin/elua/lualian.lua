@@ -4,23 +4,46 @@
 local lualian = require("lualian")
 local  getopt = require("getopt")
 
+local include_dirs = {}
+local output_files = {}
+
+local libname, modname, cprefix = nil, nil, ""
+
+local printv = function() end
+
+local quit = false
+
 local opts, args, arg_parser = getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg, descs = {
-        { "h", "help"   , false, help = "Show this message.",
-            callback = getopt.help_cb(io.stdout)
+        { "h", "help", false, help = "Show this message.",
+            callback = function(d, p)
+                getopt.help_cb(io.stdout)(d, p)
+                quit = true
+            end
         },
-        { "v", "verbose", false, help = "Be verbose." },
-        { "I", "include",  true, help = "Include a directory.",
-            metavar = "DIR"
+        { "v", "verbose", false, help = "Be verbose.",
+            callback = function() printv = print end
         },
-        { "L", "library",  true, help = "Specify a C library name." },
-        { "M", "module" ,  true, help = "Specify a module name." },
-        { "P", "prefix" ,  true, help = "Specify a class name prefix "
-            .. "to strip out for public interfaces."
+        { "I", "include", true, help = "Include a directory.",
+            metavar = "DIR", callback = function(d, p, v)
+                include_dirs[#include_dirs + 1] = v
+            end
         },
-        { "o", "output" ,  true, help = "Specify output file name(s), by "
-            .. "default goes to stdout."
+        { "L", "library", true, help = "Specify a C library name.",
+            callback = function(d, p, v) libname = v end
+        },
+        { "M", "module", true, help = "Specify a module name.",
+            callback = function(d, p, v) modname = v end
+        },
+        { "P", "prefix", true, help = "Specify a class name prefix "
+            .. "to strip out for public interfaces.",
+            callback = function(d, p, v) cprefix = v end
+        },
+        { "o", "output", true, help = "Specify output file name(s), by "
+            .. "default goes to stdout.", callback = function(d, p, v)
+                output_files[#output_files + 1] = v
+            end
         }
     }
 }
@@ -31,31 +54,7 @@ if not opts then
     return
 end
 
-local include_dirs = {}
-local output_files = {}
-local libname, modname, cprefix = nil, nil, ""
-
-local printv = function() end
-
-local quits = { ["h"] = true }
-
-for i, opt in ipairs(opts) do
-    local on = opt[1]
-    if quits[on] then return end
-    if on == "v" then
-        printv = print
-    elseif on == "I" then
-        include_dirs[#include_dirs + 1] = opt[2]
-    elseif on == "L" then
-        libname = opt[2]
-    elseif on == "M" then
-        modname = opt[2]
-    elseif on == "P" then
-        cprefix = opt[2]
-    elseif on == "o" then
-        output_files[#output_files + 1] = opt[2]
-    end
-end
+if quit then return end
 
 if not libname then
     io.stderr:write("library name not specified\n")
