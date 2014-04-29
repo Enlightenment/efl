@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 
-#define POPUP_POINT_MAX 6
+#define POPUP_POINT_MAX 8
 
 typedef struct
 {
@@ -20,7 +20,9 @@ static Evas_Rel_Coord_Point _popup_point[POPUP_POINT_MAX] =
    { 0.5, 0.5 },
    { 0.99, 0.01 },
    { 0.01, 0.99 },
-   { 0.99, 0.99 }
+   { 0.99, 0.99 },
+   { 0.0, 0.0 },
+   { 1.5, 1.5 }
 };
 
 static void
