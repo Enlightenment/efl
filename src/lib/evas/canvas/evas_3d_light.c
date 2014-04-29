@@ -1,16 +1,9 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <stdlib.h>
 #include <math.h>
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_3D_LIGHT_CLASS
-
 
 static Eina_Bool
 _light_node_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,

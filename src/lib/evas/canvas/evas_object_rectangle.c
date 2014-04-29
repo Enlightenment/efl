@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_OBJ_RECTANGLE_CLASS
 
 /* private magic number for rectangle objects */

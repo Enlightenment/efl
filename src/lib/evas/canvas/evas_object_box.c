@@ -5,8 +5,6 @@
 # undef remove
 #endif
 
-#include <Eo.h>
-
 #define MY_CLASS_NAME "Evas_Box"
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Box"
 

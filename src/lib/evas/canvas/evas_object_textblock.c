@@ -65,8 +65,6 @@
 #include "evas_private.h"
 #include <stdlib.h>
 
-#include "Eo.h"
-
 //#define LYDBG(f, args...) printf(f, ##args)
 #define LYDBG(f, args...)
 

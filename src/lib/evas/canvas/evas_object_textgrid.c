@@ -1,8 +1,6 @@
 #include "evas_common_private.h" /* Includes evas_bidi_utils stuff. */
 #include "evas_private.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_OBJ_TEXTGRID_CLASS
 
 #define MY_CLASS_NAME "Evas_Textgrid"

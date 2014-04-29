@@ -1,12 +1,6 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <stdlib.h>
 #include "evas_common_private.h"
 #include "evas_private.h"
-
-#include "Eo.h"
 
 #define MY_CLASS EVAS_3D_TEXTURE_CLASS
 

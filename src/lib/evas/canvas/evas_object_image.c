@@ -1,7 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -19,8 +15,6 @@
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
 #include "evas_filter.h"
-
-#include <Eo.h>
 
 #define MY_CLASS EVAS_OBJ_IMAGE_CLASS
 

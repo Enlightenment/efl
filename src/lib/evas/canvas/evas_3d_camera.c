@@ -1,10 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_3D_CAMERA_CLASS
-
 
 static Eina_Bool
 _camera_node_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,

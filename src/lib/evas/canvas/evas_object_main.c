@@ -3,8 +3,6 @@
 
 EVAS_MEMPOOL(_mp_sh);
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_OBJ_CLASS
 
 #define MY_CLASS_NAME "Evas_Object"

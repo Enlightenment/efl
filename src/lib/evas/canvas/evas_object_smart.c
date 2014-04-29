@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_OBJ_SMART_CLASS
 
 #define MY_CLASS_NAME "Evas_Smart"

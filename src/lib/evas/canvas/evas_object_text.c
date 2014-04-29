@@ -2,8 +2,6 @@
 #include "evas_private.h"
 #include "evas_filter.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_OBJ_TEXT_CLASS
 
 #define MY_CLASS_NAME "Evas_Text"

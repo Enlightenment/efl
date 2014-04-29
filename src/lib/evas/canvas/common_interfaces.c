@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "Eo.h"
-
 Eina_Hash* signals_hash_table = NULL;
 
 static const Eo_Event_Description *_evas_clickable_interface_event_desc[];

@@ -2,8 +2,6 @@
 #include "evas_private.h"
 #include <errno.h>
 
-#include <Eo.h>
-
 #define MY_CLASS EVAS_OBJ_TABLE_CLASS
 
 #define MY_CLASS_NAME "Evas_Table"

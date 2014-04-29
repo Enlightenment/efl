@@ -5,8 +5,6 @@
 #include "evas_cs2_private.h"
 #endif
 
-#include <Eo.h>
-
 #define MY_CLASS EVAS_OUT_CLASS
 typedef struct _Evas_Out_Data Evas_Out_Data;
 struct _Evas_Out_Data

@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "Eo.h"
-
 #define MY_CLASS EVAS_3D_OBJECT_CLASS
 
 EOLIAN static void
