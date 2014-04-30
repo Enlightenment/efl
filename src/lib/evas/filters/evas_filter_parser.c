@@ -1575,11 +1575,10 @@ _lua_program_get(lua_State *L)
    return pgm;
 }
 
-static int
+static Eina_Bool
 _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
 {
    Eina_Bool ok;
-   int retc = 0;
 
    if (!param) goto fail;
    if (param->set)
@@ -1648,13 +1647,12 @@ _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
      }
 
    param->set = EINA_TRUE;
-
-   return retc;
+   return EINA_TRUE;
 
 fail:
    ERR("Invalid value for parameter %s", param->name);
    luaL_error(L, "Invalid value for parameter %s", param->name);
-   return 0;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -1709,7 +1707,8 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
                   goto fail;
                }
 
-             _lua_parameter_parse(L, param, -1);
+             if (!_lua_parameter_parse(L, param, -1))
+               goto fail;
              lua_pop(L, 1);
 
              if (seqmode)
@@ -1722,8 +1721,9 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
      {
         EINA_INLIST_FOREACH(instr->params, param)
           {
-             if ((++i) >= argc) break;
-             _lua_parameter_parse(L, param, i);
+             if ((++i) > argc) break;
+             if (!_lua_parameter_parse(L, param, i))
+               goto fail;
           }
      }
 
