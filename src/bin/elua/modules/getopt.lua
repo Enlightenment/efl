@@ -191,6 +191,7 @@ local help = function(parser, f, category)
                 buf:write(hp, ":\n")
                 fcat = false
             else
+                fcat = false
                 buf:write(ln)
                 if hp then buf:write((" "):rep(lln - #ln), "  ", hp) end
                 buf:write("\n")
@@ -227,7 +228,7 @@ end
 
 M.help_cb = function(fstream)
     return function(desc, parser, v)
-        M.help(parser, fstream)
+        M.help(parser, v, fstream)
     end
 end
 
