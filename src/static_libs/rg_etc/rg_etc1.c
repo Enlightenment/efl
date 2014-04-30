@@ -151,6 +151,8 @@ enum RG_Etc_Constants
 #define B_VAL_GET(p) (((DATA8 *)(p))[1])
 #endif
 
+#define A_MASK (0xFFul << 24)
+
 // For unpacking and writing BGRA output data
 #define ARGB_JOIN(a,r,g,b) \
         (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
@@ -529,21 +531,9 @@ rg_etc1_color_quad_init(unsigned char r, unsigned char g, unsigned char b, unsig
 }
 
 static inline unsigned int
-rg_etc1_color_quad_set(unsigned int old_color, unsigned int new_color, unsigned char preserve_alpha)
+rg_etc1_color_quad_set(unsigned int old_color, unsigned int new_color)
 {
-   if (preserve_alpha)
-     {
-        unsigned char r, g, b, a;
-
-        // Used for UNPACKING
-        a = A_VAL_SET(&old_color);
-        r = R_VAL_SET(&new_color);
-        g = G_VAL_SET(&new_color);
-        b = B_VAL_SET(&new_color);
-
-        return ARGB_JOIN(a, r, g, b);
-     }
-   return new_color;
+   return (new_color & ~A_MASK) | (old_color & A_MASK);
 }
 
 static inline void
@@ -876,15 +866,15 @@ rg_etc_block_base4_color_get(const unsigned char bytes[8], unsigned char idx)
 
    if (idx)
      {
-        r = rg_etc1_block_byte_bits_get(bytes, cETC1AbsColor4R2BitOffset, 4);
-        g = rg_etc1_block_byte_bits_get(bytes, cETC1AbsColor4G2BitOffset, 4);
-        b = rg_etc1_block_byte_bits_get(bytes, cETC1AbsColor4B2BitOffset, 4);
+        r = (bytes[0]) & ((1 << 4) - 1);
+        g = (bytes[1]) & ((1 << 4) - 1);
+        b = (bytes[2]) & ((1 << 4) - 1);
      }
    else
      {
-        r = rg_etc1_block_byte_bits_get(bytes, cETC1AbsColor4R1BitOffset, 4);
-        g = rg_etc1_block_byte_bits_get(bytes, cETC1AbsColor4G1BitOffset, 4);
-        b = rg_etc1_block_byte_bits_get(bytes, cETC1AbsColor4B1BitOffset, 4);
+        r = (bytes[0] >> 4) & ((1 << 4) - 1);
+        g = (bytes[1] >> 4) & ((1 << 4) - 1);
+        b = (bytes[2] >> 4) & ((1 << 4) - 1);
      }
 
    return b | (g << 4) | (r << 8);
@@ -912,9 +902,9 @@ rg_etc1_block_base5_color_get(const unsigned char bytes[8])
 {
    unsigned short r, g, b;
 
-   r = rg_etc1_block_byte_bits_get(bytes, cETC1BaseColor5RBitOffset, 5);
-   g = rg_etc1_block_byte_bits_get(bytes, cETC1BaseColor5GBitOffset, 5);
-   b = rg_etc1_block_byte_bits_get(bytes, cETC1BaseColor5BBitOffset, 5);
+   r = (bytes[0] >> 3) & ((1 << 5) - 1);
+   g = (bytes[1] >> 3) & ((1 << 5) - 1);
+   b = (bytes[2] >> 3) & ((1 << 5) - 1);
 
    return b | (g << 5) | (r << 10);
 }
@@ -932,9 +922,9 @@ rg_etc1_block_delta3_color_get(const unsigned char bytes[8])
 {
    unsigned short r, g, b;
 
-   r = rg_etc1_block_byte_bits_get(bytes, cETC1DeltaColor3RBitOffset, 3);
-   g = rg_etc1_block_byte_bits_get(bytes, cETC1DeltaColor3GBitOffset, 3);
-   b = rg_etc1_block_byte_bits_get(bytes, cETC1DeltaColor3BBitOffset, 3);
+   r = (bytes[0]) & ((1 << 3) - 1);
+   g = (bytes[1]) & ((1 << 3) - 1);
+   b = (bytes[2]) & ((1 << 3) - 1);
 
    return b | (g << 3) | (r << 6);
 }
@@ -1207,13 +1197,14 @@ rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pDst_pixels_BGRA, boo
    unsigned char diff_flag, flip_flag, table_index0, table_index1;
    unsigned int subblock_colors0[4] = { 0 };
    unsigned int subblock_colors1[4] = { 0 };
-   unsigned char x, y;
    unsigned char success = 1;
+   const unsigned char *bytes;
+   bytes = (unsigned char *)ETC1_block;
 
    diff_flag = rg_etc1_block_diff_bit_get(ETC1_block);
    flip_flag = rg_etc1_block_flip_bit_get(ETC1_block);
-   table_index0 = rg_etc1_block_inten_table_get(ETC1_block, 0);
-   table_index1 = rg_etc1_block_inten_table_get(ETC1_block, 1);
+   table_index0 = (bytes[3] >> 5) & 7;
+   table_index1 = (bytes[3] >> 2) & 7;
 
    if (diff_flag)
      {
@@ -1249,44 +1240,137 @@ rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pDst_pixels_BGRA, boo
    //  0011
    //  0011
    //  0011
-   // Depending on flip_flag.
+   unsigned char val0 = (bytes[7] & 1) | ((bytes[5] & 1) << 1);
+   unsigned char val1 = ((bytes[7] >> 4) & 1) | (((bytes[5] >> 4) & 1) << 1);
+   unsigned char val2 = (bytes[6] & 1) | ((bytes[4] & 1) << 1);
+   unsigned char val3 = ((bytes[6] >> 4) & 1) | (((bytes[4] >> 4) & 1) << 1);
+   unsigned char val4 = ((bytes[7] >> 1) & 1) | (((bytes[5] >> 1) & 1) << 1);
+   unsigned char val5 = ((bytes[7] >> 5) & 1) | (((bytes[5] >> 5) & 1) << 1);
+   unsigned char val6 = ((bytes[6] >> 1) & 1) | (((bytes[4] >> 1) & 1) << 1);
+   unsigned char val7 = ((bytes[6] >> 5) & 1) | (((bytes[4] >> 5) & 1) << 1);
+   unsigned char val8 = ((bytes[7] >> 2) & 1) | (((bytes[5] >> 2) & 1) << 1);
+   unsigned char val9 = ((bytes[7] >> 6) & 1) | (((bytes[5] >> 6) & 1) << 1);
+   unsigned char val10 = ((bytes[6] >> 2) & 1) | (((bytes[4] >> 2) & 1) << 1);
+   unsigned char val11 = ((bytes[6] >> 6) & 1) | (((bytes[4] >> 6) & 1) << 1);
+   unsigned char val12 = ((bytes[7] >> 3) & 1) | (((bytes[5] >> 3) & 1) << 1);
+   unsigned char val13 = ((bytes[7] >> 7) & 1) | (((bytes[5] >> 7) & 1) << 1);
+   unsigned char val14 = ((bytes[6] >> 3) & 1) | (((bytes[4] >> 3) & 1) << 1);
+   unsigned char val15 = ((bytes[6] >> 7) & 1) | (((bytes[4] >> 7) & 1) << 1);
 
-   if (flip_flag)
-     {
-        for (y = 0; y < 2; y++)
-          {
-             for (x = 0; x < 4; x++)
-               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
-                                                  subblock_colors0[rg_etc1_block_selector_get(ETC1_block, x, y)],
-                                                  preserve_alpha);
-             pDst_pixels_BGRA += 4;
-          }
-
-        for (y = 2; y < 4; y++)
-          {
-             for (x = 0; x < 4; x++)
-               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
-                                                  subblock_colors1[rg_etc1_block_selector_get(ETC1_block, x, y)],
-                                                  preserve_alpha);
-             pDst_pixels_BGRA += 4;
-          }
-     }
-   else
-     {
-        for (y = 0; y < 4; y++)
-          {
-             for (x = 0; x < 2; x++)
-               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
-                                                  subblock_colors0[rg_etc1_block_selector_get(ETC1_block, x, y)],
-                                                  preserve_alpha);
-             for (; x < 4; x++)
-               pDst_pixels_BGRA[x] = rg_etc1_color_quad_set(pDst_pixels_BGRA[x],
-                                                  subblock_colors1[rg_etc1_block_selector_get(ETC1_block, x, y)],
-                                                  preserve_alpha);
-
-             pDst_pixels_BGRA += 4;
-          }
-     }
+   if (preserve_alpha)   // Depending on flip_flag.
+      {
+       if (flip_flag)
+         {
+            pDst_pixels_BGRA[0] = rg_etc1_color_quad_set(pDst_pixels_BGRA[0],
+                                               subblock_colors0[rg_etc1_to_selector_index[val0]]);
+            pDst_pixels_BGRA[1] = rg_etc1_color_quad_set(pDst_pixels_BGRA[1],
+                                               subblock_colors0[rg_etc1_to_selector_index[val1]]);
+            pDst_pixels_BGRA[2] = rg_etc1_color_quad_set(pDst_pixels_BGRA[2],
+                                               subblock_colors0[rg_etc1_to_selector_index[val2]]);
+            pDst_pixels_BGRA[3] = rg_etc1_color_quad_set(pDst_pixels_BGRA[3],
+                                               subblock_colors0[rg_etc1_to_selector_index[val3]]);
+            pDst_pixels_BGRA[4] = rg_etc1_color_quad_set(pDst_pixels_BGRA[4],
+                                               subblock_colors0[rg_etc1_to_selector_index[val4]]);
+            pDst_pixels_BGRA[5] = rg_etc1_color_quad_set(pDst_pixels_BGRA[5],
+                                               subblock_colors0[rg_etc1_to_selector_index[val5]]);
+            pDst_pixels_BGRA[6] = rg_etc1_color_quad_set(pDst_pixels_BGRA[6],
+                                               subblock_colors0[rg_etc1_to_selector_index[val6]]);
+            pDst_pixels_BGRA[7] = rg_etc1_color_quad_set(pDst_pixels_BGRA[7],
+                                               subblock_colors0[rg_etc1_to_selector_index[val7]]);
+            pDst_pixels_BGRA[8] = rg_etc1_color_quad_set(pDst_pixels_BGRA[8],
+                                               subblock_colors1[rg_etc1_to_selector_index[val8]]);
+            pDst_pixels_BGRA[9] = rg_etc1_color_quad_set(pDst_pixels_BGRA[9],
+                                               subblock_colors1[rg_etc1_to_selector_index[val9]]);
+            pDst_pixels_BGRA[10] = rg_etc1_color_quad_set(pDst_pixels_BGRA[10],
+                                               subblock_colors1[rg_etc1_to_selector_index[val10]]);
+            pDst_pixels_BGRA[11] = rg_etc1_color_quad_set(pDst_pixels_BGRA[11],
+                                               subblock_colors1[rg_etc1_to_selector_index[val11]]);
+            pDst_pixels_BGRA[12] = rg_etc1_color_quad_set(pDst_pixels_BGRA[12],
+                                               subblock_colors1[rg_etc1_to_selector_index[val12]]);
+            pDst_pixels_BGRA[13] = rg_etc1_color_quad_set(pDst_pixels_BGRA[13],
+                                               subblock_colors1[rg_etc1_to_selector_index[val13]]);
+            pDst_pixels_BGRA[14] = rg_etc1_color_quad_set(pDst_pixels_BGRA[14],
+                                               subblock_colors1[rg_etc1_to_selector_index[val14]]);
+            pDst_pixels_BGRA[15] = rg_etc1_color_quad_set(pDst_pixels_BGRA[15],
+                                               subblock_colors1[rg_etc1_to_selector_index[val15]]);
+         }
+       else
+         {
+            pDst_pixels_BGRA[0] = rg_etc1_color_quad_set(pDst_pixels_BGRA[0],
+                                               subblock_colors0[rg_etc1_to_selector_index[val0]]);
+            pDst_pixels_BGRA[1] = rg_etc1_color_quad_set(pDst_pixels_BGRA[1],
+                                               subblock_colors0[rg_etc1_to_selector_index[val1]]);
+            pDst_pixels_BGRA[2] = rg_etc1_color_quad_set(pDst_pixels_BGRA[2],
+                                               subblock_colors1[rg_etc1_to_selector_index[val2]]);
+            pDst_pixels_BGRA[3] = rg_etc1_color_quad_set(pDst_pixels_BGRA[3],
+                                               subblock_colors1[rg_etc1_to_selector_index[val3]]);
+            pDst_pixels_BGRA[4] = rg_etc1_color_quad_set(pDst_pixels_BGRA[4],
+                                               subblock_colors0[rg_etc1_to_selector_index[val4]]);
+            pDst_pixels_BGRA[5] = rg_etc1_color_quad_set(pDst_pixels_BGRA[5],
+                                               subblock_colors0[rg_etc1_to_selector_index[val5]]);
+            pDst_pixels_BGRA[6] = rg_etc1_color_quad_set(pDst_pixels_BGRA[6],
+                                               subblock_colors1[rg_etc1_to_selector_index[val6]]);
+            pDst_pixels_BGRA[7] = rg_etc1_color_quad_set(pDst_pixels_BGRA[7],
+                                               subblock_colors1[rg_etc1_to_selector_index[val7]]);
+            pDst_pixels_BGRA[8] = rg_etc1_color_quad_set(pDst_pixels_BGRA[8],
+                                               subblock_colors0[rg_etc1_to_selector_index[val8]]);
+            pDst_pixels_BGRA[9] = rg_etc1_color_quad_set(pDst_pixels_BGRA[9],
+                                               subblock_colors0[rg_etc1_to_selector_index[val9]]);
+            pDst_pixels_BGRA[10] = rg_etc1_color_quad_set(pDst_pixels_BGRA[10],
+                                               subblock_colors1[rg_etc1_to_selector_index[val10]]);
+            pDst_pixels_BGRA[11] = rg_etc1_color_quad_set(pDst_pixels_BGRA[11],
+                                               subblock_colors1[rg_etc1_to_selector_index[val11]]);
+            pDst_pixels_BGRA[12] = rg_etc1_color_quad_set(pDst_pixels_BGRA[12],
+                                               subblock_colors0[rg_etc1_to_selector_index[val12]]);
+            pDst_pixels_BGRA[13] = rg_etc1_color_quad_set(pDst_pixels_BGRA[13],
+                                               subblock_colors0[rg_etc1_to_selector_index[val13]]);
+            pDst_pixels_BGRA[14] = rg_etc1_color_quad_set(pDst_pixels_BGRA[14],
+                                               subblock_colors1[rg_etc1_to_selector_index[val14]]);
+            pDst_pixels_BGRA[15] = rg_etc1_color_quad_set(pDst_pixels_BGRA[15],
+                                               subblock_colors1[rg_etc1_to_selector_index[val15]]);
+         }
+      }
+      else
+      {
+       if (flip_flag)
+         {
+            pDst_pixels_BGRA[0] = subblock_colors0[rg_etc1_to_selector_index[val0]];
+            pDst_pixels_BGRA[1] = subblock_colors0[rg_etc1_to_selector_index[val1]];
+            pDst_pixels_BGRA[2] = subblock_colors0[rg_etc1_to_selector_index[val2]];
+            pDst_pixels_BGRA[3] = subblock_colors0[rg_etc1_to_selector_index[val3]];
+            pDst_pixels_BGRA[4] = subblock_colors0[rg_etc1_to_selector_index[val4]];
+            pDst_pixels_BGRA[5] = subblock_colors0[rg_etc1_to_selector_index[val5]];
+            pDst_pixels_BGRA[6] = subblock_colors0[rg_etc1_to_selector_index[val6]];
+            pDst_pixels_BGRA[7] = subblock_colors0[rg_etc1_to_selector_index[val7]];
+            pDst_pixels_BGRA[8] = subblock_colors1[rg_etc1_to_selector_index[val8]];
+            pDst_pixels_BGRA[9] = subblock_colors1[rg_etc1_to_selector_index[val9]];
+            pDst_pixels_BGRA[10] = subblock_colors1[rg_etc1_to_selector_index[val10]];
+            pDst_pixels_BGRA[11] = subblock_colors1[rg_etc1_to_selector_index[val11]];
+            pDst_pixels_BGRA[12] = subblock_colors1[rg_etc1_to_selector_index[val12]];
+            pDst_pixels_BGRA[13] = subblock_colors1[rg_etc1_to_selector_index[val13]];
+            pDst_pixels_BGRA[14] = subblock_colors1[rg_etc1_to_selector_index[val14]];
+            pDst_pixels_BGRA[15] = subblock_colors1[rg_etc1_to_selector_index[val15]];
+         }
+       else
+         {
+            pDst_pixels_BGRA[0] = subblock_colors0[rg_etc1_to_selector_index[val0]];
+            pDst_pixels_BGRA[1] = subblock_colors0[rg_etc1_to_selector_index[val1]];
+            pDst_pixels_BGRA[2] = subblock_colors1[rg_etc1_to_selector_index[val2]];
+            pDst_pixels_BGRA[3] = subblock_colors1[rg_etc1_to_selector_index[val3]];
+            pDst_pixels_BGRA[4] = subblock_colors0[rg_etc1_to_selector_index[val4]];
+            pDst_pixels_BGRA[5] = subblock_colors0[rg_etc1_to_selector_index[val5]];
+            pDst_pixels_BGRA[6] = subblock_colors1[rg_etc1_to_selector_index[val6]];
+            pDst_pixels_BGRA[7] = subblock_colors1[rg_etc1_to_selector_index[val7]];
+            pDst_pixels_BGRA[8] = subblock_colors0[rg_etc1_to_selector_index[val8]];
+            pDst_pixels_BGRA[9] = subblock_colors0[rg_etc1_to_selector_index[val9]];
+            pDst_pixels_BGRA[10] = subblock_colors1[rg_etc1_to_selector_index[val10]];
+            pDst_pixels_BGRA[11] = subblock_colors1[rg_etc1_to_selector_index[val11]];
+            pDst_pixels_BGRA[12] = subblock_colors0[rg_etc1_to_selector_index[val12]];
+            pDst_pixels_BGRA[13] = subblock_colors0[rg_etc1_to_selector_index[val13]];
+            pDst_pixels_BGRA[14] = subblock_colors1[rg_etc1_to_selector_index[val14]];
+            pDst_pixels_BGRA[15] = subblock_colors1[rg_etc1_to_selector_index[val15]];
+         }
+      }
 
    return success;
 }
@@ -1763,7 +1847,7 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
       uint i;
       const uint8* pSelectors = optimizer->m_best_solution.m_selectors;
 
-      rg_etc1_solution_coordinates_block_colors_get(&optimizer->m_best_solution.m_coords, block_colors);
+      rg_etc1_solution_coordinates_block_colors_get(optimizer->m_best_solution.m_coords, block_colors);
       pSrc_pixels = optimizer->m_pParams->m_pSrc_pixels;
       for (i = 0; i < n; i++)
         actual_error += rg_etc1_color_quad_u8_rgb_squared_distance(pSrc_pixels[i], block_colors[pSelectors[i]]);
