@@ -7,59 +7,35 @@ local  getopt = require("getopt")
 local include_dirs = {}
 local output_files = {}
 
-local libname, modname, cprefix = nil, nil, ""
-
 local printv = function() end
+local quit   = false
 
-local quit = false
-local args
-
-getopt.parse {
+local opts, args = getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg,
     descs = {
         { category = "General" },
 
         { "h", "help", nil, help = "Show this message.", metavar = "CATEGORY",
-            callback = function(d, parser, v)
-                getopt.help(parser, v, io.stdout)
-                quit = true
-            end
+            callback = getopt.help_cb(io.stdout)
         },
         { "v", "verbose", false, help = "Be verbose.",
-            callback = function()
-                printv = print
-            end
+            callback = function() printv = print end
         },
 
         { category = "Generator" },
 
         { "I", "include", true, help = "Include a directory.", metavar = "DIR",
-            callback = function(d, p, v)
-                include_dirs[#include_dirs + 1] = v
-            end
+            list = include_dirs
         },
-        { "L", "library", true, help = "Specify a C library name.",
-            callback = function(d, p, v)
-                libname = v
-            end
-        },
-        { "M", "module", true, help = "Specify a module name.",
-            callback = function(d, p, v)
-                modname = v
-            end
-        },
-        { "P", "prefix", true, help = "Specify a class name prefix "
-            .. "to strip out for public interfaces.",
-            callback = function(d, p, v)
-                cprefix = v
-            end
+        { "L", "library", true, help = "Specify a C library name." },
+        { "M", "module",  true, help = "Specify a module name."    },
+        { "P", "prefix",  true, help = "Specify a class name prefix "
+            .. "to strip out for public interfaces."
         },
         { "o", "output", true, help = "Specify output file name(s), by "
             .. "default goes to stdout.",
-            callback = function(d, p, v)
-                output_files[#output_files + 1] = v
-            end
+            list = output_files
         }
     },
     error_cb = function(parser, msg)
@@ -67,13 +43,16 @@ getopt.parse {
         getopt.help(parser, io.stderr)
         quit = true
     end,
-    done_cb = function(parser, opts, argsv)
-        if not libname and not quit then
-            io.stderr:write("library name not specified\n")
-            getopt.help(parser, io.stderr)
-            quit = true
+    done_cb = function(parser, opts)
+        if not quit then
+            if opts["h"] then
+                quit = true
+            elseif not opts["L"] then
+                io.stderr:write("library name not specified\n")
+                getopt.help(parser, io.stderr)
+                quit = true
+            end
         end
-        args = argsv
     end
 }
 
@@ -95,7 +74,7 @@ for i, fname in ipairs(args) do
     else
         printv("  Output file: printing to stdout...")
     end
-    lualian.generate(fname, modname, libname, cprefix, fstream)
+    lualian.generate(fname, opts["M"], opts["L"], opts["P"] or "", fstream)
 end
 
 return true

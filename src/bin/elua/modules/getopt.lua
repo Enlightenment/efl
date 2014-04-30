@@ -50,7 +50,9 @@ local parse_l = function(opts, opt, descs, args, parser)
     if not rets or #rets == 0 then rets = { optval } end
     local optn = desc.alias or desc[1] or desc[2]
     opts[#opts + 1] = { optn, unpack(rets) }
-    opts[optn] = #rets > 1 and rets or rets[1]
+    local optret = #rets > 1 and rets or rets[1]
+    opts[optn] = optret or true
+    if desc.list then desc.list[#desc.list + 1] = optret end
     return opts, args
 end
 
@@ -78,7 +80,9 @@ local parse_s = function(opts, optstr, descs, args, parser)
         if not rets or #rets == 0 then rets = { optval } end
         local optn = desc.alias or desc[1] or desc[2]
         opts[#opts + 1] = { optn, unpack(rets) }
-        opts[optn] = #rets > 1 and rets or rets[1]
+        local optret = #rets > 1 and rets or rets[1]
+        opts[optn] = optret or true
+        if desc.list then desc.list[#desc.list + 1] = optret end
     end
     return opts, args
 end
