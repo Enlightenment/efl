@@ -279,7 +279,7 @@ static int lua_main(lua_State *L) {
 
     progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
-    while ((ch = getopt_long(argc, argv, "LhC:M:e:l:I:E", lopt, NULL)) != -1) {
+    while ((ch = getopt_long(argc, argv, "+LhC:M:e:l:I:E", lopt, NULL)) != -1) {
         switch (ch) {
             case 'h':
                 print_help(progname, stdout);
