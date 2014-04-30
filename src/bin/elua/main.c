@@ -49,12 +49,12 @@ static int traceback(lua_State *L) {
     return 1;
 }
 
-static int docall(lua_State *L, int narg) {
+static int docall(lua_State *L, int narg, int nret) {
     int status;
     int bs = lua_gettop(L) - narg;
     lua_pushcfunction(L, traceback);
     lua_insert(L, bs);
-    status = lua_pcall(L, narg, 0, bs);
+    status = lua_pcall(L, narg, nret, bs);
     lua_remove(L, bs);
     if (status) lua_gc(L, LUA_GCCOLLECT, 0);
     return status;
@@ -122,15 +122,15 @@ static int dolib(lua_State *L, const char *libname) {
 }
 
 static int dofile(lua_State *L, const char *fname) {
-    return report(L, elua_loadfile(L, fname) || docall(L, 0));
+    return report(L, elua_loadfile(L, fname) || docall(L, 0, 1));
 }
 
 static int dostr(lua_State *L, const char *chunk, const char *chname) {
     return report(L, luaL_loadbuffer(L, chunk, strlen(chunk), chname)
-        || docall(L, 0));
+        || docall(L, 0, 0));
 }
 
-static int doscript(lua_State *L, int argc, char **argv, int n) {
+static int doscript(lua_State *L, int argc, char **argv, int n, int *quit) {
     int status;
     const char *fname = argv[n];
     int narg = getargs(L, argc, argv, n);
@@ -141,9 +141,13 @@ static int doscript(lua_State *L, int argc, char **argv, int n) {
     status = elua_loadfile(L, fname);
     lua_insert(L, -(narg + 1));
     if (!status) {
-         status = docall(L, narg);
+         status = docall(L, narg, 1);
     } else {
         lua_pop(L, narg);
+    }
+    if (!status) {
+        *quit = lua_toboolean(L, -1);
+        lua_pop(L, 1);
     }
     return report(L, status);
 }
@@ -368,9 +372,15 @@ static int lua_main(lua_State *L) {
 
     /* run script or execute sdin as file */
     if (optind < argc) {
-        if ((m->status = doscript(L, argc, argv, optind))) return 0;
+        int quit = 0;
+        if ((m->status = doscript(L, argc, argv, optind, &quit))) return 0;
+        if (quit) return 0;
     } else if (!hasexec) {
-        dofile(L, NULL);
+        int quit;
+        if ((m->status = dofile(L, NULL))) return 0;
+        quit = lua_toboolean(L, -1);
+        lua_pop(L, 1);
+        if (quit) return 0;
     }
 
     ecore_main_loop_begin();

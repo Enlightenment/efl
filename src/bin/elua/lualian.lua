@@ -27,7 +27,9 @@ getopt.parse {
             end
         },
         { "v", "verbose", false, help = "Be verbose.",
-            callback = function() printv = print end
+            callback = function()
+                printv = print
+            end
         },
 
         { category = "Generator" },
@@ -38,14 +40,20 @@ getopt.parse {
             end
         },
         { "L", "library", true, help = "Specify a C library name.",
-            callback = function(d, p, v) libname = v end
+            callback = function(d, p, v)
+                libname = v
+            end
         },
         { "M", "module", true, help = "Specify a module name.",
-            callback = function(d, p, v) modname = v end
+            callback = function(d, p, v)
+                modname = v
+            end
         },
         { "P", "prefix", true, help = "Specify a class name prefix "
             .. "to strip out for public interfaces.",
-            callback = function(d, p, v) cprefix = v end
+            callback = function(d, p, v)
+                cprefix = v
+            end
         },
         { "o", "output", true, help = "Specify output file name(s), by "
             .. "default goes to stdout.",
@@ -69,7 +77,7 @@ getopt.parse {
     end
 }
 
-if quit then return end
+if quit then return true end
 
 for i, v in ipairs(include_dirs) do
     lualian.include_dir(v)
@@ -89,3 +97,5 @@ for i, fname in ipairs(args) do
     end
     lualian.generate(fname, modname, libname, cprefix, fstream)
 end
+
+return true
