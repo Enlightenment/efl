@@ -127,6 +127,16 @@ local buf_write = function(self, ...)
     for i, v in ipairs(vs) do self[#self + 1] = v end
 end
 
+local get_metavar = function(desc)
+    local mv = desc.metavar
+    if not mv and (desc[3] or desc[3] == nil) then
+        mv = desc[2] and desc[2]:upper() or "VAL"
+    elseif desc[3] == false then
+        mv = nil
+    end
+    return mv
+end
+
 local help = function(parser, f, category)
     local usage = parser.usage
     local progn = parser.prog or parser.args[0] or "program"
@@ -144,25 +154,38 @@ local help = function(parser, f, category)
         local ohdr = parser.optheader
         buf:write("\n", ohdr and repl_prog(ohdr, progn)
             or "The following options are supported:", "\n\n")
+        local lls = 0
+        for i, desc in ipairs(parser.descs) do
+            if desc[1] then
+                local mv = get_metavar(desc)
+                if mv then
+                    lls = math.max(lls, #mv + ((desc[3] == nil) and 5 or 4))
+                else
+                    lls = math.max(lls, 2)
+                end
+            end
+        end
         local lns = {}
         local lln = 0
         local iscat = false
         local wascat = false
         for i, desc in ipairs(parser.descs) do
             if (not category or iscat) and (desc[1] or desc[2]) then
-                local mv = desc.metavar
-                if not mv and (desc[3] or desc[3] == nil) then
-                    mv = desc[2] and desc[2]:upper() or "VAL"
-                elseif desc[3] == false then
-                    mv = nil
-                end
+                local mv = get_metavar(desc)
                 local ln = {}
                 ln[#ln + 1] = "  "
                 if desc[1] then
                     ln[#ln + 1] = "-" .. desc[1]
                     if mv then ln[#ln + 1] = (desc[3] and "[" or "[?")
                         .. mv .. "]" end
+                    local sln = #table.concat(ln) - 2
+                    local sdf = lls - sln
                     if desc[2] then ln[#ln + 1] = ", " end
+                    if sdf > 0 then
+                        ln[#ln + 1] = (" "):rep(sdf)
+                    end
+                else
+                    ln[#ln + 1] = (" "):rep(lls + 2)
                 end
                 if desc[2] then
                     ln[#ln + 1] = "--" .. desc[2]
