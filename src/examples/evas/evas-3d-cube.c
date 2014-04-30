@@ -4,8 +4,6 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include <stdio.h>
-#include <math.h>
 #include <Evas.h>
 
 #define  WIDTH          400
