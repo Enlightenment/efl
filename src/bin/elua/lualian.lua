@@ -18,15 +18,20 @@ getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg,
     descs = {
-        { "h", "help", false, help = "Show this message.",
-            callback = function(d, parser)
-                getopt.help(parser, io.stdout)
+        { category = "General" },
+
+        { "h", "help", nil, help = "Show this message.", metavar = "CATEGORY",
+            callback = function(d, parser, v)
+                getopt.help(parser, v, io.stdout)
                 quit = true
             end
         },
         { "v", "verbose", false, help = "Be verbose.",
             callback = function() printv = print end
         },
+
+        { category = "Generator" },
+
         { "I", "include", true, help = "Include a directory.", metavar = "DIR",
             callback = function(d, p, v)
                 include_dirs[#include_dirs + 1] = v

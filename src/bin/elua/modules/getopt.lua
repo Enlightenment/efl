@@ -169,8 +169,10 @@ local help = function(parser, f, category)
                 lln = math.max(lln, #ln)
                 lns[#lns + 1] = { ln, desc.help }
             elseif desc.category then
-                iscat = (not category) or (desc.alias    == category)
-                                       or (desc.category == category)
+                local lcat  = category   and   category:lower() or nil
+                local alias = desc.alias and desc.alias:lower() or nil
+                iscat = (not category) or (alias                 == lcat)
+                                       or (desc.category:lower() == lcat)
                 if iscat then
                     wascat = true
                     lns[#lns + 1] = { false, desc.category }
