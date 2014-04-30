@@ -15,6 +15,7 @@
 #define EOLIAN_PROP_SET_RETURN_COMMENT "property_set_return_comment"
 
 static Eina_Hash *_classes = NULL;
+static Eina_Hash *_types = NULL;
 static Eina_Hash *_filenames = NULL; /* Hash: filename without extension -> full path */
 static int _database_init_count = 0;
 
@@ -36,6 +37,12 @@ typedef struct
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
 } Class_desc;
+
+typedef struct
+{
+   Eina_Stringshare *alias;
+   Eolian_Type type;
+} Type_Desc;
 
 typedef struct
 {
@@ -171,10 +178,18 @@ _class_del(Class_desc *class)
    free(class);
 }
 
-void _hash_free_cb(void *data)
+static void _class_hash_free_cb(void *data)
 {
    Class_desc *cl = data;
    _class_del(cl);
+}
+
+static void _type_hash_free_cb(void *data)
+{
+   Type_Desc *type = data;
+   eina_stringshare_del(type->alias);
+   database_type_del(type->type);
+   free(type);
 }
 
 static Class_desc *
@@ -192,7 +207,8 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _classes = eina_hash_stringshared_new(_hash_free_cb);
+   _classes = eina_hash_stringshared_new(_class_hash_free_cb);
+   _types = eina_hash_stringshared_new(_type_hash_free_cb);
    _filenames = eina_hash_string_small_new(free);
    return ++_database_init_count;
 }
@@ -210,10 +226,35 @@ database_shutdown()
    if (_database_init_count == 0)
      {
         eina_hash_free(_classes);
+        eina_hash_free(_types);
         eina_hash_free(_filenames);
         eina_shutdown();
      }
    return _database_init_count;
+}
+
+Eina_Bool
+database_type_add(const char *alias, Eolian_Type type)
+{
+   if (_types)
+     {
+        Type_Desc *desc = calloc(1, sizeof(*desc));
+        desc->alias = eina_stringshare_add(alias);
+        desc->type = type;
+        eina_hash_set(_types, desc->alias, desc);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EAPI Eolian_Type
+eolian_type_find_by_alias(const char *alias)
+{
+   if (!_types) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(alias);
+   Type_Desc *cl = eina_hash_find(_types, shr);
+   eina_stringshare_del(shr);
+   return cl->type;
 }
 
 Eina_Bool

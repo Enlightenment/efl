@@ -83,5 +83,6 @@ tests/eolian/data/base.eo \
 tests/eolian/data/class_simple.eo \
 tests/eolian/data/scope.eo \
 tests/eolian/data/ctor_dtor.eo \
-tests/eolian/data/complex_type.eo
+tests/eolian/data/complex_type.eo \
+tests/eolian/data/typedef.eo
 

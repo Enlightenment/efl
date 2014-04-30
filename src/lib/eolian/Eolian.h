@@ -638,6 +638,17 @@ EAPI Eina_Bool eolian_class_ctor_enable_get(const char *class_name);
  */
 EAPI Eina_Bool eolian_class_dtor_enable_get(const char *class_name);
 
+/*
+ * @brief Find the type for a certain alias
+ *
+ * @param[in] alias alias of the type definition
+ * @return real type of the type definition
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type
+eolian_type_find_by_alias(const char *alias);
+
 #endif
 
 #ifdef __cplusplus

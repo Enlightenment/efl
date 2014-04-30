@@ -52,6 +52,38 @@ START_TEST(eolian_ctor_dtor)
 }
 END_TEST
 
+START_TEST(eolian_typedef)
+{
+   Eolian_Type types_list = NULL;
+   const char *type_name = NULL;
+   Eina_Bool own = EINA_FALSE;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/typedef.eo"));
+
+   /* Check that the class Dummy is still readable */
+   fail_if(!eolian_class_function_find_by_name("Dummy", "foo", EOLIAN_METHOD));
+
+   /* Basic type */
+   fail_if(!(types_list = eolian_type_find_by_alias("Evas_Coord")));
+   fail_if(eolian_type_information_get(types_list, &type_name, &own));
+   fail_if(strcmp(type_name, "int"));
+   fail_if(own != EINA_FALSE);
+
+   /* Complex type */
+   fail_if(!(types_list = eolian_type_find_by_alias("List_Objects")));
+   fail_if(!(types_list = eolian_type_information_get(types_list, &type_name, &own)));
+   fail_if(strcmp(type_name, "Eina_List *"));
+   fail_if(own != EINA_TRUE);
+   fail_if(eolian_type_information_get(types_list, &type_name, &own));
+   fail_if(strcmp(type_name, "Eo *"));
+   fail_if(own != EINA_FALSE);
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_complex_type)
 {
    Eolian_Function fid = NULL;
@@ -251,6 +283,7 @@ static void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_ctor_dtor);
    tcase_add_test(tc, eolian_scope);
    tcase_add_test(tc, eolian_complex_type);
+   tcase_add_test(tc, eolian_typedef);
 }
 
 static const Eolian_Test_Case etc[] = {

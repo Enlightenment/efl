@@ -113,6 +113,17 @@ eo_definitions_impl_def_free(Eo_Implement_Def *impl)
 }
 
 void
+eo_definitions_type_def_free(Eo_Type_Def *type)
+{
+   if (type->alias)
+     eina_stringshare_del(type->alias);
+   if (type->type)
+     eina_stringshare_del(type->type);
+
+   free(type);
+}
+
+void
 eo_definitions_class_def_free(Eo_Class_Def *kls)
 {
    const char *s;

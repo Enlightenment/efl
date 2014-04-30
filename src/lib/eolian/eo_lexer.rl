@@ -154,6 +154,17 @@ _eo_tokenizer_class_get(Eo_Tokenizer *toknz, char *p)
    return kls;
 }
 
+static Eo_Type_Def*
+_eo_tokenizer_type_get(Eo_Tokenizer *toknz, char *p)
+{
+   Eo_Type_Def *def = calloc(1, sizeof(Eo_Type_Def));
+   if (def == NULL) ABORT(toknz, "calloc Eo_Type_Def failure");
+
+   def->type = _eo_tokenizer_token_get(toknz, p);
+
+   return def;
+}
+
 static Eo_Property_Def*
 _eo_tokenizer_property_get(Eo_Tokenizer *toknz, char *p)
 {
@@ -958,10 +969,27 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
          "abstract" %class_type_set_to_abstract |
          "interface" %class_type_set_to_interface) ws+ class_name ws* inherits? ignore* begin_def;
 
+   action end_typedef_alias {
+      toknz->tmp.typedef_alias = _eo_tokenizer_token_get(toknz, fpc);
+   }
+
+   action end_typedef_type{
+      if (toknz->tmp.typedef_alias == NULL)
+        ABORT(toknz, "No typedef");
+      toknz->tmp.type_def = _eo_tokenizer_type_get(toknz, fpc);
+      toknz->tmp.type_def->alias = toknz->tmp.typedef_alias;
+      toknz->typedefs = eina_list_append(toknz->typedefs, toknz->tmp.type_def);
+   }
+
+   typedef_type = ('@'|alpha+) >save_fpc (alnum_u | '*' | '@' | '<' | '>' | ws )+;
+   typedef_alias = ident %end_typedef_alias;
+   begin_typedef = "type" ws+ typedef_alias ws* colon ws* typedef_type %end_typedef_type end_statement;
+
    main := |*
       ignore+;    #=> show_ignore;
       comment     => show_comment;
       begin_class => begin_class;
+      begin_typedef;
       any         => show_error;
    *|;
 
@@ -1095,6 +1123,7 @@ eo_tokenizer_get(void)
    toknz->saved.tok = NULL;
    toknz->saved.line = 0;
    toknz->classes = NULL;
+   toknz->typedefs = NULL;
 
    return toknz;
 }
@@ -1303,6 +1332,7 @@ eo_tokenizer_database_fill(const char *filename)
    Eina_List *k, *l, *m;
 
    Eo_Class_Def *kls;
+   Eo_Type_Def *type_def;
    Eo_Property_Def *prop;
    Eo_Method_Def *meth;
    Eo_Param_Def *param;
@@ -1531,6 +1561,11 @@ eo_tokenizer_database_fill(const char *filename)
 
      }
 
+   EINA_LIST_FOREACH(toknz->typedefs, k, type_def)
+     {
+        database_type_add(type_def->alias, _types_extract(type_def->type, strlen(type_def->type)));
+     }
+
    ret = EINA_TRUE;
 end:
    if (buffer) free(buffer);
@@ -1543,12 +1578,16 @@ void
 eo_tokenizer_free(Eo_Tokenizer *toknz)
 {
    Eo_Class_Def *kls;
+   Eo_Type_Def *type;
 
    if (toknz->source)
      eina_stringshare_del(toknz->source);
 
    EINA_LIST_FREE(toknz->classes, kls)
       eo_definitions_class_def_free(kls);
+
+   EINA_LIST_FREE(toknz->typedefs, type)
+      eo_definitions_type_def_free(type);
 
    free(toknz);
 }

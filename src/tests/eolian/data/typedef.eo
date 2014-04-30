@@ -1,0 +1,13 @@
+type Evas_Coord: int; /* Simple type definition */
+type List_Objects: @own Eina_List * < Eo *>; /* A little more complex */
+
+class Dummy {
+   methods {
+      foo {
+         params {
+            int idx;
+         }
+         return @own char *; /*@ comment for method return */
+      }
+   }
+}

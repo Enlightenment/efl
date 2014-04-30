@@ -33,6 +33,9 @@ extern int _eolian_log_dom;
 int database_init();
 int database_shutdown();
 
+/* Add a type in the database */
+Eina_Bool database_type_add(const char *alias, Eolian_Type type);
+
 /* Add a class in the database */
 Eina_Bool database_class_add(const char *class_name, Eolian_Class_Type type);
 

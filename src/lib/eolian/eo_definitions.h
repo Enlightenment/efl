@@ -130,6 +130,15 @@ typedef struct _eo_class_def
    Eina_List *methods;
 } Eo_Class_Def;
 
+/* TYPE */
+
+typedef struct _eo_type_def
+{
+   const char *alias;
+   const char *type;
+} Eo_Type_Def;
+
 void eo_definitions_class_def_free(Eo_Class_Def *kls);
+void eo_definitions_type_def_free(Eo_Type_Def *type);
 
 #endif /* __EO_DEFINITIONS_H__ */
