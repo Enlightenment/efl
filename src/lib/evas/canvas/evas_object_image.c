@@ -2507,7 +2507,12 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
 
    pd_scene = eo_data_scope_get(scene, EVAS_3D_SCENE_CLASS);
 
-   if((pd_scene->w == 0) || (pd_scene->h == 0)) return;
+   if ((pd_scene->w == 0) || (pd_scene->h == 0)) return;
+   if (!pd_scene->camera_node)
+     {
+        WRN("Camera has not been set to scene(%p)", scene);
+        return;
+     }
 
    e = eo_data_scope_get(eo_e, EVAS_CLASS);
 
