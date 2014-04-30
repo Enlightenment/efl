@@ -233,14 +233,14 @@ static void print_help(const char *progname, FILE *stream) {
                     "A main entry for all EFL/LuaJIT powered applications.\n\n"
                     "The following options are supported:\n\n"
                     ""
-                    "  -h, --help                          Show this message.\n"
-                    "  -l, --license                       Show a license message.\n"
+                    "  -h,          --help                 Show this message.\n"
+                    "  -l,          --license              Show a license message.\n"
                     "  -C[COREDIR], --core-dir=[COREDIR]   Elua core directory path.\n"
-                    "  -M[MODDIR], --modules-dir=[MODDIR]  Elua modules directory path.\n"
-                    "  -e[CODE], --execute=[CODE]          Execute string 'code'.\n"
+                    "  -M[MODDIR],  --modules-dir=[MODDIR] Elua modules directory path.\n"
+                    "  -e[CODE],    --execute=[CODE]       Execute string 'code'.\n"
                     "  -l[LIBRARY], --library=[LIBRARY]    Require library 'library'.\n"
-                    "  -I[DIR], --lib-dir=[DIR]            Append an additional require path.\n"
-                    "  -E, --noenv                         Ignore environment variables.\n", progname);
+                    "  -I[DIR],     --lib-dir=[DIR]        Append an additional require path.\n"
+                    "  -E,          --noenv                Ignore environment variables.\n", progname);
 }
 
 static struct option lopt[] = {
