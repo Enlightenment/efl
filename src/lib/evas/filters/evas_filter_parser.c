@@ -1617,7 +1617,16 @@ _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
         break;
       case VT_COLOR:
         if (lua_isnumber(L, i))
-          eina_value_set(param->value, (DATA32) lua_tonumber(L, i));
+          {
+             DATA32 color = (DATA32) lua_tonumber(L, i);
+             int A = A_VAL(&color);
+             int R = R_VAL(&color);
+             int G = G_VAL(&color);
+             int B = B_VAL(&color);
+             if (!A && (R || B || G)) A = 0xFF;
+             evas_color_argb_premul(A, &R, &G, &B);
+             eina_value_set(param->value, ARGB_JOIN(A, R, G, B));
+          }
         else if (lua_type(L, i) == LUA_TSTRING)
           {
              DATA32 color;
