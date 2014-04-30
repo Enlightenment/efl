@@ -4,13 +4,24 @@
 local lualian = require("lualian")
 local  getopt = require("getopt")
 
-local include_dirs = {}
-local output_files = {}
+local gen_file = function(opts, i, fname)
+    local printv  = opts["v"] and print or function() end
+    printv("Generating for file: " .. fname)
+    local ofile   = opts["o"] and opts["o"][i] or nil
+    local fstream = io.stdout
+    if ofile then
+        printv("  Output file: " .. ofile)
+        fstream = io.open(ofile, "w")
+        if not fstream then
+            error("Cannot open output file: " .. ofile)
+        end
+    else
+        printv("  Output file: printing to stdout...")
+    end
+    lualian.generate(fname, opts["M"], opts["L"], opts["P"] or "", fstream)
+end
 
-local printv = function() end
-local quit   = false
-
-local opts, args = getopt.parse {
+getopt.parse {
     usage = "Usage: %prog [OPTIONS] file1.eo file2.eo ... fileN.eo",
     args  = arg,
     descs = {
@@ -19,14 +30,12 @@ local opts, args = getopt.parse {
         { "h", "help", nil, help = "Show this message.", metavar = "CATEGORY",
             callback = getopt.help_cb(io.stdout)
         },
-        { "v", "verbose", false, help = "Be verbose.",
-            callback = function() printv = print end
-        },
+        { "v", "verbose", false, help = "Be verbose." },
 
         { category = "Generator" },
 
         { "I", "include", true, help = "Include a directory.", metavar = "DIR",
-            list = include_dirs
+            list = {}
         },
         { "L", "library", true, help = "Specify a C library name." },
         { "M", "module",  true, help = "Specify a module name."    },
@@ -35,46 +44,28 @@ local opts, args = getopt.parse {
         },
         { "o", "output", true, help = "Specify output file name(s), by "
             .. "default goes to stdout.",
-            list = output_files
+            list = {}
         }
     },
     error_cb = function(parser, msg)
         io.stderr:write(msg, "\n")
         getopt.help(parser, io.stderr)
-        quit = true
     end,
-    done_cb = function(parser, opts)
-        if not quit then
-            if opts["h"] then
-                quit = true
-            elseif not opts["L"] then
+    done_cb = function(parser, opts, args)
+        if not opts["h"] then
+            if not opts["L"] then
                 io.stderr:write("library name not specified\n")
                 getopt.help(parser, io.stderr)
-                quit = true
+            else
+                for i, v in ipairs(opts["I"] or {}) do
+                    lualian.include_dir(v)
+                end
+                for i, fname in ipairs(args) do
+                    gen_file(opts, i, fname)
+                end
             end
         end
     end
 }
-
-if quit then return true end
-
-for i, v in ipairs(include_dirs) do
-    lualian.include_dir(v)
-end
-
-for i, fname in ipairs(args) do
-    printv("Generating for file: " .. fname)
-    local fstream = io.stdout
-    if output_files[i] then
-        printv("  Output file: " .. output_files[i])
-        fstream = io.open(output_files[i], "w")
-        if not fstream then
-            error("Cannot open output file: " .. output_files)
-        end
-    else
-        printv("  Output file: printing to stdout...")
-    end
-    lualian.generate(fname, opts["M"], opts["L"], opts["P"] or "", fstream)
-end
 
 return true
