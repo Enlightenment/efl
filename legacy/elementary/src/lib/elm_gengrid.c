@@ -2103,11 +2103,11 @@ _item_move_cb(void *data, double pos)
 
    dx = sd->reorder.x2 - sd->reorder.x1;
    dy = sd->reorder.y2 - sd->reorder.y1;
-   xx1 = sd->reorder.x1 + dx * pos;
-   yy1 = sd->reorder.y1 + dy * pos;
+   xx1 = sd->reorder.x1 + dx * frame;
+   yy1 = sd->reorder.y1 + dy * frame;
 
-   xx2 = sd->reorder.x2 - dx * pos;
-   yy2 = sd->reorder.y2 - dy * pos;
+   xx2 = sd->reorder.x2 - dx * frame;
+   yy2 = sd->reorder.y2 - dy * frame;
 
    evas_object_move(VIEW(sd->reorder.it1), xx1, yy1);
    evas_object_move(VIEW(sd->reorder.it2), xx2, yy2);
