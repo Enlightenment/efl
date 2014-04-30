@@ -36,6 +36,12 @@ void rg_etc1_pack_block_init();
 // pack_etc1_block() does not currently support "perceptual" colorspace metrics - it primarily optimizes for RGB RMSE.
 unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_etc1_pack_params *pack_params);
 
+// ETC2 support: RGB8_ETC2
+void rg_etc2_rgb8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
+
+// ETC2 support: RGBA8_ETC2_EAC
+//void rg_etc2_rgba8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
+
 //------------------------------------------------------------------------------
 //
 // rg_etc1 uses the ZLIB license:

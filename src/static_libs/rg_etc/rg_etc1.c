@@ -1164,7 +1164,7 @@ rg_etc1_block_subblock_color5_delta3_diff_get(unsigned int dst[4],
    if (!(table_idx < cETC1IntenModifierValues))
      {
         fprintf(stderr, "table_idx %i < %i\n", table_idx, cETC1IntenModifierValues);
- return 0;
+        return 0;
      }
 
    success = rg_etc1_block_color5_delta3_component_unpack(&r, &g, &b, packed_color5, packed_delta3, 1);

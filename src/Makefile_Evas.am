@@ -1812,6 +1812,7 @@ lib_evas_libevas_la_SOURCES += \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
 modules/evas/savers/tgv/evas_image_save_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/rg_etc1.h \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h \
@@ -1826,6 +1827,7 @@ if EVAS_CSERVE2
 bin_evas_evas_cserve2_slave_SOURCES += \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/rg_etc1.h \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h
@@ -1843,6 +1845,7 @@ loadertgvpkg_LTLIBRARIES = modules/evas/loaders/tgv/module.la
 modules_evas_loaders_tgv_module_la_SOURCES = \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
 static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/rg_etc1.h \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h
