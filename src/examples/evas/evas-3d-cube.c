@@ -2,9 +2,10 @@
 #include "config.h"
 #endif
 
+#include <Eo.h>
+#include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include <Evas.h>
 
 #define  WIDTH          400
 #define  HEIGHT         400
@@ -23,10 +24,10 @@ typedef struct _Scene_Data
    Eo *material;
 } Scene_Data;
 
-Ecore_Evas *ecore_evas = NULL;
-Evas *evas = NULL;
-Eo *background  = NULL;
-Eo *image  = NULL;
+static Ecore_Evas *ecore_evas = NULL;
+static Evas *evas = NULL;
+static Eo *background = NULL;
+static Eo *image = NULL;
 
 static const float cube_vertices[] =
 {
@@ -169,7 +170,7 @@ _mesh_setup(Scene_Data *data)
    eo_do(data->material,
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE);
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
          evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT,
                                     0.2, 0.2, 0.2, 1.0),
          evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE,
@@ -185,16 +186,16 @@ _mesh_setup(Scene_Data *data)
          evas_3d_mesh_frame_add(0),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_POSITION,
                                             12 * sizeof(float),
-                                            &cube_vertices[ 0]),
+                                            &cube_vertices[0]),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_NORMAL,
                                             12 * sizeof(float),
-                                            &cube_vertices[ 3]);
+                                            &cube_vertices[3]),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_COLOR,
                                             12 * sizeof(float),
-                                            &cube_vertices[ 6]);
+                                            &cube_vertices[6]),
          evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_TEXCOORD,
                                             12 * sizeof(float),
-                                            &cube_vertices[10]);
+                                            &cube_vertices[10]),
          evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
                                      36, &cube_indices[0]),
          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
@@ -247,13 +248,13 @@ main(void)
    _scene_setup(&data);
 
    /* Add a background rectangle objects. */
-   background = evas_object_rectangle_add(evas);
+   background = eo_add(EVAS_OBJ_RECTANGLE_CLASS, evas);
    eo_do(background,
          evas_obj_color_set(0, 0, 0, 255),
          evas_obj_size_set(WIDTH, HEIGHT),
          evas_obj_visibility_set(EINA_TRUE));
 
-/* Add an image object for 3D scene rendering. */
+   /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
    eo_do(image,
          evas_obj_size_set(WIDTH, HEIGHT),
