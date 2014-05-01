@@ -1400,7 +1400,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         eina_spinlock_free(&klass->iterators.trash_lock);
         _dich_func_clean_all(klass);
         free(klass);
-             return NULL;
+        return NULL;
      }
 
    eina_spinlock_take(&_eo_class_creation_lock);
