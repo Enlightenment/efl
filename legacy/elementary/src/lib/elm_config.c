@@ -215,7 +215,6 @@ _prop_config_get(void)
    _elm_config_font_overlays_cancel();
    _color_overlays_cancel();
    _config_free(_elm_config);
-   _elm_config = NULL;
    _elm_config = config_data;
    _env_get();
    _config_apply();
