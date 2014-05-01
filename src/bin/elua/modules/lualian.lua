@@ -56,7 +56,7 @@ local known_ptr_in = {
 
 local convfuncs = {}
 
-local build_calln = function(tps, expr, tp, isin)
+local build_calln = function(tps, expr, isin)
     local nm, own
     local buf  = { "__convert", isin and "IN" or "OUT" }
     local owns = {}
