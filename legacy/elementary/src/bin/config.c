@@ -85,7 +85,7 @@ struct _Fonts_Data
     }                                                               \
   while (0)
 
-#define CHECK_ADD(_label, _desc, _cb)  \
+#define CHECK_ADD(_label, _desc, _cb, _cb_param)  \
    ck = elm_check_add(win); \
    elm_object_text_set(ck, _label); \
    elm_object_tooltip_text_set(ck, _desc); \
@@ -93,7 +93,7 @@ struct _Fonts_Data
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5); \
    elm_box_pack_end(bx, ck); \
    evas_object_show(ck); \
-   evas_object_smart_callback_add(ck, "changed", _cb, NULL);
+   evas_object_smart_callback_add(ck, "changed", _cb, _cb_param);
 
 static int quiet = 0;
 static int interactive = 1;
@@ -1528,7 +1528,7 @@ _status_config_audio(Evas_Object *win,
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
 
 #define MUTE_CHECK(_label, _chan, _cb)  \
-   CHECK_ADD(_label, NULL, _cb) \
+   CHECK_ADD(_label, _label, _cb, NULL) \
    elm_check_state_set(ck, elm_config_audio_mute_get(_chan));
 
    MUTE_CHECK("Mute Effects", EDJE_CHANNEL_EFFECT, mute_effect_change);
@@ -1556,52 +1556,21 @@ _status_config_etc(Evas_Object *win,
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
 
    // access
-   ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set access mode");
-   elm_object_text_set(ck, "Enable Access Mode");
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   CHECK_ADD("Enable Access Mode", "Set access mode", ac_change, NULL);
    elm_check_state_set(ck, elm_config_access_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
-
-   evas_object_smart_callback_add(ck, "changed", ac_change, NULL);
 
    // selection
-   ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set selection mode");
-   elm_object_text_set(ck, "Enable clear selection when unfocus");
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   CHECK_ADD("Enable clear selection when unfocus", "Set selection mode",
+             sel_change, NULL);
    elm_check_state_set(ck, elm_config_selection_unfocused_clear_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
-
-   evas_object_smart_callback_add(ck, "changed", sel_change, NULL);
 
    // clouseau
-   ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set clouseau mode");
-   elm_object_text_set(ck, "Enable clouseau");
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   CHECK_ADD("Enable clouseau", "Set clouseau mode", dbg_change, NULL);
    elm_check_state_set(ck, elm_config_clouseau_enabled_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
-
-   evas_object_smart_callback_add(ck, "changed", dbg_change, NULL);
 
    // atspi
-   ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set atspi mode");
-   elm_object_text_set(ck, "Enable ATSPI support.");
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
+   CHECK_ADD("Enable ATSPI support", "Set atspi mode", atspi_change, NULL);
    elm_check_state_set(ck, elm_config_atspi_mode_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
-
-   evas_object_smart_callback_add(ck, "changed", atspi_change, NULL);
 
    evas_object_data_set(win, "etc", bx);
 
@@ -2838,19 +2807,13 @@ _status_config_scrolling_bounce(Evas_Object *win, Evas_Object *box)
    evas_object_show(bx);
 
    /* Enable Scroll Bounce */
-   ck = elm_check_add(bx);
-   elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br/>"
-                                   "when they reach their viewport's edge<br/>"
-                                   "during a scroll");
-   elm_object_text_set(ck, "Enable scroll bounce");
+   CHECK_ADD("Enable scroll bounce",
+             "Set whether scrollers should bounce<br/>"
+             "when they reach their viewport's edge<br/>"
+             "during a scroll",
+             sb_change, NULL);
    evas_object_data_set(win, "scroll_bounce_check", ck);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_state_set(ck, elm_config_scroll_bounce_enabled_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
-
-   evas_object_smart_callback_add(ck, "changed", sb_change, NULL);
 
    /* Scroll bounce friction */
    LABEL_FRAME_ADD("<hilight>Scroll bounce friction</>");
@@ -2975,18 +2938,12 @@ _status_config_scrolling(Evas_Object *win,
    _status_config_scrolling_acceleration(win, bx);
 
    /* Enable thumb scroll */
-   ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set whether scrollers should be<br/>"
-                                   "draggable from any point in their views");
-   elm_object_text_set(ck, "Enable thumb scroll");
+   CHECK_ADD("Enable thumb scroll",
+             "Set whether scrollers should be<br/>"
+             "draggable from any point in their views",
+             ts_change, NULL);
    evas_object_data_set(win, "thumbscroll_check", ck);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_state_set(ck, elm_config_scroll_thumbscroll_enabled_get());
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
-
-   evas_object_smart_callback_add(ck, "changed", ts_change, NULL);
 
    /* Thumb scroll threadhold */
    LABEL_FRAME_ADD("<hilight>Thumb scroll threshold</>");
@@ -3430,14 +3387,8 @@ _status_config_caches(Evas_Object *win,
    elm_slider_value_set(sl, elm_config_cache_flush_interval_get());
    elm_object_disabled_set(sl, !elm_config_cache_flush_enabled_get());
 
-   ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(ck, "Enable Flushing");
+   CHECK_ADD("Enable Flushing", "Enable Flushing", cf_enable, sl);
    elm_check_state_set(ck, elm_config_cache_flush_enabled_get());
-   evas_object_smart_callback_add(ck, "changed", cf_enable, sl);
-   elm_box_pack_end(bx, ck);
-   evas_object_show(ck);
 
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
