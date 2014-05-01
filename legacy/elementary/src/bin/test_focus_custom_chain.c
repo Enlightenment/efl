@@ -133,7 +133,7 @@ test_focus_custom_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Enabled (Config)");
-   elm_check_state_set(tg, EINA_TRUE);
+   elm_check_state_set(tg, elm_config_focus_highlight_enabled_get());
    evas_object_smart_callback_add(tg, "changed", highlight_enabled_cb, NULL);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
@@ -142,7 +142,7 @@ test_focus_custom_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Animate (Config)");
-   elm_check_state_set(tg, EINA_TRUE);
+   elm_check_state_set(tg, elm_config_focus_highlight_animate_get());
    evas_object_smart_callback_add(tg, "changed", highlight_animate_cb, NULL);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
@@ -151,7 +151,7 @@ test_focus_custom_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Enabled (Win)");
-   elm_check_state_set(tg, EINA_TRUE);
+   elm_check_state_set(tg, elm_win_focus_highlight_enabled_get(win));
    evas_object_smart_callback_add(tg, "changed", win_highlight_enabled_cb, win);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
@@ -160,7 +160,7 @@ test_focus_custom_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(tg, "Focus Highlight Animate (Win)");
-   elm_check_state_set(tg, EINA_TRUE);
+   elm_check_state_set(tg, elm_win_focus_highlight_enabled_get(win));
    evas_object_smart_callback_add(tg, "changed", win_highlight_animate_cb, win);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);

@@ -429,6 +429,7 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
         Evas_Object *ck;
         ck = elm_check_add(bx);
         elm_object_text_set(ck, "Focus Highlight Animation Enable");
+        elm_check_state_set(ck, elm_config_focus_highlight_animate_get());
         elm_box_pack_end(bx, ck);
         my_show(ck);
         evas_object_smart_callback_add(ck, "changed",
@@ -783,6 +784,7 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    ck = elm_check_add(box);
    elm_object_text_set(ck, "Focus Highlight Clip Disable");
+   elm_check_state_set(ck, elm_config_focus_highlight_clip_disabled_get());
    elm_box_pack_end(box, ck);
    evas_object_show(ck);
    evas_object_smart_callback_add(ck, "changed",
