@@ -199,6 +199,7 @@ M.Type = ffi.metatype("Eolian_Type", {
             local tp = ffi.new("const char*[1]")
             local on = ffi.new("Eina_Bool[1]")
             local nx = eolian.eolian_type_information_get(self, tp, on)
+            if nx == nil then nx = nil end
             return nx, (tp[0] ~= nil) and ffi.string(tp[0]) or nil, on[0] ~= 0
         end
     }

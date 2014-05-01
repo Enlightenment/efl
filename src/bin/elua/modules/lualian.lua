@@ -54,18 +54,28 @@ local known_ptr_in = {
     ["const char"] = function(expr) return expr end
 }
 
-local build_calln = function(expr, fulln, n, isin)
+local build_calln = function(expr, fulln, tp, isin)
     return table.concat {
-        "__convert_", fulln, "_", isin and "arg" or "ret", n, "(", expr, ")"
+        "__convert_", fulln, "_", isin and "IN_" or "OUT_", tp, "(", expr, ")"
     }
 end
 
-local typeconv_in = function(tp, expr, fulln, n, isconst, isptr)
+local build_tp = function(tps)
+    local nm
+    local buf = {}
+    while tps do
+        tps, nm = tps:information_get()
+        buf[#buf + 1] = nm:gsub("%s", "_"):gsub("%*", "_ptr"):gsub("__+", "_")
+    end
+    return table.concat(buf, "_")
+end
+
+local typeconv_in = function(tps, tp, expr, fulln, isconst, isptr)
     if isptr then
         local passtp = (isconst and "const " or "") .. tp
         local f = known_ptr_in[passtp]
         if f then return f(expr) end
-        return build_calln(expr, fulln, n, true)
+        return build_calln(expr, fulln, build_tp(tps), true)
     end
     if isnum[tp] then
         return expr
@@ -76,10 +86,10 @@ local typeconv_in = function(tp, expr, fulln, n, isconst, isptr)
         return f(expr)
     end
 
-    return build_calln(expr, fulln, n, true)
+    return build_calln(expr, fulln, build_tp(tps), true)
 end
 
-local typeconv = function(tps, expr, fulln, n, isin)
+local typeconv = function(tps, expr, fulln, isin)
     local tp = select(2, tps:information_get())
     -- strip away type qualifiers
     local isconst, tpr = tp:match("^(const)[ ]+(.+)$")
@@ -91,7 +101,7 @@ local typeconv = function(tps, expr, fulln, n, isin)
 
     -- out val
     if isin then
-        return typeconv_in(basetype or tp, expr, fulln, n, isconst,
+        return typeconv_in(tps, basetype or tp, expr, fulln, isconst,
             not not basetype)
     end
 
@@ -100,7 +110,7 @@ local typeconv = function(tps, expr, fulln, n, isin)
         local passtp = (isconst and "const " or "") .. basetype
         local f = known_ptr_out[passtp]
         if f then return f(expr) end
-        return build_calln(expr, fulln, n, false)
+        return build_calln(expr, fulln, build_tp(tps), false)
     end
 
     -- number?
@@ -114,7 +124,7 @@ local typeconv = function(tps, expr, fulln, n, isin)
         return f(expr)
     end
 
-    return build_calln(expr, fulln, n, false)
+    return build_calln(expr, fulln, build_tp(tps), false)
 end
 
 local Node = util.Object:clone {
@@ -172,7 +182,7 @@ local Method = Node:clone {
         local fulln = proto.full_name
 
         if rett then
-            rets[#rets + 1] = typeconv(rett, "v", fulln, #rets + 1, false)
+            rets[#rets + 1] = typeconv(rett, "v", fulln, false)
         end
 
         if #pars > 0 then
@@ -186,14 +196,13 @@ local Method = Node:clone {
                     cargs [#cargs  + 1] = tp .. " *" .. nm
                     vargs [#vargs  + 1] = nm
                     allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
-                        and typeconv(tps, nm, fulln, #vargs, true) or nil }
+                        and typeconv(tps, nm, fulln, true) or nil }
                     rets  [#rets   + 1] = typeconv(tps, nm .. "[0]", fulln,
-                        #rets + 1, false)
+                        false)
                 else
                     args  [#args   + 1] = nm
                     cargs [#cargs  + 1] = tp .. " " .. nm
-                    vargs [#vargs  + 1] = typeconv(tps, nm, fulln, #vargs + 1,
-                        true)
+                    vargs [#vargs  + 1] = typeconv(tps, nm, fulln, true)
                 end
             end
         end
@@ -277,7 +286,7 @@ local Property = Method:clone {
                 local tp  = select(2, tps:information_get())
                 cargs [#cargs  + 1] = tp .. " " .. nm
                 vargs [#vargs  + 1] = typeconv(tps, argn .. "[" .. i
-                    .. "]", fulln, #vargs + 1, true)
+                    .. "]", fulln, true)
             end
             args[#args + 1] = argn
         end
@@ -288,8 +297,7 @@ local Property = Method:clone {
                 if #vals == 1 and not rett then
                     local tps = vals[1]:types_list_get()
                     proto.ret_type = (select(2, tps:information_get()))
-                    rets[#rets + 1] = typeconv(tps, "v", fulln,
-                        #rets + 1, false)
+                    rets[#rets + 1] = typeconv(tps, "v", fulln, false)
                 else
                     for i, v in ipairs(vals) do
                         local dir, tp, nm = v:information_get()
@@ -298,7 +306,7 @@ local Property = Method:clone {
                         vargs [#vargs  + 1] = nm
                         allocs[#allocs + 1] = { tp, nm }
                         rets  [#rets   + 1] = typeconv(tps, nm .. "[0]", fulln,
-                            #rets + 1, false)
+                            false)
                     end
                 end
             else
@@ -309,7 +317,7 @@ local Property = Method:clone {
                     local tps = v:types_list_get()
                     cargs[#cargs + 1] = tp .. " " .. nm
                     vargs[#vargs + 1] = typeconv(tps, argn .. "[" .. i .. "]",
-                        fulln, #vargs + 1, true)
+                        fulln, true)
                 end
             end
         end
