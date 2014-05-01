@@ -93,6 +93,7 @@ ffi.cdef [[
     Eina_Bool eolian_class_event_information_get(Eolian_Event *event, const char **event_name, const char **event_type, const char **event_desc);
     Eina_Bool eolian_class_ctor_enable_get(const char *class_name);
     Eina_Bool eolian_class_dtor_enable_get(const char *class_name);
+    Eolian_Type *eolian_type_find_by_alias(const char *alias);
 ]]
 
 local cutil = require("cutil")
@@ -439,6 +440,11 @@ end
 
 M.class_dtor_enable_get = function(cname)
     return eolian.eolian_class_dtor_enable_get(cname) ~= 0
+end
+
+M.type_find_by_alias = function(alias)
+    -- implement after merge
+    -- return eolian.eolian_type_find_by_alias(alias)
 end
 
 return M
