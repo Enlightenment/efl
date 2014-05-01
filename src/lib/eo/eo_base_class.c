@@ -974,9 +974,9 @@ static Eo_Op_Description op_descs [] = {
        EO_OP_FUNC(eo_event_freeze, _ev_freeze, "Freezes events."),
        EO_OP_FUNC(eo_event_thaw, _ev_thaw, "Thaws events."),
        EO_OP_FUNC(eo_event_freeze_get, _ev_freeze_get, "Get event freeze counter."),
-       EO_OP_FUNC(eo_event_global_freeze, _ev_global_freeze, "Freezes events globally."),
-       EO_OP_FUNC(eo_event_global_thaw, _ev_global_thaw, "Thaws events globally."),
-       EO_OP_FUNC(eo_event_global_freeze_get, _ev_global_freeze_get, "Get global event freeze counter."),
+       EO_OP_CLASS_FUNC(eo_event_global_freeze, _ev_global_freeze, "Freezes events globally."),
+       EO_OP_CLASS_FUNC(eo_event_global_thaw, _ev_global_thaw, "Thaws events globally."),
+       EO_OP_CLASS_FUNC(eo_event_global_freeze_get, _ev_global_freeze_get, "Get global event freeze counter."),
        EO_OP_FUNC(eo_dbg_info_get, _dbg_info_get, "Get debug info list for obj."),
        EO_OP_SENTINEL
 };
