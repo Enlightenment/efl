@@ -220,10 +220,7 @@ M.function_type = {
     PROP_SET   = 2,
     PROP_GET   = 3,
     METHOD     = 4,
-    CTOR       = 5,
-    DTOR       = 6,
-    DFLT_CTOR  = 7,
-    DFLT_DTOR  = 8
+    CTOR       = 5
 }
 
 M.function_scope = {
