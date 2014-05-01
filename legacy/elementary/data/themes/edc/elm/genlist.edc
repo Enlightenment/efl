@@ -2,7 +2,7 @@
    group { _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -14,7 +14,7 @@
    group { _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text"; \
+         text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -28,7 +28,7 @@
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -42,7 +42,7 @@
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -62,7 +62,7 @@
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text"; \
+         text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -76,7 +76,7 @@
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -90,7 +90,7 @@
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -104,7 +104,7 @@
                text.min: 0 1; \
             } \
          } \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -125,7 +125,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
    
    parts {
-      part { "shadow_vbar";
+      image { "shadow_vbar";
          desc { "default";
             rel1.offset: -3 -2;
             rel1.to: "base_vbar";
@@ -136,7 +136,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             fill.smooth: 0;
          }
       }
-      part { "base_vbar";
+      image { "base_vbar";
          desc { "default";
             image.normal: "vgrad_med_lighter.png";
             fill.smooth: 0;
@@ -144,7 +144,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             TILED_HORIZ(120)
          }
       }
-      part { "bevel_vbar";
+      image { "bevel_vbar";
          desc { "default";
             rel1.to: "base_vbar";
             rel2.to: "base_vbar";
@@ -212,7 +212,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             rel2.offset: -3 -3;
          }
       }
-      part { "bar";
+      image { "bar";
          desc { "default";
             image.normal: "horizontal_separated_bar_small_glow.png";
             image.border: 4 4 4 4;
@@ -233,7 +233,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
 group { "elm/genlist/item_compress/group_index/default"; nomouse;
    inherit: "elm/genlist/item/group_index/default";
    parts {
-      part { "elm.text";
+      text { "elm.text";
          desc { "default";
             text.min: 0 1;
          }
@@ -280,7 +280,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              link.base: "elm,state,odd";
           }
        }
-       part { "bevel";
+       image { "bevel";
           desc { "default";
              image.normal: "bevel_curved_horiz_out.png";
              image.border: 0 0 2 2;
@@ -288,7 +288,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              fill.smooth: 0;
           }
        }
-       part { "sel_shadow";
+       image { "sel_shadow";
           desc { "default";
              image.normal: "shadow_rounded_horiz.png";
              image.border: 0 0 9 9;
@@ -304,7 +304,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              vis;
           }
        }
-       part { "sel_base";
+       image { "sel_base";
           desc { "default";
              image.normal: "vgrad_med_dark.png";
              fill.smooth: 0;
@@ -318,7 +318,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
              vis;
           }
        }
-       part { "sel_bevel";
+       image { "sel_bevel";
           desc { "default";
              image.normal: "bevel_horiz_out.png";
              image.border: 0 0 2 2;
@@ -339,7 +339,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
 group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
     images.image: "shine.png" COMP;
     parts {
-       part { "sel_shine";
+       image { "sel_shine";
           desc { "default";
              image.normal: "shine.png";
              rel1.offset: 0 -2;
@@ -1333,7 +1333,7 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
    images.image: "sym_down_dark_normal.png" COMP;
 
    parts {
-      part { "arrow_img_l"; insert_after: "sel_bevel";
+      image { "arrow_img_l"; insert_after: "sel_bevel";
          clip_to: "arrow_clip_l";
          scale: 1;
          ignore_flags: ON_HOLD;
@@ -1366,7 +1366,7 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             image.normal: "sym_down_dark_normal.png";
          }
       }
-      part { "arrow_img_r";
+      image { "arrow_img_r";
          clip_to: "arrow_clip_r";
          scale: 1;
          ignore_flags: ON_HOLD;
@@ -1512,7 +1512,7 @@ group { "elm/genlist/tree/default/default"; nomouse;
 //   alias: "elm/genlist/tree/effect_parts/default";
 //   alias: "elm/genlist/item/effect_parts/default";
    parts {
-      part { "elm.swallow.icon";
+      swallow { "elm.swallow.icon";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1536,7 +1536,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/default/default", "elm/genlist/tree/
 group { "elm/genlist/tree/default_style/default";
    inherit: "elm/genlist/item/default_style/default";
    parts {
-      part { "elm.swallow.icon";
+      swallow { "elm.swallow.icon";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1560,7 +1560,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/default_style/default", "elm/genlist
 group { "elm/genlist/tree/one_icon/default";
    inherit: "elm/genlist/item/one_icon/default";
    parts {
-      part { "elm.swallow.icon";
+      swallow { "elm.swallow.icon";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1584,7 +1584,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/one_icon/default", "elm/genlist/tree
 group { "elm/genlist/tree/end_icon/default";
    inherit: "elm/genlist/item/end_icon/default";
    parts {
-      part { "elm.text";
+      text { "elm.text";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1612,7 +1612,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/end_icon/default", "elm/genlist/tree
 group { "elm/genlist/tree/no_icon/default";
    inherit: "elm/genlist/item/no_icon/default";
    parts {
-      part { "elm.text";
+      text { "elm.text";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1640,7 +1640,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/no_icon/default", "elm/genlist/tree/
 group { "elm/genlist/tree/full/default";
    inherit: "elm/genlist/item/full/default";
    parts {
-      part { "elm.swallow.content";
+      swallow { "elm.swallow.content";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1969,13 +1969,13 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/icon_top_text_bottom/default", "elm/
 group { "elm/genlist/tree/icon_top_text_bottom/default";
    inherit: "elm/genlist/item/icon_top_text_bottom/default";
    parts {
-      part { "sizer.content";
+      image { "sizer.content";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
          }
       }
-      part { "elm.text";
+      text { "elm.text";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -1996,7 +1996,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text"; \
+         text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2010,7 +2010,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2024,7 +2024,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2038,7 +2038,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "elm.text.sub"; \
+         text { "elm.text.sub"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2052,7 +2052,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label4"; \
+         text { "label4"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2066,7 +2066,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label5"; \
+         text { "label5"; \
             desc { "default"; \
                fixed: 0 1; \
                text.min: 0 1; \
@@ -2087,7 +2087,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text"; \
+         text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2101,7 +2101,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2115,7 +2115,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2129,7 +2129,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "elm.text.sub"; \
+         text { "elm.text.sub"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2143,7 +2143,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label4"; \
+         text { "label4"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2157,7 +2157,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "label5"; \
+         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2171,7 +2171,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
                text.min: 0 1; \
             } \
          } \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -2474,7 +2474,7 @@ COMPRESS_SUB_ODD("elm/genlist/item_compress_odd/double_label/default", "elm/genl
 group { "elm/genlist/tree/double_label/default";
    inherit: "elm/genlist/item/double_label/default";
    parts {
-      part { "elm.swallow.icon";
+      swallow { "elm.swallow.icon";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -2499,7 +2499,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text"; \
+         text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2513,7 +2513,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2527,7 +2527,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2541,7 +2541,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "elm.title.1"; \
+         text { "elm.title.1"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2555,7 +2555,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label4"; \
+         text { "label4"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2569,7 +2569,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label5"; \
+         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2583,7 +2583,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "elm.title.2"; \
+         text { "elm.title.2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2597,7 +2597,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label6"; \
+         text { "label6"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2611,7 +2611,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label7"; \
+         text { "label7"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2631,7 +2631,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text"; \
+         text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2645,7 +2645,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2659,7 +2659,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2673,7 +2673,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "elm.title.1"; \
+         text { "elm.title.1"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2687,7 +2687,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label4"; \
+         text { "label4"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2701,7 +2701,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label5"; \
+         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2715,7 +2715,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "elm.title.2"; \
+         text { "elm.title.2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2729,7 +2729,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label6"; \
+         text { "label6"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2743,7 +2743,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "label7"; \
+         text { "label7"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -2757,7 +2757,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
                text.min: 0 1; \
             } \
          } \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -3367,7 +3367,7 @@ group { "elm/genlist/item/media/default"; nomouse;
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text.title"; \
+         text { "elm.text.title"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3381,7 +3381,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3395,7 +3395,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3409,7 +3409,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "elm.text.album-artist"; \
+         text { "elm.text.album-artist"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3423,7 +3423,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label4"; \
+         text { "label4"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3437,7 +3437,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label5"; \
+         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3457,7 +3457,7 @@ group { "elm/genlist/item/media/default"; nomouse;
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text.title"; \
+         text { "elm.text.title"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3471,7 +3471,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3485,7 +3485,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3499,7 +3499,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "elm.text.album-artist"; \
+         text { "elm.text.album-artist"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3513,7 +3513,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label4"; \
+         text { "label4"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3527,7 +3527,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "label5"; \
+         text { "label5"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -3541,7 +3541,7 @@ group { "elm/genlist/item/media/default"; nomouse;
                text.min: 0 1; \
             } \
          } \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -3922,7 +3922,7 @@ ODD("elm/genlist/item_odd/media-album/default", "elm/genlist/item/media-album/de
 group { "elm/genlist/item_compress/media-album/default";
    inherit: "elm/genlist/item/media-album/default";
    parts {
-      part { "elm.text.title";
+      text { "elm.text.title";
          desc { "default";
             text.min: 0 1;
          }
@@ -3936,7 +3936,7 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label2";
+      text { "label2";
          desc { "default";
             text.min: 0 1;
          }
@@ -3950,7 +3950,7 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label3";
+      text { "label3";
          desc { "default";
             text.min: 0 1;
          }
@@ -3964,7 +3964,7 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "elm.text.length";
+      text { "elm.text.length";
          desc { "default";
             text.min: 0 1;
          }
@@ -3978,7 +3978,7 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label4";
+      text { "label4";
          desc { "default";
             text.min: 0 1;
          }
@@ -3992,7 +3992,7 @@ group { "elm/genlist/item_compress/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label5";
+      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4011,7 +4011,7 @@ group { "elm/genlist/item_compress/media-album/default";
 group { "elm/genlist/item_compress_odd/media-album/default";
    inherit: "elm/genlist/item_odd/media-album/default";
    parts {
-      part { "elm.text.title";
+      text { "elm.text.title";
          desc { "default";
             text.min: 0 1;
          }
@@ -4025,7 +4025,7 @@ group { "elm/genlist/item_compress_odd/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label2";
+      text { "label2";
          desc { "default";
             text.min: 0 1;
          }
@@ -4039,7 +4039,7 @@ group { "elm/genlist/item_compress_odd/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label3";
+      text { "label3";
          desc { "default";
             text.min: 0 1;
          }
@@ -4053,7 +4053,7 @@ group { "elm/genlist/item_compress_odd/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "elm.text.length";
+      text { "elm.text.length";
          desc { "default";
             text.min: 0 1;
          }
@@ -4067,7 +4067,7 @@ group { "elm/genlist/item_compress_odd/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label4";
+      text { "label4";
          desc { "default";
             text.min: 0 1;
          }
@@ -4081,7 +4081,7 @@ group { "elm/genlist/item_compress_odd/media-album/default";
             text.min: 0 1;
          }
       }
-      part { "label5";
+      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4372,7 +4372,7 @@ ODD("elm/genlist/item_odd/media-preview/default", "elm/genlist/item/media-previe
 group { "elm/genlist/item_compress/media-preview/default";
    inherit: "elm/genlist/item/media-preview/default";
    parts {
-      part { "elm.text";
+      text { "elm.text";
          desc { "default";
             text.min: 0 1;
          }
@@ -4386,7 +4386,7 @@ group { "elm/genlist/item_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label2";
+      text { "label2";
          desc { "default";
             text.min: 0 1;
          }
@@ -4400,7 +4400,7 @@ group { "elm/genlist/item_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label3";
+      text { "label3";
          desc { "default";
             text.min: 0 1;
          }
@@ -4414,7 +4414,7 @@ group { "elm/genlist/item_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "elm.text.artist";
+      text { "elm.text.artist";
          desc { "default";
             text.min: 0 1;
          }
@@ -4428,7 +4428,7 @@ group { "elm/genlist/item_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label4";
+      text { "label4";
          desc { "default";
             text.min: 0 1;
          }
@@ -4442,7 +4442,7 @@ group { "elm/genlist/item_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label5";
+      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4461,7 +4461,7 @@ group { "elm/genlist/item_compress/media-preview/default";
 group { "elm/genlist/item_odd_compress/media-preview/default";
    inherit: "elm/genlist/item_odd/media-preview/default";
    parts {
-      part { "elm.text";
+      text { "elm.text";
          desc { "default";
             text.min: 0 1;
          }
@@ -4475,7 +4475,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label2";
+      text { "label2";
          desc { "default";
             text.min: 0 1;
          }
@@ -4489,7 +4489,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label3";
+      text { "label3";
          desc { "default";
             text.min: 0 1;
          }
@@ -4503,7 +4503,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "elm.text.artist";
+      text { "elm.text.artist";
          desc { "default";
             text.min: 0 1;
          }
@@ -4517,7 +4517,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label4";
+      text { "label4";
          desc { "default";
             text.min: 0 1;
          }
@@ -4531,7 +4531,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
             text.min: 0 1;
          }
       }
-      part { "label5";
+      text { "label5";
          desc { "default";
             text.min: 0 1;
          }
@@ -4552,7 +4552,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text.mode"; \
+         text { "elm.text.mode"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -4566,7 +4566,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -4580,7 +4580,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -4600,7 +4600,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "elm.text.mode"; \
+         text { "elm.text.mode"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -4614,7 +4614,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         part { "label2"; \
+         text { "label2"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -4628,7 +4628,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         part { "label3"; \
+         text { "label3"; \
             desc { "default"; \
                text.min: 0 1; \
             } \
@@ -4642,7 +4642,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
                text.min: 0 1; \
             } \
          } \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -4917,7 +4917,7 @@ COMPRESS_MODE_ODD("elm/genlist/item_compress_odd/mode/default", "elm/genlist/ite
 group { "elm/genlist/tree/mode/default";
    inherit: "elm/genlist/item/mode/default";
    parts {
-      part { "elm.text.mode";
+      text { "elm.text.mode";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 1 2;
@@ -4961,7 +4961,7 @@ COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tre
    group { name: _NAME; \
       inherit: _SRC; \
       parts { \
-         part { "base"; \
+         rect { "base"; \
             desc { "default"; \
                color: 56 56 56 255; \
                color_class: "list_item_base_odd"; \
@@ -4999,7 +4999,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
          target: "base";
       }
       
-      part { "sel_shadow1";
+      image { "sel_shadow1";
          desc { "default";
             image.normal: "shadow_horiz.png";
             image.border: 0 0 9 9;
@@ -5015,7 +5015,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
             vis;
          }
       }
-      part { "sel_shadow2";
+      image { "sel_shadow2";
          desc { "default";
             image.normal: "shadow_horiz.png";
             image.border: 0 0 9 9;
@@ -5031,7 +5031,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
             vis;
          }
       }
-      part { "sel_base";
+      image { "sel_base";
          desc { "default";
             image.normal: "vgrad_med_dark.png";
             fill.smooth: 0;
@@ -5043,7 +5043,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
             vis;
          }
       }
-      part { "sel_bevel";
+      image { "sel_bevel";
          desc { "default";
             image.normal: "bevel_horiz_out.png";
             image.border: 0 0 2 2;
