@@ -5,6 +5,7 @@
 #include "Eolian.h"
 #include "legacy_generator.h"
 #include "eo1_generator.h"
+#include "impl_generator.h"
 #include "common_funcs.h"
 
 static char*
@@ -118,6 +119,59 @@ end:
    return ret;
 }
 
+static Eina_Bool
+_generate_impl_c_file(char *filename, const char *classname)
+{
+   Eina_Bool ret = EINA_FALSE;
+   long file_size = 0;
+
+   FILE* fd = fopen(filename, "rb");
+   if (!fd)
+     {
+        ERR("Couldnt open file %s for reading", filename);
+        goto end;
+     }
+
+   fseek(fd, 0, SEEK_END);
+   file_size = ftell(fd);
+   fseek(fd, 0, SEEK_SET);
+   char *content = malloc(file_size + 1);
+   fread(content, file_size, 1, fd);
+   content[file_size] = '\0';
+   fclose(fd);
+
+   if (!content)
+     {
+        ERR("Couldnt read file %s", filename);
+        goto end;
+     }
+
+   Eina_Strbuf *buffer = eina_strbuf_manage_new(content);
+
+   if (!impl_source_generate(classname, buffer))
+     {
+        ERR("Failed to generate source for %s", classname);
+        goto end;
+     }
+
+   fd = fopen(filename, "wb");
+   if (!fd)
+     {
+        ERR("Couldnt open file %s for writing", filename);
+        goto end;
+     }
+
+   const char *text = eina_strbuf_string_get(buffer);
+   if (text) fputs(text, fd);
+
+   fclose(fd);
+
+   ret = EINA_TRUE;
+end:
+   eina_strbuf_free(buffer);
+   return ret;
+}
+
 // TODO join with header gen.
 static Eina_Bool
 _generate_legacy_header_file(char *filename, const char *classname)
@@ -160,7 +214,8 @@ enum
 {
    NO_WAY_GEN,
    H_GEN,
-   C_GEN
+   C_GEN,
+   C_IMPL_GEN
 };
 static int gen_opt = NO_WAY_GEN;
 static int eo_needed = 0;
@@ -198,6 +253,7 @@ int main(int argc, char **argv)
           {"help",       no_argument,         0, 'h'},
           {"gh",         no_argument,         &gen_opt, H_GEN},
           {"gc",         no_argument,         &gen_opt, C_GEN},
+          {"gi",         no_argument,         &gen_opt, C_IMPL_GEN},
           {"output",     required_argument,   0, 'o'},
           {"legacy",     no_argument,         (int *)&legacy_support, EINA_TRUE},
           {"include",    required_argument,   0, 'I'},
@@ -233,15 +289,14 @@ int main(int argc, char **argv)
 
    if (help)
      {
-        printf("Usage: %s [-h/--help] [-v/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--ah] [--output/-o outfile] file.eo ... \n", argv[0]);
+        printf("Usage: %s [-h/--help] [-v/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--gi] [--output/-o outfile] file.eo ... \n", argv[0]);
         printf("       --help/-h Print that help\n");
         printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
         printf("       --output/-o Force output filename to 'outfile'\n");
         printf("       --eo Set generator to eo mode. Must be specified\n");
-        printf("       --gh Generate c header file [.h]\n");
-        printf("       --gc Generate c source file [.c]\n");
-        printf("       --ah Append eo class definitions to an existing c header file [.h]\n");
-        printf("       --al Append legacy function definitions to an existing c header file [.h]\n");
+        printf("       --gh Generate C header file [.h]\n");
+        printf("       --gc Generate C source file [.c]\n");
+        printf("       --gi Generate C implementation source file [.c]. The output will be a series of functions that have to be filled.\n");
         printf("       --legacy Generate legacy\n");
         ret = 0;
         goto end;
@@ -284,10 +339,8 @@ int main(int argc, char **argv)
      {
         if (!output_filename)
           {
-             output_filename = malloc(strlen(eina_list_data_get(files4gen)) + 5);
-             strcpy(output_filename, eina_list_data_get(files4gen));
-             if (C_GEN == gen_opt) strcat(output_filename, ".c");
-             else strcat(output_filename, ".h");
+             ERR("You must use -o argument for files generation.");
+             goto end;
           }
         switch (gen_opt)
           {
@@ -304,6 +357,12 @@ int main(int argc, char **argv)
                 {
                    INF("Generating source file %s\n", output_filename);
                    ret = _generate_c_file(output_filename, classname, legacy_support)?0:1;
+                   break;
+                }
+           case C_IMPL_GEN:
+                {
+                   INF("Generating user source file %s\n", output_filename);
+                   ret = _generate_impl_c_file(output_filename, classname) ? 0 : 1;
                    break;
                 }
            default:

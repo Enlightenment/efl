@@ -5,4 +5,7 @@ class Base {
       destructor {
       }
    }
+   implements {
+      virtual::constructor;
+   }
 }

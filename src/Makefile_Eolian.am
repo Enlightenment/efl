@@ -30,6 +30,8 @@ bin_eolian_eolian_gen_SOURCES = \
                 bin/eolian/common_funcs.h \
                 bin/eolian/eo1_generator.c \
                 bin/eolian/eo1_generator.h \
+                bin/eolian/impl_generator.c \
+                bin/eolian/impl_generator.h \
                 bin/eolian/legacy_generator.c \
                 bin/eolian/legacy_generator.h \
                 bin/eolian/main.c
