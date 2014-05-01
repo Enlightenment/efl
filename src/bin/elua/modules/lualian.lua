@@ -54,19 +54,21 @@ local known_ptr_in = {
     ["const char"] = function(expr) return expr end
 }
 
-local build_calln = function(expr, fulln, tp, isin)
+local build_calln = function(tps, expr, fulln, tp, isin)
+    local nm, own
+    local buf  = { "__convert", fulln, isin and "IN" or "OUT" }
+    local owns = {}
+    while tps do
+        tps, nm, own = tps:information_get()
+        owns[#owns + 1] = own and "true" or "false"
+        buf[#buf + 1] = nm:gsub("%s", "_"):gsub("%*", "_ptr"):gsub("__+", "_")
+    end
     return table.concat {
-        "__convert_", fulln, "_", isin and "IN_" or "OUT_", tp, "(", expr, ")"
+        table.concat(buf, "_"), "(", expr, ", ", table.concat(owns, ", "), ")"
     }
 end
 
 local build_tp = function(tps)
-    local nm
-    local buf = {}
-    while tps do
-        tps, nm = tps:information_get()
-        buf[#buf + 1] = nm:gsub("%s", "_"):gsub("%*", "_ptr"):gsub("__+", "_")
-    end
     return table.concat(buf, "_")
 end
 
@@ -75,7 +77,7 @@ local typeconv_in = function(tps, tp, expr, fulln, isconst, isptr)
         local passtp = (isconst and "const " or "") .. tp
         local f = known_ptr_in[passtp]
         if f then return f(expr) end
-        return build_calln(expr, fulln, build_tp(tps), true)
+        return build_calln(tps, expr, fulln, true)
     end
     if isnum[tp] then
         return expr
@@ -86,7 +88,7 @@ local typeconv_in = function(tps, tp, expr, fulln, isconst, isptr)
         return f(expr)
     end
 
-    return build_calln(expr, fulln, build_tp(tps), true)
+    return build_calln(tps, expr, fulln, true)
 end
 
 local typeconv = function(tps, expr, fulln, isin)
@@ -110,7 +112,7 @@ local typeconv = function(tps, expr, fulln, isin)
         local passtp = (isconst and "const " or "") .. basetype
         local f = known_ptr_out[passtp]
         if f then return f(expr) end
-        return build_calln(expr, fulln, build_tp(tps), false)
+        return build_calln(tps, expr, fulln, false)
     end
 
     -- number?
@@ -124,7 +126,7 @@ local typeconv = function(tps, expr, fulln, isin)
         return f(expr)
     end
 
-    return build_calln(expr, fulln, build_tp(tps), false)
+    return build_calln(tps, expr, fulln, false)
 end
 
 local Node = util.Object:clone {
