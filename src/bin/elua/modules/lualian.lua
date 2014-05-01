@@ -72,10 +72,6 @@ local build_calln = function(tps, expr, tp, isin)
     }
 end
 
-local build_tp = function(tps)
-    return table.concat(buf, "_")
-end
-
 local typeconv_in = function(tps, tp, expr, isconst, isptr)
     if isptr then
         local passtp = (isconst and "const " or "") .. tp
