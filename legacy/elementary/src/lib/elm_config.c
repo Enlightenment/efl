@@ -506,7 +506,6 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, scroll_smooth_history_weight, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scroll_smooth_future_time, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, scroll_smooth_time_window, T_DOUBLE);
-   ELM_CONFIG_VAL(D, T, focus_auto_scroll_bring_in_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scale, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bgpixmap, T_INT);
    ELM_CONFIG_VAL(D, T, compositing, T_INT);
@@ -529,6 +528,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_highlight_animate, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_highlight_clip_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_move_policy, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, focus_auto_scroll_bring_in_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, item_select_on_focus_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
