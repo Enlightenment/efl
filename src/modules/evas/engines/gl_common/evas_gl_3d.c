@@ -1012,8 +1012,8 @@ _light_build(E3D_Draw_Data *data,
              const Evas_Mat4    *matrix_eye)
 {
    Evas_3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_3D_NODE_CLASS);
-   Evas_3D_Light *l = pd_light_node->data.light.light;
-   Evas_3D_Light_Data *pdl = eo_data_scope_get(l, EVAS_3D_LIGHT_CLASS);
+   Evas_3D_Light *l = pd_light_node ? pd_light_node->data.light.light : NULL;
+   Evas_3D_Light_Data *pdl = l ? eo_data_scope_get(l, EVAS_3D_LIGHT_CLASS) : NULL;
    Evas_Vec3      pos, dir;
 
    if (pdl == NULL)
