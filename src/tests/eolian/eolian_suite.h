@@ -3,8 +3,7 @@
 
 #include <check.h>
 
-void eolian_test_init(TCase *tc);
-void eolian_test_general(TCase *tc);
+void eolian_parsing_test(TCase *tc);
 
 #endif /* _EOLIAN_SUITE_H */
 

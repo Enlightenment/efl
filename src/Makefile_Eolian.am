@@ -63,6 +63,7 @@ check_PROGRAMS += \
 tests/eolian/eolian_suite
 
 tests_eolian_eolian_suite_SOURCES = \
+tests/eolian/eolian_parsing.c \
 tests/eolian/eolian_suite.c \
 tests/eolian/eolian_suite.h
 
