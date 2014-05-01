@@ -645,7 +645,10 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 
         if (_elm_scrollable_is(o) && !elm_widget_disabled_get(o))
           {
-             eo_do(o, elm_interface_scrollable_content_region_show(x, y, w, h));
+             if (!_elm_config->focus_auto_scroll_bring_in_enable)
+               eo_do(o, elm_interface_scrollable_content_region_show(x, y, w, h));
+             else
+               eo_do(o, elm_interface_scrollable_region_bring_in(x, y, w, h));
 
              if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
                {
