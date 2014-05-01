@@ -983,6 +983,14 @@ _cf_audio(void *data,
 }
 
 static void
+_cf_focus(void *data,
+          Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
+{
+   _flip_to(data, "focus");
+}
+
+static void
 _cf_etc(void *data,
         Evas_Object *obj EINA_UNUSED,
         void *event_info EINA_UNUSED)
@@ -1541,6 +1549,113 @@ _status_config_audio(Evas_Object *win,
    MUTE_CHECK("Mute Everything", EDJE_CHANNEL_ALL, mute_all_change);
 
    evas_object_data_set(win, "audio", bx);
+
+   elm_naviframe_item_simple_push(naviframe, bx);
+}
+
+static void
+_config_focus_highlight_enabled_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                                   void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_focus_highlight_enabled_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   printf("%d %d\n", cf, val);
+   if (cf == val) return;
+   elm_config_focus_highlight_enabled_set(val);
+   elm_config_all_flush();
+}
+
+static void
+_config_focus_highlight_anim_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                                void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_focus_highlight_animate_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (cf == val) return;
+   elm_config_focus_highlight_animate_set(val);
+   elm_config_all_flush();
+}
+
+static void
+_config_focus_highlight_clip_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                                void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_focus_highlight_clip_disabled_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (cf == val) return;
+   elm_config_focus_highlight_clip_disabled_set(val);
+   elm_config_all_flush();
+}
+
+static void
+_config_focus_auto_scroll_bring_in_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                                      void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_focus_auto_scroll_bring_in_enabled_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (cf == val) return;
+   elm_config_focus_auto_scroll_bring_in_enabled_set(val);
+   elm_config_all_flush();
+}
+
+static void
+_config_focus_item_select_on_focus_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                                      void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_item_select_on_focus_disabled_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (cf == val) return;
+   elm_config_item_select_on_focus_disabled_set(val);
+   elm_config_all_flush();
+}
+
+static void
+_status_config_focus(Evas_Object *win,
+                     Evas_Object *naviframe)
+{
+   Evas_Object *bx, *ck;
+
+   bx = elm_box_add(win);
+
+   CHECK_ADD("Enable Focus Highlight (only new window)",
+             "Set whether enable/disable focus highlight.<br/>"
+             "This feature is disabled by default.",
+             _config_focus_highlight_enabled_cb, NULL);
+   elm_check_state_set(ck, elm_config_focus_highlight_enabled_get());
+
+   CHECK_ADD("Enable Focus Highlight Animation (only new window)",
+             "Set whether enable/disable focus highlight animation.<br/>"
+             "This feature is disabled by default",
+             _config_focus_highlight_anim_cb, NULL);
+   elm_check_state_set(ck, elm_config_focus_highlight_animate_get());
+
+   CHECK_ADD("Disable Focus Highlight clip",
+             "Set whether enable/disable focus highlight clip feature.<br/>"
+             "If the focus highlight clip is disabled,<br/>"
+             "focus highlight object would not be clipped"
+             "by the target object's parent",
+             _config_focus_highlight_clip_cb, NULL);
+   elm_check_state_set(ck, elm_config_focus_highlight_clip_disabled_get());
+
+   CHECK_ADD("Enable Auto Scroll Bring-in",
+             "Set whether enable/disable auto scroll bring-in feature<br/>"
+             "This is disabled by default so auto scrolling works by show not"
+             "by bring-in.",
+             _config_focus_auto_scroll_bring_in_cb, NULL);
+   elm_check_state_set(ck, elm_config_focus_auto_scroll_bring_in_enabled_get());
+
+   CHECK_ADD("Disable Item Select on Focus",
+             "Set whether item would be selected on item focus.<br/>"
+             "This is enabled by default.",
+             _config_focus_item_select_on_focus_cb, NULL);
+   elm_check_state_set(ck, elm_config_item_select_on_focus_disabled_get());
+
+   evas_object_data_set(win, "focus", bx);
 
    elm_naviframe_item_simple_push(naviframe, bx);
 }
@@ -3531,6 +3646,7 @@ _status_config_full(Evas_Object *win,
                            _cf_rendering, win);
    elm_toolbar_item_append(tb, "appointment-new", "Caches", _cf_caches, win);
    elm_toolbar_item_append(tb, "sound", "Audio", _cf_audio, win);
+   elm_toolbar_item_append(tb, NULL, "Focus", _cf_focus, win);
    elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
 
    elm_box_pack_end(bx0, tb);
@@ -3548,6 +3664,7 @@ _status_config_full(Evas_Object *win,
    _status_config_scrolling(win, naviframe);
    _status_config_caches(win, naviframe);
    _status_config_audio(win, naviframe);
+   _status_config_focus(win, naviframe);
    _status_config_etc(win, naviframe);
    _status_config_sizing(win, naviframe); // Note: call this at the end.
 
