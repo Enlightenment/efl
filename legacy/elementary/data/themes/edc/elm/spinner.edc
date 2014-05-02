@@ -24,6 +24,7 @@ group { name: "elm/spinner/base/default";
             text { font: FN; size: 10;
                min: 1 1;
                text_class: "spinner";
+               ellipsis: -1;
             }
          }
          description { state: "disabled" 0.0;
