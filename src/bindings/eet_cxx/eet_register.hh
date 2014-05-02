@@ -61,7 +61,6 @@ void descriptor_type_register_impl
   // composition by value
   static_assert(std::is_member_object_pointer<F>::value, "");
   typedef typename _detail::member_type<F>::type member_type;
-  typedef typename _detail::object_type<F>::type object_type;
   static_assert(!std::is_pointer<member_type>::value, "");
   static_assert(std::is_same<member_type, U>::value, "");
   static_assert(std::is_pod<member_type>::value, "");
@@ -83,7 +82,6 @@ void descriptor_type_register_impl
   // composition by pointer
   static_assert(std::is_member_object_pointer<F>::value, "");
   typedef typename _detail::member_type<F>::type pointer_member_type;
-  typedef typename _detail::object_type<F>::type object_type;
   static_assert(std::is_pointer<pointer_member_type>::value, "");
   typedef typename std::remove_pointer<pointer_member_type>::type member_type;
   static_assert(std::is_same<member_type, U>::value, "");
@@ -106,7 +104,6 @@ void descriptor_type_register_impl
 {
   static_assert(std::is_member_object_pointer<F>::value, "");
   typedef typename _detail::member_type<F>::type member_type;
-  typedef typename _detail::object_type<F>::type object_type;
 
   eet_data_descriptor_element_add(cls, i.name, _eet_type<member_type>::value, EET_G_UNKNOWN
                                   , i.offset, 0, nullptr, nullptr);
