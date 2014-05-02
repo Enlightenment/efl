@@ -7,7 +7,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
             /*@
             @brief Set the paused state for photocam
 
-            This sets the paused state to on(EINA_TRUE) or off (EINA_FALSE) for
+            This sets the paused state to on(@c EINA_TRUE) or off (@c EINA_FALSE) for
             photocam. The default is off. This will stop zooming using animation on
             zoom level changes and change instantly. This will stop any existing
             animations that are running.
@@ -66,7 +66,7 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable)
             /*@
             @brief Set the gesture state for photocam.
 
-            This sets the gesture state to on(EINA_TRUE) or off (EINA_FALSE) for
+            This sets the gesture state to on(@c EINA_TRUE) or off (@c EINA_FALSE) for
             photocam. The default is off. This will start multi touch zooming.
 
             @ingroup Photocam */
