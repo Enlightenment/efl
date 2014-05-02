@@ -162,13 +162,17 @@ local help = function(parser, f, category)
     if parser.header then
         buf:write("\n", repl_prog(parser.header, progn), "\n")
     end
-    if #parser.descs > 0 then
+    local nignore = 0
+    for i, desc in ipairs(parser.descs) do
+        if desc.help == false then nignore = nignore + 1 end
+    end
+    if #parser.descs > nignore then
         local ohdr = parser.optheader
         buf:write("\n", ohdr and repl_prog(ohdr, progn)
             or "The following options are supported:", "\n\n")
         local lls = 0
         for i, desc in ipairs(parser.descs) do
-            if desc[1] then
+            if desc.help ~= false and desc[1] then
                 local mv = get_metavar(desc)
                 if mv then
                     lls = math.max(lls, #mv + ((desc[3] == nil) and 5 or 4))
@@ -182,7 +186,8 @@ local help = function(parser, f, category)
         local iscat = false
         local wascat = false
         for i, desc in ipairs(parser.descs) do
-            if (not category or iscat) and (desc[1] or desc[2]) then
+            local nign = desc.help ~= false
+            if nign and (not category or iscat) and (desc[1] or desc[2]) then
                 local mv = get_metavar(desc)
                 local ln = {}
                 ln[#ln + 1] = "  "
@@ -207,7 +212,7 @@ local help = function(parser, f, category)
                 ln = table.concat(ln)
                 lln = math.max(lln, #ln)
                 lns[#lns + 1] = { ln, desc.help }
-            elseif desc.category then
+            elseif nign and desc.category then
                 local lcat  = category   and   category:lower() or nil
                 local alias = desc.alias and desc.alias:lower() or nil
                 iscat = (not category) or (alias                 == lcat)
