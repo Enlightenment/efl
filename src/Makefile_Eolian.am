@@ -66,12 +66,14 @@ tests/eolian/eolian_suite
 
 tests_eolian_eolian_suite_SOURCES = \
 tests/eolian/eolian_parsing.c \
+tests/eolian/eolian_generation.c \
 tests/eolian/eolian_suite.c \
 tests/eolian/eolian_suite.h
 
 tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
 -DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/eolian\" \
+-DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 @CHECK_CFLAGS@ \
 @EOLIAN_CFLAGS@
 TESTS += tests/eolian/eolian_suite
@@ -87,5 +89,9 @@ tests/eolian/data/class_simple.eo \
 tests/eolian/data/scope.eo \
 tests/eolian/data/ctor_dtor.eo \
 tests/eolian/data/complex_type.eo \
-tests/eolian/data/typedef.eo
+tests/eolian/data/typedef.eo \
+tests/eolian/data/object_impl.eo \
+tests/eolian/data/object_impl_ref.c \
+tests/eolian/data/object_impl_add.eo \
+tests/eolian/data/object_impl_add_ref.c
 

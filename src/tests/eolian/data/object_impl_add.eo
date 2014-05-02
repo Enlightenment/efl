@@ -1,0 +1,14 @@
+class Object (Base) {
+   properties {
+      c {
+         set {
+         }
+         get {
+            /* set as virtual pure - no implementation expected */
+         }
+         values {
+            @own Eina_List *<int> value;
+         }
+      }
+   }
+}

@@ -124,29 +124,29 @@ _generate_impl_c_file(char *filename, const char *classname)
 {
    Eina_Bool ret = EINA_FALSE;
    long file_size = 0;
+   Eina_Strbuf *buffer = NULL;
 
    FILE* fd = fopen(filename, "rb");
-   if (!fd)
+   if (fd)
      {
-        ERR("Couldnt open file %s for reading", filename);
-        goto end;
+        fseek(fd, 0, SEEK_END);
+        file_size = ftell(fd);
+        fseek(fd, 0, SEEK_SET);
+        char *content = malloc(file_size + 1);
+        fread(content, file_size, 1, fd);
+        content[file_size] = '\0';
+        fclose(fd);
+
+        if (!content)
+          {
+             ERR("Couldnt read file %s", filename);
+             goto end;
+          }
+
+        buffer = eina_strbuf_manage_new(content);
      }
-
-   fseek(fd, 0, SEEK_END);
-   file_size = ftell(fd);
-   fseek(fd, 0, SEEK_SET);
-   char *content = malloc(file_size + 1);
-   fread(content, file_size, 1, fd);
-   content[file_size] = '\0';
-   fclose(fd);
-
-   if (!content)
-     {
-        ERR("Couldnt read file %s", filename);
-        goto end;
-     }
-
-   Eina_Strbuf *buffer = eina_strbuf_manage_new(content);
+   else
+      buffer = eina_strbuf_new();
 
    if (!impl_source_generate(classname, buffer))
      {

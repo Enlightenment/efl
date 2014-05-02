@@ -18,6 +18,7 @@ struct _Eolian_Test_Case
 
 static const Eolian_Test_Case etc[] = {
   { "Eolian Parsing", eolian_parsing_test},
+  { "Eolian Generation", eolian_generation_test},
   { NULL, NULL }
 };
 
