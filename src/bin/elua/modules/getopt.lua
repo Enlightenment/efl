@@ -187,7 +187,8 @@ local help = function(parser, f, category)
         local wascat = false
         for i, desc in ipairs(parser.descs) do
             local nign = desc.help ~= false
-            if nign and (not category or iscat) and (desc[1] or desc[2]) then
+            if nign and (not category or iscat)
+            and (desc[1] or desc[2] or desc.metavar) then
                 local mv = get_metavar(desc)
                 local ln = {}
                 ln[#ln + 1] = "  "
@@ -201,6 +202,8 @@ local help = function(parser, f, category)
                     if sdf > 0 then
                         ln[#ln + 1] = (" "):rep(sdf)
                     end
+                elseif not desc[2] and mv then
+                    ln[#ln + 1] = mv
                 else
                     ln[#ln + 1] = (" "):rep(lls + 2)
                 end
