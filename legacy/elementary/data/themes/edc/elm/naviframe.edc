@@ -493,7 +493,7 @@ group { name: "elm/naviframe/item/basic/default";
       }
       program { name: "titlehide2";
          action: STATE_SET "title-hidden" 0.0;
-         transition: ACCELERATE 0.5;
+         transition: DECEL 0.5;
          target: "top";
          target: "shadow";
          target: "elm.swallow.content";
@@ -557,7 +557,7 @@ group { name: "elm/naviframe/item/basic/default";
       }
       program { name: "pushed2";
          action: STATE_SET "prev" 0.0;
-         transition: ACCELERATE 0.5;
+         transition: DECEL 0.5;
          target: "base";
          target: "elements_clip";
          after: "pushed3";
@@ -576,7 +576,7 @@ group { name: "elm/naviframe/item/basic/default";
       }
       program { name: "popped2";
          action: STATE_SET "next" 0.0;
-         transition: ACCELERATE 0.5;
+         transition: DECEL 0.5;
          target: "base";
          target: "elements_clip";
          after: "popped3";
