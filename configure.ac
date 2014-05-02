@@ -146,7 +146,7 @@ AC_SUBST(dbusservicedir)
 efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
-
+EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
 
 #### Default values
 
@@ -1057,6 +1057,7 @@ EFL_LIB_START([Eolian])
 ### Default values
 
 ### Additional options to configure
+EFL_ADD_FEATURE([EOLIAN], [cxx], [${have_cxx11}])
 
 ### Checks for programs
 
@@ -4110,6 +4111,7 @@ src/examples/ephysics/Makefile
 src/examples/edje/Makefile
 src/examples/emotion/Makefile
 src/examples/ethumb_client/Makefile
+src/examples/eolian_cxx/Makefile
 src/lib/eina/eina_config.h
 src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
@@ -4121,7 +4123,9 @@ pc/eina-cxx.pc
 pc/eet.pc
 pc/eet-cxx.pc
 pc/eo.pc
+pc/eo-cxx.pc
 pc/eolian.pc
+pc/eolian-cxx.pc
 pc/evas-fb.pc
 pc/evas-opengl-x11.pc
 pc/evas-opengl-sdl.pc
@@ -4136,6 +4140,7 @@ pc/evas-wayland-shm.pc
 pc/evas-wayland-egl.pc
 pc/evas-drm.pc
 pc/evas.pc
+pc/evas-cxx.pc
 pc/ecore.pc
 pc/ecore-con.pc
 pc/ecore-ipc.pc
@@ -4181,6 +4186,18 @@ cmakeconfig/EoConfig.cmake
 cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EolianConfig.cmake
 cmakeconfig/EolianConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EolianCxxConfig.cmake
+cmakeconfig/EolianCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EinaCxxConfig.cmake
+cmakeconfig/EinaCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EoCxxConfig.cmake
+cmakeconfig/EoCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EcoreCxxConfig.cmake
+cmakeconfig/EcoreCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EvasCxxConfig.cmake
+cmakeconfig/EvasCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EetCxxConfig.cmake
+cmakeconfig/EetCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EetConfig.cmake
 cmakeconfig/EetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EvasConfig.cmake

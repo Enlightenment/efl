@@ -2,3 +2,4 @@ check-results.xml
 *_suite
 *_suite.log
 *_suite.trs
+*/cxx_compile_test

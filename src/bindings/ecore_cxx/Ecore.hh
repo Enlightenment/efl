@@ -10,6 +10,10 @@
 #include <memory>
 #include <cstring>
 
+#ifdef EFL_BETA_API_SUPPORT
+#include <Ecore.eo.hh>
+#endif
+
 namespace efl { namespace ecore {
 
 template <typename T>

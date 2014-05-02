@@ -1,17 +1,43 @@
 
 ### Library
 
-installed_ecorecxxmainheadersdir = $(includedir)/ecore_cxx-@VMAJ@
-dist_installed_ecorecxxmainheaders_DATA = \
-bindings/ecore_cxx/Ecore.hh
+installed_ecorecxxmainheadersdir = $(includedir)/ecore-cxx-@VMAJ@
+dist_installed_ecorecxxmainheaders_DATA = bindings/ecore_cxx/Ecore.hh
+
+if HAVE_CXX11
+
+generated_ecore_cxx_bindings = \
+lib/ecore/ecore_poll.eo.hh \
+lib/ecore/ecore_job.eo.hh \
+lib/ecore/ecore_idler.eo.hh \
+lib/ecore/ecore_idle_exiter.eo.hh \
+lib/ecore/ecore_animator.eo.hh \
+lib/ecore/ecore_parent.eo.hh
+
+BUILT_SOURCES += \
+lib/ecore/Ecore.eo.hh \
+$(generated_ecore_cxx_bindings)
+
+installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
+dist_installed_ecorecxxheaders_DATA = \
+lib/ecore/Ecore.eo.hh \
+$(generated_ecore_cxx_bindings)
+
+lib/ecore/Ecore.eo.hh:
+	@echo -e "#ifndef EFL_CXX_ECORE_HH\n#define EFL_CXX_ECORE_HH\n" > $(top_builddir)/src/lib/ecore/Ecore.eo.hh
+	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
+	@for i in $(generated_ecore_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh; done
+	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore/Ecore.eo.hh
+
+endif
 
 ### Unit tests
 
 if EFL_ENABLE_TESTS
 if HAVE_CXX11
 
-check_PROGRAMS += tests/ecore_cxx/ecore_cxx_suite
-TESTS += tests/ecore_cxx/ecore_cxx_suite
+check_PROGRAMS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test
+TESTS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test
 
 tests_ecore_cxx_ecore_cxx_suite_SOURCES = \
 tests/ecore_cxx/ecore_cxx_suite.cc \
@@ -20,6 +46,7 @@ tests/ecore_cxx/ecore_cxx_test_safe_call.cc
 tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bindings/ecore_cxx \
 -I$(top_srcdir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/bindings/eo_cxx \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
 @CHECK_CFLAGS@ \
@@ -31,6 +58,17 @@ tests_ecore_cxx_ecore_cxx_suite_LDADD = \
 @USE_ECORE_LIBS@
 tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@
+
+tests_ecore_cxx_cxx_compile_test_SOURCES = tests/ecore_cxx/cxx_compile_test.cc
+tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/bindings/ecore_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-I$(top_srcdir)/src/bindings/eo_cxx \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
+@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@
+tests_ecore_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+tests_ecore_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
 endif
 endif

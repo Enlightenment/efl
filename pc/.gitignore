@@ -52,3 +52,7 @@
 /evas.pc
 /evil.pc
 /eolian.pc
+/eolian-cxx.pc
+/eo-cxx.pc
+/evas-cxx.pc
+/ecore-audio-cxx.pc.in

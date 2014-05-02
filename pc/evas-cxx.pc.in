@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+eoincludedir=@datarootdir@/eolian/include
+eolian_flags=-I${eoincludedir}/evas-cxx-@VMAJ@
+
+Name: evas
+Description: Evas C++ Bindings
+Requires.private: @requirements_pc_evas@
+Version: @VERSION@
+Libs: -L${libdir} -levas
+Libs.private: @requirements_libs_evas@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/evas-@VMAJ@ -I${includedir}/evas-cxx-@VMAJ@
+

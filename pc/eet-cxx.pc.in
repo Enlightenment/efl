@@ -9,4 +9,4 @@ Version: @VERSION@
 Requires.private: @requirements_pc_eet@
 Libs: -L${libdir} -leet
 Libs.private: @requirements_libs_eet@
-Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eet-@VMAJ@ -I${includedir}/efl-@VMAJ@ -I${includedir}/eet_cxx-@VMAJ@ -I${includedir}/eet_cxx-@VMAJ@/eet_cxx
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eet-@VMAJ@ -I${includedir}/efl-@VMAJ@ -I${includedir}/eet-cxx-@VMAJ@ -I${includedir}/eet-cxx-@VMAJ@/eet-cxx

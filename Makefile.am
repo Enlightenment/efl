@@ -122,7 +122,9 @@ pkgconfig_DATA += \
 pc/eina.pc \
 pc/eina-cxx.pc \
 pc/eo.pc \
+pc/eo-cxx.pc \
 pc/eolian.pc \
+pc/eolian-cxx.pc \
 pc/eet.pc \
 pc/evas.pc \
 pc/ecore.pc \
@@ -144,7 +146,8 @@ pc/efreet-trash.pc \
 pc/edje.pc \
 pc/emotion.pc \
 pc/ethumb.pc \
-pc/ethumb_client.pc
+pc/ethumb_client.pc \
+pc/evas-cxx.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
@@ -262,6 +265,36 @@ eolian_cmakeconfigdir = $(libdir)/cmake/Eolian/
 eolian_cmakeconfig_DATA = \
 cmakeconfig/EolianConfig.cmake \
 cmakeconfig/EolianConfigVersion.cmake
+
+eolian_cxx_cmakeconfigdir = $(libdir)/cmake/EolianCxx/
+eolian_cxx_cmakeconfig_DATA = \
+cmakeconfig/EolianCxxConfig.cmake \
+cmakeconfig/EolianCxxConfigVersion.cmake
+
+eina_cxx_cmakeconfigdir = $(libdir)/cmake/EinaCxx/
+eina_cxx_cmakeconfig_DATA = \
+cmakeconfig/EinaCxxConfig.cmake \
+cmakeconfig/EinaCxxConfigVersion.cmake
+
+eo_cxx_cmakeconfigdir = $(libdir)/cmake/EoCxx/
+eo_cxx_cmakeconfig_DATA = \
+cmakeconfig/EoCxxConfig.cmake \
+cmakeconfig/EoCxxConfigVersion.cmake
+
+ecore_cxx_cmakeconfigdir = $(libdir)/cmake/EcoreCxx/
+ecore_cxx_cmakeconfig_DATA = \
+cmakeconfig/EcoreCxxConfig.cmake \
+cmakeconfig/EcoreCxxConfigVersion.cmake
+
+evas_cxx_cmakeconfigdir = $(libdir)/cmake/EvasCxx/
+evas_cxx_cmakeconfig_DATA = \
+cmakeconfig/EvasCxxConfig.cmake \
+cmakeconfig/EvasCxxConfigVersion.cmake
+
+eet_cxx_cmakeconfigdir = $(libdir)/cmake/EetCxx/
+eet_cxx_cmakeconfig_DATA = \
+cmakeconfig/EetCxxConfig.cmake \
+cmakeconfig/EetCxxConfigVersion.cmake
 
 eet_cmakeconfigdir = $(libdir)/cmake/Eet/
 eet_cmakeconfig_DATA = \

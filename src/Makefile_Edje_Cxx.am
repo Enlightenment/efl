@@ -1,0 +1,62 @@
+
+if HAVE_CXX11
+
+### Generated headers
+
+generated_edje_cxx_bindings = \
+lib/edje/edje.eo.hh \
+lib/edje/edje_edit.eo.hh
+
+BUILT_SOURCES += \
+lib/edje/Edje.hh \
+$(generated_edje_cxx_bindings)
+
+EXTRA_DIST += \
+lib/edje/Edje.hh \
+$(edje_cxx_bindngs)
+
+installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
+
+dist_installed_edjecxxmainheaders_DATA = \
+lib/edje/Edje.hh \
+$(generated_edje_cxx_bindings)
+
+lib/edje/Edje.hh:
+	@echo -e "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/edje/Edje.hh
+	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/edje/Edje.hh
+	@for i in $(generated_edje_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/edje/Edje.hh; done
+	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/edje/Edje.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/edje_cxx/cxx_compile_test
+TESTS += tests/edje_cxx/cxx_compile_test
+
+tests_edje_cxx_cxx_compile_test_SOURCES = tests/edje_cxx/cxx_compile_test.cc
+tests_edje_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/edje \
+-I$(top_builddir)/src/lib/edje \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/bindings/eo_cxx \
+-I$(top_builddir)/src/bindings/eo_cxx \
+-I$(top_srcdir)/src/bindings/ecore_cxx \
+-I$(top_builddir)/src/bindings/ecore_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/edje_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/edje_cxx\" \
+@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@
+tests_edje_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+tests_edje_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
+
+endif
+
+endif

@@ -31,6 +31,8 @@ tags
 *.eo.c
 *.eo.h
 *.eo.legacy.h
+*.eo.hh
+.dir-locals.el
 /efl-*-doc.tar.bz2
 /ar-lib
 /stamp-h1

@@ -1,10 +1,10 @@
 
 ### Library
 
-installed_eetcxxmainheadersdir = $(includedir)/eet_cxx-@VMAJ@
+installed_eetcxxmainheadersdir = $(includedir)/eet-cxx-@VMAJ@
 dist_installed_eetcxxmainheaders_DATA = bindings/eet_cxx/Eet.hh
 
-installed_eetcxxheadersdir = $(includedir)/eet_cxx-@VMAJ@/eet_cxx
+installed_eetcxxheadersdir = $(includedir)/eet-cxx-@VMAJ@/eet-cxx
 dist_installed_eetcxxheaders_DATA = \
 bindings/eet_cxx/eet_composite.hh \
 bindings/eet_cxx/eet_fold.hh \

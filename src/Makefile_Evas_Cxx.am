@@ -1,0 +1,76 @@
+
+if HAVE_CXX11
+
+### Generated headers
+
+generated_evas_canvas_cxx_bindings = \
+lib/evas/canvas/evas_line.eo.hh \
+lib/evas/canvas/evas_polygon.eo.hh \
+lib/evas/canvas/evas_rectangle.eo.hh \
+lib/evas/canvas/evas_text.eo.hh \
+lib/evas/canvas/evas_textblock.eo.hh \
+lib/evas/canvas/evas_textgrid.eo.hh \
+lib/evas/canvas/evas_signal_interface.eo.hh \
+lib/evas/canvas/evas_smart.eo.hh \
+lib/evas/canvas/evas_smart_clipped.eo.hh \
+lib/evas/canvas/evas_table.eo.hh \
+lib/evas/canvas/evas_common_interface.eo.hh \
+lib/evas/canvas/evas_object.eo.hh \
+lib/evas/canvas/evas.eo.hh \
+lib/evas/canvas/evas_grid.eo.hh \
+lib/evas/canvas/evas_image.eo.hh \
+lib/evas/canvas/evas_out.eo.hh \
+lib/evas/canvas/evas_draggable_interface.eo.hh \
+lib/evas/canvas/evas_clickable_interface.eo.hh \
+lib/evas/canvas/evas_scrollable_interface.eo.hh \
+lib/evas/canvas/evas_selectable_interface.eo.hh \
+lib/evas/canvas/evas_zoomable_interface.eo.hh \
+lib/evas/canvas/evas_box.eo.hh
+
+BUILT_SOURCES += lib/evas/Evas.hh $(generated_evas_canvas_cxx_bindings)
+
+installed_evascanvasmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/
+dist_installed_evascanvasmainheaders_DATA = lib/evas/Evas.hh
+
+installed_evascanvasmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/canvas
+dist_installed_evascanvasmainheaders_DATA = $(generated_evas_canvas_cxx_bindings)
+
+lib/evas/Evas.hh:
+	@echo -e "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
+	@echo -e "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/evas/Evas.hh
+	@for i in $(generated_evas_canvas_cxx_bindings); do echo "#include <canvas/$$(basename $$i)>" >> $(top_builddir)/src/lib/evas/Evas.hh; done
+	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/evas/Evas.hh
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/evas_cxx/cxx_compile_test
+TESTS += tests/evas_cxx/cxx_compile_test
+
+tests_evas_cxx_cxx_compile_test_SOURCES = tests/evas_cxx/cxx_compile_test.cc
+tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/edje \
+-I$(top_builddir)/src/lib/edje \
+-I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/evas \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eo \
+-I$(top_srcdir)/src/bindings/eo_cxx \
+-I$(top_builddir)/src/bindings/eo_cxx \
+-I$(top_srcdir)/src/bindings/ecore_cxx \
+-I$(top_builddir)/src/bindings/ecore_cxx \
+-I$(top_srcdir)/src/bindings/eina_cxx \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas_cxx\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas_cxx\" \
+@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@
+tests_evas_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+tests_evas_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
+
+endif
+
+endif
