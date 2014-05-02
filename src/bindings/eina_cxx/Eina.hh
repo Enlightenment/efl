@@ -13,6 +13,8 @@
 #include <eina_value.hh>
 #include <eina_ref.hh>
 #include <eina_log.hh>
+#include <eina_optional.hh>
+#include <eina_integer_sequence.hh>
 
 namespace efl { namespace eina {
 

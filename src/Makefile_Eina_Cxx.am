@@ -1,20 +1,22 @@
 
 ### Library
 
-installed_einacxxmainheadersdir = $(includedir)/eina_cxx-@VMAJ@
+installed_einacxxmainheadersdir = $(includedir)/eina-cxx-@VMAJ@
 dist_installed_einacxxmainheaders_DATA = \
 bindings/eina_cxx/Eina.hh
 
-installed_einacxxheadersdir = $(includedir)/eina_cxx-@VMAJ@/eina_cxx
+installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@/eina-cxx
 dist_installed_einacxxheaders_DATA = \
 bindings/eina_cxx/eina_accessor.hh       \
 bindings/eina_cxx/eina_clone_allocators.hh       \
 bindings/eina_cxx/eina_error.hh     \
 bindings/eina_cxx/eina_inarray.hh  \
 bindings/eina_cxx/eina_inlist.hh   \
+bindings/eina_cxx/eina_integer_sequence.hh \
 bindings/eina_cxx/eina_iterator.hh \
 bindings/eina_cxx/eina_lists_auxiliary.hh \
 bindings/eina_cxx/eina_log.hh \
+bindings/eina_cxx/eina_optional.hh \
 bindings/eina_cxx/eina_ptrarray.hh \
 bindings/eina_cxx/eina_ptrlist.hh \
 bindings/eina_cxx/eina_range_types.hh \
@@ -44,6 +46,7 @@ tests/eina_cxx/eina_cxx_test_stringshare.cc \
 tests/eina_cxx/eina_cxx_test_error.cc \
 tests/eina_cxx/eina_cxx_test_accessor.cc \
 tests/eina_cxx/eina_cxx_test_thread.cc \
+tests/eina_cxx/eina_cxx_test_optional.cc \
 tests/eina_cxx/eina_cxx_test_value.cc
 
 tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \

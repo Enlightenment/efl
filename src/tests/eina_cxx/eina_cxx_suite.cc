@@ -15,6 +15,7 @@ void eina_test_stringshare(TCase* tc);
 void eina_test_error(TCase* tc);
 void eina_test_accessor(TCase* tc);
 void eina_test_thread(TCase* tc);
+void eina_test_optional(TCase* tc);
 void eina_test_value(TCase* tc);
 void eina_test_log(TCase* tc);
 
@@ -35,6 +36,7 @@ static const Eina_Test_Case etc[] = {
    { "Error", eina_test_error },
    { "Accessor", eina_test_accessor },
    { "Thread", eina_test_thread },
+   { "Optional", eina_test_optional },
    { "Value", eina_test_value },
    { "Log", eina_test_log },
    { NULL, NULL }
