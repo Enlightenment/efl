@@ -9,6 +9,7 @@ group { name: "elm/slider/hidden/limit";
                text_class: "slider_text";
                min: 1 1;
                align: 0.0 0.5;
+               elipsis: -1;
             }
          }
       }
@@ -21,6 +22,7 @@ group { name: "elm/slider/hidden/limit";
                text_class: "slider_text";
                min: 1 1;
                align: 0.0 0.5;
+               elipsis: -1;
             }
          }
       }
@@ -360,6 +362,7 @@ group { name: "elm/slider/horizontal/default";
                text_class: "slider";
                align: 1.0 0.5;
                min: 1 1;
+               elipsis: -1;
             }
          }
          description { state: "visible" 0.0;
@@ -677,6 +680,7 @@ group { name: "elm/slider/horizontal/indicator/default";
                min: 1 1;
                align: 0.5 1.0;
                text_class: "slider_indicator";
+               elipsis: -1;
             }
             visible: 0;
          }
@@ -1070,6 +1074,7 @@ group { name: "elm/slider/vertical/default";
                text_class: "slider";
                min: 0 0;
                align: 0.5 1.0;
+               elipsis: -1;
             }
          }
          description { state: "visible" 0.0;
@@ -1384,6 +1389,7 @@ group { name: "elm/slider/vertical/indicator/default";
                min: 1 1;
                align: 0.0 0.5;
                text_class: "slider_indicator";
+               elipsis: -1;
             }
             visible: 0;
          }
