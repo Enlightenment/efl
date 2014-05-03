@@ -289,6 +289,7 @@ _bt_close(void *data,
 
 end:
    evas_object_del(d->dialog);
+   free(d);
 }
 
 static Dialog_Data *
