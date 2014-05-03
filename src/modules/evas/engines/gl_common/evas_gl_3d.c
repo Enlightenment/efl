@@ -171,7 +171,7 @@ e3d_texture_file_set(E3D_Texture *texture, const char *file, const char *key)
           color_format = EVAS_3D_COLOR_FORMAT_RGBA;
           break;
         default:
-          break;
+          return;
      }
    e3d_texture_data_set(texture, color_format, pixel_format, im->cache_entry.w,
                         im->cache_entry.h, im->image.data);
