@@ -406,7 +406,7 @@ e3d_texture_filter_get(const E3D_Texture *texture,
 E3D_Drawable *
 e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_format)
 {
-   E3D_Drawable  *drawable;
+   E3D_Drawable  *drawable = NULL;
    GLuint         tex, fbo;
    GLuint         depth_stencil_buf = 0;
    GLuint         depth_buf = 0;
