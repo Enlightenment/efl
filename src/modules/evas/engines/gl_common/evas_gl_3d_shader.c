@@ -1463,6 +1463,8 @@ error:
    _shader_string_fini(&vert);
    _shader_string_fini(&frag);
 
+   free(program);
+
    return NULL;
 }
 
