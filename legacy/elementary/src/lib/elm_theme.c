@@ -971,11 +971,10 @@ elm_theme_system_dir_get(void)
    char buf[PATH_MAX];
 
    if (path) return path;
-   if (!path)
-     {
-        snprintf(buf, sizeof(buf), "%s/themes", _elm_data_dir);
-        path = strdup(buf);
-     }
+
+   snprintf(buf, sizeof(buf), "%s/themes", _elm_data_dir);
+   path = strdup(buf);
+
    return path;
 }
 
@@ -986,13 +985,12 @@ elm_theme_user_dir_get(void)
    char buf[PATH_MAX];
 
    if (path) return path;
-   if (!path)
-     {
-        char *home = getenv("HOME");
-        if (!home) home = "";
 
-        snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes", home);
-        path = strdup(buf);
-     }
+   char *home = getenv("HOME");
+   if (!home) home = "";
+
+   snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes", home);
+   path = strdup(buf);
+
    return path;
 }
