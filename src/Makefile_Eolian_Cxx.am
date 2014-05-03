@@ -14,22 +14,13 @@ bin_eolian_cxx_eolian_cxx_SOURCES = \
     bin/eolian_cxx/eolian_cxx.cc
 
 bin_eolian_cxx_eolian_cxx_CFLAGS = \
-	-I$(top_builddir)/src/lib/efl \
-	-I$(top_builddir)/src/lib/eo \
-	-I$(top_srcdir)/src/lib/eo \
-	-I$(top_builddir)/src/lib/eina \
-	-I$(top_srcdir)/src/lib/eina \
-	-I$(top_builddir)/src/lib/eolian \
-	-I$(top_srcdir)/src/lib/eolian
+	@EOLIAN_CFLAGS@
 
 bin_eolian_cxx_eolian_cxx_CXXFLAGS = \
 	-I$(top_builddir)/src/lib/efl \
+	@EOLIAN_CFLAGS@ \
 	-I$(top_builddir)/src/lib/eo \
 	-I$(top_srcdir)/src/lib/eo \
-	-I$(top_builddir)/src/lib/eina \
-	-I$(top_srcdir)/src/lib/eina \
-	-I$(top_builddir)/src/lib/eolian \
-	-I$(top_srcdir)/src/lib/eolian \
 	-I$(top_builddir)/src/bindings/eina_cxx \
 	-I$(top_srcdir)/src/bindings/eina_cxx \
 	-I$(top_builddir)/src/lib/eolian_cxx \
