@@ -1894,9 +1894,9 @@ _lua_state_create(Evas_Filter_Program *pgm)
 static char *
 _legacy_strdup(const char *str)
 {
-   Eina_Strbuf *dst;
+   static Eina_Strbuf *dst = NULL;
 
-   dst = eina_strbuf_new();
+   if (!dst) dst = eina_strbuf_new();
    for (const char *ptr = str; ptr && *ptr; ptr++)
      {
         if (ptr[0] == '/' && ptr[1] == '/')
