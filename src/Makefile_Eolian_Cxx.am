@@ -35,3 +35,18 @@ bin_eolian_cxx_eolian_cxx_DEPENDENCIES = \
 include Makefile_Eolian_Cxx_Helper.am
 
 CLEANFILES += $(BUILT_SOURCES)
+
+EXTRA_DIST += \
+	lib/eolian_cxx/Eolian_Cxx.hh \
+	lib/eolian_cxx/eo_generate.hh \
+	lib/eolian_cxx/eo_types.hh \
+	lib/eolian_cxx/eo_validate.hh \
+	lib/eolian_cxx/grammar/comment.hh \
+	lib/eolian_cxx/grammar/eo_class_constructors_generator.hh \
+	lib/eolian_cxx/grammar/eo_class_events.generator.hh \
+	lib/eolian_cxx/grammar/eo_class_functions_generator.hh \
+	lib/eolian_cxx/grammar/eo_class_generator.hh \
+	lib/eolian_cxx/grammar/eo_header_generator.hh \
+	lib/eolian_cxx/grammar/inheritance_base_generator.hh \
+	lib/eolian_cxx/grammar/parameters_generator.hh \
+	lib/eolian_cxx/grammar/tab.hh
