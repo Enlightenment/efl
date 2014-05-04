@@ -11,13 +11,8 @@ BUILT_SOURCES += \
 lib/edje/Edje.hh \
 $(generated_edje_cxx_bindings)
 
-EXTRA_DIST += \
-lib/edje/Edje.hh \
-$(edje_cxx_bindngs)
-
 installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
-
-dist_installed_edjecxxmainheaders_DATA = \
+nodist_installed_edjecxxmainheaders_DATA = \
 lib/edje/Edje.hh \
 $(generated_edje_cxx_bindings)
 
@@ -35,27 +30,13 @@ check_PROGRAMS += tests/edje_cxx/cxx_compile_test
 TESTS += tests/edje_cxx/cxx_compile_test
 
 tests_edje_cxx_cxx_compile_test_SOURCES = tests/edje_cxx/cxx_compile_test.cc
-tests_edje_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/edje \
--I$(top_builddir)/src/lib/edje \
--I$(top_srcdir)/src/lib/evas \
--I$(top_builddir)/src/lib/evas \
--I$(top_srcdir)/src/lib/evas/canvas \
--I$(top_builddir)/src/lib/evas/canvas \
--I$(top_srcdir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/eo \
--I$(top_builddir)/src/lib/eo \
--I$(top_srcdir)/src/bindings/eo_cxx \
--I$(top_builddir)/src/bindings/eo_cxx \
--I$(top_srcdir)/src/bindings/ecore_cxx \
--I$(top_builddir)/src/bindings/ecore_cxx \
--I$(top_srcdir)/src/bindings/eina_cxx \
+tests_edje_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/edje_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/edje_cxx\" \
-@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@
-tests_edje_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
-tests_edje_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EDJE_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+@ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @EDJE_CFLAGS@ @EO_CFLAGS@
+tests_edje_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_EDJE_LIBS@
+tests_edje_cxx_cxx_compile_test_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 endif
 

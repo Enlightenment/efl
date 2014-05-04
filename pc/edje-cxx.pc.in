@@ -1,0 +1,23 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+modules=@libdir@/edje/modules
+module_arch=@MODULE_ARCH@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@/edje
+vmaj=@VMAJ@
+vmin=@VMIN@
+vmic=@VMIC@
+multisense=@want_multisense@
+physics=@want_physics@
+eoincludedir=@datarootdir@/eolian/include
+eolian_flags=-I${eoincludedir}/edje-@VMAJ@
+
+Name: edje C++ API
+Description: Enlightened graphical design and layout engine C++ API.
+Requires.private: @requirements_pc_edje@
+Version: @VERSION@
+Libs: -L${libdir} -ledje
+Libs.private: @requirements_libs_edje@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/edje-@VMAJ@ -I${includedir}/edje-cxx-@VMAJ@

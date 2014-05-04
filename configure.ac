@@ -960,6 +960,9 @@ fi
 
 AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" -a "xyes"])
 
+EFL_INTERNAL_DEPEND_PKG([EINA_CXX], [Eina])
+EFL_EVAL_PKGS([EINA_CXX])
+
 EFL_LIB_END([Eina_Cxx])
 #### End of Eina CXX
 
@@ -1010,6 +1013,16 @@ EFL_EVAL_PKGS([EET])
 EFL_LIB_END([Eet])
 #### End of Eet
 
+#### Eet CXX
+EFL_LIB_START([Eet_Cxx])
+
+EFL_INTERNAL_DEPEND_PKG([EET_CXX], [Eina_Cxx])
+EFL_INTERNAL_DEPEND_PKG([EET_CXX], [Eet])
+
+EFL_EVAL_PKGS([EET_CXX])
+
+EFL_LIB_END([Eet_Cxx])
+#### End of Eet CXX
 
 #### Eo
 
@@ -1050,6 +1063,14 @@ AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 EFL_LIB_END([Eo])
 #### End of Eo
 
+#### Eo CXX
+EFL_LIB_START([Eo_Cxx])
+
+EFL_EVAL_PKGS([EO_CXX])
+
+EFL_LIB_END([Eo_Cxx])
+#### End of Eo CXX
+
 #### Eolian
 
 EFL_LIB_START([Eolian])
@@ -1084,6 +1105,33 @@ EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
 EFL_LIB_END([Eolian])
 #### End of Eolian
 
+EFL_LIB_START([Eolian_Cxx])
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+## Compatibility layers
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
+EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eo])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+EFL_LIB_END([Eolian_Cxx])
 
 #### Evas
 
@@ -1884,6 +1932,13 @@ EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
 EFL_LIB_END([Evas])
 #### End of Evas
 
+#### Edje CXX
+EFL_LIB_START([Evas_Cxx])
+
+EFL_EVAL_PKGS([EVAS_CXX])
+
+EFL_LIB_END([Evas_Cxx])
+#### End of Edje CXX
 
 #### Embryo
 
@@ -2198,6 +2253,18 @@ fi
 EFL_LIB_END([Ecore])
 #### End of Ecore
 
+#### Ecore CXX
+EFL_LIB_START([Ecore_Cxx])
+
+EFL_INTERNAL_DEPEND_PKG([ECORE_CXX], [Eina_Cxx])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CXX], [Ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CXX], [Eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE_CXX], [Eo])
+
+EFL_EVAL_PKGS([ECORE_CXX])
+
+EFL_LIB_END([Ecore_Cxx])
+#### End of Ecore CXX
 
 #### Ecore_Con
 
@@ -2768,6 +2835,14 @@ AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
 
 #### End of Ecore_Audio
+
+#### Ecore Audio CXX
+EFL_LIB_START([Ecore_Audio_Cxx])
+
+EFL_EVAL_PKGS([ECORE_AUDIO_CXX])
+
+EFL_LIB_END([Ecore_Audio_Cxx])
+#### End of Ecore Audio CXX
 
 #### Ecore_Win32
 EFL_LIB_START_OPTIONAL([Ecore_Win32], [test "${have_win32}" = "yes"])
@@ -3882,6 +3957,14 @@ sys/wait.h \
 EFL_LIB_END([Edje])
 #### End of Edje
 
+#### Edje CXX
+EFL_LIB_START([Edje_Cxx])
+
+EFL_EVAL_PKGS([EDJE_CXX])
+
+EFL_LIB_END([Edje_Cxx])
+#### End of Edje CXX
+
 #### Emotion
 EFL_LIB_START([Emotion])
 
@@ -4142,6 +4225,7 @@ pc/evas-drm.pc
 pc/evas.pc
 pc/evas-cxx.pc
 pc/ecore.pc
+pc/ecore-cxx.pc
 pc/ecore-con.pc
 pc/ecore-ipc.pc
 pc/ecore-file.pc
@@ -4160,6 +4244,7 @@ pc/ecore-evas.pc
 pc/ecore-imf.pc
 pc/ecore-imf-evas.pc
 pc/ecore-audio.pc
+pc/ecore-audio-cxx.pc
 pc/ecore-avahi.pc
 pc/embryo.pc
 pc/eio.pc
@@ -4170,6 +4255,7 @@ pc/efreet-trash.pc
 pc/eeze.pc
 pc/ephysics.pc
 pc/edje.pc
+pc/edje-cxx.pc
 pc/emotion.pc
 pc/ethumb.pc
 pc/ethumb_client.pc

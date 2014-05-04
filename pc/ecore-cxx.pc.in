@@ -1,0 +1,16 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+modules=@libdir@/ecore
+module_arch=@MODULE_ARCH@
+eoincludedir=@datarootdir@/eolian/include
+eolian_flags=-I${eoincludedir}/ecore-@VMAJ@
+
+Name: ecore C++ API
+Description: Ecore event abstraction library C++ API
+Requires.private: @requirements_pc_ecore@
+Version: @VERSION@
+Libs: -L${libdir} -lecore
+Libs.private: @requirements_libs_ecore@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-@VMAJ@ -I${includedir}/ecore-cxx-@VMAJ@

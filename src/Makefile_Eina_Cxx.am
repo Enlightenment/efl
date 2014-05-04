@@ -50,14 +50,12 @@ tests/eina_cxx/eina_cxx_test_optional.cc \
 tests/eina_cxx/eina_cxx_test_value.cc
 
 tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_builddir)/src/bindings/eina_cxx \
--I$(top_srcdir)/src/bindings/eina_cxx \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/src/tests/eina_cxx\" \
--DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_cxx\" \
 @CHECK_CFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CXX_CFLAGS@
 tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
 tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 

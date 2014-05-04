@@ -366,7 +366,7 @@ m4_defn([UP])_LIBS=" ${m4_defn([UP])_LDFLAGS} ${EFL_COV_LIBS} ${EFL_LIBS} ${m4_d
 m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} ${requirements_internal_libs_[]m4_defn([DOWN])}"
 USE_[]m4_defn([UP])_LIBS="${m4_defn([UP])_LIBS} lib/${libdirname}/lib${libname}.la"
 USE_[]m4_defn([UP])_INTERNAL_LIBS="${m4_defn([UP])_INTERNAL_LIBS} lib/${libdirname}/lib${libname}.la"
-m4_defn([UP])_CFLAGS="${EFL_COV_CFLAGS} ${EFL_CFLAGS} ${m4_defn([UP])_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl} -DEFL_[]m4_defn([UP])_BUILD=1"
+m4_defn([UP])_CFLAGS="${EFL_COV_CFLAGS} ${EFL_CFLAGS} ${m4_defn([UP])_CFLAGS} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} -I\$(top_srcdir)/src/bindings/${libdirname} -I\$(top_builddir)/src/bindings/${libdirname} ${requirements_cflags_[]m4_defn([DOWN])} ${requirements_cflags_efl} -DEFL_[]m4_defn([UP])_BUILD=1"
 requirements_pc_[]m4_defn([DOWN])="${requirements_pc_[]m4_defn([DOWN])} ${requirements_pc_efl}"
 requirements_pc_deps_[]m4_defn([DOWN])="${requirements_pc_deps_[]m4_defn([DOWN])} ${requirements_pc_deps_efl}"
 

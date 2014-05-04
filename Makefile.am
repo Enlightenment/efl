@@ -126,8 +126,10 @@ pc/eo-cxx.pc \
 pc/eolian.pc \
 pc/eolian-cxx.pc \
 pc/eet.pc \
+pc/eet-cxx.pc \
 pc/evas.pc \
 pc/ecore.pc \
+pc/ecore-cxx.pc \
 pc/ecore-con.pc \
 pc/ecore-ipc.pc \
 pc/ecore-file.pc \
@@ -144,6 +146,7 @@ pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \
 pc/edje.pc \
+pc/edje-cxx.pc \
 pc/emotion.pc \
 pc/ethumb.pc \
 pc/ethumb_client.pc \
@@ -242,7 +245,7 @@ pkgconfig_DATA += pc/ephysics.pc
 endif
 
 if HAVE_ECORE_AUDIO
-pkgconfig_DATA += pc/ecore-audio.pc
+pkgconfig_DATA += pc/ecore-audio.pc pc/ecore-audio-cxx.pc
 endif
 
 # Cmake configs:

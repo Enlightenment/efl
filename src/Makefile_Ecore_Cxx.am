@@ -14,12 +14,10 @@ lib/ecore/ecore_idle_exiter.eo.hh \
 lib/ecore/ecore_animator.eo.hh \
 lib/ecore/ecore_parent.eo.hh
 
-BUILT_SOURCES += \
-lib/ecore/Ecore.eo.hh \
-$(generated_ecore_cxx_bindings)
+BUILT_SOURCES += lib/ecore/Ecore.eo.hh $(generated_ecore_cxx_bindings)
 
 installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
-dist_installed_ecorecxxheaders_DATA = \
+nodist_installed_ecorecxxheaders_DATA = \
 lib/ecore/Ecore.eo.hh \
 $(generated_ecore_cxx_bindings)
 
@@ -44,29 +42,21 @@ tests/ecore_cxx/ecore_cxx_suite.cc \
 tests/ecore_cxx/ecore_cxx_test_safe_call.cc
 
 tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/bindings/ecore_cxx \
--I$(top_srcdir)/src/bindings/eina_cxx \
--I$(top_srcdir)/src/bindings/eo_cxx \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
-@CHECK_CFLAGS@ \
-@ECORE_CFLAGS@ \
-@EINA_CFLAGS@
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \
+@ECORE_CFLAGS@ @EO_CFLAGS@ @EO_CXX_CFLAGS@
 
-tests_ecore_cxx_ecore_cxx_suite_LDADD = \
-@CHECK_LIBS@ \
-@USE_ECORE_LIBS@
-tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = \
-@USE_ECORE_INTERNAL_LIBS@
+tests_ecore_cxx_ecore_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
 tests_ecore_cxx_cxx_compile_test_SOURCES = tests/ecore_cxx/cxx_compile_test.cc
-tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/bindings/ecore_cxx \
--I$(top_srcdir)/src/bindings/eina_cxx \
--I$(top_srcdir)/src/bindings/eo_cxx \
+tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
-@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \
+@ECORE_CFLAGS@ @EO_CFLAGS@ @EO_CXX_CFLAGS@
+
 tests_ecore_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
 tests_ecore_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 

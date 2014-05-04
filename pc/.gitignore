@@ -55,4 +55,6 @@
 /eolian-cxx.pc
 /eo-cxx.pc
 /evas-cxx.pc
-/ecore-audio-cxx.pc.in
+/ecore-cxx.pc
+/edje-cxx.pc
+/ecore-audio-cxx.pc

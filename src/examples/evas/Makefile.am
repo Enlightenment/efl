@@ -205,19 +205,16 @@ evas_aspect_hints_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 evas_aspect_hints_LDADD = $(EDJE_COMMON_LDADD)
 
 EXTRA_PROGRAMS += evas_cxx_rectangle
-evas_cxx_rectangle_SOURCES = \
-evas_cxx_rectangle.cc \
-$(top_builddir)/src/lib/evas/canvas/evas_common_interface.eo.hh \
-$(top_builddir)/src/lib/evas/canvas/evas.eo.hh \
-$(top_builddir)/src/lib/evas/canvas/evas_object.eo.hh \
-$(top_builddir)/src/lib/evas/canvas/evas_image.eo.hh
+evas_cxx_rectangle_SOURCES = evas_cxx_rectangle.cc
 evas_cxx_rectangle_LDADD = $(ECORE_EVAS_COMMON_LDADD)
-evas_cxx_rectangle_CPPFLAGS = \
+evas_cxx_rectangle_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS) \
 -I$(top_srcdir)/src/bindings/eina_cxx \
--I$(top_builddir)/src/bindings/eina_cxx \
 -I$(top_srcdir)/src/bindings/eo_cxx \
+-I$(top_srcdir)/src/bindings/evas_cxx \
+-I$(top_builddir)/src/bindings/eina_cxx \
 -I$(top_builddir)/src/bindings/eo_cxx \
-$(ECORE_EVAS_COMMON_CPPFLAGS)
+-I$(top_builddir)/src/bindings/evas_cxx \
+$(AM_CPPFLAGS) @EVAS_CFLAGS@
 
 EDJS = $(EDCS:%.edc=%.edj)
 

@@ -33,7 +33,6 @@ include Makefile_Escape.am
 include Makefile_Eina.am
 include Makefile_Eo.am
 include Makefile_Eet.am
-include Makefile_Eet_Cxx.am
 include Makefile_Eolian.am
 include Makefile_Evas.am
 include Makefile_Ecore.am
@@ -58,7 +57,6 @@ include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Ecore_Audio_Cxx.am
 include Makefile_Ecore_Avahi.am
-include Makefile_Evas_Cxx.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_Eldbus.am
@@ -70,10 +68,12 @@ include Makefile_Emotion.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 
-include Makefile_Eolian_Cxx.am
 include Makefile_Eina_Cxx.am
+include Makefile_Eolian_Cxx.am
+include Makefile_Eet_Cxx.am
 include Makefile_Eo_Cxx.am
 include Makefile_Edje_Cxx.am
+include Makefile_Evas_Cxx.am
 
 .PHONY: benchmark examples
 

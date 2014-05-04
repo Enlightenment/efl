@@ -92,6 +92,27 @@ _guess_classname_from_sources(::options_type& opts)
    return "";
 }
 
+std::pair<std::string, std::string> get_filename_info(std::string path)
+{
+  const size_t last = path.rfind("lib/");
+  if (last != std::string::npos)
+    {
+      path.erase(0, last+4);
+  
+      std::string::iterator slash
+        = std::find(path.begin(), path.end(), '/');
+      if(slash != path.end())
+        {
+          std::string namespace_ (path.begin(), slash);
+          std::string filename (slash+1, path.end());
+          return {filename, namespace_};
+        }
+    }
+  EINA_CXX_DOM_LOG_ERR(::domain)
+    << "Couldn't find source file for class '" << path << "'";
+  return {};
+}
+
 efl::eolian::eo_generator_options
 _resolve_includes(std::string const& classname, ::options_type const& opts)
 {
@@ -101,9 +122,7 @@ _resolve_includes(std::string const& classname, ::options_type const& opts)
    std::transform(cls_name.begin(), cls_name.end(), cls_name.begin(), ::tolower);
 
    std::string eo_file = safe_str(eolian_class_file_get(classname.c_str()));
-   const size_t last = eo_file.rfind("/");
-   if (last != std::string::npos) eo_file.erase(0, last+1);
-   gen_opts.c_headers.push_back(eo_file + ".h");
+   gen_opts.c_headers.push_back(get_filename_info(eo_file).first + ".h");
 
    void *cur = NULL;
    const Eina_List *itr, *inheritances = eolian_class_inherits_list_get(classname.c_str());
@@ -113,16 +132,17 @@ _resolve_includes(std::string const& classname, ::options_type const& opts)
         std::string eo_parent_file = safe_str(eolian_class_file_get(ext));
         if (!eo_parent_file.empty())
           {
-             const size_t last = eo_parent_file.rfind("/");
-             if (last != std::string::npos) eo_parent_file.erase(0, last+1);
-             if (eo_parent_file != "eo_base.eo") // we have our own eo_base.hh
+             std::string filename, namespace_;
+             std::tie(filename, namespace_) = get_filename_info(eo_parent_file);
+             // we have our own eo_base.hh
+             if (filename != "eo_base.eo" || namespace_ != "eo")
                {
-                  gen_opts.cxx_headers.push_back(eo_parent_file + ".hh");
+                 gen_opts.cxx_headers.push_back(filename + ".hh");
                }
           }
         else
           {
-             EINA_CXX_DOM_LOG_WARN(::domain)
+             EINA_CXX_DOM_LOG_ERR(::domain)
                << "Couldn't find source file for class '" << ext << "'";
           }
      }
