@@ -80,12 +80,14 @@ group { name: "e/fileman/default/list/variable";
             rel1.to_x: "icon0";
             rel2.offset: -3 -3;
             rel2.relative: 1.0 1.0;
-            color: FN_COL_DEFAULT;
+            color2: 255 255 255 255;
+            color3: 255 255 255 255;
             color_class: "ilist_item";
             text { font: FN; size: 10;
-               min: 1 1;
+               min: 0 1;
                align: 0.0 0.5;
                text_class: "ilist_item";
+               elipsis: 0.0;
             }
          }
          description { state: "selected" 0.0;
@@ -103,12 +105,14 @@ group { name: "e/fileman/default/list/variable";
          description { state: "default" 0.0;
             rel1.to: "e.text.label";
             rel2.to: "e.text.label";
-            color: FN_COL_DISABLE;
+            color2: 255 255 255 255;
+            color3: 255 255 255 255;
             color_class: "ilist_item_disabled";
             text { font: FN; size: 10;
                text_source: "e.text.label";
                align: 0.0 0.5;
                text_class: "ilist_item";
+               elipsis: 0.0;
             }
             visible: 0;
          }
@@ -129,12 +133,14 @@ group { name: "e/fileman/default/list/variable";
             rel1.to: "e.text.label";
             rel2.offset: 2 1;
             rel2.to: "e.text.label";
-            color: FN_COL_HIGHLIGHT;
+            color2: 255 255 255 255;
+            color3: 255 255 255 255;
             color_class: "ilist_item_selected";
             text { font: FN; size: 10;
                text_source: "e.text.label";
                align: 0.0 0.5;
                text_class: "ilist_item";
+               elipsis: 0.0;
             }
             visible: 0;
          }
