@@ -182,22 +182,16 @@ convert_eolian_implements(efl::eolian::eo_class& cls, const char *classname)
    EINA_LIST_FOREACH(eolian_class_implements_list_get(classname), it, impl_desc_)
      {
         Eolian_Implement impl_desc = static_cast<Eolian_Implement>(impl_desc_);
-        Eolian_Function_Type func_type;
-        const char *func_name;
         const char *impl_class;
+        const char *func_name;
+        Eolian_Function_Type func_type;
         eolian_implement_information_get
           (impl_desc, &impl_class, &func_name, &func_type);
-#if 1 // XXX only due to a bug in Eolian we have to double-check
-        if(func_type == EOLIAN_UNRESOLVED &&
-           eolian_class_function_find_by_name(impl_class, func_name, EOLIAN_CTOR) != NULL)
-          func_type = EOLIAN_CTOR;
-#endif
         if (func_type == EOLIAN_CTOR)
           {
              efl::eolian::eo_constructor constructor;
-             Eolian_Function eolian_constructor = eolian_class_function_find_by_name
-               (impl_class, func_name, func_type);
-             assert(eolian_constructor != NULL);
+             Eolian_Function eolian_constructor =
+                eolian_class_function_find_by_name(impl_class, func_name, func_type);
              std::string parent = safe_str(impl_class);
              if(parent == "Eo_Base") parent = "eo";
              else std::transform(parent.begin(), parent.end(), parent.begin(), ::tolower);
