@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 {
    int ret = 1;
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
-   Eina_List *included_files = NULL, *itr;
+   Eina_List *itr;
    Eina_List *files4gen = NULL;
    const char *classname;
    char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
@@ -315,8 +315,6 @@ int main(int argc, char **argv)
    else ret = 0;
 
 end:
-   EINA_LIST_FREE(included_files, filename)
-      free((char *)filename);
    eina_list_free(files4gen);
 
    eina_log_timing(_eolian_gen_log_dom,
