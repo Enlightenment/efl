@@ -526,7 +526,7 @@ eolian_class_function_find_by_name(const char *class_name, const char *func_name
           }
      }
 
-   if (f_type == EOLIAN_CTOR)
+   if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_CTOR)
      {
         EINA_LIST_FOREACH(desc->constructors, itr, foo_id)
           {
