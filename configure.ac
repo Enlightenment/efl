@@ -952,13 +952,13 @@ EFL_LIB_END([Eina])
 EFL_LIB_START([Eina_Cxx])
 
 AX_CXX_COMPILE_STDCXX_11([ext])
-if test "x${HAVE_CXX11}" -a "x1"; then
+if test "x${HAVE_CXX11}" = "x1"; then
   have_cxx11="yes"
 else
   have_cxx11="no"
 fi
 
-AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" -a "xyes"])
+AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" = "xyes"])
 
 EFL_INTERNAL_DEPEND_PKG([EINA_CXX], [Eina])
 EFL_EVAL_PKGS([EINA_CXX])
