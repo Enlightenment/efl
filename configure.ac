@@ -951,7 +951,7 @@ EFL_LIB_END([Eina])
 #### Eina CXX
 EFL_LIB_START([Eina_Cxx])
 
-AX_CXX_COMPILE_STDCXX_11([ext])
+EFL_CXX_COMPILE_STDCXX_11([ext])
 if test "x${HAVE_CXX11}" = "x1"; then
   have_cxx11="yes"
 else
