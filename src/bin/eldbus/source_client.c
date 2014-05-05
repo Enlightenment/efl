@@ -8,6 +8,14 @@ static const char *code_prefix = NULL;
 static char buffer[4028];
 
 static const char *
+null_or_zero(const char *type)
+{
+   if (type[0] == 's' || type[0] == 'o' || type[0] == 'v' || type[1])
+     return "NULL";
+   return "0";
+}
+
+static const char *
 prefix_append(const char *text)
 {
    if (code_prefix)
@@ -252,7 +260,7 @@ source_client_simple_method_callback_generate(const DBus_Method *method, Eina_St
           continue;
         eina_strbuf_append(full_signature, arg->type);
         eina_strbuf_append_printf(h, ", %s%s", dbus_type2c_type(arg->type), arg->c_name);
-        eina_strbuf_append_printf(c_code, "   %s%s;\n", dbus_type2c_type(arg->type), arg->c_name);
+        eina_strbuf_append_printf(c_code, "   %s%s = %s;\n", dbus_type2c_type(arg->type), arg->c_name, null_or_zero(arg->type));
         eina_strbuf_append_printf(end_cb, ", %s", arg->c_name);
         eina_strbuf_append_printf(arguments_get, ", &%s", arg->c_name);
      }
@@ -414,14 +422,6 @@ prop_cb_get(const DBus_Property *prop)
       default:
          return "Unexpected_type";
      }
-}
-
-static const char *
-null_or_zero(const char *type)
-{
-   if (type[0] == 's' || type[0] == 'o' || type[0] == 'v' || type[1])
-     return "NULL";
-   return "0";
 }
 
 static void
