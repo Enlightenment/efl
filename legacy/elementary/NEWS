@@ -101,6 +101,8 @@ Fixes:
    * toolbar: Fixed wrong edje api usage for elm objects.
    * genlist: Removed unnecessary item show call on multi select.
    * ctxpopup bg theme should block all mouse events, not just left button
+   * ctxpopup should not blindly show arrows when they are not wanted by the theme
+   * gengrid: frame variable should be used for position changes.
 
 
 Changes since Elementary 1.8.0:
