@@ -98,7 +98,7 @@ std::pair<std::string, std::string> get_filename_info(std::string path)
   if (last != std::string::npos)
     {
       path.erase(0, last+4);
-  
+
       std::string::iterator slash
         = std::find(path.begin(), path.end(), '/');
       if(slash != path.end())
@@ -108,9 +108,10 @@ std::pair<std::string, std::string> get_filename_info(std::string path)
           return {filename, namespace_};
         }
     }
-  EINA_CXX_DOM_LOG_ERR(::domain)
-    << "Couldn't find source file for class '" << path << "'";
-  return {};
+  else
+    {
+       return {path, std::string()};
+    }
 }
 
 efl::eolian::eo_generator_options

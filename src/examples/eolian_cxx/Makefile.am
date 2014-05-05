@@ -87,7 +87,7 @@ EOLIAN_FLAGS = \
 SUFFIXES = .eo .eo.c .eo.h .eo.hh
 
 %.eo.hh: %.eo $(EOLIAN_CXX)
-	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I./$< -o $@
+	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I$< -o $@
 
 %.eo.c: %.eo $(EOLIAN_GEN)
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
