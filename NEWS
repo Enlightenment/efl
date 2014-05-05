@@ -81,6 +81,7 @@ Features:
    * eina_hash now has helper functions for managing lists inside hashes
    * edje_cc now supports part.description.link for single line state changes
    * edje now has the group.script_recursion flag for permitting unsafe embryo recursion (T905)
+   * eolian_cxx: initial version of the EFL C++ Bindings Generator.
 
 Fixes:
 
@@ -196,6 +197,9 @@ Fixes:
    * edje now correctly forces ellipsis setting on text parts
    * emotion: play set before file open callback bug fix
    * emotion: use eina stringshare not strdup
+   * configure: Only allow wayland + egl with opengl ES (T1202)
+   * eldbus-codegen no longer passes garbage values to error callbacks
+
 
 Changes since 1.8.0:
 --------------------
