@@ -4431,6 +4431,10 @@ if test "x${with_binary_eolian_gen}" != "x"; then
 echo "  eolian_gen....: ${with_binary_eolian_gen}"
 fi
 
+if test "x${with_binary_eolian_cxx}" != "x"; then
+echo "  eolian_cxx....: ${with_binary_eolian_cxx}"
+fi
+
 echo "  "
 echo "Installation....: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix........: $prefix"
