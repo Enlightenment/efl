@@ -1657,13 +1657,13 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _edje_emit(ed, "entry,redo,request", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!shift) && (!strcmp(ev->key, "w")))
-     {
-        _compose_seq_reset(en);
-        _sel_clear(ed, en->cursor, rp->object, en);
-        // select current word?
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-     }
+   //else if ((control) && (!shift) && (!strcmp(ev->key, "w")))
+     //{
+        //_compose_seq_reset(en);
+        //_sel_clear(ed, en->cursor, rp->object, en);
+         //select current word?
+        //ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     //}
    else if (!strcmp(ev->key, "Tab"))
      {
         _compose_seq_reset(en);
