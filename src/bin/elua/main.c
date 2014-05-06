@@ -225,8 +225,9 @@ static int elua_exec(lua_State *L) {
         return 1;
     }
 #else
-    char buf[4096]; /* temporary, only because Windows API is retarded */
-    char *cptr = buf;
+    char *buf, *cptr;
+    size_t buflen = 0;
+    int i;
 
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
@@ -234,7 +235,16 @@ static int elua_exec(lua_State *L) {
     si.cb = sizeof(si);
     ZeroMemory(&si, sizeof(pi));
 
-    int  i;
+    for (i = 1; i < lua_gettop(L); ++i) {
+        buflen += lua_objlen(L, i + 1) + 2;
+        if (i != (lua_gettop(L) - 1)) {
+            buflen += 1
+        }
+    }
+
+    buf = alloca(buflen + 1);
+    cptr = buf;
+
     for (i = 1; i < lua_gettop(L); ++i) {
         size_t l;
         const char *arg = lua_tolstring(L, i + 1, &l);
