@@ -1798,7 +1798,11 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              state = ecore_compose_get(en->seq, &compres);
              if (state == ECORE_COMPOSE_MIDDLE) en->composing = EINA_TRUE;
              else en->composing = EINA_FALSE;
-             if (!en->composing) _compose_seq_reset(en);
+             if (!en->composing)
+               {
+                  _compose_seq_reset(en);
+                  if (ev->string && (!ev->string[1]) && (ev->string[0] < 0x20)) goto end;
+               }
              else goto end;
           }
         else
