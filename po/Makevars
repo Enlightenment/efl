@@ -11,7 +11,7 @@ top_builddir = ..
 XGETTEXT_FALLBACK := $(XGETTEXT)
 
 # Override xgettext with our own custom wrapper
-XGETTEXT = $(srcdir)/xgettext_wrapper $(XGETTEXT_FALLBACK)
+XGETTEXT = $(srcdir)/xgettext_wrapper $(top_builddir) $(XGETTEXT_FALLBACK)
 
 # These options get passed to xgettext.
 XGETTEXT_OPTIONS = --keyword=_ --keyword=N_ --from-code=UTF-8 --foreign-user

@@ -1,5 +1,10 @@
 #!/bin/sh
-XGETTEXT=$1
+ELUAPATH=$1/src/bin/elua
+ELUA=${ELUAPATH}/elua
+LXGETTEXT=${ELUAPATH}/xgettext.lua
+export XGETTEXT=$2
+export EFL_RUN_IN_TREE=1
 shift
-$XGETTEXT "$@"
+shift
+$ELUA $LXGETTEXT "$@"
 exit $?

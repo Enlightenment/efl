@@ -120,7 +120,7 @@ local opts, args = getopt.parse {
         { nil, "copyright-holder", true, metavar = "STRING", help = "set "
             .. "copyright holder in output"
         },
-        { nil, "foreing-user", false, help = "omit copyright in output "
+        { nil, "foreign-user", false, help = "omit copyright in output "
             .. "for foreign user"
         },
         { nil, "package-name", true, metavar = "PACKAGE", help = "set package "
@@ -157,5 +157,23 @@ local opts, args = getopt.parse {
         end
     }
 }
+
+if not opts or opts["h"] or opts["v"] then
+    return true
+end
+
+local hasxgettext = os.getenv("XGETTEXT")
+if hasxgettext then
+    local gargs = { "\"" .. hasxgettext .. "\"" }
+    for i = 1, #opts do
+        gargs[#gargs + 1] = "\"" .. arg[i] .. "\""
+    end
+    for i, v in ipairs(args) do
+        if not v:match("^.+%.lua$") then
+            gargs[#gargs + 1] = v
+        end
+    end
+    os.execute(table.concat(gargs, " "))
+end
 
 return true
