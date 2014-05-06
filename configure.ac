@@ -952,7 +952,13 @@ EFL_LIB_END([Eina])
 EFL_LIB_START([Eina_Cxx])
 
 EFL_CXX_COMPILE_STDCXX_11([ext])
-if test "x${HAVE_CXX11}" = "x1"; then
+want_cxx11="yes"
+AC_ARG_ENABLE([c++11],
+   [AC_HELP_STRING([--disable-c++11],
+       [disable C++11 bindings. @<:@default=enabled@:>@])],
+   [want_cxx11="${enableval}"])
+
+if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
   have_cxx11="yes"
 else
   have_cxx11="no"
