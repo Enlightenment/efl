@@ -95,13 +95,18 @@ static int register_require(lua_State *L) {
     int n = 2;
     lua_pushvalue(L, 1);
     require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-    if (!corepath) {
-        if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
-            corepath = ELUA_CORE_DIR;
-    }
-    if (!modpath) {
-        if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
-            modpath = ELUA_MODULES_DIR;
+    if (getenv("EFL_RUN_IN_TREE")) {
+        corepath = PACKAGE_BUILD_DIR "/src/bin/elua/core";
+        modpath  = PACKAGE_BUILD_DIR "/src/bin/elua/modules";
+    } else {
+        if (!corepath) {
+            if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
+                corepath = ELUA_CORE_DIR;
+        }
+        if (!modpath) {
+            if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
+                modpath = ELUA_MODULES_DIR;
+        }
     }
     lua_pushfstring(L, "%s/?.lua;", corepath);
     EINA_LIST_FOREACH(largs, l, data) {
@@ -309,7 +314,13 @@ static int lua_main(lua_State *L) {
 
     luaL_openlibs(L);
 
-    if (!(coref = coredir)) {
+    if (getenv("EFL_RUN_IN_TREE")) {
+        Arg_Data *v = malloc(sizeof(Arg_Data));
+        v->type     = ARG_LIBDIR;
+        v->value    = PACKAGE_BUILD_DIR "/src/bindings/luajit";
+        largs       = eina_list_append(largs, v);
+        coref       = PACKAGE_BUILD_DIR "/src/bin/elua/core";
+    } else if (!(coref = coredir)) {
         if (noenv || !(coref = getenv("ELUA_CORE_DIR")) || !coref[0]) {
             coref = ELUA_CORE_DIR;
         }
