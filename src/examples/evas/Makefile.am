@@ -76,7 +76,9 @@ EDJE_COMMON_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/embryo \
 -I$(top_builddir)/src/lib/embryo \
 -I$(top_srcdir)/src/lib/edje \
+-I$(top_builddir)/src/lib/edje \
 -I$(top_srcdir)/src/lib/edje/include \
+-I$(top_builddir)/src/lib/edje/include \
 -DPACKAGE_EXAMPLES_DIR=\".\" \
 @EVAS_CFLAGS@
 
