@@ -10,8 +10,10 @@ top_builddir = ..
 # Save xgettext path
 XGETTEXT_FALLBACK := $(XGETTEXT)
 
-# Override xgettext with our own custom wrapper
-XGETTEXT = $(srcdir)/xgettext_wrapper $(top_builddir) $(XGETTEXT_FALLBACK)
+# Override xgettext with a LuaJIT aware variant (which calls
+# into plain xgettext if it needs to, and handles Lua on its own)
+XGETTEXT = XGETTEXT=$(XGETTEXT_FALLBACK) EFL_RUN_IN_TREE=1 \
+	$(top_builddir)/src/bin/elua/elua $(top_builddir)/src/bin/elua/xgettext.lua
 
 # These options get passed to xgettext.
 XGETTEXT_OPTIONS = --keyword=_ --keyword=N_ --from-code=UTF-8 --foreign-user
