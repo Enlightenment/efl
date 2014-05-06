@@ -3762,11 +3762,8 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
+_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   (void)is_next;
-
-
    evas_object_geometry_get(obj, x, y, w, h);
    elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, x, y, w, h);
 }
