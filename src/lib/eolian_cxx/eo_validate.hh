@@ -19,13 +19,18 @@ _isvalid(const std::string& name)
    return name.size() > 0 and isalpha(name[0]);
 }
 
+#ifdef DEBUG
 inline void
 _dbg(const std::string& msg)
 {
-#ifdef DEBUG
    std::cerr << "eo_validate() - " << msg << std::endl;
-#endif
 }
+#else
+inline void
+_dbg(const std::string&)
+{
+}
+#endif
 
 inline void
 eo_class_validate(const eo_class& cls)

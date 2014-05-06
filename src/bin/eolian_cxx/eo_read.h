@@ -37,7 +37,7 @@ _list_dir(const char *dir, const char *suffix, Eina_Bool recurse)
 }
 
 inline Eina_List*
-eolian_read_from_fs(const char *path, Eina_Bool recurse)
+eolian_read_from_fs(const char *path)
 {
    if (eina_str_has_suffix(path, EO_SUFFIX))
      {

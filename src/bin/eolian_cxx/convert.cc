@@ -177,10 +177,7 @@ void
 convert_eolian_implements(efl::eolian::eo_class& cls, const char *classname)
 {
    const Eina_List *it;
-   void *curr;
    std::string prefix(safe_str(eolian_class_eo_prefix_get(classname)));
-   const Eina_List *implements = eolian_class_implements_list_get(classname);
-   Eolian_Implement impl_desc;
    void *impl_desc_;
    EINA_LIST_FOREACH(eolian_class_implements_list_get(classname), it, impl_desc_)
      {

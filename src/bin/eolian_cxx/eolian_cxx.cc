@@ -108,14 +108,11 @@ std::pair<std::string, std::string> get_filename_info(std::string path)
           return {filename, namespace_};
         }
     }
-  else
-    {
-       return {path, std::string()};
-    }
+  return {path, std::string()};
 }
 
 efl::eolian::eo_generator_options
-_resolve_includes(std::string const& classname, ::options_type const& opts)
+_resolve_includes(std::string const& classname)
 {
    efl::eolian::eo_generator_options gen_opts;
 
@@ -156,7 +153,7 @@ _generate(const std::string classname, ::options_type const& opts)
    efl::eolian::eo_class cls = ::c_to_cxx(classname.c_str());
    cls.name_space = opts.name_space;
    efl::eolian::eo_class_validate(cls);
-   efl::eolian::eo_generator_options gen_opts = _resolve_includes(classname, opts);
+   efl::eolian::eo_generator_options gen_opts = _resolve_includes(classname);
    std::string outname = (opts.out_file == "") ? (cls.name + ".eo.hh") : opts.out_file;
 
    if (opts.out_dir != "")
@@ -247,7 +244,7 @@ _load_classes(options_type const& opts)
 {
    for (auto src : opts.in_srcs)
      {
-        if (eolian_read_from_fs(src.c_str(), opts.recurse) == NULL)
+        if (eolian_read_from_fs(src.c_str()) == NULL)
           {
              EINA_CXX_DOM_LOG_WARN(::domain)
                << "Couldn't load eolian file: " << src;
