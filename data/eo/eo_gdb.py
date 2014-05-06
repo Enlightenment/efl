@@ -2,34 +2,42 @@
 
 import gdb
 
+def symbol_equal_to_string(symbol, string):
+   return (symbol != None) and (symbol.name == string)
+
 class Eo_step(gdb.Command):
+   STEP_LIMIT = 10
    def __init__(self):
       gdb.Command.__init__(self, "eo_step", gdb.COMMAND_OBSCURE)
+      self.START_FUNC = "_eo_call_resolve"
+      self.SKIP_FUNC = "_eo_do_start"
 
    def invoke (self, arg, from_tty):
-      # While libeo is not reached, we step into
-      while gdb.solib_name(gdb.selected_frame().pc()).find("libeo.so") == -1:
-         # step by one assembly instruction, no print
+      # Get to the call resolve function.
+      i = 0
+      while not symbol_equal_to_string(gdb.selected_frame().function(), self.START_FUNC):
+         if symbol_equal_to_string(gdb.selected_frame().function(), self.SKIP_FUNC):
+            gdb.execute("finish", False, to_string=True)
+
+         if i > Eo_step.STEP_LIMIT:
+             break
+         else:
+             i += 1
+         gdb.execute("step", False, to_string=True)
+
+      # If we found the function, return from it, otherwise, fail.
+      if symbol_equal_to_string(gdb.selected_frame().function(), self.START_FUNC):
+         gdb.execute("finish", False, to_string=True)
+      else:
+         print "Search limit reached, you tried calling eo_step too far from an eo_do."
+         return
+
+      # Step until we move to a different function. FIXME: The hook can confuse us, needs to be solved.
+      cur_func = gdb.selected_frame().function()
+      while gdb.selected_frame().function() == cur_func:
          gdb.execute("stepi", False, to_string=True)
 
-      # While we are in libeo or in an unknown function, we step into
-      while (gdb.selected_frame().function() == None) or (gdb.solib_name(gdb.selected_frame().pc()).find("libeo.so") != -1):
-         # step by one assembly instruction, no print
-         gdb.execute("stepi", False, to_string=True)
+      # One last call to skip into the implementation
+      gdb.execute("step", True)
 
-      print "Stopped at file " + gdb.selected_frame().find_sal().symtab.filename+ " line " + str(gdb.selected_frame().find_sal().line) + " function " + str(gdb.selected_frame().function())
 Eo_step()
-
-# Very crude, but works for the meanwhile
-class Eo_backtrace(gdb.Command):
-   def __init__(self):
-      gdb.Command.__init__(self, "eo_backtrace", gdb.COMMAND_OBSCURE)
-
-   def invoke (self, arg, from_tty):
-      btrace = gdb.execute("backtrace", False, to_string=True).split('\n')
-
-      for line in btrace:
-         if line.find("libeo.so") == -1 and line.find("lib/eo/") == -1:
-            print line
-
-Eo_backtrace()
