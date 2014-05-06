@@ -1,0 +1,5 @@
+#!/bin/sh
+XGETTEXT=$1
+shift
+$XGETTEXT "$@"
+exit $?
