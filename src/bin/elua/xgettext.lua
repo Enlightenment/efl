@@ -2,6 +2,7 @@
 -- provides a drop-in replacement of xgettext that supports Lua (but not any
 -- other language)
 
+local cutil  = require("cutil")
 local getopt = require("getopt")
 
 local VERSION = "1.0.0"
@@ -164,16 +165,16 @@ end
 
 local hasxgettext = os.getenv("XGETTEXT")
 if hasxgettext then
-    local gargs = { "\"" .. hasxgettext .. "\"" }
+    local gargs = { hasxgettext }
     for i = 1, #opts do
-        gargs[#gargs + 1] = "\"" .. arg[i] .. "\""
+        gargs[#gargs + 1] = arg[i]
     end
     for i, v in ipairs(args) do
         if not v:match("^.+%.lua$") then
             gargs[#gargs + 1] = v
         end
     end
-    os.execute(table.concat(gargs, " "))
+    cutil.exec(unpack(gargs))
 end
 
 return true
