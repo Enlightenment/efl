@@ -210,7 +210,7 @@ main(int argc, char **argv)
    int i;
    int size_w = 0, size_h = 0;
    int head_only = 0;
-   int page = 0;
+   int page_nbr = 0;
 
    if (argc < 2) return -1;
    // file is ALWAYS first arg, other options come after
@@ -223,7 +223,7 @@ main(int argc, char **argv)
         else if (!strcmp(argv[i], "-key"))
           {
              i++;
-             page = atoi(argv[i]);
+             page_nbr = atoi(argv[i]);
              i++;
           }
         else if (!strcmp(argv[i], "-opt-scale-down-by"))
@@ -248,11 +248,11 @@ main(int argc, char **argv)
 
    D("_spectre_init_file\n");
    D("dpi....: %f\n", dpi);
-   D("page...: %d\n", page);
+   D("page...: %d\n", page_nbr);
 
    timeout_init(10);
    
-   if (!_spectre_init(file, page, size_w, size_h))
+   if (!_spectre_init(file, page_nbr, size_w, size_h))
      return -1;
    D("_spectre_init done\n");
 

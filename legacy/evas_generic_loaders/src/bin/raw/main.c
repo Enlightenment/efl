@@ -111,7 +111,8 @@ read_raw_header()
 static int
 read_raw_data()
 {
-   int ret, count;
+   int ret;
+   unsigned int count;
    libraw_processed_image_t *image = NULL;
    DATA8 *bufptr;
    DATA32 *dataptr;
