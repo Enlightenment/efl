@@ -114,7 +114,7 @@ static const int kAlphaModifiers[16][8] = {
 
 
 static inline void
-_T_mode_color_read(const uint8_t *etc, uint32_t *paint_colors, int alpha)
+_T_mode_color_read(const uint8_t *etc, uint32_t *paint_colors)
 {
    // 4 bit colors
    const int r1_4 = (BITS(etc[0], 3, 4) << 2) | BITS(etc[0], 0, 1);
@@ -129,20 +129,20 @@ _T_mode_color_read(const uint8_t *etc, uint32_t *paint_colors, int alpha)
    const int d = kDistances[didx];
 
    // Write out paint colors for T mode
-   paint_colors[0] = BGRA(_4to8(r1_4), _4to8(g1_4), _4to8(b1_4), alpha);
+   paint_colors[0] = BGRA(_4to8(r1_4), _4to8(g1_4), _4to8(b1_4), 255);
    paint_colors[1] = BGRA(CLAMPDOWN(_4to8(r2_4) + d),
                           CLAMPDOWN(_4to8(g2_4) + d),
                           CLAMPDOWN(_4to8(b2_4) + d),
-                          alpha);
-   paint_colors[2] = BGRA(_4to8(r2_4), _4to8(g2_4), _4to8(b2_4), alpha);
+                          255);
+   paint_colors[2] = BGRA(_4to8(r2_4), _4to8(g2_4), _4to8(b2_4), 255);
    paint_colors[3] = BGRA(CLAMPUP(_4to8(r2_4) - d),
                           CLAMPUP(_4to8(g2_4) - d),
                           CLAMPUP(_4to8(b2_4) - d),
-                          alpha);
+                          255);
 }
 
 static inline void
-_H_mode_color_read(const uint8_t *etc, uint32_t *paint_colors, int alpha)
+_H_mode_color_read(const uint8_t *etc, uint32_t *paint_colors)
 {
    // 4 bit colors
    const int r1_4 = BITS(etc[0], 3, 6);
@@ -165,23 +165,23 @@ _H_mode_color_read(const uint8_t *etc, uint32_t *paint_colors, int alpha)
    paint_colors[0] = BGRA(CLAMPDOWN(_4to8(r1_4) + d),
                           CLAMPDOWN(_4to8(g1_4) + d),
                           CLAMPDOWN(_4to8(b1_4) + d),
-                          alpha);
+                          255);
    paint_colors[1] = BGRA(CLAMPUP(_4to8(r1_4) - d),
                           CLAMPUP(_4to8(g1_4) - d),
                           CLAMPUP(_4to8(b1_4) - d),
-                          alpha);
+                          255);
    paint_colors[2] = BGRA(CLAMPDOWN(_4to8(r2_4) + d),
                           CLAMPDOWN(_4to8(g2_4) + d),
                           CLAMPDOWN(_4to8(b2_4) + d),
-                          alpha);
+                          255);
    paint_colors[3] = BGRA(CLAMPUP(_4to8(r2_4) - d),
                           CLAMPUP(_4to8(g2_4) - d),
                           CLAMPUP(_4to8(b2_4) - d),
-                          alpha);
+                          255);
 }
 
 static inline void
-_planar_mode_color_read(const uint8_t *etc, uint32_t *bgra, int alpha)
+_planar_mode_color_read(const uint8_t *etc, uint32_t *bgra)
 {
    // RO: Bits 57-62
    const int RO = _6to8(BITS(etc[0], 1, 6));
@@ -209,7 +209,7 @@ _planar_mode_color_read(const uint8_t *etc, uint32_t *bgra, int alpha)
           const int R = CLAMP(((x * (RH - RO)) + y * (RV - RO) + 4 * RO + 2) >> 2);
           const int G = CLAMP(((x * (GH - GO)) + y * (GV - GO) + 4 * GO + 2) >> 2);
           const int B = CLAMP(((x * (BH - BO)) + y * (BV - BO) + 4 * BO + 2) >> 2);
-          *bgra++ = BGRA(R, G, B, alpha);
+          *bgra++ = BGRA(R, G, B, 255);
        }
 }
 
@@ -262,21 +262,21 @@ rg_etc2_rgb8_decode_block(const uint8_t *etc, uint32_t *bgra)
    if ((R + dR) < 0 || (R + dR) >= 32)
      {
         // T mode
-        _T_mode_color_read(etc, paint_colors, 255);
+        _T_mode_color_read(etc, paint_colors);
         _TH_paint(etc, paint_colors, bgra);
         return;
      }
    if ((G + dG) < 0 || (G + dG) >= 32)
      {
         // H mode
-        _H_mode_color_read(etc, paint_colors, 255);
+        _H_mode_color_read(etc, paint_colors);
         _TH_paint(etc, paint_colors, bgra);
         return;
      }
    if ((B + dB) < 0 || (B + dB) >= 32)
      {
         // Planar mode
-        _planar_mode_color_read(etc, bgra, 255);
+        _planar_mode_color_read(etc, bgra);
         return;
      }
 
