@@ -39,8 +39,8 @@ local opts, args = getopt.parse {
         { "L", "language", true, help = false },
         { "C", "c++", false, help = false },
         { nil, "from-code", true, metavar = "NAME", help = "encoding of "
-            .. "input files\nBy default the input files are assumed to "
-            .. "be in ASCII."
+            .. "input files\nOnly relevant for non-Lua inputs "
+            .. "(Lua is always assumed to be UTF-8)."
         },
 
         { category = "Operation mode" },
@@ -140,6 +140,10 @@ local opts, args = getopt.parse {
             .. "or \"\" as suffix for msgstr values"
         },
 
+        { category = "Binaries" },
+
+        { "X", "xgettext", true, metavar = "PATH", help = "path to xgettext." },
+
         { category = "Informative output" },
 
         { "h", "help", nil, help = "display this help and exit",
@@ -185,8 +189,23 @@ end
 local onlylua  = opts["L"] and opts["L"]:lower() == "lua"
 local neverlua = opts["L"] and opts["L"]:lower() ~= "lua"
 
-local hasxgettext = os.getenv("XGETTEXT")
-if hasxgettext and not onlylua then
+local  hasxgettext = opts["X"]
+if not hasxgettext then
+       hasxgettext = os.getenv("XGETTEXT")
+end
+
+if not hasxgettext then
+    return true
+end
+
+local f = io.open(hasxgettext)
+if not f then
+    return true
+end
+
+f:close()
+
+if not onlylua then
     local gargs = { hasxgettext }
     if not opts["j"] and not neverlua then
         for i, v in ipairs(args) do
