@@ -1806,6 +1806,7 @@ endif
 endif
 
 if BUILD_LOADER_TGV
+EXTRA_DIST += static_libs/rg_etc/README
 if EVAS_STATIC_BUILD_TGV
 lib_evas_libevas_la_SOURCES += \
 modules/evas/loaders/tgv/evas_image_load_tgv.c \
