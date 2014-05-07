@@ -496,6 +496,7 @@ abstract Elm_Widget (Evas_Smart, Elm_Interface_Atspi_Widget)
             @in Evas_Coord *y;
             @in Evas_Coord *w;
             @in Evas_Coord *h;
+            @in Eina_Bool is_next;
          }
       }
       activate {

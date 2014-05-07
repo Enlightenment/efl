@@ -762,7 +762,7 @@ _elm_win_focus_highlight_anim_setup(Elm_Win_Data *sd,
    Evas_Object *target = sd->focus_highlight.cur.target;
 
    evas_object_geometry_get(obj, &px, &py, &pw, &ph);
-   elm_widget_focus_highlight_geometry_get(target, &tx, &ty, &tw, &th);
+   elm_widget_focus_highlight_geometry_get(target, &tx, &ty, &tw, &th, EINA_TRUE);
    evas_object_move(obj, tx, ty);
    evas_object_resize(obj, tw, th);
 
@@ -791,7 +791,7 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Data *sd,
    Evas_Object *clip, *target = sd->focus_highlight.cur.target;
    Evas_Coord x, y, w, h;
 
-   elm_widget_focus_highlight_geometry_get(target, &x, &y, &w, &h);
+   elm_widget_focus_highlight_geometry_get(target, &x, &y, &w, &h, EINA_TRUE);
 
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);

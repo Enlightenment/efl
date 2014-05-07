@@ -2877,12 +2877,23 @@ _elm_list_item_coordinates_adjust(Elm_List_Item *it,
 }
 
 EOLIAN static void
-_elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
 {
-   if (sd->focused_item)
+   if (is_next)
      {
-        _elm_list_item_coordinates_adjust((Elm_List_Item *)sd->focused_item, x, y, w, h);
-        elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->focused_item), x, y, w, h);
+        if (sd->focused_item)
+          {
+             _elm_list_item_coordinates_adjust((Elm_List_Item *)sd->focused_item, x, y, w, h);
+             elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->focused_item), x, y, w, h);
+          }
+     }
+   else
+     {
+        if (sd->prev_focused_item)
+          {
+             _elm_list_item_coordinates_adjust((Elm_List_Item *)sd->prev_focused_item, x, y, w, h);
+             elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->prev_focused_item), x, y, w, h);
+          }
      }
 }
 
