@@ -196,10 +196,21 @@ if hasxgettext and not onlylua then
             end
         end
     end
+    local inputs = {}
     for i, opt in ipairs(opts) do
-        gargs[#gargs + 1] = build_opt(opt)
+        if opt[1] ~= "f" then
+            gargs[#gargs + 1] = build_opt(opt)
+        else
+            local f = io.open(opt[2])
+            if f then
+                for line in f:lines() do
+                    if not line:lower():match("^.+%.lua$") then
+                        gargs[#gargs + 1] = line
+                    end
+                end
+            end
+        end
     end
-    local ngargs = #gargs
     for i, v in ipairs(args) do
         if not v:lower():match("^.+%.lua$") then
             gargs[#gargs + 1] = v
