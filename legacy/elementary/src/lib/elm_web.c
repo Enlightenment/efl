@@ -1392,6 +1392,14 @@ elm_web_uri_set(Evas_Object *obj,
 #endif
 }
 
+EAPI const char *
+elm_web_uri_get(const Evas_Object *obj)
+{
+   const char *ret = NULL;
+   eo_do((Eo *) obj, ret = elm_obj_web_url_get());
+   return ret;
+}
+
 EOLIAN static Eina_Bool
 _elm_web_url_set(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, const char *url)
 {
