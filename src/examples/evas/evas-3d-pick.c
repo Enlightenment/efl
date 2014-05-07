@@ -6,8 +6,8 @@
 #include <math.h>
 #include <Evas.h>
 
-#define  WIDTH          1024
-#define  HEIGHT         1024
+#define  WIDTH          400
+#define  HEIGHT         400
 
 Ecore_Evas       *ecore_evas	    = NULL;
 Evas             *evas		    = NULL;
