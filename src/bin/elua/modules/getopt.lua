@@ -49,7 +49,8 @@ local parse_l = function(opts, opt, descs, args, parser)
     if desc.callback then rets = { desc:callback(parser, optval) } end
     if not rets or #rets == 0 then rets = { optval } end
     local optn = desc.alias or desc[1] or desc[2]
-    opts[#opts + 1] = { optn, unpack(rets) }
+    opts[#opts + 1] = { optn, short = desc[1], long = desc[2],
+        alias = desc.alias, unpack(rets) }
     local optret = #rets > 1 and rets or rets[1]
     if desc.list then
         desc.list[#desc.list + 1] = optret
@@ -83,7 +84,8 @@ local parse_s = function(opts, optstr, descs, args, parser)
         if desc.callback then rets = { desc:callback(parser, optval) } end
         if not rets or #rets == 0 then rets = { optval } end
         local optn = desc.alias or desc[1] or desc[2]
-        opts[#opts + 1] = { optn, unpack(rets) }
+        opts[#opts + 1] = { optn, short = desc[1], long = desc[2],
+            alias = desc.alias, unpack(rets) }
         local optret = #rets > 1 and rets or rets[1]
         if desc.list then
             desc.list[#desc.list + 1] = optret

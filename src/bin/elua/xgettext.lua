@@ -165,7 +165,7 @@ end
 
 local hasxgettext = os.getenv("XGETTEXT")
 if hasxgettext then
-    local gargs = { hasxgettext }
+    local gargs = { hasxgettext, "--join-existing" }
     for i = 1, #opts do
         gargs[#gargs + 1] = arg[i]
     end
