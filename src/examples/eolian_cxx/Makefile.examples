@@ -1,0 +1,47 @@
+
+CXX=g++
+CC=gcc
+EOLIAN_GEN=eolian_gen
+EOLIAN_CXX=eolian_cxx
+COMMON_FLAGS=`pkg-config --libs --cflags eina,ecore,evas,ecore-evas,emotion,eolian,eolian-cxx,eo-cxx,eina-cxx` -DEFL_BETA_API_SUPPORT
+EOLIAN_FLAGS=`pkg-config --variable=eolian_flags eo` -I.
+
+EOS = colourable.eo colourablesquare.eo
+
+IMPL = colourable.c colourablesquare.c
+
+GENERATED = \
+	colourable.eo.c \
+	colourable.eo.h \
+	colourable.eo.hh \
+	colourablesquare.eo.c \
+	colourablesquare.eo.h \
+	colourablesquare.eo.hh
+
+EXAMPLES= eolian_cxx_inherit_01 \
+          eolian_cxx_simple_01
+
+OBJS = colourable.o colourablesquare.o
+
+all: $(OBJS) examples
+
+codegen:
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I./colourable.eo -o colourable.eo.hh
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I./colourablesquare.eo -o colourablesquare.eo.hh
+	$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o colourable.eo.c colourable.eo
+	$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o colourablesquare.eo.c colourablesquare.eo
+	$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o colourable.eo.h colourable.eo
+	$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o colourablesquare.eo.h colourablesquare.eo
+
+$(OBJS): codegen
+	$(CC) -c colourable.c $(COMMON_FLAGS)
+	$(CC) -c colourablesquare.c $(COMMON_FLAGS)
+
+examples: $(EXAMPLES)
+
+$(EXAMPLES):
+	$(CXX) -o $@ $@.cc $(OBJS) $(COMMON_FLAGS) -std=c++11
+
+clean:
+	@echo "Cleaning up built objects..."
+	@rm -Rf $(EXAMPLES)

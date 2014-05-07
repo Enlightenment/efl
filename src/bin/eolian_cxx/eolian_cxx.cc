@@ -133,9 +133,12 @@ _resolve_includes(std::string const& classname)
              std::string filename, namespace_;
              std::tie(filename, namespace_) = get_filename_info(eo_parent_file);
              // we have our own eo_base.hh
-             if (filename != "eo_base.eo" || namespace_ != "eo")
+             std::string eo_base_eo = "eo_base.eo";
+             if (filename.length() < eo_base_eo.length() ||
+                 !std::equal(eo_base_eo.begin(), eo_base_eo.end(),
+                             filename.end() - eo_base_eo.length()))
                {
-                 gen_opts.cxx_headers.push_back(filename + ".hh");
+                  gen_opts.cxx_headers.push_back(filename + ".hh");
                }
           }
         else

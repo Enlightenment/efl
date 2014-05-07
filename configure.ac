@@ -1121,8 +1121,8 @@ EFL_LIB_START([Eolian_Cxx])
 ## Compatibility layers
 
 ### Checks for libraries
-EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
-EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eo])
+EFL_INTERNAL_DEPEND_PKG([EOLIAN_CXX], [eina])
+EFL_INTERNAL_DEPEND_PKG([EOLIAN_CXX], [eo])
 
 ### Checks for header files
 

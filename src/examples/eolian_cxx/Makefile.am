@@ -4,7 +4,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CXXFLAGS = \
-	-I. \
+	-I$(srcdir) \
+	-I$(builddir) \
 	-I$(top_builddir)/src/lib/efl \
 	-I$(top_srcdir)/src/lib/eina \
 	-I$(top_builddir)/src/lib/eina \
@@ -34,7 +35,7 @@ AM_LDFLAGS = \
   -L$(top_builddir)/src/lib/evas \
 	-L$(top_builddir)/src/lib/ecore \
 	-L$(top_builddir)/src/lib/ecore_evas \
-	-leina -levas -leo -lecore -lecore_evas
+	-leina -levas -leo -lecore -lecore_evas -pthread
 
 LDADD = \
 	$(top_builddir)/src/lib/eo/libeo.la \
@@ -54,25 +55,27 @@ EOS = \
 	colourable.eo \
 	colourablesquare.eo
 
+IMPL = \
+	colourable.c \
+	colourablesquare.c
+
 SRCS = \
 	eolian_cxx_simple_01.cc \
-	eolian_cxx_inherit_01.cc
+	eolian_cxx_inherit_01.cc \
+	$(IMPL)
 
 EXTRA_PROGRAMS = \
 	eolian_cxx_simple_01 \
 	eolian_cxx_inherit_01
 
+DATA_FILES = Makefile.examples $(EOS)
 CLEANFILES =
 
-eolian_cxx_simple_01_SOURCES = \
-	eolian_cxx_simple_01.cc \
-	colourable.c \
-	colourablesquare.c
+eolian_cxx_simple_01_SOURCES = eolian_cxx_simple_01.cc $(IMPL)
+eolian_cxx_simple_01_DEPENDENCIES = $(GENERATED)
 
-eolian_cxx_inherit_01_SOURCES = \
-	eolian_cxx_inherit_01.cc \
-	colourable.c \
-	colourablesquare.c
+eolian_cxx_inherit_01_SOURCES = eolian_cxx_inherit_01.cc $(IMPL)
+eolian_cxx_inherit_01_DEPENDENCIES = $(GENERATED)
 
 EOLIAN_GEN = $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
 EOLIAN_CXX = $(top_builddir)/src/bin/eolian_cxx/eolian_cxx${EXEEXT}
@@ -86,7 +89,7 @@ EOLIAN_FLAGS = \
 SUFFIXES = .eo .eo.c .eo.h .eo.hh
 
 %.eo.hh: %.eo $(EOLIAN_CXX)
-	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I$< -o $@
+	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I./$< -o $@
 
 %.eo.c: %.eo $(EOLIAN_GEN)
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
