@@ -265,7 +265,7 @@ static int elua_exec(lua_State *L) {
         DWORD dw = GetLastError();
         FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
             | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            NUL, dw, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msgbuf,
+            NULL, dw, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msgbuf,
             0, NULL);
         lua_pushnil(L);
         lua_pushstring(L, (const char*)msgbuf);
