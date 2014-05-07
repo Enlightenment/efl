@@ -205,7 +205,7 @@ _eo_op_id_desc_get(Eo_Op op)
      {
         DBG("klass %p %s", klass, klass->desc->name);
 
-        op_descs = klass->desc->ops.descs2;
+        op_descs = klass->desc->ops.descs;
         for (i = 0; i <  klass->desc->ops.count; i++)
           {
              if (op_descs[i].op == op)
@@ -700,7 +700,7 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
              cur_klass = *kls_itr;
              imin = 0;
              imax = cur_klass->desc->ops.count - 1;
-             op_descs = cur_klass->desc->ops.descs2;
+             op_descs = cur_klass->desc->ops.descs;
 
              while (imax >= imin)
                {
@@ -788,7 +788,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
    Eo_Op_Description *op_descs;
 
    op_id = klass->base_id;
-   op_descs = klass->desc->ops.descs2;
+   op_descs = klass->desc->ops.descs;
 
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
 
