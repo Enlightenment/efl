@@ -123,7 +123,7 @@ _extnbuf_lock(Extnbuf *b, int *w, int *h, int *stride)
              if (lockf(b->lockfd, F_LOCK, 0) < 0)
                {
                   ERR("lock take fail");
-                  return EINA_FALSE;
+                  return NULL;
                }
           }
         b->have_lock = EINA_TRUE;

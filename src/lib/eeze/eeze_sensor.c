@@ -188,7 +188,7 @@ eeze_sensor_new(Eeze_Sensor_Type type)
    if (!module)
      {
       free(sens);
-      return EINA_FALSE;
+      return NULL;
      }
 
    if (!module->read)

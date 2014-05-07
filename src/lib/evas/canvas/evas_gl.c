@@ -245,7 +245,7 @@ EAPI const char *
 evas_gl_string_query(Evas_GL *evas_gl, int name)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
-   return EINA_FALSE;
+   return NULL;
    MAGIC_CHECK_END();
 
    return (const char *)evas_gl->evas->engine.func->gl_string_query(evas_gl->evas->engine.data.output, name);
@@ -255,7 +255,7 @@ EAPI Evas_GL_Func
 evas_gl_proc_address_get(Evas_GL *evas_gl, const char *name)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
-   return EINA_FALSE;
+   return NULL;
    MAGIC_CHECK_END();
 
    return (Evas_GL_Func)evas_gl->evas->engine.func->gl_proc_address_get(evas_gl->evas->engine.data.output, name);

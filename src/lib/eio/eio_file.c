@@ -614,7 +614,7 @@ eio_file_check(Eio_File *ls)
 EAPI void *
 eio_file_container_get(Eio_File *ls)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, NULL);
    return ls->container;
 }
 

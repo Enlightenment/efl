@@ -936,10 +936,10 @@ _eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, co
    const Eldbus_Property *property;
    Eina_Array *signatures;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc->interface, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc->interface, NULL);
 
    if (!dbus_connection_get_object_path_data(conn->dbus_conn, path,
                                              (void*)&obj))
@@ -1380,9 +1380,9 @@ EAPI Eldbus_Message *
 eldbus_service_signal_new(const Eldbus_Service_Interface *iface, unsigned int signal_id)
 {
    unsigned size;
-   ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
+   ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, NULL);
    size = eina_array_count(iface->sign_of_signals);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(signal_id < size, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(signal_id < size, NULL);
 
    return eldbus_message_signal_new(iface->obj->path, iface->name,
                                    iface->signals[signal_id].name);

@@ -7126,13 +7126,13 @@ edje_edit_source_generate(Evas_Object *obj)
    Eina_List *images = NULL, *color_classes = NULL, *styles = NULL, *fonts = NULL;
    Eina_List *l;
 
-   GET_ED_OR_RETURN(EINA_FALSE);
-   GET_EED_OR_RETURN(EINA_FALSE);
+   GET_ED_OR_RETURN(NULL);
+   GET_EED_OR_RETURN(NULL);
 
    if (!ed->file) return NULL;
 
    ce = eina_hash_find(ed->file->collection, ed->group);
-   if (!ce) return EINA_FALSE;
+   if (!ce) return NULL;
 
    /* Go through all of group's parts to find all resources needed for that group. */
    for (i = 0; i < ed->table_parts_size; i++)

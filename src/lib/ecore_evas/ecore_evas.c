@@ -2377,7 +2377,7 @@ ecore_evas_window_group_get(const Ecore_Evas *ee)
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
                          "XXX");
-        return EINA_FALSE;
+        return NULL;
      }
    return ee->prop.group_ee;
 }

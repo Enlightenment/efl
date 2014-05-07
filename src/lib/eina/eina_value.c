@@ -5113,7 +5113,7 @@ eina_value_array_new(const Eina_Value_Type *subtype, unsigned int step)
 {
    Eina_Value *value;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), NULL);
 
    value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
@@ -5133,7 +5133,7 @@ eina_value_list_new(const Eina_Value_Type *subtype)
 {
    Eina_Value *value;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), NULL);
 
    value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)
@@ -5153,7 +5153,7 @@ eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_s
 {
    Eina_Value *value;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), NULL);
 
    value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
    if (!value)

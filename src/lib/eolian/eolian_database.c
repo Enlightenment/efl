@@ -319,7 +319,7 @@ EAPI const char *
 eolian_class_description_get(const char *class_name)
 {
    Class_desc *desc = _class_get(class_name);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
    return desc->description;
 }
 

@@ -86,5 +86,5 @@ eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk,
         test = udev_device_get_sysattr_value(parent, sysattr);
         if (test) return eina_stringshare_add(test);
      }
-   return EINA_FALSE;
+   return NULL;
 }

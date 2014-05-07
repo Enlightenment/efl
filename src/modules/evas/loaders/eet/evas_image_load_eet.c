@@ -25,7 +25,7 @@ evas_image_load_file_open_eet(Eina_File *f, Eina_Stringshare *key,
    if (!key)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
+	return NULL;
      }
 
    loader = calloc(1, sizeof (Evas_Loader_Internal));

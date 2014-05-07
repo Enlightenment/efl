@@ -476,13 +476,13 @@ _edje_external_content_get(const Evas_Object *obj, const char *content)
    if (!type)
      {
 	ERR("no external type for object %p", obj);
-	return EINA_FALSE;
+	return NULL;
      }
    if (!type->content_get)
      {
 	ERR("external type '%s' from module '%s' does not provide content_get()",
 	    type->module_name, type->module);
-	return EINA_FALSE;
+	return NULL;
      }
    return type->content_get(type->data, obj, content);
 }

@@ -432,7 +432,7 @@ _rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
                      (evas_common_image_cache_get(), fb->w, fb->h, data, EINA_TRUE, cspace);
           }
      }
-   if (!image) return EINA_FALSE;
+   if (!image) return NULL;
 
    if (fb->alpha_only)
      sz = image->cache_entry.w * image->cache_entry.h * sizeof(DATA8);
