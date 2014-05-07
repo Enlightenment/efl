@@ -324,8 +324,8 @@ main(void)
 
    camera_node = evas_3d_node_add(evas, EVAS_3D_NODE_TYPE_CAMERA);
    eo_do(camera_node,
-         evas_3d_node_camera_set(camera);
-         evas_3d_node_position_set(0.0, 0.0, 5.0);
+         evas_3d_node_camera_set(camera),
+         evas_3d_node_position_set(0.0, 0.0, 5.0),
          evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
    eo_do(root_node, evas_3d_node_member_add(camera_node));
