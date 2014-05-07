@@ -159,7 +159,7 @@ local opts, args = getopt.parse {
     }
 }
 
-if not opts or opts["h"] or opts["v"] or #args == 0 then
+if not opts or opts["h"] or opts["v"] then
     return true
 end
 
@@ -205,9 +205,7 @@ if hasxgettext and not onlylua then
             gargs[#gargs + 1] = v
         end
     end
-    if #gargs ~= ngargs then
-        cutil.exec(unpack(gargs))
-    end
+    cutil.exec(unpack(gargs))
 end
 
 return true
