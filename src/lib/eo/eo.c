@@ -2,6 +2,10 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_DLADDR
+# include <dlfcn.h>
+#endif
+
 #include <Eina.h>
 
 #include "Eo.h"
@@ -748,8 +752,14 @@ _eo_api_op_id_get(const void *api_func, const char *file, int line)
 
    if (desc == NULL)
      {
-        ERR("in %s:%d: unable to resolve %s api func %p.",
-            file, line, (class_ref ? "class" : "regular"), api_func);
+        const char *fct_name = "unknown";
+#ifdef HAVE_DLADDR
+        Dl_info info;
+        if (dladdr(api_func, &info) != 0)
+          fct_name = info.dli_sname;
+#endif
+        ERR("in %s:%d: unable to resolve %s api func '%s' %p.",
+            file, line, (class_ref ? "class" : "regular"), fct_name, api_func);
         return EO_NOOP;
      }
 
