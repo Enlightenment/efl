@@ -412,7 +412,7 @@ eng_window_new(Display *disp,
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
    return gw;
-   indirect = 0;
+   (void) (indirect = 0);
 }
 
 void

@@ -1679,6 +1679,8 @@ eng_image_size_set(void *data, void *image, int w, int h)
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
          w &= ~0x1;
          break;
+      default:
+         break;
      }
 
    evas_gl_common_image_alloc_ensure(im);

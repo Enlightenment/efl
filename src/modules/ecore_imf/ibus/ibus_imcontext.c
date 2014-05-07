@@ -756,7 +756,7 @@ _ecore_imf_context_ibus_update_preedit_text_cb(IBusInputContext  *ibuscontext EI
           }
 
         // Add underline for all characters which don't have attribute.
-        for (unsigned int pos = 0; pos < preedit_length; ++pos)
+        for (pos = 0; pos < preedit_length; ++pos)
           {
              if (!attrs_flag[pos])
                {

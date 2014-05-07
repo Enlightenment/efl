@@ -2072,7 +2072,7 @@ _native_bind_cb(void *data, void *image)
       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
    return;
-   data = NULL;
+   (void *) (data = NULL);
 }
 
 static void
@@ -2106,7 +2106,7 @@ _native_unbind_cb(void *data, void *image)
       GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
    return;
-   data = NULL;
+   (void *) (data = NULL);
 }
 
 static void

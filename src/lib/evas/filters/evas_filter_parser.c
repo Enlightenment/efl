@@ -1593,6 +1593,7 @@ _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
       case VT_BOOL:
         if (lua_type(L, i) == LUA_TSTRING)
           {
+             ok = EINA_FALSE;
              const char *str = lua_tostring(L, i);
              Eina_Bool val = _bool_parse(str, &ok);
              if (!ok) goto fail;

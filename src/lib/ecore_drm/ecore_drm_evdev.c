@@ -291,7 +291,7 @@ static void
 _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int timestamp)
 {
    unsigned int code, nsyms;
-   unsigned int *keycode;
+   /* unsigned int *keycode; */
    const xkb_keysym_t *syms;
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
    char key[256], keyname[256], compose[256];
