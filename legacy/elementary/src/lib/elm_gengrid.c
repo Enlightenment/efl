@@ -4276,27 +4276,16 @@ elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
 }
 
 EOLIAN static void
-_elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h, Eina_Bool is_next)
+_elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
 
-   if (is_next)
+   if (sd->focused_item)
      {
-       if (sd->focused_item)
-         {
-            evas_object_geometry_get(VIEW(sd->focused_item), &item_x, &item_y, &item_w, &item_h);
-            elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->focused_item), &item_x, &item_y, &item_w, &item_h);
-         }
-     }
-   else
-     {
-       if (sd->prev_focused_item)
-         {
-            evas_object_geometry_get(VIEW(sd->prev_focused_item), &item_x, &item_y, &item_w, &item_h);
-            elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->prev_focused_item), &item_x, &item_y, &item_w, &item_h);
-         }
+        evas_object_geometry_get(VIEW(sd->focused_item), &item_x, &item_y, &item_w, &item_h);
+        elm_widget_focus_highlight_focus_part_geometry_get(VIEW(sd->focused_item), &item_x, &item_y, &item_w, &item_h);
      }
 
    *x = item_x;
