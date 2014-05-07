@@ -20,6 +20,7 @@ enum {
 
 static Eina_List *modlist = NULL;
 static int require_ref = LUA_REFNIL;
+static int appload_ref = LUA_REFNIL;
 static const char *progname = NULL;
 
 int el_log_domain = -1;
@@ -94,15 +95,19 @@ static int init_module(lua_State *L) {
 static int register_require(lua_State *L) {
     const char *corepath = lua_touserdata(L, lua_upvalueindex(1));
     const char *modpath  = lua_touserdata(L, lua_upvalueindex(2));
-    Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(3)), *l = NULL;
-    Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(4));
+    const char *appspath = lua_touserdata(L, lua_upvalueindex(3));
+    Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(4)), *l = NULL;
+    Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(5));
     Arg_Data   *data     = NULL;
     int n = 2;
     lua_pushvalue(L, 1);
     require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+    lua_pushvalue(L, 2);
+    appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
     if (getenv("EFL_RUN_IN_TREE")) {
         corepath = PACKAGE_BUILD_DIR "/src/bin/elua/core";
         modpath  = PACKAGE_BUILD_DIR "/src/bin/elua/modules";
+        appspath = PACKAGE_BUILD_DIR "/src/bin/elua/apps";
     } else {
         if (!corepath) {
             if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
@@ -112,6 +117,10 @@ static int register_require(lua_State *L) {
             if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
                 modpath = ELUA_MODULES_DIR;
         }
+        if (!appspath) {
+            if (noenv || !(appspath = getenv("ELUA_APPS_DIR")) || !appspath[0])
+                appspath = ELUA_APPS_DIR;
+        }
     }
     lua_pushfstring(L, "%s/?.lua;", corepath);
     EINA_LIST_FOREACH(largs, l, data) {
@@ -120,9 +129,12 @@ static int register_require(lua_State *L) {
         ++n;
     }
     lua_pushfstring(L, "%s/?.lua;", modpath);
-    lua_pushvalue(L, 2);
+    lua_pushvalue(L, 3);
     lua_concat(L, n + 1);
-    return 1;
+    lua_pushfstring(L, "%s/?.lua;", appspath);
+    lua_pushvalue(L, 4);
+    lua_concat(L, 2);
+    return 2;
 }
 
 static int dolib(lua_State *L, const char *libname) {
@@ -140,6 +152,18 @@ static int dostr(lua_State *L, const char *chunk, const char *chname) {
         || docall(L, 0, 0));
 }
 
+static Eina_Bool loadapp(lua_State *L, const char *appname) {
+    lua_rawgeti(L, LUA_REGISTRYINDEX, appload_ref);
+    lua_pushstring(L, appname);
+    lua_call(L, 1, 2);
+    if (lua_isnil(L, -2)) {
+        lua_remove(L, -2);
+        return EINA_FALSE;
+    }
+    lua_pop(L, 1);
+    return EINA_TRUE;
+}
+
 static int doscript(lua_State *L, int argc, char **argv, int n, int *quit) {
     int status;
     const char *fname = argv[n];
@@ -148,7 +172,11 @@ static int doscript(lua_State *L, int argc, char **argv, int n, int *quit) {
     if (fname[0] == '-' && !fname[1]) {
         fname = NULL;
     }
-    status = elua_loadfile(L, fname);
+    if (fname && fname[0] == ':') {
+        status = !loadapp(L, fname + 1);
+    } else {
+        status = elua_loadfile(L, fname);
+    }
     lua_insert(L, -(narg + 1));
     if (!status) {
          status = docall(L, narg, 1);
@@ -330,6 +358,7 @@ static void print_help(const char *progname, FILE *stream) {
                     "  -l,          --license              Show a license message.\n"
                     "  -C[COREDIR], --core-dir=[COREDIR]   Elua core directory path.\n"
                     "  -M[MODDIR],  --modules-dir=[MODDIR] Elua modules directory path.\n"
+                    "  -A[APPDIR],  --apps-dir=[APPDIR]    Elua applications directory path.\n"
                     "  -e[CODE],    --execute=[CODE]       Execute string 'code'.\n"
                     "  -l[LIBRARY], --library=[LIBRARY]    Require library 'library'.\n"
                     "  -I[DIR],     --lib-dir=[DIR]        Append an additional require path.\n"
@@ -341,6 +370,7 @@ static struct option lopt[] = {
 
     { "core-dir"   , required_argument, NULL, 'C' },
     { "modules-dir", required_argument, NULL, 'M' },
+    { "apps-dir"   , required_argument, NULL, 'A' },
 
     { "execute"    , required_argument, NULL, 'e' },
     { "library"    , required_argument, NULL, 'l' },
@@ -356,7 +386,7 @@ static int lua_main(lua_State *L) {
     Eina_List  *largs   = NULL, *l = NULL;
     Arg_Data   *data    = NULL;
     const char *coref   = NULL;
-    char       *coredir = NULL, *moddir = NULL;
+    char       *coredir = NULL, *moddir = NULL, *appsdir = NULL;
     char        modfile[1024];
 
     int ch;
@@ -372,7 +402,7 @@ static int lua_main(lua_State *L) {
 
     progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
-    while ((ch = getopt_long(argc, argv, "+LhC:M:e:l:I:E", lopt, NULL)) != -1) {
+    while ((ch = getopt_long(argc, argv, "+LhC:M:A:e:l:I:E", lopt, NULL)) != -1) {
         switch (ch) {
             case 'h':
                 print_help(progname, stdout);
@@ -382,6 +412,9 @@ static int lua_main(lua_State *L) {
                 break;
             case 'M':
                 moddir = optarg;
+                break;
+            case 'A':
+                appsdir = optarg;
                 break;
             case 'e':
             case 'l':
@@ -420,9 +453,10 @@ static int lua_main(lua_State *L) {
     }
     lua_pushlightuserdata(L, coredir);
     lua_pushlightuserdata(L, moddir);
+    lua_pushlightuserdata(L, appsdir);
     lua_pushlightuserdata(L, largs);
     lua_pushboolean      (L, noenv);
-    lua_pushcclosure(L, register_require, 4);
+    lua_pushcclosure(L, register_require, 5);
     lua_createtable(L, 0, 0);
     luaL_register(L, NULL, cutillib);
     lua_call(L, 2, 0);

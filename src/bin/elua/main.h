@@ -20,6 +20,10 @@
 #define ELUA_MODULES_DIR "."
 #endif
 
+#ifndef ELUA_APPS_DIR
+#define ELUA_APPS_DIR "."
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 

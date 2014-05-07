@@ -19,6 +19,7 @@ for k, v in pairs(package.loaded) do loaded[k] = v end
 
 M.path  = "./?.lua;/?/init.lua"
 M.cpath = ""
+M.apath = "./?.lua"
 
 local loadlib = package.loadlib
 
@@ -101,11 +102,19 @@ M.require = function(modname)
     return loaded[modname]
 end
 
+M.load_app = function(appname)
+    local  fname, err = package.searchpath(appname, M.apath)
+    if not fname then return nil, err end
+    local f, err = loadfile(fname)
+    if not f then return nil, err end
+    return f
+end
+
 M.preload = preload
 M.loaded  = loaded
 
 -- register require
-M.path = (...)(M.require, M.path)
+M.path, M.apath = (...)(M.require, M.load_app, M.path, M.apath)
 
 M.config     = package.config
 M.searchpath = package.searchpath
