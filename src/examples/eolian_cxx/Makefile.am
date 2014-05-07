@@ -77,11 +77,11 @@ eolian_cxx_inherit_01_SOURCES = \
 EOLIAN_GEN = $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
 EOLIAN_CXX = $(top_builddir)/src/bin/eolian_cxx/eolian_cxx${EXEEXT}
 EOLIAN_FLAGS = \
--I. \
--I$(top_builddir)/src/lib/eo \
--I$(top_builddir)/src/lib/evas/canvas \
--I$(top_builddir)/src/lib/edje \
--I$(top_builddir)/src/lib/ecore_audio
+-I$(srcdir) \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/edje \
+-I$(top_srcdir)/src/lib/ecore_audio
 
 SUFFIXES = .eo .eo.c .eo.h .eo.hh
 
