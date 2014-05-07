@@ -226,7 +226,7 @@ static int elua_exec(lua_State *L) {
     }
 #else
     char *buf, *cptr;
-    size_t buflen = 0;
+    size_t buflen = 1;
     int i;
 
     STARTUPINFO si;
@@ -237,9 +237,6 @@ static int elua_exec(lua_State *L) {
 
     for (i = 1; i < lua_gettop(L); ++i) {
         buflen += lua_objlen(L, i + 1) + 2;
-        if (i != (lua_gettop(L) - 1)) {
-            buflen += 1;
-        }
     }
 
     buf = alloca(buflen + 1);
