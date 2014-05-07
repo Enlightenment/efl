@@ -40,7 +40,7 @@ unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixe
 void rg_etc2_rgb8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
 
 // ETC2 support: RGBA8_ETC2_EAC
-//void rg_etc2_rgba8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
+void rg_etc2_rgba8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
 
 //------------------------------------------------------------------------------
 //

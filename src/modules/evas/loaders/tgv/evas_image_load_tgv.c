@@ -77,9 +77,7 @@ static const Evas_Colorspace cspaces_rgb8_etc2[2] = {
 
 static const Evas_Colorspace cspaces_rgba8_etc2_eac[2] = {
   EVAS_COLORSPACE_RGBA8_ETC2_EAC,
-#ifdef HAVE_ETC2_DECODER
   EVAS_COLORSPACE_ARGB8888
-#endif
 };
 
 static void *
@@ -324,14 +322,6 @@ evas_image_load_file_data_tgv(void *loader_data,
         // Offset to take duplicated pixels into account
         master.x += 1;
         master.y += 1;
-#ifndef HAVE_ETC2_DECODER
-        if (loader->cspace == EVAS_COLORSPACE_RGBA8_ETC2_EAC)
-          {
-             fprintf(stderr, "Requested ETC2 to RGBA conversion but there is no decoder\n");
-             *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-             goto on_error;
-          }
-#endif
         break;
       default: abort();
      }
@@ -410,14 +400,9 @@ evas_image_load_file_data_tgv(void *loader_data,
                          case EVAS_COLORSPACE_RGB8_ETC2:
                            rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
                            break;
-#ifdef HAVE_ETC2_DECODER
-                         case EVAS_COLORSPACE_RGB8_ETC2:
-                           etc2_rgb8_decode_block((uint8_t *) it, (uint8_t *) temporary, 16, 4, 4);
-                           break;
                          case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-                           etc2_rgba8_decode_block((uint8_t *) it, (uint8_t *) temporary, 16, 4, 4);
+                           rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
                            break;
-#endif
                          default: abort();
                         }
 
