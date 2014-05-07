@@ -163,11 +163,41 @@ if not opts or opts["h"] or opts["v"] then
     return true
 end
 
+local build_opt = function(opt)
+    local buf = {}
+    if opt.short then
+        buf[1] = "-"
+        buf[2] = opt.short
+        if opt.val then
+            buf[3] = opt.val
+        end
+    else
+        buf[1] = "--"
+        buf[2] = opt.long
+        if opt.val then
+            buf[3] = "="
+            buf[4] = opt.val
+        end
+    end
+    return table.concat(buf)
+end
+
+local onlylua  = opts["L"] and opts["L"]:lower() == "lua"
+local neverlua = opts["L"] and opts["L"]:lower() ~= "lua"
+
 local hasxgettext = os.getenv("XGETTEXT")
-if hasxgettext then
-    local gargs = { hasxgettext, "--join-existing" }
-    for i = 1, #opts do
-        gargs[#gargs + 1] = arg[i]
+if hasxgettext and not onlylua then
+    local gargs = { hasxgettext }
+    if not opts["j"] and not neverlua then
+        for i, v in ipairs(args) do
+            if v:match("^.+%.lua$") then
+                gargs[#gargs + 1] = "--join-existing"
+                break
+            end
+        end
+    end
+    for i, opt in ipairs(opts) do
+        gargs[#gargs + 1] = build_opt(opt)
     end
     for i, v in ipairs(args) do
         if not v:match("^.+%.lua$") then
