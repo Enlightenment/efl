@@ -159,7 +159,7 @@ local opts, args = getopt.parse {
     }
 }
 
-if not opts or opts["h"] or opts["v"] then
+if not opts or opts["h"] or opts["v"] or #args == 0 then
     return true
 end
 
@@ -199,12 +199,15 @@ if hasxgettext and not onlylua then
     for i, opt in ipairs(opts) do
         gargs[#gargs + 1] = build_opt(opt)
     end
+    local ngargs = #gargs
     for i, v in ipairs(args) do
         if not v:match("^.+%.lua$") then
             gargs[#gargs + 1] = v
         end
     end
-    cutil.exec(unpack(gargs))
+    if #gargs ~= ngargs then
+        cutil.exec(unpack(gargs))
+    end
 end
 
 return true
