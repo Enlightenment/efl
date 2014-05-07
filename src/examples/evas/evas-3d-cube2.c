@@ -159,9 +159,9 @@ _camera_setup(Scene_Data *data)
    eo_do(data->camera,
          evas_3d_camera_projection_perspective_set(60.0, 1.0, 2.0, 50.0));
 
-//   data->camera_node =
-//      eo_add(EVAS_3D_NODE_CLASS, evas, EVAS_3D_NODE_TYPE_CAMERA);
-   data->camera_node = evas_3d_node_add(evas, EVAS_3D_NODE_TYPE_CAMERA);
+   data->camera_node =
+      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(data->camera_node,
          evas_3d_node_camera_set(data->camera),
          evas_3d_node_position_set(0.0, 0.0, 10.0),
@@ -180,8 +180,9 @@ _light_setup(Scene_Data *data)
          evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_3d_light_specular_set(1.0, 1.0, 1.0, 1.0));
 
-//   data->light_node = eo_add(EVAS_3D_NODE_CLASS, evas, EVAS_3D_NODE_TYPE_LIGHT);
-   data->light_node = evas_3d_node_add(evas, EVAS_3D_NODE_TYPE_LIGHT);
+   data->light_node =
+      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
          evas_3d_node_position_set(0.0, 0.0, 10.0),
@@ -264,7 +265,9 @@ _mesh_setup(Scene_Data *data)
          evas_3d_mesh_frame_add(20),
          evas_3d_mesh_frame_material_set(20, data->material1));
 
-   data->mesh_node = evas_3d_node_add(evas, EVAS_3D_NODE_TYPE_MESH);
+   data->mesh_node =
+      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node));
    eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh));
 }
@@ -277,8 +280,9 @@ _scene_setup(Scene_Data *data)
          evas_3d_scene_size_set(WIDTH, HEIGHT),
          evas_3d_scene_background_color_set(0.0, 0.0, 0.0, 0.0));
 
-//   data->root_node = eo_add(EVAS_3D_NODE_CLASS, evas, EVAS_3D_NODE_TYPE_NODE);
-   data->root_node = evas_3d_node_add(evas, EVAS_3D_NODE_TYPE_NODE);
+   data->root_node =
+      eo_add_custom(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);
