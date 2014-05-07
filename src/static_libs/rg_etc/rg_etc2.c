@@ -51,6 +51,26 @@ static const int kSigned3bit[8] = {
    0, 1, 2, 3, -4, -3, -2, -1
 };
 
+// For alpha support
+static const int kAlphaModifiers[16][8] = {
+   {  -3,  -6,  -9,  -15,  2,  5,  8,  14},
+   {  -3,  -7, -10,  -13,  2,  6,  9,  12},
+   {  -2,  -5,  -8,  -13,  1,  4,  7,  12},
+   {  -2,  -4,  -6,  -13,  1,  3,  5,  12},
+   {  -3,  -6,  -8,  -12,  2,  5,  7,  11},
+   {  -3,  -7,  -9,  -11,  2,  6,  8,  10},
+   {  -4,  -7,  -8,  -11,  3,  6,  7,  10},
+   {  -3,  -5,  -8,  -11,  2,  4,  7,  10},
+   {  -2,  -6,  -8,  -10,  1,  5,  7,   9},
+   {  -2,  -5,  -8,  -10,  1,  4,  7,   9},
+   {  -2,  -4,  -8,  -10,  1,  3,  7,   9},
+   {  -2,  -5,  -7,  -10,  1,  4,  6,   9},
+   {  -3,  -4,  -7,  -10,  2,  3,  6,   9},
+   {  -1,  -2,  -3,  -10,  0,  1,  2,   9},
+   {  -4,  -6,  -8,   -9,  3,  5,  7,   8},
+   {  -3,  -5,  -7,   -9,  2,  4,  6,   8}
+};
+
 // Use with static constants so the compiler can optimize everything
 #define BITS(byteval, lowbit, highbit) \
    (((byteval) >> (lowbit)) & ((1 << ((highbit) - (lowbit) + 1)) - 1))
@@ -67,6 +87,9 @@ static const int kSigned3bit[8] = {
 // Real clamp
 #define CLAMP(a) ({ int _b = (a); (((_b) >= 0) ? (((_b) < 256) ? (_b) : 255) : 0); })
 
+// Simple min
+#define MIN(a,b) ({ int _z = (a), _y = (b); ((_z <= _y) ? _z : _y); })
+
 // Write a BGRA value for output to Evas
 #define BGRA(r,g,b,a) ((a << 24) | (r << 16) | (g << 8) | b)
 
@@ -74,6 +97,20 @@ static const int kSigned3bit[8] = {
 #define _5to8(a) ({ int _a = (a) & ((1 << 5) - 1); ((_a << 3) | ((_a >> 2) & 0x7)); })
 #define _6to8(a) ({ int _a = (a) & ((1 << 6) - 1); ((_a << 2) | ((_a >> 4) & 0x3)); })
 #define _7to8(a) ({ int _a = (a) & ((1 << 7) - 1); ((_a << 1) | ((_a >> 6) & 0x1)); })
+
+#ifndef WORDS_BIGENDIAN
+/* x86 */
+#define A_VAL(p) (((uint8_t *)(p))[3])
+#define R_VAL(p) (((uint8_t *)(p))[2])
+#define G_VAL(p) (((uint8_t *)(p))[1])
+#define B_VAL(p) (((uint8_t *)(p))[0])
+#else
+/* ppc */
+#define A_VAL(p) (((uint8_t *)(p))[0])
+#define R_VAL(p) (((uint8_t *)(p))[1])
+#define G_VAL(p) (((uint8_t *)(p))[2])
+#define B_VAL(p) (((uint8_t *)(p))[3])
+#endif
 
 
 static inline void
@@ -176,48 +213,9 @@ _planar_mode_color_read(const uint8_t *etc, uint32_t *bgra, int alpha)
        }
 }
 
-void
-rg_etc2_rgb8_decode_block(const uint8_t *etc, uint32_t *bgra)
+static inline void
+_TH_paint(const uint8_t *etc, uint32_t paint_colors[4], uint32_t *bgra)
 {
-   // Check differential mode bit
-   if ((etc[3] & 0x2) == 0)
-     goto etc1;
-
-   // Read R,G,B
-   const int R  = BITS(etc[0], 3, 7);
-   const int dR = kSigned3bit[BITS(etc[0], 0, 2)];
-   const int G  = BITS(etc[1], 3, 7);
-   const int dG = kSigned3bit[BITS(etc[1], 0, 2)];
-   const int B  = BITS(etc[2], 3, 7);
-   const int dB = kSigned3bit[BITS(etc[2], 0, 2)];
-   uint32_t paint_colors[4];
-
-   if ((R + dR) < 0 || (R + dR) >= 32)
-     {
-        // T mode
-        _T_mode_color_read(etc, paint_colors, 255);
-        goto th_mode;
-     }
-   if ((G + dG) < 0 || (G + dG) >= 32)
-     {
-        // H mode
-        _H_mode_color_read(etc, paint_colors, 255);
-        goto th_mode;
-     }
-   if ((B + dB) < 0 || (B + dB) >= 32)
-     {
-        // Planar mode
-        _planar_mode_color_read(etc, bgra, 255);
-        return;
-     }
-
-etc1:
-   // Valid differential mode or individual mode: ETC1
-   if (!rg_etc1_unpack_block(etc, bgra, 0))
-     fprintf(stderr, "ETC2: Something very strange is happening here!\n");
-   return;
-
-th_mode:
    // Common code for modes T and H.
 
    // a,b,c,d
@@ -243,5 +241,105 @@ th_mode:
    bgra[ 7] = paint_colors[(BIT(etc[4], 5) << 1) | (BIT(etc[6], 5))];
    bgra[11] = paint_colors[(BIT(etc[4], 6) << 1) | (BIT(etc[6], 6))];
    bgra[15] = paint_colors[(BIT(etc[4], 7) << 1) | (BIT(etc[6], 7))];
-   return;
+}
+
+void
+rg_etc2_rgb8_decode_block(const uint8_t *etc, uint32_t *bgra)
+{
+   // Check differential mode bit
+   if ((etc[3] & 0x2) == 0)
+     goto etc1;
+
+   // Read R,G,B
+   const int R  = BITS(etc[0], 3, 7);
+   const int dR = kSigned3bit[BITS(etc[0], 0, 2)];
+   const int G  = BITS(etc[1], 3, 7);
+   const int dG = kSigned3bit[BITS(etc[1], 0, 2)];
+   const int B  = BITS(etc[2], 3, 7);
+   const int dB = kSigned3bit[BITS(etc[2], 0, 2)];
+   uint32_t paint_colors[4];
+
+   if ((R + dR) < 0 || (R + dR) >= 32)
+     {
+        // T mode
+        _T_mode_color_read(etc, paint_colors, 255);
+        _TH_paint(etc, paint_colors, bgra);
+        return;
+     }
+   if ((G + dG) < 0 || (G + dG) >= 32)
+     {
+        // H mode
+        _H_mode_color_read(etc, paint_colors, 255);
+        _TH_paint(etc, paint_colors, bgra);
+        return;
+     }
+   if ((B + dB) < 0 || (B + dB) >= 32)
+     {
+        // Planar mode
+        _planar_mode_color_read(etc, bgra, 255);
+        return;
+     }
+
+etc1:
+   // Valid differential mode or individual mode: ETC1
+   if (!rg_etc1_unpack_block(etc, bgra, 0))
+     fprintf(stderr, "ETC2: Something very strange is happening here!\n");
+}
+
+void
+rg_etc2_rgba8_decode_block(const uint8_t *etc, uint32_t *bgra)
+{
+   const uint8_t zeros[7] = {0};
+   uint32_t table_index;
+   int base_codeword;
+   int multiplier;
+
+   base_codeword = etc[0];
+
+   // Fast path if alpha is the same for all pixels
+   if (!memcmp(etc + 1, zeros, 7))
+     {
+        if (!base_codeword)
+          memset(bgra, 0, 64);
+        else
+          {
+             rg_etc2_rgb8_decode_block(etc + 8, bgra);
+             if (base_codeword != 255)
+               for (int k = 0; k < 16; k++)
+                 {
+                    const uint32_t rgb = *bgra;
+                    const int R = MIN(R_VAL(&rgb), base_codeword);
+                    const int G = MIN(G_VAL(&rgb), base_codeword);
+                    const int B = MIN(B_VAL(&rgb), base_codeword);
+                    *bgra++ = BGRA(R, G, B, base_codeword);
+                 }
+          }
+        return;
+     }
+
+   rg_etc2_rgb8_decode_block(etc + 8, bgra);
+
+   multiplier = BITS(etc[1], 4, 7);
+   table_index = BITS(etc[1], 0, 3);
+
+   for (int x = 0, k = 0; x < 4; x++)
+     for (int y = 0; y < 4; y++, k += 3)
+       {
+          const uint32_t byte = (k >> 3); // = [k/8]
+          const uint32_t bit = k - (byte << 3); // = k%8
+          const uint32_t rgb = bgra[(y << 2) + x];
+          uint32_t index, alpha, R, G, B;
+
+          if (bit < 6)
+            index = BITS(etc[byte + 2], 5 - bit, 7 - bit);
+          else if (bit == 6)
+            index = (BITS(etc[byte + 2], 0, 1) << 1) | BIT(etc[byte + 3], 7);
+          else // bit == 7
+            index = (BIT(etc[byte + 2], 0) << 2) | BITS(etc[byte + 3], 6, 7);
+          alpha = CLAMP(base_codeword + kAlphaModifiers[table_index][index] * multiplier);
+          R = MIN(R_VAL(&rgb), alpha);
+          G = MIN(G_VAL(&rgb), alpha);
+          B = MIN(B_VAL(&rgb), alpha);
+          bgra[(y << 2) + x] = BGRA(R, G, B, alpha);
+       }
 }
