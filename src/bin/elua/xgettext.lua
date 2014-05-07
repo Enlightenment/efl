@@ -190,7 +190,7 @@ if hasxgettext and not onlylua then
     local gargs = { hasxgettext }
     if not opts["j"] and not neverlua then
         for i, v in ipairs(args) do
-            if v:match("^.+%.lua$") then
+            if v:lower():match("^.+%.lua$") then
                 gargs[#gargs + 1] = "--join-existing"
                 break
             end
@@ -201,7 +201,7 @@ if hasxgettext and not onlylua then
     end
     local ngargs = #gargs
     for i, v in ipairs(args) do
-        if not v:match("^.+%.lua$") then
+        if not v:lower():match("^.+%.lua$") then
             gargs[#gargs + 1] = v
         end
     end
