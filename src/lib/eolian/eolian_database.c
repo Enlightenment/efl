@@ -1285,6 +1285,8 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
 {
    const Eina_List *itr;
    const char *class_name = eolian_class_find_by_file(filepath);
+   const char *inherit_name;
+   Eolian_Implement impl;
    if (!class_name)
      {
         if (!eo_tokenizer_database_fill(filepath)) return EINA_FALSE;
@@ -1295,18 +1297,32 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
              return EINA_FALSE;
           }
      }
-   EINA_LIST_FOREACH(eolian_class_inherits_list_get(class_name), itr, class_name)
+   EINA_LIST_FOREACH(eolian_class_inherits_list_get(class_name), itr, inherit_name)
      {
-        char *filename = strdup(class_name);
+        char *filename = strdup(inherit_name);
         eina_str_tolower(&filename);
         filepath = eina_hash_find(_filenames, filename);
         if (!filepath)
           {
-             ERR("Unable to find class %s", class_name);
+             ERR("Unable to find class %s", inherit_name);
              return EINA_FALSE;
           }
         if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
         free(filename);
+     }
+   EINA_LIST_FOREACH(eolian_class_implements_list_get(class_name), itr, impl)
+     {
+        _Implement_Desc *_impl = (_Implement_Desc *)impl;
+        Eolian_Function foo = eolian_class_function_find_by_name(_impl->class_name, _impl->func_name, _impl->type);
+        if (!foo)
+          {
+             ERR("Unable to find function %s in class %s", _impl->func_name, _impl->class_name);
+             return EINA_FALSE;
+          }
+        if (_impl->type == EOLIAN_UNRESOLVED)
+          {
+             _impl->type = eolian_function_type_get(foo);
+          }
      }
    return EINA_TRUE;
 }
