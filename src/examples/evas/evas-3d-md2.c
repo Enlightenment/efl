@@ -59,6 +59,9 @@ _on_canvas_resize(Ecore_Evas *ee)
 int
 main(void)
 {
+   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
+
    if (!ecore_evas_init()) return 0;
 
    ecore_evas = ecore_evas_new(NULL, 10, 10, WIDTH, HEIGHT, NULL);

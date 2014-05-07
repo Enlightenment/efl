@@ -227,6 +227,9 @@ _scene_setup(Scene_Data *data)
 int
 main(void)
 {
+   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
+
    Scene_Data data;
 
    if (!ecore_evas_init()) return 0;
