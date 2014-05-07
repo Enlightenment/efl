@@ -828,7 +828,7 @@ _elm_ctxpopup_elm_container_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const 
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 
-   return NULL;
+   return content;
 }
 
 static void
