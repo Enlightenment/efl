@@ -169,7 +169,8 @@ _texture_fini(Evas_3D_Texture *obj)
    if (pd->engine_data)
      {
         Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-        e->engine.func->texture_free(e->engine.data.output, pd->engine_data);
+        if (e->engine.func->texture_free)
+          e->engine.func->texture_free(e->engine.data.output, pd->engine_data);
         pd->engine_data = NULL;
      }
 
@@ -214,7 +215,11 @@ _evas_3d_texture_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
 
         if (pd->engine_data == NULL)
           {
-             pd->engine_data = e->engine.func->texture_new(e->engine.data.output);
+             if (e->engine.func->texture_new)
+               {
+                  pd->engine_data =
+                     e->engine.func->texture_new(e->engine.data.output);
+               }
 
              if (pd->engine_data == NULL)
                {
@@ -225,8 +230,12 @@ _evas_3d_texture_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
 
         if (src->proxy->surface && !src->proxy->redraw)
           {
-             e->engine.func->texture_image_set(e->engine.data.output, pd->engine_data,
-                                               src->proxy->surface);
+             if (e->engine.func->texture_image_set)
+               {
+                  e->engine.func->texture_image_set(e->engine.data.output,
+                                                    pd->engine_data,
+                                                    src->proxy->surface);
+               }
              return;
 
           }
@@ -234,8 +243,10 @@ _evas_3d_texture_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
         pd->proxy_rendering = EINA_TRUE;
         _texture_proxy_subrender(obj);
 
-        e->engine.func->texture_image_set(e->engine.data.output, pd->engine_data,
-                                          src->proxy->surface);
+        if (e->engine.func->texture_image_set)
+          e->engine.func->texture_image_set(e->engine.data.output,
+                                            pd->engine_data,
+                                            src->proxy->surface);
         pd->proxy_rendering = EINA_FALSE;
      }
 }
@@ -316,11 +327,12 @@ _evas_3d_texture_data_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_3D
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
 
-   if (pd->engine_data == NULL)
+   if (!pd->engine_data && e->engine.func->texture_new)
      pd->engine_data = e->engine.func->texture_new(e->engine.data.output);
 
-   e->engine.func->texture_data_set(e->engine.data.output, pd->engine_data,
-                                    color_format, pixel_format, w, h, data);
+   if (e->engine.func->texture_data_set)
+     e->engine.func->texture_data_set(e->engine.data.output, pd->engine_data,
+                                      color_format, pixel_format, w, h, data);
 
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
@@ -332,10 +344,13 @@ _evas_3d_texture_file_set(Eo *obj, Evas_3D_Texture_Data *pd, const char *file, c
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
 
-   if (pd->engine_data == NULL)
+   if (!pd->engine_data && e->engine.func->texture_new)
      pd->engine_data = e->engine.func->texture_new(e->engine.data.output);
 
-   e->engine.func->texture_file_set(e->engine.data.output, pd->engine_data, file, key);
+   if (e->engine.func->texture_file_set)
+     e->engine.func->texture_file_set(e->engine.data.output, pd->engine_data,
+                                      file, key);
+
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
 
@@ -419,7 +434,11 @@ _evas_3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-   e->engine.func->texture_color_format_get(e->engine.data.output, pd->engine_data, &format);
+   if (e->engine.func->texture_color_format_get)
+     {
+        e->engine.func->texture_color_format_get(e->engine.data.output,
+                                                 pd->engine_data, &format);
+     }
    return format;
 }
 
@@ -429,7 +448,11 @@ _evas_3d_texture_size_get(Eo *obj, Evas_3D_Texture_Data *pd, int *w, int *h)
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-   e->engine.func->texture_size_get(e->engine.data.output, pd->engine_data, w, h);
+   if (e->engine.func->texture_size_get)
+     {
+        e->engine.func->texture_size_get(e->engine.data.output,
+                                         pd->engine_data, w, h);
+     }
 }
 
 EOLIAN static void
@@ -438,7 +461,11 @@ _evas_3d_texture_wrap_set(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mode s
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-   e->engine.func->texture_wrap_set(e->engine.data.output, pd->engine_data, s, t);
+   if (e->engine.func->texture_wrap_set)
+     {
+        e->engine.func->texture_wrap_set(e->engine.data.output,
+                                         pd->engine_data, s, t);
+     }
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_WRAP, NULL));
 }
 
@@ -448,7 +475,11 @@ _evas_3d_texture_wrap_get(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Wrap_Mode *
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-   e->engine.func->texture_wrap_get(e->engine.data.output, pd->engine_data, s, t);
+   if (e->engine.func->texture_wrap_set)
+     {
+        e->engine.func->texture_wrap_get(e->engine.data.output,
+                                         pd->engine_data, s, t);
+     }
 }
 
 EOLIAN static void
@@ -457,7 +488,11 @@ _evas_3d_texture_filter_set(Eo *obj, Evas_3D_Texture_Data *pd, Evas_3D_Texture_F
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-   e->engine.func->texture_filter_set(e->engine.data.output, pd->engine_data, min, mag);
+   if (e->engine.func->texture_filter_set)
+     {
+        e->engine.func->texture_filter_set(e->engine.data.output,
+                                           pd->engine_data, min, mag);
+     }
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_FILTER, NULL));
 }
 
@@ -467,7 +502,11 @@ _evas_3d_texture_filter_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
-   e->engine.func->texture_filter_get(e->engine.data.output, pd->engine_data, min, mag);
+   if (e->engine.func->texture_filter_get)
+     {
+        e->engine.func->texture_filter_get(e->engine.data.output,
+                                           pd->engine_data, min, mag);
+     }
 }
 
 #include "canvas/evas_3d_texture.eo.c"

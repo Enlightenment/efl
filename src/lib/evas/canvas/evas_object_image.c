@@ -2520,12 +2520,18 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
      {
         int  w, h;
 
-        e->engine.func->drawable_size_get(e->engine.data.output,
-                                          pd_scene->surface, &w, &h);
+        if (e->engine.func->drawable_size_get)
+          {
+             e->engine.func->drawable_size_get(e->engine.data.output,
+                                               pd_scene->surface, &w, &h);
+          }
         if ((w != pd_scene->w) || (h != pd_scene->h))
           {
-             e->engine.func->drawable_free(e->engine.data.output,
-                                           pd_scene->surface);
+             if (e->engine.func->drawable_free)
+               {
+                  e->engine.func->drawable_free(e->engine.data.output,
+                                                pd_scene->surface);
+               }
              pd_scene->surface = NULL;
              need_native_set = EINA_TRUE;
           }
@@ -2533,9 +2539,12 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
    else
      {
         /* TODO: Hard-coded alpha on. */
-        pd_scene->surface =
-           e->engine.func->drawable_new(e->engine.data.output,
-                                        pd_scene->w, pd_scene->h, 1);
+        if (e->engine.func->drawable_new)
+          {
+             pd_scene->surface =
+                e->engine.func->drawable_new(e->engine.data.output,
+                                             pd_scene->w, pd_scene->h, 1);
+          }
         need_native_set = EINA_TRUE;
      }
 
@@ -2544,10 +2553,13 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
      {
         if (need_native_set)
           {
-             data->surface =
-                e->engine.func->image_drawable_set(e->engine.data.output,
-                                                   data->surface,
-                                                   pd_scene->surface);
+             if (e->engine.func->image_drawable_set)
+               {
+                  data->surface =
+                     e->engine.func->image_drawable_set(e->engine.data.output,
+                                                        data->surface,
+                                                        pd_scene->surface);
+               }
           }
         data->w = pd_scene->w;
         data->h = pd_scene->h;
@@ -2573,8 +2585,11 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
                               evas_3d_node_light_collect, &scene_data);
 
    /* Phase 5 - Draw the scene. */
-   e->engine.func->drawable_scene_render(e->engine.data.output,
-                                         pd_scene->surface, &scene_data);
+   if (e->engine.func->drawable_scene_render)
+     {
+        e->engine.func->drawable_scene_render(e->engine.data.output,
+                                              pd_scene->surface, &scene_data);
+     }
    /* Clean up temporary resources. */
    evas_3d_scene_data_fini(&scene_data);
 }
