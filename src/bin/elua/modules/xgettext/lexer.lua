@@ -259,6 +259,12 @@ local skip_shebang = function(rdr)
     return c
 end
 
+local ls_get = function(self)
+    local tok = self.token
+    tok.name, tok.value = self.coro()
+    return tok
+end
+
 return { init = function(chunkname, input)
     local reader = type(input) == "string" and strstream(input) or input
     local current = skip_shebang(reader)
@@ -267,9 +273,11 @@ return { init = function(chunkname, input)
         token       = {},
         source      = chunkname,
         current     = current,
-        line_number = 1
+        line_number = 1,
+        get         = ls_get
     }
     local coro = coroutine.wrap(lex_main, ls)
+    ls.coro = coro
     coro(ls)
     return coro
 end }
