@@ -386,9 +386,9 @@ struct _Eo_Class_Description
    const char *name; /**< The name of the class. */
    Eo_Class_Type type; /**< The type of the class. */
    struct {
-        Eo_Op_Description *descs2;
-        size_t count;
-   } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS */
+        Eo_Op_Description *descs2; /**< The op descriptions array of size count. */
+        size_t count; /**< Number of op descriptions. */
+   } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS (later sorted by Eo). */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
    void (*class_constructor)(Eo_Class *klass); /**< The constructor of the class. */
