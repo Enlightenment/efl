@@ -646,7 +646,7 @@ init_video_object(const char *module_filename, const char *filename)
    edje_object_part_drag_value_set(oe, "video_volume", 0.0, 0.5);
    edje_object_part_text_set(oe, "video_volume_txt", "vol 0.50");
 
-   edje_object_signal_emit(o, "video_state", "play");
+   edje_object_signal_emit(oe, "video_state", "play");
 
    evas_object_show(oe);
 }
