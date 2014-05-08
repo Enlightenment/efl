@@ -627,8 +627,8 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
 
    if (func->src != NULL)
      {
-        ERR("in %s:%d: you called a pure virtual func '%s' (%d).",
-            file, line, func_name, op);
+        ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
+            file, line, func_name, op, klass->desc->name);
         return EINA_FALSE;
      }
 
@@ -758,8 +758,9 @@ _eo_api_op_id_get(const void *api_func, const char *file, int line)
         if (dladdr(api_func, &info) != 0)
           fct_name = info.dli_sname;
 #endif
-        ERR("in %s:%d: unable to resolve %s api func '%s' %p.",
-            file, line, (class_ref ? "class" : "regular"), fct_name, api_func);
+        ERR("in %s:%d: unable to resolve %s api func '%s' %p in class '%s'.",
+            file, line, (class_ref ? "class" : "regular"),
+            fct_name, api_func, klass->desc->name);
         return EO_NOOP;
      }
 

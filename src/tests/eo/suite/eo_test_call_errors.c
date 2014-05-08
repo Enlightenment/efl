@@ -19,7 +19,7 @@ START_TEST(eo_pure_virtual_fct_call)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("_eo_call_resolve", "in %s:%d: you called a pure virtual func '%s' (%d).");
+   TEST_EO_ERROR("_eo_call_resolve", "in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.");
    eo_do(obj, simple_pure_virtual());
    fail_unless(ctx.did);
 
@@ -37,7 +37,7 @@ START_TEST(eo_api_not_implemented_call)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("_eo_api_op_id_get", "in %s:%d: unable to resolve %s api func %p.");
+   TEST_EO_ERROR("_eo_api_op_id_get", "in %s:%d: unable to resolve %s api func '%s' %p in class '%s'.");
    eo_do(obj, simple_no_implementation());
    fail_unless(ctx.did);
 
