@@ -208,24 +208,18 @@ group { name: "e/modules/ibar/menu";
             }
          }
       }
-      rect { "event_block";
-         desc { hid; color: 0 0 0 0; }
-         desc { "hidden"; inherit: "default"; vis; }
-      }
    }
    programs {
       program { signal: "e,state,hidden"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "sizer";
          target: "clip";
-         target: "event_block";
       }
 
       program { signal: "e,action,show"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "sizer";
          target: "clip";
-         target: "event_block";
          transition: SINUSOIDAL 0.2;
          after: "show2";
       }
@@ -237,7 +231,6 @@ group { name: "e/modules/ibar/menu";
          action: STATE_SET "hidden" 0.0;
          target: "sizer";
          target: "clip";
-         target: "event_block";
          transition: SINUSOIDAL 0.2;
          after: "hide2";
       }
