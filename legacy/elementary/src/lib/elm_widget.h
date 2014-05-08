@@ -531,7 +531,7 @@ EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, const Evas
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_info_get(const Evas_Object *obj);
 EAPI void             _elm_access_object_highlight(Evas_Object *obj);
-EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
+EAPI void             _elm_access_object_unhighlight(Evas_Object *obj);
 EAPI void             _elm_access_object_highlight_disable(Evas *e);
 EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
 EAPI void             _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj);

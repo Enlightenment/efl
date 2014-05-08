@@ -307,7 +307,7 @@ _access_hover_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    ac = evas_object_data_get(data, "_elm_access");
    if (!ac) return;
 
-   _elm_access_object_unhilight(data);
+   _elm_access_object_unhighlight(data);
 
    ELM_SAFE_FREE(ac->delay_timer, ecore_timer_del);
 }
@@ -865,7 +865,7 @@ _elm_access_object_highlight(Evas_Object *obj)
 }
 
 EAPI void
-_elm_access_object_unhilight(Evas_Object *obj)
+_elm_access_object_unhighlight(Evas_Object *obj)
 {
    Evas_Object *o, *ptarget;
 
