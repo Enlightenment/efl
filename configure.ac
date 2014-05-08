@@ -477,6 +477,17 @@ build_cpu_sse3="no"
 build_cpu_altivec="no"
 build_cpu_neon="no"
 
+want_neon="yes"
+AC_ARG_ENABLE([neon],
+   [AC_HELP_STRING([--disable-neon], [disable neon support @<:@default=enable@:>@])],
+   [
+    if test "x${enableval}" = "xyes"; then
+       want_neon="yes"
+    else
+       want_neon="no"
+    fi
+   ])
+
 SSE3_CFLAGS=""
 ALTIVEC_CFLAGS=""
 NEON_CFLAGS=""
@@ -541,23 +552,25 @@ case $host_cpu in
     fi
     ;;
   arm*)
-    build_cpu_neon="yes"
-    AC_MSG_CHECKING([whether to use NEON instructions])
-    CFLAGS_save="${CFLAGS}"
-    CFLAGS="${CFLAGS} -mfpu=neon"
-    AC_TRY_COMPILE([#include <arm_neon.h>],
-       [asm volatile ("vqadd.u8 d0, d1, d0\n")],
-       [
-        AC_MSG_RESULT([yes])
-        AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
-        build_cpu_neon="yes"
-        NEON_CFLAGS="-mfpu=neon"
-       ],
-       [
-        AC_MSG_RESULT([no])
-        build_cpu_neon="no"
-       ])
-    CFLAGS="${CFLAGS_save}"
+    if test "x${want_neon}" = "xyes"; then
+       build_cpu_neon="yes"
+       AC_MSG_CHECKING([whether to use NEON instructions])
+       CFLAGS_save="${CFLAGS}"
+       CFLAGS="${CFLAGS} -mfpu=neon"
+       AC_TRY_COMPILE([#include <arm_neon.h>],
+         [asm volatile ("vqadd.u8 d0, d1, d0\n")],
+       	 [
+           AC_MSG_RESULT([yes])
+           AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
+           build_cpu_neon="yes"
+           NEON_CFLAGS="-mfpu=neon"
+       	 ],
+       	 [
+	   AC_MSG_RESULT([no])
+           build_cpu_neon="no"
+       	 ])
+       CFLAGS="${CFLAGS_save}"
+    fi
     ;;
 esac
 
