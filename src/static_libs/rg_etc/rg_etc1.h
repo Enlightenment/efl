@@ -24,17 +24,18 @@ typedef struct
 {
    rg_etc1_quality m_quality;
    bool m_dithering;
-}rg_etc1_pack_params;
+} rg_etc1_pack_params;
 
-// Important: pack_etc1_block_init() must be called before calling pack_etc1_block().
+// pack_etc1_block_init() should be called before calling pack_etc1_block(),
+// Otherwise rg_etc1_pack_block() will call rg_etc1_pack_block_init() for you.
 void rg_etc1_pack_block_init();
 
-// Packs a 4x4 block of 32bpp RGBA pixels to an 8-byte ETC1 block.
-// 32-bit RGBA pixels must always be arranged as (R,G,B,A) (R first, A last) in memory, independent of platform endianness. A should always be 255.
+// Packs a 4x4 block of 32bpp BGRA pixels to an 8-byte ETC1 block.
+// 32-bit BGRA pixels must always be arranged as (B,G,R,A) (B first, A last) in memory, independent of platform endianness. A should always be 255.
 // Returns squared error of result.
 // This function is thread safe, and does not dynamically allocate any memory.
 // pack_etc1_block() does not currently support "perceptual" colorspace metrics - it primarily optimizes for RGB RMSE.
-unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_rgba, rg_etc1_pack_params *pack_params);
+unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_etc1_pack_params *pack_params);
 
 // ETC2 support: RGB8_ETC2
 void rg_etc2_rgb8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
