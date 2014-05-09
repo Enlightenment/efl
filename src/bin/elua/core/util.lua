@@ -237,6 +237,13 @@ local Str_Buf = ffi.metatype("Str_Buf", {
     }
 })
 
+local fmterr = function(idx, msg)
+    local argerr = (type(idx) == "number")
+        and ("#" .. idx)
+         or ("'" .. idx .. "'")
+    error("bad argument " .. argerr .. " to '%' (" .. msg .. ")", 3)
+end
+
 getmetatable("").__mod = function(fmts, params)
     if not fmts then return nil end
     if type(params) ~= "table" then
@@ -270,17 +277,16 @@ getmetatable("").__mod = function(fmts, params)
                 else
                     nbuf:append_char(c)
                     local idx = tonumber(n) or n
+                    if type(idx) == "number" and idx > #params then
+                        fmterr(idx, "no value")
+                    end
                     local stat, val = pcall(fmt, "%" .. tostr(nbuf),
                         params[idx])
                     nbuf:clear()
                     if stat then
                         buf:append_str(val)
                     else
-                        local argerr = (type(idx) == "number")
-                            and ("#" .. idx)
-                             or ("'" .. idx .. "'")
-                        error("bad argument " .. argerr .. " to '%' "
-                            .. val:match("%(.+%)"), 2)
+                        fmterr(idx, val:match("%((.+)%)"))
                     end
                 end
             else
@@ -295,8 +301,7 @@ getmetatable("").__mod = function(fmts, params)
                 if stat then
                     buf:append_str(val)
                 else
-                    error("bad argument #" .. argn .. " to '%' "
-                        .. val:match("%(.+%)"), 2)
+                    fmterr(argn, val:match("%((.+)%)"))
                 end
                 if c then buf:append_char(c) end
                 argn = argn + 1
