@@ -36,17 +36,22 @@
   to an @ref Evas_Object "Evas Object". For the moment, these effects are
   specific to the @ref Evas_Object_Text "Text Objects".
 
-  The filters can be applied to an object using a simple script language
-  specifically designed for these effects. A script will contain a series
-  of buffer declarations and filter commands to apply to these buffers.
+  The filters can be applied to an object using simple Lua scripts. A script
+  will contain a series of buffer declarations and filter commands to apply
+  to these buffers. The Lua programming language reference can be found
+  <a href="http://www.lua.org/manual/5.1/manual.html">here</a>.
 
   Basically, when applying an effect to a @ref Evas_Object_Text "Text Object",
   an alpha-only @c input buffer is created, where the text is rendered, and
   an RGBA @c output buffer is created, where the text with effects shall be
   finally rendered.
 
-  The script language is case insensitive, except for the buffer names.
-  All spaces will be discarded during parsing.
+  The script language being Lua, it respects the usual Lua syntax and concepts.
+  As these are simple filters, the scripts should be kept as small and simple
+  as possible.
+
+  Note: Lua has been used since 1.10. The previous filters syntax is not
+        garanteed to be compatible with 1.10 and newer versions.
 
   Here are the available commands:
   <ul>
@@ -55,19 +60,19 @@
     <ul>
       <li> @ref sec_buffers_cspace "Colorspaces" </li>
       <li> @ref sec_buffers_auto "Automatic buffers" </li>
-      <li> @ref sec_buffers_cmd "BUFFER command" </li>
+      <li> @ref sec_buffers_cmd "@c buffer command" </li>
     </ul>
     <li> @ref sec_commands "Commands" </li>
     <ul>
-      <li> @ref sec_commands_blend "BLEND command"</li>
-      <li> @ref sec_commands_blur "BLUR command"</li>
-      <li> @ref sec_commands_grow "GROW command"</li>
-      <li> @ref sec_commands_curve "CURVE command"</li>
-      <li> @ref sec_commands_fill "FILL command"</li>
-      <li> @ref sec_commands_mask "MASK command"</li>
-      <li> @ref sec_commands_bump "BUMP command"</li>
-      <li> @ref sec_commands_displace "DISPLACE command"</li>
-      <li> @ref sec_commands_transform "TRANSFORM command"</li>
+      <li> @ref sec_commands_blend "@c blend command"</li>
+      <li> @ref sec_commands_blur "@c blur command"</li>
+      <li> @ref sec_commands_grow "@c grow command"</li>
+      <li> @ref sec_commands_curve "@c curve command"</li>
+      <li> @ref sec_commands_fill "@c fill command"</li>
+      <li> @ref sec_commands_mask "@c mask command"</li>
+      <li> @ref sec_commands_bump "@c bump command"</li>
+      <li> @ref sec_commands_displace "@c displace command"</li>
+      <li> @ref sec_commands_transform "@c transform command"</li>
     </ul>
   </ul>
 
@@ -75,7 +80,7 @@
   @ref evas_obj_text_filter_program_set.
 
   Note that most of the text effects work better with larger font sizes (> 50px),
-  and so do the examples in this page.
+  and so do the examples in this page (embedded devices in mind).
  */
 
 /**
@@ -84,7 +89,7 @@
 
   Here is a simple example illustrating the syntax:
 
-  @include filter_example_1.lua
+  @verbinclude filter_example_1.lua
 
   This example will display a cyan and dark blue glow surrounding the
   main text (its color depends on the object's theme).
@@ -95,66 +100,70 @@
 
   The syntax is pretty simple and follows a small set of rules:
   <ul>
-    <li>All whitespaces are discarded</li>
-    <li>All commands are case-insensitive, except for the buffer and source names</li>
     <li>All dimensions are in pixels</li>
     <li>The commands will be executed in sequential order</li>
-    <li>All commands must be terminated by a semicolon ';'</li>
     <li>Most commands have default values</li>
-    <li>A command argument can either be set by name, or sequentially omitting the name (similarily to Python)</li>
-    <li>Boolean values can be either 1/0, on/off, yes/no, enabled/disabled, true/false</li>
+    <li>A command argument can either be set by name, or sequentially omitting the name. So that:<br>
+    @verbatim function (arg1, arg2, arg3) @endverbatim</li>
+    <li>is equivalent to:<br>
+    @verbatim function ({ arg1, arg2, arg2 }) @endverbatim</li>
+    <li>or even (considering opt1, opt2 and opt3 are the first 3 arguments):<br>
+    @verbatim function ({ opt1 = arg1, opt2 = arg2, opt3 = arg3 }) @endverbatim</li>
+    <li>and since this is Lua, we can also write it as:<br>
+    @verbatim function { arg1, opt3 = arg3, opt2 = arg2 } @endverbatim</li>
+    <li>Boolean values are @c true/@c false but 1/0 and special string values are also accepted: 'yes'/'no', 'enabled'/'disabled'</li>
   </ul>
-
-  Since the spaces are discarded, the above code is equivalent to:
-  @code
-    buffer:fat(alpha);grow(5,dst=fat);blur(8,src=fat,color=darkblue);blur(4,color=cyan);blend();
-  @endcode
 
   <h3>Special keywords and their values</h3>
 
   Some options accept a certain set of values (like enums):
   <ul>
-    <li>Booleans</li>
-    <ul>
-      <li>1/0, on/off, yes/no, enabled/disabled, true/false</li>
-    </ul>
+    <li>@c color</li>
     @anchor evasfilters_color
-    <li>Color</li>
     <ul>
-      <li>Hexademical values: @c #RRGGBB, @c #RRGGBBAA, @c #RGB, @c #RGBA</li>
-      <li>white: @c #FFFFFF</li>
-      <li>black: @c #000000</li>
-      <li>red: @c #FF0000</li>
-      <li>green: @c #008000</li>
-      <li>blue: @c #0000FF</li>
-      <li>darkblue: @c #0000A0</li>
-      <li>yellow: @c #FFFF00</li>
-      <li>magenta: @c #FF00FF</li>
-      <li>cyan: @c #00FFFF</li>
-      <li>orange: @c #FFA500</li>
-      <li>purple: @c #800080</li>
-      <li>brown: @c #A52A2A</li>
-      <li>maroon: @c #800000</li>
-      <li>lime: @c #00FF00</li>
-      <li>gray: @c #808080</li>
-      <li>grey: @c #808080</li>
-      <li>silver: @c #C0C0C0</li>
-      <li>olive: @c #808000</li>
-      <li>invisible, transparent: @c #0000 (alpha is zero)</li>
+      <li>Colors can be referred to by strings or integers:</li>
+      <li>An integer can refer to any RGB or ARGB values:
+          @c 0xRRGGBB or @c 0xAARRGGBB. If alpha is zero, the color
+          will be opaque (alpha = @c 0xFF), unless R=G=B=0 (invisible).
+          These colors are <b>not</b> premultiplied.
+      </li>
+      <li>Hexademical values: @c '#RRGGBB', @c '#RRGGBBAA', @c '#RGB', @c '#RGBA'</li>
+      <li>The following string values are also accepted:</li>
+      <tt><ul>
+        <li>'white' == '#FFFFFF'</li>
+        <li>'black' == '#000000'</li>
+        <li>'red' == '#FF0000'</li>
+        <li>'green' == '#008000'</li>
+        <li>'blue' == '#0000FF'</li>
+        <li>'darkblue' == '#0000A0'</li>
+        <li>'yellow' == '#FFFF00'</li>
+        <li>'magenta' == '#FF00FF'</li>
+        <li>'cyan' == '#00FFFF'</li>
+        <li>'orange' == '#FFA500'</li>
+        <li>'purple' == '#800080'</li>
+        <li>'brown' == '#A52A2A'</li>
+        <li>'maroon' == '#800000'</li>
+        <li>'lime' == '#00FF00'</li>
+        <li>'gray' == '#808080'</li>
+        <li>'grey' == '#808080'</li>
+        <li>'silver' == '#C0C0C0'</li>
+        <li>'olive' == '#808000'</li>
+        <li>'invisible', 'transparent' == '#0000' -- (alpha is zero)</li>
+      </ul></tt>
     </ul>
+    <li>@c fillmode</li>
     @anchor evasfilter_fillmode
-    <li>Fillmode</li>
-    <ul>
-      <li>none</li>
-      <li>stretch_x</li>
-      <li>stretch_y</li>
-      <li>repeat_x</li>
-      <li>repeat_y</li>
-      <li>repeat_x_stretch_y, stretch_y_repeat_x</li>
-      <li>repeat_y_stretch_x, stretch_x_repeat_y</li>
-      <li>repeat, repeat_xy</li>
-      <li>stretch, stretch_xy</li>
-    </ul>
+    <tt><ul>
+      <li>'none'</li>
+      <li>'stretch_x'</li>
+      <li>'stretch_y'</li>
+      <li>'repeat_x'</li>
+      <li>'repeat_y'</li>
+      <li>'repeat_x_stretch_y', 'stretch_y_repeat_x'</li>
+      <li>'repeat_y_stretch_x', 'stretch_x_repeat_y'</li>
+      <li>'repeat', 'repeat_xy'</li>
+      <li>'stretch', 'stretch_xy'</li>
+    </ul></tt>
   </ul>
  */
 
@@ -164,6 +173,8 @@
 
   The Evas filters subsystem is based on the concept of using various
   buffers as image layers and drawing or applying filters to these buffers.
+  Think of it as how image drawing tools like The Gimp can combine multiple
+  layers and apply operations on them.
 
   Most of the buffers are allocated automatically at runtime, depending on the
   various inputs and commands used (eg. 2-D blur will require a temporary
@@ -653,12 +664,13 @@ _buffer_del(Buffer *buf)
 
   Create a new buffer.
 
-  @code
-    name1 = buffer();
-    name2 = buffer("alpha");
-    name3 = buffer("rgba");
-    name4 = buffer{src = "partname"};
-  @endcode
+  @verbatim
+  name1 = buffer()
+  name2 = buffer("alpha")
+  name3 = buffer("rgba")
+  name4 = buffer({ type = "rgba" })
+  name5 = buffer({ src = "partname" })
+  @endverbatim
 
   @param type   Buffer type: @c rgba (default) or @c alpha
   @param src    An optional source. If set, @a type will be @c rgba.
@@ -786,9 +798,9 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   renders one buffer on another, potentially using a color, an
   offset and fill options.
 
-  @code
-    blend (src = input, dst = output, ox = 0, oy = 0, color = white, fillmode = none);
-  @endcode
+  @verbatim
+  blend ({ src = input, dst = output, ox = 0, oy = 0, color = 'white', fillmode = 'none' })
+  @endverbatim
 
   @param src Source buffer to blend.
   @param dst Destination buffer for blending.
@@ -803,7 +815,7 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the @a color option should be set.
 
-  @include filter_blend.lua
+  @verbinclude filter_blend.lua
 
   <center>
   @image html filter_blend.png
@@ -896,9 +908,9 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
   Apply blur effect on a buffer (box or gaussian).
 
-  @code
-    blur (rx = 3, ry = -1, type = default, ox = 0, oy = 0, color = white, src = input, dst = output);
-  @endcode
+  @verbatim
+  blur ({ rx = 3, ry = nil, type = 'default', ox = 0, oy = 0, color = 'white', src = input, dst = output })
+  @endverbatim
 
   @param rx    X radius. Specifies the radius of the blurring kernel (X direction).
   @param ry    Y radius. Specifies the radius of the blurring kernel (Y direction). If -1 is used, then @a ry = @a rx.
@@ -923,7 +935,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the color option should be set.
 
   @a ox and @a oy can be used to move the blurry output by a few pixels, like a drop shadow. Example:
-  @include filter_blur.lua
+  @verbinclude filter_blur.lua
 
   <center>
   @image html filter_blur.png
@@ -963,11 +975,11 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
 
   This can be used to give a relief effect on the object.
 
-  @code
-    bump (map, azimuth = 135.0, elevation = 45.0, depth = 8.0, specular = 0.0,
-          color = white, compensate = false, src = input, dst = output,
-          black = black, white = white, fillmode = repeat);
-  @endcode
+  @verbatim
+  bump ({ map, azimuth = 135.0, elevation = 45.0, depth = 8.0, specular = 0.0,
+          color = 'white', compensate = false, src = input, dst = output,
+          black = 'black', white = 'white', fillmode = 'repeat' })
+  @endverbatim
 
   @param map        An alpha buffer treated like a Z map for the light effect (bump map). Must be specified.
   @param azimuth    The angle between the light vector and the X axis in the XY plane (Z = 0). 135.0 means 45 degrees from the top-left. Counter-clockwise notation.
@@ -985,7 +997,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
   @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
 
   Here is a full example of a very simple bevel effect:
-  @include filter_bump.lua
+  @verbinclude filter_bump.lua
 
   <center>
   @image html filter_bump.png
@@ -1025,9 +1037,9 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
 
   Apply a color curve to a specific channel in a buffer.
 
-  @code
-    curve (points, interpolation = linear, channel = rgb, src = input, dst = output);
-  @endcode
+  @verbatim
+  curve ({ points, interpolation = 'linear', channel = 'rgb', src = input, dst = output })
+  @endverbatim
 
   Modify the colors of a buffer. This applies a color curve y = f(x) to every pixel.
 
@@ -1040,19 +1052,19 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
   The @a points argument contains a list of (X,Y) points in the range 0..255,
   describing a function <tt>f(x) = y</tt> to apply to all pixel values.
 
-  The syntax of this @a points string is <tt>x1:y1 - x2:y2 - x3:y3 - ... - xn:yn</tt>
+  The syntax of this @a points string is <tt>'x1:y1 - x2:y2 - x3:y3 - ... - xn:yn'</tt>
   (remember that all spaces are discarded).
   The points @c xn are in @a increasing order: <tt>x1 < x2 < x3 < ... < xn</tt>,
   and all values @c xn or @c yn are within the range 0..255.
 
-  The identity curve is then described as <tt>0:0-255:255</tt>, with linear interpolation:
-  @code
-    curve(points = 0:0 - 255:255, interpolation = linear);
-  @endcode
+  The identity curve is then described as <tt>'0:0-255:255'</tt>, with linear interpolation:
+  @verbatim
+  curve ({ points = '0:0 - 255:255', interpolation = linear })
+  @endverbatim
   If ignored, y(x = 0) is 0 and y(x = 255) is 255.
 
   The following example will generate a 4px thick stroke around text letters:
-  @include filter_curve.lua
+  @verbinclude filter_curve.lua
 
   <center>
   @image html filter_curve.png
@@ -1074,6 +1086,8 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
 
    instr->type = EVAS_FILTER_MODE_CURVE;
 
+   // TODO: Allow passing an array of 256 values as points.
+   // It could be easily computed from another function in the script.
    _instruction_param_seq_add(instr, "points", VT_STRING, NULL);
    param = EINA_INLIST_CONTAINER_GET(eina_inlist_last(instr->params), Instruction_Param);
    param->allow_any_string = EINA_TRUE;
@@ -1128,9 +1142,9 @@ _displace_padding_update(Evas_Filter_Program *pgm,
 
   Apply a displacement map on a buffer.
 
-  @code
-    displace (map, intensity = 10, flags = 0, src = input, dst = output, fillmode = repeat);
-  @endcode
+  @verbatim
+  displace ({ map, intensity = 10, flags = 0, src = input, dst = output, fillmode = 'repeat' })
+  @endverbatim
 
   @param map       An RGBA buffer containing a displacement map. See below for more details.
   @param intensity Maximum distance for the displacement.
@@ -1161,10 +1175,10 @@ _displace_padding_update(Evas_Filter_Program *pgm,
 
   Considering <tt>I(x, y)</tt> represents the pixel at position (x, y) in the
   image I, then here is how the displacement is applied to @a dst:
-  @code
-    D = map (x, y)
-    dst (x, y) += D.alpha * src (D.red * intensity / 128, D.green * intensity / 128)
-  @endcode
+  @verbatim
+  D = map (x, y)
+  dst (x, y) = D.alpha * src (x + (D.red - 128) * intensity / 128, y + (D.green - 128) * intensity / 128) / 255 + (255 - D.alpha) * dst (x, y) / 255
+  @endverbatim
   Of course, the real algorithm takes into account interpolation between pixels as well.
 
   @since 1.9
@@ -1197,9 +1211,9 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
   Fill a buffer with a specific color.
   Not blending, can be used to clear a buffer.
 
-  @code
-    fill (dst = output, color = transparent, l = 0, r = 0, t = 0, b = 0);
-  @endcode
+  @verbatim
+  fill ({ dst = output, color = 'transparent', l = 0, r = 0, t = 0, b = 0 })
+  @endverbatim
 
   @param dst       Target buffer to fill with @a color.
   @param color     The color used to fill the buffer. All pixels within the fill area will be reset to this value. See @ref evasfilters_color "colors".
@@ -1278,9 +1292,9 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
   Grow or shrink a buffer's contents. This is not a zoom effect.
 
-  @code
-    grow (radius, smooth = true, src = input, dst = output);
-  @endcode
+  @verbatim
+  grow ({ radius, smooth = true, src = input, dst = output })
+  @endverbatim
 
   @param radius  The radius of the grow kernel.
                  If a negative value is specified, the contents will shrink rather than grow.
@@ -1289,7 +1303,7 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   @param dst     Destination buffer for blending. This must be of same size and colorspace as @a src.
 
   Example:
-  @include filter_grow.lua
+  @verbinclude filter_grow.lua
 
   This will first grow the letters in the buffer @c input by a few pixels, and
   then draw this buffer in black in the background.
@@ -1325,9 +1339,9 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
 
   Blend two input buffers into a third (target).
 
-  @code
-    mask (mask, src = input, dst = output, color = white, fillmode = repeat);
-  @endcode
+  @verbatim
+  mask ({ mask, src = input, dst = output, color = 'white', fillmode = 'repeat' })
+  @endverbatim
 
   @param mask     A mask or texture to blend with the input @a src into the target @a dst.
   @param src      Source buffer. This can also be thought of a mask if @a src is alpha and @a mask is RGBA.
@@ -1340,7 +1354,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.
 
   Example:
-  @include filter_mask.lua
+  @verbinclude filter_mask.lua
 
   This will create an inner shadow effect.
 
@@ -1412,17 +1426,17 @@ _transform_padding_update(Evas_Filter_Program *pgm,
   Right now, only <b>vertical flip</b> is implemented and available.
   This operation does not blend and assumes the destination buffer is empty.
 
-  @code
-    transform (dst, op = vflip, src = input, oy = 0);
-  @endcode
+  @verbatim
+  transform ({ dst, op = 'vflip', src = input, oy = 0 })
+  @endverbatim
 
   @param dst      Destination buffer. Must be of the same colorspace as @a src. Must be specified.
-  @param op       Must be @c vflip. There is no other operation yet.
+  @param op       Must be @c 'vflip'. There is no other operation yet.
   @param src      Source buffer to transform.
   @param oy       Y offset.
 
   Example:
-  @include filter_transform.lua
+  @verbinclude filter_transform.lua
 
   This will create a mirrored text effect, for a font of 50px.
 
@@ -1497,9 +1511,9 @@ _padding_set_padding_update(Evas_Filter_Program *pgm,
 
   Forcily set a specific padding for this filter.
 
-  @code
-    padding_set (l, r = [l], t = [r], b = [t]);
-  @endcode
+  @verbatim
+  padding_set ({ l, r = [l], t = [r], b = [t] })
+  @endverbatim
 
   @param l        Padding on the left side in pixels.
   @param r        Padding on the right side in pixels. If unset, defaults to @a l.
