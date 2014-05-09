@@ -293,7 +293,7 @@ evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
 static Eina_Bool 
 _evas_swapper_shm_pool_new(Wl_Swapper *ws)
 {
-   static const char tmp[] = "evas-wayland_shm-XXXXXX";
+   static const char tmp[] = "/evas-wayland_shm-XXXXXX";
    const char *path;
    char *name;
    size_t size;
