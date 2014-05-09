@@ -1,6 +1,14 @@
 -- elua core utilities used in other modules
 
-local ffi = require("ffi")
+local ffi  = require("ffi")
+local cast = ffi.cast
+
+ffi.cdef [[
+    int isalnum(int c);
+    int isdigit(int c);
+]]
+
+local C = ffi.C
 
 local M = {}
 
@@ -158,42 +166,48 @@ end
 
 -- string fmt
 
+local char  = string.char
 local tconc = table.concat
-local fmt = string.format
+local fmt   = string.format
 local pcall = pcall
 local error = error
 local type  = type
 
-getmetatable("").__mod = function(s, params)
+local bytes = { ("cdeEfgGiopuxXsq"):byte() }
+for i, v in ipairs(bytes) do bytes[v] = true end
+
+getmetatable("").__mod = function(fmts, params)
+    if not fmts then return nil end
     if type(params) ~= "table" then params = { params } end
-    local iter = s:gmatch(".")
+    local s = cast("const char*", fmts)
     local buf = {}
-    local c = iter()
+    local c
+    c, s = s[0], s + 1
     local argn = 1
-    while c do
-        if c == "%" then
-            c = iter()
+    while c ~= 0 do
+        if c == 37 then -- %
+            c, s = s[0], s + 1
             local nbuf = {}
-            while c and c:match("%w") do
+            while c ~= 0 and C.isalnum(c) ~= 0 do
                 nbuf[#nbuf + 1] = c
-                c = iter()
+                c, s = s[0], s + 1
             end
-            if c == "$" then
-                c = iter()
-                local n = tconc(nbuf)
+            if c == 36 then -- $
+                c, s = s[0], s + 1
+                local n = char(unpack(nbuf))
                 nbuf = {}
-                while c:match("[-0-9%.]") do
+                while C.isdigit(c) ~= 0 or c == 45 or c == 46 do -- -, .
                     nbuf[#nbuf + 1] = c
-                    c = iter()
+                    c, s = s[0], s + 1
                 end
-                if not c:match("[cdeEfgGiopuxXsq]") then
+                if bytes[c] then
                     buf[#buf + 1] = n
                     buf[#buf + 1] = "$"
-                    buf[#buf + 1] = c
+                    buf[#buf + 1] = char(c)
                 else
                     nbuf[#nbuf + 1] = c
                     local idx = tonumber(n) or n
-                    local stat, val = pcall(fmt, "%" .. tconc(nbuf),
+                    local stat, val = pcall(fmt, "%" .. char(unpack(nbuf)),
                         params[idx])
                     if stat then
                         buf[#buf + 1] = val
@@ -206,24 +220,26 @@ getmetatable("").__mod = function(s, params)
                     end
                 end
             else
-                while c and c:match("[-0-9%.cdeEfgGiopuxXsq]") do
+                while c ~= 0 and (bytes[c] or C.isdigit(c) ~= 0
+                or c == 45 or c == 46) do
                     nbuf[#nbuf + 1] = c
-                    c = iter()
+                    c, s = s[0], s + 1
                 end
-                local stat, val = pcall(fmt, "%" .. tconc(nbuf), params[argn])
+                local stat, val = pcall(fmt, "%" .. char(unpack(nbuf)),
+                    params[argn])
                 if stat then
                     buf[#buf + 1] = val
                 else
                     error("bad argument #" .. argn .. " to '%' "
                         .. val:match("%(.+%)"), 2)
                 end
-                if c then buf[#buf + 1] = c end
+                if c then buf[#buf + 1] = char(c) end
                 argn = argn + 1
             end
         else
-            buf[#buf + 1] = c
+            buf[#buf + 1] = char(c)
         end
-        c = iter()
+        c, s = s[0], s + 1
     end
     return tconc(buf)
 end
