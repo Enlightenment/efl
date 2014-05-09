@@ -988,7 +988,12 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
                return EINA_FALSE;
           }
         sdc->parent_obj = obj;
-        sdc->orient_mode = sd->orient_mode;
+
+        if (!sdc->on_create)
+          eo_do(sobj, elm_obj_widget_orientation_set(sd->orient_mode));
+        else
+          sdc->orient_mode = sd->orient_mode;
+
         _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
 
         /* update child focusable-ness on self and parents, now that a
