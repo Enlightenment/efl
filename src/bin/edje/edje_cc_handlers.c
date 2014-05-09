@@ -430,7 +430,7 @@ static void st_collections_group_physics_world_depth(void);
 
 /* short */
 static void st_collections_group_parts_part_precise(void);
-static void st_collections_group_parts_part_imprecise(void);
+static void st_collections_group_parts_part_noprecise(void);
 static void st_collections_group_parts_part_mouse(void);
 static void st_collections_group_parts_part_nomouse(void);
 static void st_collections_group_parts_part_repeat(void);
@@ -873,7 +873,7 @@ New_Statement_Handler statement_handlers_short[] =
              repeat; -> repeat_events: 1;
              norepeat; -> repeat_events: 0;
              precise; -> precise_is_inside: 1;
-             imprecise; -> precise_is_inside: 0;
+             noprecise; -> precise_is_inside: 0;
              desc {
                 vis; -> visible: 1;
                 hid; -> visible: 0;
@@ -895,7 +895,7 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.parts.part.repeat", st_collections_group_parts_part_repeat},
      {"collections.group.parts.part.norepeat", st_collections_group_parts_part_norepeat},
      {"collections.group.parts.part.precise", st_collections_group_parts_part_precise},
-     {"collections.group.parts.part.imprecise", st_collections_group_parts_part_imprecise},
+     {"collections.group.parts.part.noprecise", st_collections_group_parts_part_noprecise},
      {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
      {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
      {"collections.group.mouse", st_collections_group_mouse},
@@ -4856,7 +4856,7 @@ st_collections_group_parts_part_precise(void)
 }
 
 static void
-st_collections_group_parts_part_imprecise(void)
+st_collections_group_parts_part_noprecise(void)
 {
    check_arg_count(0);
 
