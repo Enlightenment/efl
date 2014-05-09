@@ -108,7 +108,9 @@ std::pair<std::string, std::string> get_filename_info(std::string path)
           return {filename, namespace_};
         }
     }
-  return {path, std::string()};
+  std::string::reverse_iterator slash
+        = std::find(path.rbegin(), path.rend(), '/');
+  return {std::string(slash.base(), path.end()), std::string()};
 }
 
 efl::eolian::eo_generator_options
