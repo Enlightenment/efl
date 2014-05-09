@@ -204,6 +204,8 @@ local Str_Buf = ffi.metatype("Str_Buf", {
         free = function(self)
             C.free(self.buf)
             self.buf = nil
+            self.len = 0
+            self.cap = 0
         end,
         clear = function(self)
             self.len = 0
@@ -212,8 +214,8 @@ local Str_Buf = ffi.metatype("Str_Buf", {
             local oldcap = self.cap
             if oldcap >= newcap then return end
             local buf = C.malloc(newcap)
-            copy(buf, self.buf, self.len)
-            C.free(self.buf)
+            if self.len ~= 0   then copy(buf, self.buf, self.len) end
+            if self.buf ~= nil then C.free(self.buf) end
             self.buf = buf
             self.cap = newcap
         end,
@@ -340,7 +342,10 @@ getmetatable("").__mod = function(fmts, params)
         end
         c, s = s[0], s + 1
     end
-    return tostr(buf)
+    nbuf:free()
+    local ret = tostr(buf)
+    buf:free()
+    return ret
 end
 
 return M
