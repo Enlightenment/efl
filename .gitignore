@@ -53,6 +53,7 @@ tags
 /doc/latex
 /doc/man
 /doc/previews/preview_text_filter
+/doc/previews/img
 /install-sh
 /libtool
 /ltmain.sh
