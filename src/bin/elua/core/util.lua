@@ -156,4 +156,76 @@ M.lib_unload = function(libname)
     end
 end
 
+-- string fmt
+
+local tconc = table.concat
+local fmt = string.format
+local pcall = pcall
+local error = error
+local type  = type
+
+getmetatable("").__mod = function(s, params)
+    if type(params) ~= "table" then params = { params } end
+    local iter = s:gmatch(".")
+    local buf = {}
+    local c = iter()
+    local argn = 1
+    while c do
+        if c == "%" then
+            c = iter()
+            local nbuf = {}
+            while c and c:match("%w") do
+                nbuf[#nbuf + 1] = c
+                c = iter()
+            end
+            if c == "$" then
+                c = iter()
+                local n = tconc(nbuf)
+                nbuf = {}
+                while c:match("[-0-9%.]") do
+                    nbuf[#nbuf + 1] = c
+                    c = iter()
+                end
+                if not c:match("[cdeEfgGiopuxXsq]") then
+                    buf[#buf + 1] = n
+                    buf[#buf + 1] = "$"
+                    buf[#buf + 1] = c
+                else
+                    nbuf[#nbuf + 1] = c
+                    local idx = tonumber(n) or n
+                    local stat, val = pcall(fmt, "%" .. tconc(nbuf),
+                        params[idx])
+                    if stat then
+                        buf[#buf + 1] = val
+                    else
+                        local argerr = (type(idx) == "number")
+                            and ("#" .. idx)
+                             or ("'" .. idx .. "'")
+                        error("bad argument " .. argerr .. " to '%' "
+                            .. val:match("%(.+%)"), 2)
+                    end
+                end
+            else
+                while c and c:match("[-0-9%.cdeEfgGiopuxXsq]") do
+                    nbuf[#nbuf + 1] = c
+                    c = iter()
+                end
+                local stat, val = pcall(fmt, "%" .. tconc(nbuf), params[argn])
+                if stat then
+                    buf[#buf + 1] = val
+                else
+                    error("bad argument #" .. argn .. " to '%' "
+                        .. val:match("%(.+%)"), 2)
+                end
+                if c then buf[#buf + 1] = c end
+                argn = argn + 1
+            end
+        else
+            buf[#buf + 1] = c
+        end
+        c = iter()
+    end
+    return tconc(buf)
+end
+
 return M
