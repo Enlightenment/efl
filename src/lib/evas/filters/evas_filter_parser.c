@@ -9,11 +9,11 @@
 # define LUA52 1
 #endif
 
-//#ifdef DEBUG
+#ifdef DEBUG
 # define FILTERS_DEBUG
-//#endif
+#endif
 
-#define FILTERS_LEGACY_COMPAT
+//#define FILTERS_LEGACY_COMPAT
 
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
 #define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+2)
@@ -1884,7 +1884,7 @@ _lua_state_create(Evas_Filter_Program *pgm)
       { EINA_TRUE, "enabled" },
       { EINA_FALSE, "off" },
       { EINA_FALSE, "no" },
-      { EINA_FALSE, "disnable" },
+      { EINA_FALSE, "disable" },
       { EINA_FALSE, "disabled" }
    };
 
@@ -1893,6 +1893,17 @@ _lua_state_create(Evas_Filter_Program *pgm)
         lua_pushnumber(L, booleans[k].b);
         lua_setglobal(L, booleans[k].name);
      }
+
+   // Buffers. Should be input & output only.
+   {
+      Buffer *buf;
+
+      EINA_INLIST_FOREACH(pgm->buffers, buf)
+        {
+           lua_pushstring(L, buf->name);
+           lua_setglobal(L, buf->name);
+        }
+   }
 
    // Register proxies
    if (pgm->proxies)
@@ -2061,6 +2072,7 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    if (ok) ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
    lua_close(L);
 
+   ok &= (pgm->instructions != NULL);
    pgm->valid = ok;
    pgm->padding_calc = EINA_FALSE;
 
