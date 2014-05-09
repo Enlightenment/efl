@@ -58,7 +58,7 @@ static int strstrip(const char *in, char *out, size_t size);
 int        line = 0;
 Eina_List *stack = NULL;
 Eina_Array params;
-static int had_quote = 0;
+int had_quote = 0;
 
 static char  file_buf[4096];
 static int   did_wildcard = 0;
@@ -193,8 +193,7 @@ new_object(void)
      }
    else
      {
-        if (had_quote)
-          did_wildcard = edje_cc_handlers_wildcard();
+        did_wildcard = edje_cc_handlers_wildcard();
         if (!did_wildcard)
           {
              sh = eina_hash_find(_new_statement_hash, id);

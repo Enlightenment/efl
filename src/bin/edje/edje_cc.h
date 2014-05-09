@@ -288,4 +288,6 @@ extern int                    threads;
 extern int		      anotate;
 extern Eina_Bool current_group_inherit;
 
+extern int had_quote;
+
 #endif

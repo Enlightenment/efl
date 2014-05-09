@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "edje_cc.h"
 
@@ -11341,6 +11342,7 @@ edje_cc_handlers_wildcard(void)
           {
              Eina_Bool ret;
 
+             if (!had_quote) return EINA_FALSE;
              free((void*)current_part->name);
              current_part->name = token;
              ret = _part_name_check();
@@ -11350,18 +11352,64 @@ edje_cc_handlers_wildcard(void)
           }
         if (current_desc && ((!strcmp(last, "desc")) || (!strcmp(last, "description"))))
           {
-             if ((!current_desc->state.name) || strcmp(current_desc->state.name, token))
+             double st;
+             char *end;
+
+             if (had_quote)
                {
-                  free((char*)current_desc->state.name);
-                  current_desc->state.name = token;
-                  _part_description_state_update(current_desc);
+                  if ((!current_desc->state.name) || strcmp(current_desc->state.name, token))
+                    {
+                       free((char*)current_desc->state.name);
+                       current_desc->state.name = token;
+                       _part_description_state_update(current_desc);
+                    }
+                    stack_pop_quick(EINA_FALSE, current_desc->state.name != token);
+                    return EINA_TRUE;
                }
-             stack_pop_quick(EINA_FALSE, current_desc->state.name != token);
+
+             if (!isdigit(token[0])) return EINA_FALSE;
+             st = strtod(token, &end);
+             if ((end && end[0]) || (fabs(current_desc->state.value) > DBL_EPSILON))
+               return EINA_FALSE;
+             if (current_desc == current_part->default_desc)
+               {
+                  ob_collections_group_parts_part_description();
+                  current_desc->state.name = strdup("default");
+               }
+             else
+               {
+                  unsigned int j;
+
+                  for (j = 0; j < current_part->other.desc_count; j++)
+                    {
+                       /* check for inherited descriptions */
+                       Edje_Part_Description_Common *ed = current_part->other.desc[j];
+
+                       if (((!!ed->state.name) != (!!current_desc->state.name)) ||
+                           (ed->state.name && strcmp(ed->state.name, current_desc->state.name)) ||
+                           (fabs(ed->state.value - st) > DBL_EPSILON)) continue;
+                       current_desc = ed;
+                       break;
+                    }
+                  /* not found */
+                  if (j == current_part->other.desc_count)
+                    {
+                       void *name = NULL;
+
+                       if (current_desc->state.name)
+                         name = strdup(current_desc->state.name);
+                       ob_collections_group_parts_part_description();
+                       current_desc->state.name = name;
+                    }
+               }
+             current_desc->state.value = st;
+             stack_pop_quick(EINA_FALSE, EINA_TRUE);
              return EINA_TRUE;
           }
      }
    if (current_program && ((!strcmp(last, "program")) || (!strcmp(last, "sequence"))))
      {
+        if (!had_quote) return EINA_FALSE;
         _program_sequence_check();
         _program_name(token);
         stack_pop_quick(EINA_FALSE, EINA_FALSE);
@@ -11369,12 +11417,14 @@ edje_cc_handlers_wildcard(void)
      }
    if (current_de && (!strcmp(last, "group")))
      {
+        if (!had_quote) return EINA_FALSE;
         _group_name(token);
         stack_pop_quick(EINA_FALSE, EINA_FALSE);
         return EINA_TRUE;
      }
    if (edje_file->styles && (!strcmp(last, "style")))
      {
+        if (!had_quote) return EINA_FALSE;
          _style_name(token);
          stack_pop_quick(EINA_FALSE, EINA_FALSE);
          return EINA_TRUE;
