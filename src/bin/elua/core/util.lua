@@ -185,7 +185,7 @@ local error = error
 local type  = type
 local tostr = tostring
 
-local bytes = { ("cdeEfgGiopuxXsq"):byte() }
+local bytes = { ("cdeEfgGiopuxXsq"):byte(1, #("cdeEfgGiopuxXsq")) }
 for i, v in ipairs(bytes) do bytes[v] = true end
 
 local Str_Buf = ffi.metatype("Str_Buf", {
@@ -270,7 +270,7 @@ getmetatable("").__mod = function(fmts, params)
                     nbuf:append_char(c)
                     c, s = s[0], s + 1
                 end
-                if bytes[c] then
+                if not bytes[c] then
                     buf:append_str(n)
                     buf:append_char(36) -- $
                     buf:append_char(c)
