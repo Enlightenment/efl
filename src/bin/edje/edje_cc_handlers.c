@@ -2894,8 +2894,6 @@ ob_collections_group(void)
    current_part = NULL;
    current_desc = NULL;
 
-   if (current_de)
-     _link_combine();
 
    current_group_inherit = EINA_FALSE;
 
@@ -11205,6 +11203,8 @@ edje_cc_handlers_pop_notify(const char *token)
      }
    else if (current_program && (!strcmp(token, "link")))
      current_program = NULL;
+   else if (current_de && (!strcmp(token, "group")))
+     _link_combine();
 }
 
 static void
