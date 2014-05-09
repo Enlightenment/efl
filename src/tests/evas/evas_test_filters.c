@@ -14,14 +14,6 @@
 #include "Ecore_Evas.h"
 #include "../../lib/evas/include/evas_filter.h"
 
-#if !defined(EFL_EO_API_SUPPORT) || !defined(EFL_BETA_API_SUPPORT)
-# define BUILD_FILTER_TESTS 0
-#else
-# define BUILD_FILTER_TESTS 1
-#endif
-
-#if BUILD_FILTER_TESTS
-
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
 
@@ -70,84 +62,89 @@ START_TEST(evas_filter_parser)
 {
    Evas_Filter_Program *pgm;
 
+   // It's practically impossible to test all combinations since the language
+   // itself is full featured. Let's just ensure that our main functions exist
+   // and that calling them (kinda) works.
+
 #define CHECK_FILTER(_a, _v) do { \
    pgm = evas_filter_program_new("evas_suite", EINA_TRUE); \
-   fail_if(evas_filter_program_parse(pgm, _a) != _v); \
+   if (evas_filter_program_parse(pgm, _a) != _v) \
+     fail("Filter test failed (result should be %s):\n%s", # _v, _a); \
    evas_filter_program_del(pgm); \
    } while (0)
 #define CHKGOOD(_a) CHECK_FILTER(_a, EINA_TRUE)
 #define CHKBAAD(_a) CHECK_FILTER(_a, EINA_FALSE)
 
-   // Basic syntax errors
-   fail_if(evas_filter_program_parse(NULL, "blend();"));
-   CHKBAAD(NULL);
-   CHKBAAD("");
-   CHKBAAD("       \t    \n    ");
-   CHKBAAD("blend");
-   CHKBAAD("blend()");
-   CHKBAAD("blend;");
+   static const char *good [] = {
+      // Single command names
+      "blend()",
+      "blur()",
+      "grow(10)",
+      "fill()",
+      "curve('0:0-255:255')",
+      "padding_set(10)",
+      "transform(output)",
+      // Buffer modes
+      "a = buffer() blend()",
+      "a = buffer('alpha') blend()",
+      "a = buffer('rgba') blend()",
+      "a = buffer{src = 'partname'} blend()",
+      // Lua comments
+      "blend() -- comment",
+      "--comment\n blend()",
+      "--[[ long comment\n blend() continues --]] blend()",
+      // Combinations
+      "blend() blend()",
+      "m = buffer() transform({ m, op = 'vflip', src = input, oy = 0 })",
+      // All default commands
+      "blend ({ src = input, dst = output, ox = 0, oy = 0, color = 'white', fillmode = 'none' })",
+      "blur ({ rx = 3, ry = nil, type = 'default', ox = 0, oy = 0, color = 'white', src = input, dst = output })",
+      "bump ({ map, azimuth = 135.0, elevation = 45.0, depth = 8.0, specular = 0.0,"
+              "color = 'white', compensate = false, src = input, dst = output,"
+              "black = 'black', white = 'white', fillmode = 'repeat' })",
+      "curve ({ points, interpolation = 'linear', channel = 'rgb', src = input, dst = output })",
+      "m = buffer ('rgba') displace ({ m, intensity = 10, flags = 'default', src = input, dst = output, fillmode = 'repeat' })",
+      "fill ({ dst = output, color = 'transparent', l = 0, r = 0, t = 0, b = 0 })",
+      "grow ({ radius, smooth = true, src = input, dst = output })",
+      "m = buffer('alpha') mask ({ m, src = input, dst = output, color = 'white', fillmode = 'repeat' })",
+      "transform ({ output, op = 'vflip', src = input, oy = 0 })",
+      "padding_set ({ 1, 2, 3, 4 })",
+      NULL
+   };
 
-   // Known & unknown instructions + some syntax errors
-   CHKGOOD("blend();");
-   CHKBAAD("blend()\nblend();");
-   CHKBAAD("blend(blend());");
-   CHKGOOD("blend(); blend();");
-   CHKGOOD("buffer:a;blend();");
-   CHKGOOD("buffer:a();blend();");
-   CHKGOOD("buffer:a(alpha);blend();");
-   CHKGOOD("buffer:a(rgba);blend();");
-   CHKBAAD("buffer:a(BAAD);blend();");
-   CHKGOOD("buffer:a(src=partname);blend();");
-   CHKBAAD("buffer a(alpha);blend();");
-   CHKGOOD("blend();blur();fill();");
-   CHKGOOD("grow(10);");
-   CHKGOOD("curve(0:0 - 255:255);");
-   CHKGOOD("buffer:a(alpha);mask(a);");
-   CHKGOOD("buffer:a(rgba);mask(a);");
-   CHKGOOD("buffer:a(rgba);bump(a);");
-   CHKGOOD("buffer:a(rgba);displace(a);");
-   CHKGOOD("transform(output);");
-   CHKBAAD("unknown_command();");
-   CHKBAAD("blend(unknown_buffer);");
-   CHKGOOD("//comment\nblend();");
-   CHKBAAD("blend(); /* unterminated comment section");
-   CHKGOOD("blend(/* we want yellow */ color = yellow);");
-   CHKGOOD("/* blend ();\n this is still a comment\n*/\n blend();");
-   CHKBAAD("blend(ox = 1/2);");
-   CHKBAAD("blend();!@#$%^&*");
-   CHKBAAD("blend(invalid=hello);");
-   CHKBAAD("buffer:a(alpha);buffer:a(rgba);blend();");
-   CHKBAAD("buffer:a(alpha,src=partname);");
-   CHKGOOD("padding_set(0);blend();");
-   CHKGOOD("padding_set(l=1,r=2,t=3,b=4);blend();");
+   static const char *bad[] = {
+      "", // Empty filters should fail
+      "function run () blend () end", // run() won't be called, filter is empty
+      // All default commands with one extra invalid argument
+      "blend ({ src = input, dst = output, ox = 0, oy = 0, color = 'white', fillmode = 'none', invalid = 42 })",
+      "blur ({ rx = 3, ry = nil, type = 'default', ox = 0, oy = 0, color = 'white', src = input, dst = output, invalid = 42 })",
+      "bump ({ map, azimuth = 135.0, elevation = 45.0, depth = 8.0, specular = 0.0,"
+              "color = 'white', compensate = false, src = input, dst = output,"
+              "black = 'black', white = 'white', fillmode = 'repeat', invalid = 42 })",
+      "curve ({ points, interpolation = 'linear', channel = 'rgb', src = input, dst = output, invalid = 42 })",
+      "m = buffer ('rgba') displace ({ m, intensity = 10, flags = 'default', src = input, dst = output, fillmode = 'repeat', invalid = 42 })",
+      "fill ({ dst = output, color = 'transparent', l = 0, r = 0, t = 0, b = 0, invalid = 42 })",
+      "grow ({ radius, smooth = true, src = input, dst = output, invalid = 42 })",
+      "m = buffer('alpha') mask ({ m, src = input, dst = output, color = 'white', fillmode = 'repeat', invalid = 42 })",
+      "transform ({ output, op = 'vflip', src = input, oy = 0, invalid = 42 })",
+      "padding_set ({ 1, 2, 3, 4, invalid = 42 })",
+      // Some early check failures
+      //"m = buffer ('alpha') displace ({ m, intensity = 10, flags = 'default', src = input, dst = output, fillmode = 'repeat' })",
+      "m = buffer ('rgba') displace ({ m, intensity = 10, flags = 'invalid', src = input, dst = output, fillmode = 'repeat' })",
+      NULL
+   };
 
-   // Case sensitivity
-   CHKGOOD("BLEND();");
-   CHKGOOD("Blend();");
-   CHKGOOD("bLeNd();");
-   CHKGOOD("buffer : lowercase; blend (lowercase);");
-   CHKGOOD("buffer : UPPERCASE; blend (UPPERCASE);");
-   CHKBAAD("buffer : CamelCase; blend (cAMELcASE);");
+   fail_if(evas_filter_program_parse(NULL, "blend()"));
 
-   // Full sequential arguments (default values)
-   CHKGOOD("blend(input, output, 0, 0, color = white, fillmode = none);");
-   CHKGOOD("blur(3, -1, default, 0, 0, color = white, src = input, dst = output);");
-   CHKGOOD("buffer : m (alpha); "
-           "bump(m, 135.0, 45.0, 8.0, 0.0, color = white, compensate = true, "
-           "src = input, dst = output, black = black, white = white, fillmode = repeat);");
-   CHKGOOD("curve(0:0 - 255:255, linear, rgb, src = input, dst = output);");
-   CHKGOOD("curve(128:0 - 0:0 - 255:255, linear, rgb, src = input, dst = output);"); // invalid
-   CHKGOOD("buffer:a(rgba);blend(dst=a);curve(0:0-255:255,src=a,channel=r);");
-   CHKGOOD("buffer:a(rgba);blend(dst=a);curve(0:128-255:128,src=a,channel=g);");
-   CHKGOOD("buffer:a(rgba);blend(dst=a);curve(0:255-255:0,src=a,channel=b,interpolation=none);");
-   CHKGOOD("buffer : m (rgba); "
-           "displace(m, 10, default, src = input, dst = output, fillmode = repeat);");
-   CHKGOOD("fill(output, transparent, 0, 0, 0, 0);");
-   CHKGOOD("grow(0, smooth = yes, src = input, dst = output);");
-   CHKGOOD("buffer : m (alpha); "
-           "mask(m, src = input, dst = output, color = white, fillmode = none);");
-   CHKGOOD("buffer : m (alpha); "
-           "transform(m, op = vflip, src = input, oy = 0);");
+   pgm = evas_filter_program_new("evas_suite", EINA_TRUE);
+   fail_if(evas_filter_program_parse(NULL, NULL));
+   evas_filter_program_del(pgm);
+
+   for (int k = 0; good[k]; k++)
+     CHKGOOD(good[k]);
+
+   for (int k = 0; bad[k]; k++)
+     CHKBAAD(bad[k]);
 
    // All colors
    static const char *colors [] = {
@@ -189,43 +186,14 @@ START_TEST(evas_filter_parser)
    for (size_t c = 0; c < sizeof(colors) / sizeof(colors[0]); c++)
      {
         char buf[64];
-        sprintf(buf, "blend(color = %s);", colors[c]);
+        sprintf(buf, "blend { color = '%s' }", colors[c]);
         CHKGOOD(buf);
      }
 
    for (size_t c = 0; c < sizeof(colors_bad) / sizeof(colors_bad[0]); c++)
      {
         char buf[64];
-        sprintf(buf, "blend(color = %s);", colors_bad[c]);
-        CHKBAAD(buf);
-     }
-
-   // All booleans
-   static const char *booleans[] = {
-      "1", "0",
-      "yes", "no",
-      "on", "off",
-      "enable", "disable",
-      "enabled", "disabled",
-      "true", "false",
-      "YES", "Yes"
-   };
-
-   static const char *booleans_bad[] = {
-      "o", "oui", "10"
-   };
-
-   for (size_t c = 0; c < sizeof(booleans) / sizeof(booleans[0]); c++)
-     {
-        char buf[64];
-        sprintf(buf, "grow(10, smooth = %s);", booleans[c]);
-        CHKGOOD(buf);
-     }
-
-   for (size_t c = 0; c < sizeof(booleans_bad) / sizeof(booleans_bad[0]); c++)
-     {
-        char buf[64];
-        sprintf(buf, "grow(10, smooth = %s);", booleans_bad[c]);
+        sprintf(buf, "blend { color = '%s' }", colors_bad[c]);
         CHKBAAD(buf);
      }
 
@@ -444,19 +412,11 @@ START_TEST(evas_filter_text_render_test)
 }
 END_TEST
 
-#endif // BUILD_FILTER_TESTS
-
 void evas_test_filters(TCase *tc)
 {
-#if 0
-// FIXME: The test suite is disabled for now since we should
-// now test with proper Lua language. The legacy script should
-// not even be tested.
-//#if BUILD_FILTER_TESTS
    tcase_add_test(tc, evas_filter_parser);
+#if 0
    tcase_add_test(tc, evas_filter_text_padding_test);
    tcase_add_test(tc, evas_filter_text_render_test);
-#else
-   (void) tc;
 #endif
 }
