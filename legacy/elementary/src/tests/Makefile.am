@@ -98,3 +98,37 @@ elm_suite_LDADD = \
 	@ELEMENTARY_LIBS@ \
 	@ELEMENTARY_WEB_LIBS@ \
 	@my_libs@
+
+if HAVE_CXX11
+TESTS += elm_cxx_suite
+check_PROGRAMS = elm_cxx_suite
+
+elm_cxx_suite_SOURCES = elm_cxx_suite.cc
+elm_cxx_suite_CPPFLAGS = \
+	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests\" \
+	-I$(top_srcdir)/src/lib \
+	-I$(top_builddir)/src/lib \
+	@CHECK_CFLAGS@ \
+	@ELEMENTARY_CFLAGS@ \
+	@ELEMENTARY_X_CFLAGS@ \
+	@ELEMENTARY_CXX_CFLAGS@ \
+	@ELEMENTARY_FB_CFLAGS@ \
+	@ELEMENTARY_SDL_CFLAGS@ \
+	@ELEMENTARY_WIN32_CFLAGS@ \
+	@ELEMENTARY_ELOCATION_CFLAGS@ \
+	@ELEMENTARY_EWEATHER_CFLAGS@ \
+	@ELEMENTARY_WEB_CFLAGS@ \
+	@ELEMENTARY_EMAP_CFLAGS@ \
+	@ELEMENTARY_WAYLAND_CFLAGS@ \
+	@EVIL_CFLAGS@
+
+elm_cxx_suite_LDADD = \
+	$(top_builddir)/src/lib/libelementary.la \
+	@CHECK_LIBS@ \
+	@ELEMENTARY_EWEATHER_LIBS@ \
+	@ELEMENTARY_ELOCATION_LIBS@ \
+	@ELEMENTARY_EMAP_LIBS@ \
+	@ELEMENTARY_LIBS@ \
+	@ELEMENTARY_WEB_LIBS@ \
+	@my_libs@
+endif

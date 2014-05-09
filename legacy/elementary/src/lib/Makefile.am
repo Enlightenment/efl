@@ -7,6 +7,7 @@ EOLIAN_FLAGS = @DEPS_EOLIAN_FLAGS@ \
 	       -I$(top_srcdir)/src/lib
 
 include $(top_srcdir)/Makefile_Eolian_Helper.am
+include $(top_srcdir)/Makefile_Eolian_Cxx_Helper.am
 
 AM_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
@@ -533,6 +534,95 @@ elm_factory.h \
 elm_factory.c \
 elm_intro.h.in
 
+elm_eolian_sources = \
+elm_widget.eo \
+elm_container.eo \
+elm_layout.eo \
+elm_interface_scrollable.eo \
+elm_pan.eo \
+elm_frame.eo \
+elm_hover.eo \
+elm_access.eo \
+elm_actionslider.eo \
+elm_app_client.eo \
+elm_app_client_view.eo \
+elm_app_server.eo \
+elm_app_server_view.eo \
+elm_atspi_app_object.eo \
+elm_interface_atspi_accessible.eo \
+elm_interface_atspi_action.eo \
+elm_interface_atspi_component.eo \
+elm_interface_atspi_value.eo \
+elm_interface_atspi_widget.eo \
+elm_interface_atspi_widget_action.eo \
+elm_interface_atspi_window.eo \
+elm_bg.eo \
+elm_box.eo \
+elm_bubble.eo \
+elm_button.eo \
+elm_calendar.eo \
+elm_check.eo \
+elm_clock.eo \
+elm_colorselector.eo \
+elm_conformant.eo \
+elc_ctxpopup.eo \
+elm_datetime.eo \
+elm_dayselector.eo \
+elm_diskselector.eo \
+elm_entry.eo \
+elc_fileselector.eo \
+elc_fileselector_button.eo \
+elc_fileselector_entry.eo \
+elm_flipselector.eo \
+elm_flip.eo \
+elm_gengrid.eo \
+elm_gengrid_pan.eo \
+elm_genlist.eo \
+elm_genlist_pan.eo \
+elm_gesture_layer.eo \
+elm_glview.eo \
+elm_grid.eo \
+elc_hoversel.eo \
+elm_image.eo \
+elm_icon.eo \
+elm_index.eo \
+elm_interface_fileselector.eo \
+elm_inwin.eo \
+elm_label.eo \
+elm_list.eo \
+elm_map_pan.eo \
+elm_map.eo \
+elm_menu.eo \
+elc_multibuttonentry.eo \
+elc_naviframe.eo \
+elm_panel.eo \
+elm_mapbuf.eo \
+elm_notify.eo \
+elm_panes.eo \
+elm_photocam.eo \
+elm_photocam_pan.eo \
+elm_photo.eo \
+elc_player.eo \
+elm_plug.eo \
+elc_popup.eo \
+elm_prefs.eo \
+elm_progressbar.eo \
+elm_radio.eo \
+elm_route.eo \
+elm_scroller.eo \
+elm_segment_control.eo \
+elm_separator.eo \
+elm_slider.eo \
+elm_slideshow.eo \
+elm_spinner.eo \
+elm_systray.eo \
+elm_table.eo \
+elm_thumb.eo \
+elm_toolbar.eo \
+elm_video.eo \
+elm_web.eo \
+elm_win.eo
+
 BUILT_SOURCES = \
 		elm_widget.eo.c \
 		elm_widget.eo.h \
@@ -874,8 +964,195 @@ elementaryeolianfiles_DATA = \
 	     elm_web.eo \
 	     elm_win.eo
 
-EXTRA_DIST += \
-              ${elementaryeolianfiles_DATA}
+if HAVE_CXX11
+BUILT_SOURCES += \
+	     elm_widget.eo.hh \
+	     elm_container.eo.hh \
+	     elm_layout.eo.hh \
+	     elm_interface_scrollable.eo.hh \
+	     elm_pan.eo.hh \
+	     elm_frame.eo.hh \
+	     elm_hover.eo.hh \
+	     elm_access.eo.hh \
+	     elm_actionslider.eo.hh \
+	     elm_app_client.eo.hh \
+	     elm_app_client_view.eo.hh \
+	     elm_app_server.eo.hh \
+	     elm_app_server_view.eo.hh \
+	     elm_atspi_app_object.eo.hh \
+	     elm_interface_atspi_accessible.eo.hh \
+	     elm_interface_atspi_action.eo.hh \
+	     elm_interface_atspi_component.eo.hh \
+	     elm_interface_atspi_editable_text.eo.hh \
+	     elm_interface_atspi_image.eo.hh \
+	     elm_interface_atspi_selection.eo.hh \
+	     elm_interface_atspi_text.eo.hh \
+	     elm_interface_atspi_value.eo.hh \
+	     elm_interface_atspi_widget.eo.hh \
+	     elm_interface_atspi_widget_action.eo.hh \
+	     elm_interface_atspi_window.eo.hh \
+	     elm_bg.eo.hh \
+	     elm_box.eo.hh \
+	     elm_bubble.eo.hh \
+	     elm_button.eo.hh \
+	     elm_calendar.eo.hh \
+	     elm_check.eo.hh \
+	     elm_clock.eo.hh \
+	     elm_colorselector.eo.hh \
+	     elm_conformant.eo.hh \
+	     elc_ctxpopup.eo.hh \
+	     elm_datetime.eo.hh \
+	     elm_dayselector.eo.hh \
+	     elm_diskselector.eo.hh \
+	     elm_entry.eo.hh \
+	     elc_fileselector.eo.hh \
+	     elc_fileselector_button.eo.hh \
+	     elc_fileselector_entry.eo.hh \
+	     elm_flipselector.eo.hh \
+	     elm_flip.eo.hh \
+	     elm_gengrid.eo.hh \
+	     elm_gengrid_pan.eo.hh \
+	     elm_genlist.eo.hh \
+	     elm_genlist_pan.eo.hh \
+	     elm_gesture_layer.eo.hh \
+	     elm_glview.eo.hh \
+	     elm_grid.eo.hh \
+	     elc_hoversel.eo.hh \
+	     elm_image.eo.hh \
+	     elm_icon.eo.hh \
+	     elm_index.eo.hh \
+	     elm_interface_fileselector.eo.hh \
+	     elm_inwin.eo.hh \
+	     elm_label.eo.hh \
+	     elm_list.eo.hh \
+	     elm_map_pan.eo.hh \
+	     elm_map.eo.hh \
+	     elm_menu.eo.hh \
+	     elc_multibuttonentry.eo.hh \
+	     elc_naviframe.eo.hh \
+	     elm_panel.eo.hh \
+	     elm_mapbuf.eo.hh \
+	     elm_notify.eo.hh \
+	     elm_panes.eo.hh \
+	     elm_photocam.eo.hh \
+	     elm_photocam_pan.eo.hh \
+	     elm_photo.eo.hh \
+	     elc_player.eo.hh \
+	     elm_plug.eo.hh \
+	     elc_popup.eo.hh \
+	     elm_prefs.eo.hh \
+	     elm_progressbar.eo.hh \
+	     elm_radio.eo.hh \
+	     elm_route.eo.hh \
+	     elm_scroller.eo.hh \
+	     elm_segment_control.eo.hh \
+	     elm_separator.eo.hh \
+	     elm_slider.eo.hh \
+	     elm_slideshow.eo.hh \
+	     elm_spinner.eo.hh \
+	     elm_systray.eo.hh \
+	     elm_table.eo.hh \
+	     elm_thumb.eo.hh \
+	     elm_toolbar.eo.hh \
+	     elm_video.eo.hh \
+	     elm_web.eo.hh \
+	     elm_win.eo.hh
+
+nodist_includesunstable_HEADERS = \
+	     elm_widget.eo.hh \
+	     elm_container.eo.hh \
+	     elm_layout.eo.hh \
+	     elm_interface_scrollable.eo.hh \
+	     elm_pan.eo.hh \
+	     elm_frame.eo.hh \
+	     elm_hover.eo.hh \
+	     elm_access.eo.hh \
+	     elm_actionslider.eo.hh \
+	     elm_app_client.eo.hh \
+	     elm_app_client_view.eo.hh \
+	     elm_app_server.eo.hh \
+	     elm_app_server_view.eo.hh \
+	     elm_atspi_app_object.eo.hh \
+	     elm_interface_atspi_accessible.eo.hh \
+	     elm_interface_atspi_action.eo.hh \
+	     elm_interface_atspi_component.eo.hh \
+	     elm_interface_atspi_editable_text.eo.hh \
+	     elm_interface_atspi_image.eo.hh \
+	     elm_interface_atspi_selection.eo.hh \
+	     elm_interface_atspi_text.eo.hh \
+	     elm_interface_atspi_value.eo.hh \
+	     elm_interface_atspi_widget.eo.hh \
+	     elm_interface_atspi_widget_action.eo.hh \
+	     elm_interface_atspi_window.eo.hh \
+	     elm_bg.eo.hh \
+	     elm_box.eo.hh \
+	     elm_bubble.eo.hh \
+	     elm_button.eo.hh \
+	     elm_calendar.eo.hh \
+	     elm_check.eo.hh \
+	     elm_clock.eo.hh \
+	     elm_colorselector.eo.hh \
+	     elm_conformant.eo.hh \
+	     elc_ctxpopup.eo.hh \
+	     elm_datetime.eo.hh \
+	     elm_dayselector.eo.hh \
+	     elm_diskselector.eo.hh \
+	     elm_entry.eo.hh \
+	     elc_fileselector.eo.hh \
+	     elc_fileselector_button.eo.hh \
+	     elc_fileselector_entry.eo.hh \
+	     elm_flipselector.eo.hh \
+	     elm_flip.eo.hh \
+	     elm_gengrid.eo.hh \
+	     elm_gengrid_pan.eo.hh \
+	     elm_genlist.eo.hh \
+	     elm_genlist_pan.eo.hh \
+	     elm_gesture_layer.eo.hh \
+	     elm_glview.eo.hh \
+	     elm_grid.eo.hh \
+	     elc_hoversel.eo.hh \
+	     elm_image.eo.hh \
+	     elm_icon.eo.hh \
+	     elm_index.eo.hh \
+	     elm_interface_fileselector.eo.hh \
+	     elm_inwin.eo.hh \
+	     elm_label.eo.hh \
+	     elm_list.eo.hh \
+	     elm_map_pan.eo.hh \
+	     elm_map.eo.hh \
+	     elm_menu.eo.hh \
+	     elc_multibuttonentry.eo.hh \
+	     elc_naviframe.eo.hh \
+	     elm_panel.eo.hh \
+	     elm_mapbuf.eo.hh \
+	     elm_notify.eo.hh \
+	     elm_panes.eo.hh \
+	     elm_photocam.eo.hh \
+	     elm_photocam_pan.eo.hh \
+	     elm_photo.eo.hh \
+	     elc_player.eo.hh \
+	     elm_plug.eo.hh \
+	     elc_popup.eo.hh \
+	     elm_prefs.eo.hh \
+	     elm_progressbar.eo.hh \
+	     elm_radio.eo.hh \
+	     elm_route.eo.hh \
+	     elm_scroller.eo.hh \
+	     elm_segment_control.eo.hh \
+	     elm_separator.eo.hh \
+	     elm_slider.eo.hh \
+	     elm_slideshow.eo.hh \
+	     elm_spinner.eo.hh \
+	     elm_systray.eo.hh \
+	     elm_table.eo.hh \
+	     elm_thumb.eo.hh \
+	     elm_toolbar.eo.hh \
+	     elm_video.eo.hh \
+	     elm_web.eo.hh \
+	     elm_win.eo.hh
+endif
+
+EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
 nodist_includesunstable_HEADERS = \
 				  elm_widget.eo.h \
@@ -1032,3 +1309,4 @@ nodist_includesunstable_HEADERS = \
 				  elm_video.eo.legacy.h \
 				  elm_web.eo.legacy.h \
 				  elm_win.eo.legacy.h
+

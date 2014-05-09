@@ -1,0 +1,19 @@
+
+if HAVE_EOLIAN_CXX
+EOLIAN_CXX = @eolian_cxx@
+_EOLIAN_CXX_DEP = @eolian_cxx@
+else
+EOLIAN_CXX = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian_cxx/eolian_cxx${EXEEXT}
+_EOLIAN_CXX_DEP = bin/eolian_cxx/eolian_cxx${EXEEXT}
+endif
+
+AM_V_EOLCXX = $(am__v_EOLCXX_@AM_V@)
+am__v_EOLCXX_ = $(am__v_EOLCXX_@AM_DEFAULT_V@)
+am__v_EOLCXX_0 = @echo "  EOLCXX  " $@;
+
+SUFFIXES += .eo.hh
+
+%.eo.hh: %.eo $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -o $@ $<
+
+CLEANFILES += $(BUILT_SOURCES)

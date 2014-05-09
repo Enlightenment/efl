@@ -112,6 +112,7 @@ AC_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
 AC_FUNC_ALLOCA
+AC_PROG_CXX
 
 ELM_VERSION_MAJOR="v_maj"
 ELM_VERSION_MINOR="v_min"
@@ -223,6 +224,33 @@ requirement_elm="\
     efreet-trash >= efl_version \
     eio >= efl_version \
     "
+
+EFL_CXX_COMPILE_STDCXX_11([ext])
+want_cxx11="yes"
+AC_ARG_ENABLE([c++11],
+   [AC_HELP_STRING([--disable-c++11],
+       [disable C++11 bindings. @<:@default=enabled@:>@])],
+   [want_cxx11="${enableval}"])
+
+if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
+   PKG_CHECK_MODULES([ELEMENTARY_CXX],
+      [
+        eo-cxx >= efl_version
+        eina-cxx >= efl_version
+        evas-cxx >= efl_version
+      ],
+      [
+        requirement_elm="${requirement_elm} \
+          eo-cxx >= efl_version \
+          eina-cxx >= efl_version \
+          evas-cxx >= efl_version \
+        "
+        have_cxx11="yes"
+      ],
+      [have_cxx11="no"]
+   )
+fi
+AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" = "xyes"])
 
 have_elementary_x="no"
 want_elementary_x="auto"
@@ -527,7 +555,7 @@ if test "x$want_elementary_web" != "xnone"; then
                            "$webkit_datadir",
                            "WebKit's data dir")
         ELM_WEB2_DEF="#define"
-
+o
         elementary_web=$want_elementary_web
         requirement_elm="${want_elementary_web} ${requirement_elm}"
        ],
@@ -590,13 +618,16 @@ my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
 
+
 EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
 EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
 EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
-# Force the helper to try external eolian-gen
+EFL_WITH_BIN([eolian-cxx], [eolian-cxx], [eolian_cxx])
+# Force the helper to try external eolian generators
 AM_CONDITIONAL(HAVE_EOLIAN_GEN, [true])
+AM_CONDITIONAL(HAVE_EOLIAN_CXX, [true])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
@@ -725,6 +756,7 @@ echo "  edje_cc..................: ${edje_cc}"
 echo "  elementary_codegen.......: ${elementary_codegen}"
 echo "  elm_prefs_cc.............: ${elm_prefs_cc}"
 echo "  eolian_gen...............: ${eolian_gen}"
+echo "  eolian_cxx...............: ${eolian_cxx}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
 echo "  Build elementary_codegen.: ${have_elementary_codegen}"
@@ -733,10 +765,12 @@ echo "  Examples.................: ${enable_build_examples}"
 echo "  Examples installed.......: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"
 echo "  Enable debug.............: ${want_elementary_debug}"
+echo "  Enable C++...............: ${have_cxx11}"
 echo
 echo "Compilation................: make (or gmake)"
 echo "  CPPFLAGS.................: $CPPFLAGS"
 echo "  CFLAGS...................: $CFLAGS"
+echo "  CXXFLAGS.................: $CXXFLAGS"
 echo "  LDFLAGS..................: $LDFLAGS"
 echo
 if test "${build_tests}" = "none"; then
