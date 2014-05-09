@@ -4280,7 +4280,7 @@ _elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
-   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
 
    if (sd->focused_item)
      {

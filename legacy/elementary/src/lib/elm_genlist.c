@@ -7422,7 +7422,7 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Ge
 {
    Evas_Coord ox, oy, oh, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
-   evas_object_geometry_get(obj, &ox, &oy, NULL, &oh);
+   evas_object_geometry_get(sd->pan_obj, &ox, &oy, NULL, &oh);
 
    if (sd->focused_item)
      {
