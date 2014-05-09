@@ -30,7 +30,7 @@ isa/eo_isa_mixin.h \
 isa/eo_isa_simple.c \
 isa/eo_isa_simple.h
 
-eo_isa_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@
+eo_isa_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
 
 if EO_BUILD_EXAMPLE_EVAS
 
@@ -49,7 +49,7 @@ evas/evas_evas_obj.c \
 evas/evas_evas_obj.h \
 evas/evas_test.c
 
-eo_evas_LDADD = $(top_builddir)/src/lib/eo/libeo.la @ELM_LIBS@ @EO_LDFLAGS@
+eo_evas_LDADD = $(top_builddir)/src/lib/eo/libeo.la @ELM_LIBS@ @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
 
 endif
 
@@ -62,7 +62,7 @@ simple/simple_mixin.h \
 simple/simple_simple.c \
 simple/simple_simple.h
 
-eo_simple_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@
+eo_simple_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
 
 DATA_FILES = Makefile.examples
 

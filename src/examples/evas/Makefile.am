@@ -50,7 +50,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
 $(top_builddir)/src/lib/evas/libevas.la \
-@EVAS_LDFLAGS@
+@EVAS_LDFLAGS@ -lm
 
 # EDJE_COMMON_* is similar to src/examples/edje/Makefile.am
 EDJE_COMMON_CPPFLAGS = \
@@ -174,27 +174,27 @@ evas_multi_touch_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_cube
 evas_3d_cube_SOURCES = evas-3d-cube.c
-evas_3d_cube_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_cube_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_cube_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_cube2
 evas_3d_cube2_SOURCES = evas-3d-cube2.c
-evas_3d_cube2_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_cube2_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_cube2_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_proxy
 evas_3d_proxy_SOURCES = evas-3d-proxy.c
-evas_3d_proxy_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_proxy_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_proxy_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_pick
 evas_3d_pick_SOURCES = evas-3d-pick.c
-evas_3d_pick_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_pick_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_pick_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_md2
 evas_3d_md2_SOURCES = evas-3d-md2.c
-evas_3d_md2_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_3d_md2_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_md2_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 .edc.edj:
@@ -211,13 +211,7 @@ if HAVE_CXX11
 EXTRA_PROGRAMS += evas_cxx_rectangle
 evas_cxx_rectangle_SOURCES = evas_cxx_rectangle.cc
 evas_cxx_rectangle_LDADD = $(ECORE_EVAS_COMMON_LDADD)
-evas_cxx_rectangle_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS) \
--I$(top_srcdir)/src/bindings/eina_cxx \
--I$(top_srcdir)/src/bindings/eo_cxx \
--I$(top_srcdir)/src/bindings/evas_cxx \
--I$(top_builddir)/src/bindings/eina_cxx \
--I$(top_builddir)/src/bindings/eo_cxx \
--I$(top_builddir)/src/bindings/evas_cxx \
+evas_cxx_rectangle_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS) @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ \
 $(AM_CPPFLAGS) @EVAS_CFLAGS@
 
 endif
