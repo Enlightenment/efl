@@ -237,11 +237,29 @@ local Str_Buf = ffi.metatype("Str_Buf", {
     }
 })
 
-local fmterr = function(idx, msg)
+local fmterr = function(idx, msg, off)
     local argerr = (type(idx) == "number")
         and ("#" .. idx)
          or ("'" .. idx .. "'")
-    error("bad argument " .. argerr .. " to '%' (" .. msg .. ")", 3)
+    error("bad argument " .. argerr .. " to '%' (" .. msg .. ")",
+        3 + (off or 0))
+end
+
+-- simulates lua's coercion
+local checktype = function(c, idx, val)
+    if c == 115 or c == 112 then -- s, p
+        return
+    end
+    local tv = type(val)
+    if c == 113 then -- q
+        if tv ~= "string" or tv ~= "number" then
+            fmterr(idx, "string expected, got " .. tv, 1)
+        end
+        return
+    end
+    if tv == "number" then return end
+    if tv == "string" and tonumber(tv) then return end
+    fmterr(idx, "number expected, got " .. tv, 1)
 end
 
 getmetatable("").__mod = function(fmts, params)
@@ -280,14 +298,10 @@ getmetatable("").__mod = function(fmts, params)
                     if type(idx) == "number" and idx > #params then
                         fmterr(idx, "no value")
                     end
-                    local stat, val = pcall(fmt, "%" .. tostr(nbuf),
-                        params[idx])
+                    local v = params[idx]
+                    checktype(c, idx, v)
+                    buf:append_str(("%" .. tostr(nbuf)):format(v))
                     nbuf:clear()
-                    if stat then
-                        buf:append_str(val)
-                    else
-                        fmterr(idx, val:match("%((.+)%)"))
-                    end
                 end
             else
                 while c ~= 0 and (bytes[c] or C.isdigit(c) ~= 0
