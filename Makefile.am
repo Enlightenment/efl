@@ -120,16 +120,11 @@ endif
 
 pkgconfig_DATA += \
 pc/eina.pc \
-pc/eina-cxx.pc \
 pc/eo.pc \
-pc/eo-cxx.pc \
 pc/eolian.pc \
-pc/eolian-cxx.pc \
 pc/eet.pc \
-pc/eet-cxx.pc \
 pc/evas.pc \
 pc/ecore.pc \
-pc/ecore-cxx.pc \
 pc/ecore-con.pc \
 pc/ecore-ipc.pc \
 pc/ecore-file.pc \
@@ -146,11 +141,20 @@ pc/efreet.pc \
 pc/efreet-mime.pc \
 pc/efreet-trash.pc \
 pc/edje.pc \
-pc/edje-cxx.pc \
 pc/emotion.pc \
 pc/ethumb.pc \
-pc/ethumb_client.pc \
-pc/evas-cxx.pc
+pc/ethumb_client.pc
+
+if HAVE_CXX11
+pkgconfig_DATA += \
+pc/eina-cxx.pc \
+pc/evas-cxx.pc \
+pc/ecore-cxx.pc \
+pc/eolian-cxx.pc \
+pc/edje-cxx.pc \
+pc/eet-cxx.pc \
+pc/eo-cxx.pc
+endif
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc

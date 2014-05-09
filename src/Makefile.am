@@ -91,7 +91,6 @@ benchmark: all-am
 
 EXAMPLES_SUBDIRS = \
 examples/eina \
-examples/eina_cxx \
 examples/eo \
 examples/eet \
 examples/evas \
@@ -102,11 +101,18 @@ examples/eldbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \
-examples/ethumb_client \
+examples/ethumb_client
+
+if HAVE_CXX11
+EXAMPLES_SUBDIRS += \
+examples/eina_cxx \
 examples/eolian_cxx
+endif
+
 if ALWAYS_BUILD_EXAMPLES
 SUBDIRS += . $(EXAMPLES_SUBDIRS)
 endif
+
 DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 
 examples: all-am

@@ -206,6 +206,8 @@ evas_aspect_hints_SOURCES = evas-aspect-hints.c
 evas_aspect_hints_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 evas_aspect_hints_LDADD = $(EDJE_COMMON_LDADD)
 
+if HAVE_CXX11
+
 EXTRA_PROGRAMS += evas_cxx_rectangle
 evas_cxx_rectangle_SOURCES = evas_cxx_rectangle.cc
 evas_cxx_rectangle_LDADD = $(ECORE_EVAS_COMMON_LDADD)
@@ -217,6 +219,8 @@ evas_cxx_rectangle_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS) \
 -I$(top_builddir)/src/bindings/eo_cxx \
 -I$(top_builddir)/src/bindings/evas_cxx \
 $(AM_CPPFLAGS) @EVAS_CFLAGS@
+
+endif
 
 EDJS = $(EDCS:%.edc=%.edj)
 
