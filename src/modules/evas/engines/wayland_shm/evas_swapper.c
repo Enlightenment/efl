@@ -293,7 +293,9 @@ evas_swapper_buffer_idle_flush(Wl_Swapper *ws)
 static Eina_Bool 
 _evas_swapper_shm_pool_new(Wl_Swapper *ws)
 {
-   char tmp[PATH_MAX];
+   static const char tmp[] = "evas-wayland_shm-XXXXXX";
+   const char *path;
+   char *name;
    size_t size;
    int fd = 0;
 
@@ -308,17 +310,30 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
    /* check pool size to see if we need to realloc the pool */
    if (size <= ws->pool_size) return EINA_TRUE;
 
-   /* create tmp file
-    * 
-    * NB: Should this use XDG_RUNTIME_DIR ?? */
-   strcpy(tmp, "/tmp/evas-wayland_shm-XXXXXX");
+   /* create tmp file, trying to use XDG_RUNTIME if set */
+   if ((path = getenv("XDG_RUNTIME_DIR")))
+     {
+        if ((name = malloc(strlen(path) + sizeof(tmp))))
+          strcpy(name, path);
+     }
+   else
+     {
+        if ((name = malloc(strlen("/tmp") + sizeof(tmp))))
+          strcpy(name, "/tmp");
+     }
+
+   if (!name) return EINA_FALSE;
+
+   strcat(name, tmp);
 
    /* try to create the tmp file */
-   if ((fd = mkstemp(tmp)) < 0)
+   if ((fd = mkstemp(name)) < 0)
      {
         ERR("Could not create temporary file.");
         return EINA_FALSE;
      }
+
+   free(name);
 
    /* try to truncate the tmp file to requested size */
    if (ftruncate(fd, size) < 0)
