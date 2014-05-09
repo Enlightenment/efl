@@ -2,11 +2,10 @@
 
 local ffi  = require("ffi")
 local cast = ffi.cast
-
-ffi.cdef [[
-    int isalnum(int c);
-    int isdigit(int c);
-]]
+local new  = ffi.new
+local copy = ffi.copy
+local str  = ffi.string
+local gc   = ffi.gc
 
 local C = ffi.C
 
@@ -166,15 +165,78 @@ end
 
 -- string fmt
 
+ffi.cdef [[
+    typedef struct _Str_Buf {
+        char  *buf;
+        size_t len, cap;
+    } Str_Buf;
+
+    void *malloc(size_t);
+    void    free(void*);
+    size_t  strlen(const char *str);
+
+    int isalnum(int c);
+    int isdigit(int c);
+]]
+
 local char  = string.char
 local tconc = table.concat
 local fmt   = string.format
 local pcall = pcall
 local error = error
 local type  = type
+local tostr = tostring
 
 local bytes = { ("cdeEfgGiopuxXsq"):byte() }
 for i, v in ipairs(bytes) do bytes[v] = true end
+
+local Str_Buf = ffi.metatype("Str_Buf", {
+    __new = function(self)
+        local r = new("Str_Buf")
+        r.buf = C.malloc(8)
+        r.len = 0
+        r.cap = 8
+        gc(r, self.free)
+        return r
+    end,
+    __tostring = function(self)
+        return str(self.buf, self.len)
+    end,
+    __index = {
+        free = function(self)
+            C.free(self.buf)
+            self.buf = nil
+        end,
+        clear = function(self)
+            self.len = 0
+        end,
+        grow = function(self, newcap)
+            local oldcap = self.cap
+            if oldcap >= newcap then return end
+            local buf = C.malloc(newcap)
+            copy(buf, self.buf, self.len)
+            C.free(self.buf)
+            self.buf = buf
+            self.cap = newcap
+        end,
+        append_char = function(self, c)
+            local len = self.len
+            self:grow (len + 1)
+            self.buf  [len] = c
+            self.len = len + 1
+        end,
+        append_str = function(self, str, strlen)
+            local strp = cast("const char*", str)
+            strlen = strlen or C.strlen(strp)
+            local len = self.len
+            self:grow(len + strlen)
+            for i = 0, strlen - 1 do
+                self.buf[len + i] = strp[i]
+            end
+            self.len = len + strlen
+        end
+    }
+})
 
 getmetatable("").__mod = function(fmts, params)
     if not fmts then return nil end
@@ -184,20 +246,20 @@ getmetatable("").__mod = function(fmts, params)
     local c
     c, s = s[0], s + 1
     local argn = 1
+    local nbuf = Str_Buf()
     while c ~= 0 do
         if c == 37 then -- %
             c, s = s[0], s + 1
-            local nbuf = {}
             while c ~= 0 and C.isalnum(c) ~= 0 do
-                nbuf[#nbuf + 1] = c
+                nbuf:append_char(c)
                 c, s = s[0], s + 1
             end
             if c == 36 then -- $
                 c, s = s[0], s + 1
-                local n = char(unpack(nbuf))
-                nbuf = {}
+                local n = tostr(nbuf)
+                nbuf:clear()
                 while C.isdigit(c) ~= 0 or c == 45 or c == 46 do -- -, .
-                    nbuf[#nbuf + 1] = c
+                    nbuf:append_char(c)
                     c, s = s[0], s + 1
                 end
                 if bytes[c] then
@@ -205,10 +267,11 @@ getmetatable("").__mod = function(fmts, params)
                     buf[#buf + 1] = "$"
                     buf[#buf + 1] = char(c)
                 else
-                    nbuf[#nbuf + 1] = c
+                    nbuf:append_char(c)
                     local idx = tonumber(n) or n
-                    local stat, val = pcall(fmt, "%" .. char(unpack(nbuf)),
+                    local stat, val = pcall(fmt, "%" .. tostr(nbuf),
                         params[idx])
+                    nbuf:clear()
                     if stat then
                         buf[#buf + 1] = val
                     else
@@ -222,11 +285,12 @@ getmetatable("").__mod = function(fmts, params)
             else
                 while c ~= 0 and (bytes[c] or C.isdigit(c) ~= 0
                 or c == 45 or c == 46) do
-                    nbuf[#nbuf + 1] = c
+                    nbuf:append_char(c)
                     c, s = s[0], s + 1
                 end
-                local stat, val = pcall(fmt, "%" .. char(unpack(nbuf)),
+                local stat, val = pcall(fmt, "%" .. tostr(nbuf),
                     params[argn])
+                nbuf:clear()
                 if stat then
                     buf[#buf + 1] = val
                 else
