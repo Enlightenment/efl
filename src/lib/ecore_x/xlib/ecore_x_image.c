@@ -260,6 +260,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
    if ((im->xim->data == (char *)-1) ||
        (!im->xim->data))
      {
+        ERR("shmat failed: %s", strerror(errno));
         shmdt(im->shminfo.shmaddr);
         shmctl(im->shminfo.shmid, IPC_RMID, 0);
         XDestroyImage(im->xim);
