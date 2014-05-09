@@ -14,9 +14,10 @@ I next(I i, std::size_t n = 1u)
 {
   for(;n;--n)
     ++i;
+  return i;
 }
 
-int main(int argc, char **argv)
+int main()
 {
    efl::eina::eina_init eina_init;
 

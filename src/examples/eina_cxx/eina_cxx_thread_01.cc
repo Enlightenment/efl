@@ -11,12 +11,12 @@
 
 namespace eina = efl::eina;
 
-void thread1(eina::mutex& m)
+void thread1(eina::mutex&)
 {
   
 }
 
-int main(int argc, char **argv)
+int main()
 {
    eina::eina_init eina_init;
    eina::eina_threads_init threads_init;
