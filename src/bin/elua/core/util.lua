@@ -279,52 +279,61 @@ getmetatable("").__mod = function(fmts, params)
     while c ~= 0 do
         if c == 37 then -- %
             c, s = s[0], s + 1
-            while c ~= 0 and C.isalnum(c) ~= 0 do
-                nbuf:append_char(c)
-                c, s = s[0], s + 1
-            end
-            if c == 36 then -- $
-                c, s = s[0], s + 1
-                local n = tostr(nbuf)
-                nbuf:clear()
-                while C.isdigit(c) ~= 0 or c == 45 or c == 46 do -- -, .
+            if c ~= 37 then
+                while c ~= 0 and C.isalnum(c) ~= 0 do
                     nbuf:append_char(c)
                     c, s = s[0], s + 1
                 end
-                if not bytes[c] then
-                    buf:append_str(n)
-                    buf:append_char(36) -- $
-                    buf:append_char(c)
-                else
-                    nbuf:append_char(c)
-                    local idx = tonumber(n) or n
-                    if type(idx) == "number" and idx > #params then
-                        fmterr(idx, "no value")
-                    end
-                    local v = params[idx]
-                    v = checktype(c, idx, v)
-                    buf:append_str(("%" .. tostr(nbuf)):format(v))
+                if c == 36 then -- $
+                    c, s = s[0], s + 1
+                    local n = tostr(nbuf)
                     nbuf:clear()
+                    while C.isdigit(c) ~= 0 or c == 45 or c == 46 do -- -, .
+                        nbuf:append_char(c)
+                        c, s = s[0], s + 1
+                    end
+                    if not bytes[c] then
+                        buf:append_str(n)
+                        buf:append_char(36) -- $
+                        buf:append_char(c)
+                    else
+                        nbuf:append_char(c)
+                        local idx = tonumber(n) or n
+                        if type(idx) == "number" and idx > #params then
+                            fmterr(idx, "no value")
+                        end
+                        local v = params[idx]
+                        v = checktype(c, idx, v)
+                        buf:append_str(("%" .. tostr(nbuf)):format(v))
+                        nbuf:clear()
+                    end
+                else
+                    local fmtmark = (nbuf.len > 0) and nbuf.buf[0] or nil
+                    if not fmtmark then
+                        while c ~= 0 and (C.isdigit(c) ~= 0 or c == 45
+                        or c == 46) do
+                            nbuf:append_char(c)
+                            c, s = s[0], s + 1
+                        end
+                        if bytes[c] then fmtmark = c end
+                    end
+                    if fmtmark then
+                        if argn > #params then
+                            fmterr(argn, "no value")
+                        end
+                        local v = params[argn]
+                        v = checktype(fmtmark, argn, v)
+                        buf:append_str(("%" .. tostr(nbuf)):format(v))
+                        nbuf:clear()
+                        argn = argn + 1
+                    else
+                        buf:append_str(nbuf.buf, nbuf.len)
+                        nbuf:clear()
+                    end
+                    if c ~= 0 then buf:append_char(c) end
                 end
             else
-                while c ~= 0 and (bytes[c] or C.isdigit(c) ~= 0
-                or c == 45 or c == 46) do
-                    nbuf:append_char(c)
-                    c, s = s[0], s + 1
-                end
-                if argn > #params then
-                    fmterr(idx, "no value")
-                end
-                local stat, val = pcall(fmt, "%" .. tostr(nbuf),
-                    params[argn])
-                nbuf:clear()
-                if stat then
-                    buf:append_str(val)
-                else
-                    fmterr(argn, val:match("%((.+)%)"))
-                end
-                if c then buf:append_char(c) end
-                argn = argn + 1
+                buf:append_char(c)
             end
         else
             buf:append_char(c)
