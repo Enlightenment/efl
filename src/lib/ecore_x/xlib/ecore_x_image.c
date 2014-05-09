@@ -309,11 +309,7 @@ ecore_x_image_get(Ecore_X_Image *im,
           _ecore_x_image_shm_create(im);
 
         if (!im->xim)
-          {
-             fprintf(stderr, "BLAAAAAAAAAAAAH\n");
-             abort();
-             return EINA_FALSE;
-          }
+          return EINA_FALSE;
 
         _ecore_x_image_err = 0;
         
