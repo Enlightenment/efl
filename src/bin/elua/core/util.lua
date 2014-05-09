@@ -248,17 +248,20 @@ end
 -- simulates lua's coercion
 local checktype = function(c, idx, val)
     if c == 115 or c == 112 then -- s, p
-        return
+        return val
     end
     local tv = type(val)
     if c == 113 then -- q
         if tv ~= "string" or tv ~= "number" then
             fmterr(idx, "string expected, got " .. tv, 1)
         end
-        return
+        return val
     end
-    if tv == "number" then return end
-    if tv == "string" and tonumber(tv) then return end
+    if tv == "number" then return val end
+    if tv == "string" then
+        local v = tonumber(val)
+        if v then return v end
+    end
     fmterr(idx, "number expected, got " .. tv, 1)
 end
 
@@ -299,7 +302,7 @@ getmetatable("").__mod = function(fmts, params)
                         fmterr(idx, "no value")
                     end
                     local v = params[idx]
-                    checktype(c, idx, v)
+                    v = checktype(c, idx, v)
                     buf:append_str(("%" .. tostr(nbuf)):format(v))
                     nbuf:clear()
                 end
