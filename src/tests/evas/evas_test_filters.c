@@ -130,7 +130,7 @@ START_TEST(evas_filter_parser)
       "padding_set ({ 1, 2, 3, 4, invalid = 42 })",
       // Some early check failures
       //"m = buffer ('alpha') displace ({ m, intensity = 10, flags = 'default', src = input, dst = output, fillmode = 'repeat' })",
-      "m = buffer ('rgba') displace ({ m, intensity = 10, flags = 'invalid', src = input, dst = output, fillmode = 'repeat' })",
+      "m = buffer ('rgba') displace ({ m, intensity = 10, flags = 'invalid', src = input, dst = output, fillmode = 'repeat', invalid = 42 })",
       NULL
    };
 
@@ -218,64 +218,64 @@ struct Filter_Test_Case {
  */
 static struct Filter_Test_Case _test_cases[] = {
    // Single filters. Blend can be used to ensure all filters are valid.
-   { 0, 0, 0, 0, "blend();", NULL },
-   { 7, 0, 11, 0, "blend(ox = -7, oy = -11);", NULL },
-   { 0, 7, 0, 11, "blend(ox = 7, oy = 11);", NULL },
-   { 0, 0, 0, 0, "buffer:a(rgba);buffer:b(alpha);blend(dst=a);blend(src=a,dst=b);blend(b);", NULL },
+   { 0, 0, 0, 0, "blend ()", NULL },
+   { 7, 0, 11, 0, "blend ({ ox = -7, oy = -11 })", NULL },
+   { 0, 7, 0, 11, "blend ({ ox = 7, oy = 11 })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'rgba' }) b = buffer ({ 'alpha' }) blend ({ dst = a }) blend ({ src = a, dst = b }) blend ({ b })", NULL },
 
-   { 5, 5, 7, 7, "blur(rx = 5, ry = 7);", NULL },
-   { 0, 0, 5, 5, "blur(rx = 0, ry = 5, type = box);", NULL },
-   { 0, 0, 5, 5, "buffer : a (rgba); blend(dst = a); blur(src = a,rx = 0, ry = 5, type = box);", NULL },
-   { 5, 5, 0, 0, "blur(rx = 5, ry = 0, type = gaussian);", NULL },
-   { 5, 15, 7, 0, "blur(rx = 5, ry = 0, ox = 10, oy = -7, type = default);", NULL },
+   { 5, 5, 7, 7, "blur ({ rx = 5, ry = 7 })", NULL },
+   { 0, 0, 5, 5, "blur ({ rx = 0, ry = 5, type = 'box' })", NULL },
+   { 0, 0, 5, 5, "a = buffer ({ 'rgba' })  blend ({ dst = a })  blur ({ src = a, rx = 0, ry = 5, type = 'box' })", NULL },
+   { 5, 5, 0, 0, "blur ({ rx = 5, ry = 0, type = 'gaussian' })", NULL },
+   { 5, 15, 7, 0, "blur ({ rx = 5, ry = 0, ox = 10, oy = -7, type = 'default' })", NULL },
 
-   { 5, 5, 5, 5, "grow(5);", NULL },
+   { 5, 5, 5, 5, "grow ({ 5 })", NULL },
 
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,src=a,dst=a);blend(a);", NULL },
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);curve(0:0-255:255,dst=a);blend(a);", NULL },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:0-255:255,src=a,channel=r);", NULL },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);curve(0:128-128:0,src=a,channel=rgb,interpolation=none);", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) blend ({ dst = a }) curve ({ '0:0-255:255', src = a,dst = a }) blend ({ a })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) blend ({ dst = a }) curve ({ '0:0-255:255',dst = a }) blend ({ a })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'rgba' }) blend ({ dst = a }) curve ({ '0:0-255:255', src = a, channel = 'r' })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'rgba' }) blend ({ dst = a }) curve ({ '0:128-128:0', src = a, channel = 'rgb', interpolation = 'none' })", NULL },
 
-   { 0, 0, 0, 0, "fill(color=red);", NULL },
+   { 0, 0, 0, 0, "fill ({ color = 'red' })", NULL },
 
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);mask(a);", NULL },
-   { 0, 0, 0, 0, "buffer:a(alpha);buffer:b(alpha);blend(dst=a);mask(a,dst=b);blend(b);", NULL },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(a);", NULL },
-   { 0, 0, 0, 0, "buffer:a(rgba);blend(dst=a);mask(mask=input,src=a);", NULL },
-   { 0, 0, 0, 0, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=red);blend(dst=a);mask(a,src=b);", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) blend ({ dst = a }) mask ({ a })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) b = buffer ({ 'alpha' }) blend ({ dst = a }) mask ({ a,dst = b }) blend ({ b })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'rgba' }) blend ({ dst = a }) mask ({ a })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'rgba' }) blend ({ dst = a }) mask ({ mask=input, src = a })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = 'red' }) blend ({ dst = a }) mask ({ a, src = b })", NULL },
 
-   // Note: Alpha bump is not tested. Its render quality must be improved first.
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a);", NULL },
-   { 0, 0, 0, 0, "buffer:a(alpha);blend(dst=a);bump(a,compensate=yes,specular=10.0);", NULL },
+   // Note: 'alpha' bump is not tested. Its render quality must be improved first.
+   { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) blend ({ dst = a }) bump ({ a })", NULL },
+   { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) blend ({ dst = a }) bump ({ a,compensate=yes,specular=10.0 })", NULL },
 
-   { 7, 7, 7, 7, "buffer:a(alpha);buffer:b(rgba);blend(dst=b,color=#330);displace(map=b,src=input,dst=a,intensity=7);blend(a);", NULL },
-   { 7, 7, 7, 7, "buffer:a(alpha);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7);", NULL },
-   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7);", NULL },
-   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=default);", NULL },
-   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=nearest);", NULL },
-   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=smooth);", NULL },
-   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=nearest_stretch);", NULL },
-   { 7, 7, 7, 7, "buffer:a(rgba);buffer:b(rgba);blend(dst=b,color=#330);blend(dst=a);displace(map=b,src=a,intensity=7,flags=smooth_stretch);", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'alpha' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) displace ({ map = b, src = input, dst = a, intensity = 7 }) blend ({ a })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'alpha' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7 })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7 })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'default' })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'nearest' })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'smooth' })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'nearest_stretch' })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'smooth_stretch' })", NULL },
 
-   { 0, 0, 0, 40, "buffer:a(alpha);transform(a,vflip,oy=20);blend(src=a);", NULL },
-   { 0, 0, 40, 0, "buffer:a(alpha);transform(a,vflip,oy=-20);blend(src=a);", NULL },
-   { 0, 0, 0, 40, "buffer:a(alpha);blend(dst=a);transform(a,vflip,oy=20,src=a);blend(src=a);", NULL },
+   { 0, 0, 0, 40, "a = buffer ({ 'alpha' }) transform ({ a, 'vflip', oy = 20 }) blend ({ src = a })", NULL },
+   { 0, 0, 40, 0, "a = buffer ({ 'alpha' }) transform ({ a, 'vflip', oy = -20 }) blend ({ src = a })", NULL },
+   { 0, 0, 0, 40, "a = buffer ({ 'alpha' }) blend ({ dst = a }) transform ({ a, 'vflip', oy = 20, src = a }) blend ({ src = a })", NULL },
 
-   // Filter combos. TODO: Add some more tricky cases :)
-   { 3, 5, 7, 11, "blend(ox = -3, oy = 11); blend(ox = 5, oy = -7);", NULL },
-   { 15, 15, 15, 15, "buffer:a(rgba);grow(10,dst=a);blur(5,src=a);", NULL },
-   { 10, 15, 10, 17, "buffer:a(alpha);blend(dst=a,ox=5,oy=7);blur(10,src=a);blend(ox=-6,oy=-9);", NULL },
-   { 5, 5, 5, 5, "buffer:a(alpha);blur(5,dst=a);bump(a,azimuth=45.0,color=yellow);", NULL },
+   // Filter combos. TODO: Add some more tricky cases : })
+   { 3, 5, 7, 11, "blend ({ ox = -3, oy = 11 })  blend ({ ox = 5, oy = -7 })", NULL },
+   { 15, 15, 15, 15, "a = buffer ({ 'rgba' }) grow ({ 10,dst = a }) blur ({ 5, src = a })", NULL },
+   { 10, 15, 10, 17, "a = buffer ({ 'alpha' }) blend ({ dst = a, ox = 5, oy = 7 }) blur ({ 10, src = a }) blend ({ ox = -6, oy = -9 })", NULL },
+   { 5, 5, 5, 5, "a = buffer ({ 'alpha' }) blur ({ 5,dst = a }) bump ({ a, azimuth = 45.0, color = 'yellow' })", NULL },
 
-   // Proxy tests (RECT as a proxy object)
-   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=none);", "rect" },
-   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=repeat_x_stretch_y);", "rect" },
-   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=repeat);", "rect" },
-   { 0, 0, 0, 0, "buffer:m(src=rect);mask(m,fillmode=stretch);", "rect" },
-   { 0, 0, 0, 0, "buffer:m(src=rect);buffer:b(rgba);blend(m,dst=b,fillmode=repeat_x_stretch_y);blend();", "rect" },
+   // Proxy tests  ({ RECT as a proxy object })
+   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'none' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'repeat_x_stretch_y' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'repeat' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'stretch' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = rect }) b = buffer ({ 'rgba' }) blend ({ m,dst = b, fillmode = 'repeat_x_stretch_y' }) blend ()", "rect" },
 
    // Padding_set
-   { 11, 22, 33, 44, "padding_set(11,22,33,44);blend();"}
+   { 11, 22, 33, 44, "padding_set ({ 11,22,33,44 }) blend ()"}
 };
 
 static const int _test_cases_count = sizeof(_test_cases) / sizeof(_test_cases[0]);
@@ -415,8 +415,6 @@ END_TEST
 void evas_test_filters(TCase *tc)
 {
    tcase_add_test(tc, evas_filter_parser);
-#if 0
    tcase_add_test(tc, evas_filter_text_padding_test);
    tcase_add_test(tc, evas_filter_text_render_test);
-#endif
 }
