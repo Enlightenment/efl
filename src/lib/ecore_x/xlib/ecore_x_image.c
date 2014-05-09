@@ -248,6 +248,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
                               IPC_CREAT | 0666);
    if (im->shminfo.shmid == -1)
      {
+        ERR("shmget failed: %s", strerror(errno));
         XDestroyImage(im->xim);
         im->xim = NULL;
         return;
