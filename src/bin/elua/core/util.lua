@@ -295,6 +295,9 @@ getmetatable("").__mod = function(fmts, params)
                     nbuf:append_char(c)
                     c, s = s[0], s + 1
                 end
+                if argn > #params then
+                    fmterr(idx, "no value")
+                end
                 local stat, val = pcall(fmt, "%" .. tostr(nbuf),
                     params[argn])
                 nbuf:clear()
