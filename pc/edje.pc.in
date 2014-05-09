@@ -11,7 +11,7 @@ vmin=@VMIN@
 vmic=@VMIC@
 multisense=@want_multisense@
 physics=@want_physics@
-eoincludedir=@datarootdir@/eolian/include
+eoincludedir=@datadir@/eolian/include
 eolian_flags=-I${eoincludedir}/edje-@VMAJ@
 
 Name: edje
