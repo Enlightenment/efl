@@ -1353,15 +1353,15 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             inherit: "default";
             image.normal: "sym_right_dark_normal.png";
          }
-         desc { state: "default" 1.0;
+         desc { "default" 1.0;
             inherit: "default";
             image.normal: "sym_down_light_normal.png";
          }
-         desc { state: "selected" 1.0;
+         desc { "selected" 1.0;
             inherit: "default";
             image.normal: "sym_down_glow_normal.png";
          }
-         desc { state: "disabled" 1.0;
+         desc { "disabled" 1.0;
             inherit: "default";
             image.normal: "sym_down_dark_normal.png";
          }
@@ -1386,15 +1386,15 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             inherit: "default";
             image.normal: "sym_left_dark_normal.png";
          }
-         desc { state: "default" 1.0;
+         desc { "default" 1.0;
             inherit: "default";
             image.normal: "sym_down_light_normal.png";
          }
-         desc { state: "selected" 1.0;
+         desc { "selected" 1.0;
             inherit: "default";
             image.normal: "sym_down_glow_normal.png";
          }
-         desc { state: "disabled" 1.0;
+         desc { "disabled" 1.0;
             inherit: "default";
             image.normal: "sym_down_dark_normal.png";
          }
