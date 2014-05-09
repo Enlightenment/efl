@@ -429,6 +429,7 @@ static void st_collections_group_physics_world_depth(void);
 #endif
 
 /* short */
+static void st_collections_group_parts_part_noscale(void);
 static void st_collections_group_parts_part_precise(void);
 static void st_collections_group_parts_part_noprecise(void);
 static void st_collections_group_parts_part_mouse(void);
@@ -874,6 +875,8 @@ New_Statement_Handler statement_handlers_short[] =
              norepeat; -> repeat_events: 0;
              precise; -> precise_is_inside: 1;
              noprecise; -> precise_is_inside: 0;
+             scale; -> scale: 1;
+             noscale; -> scale: 0;
              desc {
                 vis; -> visible: 1;
                 hid; -> visible: 0;
@@ -896,6 +899,8 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.parts.part.norepeat", st_collections_group_parts_part_norepeat},
      {"collections.group.parts.part.precise", st_collections_group_parts_part_precise},
      {"collections.group.parts.part.noprecise", st_collections_group_parts_part_noprecise},
+     {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
+     {"collections.group.parts.part.noscale", st_collections_group_parts_part_noscale},
      {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
      {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
      {"collections.group.mouse", st_collections_group_mouse},
@@ -4796,9 +4801,17 @@ st_collections_group_parts_part_ignore_flags(void)
 static void
 st_collections_group_parts_part_scale(void)
 {
-   check_arg_count(1);
+   if (get_arg_count() == 1)
+     current_part->scale = parse_bool(0);
+   else
+     current_part->scale = 1;
+}
 
-   current_part->scale = parse_bool(0);
+static void
+st_collections_group_parts_part_noscale(void)
+{
+   check_arg_count(0);
+   current_part->scale = 0;
 }
 
 /**
