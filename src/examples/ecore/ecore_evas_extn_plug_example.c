@@ -1,12 +1,10 @@
 /**
- * Ecore example illustrating the basics of ecore evas extn socket usage.
+ * Ecore example illustrating the basics of ecore evas extn plug usage.
  *
- * You'll need at least one Evas engine built for it (excluding the
- * buffer one). See stdout/stderr for output.
- * You can check functions of ecore extn socket if you use ecore extn plug together.
+ * For checking with ecore evas extn socket, please run with ecore_evas_extn_socket_example.
  *
  * @verbatim
- * gcc -o ecore_evas_extn_socket_example ecore_evas_extn_socket_example.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o ecore_evas_extn_plug_example ecore_evas_extn_plug_example.c `pkg-config --libs --cflags ecore-evas`
  * @endverbatim
  */
 
