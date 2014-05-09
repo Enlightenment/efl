@@ -2,6 +2,17 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES =
+
+EOLIAN_FLAGS = \
+  -I$(srcdir) \
+  -I$(top_srcdir)/src/lib/eo \
+  -I$(top_srcdir)/src/lib/evas/canvas \
+  -I$(top_srcdir)/src/lib/edje \
+  -I$(top_srcdir)/src/lib/ecore_audio
+
+include $(top_srcdir)/src/Makefile_Eolian_Helper.am
+include $(top_srcdir)/src/Makefile_Eolian_Cxx_Helper.am
 
 AM_CXXFLAGS = \
 	-I$(srcdir) \
@@ -51,6 +62,9 @@ GENERATED = \
 	colourablesquare.eo.h \
 	colourablesquare.eo.hh
 
+BUILT_SOURCES = $(GENERATED)
+CLEANFILES += $(BUILT_SOURCES)
+
 EOS = \
 	colourable.eo \
 	colourablesquare.eo
@@ -71,30 +85,27 @@ EXTRA_PROGRAMS = \
 DATA_FILES = Makefile.examples $(EOS)
 CLEANFILES =
 
-eolian_cxx_simple_01_SOURCES = eolian_cxx_simple_01.cc $(IMPL)
-eolian_cxx_simple_01_DEPENDENCIES = $(GENERATED)
+eolian_cxx_simple_01_SOURCES = \
+	eolian_cxx_simple_01.cc \
+	colourable.c \
+	colourablesquare.c
 
-eolian_cxx_inherit_01_SOURCES = eolian_cxx_inherit_01.cc $(IMPL)
-eolian_cxx_inherit_01_DEPENDENCIES = $(GENERATED)
+eolian_cxx_simple_01.$(OBJEXT): $(GENERATED)
 
-EOLIAN_GEN = $(top_builddir)/src/bin/eolian/eolian_gen${EXEEXT}
-EOLIAN_CXX = $(top_builddir)/src/bin/eolian_cxx/eolian_cxx${EXEEXT}
-EOLIAN_FLAGS = \
--I$(srcdir) \
--I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/evas/canvas \
--I$(top_srcdir)/src/lib/edje \
--I$(top_srcdir)/src/lib/ecore_audio
+eolian_cxx_inherit_01_SOURCES = \
+	eolian_cxx_inherit_01.cc \
+	colourable.c \
+	colourablesquare.c
 
-SUFFIXES = .eo .eo.c .eo.h .eo.hh
+eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
 
-%.eo.hh: %.eo $(EOLIAN_CXX)
-	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I./$< -o $@
+%.eo.hh: %.eo
+	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I$< -o $@
 
-%.eo.c: %.eo $(EOLIAN_GEN)
+%.eo.c: %.eo
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
 
-%.eo.h: %.eo $(EOLIAN_GEN)
+%.eo.h: %.eo
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o $@ $<
 
 examples: $(EOS) $(GENERATED) $(EXTRA_PROGRAMS)
