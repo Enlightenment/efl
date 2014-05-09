@@ -989,6 +989,8 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
                         _extnbuf_free(extn->b[pn].obuf);
                         extn->b[pn].obuf = NULL;
                      }
+
+                   evas_object_image_colorspace_set(bdata->image, EVAS_COLORSPACE_ARGB8888);
                    if (extn->b[n].buf)
                      {
                         data2 = _extnbuf_data_get(extn->b[n].buf, &w, &h, NULL);
