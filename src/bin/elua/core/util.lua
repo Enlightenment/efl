@@ -179,8 +179,6 @@ ffi.cdef [[
     int isdigit(int c);
 ]]
 
-local char  = string.char
-local tconc = table.concat
 local fmt   = string.format
 local pcall = pcall
 local error = error
@@ -226,6 +224,7 @@ local Str_Buf = ffi.metatype("Str_Buf", {
             self.len = len + 1
         end,
         append_str = function(self, str, strlen)
+            if type(str) == "string" then strlen = strlen or #str end
             local strp = cast("const char*", str)
             strlen = strlen or C.strlen(strp)
             local len = self.len
@@ -240,13 +239,15 @@ local Str_Buf = ffi.metatype("Str_Buf", {
 
 getmetatable("").__mod = function(fmts, params)
     if not fmts then return nil end
-    if type(params) ~= "table" then params = { params } end
-    local s = cast("const char*", fmts)
-    local buf = {}
-    local c
-    c, s = s[0], s + 1
-    local argn = 1
-    local nbuf = Str_Buf()
+    if type(params) ~= "table" then
+        params = { params }
+    end
+
+    local buf, nbuf = Str_Buf(), Str_Buf()
+    local s         = cast("const char*", fmts)
+    local c, s      = s[0], s + 1
+    local argn      = 1
+
     while c ~= 0 do
         if c == 37 then -- %
             c, s = s[0], s + 1
@@ -263,9 +264,9 @@ getmetatable("").__mod = function(fmts, params)
                     c, s = s[0], s + 1
                 end
                 if bytes[c] then
-                    buf[#buf + 1] = n
-                    buf[#buf + 1] = "$"
-                    buf[#buf + 1] = char(c)
+                    buf:append_str(n)
+                    buf:append_char(36) -- $
+                    buf:append_char(c)
                 else
                     nbuf:append_char(c)
                     local idx = tonumber(n) or n
@@ -273,7 +274,7 @@ getmetatable("").__mod = function(fmts, params)
                         params[idx])
                     nbuf:clear()
                     if stat then
-                        buf[#buf + 1] = val
+                        buf:append_str(val)
                     else
                         local argerr = (type(idx) == "number")
                             and ("#" .. idx)
@@ -292,20 +293,20 @@ getmetatable("").__mod = function(fmts, params)
                     params[argn])
                 nbuf:clear()
                 if stat then
-                    buf[#buf + 1] = val
+                    buf:append_str(val)
                 else
                     error("bad argument #" .. argn .. " to '%' "
                         .. val:match("%(.+%)"), 2)
                 end
-                if c then buf[#buf + 1] = char(c) end
+                if c then buf:append_char(c) end
                 argn = argn + 1
             end
         else
-            buf[#buf + 1] = char(c)
+            buf:append_char(c)
         end
         c, s = s[0], s + 1
     end
-    return tconc(buf)
+    return tostr(buf)
 end
 
 return M
