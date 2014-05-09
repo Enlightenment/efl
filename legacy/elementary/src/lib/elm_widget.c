@@ -3869,7 +3869,7 @@ _elm_widget_orientation_set(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      {
         if (elm_widget_is(child))
-          elm_widget_orientation_set(child, orient_mode);
+          eo_do(child, elm_obj_widget_orientation_set(orient_mode));
      }
 
    if (orient_mode != -1)
