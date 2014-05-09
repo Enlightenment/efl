@@ -48,7 +48,7 @@ previews-data: preview_text_filter
 		echo "  GEN      filter_$${a}.png" ; \
 		FONT="Sans" ; \
 		SIZE=24 ; \
-		FILTER=`cat ${top_srcdir}/src/examples/evas/filters/filter_$${a}.txt` ; \
+		FILTER=`cat ${top_srcdir}/src/examples/evas/filters/filter_$${a}.lua` ; \
 		if [ -e ${top_srcdir}/doc/previews/filter_$${a}.sh ] ; then \
 			source ${top_srcdir}/doc/previews/filter_$${a}.sh ; \
 		fi ; \

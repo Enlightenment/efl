@@ -84,7 +84,7 @@
 
   Here is a simple example illustrating the syntax:
 
-  @include filter_example_1.txt
+  @include filter_example_1.lua
 
   This example will display a cyan and dark blue glow surrounding the
   main text (its color depends on the object's theme).
@@ -803,7 +803,7 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
 
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the @a color option should be set.
 
-  @include filter_blend.txt
+  @include filter_blend.lua
 
   <center>
   @image html filter_blend.png
@@ -923,7 +923,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the color option should be set.
 
   @a ox and @a oy can be used to move the blurry output by a few pixels, like a drop shadow. Example:
-  @include filter_blur.txt
+  @include filter_blur.lua
 
   <center>
   @image html filter_blur.png
@@ -985,7 +985,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
   @note As of 2014/02/11, the ALPHA to RGBA support is of much better quality than ALPHA only, but @b very slow. RGBA sources are not supported yet.
 
   Here is a full example of a very simple bevel effect:
-  @include filter_bump.txt
+  @include filter_bump.lua
 
   <center>
   @image html filter_bump.png
@@ -1052,7 +1052,7 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
   If ignored, y(x = 0) is 0 and y(x = 255) is 255.
 
   The following example will generate a 4px thick stroke around text letters:
-  @include filter_curve.txt
+  @include filter_curve.lua
 
   <center>
   @image html filter_curve.png
@@ -1289,7 +1289,7 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
   @param dst     Destination buffer for blending. This must be of same size and colorspace as @a src.
 
   Example:
-  @include filter_grow.txt
+  @include filter_grow.lua
 
   This will first grow the letters in the buffer @c input by a few pixels, and
   then draw this buffer in black in the background.
@@ -1340,7 +1340,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
   Note that @a src and @a mask are interchangeable, if they have the same dimensions.
 
   Example:
-  @include filter_mask.txt
+  @include filter_mask.lua
 
   This will create an inner shadow effect.
 
@@ -1422,7 +1422,7 @@ _transform_padding_update(Evas_Filter_Program *pgm,
   @param oy       Y offset.
 
   Example:
-  @include filter_transform.txt
+  @include filter_transform.lua
 
   This will create a mirrored text effect, for a font of 50px.
 

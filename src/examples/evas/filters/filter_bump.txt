@@ -1,3 +1,0 @@
-buffer : a (alpha);
-blur (5, dst = a);
-bump (map = a, compensate = yes, color = #3399FF, specular = 10.0);

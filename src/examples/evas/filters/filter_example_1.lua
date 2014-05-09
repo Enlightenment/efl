@@ -1,0 +1,5 @@
+fat = buffer ('alpha')
+grow ({ 8, dst = fat })
+blur ({ 12, src = fat, color = 'darkblue' })
+blur ({ 4, color = 'cyan' })
+blend ()

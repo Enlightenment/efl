@@ -1,0 +1,5 @@
+a = buffer ('alpha')
+blur ({ 6, dst = a })
+curve ({ points = '0:255 - 128:255 - 255:0', src = a, dst = a })
+blend ({ color = 'yellow' })
+mask ({ mask = a, color = 'black' })
