@@ -10,7 +10,7 @@
 namespace efl { namespace eolian {
 
 inline void
-generate(std::ostream& out, eo_class cls, eo_generator_options const& opts)
+generate(std::ostream& out, eo_class const& cls, eo_generator_options const& opts)
 {
    grammar::eo_header_generator(out, cls, opts);
 }
