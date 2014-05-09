@@ -283,6 +283,12 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 }
 
 static void
+reorder_mode_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   elm_gengrid_reorder_mode_set(data, elm_check_state_get(obj));
+}
+
+static void
 always_select_mode_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
@@ -322,7 +328,6 @@ create_gengrid(Evas_Object *obj, int items)
    elm_gengrid_item_size_set(grid,
                              elm_config_scale_get() * 200,
                              elm_config_scale_get() * 150);
-   elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "unselected", grid_unselected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
@@ -526,6 +531,15 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_box_horizontal_set(bx, EINA_TRUE);
    elm_box_pack_end(bxx, bx);
    evas_object_show(bx);
+
+   ck = elm_check_add(win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ck, "Reorder mode enable");
+   evas_object_smart_callback_add(ck, "changed", reorder_mode_cb,
+                                  api->grid);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
 
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
@@ -839,7 +853,6 @@ test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                                    elm_config_scale_get() * 31,
                                    elm_config_scale_get() * 31);
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
-   elm_gengrid_reorder_mode_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
    evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
