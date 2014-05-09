@@ -717,6 +717,8 @@ main(int argc, const char *argv[])
         "--no-stats",                   /* no stats                          */
         "--no-inhibit",                 /* we don't want interfaces          */
         "--no-disable-screensaver",     /* we don't want interfaces          */
+        "--codec", "avcodec",
+        "--demux", "avformat"
      };
    vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
 
