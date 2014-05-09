@@ -4276,7 +4276,7 @@ elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
 }
 
 EOLIAN static void
-_elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 
