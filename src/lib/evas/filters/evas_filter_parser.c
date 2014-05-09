@@ -1527,6 +1527,16 @@ _padding_set_padding_update(Evas_Filter_Program *pgm,
   A common use case will be when changing a blur size during an animation, or
   when applying a mask that will hide most of the (blurred) text.
 
+  Example (the @c fill command is used for illustration purposes):
+  @verbinclude filter_padding.lua
+
+  This will set the left, right, top and bottom paddings to their respective values,
+  and some effects may look like they've been "clipped" out.
+
+  <center>
+  @image html filter_padding.png
+  </center>
+
   @since 1.10
  */
 
