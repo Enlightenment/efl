@@ -2517,7 +2517,8 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
 
    if (pd_scene->surface)
      {
-        int  w, h;
+        int w = 0;
+        int h = 0;
 
         if (e->engine.func->drawable_size_get)
           {
