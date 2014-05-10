@@ -1869,6 +1869,12 @@ _item_text_get_hook(const Elm_Object_Item *it,
    return ((Elm_List_Item *)it)->label;
 }
 
+/* FIXME: this _item_del_pre_hook is never been called at all!
+ To fix this,
+ 1. it->walking concept should be adopted.
+ 2. elm_widget_item_del() should be called instead of the combination of
+ _elm_list_item_free() + elm_widget_item_free()
+ */
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
