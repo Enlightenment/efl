@@ -140,7 +140,7 @@ _elm_progressbar_elm_widget_sub_object_del(Eo *obj, Elm_Progressbar_Data *_pd EI
 {
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
-   if(!int_ret) return EINA_FALSE;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
@@ -155,7 +155,7 @@ _elm_progressbar_elm_container_content_set(Eo *obj, Elm_Progressbar_Data *_pd EI
 {
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
-   if(!int_ret) return EINA_FALSE;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 

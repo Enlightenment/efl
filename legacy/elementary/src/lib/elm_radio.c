@@ -125,7 +125,7 @@ _elm_radio_elm_widget_sub_object_del(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, E
 {
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
-   if(!int_ret) return EINA_FALSE;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
@@ -142,7 +142,7 @@ _elm_radio_elm_container_content_set(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, c
 {
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
-   if(!int_ret) return EINA_FALSE;
+   if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 

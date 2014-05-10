@@ -1548,7 +1548,7 @@ _item_focus_up(Elm_Gengrid_Data *sd)
      {
         prev = (Elm_Gen_Item *)elm_gengrid_item_prev_get(sd->focused_item);
         if (!prev) return EINA_FALSE;
-        if(prev == (Elm_Gen_Item *)sd->focused_item) return EINA_FALSE;
+        if (prev == (Elm_Gen_Item *)sd->focused_item) return EINA_FALSE;
      }
 
    for (i = 1; i < sd->nmax; i++)

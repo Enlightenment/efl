@@ -17,7 +17,7 @@ _dbus_package_to_path(const char *pkg)
      {
         if (*pkg == '.')
           eina_strbuf_append_char(buffer, '/');
-        else if(isalnum(*pkg))
+        else if (isalnum(*pkg))
           eina_strbuf_append_char(buffer, *pkg);
         else
           eina_strbuf_append_printf(buffer, "_%02x", *pkg);

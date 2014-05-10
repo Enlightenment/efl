@@ -258,7 +258,7 @@ _elm_clouseau_reload()
    _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, app_connect);
 
    _clouseau_info.init();
-   if(!_clouseau_info.app_connect(elm_app_name_get()))
+   if (!_clouseau_info.app_connect(elm_app_name_get()))
      {
         ERR("Failed connecting to the clouseau server.");
      }

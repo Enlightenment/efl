@@ -402,7 +402,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
 {
    Eina_Bool ret = EINA_FALSE;
    eo_do(obj, ret = elm_obj_image_file_set(drop->data, NULL));
-   if(ret)
+   if (ret)
      {
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
                SIG_DND, (char *)drop->data);

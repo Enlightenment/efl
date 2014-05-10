@@ -1686,7 +1686,7 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
    if (!_taps_rect_get(st->l, 0, &base))
      return EINA_FALSE;  /* Should not happen */
 
-   for(i = 1; i < st->n_taps_needed; i++)
+   for (i = 1; i < st->n_taps_needed; i++)
      {  /* Compare all other rects to base, tolerance is finger size */
         if (_taps_rect_get(st->l, i, &tmp))
           {

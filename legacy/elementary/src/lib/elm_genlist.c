@@ -2625,7 +2625,7 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
           {
              if (dir == ELM_FOCUS_UP)
                it = elm_genlist_last_item_get(obj);
-            else if(dir == ELM_FOCUS_DOWN)
+            else if (dir == ELM_FOCUS_DOWN)
                it = elm_genlist_first_item_get(obj);
 
              if (it && focus_only)

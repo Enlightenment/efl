@@ -1617,7 +1617,7 @@ _palette_box_vertical_item_get(Eina_List* ref_item, enum Palette_Box_Direction d
 
    if (!ref_item) return NULL;
 
-   switch(dir)
+   switch (dir)
      {
         case PALETTE_BOX_UP:
           dir_func = eina_list_prev;

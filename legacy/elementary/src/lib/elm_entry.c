@@ -4089,7 +4089,7 @@ _elm_entry_context_menu_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 EAPI const char *
 elm_entry_context_menu_item_label_get(const Elm_Entry_Context_Menu_Item *item)
 {
-   if(!item) return NULL;
+   if (!item) return NULL;
    return item->label;
 }
 
@@ -4099,7 +4099,7 @@ elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item,
                                      const char **icon_group,
                                      Elm_Icon_Type *icon_type)
 {
-   if(!item) return;
+   if (!item) return;
    if (icon_file) *icon_file = item->icon_file;
    if (icon_group) *icon_group = item->icon_group;
    if (icon_type) *icon_type = item->icon_type;

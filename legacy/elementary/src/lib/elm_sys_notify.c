@@ -70,7 +70,7 @@ _get_capabilities_cb(void *data EINA_UNUSED,
    if (eldbus_message_error_get(msg, NULL, NULL) ||
        !eldbus_message_arguments_get(msg, "as", &arr)) goto end;
 
-   while(eldbus_message_iter_get_and_next(arr, 's', &val))
+   while (eldbus_message_iter_get_and_next(arr, 's', &val))
      if (!strcmp(val, "body-markup"))
        {
           _has_markup = EINA_TRUE;

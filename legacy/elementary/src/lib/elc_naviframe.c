@@ -996,8 +996,8 @@ _elm_naviframe_elm_container_content_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UN
 
    elm_object_item_part_content_set(it, part, content);
 
-   if(content == elm_object_item_part_content_get(it, part))
-      return EINA_TRUE;
+   if (content == elm_object_item_part_content_get(it, part))
+     return EINA_TRUE;
 
    return EINA_FALSE;
 }

@@ -819,7 +819,7 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
         evas_object_smart_callback_call(obj, SIG_CLIPBOARD_STATE_OFF, NULL);
      }
-   else if(state == ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
+   else if (state == ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
      {
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);

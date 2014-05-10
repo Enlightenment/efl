@@ -1679,7 +1679,7 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
         return EINA_FALSE;
      }
 
-   switch(type)
+   switch (type)
     {
      case ATSPI_OBJECT_CHILD_ADDED:
         atspi_desc = "add";

@@ -2342,7 +2342,7 @@ _elm_widget_focus_list_next_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED,
    focused_object = elm_widget_focused_object_get(obj);
    if (focused_object)
      {
-        if((dir == ELM_FOCUS_UP)
+        if ((dir == ELM_FOCUS_UP)
            || (dir == ELM_FOCUS_DOWN)
            || (dir == ELM_FOCUS_RIGHT)
            || (dir == ELM_FOCUS_LEFT))

@@ -538,7 +538,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         msg = alloca(sizeof(Edje_Message_Float_Set) + sizeof(double));
         msg->count = 2;
         //Orient calculations if orient set
-        switch(tt->orient)
+        switch (tt->orient)
           {
            case ELM_TOOLTIP_ORIENT_TOP_LEFT:
              evas_object_move(tt->tooltip, ox - tw, oy - th);

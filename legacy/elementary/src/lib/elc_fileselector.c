@@ -1271,7 +1271,7 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
         it = elm_genlist_first_item_get(sd->files_view);
-        while(it)
+        while (it)
           {
              if (!strcmp(elm_object_item_data_get(it), event->filename))
                {
@@ -1284,7 +1284,7 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
    else
      {
         it = elm_gengrid_first_item_get(sd->files_view);
-        while(it)
+        while (it)
           {
              if (!strcmp(elm_object_item_data_get(it), event->filename))
                {

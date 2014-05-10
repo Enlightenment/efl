@@ -4268,7 +4268,7 @@ _cont_obj_anim_start(void *data)
 
    if (st->data_get)
      {  /* collect info then start animation or start dragging */
-        if(st->data_get(    /* Collect drag info */
+        if (st->data_get(    /* Collect drag info */
                  st->obj,      /* The container object */
                  it,           /* Drag started on this item */
                  &st->user_info))
