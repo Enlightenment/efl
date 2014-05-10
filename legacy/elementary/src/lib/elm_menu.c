@@ -1112,7 +1112,7 @@ elm_menu_item_subitems_clear(Elm_Object_Item *it)
    ELM_MENU_ITEM_CHECK_OR_RETURN(it);
    EINA_LIST_FOREACH_SAFE(((Elm_Menu_Item *)it)->submenu.items,
                           l, l_next, sub_it)
-     elm_object_item_del(sub_it);
+     elm_widget_item_del(sub_it);
 }
 
 EOLIAN static const Eina_List*

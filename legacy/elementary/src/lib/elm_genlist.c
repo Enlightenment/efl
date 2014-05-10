@@ -728,7 +728,7 @@ _item_sub_items_clear(Elm_Gen_Item *it)
    EINA_LIST_FOREACH(it->item->items, l, it2)
      tl = eina_list_append(tl, it2);
    EINA_LIST_FREE(tl, it2)
-     elm_object_item_del(it2);
+     elm_widget_item_del(it2);
 }
 
 static void

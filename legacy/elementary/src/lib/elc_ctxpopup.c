@@ -1041,14 +1041,16 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    if (eina_list_count(elm_list_items_get(list)) < 2)
      {
-        elm_object_item_del(ctxpopup_it->list_item);
+        if (ctxpopup_it->list_item)
+          elm_widget_item_del(ctxpopup_it->list_item);
         sd->items = eina_list_remove(sd->items, ctxpopup_it);
         evas_object_hide(WIDGET(ctxpopup_it));
 
         return EINA_TRUE;
      }
 
-   elm_object_item_del(ctxpopup_it->list_item);
+   if (ctxpopup_it->list_item)
+     elm_widget_item_del(ctxpopup_it->list_item);
    sd->items = eina_list_remove(sd->items, ctxpopup_it);
    if (sd->list_visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
 

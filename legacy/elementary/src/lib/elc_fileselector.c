@@ -1295,7 +1295,7 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
           }
      }
 
-   if (it) elm_object_item_del(it);
+   if (it) elm_widget_item_del(it);
 
    if (selected)
      {
