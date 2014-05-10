@@ -2783,9 +2783,9 @@ _elm_entry_elm_container_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, c
 EOLIAN static Evas_Object*
 _elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *part)
 {
-   Evas_Object *int_content = NULL;
-   eo_do_super(obj, MY_CLASS, int_content = elm_obj_container_content_unset(part));
-   if (!int_content) return NULL;
+   Evas_Object *ret = NULL;
+   eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset(part));
+   if (!ret) return NULL;
 
    /* too bad entry does not follow the pattern
     * "elm,state,{icon,end},hidden", we have to repeat ourselves */
@@ -2795,7 +2795,7 @@ _elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED,
    if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
      elm_entry_end_visible_set(obj, EINA_FALSE);
 
-   return int_content;
+   return ret;
 }
 
 EOLIAN static Eina_Bool

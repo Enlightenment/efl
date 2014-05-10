@@ -300,21 +300,21 @@ _elm_panel_elm_container_content_get(Eo *obj, Elm_Panel_Data *sd, const char *pa
 EOLIAN static Evas_Object*
 _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *part)
 {
-   Evas_Object *content = NULL;
+   Evas_Object *ret = NULL;
 
    if (part && strcmp(part, "default"))
      {
-        eo_do_super(obj, MY_CLASS, content = elm_obj_container_content_unset(part));
-        return content;
+        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset(part));
+        return ret;
      }
 
    if (!sd->content) return NULL;
-   content = sd->content;
+   ret = sd->content;
 
    evas_object_box_remove_all(sd->bx, EINA_FALSE);
    sd->content = NULL;
 
-   return content;
+   return ret;
 }
 
 EOLIAN static void

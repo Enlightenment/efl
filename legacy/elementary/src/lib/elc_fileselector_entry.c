@@ -260,9 +260,9 @@ _elm_fileselector_entry_elm_container_content_unset(Eo *obj, Elm_Fileselector_En
 {
    if (part && strcmp(part, "button icon"))
      {
-        Evas_Object *int_ret = NULL;
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_unset(part));
-        return int_ret;
+        Evas_Object *ret = NULL;
+        eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset(part));
+        return ret;
      }
 
    return elm_layout_content_unset(sd->button, NULL);

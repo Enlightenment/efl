@@ -474,17 +474,17 @@ _elm_hover_elm_container_content_get(Eo *obj, Elm_Hover_Data *sd, const char *sw
 EOLIAN static Evas_Object*
 _elm_hover_elm_container_content_unset(Eo *obj, Elm_Hover_Data *sd, const char *swallow)
 {
-   Evas_Object *int_ret = NULL;
+   Evas_Object *ret = NULL;
 
    if (!swallow) return NULL;
 
    if (!strcmp(swallow, "smart"))
-      eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_unset
+      eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset
             (sd->smt_sub->swallow));
    else
-      eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_unset
+      eo_do_super(obj, MY_CLASS, ret = elm_obj_container_content_unset
             (swallow));
-   return int_ret;
+   return ret;
 }
 
 static void
