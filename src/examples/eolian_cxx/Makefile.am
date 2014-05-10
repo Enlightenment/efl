@@ -83,7 +83,6 @@ EXTRA_PROGRAMS = \
 	eolian_cxx_inherit_01
 
 DATA_FILES = Makefile.examples $(EOS)
-CLEANFILES =
 
 eolian_cxx_simple_01_SOURCES = \
 	eolian_cxx_simple_01.cc \

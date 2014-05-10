@@ -19,26 +19,11 @@ _isvalid(const std::string& name)
    return name.size() > 0 and isalpha(name[0]);
 }
 
-#ifdef DEBUG
-inline void
-_dbg(const std::string& msg)
-{
-   std::cerr << "eo_validate() - " << msg << std::endl;
-}
-#else
-inline void
-_dbg(const std::string&)
-{
-}
-#endif
-
 inline void
 eo_class_validate(const eo_class& cls)
 {
-   _dbg("class name... " + cls.name);
    assert(_isvalid(cls.name));
 
-   _dbg("class type... " + cls.type);
    assert(cls.type != eo_class::regular_ ||
           cls.type != eo_class::regular_noninst_ ||
           cls.type != eo_class::interface_ ||
@@ -53,13 +38,10 @@ eo_class_validate(const eo_class& cls)
            parameters_container_type::const_iterator
              param = (*it).params.begin(),
              last_param = (*it).params.end();
-           _dbg("constructor... " + (*it).name);
            assert(_isvalid((*it).name));
            for (; param != last_param; ++param)
              {
-                _dbg("constructor parameter... " + (*param).name);
                 assert(_isvalid((*param).name));
-                _dbg("constructor parameter type... " + (*param).type);
                 assert(_isvalid((*param).type));
              }
         }
@@ -71,20 +53,15 @@ eo_class_validate(const eo_class& cls)
         last  = cls.functions.end();
       for (it = first; it != last; ++it)
         {
-           _dbg("function... " + (*it).name);
            assert(_isvalid((*it).name));
-           _dbg("function api... " + (*it).impl);
            assert(_isvalid((*it).impl));
-           _dbg("function return... " + (*it).ret);
            assert(_isvalid((*it).ret));
            parameters_container_type::const_iterator
              param = (*it).params.begin(),
              last_param = (*it).params.end();
            for (; param != last_param; ++param)
              {
-                _dbg("function parameter... " + (*param).name);
                 assert(_isvalid((*param).name));
-                _dbg("function parameter type... " + (*param).type);
                 assert(_isvalid((*param).type));
              }
         }
