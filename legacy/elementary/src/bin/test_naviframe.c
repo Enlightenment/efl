@@ -59,6 +59,59 @@ _promote(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 }
 
 void
+_page8(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *bt, *bt2, *content, *nf = data;
+   Elm_Object_Item *it;
+
+   bt = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt, "Page 7");
+
+   bt2 = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt2, "Page 1");
+   evas_object_smart_callback_add(bt2, "clicked", _promote,
+                                  evas_object_data_get(nf, "page1"));
+   content = _content_new(nf, img6);
+   it = elm_naviframe_item_push(nf, "Page 8", bt, bt2, content, NULL);
+   elm_object_item_part_text_set(it, "subtitle", "Overlap style!");
+
+   evas_object_smart_callback_add(bt, "clicked", _navi_pop, nf);
+}
+
+static void
+_page7_btn_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+                   void *event_info EINA_UNUSED)
+{
+   evas_object_color_set(obj, 100, 0, 0, 100);
+   _page8(data, NULL, NULL);
+}
+
+static void
+_page7_btn_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
+                 void *event_info EINA_UNUSED)
+{
+   evas_object_color_set(obj, 255, 255, 255, 255);
+   printf("Page7 Button Mouse Up!\n");
+}
+
+Evas_Object *
+_page7_content_new(Evas_Object *nf)
+{
+   Evas_Object *bt;
+
+   bt = elm_button_add(nf);
+   elm_object_text_set(bt, "Page 8");
+   evas_object_event_callback_add(bt, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _page7_btn_down_cb, nf);
+   evas_object_event_callback_add(bt, EVAS_CALLBACK_MOUSE_UP,
+                                  _page7_btn_up_cb, NULL);
+
+   return bt;
+}
+
+void
 _page7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt, *bt2, *content, *nf = data;
@@ -70,10 +123,9 @@ _page7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   BUTTON_TEXT_SET(bt2, "Page 1");
-   evas_object_smart_callback_add(bt2, "clicked", _promote,
-                                  evas_object_data_get(nf, "page1"));
-   content = _content_new(nf, img6);
+   BUTTON_TEXT_SET(bt2, "Page 8");
+   evas_object_smart_callback_add(bt2, "clicked", _page8, nf);
+   content = _page7_content_new(nf);
    it = elm_naviframe_item_push(nf, "Page 7", bt, bt2, content, "overlap");
    elm_object_item_part_text_set(it, "subtitle", "Overlap style!");
 
