@@ -4,6 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 modules=@libdir@/ecore
 module_arch=@MODULE_ARCH@
+datarootdir=@datarootdir@
+datadir=@datadir@
 eoincludedir=@datadir@/eolian/include
 eolian_flags=-I${eoincludedir}/ecore-@VMAJ@
 
