@@ -429,15 +429,18 @@ _evas_3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *p
 EOLIAN static Evas_3D_Color_Format
 _evas_3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
 {
-   Evas_3D_Color_Format format;
+   // FIXME: we need an unknown color format and unify that with Evas color space to
+   Evas_3D_Color_Format format = -1;
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CLASS);
+
    if (e->engine.func->texture_color_format_get)
      {
         e->engine.func->texture_color_format_get(e->engine.data.output,
                                                  pd->engine_data, &format);
      }
+
    return format;
 }
 
