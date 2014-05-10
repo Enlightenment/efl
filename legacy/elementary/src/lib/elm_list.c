@@ -73,6 +73,18 @@ static const Elm_Action key_actions[] = {
 static inline void
 _elm_list_item_free(Elm_List_Item *it)
 {
+   ELM_LIST_DATA_GET(WIDGET(it), sd);
+
+   if (sd->focused_item == (Elm_Object_Item *)it)
+     sd->focused_item = NULL;
+   if (sd->last_focused_item == (Elm_Object_Item *)it)
+     sd->last_focused_item = NULL;
+   if (sd->prev_focused_item == (Elm_Object_Item *)it)
+     sd->prev_focused_item = NULL;
+   if (sd->last_selected_item == (Elm_Object_Item *)it)
+     sd->last_selected_item = NULL;
+
+
    evas_object_event_callback_del_full
      (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, it);
    evas_object_event_callback_del_full
@@ -1880,15 +1892,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
      }
 
    sd->items = eina_list_remove_list(sd->items, item->node);
-
-   if (sd->focused_item == (Elm_Object_Item *)it)
-     sd->focused_item = NULL;
-   if (sd->last_focused_item == (Elm_Object_Item *)it)
-     sd->last_focused_item = NULL;
-   if (sd->prev_focused_item == (Elm_Object_Item *)it)
-     sd->prev_focused_item = NULL;
-   if (sd->last_selected_item == (Elm_Object_Item *)it)
-     sd->last_selected_item = NULL;
 
    evas_object_ref(obj);
    _elm_list_walk(sd);
