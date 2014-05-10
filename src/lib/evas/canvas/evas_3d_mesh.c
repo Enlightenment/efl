@@ -682,7 +682,7 @@ _mesh_frame_find(Evas_3D_Mesh_Data *mesh, int frame,
                  Eina_List **l, Eina_List **r)
 {
    Eina_List *left, *right;
-   Evas_3D_Mesh_Frame *f0, *f1;
+   Evas_3D_Mesh_Frame *f0 = NULL, *f1;
 
    left = mesh->frames;
    right = eina_list_next(left);
@@ -701,7 +701,7 @@ _mesh_frame_find(Evas_3D_Mesh_Data *mesh, int frame,
 
    if (right == NULL)
      {
-        if (frame <= f0->frame)
+        if (f0 && frame <= f0->frame)
           {
              *l = NULL;
              *r = left;
