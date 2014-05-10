@@ -25,18 +25,6 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 PKG_PROG_PKG_CONFIG
 
 MODULE_EDJE=`pkg-config --variable=module_arch edje`
-if test -z "$MODULE_EDJE"; then
-   # Backward compatibility -- TODO: remove when EFL 1.8 is released.
-   EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.%s.%s", $1, $2, $3);}'`
-   case "$host_os" in
-     mingw32ce* | cegcc*)
-       MODULE_EDJE="$host_os-$host_cpu"
-       ;;
-     *)
-       MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
-       ;;
-   esac
-fi
 AC_SUBST(MODULE_EDJE)
 AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
 
