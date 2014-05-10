@@ -484,7 +484,6 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
      goto error;
 
    drawable = (E3D_Drawable *)calloc(1, sizeof(E3D_Drawable));
-
    if (drawable == NULL)
      goto error;
 
@@ -530,9 +529,6 @@ error:
 
    if (stencil_buf)
      glDeleteRenderbuffers(1, &stencil_buf);
-
-   if (drawable)
-     free(drawable);
 
    return NULL;
 }
