@@ -1007,6 +1007,7 @@ class Evas_Image (Evas_Object)
 
             @see evas_object_image_scene_set
             @since 1.10 */
+	    legacy null;
          }
          get {
             /*@
@@ -1018,6 +1019,7 @@ class Evas_Image (Evas_Object)
 
             @see evas_object_image_scene_get
             @since 1.10 */
+	    legacy null;
          }
          values {
             Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
