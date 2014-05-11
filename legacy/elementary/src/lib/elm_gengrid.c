@@ -911,8 +911,6 @@ _item_realize(Elm_Gen_Item *it)
    if (it->mouse_cursor)
      elm_widget_item_cursor_set(it, it->mouse_cursor);
 
-   _elm_widget_item_highlight_in_theme(WIDGET(it), (Elm_Object_Item *)it);
-
    it->realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
 }
@@ -2917,6 +2915,9 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
              if (sd->focused_item)
                _elm_gengrid_item_unfocused((Elm_Gen_Item *)sd->focused_item);
              _elm_gengrid_item_focused((Elm_Gen_Item *)it);
+
+             _elm_widget_item_highlight_in_theme(obj, (Elm_Object_Item *)it);
+             _elm_widget_highlight_in_theme_update(obj);
              _elm_widget_focus_highlight_start(obj);
           }
      }

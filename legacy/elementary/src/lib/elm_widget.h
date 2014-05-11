@@ -521,7 +521,9 @@ void                  _elm_access_widget_item_access_order_set(Elm_Widget_Item *
 const Eina_List      *_elm_access_widget_item_access_order_get(const Elm_Widget_Item *item);
 void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item *item);
 void                  _elm_widget_focus_highlight_start(const Evas_Object *obj);
+void                  _elm_widget_highlight_in_theme_update(Eo *obj);
 void                  _elm_win_focus_highlight_start(Evas_Object *obj);
+void                   _elm_win_focus_highlight_in_theme_update(Evas_Object *obj, Eina_Bool in_theme);
 
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);

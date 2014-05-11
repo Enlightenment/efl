@@ -820,6 +820,9 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
         if (it)
           _elm_toolbar_item_unfocused((Elm_Toolbar_Item *)it);
      }
+
+   _elm_widget_item_highlight_in_theme(obj, (Elm_Object_Item *)it);
+   _elm_widget_highlight_in_theme_update(obj);
    _elm_widget_focus_highlight_start(obj);
 }
 

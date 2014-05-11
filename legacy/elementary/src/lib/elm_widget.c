@@ -1387,6 +1387,18 @@ _elm_widget_highlight_in_theme_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *s
    /* FIXME: if focused, it should switch from one mode to the other */
 }
 
+void
+_elm_widget_highlight_in_theme_update(Eo *obj)
+{
+   Evas_Object *top = elm_widget_top_get(obj);
+
+   if (top && eo_isa(top, ELM_OBJ_WIN_CLASS))
+     {
+        _elm_win_focus_highlight_in_theme_update(
+           top, elm_widget_highlight_in_theme_get(obj));
+     }
+}
+
 EOLIAN static Eina_Bool
 _elm_widget_highlight_in_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {

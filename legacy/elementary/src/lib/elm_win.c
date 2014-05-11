@@ -4745,6 +4745,13 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 }
 
 void
+_elm_win_focus_highlight_in_theme_update(Evas_Object *obj, Eina_Bool in_theme)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+   sd->focus_highlight.cur.in_theme = !!in_theme;
+}
+
+void
 _elm_win_focus_highlight_start(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
