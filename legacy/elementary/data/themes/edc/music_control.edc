@@ -1,4 +1,5 @@
 group { name: "e/modules/music-control/icon";
+   alias: "modules/music-control/icon";
    max: 24 24;
    images.image: "music_control_icon.png" COMP;
    parts {
@@ -12,6 +13,7 @@ group { name: "e/modules/music-control/icon";
 }
 
 group { name: "e/modules/music-control/main";
+   alias: "modules/music-control/main";
    images.image: "music_control_icon.png" COMP;
    parts {
       part { name: "icon";
@@ -24,6 +26,7 @@ group { name: "e/modules/music-control/main";
 }
 
 group { name: "e/modules/music-control/popup";
+   alias: "modules/music-control/popup";
    min: 150 50;
    images.image: "icon_prev.png" COMP;
    images.image: "icon_next.png" COMP;
