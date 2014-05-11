@@ -259,9 +259,7 @@ group { name: "e/deskmirror/frame/default";
          signal: "e,state,focused"; source: "e";
          script {
             custom_state(PART:"top", "default", 0.0);
-#ifdef EFL_VERSION_MAJOR
             set_state_val(PART:"top", STATE_IMAGE, get_image_id("vgrad_med_dark.png"));
-#endif
             set_state(PART:"top", "custom", 0.0);
          }
       }
@@ -270,9 +268,7 @@ group { name: "e/deskmirror/frame/default";
          signal: "e,state,unfocused"; source: "e";
          script {
             custom_state(PART:"top", "default", 0.0);
-#ifdef EFL_VERSION_MAJOR
             set_state_val(PART:"top", STATE_IMAGE, get_image_id("vgrad_med_lighter.png"));
-#endif
             set_state(PART:"top", "custom", 0.0);
          }
       }
