@@ -796,6 +796,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.offset: -2 -7;
             rel2.relative: 0.0 1.0;
             text.text_class: "hoversel";
+            text.ellipsis: -1;
             color3: 255 255 255 255;
          }
          description { state: "visible" 0.0;
