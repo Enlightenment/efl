@@ -1092,7 +1092,7 @@ _elm_list_item_focused(Elm_List_Item *it)
      return;
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
    evas_object_geometry_get(sd->hit_rect, &sx, &sy, &sw, &sh);
-   if ((x < sx) || (y < sy)|| ((x + w) > (sx + sw)) || ((y + h) > (sy + sh)))
+   if (!ELM_RECTS_INCLUDE(sx, sy, sw, sh, x, y, w, h))
      {
         switch (_elm_config->focus_autoscroll_mode)
           {
