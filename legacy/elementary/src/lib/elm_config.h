@@ -551,24 +551,48 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
 EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
 
 /**
- * Get enable status of focus auto scroll bring in.
+ * Focus Autoscroll Mode
  *
- * @see elm_config_focus_auto_scroll_bring_in_enabled_set()
- * @ingroup Focus
  * @since 1.10
+ * @ingroup Focus
  */
-EAPI Eina_Bool    elm_config_focus_auto_scroll_bring_in_enabled_get(void);
+typedef enum
+{
+   ELM_FOCUS_AUTOSCROLL_MODE_SHOW, /**< directly show the focused region or item automatically */
+   ELM_FOCUS_AUTOSCROLL_MODE_NONE, /**< do not show the focused region or item automatically */
+   ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN /**< bring_in the focused region or item automatically which might invole the scrolling */
+} Elm_Focus_Autoscroll_Mode;
 
 /**
- * Set enable status of focus auto scroll bring in.
+ * Get focus auto scroll mode.
  *
- * @param enabled enable scroll bring in if @c EINA_TRUE, disable otherwise
+ * When a region or an item is focused and it resides inside any scroller,
+ * elementary will automatically scroll the focused area to the visible
+ * viewport.
  *
- * @see elm_config_focus_auto_scroll_bring_in_enabled_get()
+ * @see elm_config_focus_autoscroll_mode_set()
  * @ingroup Focus
  * @since 1.10
  */
-EAPI void         elm_config_focus_auto_scroll_bring_in_enabled_set(Eina_Bool enabled);
+EAPI Elm_Focus_Autoscroll_Mode elm_config_focus_autoscroll_mode_get(void);
+
+/**
+ * Set focus auto scroll mode.
+ *
+ * @param mode focus auto scroll mode. This can be one of the
+ * Elm_Focus_Autoscroll_Mode enum values.
+ *
+ * When a region or an item is focused and it resides inside any scroller,
+ * elementary will automatically scroll the focused area to the visible
+ * viewport.
+ * Focus auto scroll mode is set to @c ELM_FOCUS_AUTOSCROLL_MODE_SHOW by
+ * default historically.
+ *
+ * @see elm_config_focus_autoscroll_mode_get()
+ * @ingroup Focus
+ * @since 1.10
+ */
+EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode mode);
 
 /**
  * @}

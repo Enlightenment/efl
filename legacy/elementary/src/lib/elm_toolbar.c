@@ -601,12 +601,20 @@ _elm_toolbar_item_focused(Elm_Toolbar_Item *it)
      return;
 
    sd->focused_item = it;
-   if (!_elm_config->focus_auto_scroll_bring_in_enable)
-     elm_toolbar_item_show((Elm_Object_Item *)it,
-                           ELM_TOOLBAR_ITEM_SCROLLTO_IN);
-   else
-     elm_toolbar_item_bring_in((Elm_Object_Item *)it,
+   switch (_elm_config->focus_autoscroll_mode)
+     {
+      case ELM_FOCUS_AUTOSCROLL_MODE_SHOW:
+         elm_toolbar_item_show((Elm_Object_Item *)it,
                                ELM_TOOLBAR_ITEM_SCROLLTO_IN);
+         break;
+      case ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN:
+         elm_toolbar_item_bring_in((Elm_Object_Item *)it,
+                                   ELM_TOOLBAR_ITEM_SCROLLTO_IN);
+         break;
+      default:
+         break;
+     }
+
    if (elm_widget_focus_highlight_enabled_get(obj))
      {
         edje_object_signal_emit

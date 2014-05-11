@@ -1487,12 +1487,20 @@ _elm_gengrid_item_focused(Elm_Gen_Item *it)
        (elm_widget_item_disabled_get(it)))
      return;
 
-   if (!_elm_config->focus_auto_scroll_bring_in_enable)
-     elm_gengrid_item_show
+   switch (_elm_config->focus_autoscroll_mode)
+     {
+      case ELM_FOCUS_AUTOSCROLL_MODE_SHOW:
+         elm_gengrid_item_show
             ((Elm_Object_Item *)it, ELM_GENGRID_ITEM_SCROLLTO_IN);
-   else
-     elm_gengrid_item_bring_in
+         break;
+      case ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN:
+         elm_gengrid_item_bring_in
             ((Elm_Object_Item *)it, ELM_GENGRID_ITEM_SCROLLTO_IN);
+         break;
+      default:
+         break;
+     }
+
    sd->focused_item = (Elm_Object_Item *)it;
 
    if (elm_widget_focus_highlight_enabled_get(obj))

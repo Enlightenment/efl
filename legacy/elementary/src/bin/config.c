@@ -1591,18 +1591,6 @@ _config_focus_highlight_clip_cb(void *data EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_config_focus_auto_scroll_bring_in_cb(void *data EINA_UNUSED, Evas_Object *obj,
-                                      void *event_info EINA_UNUSED)
-{
-   Eina_Bool cf = elm_config_focus_auto_scroll_bring_in_enabled_get();
-   Eina_Bool val = elm_check_state_get(obj);
-
-   if (cf == val) return;
-   elm_config_focus_auto_scroll_bring_in_enabled_set(val);
-   elm_config_all_flush();
-}
-
-static void
 _config_focus_item_select_on_focus_cb(void *data EINA_UNUSED, Evas_Object *obj,
                                       void *event_info EINA_UNUSED)
 {
@@ -1615,10 +1603,18 @@ _config_focus_item_select_on_focus_cb(void *data EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
+_status_config_focus_autoscroll_changed_cb(void *data EINA_UNUSED,
+                                           Evas_Object *obj,
+                                           void *event_info EINA_UNUSED)
+{
+   elm_config_focus_autoscroll_mode_set(elm_radio_value_get(obj));
+}
+
+static void
 _status_config_focus(Evas_Object *win,
                      Evas_Object *naviframe)
 {
-   Evas_Object *bx, *ck;
+   Evas_Object *bx, *ck, *fr;
 
    bx = elm_box_add(win);
 
@@ -1642,18 +1638,68 @@ _status_config_focus(Evas_Object *win,
              _config_focus_highlight_clip_cb, NULL);
    elm_check_state_set(ck, elm_config_focus_highlight_clip_disabled_get());
 
-   CHECK_ADD("Enable Auto Scroll Bring-in",
-             "Set whether enable/disable auto scroll bring-in feature<br/>"
-             "This is disabled by default so auto scrolling works by show not"
-             "by bring-in.",
-             _config_focus_auto_scroll_bring_in_cb, NULL);
-   elm_check_state_set(ck, elm_config_focus_auto_scroll_bring_in_enabled_get());
-
    CHECK_ADD("Disable Item Select on Focus",
              "Set whether item would be selected on item focus.<br/>"
              "This is enabled by default.",
              _config_focus_item_select_on_focus_cb, NULL);
    elm_check_state_set(ck, elm_config_item_select_on_focus_disabled_get());
+
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Focus Autoscroll Mode");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+     {
+        Evas_Object *bx2, *rdg, *rd;
+        bx2 = elm_box_add(fr);
+        elm_object_content_set(fr, bx2);
+        evas_object_show(bx2);
+
+        rdg = rd = elm_radio_add(bx2);
+        elm_radio_state_value_set(rd, ELM_FOCUS_AUTOSCROLL_MODE_SHOW);
+        elm_object_text_set(rd, "ELM_FOCUS_AUTOSCROLL_MODE_SHOW");
+        elm_object_tooltip_text_set(rd, "Directly show the focused region<br/>"
+                                    "or item automatically inside a scroller.");
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+        elm_box_pack_end(bx2, rd);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed",
+                                       _status_config_focus_autoscroll_changed_cb,
+                                       NULL);
+
+        rd = elm_radio_add(bx2);
+        elm_radio_state_value_set(rd, ELM_FOCUS_AUTOSCROLL_MODE_NONE);
+        elm_object_text_set(rd, "ELM_FOCUS_AUTOSCROLL_MODE_NONE");
+        elm_object_tooltip_text_set(rd, "Do not show the focused region or<br/>"
+                                    "item automatically inside a scroller.");
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+        elm_box_pack_end(bx2, rd);
+        elm_radio_group_add(rd, rdg);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed",
+                                       _status_config_focus_autoscroll_changed_cb,
+                                       NULL);
+
+
+        rd = elm_radio_add(bx2);
+        elm_radio_state_value_set(rd, ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN);
+        elm_object_text_set(rd, "ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN");
+        elm_object_tooltip_text_set(rd, "Bring in the focused region or item<br/>"
+                                    "automatically which might invole the scrolling.");
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+        elm_box_pack_end(bx2, rd);
+        elm_radio_group_add(rd, rdg);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed",
+                                       _status_config_focus_autoscroll_changed_cb,
+                                       NULL);
+
+        elm_radio_value_set(rdg, elm_config_focus_autoscroll_mode_get());
+     }
 
    evas_object_data_set(win, "focus", bx);
 

@@ -528,7 +528,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_highlight_animate, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_highlight_clip_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_move_policy, T_UCHAR);
-   ELM_CONFIG_VAL(D, T, focus_auto_scroll_bring_in_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, focus_autoscroll_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, item_select_on_focus_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
@@ -2027,8 +2027,16 @@ _env_get(void)
    if (s) _elm_config->scroll_smooth_future_time = _elm_atof(s);
    s = getenv("ELM_SCROLL_SMOOTH_TIME_WINDOW");
    if (s) _elm_config->scroll_smooth_time_window = _elm_atof(s);
-   s = getenv("ELM_FOCUS_AUTO_SCROLL_BRING_IN_ENABLE");
-   if (s) _elm_config->focus_auto_scroll_bring_in_enable = !!atoi(s);
+   s = getenv("ELM_FOCUS_AUTOSCROLL_MODE");
+   if (s)
+     {
+        if (!strcmp(s, "ELM_FOCUS_AUTOSCROLL_MODE_NONE"))
+          _elm_config->focus_autoscroll_mode = ELM_FOCUS_AUTOSCROLL_MODE_NONE;
+        else if (!strcmp(s, "ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN"))
+          _elm_config->focus_autoscroll_mode = ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN;
+        else
+          _elm_config->focus_autoscroll_mode = ELM_FOCUS_AUTOSCROLL_MODE_SHOW;
+     }
 
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
@@ -2926,16 +2934,16 @@ elm_config_scroll_thumbscroll_acceleration_weight_set(double weight)
    _elm_config->thumbscroll_acceleration_weight = weight;
 }
 
-EAPI Eina_Bool
-elm_config_focus_auto_scroll_bring_in_enabled_get(void)
+EAPI Elm_Focus_Autoscroll_Mode
+elm_config_focus_autoscroll_mode_get(void)
 {
-   return _elm_config->focus_auto_scroll_bring_in_enable;
+   return _elm_config->focus_autoscroll_mode;
 }
 
 EAPI void
-elm_config_focus_auto_scroll_bring_in_enabled_set(Eina_Bool enabled)
+elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode mode)
 {
-   _elm_config->focus_auto_scroll_bring_in_enable = !!enabled;
+   _elm_config->focus_autoscroll_mode = mode;
 }
 
 EAPI void

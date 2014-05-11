@@ -3807,12 +3807,75 @@ _focus_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
    printf("Button clicked: %s\n", (char *)data);
 }
 
-static void
-_gl_focus_bring_in_changed_cb(void *data EINA_UNUSED,
-                              Evas_Object *obj,
-                              void *event_info EINA_UNUSED)
+void
+_focus_autoscroll_changed_cb(void *data EINA_UNUSED,
+                             Evas_Object *obj,
+                             void *event_info EINA_UNUSED)
 {
-   elm_config_focus_auto_scroll_bring_in_enabled_set(elm_check_state_get(obj));
+   elm_config_focus_autoscroll_mode_set(elm_radio_value_get(obj));
+}
+
+/* this function is used in another tests such as list, gengrid, and toolbar. */
+Evas_Object *
+_focus_autoscroll_mode_frame_create(Evas_Object *parent)
+{
+   Evas_Object *fr, *bx, *rdg, *rd;
+
+   fr = elm_frame_add(parent);
+   elm_object_text_set(fr, "Focus Autoscroll Mode");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   rdg = rd = elm_radio_add(bx);
+   elm_radio_state_value_set(rd, ELM_FOCUS_AUTOSCROLL_MODE_SHOW);
+   elm_object_text_set(rd, "ELM_FOCUS_AUTOSCROLL_MODE_SHOW");
+   elm_object_tooltip_text_set(rd, "Directly show the focused region<br/>"
+                               "or item automatically inside a scroller.");
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _focus_autoscroll_changed_cb,
+                                  NULL);
+
+   rd = elm_radio_add(bx);
+   elm_radio_state_value_set(rd, ELM_FOCUS_AUTOSCROLL_MODE_NONE);
+   elm_object_text_set(rd, "ELM_FOCUS_AUTOSCROLL_MODE_NONE");
+   elm_object_tooltip_text_set(rd, "Do not show the focused region or<br/>"
+                               "item automatically inside a scroller.");
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, rd);
+   elm_radio_group_add(rd, rdg);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _focus_autoscroll_changed_cb,
+                                  NULL);
+
+
+   rd = elm_radio_add(bx);
+   elm_radio_state_value_set(rd, ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN);
+   elm_object_text_set(rd, "ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN");
+   elm_object_tooltip_text_set(rd, "Bring in the focused region or item<br/>"
+                               "automatically which might invole the scrolling.");
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, rd);
+   elm_radio_group_add(rd, rdg);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed",
+                                  _focus_autoscroll_changed_cb,
+                                  NULL);
+
+   elm_radio_value_set(rdg, elm_config_focus_autoscroll_mode_get());
+
+   return fr;
 }
 
 void
@@ -3979,15 +4042,6 @@ test_genlist_focus(void *data EINA_UNUSED,
    evas_object_show(chk);
 
    chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Focus Auto scroll bring in enable");
-   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(chk, "changed", _gl_focus_bring_in_changed_cb,
-                                  NULL);
-   elm_check_state_set(chk, elm_config_focus_auto_scroll_bring_in_enabled_get());
-   elm_box_pack_end(bx_opt, chk);
-   evas_object_show(chk);
-
-   chk = elm_check_add(bx_opt);
    elm_object_text_set(chk, "Item Select on Focus disable");
    elm_check_state_set(chk, elm_config_item_select_on_focus_disabled_get());
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
@@ -3996,6 +4050,10 @@ test_genlist_focus(void *data EINA_UNUSED,
                                   NULL);
    elm_box_pack_end(bx_opt, chk);
    evas_object_show(chk);
+
+   // Focus Autoscroll Mode
+   fr = _focus_autoscroll_mode_frame_create(bx);
+   elm_box_pack_end(bx, fr);
 
    // Focus Movement Policy
    fr = elm_frame_add(bx);
