@@ -2907,11 +2907,13 @@ _elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd)
           it = sd->last_focused_item;
         else if (sd->last_selected_item)
           it = sd->last_selected_item;
+        /* TODO: make it optional on 1.11. Disable this until then
         else if (elm_widget_focus_highlight_enabled_get(obj))
           {
              it = elm_genlist_first_item_get(obj);
              is_sel = EINA_TRUE;
           }
+        */
 
         if (it)
           {
