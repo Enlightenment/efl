@@ -581,9 +581,13 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
                                  Ecore_X_Atom *protos,
                                  int num)
 {
+   Atom *protos2 = alloca(sizeof(Atom) * num);
+   int i;
+   
+   for (i = 0; i < num; i++) protos2[i] = protos[i];
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (num > 0)
-     XSetWMProtocols(_ecore_x_disp, win, (Atom *)(protos), num);
+     XSetWMProtocols(_ecore_x_disp, win, protos2, num);
    else
      XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_PROTOCOLS);
    if (_ecore_xlib_sync) ecore_x_sync();
