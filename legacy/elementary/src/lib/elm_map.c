@@ -3806,9 +3806,14 @@ _elm_map_pan_class_constructor(Eo_Class *klass)
 EOLIAN static Eina_Bool
 _elm_map_elm_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
+
+
+   elm_widget_theme_object_set
+      (obj, wd->resize_obj, "map", "base", elm_widget_style_get(obj));
 
    _sizing_eval(obj);
 
