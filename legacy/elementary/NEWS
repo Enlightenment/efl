@@ -32,6 +32,7 @@ Features:
    * genlist: Implemented item_select_on_focus feature.
    * gengrid: Implemented item_select_on_focus feature.
    * gengrid: Added elm_gengrid_wheel_disabled_set/get() APIs.
+   * focus: Change new API names related to focus auto scrolling.
 
 Fixes:
 
@@ -103,6 +104,8 @@ Fixes:
    * ctxpopup bg theme should block all mouse events, not just left button
    * ctxpopup should not blindly show arrows when they are not wanted by the theme
    * gengrid: frame variable should be used for position changes.
+   * widgets - propagate current parent orientation to sub object.
+   * elm_map: Fix to support customized style for elm_map
 
 
 Changes since Elementary 1.8.0:
