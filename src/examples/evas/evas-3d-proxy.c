@@ -292,13 +292,14 @@ main(void)
    source = evas_object_image_filled_add(evas);
    eo_do(source,
          evas_obj_image_size_set(IMG_WIDTH, IMG_HEIGHT),
-         evas_obj_size_set(IMG_WIDTH, IMG_HEIGHT),
+         evas_obj_position_set((WIDTH / 2), (HEIGHT / 2)),
+         evas_obj_size_set((WIDTH / 2), (HEIGHT / 2)),
          evas_obj_visibility_set(EINA_TRUE));
 
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
    eo_do(image,
-         evas_obj_size_set(IMG_WIDTH, IMG_HEIGHT),
+         evas_obj_size_set((WIDTH / 2), (HEIGHT / 2)),
          evas_obj_visibility_set(EINA_TRUE));
 
    /* Setup scene */
