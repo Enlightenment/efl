@@ -297,13 +297,8 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    char key[256], keyname[256], compose[256];
    Ecore_Event_Key *e;
    Ecore_Drm_Input *input;
-   int evtype;
 
    if (!(input = dev->seat->input)) return;
-
-   /* DBG("Key Event"); */
-   /* DBG("\tCode: %d", event->code); */
-   /* DBG("\tValue: %d", event->value); */
 
    /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = event->code + 8;
@@ -356,18 +351,17 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    e->root_window = (Ecore_Window)input->dev->window;
    e->timestamp = timestamp;
    e->same_screen = 1;
-   e->keycode = event->code;
+   e->keycode = code;
    e->data = NULL;
 
    _device_modifiers_update(dev);
    e->modifiers = dev->xkb.modifiers;
 
    if (event->value)
-     evtype = ECORE_EVENT_KEY_DOWN;
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
    else
-     evtype = ECORE_EVENT_KEY_UP;
+     ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
-   ecore_event_add(evtype, e, NULL, NULL);
 }
 
 static void 
