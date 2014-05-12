@@ -785,13 +785,17 @@ EOLIAN static void
 _evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Image_Load_Opts lo;
 
    if (o->cur->scene == scene) return;
 
-   _evas_object_image_cleanup(eo_obj, obj, o);
-
-   if (o->cur->u.file || o->cur->key)
-     evas_object_image_file_set(eo_obj, NULL, NULL);
+   _image_init_set(NULL, NULL, NULL, eo_obj, obj, o, &lo);
+   o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
+                                                              o->cur->u.file,
+                                                              o->cur->key,
+                                                              &o->load_error,
+                                                              &lo);
+   _image_done_set(eo_obj, obj, o);
 
    if (scene) _3d_set(eo_obj, scene);
    else _3d_unset(eo_obj, obj, o);
@@ -974,6 +978,8 @@ _evas_image_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJ_CLASS);
 
    int stride = 0;
+
+   if (o->cur->scene) return;
 
    _evas_object_image_cleanup(eo_obj, obj, o);
    if (w < 1) w = 1;
