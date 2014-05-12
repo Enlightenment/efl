@@ -8,7 +8,7 @@ endif
 
 AM_V_EOL = $(am__v_EOL_@AM_V@)
 am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
-am__v_EOL_0 = @echo "  EOLIAN   " $@;
+am__v_EOL_0 = @echo "  EOLIAN  " $@;
 
 SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h
 
