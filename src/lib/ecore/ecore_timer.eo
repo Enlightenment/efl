@@ -3,32 +3,32 @@ class Ecore_Timer (Eo_Base)
    eo_prefix: ecore_obj_timer;
    constructors {
       loop_constructor {
-         /*@ Contructor. */
+         /*@ Create a timer to call in a given time from now */
          params {
-            @in double in;
-            @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in double in; /*@ The time, in seconds, from now when to go off */
+            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
+            @in const void *data; /*@ A pointer to pass to the callback function as its data pointer */
          }
       }
       constructor {
-         /*@ Contructor. */
+         /*@ Create a timer to call in a given time from when the mainloop woke up from sleep */
          params {
-            @in double in;
-            @in Ecore_Task_Cb func;
-            @in const void *data;
+            @in double in; /*@ The time, in seconds, from when the main loop woke up, to go off */
+            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
+            @in const void *data; /*@ A pointer to pass to the callback function as its data pointer */
          }
       }
    }
    properties {
       interval {
          set {
-            /*@ Change the interval the timer ticks of. */
+            /*@ Change the interval the timer ticks off. */
          }
          get {
             /*@ Get the interval the timer ticks on. */
          }
          values {
-            double in;
+            double in; /*@ The new interval in seconds */
          }
       }
       pending {
@@ -40,12 +40,13 @@ class Ecore_Timer (Eo_Base)
    }
    methods {
       reset {
-         /*@ Reset a timer to its full interval. */
+         /*@ Reset a timer to its full interval. This effectively makes
+          *  the timer start ticking off from zero now. */
       }
       delay {
          /*@ Add some delay for the next occurrence of a timer. */
          params {
-            @in double add;
+            @in double add; /*@ The amount of time to delay the timer by in seconds */
          }
       }
    }
