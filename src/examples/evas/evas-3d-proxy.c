@@ -1,9 +1,9 @@
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+
+#include <math.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include <stdio.h>
-#include <math.h>
 #include <Evas.h>
 
 #define  WIDTH          400
@@ -14,24 +14,24 @@
 
 typedef struct _Scene_Data
 {
-   Evas_3D_Scene    *scene;
-   Evas_3D_Node     *root_node;
-   Evas_3D_Node     *camera_node;
-   Evas_3D_Node     *light_node;
-   Evas_3D_Node     *mesh_node;
+   Eo *scene;
+   Eo *root_node;
+   Eo *camera_node;
+   Eo *light_node;
+   Eo *mesh_node;
 
-   Evas_3D_Camera   *camera;
-   Evas_3D_Light    *light;
-   Evas_3D_Mesh     *mesh;
-   Evas_3D_Material *material;
-   Evas_3D_Texture  *texture;
+   Eo *camera;
+   Eo *light;
+   Eo *mesh;
+   Eo *material;
+   Eo *texture;
 } Scene_Data;
 
-Ecore_Evas       *ecore_evas  = NULL;
-Evas             *evas        = NULL;
-Evas_Object      *background  = NULL;
-Evas_Object      *image       = NULL;
-Evas_Object      *source    = NULL;
+static Ecore_Evas *ecore_evas = NULL;
+static Evas *evas = NULL;
+static Eo *background = NULL;
+static Eo *image = NULL;
+static Eo *source = NULL;
 
 static const float cube_vertices[] =
 {
@@ -105,10 +105,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-
-   evas_object_resize(background, w, h);
-   evas_object_resize(image, w, h);
-   evas_object_move(image, 0, 0);
+   eo_do(background, evas_obj_size_set(w, h));
+   eo_do(image, evas_obj_size_set(w, h));
 }
 
 static Eina_Bool
@@ -125,11 +123,11 @@ _animate_scene(void *data)
          evas_3d_node_orientation_angle_axis_set(angle, 1.0, 1.0, 1.0));
 
    /* Rotate */
-   if (angle > 360.0)
-     angle -= 360.0f;
+   if (angle > 360.0) angle -= 360.0f;
 
-   pixels = (unsigned int *)evas_object_image_data_get(source, EINA_TRUE);
-   stride = evas_object_image_stride_get(source);
+   eo_do(source,
+         pixels = evas_obj_image_data_get(EINA_TRUE),
+         stride = evas_obj_image_stride_get());
 
    for (i = 0; i < IMG_HEIGHT; i++)
      {
@@ -141,8 +139,9 @@ _animate_scene(void *data)
           }
      }
 
-   evas_object_image_data_set(source, pixels);
-   evas_object_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
+   eo_do(source,
+         evas_obj_image_data_set(pixels),
+         evas_obj_image_data_update_add(0, 0, IMG_WIDTH, IMG_HEIGHT));
 
    return EINA_TRUE;
 }
@@ -269,13 +268,11 @@ main(void)
 
    Scene_Data data;
 
-   if (!ecore_evas_init())
-     return 0;
+   if (!ecore_evas_init()) return 0;
 
    ecore_evas = ecore_evas_new(NULL, 10, 10, WIDTH, HEIGHT, NULL);
 
-   if (!ecore_evas)
-     return 0;
+   if (!ecore_evas) return 0;
 
    ecore_evas_callback_delete_request_set(ecore_evas, _on_delete);
    ecore_evas_callback_resize_set(ecore_evas, _on_canvas_resize);
@@ -284,30 +281,31 @@ main(void)
    evas = ecore_evas_get(ecore_evas);
 
    /* Add a background rectangle objects. */
-   background = evas_object_rectangle_add(evas);
-   evas_object_color_set(background, 0, 0, 0, 255);
-   evas_object_move(background, 0, 0);
-   evas_object_resize(background, WIDTH, HEIGHT);
-   evas_object_show(background);
+   background = eo_add(EVAS_OBJ_RECTANGLE_CLASS, evas);
+   eo_unref(background);
+   eo_do(background,
+         evas_obj_color_set(0, 0, 0, 255),
+         evas_obj_size_set(WIDTH, HEIGHT),
+         evas_obj_visibility_set(EINA_TRUE));
 
-   /* Add a background imageg. */
+   /* Add a background image. */
    source = evas_object_image_filled_add(evas);
-   evas_object_image_size_set(source, IMG_WIDTH, IMG_HEIGHT);
-   evas_object_move(source, 0, 0);
-   evas_object_resize(source, IMG_WIDTH, IMG_HEIGHT);
-   evas_object_show(source);
+   eo_do(source,
+         evas_obj_image_size_set(IMG_WIDTH, IMG_HEIGHT),
+         evas_obj_size_set(IMG_WIDTH, IMG_HEIGHT),
+         evas_obj_visibility_set(EINA_TRUE));
 
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
-   evas_object_move(image, 0, 0);
-   evas_object_resize(image, WIDTH, HEIGHT);
-   evas_object_show(image);
+   eo_do(image,
+         evas_obj_size_set(IMG_WIDTH, IMG_HEIGHT),
+         evas_obj_visibility_set(EINA_TRUE));
 
    /* Setup scene */
    _scene_setup(&data);
 
    /* Set the image object as render target for 3D scene. */
-   evas_object_image_scene_set(image, data.scene);
+   eo_do(image, evas_obj_image_scene_set(data.scene));
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);

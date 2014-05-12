@@ -1,6 +1,5 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#define EFL_EO_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
 
 #include <Eo.h>
 #include <Evas.h>
@@ -263,7 +262,7 @@ main(void)
          evas_obj_visibility_set(EINA_TRUE));
 
    /* Set the image object as render target for 3D scene. */
-  eo_do(image, evas_obj_image_scene_set(data.scene));
+   eo_do(image, evas_obj_image_scene_set(data.scene));
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);
