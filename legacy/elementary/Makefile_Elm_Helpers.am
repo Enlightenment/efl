@@ -6,7 +6,7 @@ endif
 
 AM_V_EPB = $(am__v_EPB_@AM_V@)
 am__v_EPB_ = $(am__v_EPB_@AM_DEFAULT_V@)
-am__v_EPB_0 = @echo "  EPB   " $@;
+am__v_EPB_0 = @echo "  EPB     " $@;
 
 EDJE_CC = @edje_cc@
 EDJE_CC_FLAGS_VERBOSE = $(EDJE_CC_FLAGS_VERBOSE_@AM_V@)
@@ -16,4 +16,4 @@ EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_VERBOSE) -fastdecomp -id $(srcdir) -fd $(srcdir)
 
 AM_V_EDJ = $(am__v_EDJ_@AM_V@)
 am__v_EDJ_ = $(am__v_EDJ_@AM_DEFAULT_V@)
-am__v_EDJ_0 = @echo "  EDJ   " $@;
+am__v_EDJ_0 = @echo "  EDJ     " $@;
