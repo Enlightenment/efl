@@ -70,6 +70,9 @@ static const struct {
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGB8_ETC2, &etc2_rgb_fmt, &etc2_rgb_fmt },
+  { EINA_TRUE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
+  { EINA_TRUE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
+  // images marked as no alpha but format supports it (RGBA8_ETC2_EAC):
   { EINA_FALSE, EINA_FALSE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt },
   { EINA_FALSE, EINA_TRUE, EVAS_COLORSPACE_RGBA8_ETC2_EAC, &etc2_rgba_fmt, &etc2_rgba_fmt }
 };
