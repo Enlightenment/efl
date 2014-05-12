@@ -199,6 +199,10 @@ Fixes:
    * emotion: use eina stringshare not strdup
    * configure: Only allow wayland + egl with opengl ES (T1202)
    * eldbus-codegen no longer passes garbage values to error callbacks
+   * fix emotion_test signal emit object
+   * evas-wayland-shm: Use XDG_RUNTIME_DIR if available for creating mmap'd buffer file.
+   * evas-wayland-shm: Fix 'oopsie/typo' in temporary file name template
+   * ecore-x - fix setting protocol atoms for icccm for 64bit
 
 
 Changes since 1.8.0:
