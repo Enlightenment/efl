@@ -203,6 +203,21 @@ _grid_item_getcb(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int
    return item;
 }
 
+static inline char *
+_strndup(const char *str, size_t len)
+{
+   size_t slen = strlen(str);
+   char *ret;
+
+   if (slen > len) slen = len;
+   ret = malloc (slen + 1);
+   if (!ret) return NULL;
+
+   if (slen > 0) memcpy(ret, str, slen);
+   ret[slen] = '\0';
+   return ret;
+}
+
 static Eina_Bool
 _gl_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret EINA_UNUSED, int yposret)
 {  /* This function is called when data is dropped on the genlist */
@@ -212,7 +227,7 @@ _gl_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Se
    if (ev->len <= 0)
      return EINA_FALSE;
 
-   char *dd = strndup(ev->data, ev->len);
+   char *dd = _strndup(ev->data, ev->len);
    if (!dd) return EINA_FALSE;
    char *p = dd;
 
@@ -267,7 +282,7 @@ _grid_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_
    if (ev->len <= 0)
      return EINA_FALSE;
 
-   char *dd = strndup(ev->data, ev->len);
+   char *dd = _strndup(ev->data, ev->len);
    if (!dd) return EINA_FALSE;
    char *p = dd;
    char *s = _drag_data_extract(&p);
@@ -962,7 +977,7 @@ static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selec
    if (ev->len <= 0)
      return EINA_FALSE;
 
-   char *dd = strndup(ev->data, ev->len);
+   char *dd = _strndup(ev->data, ev->len);
    if (!dd) return EINA_FALSE;
    char *p = dd;
    char *s = _drag_data_extract(&p);
@@ -996,7 +1011,7 @@ static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Sele
    if (ev->len <= 0)
      return EINA_FALSE;
 
-   char *dd = strndup(ev->data, ev->len);
+   char *dd = _strndup(ev->data, ev->len);
    if (!dd) return EINA_FALSE;
    char *p = dd;
    char *s = _drag_data_extract(&p);
@@ -1024,7 +1039,7 @@ static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, El
    if (ev->len <= 0)
      return EINA_FALSE;
 
-   char *dd = strndup(ev->data, ev->len);
+   char *dd = _strndup(ev->data, ev->len);
    if (!dd) return EINA_FALSE;
    char *p = dd;
    char *s = _drag_data_extract(&p);
