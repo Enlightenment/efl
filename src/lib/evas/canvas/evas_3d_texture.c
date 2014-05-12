@@ -9,7 +9,7 @@ _texture_proxy_set(Evas_3D_Texture *texture, Evas_Object *eo_src, Evas_Object_Pr
    Evas_3D_Texture_Data *pd = eo_data_scope_get(texture, MY_CLASS);
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src)
      {
-        proxy_src->proxy_textures = eina_list_append(proxy_src->proxy_textures, pd);
+        proxy_src->proxy_textures = eina_list_append(proxy_src->proxy_textures, texture);
         proxy_src->redraw = EINA_TRUE;
      }
    EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_src);
