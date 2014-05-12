@@ -3,7 +3,8 @@ if HAVE_CXX11
 
 ### Generated headers
 
-generated_ecore_audio_cxx_bindings = \
+generated_ecore_audio_cxx_bindings =
+#\
 lib/ecore_audio/ecore_audio.eo.hh \
 lib/ecore_audio/ecore_audio_in.eo.hh \
 lib/ecore_audio/ecore_audio_out.eo.hh \
@@ -12,7 +13,7 @@ lib/ecore_audio/ecore_audio_out_sndfile.eo.hh \
 lib/ecore_audio/ecore_audio_out_pulse.eo.hh \
 lib/ecore_audio/ecore_audio_in_tone.eo.hh
 
-BUILT_SOURCES += \
+#BUILT_SOURCES += \
 lib/ecore_audio/Ecore_Audio.hh \
 $(generated_ecore_audio_cxx_bindings)
 
@@ -23,27 +24,27 @@ lib/ecore_audio/Ecore_Audio.hh:
 	@echo -e "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecore_audio/Ecore_Audio.hh
 
 installed_ecoreaudiocxxmainheadersdir = $(includedir)/ecore-audio-cxx-@VMAJ@
-dist_installed_ecoreaudiocxxmainheaders_DATA = \
+#dist_installed_ecoreaudiocxxmainheaders_DATA = \
 lib/ecore_audio/Ecore_Audio.hh \
 $(generated_ecore_audio_cxx_bindings)
 
 ### Unit tests
 
-if EFL_ENABLE_TESTS
+# if EFL_ENABLE_TESTS
 
-check_PROGRAMS += tests/ecore_audio_cxx/cxx_compile_test
-TESTS += tests/ecore_audio_cxx/cxx_compile_test
+# check_PROGRAMS += tests/ecore_audio_cxx/cxx_compile_test
+# TESTS += tests/ecore_audio_cxx/cxx_compile_test
 
-tests_ecore_audio_cxx_cxx_compile_test_SOURCES = tests/ecore_audio_cxx/cxx_compile_test.cc
-tests_ecore_audio_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
--DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_audio_cxx\" \
--DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_audio_cxx\" \
-@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_AUDIO_CFLAGS@ \
-@ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_AUDIO_CXX_CFLAGS@
+# tests_ecore_audio_cxx_cxx_compile_test_SOURCES = tests/ecore_audio_cxx/cxx_compile_test.cc
+# tests_ecore_audio_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl \
+# -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_audio_cxx\" \
+# -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_audio_cxx\" \
+# @CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_AUDIO_CFLAGS@ \
+# @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_AUDIO_CXX_CFLAGS@
 
-tests_ecore_audio_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
-tests_ecore_audio_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
+# tests_ecore_audio_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
+# tests_ecore_audio_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
-endif
+# endif
 
 endif
