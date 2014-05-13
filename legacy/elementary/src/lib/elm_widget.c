@@ -3789,35 +3789,8 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
 EOLIAN static void
 _elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Evas_Coord ox = 0, oy = 0, ow = 0, oh = 0;
-   Evas_Object *scroller = obj;
-
    evas_object_geometry_get(obj, x, y, w, h);
    elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, x, y, w, h);
-
-   if (!_elm_config->focus_auto_scroll_bring_in_enable)
-     return;
-
-   while (scroller)
-     {
-        if (_elm_scrollable_is(scroller))
-          {
-             eo_do(scroller,
-                   elm_interface_scrollable_content_viewport_geometry_get(&ox, &oy, &ow, &oh));
-
-             if (*y < oy)
-               *y = oy;
-             else if ((oy + oh) < (*y + *h))
-               *y = (oy + oh - *h);
-             else if (*x < ox)
-               *x = ox;
-             else if ((ox + ow) < (*x + *w))
-               *x = (ox + ow - *w);
-
-             break;
-          }
-        scroller = elm_widget_parent_get(scroller);
-     }
 }
 
 EOLIAN static Elm_Object_Item*
