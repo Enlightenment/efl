@@ -1493,8 +1493,8 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
      return;
 
    eo_do(ep->object,
-	 evas_obj_size_get(&tw, &th),
-	 evas_obj_text_style_pad_get(&l, &r, &t, &b));
+         evas_obj_size_get(&tw, &th),
+         evas_obj_text_style_pad_get(&l, &r, &t, &b));
 
    mw = tw + l + r;
    mh = th + t + b;
@@ -1532,22 +1532,22 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
         /* Update a object_text part */
 
         if (chosen_desc->text.id_source >= 0)
-          ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
+          ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
         else
-          source = ep->text.source = NULL;
+          source = ep->typedata.text->source = NULL;
 
         if (chosen_desc->text.id_text_source >= 0)
-          ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+          ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
         else
-          text_source = ep->text.text_source = NULL;
+          text_source = ep->typedata.text->text_source = NULL;
 
-        if (ep->text.text_source)
-          text = edje_string_get(&_edje_real_part_text_text_source_description_get(ep, &text_source)->text.text));
+        if (ep->typedata.text->text_source)
+          text = edje_string_get(&_edje_real_part_text_text_source_description_get(ep, &text_source)->text.text);
         else
           text = edje_string_get(&chosen_desc->text.text);
 
-        if (ep->text.source)
-          font = _edje_text_class_font_get(ed, _edje_real_part_text_source_description_get(ep, &source)), &size, &sfont);
+        if (ep->typedata.text->source)
+          font = _edje_text_class_font_get(ed, _edje_real_part_text_source_description_get(ep, &source), &size, &sfont);
         else
           font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
 
@@ -1555,22 +1555,22 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
         if (text_source)
           {
-             if (text_source->text.text) text = text_source->text.text;
+             if (text_source->typedata.text->text) text = text_source->typedata.text->text;
           }
         else
           {
-             if (ep->text.text) text = ep->text.text;
+             if (ep->typedata.text->text) text = ep->typedata.text->text;
           }
 
         if (source)
           {
-             if (source->text.font) font = source->text.font;
-             if (source->text.size > 0) size = source->text.size;
+             if (source->typedata.text->font) font = source->typedata.text->font;
+             if (source->typedata.text->size > 0) size = source->typedata.text->size;
           }
         else
           {
-             if (ep->text.font) font = ep->text.font;
-             if (ep->text.size > 0) size = ep->text.size;
+             if (ep->typedata.text->font) font = ep->typedata.text->font;
+             if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
           }
         if (!text) text = "";
 
