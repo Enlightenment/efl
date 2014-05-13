@@ -58,6 +58,11 @@ local parse_l = function(opts, opt, descs, args, parser)
     else
         opts[optn] = optret or true
     end
+    local dopts = desc.opts
+    if    dopts then
+          dopts[#opts + 1] = opts[#opts]
+          dopts[optn]      = opts[optn ]
+    end
 end
 
 local parse_s = function(opts, optstr, descs, args, parser)
@@ -91,6 +96,11 @@ local parse_s = function(opts, optstr, descs, args, parser)
             opts[optn] = desc.list
         else
             opts[optn] = optret or true
+        end
+        local dopts = desc.opts
+        if    dopts then
+              dopts[#dopts + 1] = opts[#opts]
+              dopts[optn]       = opts[optn ]
         end
     end
 end
