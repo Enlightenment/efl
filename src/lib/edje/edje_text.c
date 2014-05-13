@@ -247,13 +247,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
              font = font2;
           }
      }
-     {
-        int l, r, t, b;
 
-        evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
-        sw = TO_INT(params->eval.w);
-        sh = TO_INT(params->eval.h);
-     }
+   sw = TO_INT(params->eval.w);
+   sh = TO_INT(params->eval.h);
 
    if (params->type.text.size)
      size = params->type.text.size;
