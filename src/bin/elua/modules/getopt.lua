@@ -39,7 +39,7 @@ local parse_l = function(opts, opt, descs, args, parser)
                     error("option --" .. opt .. " requires an argument", 3)
                 end
             elseif argr or not is_arg(args[1], 2, descs) then
-                optval, args = args[1], { unpack(args, 2) }
+                optval = table.remove(args, 1)
             end
         end
     elseif optval then
@@ -58,7 +58,6 @@ local parse_l = function(opts, opt, descs, args, parser)
     else
         opts[optn] = optret or true
     end
-    return opts, args
 end
 
 local parse_s = function(opts, optstr, descs, args, parser)
@@ -75,7 +74,7 @@ local parse_s = function(opts, optstr, descs, args, parser)
                         error("option -" .. opt .. " requires an argument", 3)
                     end
                 elseif argr or not is_arg(args[1], 1, descs) then
-                    optstr, args = args[1], { unpack(args, 2) }
+                    optstr = table.remove(args, 1)
                 end
             end
             optval, optstr = optstr, ""
@@ -94,24 +93,19 @@ local parse_s = function(opts, optstr, descs, args, parser)
             opts[optn] = optret or true
         end
     end
-    return opts, args
 end
 
 local getopt_u  = function(parser)
-    local args  = parser.args
+    local args  = { unpack(parser.args) }
     local descs = parser.descs
     local opts  = {}
-    while args and #args > 0 and args[1]:sub(1, 1) == "-" and args[1] ~= "-" do
-        if args[1] == "--" then
-            args = { unpack(args, 2) }
-            break
-        end
-        if args[1]:sub(1, 2) == "--" then
-            opts, args = parse_l(opts, args[1]:sub(3), descs,
-                { unpack(args, 2) }, parser)
+    while #args > 0 and args[1]:sub(1, 1) == "-" and args[1] ~= "-" do
+        local v = table.remove(args, 1)
+        if v == "--" then break end
+        if v:sub(1, 2) == "--" then
+            parse_l(opts, v:sub(3), descs, args, parser)
         else
-            opts, args = parse_s(opts, args[1]:sub(2), descs,
-                { unpack(args, 2) }, parser)
+            parse_s(opts, v:sub(2), descs, args, parser)
         end
     end
     return opts, args
