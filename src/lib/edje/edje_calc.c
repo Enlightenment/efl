@@ -1478,7 +1478,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
  * -- Gustavo Barbieri at 20-Aug-2011
  */
 {
-   int tw, th, mw, mh, l, r, t, b, size;
+   int mw, mh,size;
    char *sfont = NULL;
 
    _edje_text_class_font_get(ed, desc, &size, &sfont);
@@ -1492,12 +1492,8 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
         (!chosen_desc->text.max_x) && (!chosen_desc->text.max_y)))
      return;
 
-   eo_do(ep->object,
-         evas_obj_size_get(&tw, &th),
-         evas_obj_text_style_pad_get(&l, &r, &t, &b));
-
-   mw = tw + l + r;
-   mh = th + t + b;
+   // Note: No need to add padding to that, it's already in the geometry
+   eo_do(ep->object, evas_obj_size_get(&mw, &mh));
 
    if (chosen_desc->text.max_x)
      {
