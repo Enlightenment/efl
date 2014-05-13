@@ -342,7 +342,7 @@ static void st_collections_group_parts_part_description_text_max(void);
 static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
-static void st_collections_group_parts_part_description_text_elipsis(void);
+static void st_collections_group_parts_part_description_text_ellipsis(void);
 static void st_collections_group_parts_part_description_text_filter(void);
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
@@ -688,8 +688,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.text_source", st_collections_group_parts_part_description_text_text_source},
      {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
-     {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
-     {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_elipsis},
+     {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_ellipsis},
+     {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_ellipsis},
      {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_text_filter},
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
@@ -8399,7 +8399,7 @@ st_collections_group_parts_part_description_text_text_source(void)
     @endproperty
 */
 static void
-st_collections_group_parts_part_description_text_elipsis(void)
+st_collections_group_parts_part_description_text_ellipsis(void)
 {
    Edje_Part_Description_Text *ed;
 
@@ -8415,7 +8415,7 @@ st_collections_group_parts_part_description_text_elipsis(void)
 
    ed = (Edje_Part_Description_Text*) current_desc;
 
-   ed->text.elipsis = parse_float_range(0, -1.0, 1.0);
+   ed->text.ellipsis = parse_float_range(0, -1.0, 1.0);
 }
 
 /**
@@ -11301,7 +11301,7 @@ _part_text_ellipsis_check(Edje_Part *ep, Edje_Part_Description_Common *desc)
 
    ed = (Edje_Part_Description_Text*)desc;
 
-   return ((ed->text.elipsis != -1) && ed->text.min_x);
+   return ((ed->text.ellipsis != -1) && ed->text.min_x);
 }
 
 static void

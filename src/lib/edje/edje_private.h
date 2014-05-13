@@ -1202,7 +1202,7 @@ struct _Edje_Part_Description_Spec_Text
    Edje_Alignment align; /* text alignment within bounds */
    Edje_Color     color3;
 
-   double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
+   double         ellipsis; /* 0.0 - 1.0 defining where the ellipsis align */
    int            size; /* 0 = use user set size */
    int            id_source; /* -1 if none */
    char          *id_source_part;
@@ -1484,7 +1484,7 @@ struct _Edje_Calc_Params
       } common; // 40
       struct {
 	 Edje_Alignment align; /* text alignment within bounds */ // 16
-	 double         elipsis; // 8
+	 double         ellipsis; // 8
 	 int            size; // 4
 	 Edje_Color     color2, color3; // 8
       } text; // 36
@@ -1563,7 +1563,7 @@ struct _Edje_Real_Part_Text
       unsigned char       fit_x, fit_y; // 2
       short               in_size; // 2
       short               out_size; // 2
-      float               elipsis; // 4
+      float               ellipsis; // 4
       Evas_Coord          in_w, in_h; // 8
       const char         *in_str; // 4
       const char         *out_str; // 4

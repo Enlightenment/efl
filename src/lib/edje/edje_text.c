@@ -91,13 +91,13 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    *free_text = 0;
    if (sw <= 1) return "";
 
-   if (params->type.text.elipsis < 0)
+   if (params->type.text.ellipsis < 0)
      return text;
 
    if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
    eo_do(ep->object,
-         evas_obj_text_ellipsis_set(params->type.text.elipsis),
+         evas_obj_text_ellipsis_set(params->type.text.ellipsis),
          evas_obj_text_font_set(font, size),
          evas_obj_text_text_set(text),
          evas_obj_size_set(sw, sh));
@@ -273,7 +273,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        same_text &&
        (ep->typedata.text->cache.align_x == params->type.text.align.x) &&
        (ep->typedata.text->cache.align_y == params->type.text.align.y) &&
-       (ep->typedata.text->cache.elipsis == params->type.text.elipsis) &&
+       (ep->typedata.text->cache.ellipsis == params->type.text.ellipsis) &&
        (ep->typedata.text->cache.fit_x == chosen_desc->text.fit_x) &&
        (ep->typedata.text->cache.fit_y == chosen_desc->text.fit_y) &&
        (ep->typedata.text->cache.in_font == font))
@@ -439,9 +439,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
     * 22 April 2014
     */
    else if (((ed->file->version >= 3) && (ed->file->minor >= 6)) ||
-            params->type.text.elipsis)
+            params->type.text.ellipsis)
      eo_do(ep->object,
-           evas_obj_text_ellipsis_set(params->type.text.elipsis));
+           evas_obj_text_ellipsis_set(params->type.text.ellipsis));
 
    eina_stringshare_replace(&ep->typedata.text->cache.out_str, text);
    ep->typedata.text->cache.in_w = sw;
@@ -450,7 +450,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->typedata.text->cache.out_size = size;
    ep->typedata.text->cache.align_x = params->type.text.align.x;
    ep->typedata.text->cache.align_y = params->type.text.align.y;
-   ep->typedata.text->cache.elipsis = params->type.text.elipsis;
+   ep->typedata.text->cache.ellipsis = params->type.text.ellipsis;
    ep->typedata.text->cache.fit_x = chosen_desc->text.fit_x;
    ep->typedata.text->cache.fit_y = chosen_desc->text.fit_y;
 arrange_text:

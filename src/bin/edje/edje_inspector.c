@@ -626,8 +626,8 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
         else if ((x) || (y)) printf(INDENT5 "fit: %d %d;\n", x, y);
 
         dx = edje_edit_state_text_elipsis_get(ed, ppart, state, value);
-        if (machine) printf("TEXT-ELIPSIS: %g\n", dx);
-        else if (FDIFF(dx, 0.5)) printf(INDENT5 "elipsis: %g;\n", dx);
+        if (machine) printf("TEXT-ELLIPSIS: %g\n", dx);
+        else if (FDIFF(dx, 0.5)) printf(INDENT5 "ellipsis: %g;\n", dx);
 
         if (machine) puts("TEXT-END");
         else puts(INDENT4 "}");

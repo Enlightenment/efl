@@ -828,7 +828,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.id_source_part", text.id_source_part, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.id_text_source", text.id_text_source, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.id_text_source_part", text.id_text_source_part, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.elipsis", text.elipsis, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.ellipsis", text.ellipsis, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter", text.filter, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter_sources", text.filter_sources);
 
@@ -862,7 +862,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.id_source_part", text.id_source_part, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.id_text_source", text.id_text_source, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.id_text_source_part", text.id_text_source_part, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.elipsis", text.elipsis, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.ellipsis", text.ellipsis, EET_T_DOUBLE);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Box);
    eddc.func.mem_free = mem_free_box;

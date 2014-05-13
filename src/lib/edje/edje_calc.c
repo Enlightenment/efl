@@ -2491,7 +2491,7 @@ _edje_part_recalc_single(Edje *ed,
               /* text.align */
               params->type.text.align.x = text_desc->text.align.x;
               params->type.text.align.y = text_desc->text.align.y;
-              params->type.text.elipsis = text_desc->text.elipsis;
+              params->type.text.ellipsis = text_desc->text.ellipsis;
 
               /* text colors */
               if (cc)
@@ -3608,7 +3608,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
               p3->type.text.align.x = FFP(p1->type.text.align.x, p2->type.text.align.x, pos);
               p3->type.text.align.y = FFP(p1->type.text.align.y, p2->type.text.align.y, pos);
-              p3->type.text.elipsis = TO_DOUBLE(FINTP(p1->type.text.elipsis, p2->type.text.elipsis, pos2));
+              p3->type.text.ellipsis = TO_DOUBLE(FINTP(p1->type.text.ellipsis, p2->type.text.ellipsis, pos2));
               break;
           }
 

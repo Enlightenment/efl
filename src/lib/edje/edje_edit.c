@@ -4526,7 +4526,7 @@ edje_edit_state_text_size_set(Evas_Object *obj, const char *part, const char *st
 
 FUNC_TEXT_DOUBLE(align_x, align.x, -1.0);
 FUNC_TEXT_DOUBLE(align_y, align.y, 0.0);
-FUNC_TEXT_DOUBLE(elipsis, elipsis, -1.0);
+FUNC_TEXT_DOUBLE(elipsis, ellipsis, -1.0);
 
 #define FUNC_TEXT_BOOL(Name, Type)					\
   EAPI Eina_Bool                                                        \
@@ -7734,8 +7734,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	  BUF_APPENDF(I6"align: %g %g;\n", TO_DOUBLE(txt->text.align.x), TO_DOUBLE(txt->text.align.y));
         //TODO Support source
         //TODO Support text_source
-	if (txt->text.elipsis)
-	  BUF_APPENDF(I6"elipsis: %g;\n", txt->text.elipsis);
+	if (txt->text.ellipsis)
+	  BUF_APPENDF(I6"ellipsis: %g;\n", txt->text.ellipsis);
 	BUF_APPEND(I5"}\n");
      }
 
