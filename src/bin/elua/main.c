@@ -402,6 +402,8 @@ static int lua_main(lua_State *L) {
 
 #if ENABLE_NLS
     char *(*dgettextp)(const char*, const char*) = dgettext;
+    char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
+        = dngettext;
 #endif
 
     progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
@@ -475,6 +477,8 @@ static int lua_main(lua_State *L) {
 #if ENABLE_NLS
     lua_pushlightuserdata(L, *((void**)&dgettextp));
     lua_setfield(L, -2, "dgettext");
+    lua_pushlightuserdata(L, *((void**)&dngettextp));
+    lua_setfield(L, -2, "dngettext");
 #endif
     lua_call(L, 1, 0);
 
