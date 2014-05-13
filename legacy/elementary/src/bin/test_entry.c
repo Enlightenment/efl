@@ -2190,7 +2190,7 @@ test_entry7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                        "<item size=50x50 vsize=full href=itemprovider></item>"
                       );
    elm_entry_item_provider_append(en2, item_provider, NULL);
-   elm_entry_context_menu_disabled_set(en, EINA_TRUE);
+   elm_entry_context_menu_disabled_set(en2, EINA_TRUE);
    elm_grid_pack(gd, en2, 10, 50, 45, 30);
    evas_object_show(en2);
 
