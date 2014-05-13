@@ -11291,6 +11291,19 @@ edje_cc_handlers_hierarchy_free(void)
    part_hierarchy = NULL;
 }
 
+static Eina_Bool
+_part_text_ellipsis_check(Edje_Part *ep, Edje_Part_Description_Common *desc)
+{
+   Edje_Part_Description_Text *ed;
+
+   if ((ep->type != EDJE_PART_TYPE_TEXT) && (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
+     return EINA_FALSE;
+
+   ed = (Edje_Part_Description_Text*)desc;
+
+   return ((ed->text.elipsis != -1) && ed->text.min_x);
+}
+
 static void
 edje_cc_handlers_hierarchy_pop(void)
 {  /* Remove part from hierarchy stack when finished parsing it */
@@ -11301,15 +11314,32 @@ edje_cc_handlers_hierarchy_pop(void)
         unsigned int i;
 
         for (i = 0; i < current_part->other.desc_count; i++)
-          if (!current_part->other.desc[i]->state.name)
-            {
-               ERR("syntax error near %s:%i. Non-default or inherited parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
-                     file_in, line - 1, current_de->entry, current_part->name);
-                 exit(-1);
-            }
+          {
+             if (!current_part->other.desc[i]->state.name)
+               {
+                  ERR("syntax error near %s:%i. Non-default or inherited parts are required to have state names for all descriptions (Group '%s', part '%s' has missing description state names)",
+                        file_in, line - 1, current_de->entry, current_part->name);
+                    exit(-1);
+               }
+             if (_part_text_ellipsis_check(current_part, current_part->other.desc[i]))
+               {
+                  WRN("Part '%s' in group '%s' contains description '%s:%g' which has text.min: 1 X; but not text.ellipsis: -1;",
+                      current_part->name, current_de->entry,
+                      current_part->other.desc[i]->state.name, current_part->other.desc[i]->state.value);
+                  WRN("This is almost certainly not what you want.");
+               }
+          }
+
         /* auto-add default desc if it was omitted */
         if (!current_part->default_desc)
           ob_collections_group_parts_part_description();
+        else if (_part_text_ellipsis_check(current_part, current_part->default_desc))
+          {
+             WRN("Part '%s' in group '%s' contains description '%s:%g' which has text.min: 1 X; but not text.ellipsis: -1;",
+                 current_part->name, current_de->entry,
+                 current_part->default_desc->state.name, current_part->default_desc->state.value);
+             WRN("This is almost certainly not what you want.");
+          }
      }
 
    if (info)
