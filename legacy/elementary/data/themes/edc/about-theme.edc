@@ -52,6 +52,7 @@ group { name: "e/theme/about";
             text { font: FN; size: 10;
                text: "The default theme for Enlightenment";
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 1.0;
             }
          }

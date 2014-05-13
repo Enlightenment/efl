@@ -10,6 +10,7 @@ group { name: "e/widgets/label";
             color3: 255 255 255 255;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "label";
             }
