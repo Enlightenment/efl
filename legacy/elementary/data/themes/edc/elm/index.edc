@@ -60,6 +60,7 @@ group { name: "elm/index/base/vertical/default";
                font: FN;
                size: 20;
                min: 1 1;
+               ellipsis: -1;
                align: 1.0 0.5;
             }
          }
@@ -175,6 +176,7 @@ group { name: "elm/index/item/vertical/default";
                font: FN;
                size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
          }
@@ -279,6 +281,7 @@ group { name: "elm/index/item_odd/vertical/default";
                font: FN;
                size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
          }
@@ -408,6 +411,7 @@ group { name: "elm/index/base/horizontal/default";
                font: FN;
                size: 20;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 1;
             }
          }
@@ -513,6 +517,7 @@ group { name: "elm/index/item/horizontal/default";
                font: FN;
                size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
          }
@@ -613,6 +618,7 @@ group { name: "elm/index/item_odd/horizontal/default";
                font: FN;
                size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
          }

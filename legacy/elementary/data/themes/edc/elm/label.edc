@@ -42,6 +42,7 @@ group { name: "elm/label/base/marker";
          description { state: "default" 0.0;
             text { style: "label_style2";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }
@@ -129,6 +130,7 @@ group { name: "elm/label/base/slide_long";
             text {
                style: "label_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
          description { state: "slide_begin" 0.0;
@@ -139,6 +141,7 @@ group { name: "elm/label/base/slide_long";
             text {
                style: "label_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }
@@ -239,6 +242,7 @@ group { name: "elm/label/base/slide_short";
             align: 1.0 0.0;
             text { style: "label_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
          description { state: "slide_begin" 0.0;
@@ -248,6 +252,7 @@ group { name: "elm/label/base/slide_short";
             align: 0.0 0.0;
             text { style: "label_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }
@@ -359,6 +364,7 @@ group { name: "elm/label/base/slide_bounce";
             align: 1.0 0.0;
             text { style: "label_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
          description { state: "slide_begin" 0.0;
@@ -368,6 +374,7 @@ group { name: "elm/label/base/slide_bounce";
             align: 0.0 0.0;
             text { style: "label_style";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }

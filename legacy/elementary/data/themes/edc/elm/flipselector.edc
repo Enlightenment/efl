@@ -216,6 +216,7 @@ group { name: "elm/flipselector/base/default";
             rel2.offset: -3 -1;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
             color: FN_COL_DEFAULT;
@@ -283,6 +284,7 @@ group { name: "elm/flipselector/base/default";
             rel2.offset: -3 -1;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
             color: FN_COL_DEFAULT;
@@ -320,6 +322,7 @@ group { name: "elm/flipselector/base/default";
             rel2.offset: -3 -1;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                source: "elm.top";
             }
@@ -363,6 +366,7 @@ group { name: "elm/flipselector/base/default";
             rel2.offset: -3 -3;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
             }
             color: FN_COL_GREY_192;

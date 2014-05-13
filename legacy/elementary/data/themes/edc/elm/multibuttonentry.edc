@@ -19,6 +19,7 @@ group { name: "elm/multibuttonentry/label/default";
             color_class: "multibuttonentry_label";
             text { font: FNBD; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "multibuttonentry_label";
             }
@@ -153,6 +154,7 @@ group { name: "elm/multibuttonentry/btn/default";
             color_class: "multibuttonentry_label";
             text { style: "multibuttonentry_textblock_style";
                min: 1 1;
+               ellipsis: -1;
                text_class: "multibuttonentry_label";
             }               
             visible: 0;
@@ -252,6 +254,7 @@ group { name: "elm/multibuttonentry/closedbutton/default";
             rel2.to: "bg";
             text { style: "textblock_style_multibuttonentry_default";
                min: 1 1;
+               ellipsis: -1;
             }
          }
       }

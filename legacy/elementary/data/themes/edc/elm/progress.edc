@@ -106,6 +106,7 @@ group { name: "elm/progressbar/horizontal/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -138,6 +139,7 @@ group { name: "elm/progressbar/horizontal/default";
             rel1.offset: 2 2;
             rel2.offset: 2 -3;
             text.min: 1 1;
+            text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
@@ -661,6 +663,7 @@ group { name: "elm/progressbar/vertical/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -693,6 +696,7 @@ group { name: "elm/progressbar/vertical/default";
             rel1.offset: 2 2;
             rel2.offset: -3 2;
             text.min: 1 1;
+            text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;

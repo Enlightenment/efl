@@ -130,6 +130,7 @@ group { name: "elm/button/base/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -139,6 +140,7 @@ group { name: "elm/button/base/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -166,11 +168,13 @@ group { name: "elm/button/base/default";
             inherit: "default" 0.0;
             rel1.offset: 2 5;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "textonly" 0.0;
             inherit: "default" 0.0;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_visible" 0.0;
@@ -179,6 +183,7 @@ group { name: "elm/button/base/default";
             color_class: "button_text_disabled";
             color3: 255 255 255 255;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_textonly" 0.0;
@@ -186,6 +191,7 @@ group { name: "elm/button/base/default";
             color_class: "button_text_disabled";
             color3: 255 255 255 255;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
       }
@@ -415,6 +421,7 @@ group { name: "elm/button/base/anchor";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -424,6 +431,7 @@ group { name: "elm/button/base/anchor";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -452,11 +460,13 @@ group { name: "elm/button/base/anchor";
             inherit: "default" 0.0;
             rel1.offset: 0 0;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "textonly" 0.0;
             inherit: "default" 0.0;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_visible" 0.0;
@@ -464,12 +474,14 @@ group { name: "elm/button/base/anchor";
             rel1.offset: 0 0;
             color_class: "button_text_anchor_disabled";
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_textonly" 0.0;
             inherit: "default" 0.0;
             color_class: "button_text_anchor_disabled";
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
       }
@@ -486,6 +498,7 @@ group { name: "elm/button/base/anchor";
             text { font: FN; size: 10;
                text_source: "elm.text";
                min: 1 1;
+               ellipsis: -1;
                text_class: "button_anchor";
             }
             visible: 0;
@@ -803,11 +816,13 @@ group { name: "elm/button/base/hoversel_vertical/default";
             inherit: "default" 0.0;
             rel1.offset: 2 5;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "textonly" 0.0;
             inherit: "default" 0.0;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_visible" 0.0;
@@ -815,12 +830,14 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel1.offset: 2 5;
             color_class: "hoversel_text_disabled";
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_textonly" 0.0;
             inherit: "default" 0.0;
             color_class: "hoversel_text_disabled";
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
       }
@@ -1010,6 +1027,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -1019,6 +1037,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -1055,11 +1074,13 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             inherit: "default" 0.0;
             rel1.offset: 2 5;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "textonly" 0.0;
             inherit: "default" 0.0;
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_visible" 0.0;
@@ -1067,12 +1088,14 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel1.offset: 2 5;
             color_class: "hoversel_text_disabled";
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
          description { state: "disabled_textonly" 0.0;
             inherit: "default" 0.0;
             color_class: "hoversel_text_disabled";
             text.min: 1 1;
+            text.ellipsis: -1;
             visible: 1;
          }
       }

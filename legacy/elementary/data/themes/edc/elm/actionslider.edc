@@ -51,6 +51,7 @@ group { name: "elm/actionslider/base/default";
             text { font: FN; size: 10;
                align: 0.05 0.5;
                min: 1 1;
+               ellipsis: -1;
                text_class: "button";
             }
          }
@@ -69,6 +70,7 @@ group { name: "elm/actionslider/base/default";
             text { font: FN; size: 10;
                align: 0.5 0.5;
                min: 1 1;
+               ellipsis: -1;
                text_class: "check_off_text";
             }
          }
@@ -87,6 +89,7 @@ group { name: "elm/actionslider/base/default";
             text { font: FN; size: 10;
                align: 0.95 0.5;
                min: 1 1;
+               ellipsis: -1;
                text_class: "check_off_text";
             }
          }

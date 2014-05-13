@@ -681,6 +681,7 @@ group { name: "elm/entry/base-nowrap/default";
          description { state: "default" 0.0;
             text { style: "entry_nowrap_style";
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
             }
          }
@@ -731,6 +732,7 @@ group { name: "elm/entry/base-single/default";
          description { state: "default" 0.0;
             text { style: "entry_single_style";
                min: 1 1;
+               ellipsis: -1;
                max: 0 0;
                align: 0.0 0.5;
             }
@@ -756,6 +758,7 @@ group { name: "elm/entry/base-single-noedit/default";
          description { state: "default" 0.0;
             text { style: "entry_single_style";
                min: 1 1;
+               ellipsis: -1;
                max: 0 0;
                align: 0.0 0.5;
             }
@@ -852,6 +855,7 @@ group { name: "elm/entry/base-nowrap-noedit/default";
          description { state: "default" 0.0;
             text { style: "entry_style";
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
             }
          }
@@ -892,6 +896,7 @@ group { name: "elm/entry/base-password/default";
             text { style: "entry_single_style";
                repch: "*";
                min: 1 1;
+               ellipsis: -1;
                max: 0 0;
                align: 0.0 0.5;
             }

@@ -143,6 +143,7 @@ group { name: "elm/radio/base/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -152,6 +153,7 @@ group { name: "elm/radio/base/default";
             rel2.to: "elm.swallow.content";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -180,6 +182,7 @@ group { name: "elm/radio/base/default";
             inherit: "default" 0.0;
             visible: 1;
             text.min: 1 1;
+            text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
@@ -187,6 +190,7 @@ group { name: "elm/radio/base/default";
             color3: 255 255 255 25;
             visible: 1;
             text.min: 1 1;
+            text.ellipsis: -1;
          }
       }
       part { name: "event"; type: RECT;

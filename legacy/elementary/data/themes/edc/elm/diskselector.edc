@@ -271,6 +271,7 @@ group { name: "elm/diskselector/item/datetime/default";
               font: "Sans,Edje-Vera";
               size: 10;
               min: 1 1;
+              ellipsis: -1;
            }
         }
         description { state: "center_sel" 0.0;

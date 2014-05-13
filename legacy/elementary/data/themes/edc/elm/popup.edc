@@ -205,6 +205,7 @@ group { name: "elm/popup/base/default";
             text {
               style: "popup_title_style";
               min: 1 1;
+              ellipsis: -1;
             }
             visible: 0;
             rel1.offset: 2 2;

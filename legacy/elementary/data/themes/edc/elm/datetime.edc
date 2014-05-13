@@ -55,6 +55,7 @@
          text { \
             font: "Sans"; size: 10; \
             min: 1 0; \
+            ellipsis: -1; \
             align: 0.5 0.5; \
             text_class: "datetime_text"; \
          } \

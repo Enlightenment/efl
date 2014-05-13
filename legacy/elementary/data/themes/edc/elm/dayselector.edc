@@ -327,6 +327,7 @@ group { name: "elm/check/base/dayselector/default";
                font: FN;
                size: 10;
                min: 1 1;
+               ellipsis: -1;
                text_class: "button";
             }
             color: FN_COL_DEFAULT;
@@ -367,6 +368,7 @@ group { name: "elm/check/base/dayselector/default";
                font: FN;
                size: 10;
                min: 1 1;
+               ellipsis: -1;
                text_source: "elm.text";
                text_class: "button";
             }

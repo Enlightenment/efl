@@ -198,6 +198,7 @@
          color: FN_COL_DISABLE;\
          text { font: FN; size: 8; \
             min: 1 1; \
+            ellipsis: -1; \
          } \
       } \
    } \
@@ -280,6 +281,7 @@
          rel2.to: "cit_"#_pos".rect"; \
          text.style: "calendar_date_style"; \
          text.min: 1 1; \
+         text.ellipsis: -1; \
       } \
       description { state: "holiday" 0.0; \
          inherit: "default" 0.0; \

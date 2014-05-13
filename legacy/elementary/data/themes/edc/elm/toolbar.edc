@@ -597,6 +597,7 @@ group { name: "elm/toolbar/item/default";
             color_class: "toolbar_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "toolbar_item";
             }
@@ -689,6 +690,7 @@ group { name: "elm/toolbar/item/default";
             color_class: "toolbar_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "toolbar_item";
             }
@@ -1044,6 +1046,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             color_class: "toolbar_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "toolbar_item";
             }
@@ -1105,6 +1108,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             color_class: "toolbar_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "toolbar_item";
             }

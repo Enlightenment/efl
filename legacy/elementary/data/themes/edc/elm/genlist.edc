@@ -170,6 +170,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             color_class: "list_group_item";
             text { font: FNBD; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_group_item";
             }
@@ -396,6 +397,7 @@ group { "elm/genlist/item/default/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_item";
             }
@@ -607,6 +609,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_item";
                style: "genlist_style";
@@ -964,6 +967,7 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_item";
             }
@@ -1140,6 +1144,7 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_item";
             }
@@ -1794,6 +1799,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "list_item";
             }
@@ -1927,6 +1933,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.5 0.5;
                text_class: "list_item";
                text: "M";
@@ -2206,6 +2213,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
                text_class: "list_item";
             }
@@ -2309,6 +2317,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
@@ -2790,6 +2799,7 @@ group { "elm/genlist/item/message/default"; nomouse;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
                text_class: "list_item";
             }
@@ -2896,6 +2906,7 @@ group { "elm/genlist/item/message/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_item";
             }
@@ -2985,6 +2996,7 @@ group { "elm/genlist/item/message/default"; nomouse;
             align: 0.0 1.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 1.0;
                text_class: "list_item";
             }
@@ -3138,6 +3150,7 @@ group { "elm/genlist/item/media/default"; nomouse;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
                text_class: "list_item";
             }
@@ -3240,6 +3253,7 @@ group { "elm/genlist/item/media/default"; nomouse;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
@@ -3579,6 +3593,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
                text_class: "list_item";
             }
@@ -3680,6 +3695,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             rel2.offset: 2 -1;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text: ":";
             }
@@ -3704,6 +3720,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
                text_class: "list_item";
             }
@@ -3795,6 +3812,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
@@ -4124,6 +4142,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.0;
                text_class: "list_item";
             }
@@ -4226,6 +4245,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 1.0;
                text_class: "list_item_sub";
             }
@@ -4673,6 +4693,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
             color_class: "list_item";
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "list_item";
             }

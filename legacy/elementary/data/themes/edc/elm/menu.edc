@@ -84,6 +84,7 @@ group { name: "elm/menu/item/default";
             color: FN_COL_DEFAULT;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "menu_item";
             }
@@ -462,6 +463,7 @@ group { name: "elm/menu/main_menu_submenu/default";
             color: FN_COL_DEFAULT;
             text { font: FN; size: 10;
                min: 1 1;
+               ellipsis: -1;
                align: 0.0 0.5;
                text_class: "menu_item";
             }

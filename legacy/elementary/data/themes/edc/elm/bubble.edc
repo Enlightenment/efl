@@ -44,6 +44,7 @@ group { name: "elm/bubble/top_left/default";
             rel2.to: "elm.swallow.icon";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -88,6 +89,7 @@ group { name: "elm/bubble/top_left/default";
             color_class: "bubble_info";
             text { font: FNBD; size: 10;
                min: 1 1;
+               ellipsis: -1;
                max: 1 1;
                align: 1.0 0.0;
                text_class: "bubble_info";
@@ -231,6 +233,7 @@ group { name: "elm/bubble/top_right/default";
             rel2.to: "elm.swallow.icon";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -272,6 +275,7 @@ group { name: "elm/bubble/top_right/default";
             color_class: "bubble_info";
             text { font: FNBD; size: 10;
                min: 1 1;
+               ellipsis: -1;
                max: 1 1;
                align: 1.0 0.0;
                text_class: "bubble_info";
@@ -416,6 +420,7 @@ group { name: "elm/bubble/bottom_left/default";
             rel2.to: "elm.swallow.icon";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -460,6 +465,7 @@ group { name: "elm/bubble/bottom_left/default";
             color_class: "bubble_info";
             text { font: FNBD; size: 10;
                min: 1 1;
+               ellipsis: -1;
                max: 1 1;
                align: 1.0 1.0;
                text_class: "bubble_info";
@@ -596,6 +602,7 @@ group { name: "elm/bubble/bottom_right/default";
             rel2.to: "elm.swallow.icon";
             text {
                min: 1 1;
+               ellipsis: -1;
                text: "M";
             }
          }
@@ -640,6 +647,7 @@ group { name: "elm/bubble/bottom_right/default";
             color_class: "bubble_info";
             text { font: FNBD; size: 10;
                min: 1 1;
+               ellipsis: -1;
                max: 1 1;
                align: 1.0 1.0;
                text_class: "bubble_info";
