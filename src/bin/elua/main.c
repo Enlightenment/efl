@@ -73,7 +73,11 @@ static int getargs(lua_State *L, int argc, char **argv, int n) {
     for (i = n + 1; i < argc; ++i) lua_pushstring(L, argv[i]);
     lua_createtable(L, narg, n + 1);
     for (i = 0; i < argc; ++i) {
-        lua_pushstring(L, argv[i]);
+        if (!(i - n) && argv[i][0] == ':') {
+            lua_pushstring(L, &argv[i][1]);
+        } else {
+            lua_pushstring(L, argv[i]);
+        }
         lua_rawseti(L, -2, i - n);
     }
     return narg;
