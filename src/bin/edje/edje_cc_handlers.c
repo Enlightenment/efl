@@ -4251,6 +4251,11 @@ st_collections_group_parts_part_inherit(void)
         const char *pname;
 
         if (strcmp(pc->parts[i]->name, name)) continue;
+        if (pc->parts[i] == current_part)
+          {
+             ERR("Cannot inherit from same part '%s' in group '%s'", name, current_de->entry);
+             exit(-1);
+          }
         pname = current_part->name;
         current_part->name = NULL;
         current_part = _part_free(current_part);
