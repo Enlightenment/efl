@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.7.99.76688\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-02 19:23+0900\n"
+"POT-Creation-Date: 2014-05-14 14:31+0900\n"
 "PO-Revision-Date: 2012-09-14 22:20+0300\n"
 "Last-Translator: Danny Moshnakov <dm@agent.co.il>\n"
 "Language-Team: ru <ru>\n"
@@ -78,9 +78,9 @@ msgid "Clicked"
 msgstr "Нажато"
 
 #: src/lib/elm_button.c:272 src/lib/elm_check.c:214 src/lib/elm_gengrid.c:719
-#: src/lib/elm_genlist.c:1451 src/lib/elm_list.c:1981 src/lib/elm_radio.c:253
+#: src/lib/elm_genlist.c:1451 src/lib/elm_list.c:1999 src/lib/elm_radio.c:253
 #: src/lib/elm_segment_control.c:519 src/lib/elm_spinner.c:568
-#: src/lib/elm_toolbar.c:2192
+#: src/lib/elm_toolbar.c:2205
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:3147
+#: src/lib/elm_config.c:3155
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -244,7 +244,7 @@ msgstr "индикатор прогресса"
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elm_segment_control.c:522 src/lib/elm_toolbar.c:2194
+#: src/lib/elm_segment_control.c:522 src/lib/elm_toolbar.c:2207
 msgid "State: Selected"
 msgstr "Состояние: Выбрано"
 
@@ -273,24 +273,24 @@ msgstr "кнопка уменьшения счетчика"
 msgid "spinner"
 msgstr "счетчик"
 
-#: src/lib/elm_toolbar.c:1654 src/lib/elm_toolbar.c:2253
+#: src/lib/elm_toolbar.c:1667 src/lib/elm_toolbar.c:2266
 msgid "Selected"
 msgstr "Выбрано"
 
-#: src/lib/elm_toolbar.c:2190
+#: src/lib/elm_toolbar.c:2203
 msgid "Separator"
 msgstr "Разделитель"
 
-#: src/lib/elm_toolbar.c:2196
+#: src/lib/elm_toolbar.c:2209
 msgid "Has menu"
 msgstr "С меню"
 
-#: src/lib/elm_toolbar.c:2248
+#: src/lib/elm_toolbar.c:2261
 #, fuzzy
 msgid "Unselected"
 msgstr "Выбрано"
 
-#: src/lib/elm_toolbar.c:2265
+#: src/lib/elm_toolbar.c:2278
 #, fuzzy
 msgid "Toolbar Item"
 msgstr "Элемент инструментов"
