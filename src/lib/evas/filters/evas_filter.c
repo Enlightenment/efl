@@ -1125,7 +1125,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         int render_op;
 
         if (!cmd) goto fail;
-        if (!copybuf) goto fail;
         DBG("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
         render_op = cmd->ENFN->context_render_op_get(cmd->ENDT, drawctx);
