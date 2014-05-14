@@ -46,7 +46,9 @@ local parse_l = function(opts, opt, descs, args, parser)
         error("option --" .. opt .. " cannot have an argument", 3)
     end
     local rets
-    if desc.callback then rets = { desc:callback(parser, optval) } end
+    if desc.callback then
+        rets = { desc:callback(parser, optval, opts) }
+    end
     if not rets or #rets == 0 then rets = { optval } end
     local optn = desc.alias or desc[1] or desc[2]
     opts[#opts + 1] = { optn, short = desc[1], long = desc[2],
@@ -85,7 +87,9 @@ local parse_s = function(opts, optstr, descs, args, parser)
             optval, optstr = optstr, ""
         end
         local rets
-        if desc.callback then rets = { desc:callback(parser, optval) } end
+        if desc.callback then
+            rets = { desc:callback(parser, optval, opts) }
+        end
         if not rets or #rets == 0 then rets = { optval } end
         local optn = desc.alias or desc[1] or desc[2]
         opts[#opts + 1] = { optn, short = desc[1], long = desc[2],
