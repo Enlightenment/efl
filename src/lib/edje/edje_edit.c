@@ -2204,8 +2204,8 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
    if (!rp)
      {
-	eina_mempool_free(ce->mp.part, ep);
-	return EINA_FALSE;
+        eina_mempool_free(ce->mp.part, ep);
+        return EINA_FALSE;
      }
    memset(rp, 0, sizeof(Edje_Real_Part));
 
@@ -2215,9 +2215,9 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    tmp = realloc(pc->parts, (pc->parts_count + 1) * sizeof (Edje_Part *));
    if (!tmp)
      {
-	eina_mempool_free(ce->mp.part, ep);
-	eina_mempool_free(_edje_real_part_mp, rp);
-	return EINA_FALSE;
+        eina_mempool_free(ce->mp.part, ep);
+        eina_mempool_free(_edje_real_part_mp, rp);
+        return EINA_FALSE;
      }
 
    id = pc->parts_count++;
@@ -2254,75 +2254,89 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      rp->object = evas_object_image_add(ed->base->evas);
    else if (ep->type == EDJE_PART_TYPE_TEXT)
      {
-	_edje_text_part_on_add(ed, rp);
-	rp->object = evas_object_text_add(ed->base->evas);
-	evas_object_text_font_source_set(rp->object, ed->path);
+        rp->type = EDJE_RP_TYPE_TEXT;
+        rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
+        _edje_text_part_on_add(ed, rp);
+        rp->object = evas_object_text_add(ed->base->evas);
+        evas_object_text_font_source_set(rp->object, ed->path);
      }
    else if (ep->type == EDJE_PART_TYPE_SWALLOW ||
-	    ep->type == EDJE_PART_TYPE_GROUP ||
-	    ep->type == EDJE_PART_TYPE_EXTERNAL)
+            ep->type == EDJE_PART_TYPE_GROUP ||
+            ep->type == EDJE_PART_TYPE_EXTERNAL)
      {
-	rp->object = evas_object_rectangle_add(ed->base->evas);
-	evas_object_color_set(rp->object, 0, 0, 0, 0);
-	evas_object_pass_events_set(rp->object, 1);
-	evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+        rp->type = EDJE_RP_TYPE_SWALLOW;
+        rp->typedata.swallow = calloc(1, sizeof(Edje_Real_Part_Swallow));
+        rp->object = evas_object_rectangle_add(ed->base->evas);
+        evas_object_color_set(rp->object, 0, 0, 0, 0);
+        evas_object_pass_events_set(rp->object, 1);
+        evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
      }
    else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
-     rp->object = evas_object_textblock_add(ed->base->evas);
+     {
+        rp->type = EDJE_RP_TYPE_TEXT;
+        rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
+        rp->object = evas_object_textblock_add(ed->base->evas);
+     }
+   else if (ep->type == EDJE_PART_TYPE_BOX ||
+            ep->type == EDJE_PART_TYPE_TABLE)
+     {
+        rp->type = EDJE_RP_TYPE_CONTAINER;
+        rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
+     }
    else if (ep->type != EDJE_PART_TYPE_SPACER)
      ERR("wrong part type %i!", ep->type);
    if (rp->object)
      {
-	evas_object_show(rp->object);
-	evas_object_smart_member_add(rp->object, ed->obj);
-	evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
-	if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP)
-	  {
-	     if (ep->mouse_events)
-	       {
-		  _edje_callbacks_add(rp->object, ed, rp);
-		  if (ep->repeat_events)
-		    evas_object_repeat_events_set(rp->object, 1);
+        evas_object_show(rp->object);
+        evas_object_smart_member_add(rp->object, ed->obj);
+        evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
+        if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP)
+          {
+             if (ep->mouse_events)
+               {
+                  _edje_callbacks_add(rp->object, ed, rp);
+                  if (ep->repeat_events)
+                    evas_object_repeat_events_set(rp->object, 1);
 
-		  if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
-		    evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
-	       }
-	     else
-	       {
-		  evas_object_pass_events_set(rp->object, 1);
-		  evas_object_pointer_mode_set(rp->object,
-					       EVAS_OBJECT_POINTER_MODE_NOGRAB);
-	       }
-	     if (ep->precise_is_inside)
-	       evas_object_precise_is_inside_set(rp->object, 1);
-	  }
-	if (ep->type == EDJE_PART_TYPE_EXTERNAL)
-	  {
-	     Evas_Object *child;
-	     child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL, name);
-	     if (child)
-	       _edje_real_part_swallow(ed, rp, child, EINA_TRUE);
-	  }
-	evas_object_clip_set(rp->object, ed->base->clipper);
-	evas_object_show(ed->base->clipper);
+                  if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
+                    evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
+               }
+             else
+               {
+                  evas_object_pass_events_set(rp->object, 1);
+                  evas_object_pointer_mode_set(rp->object,
+                                               EVAS_OBJECT_POINTER_MODE_NOGRAB);
+               }
+             if (ep->precise_is_inside)
+               evas_object_precise_is_inside_set(rp->object, 1);
+          }
+        if (ep->type == EDJE_PART_TYPE_EXTERNAL)
+          {
+             Evas_Object *child;
+             child = _edje_external_type_add(source, evas_object_evas_get(ed->obj), ed->obj, NULL, name);
+             if (child)
+               _edje_real_part_swallow(ed, rp, child, EINA_TRUE);
+          }
+        evas_object_clip_set(rp->object, ed->base->clipper);
+        evas_object_show(ed->base->clipper);
      }
 
    /* Update table_parts */
    ed->table_parts_size++;
    ed->table_parts = realloc(ed->table_parts,
-			     sizeof(Edje_Real_Part *) * ed->table_parts_size);
+                             sizeof(Edje_Real_Part *) * ed->table_parts_size);
 
    ed->table_parts[ep->id % ed->table_parts_size] = rp;
 
    /* Create default description */
    if (!edje_edit_state_add(obj, name, "default", 0.0))
      {
-	_edje_if_string_free(ed, ep->name);
-	if (source)
-	  _edje_if_string_free(ed, ep->source);
-	eina_mempool_free(ce->mp.part, ep);
-	eina_mempool_free(_edje_real_part_mp, rp);
-	return EINA_FALSE;
+        _edje_if_string_free(ed, ep->name);
+        if (source)
+          _edje_if_string_free(ed, ep->source);
+        eina_mempool_free(ce->mp.part, ep);
+        eina_mempool_free(_edje_real_part_mp, rp);
+        return EINA_FALSE;
      }
    edje_edit_part_selected_state_set(obj, name, "default", 0.0);
 
