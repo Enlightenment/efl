@@ -249,6 +249,20 @@ eo_header_generate(const char *classname, Eina_Strbuf *buf)
         return EINA_FALSE;
      }
 
+   const char *desc = eolian_class_description_get(classname);
+   Eina_Strbuf *linedesc = eina_strbuf_new();
+   eina_strbuf_append(linedesc, "/**\n");
+   if (desc)
+     {
+        eina_strbuf_append(linedesc, desc);
+        eina_strbuf_replace_all(linedesc, "\n", "\n * ");
+     }
+
+   eina_strbuf_append(linedesc, "\n */\n");
+   eina_strbuf_replace_all(linedesc, " * \n", " *\n"); /* Remove trailing whitespaces */
+   eina_strbuf_append(buf, eina_strbuf_string_get(linedesc));
+   eina_strbuf_free(linedesc);
+
    _template_fill(str_hdr, tmpl_eo_obj_header, classname, "", EINA_TRUE);
 
    eina_strbuf_replace_all(str_hdr, "@#EOPREFIX", current_eo_prefix_upper);
