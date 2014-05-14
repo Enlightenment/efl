@@ -1421,7 +1421,8 @@ _menu_call(Evas_Object *obj)
           {
              /* prevent stupid blank hoversel */
              if (sd->have_selection && sd->password) return;
-             if (_elm_config->desktop_entry && ((!sd->editable) || (!ownersel))) return;
+             if (_elm_config->desktop_entry && (!sd->have_selection) && ((!sd->editable) || (!ownersel)))
+               return;
           }
         if (sd->hoversel) evas_object_del(sd->hoversel);
         else elm_widget_scroll_freeze_push(obj);
