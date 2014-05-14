@@ -1753,32 +1753,28 @@ static Eina_Bool
 _item_single_select_up(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
-   Elm_Gen_Item *prev;
+   Elm_Object_Item *prev;
 
    if (!sd->selected)
-     {
-        prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while ((prev) && (prev->generation < sd->generation))
-          prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
-        elm_gengrid_item_selected_set((Elm_Object_Item *)prev, EINA_TRUE);
-        return EINA_TRUE;
-     }
+     prev = (Elm_Object_Item *)ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
    else
-     prev = (Elm_Gen_Item *)elm_gengrid_item_prev_get(sd->last_selected_item);
+     prev = sd->last_selected_item;
+
+   while (prev)
+     {
+        for (i = 0; i < sd->nmax; i++)
+          {
+             prev = elm_gengrid_item_prev_get((Elm_Object_Item *)prev);
+             if (!prev) return EINA_FALSE;
+          }
+
+        if (!elm_object_item_disabled_get(prev)) break;
+     }
 
    if (!prev) return EINA_FALSE;
 
-   for (i = 1; i < sd->nmax; i++)
-     {
-        Elm_Object_Item *tmp =
-          elm_gengrid_item_prev_get((Elm_Object_Item *)prev);
-        if (!tmp) return EINA_FALSE;
-        prev = (Elm_Gen_Item *)tmp;
-     }
-
    _all_items_deselect(sd);
-
-   elm_gengrid_item_selected_set((Elm_Object_Item *)prev, EINA_TRUE);
+   elm_gengrid_item_selected_set(prev, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -1787,32 +1783,28 @@ static Eina_Bool
 _item_single_select_down(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
-   Elm_Gen_Item *next;
+   Elm_Object_Item *next;
 
    if (!sd->selected)
-     {
-        next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while ((next) && (next->generation < sd->generation))
-          next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
-        elm_gengrid_item_selected_set((Elm_Object_Item *)next, EINA_TRUE);
-        return EINA_TRUE;
-     }
+     next = (Elm_Object_Item *)ELM_GEN_ITEM_FROM_INLIST(sd->items);
    else
-     next = (Elm_Gen_Item *)elm_gengrid_item_next_get(sd->last_selected_item);
+     next = sd->last_selected_item;
+
+   while (next)
+     {
+        for (i = 0; i < sd->nmax; i++)
+          {
+             next = elm_gengrid_item_next_get((Elm_Object_Item *)next);
+             if (!next) return EINA_FALSE;
+          }
+
+        if (!elm_object_item_disabled_get(next)) break;
+     }
 
    if (!next) return EINA_FALSE;
 
-   for (i = 1; i < sd->nmax; i++)
-     {
-        Elm_Object_Item *tmp =
-          elm_gengrid_item_next_get((Elm_Object_Item *)next);
-        if (!tmp) return EINA_FALSE;
-        next = (Elm_Gen_Item *)tmp;
-     }
-
    _all_items_deselect(sd);
-
-   elm_gengrid_item_selected_set((Elm_Object_Item *)next, EINA_TRUE);
+   elm_gengrid_item_selected_set(next, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -1825,11 +1817,20 @@ _item_single_select_left(Elm_Gengrid_Data *sd)
    if (!sd->selected)
      {
         prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while ((prev) && (prev->generation < sd->generation))
+        while ((prev) && (prev->generation < sd->generation)
+               && elm_object_item_disabled_get((Elm_Object_Item *)prev))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
    else
-     prev = (Elm_Gen_Item *)elm_gengrid_item_prev_get(sd->last_selected_item);
+     {
+        prev = (Elm_Gen_Item *)elm_gengrid_item_prev_get(sd->last_selected_item);
+        while (prev)
+          {
+             if (!elm_object_item_disabled_get((Elm_Object_Item *)prev))
+               break;
+             prev = (Elm_Gen_Item *)elm_gengrid_item_prev_get((Elm_Object_Item *)prev);
+          }
+     }
 
    if (!prev) return EINA_FALSE;
 
@@ -1848,11 +1849,20 @@ _item_single_select_right(Elm_Gengrid_Data *sd)
    if (!sd->selected)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while ((next) && (next->generation < sd->generation))
+        while ((next) && (next->generation < sd->generation)
+               && elm_object_item_disabled_get((Elm_Object_Item *)next))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
-     next = (Elm_Gen_Item *)elm_gengrid_item_next_get(sd->last_selected_item);
+     {
+        next = (Elm_Gen_Item *)elm_gengrid_item_next_get(sd->last_selected_item);
+        while (next)
+          {
+             if (!elm_object_item_disabled_get((Elm_Object_Item *)next))
+               break;
+             next = (Elm_Gen_Item *)elm_gengrid_item_next_get((Elm_Object_Item *)next);
+          }
+     }
 
    if (!next) return EINA_FALSE;
 
