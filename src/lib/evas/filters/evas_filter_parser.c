@@ -18,8 +18,6 @@
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
 #define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+2)
 
-// FIXME: The documentation must be updated to respect the Lua language
-
 /* Note on the documentation:
  * To keep it simple, I'm not using any fancy features, only <ul>/<li> lists
  * and @a, @b, @c flags from Doxygen.
@@ -1936,13 +1934,17 @@ _legacy_strdup(const char *str)
    for (const char *ptr = str; ptr && *ptr; ptr++)
      {
         if (ptr[0] == '/' && ptr[1] == '/')
-          // Comments
-          ptr = strchr(ptr, '\n');
+          {
+             // Comments
+             ptr = strchr(ptr, '\n');
+             if (!ptr) break;
+          }
         else if (ptr[0] == '/' && ptr[1] == '*')
           {
              /* Comments */
              ptr = strstr(ptr + 2, "*/");
-             if (ptr) ptr++;
+             if (!ptr) break;
+             ptr++;
           }
         else if (*ptr == '(')
           eina_strbuf_append_char(dst, '{');
