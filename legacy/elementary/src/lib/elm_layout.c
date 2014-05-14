@@ -520,6 +520,7 @@ _elm_layout_elm_widget_sub_object_del(Eo *obj, Elm_Layout_Smart_Data *sd, Evas_O
 
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
    if (!int_ret) return EINA_FALSE;
+   if (sd->destructed_is) return EINA_TRUE;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -798,6 +799,8 @@ _elm_layout_evas_smart_del(Eo *obj, Elm_Layout_Smart_Data *sd)
              break;
           }
      }
+
+   sd->destructed_is = EINA_TRUE;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
