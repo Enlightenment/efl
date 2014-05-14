@@ -1604,7 +1604,7 @@ _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
 {
    Eina_Bool ok;
 
-   if (!param) goto fail;
+   if (!param) return EINA_FALSE;
    if (param->set)
      {
         ERR("Parameter %s has already been set", param->name);
@@ -1688,7 +1688,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
    Instruction_Param *param;
    unsigned int i = 0;
 
-   if (!instr) goto fail;
+   if (!instr) return EINA_FALSE;
 
    if (eina_inlist_count(instr->params) < argc)
      {
