@@ -7,6 +7,15 @@ local getopt = require("getopt")
 
 local VERSION = "1.0.0"
 
+local input_files    = {}
+local search_dirs    = {}
+local excluded_files = {}
+local keywords       = {}
+local flags          = {}
+
+local opts_final = {}
+local opts_nolua = {}
+
 local opts, args = getopt.parse {
     usage = "Usage: %prog [OPTION] [INPUTFILE]...",
     args  = arg,
@@ -15,129 +24,140 @@ local opts, args = getopt.parse {
 
         { metavar = "INPUTFILE ...", help = "input files" },
         { "f", "files-from", true, metavar = "FILE",
-            help = "get list of input files from FILE"
+            help = "get list of input files from FILE", list = input_files
         },
         { "D", "directory", true, help = "add DIRECTORY to list for input "
-            .. "files search\nIf input file is -, standard input is read."
+            .. "files search\nIf input file is -, standard input is read.",
+            list = search_dirs
         },
 
         { category = "Output file location" },
 
         { "d", "default-domain", true, metavar = "NAME",
-            help = "use NAME.po for output (instead of messages.po)"
+            help = "use NAME.po for output (instead of messages.po)",
+            opts = opts_final
         },
         { "o", "output", true, metavar = "FILE",
-            help = "write output to specified file"
+            help = "write output to specified file", opts = opts_final
         },
         { "p", "output-dir", true, metavar = "DIR", help = "output files "
             .. "will be placed in directory DIR\nIf output file is -, "
-            .. "output is written to standard output."
+            .. "output is written to standard output.",
+            opts = opts_final
         },
 
         { category = "Input file interpretation" },
 
         { "L", "language", true, help = false },
-        { "C", "c++", false, help = false },
+        { "C", "c++", false, help = false,
+            callback = function(desc, parser, val, opts) opts["L"] = "C++" end
+        },
         { nil, "from-code", true, metavar = "NAME", help = "encoding of "
             .. "input files\nOnly relevant for non-Lua inputs "
-            .. "(Lua is always assumed to be UTF-8)."
+            .. "(Lua is always assumed to be UTF-8).", opts = opts_nolua
         },
 
         { category = "Operation mode" },
 
         { "j", "join-existing", false,
-            help = "join essages with existing file"
+            help = "join messages with existing file", opts = opts_final
         },
         { "x", "exclude-file", true, metavar = "FILE.po",
-            help = "entries from FILE.po are not extracted"
+            help = "entries from FILE.po are not extracted",
+            list = excluded_files
         },
         { "c", "add-comments", nil, metavar = "TAG", help = "place comment "
             .. "blocks (optionally starting with TAG) and preceding "
-            .. "keyword lines in output file"
+            .. "keyword lines in output file", opts = opts_nolua
         },
 
         { category = "Language specific options" },
 
-        { "a", "extract-all", false, help = "extract all strings" },
+        { "a", "extract-all", false, help = "extract all strings",
+            opts = opts_nolua
+        },
         { "k", "keyword", nil, metavar = "WORD", help = "look for WORD as an "
-            .. "additional keyword or if not given, do no use default keywords"
+            .. "additional keyword or if not given, do no use default keywords",
+            opts = opts_nolua, list = keywords
         },
         { nil, "flag", true, metavar = "WORD:ARG:FLAG", help = "additional "
-            .. "flag for strings inside the argument number ARG of keyword WORD"
+            .. "flag for strings inside the argument number ARG of keyword WORD",
+            opts = opts_nolua, list = flags
+        },
+        { "T", "trigraphs", false, help = false, opts = opts_nolua },
+        { nil, "qt", false, help = false, opts = opts_nolua },
+        { nil, "kde", false, help = false, opts = opts_nolua },
+        { nil, "boost", false, help = false, opts = opts_nolua },
+        { nil, "debug", false, help = "more detailed formatstring "
+            .. "recognition results", opts = opts_nolua
         },
 
         { category = "Output details" },
 
-        { "T", "trigraphs", false, help = false },
-        { nil, "qt", false, help = false },
-        { nil, "kde", false, help = false },
-        { nil, "boost", false, help = false },
-        { nil, "debug", false, help = "more detailed formatstring "
-            .. "recognition results"
-        },
         { nil, "color", nil, metavar = "WHEN", help = "use colors and other "
             .. "text attributes always or if WHEN. WHEN may be 'always', "
-            .. "'never', 'auto', or 'html'"
+            .. "'never', 'auto', or 'html'", opts = opts_final
         },
         { nil, "style", true, metavar = "STYLEFILE", help = "specify CSS "
-            .. "style rule file for --color"
+            .. "style rule file for --color", opts = opts_final
         },
-        { "e", "no-escape", false, help = "do not use C escapes in output "
-            .. "(default)"
+        { nil, "force-po", false, help = "write PO file even if empty",
+            opts = opts_final
         },
-        { "E", "escape", false, help = "use C escapes in output, no "
-            .. "extended chars"
-        },
-        { nil, "force-po", false, help = "write PO file even if empty" },
-        { "i", "indent", false, help = "wrute the .po file using indented "
-            .. "style"
+        { "i", "indent", false, help = "write the .po file using indented "
+            .. "style", opts = opts_final
         },
         { nil, "no-location", false, help = "do not write '#: filename:line' "
-            .. "lines"
+            .. "lines", opts = opts_nolua
         },
         { "n", "add-location", false, help = "generate '#: filename:line' "
-            .. "lines (default)"
+            .. "lines (default)", opts = opts_nolua
         },
         { nil, "strict", false, help = "write out strict Uniforum "
-            .. "conforming .po file"
+            .. "conforming .po file", opts = opts_final
         },
         { nil, "properties-output", false, help = "write out a Java "
-            .. ".properties file"
+            .. ".properties file", opts = opts_final
         },
         { nil, "stringtable-output", false, help = "write out a NeXTstep/"
-            .. "GNUstep .strings file"
+            .. "GNUstep .strings file", opts = opts_final
         },
         { "w", "width", true, metavar = "NUMBER", help = "set output page "
-            .. "width"
+            .. "width", opts = opts_final
         },
         { nil, "no-wrap", false, "do not break long message lines, longer "
-            .. "than the output page width, into several lines"
+            .. "than the output page width, into several lines",
+            opts = opts_final
         },
-        { "s", "sort-output", false, help = "generate sorted output" },
-        { "F", "sort-by-file", false, help = "sort output by file location" },
+        { "s", "sort-output", false, help = "generate sorted output",
+            opts = opts_final
+        },
+        { "F", "sort-by-file", false, help = "sort output by file location",
+            opts = opts_final
+        },
         { nil, "omit-header", false, help = "don't write header with "
-            .. "'msgid \"\"' entry"
+            .. "'msgid \"\"' entry", opts = opts_final
         },
         { nil, "copyright-holder", true, metavar = "STRING", help = "set "
-            .. "copyright holder in output"
+            .. "copyright holder in output", opts = opts_final
         },
         { nil, "foreign-user", false, help = "omit copyright in output "
-            .. "for foreign user"
+            .. "for foreign user", opts = opts_final
         },
         { nil, "package-name", true, metavar = "PACKAGE", help = "set package "
-            .. "name in output"
+            .. "name in output", opts = opts_final
         },
         { nil, "package-version", true, metavar = "VERSION", help = "set "
-            .. "package version in output"
+            .. "package version in output", opts = opts_final
         },
         { nil, "msgid-bugs-address", true, metavar = "EMAIL@ADDRESS", help =
-            "set report address for msgid bugs"
+            "set report address for msgid bugs", opts = opts_final
         },
         { "m", "msgstr-prefix", true, metavar = "STRING", help = "use STRING "
-            .. "or \"\" as prefix for msgstr values"
+            .. "or \"\" as prefix for msgstr values", opts = opts_final
         },
         { "M", "msgstr-suffix", true, metavar = "STRING", help = "use STRING "
-            .. "or \"\" as suffix for msgstr values"
+            .. "or \"\" as suffix for msgstr values", opts = opts_final
         },
 
         { category = "Binaries" },
@@ -223,19 +243,21 @@ if not onlylua then
             ifiles[#ifiles + 1] = opt[2]
         end
     end
+
+    local inputs = {}
     for i, v in ipairs(ifiles) do
         local f = io.open(v)
         if f then
             for line in f:lines() do
                 if not line:lower():match("^.+%.lua$") then
-                    gargs[#gargs + 1] = line
+                    inputs[#inputs + 1] = line
                 end
             end
         end
     end
     for i, v in ipairs(args) do
         if not v:lower():match("^.+%.lua$") then
-            gargs[#gargs + 1] = v
+            inputs[#inputs + 1] = v
         end
     end
     cutil.exec(unpack(gargs))
