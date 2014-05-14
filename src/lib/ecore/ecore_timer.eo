@@ -1,5 +1,12 @@
 class Ecore_Timer (Eo_Base)
 {
+   /*@ Timers are objects that will call a given callback at some point
+    *  in the future. They may also optionall repeat themselves if the
+    *  timer callback returns true. If it does not they will be
+    *  automatically deleted and never called again. Timers require the
+    *  ecore mainloop to be running and functioning properly. They do not
+    *  guarantee exact timing, but try to work on a "best effort basis.
+    */
    eo_prefix: ecore_obj_timer;
    constructors {
       loop_constructor {
