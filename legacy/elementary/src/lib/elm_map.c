@@ -1012,21 +1012,24 @@ _track_place(Elm_Map_Data *sd)
 static void
 _calc_job(Elm_Map_Data *sd)
 {
-   if (sd->calc_job.region_show_bring_in)
-     {
-        sd->calc_job.region_show_bring_in
-          (sd, sd->calc_job.lon, sd->calc_job.lat, sd->calc_job.bring_in);
-        sd->calc_job.region_show_bring_in = NULL;
-     }
    if (sd->calc_job.zoom_mode_set)
      {
         sd->calc_job.zoom_mode_set(sd, sd->calc_job.zoom);
         sd->calc_job.zoom_mode_set = NULL;
      }
-   if (sd->calc_job.overlays_show)
+   if (!sd->zoom_animator)
      {
-        sd->calc_job.overlays_show(sd, sd->calc_job.overlays);
-        sd->calc_job.overlays_show = NULL;
+        if (sd->calc_job.region_show_bring_in)
+          {
+             sd->calc_job.region_show_bring_in
+                (sd, sd->calc_job.lon, sd->calc_job.lat, sd->calc_job.bring_in);
+             sd->calc_job.region_show_bring_in = NULL;
+          }
+        if (sd->calc_job.overlays_show)
+          {
+             sd->calc_job.overlays_show(sd, sd->calc_job.overlays);
+             sd->calc_job.overlays_show = NULL;
+          }
      }
 }
 
@@ -1136,6 +1139,7 @@ _zoom_anim_cb(void *data)
      {
         sd->zoom_animator = NULL;
         evas_object_smart_changed(sd->pan_obj);
+        _calc_job(sd);
 
         return ECORE_CALLBACK_CANCEL;
      }
