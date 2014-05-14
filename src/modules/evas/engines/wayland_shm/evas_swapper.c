@@ -333,6 +333,8 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
         return EINA_FALSE;
      }
 
+   /* unlink the temp file */
+   unlink(name);
    free(name);
 
    /* try to truncate the tmp file to requested size */
@@ -345,9 +347,6 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
 
    /* mem map the file */
    ws->data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
-
-   /* unlink the tmp file */
-   unlink(tmp);
 
    /* if we failed to mem map the file, return an error */
    if (ws->data == MAP_FAILED)
