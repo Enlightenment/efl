@@ -513,7 +513,8 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    if (!strcmp(dir, "down"))
      {
-        if (item_focused_get(sd) == litem)
+        if ((!sd->horizontal) &&
+            (item_focused_get(sd) == litem))
           {
             elm_object_focus_set(VIEW(fitem), EINA_TRUE);
             return EINA_TRUE;
@@ -523,7 +524,8 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "up"))
      {
-        if (item_focused_get(sd) == fitem)
+        if ((!sd->horizontal) &&
+            (item_focused_get(sd) == fitem))
           {
             elm_object_focus_set(VIEW(litem), EINA_TRUE);
             return EINA_TRUE;
@@ -533,7 +535,8 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "left"))
      {
-        if (item_focused_get(sd) == fitem)
+        if (sd->horizontal &&
+            (item_focused_get(sd) == fitem))
           {
             elm_object_focus_set(VIEW(litem), EINA_TRUE);
             return EINA_TRUE;
@@ -543,7 +546,8 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "right"))
      {
-        if (item_focused_get(sd) == litem)
+        if (sd->horizontal &&
+            (item_focused_get(sd) == litem))
           {
             elm_object_focus_set(VIEW(fitem), EINA_TRUE);
             return EINA_TRUE;
