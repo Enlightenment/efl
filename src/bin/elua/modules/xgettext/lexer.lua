@@ -99,16 +99,16 @@ local read_long_string = function(ls, sep, cmt)
             if skip_sep(ls, tbuf) == sep then
                 c = next_char(ls)
                 break
-            elseif not cmt then
+            else
                 buf[#buf + 1] = tconc(tbuf)
             end
             c = ls.current
         else
-            if not cmt then buf[#buf + 1] = c end
+            buf[#buf + 1] = c
             c = next_char(ls)
         end
     end
-    if not cmt then return tconc(buf) end
+    return tconc(buf)
 end
 
 local read_string = function(ls)
@@ -145,13 +145,15 @@ local lex_tbl = {
         if c == "[" then
             local sep = skip_sep(ls, {})
             if sep >= 0 then
-                read_long_string(ls, sep, true)
-                return
+                return "<comment>", read_long_string(ls, sep, true)
             end
         end
+        local buf = {}
         while ls.current and ls.current ~= "\n" and ls.current ~= "\r" do
+            buf[#buf + 1] = ls.current
             next_char(ls)
         end
+        return "<comment>", tconc(buf)
     end,
     ["[" ] = function(ls)
         local buf = {}
