@@ -311,6 +311,21 @@ static int elua_exec(lua_State *L) {
 #endif
 }
 
+static int elua_build_args(lua_State *L) {
+    /* todo: will probably need adjustments for Windows */
+    int nargs = lua_gettop(L), n = 0, i;
+    for (i = 1; i <= nargs; ++i) {
+        lua_pushliteral(L, "'");     ++n;
+        lua_pushvalue(L, i);         ++n;
+        lua_pushliteral(L, "'");     ++n;
+        if (i != nargs) {
+            lua_pushliteral(L, " "); ++n;
+        }
+    }
+    lua_concat(L, n);
+    return 1;
+}
+
 struct Main_Data {
     int    argc;
     char **argv;
@@ -318,10 +333,11 @@ struct Main_Data {
 };
 
 const luaL_reg cutillib[] = {
-    { "init_module", init_module },
+    { "init_module"       , init_module        },
     { "register_callbacks", register_callbacks },
-    { "exec", elua_exec },
-    { NULL, NULL }
+    { "exec"              , elua_exec          },
+    { "build_args"        , elua_build_args    },
+    { NULL                , NULL               }
 };
 
 static int gettext_bind_textdomain(lua_State *L) {
