@@ -2282,6 +2282,111 @@ _edje_part_recalc_single(Edje *ed,
    /* size step */
    _edje_part_recalc_single_step(desc, params);
 
+   /* colors */
+   if (ep->part->type != EDJE_PART_TYPE_SPACER)
+     {
+        if ((desc->color_class) && (*desc->color_class))
+          cc = _edje_color_class_find(ed, desc->color_class);
+
+        if (cc)
+          {
+             params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
+             params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
+             params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
+             params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
+          }
+        else
+          {
+             params->color.r = desc->color.r;
+             params->color.g = desc->color.g;
+             params->color.b = desc->color.b;
+             params->color.a = desc->color.a;
+          }
+     }
+
+   /* visible */
+   params->visible = desc->visible;
+
+   /* set parameters, some are required for recalc_single_text[block] */
+   switch (ep->part->type)
+     {
+      case EDJE_PART_TYPE_IMAGE:
+           {
+              Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) desc;
+
+              /* border */
+              params->type.common.spec.image.l = img_desc->image.border.l;
+              params->type.common.spec.image.r = img_desc->image.border.r;
+
+              params->type.common.spec.image.t = img_desc->image.border.t;
+              params->type.common.spec.image.b = img_desc->image.border.b;
+
+              params->type.common.spec.image.border_scale_by = img_desc->image.border.scale_by;
+
+              if (set && set->set)
+                {
+#define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
+                   SET_BORDER_DEFINED(params->type.common.spec.image.l, set->entry->border.l);
+                   SET_BORDER_DEFINED(params->type.common.spec.image.r, set->entry->border.r);
+                   SET_BORDER_DEFINED(params->type.common.spec.image.t, set->entry->border.t);
+                   SET_BORDER_DEFINED(params->type.common.spec.image.b, set->entry->border.b);
+
+                   SET_BORDER_DEFINED(params->type.common.spec.image.border_scale_by, set->entry->border.scale_by);
+                }
+
+              break;
+           }
+      case EDJE_PART_TYPE_TEXT:
+      case EDJE_PART_TYPE_TEXTBLOCK:
+           {
+              Edje_Part_Description_Text *text_desc = (Edje_Part_Description_Text*) desc;
+
+              /* text.align */
+              params->type.text.align.x = text_desc->text.align.x;
+              params->type.text.align.y = text_desc->text.align.y;
+              params->type.text.ellipsis = text_desc->text.ellipsis;
+
+              /* text colors */
+              if (cc)
+                {
+                   params->type.text.color2.r = (((int)cc->r2 + 1) * text_desc->common.color2.r) >> 8;
+                   params->type.text.color2.g = (((int)cc->g2 + 1) * text_desc->common.color2.g) >> 8;
+                   params->type.text.color2.b = (((int)cc->b2 + 1) * text_desc->common.color2.b) >> 8;
+                   params->type.text.color2.a = (((int)cc->a2 + 1) * text_desc->common.color2.a) >> 8;
+                   params->type.text.color3.r = (((int)cc->r3 + 1) * text_desc->text.color3.r) >> 8;
+                   params->type.text.color3.g = (((int)cc->g3 + 1) * text_desc->text.color3.g) >> 8;
+                   params->type.text.color3.b = (((int)cc->b3 + 1) * text_desc->text.color3.b) >> 8;
+                   params->type.text.color3.a = (((int)cc->a3 + 1) * text_desc->text.color3.a) >> 8;
+                }
+              else
+                {
+                   params->type.text.color2.r = text_desc->common.color2.r;
+                   params->type.text.color2.g = text_desc->common.color2.g;
+                   params->type.text.color2.b = text_desc->common.color2.b;
+                   params->type.text.color2.a = text_desc->common.color2.a;
+                   params->type.text.color3.r = text_desc->text.color3.r;
+                   params->type.text.color3.g = text_desc->text.color3.g;
+                   params->type.text.color3.b = text_desc->text.color3.b;
+                   params->type.text.color3.a = text_desc->text.color3.a;
+                }
+
+              break;
+           }
+      case EDJE_PART_TYPE_SPACER:
+      case EDJE_PART_TYPE_RECTANGLE:
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_SWALLOW:
+      case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_PROXY:
+         break;
+      case EDJE_PART_TYPE_GRADIENT:
+         /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
+         break;
+      default:
+         break;
+     }
+
    /* if we have text that wants to make the min size the text size... */
    if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
      _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh);
@@ -2425,110 +2530,6 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image.fill, params);
    else if (ep->part->type == EDJE_PART_TYPE_PROXY)
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Proxy *)desc)->proxy.fill, params);
-
-   if (ep->part->type != EDJE_PART_TYPE_SPACER)
-     {
-        /* colors */
-        if ((desc->color_class) && (*desc->color_class))
-          cc = _edje_color_class_find(ed, desc->color_class);
-
-        if (cc)
-          {
-             params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
-             params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
-             params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
-             params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
-          }
-        else
-          {
-             params->color.r = desc->color.r;
-             params->color.g = desc->color.g;
-             params->color.b = desc->color.b;
-             params->color.a = desc->color.a;
-          }
-     }
-
-   /* visible */
-   params->visible = desc->visible;
-
-   switch (ep->part->type)
-     {
-      case EDJE_PART_TYPE_IMAGE:
-           {
-              Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) desc;
-
-              /* border */
-              params->type.common.spec.image.l = img_desc->image.border.l;
-              params->type.common.spec.image.r = img_desc->image.border.r;
-
-              params->type.common.spec.image.t = img_desc->image.border.t;
-              params->type.common.spec.image.b = img_desc->image.border.b;
-
-              params->type.common.spec.image.border_scale_by = img_desc->image.border.scale_by;
-
-	      if (set && set->set)
-		{
-#define SET_BORDER_DEFINED(Result, Value) Result = Value ? Value : Result;
-                   SET_BORDER_DEFINED(params->type.common.spec.image.l, set->entry->border.l);
-                   SET_BORDER_DEFINED(params->type.common.spec.image.r, set->entry->border.r);
-                   SET_BORDER_DEFINED(params->type.common.spec.image.t, set->entry->border.t);
-                   SET_BORDER_DEFINED(params->type.common.spec.image.b, set->entry->border.b);
-
-                   SET_BORDER_DEFINED(params->type.common.spec.image.border_scale_by, set->entry->border.scale_by);
-                }
-
-              break;
-           }
-      case EDJE_PART_TYPE_TEXT:
-      case EDJE_PART_TYPE_TEXTBLOCK:
-           {
-              Edje_Part_Description_Text *text_desc = (Edje_Part_Description_Text*) desc;
-
-              /* text.align */
-              params->type.text.align.x = text_desc->text.align.x;
-              params->type.text.align.y = text_desc->text.align.y;
-              params->type.text.ellipsis = text_desc->text.ellipsis;
-
-              /* text colors */
-              if (cc)
-                {
-                   params->type.text.color2.r = (((int)cc->r2 + 1) * text_desc->common.color2.r) >> 8;
-                   params->type.text.color2.g = (((int)cc->g2 + 1) * text_desc->common.color2.g) >> 8;
-                   params->type.text.color2.b = (((int)cc->b2 + 1) * text_desc->common.color2.b) >> 8;
-                   params->type.text.color2.a = (((int)cc->a2 + 1) * text_desc->common.color2.a) >> 8;
-                   params->type.text.color3.r = (((int)cc->r3 + 1) * text_desc->text.color3.r) >> 8;
-                   params->type.text.color3.g = (((int)cc->g3 + 1) * text_desc->text.color3.g) >> 8;
-                   params->type.text.color3.b = (((int)cc->b3 + 1) * text_desc->text.color3.b) >> 8;
-                   params->type.text.color3.a = (((int)cc->a3 + 1) * text_desc->text.color3.a) >> 8;
-                }
-              else
-                {
-                   params->type.text.color2.r = text_desc->common.color2.r;
-                   params->type.text.color2.g = text_desc->common.color2.g;
-                   params->type.text.color2.b = text_desc->common.color2.b;
-                   params->type.text.color2.a = text_desc->common.color2.a;
-                   params->type.text.color3.r = text_desc->text.color3.r;
-                   params->type.text.color3.g = text_desc->text.color3.g;
-                   params->type.text.color3.b = text_desc->text.color3.b;
-                   params->type.text.color3.a = text_desc->text.color3.a;
-                }
-
-              break;
-           }
-      case EDJE_PART_TYPE_SPACER:
-      case EDJE_PART_TYPE_RECTANGLE:
-      case EDJE_PART_TYPE_BOX:
-      case EDJE_PART_TYPE_TABLE:
-      case EDJE_PART_TYPE_SWALLOW:
-      case EDJE_PART_TYPE_GROUP:
-      case EDJE_PART_TYPE_PROXY:
-         break;
-      case EDJE_PART_TYPE_GRADIENT:
-         /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
-         break;
-      default:
-         break;
-     }
 
 #ifdef HAVE_EPHYSICS
    if (ep->part->physics_body || ep->body)
