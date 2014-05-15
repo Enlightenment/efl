@@ -275,7 +275,7 @@ grid_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 static void
 grid_sel(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("sel item data [%p] on grid obj [%p], pointer [%p]\n", data, obj, event_info);
+   printf("sel item data [%p] on grid obj [%p], pointer [%p], position [%d]\n", data, obj, event_info, elm_gengrid_item_index_get(event_info));
 }
 
 static void

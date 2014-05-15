@@ -998,6 +998,7 @@ _item_place(Elm_Gen_Item *it,
    Eina_Bool was_realized;
    Elm_Gen_Item_Type *item;
    long items_count;
+   int item_pos;
 
    item = GG_IT(it);
    wsd = GG_IT(it)->wsd;
@@ -1040,6 +1041,12 @@ _item_place(Elm_Gen_Item *it,
         else
           tch = items_row * wsd->item_height;
         alignh = (vh - tch) * wsd->align_y;
+        item_pos = items_row * cx + cy + 1;
+        if (item_pos != it->position)
+          {
+             it->position = item_pos;
+             it->position_update = EINA_TRUE;
+          }
      }
    else
      {
@@ -1067,6 +1074,12 @@ _item_place(Elm_Gen_Item *it,
         else
           tcw = items_col * wsd->item_width;
         alignw = (vw - tcw) * wsd->align_x;
+        item_pos = cx + items_col * cy + 1;
+        if (item_pos != it->position)
+          {
+             it->position = item_pos;
+             it->position_update = EINA_TRUE;
+          }
      }
 
    if (it->group)
