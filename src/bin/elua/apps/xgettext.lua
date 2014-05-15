@@ -190,17 +190,21 @@ end
 local build_opt = function(opt)
     local buf = {}
     if opt.short then
-        buf[1] = "-"
+        buf[1] = "'-"
         buf[2] = opt.short
         if opt.val then
             buf[3] = opt.val
         end
+        buf[4] = "'"
     else
-        buf[1] = "--"
+        buf[1] = "'--"
         buf[2] = opt.long
         if opt.val then
             buf[3] = "="
             buf[4] = opt.val
+            buf[5] = "'"
+        else
+            buf[3] = "'"
         end
     end
     return table.concat(buf)
@@ -245,15 +249,17 @@ for i, opt in ipairs(opts_nolua) do
 end
 args_nolua[#args_nolua + 1] = "--omit-header"
 args_nolua[#args_nolua + 1] = "--output=-"
-args_nolua[#args_nolua + 1] = false
+
+args_nolua = table.concat(args_nolua, " ")
 
 local parsed_files = {}
 for i, fname in ipairs(input_files) do
     if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
         -- parse lua files here
     else
-        args_nolua[#args_nolua] = fname
-        -- exec stuff here - need ecore_exe bindings
+        local f = assert(io.popen(args_nolua .. " '" .. fname .. "'", "r"))
+        parsed_files[#parsed_files + 1] = f:read("*all")
+        f:close()
     end
 end
 
@@ -261,7 +267,10 @@ local args_final = { hasxgettext }
 for i, opt in ipairs(opts_final) do
     args_final[#args_final + 1] = build_opt(opt)
 end
+args_final[#args_final + 1] = "--language=PO"
 args_final[#args_final + 1] = "-"
--- final exec here - need ecore_exe bindings
+local f = assert(io.popen(table.concat(args_final, " "), "w"))
+f:write(table.concat(parsed_files, "\n\n"))
+f:close()
 
 return true
