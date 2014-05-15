@@ -1,6 +1,19 @@
 =========
-EFL 1.9.3
+EFL 1.9.4
 =========
+
+Changes since 1.9.3:
+--------------------
+
+Fixes:
+
+   * emotion: fix triggering condition of fallback module loading (T1025)
+   * edje now correctly forces ellipsis setting on text parts
+   * Evas: gif decoding bug fix
+   * eldbus-codegen no longer passes garbage values to error callbacks
+   * fix emotion_test signal emit object
+   * configure: Only allow wayland + egl with opengl ES (T1202)
+
 
 Changes since 1.9.2:
 --------------------
