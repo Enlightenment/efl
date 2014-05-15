@@ -1311,15 +1311,14 @@ ecore_thread_global_data_wait(const char *key,
    if (!key)
      return NULL;
 
-   if (!_ecore_thread_global_hash)
-     return NULL;
    if (seconds > 0)
      tm = ecore_time_get() + seconds;
 
    while (1)
      {
         LRWKRL(_ecore_thread_global_hash_lock);
-        ret = eina_hash_find(_ecore_thread_global_hash, key);
+        if (_ecore_thread_global_hash)
+          ret = eina_hash_find(_ecore_thread_global_hash, key);
         LRWKU(_ecore_thread_global_hash_lock);
         if ((ret) || (!seconds) || ((seconds > 0) && (tm <= ecore_time_get())))
           break;
