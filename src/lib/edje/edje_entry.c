@@ -1388,7 +1388,14 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        _sel_start(en->cursor, rp->object, en);
                        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                     }
-                  else _sel_clear(ed, en->cursor, rp->object, en);
+                  else
+                    {
+                       if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
+                         evas_textblock_cursor_copy(en->sel_start, en->cursor);
+                       else
+                         evas_textblock_cursor_copy(en->sel_end, en->cursor);
+                       _sel_clear(ed, en->cursor, rp->object, en);
+                    }
                }
              if (_curs_up(en->cursor, rp->object, en))
                ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1417,7 +1424,14 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        _sel_start(en->cursor, rp->object, en);
                        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                     }
-                  else _sel_clear(ed, en->cursor, rp->object, en);
+                  else
+                    {
+                       if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
+                         evas_textblock_cursor_copy(en->sel_end, en->cursor);
+                       else
+                         evas_textblock_cursor_copy(en->sel_start, en->cursor);
+                       _sel_clear(ed, en->cursor, rp->object, en);
+                    }
                }
              if (_curs_down(en->cursor, rp->object, en))
                ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1444,7 +1458,14 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   _sel_start(en->cursor, rp->object, en);
                   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                }
-             else _sel_clear(ed, en->cursor, rp->object, en);
+             else
+               {
+                  if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
+                    evas_textblock_cursor_copy(en->sel_start, en->cursor);
+                  else
+                    evas_textblock_cursor_copy(en->sel_end, en->cursor);
+                  _sel_clear(ed, en->cursor, rp->object, en);
+               }
           }
         if (evas_textblock_cursor_char_prev(en->cursor))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1472,7 +1493,14 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   _sel_start(en->cursor, rp->object, en);
                   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                }
-             else _sel_clear(ed, en->cursor, rp->object, en);
+             else
+               {
+                  if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
+                    evas_textblock_cursor_copy(en->sel_end, en->cursor);
+                  else
+                    evas_textblock_cursor_copy(en->sel_start, en->cursor);
+                  _sel_clear(ed, en->cursor, rp->object, en);
+               }
           }
         /* If control is pressed, go to the end of the word */
         if (control) evas_textblock_cursor_word_end(en->cursor);
