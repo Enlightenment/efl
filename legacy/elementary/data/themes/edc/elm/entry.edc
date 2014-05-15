@@ -323,6 +323,7 @@ group { name: "elm/entry/cursor/default";
    images.image: "white_bar_vert_glow.png" COMP;
    parts {
       part { name: "cursor"; mouse_events: 0;
+         clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: -4 -4;
             rel2.offset: 3 3;
@@ -337,8 +338,29 @@ group { name: "elm/entry/cursor/default";
             color: 255 255 255 255;
          }
       }
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "cursor";
+            rel2.to: "cursor";
+            fixed: 1 1;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
    }
    programs {
+      program {
+         signal: "selection,start"; source: "elm.text";
+         action: STATE_SET "hidden" 0.0;
+         target: "clipper";
+      }
+      program {
+         signal: "selection,cleared"; source: "elm.text";
+         action: STATE_SET "default" 0.0;
+         target: "clipper";
+      }
       program {
          signal: "elm,action,focus"; source: "elm";
          action: ACTION_STOP;
