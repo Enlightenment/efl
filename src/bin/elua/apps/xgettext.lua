@@ -7,7 +7,7 @@ local getopt = require("getopt")
 
 local VERSION = "1.0.0"
 
-local input_files    = {}
+local input_sources  = {}
 local search_dirs    = {}
 local excluded_files = {}
 local keywords       = {}
@@ -24,11 +24,11 @@ local opts, args = getopt.parse {
 
         { metavar = "INPUTFILE ...", help = "input files" },
         { "f", "files-from", true, metavar = "FILE",
-            help = "get list of input files from FILE", list = input_files
+            help = "get list of input files from FILE", list = input_sources
         },
         { "D", "directory", true, help = "add DIRECTORY to list for input "
             .. "files search\nIf input file is -, standard input is read.",
-            list = search_dirs
+            list = search_dirs, opts = opts_nolua
         },
 
         { category = "Output file location" },
@@ -222,45 +222,46 @@ local f = io.open(hasxgettext)
 if not f then
     return true
 end
-
 f:close()
 
-if not onlylua then
-    local gargs = { hasxgettext }
-    if not opts["j"] and not neverlua then
-        for i, v in ipairs(args) do
-            if v:lower():match("^.+%.lua$") then
-                gargs[#gargs + 1] = "--join-existing"
-                break
+local input_files = {}
+for i, v in ipairs(input_sources) do
+    local f = io.open(v)
+    if f then
+        for line in f:lines() do
+            if not line:lower():match("^.+%.lua$") then
+                input_files[#input_files + 1] = line
             end
         end
     end
-    local ifiles = {}
-    for i, opt in ipairs(opts) do
-        if opt[1] ~= "f" then
-            gargs[#gargs + 1] = build_opt(opt)
-        else
-            ifiles[#ifiles + 1] = opt[2]
-        end
-    end
-
-    local inputs = {}
-    for i, v in ipairs(ifiles) do
-        local f = io.open(v)
-        if f then
-            for line in f:lines() do
-                if not line:lower():match("^.+%.lua$") then
-                    inputs[#inputs + 1] = line
-                end
-            end
-        end
-    end
-    for i, v in ipairs(args) do
-        if not v:lower():match("^.+%.lua$") then
-            inputs[#inputs + 1] = v
-        end
-    end
-    cutil.exec(unpack(gargs))
 end
+for i, v in ipairs(args) do
+    input_files[#input_files + 1] = v
+end
+
+local args_nolua = { hasxgettext }
+for i, opt in ipairs(opts_nolua) do
+    args_nolua[#args_nolua + 1] = build_opt(opt)
+end
+args_nolua[#args_nolua + 1] = "--omit-header"
+args_nolua[#args_nolua + 1] = "--output=-"
+args_nolua[#args_nolua + 1] = false
+
+local parsed_files = {}
+for i, fname in ipairs(input_files) do
+    if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
+        -- parse lua files here
+    else
+        args_nolua[#args_nolua] = fname
+        -- exec stuff here - need ecore_exe bindings
+    end
+end
+
+local args_final = { hasxgettext }
+for i, opt in ipairs(opts_final) do
+    args_final[#args_final + 1] = build_opt(opt)
+end
+args_final[#args_final + 1] = "-"
+-- final exec here - need ecore_exe bindings
 
 return true
