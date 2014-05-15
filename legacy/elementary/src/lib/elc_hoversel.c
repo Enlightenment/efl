@@ -185,7 +185,7 @@ _activate(Evas_Object *obj)
 
         if (item->icon_file)
           {
-             ic = elm_icon_add(obj);
+             ic = elm_icon_add(bt);
              elm_image_resizable_set(ic, EINA_FALSE, EINA_TRUE);
              if (item->icon_type == ELM_ICON_FILE)
                elm_image_file_set(ic, item->icon_file, item->icon_group);
