@@ -109,7 +109,7 @@ static int init_ntdll(void) {
     return !!ZwCreateProcess;
 }
 
-int fork_win(void) {
+static int fork_win(void) {
     if (setjmp(jenv)) return 0;
     if (!ZwCreateProcess && !init_ntdll()) return -1;
 

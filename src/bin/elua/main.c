@@ -8,6 +8,7 @@
 #define pipe(x, mode) pipe(x)
 #else
 #include <io.h>
+#include "fork_win.c"
 int fork_win(void);
 #define fork fork_win
 #define fdopen _fdopen
