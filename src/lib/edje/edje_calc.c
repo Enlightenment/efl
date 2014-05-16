@@ -3592,6 +3592,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               break;
            case EDJE_PART_TYPE_TEXT:
               p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
+              /* no break as we share code with the TEXTBLOCK type here. Intended fall-through */
            case EDJE_PART_TYPE_TEXTBLOCK:
               p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos2);
               p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos2);
@@ -3774,6 +3775,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                    evas_object_image_scale_hint_set(ep->object,
                                                     img_desc->image.scale_hint);
+                   /* No break here as we share the rest of the code for all types. Intended fall-through*/
                 }
            case EDJE_PART_TYPE_PROXY:
            case EDJE_PART_TYPE_RECTANGLE:
