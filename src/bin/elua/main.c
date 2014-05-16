@@ -5,9 +5,17 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#define pipe(x, mode) pipe(x)
 #else
+#include <io.h>
 int fork_win(void);
-#define fork fork_win;
+#define fork fork_win
+#define fdopen _fdopen
+#define execv _execv
+#define close _close
+#define dup2 _dup2
+#define pipe(x, mode) _pipe(x, 4096, ((mode && mode[0] && mode[1] == 'b') \
+    ? _O_BINARY : _O_TEXT) | _NO_NOINHERIT)
 #endif
 
 #include "main.h"
@@ -230,6 +238,31 @@ static int register_callbacks(lua_State *L) {
     u.fptr = smart_cb_wrapper;
     lua_pushlightuserdata(L, u.ptr);
     return 1;
+}
+
+static FILE *elua_popen(const char *path, const char *argv[], const char *mode) {
+    int read   = (!mode || mode[0] == 'r');
+    int binary = mode && mode[0] && mode[1] == 'b';
+    pid_t pid;
+
+    int des[2];
+    if (pipe(des, mode)) return NULL;
+
+    pid = fork();
+    if (!pid) {
+        /* if read, stdout (1) is still open here
+         * (parent can read, child can write) */
+        close(des[!read]);
+        dup2(des[read], read ? STDOUT_FILENO : STDIN_FILENO);
+        execv(path, (char * const *)argv);
+        return NULL;
+    } else {
+        /* if read, stdin (0) is still open here
+         * (child can read, parent can write) */
+        close(des[read]);
+        return fdopen(des[!read], read ? (binary ? "rb" : "r")
+            : (binary ? "wb" : "w"));
+    }
 }
 
 static int elua_exec(lua_State *L) {
