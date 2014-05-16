@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#else
+int fork_win(void);
+#define fork fork_win;
 #endif
 
 #include "main.h"
