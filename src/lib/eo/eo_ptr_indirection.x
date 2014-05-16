@@ -392,9 +392,10 @@ _eo_id_allocate(const _Eo_Object *obj)
    if (!entry)
      {
         entry = _search_tables();
-        if (!entry)
-          return 0;
      }
+
+   if (!_current_table || !entry)
+      return 0;
 
    /* [1;max-1] thus we never generate an Eo_Id equal to 0 */
    _eo_generation_counter++;
