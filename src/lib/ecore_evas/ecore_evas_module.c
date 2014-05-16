@@ -101,9 +101,11 @@ _ecore_evas_engine_init(void)
 
    /* 1. libecore_evas.so/../ecore_evas/engines/ */
    paths[0] = eina_module_symbol_path_get(_ecore_evas_engine_init, "/ecore_evas/engines");
-   /* 2. PREFIX/ecore_evas/engines/ */
-#ifndef _MSC_VER
+#ifndef _WIN32
+   /* 3. PREFIX/ecore_evas/engines/ */
    paths[1] = strdup(PACKAGE_LIB_DIR "/ecore_evas/engines");
+#else
+   paths[1] = eina_module_symbol_path_get(_ecore_evas_engine_init, "/../lib/ecore_evas/engines");
 #endif
 
    for (j = 0; j < ((sizeof (paths) / sizeof (char*)) - 1); ++j)
