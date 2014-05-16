@@ -298,6 +298,8 @@ test_cursor3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(bx);
 
    o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_cursor_set(o, ELM_CURSOR_HAND1);
    elm_object_cursor_theme_search_enabled_set(o, EINA_TRUE);
    elm_object_text_set(o, "hand1");
