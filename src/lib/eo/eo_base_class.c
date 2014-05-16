@@ -430,11 +430,10 @@ struct _Eo_Callback_Description
 static void
 _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
 {
-   Eo_Callback_Description *itr, *pitr;
+   Eo_Callback_Description *itr, *pitr, *base;
 
-   itr = pitr = pd->callbacks;
-   if (pd->callbacks == cb)
-      pd->callbacks = cb->next;
+   base = itr = pd->callbacks;
+   pitr = NULL;
 
    for ( ; itr; )
      {
@@ -447,6 +446,11 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
                {
                   pitr->next = titr->next;
                }
+             else
+               {
+                  /* If pitr is NULL, it means we need to update base. */
+                  base = titr->next;
+               }
              free(titr);
           }
         else
@@ -454,6 +458,8 @@ _eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
              pitr = titr;
           }
      }
+
+   pd->callbacks = base;
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
