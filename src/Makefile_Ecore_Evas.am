@@ -26,7 +26,9 @@ lib/ecore_evas/ecore_evas_util.c
 
 lib_ecore_evas_libecore_evas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ecore_evas\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 @ECORE_EVAS_CFLAGS@
 lib_ecore_evas_libecore_evas_la_LIBADD = @ECORE_EVAS_LIBS@
