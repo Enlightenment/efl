@@ -57,7 +57,7 @@ lib_ecore_libecore_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 @ECORE_CFLAGS@
-lib_ecore_libecore_la_LIBADD = @ECORE_LIBS@
+lib_ecore_libecore_la_LIBADD = @ECORE_LIBS@ @EVIL_LIBS@
 lib_ecore_libecore_la_DEPENDENCIES = @ECORE_INTERNAL_LIBS@
 lib_ecore_libecore_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 

@@ -34,6 +34,6 @@ endif
 endif
 
 lib_ecore_con_libecore_con_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_CON_CFLAGS@
-lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@
+lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@
 lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
