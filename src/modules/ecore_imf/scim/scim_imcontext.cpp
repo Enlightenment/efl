@@ -372,6 +372,7 @@ feed_key_event(Evas *evas, const char *str, Eina_Bool fake)
      }
    else
      {
+	if (strlen(str) + 1 > 128) return;
         strncpy(key_string, str, strlen(str));
         evas_event_feed_key_down(evas, key_string, key_string, NULL, NULL, timestamp, NULL);
         SCIM_DEBUG_FRONTEND(1) << "    evas_event_feed_key_down()...\n";
