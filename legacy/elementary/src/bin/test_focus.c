@@ -3,6 +3,8 @@
 #endif
 #include <Elementary.h>
 
+Evas_Object * _focus_autoscroll_mode_frame_create(Evas_Object *parent);
+
 /**** focus 1 ****/
 
 static Eina_Bool
@@ -715,14 +717,6 @@ _focus_highlight_clip_disable_changed_cb(void *data EINA_UNUSED,
 }
 
 static void
-_focus_bring_in_changed_cb(void *data EINA_UNUSED,
-                           Evas_Object *obj,
-                           void *event_info EINA_UNUSED)
-{
-   elm_config_focus_auto_scroll_bring_in_enabled_set(elm_check_state_get(obj));
-}
-
-static void
 _horizontal_btn(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *box_btn = data;
@@ -747,7 +741,6 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_focus_highlight_animate_set(win, EINA_TRUE);
    elm_win_focus_highlight_style_set(win, "glow");
-   evas_object_resize(win, 320, 400);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -806,14 +799,9 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                                   _focus_highlight_clip_disable_changed_cb,
                                   NULL);
 
-   ck = elm_check_add(box);
-   elm_object_text_set(ck, "Focus Auto scroll bring in enable");
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
-   evas_object_smart_callback_add(ck, "changed", _focus_bring_in_changed_cb,
-                                  NULL);
-   elm_check_state_set(ck, elm_config_focus_auto_scroll_bring_in_enabled_get());
-   elm_box_pack_end(box, ck);
-   evas_object_show(ck);
+   // Focus Autoscroll Mode
+   fr = _focus_autoscroll_mode_frame_create(box);
+   elm_box_pack_end(box, fr);
 
    ck = elm_check_add(box);
    elm_object_text_set(ck, "Horizontal Mode");
@@ -821,6 +809,7 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(box, ck);
    evas_object_show(ck);
 
+   evas_object_resize(win, 320, 500);
    evas_object_show(win);
 }
 
