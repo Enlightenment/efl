@@ -76,6 +76,7 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
                text.min: 1 1;
+               text.ellipsis: -1;
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0;
@@ -84,6 +85,7 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
                text.min: 1 1;
+               text.ellipsis: -1;
          }
       }
       programs {

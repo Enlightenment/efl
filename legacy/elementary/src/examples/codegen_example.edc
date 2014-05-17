@@ -28,6 +28,7 @@ collections {
                   size: 16;
                   font: "sans";
                   min: 1 1;
+                  ellipsis: -1;
                }
             }
          }
