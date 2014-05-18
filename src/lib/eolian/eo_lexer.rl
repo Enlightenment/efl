@@ -314,9 +314,10 @@ _eo_tokenizer_accessor_param_get(Eo_Tokenizer *toknz, char *p)
    if (param == NULL) ABORT(toknz, "calloc Eo_Accessor_Param failure");
 
    /* Remove the colon and spaces - we just need the param name */
-   while (*p == ':') p--;
+   while (*p != ':') p--;
+   p--;
    while (*p == ' ') p--;
-   param->name = _eo_tokenizer_token_get(toknz, p);
+   param->name = _eo_tokenizer_token_get(toknz, p + 1);
 
    return param;
 }
