@@ -1335,13 +1335,6 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void
-_name_entry_activated_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
-{
-   _ok(data, NULL, NULL);
-}
-
 EOLIAN static void
 _elm_fileselector_evas_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
 {
@@ -1430,8 +1423,6 @@ _elm_fileselector_evas_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(en, "activated",
-                                  _name_entry_activated_cb, obj);
 
    elm_widget_sub_object_add(obj, en);
    priv->name_entry = en;
