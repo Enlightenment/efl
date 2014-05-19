@@ -6,140 +6,140 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-14 14:31+0900\n"
-"PO-Revision-Date: 2013-01-23 05:24+0000\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-12-30 11:50+0100\n"
+"PO-Revision-Date: 2013-11-05 18:59+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-24 05:46+0000\n"
-"X-Generator: Launchpad (build 16640)\n"
+"X-Launchpad-Export-Date: 2013-12-31 04:56+0000\n"
+"X-Generator: Launchpad (build 16877)\n"
+"Language: eo\n"
 
-#: src/lib/elc_fileselector.c:1370
+#: src/lib/elc_fileselector.c:1341
 msgid "Up"
 msgstr "Supren"
 
-#: src/lib/elc_fileselector.c:1385
+#: src/lib/elc_fileselector.c:1356
 msgid "Home"
 msgstr "Hejmo"
 
-#: src/lib/elc_fileselector.c:1588 src/lib/elm_entry.c:1464
-#: src/lib/elm_entry.c:1489
+#: src/lib/elc_fileselector.c:1583 src/lib/elm_entry.c:1346
+#: src/lib/elm_entry.c:1371
 msgid "Cancel"
 msgstr "Nuligi"
 
-#: src/lib/elc_fileselector.c:1597
+#: src/lib/elc_fileselector.c:1592
 msgid "OK"
 msgstr "Bone"
 
-#: src/lib/elc_multibuttonentry.c:602
+#: src/lib/elc_multibuttonentry.c:614
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:623
+#: src/lib/elc_multibuttonentry.c:635
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1488
+#: src/lib/elc_multibuttonentry.c:1512
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:406
+#: src/lib/elc_naviframe.c:377
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
-#: src/lib/elc_naviframe.c:933 src/lib/elc_naviframe.c:1128
+#: src/lib/elc_naviframe.c:906 src/lib/elc_naviframe.c:1130
 msgid "Back"
-msgstr ""
+msgstr "Reen"
 
 #: src/lib/elc_naviframe.c:1209
 msgid "Next"
-msgstr ""
+msgstr "Antaŭen"
 
-#: src/lib/elc_popup.c:286 src/lib/elc_popup.c:920
+#: src/lib/elc_popup.c:282 src/lib/elc_popup.c:908
 msgid "Popup Title"
-msgstr ""
+msgstr "Titolo de spruĉfenestro"
 
-#: src/lib/elc_popup.c:296 src/lib/elc_popup.c:988
+#: src/lib/elc_popup.c:292 src/lib/elc_popup.c:976
 msgid "Popup Body Text"
-msgstr ""
+msgstr "Enhava teksto de spruĉfenestro"
 
-#: src/lib/elm_bubble.c:192
+#: src/lib/elm_bubble.c:217
 msgid "Bubble"
 msgstr "Veziko"
 
-#: src/lib/elm_button.c:67
+#: src/lib/elm_button.c:58
 msgid "Clicked"
 msgstr "Alklakita"
 
-#: src/lib/elm_button.c:272 src/lib/elm_check.c:214 src/lib/elm_gengrid.c:719
-#: src/lib/elm_genlist.c:1451 src/lib/elm_list.c:1999 src/lib/elm_radio.c:253
-#: src/lib/elm_segment_control.c:519 src/lib/elm_spinner.c:568
-#: src/lib/elm_toolbar.c:2205
+#: src/lib/elm_button.c:279 src/lib/elm_check.c:222 src/lib/elm_gengrid.c:705
+#: src/lib/elm_genlist.c:1464 src/lib/elm_list.c:1547 src/lib/elm_radio.c:265
+#: src/lib/elm_segment_control.c:537 src/lib/elm_spinner.c:561
+#: src/lib/elm_toolbar.c:1979
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elm_button.c:297
+#: src/lib/elm_button.c:304
 msgid "Button"
 msgstr "Butono"
 
-#: src/lib/elm_calendar.c:150
+#: src/lib/elm_calendar.c:142
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:159
+#: src/lib/elm_calendar.c:151
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elm_calendar.c:168
+#: src/lib/elm_calendar.c:160
 msgid "%Y"
 msgstr "%V"
 
-#: src/lib/elm_calendar.c:283
+#: src/lib/elm_calendar.c:274
 msgid "calendar item"
 msgstr "kalendarero"
 
-#: src/lib/elm_calendar.c:309
+#: src/lib/elm_calendar.c:300
 msgid "calendar decrement month button"
 msgstr "Dekrementa butono de monata kalendaro"
 
-#: src/lib/elm_calendar.c:314
+#: src/lib/elm_calendar.c:305
 msgid "calendar decrement year button"
 msgstr "Dekrementa butono de jara kalendaro"
 
-#: src/lib/elm_calendar.c:319
+#: src/lib/elm_calendar.c:310
 msgid "calendar increment month button"
 msgstr "Alkrementa butono de monata kalendaro"
 
-#: src/lib/elm_calendar.c:324
+#: src/lib/elm_calendar.c:315
 msgid "calendar increment year button"
 msgstr "Alkrementa butono de jara kalendaro"
 
-#: src/lib/elm_calendar.c:329
+#: src/lib/elm_calendar.c:320
 msgid "calendar month"
 msgstr "monato de kalendaro"
 
-#: src/lib/elm_calendar.c:334
+#: src/lib/elm_calendar.c:325
 msgid "calendar year"
 msgstr "jara kalendaro"
 
-#: src/lib/elm_check.c:59 src/lib/elm_check.c:227 src/lib/elm_radio.c:99
-#: src/lib/elm_radio.c:254
+#: src/lib/elm_check.c:52 src/lib/elm_check.c:235 src/lib/elm_radio.c:92
+#: src/lib/elm_radio.c:266
 msgid "State: On"
 msgstr "Stato: enŝaltita"
 
-#: src/lib/elm_check.c:65 src/lib/elm_check.c:239 src/lib/elm_radio.c:256
+#: src/lib/elm_check.c:58 src/lib/elm_check.c:247 src/lib/elm_radio.c:268
 msgid "State: Off"
 msgstr "Stato: malŝaltita"
 
-#: src/lib/elm_check.c:223 src/lib/elm_check.c:236
+#: src/lib/elm_check.c:231 src/lib/elm_check.c:244
 msgid "State"
 msgstr "Stato"
 
-#: src/lib/elm_check.c:304
+#: src/lib/elm_check.c:312
 msgid "Check"
 msgstr "Kontroli"
 
@@ -151,132 +151,130 @@ msgstr "Alkrementa butono de ĥorloĝo por m,ptm"
 msgid "clock decrement button for am,pm"
 msgstr "Dekrementa butono de ĥorloĝo por m,ptm"
 
-#: src/lib/elm_clock.c:647
+#: src/lib/elm_clock.c:659
 msgid "State: Editable"
 msgstr "Stato: redaktebla"
 
-#: src/lib/elm_clock.c:682
+#: src/lib/elm_clock.c:695
 msgid "Clock"
 msgstr "Horloĝo"
 
-#: src/lib/elm_colorselector.c:1364
+#: src/lib/elm_colorselector.c:1370
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:3155
+#: src/lib/elm_config.c:2441
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_dayselector.c:394
-#, fuzzy
+#: src/lib/elm_dayselector.c:422
 msgid "day selector item"
-msgstr "ero de diskelektilo"
+msgstr ""
 
-#: src/lib/elm_diskselector.c:672
+#: src/lib/elm_diskselector.c:681
 msgid "diskselector item"
 msgstr "ero de diskelektilo"
 
-#: src/lib/elm_entry.c:1451
+#: src/lib/elm_entry.c:1333
 msgid "Copy"
 msgstr "Kopii"
 
-#: src/lib/elm_entry.c:1456
+#: src/lib/elm_entry.c:1338
 msgid "Cut"
 msgstr "Eltondi"
 
-#: src/lib/elm_entry.c:1460 src/lib/elm_entry.c:1483
+#: src/lib/elm_entry.c:1342 src/lib/elm_entry.c:1365
 msgid "Paste"
 msgstr "Alglui"
 
-#: src/lib/elm_entry.c:1476
+#: src/lib/elm_entry.c:1358
 msgid "Select"
 msgstr "Elekti"
 
-#: src/lib/elm_entry.c:3430
+#: src/lib/elm_entry.c:3306
 msgid "Entry"
 msgstr "Ero"
 
-#: src/lib/elm_gengrid.c:749
+#: src/lib/elm_gengrid.c:735
 msgid "Gengrid Item"
 msgstr "Ero de komuna krado"
 
-#: src/lib/elm_index.c:89
+#: src/lib/elm_index.c:102
 msgid "Index"
 msgstr "Indekso"
 
-#: src/lib/elm_index.c:116
+#: src/lib/elm_index.c:129
 msgid "Index Item"
 msgstr "Indeksero"
 
-#: src/lib/elm_label.c:382
+#: src/lib/elm_label.c:408
 msgid "Label"
 msgstr "Etikedo"
 
-#: src/lib/elm_panel.c:61
+#: src/lib/elm_panel.c:54
 msgid "state: opened"
 msgstr "stato: malfermita"
 
-#: src/lib/elm_panel.c:62
+#: src/lib/elm_panel.c:55
 msgid "state: closed"
 msgstr "stato: fermita"
 
-#: src/lib/elm_panel.c:125
+#: src/lib/elm_panel.c:118
 msgid "panel button"
 msgstr "butono de panelo"
 
-#: src/lib/elm_progressbar.c:284
+#: src/lib/elm_progressbar.c:296
 msgid "progressbar"
 msgstr "progresbreto"
 
-#: src/lib/elm_radio.c:282
+#: src/lib/elm_radio.c:296
 msgid "Radio"
 msgstr "Radiobutono"
 
-#: src/lib/elm_segment_control.c:522 src/lib/elm_toolbar.c:2207
+#: src/lib/elm_segment_control.c:540 src/lib/elm_toolbar.c:1981
 msgid "State: Selected"
 msgstr "Stato: elektita"
 
-#: src/lib/elm_segment_control.c:524
-#, fuzzy
+#: src/lib/elm_segment_control.c:542
 msgid "State: Unselected"
-msgstr "Stato: elektita"
+msgstr ""
 
-#: src/lib/elm_segment_control.c:536
+#: src/lib/elm_segment_control.c:554
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:873
+#: src/lib/elm_slider.c:894
 msgid "slider"
 msgstr "ŝovilo"
 
-#: src/lib/elm_spinner.c:657
+#: src/lib/elm_spinner.c:650
 msgid "spinner increment button"
 msgstr "alkrementa sago-butono"
 
-#: src/lib/elm_spinner.c:666
+#: src/lib/elm_spinner.c:659
 msgid "spinner decrement button"
 msgstr "dekrementa sago-butono"
 
-#: src/lib/elm_spinner.c:674
+#: src/lib/elm_spinner.c:667
 msgid "spinner"
 msgstr "sago-butono"
 
-#: src/lib/elm_toolbar.c:1667 src/lib/elm_toolbar.c:2266
+#: src/lib/elm_toolbar.c:1450 src/lib/elm_toolbar.c:2040
 msgid "Selected"
 msgstr "Elektita"
 
-#: src/lib/elm_toolbar.c:2203
+#: src/lib/elm_toolbar.c:1977
 msgid "Separator"
 msgstr "Disigilo"
 
-#: src/lib/elm_toolbar.c:2209
+#: src/lib/elm_toolbar.c:1983
 msgid "Has menu"
 msgstr "Ĝi havas menuo"
 
-#: src/lib/elm_toolbar.c:2261
+#: src/lib/elm_toolbar.c:2035
 msgid "Unselected"
 msgstr "Malelektita"
 
-#: src/lib/elm_toolbar.c:2278
+#: src/lib/elm_toolbar.c:2052
 msgid "Toolbar Item"
 msgstr "Ilobretero"
