@@ -203,6 +203,12 @@ Fixes:
    * evas-wayland-shm: Use XDG_RUNTIME_DIR if available for creating mmap'd buffer file.
    * evas-wayland-shm: Fix 'oopsie/typo' in temporary file name template
    * ecore-x - fix setting protocol atoms for icccm for 64bit
+   * edje/Edje_Edit: _edje_edit_real_part_add init field of Edje_Real_part
+   * fix ecore_con_url using 100% cpu and just let fd handler do work (T1251)
+   * fix behavior of edje entry to match other toolkit entires (T1229)
+   * fix ecore_thread_global_data_wait to work when no data exists yet
+   * Eo: Fix deref after free. (CID1039898)
+   * evas/render - fix segfault because of null cow access. (T1252)
 
 
 Changes since 1.8.0:
