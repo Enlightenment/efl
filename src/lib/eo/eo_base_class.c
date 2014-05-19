@@ -670,6 +670,31 @@ EAPI EO_VOID_FUNC_BODYV(eo_event_callback_array_del,
                         const void *user_data);
 
 static Eina_Bool
+_cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
+{
+   if (!a)
+      return EINA_FALSE;
+
+   /* If either is legacy, fallback to string comparison. */
+   if ((a->doc == _legacy_event_desc) || (b->doc == _legacy_event_desc))
+     {
+        /* Take stringshare shortcut if both are legacy */
+        if (a->doc == b->doc)
+          {
+             return (a->name == b->name);
+          }
+        else
+          {
+             return !strcmp(a->name, b->name);
+          }
+     }
+   else
+     {
+        return (a == b);
+     }
+}
+
+static Eina_Bool
 _ev_cb_call(Eo *obj_id, void *class_data,
             const Eo_Event_Description *desc,
             void *event_info)
@@ -695,7 +720,7 @@ _ev_cb_call(Eo *obj_id, void *class_data,
 
                   for (it = cb->items.item_array; it->func; it++)
                     {
-                       if (it->desc != desc)
+                       if (!_cb_desc_match(it->desc, desc))
                           continue;
                        if (!it->desc->unfreezable &&
                            (event_freeze_count || pd->event_freeze_count))
@@ -712,7 +737,7 @@ _ev_cb_call(Eo *obj_id, void *class_data,
                }
              else
                {
-                  if (cb->items.item.desc != desc)
+                  if (!_cb_desc_match(cb->items.item.desc, desc))
                     continue;
                   if ((!cb->items.item.desc
                        || !cb->items.item.desc->unfreezable) &&
