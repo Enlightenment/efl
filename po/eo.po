@@ -6,17 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-14 14:29+0900\n"
-"PO-Revision-Date: 2013-02-21 15:24+0000\n"
-"Last-Translator: Michael Moroni <michael.moroni@mailoo.org>\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2014-01-21 11:50+0100\n"
+"PO-Revision-Date: 2014-02-13 06:52+0000\n"
+"Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-02-22 05:19+0000\n"
-"X-Generator: Launchpad (build 16506)\n"
+"X-Launchpad-Export-Date: 2014-02-14 06:59+0000\n"
+"X-Generator: Launchpad (build 16916)\n"
+"Language: eo\n"
 
 #: src/lib/ecore/ecore_getopt.c:93
 msgid "Version:"
@@ -27,9 +27,9 @@ msgid "Usage:"
 msgstr "Uzado:"
 
 #: src/lib/ecore/ecore_getopt.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "%s [options]"
-msgstr "%s [opcioj]\n"
+msgstr "%s [opcioj]"
 
 #: src/lib/ecore/ecore_getopt.c:309
 msgid "Copyright:"
@@ -51,159 +51,157 @@ msgstr "Apriore: "
 msgid "Choices: "
 msgstr "Elektoj: "
 
-#: src/lib/ecore/ecore_getopt.c:648 src/lib/ecore/ecore_getopt.c:649
+#: src/lib/ecore/ecore_getopt.c:647 src/lib/ecore/ecore_getopt.c:648
 msgid "No categories available."
-msgstr ""
+msgstr "Neniu kategorio disponebla"
 
-#: src/lib/ecore/ecore_getopt.c:653
-#, fuzzy
+#: src/lib/ecore/ecore_getopt.c:652
 msgid "Categories: "
-msgstr "Elektoj: "
+msgstr "Kategorioj: "
 
-#: src/lib/ecore/ecore_getopt.c:775
+#: src/lib/ecore/ecore_getopt.c:774
 msgid "Options:\n"
 msgstr "Opcioj:\n"
 
-#: src/lib/ecore/ecore_getopt.c:784
+#: src/lib/ecore/ecore_getopt.c:783
 msgid "Positional arguments:\n"
-msgstr ""
+msgstr "Poziciaj argumentoj:\n"
 
-#: src/lib/ecore/ecore_getopt.c:870
-#, fuzzy, c-format
+#: src/lib/ecore/ecore_getopt.c:869
+#, c-format
 msgid "ERROR: unknown category '%s'.\n"
-msgstr "ERARO: nekonata opcio --%s.\n"
+msgstr "ERARO: nekonata kategorio \"%s\".\n"
 
-#: src/lib/ecore/ecore_getopt.c:974
+#: src/lib/ecore/ecore_getopt.c:973
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "ERARO: nekonata opcio --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:976
+#: src/lib/ecore/ecore_getopt.c:975
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "ERARO: nekonata opcio -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1039
+#: src/lib/ecore/ecore_getopt.c:1038
 msgid "ERROR: "
 msgstr "ERARO: "
 
-#: src/lib/ecore/ecore_getopt.c:1132 src/lib/ecore/ecore_getopt.c:1269
-#: src/lib/ecore/ecore_getopt.c:1285 src/lib/ecore/ecore_getopt.c:1300
-#: src/lib/ecore/ecore_getopt.c:1317 src/lib/ecore/ecore_getopt.c:1364
-#: src/lib/ecore/ecore_getopt.c:1484 src/lib/ecore/ecore_getopt.c:1525
+#: src/lib/ecore/ecore_getopt.c:1131 src/lib/ecore/ecore_getopt.c:1268
+#: src/lib/ecore/ecore_getopt.c:1284 src/lib/ecore/ecore_getopt.c:1299
+#: src/lib/ecore/ecore_getopt.c:1316 src/lib/ecore/ecore_getopt.c:1363
+#: src/lib/ecore/ecore_getopt.c:1483 src/lib/ecore/ecore_getopt.c:1524
 msgid "value has no pointer set.\n"
 msgstr "valoro ne havas agorditan referencon.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1164 src/lib/ecore/ecore_getopt.c:1384
+#: src/lib/ecore/ecore_getopt.c:1163 src/lib/ecore/ecore_getopt.c:1383
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "nekonata bulea valoro %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1215 src/lib/ecore/ecore_getopt.c:1472
+#: src/lib/ecore/ecore_getopt.c:1214 src/lib/ecore/ecore_getopt.c:1471
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "nevalida numeraranĝo %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:1330
+#: src/lib/ecore/ecore_getopt.c:1329
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "nevalida elekto \"%s\". Validaj valoroj estas: "
 
-#: src/lib/ecore/ecore_getopt.c:1358
+#: src/lib/ecore/ecore_getopt.c:1357
 msgid "missing parameter to append.\n"
 msgstr "postaldonenda parametro mankas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1462
+#: src/lib/ecore/ecore_getopt.c:1461
 msgid "could not parse value.\n"
 msgstr "valoro ne sintakse analizeblas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1519
+#: src/lib/ecore/ecore_getopt.c:1518
 msgid "missing parameter.\n"
 msgstr "parametro mankas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1532
+#: src/lib/ecore/ecore_getopt.c:1531
 msgid "missing callback function!\n"
 msgstr "funkcio vokita per referenco mankas!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1563
+#: src/lib/ecore/ecore_getopt.c:1562
 msgid "no version was defined.\n"
 msgstr "neniu versio estas difinita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1580
+#: src/lib/ecore/ecore_getopt.c:1579
 msgid "no copyright was defined.\n"
 msgstr "neniu kopirajto estas difinita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1597
+#: src/lib/ecore/ecore_getopt.c:1596
 msgid "no license was defined.\n"
 msgstr "neniu permesilo estas difinita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1687
+#: src/lib/ecore/ecore_getopt.c:1686
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "ERARO: nekonata opcio --%s. Ignorita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1720
+#: src/lib/ecore/ecore_getopt.c:1719
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "ERARO: opcio --%s postulas argumenton!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1762
+#: src/lib/ecore/ecore_getopt.c:1761
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "ERARO: nekonata opcio -%c. Ignorata.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1800
+#: src/lib/ecore/ecore_getopt.c:1799
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "ERARO: opcio -%c postulas argumenton!\n"
 
-#: src/lib/ecore/ecore_getopt.c:1895
-#, fuzzy, c-format
+#: src/lib/ecore/ecore_getopt.c:1894
+#, c-format
 msgid "ERROR: missing required positional argument %s.\n"
-msgstr "ERARO: opcio -%c postulas argumenton!\n"
+msgstr "ERARO: nepra poziciaj argumento %s mankas.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1927
+#: src/lib/ecore/ecore_getopt.c:1926
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
-msgstr ""
+msgstr "ERARO: neeltena tipo de agado %d por pozicia argumento %s\n"
 
-#: src/lib/ecore/ecore_getopt.c:2116 src/lib/ecore/ecore_getopt.c:2233
+#: src/lib/ecore/ecore_getopt.c:2115 src/lib/ecore/ecore_getopt.c:2232
 msgid "ERROR: no parser provided.\n"
 msgstr "ERARO: neniu sintaksa analizilo provizita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2121 src/lib/ecore/ecore_getopt.c:2238
+#: src/lib/ecore/ecore_getopt.c:2120 src/lib/ecore/ecore_getopt.c:2237
 msgid "ERROR: no values provided.\n"
 msgstr "ERARO: neniu valoro provizita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2130 src/lib/ecore/ecore_getopt.c:2247
+#: src/lib/ecore/ecore_getopt.c:2129 src/lib/ecore/ecore_getopt.c:2246
 msgid "ERROR: no arguments provided.\n"
 msgstr "ERARO: neniu argumento provizita.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2156
+#: src/lib/ecore/ecore_getopt.c:2155
 msgid "ERROR: invalid options found."
 msgstr "ERARO: nevalidaj opcioj trovitaj."
 
-#: src/lib/ecore/ecore_getopt.c:2162 src/lib/ecore/ecore_getopt.c:2279
+#: src/lib/ecore/ecore_getopt.c:2161 src/lib/ecore/ecore_getopt.c:2278
 #, c-format
 msgid " See --%s.\n"
 msgstr " Vidu --%s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2164 src/lib/ecore/ecore_getopt.c:2281
+#: src/lib/ecore/ecore_getopt.c:2163 src/lib/ecore/ecore_getopt.c:2280
 #, c-format
 msgid " See -%c.\n"
 msgstr " Vidu -%c.\n"
 
-#: src/lib/ecore/ecore_getopt.c:2273
-#, fuzzy
+#: src/lib/ecore/ecore_getopt.c:2272
 msgid "ERROR: invalid positional arguments found."
-msgstr "ERARO: nevalidaj opcioj trovitaj."
+msgstr "ERARO: nevalida poziciaj argumentoj trovitaj."
 
-#: src/lib/ecore/ecore_getopt.c:2327
+#: src/lib/ecore/ecore_getopt.c:2326
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "ERARO: nekorekta geometria valoro '%s'\n"
 
-#: src/lib/ecore/ecore_getopt.c:2359
+#: src/lib/ecore/ecore_getopt.c:2358
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERARO: nekorekta valoro de grando '%s'\n"

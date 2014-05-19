@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=Application
 Name=Sub
+Name[gl]=Sub
+Name[ms]=Sub
+Name[sr]=Под
+Name[tr]=Sub
 Exec=subtest
 Categories=Test
