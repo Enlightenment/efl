@@ -2465,8 +2465,7 @@ _evas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
           e->engine.func->output_dump(e->engine.data.output);
 
 #define GC_ALL(Cow) \
-   while (eina_cow_gc(Cow))
-
+  if (Cow) while (eina_cow_gc(Cow))
         GC_ALL(evas_object_proxy_cow);
         GC_ALL(evas_object_map_cow);
         GC_ALL(evas_object_image_pixels_cow);
