@@ -4098,9 +4098,12 @@ _elm_widget_item_free(Elm_Widget_Item *item)
 /**
  * @internal
  *
- * Releases widget item memory, calling back del_cb() if it exists.
+ * Releases widget item memory, calling back item_del_pre_hook() and
+ * item_del_cb() if they exist.
  *
- * If there is a Elm_Widget_Item::del_cb, then it will be called prior
+ * @param item a valid #Elm_Widget_Item to be deleted.
+ *
+ * If there is an Elm_Widget_Item::del_cb, then it will be called prior
  * to memory release. Note that elm_widget_item_pre_notify_del() calls
  * this function and then unset it, thus being useful for 2 step
  * cleanup whenever the del_cb may use any of the data that must be
@@ -4109,7 +4112,9 @@ _elm_widget_item_free(Elm_Widget_Item *item)
  * The Elm_Widget_Item::view will be deleted (evas_object_del()) if it
  * is presented!
  *
- * @param item a valid #Elm_Widget_Item to be deleted.
+ * Note that if item_del_pre_hook() returns @c EINA_TRUE, item free will be
+ * deferred, or item will be freed here if it returns @c EINA_FALSE.
+ *
  * @see elm_widget_item_del() convenience macro.
  * @ingroup Widget
  */
