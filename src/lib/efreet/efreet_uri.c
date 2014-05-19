@@ -18,40 +18,49 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+/* The URI standard is at http://tools.ietf.org/html/std66 */
 
 EAPI Efreet_Uri *
 efreet_uri_decode(const char *full_uri)
 {
     Efreet_Uri *uri;
     const char *p;
-    char protocol[64], hostname[_POSIX_HOST_NAME_MAX], path[PATH_MAX];
+    char scheme[64], authority[_POSIX_HOST_NAME_MAX], path[PATH_MAX];
     int i = 0;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(full_uri, NULL);
 
-    /* An uri should be in the form <protocol>://<hostname>/<path> */
-    if (!strstr(full_uri, "://")) return NULL;
+    /* An uri should be in the form <scheme>:[<authority>][<path>][<query>][<fragment>] */
+    if (!strstr(full_uri, ":")) return NULL;
 
-    memset(protocol, 0, 64);
-    memset(hostname, 0, _POSIX_HOST_NAME_MAX);
+
+    memset(scheme, 0, 64);
+    memset(authority, 0, _POSIX_HOST_NAME_MAX);
     memset(path, 0, PATH_MAX);
 
-    /* parse protocol */
+    /* parse scheme */
     p = full_uri;
     for (i = 0; *p != ':' && *p != '\0' && i < (64 - 1); p++, i++)
-         protocol[i] = *p;
-    protocol[i] = '\0';
+         scheme[i] = *p;
+    if (i == 0) return NULL; /* scheme is required */
+    scheme[i] = '\0';
 
-    /* parse hostname */
-    p += 3;
+    /* parse authority */
+    p++;
     if (*p != '/')
     {
-        for (i = 0; *p != '/' && *p != '\0' && i < (_POSIX_HOST_NAME_MAX - 1); p++, i++)
-            hostname[i] = *p;
-        hostname[i] = '\0';
+        p++;
+        if (*p != '/')
+        {
+            for (i = 0; *p != '/' && *p != '?' && *p != '#' && *p != '\0' && i < (_POSIX_HOST_NAME_MAX - 1); p++, i++)
+                authority[i] = *p;
+            authority[i] = '\0';
+        }
+        else /* It's a path, let path parser handle the leading slash */
+            p--;
     }
     else
-        hostname[0] = '\0';
+        authority[0] = '\0';
 
     /* parse path */
     /* See http://www.faqs.org/rfcs/rfc1738.html for the escaped chars */
@@ -71,8 +80,8 @@ efreet_uri_decode(const char *full_uri)
     uri = NEW(Efreet_Uri, 1);
     if (!uri) return NULL;
 
-    uri->protocol = eina_stringshare_add(protocol);
-    uri->hostname = eina_stringshare_add(hostname);
+    uri->protocol = eina_stringshare_add(scheme);
+    uri->hostname = eina_stringshare_add(authority);
     uri->path = eina_stringshare_add(path);
 
     return uri;

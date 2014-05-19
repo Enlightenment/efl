@@ -624,14 +624,7 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
     f->command = command;
 
     /* handle uris */
-    if ((!strncmp(file, "http", 4) && (!strncmp(file + 4, "://", 3) || !strncmp(file + 4, "s://", 4))) || !strncmp(file, "ftp://", 6))
-    {
-        uri = file;
-        base = ecore_file_file_get(file);
-
-        nonlocal = 1;
-    }
-    else if (!strncmp(file, "file:", 5))
+    if (!strncmp(file, "file:", 5))
     {
         file = efreet_desktop_command_file_uri_process(file);
         if (!file)
@@ -639,6 +632,13 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
             efreet_desktop_command_file_free(f);
             return NULL;
         }
+    }
+    else if (strstr(file, ":"))
+    {
+        uri = file;
+        base = ecore_file_file_get(file);
+
+        nonlocal = 1;
     }
 
     if (nonlocal)
