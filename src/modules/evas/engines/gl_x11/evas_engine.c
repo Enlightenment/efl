@@ -1612,7 +1612,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
         Tilebuf_Rect *r;
         
         // if partial swaps can be done use re->rects
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(re->rects), r) num++;
+        num = eina_inlist_count(EINA_INLIST_GET(re->rects));
         if (num > 0)
           {
              rects = alloca(sizeof(EGLint) * 4 * num);
