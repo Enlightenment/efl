@@ -368,6 +368,9 @@ typedef enum _Eo_Class_Type Eo_Class_Type;
 typedef struct _Eo_Op_Description
 {
    void *api_func;         /**< The EAPI function offering this op. */
+#ifdef _WIN32
+   const char *api_name;   /**< Full name of this API entry-point. Used to work around import indirection in DLL's. */
+#endif
    void *func;             /**< The static function to call for the op. */
    Eo_Op op;               /**< The op. */
    Eo_Op_Type op_type;     /**< The type of the Op. */
@@ -547,11 +550,17 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 // OP ID of an overriding function
 #define EO_OP_OVERRIDE ((Eo_Op) -1)
 
-#define EO_OP_FUNC(_api, _private, _doc) {_api, _private, EO_NOOP, EO_OP_TYPE_REGULAR, _doc}
-#define EO_OP_CLASS_FUNC(_api, _private, _doc) {_api, _private, EO_NOOP, EO_OP_TYPE_CLASS, _doc}
-#define EO_OP_FUNC_OVERRIDE(_api, _private) {_api, _private, EO_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL}
-#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) {_api, _private, EO_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL}
-#define EO_OP_SENTINEL { NULL, NULL, 0, EO_OP_TYPE_INVALID, NULL}
+#ifndef _WIN32
+# define _EO_OP_API_ENTRY(a) a
+#else
+# define _EO_OP_API_ENTRY(a) a, #a
+#endif
+
+#define EO_OP_FUNC(_api, _private, _doc) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_REGULAR, _doc }
+#define EO_OP_CLASS_FUNC(_api, _private, _doc) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_CLASS, _doc }
+#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL }
+#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL }
+#define EO_OP_SENTINEL { _EO_OP_API_ENTRY(NULL), NULL, 0, EO_OP_TYPE_INVALID, NULL }
 
 // returns the OP id corresponding to the given api_func
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func, const char *file, int line);

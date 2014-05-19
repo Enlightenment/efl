@@ -685,7 +685,7 @@ end2:
 
 
 static inline const Eo_Op_Description *
-_eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns)
+_eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns, const char *api_name)
 {
    int imin, imax, imid;
    const _Eo_Class *cur_klass;
@@ -715,6 +715,22 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
                     return op_desc;
                }
 
+#ifdef _WIN32
+             /* On Windows, DLL API's will be exported using the dllexport flag.
+              * When used by another library or executable, they will be declared
+              * using the dllimport flag. What happens really is that two symbols are
+              * created, at two different addresses. So it's impossible to match
+              * them. We fallback to plain string comparison based on the
+              * function name itself. Slow, but this should rarely happen.
+              */
+             for (int i = 0; i < cur_klass->desc->ops.count; i++)
+               if (op_descs[i].api_name && !strcmp(api_name, op_descs[i].api_name))
+                 {
+                    if (op_descs[i].api_func == NULL || op_descs[i].api_func == ((void (*)())-1))
+                      break;
+                    return &op_descs[i];
+                 }
+#endif
           }
      }
 
@@ -723,7 +739,7 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
         for (kls_itr = extns ; *kls_itr ; kls_itr++)
           {
              cur_klass = *kls_itr;
-             op_desc = _eo_api_desc_get(api_func, cur_klass, NULL);
+             op_desc = _eo_api_desc_get(api_func, cur_klass, NULL, api_name);
              if (op_desc) return op_desc;
           }
      }
@@ -748,7 +764,10 @@ _eo_api_op_id_get(const void *api_func, const char *file, int line)
    else
      klass = stack->frame_ptr->o.obj->klass;
 
-   desc = _eo_api_desc_get(api_func, klass, klass->extensions);
+   // Win32 compatibility: api_name is NULL because we're assuming the
+   // function pointer is correct (it was referred to using the same
+   // dllimport vs. dllexport flags).
+   desc = _eo_api_desc_get(api_func, klass, klass->extensions, NULL);
 
    if (desc == NULL)
      {
@@ -819,7 +838,11 @@ _eo_class_funcs_set(_Eo_Class *klass)
           }
         else if (op_desc->op == EO_OP_OVERRIDE)
           {
-             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
+#ifdef _WIN32
+             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions, op_desc->api_name);
+#else
+             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions, NULL);
+#endif
 
              if (api_desc == NULL)
                {
