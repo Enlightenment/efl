@@ -409,6 +409,39 @@ _wref_destruct(Private_Data *pd)
 
 /* Callbacks */
 
+/* XXX: Legacy support, remove when legacy is dead. */
+static Eina_Hash *_legacy_events_hash = NULL;
+static const char *_legacy_event_desc = "Dynamically generated legacy event";
+
+EAPI const Eo_Event_Description *
+eo_base_legacy_only_event_description_get(const char *_event_name)
+{
+   Eina_Stringshare *event_name = eina_stringshare_add(_event_name);
+   Eo_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
+   if (!event_desc)
+     {
+        event_desc = calloc(1, sizeof(Eo_Event_Description));
+        event_desc->name = event_name;
+        event_desc->doc = _legacy_event_desc;
+     }
+   else
+     {
+        eina_stringshare_del(event_name);
+     }
+
+   return event_desc;
+}
+
+static void
+_legacy_events_hash_free_cb(void *_desc)
+{
+   Eo_Event_Description *desc = _desc;
+   eina_stringshare_del(desc->name);
+   free(desc);
+}
+
+/* EOF Legacy */
+
 struct _Eo_Callback_Description
 {
    Eo_Callback_Description *next;
@@ -910,7 +943,6 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 
 /* EOF event callbacks */
 
-
 /* EO_CLASS stuff */
 #define MY_CLASS EO_CLASS
 
@@ -953,6 +985,13 @@ static void
 _class_constructor(Eo_Class *klass EINA_UNUSED)
 {
    event_freeze_count = 0;
+   _legacy_events_hash = eina_hash_stringshared_new(_legacy_events_hash_free_cb);
+}
+
+static void
+_class_destructor(Eo_Class *klass EINA_UNUSED)
+{
+   eina_hash_free(_legacy_events_hash);
 }
 
 static Eo_Op_Description op_descs [] = {
@@ -999,7 +1038,7 @@ static const Eo_Class_Description class_desc = {
      event_desc,
      sizeof(Private_Data),
      _class_constructor,
-     NULL
+     _class_destructor
 };
 
 EO_DEFINE_CLASS(eo_base_class_get, &class_desc, NULL, NULL)

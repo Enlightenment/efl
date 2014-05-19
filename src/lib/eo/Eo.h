@@ -1109,6 +1109,12 @@ EAPI void eo_destructor(void);
  */
 
 /**
+ * Don't use.
+ * @internal
+ */
+EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const char *_event_name);
+
+/**
  * @def EO_CALLBACK_PRIORITY_BEFORE
  * Slightly more prioritized than default.
  */
