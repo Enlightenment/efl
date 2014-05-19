@@ -1,25 +1,34 @@
-# French translation for Efl.
-# Copyright (C) 2012, 2013 Enlightenment development team
+# French translation for Enlightenment DR17.
 # This file is put in the public domain.
-# batden <batden@orange.fr>, 2009.
-# Jerome Pinot <ngc891@gmail.com>, 2012.
-# Chidambar Zinnoury <illogict@online.fr>, 2013.
 #
+# Vincent 'Caro' Torri <vtorri at univ-evry dot fr>, 2005.
+# Sébastien HOUZE <shouze@nerim.net>, 2005.
+# Maxime BRUNEL <maxtoo@gentoofr.org>, 2005, 2006.
+# Chidambar Zinnoury <illogict@online.fr>, 2006, 2007, 2012.
+# Antoine Giniès <aginies.cooker@gmail.com>, 2007, 2008.
+# Jérôme Pinot <ngc891@gmail.com>, 2008.
+# batden <batden@orange.fr>, 2008, 2009, 2010, 2011.
+# dazibao <dazibao@sfr.fr>, 2011, 2012.
+# rustyBSD <rustyBSD@gmx.fr>, 2012.
+# Raoul Hecky <raoul.hecky@gmail.com>, 2012.
+# Eliovir <eliovir@gmail.com>, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: Efl\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-02 12:42+0900\n"
-"PO-Revision-Date: 2013-02-05 22:51+0000\n"
-"Last-Translator: ilLogict <illogict@online.fr>\n"
-"Language-Team: Enlightenment French Team <enlightenment-intl@lists."
-"sourceforge.net>\n"
-"Language: fr\n"
+"Project-Id-Version: Enlightenment DR17\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-12-30 11:41+0100\n"
+"PO-Revision-Date: 2013-12-30 11:46+0000\n"
+"Last-Translator: Eliovir <Unknown>\n"
+"Language-Team: French <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-02-06 05:17+0000\n"
-"X-Generator: Launchpad (build 16468)\n"
+"X-Launchpad-Export-Date: 2013-12-31 05:52+0000\n"
+"X-Generator: Launchpad (build 16877)\n"
+"X-Poedit-Country: FRANCE\n"
+"Language: fr\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: src/lib/ecore/ecore_getopt.c:87
 msgid "Version:"
