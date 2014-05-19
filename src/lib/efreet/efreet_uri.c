@@ -47,11 +47,12 @@ efreet_uri_decode(const char *full_uri)
 
     /* parse authority */
     p++;
-    if (*p != '/')
+    if (*p == '/')
     {
         p++;
-        if (*p != '/')
+        if (*p == '/')
         {
+            p++;
             for (i = 0; *p != '/' && *p != '?' && *p != '#' && *p != '\0' && i < (_POSIX_HOST_NAME_MAX - 1); p++, i++)
                 authority[i] = *p;
             authority[i] = '\0';
