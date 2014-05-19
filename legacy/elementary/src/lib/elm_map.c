@@ -3609,6 +3609,7 @@ _zoom_mode_set(Elm_Map_Data *sd, double zoom)
                        w = pow(2.0, zoom) * sd->tsize;
                        h = pow(2.0, zoom) * sd->tsize;
                     }
+                  zoom -= diff;
                }
           }
         else if (sd->mode == ELM_MAP_ZOOM_MODE_AUTO_FILL)
@@ -3632,6 +3633,7 @@ _zoom_mode_set(Elm_Map_Data *sd, double zoom)
                        w = pow(2.0, zoom) * sd->tsize;
                        h = pow(2.0, zoom) * sd->tsize;
                     }
+                  zoom -= diff;
                }
           }
         _zoom_do(sd, zoom);
