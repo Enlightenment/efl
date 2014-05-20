@@ -181,15 +181,19 @@ static Eina_List *cont_drag_tg = NULL; /* List of Item_Container_Drag_Info */
 static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _all_drop_targets_cbs_del(void *data, Evas *e, Evas_Object *obj, void *info);
+#ifdef HAVE_ELEMENTARY_X
 static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
+#endif
 
 static Eina_Bool
 _drag_cancel_animate(void *data EINA_UNUSED, double pos)
 {  /* Animation to "move back" drag-window */
    if (pos >= 0.99)
      {
+#ifdef HAVE_ELEMENTARY_X
         Ecore_X_Window xdragwin = _x11_elm_widget_xwin_get(data);
         ecore_x_window_ignore_set(xdragwin, 0);
+#endif
         evas_object_del(data);
         return ECORE_CALLBACK_CANCEL;
      }
@@ -303,8 +307,6 @@ static Eina_Bool      _x11_dnd_status               (void *data EINA_UNUSED, int
 static Eina_Bool      _x11_dnd_leave                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
 static Eina_Bool      _x11_drag_mouse_up            (void *data, int etype EINA_UNUSED, void *event);
 static void           _x11_drag_move                (void *data EINA_UNUSED, Ecore_X_Xdnd_Position *pos);
-
-static Ecore_X_Window _x11_elm_widget_xwin_get           (const Evas_Object *obj);
 
 static Eina_Bool _x11_elm_cnp_init                       (void);
 static Eina_Bool _x11_elm_cnp_selection_set              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
