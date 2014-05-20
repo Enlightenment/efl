@@ -1706,7 +1706,7 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
             link.base: "elm,state,show";
          }
          desc { "hide";
-            hid;
+//            hid;
             link.base: "elm,state,hide";
          }
          desc { "map_transition";
