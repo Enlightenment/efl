@@ -2899,6 +2899,7 @@ _elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Ev
         if (x) *x = 0;
         if (y) *y = 0;
      }
+   if ((*w <= 0) || (*h <= 0)) return EINA_FALSE;
    return EINA_TRUE;
 }
 
