@@ -41,8 +41,8 @@ struct _Eio_Monitor_Win32_Watcher
    HANDLE               event;
    Eio_Monitor         *monitor;
    Ecore_Win32_Handler *h;
-   char                *current;
-   char                *file;
+   Eina_Stringshare    *current;
+   Eina_Stringshare    *file;
    DWORD                buf_length;
    Eina_Bool            monitor_file : 1;
    Eina_Bool            monitor_parent : 1;
@@ -188,11 +188,11 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
 }
 
 static Eio_Monitor_Win32_Watcher *
-_eio_monitor_win32_watcher_new(Eio_Monitor *monitor,
-                               char        *current,
-                               char        *file,
-                               Eina_Bool    monitor_file,
-                               Eina_Bool    monitor_parent)
+_eio_monitor_win32_watcher_new(Eio_Monitor      *monitor,
+                               Eina_Stringshare *current,
+                               Eina_Stringshare *file,
+                               Eina_Bool         monitor_file,
+                               Eina_Bool         monitor_parent)
 {
    Eio_Monitor_Win32_Watcher *w;
    char                      *monitored;
@@ -273,8 +273,8 @@ _eio_monitor_win32_watcher_new(Eio_Monitor *monitor,
    w->monitor = monitor;
    w->monitor_file = monitor_file;
    w->monitor_parent = monitor_parent;
-   w->file = file;
-   w->current = current;
+   w->file = eina_stringshare_ref(file);
+   w->current = eina_stringshare_ref(current);
 
    return w;
 
@@ -293,9 +293,8 @@ _eio_monitor_win32_watcher_free(Eio_Monitor_Win32_Watcher *w)
 {
    if (!w) return;
 
-   if (w->file)
-     free(w->file);
-   free(w->current);
+   eina_stringshare_del(w->file);
+   eina_stringshare_del(w->current);
    CloseHandle(w->event);
    CloseHandle (w->handle);
    free (w);
@@ -326,8 +325,8 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    char path[PATH_MAX];
    struct _stat s;
    char *res;
-   char *current;
-   char *file = NULL;
+   Eina_Stringshare *current;
+   Eina_Stringshare *file = NULL;
    Eio_Monitor_Backend *backend;
    int ret;
 
@@ -341,7 +340,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
 
    if (_S_IFDIR & s.st_mode)
      {
-        current = strdup(path);
+        current = eina_stringshare_add(path);
         if (!current)
           goto fallback;
      }
@@ -350,15 +349,15 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
         char *tmp;
 
         tmp = strrchr(path, '\\');
-        file = strdup(tmp + 1);
+        file = eina_stringshare_add(tmp + 1);
         if (!file)
           goto fallback;
 
         *tmp = '\0';
-        current = strdup(path);
+        current = eina_stringshare_add(path);
         if (!current)
           {
-             free(file);
+             eina_stringshare_del(file);
              goto fallback;
           }
      }
@@ -385,6 +384,9 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
 
    _eio_monitor_win32_native = EINA_TRUE;
    monitor->backend = backend;
+
+   eina_stringshare_del(current);
+   eina_stringshare_del(file);
 
    return;
 
