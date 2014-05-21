@@ -1,4 +1,5 @@
 interface Efl_Interface_File {
+   legacy_prefix: null;
    properties {
       data_copy {
          set {

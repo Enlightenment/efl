@@ -1,4 +1,5 @@
 interface Efl_Interface_Text_Properties {
+   legacy_prefix: null;
    properties {
       font {
          set {
@@ -33,4 +34,5 @@ interface Efl_Interface_Text_Properties {
    }
    implements {
       virtual::font;
+   }
 }

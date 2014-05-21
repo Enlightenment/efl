@@ -1,4 +1,5 @@
 interface Efl_Interface_Gui_Object {
+   legacy_prefix: null;
    properties {
       size {
          set {
@@ -46,6 +47,21 @@ interface Efl_Interface_Gui_Object {
             return Evas_Object * @warn_unused;
          }
       }
+      visibility {
+         set {
+            /*@ Makes the given Evas object visible or invisible. */
+            legacy null;
+         }
+         get {
+            /*@ Retrieves whether or not the given Evas object is visible. */
+            legacy null;
+         }
+         values {
+            Eina_Bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+         }
+      }
+   }
+   methods {
       stack_above {
          /*@
          Stack @p obj immediately above @p above
@@ -125,19 +141,6 @@ interface Efl_Interface_Gui_Object {
          @see evas_object_stack_below()
          @see evas_object_raise() */
 
-      }
-      visibility {
-         set {
-            /*@ Makes the given Evas object visible or invisible. */
-            legacy null;
-         }
-         get {
-            /*@ Retrieves whether or not the given Evas object is visible. */
-            legacy evas_object_visible_get;
-         }
-         values {
-            Eina_Bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
-         }
       }
    }
 }
