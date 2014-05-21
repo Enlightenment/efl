@@ -9,6 +9,33 @@
 #include "Eolian.h"
 #include "eolian_suite.h"
 
+START_TEST(eolian_consts)
+{
+   Eolian_Function fid = NULL;
+   const char *class_name = "Const";
+   Eolian_Function_Parameter param = NULL;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/consts.eo"));
+
+   /* Class */
+   fail_if(!eolian_class_exists(class_name));
+
+   /* Property */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "a", EOLIAN_PROPERTY)));
+   fail_if(!(param = eolian_function_parameter_get(fid, "buffer")));
+   fail_if(eolian_parameter_const_attribute_get(param, EINA_FALSE));
+   fail_if(!eolian_parameter_const_attribute_get(param, EINA_TRUE));
+
+   /* Method */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "foo", EOLIAN_METHOD)));
+   fail_if(EINA_FALSE == eolian_function_object_is_const(fid));
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_ctor_dtor)
 {
    const char *class_name = "Ctor_Dtor";
@@ -277,5 +304,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_scope);
    tcase_add_test(tc, eolian_complex_type);
    tcase_add_test(tc, eolian_typedef);
+   tcase_add_test(tc, eolian_consts);
 }
 
