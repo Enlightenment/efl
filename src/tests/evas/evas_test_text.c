@@ -189,6 +189,9 @@ _test_ellipsis(Evas_Object *to, const char *buf, const char *font, Evas_Font_Siz
         evas_object_geometry_get(to, NULL, NULL, &w, NULL);
         /* If it's gotten way too small, it means we have an issue. */
         fail_if(w < 100);
+
+        w = evas_object_text_horiz_advance_get(to);
+        fail_if(w < 100);
      }
 }
 
@@ -218,6 +221,9 @@ START_TEST(evas_text_ellipsis)
    _test_ellipsis(to, buf, font, size, 0.5);
    _test_ellipsis(to, buf, font, size, 1.0);
 
+   /* Ligatures */
+   buf = "Fffffffffffffffffffffffffffffffffff";
+   _test_ellipsis(to, buf, font, size, 0.0);
    END_TEXT_TEST();
 }
 END_TEST
