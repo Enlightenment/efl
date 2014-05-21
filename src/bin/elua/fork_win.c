@@ -94,17 +94,19 @@ static int init_ntdll(void) {
     HMODULE ntdll = GetModuleHandle("ntdll");
     if (!ntdll) return 0;
 
-#define GETPROC(name) name = (name##_t)GetProcAddress(ntdll, #name)
+#define FORK_WIN_GETPROC(name) name = (name##_t)GetProcAddress(ntdll, #name)
 
-    GETPROC(ZwCreateProcess);
-    GETPROC(ZwQuerySystemInformation);
-    GETPROC(ZwQueryVirtualMemory);
-    GETPROC(ZwCreateThread);
-    GETPROC(ZwGetContextThread);
-    GETPROC(ZwResumeThread);
-    GETPROC(ZwQueryInformationThread);
-    GETPROC(ZwWriteVirtualMemory);
-    GETPROC(ZwClose);
+    FORK_WIN_GETPROC(ZwCreateProcess);
+    FORK_WIN_GETPROC(ZwQuerySystemInformation);
+    FORK_WIN_GETPROC(ZwQueryVirtualMemory);
+    FORK_WIN_GETPROC(ZwCreateThread);
+    FORK_WIN_GETPROC(ZwGetContextThread);
+    FORK_WIN_GETPROC(ZwResumeThread);
+    FORK_WIN_GETPROC(ZwQueryInformationThread);
+    FORK_WIN_GETPROC(ZwWriteVirtualMemory);
+    FORK_WIN_GETPROC(ZwClose);
+
+#undef FORK_WIN_GETPROC
 
     return !!ZwCreateProcess;
 }
