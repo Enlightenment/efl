@@ -2398,7 +2398,16 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
 	     real->part->clip_to_id = -1;
 	  }
 	if (real->drag && real->drag->confine_to == rp)
-	  real->drag->confine_to = NULL;
+	  {
+	     real->drag->confine_to = NULL;
+	  }
+	if (real->part->dragable.event_id != -1)
+	  {
+	     if (real->part->dragable.event_id == TO_INT(id))
+	       real->part->dragable.event_id = -1;
+	     else if (i > id)
+	       real->part->dragable.event_id--;
+	  }
      }
 
    /* Unlink all the parts and descriptions that refer to id */
