@@ -636,7 +636,7 @@ static Eina_Bool
 _layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Text_Data *o, Evas_Object_Text_Item *ti, int idx, Eina_Bool want_start)
 {
    Evas_Text_Props new_text_props;
-   if (idx >= (int) ti->text_props.len)
+   if (idx >= (int) ti->text_props.text_len)
       return EINA_FALSE;
 
    memset(&new_text_props, 0, sizeof (new_text_props));
