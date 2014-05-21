@@ -239,33 +239,34 @@ for i, v in ipairs(args) do
     input_files[#input_files + 1] = v
 end
 
-local args_nolua = { hasxgettext }
+local args_nolua = {}
 for i, opt in ipairs(opts_nolua) do
     args_nolua[#args_nolua + 1] = build_opt(opt)
 end
 args_nolua[#args_nolua + 1] = "--omit-header"
 args_nolua[#args_nolua + 1] = "--output=-"
-
-args_nolua = cutil.build_args(unpack(args_nolua))
+args_nolua[#args_nolua + 1] = false
 
 local parsed_files = {}
 for i, fname in ipairs(input_files) do
     if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
         -- parse lua files here
     else
-        local f = assert(io.popen(args_nolua .. " '" .. fname .. "'", "r"))
-        parsed_files[#parsed_files + 1] = f:read("*all")
+        args_nolua[#args_nolua] = fname
+        local f = assert(cutil.popenv(hasxgettext, "r", unpack(args_nolua)))
+        local s = f:read("*all")
+        parsed_files[#parsed_files + 1] = s
         f:close()
     end
 end
 
-local args_final = { hasxgettext }
+local args_final = {}
 for i, opt in ipairs(opts_final) do
     args_final[#args_final + 1] = build_opt(opt)
 end
 args_final[#args_final + 1] = "--language=PO"
 args_final[#args_final + 1] = "-"
-local f = assert(io.popen(cutil.build_args(unpack(args_final)), "w"))
+local f = assert(cutil.popenv(hasxgettext, "w", unpack(args_final)))
 f:write(table.concat(parsed_files, "\n\n"))
 f:close()
 

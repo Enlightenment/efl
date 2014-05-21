@@ -168,7 +168,7 @@ static int elua_read(lua_State *L) {
     } else {
         luaL_checkstack(L, nargs + LUA_MINSTACK, "too many arguments");
         success = 1;
-        for (n = first; --nargs && success; ++n) {
+        for (n = first; nargs-- && success; ++n) {
             if (lua_type(L, n) == LUA_TNUMBER) {
                 size_t l = (size_t)lua_tointeger(L, n);
                 success = (l == 0) ? test_eof(L, f) : read_chars(L, f, l);
@@ -206,7 +206,7 @@ static int elua_write(lua_State *L) {
     FILE *f    = tofile(L);
     int nargs  = lua_gettop(L) - 1;
     int status = 1, arg = 2;
-    for (; --nargs; ++arg) {
+    for (; nargs--; ++arg) {
         if (lua_type(L, arg) == LUA_TNUMBER) {
             status = status && (fprintf(f, LUA_NUMBER_FMT,
                 lua_tonumber(L, arg)) > 0);
@@ -270,7 +270,7 @@ int elua_popen(lua_State *L) {
         const char **argv = (const char**)alloca((nargs + 2) * sizeof(char*));
         memset(argv, 0, (nargs + 2) * sizeof(char*));
         for (; nargs; --nargs) {
-            argv[nargs] = lua_tostring(L, nargs);
+            argv[nargs] = lua_tostring(L, nargs + 2);
         }
         argv[0] = fname;
         *pf = elua_popen_c(fname, argv, mode);

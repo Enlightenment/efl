@@ -62,8 +62,8 @@ local parse_l = function(opts, opt, descs, args, parser)
     end
     local dopts = desc.opts
     if    dopts then
-          dopts[#opts + 1] = opts[#opts]
-          dopts[optn]      = opts[optn ]
+          dopts[#dopts + 1] = opts[#opts]
+          dopts[optn]       = opts[optn ]
     end
 end
 
