@@ -454,7 +454,7 @@ group { name: "e/modules/everything/list";
                min: 1 1;
                ellipsis: -1;
                text_class: "fileman_typebuf";
-               elipsis: -1;
+               ellipsis: -1;
             }
          }
       }
