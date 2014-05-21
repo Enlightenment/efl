@@ -1106,6 +1106,11 @@ _elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
 
    evas_object_image_size_set(sd->img, iw, ih);
    data = evas_object_image_data_get(sd->img, EINA_TRUE);
+   if (!data)
+     {
+        free(data2);
+        return;
+     }
 
    switch (orient)
      {
