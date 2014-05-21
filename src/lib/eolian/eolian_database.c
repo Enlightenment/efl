@@ -1299,16 +1299,19 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
      }
    EINA_LIST_FOREACH(eolian_class_inherits_list_get(class_name), itr, inherit_name)
      {
-        char *filename = strdup(inherit_name);
-        eina_str_tolower(&filename);
-        filepath = eina_hash_find(_filenames, filename);
-        if (!filepath)
+        if (!eolian_class_exists(inherit_name))
           {
-             ERR("Unable to find class %s", inherit_name);
-             return EINA_FALSE;
+             char *filename = strdup(inherit_name);
+             eina_str_tolower(&filename);
+             filepath = eina_hash_find(_filenames, filename);
+             if (!filepath)
+               {
+                  ERR("Unable to find class %s", inherit_name);
+                  return EINA_FALSE;
+               }
+             if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
+             free(filename);
           }
-        if (!eolian_eo_file_parse(filepath)) return EINA_FALSE;
-        free(filename);
      }
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class_name), itr, impl)
      {
