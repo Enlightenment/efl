@@ -1,0 +1,19 @@
+class Simple (Base) {
+   properties {
+      a {
+         set {
+         }
+         get {
+         }
+      }
+   }
+   methods {
+      foo {
+      }
+   }
+   implements {
+      Base::constructor;
+      virtual::a::set;
+      virtual::foo;
+   }
+};

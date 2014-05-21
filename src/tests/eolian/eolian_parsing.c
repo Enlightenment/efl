@@ -9,6 +9,43 @@
 #include "Eolian.h"
 #include "eolian_suite.h"
 
+START_TEST(eolian_override)
+{
+   Eolian_Function fid = NULL;
+   const char *class_name = "Simple";
+   const char *base_name = "Base";
+   const Eina_List *impls = NULL;
+   const char *impl_class = NULL, *impl_func = NULL;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/override.eo"));
+
+   /* Class */
+   fail_if(!eolian_class_exists(class_name));
+
+   /* Base ctor */
+   fail_if(!(fid = eolian_class_function_find_by_name(base_name, "constructor", EOLIAN_UNRESOLVED)));
+   fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_UNRESOLVED));
+   fail_if(!(impls = eolian_class_implements_list_get(class_name)));
+   fail_if(!eolian_implement_information_get(eina_list_nth(impls, 0), &impl_class, &impl_func, NULL));
+   fail_if(strcmp(impl_class, base_name));
+   fail_if(strcmp(impl_func, "constructor"));
+
+   /* Property */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "a", EOLIAN_PROPERTY)));
+   fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_PROP_SET));
+   fail_if(eolian_function_is_virtual_pure(fid, EOLIAN_PROP_GET));
+
+   /* Method */
+   fail_if(!(fid = eolian_class_function_find_by_name(class_name, "foo", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_METHOD));
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_consts)
 {
    Eolian_Function fid = NULL;
@@ -305,5 +342,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_complex_type);
    tcase_add_test(tc, eolian_typedef);
    tcase_add_test(tc, eolian_consts);
+   tcase_add_test(tc, eolian_override);
 }
 

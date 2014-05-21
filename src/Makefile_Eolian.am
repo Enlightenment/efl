@@ -94,5 +94,6 @@ tests/eolian/data/object_impl.eo \
 tests/eolian/data/object_impl_ref.c \
 tests/eolian/data/object_impl_add.eo \
 tests/eolian/data/object_impl_add_ref.c \
-tests/eolian/data/consts.eo
+tests/eolian/data/consts.eo \
+tests/eolian/data/override.eo
 
