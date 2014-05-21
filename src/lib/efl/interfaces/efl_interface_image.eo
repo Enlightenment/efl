@@ -1,0 +1,27 @@
+interface Efl_Interface_File {
+   properties {
+      data_copy {
+         set {
+         }
+         values {
+            void *data; /*@ The raw data to replace. */
+         }
+      }
+   }
+   methods {
+      data_set {
+         params {
+            @in void *data; /*@ The raw data, or @c NULL. */
+         }
+      }
+      data_get {
+         const;
+         return void * @warn_unused;
+         params {
+            @in Eina_Bool for_writing; /*@ Whether the data being retrieved will be
+            modified (@c EINA_TRUE) or not (@c EINA_FALSE). */
+         }
+      }
+   }
+}
+

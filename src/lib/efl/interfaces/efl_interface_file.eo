@@ -1,0 +1,29 @@
+interface Efl_Interface_File {
+   properties {
+      file {
+         set {
+            return Eina_Bool;
+         }
+         get {
+         }
+         values {
+            const char *file; /*@ The path to the file to load @p from */
+            const char *group; /*@ The name of the group, in @p file */
+         }
+      }
+   }
+   methods {
+      save {
+         const;
+         return Eina_Bool;
+         params {
+            @in const char *file @nonull; /*@ The filename to be used to save the data (extension
+            obligatory). */
+            @in const char *key; /*@ The image key in the file (if an Eet one), or @c NULL,
+            otherwise. */
+            @in const char *flags; /*@ String containing the flags to be used (@c NULL for
+            none). */
+         }
+      }
+   }
+}

@@ -1,0 +1,36 @@
+interface Efl_Interface_Text {
+   properties {
+      text_markup {
+         set {
+            /*@
+            Sets the tetxblock's text to the markup text.
+
+            @note assumes text does not include the unicode object replacement char (0xFFFC)
+
+            @return Return no value. */
+         }
+         get {
+            /*@
+            Return the markup of the object.
+
+            @return the markup text of the object. */
+         }
+         values {
+            const char *text; /*@ the markup text to use. */
+         }
+      }
+      cursor {
+         get {
+            /*@
+            Return the object's main cursor.
+
+            @return The @p obj's main cursor. */
+            return Evas_Textblock_Cursor *;
+         }
+      }
+   }
+   implements {
+      virtual::text_markup;
+      virtual::cursor::get;
+   }
+}

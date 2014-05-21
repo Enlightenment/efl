@@ -1,0 +1,144 @@
+interface Efl_Interface_Gui_Object {
+   properties {
+      size {
+         set {
+            /*@ Changes the size of the given Evas object. */
+         }
+         get {
+            /*@ Retrieves the (rectangular) size of the given Evas object. */
+         }
+         values {
+            Evas_Coord w; /*@ in */
+            Evas_Coord h; /*@ in */
+         }
+      }
+      above {
+         get {
+            /*@
+            Get the Evas object stacked right above @p obj
+
+            @return the #Evas_Object directly above @p obj, if any, or @c NULL,
+            if none
+
+            This function will traverse layers in its search, if there are
+            objects on layers above the one @p obj is placed at.
+
+            @see evas_object_layer_get()
+            @see evas_object_layer_set()
+            @see evas_object_below_get() */
+            return Evas_Object * @warn_unused;
+         }
+      }
+      below {
+         get {
+            /*@
+            Get the Evas object stacked right below @p obj
+
+            @return the #Evas_Object directly below @p obj, if any, or @c NULL,
+            if none
+
+            This function will traverse layers in its search, if there are
+            objects on layers below the one @p obj is placed at.
+
+            @see evas_object_layer_get()
+            @see evas_object_layer_set()
+            @see evas_object_below_get() */
+            return Evas_Object * @warn_unused;
+         }
+      }
+      stack_above {
+         /*@
+         Stack @p obj immediately above @p above
+
+         Objects, in a given canvas, are stacked in the order they get added
+         to it.  This means that, if they overlap, the highest ones will
+         cover the lowest ones, in that order. This function is a way to
+         change the stacking order for the objects.
+
+         This function is intended to be used with <b>objects belonging to
+         the same layer</b> in a given canvas, otherwise it will fail (and
+         accomplish nothing).
+
+         If you have smart objects on your canvas and @p obj is a member of
+         one of them, then @p above must also be a member of the same
+         smart object.
+
+         Similarly, if @p obj is not a member of a smart object, @p above
+         must not be either.
+
+         @see evas_object_layer_get()
+         @see evas_object_layer_set()
+         @see evas_object_stack_below() */
+
+         params {
+            @in Evas_Object *above @nonull; /*@ the object above which to stack */
+         }
+      }
+      stack_below {
+         /*@
+         Stack @p obj immediately below @p below
+
+         Objects, in a given canvas, are stacked in the order they get added
+         to it.  This means that, if they overlap, the highest ones will
+         cover the lowest ones, in that order. This function is a way to
+         change the stacking order for the objects.
+
+         This function is intended to be used with <b>objects belonging to
+         the same layer</b> in a given canvas, otherwise it will fail (and
+         accomplish nothing).
+
+         If you have smart objects on your canvas and @p obj is a member of
+         one of them, then @p below must also be a member of the same
+         smart object.
+
+         Similarly, if @p obj is not a member of a smart object, @p below
+         must not be either.
+
+         @see evas_object_layer_get()
+         @see evas_object_layer_set()
+         @see evas_object_stack_below() */
+
+         params {
+            @in Evas_Object *below @nonull; /*@ the object below which to stack */
+         }
+      }
+      raise {
+         /*@
+         Raise @p obj to the top of its layer.
+
+         @p obj will, then, be the highest one in the layer it belongs
+         to. Object on other layers won't get touched.
+
+         @see evas_object_stack_above()
+         @see evas_object_stack_below()
+         @see evas_object_lower() */
+
+      }
+      lower {
+         /*@
+         Lower @p obj to the bottom of its layer.
+
+         @p obj will, then, be the lowest one in the layer it belongs
+         to. Objects on other layers won't get touched.
+
+         @see evas_object_stack_above()
+         @see evas_object_stack_below()
+         @see evas_object_raise() */
+
+      }
+      visibility {
+         set {
+            /*@ Makes the given Evas object visible or invisible. */
+            legacy null;
+         }
+         get {
+            /*@ Retrieves whether or not the given Evas object is visible. */
+            legacy evas_object_visible_get;
+         }
+         values {
+            Eina_Bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+         }
+      }
+   }
+}
+

@@ -1,0 +1,40 @@
+interface Efl_Interface_Color_Enum_Part (Efl_Interface_Part)
+{
+}
+
+interface Efl_Interface_Color_Text_Part (Efl_Interface_Part)
+{
+}
+
+interface Efl_Interface_Color {
+   properties {
+      color {
+         set {
+         }
+         get {
+         }
+         values {
+            int r; /*@ The red component of the given color. */
+            int g; /*@ The green component of the given color. */
+            int b; /*@ The blue component of the given color. */
+            int a; /*@ The alpha component of the given color. */
+         }
+      }
+      color_part {
+         set {
+         }
+         get {
+         }
+         keys {
+            const Efl_Interface_Part *part;
+         }
+         values {
+            int r; /*@ The red component of the given color. */
+            int g; /*@ The green component of the given color. */
+            int b; /*@ The blue component of the given color. */
+            int a; /*@ The alpha component of the given color. */
+         }
+      }
+   }
+}
+
