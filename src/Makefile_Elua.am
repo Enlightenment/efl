@@ -4,7 +4,8 @@ bin_PROGRAMS += bin/elua/elua
 
 bin_elua_elua_SOURCES = \
     bin/elua/cache.c \
-    bin/elua/main.c
+    bin/elua/main.c \
+    bin/elua/io.c
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
     -DELUA_CORE_DIR="\"$(datadir)/elua/core\"" \

@@ -1,23 +1,6 @@
 /* The Lua runtime component of the EFL */
 
 #include <getopt.h>
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#define pipe(x, mode) pipe(x)
-#else
-#include <io.h>
-#include "fork_win.c"
-int fork_win(void);
-#define fork fork_win
-#define fdopen _fdopen
-#define execv _execv
-#define close _close
-#define dup2 _dup2
-#define pipe(x, mode) _pipe(x, 4096, ((mode && mode[0] && mode[1] == 'b') \
-    ? _O_BINARY : _O_TEXT) | _NO_NOINHERIT)
-#endif
 
 #include "main.h"
 
@@ -241,113 +224,6 @@ static int register_callbacks(lua_State *L) {
     return 1;
 }
 
-static FILE *elua_popen(const char *path, const char *argv[], const char *mode) {
-    int read   = (!mode || mode[0] == 'r');
-    int binary = mode && mode[0] && mode[1] == 'b';
-    pid_t pid;
-
-    int des[2];
-    if (pipe(des, mode)) return NULL;
-
-    pid = fork();
-    if (!pid) {
-        /* if read, stdout (1) is still open here
-         * (parent can read, child can write) */
-        close(des[!read]);
-        dup2(des[read], read ? STDOUT_FILENO : STDIN_FILENO);
-        execv(path, (char * const *)argv);
-        return NULL;
-    } else {
-        /* if read, stdin (0) is still open here
-         * (child can read, parent can write) */
-        close(des[read]);
-        return fdopen(des[!read], read ? (binary ? "rb" : "r")
-            : (binary ? "wb" : "w"));
-    }
-}
-
-static int elua_exec(lua_State *L) {
-#ifndef _WIN32
-    pid_t cpid = fork();
-    if (cpid < 0) {
-        lua_pushnil(L);
-        lua_pushstring(L, strerror(errno));
-        return 2;
-    }
-    if (!cpid) {
-        const char **argv = alloca((lua_gettop(L) + 1) * sizeof(char*));
-        int  i;
-        for (i = 0; i < lua_gettop(L); ++i) {
-            argv[i] = lua_tostring(L, i + 1);
-        }
-        argv[lua_gettop(L)] = NULL;
-        execv(argv[0], (char*const*)argv);
-        exit(1);
-    } else {
-        int status;
-        if (waitpid(cpid, &status, 0) < 0) {
-            lua_pushnil(L);
-            lua_pushstring(L, strerror(errno));
-            return 2;
-        }
-        lua_pushinteger(L, status);
-        return 1;
-    }
-#else
-    char *buf, *cptr;
-    size_t buflen = 1;
-    int i;
-
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&si, sizeof(pi));
-
-    for (i = 1; i < lua_gettop(L); ++i) {
-        buflen += lua_objlen(L, i + 1) + 2;
-    }
-
-    buf = alloca(buflen + 1);
-    cptr = buf;
-
-    for (i = 1; i < lua_gettop(L); ++i) {
-        size_t l;
-        const char *arg = lua_tolstring(L, i + 1, &l);
-        *(cptr++) = '"';
-        memcpy(cptr, l + 1, arg);
-        cptr += l;
-        *(cptr++) = '"'
-        if (i != (lua_gettop(L) - 1)) {
-            *(cptr++) = ' ';
-        } else {
-            cptr[0] = '\0';
-        }
-    }
-
-    if (!CreateProcess(lua_tostring(L, 1), buf, NULL, NULL, FALSE, 0, NULL,
-    NULL, &si, &pi)) {
-        LPVOID msgbuf;
-        DWORD dw = GetLastError();
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER
-            | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            NULL, dw, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msgbuf,
-            0, NULL);
-        lua_pushnil(L);
-        lua_pushstring(L, (const char*)msgbuf);
-        LocalFree(msgbuf);
-        return 2;
-    }
-
-    int status;
-    if (!GetExitCodeProcess(pi.hProcess, &status)) status = 0;
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
-    lua_pushinteger(L, status);
-    return 1;
-#endif
-}
-
 static int elua_build_args(lua_State *L) {
     /* todo: will probably need adjustments for Windows */
     int nargs = lua_gettop(L), n = 0, i;
@@ -369,11 +245,13 @@ struct Main_Data {
     int    status;
 };
 
+int elua_popen(lua_State *L);
+
 const luaL_reg cutillib[] = {
     { "init_module"       , init_module        },
     { "register_callbacks", register_callbacks },
-    { "exec"              , elua_exec          },
     { "build_args"        , elua_build_args    },
+    { "popenv"            , elua_popen         },
     { NULL                , NULL               }
 };
 
