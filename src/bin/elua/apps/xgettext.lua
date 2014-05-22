@@ -2,6 +2,7 @@
 -- provides a drop-in replacement of xgettext that supports Lua (but not any
 -- other language)
 
+local util   = require("util")
 local cutil  = require("cutil")
 local getopt = require("getopt")
 
@@ -267,6 +268,7 @@ for i, fname in ipairs(input_files) do
     if not excluded_files[fname] then
         if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
             -- parse lua files here
+            local fpath = util.find_file(fname, search_dirs)
         else
             args_nolua[#args_nolua] = fname
             local f = assert(cutil.popenv(hasxgettext, "r",

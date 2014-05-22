@@ -348,4 +348,22 @@ getmetatable("").__mod = function(fmts, params)
     return ret
 end
 
+-- file utils
+
+M.find_file = function(fname, paths)
+    for i, path in ipairs(paths) do
+        local actual_path
+        if path:match(".*/") then
+            actual_path = path .. fname
+        else
+            actual_path = path .. "/" .. fname
+        end
+        local f = io.open(actual_path)
+        if f then
+            f:close()
+            return actual_path
+        end
+    end
+end
+
 return M
