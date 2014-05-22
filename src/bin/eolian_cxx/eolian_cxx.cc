@@ -84,9 +84,9 @@ _guess_classname_from_sources(::options_type& opts)
 {
    for (auto filename : opts.in_srcs)
      {
-        if (const char *cls = eolian_class_find_by_file(filename.c_str()))
+        if (Eolian_Class klass = eolian_class_find_by_file(filename.c_str()))
           {
-             return cls;
+             return eolian_class_name_get(klass);
           }
      }
    return "";
@@ -119,16 +119,17 @@ _resolve_includes(std::string const& classname)
    efl::eolian::eo_generator_options gen_opts;
 
    std::string cls_name = classname;
+   Eolian_Class klass = eolian_class_find_by_name(classname.c_str());
    std::transform(cls_name.begin(), cls_name.end(), cls_name.begin(), ::tolower);
 
-   std::string eo_file = safe_str(eolian_class_file_get(classname.c_str()));
+   std::string eo_file = safe_str(eolian_class_file_get(klass));
    gen_opts.c_headers.push_back(get_filename_info(eo_file).first + ".h");
 
    void *cur = NULL;
-   const Eina_List *itr, *inheritances = eolian_class_inherits_list_get(classname.c_str());
+   const Eina_List *itr, *inheritances = eolian_class_inherits_list_get(klass);
    EINA_LIST_FOREACH(inheritances, itr, cur)
      {
-        const char *ext = static_cast<const char*>(cur);
+        Eolian_Class ext = eolian_class_find_by_name(static_cast<const char*>(cur));
         std::string eo_parent_file = safe_str(eolian_class_file_get(ext));
         if (!eo_parent_file.empty())
           {

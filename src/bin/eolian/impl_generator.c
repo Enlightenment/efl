@@ -143,13 +143,14 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
 }
 
 Eina_Bool
-impl_source_generate(const char *class_name, Eina_Strbuf *buffer)
+impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
 {
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *data_type_buf = eina_strbuf_new();
    const Eina_List *itr_funcs;
    Eolian_Function foo;
    Eina_Strbuf *begin = eina_strbuf_new();
+   const char *class_name = eolian_class_name_get(class);
 
    _class_func_names_fill(class_name, NULL);
 
@@ -166,7 +167,7 @@ impl_source_generate(const char *class_name, Eina_Strbuf *buffer)
      }
 
    /* Little calculation of the prefix of the data */
-   const char *data_type = eolian_class_data_type_get(class_name);
+   const char *data_type = eolian_class_data_type_get(class);
    if (data_type)
      {
         if (strcmp(data_type, "null"))
@@ -188,7 +189,7 @@ impl_source_generate(const char *class_name, Eina_Strbuf *buffer)
    eina_strbuf_free(begin);
 
    /* Properties */
-   EINA_LIST_FOREACH(eolian_class_functions_list_get(class_name, EOLIAN_PROPERTY), itr_funcs, foo)
+   EINA_LIST_FOREACH(eolian_class_functions_list_get(class, EOLIAN_PROPERTY), itr_funcs, foo)
      {
         const Eolian_Function_Type ftype = eolian_function_type_get(foo);
         if (ftype == EOLIAN_PROP_SET || ftype == EOLIAN_PROPERTY)
@@ -199,39 +200,40 @@ impl_source_generate(const char *class_name, Eina_Strbuf *buffer)
      }
 
    /* Methods */
-   EINA_LIST_FOREACH(eolian_class_functions_list_get(class_name, EOLIAN_METHOD), itr_funcs, foo)
+   EINA_LIST_FOREACH(eolian_class_functions_list_get(class, EOLIAN_METHOD), itr_funcs, foo)
      {
         _prototype_generate(foo, EOLIAN_METHOD, data_type_buf, NULL, buffer);
      }
 
    /* Custom constructors */
-   EINA_LIST_FOREACH(eolian_class_functions_list_get(class_name, EOLIAN_CTOR), itr_funcs, foo)
+   EINA_LIST_FOREACH(eolian_class_functions_list_get(class, EOLIAN_CTOR), itr_funcs, foo)
      {
         _prototype_generate(foo, EOLIAN_CTOR, data_type_buf, NULL, buffer);
      }
 
-   if (eolian_class_implements_list_get(class_name))
+   if (eolian_class_implements_list_get(class))
      {
         Eolian_Implement impl_desc;
-        EINA_LIST_FOREACH(eolian_class_implements_list_get(class_name), itr_funcs, impl_desc)
+        EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr_funcs, impl_desc)
           {
              const char *func_name;
-             const char *impl_class;
+             const char *impl_classname;
              Eolian_Function_Type ftype;
 
-             eolian_implement_information_get(impl_desc, &impl_class, &func_name, &ftype);
+             eolian_implement_information_get(impl_desc, &impl_classname, &func_name, &ftype);
+             Eolian_Class impl_class = eolian_class_find_by_name(impl_classname);
 
-             _class_func_names_fill(impl_class, NULL);
+             _class_func_names_fill(impl_classname, NULL);
 
              char implname[0xFF];
              char *tmp = implname;
-             sprintf(implname, "%s_%s", class_name, impl_class);
+             sprintf(implname, "%s_%s", class_name, impl_classname);
              eina_str_tolower(&tmp);
 
              foo = eolian_class_function_find_by_name(impl_class, func_name, ftype);
              if (!foo)
                {
-                  ERR ("Failed to generate implementation of %s:%s - missing form super class", impl_class, func_name);
+                  ERR ("Failed to generate implementation of %s:%s - missing form super class", impl_classname, func_name);
                   goto end;
                }
 
@@ -248,7 +250,7 @@ impl_source_generate(const char *class_name, Eina_Strbuf *buffer)
      }
 
    _class_func_names_fill(class_name, NULL);
-   if (eolian_class_ctor_enable_get(class_name))
+   if (eolian_class_ctor_enable_get(class))
      {
         char func_name[100];
         sprintf(func_name, "_%s_class_constructor", lowclass);
@@ -261,7 +263,7 @@ impl_source_generate(const char *class_name, Eina_Strbuf *buffer)
           }
      }
 
-   if (eolian_class_dtor_enable_get(class_name))
+   if (eolian_class_dtor_enable_get(class))
      {
         char func_name[100];
         sprintf(func_name, "_%s_class_destructor", lowclass);

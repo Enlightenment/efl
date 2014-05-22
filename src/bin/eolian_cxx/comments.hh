@@ -14,7 +14,7 @@ extern "C"
 
 namespace detail {
 
-std::string eolian_class_comment(const char *classname);
+std::string eolian_class_comment(const Eolian_Class kls);
 
 std::string eolian_constructor_comment(Eolian_Function constructor);
 

@@ -73,9 +73,9 @@ _comment_return(Eolian_Function function,
 namespace detail {
 
 std::string
-eolian_class_comment(const char *classname)
+eolian_class_comment(const Eolian_Class kls)
 {
-   return safe_str(eolian_class_description_get(classname));
+   return safe_str(eolian_class_description_get(kls));
 }
 
 std::string

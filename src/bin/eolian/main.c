@@ -41,13 +41,13 @@ _filename_get(const char *path)
 }
 
 static Eina_Bool
-_generate_eo_h_file(char *filename, const char *classname)
+_generate_eo_h_file(char *filename, const Eolian_Class class)
 {
    Eina_Bool ret = EINA_FALSE;
    Eina_Strbuf *hfile = eina_strbuf_new();
-   if (!eo_header_generate(classname, hfile))
+   if (!eo_header_generate(class, hfile))
      {
-        ERR("Failed to generate header for %s", classname);
+        ERR("Failed to generate header for %s", eolian_class_name_get(class));
         goto end;
      }
 
@@ -78,23 +78,23 @@ end:
 }
 
 static Eina_Bool
-_generate_c_file(char *filename, const char *classname, Eina_Bool legacy_support)
+_generate_c_file(char *filename, const Eolian_Class class, Eina_Bool legacy_support)
 {
    Eina_Bool ret = EINA_FALSE;
 
    Eina_Strbuf *eo_buf = eina_strbuf_new();
    Eina_Strbuf *legacy_buf = eina_strbuf_new();
 
-   if (!eo_source_generate(classname, eo_buf))
+   if (!eo_source_generate(class, eo_buf))
      {
-        ERR("Failed to generate source for %s", classname);
+        ERR("Failed to generate source for %s", eolian_class_name_get(class));
         goto end;
      }
 
    if (legacy_support)
-      if (!legacy_source_generate(classname, legacy_buf))
+      if (!legacy_source_generate(class, legacy_buf))
         {
-           ERR("Failed to generate source for %s", classname);
+           ERR("Failed to generate source for %s", eolian_class_name_get(class));
            goto end;
         }
 
@@ -120,7 +120,7 @@ end:
 }
 
 static Eina_Bool
-_generate_impl_c_file(char *filename, const char *classname)
+_generate_impl_c_file(char *filename, const Eolian_Class class)
 {
    Eina_Bool ret = EINA_FALSE;
    long file_size = 0;
@@ -148,9 +148,9 @@ _generate_impl_c_file(char *filename, const char *classname)
    else
       buffer = eina_strbuf_new();
 
-   if (!impl_source_generate(classname, buffer))
+   if (!impl_source_generate(class, buffer))
      {
-        ERR("Failed to generate source for %s", classname);
+        ERR("Failed to generate source for %s", eolian_class_name_get(class));
         goto end;
      }
 
@@ -174,15 +174,15 @@ end:
 
 // TODO join with header gen.
 static Eina_Bool
-_generate_legacy_header_file(char *filename, const char *classname)
+_generate_legacy_header_file(char *filename, const Eolian_Class class)
 {
    Eina_Bool ret = EINA_FALSE;
 
    Eina_Strbuf *lfile = eina_strbuf_new();
 
-   if (!legacy_header_generate(classname, lfile))
+   if (!legacy_header_generate(class, lfile))
      {
-        ERR("Failed to generate header for %s", classname);
+        ERR("Failed to generate header for %s", eolian_class_name_get(class));
         goto end;
      }
 
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
    Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
    Eina_List *itr;
    Eina_List *files4gen = NULL;
-   const char *classname;
+   Eolian_Class class;
    char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
 
    eina_init();
@@ -322,8 +322,8 @@ int main(int argc, char **argv)
      {
         EINA_LIST_FOREACH(files4gen, itr, filename)
           {
-             const char *cname = eolian_class_find_by_file(filename);
-             if (cname) eolian_show(cname);
+             class = eolian_class_find_by_file(filename);
+             if (class) eolian_show(class);
           }
      }
 
@@ -333,7 +333,7 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   classname = eolian_class_find_by_file(eina_list_data_get(files4gen));
+   class = eolian_class_find_by_file(eina_list_data_get(files4gen));
 
    if (gen_opt)
      {
@@ -348,21 +348,21 @@ int main(int argc, char **argv)
                 {
                    INF("Generating header file %s\n", output_filename);
                    if (legacy_support)
-                     ret = ( _generate_legacy_header_file(output_filename, classname) ? 0 : 1 );
+                     ret = ( _generate_legacy_header_file(output_filename, class) ? 0 : 1 );
                    else
-                     ret = ( _generate_eo_h_file(output_filename, classname) ? 0 : 1 );
+                     ret = ( _generate_eo_h_file(output_filename, class) ? 0 : 1 );
                    break;
                 }
            case C_GEN:
                 {
                    INF("Generating source file %s\n", output_filename);
-                   ret = _generate_c_file(output_filename, classname, legacy_support)?0:1;
+                   ret = _generate_c_file(output_filename, class, legacy_support)?0:1;
                    break;
                 }
            case C_IMPL_GEN:
                 {
                    INF("Generating user source file %s\n", output_filename);
-                   ret = _generate_impl_c_file(output_filename, classname) ? 0 : 1;
+                   ret = _generate_impl_c_file(output_filename, class) ? 0 : 1;
                    break;
                 }
            default:

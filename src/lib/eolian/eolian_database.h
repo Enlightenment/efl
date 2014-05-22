@@ -37,34 +37,34 @@ int database_shutdown();
 Eina_Bool database_type_add(const char *alias, Eolian_Type type);
 
 /* Add a class in the database */
-Eina_Bool database_class_add(const char *class_name, Eolian_Class_Type type);
+Eolian_Class database_class_add(const char *class_name, Eolian_Class_Type type);
 
 /* Add a class from the database */
 Eina_Bool
-database_class_del(const char *class_name);
+database_class_del(Eolian_Class class);
 
 /* Add an inherit class name to a class */
-Eina_Bool database_class_inherit_add(const char *class_name, const char *inherit_class_name);
+Eina_Bool database_class_inherit_add(Eolian_Class class, const char *inherit_class_name);
 
 /* Set description of class. */
 void
-database_class_description_set(const char *class_name, const char *description);
+database_class_description_set(Eolian_Class class, const char *description);
 
 /* Set legacy of class. */
 void
-database_class_legacy_prefix_set(const char *class_name, const char *legacy_prefix);
+database_class_legacy_prefix_set(Eolian_Class class, const char *legacy_prefix);
 
 /* Set eo prefix of class. */
 void
-database_class_eo_prefix_set(const char *class_name, const char *eo_prefix);
+database_class_eo_prefix_set(Eolian_Class class, const char *eo_prefix);
 
 /* Set data of class. */
 void
-database_class_data_type_set(const char *class_name, const char *data_type);
+database_class_data_type_set(Eolian_Class class, const char *data_type);
 
 /* Set file of class */
 Eina_Bool
-database_class_file_set(const char *class_name, const char *file_name);
+database_class_file_set(Eolian_Class class, const char *file_name);
 
 /* Create a function */
 Eolian_Function database_function_new(const char *function_name, Eolian_Function_Type foo_type);
@@ -73,7 +73,7 @@ Eolian_Function database_function_new(const char *function_name, Eolian_Function
 void database_function_type_set(Eolian_Function function_id, Eolian_Function_Type foo_type);
 
 /* Add a function to a class */
-Eina_Bool database_class_function_add(const char *classname, Eolian_Function foo_id);
+Eina_Bool database_class_function_add(Eolian_Class class, Eolian_Function foo_id);
 
 void database_function_data_set(Eolian_Function function_id, const char *key, const char *description);
 
@@ -120,13 +120,13 @@ Eolian_Implement
 database_implement_new(const char *class_name, const char *func_name, Eolian_Function_Type type);
 
 Eina_Bool
-database_class_implement_add(const char *class_name, Eolian_Implement impl_id);
+database_class_implement_add(Eolian_Class class, Eolian_Implement impl_id);
 
 Eina_Bool
-database_class_ctor_enable_set(const char *class_name, Eina_Bool enable);
+database_class_ctor_enable_set(Eolian_Class class, Eina_Bool enable);
 
 Eina_Bool
-database_class_dtor_enable_set(const char *class_name, Eina_Bool enable);
+database_class_dtor_enable_set(Eolian_Class class, Eina_Bool enable);
 
 Eolian_Event
 database_event_new(const char *event_name, const char *event_type, const char *event_desc);
@@ -135,6 +135,6 @@ void
 database_event_free(Eolian_Event event);
 
 Eina_Bool
-database_class_event_add(const char *class_name, Eolian_Event event_desc);
+database_class_event_add(Eolian_Class class, Eolian_Event event_desc);
 
 #endif

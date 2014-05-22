@@ -4504,30 +4504,30 @@ eo_tokenizer_database_fill(const char *filename)
 
    EINA_LIST_FOREACH(toknz->classes, k, kls)
      {
-        database_class_add(kls->name, kls->type);
-        database_class_file_set(kls->name, filename);
+        Eolian_Class class = database_class_add(kls->name, kls->type);
+        database_class_file_set(class, filename);
 
-        if (kls->comment) database_class_description_set(kls->name, kls->comment);
+        if (kls->comment) database_class_description_set(class, kls->comment);
 
         EINA_LIST_FOREACH(kls->inherits, l, s)
-           database_class_inherit_add(kls->name, s);
+           database_class_inherit_add(class, s);
 
         if (kls->legacy_prefix)
           {
-             database_class_legacy_prefix_set(kls->name, kls->legacy_prefix);
+             database_class_legacy_prefix_set(class, kls->legacy_prefix);
           }
         if (kls->eo_prefix)
           {
-             database_class_eo_prefix_set(kls->name, kls->eo_prefix);
+             database_class_eo_prefix_set(class, kls->eo_prefix);
           }
         if (kls->data_type)
           {
-             database_class_data_type_set(kls->name, kls->data_type);
+             database_class_data_type_set(class, kls->data_type);
           }
         EINA_LIST_FOREACH(kls->constructors, l, meth)
           {
              Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_CTOR);
-             database_class_function_add(kls->name, foo_id);
+             database_class_function_add(class, foo_id);
              if (meth->ret) database_function_return_comment_set(foo_id, EOLIAN_METHOD, meth->ret->comment);
              database_function_data_set(foo_id, EOLIAN_LEGACY, meth->legacy);
              EINA_LIST_FOREACH(meth->params, m, param)
@@ -4596,14 +4596,14 @@ eo_tokenizer_database_fill(const char *filename)
                             }
                     }
                }
-             database_class_function_add(kls->name, foo_id);
+             database_class_function_add(class, foo_id);
           }
 
         EINA_LIST_FOREACH(kls->methods, l, meth)
           {
              Eolian_Function foo_id = database_function_new(meth->name, EOLIAN_METHOD);
              database_function_scope_set(foo_id, meth->scope);
-             database_class_function_add(kls->name, foo_id);
+             database_class_function_add(class, foo_id);
              if (meth->ret)
                {
                   Eolian_Type types = _types_extract(meth->ret->type, strlen(meth->ret->type));
@@ -4628,20 +4628,20 @@ eo_tokenizer_database_fill(const char *filename)
 
         EINA_LIST_FOREACH(kls->implements, l, impl)
           {
-             const char *class = impl->meth_name;
+             const char *impl_class = impl->meth_name;
              Eina_Bool virtual_pure = EINA_FALSE;
-             if (!strcmp(class, "class::constructor"))
+             if (!strcmp(impl_class, "class::constructor"))
                {
-                  database_class_ctor_enable_set(kls->name, EINA_TRUE);
+                  database_class_ctor_enable_set(class, EINA_TRUE);
                   continue;
                }
-             if (!strcmp(class, "class::destructor"))
+             if (!strcmp(impl_class, "class::destructor"))
                {
-                  database_class_dtor_enable_set(kls->name, EINA_TRUE);
+                  database_class_dtor_enable_set(class, EINA_TRUE);
                   continue;
                }
-             if (!strncmp(class, "virtual::", 9)) virtual_pure = EINA_TRUE;
-             char *func = strstr(class, "::");
+             if (!strncmp(impl_class, "virtual::", 9)) virtual_pure = EINA_TRUE;
+             char *func = strstr(impl_class, "::");
              if (func) *func = '\0';
              func += 2;
              Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
@@ -4656,23 +4656,23 @@ eo_tokenizer_database_fill(const char *filename)
                {
                   /* Search the function into the existing functions of the current class */
                   Eolian_Function foo_id = eolian_class_function_find_by_name(
-                        kls->name, func, ftype);
+                        class, func, ftype);
                   if (!foo_id)
                     {
-                       ERR("Error - %s not known in class %s", class + 9, kls->name);
+                       ERR("Error - %s not known in class %s", impl_class + 9, eolian_class_name_get(class));
                        goto end;
                     }
                   database_function_set_as_virtual_pure(foo_id, ftype);
                   continue;
                }
-             Eolian_Implement impl_desc = database_implement_new(class, func, ftype);
-             database_class_implement_add(kls->name, impl_desc);
+             Eolian_Implement impl_desc = database_implement_new(impl_class, func, ftype);
+             database_class_implement_add(class, impl_desc);
           }
 
         EINA_LIST_FOREACH(kls->events, l, event)
           {
              Eolian_Event ev = database_event_new(event->name, event->type, event->comment);
-             database_class_event_add(kls->name, ev);
+             database_class_event_add(class, ev);
           }
 
      }

@@ -32,7 +32,7 @@ extern int _eolian_gen_log_dom;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eolian_gen_log_dom, __VA_ARGS__)
 
-void _template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const char *funcname, Eina_Bool reset);
+void _template_fill(Eina_Strbuf *buf, const char *templ, const char *classname, const char *funcname, Eina_Bool reset);
 
 char *_nextline(char *str, unsigned int lines);
 

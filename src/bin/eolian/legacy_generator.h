@@ -16,7 +16,7 @@
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
-Eina_Bool legacy_header_generate(const char *classname, Eina_Strbuf *buf);
+Eina_Bool legacy_header_generate(const Eolian_Class class, Eina_Strbuf *buf);
 
 /*
  * @brief Generate C source code for Eo class
@@ -30,7 +30,7 @@ Eina_Bool legacy_header_generate(const char *classname, Eina_Strbuf *buf);
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  */
-Eina_Bool legacy_source_generate(const char *classname, Eina_Strbuf *buf);
+Eina_Bool legacy_source_generate(const Eolian_Class class, Eina_Strbuf *buf);
 
 #endif
 

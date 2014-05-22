@@ -38,6 +38,12 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+/* Class type used to extract information on classes
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Class_Desc* Eolian_Class;
+
 /* Function Id used to extract information on class functions
  *
  * @ingroup Eolian
@@ -172,44 +178,64 @@ EAPI Eina_Bool eolian_all_eo_files_parse();
 /*
  * @brief Show information about a given class.
  *
- * If class_name is NULL, this function will print information of
+ * If klass is NULL, this function will print information of
  * all the classes stored into the database.
  *
- * @param[in] class_name the class to show
+ * @param[in] klass the class to show
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_show(const char *class_name);
+EAPI Eina_Bool eolian_show(const Eolian_Class klass);
+
+/*
+ * @brief Finds a class by its name
+ *
+ * @param[in] class_name name of the class to find.
+ * @return the class
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Class
+eolian_class_find_by_name(const char *class_name);
 
 /*
  * @brief Finds a class by its location (.eo file)
  *
  * @param[in] file_name filename where the class is stored.
- * @return the class name stored in the file
+ * @return the class stored in the file
  *
  * @ingroup Eolian
  */
-EAPI const char *
+EAPI Eolian_Class
 eolian_class_find_by_file(const char *file_name);
 
 /*
  * @brief Returns the name of the file containing the given class.
  *
- * @param[in] class_name name of the class.
+ * @param[in] klass the class.
  * @return the name of the file on success or NULL otherwise.
  */
 EAPI const char *
-eolian_class_file_get(const char *class_name);
+eolian_class_file_get(const Eolian_Class klass);
+
+/*
+ * @brief Returns the name of the given class.
+ *
+ * @param[in] class the class.
+ * @return the name of the class on success or NULL otherwise.
+ */
+EAPI const char *
+eolian_class_name_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the class type of the given class
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @return the class type
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Class_Type eolian_class_type_get(const char *class_name);
+EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the names list of all the classes stored into the database.
@@ -222,76 +248,66 @@ EAPI Eolian_Class_Type eolian_class_type_get(const char *class_name);
 EAPI const Eina_List *eolian_class_names_list_get(void);
 
 /*
- * @brief Indicates if class exists in the database.
- *
- * @param[in] class_name name of the class
- * @return EINA_TRUE if exists, EINA_FALSE otherwise
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_class_exists(const char *class_name);
-
-/*
  * @brief Returns the description of a class.
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @return the description of a class
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_class_description_get(const char *class_name);
+EAPI const char *eolian_class_description_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the legacy prefix of a class
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @return the legacy prefix
  *
  * @ingroup Eolian
  */
-EAPI const char *eolian_class_legacy_prefix_get(const char *class_name);
+EAPI const char *eolian_class_legacy_prefix_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the eo prefix of a class
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @return the eo prefix
  *
  * @ingroup Eolian
  */
-EAPI const char* eolian_class_eo_prefix_get(const char *class_name);
+EAPI const char* eolian_class_eo_prefix_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the data type of a class
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @return the data type
  *
  * @ingroup Eolian
  */
 EAPI const char*
-eolian_class_data_type_get(const char *class_name);
+eolian_class_data_type_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the names list of the inherit classes of a class
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @return the list
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_inherits_list_get(const char *class_name);
+EAPI const Eina_List *eolian_class_inherits_list_get(const Eolian_Class klass);
 
 /*
  * @brief Returns a list of functions of a class.
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @param[in] func_type type of the functions to insert into the list.
  * @return the list of Eolian_Function
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_functions_list_get(const char *class_name, Eolian_Function_Type func_type);
+EAPI const Eina_List *eolian_class_functions_list_get(const Eolian_Class klass, Eolian_Function_Type func_type);
 
 /*
  * @brief Returns the type of a function
@@ -326,14 +342,14 @@ EAPI const char *eolian_function_name_get(Eolian_Function function_id);
 /*
  * @brief Find a function in a class by its name and type
  *
- * @param[in] class_name name of the class
+ * @param[in] klass the class
  * @param[in] func_name name of the function
  * @param[in] f_type type of the function
  * @return the function id if found, NULL otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Function eolian_class_function_find_by_name(const char *classname, const char *func_name, Eolian_Function_Type f_type);
+EAPI Eolian_Function eolian_class_function_find_by_name(const Eolian_Class klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a specific data for a function.
@@ -587,22 +603,22 @@ EAPI Eina_Bool eolian_implement_information_get(Eolian_Implement impl,
 /*
  * @brief Get the list of overriding functions defined in a class.
  *
- * @param[in] class_name name of the class.
+ * @param[in] klass the class.
  * @return a list of Eolian_Implement handles
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_implements_list_get(const char *class_name);
+EAPI const Eina_List *eolian_class_implements_list_get(const Eolian_Class klass);
 
 /*
  * @brief Get the list of events defined in a class.
  *
- * @param[in] class_name name of the class.
+ * @param[in] klass the class.
  * @return a list of Eolian_Event handles
  *
  * @ingroup Eolian
  */
-EAPI const Eina_List *eolian_class_events_list_get(const char *class_name);
+EAPI const Eina_List *eolian_class_events_list_get(const Eolian_Class klass);
 
 /*
  * @brief Get information about an event.
@@ -620,23 +636,23 @@ EAPI Eina_Bool eolian_class_event_information_get(Eolian_Event event, const char
  * @brief Indicates if the class constructor has to invoke
  * a non-generated class constructor function.
  *
- * @param[in] class_name name of the class.
+ * @param[in] klass the class.
  * @return EINA_TRUE if the invocation is needed, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_ctor_enable_get(const char *class_name);
+EAPI Eina_Bool eolian_class_ctor_enable_get(const Eolian_Class klass);
 
 /*
  * @brief Indicates if the class destructor has to invoke
  * a non-generated class destructor function.
  *
- * @param[in] class_name name of the class.
+ * @param[in] klass the class.
  * @return EINA_TRUE if the invocation is needed, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_dtor_enable_get(const char *class_name);
+EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class klass);
 
 /*
  * @brief Find the type for a certain alias

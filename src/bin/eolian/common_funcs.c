@@ -23,8 +23,9 @@ _class_func_names_fill(const char *classname, const char *funcname)
         eina_str_tolower(&p);
 
         /* eo_prefix */
-        if (eolian_class_exists(classname))
-           eo_prefix = eolian_class_eo_prefix_get(classname);
+        Eolian_Class class = eolian_class_find_by_name(classname);
+        if (class)
+           eo_prefix = eolian_class_eo_prefix_get(class);
         if (!eo_prefix) eo_prefix = classname;
         strncpy(current_eo_prefix_lower, eo_prefix, sizeof(current_eo_prefix_lower) - 1);
         p = current_eo_prefix_lower;
@@ -42,7 +43,7 @@ _class_func_names_fill(const char *classname, const char *funcname)
 }
 
 void
-_template_fill(Eina_Strbuf *buf, const char* templ, const char* classname, const char *funcname, Eina_Bool reset)
+_template_fill(Eina_Strbuf *buf, const char *templ, const char *classname, const char *funcname, Eina_Bool reset)
 {
    _class_func_names_fill(classname, funcname);
    if (buf)

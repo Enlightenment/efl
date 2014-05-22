@@ -15,7 +15,7 @@
  *
  */
 Eina_Bool
-impl_source_generate(const char *classname, Eina_Strbuf *buf);
+impl_source_generate(const Eolian_Class class, Eina_Strbuf *buf);
 
 #endif
 
