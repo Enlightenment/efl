@@ -187,6 +187,21 @@ if not opts or opts["h"] or opts["v"] then
     return true
 end
 
+-- transform some lists into mappings
+for i = 1, #excluded_files do
+    excluded_files[excluded_files[i]] = true
+    excluded_files[i] = nil
+end
+for i = 1, #keywords do
+    keywords[keywords[i]] = true
+    keywords[i] = nil
+end
+
+-- at least one default path
+if #search_dirs == 0 then
+    search_dirs[1] = "."
+end
+
 local build_opt = function(opt)
     local buf = {}
     if opt.short then
@@ -249,14 +264,17 @@ args_nolua[#args_nolua + 1] = false
 
 local parsed_files = {}
 for i, fname in ipairs(input_files) do
-    if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
-        -- parse lua files here
-    else
-        args_nolua[#args_nolua] = fname
-        local f = assert(cutil.popenv(hasxgettext, "r", unpack(args_nolua)))
-        local s = f:read("*all")
-        parsed_files[#parsed_files + 1] = s
-        f:close()
+    if not excluded_files[fname] then
+        if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
+            -- parse lua files here
+        else
+            args_nolua[#args_nolua] = fname
+            local f = assert(cutil.popenv(hasxgettext, "r",
+                unpack(args_nolua)))
+            local s = f:read("*all")
+            parsed_files[#parsed_files + 1] = s
+            f:close()
+        end
     end
 end
 
