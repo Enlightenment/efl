@@ -12,7 +12,11 @@ bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
     -DELUA_MODULES_DIR="\"$(datadir)/elua/modules\"" @ELUA_CFLAGS@ \
     -DLOCALE_DIR=\"@LOCALE_DIR@\" \
     -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\"
+if HAVE_WIN32
+bin_elua_elua_LDADD = -L$(top_builddir)/src/lib/evil @ELUA_LIBS@
+else
 bin_elua_elua_LDADD = @ELUA_LIBS@
+endif
 bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
 
 eluamodulesdir = $(datadir)/elua/modules

@@ -30,6 +30,10 @@
 #include <Eina.h>
 #include <Ecore.h>
 
+#ifdef HAVE_EVIL
+#include <Evil.h>
+#endif
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
