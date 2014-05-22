@@ -1527,7 +1527,7 @@ _config_load(void)
    _elm_config->font_cache = 512;
    _elm_config->edje_cache = 32;
    _elm_config->edje_collection_cache = 64;
-   _elm_config->finger_size = 40;
+   _elm_config->finger_size = 10;
    _elm_config->fps = 60.0;
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
