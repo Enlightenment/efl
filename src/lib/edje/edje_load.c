@@ -899,7 +899,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                                                  obj);
                               if (rp->part->type == EDJE_PART_TYPE_GROUP)
                                 {
-                                   ed->groups = eina_list_append(ed->groups, _edje_fetch(child_obj));
+                                   Edje *edg = _edje_fetch(child_obj);
+                                   ed->groups = eina_list_append(ed->groups, edg);
+                                   evas_object_data_set(child_obj, "\377 edje.part_obj", rp);
                                    _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
                                    _edje_subobj_register(ed, child_obj);
                                    source = NULL;

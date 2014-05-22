@@ -272,6 +272,9 @@ _edje_evas_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord w, Evas_Coord 
 EOLIAN static void
 _edje_evas_smart_show(Eo *obj, Edje *ed)
 {
+   Eina_List *l;
+   Edje *edg;
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
    if (evas_object_visible_get(obj)) return;
    if (_edje_script_only(ed))
@@ -284,12 +287,27 @@ _edje_evas_smart_show(Eo *obj, Edje *ed)
         _edje_lua_script_only_show(ed);
         return;
      }
+   if (eina_list_count(ed->groups) > 1)
+     {
+        EINA_LIST_FOREACH(ed->groups, l, edg)
+          {
+             Edje_Real_Part *rp;
+
+             if (edg == ed) continue;
+             rp = evas_object_data_get(edg->obj, "\377 edje.part_obj");
+             if (rp->chosen_description->visible)
+               evas_object_show(edg->obj);
+          }
+     }
    _edje_emit(ed, "show", NULL);
 }
 
 EOLIAN static void
 _edje_evas_smart_hide(Eo *obj, Edje *ed)
 {
+   Eina_List *l;
+   Edje *edg;
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    if (!evas_object_visible_get(obj)) return;
    if (_edje_script_only(ed))
@@ -302,6 +320,8 @@ _edje_evas_smart_hide(Eo *obj, Edje *ed)
         _edje_lua_script_only_hide(ed);
         return;
      }
+   EINA_LIST_FOREACH(ed->groups, l, edg)
+     if (edg != ed) evas_object_hide(edg->obj);
    _edje_emit(ed, "hide", NULL);
 }
 
