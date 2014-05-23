@@ -218,9 +218,10 @@ for i = 1, #keywords do
         end
     end
     -- all matched, sanitize now
-    if n1c == "" then n1c = nil end
-    if n2c == "" then n2c = nil end
-    if n3c == "" then n3c = nil end
+    if n1c  == "" then  n1c = nil end
+    if n2c  == "" then  n2c = nil end
+    if n3c  == "" then  n3c = nil end
+    if xcmt == "" then xcmt = nil end
     -- sanitize/retrieve comment and potential total number of args
     if n3 and xcmt == "t" then
         if n3c then error("invalid keyword specifier") end
@@ -234,7 +235,7 @@ for i = 1, #keywords do
         if n1c then error("invalid keyword specifier") end
         argnum = n1
         n1 = nil
-    elseif xcmt ~= "" then
+    elseif xcmt then
         local xcmtm, rest = xcmt:match('^,"(.+)"(.*)$')
         if not xcmtm then
             xcmtm, rest = xcmt:match("^,'(.+)'(.*)$")
@@ -250,8 +251,6 @@ for i = 1, #keywords do
         if not xcmt and not argnum then
             error("invalid keyword specifier")
         end
-    else
-        xcmt = nil
     end
     -- allow only one context arg
     if (n1c and n2c) or (n2c and n3c) or (n1c and n3c) then
