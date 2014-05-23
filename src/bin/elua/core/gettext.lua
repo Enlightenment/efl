@@ -6,9 +6,10 @@ local M = {}
 
 local gettext = ...
 
-local bind_textdomain = gettext.bind_textdomain
-local dgettext        = gettext.dgettext
-local dngettext       = gettext.dngettext
+local bind_textdomain         = gettext.bind_textdomain
+local bind_textdomain_codeset = gettext.bind_textdomain_codeset
+local dgettext                = gettext.dgettext
+local dngettext               = gettext.dngettext
 
 if  dgettext then
     dgettext  = ffi.cast("char *(*)(const char*, const char*)", dgettext)
@@ -57,6 +58,7 @@ if dgettext then
         end
         return ffistr(lmsgid)
     end
+    M.dgettext = M.gettext
     M.ngettext = function(dom, msgid, plmsgid, n)
         if not n then
             plmsgid = msgid
@@ -78,6 +80,7 @@ if dgettext then
         end
         return ffistr(lmsgid)
     end
+    M.dngettext = M.ngettext
 else
     M.gettext  = function(dom, msgid) return msgid end
     M.ngettext = function(dom, msgid, plmsgid, n)

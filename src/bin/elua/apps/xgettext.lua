@@ -188,13 +188,95 @@ if not opts or opts["h"] or opts["v"] then
     return true
 end
 
+-- default keywords
+if #keywords == 0 then
+    keywords = { "_", "gettext.gettext"      , "gettext.dgettext:2",
+                      "gettext.dcgettext:2"  , "gettext.ngettext:1,2",
+                      "gettext.dngettext:2,3", "gettext.dcngettext:2,3" }
+end
+
 -- transform some lists into mappings
 for i = 1, #excluded_files do
     excluded_files[excluded_files[i]] = true
     excluded_files[i] = nil
 end
 for i = 1, #keywords do
-    keywords[keywords[i]] = true
+    local  kw = keywords[i]
+    local  kwb, specs = kw:match("^(.+):(.+)$")
+    local  n1, n1c, n2, n2c, n3, n3c, xcmt, argnum
+    if not kwb then
+        kwb = kw
+    else
+        n1, n1c, n2, n2c, n3, n3c, xcmt
+            = specs:match("^(%d+)(c?),(%d+)(c?),(%d+)(c?)(.*)$")
+        if not n1 then
+            n1, n1c, n2, n2c, xcmt = specs:match("^(%d+)(c?),(%d+)(c?)(.*)$")
+            if not n1 then
+                n1, n1c, xcmt = specs:match("^(%d+)(c?)(.*)$")
+                if not n1 then error("invalid keyword specifier") end
+            end
+        end
+    end
+    -- all matched, sanitize now
+    if n1c == "" then n1c = nil end
+    if n2c == "" then n2c = nil end
+    if n3c == "" then n3c = nil end
+    -- sanitize/retrieve comment and potential total number of args
+    if n3 and xcmt == "t" then
+        if n3c then error("invalid keyword specifier") end
+        argnum = n3
+        n3 = nil
+    elseif n2 and xcmt == "t" then
+        if n2c then error("invalid keyword specifier") end
+        argnum = n2
+        n2 = nil
+    elseif n1 and xcmt == "t" then
+        if n1c then error("invalid keyword specifier") end
+        argnum = n1
+        n1 = nil
+    elseif xcmt ~= "" then
+        local xcmtm, rest = xcmt:match('^,"(.+)"(.*)$')
+        if not xcmtm then
+            xcmtm, rest = xcmt:match("^,'(.+)'(.*)$")
+        end
+        if xcmtm then
+            xcmt = xcmtm
+        else
+            rest = xcmt
+            xcmt = nil
+        end
+        argnum = rest:match("^,(%d+)t$")
+        -- the rest doesn't match either comment nor argnum nor both
+        if not xcmt and not argnum then
+            error("invalid keyword specifier")
+        end
+    else
+        xcmt = nil
+    end
+    -- allow only one context arg
+    if (n1c and n2c) or (n2c and n3c) or (n1c and n3c) then
+        error("invalid keyword specifier")
+    end
+    -- retrieve context
+    local context
+    if n1c then
+        context = tonumber(n1)
+        n1 = n2
+        n2 = n3
+        n3 = nil
+    elseif n2c then
+        context = tonumber(n2)
+        n2 = n3
+        n3 = nil
+    elseif n3c then
+        context = tonumber(n3)
+    elseif n1 and n2 and n3 then -- 3 regular args, forbidden
+        error("invalid keyword specifier")
+    end
+
+    -- all sanitized, store :)
+    keywords[kwb] = { context = context, argnum = tonumber(argnum),
+        xcomment = xcmt, tonumber(n1), tonumber(n2) }
     keywords[i] = nil
 end
 
