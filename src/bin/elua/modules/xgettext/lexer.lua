@@ -28,6 +28,10 @@ local lex_error = function(ls, msg, tok)
     error(msg, 0)
 end
 
+local syntax_error = function(ls, msg)
+    lex_error(ls, msg, ls.token.value or ls.token.name)
+end
+
 local next_char = function(ls)
     local c = ls.reader()
     ls.current = c
@@ -282,4 +286,4 @@ return { init = function(chunkname, input)
     ls.coro = coro
     coro(ls)
     return coro
-end }
+end, syntax_error = syntax_error }
