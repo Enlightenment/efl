@@ -9,6 +9,37 @@
 #include "Eolian.h"
 #include "eolian_suite.h"
 
+START_TEST(eolian_events)
+{
+   Eolian_Class class;
+   const Eina_List *list = NULL;
+   const char *name, *type, *comment;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/events.eo"));
+
+   /* Class */
+   fail_if(!(class = eolian_class_find_by_name("Events")));
+
+   /* Events */
+   fail_if(!(list = eolian_class_events_list_get(class)));
+   fail_if(eina_list_count(list) != 2);
+   /* Clicked */
+   fail_if(!eolian_class_event_information_get(eina_list_nth(list, 0), &name, &type, &comment));
+   fail_if(strcmp(name, "clicked"));
+   fail_if(type);
+   fail_if(strcmp(comment, "Comment for clicked"));
+   /* Clicked,double */
+   fail_if(!eolian_class_event_information_get(eina_list_nth(list, 1), &name, &type, &comment));
+   fail_if(strcmp(name, "clicked,double"));
+   fail_if(strcmp(type, "Evas_Event_Clicked_Double_Info"));
+   fail_if(comment);
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_override)
 {
    Eolian_Function fid = NULL;
@@ -346,5 +377,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_typedef);
    tcase_add_test(tc, eolian_consts);
    tcase_add_test(tc, eolian_override);
+   tcase_add_test(tc, eolian_events);
 }
 

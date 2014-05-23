@@ -910,7 +910,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    event_comment = ws* eo_comment %end_event_comment;
    event_type = begin_list ws* alpha_u >save_fpc (alnum_u | '*' | ws )* ws* end_list %end_event_type;
-   event_it = event %end_event_name ws* event_type? ignore* end_statement event_comment? ignore*;
+   event_it = event %end_event_name ws* event_type? ignore* end_statement event_comment? ignore* comment* ignore*;
    events = 'events' ignore* begin_def ignore* event_it* end_def;
 
    constructors = 'constructors' ignore* begin_def;
