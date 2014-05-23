@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-14 14:31+0900\n"
-"PO-Revision-Date: 2012-12-16 21:59+0100\n"
+"POT-Creation-Date: 2014-05-22 22:22+0200\n"
+"PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
@@ -36,35 +36,35 @@ msgstr "OK"
 
 #: src/lib/elc_multibuttonentry.c:602
 msgid "multi button entry label"
-msgstr ""
+msgstr "popisek vícetlačítkového vstupu"
 
 #: src/lib/elc_multibuttonentry.c:623
 msgid "multi button entry item"
-msgstr ""
+msgstr "položka vícetlačítkového vstupu"
 
 #: src/lib/elc_multibuttonentry.c:1488
 msgid "multi button entry"
-msgstr ""
+msgstr "vícetlačítkový vstup"
 
 #: src/lib/elc_naviframe.c:406
 msgid "Title"
-msgstr ""
+msgstr "Název"
 
 #: src/lib/elc_naviframe.c:933 src/lib/elc_naviframe.c:1128
 msgid "Back"
-msgstr ""
+msgstr "Zpět"
 
 #: src/lib/elc_naviframe.c:1209
 msgid "Next"
-msgstr ""
+msgstr "Další"
 
 #: src/lib/elc_popup.c:286 src/lib/elc_popup.c:920
 msgid "Popup Title"
-msgstr ""
+msgstr "Titulek vyskakujícího okna"
 
 #: src/lib/elc_popup.c:296 src/lib/elc_popup.c:988
 msgid "Popup Body Text"
-msgstr ""
+msgstr "Text vyskakovacího okna"
 
 #: src/lib/elm_bubble.c:192
 msgid "Bubble"
@@ -91,44 +91,39 @@ msgstr "%B %Y"
 
 #: src/lib/elm_calendar.c:159
 msgid "%B"
-msgstr ""
+msgstr "%B"
 
 #: src/lib/elm_calendar.c:168
 msgid "%Y"
-msgstr ""
+msgstr "%Y"
 
 #: src/lib/elm_calendar.c:283
 msgid "calendar item"
 msgstr "položka kalendáře"
 
 #: src/lib/elm_calendar.c:309
-#, fuzzy
 msgid "calendar decrement month button"
-msgstr "odečítací tlačítko kalendáře"
+msgstr "odečítací tlačítko pro měsíc"
 
 #: src/lib/elm_calendar.c:314
-#, fuzzy
 msgid "calendar decrement year button"
-msgstr "odečítací tlačítko kalendáře"
+msgstr "odečítací tlačítko pro rok"
 
 #: src/lib/elm_calendar.c:319
-#, fuzzy
 msgid "calendar increment month button"
-msgstr "přičítací tlačítko kalendáře"
+msgstr "přičítací tlačítko pro měsíc"
 
 #: src/lib/elm_calendar.c:324
-#, fuzzy
 msgid "calendar increment year button"
-msgstr "přičítací tlačítko kalendáře"
+msgstr "přičítací tlačítko pro rok"
 
 #: src/lib/elm_calendar.c:329
 msgid "calendar month"
 msgstr "kalendářní měsíc"
 
 #: src/lib/elm_calendar.c:334
-#, fuzzy
 msgid "calendar year"
-msgstr "položka kalendáře"
+msgstr "kalendářní rok"
 
 #: src/lib/elm_check.c:59 src/lib/elm_check.c:227 src/lib/elm_radio.c:99
 #: src/lib/elm_radio.c:254
@@ -172,9 +167,8 @@ msgid "default:LTR"
 msgstr "výchozí:LTR"
 
 #: src/lib/elm_dayselector.c:394
-#, fuzzy
 msgid "day selector item"
-msgstr "položka výběru disků"
+msgstr "položka výběru dne"
 
 #: src/lib/elm_diskselector.c:672
 msgid "diskselector item"
@@ -241,13 +235,12 @@ msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
 #: src/lib/elm_segment_control.c:524
-#, fuzzy
 msgid "State: Unselected"
-msgstr "Stav: Vybráno"
+msgstr "Stav: Nevybráno"
 
 #: src/lib/elm_segment_control.c:536
 msgid "Segment Control Item"
-msgstr ""
+msgstr "položka ovládání segmentu"
 
 #: src/lib/elm_slider.c:873
 msgid "slider"
@@ -284,15 +277,3 @@ msgstr "Nevybrané"
 #: src/lib/elm_toolbar.c:2278
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
-
-#~ msgid "Genlist Item"
-#~ msgstr "položka seznamu (genlist)"
-
-#~ msgid "List Item"
-#~ msgstr "položka seznamu"
-
-#~ msgid "ON"
-#~ msgstr "ZAPNUTO"
-
-#~ msgid "OFF"
-#~ msgstr "VYPNUTO"
