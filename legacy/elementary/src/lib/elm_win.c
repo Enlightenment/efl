@@ -806,6 +806,16 @@ _elm_win_focus_highlight_simple_setup(Elm_Win_Data *sd,
 }
 
 static void
+_elm_win_focus_prev_target_del(void *data,
+                               Evas *e EINA_UNUSED,
+                               Evas_Object *obj EINA_UNUSED,
+                               void *event_info EINA_UNUSED)
+{
+   ELM_WIN_DATA_GET(data, sd);
+   sd->focus_highlight.prev.target = NULL;
+}
+
+static void
 _elm_win_focus_highlight_reconfigure_job(void *data)
 {
    ELM_WIN_DATA_GET(data, sd);
@@ -829,8 +839,12 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
      return;
 
    if ((previous) && (sd->focus_highlight.prev.in_theme))
-     elm_widget_signal_emit
-       (previous, "elm,action,focus_highlight,hide", "elm");
+     {
+        evas_object_event_callback_del_full
+           (previous, EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
+        elm_widget_signal_emit
+           (previous, "elm,action,focus_highlight,hide", "elm");
+     }
 
    if (!target)
      common_visible = EINA_FALSE;
@@ -891,6 +905,9 @@ the_end:
    _elm_win_focus_highlight_visible_set(sd, common_visible);
    sd->focus_highlight.geometry_changed = EINA_FALSE;
    sd->focus_highlight.prev = sd->focus_highlight.cur;
+   evas_object_event_callback_add
+     (sd->focus_highlight.prev.target,
+      EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
 }
 
 static void
