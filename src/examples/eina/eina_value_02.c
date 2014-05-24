@@ -79,6 +79,8 @@ void my_struct_use(Eina_Value *params)
 
 int main(int argc, char **argv)
 {
+   (void)argc;
+   (void)argv;
    Eina_Value *v1, *v2;
 
    eina_init();

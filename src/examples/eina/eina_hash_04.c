@@ -38,7 +38,7 @@ _phone_entry_free_cb(void *data)
 
 static Eina_Bool
 _phone_book_foreach_cb(const Eina_Hash *phone_book, const void *key,
-		       void *data, void *fdata)
+		       void *data, void *fdata EINA_UNUSED)
 {
    const char *name = key;
    const char *number = data;
@@ -51,6 +51,8 @@ _phone_book_foreach_cb(const Eina_Hash *phone_book, const void *key,
 int
 main(int argc, const char *argv[])
 {
+   (void)argc;
+   (void)argv;
    Eina_Hash *phone_book = NULL;
    int i;
    const char *entry_name = "Heitor Villa-Lobos";

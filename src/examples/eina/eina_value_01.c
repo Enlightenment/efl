@@ -5,6 +5,8 @@
 
 int main(int argc, char **argv)
 {
+   (void)argc;
+   (void)argv;
    Eina_Value v;
    int i;
    char *newstr;

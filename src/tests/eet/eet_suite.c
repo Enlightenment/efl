@@ -415,7 +415,7 @@ _eet_build_ex_descriptor(Eet_Data_Descriptor *edd, Eina_Bool stream)
         eet_eina_stream_data_descriptor_class_set(&eddc,
                                                   sizeof (Eet_Data_Descriptor_Class),
                                                   "Eet_Test_Basic_Type",
-                                                  sizeof(Eet_Test_Basic_Type));        
+                                                  sizeof(Eet_Test_Basic_Type));
         eddb = eet_data_descriptor_stream_new(&eddc);
      }
    else
@@ -423,7 +423,7 @@ _eet_build_ex_descriptor(Eet_Data_Descriptor *edd, Eina_Bool stream)
         eet_eina_file_data_descriptor_class_set(&eddc,
                                                 sizeof (Eet_Data_Descriptor_Class),
                                                 "Eet_Test_Basic_Type",
-                                                sizeof(Eet_Test_Basic_Type));        
+                                                sizeof(Eet_Test_Basic_Type));
         eddb = eet_data_descriptor_file_new(&eddc);
      }
    fail_if(!eddb);
@@ -968,10 +968,12 @@ START_TEST(eet_file_simple_write)
    char *test;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
+   int tmpfd;
 
    eet_init();
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    fail_if(eet_mode_get(NULL) != EET_FILE_MODE_INVALID);
 
@@ -1040,6 +1042,7 @@ START_TEST(eet_file_data_test)
    Eet_Test_Ex_Type etbt;
    int size;
    int test;
+   int tmpfd;
 
    eet_init();
 
@@ -1071,7 +1074,8 @@ START_TEST(eet_file_data_test)
 
    _eet_build_ex_descriptor(edd, EINA_FALSE);
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    /* Insert an error in etbt. */
    etbt.i = 0;
@@ -1194,6 +1198,7 @@ START_TEST(eet_file_data_dump_test)
    char *string1;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int test;
+   int tmpfd;
 
    eet_init();
 
@@ -1223,7 +1228,8 @@ START_TEST(eet_file_data_dump_test)
 
    _eet_build_ex_descriptor(edd, EINA_FALSE);
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    /* Save the encoded data in a file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -1294,10 +1300,12 @@ START_TEST(eet_image)
    int alpha;
    unsigned int w;
    unsigned int h;
+   int tmpfd;
 
    eet_init();
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    /* Save the encoded data in a file. */
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
@@ -1660,6 +1668,7 @@ START_TEST(eet_small_image)
    int quality;
    Eet_Image_Encoding lossy;
    int result;
+   int tmpfd;
 
    image[0] = IM0;
    image[1] = IM1;
@@ -1668,7 +1677,8 @@ START_TEST(eet_small_image)
 
    eet_init();
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
@@ -1720,7 +1730,8 @@ START_TEST(eet_identity_simple)
 
    eet_init();
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (fd = mkstemp(file)));
+   fail_if(!!close(fd));
    fail_if(!(noread = fopen("/dev/null", "w")));
 
    /* Sign an eet file. */
@@ -1880,10 +1891,12 @@ START_TEST(eet_cipher_decipher_simple)
    char *test;
    char *file = strdup("/tmp/eet_suite_testXXXXXX");
    int size;
+   int tmpfd;
 
    eet_init();
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    /* Crypt an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);
@@ -1966,6 +1979,7 @@ START_TEST(eet_cache_concurrency)
    unsigned int n;
    Eina_Thread thread;
    Eina_Bool r;
+   int tmpfd;
 
    eet_init();
    eina_threads_init();
@@ -1974,7 +1988,8 @@ START_TEST(eet_cache_concurrency)
    eina_condition_new(&open_worker_cond, &open_worker_mutex);
 
    /* create a file to test with */
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
    ef = eet_open(file, EET_FILE_MODE_WRITE);
    fail_if(!ef);
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
@@ -2235,6 +2250,7 @@ START_TEST(eet_file_fp)
    Eet_5FP origin;
    Eet_5DBL *convert;
    Eet_5FP *build;
+   int tmpfd;
 
    eet_init();
 
@@ -2262,7 +2278,8 @@ START_TEST(eet_file_fp)
    origin.f1 = eina_f32p32_int_from(1);
    origin.f0 = 0;
 
-   fail_if(!(file = tmpnam(file)));
+   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(!!close(tmpfd));
 
    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
    fail_if(!ef);
@@ -2871,4 +2888,3 @@ main(int argc EINA_UNUSED, char *argv[])
 
    return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 } /* main */
-

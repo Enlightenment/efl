@@ -7,6 +7,8 @@
 int
 main(int argc, char **argv)
 {
+   (void)argc;
+   (void)argv;
    Eina_List *list = NULL, *r_list;
    Eina_List *l;
    Eina_Iterator *itr;

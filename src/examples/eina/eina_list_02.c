@@ -8,6 +8,8 @@
 int
 main(int argc, char **argv)
 {
+   (void)argc;
+   (void)argv;
    Eina_List *list = NULL, *other_list = NULL;
    Eina_List *l;
    void *data;

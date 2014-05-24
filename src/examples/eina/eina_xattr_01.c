@@ -37,7 +37,7 @@ main(int argc, char **argv)
      }
    else if (strcmp(argv[1], "get") == 0)
      {
-        size_t size = 0;
+        ssize_t size = 0;
         const char *value;
 
         if (argc < 4)

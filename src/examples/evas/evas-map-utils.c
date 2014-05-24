@@ -166,9 +166,6 @@ _on_keydown(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *e
 {
    App_Data *ad = data;
    Evas_Event_Key_Down *ev = event;
-   const Evas_Modifier *mods;
-
-   mods = evas_key_modifier_get(ad->canvas);
    switch (ev->key[0])
      {
       case 'a':

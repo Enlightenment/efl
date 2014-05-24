@@ -128,6 +128,7 @@ static void set_brks_to(
     while (posNext < posEnd)
     {
         utf32_t ch;
+        (void)ch;
         ch = get_next_char(s, len, &posNext);
         assert(ch != EOS);
         for (; posStart < posNext - 1; ++posStart)

@@ -63,7 +63,7 @@ _fill_receive_array_of_string_int_with_size(Eldbus_Message *msg, int size, const
 
    offset = _type_offset(sizeof(int), sizeof(Eina_Value_Array));
    main_members[0].name = "size";
-   main_members[0].type = EINA_VALUE_TYPE_INT, 0;
+   main_members[0].type = EINA_VALUE_TYPE_INT;
    main_members[0].offset = 0;
    main_members[1].name = "array";
    main_members[1].type = EINA_VALUE_TYPE_ARRAY;

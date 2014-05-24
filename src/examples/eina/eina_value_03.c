@@ -26,7 +26,7 @@ _tz_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void * dst)
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static int
 _tz_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
 {
    struct timezone tza = *(struct timezone*)a;

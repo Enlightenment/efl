@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 int
 main(void)
@@ -16,17 +17,19 @@ main(void)
    const char *key = "This is a crypto key";
    const char *key_bad = "This is another crypto key";
 
-   char *file = strdup("/tmp/eet_cipher_example_XXXXX");
+   char *file = strdup("/tmp/eet_cipher_example_XXXXXX");
    Eet_File *ef;
    char *test;
    int size;
+   int tmpfd;
 
    eet_init();
 
-   if (!(file = tmpnam(file)))
+   if (-1 == (tmpfd = mkstemp(file)) || !!close(tmpfd))
      {
         fprintf(
-          stderr, "ERROR: could not create temporary file (%s).\n", file);
+                stderr, "ERROR: could not create temporary file (%s) : %s\n",
+                file, strerror(errno));
         goto panic;
      }
 

@@ -47,7 +47,9 @@ _phone_book_stringshared_free_cb(void *data)
 
 static Eina_Bool
 _phone_book_stringshared_foreach_cb(const Eina_Hash *phone_book,
-				    const void *key, void *data, void *fdata)
+                                    const void *key EINA_UNUSED,
+                                    void *data,
+                                    void *fdata EINA_UNUSED)
 {
    Phone_Entry *e = data;
    const char *name = e->name; // e->name == key
@@ -97,8 +99,8 @@ _phone_book_string_key_length(const char *key)
 }
 
 static int
-_phone_book_string_key_cmp(const char *key1, int key1_length,
-                     const char *key2, int key2_length)
+_phone_book_string_key_cmp(const char *key1, int key1_length EINA_UNUSED,
+                     const char *key2, int key2_length EINA_UNUSED)
 {
    return strcmp(key1, key2);
 }
@@ -138,6 +140,8 @@ example_hash_big(void)
 int
 main(int argc, const char *argv[])
 {
+   (void)argc;
+   (void)argv;
    eina_init();
 
    example_hash_stringshared();

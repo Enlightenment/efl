@@ -25,7 +25,7 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    eina_strbuf_reset(buf);
 
    eina_strbuf_append_printf(buf, "%s%c", "buffe", 'r');
-   eina_strbuf_insert_printf(buf, " %s: %d", 6, "length", eina_strbuf_length_get(buf));
+   eina_strbuf_insert_printf(buf, " %s: %d", 6, "length", (int)eina_strbuf_length_get(buf));
    printf("%s\n", eina_strbuf_string_get(buf));
 
    eina_strbuf_remove(buf, 0, 7);
