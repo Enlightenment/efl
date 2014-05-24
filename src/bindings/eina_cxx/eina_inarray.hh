@@ -556,6 +556,7 @@ public:
           new (&*first++) T(t);
         std::size_t diff = last - first;
         assert(diff == _array->len - index - n);
+        static_cast<void>(diff);
         while(first != last)
           {
             new (&*first++) T(*old_first);
