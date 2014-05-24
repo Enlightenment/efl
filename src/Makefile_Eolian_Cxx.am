@@ -2,14 +2,17 @@
 ### Library
 
 installed_eoliancxxmainheadersdir = $(includedir)/eolian-cxx-@VMAJ@/
-dist_installed_eoliancxxmainheaders_DATA = \
+nodist_installed_eoliancxxmainheaders_DATA = \
 lib/eolian_cxx/Eolian_Cxx.hh
 
 installed_eoliancxxheadersdir = $(includedir)/eolian-cxx-@VMAJ@/
-dist_installed_eoliancxxheaders_DATA = \
+nodist_installed_eoliancxxheaders_DATA = \
 lib/eolian_cxx/eo_generate.hh \
 lib/eolian_cxx/eo_types.hh \
-lib/eolian_cxx/eo_validate.hh \
+lib/eolian_cxx/eo_validate.hh
+
+installed_eoliancxxgrammarheadersdir = $(includedir)/eolian-cxx-@VMAJ@/grammar/
+nodist_installed_eoliancxxgrammarheaders_DATA = \
 lib/eolian_cxx/grammar/comment.hh \
 lib/eolian_cxx/grammar/eo_class_constructors_generator.hh \
 lib/eolian_cxx/grammar/eo_class_events.generator.hh \
