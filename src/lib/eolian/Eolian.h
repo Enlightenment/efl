@@ -68,18 +68,6 @@ typedef struct _Parameter_Desc* Eolian_Function_Parameter;
  */
 typedef struct _Implement_Desc* Eolian_Implement;
 
-/* Class implement legacy information
- *
- * @ingroup Eolian
- */
-typedef struct _Implement_Legacy_Desc* Eolian_Implement_Legacy;
-
-/* Class implement legacy parameter information
- *
- * @ingroup Eolian
- */
-typedef struct _Implement_Legacy_Param* Eolian_Implement_Legacy_Parameter;
-
 /* Event information
  *
  * @ingroup Eolian

@@ -81,25 +81,9 @@ typedef struct
 
 typedef struct
 {
-   Eina_Stringshare *eo_param;
-   Eina_Stringshare *leg_param;
-   Eina_Stringshare *comment;
-} _Implement_Legacy_Param;
-
-typedef struct
-{
-   Eina_Stringshare *legacy_function_name;
-   Eina_List *params; /* List of Eolian_Implement_Legacy_Parameter */
-   Eina_Stringshare *ret_type;
-   Eina_Stringshare *ret_value;
-} _Implement_Legacy_Desc;
-
-typedef struct
-{
    Eina_Stringshare *class_name;
    Eina_Stringshare *func_name;
    Eolian_Function_Type type;
-   Eolian_Implement_Legacy leg_desc;
 } _Implement_Desc;
 
 typedef struct
