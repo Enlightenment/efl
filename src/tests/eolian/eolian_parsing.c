@@ -9,6 +9,78 @@
 #include "Eolian.h"
 #include "eolian_suite.h"
 
+START_TEST(eolian_namespaces)
+{
+   Eolian_Class class11, class112, class21, class_no;
+   Eolian_Function fid;
+   const Eina_List *list = NULL;
+   const char *class_name, *func_name;
+   Eolian_Function_Type func_type;
+
+   eolian_init();
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/namespace.eo"));
+
+   /* Classes existence  */
+   fail_if(!(class11 = eolian_class_find_by_name("nmsp1::class1")));
+   fail_if(!(class112 = eolian_class_find_by_name("nmsp1::nmsp11::class2")));
+   fail_if(!(class21 = eolian_class_find_by_name("nmsp2::class1")));
+   fail_if(!(class_no = eolian_class_find_by_name("no_nmsp")));
+
+   /* Check names and namespaces*/
+   fail_if(strcmp(eolian_class_name_get(class11), "class1"));
+   fail_if(!(list = eolian_class_namespaces_list_get(class11)));
+   fail_if(eina_list_count(list) != 1);
+   fail_if(strcmp(eina_list_nth(list, 0), "nmsp1"));
+
+   fail_if(strcmp(eolian_class_name_get(class112), "class2"));
+   fail_if(!(list = eolian_class_namespaces_list_get(class112)));
+   fail_if(eina_list_count(list) != 2);
+   fail_if(strcmp(eina_list_nth(list, 0), "nmsp1"));
+   fail_if(strcmp(eina_list_nth(list, 1), "nmsp11"));
+
+   fail_if(strcmp(eolian_class_name_get(class21), "class1"));
+   fail_if(!(list = eolian_class_namespaces_list_get(class21)));
+   fail_if(eina_list_count(list) != 1);
+   fail_if(strcmp(eina_list_nth(list, 0), "nmsp2"));
+
+   fail_if(strcmp(eolian_class_name_get(class_no), "no_nmsp"));
+   fail_if(eolian_class_namespaces_list_get(class_no));
+
+   /* Inherits */
+   fail_if(!(list = eolian_class_inherits_list_get(class11)));
+   fail_if(eina_list_count(list) != 3);
+   class_name = eina_list_nth(list, 0);
+   fail_if(eolian_class_find_by_name(class_name) != class112);
+   class_name = eina_list_nth(list, 1);
+   fail_if(eolian_class_find_by_name(class_name) != class21);
+   class_name = eina_list_nth(list, 2);
+   fail_if(eolian_class_find_by_name(class_name) != class_no);
+
+   /* Implements */
+   fail_if(!(list = eolian_class_implements_list_get(class11)));
+   fail_if(eina_list_count(list) != 3);
+   fail_if(!eolian_implement_information_get(eina_list_nth(list, 0),
+            &class_name, &func_name, &func_type));
+   fail_if(eolian_class_find_by_name(class_name) != class112);
+   fail_if(strcmp(func_name, "a"));
+   fail_if(func_type != EOLIAN_PROP_SET);
+   fail_if(eolian_implement_information_get(eina_list_nth(list, 1),
+            &class_name, &func_name, &func_type));
+   fail_if(!eolian_implement_information_get(eina_list_nth(list, 2),
+            &class_name, &func_name, &func_type));
+   fail_if(eolian_class_find_by_name(class_name) != class_no);
+   fail_if(strcmp(func_name, "foo"));
+   fail_if(func_type != EOLIAN_METHOD);
+
+   /* Virtual regression */
+   fail_if(!(fid = eolian_class_function_find_by_name(class112, "a", EOLIAN_UNRESOLVED)));
+   fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_PROP_SET));
+
+   eolian_shutdown();
+}
+END_TEST
+
 START_TEST(eolian_events)
 {
    Eolian_Class class;
@@ -378,5 +450,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_consts);
    tcase_add_test(tc, eolian_override);
    tcase_add_test(tc, eolian_events);
+   tcase_add_test(tc, eolian_namespaces);
 }
 

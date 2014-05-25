@@ -1,0 +1,33 @@
+class nmsp1::nmsp11::class2
+{
+   properties {
+      a {
+         set {
+         }
+      }
+   }
+   implements {
+      virtual::a::set;
+   }
+}
+
+class nmsp2::class1
+{
+}
+
+class no_nmsp
+{
+   methods {
+      foo {
+      }
+   }
+}
+
+class nmsp1::class1 (nmsp1::nmsp11::class2, nmsp2::class1, no_nmsp)
+{
+   implements {
+      nmsp1::nmsp11::class2::a::set;
+      nmsp1::bad_class::a::set;
+      no_nmsp::foo;
+   }
+}

@@ -117,7 +117,7 @@ database_function_scope_set(Eolian_Function function_id, Eolian_Function_Scope s
 /* Need to add API for callbacks and implements */
 
 Eolian_Implement
-database_implement_new(const char *class_name, const char *func_name, Eolian_Function_Type type);
+database_implement_new(const char *impl_name);
 
 Eina_Bool
 database_class_implement_add(Eolian_Class class, Eolian_Implement impl_id);

@@ -207,6 +207,18 @@ EAPI const char *
 eolian_class_file_get(const Eolian_Class klass);
 
 /*
+ * @brief Returns the full name of the given class.
+ *
+ * @param[in] class the class.
+ * @return the full name of the class on success or NULL otherwise.
+ *
+ * The full name and the name of a class will be different if namespaces
+ * are used.
+ */
+EAPI const char *
+eolian_class_full_name_get(const Eolian_Class klass);
+
+/*
  * @brief Returns the name of the given class.
  *
  * @param[in] class the class.
@@ -214,6 +226,15 @@ eolian_class_file_get(const Eolian_Class klass);
  */
 EAPI const char *
 eolian_class_name_get(const Eolian_Class klass);
+
+/*
+ * @brief Returns the namespaces list of the given class.
+ *
+ * @param[in] class the class.
+ * @return the namespaces list of the class on success or NULL otherwise.
+ */
+EAPI const Eina_List *
+eolian_class_namespaces_list_get(const Eolian_Class klass);
 
 /*
  * @brief Returns the class type of the given class

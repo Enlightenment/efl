@@ -429,8 +429,9 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
    alnum_u           = alnum | '_';
    alpha_u           = alpha | '_';
    ident             = alpha+ >save_fpc (alnum | '_' )*;
-   event            = alpha+ >save_fpc (alnum | '_' | ',' )*;
+   event             = alpha+ >save_fpc (alnum | '_' | ',' )*;
    class_meth        = alpha+ >save_fpc (alnum | '_' | '::' )*;
+   class_name        = alpha+ >save_fpc (alnum | '_' | '::' )*;
 
    eo_comment        = "/*@" ignore* ('@' | alnum_u) >save_fpc ( any | cr @inc_line )* :>> "*/";
    c_comment         = "/*" ( any | cr @inc_line )* :>> "*/";
@@ -894,7 +895,7 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
 
    data_type = 'data' ignore* colon ignore* ident %end_data_type end_statement ignore*;
 
-   class_it = ident %end_str_item ignore*;
+   class_it = class_name %end_str_item ignore*;
    class_it_next = list_separator ignore* class_it;
    inherits = begin_list (class_it class_it_next*)? end_list %end_inherits;
 
@@ -962,12 +963,11 @@ _eo_tokenizer_implement_get(Eo_Tokenizer *toknz, char *p)
       toknz->tmp.kls->type = toknz->tmp.kls_type;
    }
 
-   class_name = ident %end_class_name;
    begin_class = (
          "class" %class_type_set_to_class |
          "mixin" %class_type_set_to_mixin |
          "abstract" %class_type_set_to_abstract |
-         "interface" %class_type_set_to_interface) ws+ class_name ws* inherits? ignore* begin_def;
+         "interface" %class_type_set_to_interface) ws+ class_name %end_class_name ws* inherits? ignore* begin_def;
 
    action end_typedef_alias {
       toknz->tmp.typedef_alias = _eo_tokenizer_token_get(toknz, fpc);
@@ -1512,44 +1512,44 @@ eo_tokenizer_database_fill(const char *filename)
 
         EINA_LIST_FOREACH(kls->implements, l, impl)
           {
-             const char *impl_class = impl->meth_name;
-             Eina_Bool virtual_pure = EINA_FALSE;
-             if (!strcmp(impl_class, "class::constructor"))
+             const char *impl_name = impl->meth_name;
+             if (!strcmp(impl_name, "class::constructor"))
                {
                   database_class_ctor_enable_set(class, EINA_TRUE);
                   continue;
                }
-             if (!strcmp(impl_class, "class::destructor"))
+             if (!strcmp(impl_name, "class::destructor"))
                {
                   database_class_dtor_enable_set(class, EINA_TRUE);
                   continue;
                }
-             if (!strncmp(impl_class, "virtual::", 9)) virtual_pure = EINA_TRUE;
-             char *func = strstr(impl_class, "::");
-             if (func) *func = '\0';
-             func += 2;
-             Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
-             char *type_as_str = strstr(func, "::");
-             if (type_as_str)
+             if (!strncmp(impl_name, "virtual::", 9))
                {
-                  *type_as_str = '\0';
-                  if (!strcmp(type_as_str+2, "set")) ftype = EOLIAN_PROP_SET;
-                  else if (!strcmp(type_as_str+2, "get")) ftype = EOLIAN_PROP_GET;
-               }
-             if (virtual_pure)
-               {
+                  char *virtual_name = strdup(impl_name);
+                  char *func = strstr(virtual_name, "::");
+                  if (func) *func = '\0';
+                  func += 2;
+                  Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+                  char *type_as_str = strstr(func, "::");
+                  if (type_as_str)
+                    {
+                       *type_as_str = '\0';
+                       if (!strcmp(type_as_str+2, "set")) ftype = EOLIAN_PROP_SET;
+                       else if (!strcmp(type_as_str+2, "get")) ftype = EOLIAN_PROP_GET;
+                    }
                   /* Search the function into the existing functions of the current class */
                   Eolian_Function foo_id = eolian_class_function_find_by_name(
                         class, func, ftype);
+                  free(virtual_name);
                   if (!foo_id)
                     {
-                       ERR("Error - %s not known in class %s", impl_class + 9, eolian_class_name_get(class));
+                       ERR("Error - %s not known in class %s", impl_name + 9, eolian_class_name_get(class));
                        goto end;
                     }
                   database_function_set_as_virtual_pure(foo_id, ftype);
                   continue;
                }
-             Eolian_Implement impl_desc = database_implement_new(impl_class, func, ftype);
+             Eolian_Implement impl_desc = database_implement_new(impl_name);
              database_class_implement_add(class, impl_desc);
           }
 

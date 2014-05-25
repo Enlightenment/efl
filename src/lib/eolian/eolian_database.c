@@ -21,6 +21,8 @@ static int _database_init_count = 0;
 
 typedef struct
 {
+   Eina_Stringshare *full_name;
+   Eina_List *namespaces; /* List Eina_Stringshare * */
    Eina_Stringshare *name;
    Eina_Stringshare *file;
    Eolian_Class_Type type;
@@ -81,9 +83,7 @@ typedef struct
 
 typedef struct
 {
-   Eina_Stringshare *class_name;
-   Eina_Stringshare *func_name;
-   Eolian_Function_Type type;
+   Eina_Stringshare *full_name;
 } _Implement_Desc;
 
 typedef struct
@@ -141,8 +141,7 @@ _class_del(_Class_Desc *class)
    Eina_List *implements = class->implements;
    EINA_LIST_FREE(implements, impl)
      {
-        eina_stringshare_del(impl->class_name);
-        eina_stringshare_del(impl->func_name);
+        eina_stringshare_del(impl->full_name);
         free(impl);
      }
 
@@ -154,6 +153,7 @@ _class_del(_Class_Desc *class)
    EINA_LIST_FREE(class->events, ev) database_event_free(ev);
 
    eina_stringshare_del(class->name);
+   eina_stringshare_del(class->full_name);
    eina_stringshare_del(class->file);
    eina_stringshare_del(class->description);
    eina_stringshare_del(class->legacy_prefix);
@@ -229,11 +229,27 @@ eolian_type_find_by_alias(const char *alias)
 Eolian_Class
 database_class_add(const char *class_name, Eolian_Class_Type type)
 {
-   _Class_Desc *cl = NULL;
-   cl = calloc(1, sizeof(*cl));
-   cl->name = eina_stringshare_add(class_name);
+   char *full_name = strdup(class_name);
+   char *name = full_name;
+   char *colon = full_name;
+   _Class_Desc *cl = calloc(1, sizeof(*cl));
+   cl->full_name = eina_stringshare_add(class_name);
    cl->type = type;
+   do
+     {
+        colon = strstr(colon, "::");
+        if (colon)
+          {
+             *colon = '\0';
+             cl->namespaces = eina_list_append(cl->namespaces, eina_stringshare_add(name));
+             colon += 2;
+             name = colon;
+          }
+     }
+   while(colon);
+   cl->name = eina_stringshare_add(name);
    _classes = eina_list_append(_classes, cl);
+   free(full_name);
    return (Eolian_Class)cl;
 }
 
@@ -254,10 +270,24 @@ eolian_class_file_get(const Eolian_Class class)
 }
 
 EAPI const char *
+eolian_class_full_name_get(const Eolian_Class class)
+{
+   _Class_Desc *cl = (_Class_Desc *)class;
+   return cl ? cl->full_name : NULL;
+}
+
+EAPI const char *
 eolian_class_name_get(const Eolian_Class class)
 {
    _Class_Desc *cl = (_Class_Desc *)class;
    return cl ? cl->name : NULL;
+}
+
+EAPI const Eina_List *
+eolian_class_namespaces_list_get(const Eolian_Class class)
+{
+   _Class_Desc *cl = (_Class_Desc *)class;
+   return cl ? cl->namespaces : NULL;
 }
 
 EAPI Eolian_Class
@@ -267,14 +297,48 @@ eolian_class_find_by_name(const char *class_name)
    _Class_Desc *cl;
    Eina_Stringshare *shr_name = eina_stringshare_add(class_name);
    EINA_LIST_FOREACH(_classes, itr, cl)
+      if (cl->full_name == shr_name) goto end;
+   cl = NULL;
+end:
+   eina_stringshare_del(shr_name);
+   return (Eolian_Class)cl;
+}
+
+/*
+ * ret false -> clash, class = NULL
+ * ret true && class -> only one class corresponding
+ * ret true && !class -> no class corresponding
+ */
+Eina_Bool database_class_name_validate(const char *class_name, Eolian_Class *class)
+{
+   char *name = strdup(class_name);
+   char *colon = name + 1;
+   Eolian_Class found_class = NULL;
+   Eolian_Class candidate;
+   if (class) *class = NULL;
+   do
      {
-        if (cl->name == shr_name)
+        colon = strstr(colon, "::");
+        if (colon) *colon = '\0';
+        candidate = eolian_class_find_by_name(name);
+        if (candidate)
           {
-             eina_stringshare_del(shr_name);
-             return (Eolian_Class)cl;
+             if (found_class)
+               {
+                  ERR("Name clash between class %s and class %s",
+                        ((_Class_Desc *)candidate)->full_name,
+                        ((_Class_Desc *)found_class)->full_name);
+                  free(name);
+                  return EINA_FALSE; // Names clash
+               }
+             found_class = candidate;
           }
+        if (colon) *colon++ = ':';
      }
-   return NULL;
+   while(colon);
+   if (class) *class = found_class;
+   free(name);
+   return EINA_TRUE;
 }
 
 EAPI Eolian_Class
@@ -284,15 +348,11 @@ eolian_class_find_by_file(const char *file_name)
    _Class_Desc *cl;
    Eina_Stringshare *shr_file = eina_stringshare_add(file_name);
    EINA_LIST_FOREACH(_classes, itr, cl)
-     {
-        if (cl->file == shr_file)
-          {
-             eina_stringshare_del(shr_file);
-             return (Eolian_Class)cl;
-          }
-     }
+      if (cl->file == shr_file) goto end;
+   cl = NULL;
+end:
    eina_stringshare_del(shr_file);
-   return NULL;
+   return (Eolian_Class)cl;
 }
 
 EAPI Eolian_Class_Type
@@ -486,14 +546,11 @@ Eina_Bool database_class_function_add(Eolian_Class class, Eolian_Function foo_id
 }
 
 Eolian_Implement
-database_implement_new(const char *class_name, const char *func_name, Eolian_Function_Type type)
+database_implement_new(const char *impl_name)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(class_name && func_name, NULL);
    _Implement_Desc *impl_desc = calloc(1, sizeof(_Implement_Desc));
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl_desc, NULL);
-   impl_desc->class_name = eina_stringshare_add(class_name);
-   impl_desc->func_name = eina_stringshare_add(func_name);
-   impl_desc->type = type;
+   impl_desc->full_name = eina_stringshare_add(impl_name);
    return (Eolian_Implement) impl_desc;
 }
 
@@ -508,13 +565,30 @@ database_class_implement_add(Eolian_Class class, Eolian_Implement impl_desc)
 }
 
 EAPI Eina_Bool
-eolian_implement_information_get(Eolian_Implement impl, const char **class_name, const char **func_name, Eolian_Function_Type *type)
+eolian_implement_information_get(Eolian_Implement impl, const char **class_name_out, const char **func_name_out, Eolian_Function_Type *type_out)
 {
    _Implement_Desc *_impl = (_Implement_Desc *)impl;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_impl, EINA_FALSE);
-   if (class_name) *class_name = _impl->class_name;
-   if (func_name) *func_name = _impl->func_name;
-   if (type) *type = _impl->type;
+   Eolian_Class class;
+   if (!database_class_name_validate(_impl->full_name, &class) || !class) return EINA_FALSE;
+   const char *class_name = ((_Class_Desc *)class)->full_name;
+   if (class_name_out) *class_name_out = class_name;
+
+   char *func_name = strdup(_impl->full_name + strlen(class_name) + 2);
+   char *colon = strstr(func_name, "::");
+   Eolian_Function_Type type = EOLIAN_UNRESOLVED;
+   if (colon)
+     {
+        *colon = '\0';
+        if (!strcmp(colon+2, "set")) type = EOLIAN_PROP_SET;
+        else if (!strcmp(colon+2, "get")) type = EOLIAN_PROP_GET;
+     }
+
+   Eolian_Function fid = eolian_class_function_find_by_name(class, func_name, type);
+   if (func_name_out) *func_name_out = eolian_function_name_get(fid);
+   if (type == EOLIAN_UNRESOLVED) type = eolian_function_type_get(fid);
+   if (type_out) *type_out = type;
+   free(func_name);
    return EINA_TRUE;
 }
 
@@ -1339,17 +1413,15 @@ EAPI Eina_Bool eolian_eo_file_parse(const char *filepath)
      }
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl)
      {
-        _Implement_Desc *_impl = (_Implement_Desc *)impl;
-        Eolian_Class impl_class = eolian_class_find_by_name(_impl->class_name);
-        Eolian_Function foo = eolian_class_function_find_by_name(impl_class, _impl->func_name, _impl->type);
+        const char *impl_classname = NULL, *impl_func = NULL;
+        Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
+        eolian_implement_information_get(impl, &impl_classname, &impl_func, &impl_type);
+        Eolian_Class impl_class = eolian_class_find_by_name(impl_classname);
+        Eolian_Function foo = eolian_class_function_find_by_name(impl_class, impl_func, impl_type);
         if (!foo)
           {
-             ERR("Unable to find function %s in class %s", _impl->func_name, _impl->class_name);
+             ERR("Unable to find function %s in class %s", impl_func, impl_classname);
              return EINA_FALSE;
-          }
-        if (_impl->type == EOLIAN_UNRESOLVED)
-          {
-             _impl->type = eolian_function_type_get(foo);
           }
      }
    return EINA_TRUE;
