@@ -2,6 +2,7 @@
 #define __EOLIAN_COMMON_FUNCS_H
 
 #include <Eina.h>
+#include <Eolian.h>
 
 #define EO
 
@@ -32,7 +33,7 @@ extern int _eolian_gen_log_dom;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eolian_gen_log_dom, __VA_ARGS__)
 
-void _template_fill(Eina_Strbuf *buf, const char *templ, const char *classname, const char *funcname, Eina_Bool reset);
+void _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, const char *classname, const char *funcname, Eina_Bool reset);
 
 char *_nextline(char *str, unsigned int lines);
 
@@ -40,11 +41,13 @@ char *_startline(char *str, char *pos);
 
 char *_source_desc_get(const char *str);
 
-void _class_func_names_fill(const char *classname, const char *funcname);
+void _class_func_names_fill(const Eolian_Class class, const char *classname, const char *funcname);
 
 char current_eo_prefix_lower[256];
 
 char current_eo_prefix_upper[256];
+
+char current_classname[256];
 
 char capobjclass[0xFF];
 char lowobjclass[0xFF];

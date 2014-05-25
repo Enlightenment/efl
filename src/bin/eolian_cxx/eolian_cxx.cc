@@ -86,7 +86,7 @@ _guess_classname_from_sources(::options_type& opts)
      {
         if (Eolian_Class klass = eolian_class_find_by_file(filename.c_str()))
           {
-             return eolian_class_name_get(klass);
+             return eolian_class_full_name_get(klass);
           }
      }
    return "";

@@ -152,7 +152,7 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
    Eina_Strbuf *begin = eina_strbuf_new();
    const char *class_name = eolian_class_name_get(class);
 
-   _class_func_names_fill(class_name, NULL);
+   _class_func_names_fill(class, NULL, NULL);
 
    if (!_type_exists("EFL_BETA_API_SUPPORT", buffer))
      {
@@ -223,7 +223,7 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
              eolian_implement_information_get(impl_desc, &impl_classname, &func_name, &ftype);
              Eolian_Class impl_class = eolian_class_find_by_name(impl_classname);
 
-             _class_func_names_fill(impl_classname, NULL);
+             _class_func_names_fill(impl_class, NULL, NULL);
 
              char implname[0xFF];
              char *tmp = implname;
@@ -249,7 +249,7 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
           }
      }
 
-   _class_func_names_fill(class_name, NULL);
+   _class_func_names_fill(class, NULL, NULL);
    if (eolian_class_ctor_enable_get(class))
      {
         char func_name[100];
