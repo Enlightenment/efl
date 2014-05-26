@@ -502,11 +502,13 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
              if (sd->spin_timer) _spin_stop(obj);
              else return EINA_FALSE;
           }
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
         if (sd->spin_timer) _spin_stop(obj);
         else return EINA_FALSE;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
@@ -523,10 +525,10 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
              elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
           }
         _spin_value(obj);
+        mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else return EINA_FALSE;
 
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
