@@ -62,8 +62,8 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_part_content_set(layout, "elm.swallow.content", icon);
 
-   elm_object_signal_callback_add(layout, "elm,action,back", "", _signal_cb, &app);
-   elm_object_signal_callback_add(layout, "elm,action,next", "", _signal_cb, &app);
+   elm_object_signal_callback_add(layout, "elm,action,back", "elm", _signal_cb, &app);
+   elm_object_signal_callback_add(layout, "elm,action,next", "elm", _signal_cb, &app);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
