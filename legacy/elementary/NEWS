@@ -106,6 +106,18 @@ Fixes:
    * gengrid: frame variable should be used for position changes.
    * widgets - propagate current parent orientation to sub object.
    * elm_map: Fix to support customized style for elm_map
+   * entry: Fix a test case for editable, non-editable entry.
+   * layout: remove sizing_eval call when layout is already destructed. @fix
+   * elm_map: Fix to show and bring in a correct region after zooming
+   * gengrid : Fix the issue to skip disable item in item select
+   * entry: Enable context menu with mosue down even if the entry is not editable in some case.
+   * hoversel: item-loop should happen on UP/DOWN Key in case of vertical hoversel and on LEFT/RIGHT Key in case of horizontal hoversel.
+   * fix visiblity of entry cursor when selections exist (T1229)
+   * elm_map: Fix to calculate map size not to be smaller than viewport size
+   * [Fileselector] Fix double-call of callback function on clicking "Enter" key.
+   * fix 0 size focus region (T1205)
+   * Correctly emit the scroll signal when scrolling an entry @fix T1274.
+   * entry: update selection handlers' visibility when entry is hidden or shown (T1175)
 
 
 Changes since Elementary 1.8.0:
