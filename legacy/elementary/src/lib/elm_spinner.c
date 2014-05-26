@@ -491,11 +491,11 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
    Evas_Event_Mouse_Wheel *mev;
    (void) src;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
         Eina_Bool ret;
+        
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         ret = _elm_config_key_binding_call(obj, ev, key_actions);
         if (!ret)
           {
@@ -506,12 +506,14 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
      }
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         if (sd->spin_timer) _spin_stop(obj);
         else return EINA_FALSE;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
      {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         mev = event_info;
         sd->interval = sd->first_interval;
         if (mev->z < 0)
