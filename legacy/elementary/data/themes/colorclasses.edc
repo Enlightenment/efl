@@ -1,3 +1,5 @@
+#define WIN_DEFAULT_BASIC 255 255 255 255
+
 color_classes {
 // comp
    color_class { name: "comp_focus-out_color";
@@ -15,13 +17,13 @@ color_classes {
       color: FN_COL_DEFAULT_SOFT_SHADOW;
    }
    color_class { name: "border_frame";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "border_frame_active";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "border_bottom";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "move_text";
       color: FN_COL_DEFAULT;
@@ -30,7 +32,7 @@ color_classes {
       color: FN_COL_DEFAULT;
    }
    color_class { name: "menu_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "menu_title";
       color: FN_COL_DISABLE;
@@ -57,13 +59,13 @@ color_classes {
       color: FN_COL_DISABLE;
    }
    color_class { name: "dialog_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "shelf_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "fileman_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
 
 // widgets
@@ -101,10 +103,10 @@ color_classes {
       color: FN_COL_DISABLE;
    }
    color_class { name: "frame_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "scrollframe_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "radio_text";
       color: FN_COL_DEFAULT;
@@ -125,25 +127,25 @@ color_classes {
       color: FN_COL_DEFAULT;
    }
    color_class { name: "ilist_item_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "ilist_item_odd";
       color: FN_COL_DEFAULT;
    }
    color_class { name: "ilist_item_odd_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "ilist_item_header";
       color: FN_COL_DEFAULT;
    }
    color_class { name: "ilist_item_header_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
    color_class { name: "ilist_item_header_odd";
       color: FN_COL_DEFAULT;
    }
    color_class { name: "ilist_item_header_odd_base";
-      color: FN_COL_DEFAULT_BASIC;
+      color: WIN_DEFAULT_BASIC;
    }
 
    color_class { name: "hoversel_text";
