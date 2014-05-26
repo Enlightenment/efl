@@ -3904,10 +3904,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           {
              if (pf->visible)
                {
+                  Eina_Bool vis = EINA_TRUE;
+
+                  if (ep->part->type == EDJE_PART_TYPE_GROUP)
+                    vis = evas_object_visible_get(ed->obj);
                   eo_do(ep->typedata.swallow->swallowed_object,
                         evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
                         evas_obj_size_set(pf->final.w, pf->final.h),
-                        evas_obj_visibility_set(evas_object_visible_get(ed->obj)));
+                        evas_obj_visibility_set(vis));
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;
