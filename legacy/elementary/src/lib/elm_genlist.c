@@ -5507,6 +5507,21 @@ _item_select(Elm_Gen_Item *it)
         else
           sd->last_selected_item = (Elm_Object_Item *)it;
      }
+
+   if (!(sd->focus_on_selection_enabled || _elm_config->item_select_on_focus_disable))
+     {
+        Evas_Object *swallow_obj;
+        Eina_List *l;
+        EINA_LIST_FOREACH(it->content_objs, l, swallow_obj)
+          {
+             if (elm_object_focus_get(swallow_obj))
+               {
+                  elm_object_focus_set( obj, EINA_FALSE);
+                  elm_object_focus_set( obj, EINA_TRUE);
+                  break;
+               }
+          }
+     }
    evas_object_unref(obj);
 }
 
