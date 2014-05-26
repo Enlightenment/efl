@@ -1946,6 +1946,7 @@ _item_focus_set_hook(Elm_Object_Item *it, Eina_Bool focused)
 
    if (focused)
      {
+        sd->last_focused_item = it;
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
         if (it != sd->focused_item)
