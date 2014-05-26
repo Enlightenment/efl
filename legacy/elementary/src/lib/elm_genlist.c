@@ -1738,6 +1738,17 @@ _item_realize(Elm_Gen_Item *it,
 
           }
 
+        if (it->item->type == ELM_GENLIST_ITEM_TREE)
+          {
+             Evas_Object* t_eobj;
+             Eina_List* tl;
+             EINA_LIST_FOREACH(it->content_objs, tl, t_eobj)
+                if (elm_widget_is(t_eobj) && elm_object_focus_allow_get(t_eobj))
+                  it->item_focus_chain = eina_list_append
+                      (it->item_focus_chain, t_eobj);
+
+          }
+
         evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
      }
 
