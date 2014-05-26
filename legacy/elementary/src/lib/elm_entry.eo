@@ -1163,6 +1163,8 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
       Evas_Smart::add;
       Evas_Smart::resize;
       Evas_Smart::del;
+      Evas_Smart::show;
+      Evas_Smart::hide;
       Elm_Widget::activate;
       Elm_Widget::focus_direction_manager_is;
       Elm_Widget::theme_apply;

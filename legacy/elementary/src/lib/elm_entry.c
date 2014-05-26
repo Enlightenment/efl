@@ -384,10 +384,16 @@ _hide_selection_handler(Evas_Object *obj)
 
    if (!sd->start_handler) return;
 
-   edje_object_signal_emit(sd->start_handler, "elm,handler,hide", "elm");
-   sd->start_handler_shown = EINA_FALSE;
-   edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
-   sd->end_handler_shown = EINA_FALSE;
+   if (sd->start_handler_shown)
+     {
+        edje_object_signal_emit(sd->start_handler, "elm,handler,hide", "elm");
+        sd->start_handler_shown = EINA_FALSE;
+     }
+   if (sd->end_handler_shown)
+     {
+        edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
+        sd->end_handler_shown = EINA_FALSE;
+     }
 }
 
 static Eina_Rectangle *
@@ -3562,6 +3568,25 @@ _elm_entry_evas_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, Evas_Coo
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
+
+}
+
+EOLIAN static void
+_elm_entry_evas_smart_show(Eo *obj, Elm_Entry_Data *sd)
+{
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+
+   if (sd->have_selection)
+     _update_selection_handler(obj);
+}
+
+EOLIAN static void
+_elm_entry_evas_smart_hide(Eo *obj, Elm_Entry_Data *sd)
+{
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+
+   if (sd->have_selection)
+     _hide_selection_handler(obj);
 }
 
 EOLIAN static void
