@@ -219,7 +219,7 @@ enum
 };
 static int gen_opt = NO_WAY_GEN;
 static int eo_needed = 0;
-static Eina_Bool legacy_support = EINA_FALSE;
+static int legacy_support = 0;
 
 int main(int argc, char **argv)
 {
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
           {"gc",         no_argument,         &gen_opt, C_GEN},
           {"gi",         no_argument,         &gen_opt, C_IMPL_GEN},
           {"output",     required_argument,   0, 'o'},
-          {"legacy",     no_argument,         (int *)&legacy_support, EINA_TRUE},
+          {"legacy",     no_argument,         &legacy_support, 1},
           {"include",    required_argument,   0, 'I'},
           {0, 0, 0, 0}
      };
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
            case C_GEN:
                 {
                    INF("Generating source file %s\n", output_filename);
-                   ret = _generate_c_file(output_filename, class, legacy_support)?0:1;
+                   ret = _generate_c_file(output_filename, class, !!legacy_support)?0:1;
                    break;
                 }
            case C_IMPL_GEN:
