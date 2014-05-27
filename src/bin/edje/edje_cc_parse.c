@@ -435,6 +435,8 @@ next_token(char *p, char *end, char **new_p, int *delim)
    *new_p = p;
 
    tok = mem_alloc(tok_end - tok_start + 2);
+   if (!tok) return NULL;
+
    strncpy(tok, tok_start, tok_end - tok_start + 1);
    tok[tok_end - tok_start + 1] = 0;
 
@@ -475,7 +477,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
                }
           }
      }
-   else if ((tok) && (*tok == '('))
+   else if (*tok == '(')
      {
         char *tmp;
         tmp = tok;
