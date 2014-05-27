@@ -351,7 +351,7 @@ local Event = Node:clone {
         local ffin = self.cached_ffi_name
         if ffin then return ffin end
         ffin = table.concat {
-            "_", self.parent_node.cname:upper(), "_EVENT_",
+            "_", self.parent_node.klass:name_get():upper(), "_EVENT_",
             self.ename:gsub("%W", "_"):upper()
         }
         self.cached_ffi_name = ffin
@@ -418,23 +418,24 @@ local Default_Constructor = Node:clone {
 }
 
 local Mixin = Node:clone {
-    __ctor = function(self, cname, ch, evs)
-        self.cname    = cname
-        self.prefix   = eolian.class_eo_prefix_get(cname)
+    __ctor = function(self, klass, ch, evs)
+        self.klass    = klass
+        self.prefix   = klass:eo_prefix_get()
         self.children = ch
         self.events   = evs
     end,
 
     generate = function(self, s)
         dom:log(log.level.INFO, "  Generating for interface/mixin: "
-            .. self.cname)
+            .. self.klass:full_name_get())
 
         s:write("ffi.cdef [[\n")
         self:gen_ffi(s)
         s:write("]]\n\n")
 
         s:write(("M.%s = eo.class_register(\"%s\", {\n"):format(
-            strip_name(self, self.cname, self.parent_node.cprefix), self.cname))
+            strip_name(self, self.klass:name_get(),
+                self.parent_node.cprefix), self.klass:name_get()))
 
         self:gen_children(s)
 
@@ -464,30 +465,31 @@ local Mixin = Node:clone {
 }
 
 local Class = Node:clone {
-    __ctor = function(self, cname, parent, mixins, ch, evs)
-        self.cname      = cname
+    __ctor = function(self, klass, parent, mixins, ch, evs)
+        self.klass      = klass
         self.parent     = parent
         self.interfaces = interfaces
         self.mixins     = mixins
-        self.prefix     = eolian.class_eo_prefix_get(cname)
+        self.prefix     = klass:eo_prefix_get()
         self.children   = ch
         self.events     = evs
     end,
 
     generate = function(self, s)
-        dom:log(log.level.INFO, "  Generating for class: " .. self.cname)
+        dom:log(log.level.INFO, "  Generating for class: "
+            .. self.klass:full_name_get())
 
         s:write("ffi.cdef [[\n")
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        local name_stripped = strip_name(self, self.cname,
+        local name_stripped = strip_name(self, self.klass:name_get(),
             self.parent_node.cprefix)
 
         s:write(([[
 local Parent = eo.class_get("%s")
 M.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.parent, name_stripped, self.cname))
+]]):format(self.parent, name_stripped, self.klass:name_get()))
 
         self:gen_children(s)
 
@@ -504,9 +506,9 @@ M.%s = eo.class_register("%s", Parent:clone {
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, cname, modname, libname, cprefix, ch)
+    __ctor = function(self, fname, klass, modname, libname, cprefix, ch)
         self.fname    = fname:match(".+/(.+)") or fname
-        self.cname    = cname
+        self.klass    = klass
         self.modname  = (modname and #modname > 0) and modname or nil
         self.libname  = libname
         self.cprefix  = cprefix
@@ -515,7 +517,8 @@ local File = Node:clone {
 
     generate = function(self, s)
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
-        dom:log(log.level.INFO, "  Class            : " .. self.cname)
+        dom:log(log.level.INFO, "  Class            : "
+            .. self.klass:full_name_get())
 
         local modn = self.modname
         if    modn then
@@ -546,7 +549,8 @@ end
 
 cutil.init_module(init, shutdown)
 
-]]):format(self.fname, self.cname, modn, self.libname, self.libname))
+]]):format(self.fname, self.klass:name_get(), modn, self.libname,
+        self.libname))
 
         self:gen_children(s)
 
@@ -566,11 +570,11 @@ return M
     end
 }
 
-local gen_contents = function(classn)
+local gen_contents = function(klass)
     local cnt = {}
     local ft  = eolian.function_type
     -- first try properties
-    local props = eolian.class_functions_list_get(classn, ft.PROPERTY)
+    local props = klass:functions_list_get(ft.PROPERTY)
     for i, v in ipairs(props) do
         if v:scope_get() == eolian.function_scope.PUBLIC then
             local ftype  = v:type_get()
@@ -585,14 +589,14 @@ local gen_contents = function(classn)
         end
     end
     -- then methods
-    local meths = eolian.class_functions_list_get(classn, ft.METHOD)
+    local meths = klass:functions_list_get(ft.METHOD)
     for i, v in ipairs(meths) do
         if v:scope_get() == eolian.function_scope.PUBLIC then
             cnt[#cnt + 1] = Method(v)
         end
     end
     -- and constructors
-    local ctors = eolian.class_functions_list_get(classn, ft.CTOR)
+    local ctors = klass:functions_list_get(ft.CTOR)
     for i, v in ipairs(ctors) do
         cnt[#cnt + 1] = Constructor(v)
     end
@@ -601,7 +605,7 @@ local gen_contents = function(classn)
     end
     -- events
     local evs = {}
-    local events = eolian.class_events_list_get(classn)
+    local events = klass:events_list_get()
     for i, v in ipairs(events) do
         local en, et, ed = v:information_get()
         evs[#evs + 1] = Event(en, et, ed)
@@ -609,29 +613,29 @@ local gen_contents = function(classn)
     return cnt, evs
 end
 
-local gen_mixin = function(classn)
-    return Mixin(classn, gen_contents(classn))
+local gen_mixin = function(klass)
+    return Mixin(klass, gen_contents(klass))
 end
 
-local gen_class = function(classn)
-    local inherits = eolian.class_inherits_list_get(classn)
+local gen_class = function(klass)
+    local inherits = klass:inherits_list_get()
     local parent
     local mixins   = {}
     local ct = eolian.class_type
     for i, v in ipairs(inherits) do
-        local tp = eolian.class_type_get(v)
+        local tp = eolian.class_find_by_name(v):type_get()
         if tp == ct.REGULAR or tp == ct.ABSTRACT then
             if parent then
-                error(classn .. ": more than 1 parent!")
+                error(klass:full_name_get() .. ": more than 1 parent!")
             end
             parent = v
         elseif tp == ct.MIXIN or tp == ct.INTERFACE then
             mixins[#mixins + 1] = v
         else
-            error(classn .. ": unknown inherit " .. v)
+            error(klass:full_name_get() .. ": unknown inherit " .. v)
         end
     end
-    return Class(classn, parent, mixins, gen_contents(classn))
+    return Class(klass, parent, mixins, gen_contents(klass))
 end
 
 M.include_dir = function(dir)
@@ -644,18 +648,18 @@ M.generate = function(fname, modname, libname, cprefix, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
     end
-    local classn = eolian.class_find_by_file(fname)
-    local tp = eolian.class_type_get(classn)
+    local klass = eolian.class_find_by_file(fname)
+    local tp = klass:type_get()
     local ct = eolian.class_type
     local cl
     if tp == ct.MIXIN or tp == ct.INTERFACE then
-        cl = gen_mixin(classn)
+        cl = gen_mixin(klass)
     elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
-        cl = gen_class(classn)
+        cl = gen_class(klass)
     else
-        error(classn .. ": unknown type")
+        error(klass:full_name_get() .. ": unknown type")
     end
-    File(fname, classn, modname, libname, cprefix, { cl })
+    File(fname, klass, modname, libname, cprefix, { cl })
         :generate(fstream or io.stdout)
 end
 
