@@ -147,13 +147,20 @@ evas_image_save_file_tgv(RGBA_Image *im,
 {
    rg_etc1_pack_params param;
    FILE *f;
-   char *comp;
-   char *buffer;
+   uint8_t *comp = NULL;
+   uint8_t *buffer;
    uint32_t *data;
    uint32_t width, height;
    uint8_t header[8] = "TGV1";
    int block_width, block_height, macro_block_width, macro_block_height;
-   int block_count, image_stride, image_height;
+   int block_count, image_stride, image_height, etc_block_size;
+   Evas_Colorspace cspace;
+   Eina_Bool alpha;
+
+   /* FIXME: How to tell the encoder to encode as ETC1 or ETC2?
+    * The save API is weak. For now, assume ETC2 iif there's alpha.
+    * As long as we don't have a full ETC2 encoder, this is fine.
+    */
 
    if (!im || !im->image.data || !file)
      return 0;
@@ -161,8 +168,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-        if (im->cache_entry.flags.alpha)
-          return 0;
+        alpha = im->cache_entry.flags.alpha;
         break;
       case EVAS_COLORSPACE_ETC1:
       case EVAS_COLORSPACE_RGB8_ETC2:
@@ -177,6 +183,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
    data = im->image.data;
    width = htonl(image_stride);
    height = htonl(image_height);
+   compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
    param.m_dithering = 0;
@@ -193,11 +200,22 @@ evas_image_save_file_tgv(RGBA_Image *im,
    block_height = _block_size_get(image_height + 2);
    header[4] = (block_height << 4) | block_width;
 
-   // header[5]: 0 for ETC1
-   header[5] = 0;
+   // header[5]: 0 for ETC1, 1 for RGB8_ETC2, 2 for RGBA8_ETC2_EAC
+   if (alpha)
+     {
+        cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
+        etc_block_size = 16;
+        header[5] = 2;
+     }
+   else
+     {
+        cspace = EVAS_COLORSPACE_ETC1;
+        etc_block_size = 8;
+        header[5] = 0;
+     }
 
    // header[6]: 0 for raw, 1, for LZ4 compressed
-   header[6] = (!!compress & 0x1);
+   header[6] = compress;
 
    // header[7]: options (unused)
    header[7] = 0;
@@ -216,16 +234,10 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
    // Number of ETC1 blocks in a compressed block
    block_count = (macro_block_width * macro_block_height) / (4 * 4);
-   buffer = alloca(block_count * 8);
+   buffer = alloca(block_count * etc_block_size);
 
    if (compress)
-     {
-        comp = alloca(LZ4_compressBound(block_count * 8));
-     }
-   else
-     {
-        comp = NULL;
-     }
+     comp = alloca(LZ4_compressBound(block_count * etc_block_size));
 
    // Write macro block
    for (int y = 0; y < image_height + 2; y += macro_block_height)
@@ -240,7 +252,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
         for (int x = 0; x < image_stride + 2; x += macro_block_width)
           {
-             char *offset = buffer;
+             uint8_t *offset = buffer;
              int real_x = x;
 
              if (x == 0) real_x = 0;
@@ -315,19 +327,33 @@ evas_image_save_file_tgv(RGBA_Image *im,
                               }
                          }
 
-                       rg_etc1_pack_block(offset, (unsigned int*) todo, &param);
-                       offset += 8;
+                       switch (cspace)
+                         {
+                          case EVAS_COLORSPACE_ETC1:
+                            rg_etc1_pack_block(offset, (uint32_t *) todo, &param);
+                            break;
+                          case EVAS_COLORSPACE_RGB8_ETC2:
+                            etc2_rgb8_block_pack(offset, (uint32_t *) todo, &param);
+                            break;
+                          case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+                            etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
+                            break;
+                          default: return 0;
+                         }
+
+                       offset += etc_block_size;
                     }
                }
 
              if (compress)
                {
-                  wlen = LZ4_compressHC(buffer, comp, block_count * 8);
+                  wlen = LZ4_compressHC((char *) buffer, (char *) comp,
+                                        block_count * etc_block_size);
                }
              else
                {
                   comp = buffer;
-                  wlen = block_count * 8;
+                  wlen = block_count * etc_block_size;
                }
 
              if (wlen > 0)
