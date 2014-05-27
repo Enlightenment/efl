@@ -41,7 +41,7 @@ evas_3d_mesh_frame_free(Evas_3D_Mesh_Frame *frame)
    free(frame);
 }
 
-static Evas_3D_Mesh_Frame *
+Evas_3D_Mesh_Frame *
 evas_3d_mesh_frame_find(Evas_3D_Mesh_Data *pd, int frame)
 {
    Eina_List *l;
@@ -54,6 +54,47 @@ evas_3d_mesh_frame_find(Evas_3D_Mesh_Data *pd, int frame)
      }
 
    return NULL;
+}
+
+Eina_Bool
+_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
+{
+   Evas_3D_Mesh_Frame *curframe = evas_3d_mesh_frame_find(pd, frame);
+   int i = 0, j = 0, step = 0, size = 0;
+   float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
+   float *minmaxdata = NULL;
+   Evas_Box3 box3;
+
+   step = curframe->vertices[EVAS_3D_VERTEX_POSITION].element_count;
+   size = curframe->vertices[EVAS_3D_VERTEX_POSITION].size;
+   minmaxdata = (float *)curframe->vertices[EVAS_3D_VERTEX_POSITION].data;
+
+   if (!minmaxdata)
+     {
+        ERR("Invalid vertex data.");
+        return EINA_FALSE;
+     }
+
+   vxmax = vxmin = minmaxdata[0];
+   vymax = vymin = minmaxdata[1];
+   vzmax = vzmin = minmaxdata[2];
+   j += step;
+
+   for (i = 1; i < size/stride; ++i)
+     {
+        vxmin > minmaxdata[j] ? vxmin = minmaxdata[j] : 0;
+        vxmax < minmaxdata[j] ? vxmax = minmaxdata[j] : 0;
+        vymin > minmaxdata[j + 1] ? vymin = minmaxdata[j + 1] : 0;
+        vymax < minmaxdata[j + 1] ? vymax = minmaxdata[j + 1] : 0;
+        vzmin > minmaxdata[j + 2] ? vzmin = minmaxdata[j + 2] : 0;
+        vzmax < minmaxdata[j + 2] ? vzmax = minmaxdata[j + 2] : 0;
+        j += step;
+     }
+
+   evas_box3_empty_set(&box3);
+   evas_box3_set(&box3, vxmin, vymin, vzmin, vxmax, vymax, vzmax);
+   curframe->aabb = box3;
+   return EINA_TRUE;
 }
 
 static inline void
@@ -331,7 +372,39 @@ _evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
 
    if (attrib == EVAS_3D_VERTEX_POSITION)
      {
+        int i = 0, j = 0, size = stride/sizeof(float);
+        float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
+        float *minmaxdata = (float *)data;
+        Evas_Box3 box3;
+
         element_count = 3;
+
+        if (minmaxdata)
+          {
+             vxmax = vxmin = minmaxdata[0];
+             vymax = vymin = minmaxdata[1];
+             vzmax = vzmin = minmaxdata[2];
+             j += size;
+
+             for (i = 1; i < size; ++i)
+               {
+                  vxmin > minmaxdata[j] ? vxmin = minmaxdata[j] : 0;
+                  vxmax < minmaxdata[j] ? vxmax = minmaxdata[j] : 0;
+                  vymin > minmaxdata[j + 1] ? vymin = minmaxdata[j + 1] : 0;
+                  vymax < minmaxdata[j + 1] ? vymax = minmaxdata[j + 1] : 0;
+                  vzmin > minmaxdata[j + 2] ? vzmin = minmaxdata[j + 2] : 0;
+                  vzmax < minmaxdata[j + 2] ? vzmax = minmaxdata[j + 2] : 0;
+                  j += size;
+                }
+
+              evas_box3_empty_set(&box3);
+              evas_box3_set(&box3, vxmin, vymin, vzmin, vxmax, vymax, vzmax);
+              f->aabb = box3;
+          }
+        else
+          {
+             ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);
+          }
      }
    else if (attrib == EVAS_3D_VERTEX_NORMAL)
      {
@@ -489,6 +562,11 @@ _evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int fra
                   src = (float *)((char *)src + stride);
                }
           }
+     }
+
+   if (attrib == EVAS_3D_VERTEX_POSITION && !_aabb_add_to_frame(pd, frame, stride))
+     {
+        ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);
      }
 
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_DATA, NULL));

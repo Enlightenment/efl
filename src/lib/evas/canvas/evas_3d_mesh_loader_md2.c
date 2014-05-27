@@ -350,6 +350,7 @@ evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
    float               *pos, *nor, *tex;
    int                  stride_pos, stride_nor, stride_tex;
    float                s_scale, t_scale;
+   Evas_3D_Mesh_Data *pd;
 
    /* Initialize MD2 loader (Open file and read MD2 head ant etc) */
    if (!_md2_loader_init(&loader, file))
@@ -432,6 +433,13 @@ evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
               evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_POSITION),
               evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_NORMAL),
               evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_TEXCOORD));
+
+        pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
+
+        if (!_aabb_add_to_frame(pd, f, stride_pos))
+          {
+             ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", f);
+          }
      }
 
    _md2_loader_fini(&loader);

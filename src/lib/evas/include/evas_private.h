@@ -136,6 +136,7 @@ struct _Evas_3D_Node
    Evas_Vec3         scale_world;
 
    Evas_Box3         aabb;
+   Evas_Box3         obb;
 
    Evas_3D_Node_Type type;
 

@@ -330,6 +330,30 @@ class Evas_3D_Node (Evas_3D_Object, Evas_Common_Interface)
          return const Eina_List *;
       }
 
+      bounding_box_get{
+         /*
+
+          * Get axis-aligned bounding box (AABB) of the given node.
+          *
+          * @param node     The given node.
+          * @param x       Pointer to receive X coordinate of the first point of AABB.
+          * @param y       Pointer to receive Y coordinate of the first point of AABB.
+          * @param z       Pointer to receive Z coordinate of the first point of AABB.
+          * @param x2       Pointer to receive X coordinate of the second point of AABB.
+          * @param y2       Pointer to receive Y coordinate of the second point of AABB.
+          * @param z2       Pointer to receive Z coordinate of the second point of AABB.
+
+           @ingroup Evas_3D_Node
+          */
+         params {
+            @in Evas_Real *x;      /*@ Coordinates of vector.*/
+            @in Evas_Real *y;
+            @in Evas_Real *z;
+            @in Evas_Real *x2;
+            @in Evas_Real *y2;
+            @in Evas_Real *z2;
+         }
+      }
    }
 
    properties {
