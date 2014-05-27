@@ -3892,6 +3892,7 @@ do_error(cpp_reader * pfile, struct directive *keyword EINA_UNUSED,
    copy[length] = 0;
    SKIP_WHITE_SPACE(copy);
    cpp_error(pfile, "#error %s", copy);
+   free(copy);
    return 0;
 }
 
@@ -3912,6 +3913,7 @@ do_warning(cpp_reader * pfile, struct directive *keyword EINA_UNUSED,
    copy[length] = 0;
    SKIP_WHITE_SPACE(copy);
    cpp_warning(pfile, "#warning %s", copy);
+   free(copy);
    return 0;
 }
 
