@@ -23,7 +23,7 @@
 #define D(fmt, args...)
 #endif
 
-#define CAPS "video/x-raw-rgb,bpp=(int)32,depth=(int)32,endianness=(int)4321,red_mask=(int)0x0000ff00, green_mask=(int)0x00ff0000, blue_mask=(int)0xff000000"
+#define CAPS "video/x-raw,format=RGB"
 
 static GstElement *pipeline = NULL;
 static GstElement *sink = NULL;
@@ -67,7 +67,7 @@ _gst_init(const char *filename)
 
    D("Setting file %s\n", uri);
 
-   descr = g_strdup_printf("uridecodebin uri=%s ! typefind ! ffmpegcolorspace ! "
+   descr = g_strdup_printf("uridecodebin uri=%s ! typefind ! videoconvert ! " 
       " appsink name=sink caps=\"" CAPS "\"", uri);
    pipeline = gst_parse_launch(descr, &error);
    free(uri);
@@ -112,7 +112,7 @@ _gst_init(const char *filename)
      }
 
    format = GST_FORMAT_TIME;
-   gst_element_query_duration (pipeline, &format, &duration);
+   gst_element_query_duration (pipeline, format, &duration);
    if (duration == -1)
      {
 	D("could not retrieve the duration, set it to 1s\n");
@@ -126,7 +126,7 @@ _gst_init(const char *filename)
         goto unref_pipeline;
      }
 
-   caps = gst_pad_get_negotiated_caps(pad);
+   caps = gst_pad_get_current_caps(pad);
    if (!caps)
      goto unref_pad;
 
@@ -167,6 +167,8 @@ static void
 _gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED, double pos)
 {
    GstBuffer *buffer;
+   GstMapInfo info;
+   GstSample *sample;
 
    D("load image\n");
    if (pos >= 0.0)
@@ -175,14 +177,19 @@ _gst_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED, double pos)
    else
      gst_element_seek_simple(pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
                              duration / 2);
-   g_signal_emit_by_name(sink, "pull-preroll", &buffer, NULL);
-   D("load image : %p %d\n", GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+   g_signal_emit_by_name(sink, "pull-preroll", &sample, NULL);
 
    shm_alloc(width * height * sizeof(DATA32));
    if (!shm_addr) return;
    data = shm_addr;
 
-   memcpy(data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
+   buffer = gst_sample_get_buffer (sample);
+   gst_buffer_map (buffer, &info, GST_MAP_READ);
+   D("load image: %p %d\n", info.data, info.size);
+
+   memcpy(data, info.data, info.size);
+
+   gst_buffer_unmap(buffer, &info);
 }
 
 int

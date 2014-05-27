@@ -147,9 +147,9 @@ if test "x$want_svg" = "xyes" ; then
 else
    have_svg=no
 fi
-GST_REQS=0.10.13
-GSTPLUG_REQS=0.10.13
-GST_MAJORMINOR=0.10
+GST_REQS=1.0
+GSTPLUG_REQS=1.0
+GST_MAJORMINOR=1.0
 
 AC_ARG_ENABLE([gstreamer],
    [AC_HELP_STRING([--disable-gstreamer], [disable gstreamer support  @<:@default==enabled@:>@])],
@@ -163,6 +163,19 @@ if test "x$want_gstreamer" = "xyes" ; then
       ],
       [have_gst="yes"],
       [have_gst="no"])
+   if test "x$have_gst" = "xno" ; then
+      GST_REQS=0.10.13
+      GSTPLUG_REQS=0.10.13
+      GST_MAJORMINOR=0.10
+      PKG_CHECK_MODULES([GSTREAMER],
+         [gstreamer-$GST_MAJORMINOR >= $GST_REQS
+          gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS
+         ],
+         [have_gst="yes"
+         AC_DEFINE_UNQUOTED([USE_OLD_GST], [1], [using older gstreamer])
+         ],
+         [have_gst="no"])
+   fi
 else
    have_gst=no
 fi
