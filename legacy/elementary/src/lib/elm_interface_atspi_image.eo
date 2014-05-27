@@ -1,0 +1,43 @@
+mixin Elm_Interface_Atspi_Image ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_image;
+   data: null;
+   properties {
+      protected extents {
+         get {
+            /*@ Gets an image extents. */
+         }
+         keys {
+            Eina_Bool screen_coords;
+         }
+         values {
+            int x;
+            int y;
+            int width;
+            int height;
+         }
+      }
+      description {
+         get {
+            /* Gets textual description of image */
+         }
+         set {
+         }
+         values {
+            const char *description;
+         }
+      }
+      protected locale {
+         get {
+            /* Gets locale of the image description. */
+         }
+         values {
+            const char *locale;
+         }
+      }
+   }
+   implements {
+      virtual::extents::get;
+   }
+}

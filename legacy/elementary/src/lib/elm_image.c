@@ -7,6 +7,9 @@
 #include "elm_priv.h"
 #include "elm_widget_image.h"
 
+#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
+#include "elm_interface_atspi_image.eo.h"
+
 #define FMT_SIZE_T "%zu"
 
 #define MY_CLASS ELM_OBJ_IMAGE_CLASS
@@ -1312,5 +1315,29 @@ _elm_image_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+// A11Y
+
+EOLIAN static void
+_elm_image_elm_interface_atspi_image_extents_get(Eo *obj, Elm_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+{
+   int ee_x, ee_y;
+   Evas_Object *image = elm_image_object_get(obj);
+   if (!image) return;
+
+   evas_object_geometry_get(image, x, y, NULL, NULL);
+   if (screen_coords)
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(image));
+        if (!ee) return;
+        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+        if (x) *x += ee_x;
+        if (y) *y += ee_y;
+     }
+   elm_image_object_size_get(obj, w, h);
+}
+
+
+// A11Y - END
 
 #include "elm_image.eo.c"

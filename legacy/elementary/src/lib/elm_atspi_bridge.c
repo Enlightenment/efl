@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
+#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
@@ -19,6 +20,7 @@
 #include "elm_interface_atspi_window.eo.h"
 #include "elm_interface_atspi_action.eo.h"
 #include "elm_interface_atspi_value.eo.h"
+#include "elm_interface_atspi_image.eo.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -706,6 +708,80 @@ static const Eldbus_Method action_methods[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
+static Eldbus_Message *
+_image_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   AtspiCoordType type;
+   Eldbus_Message *ret;
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   int x, y, w, h;
+   Eina_Bool screen_coords;
+   Eo *obj = _access_object_from_path(obj_path);
+
+   x = y = w = h = -1;
+
+   if (!eldbus_message_arguments_get(msg, "u", &type))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, elm_interface_atspi_image_extents_get(screen_coords, &x, &y, &w, &h));
+   eldbus_message_arguments_append(ret, "iiii", x, y, w, h);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_image_position_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   AtspiCoordType type;
+   Eldbus_Message *ret;
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int x = -1, y = -1;
+   Eina_Bool screen_coords;
+
+   if (!eldbus_message_arguments_get(msg, "u", &type))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
+   eo_do(obj, elm_interface_atspi_image_extents_get(screen_coords, &x, &y, NULL, NULL));
+   eldbus_message_arguments_append(ret, "i", x);
+   eldbus_message_arguments_append(ret, "i", y);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_image_size_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   Eldbus_Message *ret;
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int w = -1, h = -1;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, elm_interface_atspi_image_extents_get(EINA_FALSE, NULL, NULL, &w, &h));
+   eldbus_message_arguments_append(ret, "i", w);
+   eldbus_message_arguments_append(ret, "i", h);
+
+   return ret;
+}
+
+static const Eldbus_Method image_methods[] = {
+   { "GetImageExtents", ELDBUS_ARGS({"u", "coordType"}), ELDBUS_ARGS({"iiii", "extents"}), _image_extents_get, 0 },
+   { "GetImagePosition", ELDBUS_ARGS({"u", "coordType"}), ELDBUS_ARGS({"i", "x"}, {"i", "y"}), _image_position_get, 0 },
+   { "GetImageSize", NULL, ELDBUS_ARGS({"i", "width"}, {"i", "height"}), _image_size_get, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
 static Eo *
 _access_object_from_path(const char *path)
 {
@@ -875,6 +951,34 @@ _value_properties_get(const Eldbus_Service_Interface *interface, const char *pro
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_image_properties_get(const Eldbus_Service_Interface *interface, const char *property,
+                         Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED,
+                         Eldbus_Message **error EINA_UNUSED)
+{
+   const char *value;
+   const char *obj_path = eldbus_service_object_path_get(interface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!strcmp(property, "ImageDescription"))
+     {
+        eo_do(obj, value = elm_interface_atspi_image_description_get());
+        value = value ? value : "";
+        eldbus_message_iter_basic_append(iter, 's', value);
+        return EINA_TRUE;
+     }
+   if (!strcmp(property, "ImageLocale"))
+     {
+        eo_do(obj, value = elm_interface_atspi_image_locale_get());
+        value = value ? value : "";
+        eldbus_message_iter_basic_append(iter, 's', value);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static const Eldbus_Property accessible_properties[] = {
    { "Name", "s", _accessible_property_get, NULL, 0 },
    { "Description", "s", _accessible_property_get, NULL, 0 },
@@ -896,6 +1000,12 @@ static const Eldbus_Property value_properties[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
+static const Eldbus_Property image_properties[] = {
+   { "ImageDescription", "s", NULL, NULL, 0 },
+   { "ImageLocale", "s", NULL, NULL, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
 static const Eldbus_Service_Interface_Desc accessible_iface_desc = {
    ATSPI_DBUS_INTERFACE_ACCESSIBLE, accessible_methods, NULL, accessible_properties, _accessible_property_get, NULL
 };
@@ -914,6 +1024,10 @@ static const Eldbus_Service_Interface_Desc action_iface_desc = {
 
 static const Eldbus_Service_Interface_Desc value_iface_desc = {
    ATSPI_DBUS_INTERFACE_VALUE, NULL, NULL, value_properties, _value_properties_get, _value_properties_set
+};
+
+static const Eldbus_Service_Interface_Desc image_iface_desc = {
+   ATSPI_DBUS_INTERFACE_IMAGE, image_methods, NULL, image_properties, _image_properties_get, NULL
 };
 
 static void
@@ -994,6 +1108,8 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
   if (eo_isa(data, ELM_INTERFACE_ATSPI_VALUE_CLASS))
     eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
+  if (eo_isa(data, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
+    eldbus_message_iter_basic_append(iter_sub_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
 
   eldbus_message_iter_container_close(iter_struct, iter_sub_array);
 
@@ -1887,6 +2003,8 @@ static void _object_register(Eo *obj, char *path)
           eldbus_service_interface_register(_a11y_bus, path, &action_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_CLASS))
           eldbus_service_interface_register(_a11y_bus, path, &value_iface_desc);
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
+          eldbus_service_interface_register(_a11y_bus, path, &image_iface_desc);
      }
 }
 

@@ -1,4 +1,4 @@
-class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
+class Elm_Image (Elm_Widget, Evas_Clickable_Interface, Elm_Interface_Atspi_Image)
 {
    eo_prefix: elm_obj_image;
    properties {
@@ -547,6 +547,7 @@ class Elm_Image (Elm_Widget, Evas_Clickable_Interface)
       Evas_Smart::resize;
       Elm_Widget::theme_apply;
       Elm_Widget::event;
+      Elm_Interface_Atspi_Image::extents::get;
    }
    events {
       drop;
