@@ -4,6 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 pkgdatadir=@datadir@/elementary
 themes=${pkgdatadir}/themes
+eoincludedir=@datadir@/eolian/include
+eolian_flags=-I${eoincludedir}/elementary-@VMAJ@
 
 Name: elementary
 Description: Mobile device touchscreen widget library
