@@ -788,12 +788,20 @@ group { name: "elm/scroller/base/default";
          target: "center_glow_vbar";
       }
       program {
+         signal: "mouse,down,*"; source: "elm.dragable.vbar";
+         action: SIGNAL_EMIT "elm,vbar,press" "elm";
+      }
+      program {
          signal: "mouse,up,1"; source: "elm.dragable.vbar";
          action: STATE_SET "default" 0.0;
          target: "elm.dragable.vbar";
          target: "shadow_vbar";
          target: "glow_vbar";
          target: "center_glow_vbar";
+      }
+      program {
+         signal: "mouse,up,*"; source: "elm.dragable.vbar";
+         action: SIGNAL_EMIT "elm,vbar,unpress" "elm";
       }
       program {
          signal: "mouse,down,1*"; source: "elm.dragable.hbar";
@@ -804,12 +812,20 @@ group { name: "elm/scroller/base/default";
          target: "center_glow_hbar";
       }
       program {
+         signal: "mouse,down,*"; source: "elm.dragable.hbar";
+         action: SIGNAL_EMIT "elm,hbar,press" "elm";
+      }
+      program {
          signal: "mouse,up,1"; source: "elm.dragable.hbar";
          action: STATE_SET "default" 0.0;
          target: "elm.dragable.hbar";
          target: "shadow_hbar";
          target: "glow_hbar";
          target: "center_glow_hbar";
+      }
+      program {
+         signal: "mouse,up,*"; source: "elm.dragable.hbar";
+         action: SIGNAL_EMIT "elm,hbar,unpress" "elm";
       }
       program {
          signal: "elm,action,looping,left"; source: "elm";
