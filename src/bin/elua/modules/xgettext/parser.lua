@@ -19,15 +19,51 @@ local check_match = function(ls, a, b, line)
     end
 end
 
-local parse_arg = function(ls)
-    local plevel = 0
+local parse_simple_expr = function(ls)
+    local tok = ls.token
+    local tn  = tok.name
+    if tn == "(" then
+        local line = ls.line_number
+        ls:get()
+        local v, tn = parse_expr(ls)
+        check_match(ls, ")", "(", line)
+        ls:get()
+        return v, tn
+    elseif tn == "<string>" or tn == "<number>" or tn == "<name>" then
+        local v = tok.value
+        ls:get()
+        return v, tn
+    else
+        syntax_error(ls, "unexpected symbol")
+    end
+end
+
+local parse_expr
+parse_expr = function(ls)
+    local tok     = ls.token
+    local line    = ls.line_number
+    local lhs, tn = parse_simple_expr(ls)
+    while true do
+        if tok.name ~= ".." then break end
+        if tn ~= "<string>" and tn ~= "<number>" then
+            syntax_error(ls, "invalid lhs for concat")
+        end
+        tn = "<string>"
+        ls:get()
+        local rhs, rtn = parse_expr(ls)
+        if rtn ~= "<string>" and rtn ~= "<number>" then
+            syntax_error(ls, "invalid rhs for concat")
+        end
+        lhs = lhs .. rhs
+    end
+    return lhs, tn
 end
 
 local parse_arglist = function(ls)
     local tok  = ls.token
     local rets = {}
     while true do
-        rets[#rets + 1] = parse_arg(ls)
+        rets[#rets + 1] = { parse_expr(ls) }
         if tok.name == "," then
             ls:get()
         else
@@ -52,7 +88,7 @@ local parse_call = function(ls)
     elseif tok.name == "<string>" then
         local v = tok.value
         ls:get()
-        return { v }
+        return { { v, "<string>" } }
     else
         return nil
     end
