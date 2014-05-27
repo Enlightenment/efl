@@ -38,7 +38,7 @@ Eo *light = NULL;
 
 
 static Eina_Bool
-_mesh_aabb(Evas_3D_Mesh **mesh_b, const Evas_3D_Node *node);
+_mesh_aabb(Evas_3D_Mesh **mesh_b);
 
 static Eina_Bool
 _animate_scene(void *data)
@@ -47,7 +47,7 @@ _animate_scene(void *data)
 
    eo_do((Evas_3D_Node *)data, evas_3d_node_mesh_frame_set(mesh, frame));
 
-   _mesh_aabb(&mesh_box, mesh_box_node);
+   _mesh_aabb(&mesh_box);
 
    frame += 32;
 
@@ -104,7 +104,7 @@ _on_canvas_resize(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_mesh_aabb(Evas_3D_Mesh **mesh_b, const Evas_3D_Node *node)
+_mesh_aabb(Evas_3D_Mesh **mesh_b)
 {
    Evas_Real x0, y0, z0, x1, y1, z1;
 
@@ -159,14 +159,11 @@ _mesh_aabb(Evas_3D_Mesh **mesh_b, const Evas_3D_Node *node)
    memcpy(cube_indices, indices, sizeof(indices));
 
    eo_do(*mesh_b,
-         evas_3d_mesh_vertex_count_set(24),
-         evas_3d_mesh_frame_add( 0),
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION, 3 * sizeof(float), &cube_vertices[ 0]),
-         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, 48, &cube_indices[0]),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-         evas_3d_mesh_frame_material_set(0, material_box));
-
+         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
+                                                 3 * sizeof(float),
+                                                 &cube_vertices[ 0]),
+         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
+                                          48, &cube_indices[0]));
    free(cube_vertices);
    free(cube_indices);
 
@@ -264,7 +261,13 @@ main(void)
    eo_do(material_box, evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE));
 
     mesh_box = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _mesh_aabb(&mesh_box, mesh_box_node);
+    eo_do(mesh_box,
+          evas_3d_mesh_vertex_count_set(24),
+          evas_3d_mesh_frame_add(0),
+          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
+          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+          evas_3d_mesh_frame_material_set(0, material_box));
+    _mesh_aabb(&mesh_box);
 
    eo_do(root_node,
          evas_3d_node_member_add(mesh_box_node));
