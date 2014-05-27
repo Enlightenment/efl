@@ -147,6 +147,13 @@ if test "x$want_svg" = "xyes" ; then
 else
    have_svg=no
 fi
+
+want_gst1="yes"
+AC_ARG_ENABLE([gstreamer1],
+   [AC_HELP_STRING([--disable-gstreamer1], [disable gstreamer1 support @<:@default==enabled@:>@])],
+   [want_gst1=$enableval],
+   [want_gst1="yes"])
+
 GST_REQS=1.0
 GSTPLUG_REQS=1.0
 GST_MAJORMINOR=1.0
@@ -157,29 +164,28 @@ AC_ARG_ENABLE([gstreamer],
    [want_gstreamer="yes"])
 
 if test "x$want_gstreamer" = "xyes" ; then
-   PKG_CHECK_MODULES([GSTREAMER],
-      [gstreamer-$GST_MAJORMINOR >= $GST_REQS
-       gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS
-      ],
-      [have_gst="yes"],
-      [have_gst="no"])
-   if test "x$have_gst" = "xno" ; then
-      GST_REQS=0.10.13
-      GSTPLUG_REQS=0.10.13
-      GST_MAJORMINOR=0.10
+   have_gst="no";
+   if test "x$want_gst1" = "xyes" ; then
       PKG_CHECK_MODULES([GSTREAMER],
-         [gstreamer-$GST_MAJORMINOR >= $GST_REQS
-          gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS
+         [gstreamer-1.0 >= 1.0
+          gstreamer-plugins-base-1.0 >= 1.0
          ],
-         [have_gst="yes"
-         AC_DEFINE_UNQUOTED([USE_OLD_GST], [1], [using older gstreamer])
+         [have_gst="yes"; have_gst1="yes";],
+         [have_gst="no"; have_gst1="no";])
+   fi
+   if test "x$have_gst" = "xno" ; then
+      PKG_CHECK_MODULES([GSTREAMER],
+         [gstreamer-0.10 >= 0.10.13
+          gstreamer-plugins-base-0.10 >= 0.10.13
          ],
-         [have_gst="no"])
+         [have_gst="yes"; have_gst1="no";],
+         [have_gst="no"; have_gst1="no";])
    fi
 else
    have_gst=no
 fi
 AM_CONDITIONAL([HAVE_GST], [test "x${have_gst}" = "xyes"])
+AM_CONDITIONAL([HAVE_GST1], [test "x${have_gst1}" = "xyes"])
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS],  [test "x${have_ps}" = "xyes"])
 AM_CONDITIONAL([HAVE_RAW], [test "x${have_raw}" = "xyes"])

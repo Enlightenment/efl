@@ -15,10 +15,22 @@ AM_CPPFLAGS = \
 bin_PROGRAMS = evas_image_loader.gst
 bindir = $(libdir)/evas/utils
 
+if HAVE_GST1
+
 evas_image_loader_gst_SOURCES = \
 main.c \
 $(top_srcdir)/src/bin/common/shmfile.c \
 $(top_srcdir)/src/bin/common/timeout.c
+
+else
+
+evas_image_loader_gst_SOURCES = \
+main_0_10.c \
+$(top_srcdir)/src/bin/common/shmfile.c \
+$(top_srcdir)/src/bin/common/timeout.c
+
+endif
+
 evas_image_loader_gst_CFLAGS =
 evas_image_loader_gst_LDADD = @GSTREAMER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_gst_LDFLAGS =
