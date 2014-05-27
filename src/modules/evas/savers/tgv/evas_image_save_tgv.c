@@ -13,6 +13,13 @@
 #include "lz4hc.h"
 #include "rg_etc1.h"
 
+// FIXME: Remove DEBUG
+#define DEBUG
+#if defined(DEBUG) && defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_MONOTONIC_CLOCK)
+# include <time.h>
+# define DEBUG_STATS
+#endif
+
 static int
 _block_size_get(int size)
 {
@@ -156,6 +163,12 @@ evas_image_save_file_tgv(RGBA_Image *im,
    int block_count, image_stride, image_height, etc_block_size;
    Evas_Colorspace cspace;
    Eina_Bool alpha;
+
+#ifdef DEBUG_STATS
+   struct timespec ts1, ts2;
+   long long tsdiff, mse = 0, mse_div = 0;
+   clock_gettime(CLOCK_MONOTONIC, &ts1);
+#endif
 
    /* FIXME: How to tell the encoder to encode as ETC1 or ETC2?
     * The save API is weak. For now, assume ETC2 iif there's alpha.
@@ -341,6 +354,27 @@ evas_image_save_file_tgv(RGBA_Image *im,
                           default: return 0;
                          }
 
+#ifdef DEBUG_STATS
+                       {
+                          // Decode to compute PSNR, this is slow.
+                          uint32_t done[16];
+                          uint8_t *orig = (uint8_t *) todo;
+                          uint8_t *enc = (uint8_t *) done;
+
+                          if (alpha)
+                            rg_etc2_rgba8_decode_block(offset, done);
+                          else
+                            rg_etc2_rgb8_decode_block(offset, done);
+
+                          for (int k = 0; k < 64; k++)
+                            {
+                               const int err = (orig[k] - enc[k]);
+                               mse += err * err;
+                               mse_div++;
+                            }
+                       }
+#endif
+
                        offset += etc_block_size;
                     }
                }
@@ -375,6 +409,19 @@ evas_image_save_file_tgv(RGBA_Image *im,
           }
      }
    fclose(f);
+
+#ifdef DEBUG_STATS
+   if (mse_div && mse)
+     {
+        // TODO: Add DSSIM too
+        double dmse = (double) mse / (double) mse_div;
+        double psnr = 20 * log10(255.0) - 10 * log10(dmse);
+        clock_gettime(CLOCK_MONOTONIC, &ts2);
+        tsdiff = ((ts2.tv_sec - ts1.tv_sec) * 1000LL) + ((ts2.tv_nsec - ts1.tv_nsec) / 1000000LL);
+        INF("ETC%d encoding stats: %dx%d, Time: %lldms, PSNR: %.02fdB",
+            alpha ? 2 : 1, image_stride, image_height, tsdiff, psnr);
+     }
+#endif
 
    return 1;
 
