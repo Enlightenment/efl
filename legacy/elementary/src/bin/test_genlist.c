@@ -3468,6 +3468,278 @@ test_genlist_multi_select(void *data EINA_UNUSED,
    evas_object_show(win);
 }
 
+/* test genlist item search by text */
+
+typedef struct _gl20_Event_Data gl20_Event_Data;
+struct _gl20_Event_Data
+{
+   Evas_Object *gl_obj;
+   Evas_Object *tg_obj;
+   Evas_Object *en_obj;
+   Elm_Object_Item *last_item_found;
+};
+
+static const char *_gl20_items_text[] = {
+         "Albany",          "Annapolis",
+         "Atlanta",         "Augusta",
+         "Austin",          "Baton Rouge",
+         "Bismarck",        "Boise",
+         "Boston",          "Carson City",
+         "Charleston",      "Cheyenne",
+         "Columbia",        "Columbus",
+         "Concord",         "Denver",
+         "Des Moines",      "Dover",
+         "Frankfort",       "Harrisburg",
+         "Hartford",        "Helena",
+         "Honolulu",        "Indianapolis",
+         "Jackson",         "Jefferson City",
+         "Juneau",          "Lansing",
+         "Lincoln",         "Little Rock",
+         "Madison",         "Montgomery",
+         "Montpelier",      "Nashville",
+         "Oklahoma City",   "Olympia",
+         "Phoenix",         "Pierre",
+         "Providence",      "Raleigh",
+         "Richmond",        "Sacramento",
+         "Saint Paul",      "Salem",
+         "Salt Lake City",  "Santa Fe",
+         "Springfield",     "Tallahassee",
+         "Topeka",          "Trenton" };
+
+static char *
+_gl20_search_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                      const char *part EINA_UNUSED)
+{
+   char buf[32];
+   int item_index = (int)(uintptr_t)data;
+
+   if (item_index < 50)
+     {
+        snprintf(buf, sizeof(buf), "%s", _gl20_items_text[item_index]);
+        return strdup(buf);
+     }
+   else if (item_index < 100)
+     {
+        snprintf(buf, sizeof(buf), "%X", (item_index - 50));
+        return strdup(buf);
+     }
+   else if (item_index == 100)
+     return strdup("Tree Item");
+
+   return NULL;
+}
+
+static char *
+_gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+               const char *part EINA_UNUSED)
+{
+   char buf[64];
+   snprintf(buf, sizeof(buf), "(this text is not uset for search)     %s",
+      _gl20_search_text_get(data, NULL, NULL));
+   return strdup(buf);
+}
+
+static void
+_gl20_searsh_item(gl20_Event_Data *event_data, Elm_Object_Item * it)
+{
+   const char *str = elm_entry_entry_get(event_data->en_obj);
+   if (!str || !strlen(str)) return;
+
+   int flag = 0;
+   if (!elm_check_state_get(event_data->tg_obj))
+     flag = FNM_CASEFOLD;
+
+   printf("Looking for \"%s\". ", str);
+   event_data->last_item_found = elm_genlist_search_by_text_item_get(event_data->gl_obj,
+                                    it, _gl20_search_text_get, NULL, str, flag);
+
+   if (event_data->last_item_found)
+     {
+        printf("Found.\n");
+        elm_genlist_item_selected_set(event_data->last_item_found, EINA_TRUE);
+        elm_genlist_item_bring_in(event_data->last_item_found,
+           ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+        elm_object_focus_set(event_data->en_obj, EINA_TRUE);
+     }
+   else
+     printf("Not Found.\n");
+}
+
+static void
+_gl20_search_settings_changed_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                 void *einfo EINA_UNUSED)
+{
+   _gl20_searsh_item(data, NULL);
+}
+
+static Elm_Genlist_Item_Class *
+_gl20_item_class_create(const char *item_style)
+{
+   Elm_Genlist_Item_Class * itc = elm_genlist_item_class_new();
+   itc->item_style = item_style;
+   itc->func.text_get = _gl20_text_get;
+   itc->func.content_get  = gl_content_get;
+   itc->func.state_get = gl_state_get;
+   itc->func.del = NULL; 
+   return itc;
+}
+
+static void
+_gl20_expand_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED,
+                void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   Evas_Object *gl = elm_object_item_widget_get(glit);
+   Elm_Genlist_Item_Class *itc = NULL;
+   int i = 0;
+
+   itc = _gl20_item_class_create("default");
+
+   for (i = 50; i < 100; i++)
+     {
+        elm_genlist_item_append(gl, itc,
+           (void *)(uintptr_t) i/* item data */,
+           glit/* parent */,
+           ELM_GENLIST_ITEM_NONE, NULL/* func */,
+           NULL/* func data */);
+     }
+   elm_genlist_item_class_free(itc);
+}
+
+static void _gl20_on_keydown(void *data, Evas *evas EINA_UNUSED,
+                             Evas_Object *o EINA_UNUSED, void *einfo)
+{
+   Evas_Event_Key_Down *ev = einfo;
+   gl20_Event_Data * event_data = (gl20_Event_Data *)data;
+
+   if (!strcmp(ev->key, "Return"))
+     {
+        printf("Looking for next item\n");
+        _gl20_searsh_item(data, event_data->last_item_found);
+     }
+}
+
+void
+test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *gl;
+   Evas_Object *fr, *lb_frame;            // info frame
+   Evas_Object *bx_entry, *lb_entry, *en; // search line
+   Evas_Object *tg;                       // "case sensitive" toggle
+   Elm_Genlist_Item_Class *itc = NULL;
+   gl20_Event_Data* event_data = NULL;
+   int i = 0;
+
+   win = elm_win_util_standard_add("genlist-item-search-by-text",
+            "Genlist Item Search By Text");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(bx);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Information");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lb_frame = elm_label_add(fr);
+   elm_object_text_set(lb_frame,
+      "<align=left>This is an example of "
+      "elm_genlist_search_by_text_item_get() usage.<br>"
+      "Enter search string to the entry and press Enter to "
+      "show next search result.<br>");
+   elm_object_content_set(fr, lb_frame);
+   evas_object_show(lb_frame);
+
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
+   elm_object_text_set(tg, " Case Sensitive Search");
+   elm_check_state_set(tg, EINA_TRUE);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+
+   bx_entry = elm_box_add(win);
+   elm_box_horizontal_set(bx_entry, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx_entry, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx_entry, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, bx_entry);
+   evas_object_show(bx_entry);
+
+   lb_entry = elm_label_add(win);
+   elm_object_text_set(lb_entry, " Search:");
+   evas_object_size_hint_weight_set(lb_entry, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lb_entry, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_entry, lb_entry);
+   evas_object_show(lb_entry);
+
+   en = elm_entry_add(win);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_object_part_text_set(en, "guide", "Type item's name here to search.");
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx_entry, en);
+   evas_object_show(en);
+   elm_object_focus_set(en, EINA_TRUE);
+
+   gl = elm_genlist_add(bx);
+
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   event_data = calloc(1, sizeof(gl20_Event_Data));
+   event_data->tg_obj = tg;
+   event_data->en_obj = en;
+   event_data->gl_obj = gl;
+   event_data->last_item_found = NULL;
+
+   evas_object_event_callback_add(en, EVAS_CALLBACK_KEY_DOWN,
+      _gl20_on_keydown, (void*)event_data);
+   evas_object_event_callback_add(gl, EVAS_CALLBACK_FREE,
+      _cleanup_cb, (void*)event_data);
+   evas_object_smart_callback_add(en, "changed,user",
+      _gl20_search_settings_changed_cb, (void*)event_data);
+   evas_object_smart_callback_add(tg, "changed",
+      _gl20_search_settings_changed_cb, (void*)event_data);
+   evas_object_smart_callback_add(gl, "expand,request", gl4_exp_req, gl);
+   evas_object_smart_callback_add(gl, "contract,request", gl4_con_req, gl);
+   evas_object_smart_callback_add(gl, "contracted", gl4_con, gl);
+   evas_object_smart_callback_add(gl, "expanded", _gl20_expand_cb, gl);
+
+   itc = _gl20_item_class_create("tree_effect");
+
+   elm_genlist_item_append(gl, itc,
+      (void *)100/* item data */,
+      NULL/* parent */,
+      ELM_GENLIST_ITEM_TREE,
+      NULL/* func */,
+      NULL/* func data */);
+
+   itc->item_style = "default";
+
+   for (i = 0; i < 50; i++)
+     {
+        elm_genlist_item_append(gl, itc,
+           (void *)(uintptr_t)i/* item data */,
+           NULL/* parent */,
+           ELM_GENLIST_ITEM_NONE,
+           NULL/* func */,
+           NULL/* func data */);
+     }
+
+   elm_genlist_item_class_free(itc);
+
+   evas_object_resize(win, 320, 500);
+   evas_object_show(win);
+}
+
 /* test genlist deletion */
 
 static void _gl_del_sel(void *data, Evas_Object *obj, void *event_info);
