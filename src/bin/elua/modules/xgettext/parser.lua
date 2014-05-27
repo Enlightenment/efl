@@ -6,7 +6,7 @@ local syntax_error = lexer.syntax_error
 
 local yield = coroutine.yield
 
-local saved_comments = {}
+local saved_comment
 
 local check_match = function(ls, a, b, line)
     if ls.token.name ~= a then
@@ -99,17 +99,35 @@ local parse = function(ls, keywords)
     local tok = ls.token
     while tok.name do
         if tok.name == "<comment>" then
-            saved_comments[#saved_comments + 1] = tok.value
+            saved_comment = tok.value
             ls:get()
         elseif tok.name == "<name>" and keywords[tok.value] then
             local kw = keywords[tok.value]
             ls:get()
-
-            local cmt = saved_comments[#saved_comments]
-            saved_comments = {}
+            local  args = parse_call(ls)
+            local n1, n2, cx, an = kw[1], kw[2], kw.context, kw.argnum
+            local n1arg, n2arg, cxarg = args[n1], args[n2], args[cx]
+            local n1argt, n2argt, cxargt = n1arg and (n1arg[2] ~= "<name>"),
+                                           n2arg and (n2arg[2] ~= "<name>"),
+                                           cxarg and (cxarg[2] ~= "<name>")
+            if not args           then goto skip end
+            if an and #args ~= an then goto skip end
+            if        #args  < n1 then goto skip end
+            if n2 and #args  < n2 then goto skip end
+            if cx and #args  < cx then goto skip end
+            if        not n1argt  then goto skip end
+            if n2 and not n2argt  then goto skip end
+            if cx and not cxargt  then goto skip end
+            local sc = saved_comment
+            saved_comment = nil
+            yield {
+                n1arg[1], n2 and n2arg[1], context = cx and cxarg[1],
+                xcomment = kw.xcomment, comment = sc
+            }
         else
             ls:get()
         end
+        ::skip::
     end
 end
 
