@@ -10320,10 +10320,9 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
 loop_advance:
         *w += it->adv;
 
+        /* Only conditional if we have bidi support, otherwise, just set it. */
 #ifdef BIDI_SUPPORT
         if (!last_it || (it->visual_pos > last_it->visual_pos))
-#else
-        if (!last_it)
 #endif
           {
              last_it = it;
