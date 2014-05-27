@@ -37,6 +37,12 @@ void rg_etc1_pack_block_init();
 // pack_etc1_block() does not currently support "perceptual" colorspace metrics - it primarily optimizes for RGB RMSE.
 unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_etc1_pack_params *pack_params);
 
+// Pack a 4x4 block of 32bpp BGRA pixels to a 16-byte RGBA8_ETC2_EAC block (supports alpha).
+unsigned int etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra, rg_etc1_pack_params *params);
+
+// Pack a 4x4 block of 32bpp BGRA pixels to a 8-byte RGB8_ETC2 block (opaque).
+unsigned int etc2_rgb8_block_pack(unsigned char *etc2, const unsigned int *bgra, rg_etc1_pack_params *params);
+
 // ETC2 support: RGB8_ETC2
 void rg_etc2_rgb8_decode_block(const unsigned char *etc_block, unsigned int *bgra);
 
