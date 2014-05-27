@@ -310,7 +310,7 @@ _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Fun
    if (rettype && (!ret_is_void))
      {
         char tmp_ret_str[0xFF];
-        sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype?rettype:"void");
+        sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype);
              const char *dflt_ret_val =
                 eolian_function_return_dflt_value_get(funcid, ftype);
              Eina_Bool had_star = !!strchr(rettype, '*');

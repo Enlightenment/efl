@@ -62,9 +62,8 @@ _function_exists(const char* func_name, Eina_Strbuf *buffer)
                          return EINA_TRUE;
                      }
                 }
-           default:
-              ptr++; /* so strstr doesn't fall again on func_name */
           }
+        ptr++; /* so strstr doesn't fall again on func_name */
      }
    return EINA_FALSE;
 }
@@ -87,9 +86,8 @@ _type_exists(const char* type_name, Eina_Strbuf *buffer)
                          return EINA_TRUE;
                      }
                 }
-           default:
-              ptr++; /* so strstr doesn't fall again on type_name */
           }
+        ptr++; /* so strstr doesn't fall again on type_name */
      }
    return EINA_FALSE;
 }

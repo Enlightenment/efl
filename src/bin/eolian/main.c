@@ -131,17 +131,28 @@ _generate_impl_c_file(char *filename, const Eolian_Class class)
      {
         fseek(fd, 0, SEEK_END);
         file_size = ftell(fd);
-        fseek(fd, 0, SEEK_SET);
-        char *content = malloc(file_size + 1);
-        fread(content, file_size, 1, fd);
-        content[file_size] = '\0';
-        fclose(fd);
-
-        if (!content)
+        if (file_size <= 0)
           {
-             ERR("Couldnt read file %s", filename);
+             ERR("Couldnt determine length for file %s", filename);
              goto end;
           }
+        fseek(fd, 0, SEEK_SET);
+        char *content = malloc(file_size + 1);
+        if (!content)
+          {
+             ERR("Couldnt allocate memory for file %s", filename);
+             goto end;
+          }
+        if (0 == fread(content, file_size, 1, fd))
+          {
+             ERR("Couldnt read the %ld bytes of file %s", file_size, filename);
+             free(content);
+             goto end;
+          }
+
+        content[file_size] = '\0';
+        fclose(fd);
+        fd = NULL;
 
         buffer = eina_strbuf_manage_new(content);
      }
@@ -164,10 +175,9 @@ _generate_impl_c_file(char *filename, const Eolian_Class class)
    const char *text = eina_strbuf_string_get(buffer);
    if (text) fputs(text, fd);
 
-   fclose(fd);
-
    ret = EINA_TRUE;
 end:
+   if (fd) fclose(fd);
    eina_strbuf_free(buffer);
    return ret;
 }

@@ -588,6 +588,7 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
    if (!str_classtype)
      {
         ERR ("Unknown class type for class %s !", classname);
+        free(classname);
         return EINA_FALSE;
      }
 

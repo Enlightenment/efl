@@ -28,7 +28,7 @@ _class_func_names_fill(const Eolian_Class class, const char *over_classname, con
      {
         current_class = class;
         if (!class)
-           strcpy(current_classname, over_classname);
+           strncpy(current_classname, over_classname, sizeof(current_classname) - 1);
         else
            _class_name_concatenate(class, current_classname);
 

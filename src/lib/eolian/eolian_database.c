@@ -223,7 +223,7 @@ eolian_type_find_by_alias(const char *alias)
    Eina_Stringshare *shr = eina_stringshare_add(alias);
    Type_Desc *cl = eina_hash_find(_types, shr);
    eina_stringshare_del(shr);
-   return cl->type;
+   return cl?cl->type:NULL;
 }
 
 Eolian_Class
