@@ -569,8 +569,8 @@ _ecore_event_call(void)
                          }
                     }
 
-                  if (event_handler_current) /* may have changed in recursive main loops */
-                    event_handler_current = (Ecore_Event_Handler *)EINA_INLIST_GET(event_handler_current)->next;
+                  /* may have changed in recursive main loops */
+                  event_handler_current = (Ecore_Event_Handler *)EINA_INLIST_GET(event_handler_current)->next;
                }
           }
         while (event_handlers_add_list)
