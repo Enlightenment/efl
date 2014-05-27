@@ -20,12 +20,6 @@ end, function()
     dom = nil
 end)
 
-local strip_name = function(self, cn, cp)
-    if not cp or #cp == 0 then return cn end
-    local  nm = cn:match("^" .. cp .. "_(.*)$")
-    return nm or cp
-end
-
 -- char not included - manual disambiguation needed
 local isnum = {
     ["short"   ] = true, ["int"      ] = true, ["long"       ] = true,
@@ -434,8 +428,7 @@ local Mixin = Node:clone {
         s:write("]]\n\n")
 
         s:write(("M.%s = eo.class_register(\"%s\", {\n"):format(
-            strip_name(self, self.klass:name_get(),
-                self.parent_node.cprefix), self.klass:name_get()))
+            self.klass:name_get(), self.klass:name_get()))
 
         self:gen_children(s)
 
@@ -483,13 +476,10 @@ local Class = Node:clone {
         self:gen_ffi(s)
         s:write("]]\n\n")
 
-        local name_stripped = strip_name(self, self.klass:name_get(),
-            self.parent_node.cprefix)
-
         s:write(([[
 local Parent = eo.class_get("%s")
 M.%s = eo.class_register("%s", Parent:clone {
-]]):format(self.parent, name_stripped, self.klass:name_get()))
+]]):format(self.parent, self.klass:name_get(), self.klass:name_get()))
 
         self:gen_children(s)
 
@@ -497,7 +487,7 @@ M.%s = eo.class_register("%s", Parent:clone {
 
         for i, v in ipairs(self.mixins) do
             s:write(("\nM.%s:mixin(eo.class_get(\"%s\"))\n")
-                :format(name_stripped, v))
+                :format(self.klass:name_get(), v))
         end
     end,
 
@@ -506,12 +496,11 @@ M.%s = eo.class_register("%s", Parent:clone {
 }
 
 local File = Node:clone {
-    __ctor = function(self, fname, klass, modname, libname, cprefix, ch)
+    __ctor = function(self, fname, klass, modname, libname, ch)
         self.fname    = fname:match(".+/(.+)") or fname
         self.klass    = klass
         self.modname  = (modname and #modname > 0) and modname or nil
         self.libname  = libname
-        self.cprefix  = cprefix
         self.children = ch
     end,
 
@@ -644,7 +633,7 @@ M.include_dir = function(dir)
     end
 end
 
-M.generate = function(fname, modname, libname, cprefix, fstream)
+M.generate = function(fname, modname, libname, fstream)
     if not eolian.eo_file_parse(fname) then
         error("Failed parsing file: " .. fname)
     end
@@ -659,7 +648,7 @@ M.generate = function(fname, modname, libname, cprefix, fstream)
     else
         error(klass:full_name_get() .. ": unknown type")
     end
-    File(fname, klass, modname, libname, cprefix, { cl })
+    File(fname, klass, modname, libname, { cl })
         :generate(fstream or io.stdout)
 end
 

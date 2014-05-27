@@ -18,7 +18,7 @@ local gen_file = function(opts, i, fname)
     else
         printv("  Output file: printing to stdout...")
     end
-    lualian.generate(fname, opts["M"], opts["L"], opts["P"] or "", fstream)
+    lualian.generate(fname, opts["M"], opts["L"], fstream)
 end
 
 getopt.parse {
@@ -39,9 +39,6 @@ getopt.parse {
         },
         { "L", "library", true, help = "Specify a C library name." },
         { "M", "module",  true, help = "Specify a module name."    },
-        { "P", "prefix",  true, help = "Specify a class name prefix "
-            .. "to strip out for public interfaces."
-        },
         { "o", "output", true, help = "Specify output file name(s), by "
             .. "default goes to stdout.",
             list = {}
