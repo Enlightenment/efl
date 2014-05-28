@@ -308,6 +308,55 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
  * eina_tile_grid_slicer_next() untill it returns #EINA_FALSE.
  */
 EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, int h, int tile_w, int tile_h);
+
+/**
+ * @brief Gets the union of two tilers.
+ *
+ * @param   dst The first tiler, will store the result.
+ * @param   src The second tiler.
+ * @return  #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This fuction get the union of tilers @p dst and @p src.
+ * The result is stored in @p dst. It returns #EINA_TRUE if it succeeds.
+ */
+EAPI Eina_Bool          eina_tiler_union(Eina_Tiler *dst, Eina_Tiler *src);
+
+/**
+ * @brief Subtracts two tilers.
+ *
+ * @param   dst The first tiler, will store the result.
+ * @param   src The second tiler.
+ * @return  #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This fuction subtracts two tilers @p dst and @p src.
+ * The result is stored in @p dst. It returns #EINA_TRUE if it succeeds.
+ */
+EAPI Eina_Bool          eina_tiler_subtract(Eina_Tiler *dst, Eina_Tiler *src);
+
+/**
+ * @brief Gets the intersection of two tilers.
+ *
+ * @param   t1 The first tile.
+ * @param   t2 The second tiler.
+ * @return  A pointer of intersection result. @c NULL on failure.
+ *
+ * This fuction gest intersection of two tilers @p t1 and @p t2.
+ * It returns a pointer of result if it succeeds., otherwise returns NULL.
+ */
+EAPI Eina_Tiler        *eina_tiler_intersection(Eina_Tiler *t1, Eina_Tiler *t2);
+
+/**
+ * @brief Gets whether two tilers are equal in rects or not.
+ *
+ * @param   t1 The first tiler.
+ * @param   t2 The second tiler.
+ * @return  #EINA_TRUE is equal, #EINA_FALSE is unequal.
+ *
+ * This fuction gets result of comparison for @p t1 and @p t2.
+ * It returns #EINA_TRUE if tilers are equal.
+ */
+EAPI Eina_Bool           eina_tiler_equal(Eina_Tiler *t1, Eina_Tiler *t2);
+
 /**
  * @brief Iterates over the tiles set by eina_tile_grid_slicer_setup().
  *

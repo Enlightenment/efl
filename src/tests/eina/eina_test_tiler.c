@@ -220,10 +220,117 @@ START_TEST(eina_test_tiler_stable)
 }
 END_TEST
 
+START_TEST(eina_test_tiler_calculation)
+{
+   Eina_Tiler *t1, *t2, *t;
+   Eina_Iterator *itr;
+   Eina_Rectangle r1, r2, *rp;
+   int i = 0;
+
+   eina_init();
+
+   t1 = eina_tiler_new(500, 500);
+   fail_if(!t1);
+
+   t2 = eina_tiler_new(500, 500);
+   fail_if(!t2);
+
+   t = eina_tiler_new(500, 500);
+   fail_if(!t);
+
+   eina_tiler_tile_size_set(t1, 1, 1);
+   eina_tiler_tile_size_set(t2, 1, 1);
+   eina_tiler_tile_size_set(t, 1, 1);
+
+   EINA_RECTANGLE_SET(&r1, 0, 0, 500, 500);
+   eina_tiler_rect_add(t1, &r1);
+
+   EINA_RECTANGLE_SET(&r2, 100, 100, 300, 300);
+   eina_tiler_rect_add(t2, &r2);
+
+   fail_if(!eina_tiler_union(t1, t2));
+
+   itr = eina_tiler_iterator_new(t1);
+   EINA_ITERATOR_FOREACH(itr, rp)
+     {
+        fail_if(rp->w != 500);
+        fail_if(rp->h != 500);
+        fail_if(rp->x != 0);
+        fail_if(rp->y != 0);
+        ++i;
+     }
+
+   eina_iterator_free(itr);
+   eina_tiler_clear(t1);
+
+   fail_if(i != 1);
+
+   eina_tiler_rect_add(t1, &r1);
+
+   fail_if(!eina_tiler_subtract(t1, t2));
+
+   i = 0;
+   itr = eina_tiler_iterator_new(t1);
+   EINA_ITERATOR_FOREACH(itr, rp)
+     {
+        fail_if(!eina_rectangles_intersect(&r1, rp));
+        fail_if(eina_rectangles_intersect(&r2, rp));
+
+        fail_if(rp->w <= 0);
+        fail_if(rp->h <= 0);
+        fail_if(rp->x < 0 || rp->x + rp->w > 500);
+        fail_if(rp->y < 0 || rp->y + rp->h > 500);
+        ++i;
+     }
+
+   eina_iterator_free(itr);
+   eina_tiler_clear(t1);
+
+   fail_if(i != 4);
+
+
+   eina_tiler_rect_add(t1, &r1);
+
+   t = eina_tiler_intersection(t1, t2);
+   fail_if(!t);
+
+   i = 0;
+   itr = eina_tiler_iterator_new(t);
+   EINA_ITERATOR_FOREACH(itr, rp)
+     {
+        fail_if(!eina_rectangles_intersect(&r1, rp));
+        fail_if(!eina_rectangles_intersect(&r2, rp));
+
+        fail_if(rp->w <= 0);
+        fail_if(rp->h <= 0);
+        fail_if(rp->x < 0 || rp->x + rp->w > 500);
+        fail_if(rp->y < 0 || rp->y + rp->h > 500);
+        ++i;
+     }
+
+   eina_iterator_free(itr);
+   eina_tiler_clear(t);
+
+   fail_if(i != 1);
+
+   eina_tiler_rect_add(t, &r1);
+
+   fail_if(!eina_tiler_equal(t, t1));
+   fail_if(!eina_tiler_equal(t1, t));
+
+   eina_tiler_free(t);
+   eina_tiler_free(t1);
+   eina_tiler_free(t2);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_tiler(TCase *tc)
 {
    tcase_add_test(tc, eina_test_tile_grid_slicer_iterator);
    tcase_add_test(tc, eina_test_tiler_all);
    tcase_add_test(tc, eina_test_tiler_stable);
+   tcase_add_test(tc, eina_test_tiler_calculation);
 }
