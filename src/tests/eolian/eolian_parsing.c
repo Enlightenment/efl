@@ -202,7 +202,7 @@ START_TEST(eolian_ctor_dtor)
    fail_if(strcmp(impl_func, "destructor"));
 
    /* Custom ctors/dtors */
-   fail_if(!eolian_class_function_find_by_name(base, "constructor", EOLIAN_METHOD));
+   fail_if(!eolian_class_function_find_by_name(base, "constructor", EOLIAN_CTOR));
    fail_if(!eolian_class_function_find_by_name(base, "destructor", EOLIAN_METHOD));
    fail_if(!eolian_class_function_find_by_name(class, "custom_constructor_1", EOLIAN_CTOR));
    fail_if(!eolian_class_function_find_by_name(class, "custom_constructor_2", EOLIAN_CTOR));
