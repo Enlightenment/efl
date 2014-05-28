@@ -687,7 +687,7 @@ _evas_3d_scene_exist(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y, 
 EOLIAN static Eina_List *
 _evas_3d_scene_pick_member_list_get(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y)
 {
-   const Eina_List *list = NULL;
+   Eina_List *list = NULL;
    Eina_List *picked_nodes = NULL, *l = NULL;
    void *node;
    Eina_Bool pick = EINA_FALSE;
