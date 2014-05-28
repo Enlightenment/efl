@@ -146,7 +146,7 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
    A_VAL(&(dc->col.col)) = (DATA8)a;
 #ifdef HAVE_PIXMAN
 #if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
-   if (dc && dc->col.pixman_color_image)
+   if (dc->col.pixman_color_image)
      pixman_image_unref(dc->col.pixman_color_image);
    
    pixman_color_t pixman_color;
