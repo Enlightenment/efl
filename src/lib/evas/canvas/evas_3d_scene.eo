@@ -89,6 +89,34 @@ class Evas_3D_Scene (Evas_3D_Object, Evas_Common_Interface)
          }
       }
 
+      exist {
+         /*
+           Search given node in the given position.
+
+           @ingroup Evas_3D_Scene
+         */
+         const;
+         return Evas_3D_Node *;
+         params {
+            @in Evas_Real x;         /*@ X coordinate of the picking position. */
+            @in Evas_Real y;         /*@ Y coordinate of the picking position. */
+            @in Evas_3D_Node *node;  /*@ Node for search. */
+         }
+      }
+
+      pick_member_list_get {
+         /*
+           Get list of the all root members from scene in the given position.
+
+           @ingroup Evas_3D_Scene
+         */
+         const;
+         return Eina_List *;
+         params {
+            @in Evas_Real x;         /*@ X coordinate of the picking position. */
+            @in Evas_Real y;         /*@ Y coordinate of the picking position. */
+         }
+      }
    }
    properties {
 

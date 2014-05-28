@@ -225,7 +225,12 @@ _position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffer *pos0, const Evas_3D_V
 {
    if (pos1->data == NULL)
      {
-        float *ptr = (float *)((char *)pos0->data + pos0->stride * index);
+        float *ptr;
+
+        if (pos0->stride != 0.0)
+          ptr = (float *)((char *)pos0->data + pos0->stride * index);
+        else
+          ptr = (float *)((char *)pos0->data + (3 * sizeof(float)) * index);
 
         out->x = ptr[0];
         out->y = ptr[1];
@@ -235,8 +240,15 @@ _position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffer *pos0, const Evas_3D_V
      {
         float *ptr0, *ptr1;
 
-        ptr0 = (float *)((char *)pos0->data + pos0->stride * index);
-        ptr1 = (float *)((char *)pos1->data + pos1->stride * index);
+        if (pos0->stride != 0.0)
+          ptr0 = (float *)((char *)pos0->data + pos0->stride * index);
+        else
+          ptr0 = (float *)((char *)pos0->data + (3 * sizeof(float)) * index);
+
+        if (pos1->stride != 0.0)
+          ptr1 = (float *)((char *)pos1->data + pos1->stride * index);
+        else
+          ptr1 = (float *)((char *)pos1->data + (3 * sizeof(float)) * index);
 
         out->x = ptr0[0] * weight + ptr1[0] * (1.0 - weight);
         out->y = ptr0[1] * weight + ptr1[1] * (1.0 - weight);
@@ -498,6 +510,64 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                }
           }
      }
+   else if (pdmesh->index_count == 0.0 && pdmesh->vertex_count != 0)
+     {
+        if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES)
+          {
+             for (i = 0; i < pdmesh->vertex_count; i += 3)
+               {
+                  _position_get(&tri.p0, &pos0, &pos1, pos_weight, i);
+                  _position_get(&tri.p1, &pos0, &pos1, pos_weight, i + 1);
+                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
+
+                  if (_pick_data_triangle_add(data, ray, &tri))
+                    {
+                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
+                       data->mesh = mesh;
+                       data->node = node;
+                    }
+               }
+          }
+        else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
+          {
+             _position_get(&tri.p1, &pos0, &pos1, pos_weight, 0);
+             _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
+
+             for (i = 0; i < pdmesh->vertex_count - 2; i++)
+               {
+                  tri.p0 = tri.p1;
+                  tri.p1 = tri.p2;
+
+                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
+
+                  if (_pick_data_triangle_add(data, ray, &tri))
+                    {
+                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
+                       data->mesh = mesh;
+                       data->node = node;
+                    }
+               }
+          }
+        else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
+          {
+             _position_get(&tri.p0, &pos0, &pos1, pos_weight, 0);
+             _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
+
+             for (i = 1; i < pdmesh->vertex_count - 1; i++)
+               {
+                  tri.p1 = tri.p2;
+
+                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 1);
+
+                  if (_pick_data_triangle_add(data, ray, &tri))
+                    {
+                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, 0, i, i + 1);
+                       data->mesh = mesh;
+                       data->node = node;
+                    }
+               }
+          }
+     }
 }
 
 Eina_Bool
@@ -577,6 +647,67 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
    if (mesh)  *mesh  = data.mesh;
 
    return EINA_TRUE;
+}
+
+EOLIAN static Evas_3D_Node *
+_evas_3d_scene_exist(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y, Evas_3D_Node *node)
+{
+   Evas_3D_Pick_Data data;
+   Evas_3D_Node_Data *pd_camera_node;
+   Evas_3D_Camera_Data *pd_camera;
+
+   data.x      = ((x * 2.0) / (Evas_Real)pd->w) - 1.0;
+   data.y      = ((((Evas_Real)pd->h - y - 1.0) * 2.0) / ((Evas_Real)pd->h)) - 1.0;
+
+   data.picked = EINA_FALSE;
+   data.z      = 1.0;
+   data.node   = NULL;
+   data.mesh   = NULL;
+   data.s      = 0.0;
+   data.t      = 0.0;
+
+   /* Update the scene graph. */
+   eo_do(obj, evas_3d_object_update());
+   pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_3D_NODE_CLASS);
+   pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_3D_CAMERA_CLASS);
+   evas_mat4_multiply(&data.matrix_vp,
+                      &pd_camera->projection,
+                      &pd_camera_node->data.camera.matrix_world_to_eye);
+
+   evas_ray3_init(&data.ray_world, data.x, data.y, &data.matrix_vp);
+
+   /* Check pick for given node. */
+   _node_pick(node, &data);
+
+   if (!data.picked || data.node != node) node = NULL;
+
+   return node;
+}
+
+EOLIAN static Eina_List *
+_evas_3d_scene_pick_member_list_get(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y)
+{
+   const Eina_List *list = NULL;
+   Eina_List *picked_nodes = NULL, *l = NULL;
+   void *node;
+   Eina_Bool pick = EINA_FALSE;
+
+   /* Check pick for given scene. */
+   pick = eo_do(obj, evas_3d_scene_pick(x, y, NULL, NULL, NULL, NULL));
+
+   if (!pick)
+     return NULL;
+
+   /* Get all members from root node. */
+   list = eo_do(pd->root_node, evas_3d_node_member_list_get());
+
+   EINA_LIST_FOREACH(list, l, node)
+     {
+        if (eo_do(obj, evas_3d_scene_exist(x, y, node)))
+          picked_nodes = eina_list_append(picked_nodes, l);
+     }
+
+   return picked_nodes;
 }
 
 #include "canvas/evas_3d_scene.eo.c"
