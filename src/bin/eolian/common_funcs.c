@@ -20,6 +20,34 @@ _class_name_concatenate(const Eolian_Class class, char *buffer)
 }
 
 void
+_class_env_create(const Eolian_Class class, const char *over_classname, _eolian_class_vars *env)
+{
+   if (!env || !class) return;
+
+   const char *eo_prefix = NULL;
+   char *p;
+
+   if (!class)
+      strncpy(env->full_classname, over_classname, PATH_MAX - 1);
+   else
+      _class_name_concatenate(class, env->full_classname);
+
+   /* class/CLASS*/
+   p = strncpy(env->upper_classname, env->full_classname, PATH_MAX - 1);
+   eina_str_toupper(&p);
+   p = strncpy(env->lower_classname, env->full_classname, PATH_MAX - 1);
+   eina_str_tolower(&p);
+
+   /* eo_prefix */
+   if (class) eo_prefix = eolian_class_eo_prefix_get(class);
+   if (!eo_prefix) eo_prefix = env->full_classname;
+   p = strncpy(env->upper_eo_prefix, eo_prefix, PATH_MAX - 1);
+   eina_str_toupper(&p);
+   p = strncpy(env->lower_eo_prefix, eo_prefix, PATH_MAX - 1);
+   eina_str_tolower(&p);
+}
+
+void
 _class_func_names_fill(const Eolian_Class class, const char *over_classname, const char *funcname)
 {
    char *p;

@@ -33,6 +33,17 @@ extern int _eolian_gen_log_dom;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_eolian_gen_log_dom, __VA_ARGS__)
 
+typedef struct
+{
+   char full_classname[PATH_MAX];
+
+   char upper_eo_prefix[PATH_MAX];
+   char lower_eo_prefix[PATH_MAX];
+
+   char upper_classname[PATH_MAX];
+   char lower_classname[PATH_MAX];
+}_eolian_class_vars;
+
 void _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, const char *classname, const char *funcname, Eina_Bool reset);
 
 char *_nextline(char *str, unsigned int lines);
@@ -40,6 +51,8 @@ char *_nextline(char *str, unsigned int lines);
 char *_startline(char *str, char *pos);
 
 char *_source_desc_get(const char *str);
+
+void _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_class_vars *env);
 
 void _class_func_names_fill(const Eolian_Class class, const char *classname, const char *funcname);
 
@@ -49,10 +62,8 @@ char current_eo_prefix_upper[256];
 
 char current_classname[256];
 
-char capobjclass[0xFF];
-char lowobjclass[0xFF];
 char capclass[0xFF];
 char lowclass[0xFF];
-char normclass[0xFF];
+
 char capfunc[0xFF];
 #endif
