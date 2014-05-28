@@ -488,6 +488,12 @@ _bring_seoul(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 }
 
 static void
+_bring_zoom_suwon(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   elm_map_region_zoom_bring_in(data, 16, 126.977969, 37.566535);
+}
+
+static void
 _paused_set(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_map_paused_set(data, EINA_TRUE);
@@ -770,6 +776,7 @@ _submenu_move_add(void *data, Elm_Object_Item *parent)
    if ((!data) || (!parent)) return;
    elm_menu_item_add(menu, parent, NULL, "Show Urmatt", _show_urmatt, data);
    elm_menu_item_add(menu, parent, NULL, "Bring Seoul", _bring_seoul, data);
+   elm_menu_item_add(menu, parent, NULL, "Zoom & Bring Suwon", _bring_zoom_suwon, data);
 
 }
 

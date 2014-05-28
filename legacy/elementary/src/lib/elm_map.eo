@@ -632,6 +632,26 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable)
             @in double lat; /*@ Latitude to center at. */
          }
       }
+      region_zoom_bring_in {
+         /*@
+         Animatedly set the zoom level of the map and bring in given coordinates
+         to the center of the map.
+
+         This causes map to zoom into specific zoom level and also move to the
+         given @p lat and @p lon coordinates and show it (by scrolling) in the
+         center of the viewport concurrently.
+
+         @see elm_map_region_bring_in()
+         @see elm_map_zoom_set()
+
+         @ingroup Map */
+
+         params {
+            @in int zoom;   /*@ The zoom level to set. */
+            @in double lon; /*@ Longitude to center at. */
+            @in double lat; /*@ Latitude to center at. */
+         }
+      }
       track_remove {
          /*@
          Remove a track from the map

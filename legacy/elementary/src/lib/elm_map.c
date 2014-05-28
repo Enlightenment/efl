@@ -26,6 +26,8 @@
 #define DEFAULT_TILE_SIZE      256
 #define MARER_MAX_NUMBER       30
 #define OVERLAY_GROUPING_SCALE 2
+#define ZOOM_ANIM_CNT          75
+#define ZOOM_BRING_CNT         80
 
 #define CACHE_ROOT             "/elm_map"
 #define CACHE_TILE_ROOT        CACHE_ROOT "/%d/%d/%d"
@@ -1135,7 +1137,7 @@ _zoom_anim_cb(void *data)
 {
    ELM_MAP_DATA_GET(data, sd);
 
-   if (sd->ani.cnt <= 0)
+   if (sd->ani.zoom_cnt <= 0)
      {
         sd->zoom_animator = NULL;
         evas_object_smart_changed(sd->pan_obj);
@@ -1145,8 +1147,8 @@ _zoom_anim_cb(void *data)
      }
    else
      {
-        sd->ani.zoom += sd->ani.diff;
-        sd->ani.cnt--;
+        sd->ani.zoom += sd->ani.zoom_diff;
+        sd->ani.zoom_cnt--;
         _zoom_do(sd, sd->ani.zoom);
 
         return ECORE_CALLBACK_RENEW;
@@ -1160,11 +1162,81 @@ _zoom_with_animation(Elm_Map_Data *sd,
 {
    if (cnt == 0) return;
 
-   sd->ani.cnt = cnt;
+   sd->ani.zoom_cnt = cnt;
    sd->ani.zoom = sd->zoom;
-   sd->ani.diff = (double)(zoom - sd->zoom) / cnt;
+   sd->ani.zoom_diff = (double)(zoom - sd->zoom) / cnt;
    ecore_animator_del(sd->zoom_animator);
    sd->zoom_animator = ecore_animator_add(_zoom_anim_cb, sd->obj);
+}
+
+static Eina_Bool
+_zoom_bring_anim_cb(void *data)
+{
+   ELM_MAP_DATA_GET(data, sd);
+
+   if ((sd->ani.zoom_cnt <= 0) && (sd->ani.region_cnt <= 0))
+     {
+        sd->zoom_animator = NULL;
+
+        evas_object_smart_changed(sd->pan_obj);
+        _calc_job(sd);
+
+        return ECORE_CALLBACK_CANCEL;
+     }
+   else
+     {
+        Evas_Coord x, y, w, h;
+        if (sd->ani.zoom_cnt > 0)
+          {
+             sd->ani.zoom += sd->ani.zoom_diff;
+             _zoom_do(sd, sd->ani.zoom);
+             sd->ani.zoom_cnt--;
+          }
+        if (sd->ani.region_cnt > 0)
+          {
+             sd->ani.lon += sd->ani.lon_diff;
+             sd->ani.lat += sd->ani.lat_diff;
+
+             _region_to_coord_convert
+                (sd, sd->ani.lon, sd->ani.lat, sd->size.w, &x, &y);
+             _viewport_coord_get(sd, NULL, NULL, &w, &h);
+             x = x - (w / 2);
+             y = y - (h / 2);
+             eo_do(sd->obj, elm_interface_scrollable_content_region_show(x, y, w, h));
+             sd->ani.region_cnt--;
+          }
+
+        return ECORE_CALLBACK_RENEW;
+     }
+}
+
+static void
+_zoom_bring_with_animation(Elm_Map_Data *sd,
+                           double zoom,
+                           double lon,
+                           double lat,
+                           int zoom_cnt,
+                           int region_cnt)
+{
+   double tlon, tlat;
+   Evas_Coord vx, vy, vw, vh;
+   if ((zoom_cnt == 0) && (region_cnt == 0)) return;
+
+   sd->ani.zoom_cnt = zoom_cnt;
+   sd->ani.zoom = sd->zoom;
+   sd->ani.zoom_diff = (double)(zoom - sd->zoom) / zoom_cnt;
+
+   sd->ani.region_cnt = region_cnt;
+   _viewport_coord_get(sd, &vx, &vy, &vw, &vh);
+   _coord_to_region_convert
+     (sd, vx + vw / 2, vy + vh / 2, sd->size.w, &tlon, &tlat);
+   sd->ani.lon = tlon;
+   sd->ani.lat = tlat;
+   sd->ani.lon_diff = (lon - tlon) / region_cnt;
+   sd->ani.lat_diff = (lat - tlat) / region_cnt;
+
+   ecore_animator_del(sd->zoom_animator);
+   sd->zoom_animator = ecore_animator_add(_zoom_bring_anim_cb, sd->obj);
 }
 
 static void
@@ -4220,6 +4292,12 @@ _elm_map_region_show(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double l
    sd->calc_job.region_show_bring_in = _region_show_bring_in;
 
    evas_object_smart_changed(sd->pan_obj);
+}
+
+EOLIAN static void
+_elm_map_region_zoom_bring_in(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int zoom, double lon, double lat)
+{
+   _zoom_bring_with_animation(sd, zoom, lon, lat, ZOOM_ANIM_CNT, ZOOM_BRING_CNT);
 }
 
 EOLIAN static void

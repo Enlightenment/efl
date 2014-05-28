@@ -432,8 +432,11 @@ struct _Elm_Map_Data
    struct
    {
       double zoom;
-      double diff;
-      int    cnt;
+      double zoom_diff;
+      double lon, lat;
+      double lon_diff, lat_diff;
+      int    zoom_cnt;
+      int    region_cnt;
    } ani;
 
    Ecore_Timer                          *zoom_timer;
