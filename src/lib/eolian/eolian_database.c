@@ -1273,7 +1273,7 @@ eolian_directory_scan(const char *dir)
           {
              int len = strlen(file);
              int idx = len - 1;
-             while (idx >= 0 && file[idx] != '/') idx--;
+             while (idx >= 0 && file[idx] != '/' && file[idx] != '\\') idx--;
              eina_hash_add(_filenames, eina_stringshare_add_length(file+idx+1, len - idx - sizeof(EO_SUFFIX)), strdup(file));
           }
      }
