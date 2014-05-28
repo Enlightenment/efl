@@ -35,17 +35,21 @@ _files_compare (const char *ref_filename, const char *tmp_filename)
      }
 
    fseek(tmp_file, 0, SEEK_END);
-   int tmp_filesize = ftell(tmp_file);
+   long tmp_filesize = ftell(tmp_file);
+   if (tmp_filesize < 0) goto end;
    fseek(tmp_file, 0, SEEK_SET);
    tmp_content = malloc(tmp_filesize + 1);
-   fread(tmp_content, tmp_filesize, 1, tmp_file);
+   if (fread(tmp_content, tmp_filesize, 1, tmp_file) != 1)
+     goto end;
    tmp_content[tmp_filesize] = '\0';
 
    fseek(ref_file, 0, SEEK_END);
-   int ref_filesize = ftell(ref_file);
+   long ref_filesize = ftell(ref_file);
+   if (ref_filesize < 0) goto end;
    fseek(ref_file, 0, SEEK_SET);
    ref_content = malloc(ref_filesize + 1);
-   fread(ref_content, ref_filesize, 1, ref_file);
+   if (fread(ref_content, ref_filesize, 1, ref_file) != 1)
+     goto end;
    ref_content[ref_filesize] = '\0';
 
    if (tmp_filesize != ref_filesize) goto end;
