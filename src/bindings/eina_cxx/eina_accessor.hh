@@ -59,10 +59,7 @@ struct accessor
   {
     std::swap(_impl, other._impl);
   }
-private:
-  typedef Eina_Accessor*(accessor<T>::*unspecified_bool_type)() const;
-public:
-  operator unspecified_bool_type() const
+  explicit operator bool() const
   {
     return native_handle() ? &accessor<T>::native_handle : 0 ;
   }
