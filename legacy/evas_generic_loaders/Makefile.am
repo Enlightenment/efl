@@ -30,3 +30,8 @@ autogen.sh \
 m4/ac_attribute.m4 \
 m4/ac_path_generic.m4 \
 README
+
+.PHONY: doc
+
+doc:
+	@echo "Empty doc target until we have real documentation."
