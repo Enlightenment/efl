@@ -1,8 +1,8 @@
 if HAVE_ELUA_BIN
-ELUA_GEN = @elua_bin@ :lualian
+ELUA_GEN = @elua_bin@
 _ELUA_GEN_DEP = @elua_bin@
 else
-ELUA_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/elua/elua{EXEEXT} :lualian
+ELUA_GEN = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/elua/elua{EXEEXT}
 _ELUA_GEN_DEP = bin/elua/elua${EXEEXT}
 endif
 
@@ -13,6 +13,6 @@ am__v_ELUA_0 = @echo "  ELUA    " $@;
 SUFFIXES += .lua
 
 $(top_builddir)/src/bindings/%.lua: %.eo ${_ELUA_GEN_DEP}
-	$(AM_V_ELUA)$(ELUA_GEN) $(ELUA_GEN_FLAGS) -o $@ $<
+	$(AM_V_ELUA)$(ELUA_GEN) :lualian $(ELUA_GEN_FLAGS) -o $@ $<
 
 CLEANFILES += $(BUILT_SOURCES)
