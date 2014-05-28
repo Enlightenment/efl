@@ -38,10 +38,10 @@ void rg_etc1_pack_block_init();
 unsigned int rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_etc1_pack_params *pack_params);
 
 // ETC2 support: RGB8_ETC2
-void rg_etc2_rgb8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
+void rg_etc2_rgb8_decode_block(const unsigned char *etc_block, unsigned int *bgra);
 
 // ETC2 support: RGBA8_ETC2_EAC
-void rg_etc2_rgba8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
+void rg_etc2_rgba8_decode_block(const unsigned char *etc_block, unsigned int *bgra);
 
 //------------------------------------------------------------------------------
 //

@@ -36,8 +36,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <Eina.h>
 #include "rg_etc1.h"
 
-void rg_etc2_rgb8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
-void rg_etc2_rgba8_decode_block(const uint8_t *etc_block, uint32_t *bgra);
+void rg_etc2_rgb8_decode_block(const unsigned char *etc_block, unsigned int *bgra);
+void rg_etc2_rgba8_decode_block(const unsigned char *etc_block, unsigned int *bgra);
 
 typedef const uint8_t etc_block;
 
@@ -244,7 +244,7 @@ _TH_paint(const uint8_t *etc, uint32_t paint_colors[4], uint32_t *bgra)
 }
 
 void
-rg_etc2_rgb8_decode_block(const uint8_t *etc, uint32_t *bgra)
+rg_etc2_rgb8_decode_block(const unsigned char *etc, unsigned int *bgra)
 {
    // Check differential mode bit
    if ((etc[3] & 0x2) == 0)
