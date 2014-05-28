@@ -5,12 +5,15 @@
 #include "impl_generator.h"
 #include "common_funcs.h"
 
+static _eolian_class_vars class_env;
+
 static Eina_Bool
-_params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_as_ret, Eina_Strbuf *params)
+_params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_as_ret, Eina_Strbuf *params, Eina_Strbuf *short_params)
 {
    const Eina_List *itr;
    Eolian_Function_Parameter param;
    eina_strbuf_reset(params);
+   eina_strbuf_reset(short_params);
    EINA_LIST_FOREACH(eolian_property_keys_list_get(foo), itr, param)
      {
         const char *pname;
@@ -18,11 +21,16 @@ _params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_
         eolian_parameter_information_get(param, NULL, &ptype, &pname, NULL);
         Eina_Bool had_star = !!strchr(ptype, '*');
         Eina_Bool is_const = eolian_parameter_const_attribute_get(param, ftype == EOLIAN_PROP_GET);
-        if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
+        if (eina_strbuf_length_get(params))
+          {
+             eina_strbuf_append(params, ", ");
+             eina_strbuf_append(short_params, ", ");
+          }
         eina_strbuf_append_printf(params, "%s%s%s%s",
               is_const?"const ":"", ptype,
               had_star?"":" ",
               pname);
+        eina_strbuf_append_printf(short_params, "%s", pname);
      }
    if (!var_as_ret)
      {
@@ -36,10 +44,15 @@ _params_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Bool var_
              Eina_Bool is_const = eolian_parameter_const_attribute_get(param, ftype == EOLIAN_PROP_GET);
              Eina_Bool had_star = !!strchr(ptype, '*');
              if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM);
-             if (eina_strbuf_length_get(params)) eina_strbuf_append(params, ", ");
+             if (eina_strbuf_length_get(params))
+               {
+                  eina_strbuf_append(params, ", ");
+                  eina_strbuf_append(short_params, ", ");
+               }
              eina_strbuf_append_printf(params, "%s%s%s%s%s",
                    is_const?"const ":"",
                    ptype, had_star?"":" ", add_star?"*":"", pname);
+             eina_strbuf_append_printf(short_params, "%s", pname);
           }
      }
    return EINA_TRUE;
@@ -93,16 +106,32 @@ _type_exists(const char* type_name, Eina_Strbuf *buffer)
 }
 
 static Eina_Bool
-_prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf *data_type_buf, char *impl_name, Eina_Strbuf *buffer)
+_prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf *data_type_buf, Eolian_Implement impl_desc, Eina_Strbuf *buffer)
 {
    Eina_Bool var_as_ret = EINA_FALSE, ret_const = EINA_FALSE;
-   Eina_Strbuf *params = NULL;
-   char func_name[100];
+   Eina_Strbuf *params = NULL, *short_params = NULL, *super_invok = NULL;
+   char func_name[PATH_MAX];
+   char impl_name[PATH_MAX];
+   _eolian_class_vars impl_env;
 
-   if (!impl_name && eolian_function_is_virtual_pure(foo, ftype)) return EINA_TRUE;
+   if (!impl_desc && eolian_function_is_virtual_pure(foo, ftype)) return EINA_TRUE;
+
+   super_invok = eina_strbuf_new();
+   if (impl_desc)
+     {
+        const char *impl_classname;
+
+        eolian_implement_information_get(impl_desc, &impl_classname, NULL, NULL);
+
+        char *tmp = impl_name;
+        sprintf(impl_name, "%s_%s", class_env.full_classname, impl_classname);
+        eina_str_tolower(&tmp);
+
+        _class_env_create(eolian_class_find_by_name(impl_classname), NULL, &impl_env);
+     }
 
    sprintf(func_name, "_%s_%s%s",
-         impl_name?impl_name:lowclass, eolian_function_name_get(foo),
+         impl_desc?impl_name:class_env.lower_classname, eolian_function_name_get(foo),
          ftype == EOLIAN_PROP_GET?"_get": (ftype == EOLIAN_PROP_SET?"_set":""));
 
    if (_function_exists(func_name, buffer)) return EINA_TRUE;
@@ -122,21 +151,34 @@ _prototype_generate(Eolian_Function foo, Eolian_Function_Type ftype, Eina_Strbuf
      }
 
    params = eina_strbuf_new();
-   _params_generate(foo, ftype, var_as_ret, params);
+   short_params = eina_strbuf_new();
+   _params_generate(foo, ftype, var_as_ret, params, short_params);
    if (eina_strbuf_length_get(params))
       eina_strbuf_prepend_printf(params, ", ");
 
+   if (impl_desc && ftype == EOLIAN_CTOR)
+     {
+        eina_strbuf_append_printf(super_invok,
+              "   eo_do_super(obj, %s_CLASS, %s_%s(%s);\n",
+              class_env.upper_eo_prefix,
+              impl_env.lower_classname, eolian_function_name_get(foo),
+              eina_strbuf_string_get(short_params));
+     }
+
    eina_strbuf_append_printf(buffer,
-         "EOLIAN static %s%s\n%s(%sEo *obj, %s *pd%s%s)\n{\n\n}\n\n",
+         "EOLIAN static %s%s\n%s(%sEo *obj, %s *pd%s%s)\n{\n%s\n}\n\n",
          ret_const?"const ":"", !rettype?"void":rettype,
          func_name,
          eolian_function_object_is_const(foo)?"const ":"",
          !eina_strbuf_length_get(data_type_buf) ? "void" : eina_strbuf_string_get(data_type_buf),
          !eina_strbuf_length_get(data_type_buf) ? " EINA_UNUSED" : "",
-         eina_strbuf_string_get(params)
+         eina_strbuf_string_get(params),
+         eina_strbuf_string_get(super_invok)
          );
 
+   eina_strbuf_free(short_params);
    eina_strbuf_free(params);
+   eina_strbuf_free(super_invok);
    return EINA_TRUE;
 }
 
@@ -150,7 +192,7 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
    Eina_Strbuf *begin = eina_strbuf_new();
    const char *class_name = eolian_class_name_get(class);
 
-   _class_func_names_fill(class, NULL, NULL);
+   _class_env_create(class, NULL, &class_env);
 
    if (!_type_exists("EFL_BETA_API_SUPPORT", buffer))
      {
@@ -160,8 +202,8 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
 
    if (!_type_exists("<Eo.h>", buffer))
      {
-        printf("Generation of #include <Eo.h> and \"%s.eo.h\"\n", lowclass);
-        eina_strbuf_append_printf(begin, "#include <Eo.h>\n#include \"%s.eo.h\"\n\n", lowclass);
+        printf("Generation of #include <Eo.h> and \"%s.eo.h\"\n", class_env.lower_classname);
+        eina_strbuf_append_printf(begin, "#include <Eo.h>\n#include \"%s.eo.h\"\n\n", class_env.lower_classname);
      }
 
    /* Little calculation of the prefix of the data */
@@ -221,55 +263,46 @@ impl_source_generate(const Eolian_Class class, Eina_Strbuf *buffer)
              eolian_implement_information_get(impl_desc, &impl_classname, &func_name, &ftype);
              Eolian_Class impl_class = eolian_class_find_by_name(impl_classname);
 
-             _class_func_names_fill(impl_class, NULL, NULL);
-
-             char implname[0xFF];
-             char *tmp = implname;
-             sprintf(implname, "%s_%s", class_name, impl_classname);
-             eina_str_tolower(&tmp);
-
              foo = eolian_class_function_find_by_name(impl_class, func_name, ftype);
              if (!foo)
                {
                   ERR ("Failed to generate implementation of %s:%s - missing form super class", impl_classname, func_name);
                   goto end;
                }
-
              switch (ftype)
                {
                 case EOLIAN_PROP_SET: case EOLIAN_PROP_GET:
-                   _prototype_generate(foo, ftype, data_type_buf, implname, buffer);
+                   _prototype_generate(foo, ftype, data_type_buf, impl_desc, buffer);
                    break;
                 default:
-                   _prototype_generate(foo, eolian_function_type_get(foo), data_type_buf, implname, buffer);
+                   _prototype_generate(foo, eolian_function_type_get(foo), data_type_buf, impl_desc, buffer);
                    break;
                }
           }
      }
 
-   _class_func_names_fill(class, NULL, NULL);
    if (eolian_class_ctor_enable_get(class))
      {
         char func_name[100];
-        sprintf(func_name, "_%s_class_constructor", lowclass);
+        sprintf(func_name, "_%s_class_constructor", class_env.lower_classname);
         if (!_function_exists(func_name, buffer))
           {
              printf("Generation of function %s\n", func_name);
              eina_strbuf_append_printf(buffer,
                    "EOLIAN static void\n_%s_class_constructor(Eo_Class *klass)\n{\n\n}\n\n",
-                   lowclass);
+                   class_env.lower_classname);
           }
      }
 
    if (eolian_class_dtor_enable_get(class))
      {
         char func_name[100];
-        sprintf(func_name, "_%s_class_destructor", lowclass);
+        sprintf(func_name, "_%s_class_destructor", class_env.lower_classname);
         if (!_function_exists(func_name, buffer))
           {
              printf("Generation of function %s\n", func_name);
              eina_strbuf_append_printf(buffer, "EOLIAN static void\n_%s_class_destructor(Eo_Class *klass)\n{\n\n}\n\n",
-                   lowclass);
+                   class_env.lower_classname);
           }
      }
 
