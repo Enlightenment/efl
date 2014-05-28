@@ -50,3 +50,8 @@ src_vlc_vlc_SOURCES = src/vlc/emotion_generic_vlc.c
 src_vlc_vlc_CPPFLAGS = @VLC_CFLAGS@
 src_vlc_vlc_LDADD = @VLC_LIBS@
 endif
+
+.PHONY: doc
+
+doc:
+	@echo "Empty doc target until we have real documentation."
