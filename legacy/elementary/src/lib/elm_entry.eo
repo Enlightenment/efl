@@ -1190,6 +1190,8 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas_Clickable_Interface)
       language,changed;
       access,changed;
       activated;
+      changed;
+      changed,user;
    }
 
 }
