@@ -80,7 +80,7 @@ inline void _log(std::stringstream const& stream, int domain, ::Eina_Log_Level l
 }
 
 #define EINA_CXX_DOM_LOG(DOMAIN, LEVEL)                                 \
-    if( bool run = ::eina_log_domain_level_check((DOMAIN), LEVEL) )     \
+    for( bool run = ::eina_log_domain_level_check((DOMAIN), LEVEL); run;) \
       for(std::stringstream stream; run ;                               \
           ::efl::eina::_log(std::move(stream), (DOMAIN), LEVEL          \
                             , __FILE__, __FUNCTION__, __LINE__), run = false) \
