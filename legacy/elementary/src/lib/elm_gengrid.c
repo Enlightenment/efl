@@ -1947,7 +1947,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
           {
              row = cvh / sd->item_height;
              if (row <= 0) row = 1;
-             if (tmp->position < row)
+             if (tmp->position <= row)
                return EINA_TRUE;
           }
         else if (sd->item_width > 0)
@@ -1974,13 +1974,13 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *it,
              if (x == 0)
                {
                   if ((tmp->position <= (row * col)) &&
-                      (tmp->position >= (row *(col - 1))))
+                      (tmp->position > (row *(col - 1))))
                     return EINA_TRUE;
                }
              else
                {
                   if ((tmp->position <= ((col * row) + x)) &&
-                      (tmp->position >= (col * row)))
+                      (tmp->position > ((col-1) * row) + x))
                     return EINA_TRUE;
                }
           }
