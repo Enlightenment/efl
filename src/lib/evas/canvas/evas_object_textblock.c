@@ -10276,8 +10276,11 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj, Eina_List *items,
         Evas_Coord asc = 0, desc = 0;
         /* If there are no text items yet, calc ascent/descent
          * according to the current format. */
-        _layout_item_ascent_descent_adjust(eo_obj, &asc, &desc,
-              it, it->format);
+        if (it->format)
+          {
+             _layout_item_ascent_descent_adjust(eo_obj, &asc, &desc,
+                                                it, it->format);
+          }
 
         if (asc > *ascent)
            *ascent = asc;
