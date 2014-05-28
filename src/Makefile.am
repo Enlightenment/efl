@@ -108,8 +108,11 @@ examples/eldbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \
-examples/ethumb_client \
-examples/elua
+examples/ethumb_client
+
+if HAVE_ELUA
+EXAMPLES_SUBDIRS += examples/elua
+endif
 
 if HAVE_CXX11
 EXAMPLES_SUBDIRS += \
