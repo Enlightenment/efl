@@ -162,12 +162,12 @@ static _ptr_list_iterator<T const> end(Eina_List const* list)
 template <typename T>
 static std::reverse_iterator<_ptr_list_iterator<T> > rbegin(Eina_List* list)
 {
-  return std::reverse_iterator<_ptr_list_iterator<T> >(_ptr_list_access_traits::begin<T>(list));
+  return std::reverse_iterator<_ptr_list_iterator<T> >(_ptr_list_access_traits::end<T>(list));
 }
 template <typename T>
 static std::reverse_iterator<_ptr_list_iterator<T> > rend(Eina_List* list)
 {
-  return std::reverse_iterator<_ptr_list_iterator<T> >(_ptr_list_access_traits::end<T>(list));
+  return std::reverse_iterator<_ptr_list_iterator<T> >(_ptr_list_access_traits::begin<T>(list));
 }
 template <typename T>
 static std::reverse_iterator<_ptr_list_iterator<T const> > rbegin(Eina_List const* list)

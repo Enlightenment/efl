@@ -25,8 +25,27 @@ START_TEST(eina_cxx_stringshare_constructors)
 }
 END_TEST
 
+START_TEST(eina_cxx_stringshare_iterators)
+{
+  efl::eina::eina_init eina_init;
+
+  const char str[] = "string";
+  const char rstr[] = "gnirts";
+
+  efl::eina::stringshare string(str);
+  ck_assert(string.size() == 6);
+  ck_assert(string == str);
+
+  ck_assert(std::equal(string.begin(), string.end(), str));
+  ck_assert(std::equal(string.rbegin(), string.rend(), rstr));
+  ck_assert(std::equal(string.cbegin(), string.cend(), str));
+  ck_assert(std::equal(string.crbegin(), string.crend(), rstr));
+}
+END_TEST
+
 void
 eina_test_stringshare(TCase *tc)
 {
   tcase_add_test(tc, eina_cxx_stringshare_constructors);
+  tcase_add_test(tc, eina_cxx_stringshare_iterators);
 }

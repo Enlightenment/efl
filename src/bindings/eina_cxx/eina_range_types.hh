@@ -43,7 +43,7 @@ struct _const_range_template
   }
   const_reverse_iterator crbegin() const
   {
-    return const_reverse_iterator(Traits::template begin<value_type>(_handle));
+    return const_reverse_iterator(Traits::template rbegin<value_type>(_handle));
   }
   const_reverse_iterator crend() const
   {

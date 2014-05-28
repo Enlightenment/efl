@@ -88,11 +88,11 @@ struct stringshare
 
   const_reverse_iterator rbegin() const
   {
-    return const_reverse_iterator(begin());
+    return const_reverse_iterator(end());
   }
   const_reverse_iterator rend() const
   {
-    return const_reverse_iterator(end());
+    return const_reverse_iterator(begin());
   }
 
   const_iterator cbegin() const

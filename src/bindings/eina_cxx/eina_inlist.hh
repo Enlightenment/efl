@@ -200,12 +200,12 @@ struct _inlist_access_traits {
   template <typename T>
   static std::reverse_iterator<_inlist_iterator<T> > rbegin(Eina_Inlist* list)
   {
-    return std::reverse_iterator<_inlist_iterator<T> >(_inlist_access_traits::begin<T>(list));
+    return std::reverse_iterator<_inlist_iterator<T> >(_inlist_access_traits::end<T>(list));
   }
   template <typename T>
   static std::reverse_iterator<_inlist_iterator<T> > rend(Eina_Inlist* list)
   {
-    return std::reverse_iterator<_inlist_iterator<T> >(_inlist_access_traits::end<T>(list));
+    return std::reverse_iterator<_inlist_iterator<T> >(_inlist_access_traits::begin<T>(list));
   }
   template <typename T>
   static std::reverse_iterator<_inlist_iterator<T const> > rbegin(Eina_Inlist const* list)
@@ -540,19 +540,19 @@ public:
   }
   const_reverse_iterator rbegin() const
   {
-    return _inlist_access_traits::end<T>(this->_impl._list);
+    return reverse_iterator(end());
   }
   const_reverse_iterator rend() const
   {
-    return const_reverse_iterator(end());
+    return const_reverse_iterator(begin());
   }
   reverse_iterator rbegin()
   {
-    return reverse_iterator(begin());
+    return reverse_iterator(end());
   }
   reverse_iterator rend()
   {
-    return reverse_iterator(end());
+    return reverse_iterator(begin());
   }
   const_iterator cbegin() const
   {

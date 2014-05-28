@@ -17,9 +17,11 @@ START_TEST(eina_cxx_inlist_push_back)
   list.push_back(15);
 
   int result[] = {5, 10, 15};
+  int rresult[] = {15, 10, 5};
 
   ck_assert(list.size() == 3);
   ck_assert(std::equal(list.begin(), list.end(), result));
+  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
 END_TEST
 
@@ -35,9 +37,11 @@ START_TEST(eina_cxx_inlist_pop_back)
   list.pop_back();
 
   int result[] = {5, 10};
+  int rresult[] = {10, 5};
 
   ck_assert(list.size() == 2);
   ck_assert(std::equal(list.begin(), list.end(), result));
+  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
 END_TEST
 
@@ -52,9 +56,11 @@ START_TEST(eina_cxx_inlist_push_front)
   list.push_front(15);
 
   int result[] = {15, 10, 5};
+  int rresult[] = {5, 10, 15};
 
   ck_assert(list.size() == 3);
   ck_assert(std::equal(list.begin(), list.end(), result));
+  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
 END_TEST
 
@@ -70,9 +76,11 @@ START_TEST(eina_cxx_inlist_pop_front)
   list.pop_front();
 
   int result[] = {10, 5};
+  int rresult[] = {5, 10};
 
   ck_assert(list.size() == 2);
   ck_assert(std::equal(list.begin(), list.end(), result));
+  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 }
 END_TEST
 
@@ -102,9 +110,11 @@ START_TEST(eina_cxx_inlist_insert)
   list.insert(it, 20); // insert before the last element
 
   int result[] = {15, 5, 20, 10};
+  int rresult[] = {10, 20, 5, 15};
 
   ck_assert(list.size() == 4);
   ck_assert(std::equal(list.begin(), list.end(), result));
+  ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
 
   efl::eina::inlist<int> list2;
   it = list2.insert(list2.end(), list.begin(), list.end());
@@ -216,12 +226,15 @@ START_TEST(eina_cxx_inlist_range)
   ck_assert(range_list.size() == 6u);
 
   int result[] = {5, 10, 15, 20, 25, 30};
+  int rresult[] = {30, 25, 20, 15, 10, 5};
   ck_assert(std::equal(range_list.begin(), range_list.end(), result));
+  ck_assert(std::equal(range_list.rbegin(), range_list.rend(), rresult));
 
   efl::eina::range_inlist<int const> const_range_list(list);
 
   ck_assert(const_range_list.size() == 6u);
   ck_assert(std::equal(range_list.begin(), range_list.end(), result));
+  ck_assert(std::equal(range_list.rbegin(), range_list.rend(), rresult));
 
   *range_list.begin() = 0;
   ck_assert(*const_range_list.begin() == 0);

@@ -21,9 +21,11 @@ START_TEST(eina_cxx_inarray_pod_push_back)
   array.push_back(15);
 
   int result[] = {5, 10, 15};
+  int rresult[] = {15, 10, 5};
 
   ck_assert(array.size() == 3);
   ck_assert(std::equal(array.begin(), array.end(), result));
+  ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 }
 END_TEST
 
@@ -39,9 +41,11 @@ START_TEST(eina_cxx_inarray_pod_pop_back)
   array.pop_back();
 
   int result[] = {5, 10};
+  int rresult[] = {10, 5};
 
   ck_assert(array.size() == 2);
   ck_assert(std::equal(array.begin(), array.end(), result));
+  ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 }
 END_TEST
 
@@ -71,9 +75,11 @@ START_TEST(eina_cxx_inarray_pod_insert)
   array.insert(it, 20); // insert before the last element
 
   int result[] = {15, 5, 20, 10};
+  int rresult[] = {10, 20, 5, 15};
 
   ck_assert(array.size() == 4);
   ck_assert(std::equal(array.begin(), array.end(), result));
+  ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 
   efl::eina::inarray<int> array2;
   it = array2.insert(array2.end(), array.begin(), array.end());
@@ -206,9 +212,11 @@ START_TEST(eina_cxx_inarray_nonpod_push_back)
     array.push_back(15);
 
     int result[] = {5, 10, 15};
+    int rresult[] = {15, 10, 5};
 
     ck_assert(array.size() == 3);
     ck_assert(std::equal(array.begin(), array.end(), result));
+    ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
   }
   std::cout << "constructors called " << ::constructors_called
             << "\ndestructors called " << ::destructors_called << std::endl;
@@ -230,9 +238,11 @@ START_TEST(eina_cxx_inarray_nonpod_pop_back)
     array.pop_back();
 
     int result[] = {5, 10};
+    int rresult[] = {10, 5};
 
     ck_assert(array.size() == 2);
     ck_assert(std::equal(array.begin(), array.end(), result));
+    ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
   }
   std::cout << "constructors called " << ::constructors_called
             << "\ndestructors called " << ::destructors_called << std::endl;
@@ -268,9 +278,11 @@ START_TEST(eina_cxx_inarray_nonpod_insert)
     array.insert(it, 20); // insert before the last element
 
     int result[] = {15, 5, 20, 10};
+    int rresult[] = {10, 20, 5, 15};
 
     ck_assert(array.size() == 4);
     ck_assert(std::equal(array.begin(), array.end(), result));
+    ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 
     efl::eina::inarray<non_pod> array2;
     it = array2.insert(array2.end(), array.begin(), array.end());
@@ -384,20 +396,24 @@ START_TEST(eina_cxx_range_inarray)
   array.push_back(15);
 
   int result[] = {5, 10, 15};
+  int rresult[] = {15, 10, 5};
 
   efl::eina::range_inarray<int> range_array(array);
 
   ck_assert(range_array.size() == 3);
   ck_assert(std::equal(range_array.begin(), range_array.end(), result));
+  ck_assert(std::equal(range_array.rbegin(), range_array.rend(), rresult));
 
   ck_assert(range_array[0] == 5);
 
   *range_array.begin() = 0;
 
   int result1[] = {0, 10, 15};
+  int rresult1[] = {15, 10, 0};
 
   ck_assert(range_array.size() == 3);
   ck_assert(std::equal(range_array.begin(), range_array.end(), result1));
+  ck_assert(std::equal(range_array.rbegin(), range_array.rend(), rresult1));
 
   ck_assert(range_array[0] == 0);
 }

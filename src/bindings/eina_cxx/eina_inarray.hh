@@ -85,22 +85,22 @@ static T const* end(Eina_Inarray const* raw)
 template <typename T>
 static std::reverse_iterator<T const*> rbegin(Eina_Inarray const* raw)
 {
-  return std::reverse_iterator<T const*>(_inarray_access_traits::begin<T>(raw));
+  return std::reverse_iterator<T const*>(_inarray_access_traits::end<T>(raw));
 }
 template <typename T>
 static std::reverse_iterator<T const*> rend(Eina_Inarray const* raw)
 {
-  return std::reverse_iterator<T const*>(_inarray_access_traits::end<T>(raw));
+  return std::reverse_iterator<T const*>(_inarray_access_traits::begin<T>(raw));
 }
 template <typename T>
 static std::reverse_iterator<T*> rbegin(Eina_Inarray* raw)
 {
-  return std::reverse_iterator<T*>(_inarray_access_traits::begin<T>(raw));
+  return std::reverse_iterator<T*>(_inarray_access_traits::end<T>(raw));
 }
 template <typename T>
 static std::reverse_iterator<T*> rend(Eina_Inarray* raw)
 {
-  return std::reverse_iterator<T*>(_inarray_access_traits::end<T>(raw));
+  return std::reverse_iterator<T*>(_inarray_access_traits::begin<T>(raw));
 }
 template <typename T>
 static T const* cbegin(Eina_Inarray const* raw)

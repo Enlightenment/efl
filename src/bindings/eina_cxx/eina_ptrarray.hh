@@ -178,22 +178,22 @@ static _ptr_array_iterator<T> end(Eina_Array const* array)
 template <typename T>
 static std::reverse_iterator<_ptr_array_iterator<T> > rbegin(Eina_Array* array)
 {
-  return std::reverse_iterator<_ptr_array_iterator<T> >(_ptr_array_access_traits::begin<T>(array));
+  return std::reverse_iterator<_ptr_array_iterator<T> >(_ptr_array_access_traits::end<T>(array));
 }
 template <typename T>
 static std::reverse_iterator<_ptr_array_iterator<T> > rend(Eina_Array* array)
 {
-  return std::reverse_iterator<_ptr_array_iterator<T> >(_ptr_array_access_traits::end<T>(array));
+  return std::reverse_iterator<_ptr_array_iterator<T> >(_ptr_array_access_traits::begin<T>(array));
 }
 template <typename T>
 static std::reverse_iterator<_ptr_array_iterator<T const> > rbegin(Eina_Array const* array)
 {
-  return std::reverse_iterator<_ptr_array_iterator<T const> >(_ptr_array_access_traits::begin<T>(const_cast<Eina_Array*>(array)));
+  return std::reverse_iterator<_ptr_array_iterator<T const> >(_ptr_array_access_traits::end<T>(const_cast<Eina_Array*>(array)));
 }
 template <typename T>
 static std::reverse_iterator<_ptr_array_iterator<T const> > rend(Eina_Array const* array)
 {
-  return std::reverse_iterator<_ptr_array_iterator<T const> >(_ptr_array_access_traits::end<T>(const_cast<Eina_Array*>(array)));
+  return std::reverse_iterator<_ptr_array_iterator<T const> >(_ptr_array_access_traits::begin<T>(const_cast<Eina_Array*>(array)));
 }
 template <typename T>
 static _ptr_array_iterator<T const> cbegin(Eina_Array const* array)

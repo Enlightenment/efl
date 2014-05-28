@@ -16,9 +16,11 @@ START_TEST(eina_cxx_ptrarray_push_back)
   array.push_back(new int(15));
 
   int result[] = {5, 10, 15};
+  int rresult[] = {15, 10, 5};
 
   ck_assert(array.size() == 3);
   ck_assert(std::equal(array.begin(), array.end(), result));
+  ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 }
 END_TEST
 
@@ -34,9 +36,11 @@ START_TEST(eina_cxx_ptrarray_pop_back)
   array.pop_back();
 
   int result[] = {5, 10};
+  int rresult[] = {10, 5};
 
   ck_assert(array.size() == 2);
   ck_assert(std::equal(array.begin(), array.end(), result));
+  ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 }
 END_TEST
 
@@ -46,6 +50,7 @@ START_TEST(eina_cxx_ptrarray_insert)
 
   efl::eina::ptr_array<int> array;
   ck_assert(std::distance(array.begin(), array.end()) == 0u);
+  ck_assert(std::distance(array.rbegin(), array.rend()) == 0u);
 
   efl::eina::ptr_array<int>::iterator it;
 
@@ -80,10 +85,13 @@ START_TEST(eina_cxx_ptrarray_insert)
   ck_assert(std::distance(array.begin(), array.end()) == 4u);
 
   int result[] = {15, 5, 20, 10};
+  int rresult[] = {10, 20, 5, 15};
 
   ck_assert(array.size() == 4);
   ck_assert(std::distance(array.begin(), array.end()) == 4u);
+  ck_assert(std::distance(array.rbegin(), array.rend()) == 4u);
   ck_assert(std::equal(array.begin(), array.end(), result));
+  ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 
   efl::eina::ptr_array<int, efl::eina::heap_copy_allocator> array2;
   it = array2.insert(array2.end(), array.begin(), array.end());
@@ -143,7 +151,9 @@ START_TEST(eina_cxx_ptrarray_erase)
   array1.push_back(new int(30));
 
   int result[] = {5, 10, 15, 20, 25, 30};
+  int rresult[] = {30, 25, 20, 15, 10, 5};
   ck_assert(std::equal(array1.begin(), array1.end(), result));
+  ck_assert(std::equal(array1.rbegin(), array1.rend(), rresult));
   
   efl::eina::ptr_array<int>::iterator it = array1.erase(array1.begin());
   ck_assert(it == array1.begin());
@@ -186,12 +196,15 @@ START_TEST(eina_cxx_ptrarray_range)
   ck_assert(range_array.size() == 6u);
 
   int result[] = {5, 10, 15, 20, 25, 30};
+  int rresult[] = {30, 25, 20, 15, 10, 5};
   ck_assert(std::equal(range_array.begin(), range_array.end(), result));
+  ck_assert(std::equal(range_array.rbegin(), range_array.rend(), rresult));
 
   efl::eina::range_ptr_array<int const> const_range_array(array);
 
   ck_assert(const_range_array.size() == 6u);
   ck_assert(std::equal(range_array.begin(), range_array.end(), result));
+  ck_assert(std::equal(range_array.rbegin(), range_array.rend(), rresult));
 
   *range_array.begin() = 0;
   ck_assert(*const_range_array.begin() == 0);
