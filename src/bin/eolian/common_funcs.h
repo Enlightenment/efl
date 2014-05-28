@@ -56,14 +56,5 @@ void _class_env_create(const Eolian_Class class, const char *over_classname, _eo
 
 void _class_func_names_fill(const Eolian_Class class, const char *classname, const char *funcname);
 
-char current_eo_prefix_lower[256];
-
-char current_eo_prefix_upper[256];
-
-char current_classname[256];
-
-char capclass[0xFF];
-char lowclass[0xFF];
-
 char capfunc[0xFF];
 #endif

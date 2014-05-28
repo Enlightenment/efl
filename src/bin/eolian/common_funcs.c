@@ -22,7 +22,7 @@ _class_name_concatenate(const Eolian_Class class, char *buffer)
 void
 _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_class_vars *env)
 {
-   if (!env || !class) return;
+   if (!env) return;
 
    const char *eo_prefix = NULL;
    char *p;
@@ -48,37 +48,9 @@ _class_env_create(const Eolian_Class class, const char *over_classname, _eolian_
 }
 
 void
-_class_func_names_fill(const Eolian_Class class, const char *over_classname, const char *funcname)
+_class_func_names_fill(const Eolian_Class class EINA_UNUSED, const char *over_classname EINA_UNUSED, const char *funcname)
 {
    char *p;
-   const char *eo_prefix = NULL;
-   if (!class || class != current_class)
-     {
-        current_class = class;
-        if (!class)
-           strncpy(current_classname, over_classname, sizeof(current_classname) - 1);
-        else
-           _class_name_concatenate(class, current_classname);
-
-        /* class/CLASS*/
-        strncpy(capclass, current_classname, sizeof(capclass) - 1);
-        p = capclass;
-        eina_str_toupper(&p);
-        strncpy(lowclass, current_classname, sizeof(lowclass) - 1);
-        p = lowclass;
-        eina_str_tolower(&p);
-
-        /* eo_prefix */
-        if (class)
-           eo_prefix = eolian_class_eo_prefix_get(class);
-        if (!eo_prefix) eo_prefix = current_classname;
-        strncpy(current_eo_prefix_lower, eo_prefix, sizeof(current_eo_prefix_lower) - 1);
-        p = current_eo_prefix_lower;
-        eina_str_tolower(&p);
-        strncpy(current_eo_prefix_upper, eo_prefix, sizeof(current_eo_prefix_lower) - 1);
-        p = current_eo_prefix_upper;
-        eina_str_toupper(&p);
-     }
    if (funcname)
      {
         strncpy(capfunc, funcname, sizeof(capfunc) - 1);
@@ -90,16 +62,18 @@ _class_func_names_fill(const Eolian_Class class, const char *over_classname, con
 void
 _template_fill(Eina_Strbuf *buf, const char *templ, const Eolian_Class class, const char *classname, const char *funcname, Eina_Bool reset)
 {
-   _class_func_names_fill(class, classname, funcname);
+   _eolian_class_vars tmp_env;
+   _class_env_create(class, classname, &tmp_env);
+   _class_func_names_fill(NULL, NULL, funcname);
    if (buf)
      {
         if (reset) eina_strbuf_reset(buf);
         if (templ) eina_strbuf_append(buf, templ);
         if (funcname) eina_strbuf_replace_all(buf, "@#func", funcname);
         eina_strbuf_replace_all(buf, "@#FUNC", capfunc);
-        eina_strbuf_replace_all(buf, "@#Class", current_classname);
-        eina_strbuf_replace_all(buf, "@#class", lowclass);
-        eina_strbuf_replace_all(buf, "@#CLASS", capclass);
+        eina_strbuf_replace_all(buf, "@#Class", tmp_env.full_classname);
+        eina_strbuf_replace_all(buf, "@#class", tmp_env.lower_classname);
+        eina_strbuf_replace_all(buf, "@#CLASS", tmp_env.upper_classname);
      }
 }
 

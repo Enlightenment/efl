@@ -6,6 +6,8 @@
 #include "legacy_generator.h"
 #include "common_funcs.h"
 
+static _eolian_class_vars class_env;
+
 static const char
 tmpl_eapi_funcdef[] = "\n\
 /**\n\
@@ -99,7 +101,7 @@ _eapi_decl_func_generate(Eolian_Class class, Eolian_Function funcid, Eolian_Func
         func_lpref = eolian_class_legacy_prefix_get(class);
         if (func_lpref && !strcmp(func_lpref, "null")) goto end;
 
-        if (!func_lpref) func_lpref = lowclass;
+        if (!func_lpref) func_lpref = class_env.lower_classname;
         sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
         _template_fill(fbody, tmpl_eapi_funcdef, NULL, func_lpref, tmpstr, EINA_FALSE);
      }
@@ -256,7 +258,7 @@ _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Fun
      _template_fill(fbody, tmpl_eapi_body, class, NULL, NULL, EINA_FALSE);
    else
      _template_fill(fbody, tmpl_eapi_body_void, class, NULL, NULL, EINA_FALSE);
-   eina_strbuf_replace_all(fbody, "@#eoprefix", current_eo_prefix_lower);
+   eina_strbuf_replace_all(fbody, "@#eoprefix", class_env.lower_eo_prefix);
 
    if (func_lpref)
       eina_strbuf_replace_all(fbody, "@#eapi_prefix_@#func", func_lpref);
@@ -267,7 +269,7 @@ _eapi_func_generate(const Eolian_Class class, Eolian_Function funcid, Eolian_Fun
 
         if (func_lpref) eina_strbuf_replace_all(fbody, "@#eapi_prefix", func_lpref);
         else
-           eina_strbuf_replace_all(fbody, "@#eapi_prefix", lowclass);
+           eina_strbuf_replace_all(fbody, "@#eapi_prefix", class_env.lower_classname);
      }
 
    sprintf (tmpstr, "%s%s", eolian_function_name_get(funcid), suffix);
@@ -346,6 +348,8 @@ legacy_header_generate(const Eolian_Class class, Eina_Strbuf *buf)
    const Eina_List *l;
    void *data;
 
+   _class_env_create(class, NULL, &class_env);
+
    const char *desc = eolian_class_description_get(class);
    Eina_Strbuf *linedesc = eina_strbuf_new();
    eina_strbuf_append(linedesc, "/**\n");
@@ -390,6 +394,8 @@ legacy_source_generate(const Eolian_Class class, Eina_Strbuf *buf)
    Eina_Bool ret = EINA_FALSE;
    const Eina_List *itr;
    Eolian_Function fn;
+
+   _class_env_create(class, NULL, &class_env);
 
    Eina_Strbuf *tmpbuf = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
