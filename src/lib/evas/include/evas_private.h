@@ -1208,13 +1208,6 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 };
 
-
-typedef struct
-{
-   Eo_Event_Description *eo_desc;
-   Eina_Bool is_desc_allocated : 1;
-} _Evas_Event_Description;
-
 #ifdef __cplusplus
 extern "C" {
 #endif

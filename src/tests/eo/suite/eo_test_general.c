@@ -38,15 +38,15 @@ START_TEST(eo_stack)
 }
 END_TEST
 
-static int _eo_signals_cb_curent = 0;
+static int _eo_signals_cb_current = 0;
 static int _eo_signals_cb_flag = 0;
 
 static Eina_Bool
 _eo_signals_a_changed_cb(void *_data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int data = (intptr_t) _data;
-   _eo_signals_cb_curent++;
-   ck_assert_int_eq(data, _eo_signals_cb_curent);
+   _eo_signals_cb_current++;
+   ck_assert_int_eq(data, _eo_signals_cb_current);
    _eo_signals_cb_flag |= 0x1;
    return EO_CALLBACK_CONTINUE;
 }
@@ -113,6 +113,34 @@ START_TEST(eo_signals)
    eo_do(obj, simple_a_set(1));
    ck_assert_int_eq(_eo_signals_cb_flag, 0x0);
 
+   eo_unref(obj);
+
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   /* Legacy support signals. */
+     {
+        const Eo_Event_Description *a_desc = eo_base_legacy_only_event_description_get("a,changed");
+        fail_if(!a_desc);
+        ck_assert_str_eq(a_desc->name, "a,changed");
+        fail_if(a_desc == EV_A_CHANGED);
+
+        const Eo_Event_Description *bad_desc = eo_base_legacy_only_event_description_get("bad");
+        fail_if(!bad_desc);
+        ck_assert_str_eq(bad_desc->name, "bad");
+
+        /* Call Eo event with legacy and non-legacy callbacks. */
+        _eo_signals_cb_current = 0;
+        eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, -100, _eo_signals_a_changed_cb, (void *) 1));
+        eo_do(obj, eo_event_callback_add(a_desc, _eo_signals_a_changed_cb2, NULL));
+        eo_do(obj, simple_a_set(1));
+        ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
+
+        /* Call legacy event with legacy and non-legacy callbacks. */
+        int a = 3;
+        _eo_signals_cb_current = 0;
+        _eo_signals_cb_flag = 0;
+        eo_do(obj, eo_event_callback_call(a_desc, &a));
+        ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
+     }
    eo_unref(obj);
 
    eo_shutdown();
