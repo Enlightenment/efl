@@ -929,7 +929,7 @@ eng_setup(Evas *eo_e, void *in)
    else
      {
         re = e->engine.data.output;
-        if (_re_wincheck(re))
+        if (re->win && _re_wincheck(re))
           {
              if ((re->info->info.display != re->win->disp) ||
                  (re->info->info.drawable != re->win->win) ||
@@ -939,15 +939,10 @@ eng_setup(Evas *eo_e, void *in)
                  (re->info->info.depth != re->win->depth) ||
                  (re->info->info.destination_alpha != re->win->alpha))
                {
-                  int inc = 0;
+                  re->win->gl_context->references++;
+                  eng_window_free(re->win);
+                  gl_wins--;
 
-                  if (re->win)
-                    {
-                       re->win->gl_context->references++;
-                       eng_window_free(re->win);
-                       inc = 1;
-                       gl_wins--;
-                    }
                   re->w = e->output.w;
                   re->h = e->output.h;
                   re->win = eng_window_new(re->info->info.display,
@@ -962,9 +957,11 @@ eng_setup(Evas *eo_e, void *in)
                                            re->info->info.destination_alpha,
                                            re->info->info.rotation);
                   eng_window_use(re->win);
-                  if (re->win) gl_wins++;
-                  if ((re->win) && (inc))
-                     re->win->gl_context->references--;
+                  if (re->win)
+                    {
+                       gl_wins++;
+                       re->win->gl_context->references--;
+                    }
                }
              else if ((re->win->w != e->output.w) ||
                       (re->win->h != e->output.h) ||
