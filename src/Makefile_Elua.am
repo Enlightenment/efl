@@ -19,6 +19,9 @@ bin_elua_elua_LDADD = @ELUA_LIBS@
 endif
 bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@
 
+### Helper for other modules using Elua
+include Makefile_Elua_Helper.am
+
 eluamodulesdir = $(datadir)/elua/modules
 
 eluamodules_DATA = \

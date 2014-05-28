@@ -10,6 +10,7 @@ EOLIAN_FLAGS = \
 	       -I$(srcdir)/lib/edje \
 	       -I$(srcdir)/lib/ecore_audio
 
+ELUA_GEN_FLAGS =
 
 DIST_SUBDIRS =
 SUBDIRS =

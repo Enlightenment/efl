@@ -147,6 +147,7 @@ efl_deprecated_option="no"
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
+EFL_WITH_BIN([elua], [elua-bin])
 
 #### Default values
 
@@ -4644,6 +4645,10 @@ fi
 
 if test "x${with_binary_eolian_cxx}" != "x"; then
 echo "  eolian_cxx....: ${with_binary_eolian_cxx}"
+fi
+
+if test "x${with_binary_elua_bin}" != "x"; then
+echo "  elua..........: ${with_binary_elua_bin}"
 fi
 
 echo "  "
