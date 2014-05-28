@@ -10377,7 +10377,7 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
                   Evas_Coord fw, fh, fy;
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
-                  if (it && (ascent + descent == 0))
+                  if (ascent + descent == 0)
                      _layout_item_ascent_descent_adjust(eo_obj, &ascent,
                            &descent, it, it->format);
 
