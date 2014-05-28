@@ -9,8 +9,6 @@
 #include "Eolian.h"
 #include "eolian_suite.h"
 
-#define MAX_PATH 1024
-
 #ifdef HAVE_EVIL
 #include "Evil.h"
 #endif
@@ -85,7 +83,7 @@ _eolian_gen_execute(const char *eo_filename, const char *output_filename)
 
 START_TEST(eolian_dev_impl_code)
 {
-   char output_filepath[MAX_PATH] = "";
+   char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/object_impl.c",
 #ifdef HAVE_EVIL
          (char *)evil_tmpdir_get()
