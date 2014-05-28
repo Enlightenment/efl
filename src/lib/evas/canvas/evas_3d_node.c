@@ -204,7 +204,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
    Eina_Bool transform_dirty = EINA_FALSE, mesh_geom_dirty = EINA_FALSE;
    Eina_Bool mesh_frame_dirty = EINA_FALSE, member_dirty = EINA_FALSE;
    Eina_Bool frame_found = EINA_FALSE, is_change_orientation = EINA_FALSE;
-   Eina_List *m, *l;
+   const Eina_List *m, *l;
    Evas_3D_Mesh *mesh;
    int frame, count, size, i, j;
    Evas_3D_Mesh_Frame *f;
@@ -370,15 +370,15 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
         else
           {
              Eina_List *current;
-             Evas_3D_Node *data;
+             Evas_3D_Node *datanode;
 
              /* Update AABB and OBB of this node. */
              evas_box3_empty_set(&pd->aabb);
              evas_box3_empty_set(&pd->obb);
 
-             EINA_LIST_FOREACH(pd->members, current, data)
+             EINA_LIST_FOREACH(pd->members, current, datanode)
                {
-                  Evas_3D_Node_Data *datapd = eo_data_scope_get(data, EVAS_3D_NODE_CLASS);
+                  Evas_3D_Node_Data *datapd = eo_data_scope_get(datanode, EVAS_3D_NODE_CLASS);
                   evas_box3_union(&pd->obb, &pd->obb, &datapd->obb);
                   evas_box3_union(&pd->aabb, &pd->aabb, &datapd->aabb);
                }
