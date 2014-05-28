@@ -435,6 +435,33 @@ _accessible_get_application(const Eldbus_Service_Interface *iface EINA_UNUSED, c
    return ret;
 }
 
+static Eldbus_Message *
+_accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   Eina_List *attrs, *l;
+   Elm_Atspi_Attribute *attr;
+   Eldbus_Message_Iter *iter, *iter_array;
+
+   Eldbus_Message *ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   eo_do(obj, attrs = elm_interface_atspi_accessible_attributes_get());
+
+   iter = eldbus_message_iter_get(ret);
+   iter_array = eldbus_message_iter_container_new(iter, 'a', "ss");
+
+   EINA_LIST_FOREACH(attrs, l, attr)
+     eldbus_message_iter_arguments_get(iter_array, "ss", attr->key, attr->value);
+
+   eldbus_message_iter_container_close(iter, iter_array);
+   elm_atspi_attributes_list_free(attrs);
+
+   return ret;
+}
+
 static uint64_t 
 _elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
 {
@@ -552,7 +579,7 @@ static const Eldbus_Method accessible_methods[] = {
    { "GetLocalizedRoleName", NULL, ELDBUS_ARGS({"s", "LocalizedName"}), _accessible_get_localized_role_name, 0},
    { "GetState", NULL, ELDBUS_ARGS({"au", NULL}), _accessible_get_state, 0},
    { "GetApplication", NULL, ELDBUS_ARGS({"(so)", NULL}), _accessible_get_application, 0},
-   //{ "GetAttributes", NULL, ELDBUS_ARGS({"a{ss}", NULL}), NULL, 0},
+   { "GetAttributes", NULL, ELDBUS_ARGS({"a{ss}", NULL}), _accessible_attributes_get, 0},
    { NULL, NULL, NULL, NULL, 0 }
 };
 

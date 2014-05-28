@@ -34,11 +34,11 @@ _elm_interface_atspi_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_
 EOLIAN static Eina_Bool
 _elm_interface_atspi_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int w, int h)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret;
    int c_x = 0, c_y = 0;
 
    eo_do(obj, elm_interface_atspi_component_extents_get(EINA_FALSE, &c_x, &c_y, NULL, NULL));
-   eo_do(obj, elm_interface_atspi_component_extents_set(EINA_FALSE, c_x, c_y, w, h));
+   eo_do(obj, ret = elm_interface_atspi_component_extents_set(EINA_FALSE, c_x, c_y, w, h));
    return ret;
 }
 

@@ -186,6 +186,31 @@ enum _Elm_Atspi_State_Type
     ELM_ATSPI_STATE_LAST_DEFINED,
 };
 
+typedef enum _Elm_Atspi_Relation_Type Elm_Atspi_Relation_Type;
+
+enum _Elm_Atspi_Relation_Type {
+	ELM_ATSPI_RELATION_NULL,
+	ELM_ATSPI_RELATION_LABEL_FOR,
+	ELM_ATSPI_RELATION_LABELLED_BY,
+	ELM_ATSPI_RELATION_CONTROLLER_FOR,
+	ELM_ATSPI_RELATION_CONTROLLED_BY,
+	ELM_ATSPI_RELATION_MEMBER_OF,
+	ELM_ATSPI_RELATION_TOOLTIP_FOR,
+	ELM_ATSPI_RELATION_NODE_CHILD_OF,
+	ELM_ATSPI_RELATION_NODE_PARENT_OF,
+	ELM_ATSPI_RELATION_EXTENDED,
+	ELM_ATSPI_RELATION_FLOWS_TO,
+	ELM_ATSPI_RELATION_FLOWS_FROM,
+	ELM_ATSPI_RELATION_SUBWINDOW_OF,
+	ELM_ATSPI_RELATION_EMBEDS,
+	ELM_ATSPI_RELATION_EMBEDDED_BY,
+	ELM_ATSPI_RELATION_POPUP_FOR,
+	ELM_ATSPI_RELATION_PARENT_WINDOW_OF,
+	ELM_ATSPI_RELATION_DESCRIPTION_FOR,
+	ELM_ATSPI_RELATION_DESCRIBED_BY,
+	ELM_ATSPI_RELATION_LAST_DEFINED,
+};
+
 
 typedef struct _Elm_Atspi_Event_State_Changed_Data Elm_Atspi_Event_State_Changed_Data;
 
@@ -202,6 +227,27 @@ struct _Elm_Atspi_Event_Children_Changed_Data
    Eina_Bool is_added;
    Eo *child;
 };
+
+typedef struct _Elm_Atspi_Attribute Elm_Atspi_Attribute;
+
+struct _Elm_Atspi_Attribute
+{
+   const char *key;
+   const char *value;
+};
+
+typedef struct _Elm_Atspi_Relation Elm_Atspi_Relation;
+
+struct _Elm_Atspi_Relation
+{
+   Elm_Atspi_Relation_Type type;
+   const Eo *obj;
+};
+
+/**
+ * Free Elm_Atspi_Attributes_List
+ */
+void elm_atspi_attributes_list_free(Eina_List *list);
 
 /**
  * Emits ATSPI 'StateChanged' dbus signal.

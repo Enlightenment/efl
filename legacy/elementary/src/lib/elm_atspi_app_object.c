@@ -16,8 +16,21 @@ extern Eina_List *_elm_win_list;
 static Eo *_atspi_root;
 static int _init;
 
+typedef struct _Elm_Atspi_App_Object_Data Elm_Atspi_App_Object_Data;
+
+struct _Elm_Atspi_App_Object_Data
+{
+   const char *descr;
+};
+
+EOLIAN static void
+_elm_atspi_app_object_eo_base_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
+{
+   if (_pd->descr) eina_stringshare_del(_pd->descr);
+}
+
 EOLIAN static Eina_List*
-_elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *win;
@@ -33,19 +46,25 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_U
 }
 
 EOLIAN static const char*
-_elm_atspi_app_object_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_elm_atspi_app_object_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    return elm_app_name_get();
 }
 
 EOLIAN static const char*
-_elm_atspi_app_object_elm_interface_atspi_accessible_description_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_elm_atspi_app_object_elm_interface_atspi_accessible_description_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
 {
-   return NULL;
+   return _pd->descr;
+}
+
+EOLIAN static void
+_elm_atspi_app_object_elm_interface_atspi_accessible_description_set(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED, const char *descr)
+{
+   eina_stringshare_replace(&_pd->descr, descr);
 }
 
 EOLIAN static Elm_Atspi_Role
-_elm_atspi_app_object_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_elm_atspi_app_object_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    return ELM_ATSPI_ROLE_APPLICATION;
 }

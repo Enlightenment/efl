@@ -155,4 +155,54 @@ _elm_interface_atspi_widget_elm_interface_atspi_accessible_state_set_get(Eo *obj
    return states;
 }
 
+EOLIAN static Eina_List*
+_elm_interface_atspi_widget_elm_interface_atspi_accessible_attributes_get(Eo *obj, Elm_Interface_Atspi_Widget_Data *pd EINA_UNUSED)
+{
+   Eina_List *ret = NULL;
+   Elm_Atspi_Attribute *attr = calloc(1, sizeof(Elm_Atspi_Attribute));
+   if (!attr) return NULL;
+
+   attr->key = eina_stringshare_add("type");
+   attr->value = eina_stringshare_add(evas_object_type_get(obj));
+
+   ret = eina_list_append(ret, attr);
+   return ret;
+}
+
+static Elm_Atspi_Relation*
+_relation_new(Elm_Atspi_Relation_Type type, Eo *obj)
+{
+   Elm_Atspi_Relation *rel = calloc(1, sizeof(Elm_Atspi_Relation));
+   if (!rel) return NULL;
+
+   rel->type = type;
+   rel->obj = obj;
+
+   return rel;
+}
+
+EOLIAN static Eina_List*
+_elm_interface_atspi_widget_elm_interface_atspi_accessible_relation_set_get(Eo *obj, Elm_Interface_Atspi_Widget_Data *pd EINA_UNUSED)
+{
+   Eina_List *list = NULL;
+   Elm_Atspi_Relation *rel;
+   Evas_Object *rel_obj;
+
+   rel_obj = elm_object_focus_next_object_get(obj, ELM_FOCUS_NEXT);
+   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+     {
+        rel = _relation_new(ELM_ATSPI_RELATION_FLOWS_TO, rel_obj);
+        list = eina_list_append(list, rel);
+     }
+
+   rel_obj = elm_object_focus_next_object_get(obj, ELM_FOCUS_PREVIOUS);
+   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_CLASS))
+     {
+        rel = _relation_new(ELM_ATSPI_RELATION_FLOWS_FROM, rel_obj);
+        list = eina_list_append(list, rel);
+     }
+
+   return list;
+}
+
 #include "elm_interface_atspi_widget.eo.c"

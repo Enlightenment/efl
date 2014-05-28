@@ -166,11 +166,12 @@ _elm_interface_atspi_accessible_parent_set(Eo *obj, void *priv EINA_UNUSED, Eo *
        eo_class_name_get(eo_class_get(obj)));
 }
 
-EOLIAN void
+EOLIAN Eina_List*
 _elm_interface_atspi_accessible_attributes_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_attributes_set\" function.",
        eo_class_name_get(eo_class_get(obj)));
+   return NULL;
 }
 
 EOLIAN static Elm_Atspi_Role
@@ -262,6 +263,24 @@ _elm_interface_atspi_accessible_state_set_get(Eo *obj EINA_UNUSED, void *pd EINA
 {
    Elm_Atspi_State_Set ret = 0;
    return ret;
+}
+
+EOLIAN Eina_List*
+_elm_interface_atspi_accessible_relation_set_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   WRN("The %s object does not implement the \"accessible_relation_set\" function.",
+       eo_class_name_get(eo_class_get(obj)));
+   return NULL;
+}
+
+void elm_atspi_attributes_list_free(Eina_List *list)
+{
+   Elm_Atspi_Attribute *attr;
+   EINA_LIST_FREE(list, attr)
+	 {
+		eina_stringshare_del(attr->key);
+		eina_stringshare_del(attr->value);
+	 }
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

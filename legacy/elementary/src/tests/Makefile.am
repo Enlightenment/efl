@@ -6,6 +6,7 @@ TESTS = elm_suite
 check_PROGRAMS = elm_suite
 elm_suite_SOURCES = \
 	elm_suite.c \
+	elm_test_atspi.c \
 	elm_test_check.c \
 	elm_test_colorselector.c \
 	elm_test_entry.c \

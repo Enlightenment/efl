@@ -24,7 +24,11 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
       protected relation_set {
          get {
-            /*@ Gets an string describing ATSPI widget role name. */
+            /*@ Gets an string describing ATSPI widget role name. Lists and
+             * elements Should be free by a user. */
+         }
+         values {
+            Eina_List *relations;
          }
       }
       protected role {
@@ -56,8 +60,11 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
       protected attributes {
          get {
-            /*@ Gets human-readable string indentifying widget accessibility
-             * role. */
+            /*@ Gets key-value pairs indentifying widget extra 
+             * attributes. Must be free by a user. */
+         }
+         values {
+            Eina_List *attributes;
          }
       }
       protected index_in_parent {
@@ -98,9 +105,6 @@ mixin Elm_Interface_Atspi_Accessible ()
             Elm_Atspi_State_Set states;
          }
       }
-   }
-   implements {
-      virtual::relation_set::get;
    }
    events {
       property,changed (const char *);
