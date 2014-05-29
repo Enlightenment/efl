@@ -10,7 +10,7 @@ files_DATA = default.edj
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(AM_V_EDJ)$(EDJE_CC) \
-        $(EDJE_CC_FLAGS) \
+        $(EDJE_CC_FLAGS) -fastdecomp \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/default.edj
 
