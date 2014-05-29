@@ -528,7 +528,11 @@ evas_image_load_file_head_gif2(void *loader_data,
    ret = EINA_TRUE;
 
 on_error: // jump here on any errors to clean up
+#if (GIFLIB_MAJOR > 5) || ((GIFLIB_MAJOR == 5) && (GIFLIB_MINOR >= 1))
+   if (gif) DGifCloseFile(gif, NULL);
+#else
    if (gif) DGifCloseFile(gif);
+#endif
    if (fi.map) eina_file_map_free(f, fi.map);
    return ret;
 }
@@ -607,7 +611,11 @@ open_file:
    if ((index > 0) && (index < loader->imgnum) &&
        (animated->animated > 1))
      {
+#if (GIFLIB_MAJOR > 5) || ((GIFLIB_MAJOR == 5) && (GIFLIB_MINOR >= 1))
+        if (loader->gif) DGifCloseFile(loader->gif, NULL);
+#else
         if (loader->gif) DGifCloseFile(loader->gif);
+#endif
         if ((loader->fi.map) && (loader->f))
           eina_file_map_free(loader->f, loader->fi.map);
         loader->gif = NULL;
@@ -765,7 +773,11 @@ open_file:
    loader->imgnum = imgnum;
    if ((animated->frame_count <= 1) || (rec == TERMINATE_RECORD_TYPE))
      {
+#if (GIFLIB_MAJOR > 5) || ((GIFLIB_MAJOR == 5) && (GIFLIB_MINOR >= 1))
+        if (loader->gif) DGifCloseFile(loader->gif, NULL);
+#else
         if (loader->gif) DGifCloseFile(loader->gif);
+#endif
         if ((loader->fi.map) && (loader->f))
           eina_file_map_free(loader->f, loader->fi.map);
         loader->gif = NULL;
@@ -849,7 +861,11 @@ static void
 evas_image_load_file_close_gif2(void *loader_data)
 {
    Loader_Info *loader = loader_data;
+#if (GIFLIB_MAJOR > 5) || ((GIFLIB_MAJOR == 5) && (GIFLIB_MINOR >= 1))
+   if (loader->gif) DGifCloseFile(loader->gif, NULL);
+#else
    if (loader->gif) DGifCloseFile(loader->gif);
+#endif
    if ((loader->fi.map) && (loader->f))
      eina_file_map_free(loader->f, loader->fi.map);
    free(loader);
