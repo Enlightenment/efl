@@ -144,7 +144,7 @@ compress_rle4(DATA8 *src, int pitch, int w, int h, int *size_ret)
         // track to find out where this rows RLE run *ENDS* so keep a
         // pointer to it and we will keep ++ing it with each REL entry we add
         pos = &(jumptab[y]);
-        *pos = (int)((unsigned long)p - (unsigned long)scratch);
+        *pos = (int)(p - scratch);
         // no spans now so init all span things to 0
         spanval = spanlen = spannum = 0;
         for (x = 0; x < w; x++)
@@ -184,7 +184,7 @@ compress_rle4(DATA8 *src, int pitch, int w, int h, int *size_ret)
           }
      }
    // get the size of RLE data we have plus int header
-   total = (int)((unsigned long)p - (unsigned long)scratch);
+   total = (int)(p - scratch);
    size = sizeof(int) + total;
    // based on total number of bytes in RLE, use 32, 16 or 8 bit jumptable
    // and add that to our size
