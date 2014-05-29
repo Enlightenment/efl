@@ -202,7 +202,7 @@ _eio_monitor_win32_watcher_new(Eio_Monitor      *monitor,
    if (!w) return NULL;
 
    if (!monitor_parent)
-     monitored = current;
+     monitored = (char *)current;
    else
      {
         char *tmp;

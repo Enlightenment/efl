@@ -324,6 +324,8 @@ _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize
                                   MEM_PAGE_SIZE);
    madvise(((unsigned char *)*ptr) + addr, maxsize - addr, MADV_DONTNEED);
 #else
+   (void)newsize;
+   (void)maxsize;
    // just grow in regular cases
 #endif
 }
@@ -335,6 +337,7 @@ _eo_call_stack_mem_free(void *ptr, size_t maxsize)
    // free mmaped memory
    munmap(ptr, maxsize);
 #else
+   (void)maxsize;
    // free regular memory
    free(ptr);
 #endif
@@ -723,7 +726,7 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
               * them. We fallback to plain string comparison based on the
               * function name itself. Slow, but this should rarely happen.
               */
-             for (int i = 0; i < cur_klass->desc->ops.count; i++)
+             for (unsigned int i = 0; i < cur_klass->desc->ops.count; i++)
                if (op_descs[i].api_name && !strcmp(api_name, op_descs[i].api_name))
                  {
                     if (op_descs[i].api_func == NULL || op_descs[i].api_func == ((void (*)())-1))
@@ -1649,7 +1652,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
 #endif
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object %lx (%s) is already not referenced.", (unsigned long) _eo_id_get(obj), obj->klass->desc->name);
+        ERR("Data for object %zx (%s) is already not referenced.", (size_t)_eo_id_get(obj), obj->klass->desc->name);
      }
    else
      {
@@ -1670,7 +1673,7 @@ _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
      }
    else
      {
-        ERR("ref_obj (0x%lx) does not reference data (%p) of obj (0x%lx).", (unsigned long) _eo_id_get(ref_obj), data, (unsigned long)_eo_id_get(obj));
+        ERR("ref_obj (0x%zx) does not reference data (%p) of obj (0x%zx).", (size_t)_eo_id_get(ref_obj), data, (size_t)_eo_id_get(obj));
      }
 #else
    (void) ref_obj;
