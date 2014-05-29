@@ -85,7 +85,7 @@ _eina_thread_tls_keys_clean(Eina_Thread_Win32 *tw)
 
    EINA_LIST_FREE(tw->tls_keys, data)
      {
-        Eina_TLS key = data;
+        Eina_TLS key = (Eina_TLS)(uintptr_t)data;
         cb = _eina_thread_tls_cb_find(key);
         if (cb)
           cb->cb(eina_tls_get(key));
@@ -129,7 +129,7 @@ _eina_thread_tls_key_add(Eina_TLS key)
    EINA_LIST_FOREACH(_thread_running, l, tw)
       if (tw->thread == t)
         {
-           void *data = key;
+           void *data = (void *)(uintptr_t)key;
            if (!eina_list_data_find(tw->tls_keys, data))
              tw->tls_keys = eina_list_append(tw->tls_keys, data);
            return EINA_TRUE;

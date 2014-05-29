@@ -192,6 +192,9 @@ _evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int 
    else
      munmap(data, siz);
 #else
+   (void)w;
+   (void)h;
+   (void)cspace;
    free(data);
 #endif
 }
