@@ -11,11 +11,11 @@
 
 START_TEST(eolian_namespaces)
 {
-   Eolian_Class class11, class112, class21, class_no;
+   Eolian_Class class11, class112, class21, class_no, impl_class;
    Eolian_Function fid;
    const Eina_List *list = NULL;
-   const char *class_name, *func_name;
    Eolian_Function_Type func_type;
+   const char *class_name;
 
    eolian_init();
    /* Parsing */
@@ -60,17 +60,19 @@ START_TEST(eolian_namespaces)
    /* Implements */
    fail_if(!(list = eolian_class_implements_list_get(class11)));
    fail_if(eina_list_count(list) != 3);
+
    fail_if(!eolian_implement_information_get(eina_list_nth(list, 0),
-            &class_name, &func_name, &func_type));
-   fail_if(eolian_class_find_by_name(class_name) != class112);
-   fail_if(strcmp(func_name, "a"));
+            &impl_class, &fid, &func_type));
+   fail_if(impl_class != class112);
+   fail_if(strcmp(eolian_function_name_get(fid), "a"));
    fail_if(func_type != EOLIAN_PROP_SET);
+
    fail_if(eolian_implement_information_get(eina_list_nth(list, 1),
-            &class_name, &func_name, &func_type));
+            &impl_class, &fid, &func_type));
    fail_if(!eolian_implement_information_get(eina_list_nth(list, 2),
-            &class_name, &func_name, &func_type));
-   fail_if(eolian_class_find_by_name(class_name) != class_no);
-   fail_if(strcmp(func_name, "foo"));
+            &impl_class, &fid, &func_type));
+   fail_if(impl_class != class_no);
+   fail_if(strcmp(eolian_function_name_get(fid), "foo"));
    fail_if(func_type != EOLIAN_METHOD);
 
    /* Virtual regression */
@@ -116,7 +118,8 @@ START_TEST(eolian_override)
 {
    Eolian_Function fid = NULL;
    const Eina_List *impls = NULL;
-   const char *impl_class = NULL, *impl_func = NULL;
+   Eolian_Class impl_class = NULL;
+   Eolian_Function impl_func = NULL;
    Eolian_Class class, base;
 
    eolian_init();
@@ -133,8 +136,8 @@ START_TEST(eolian_override)
    fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_UNRESOLVED));
    fail_if(!(impls = eolian_class_implements_list_get(class)));
    fail_if(!eolian_implement_information_get(eina_list_nth(impls, 0), &impl_class, &impl_func, NULL));
-   fail_if(strcmp(impl_class, "Base"));
-   fail_if(strcmp(impl_func, "constructor"));
+   fail_if(impl_class != base);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
 
    /* Property */
    fail_if(!(fid = eolian_class_function_find_by_name(class, "a", EOLIAN_PROPERTY)));
@@ -177,7 +180,8 @@ END_TEST
 START_TEST(eolian_ctor_dtor)
 {
    const Eina_List *impls = NULL;
-   const char *impl_class = NULL, *impl_func = NULL;
+   Eolian_Class impl_class = NULL;
+   Eolian_Function impl_func = NULL;
    Eolian_Class class, base;
 
    eolian_init();
@@ -195,11 +199,11 @@ START_TEST(eolian_ctor_dtor)
    fail_if(!(impls = eolian_class_implements_list_get(class)));
    fail_if(eina_list_count(impls) != 2);
    fail_if(!eolian_implement_information_get(eina_list_nth(impls, 0), &impl_class, &impl_func, NULL));
-   fail_if(strcmp(impl_class, "Base"));
-   fail_if(strcmp(impl_func, "constructor"));
+   fail_if(impl_class != base);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
    fail_if(!eolian_implement_information_get(eina_list_nth(impls, 1), &impl_class, &impl_func, NULL));
-   fail_if(strcmp(impl_class, "Base"));
-   fail_if(strcmp(impl_func, "destructor"));
+   fail_if(impl_class != base);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "destructor"));
 
    /* Custom ctors/dtors */
    fail_if(!eolian_class_function_find_by_name(base, "constructor", EOLIAN_CTOR));

@@ -596,18 +596,26 @@ EAPI Eina_Bool eolian_function_return_is_warn_unused(Eolian_Function foo_id, Eol
 EAPI Eina_Bool eolian_function_object_is_const(Eolian_Function function_id);
 
 /*
+ * @brief Get full string of an overriding function (implement).
+ *
+ * @param[in] impl handle of the implement
+ * @return the full string.
+ */
+EAPI Eina_Stringshare * eolian_implement_full_name_get(const Eolian_Implement impl);
+
+/*
  * @brief Get information about an overriding function (implement).
  *
  * @param[in] impl handle of the implement
- * @param[out] class_name name of the class to override
- * @param[out] func_name name of the function to override
- * @param[out] type type of the function to override
+ * @param[out] class overridden class
+ * @param[out] func overridden function
+ * @param[out] type type of the overridden function
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_information_get(Eolian_Implement impl,
-      const char **class_name, const char **func_name, Eolian_Function_Type *type);
+EAPI Eina_Bool eolian_implement_information_get(const Eolian_Implement impl,
+      Eolian_Class *klass, Eolian_Function *function, Eolian_Function_Type *type);
 
 /*
  * @brief Get the list of overriding functions defined in a class.

@@ -182,25 +182,22 @@ convert_eolian_implements(efl::eolian::eo_class& cls, const Eolian_Class klass)
    EINA_LIST_FOREACH(eolian_class_implements_list_get(klass), it, impl_desc_)
      {
         Eolian_Implement impl_desc = static_cast<Eolian_Implement>(impl_desc_);
-        const char *impl_classname;
-        const char *func_name;
-        Eolian_Function_Type func_type;
+        Eolian_Class impl_class;
+        Eolian_Function impl_func;
+        Eolian_Function_Type impl_type;
         eolian_implement_information_get
-          (impl_desc, &impl_classname, &func_name, &func_type);
-        if (func_type == EOLIAN_CTOR)
+          (impl_desc, &impl_class, &impl_func, &impl_type);
+        if (impl_type == EOLIAN_CTOR)
           {
              efl::eolian::eo_constructor constructor;
-             Eolian_Class impl_class = eolian_class_find_by_name(impl_classname);
-             Eolian_Function eolian_constructor =
-                eolian_class_function_find_by_name(impl_class, func_name, func_type);
-             std::string parent = safe_str(impl_classname);
+             std::string parent = safe_str(eolian_class_full_name_get(impl_class));
              if(parent == "Eo_Base") parent = "eo";
              else std::transform(parent.begin(), parent.end(), parent.begin(), ::tolower);
-             constructor.name = parent + "_" + safe_str(func_name);
+             constructor.name = parent + "_" + safe_str(eolian_function_name_get(impl_func));
              constructor.params = _get_params
-               (eolian_parameters_list_get(eolian_constructor));
+               (eolian_parameters_list_get(impl_func));
              constructor.comment = detail::eolian_constructor_comment
-               (eolian_constructor);
+               (impl_func);
              cls.constructors.push_back(constructor);
           }
      }

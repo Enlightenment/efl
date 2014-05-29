@@ -52,9 +52,6 @@ EO_DEFINE_CLASS(@#eoprefix_class_get, &_@#class_class_desc, @#list_inheritNULL);
 ";
 
 static const char
-tmpl_eo_func_desc[] = "\n     EO_OP_FUNC_OVERRIDE(@#eoprefix_@#func, _@#class_@#func),";
-
-static const char
 tmpl_eo_op_desc[] = "\n     EO_OP_FUNC(@#eoprefix_@#func, _@#class_@#func, \"@#desc\"),";
 
 static const char
@@ -590,7 +587,6 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
    Eina_Strbuf *str_func = eina_strbuf_new();
    Eina_Strbuf *str_bodyf = eina_strbuf_new();
    Eina_Strbuf *str_ev = eina_strbuf_new();
-   Eina_Strbuf *tmpl_impl = eina_strbuf_new();
 
    _template_fill(str_end, tmpl_eo_src, class, NULL, NULL, EINA_TRUE);
 
@@ -628,80 +624,51 @@ eo_source_end_generate(const Eolian_Class class, Eina_Strbuf *buf)
    Eolian_Implement impl_desc;
    EINA_LIST_FOREACH(eolian_class_implements_list_get(class), itr, impl_desc)
      {
-        const char *funcname;
-        const char *impl_classname;
+        Eolian_Class impl_class;
         Eolian_Function_Type ftype;
-
-        eolian_implement_information_get(impl_desc, &impl_classname, &funcname, &ftype);
-        Eolian_Class impl_class = eolian_class_find_by_name(impl_classname);
         _eolian_class_vars impl_env;
-        _class_env_create(impl_class, NULL, &impl_env);
+        Eolian_Function fnid;
+        const char *funcname;
 
-        eina_strbuf_reset(tmpl_impl);
-        eina_strbuf_append(tmpl_impl, tmpl_eo_func_desc);
-        eina_strbuf_replace_all(tmpl_impl, "@#eoprefix", impl_env.lower_eo_prefix);
+        eolian_implement_information_get(impl_desc, &impl_class, &fnid, &ftype);
+        _class_env_create(impl_class, NULL, &impl_env);
+        funcname = eolian_function_name_get(fnid);
 
         char implname[0xFF];
         char *tp = implname;
         sprintf(implname, "%s_%s", class_env.full_classname, impl_env.full_classname);
         eina_str_tolower(&tp);
 
-        eina_strbuf_replace_all(tmpl_impl, "@#class", implname);
-        const char *tmpl_impl_str = eina_strbuf_string_get(tmpl_impl);
-
-        Eolian_Function in_meth = NULL;
-        Eolian_Function in_prop = NULL;
-        const Eina_List *itr2;
-        Eolian_Function fnid;
-        EINA_LIST_FOREACH(eolian_class_functions_list_get(impl_class, EOLIAN_CTOR), itr2, fnid)
-          if (fnid && !strcmp(eolian_function_name_get(fnid), funcname)) in_meth = fnid;
-        EINA_LIST_FOREACH(eolian_class_functions_list_get(impl_class, EOLIAN_METHOD), itr2, fnid)
-          if (fnid && !strcmp(eolian_function_name_get(fnid), funcname)) in_meth = fnid;
-        EINA_LIST_FOREACH(eolian_class_functions_list_get(impl_class, EOLIAN_PROPERTY), itr2, fnid)
-          if (fnid && !strcmp(eolian_function_name_get(fnid), funcname)) in_prop = fnid;
-
-        if (!in_meth && !in_prop)
+        if (!fnid)
           {
-             ERR ("Failed to generate implementation of %s:%s - missing form super class", impl_classname, funcname);
+             ERR ("Failed to generate implementation of %s - missing form super class",
+                   eolian_implement_full_name_get(impl_desc));
              goto end;
           }
 
-        /* e.g event_freeze can be a property or a method. If a type is explicit (property EOLIAN_PROP_SET/EOLIAN_PROP_GET),
-         * we assume it can't be a method.
-         */
-        if ((in_meth && in_prop) && (ftype == EOLIAN_PROP_SET || ftype == EOLIAN_PROP_GET)) in_meth = NULL;
-
-        if (in_meth)
+        switch (ftype)
           {
-             _template_fill(str_op, tmpl_impl_str, impl_class, NULL, funcname, EINA_FALSE);
-             eo_bind_func_generate(class, in_meth, EOLIAN_UNRESOLVED, str_bodyf, &impl_env);
-             continue;
+           case EOLIAN_PROP_SET: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY:
+              if (ftype != EOLIAN_PROP_GET)
+                {
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_%s_set, _%s_%s_set),",
+                         impl_env.lower_eo_prefix, funcname, implname, funcname);
+                   eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, &impl_env);
+                }
+
+              if (ftype != EOLIAN_PROP_SET)
+                {
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_%s_get, _%s_%s_get),",
+                         impl_env.lower_eo_prefix, funcname, implname, funcname);
+                   eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, &impl_env);
+                }
+              break;
+           default:
+              eina_strbuf_append_printf(str_op, "\n     EO_OP_FUNC_OVERRIDE(%s_%s, _%s_%s),",
+                    impl_env.lower_eo_prefix, funcname, implname, funcname);
+              eo_bind_func_generate(class, fnid, ftype, str_bodyf, &impl_env);
+              break;
           }
-
-        if (in_prop)
-          {
-             char tmpstr[0xFF];
-
-             if ((ftype != EOLIAN_PROP_GET) && (ftype != EOLIAN_PROP_SET)) ftype = eolian_function_type_get(in_prop);
-
-             Eina_Bool prop_read = ( ftype == EOLIAN_PROP_SET ) ? EINA_FALSE : EINA_TRUE;
-             Eina_Bool prop_write = ( ftype == EOLIAN_PROP_GET ) ? EINA_FALSE : EINA_TRUE;
-
-             if (prop_write)
-               {
-                  sprintf(tmpstr, "%s_set", funcname);
-                  _template_fill(str_op, tmpl_impl_str, impl_class, NULL, tmpstr, EINA_FALSE);
-                  eo_bind_func_generate(class, in_prop, EOLIAN_PROP_SET, str_bodyf, &impl_env);
-               }
-
-             if (prop_read)
-               {
-                  sprintf(tmpstr, "%s_get", funcname);
-                  _template_fill(str_op, tmpl_impl_str, impl_class, NULL, tmpstr, EINA_FALSE);
-                  eo_bind_func_generate(class, in_prop, EOLIAN_PROP_GET, str_bodyf, &impl_env);
-               }
-          }
-        eina_strbuf_append(str_op, eina_strbuf_string_get(tmpbuf));
      }
 
    //Constructors
@@ -864,7 +831,6 @@ end:
    eina_strbuf_free(str_bodyf);
    eina_strbuf_free(str_end);
    eina_strbuf_free(str_ev);
-   eina_strbuf_free(tmpl_impl);
 
    return ret;
 }
