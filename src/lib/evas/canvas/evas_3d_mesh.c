@@ -57,7 +57,7 @@ evas_3d_mesh_frame_find(Evas_3D_Mesh_Data *pd, int frame)
 }
 
 Eina_Bool
-_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
+evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
 {
    Evas_3D_Mesh_Frame *curframe = evas_3d_mesh_frame_find(pd, frame);
    int i = 0, j = 0, step = 0, size = 0;
@@ -564,7 +564,8 @@ _evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int fra
           }
      }
 
-   if (attrib == EVAS_3D_VERTEX_POSITION && !_aabb_add_to_frame(pd, frame, stride))
+   if (attrib == EVAS_3D_VERTEX_POSITION &&
+       !evas_3d_mesh_aabb_add_to_frame(pd, frame, stride))
      {
         ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);
      }

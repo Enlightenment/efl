@@ -436,7 +436,7 @@ evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file)
 
         pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
 
-        if (!_aabb_add_to_frame(pd, f, stride_pos))
+        if (!evas_3d_mesh_aabb_add_to_frame(pd, f, stride_pos))
           {
              ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", f);
           }
