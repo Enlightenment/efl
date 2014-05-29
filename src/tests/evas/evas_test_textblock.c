@@ -1733,19 +1733,54 @@ START_TEST(evas_textblock_wrapping)
 
 
    /* Ellipsis */
-   evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
-   evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
-   evas_object_resize(tb, nw / 2, nh);
-   evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if((w > (nw / 2)) || (h != nh));
-
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa<br/>b");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=word");
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   fail_if(w > (nw / 2));
+   ck_assert_int_le(w, (nw / 2));
+
+   {
+      double ellip;
+      for(ellip = 0.0; ellip <= 1.0; ellip = ellip + 0.1)
+        {
+           char buf[128];
+           Evas_Coord w1, h1, w2, h2;
+
+           sprintf(buf, "+ ellipsis=%f", ellip);
+           evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
+           evas_textblock_cursor_format_prepend(cur, buf);
+           evas_object_textblock_size_native_get(tb, &nw, &nh);
+           evas_object_resize(tb, nw / 2, nh);
+           evas_object_textblock_size_formatted_get(tb, &w, &h);
+           ck_assert_int_le(w, (nw / 2));
+           ck_assert_int_eq(h, nh);
+
+           evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
+           evas_textblock_cursor_format_prepend(cur, buf);
+           evas_object_textblock_size_native_get(tb, &nw, &nh);
+           evas_object_resize(tb, nw, nh);
+           evas_object_textblock_size_formatted_get(tb, &w, &h);
+           evas_object_resize(tb, nw / 2, nh);
+           evas_object_textblock_size_formatted_get(tb, &w1, &h1);
+           evas_object_resize(tb, nw, nh);
+           evas_object_textblock_size_formatted_get(tb, &w2, &h2);
+           ck_assert_int_eq(w, w2);
+           ck_assert_int_eq(h, h2);
+
+           sprintf(buf, "+ ellipsis=%f", ellip);
+           evas_object_textblock_text_markup_set(tb,
+                 "the<tab>quick brown fox"
+                 "jumps<tab> over the<tab> lazy dog"
+                 );
+           evas_textblock_cursor_format_prepend(cur, buf);
+           evas_object_textblock_size_native_get(tb, &nw, &nh);
+           evas_object_resize(tb, nw / 2, nh);
+           evas_object_textblock_size_formatted_get(tb, &w, &h);
+           ck_assert_int_le(w, (nw / 2));
+           ck_assert_int_eq(h, nh);
+        }
+   }
 
    /* Word wrap ending with whites. */
    evas_object_resize(tb, 322, 400);

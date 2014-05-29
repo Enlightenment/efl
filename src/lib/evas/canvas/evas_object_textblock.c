@@ -487,6 +487,7 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Paragraph    *par_index[TEXTBLOCK_PAR_INDEX_SIZE];
 
    Evas_Object_Textblock_Text_Item    *ellip_ti;
+   Eina_List                          *ellip_prev_it; /* item that is placed before ellipsis item (0.0 <= ellipsis < 1.0), if required */
    Eina_List                          *anchors_a;
    Eina_List                          *anchors_item;
    int                                 last_w, last_h;
@@ -2910,6 +2911,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         fmt->underline_dash_gap = 2;
         fmt->linerelgap = 0.0;
         fmt->password = 1;
+        fmt->ellipsis = -1;
      }
    return fmt;
 }
@@ -4471,6 +4473,142 @@ _layout_paragraph_render(Evas_Textblock_Data *o,
 #endif
 }
 
+/* calculates items width in current paragraph */
+static inline Evas_Coord
+_calc_items_width(Ctxt *c)
+{
+   Evas_Object_Textblock_Item *it, *last_it = NULL;
+   Eina_List *i;
+   Evas_Coord w = 0;
+
+   if  (!c->par->logical_items)
+      return 0;
+
+   EINA_LIST_FOREACH(c->par->logical_items, i, it)
+     {
+        w += it->adv;
+        last_it = it;
+     }
+
+   //reaching this point when it is the last item
+   if (last_it)
+      w += last_it->w - last_it->adv;
+   return w;
+}
+
+static inline int
+_item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x)
+{
+   int pos = -1;
+   Evas_Object_Textblock_Text_Item *ti;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(c->obj, EVAS_OBJ_CLASS);
+
+   ti = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(it) : NULL;
+   if (ti && ti->parent.format->font.font)
+     {
+        pos = ENFN->font_last_up_to_pos(ENDT, ti->parent.format->font.font,
+              &ti->text_props, x, 0);
+     }
+   return pos;
+}
+
+/**
+ * @internal
+ * This handles ellipsis prior most of the work in _layout_par.
+ * Currently it is here to handle all value in the range of 0.0 to 0.9999 (<1).
+ * It starts by getting the total width of items, and calculates the 'block' of
+ * text that needs to be removed i.e. sets low and high boundaries
+ * of that block.
+ * All text items that intersect this block will be cut: the edge items (ones
+ * that don't intersect in whole) will be split, and the rest are set to be
+ * visually-deleted.
+ * Note that a special case for visible format items does not
+ * split them, but instead just visually-deletes them (because there are no 
+ * characters to split).
+ */
+static inline void
+_layout_par_ellipsis_items(Ctxt *c, double ellip)
+{
+   Evas_Object_Textblock_Item *it;
+   Evas_Object_Textblock_Text_Item *ellip_ti;
+   Eina_List *i, *j;
+   Evas_Coord items_width, exceed, items_cut;
+   Evas_Coord l, h, off;
+   int pos;
+
+   c->o->ellip_prev_it = NULL;
+
+   /* calc exceed amount */
+   items_width = _calc_items_width(c);
+   exceed = items_width - (c->w - c->o->style_pad.l - c->o->style_pad.r
+                         - c->marginl - c->marginr);
+
+   if (exceed <= 0)
+      return;
+
+     {
+        Evas_Object_Textblock_Item *first_it =
+           _ITEM(eina_list_data_get(c->par->logical_items));
+        ellip_ti = _layout_ellipsis_item_new(c, first_it);
+     }
+   exceed += ellip_ti->parent.adv;
+   items_cut = items_width * ellip;
+   l = items_cut - (exceed * ellip);
+   h = l + exceed; //h = items_cut - (exceed * (1 - ellip))
+
+   off = 0;
+   /* look for the item that is being cut by the lower boundary */
+   i = c->par->logical_items;
+   EINA_LIST_FOREACH(c->par->logical_items, i, it)
+     {
+        if (it->w > (l - off))
+           break;
+        off += it->adv;
+     }
+   c->o->ellip_prev_it = i;
+   if (it) _layout_ellipsis_item_new(c, it);
+
+
+   pos = (it && it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+      (_item_get_cutoff(c, it, l - off)) : -1;
+   if (pos >= 0)
+     {
+        _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, pos);
+        off += it->adv;
+        i = eina_list_next(i);
+     }
+
+   /* look for the item that is being cut by the upper boundary */
+   EINA_LIST_FOREACH(i, j, it)
+     {
+        if (it->w > (h - off))
+           break;
+        off += it->adv;
+        /* if item is not being cut by the upper boundary, then
+         * it is contained in the area that we are supposed to
+         * visually remove */
+        it->visually_deleted = EINA_TRUE;
+     }
+
+   pos = (it && it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+      (_item_get_cutoff(c, it, h - off)) : -1;
+   if (pos >= 0)
+      _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), j, pos + 1);
+   if (it)
+      it->visually_deleted = EINA_TRUE;
+}
+
+static inline void
+_layout_par_append_ellipsis(Ctxt *c)
+{
+   Evas_Object_Textblock_Text_Item *ellip_ti = c->o->ellip_ti;
+   c->ln->items = (Evas_Object_Textblock_Item *)
+      eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+            EINA_INLIST_GET(_ITEM(ellip_ti)));
+   ellip_ti->parent.ln = c->ln;
+   c->x += ellip_ti->parent.adv;
+}
+
 /* 0 means go ahead, 1 means break without an error, 2 means
  * break with an error, should probably clean this a bit (enum/macro)
  * FIXME ^ */
@@ -4550,6 +4688,18 @@ _layout_par(Ctxt *c)
    _layout_line_new(c, it->format);
    /* We walk on our own because we want to be able to add items from
     * inside the list and then walk them on the next iteration. */
+
+   /* TODO: We need to consider where ellipsis is used in the current text.
+      Currently, we assume that ellipsis is at the beginning of the
+      paragraph. This is a safe assumption for now, as other usages
+      seem a bit unnatural.*/
+     {
+        double ellip;
+        ellip = it->format->ellipsis;
+        if ((0 <= ellip) && (ellip < 1.0))
+           _layout_par_ellipsis_items(c, ellip);
+     }
+
    for (i = c->par->logical_items ; i ; )
      {
         Evas_Coord prevdescent = 0, prevascent = 0;
@@ -4559,6 +4709,10 @@ _layout_par(Ctxt *c)
         /* Skip visually deleted items */
         if (it->visually_deleted)
           {
+             //one more chance for ellipsis special cases
+             if (c->o->ellip_prev_it == i)
+                _layout_par_append_ellipsis(c);
+
              i = eina_list_next(i);
              continue;
           }
@@ -4596,7 +4750,11 @@ _layout_par(Ctxt *c)
                  c->marginl - c->marginr)) || (wrap > 0)))
           {
              /* Handle ellipsis here. If we don't have more width left
-              * and no height left, or no more width left and no wrapping. */
+              * and no height left, or no more width left and no wrapping.
+              * Note that this is only for ellipsis == 1.0, and is treated in a
+              * fast path.
+              * Other values of 0.0 <= ellipsis < 1.0 are handled in
+              * _layout_par_ellipsis_items */
              if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
                    ((2 * it->h + c->y >
                      c->h - c->o->style_pad.t - c->o->style_pad.b) ||
@@ -4766,6 +4924,8 @@ _layout_par(Ctxt *c)
                     }
                }
              c->x += it->adv;
+             if (c->o->ellip_prev_it == i)
+                _layout_par_append_ellipsis(c);
              i = eina_list_next(i);
           }
         if (adv_line)
