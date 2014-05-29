@@ -28,6 +28,30 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <Eina.h>
 #include "rg_etc1.h"
 
+// FIXME: Remove DEBUG
+#define DEBUG
+
+// Weights for the distance (perceptual mode) - sum is ~1024
+static const int R_WEIGHT = 299 * 1024 / 1000;
+static const int G_WEIGHT = 587 * 1024 / 1000;
+static const int B_WEIGHT = 114 * 1024 / 1000;
+
+static const int kTargetError[3] = {
+   5*5*16, // 34 dB
+   2*2*16, // 42 dB
+   0 // infinite dB
+};
+
+// For T and H modes
+static const int kDistances[8] = {
+   3, 6, 11, 16, 23, 32, 41, 64
+};
+
+// For differential mode
+static const int kSigned3bit[8] = {
+   0, 1, 2, 3, -4, -3, -2, -1
+};
+
 // For alpha support
 static const int kAlphaModifiers[16][8] = {
    {  -3,  -6,  -9,  -15,  2,  5,  8,  14},
@@ -75,8 +99,17 @@ static const int kBlockWalk[16] = {
 // Simple min
 #define MIN(a,b) ({ int _z = (a), _y = (b); ((_z <= _y) ? _z : _y); })
 
+// Simple max
+#define MAX(a,b) ({ int __z = (a), __y = (b); ((__z > __y) ? __z : __y); })
+
+// Simple clamp between two values
+#define MINMAX(a,b,c) (MIN(c,MAX(a,b)))
+
 // Simple abs
 #define ABS(a) ({ int _a = (a); ((_a >= 0) ? _a : (-_a)); })
+
+// Write a BGRA value for output to Evas
+#define BGRA(r,g,b,a) ((a << 24) | (r << 16) | (g << 8) | b)
 
 #ifndef WORDS_BIGENDIAN
 /* x86 */
@@ -84,16 +117,22 @@ static const int kBlockWalk[16] = {
 #define R_VAL(p) (((uint8_t *)(p))[2])
 #define G_VAL(p) (((uint8_t *)(p))[1])
 #define B_VAL(p) (((uint8_t *)(p))[0])
+#define R_IDX 2
+#define G_IDX 1
+#define B_IDX 0
 #else
 /* ppc */
 #define A_VAL(p) (((uint8_t *)(p))[0])
 #define R_VAL(p) (((uint8_t *)(p))[1])
 #define G_VAL(p) (((uint8_t *)(p))[2])
 #define B_VAL(p) (((uint8_t *)(p))[3])
+#define R_IDX 1
+#define G_IDX 2
+#define B_IDX 3
 #endif
 
 #ifndef DBG
-# define DBG(fmt, ...) fprintf(stderr, fmt "\n", ## __VA_ARGS__)
+# define DBG(fmt, ...) fprintf(stderr, "%s:%d: " fmt "\n", __FUNCTION__, __LINE__, ## __VA_ARGS__)
 #endif
 
 /** Pack alpha block given a modifier table and a multiplier
@@ -163,7 +202,7 @@ _etc2_alpha_block_pack(uint8_t *etc2_alpha,
 
 static int
 _etc2_alpha_encode(uint8_t *etc2_alpha, const uint32_t *bgra,
-                   rg_etc1_pack_params *params EINA_UNUSED)
+                   const rg_etc1_pack_params *params)
 {
    int alphas[16], avg = 0, diff = 0, maxDiff = INT_MAX, minErr = INT_MAX;
    int base_codeword;
@@ -196,24 +235,21 @@ _etc2_alpha_encode(uint8_t *etc2_alpha, const uint32_t *bgra,
      }
 
    // Bruteforce -- try all tables and all multipliers, oh my god this will be slow.
-
+   max_error = kTargetError[params->m_quality];
    switch (params->m_quality)
      {
       // The follow parameters are completely arbitrary.
       // Need some real testing.
       case rg_etc1_high_quality:
         base_range = 15;
-        base_step = 0;
-        max_error = 0;
+        base_step = 1;
         break;
       case rg_etc1_medium_quality:
         base_range = 6;
         base_step = 2;
-        max_error = 2 * 2 * 16; // 42dB
         break;
       case rg_etc1_low_quality:
         base_range = 0;
-        max_error = 5 * 5 * 16; // 34dB
         break;
      }
 
@@ -248,27 +284,455 @@ pack_now:
    return err;
 }
 
+static Eina_Bool
+_etc2_t_mode_header_pack(uint8_t *etc2,
+                         uint32_t color1, uint32_t color2, int distance)
+{
+   // 4 bit colors
+   int r1_4 = R_VAL(&color1) >> 4;
+   int g1_4 = G_VAL(&color1) >> 4;
+   int b1_4 = B_VAL(&color1) >> 4;
+   int r2_4 = R_VAL(&color2) >> 4;
+   int g2_4 = G_VAL(&color2) >> 4;
+   int b2_4 = B_VAL(&color2) >> 4;
+   int distanceIdx, R, dR;
+
+   for (distanceIdx = 0; distanceIdx < 8; distanceIdx++)
+     if (kDistances[distanceIdx] == distance) break;
+
+   if (distanceIdx >= 8)
+     return EINA_FALSE;
+
+   // R1. R + [dR] must be outside [0..31]. Scanning all values. Not smart.
+   R  = r1_4 >> 2;
+   dR = r1_4 & 0x3;
+   for (int Rx = 0; Rx < 8; Rx++)
+     for (int dRx = 0; dRx < 2; dRx++)
+       {
+          int Rtry = R | (Rx << 2);
+          int dRtry = dR | (dRx << 2);
+          if ((Rtry + kSigned3bit[dRtry]) < 0 || (Rtry + kSigned3bit[dRtry] > 31))
+            {
+               R = Rtry;
+               dR = dRtry;
+               break;
+            }
+       }
+   if ((R + kSigned3bit[dR]) >= 0 && (R + kSigned3bit[dR] <= 31))
+     // this can't happen, should be an assert
+     return EINA_FALSE;
+
+   etc2[0] = ((R & 0x1F) << 3) | (dR & 0x7);
+
+   // G1, B1
+   etc2[1] = (g1_4 << 4) | b1_4;
+
+   // R2, G2
+   etc2[2] = (r2_4 << 4) | g2_4;
+
+   // B2, distance
+   etc2[3] = (b2_4 << 4) | ((distanceIdx >> 1) << 2) | (1 << 1) | (distanceIdx & 0x1);
+
+   return EINA_TRUE;
+}
+
+static inline int
+_rgb_distance_percept(uint32_t color1, uint32_t color2)
+{
+   int R = R_VAL(&color1) - R_VAL(&color2);
+   int G = G_VAL(&color1) - G_VAL(&color2);
+   int B = B_VAL(&color1) - B_VAL(&color2);
+   return (R * R * R_WEIGHT) + (G * G * G_WEIGHT) + (B * B * B_WEIGHT);
+}
+
+static inline int
+_rgb_distance_euclid(uint32_t color1, uint32_t color2)
+{
+   int R = R_VAL(&color1) - R_VAL(&color2);
+   int G = G_VAL(&color1) - G_VAL(&color2);
+   int B = B_VAL(&color1) - B_VAL(&color2);
+   return (R * R) + (G * G) + (B * B);
+}
+
+static unsigned int
+_etc2_t_mode_block_pack(uint8_t *etc2,
+                        uint32_t color1, uint32_t color2, int distance,
+                        const uint32_t *bgra, Eina_Bool write)
+{
+   uint8_t paint_colors[4][4];
+   int errAcc = 0;
+
+   for (int k = 0; k < 4; k++)
+     {
+        // Note: We don't really care about alpha...
+        paint_colors[0][k] = ((uint8_t *) &color1)[k];
+        paint_colors[1][k] = CLAMPDOWN(((uint8_t *) &color2)[k] + distance);
+        paint_colors[2][k] = ((uint8_t *) &color2)[k];
+        paint_colors[3][k] = CLAMPUP(((uint8_t *) &color2)[k] - distance);
+     }
+
+   if (write)
+     memset(etc2 + 4, 0, 4);
+
+   for (int k = 0; k < 16; k++)
+     {
+        uint32_t pixel = bgra[kBlockWalk[k]];
+        int bestDist = INT_MAX;
+        int bestIdx = 0;
+
+        for (int idx = 0; idx < 4; idx++)
+          {
+             int dist = _rgb_distance_euclid(pixel, *((uint32_t *) paint_colors[idx]));
+             if (dist < bestDist)
+               {
+                  bestDist = dist;
+                  bestIdx = idx;
+                  if (!dist) break;
+               }
+          }
+
+        errAcc += bestDist;
+
+        if (write)
+          {
+             etc2[5 - (k >> 3)] |= ((bestIdx & 0x2) ? 1 : 0) << (k & 0x7);
+             etc2[7 - (k >> 3)] |= (bestIdx & 0x1) << (k & 0x7);
+          }
+     }
+
+   if (write)
+     {
+        if (!_etc2_t_mode_header_pack(etc2, color1, color2, distance))
+          return INT_MAX; // assert
+     }
+
+   return errAcc;
+}
+
+static uint32_t
+_color_reduce_444(uint32_t color)
+{
+   int R = R_VAL(&color);
+   int G = G_VAL(&color);
+   int B = B_VAL(&color);
+   int R1, R2, G1, G2, B1, B2;
+
+   R1 = (R & 0xF0) | (R >> 4);
+   R2 = ((R & 0xF0) + 0x10) | ((R >> 4) + 1);
+   G1 = (G & 0xF0) | (G >> 4);
+   G2 = ((G & 0xF0) + 0x10) | ((G >> 4) + 1);
+   B1 = (B & 0xF0) | (B >> 4);
+   B2 = ((B & 0xF0) + 0x10) | ((B >> 4) + 1);
+
+   R = (ABS(R - R1) <= ABS(R - R2)) ? R1 : R2;
+   G = (ABS(G - G1) <= ABS(G - G2)) ? G1 : G2;
+   B = (ABS(B - B1) <= ABS(B - B2)) ? B1 : B2;
+
+   return BGRA(R, G, B, 255);
+}
+
+static int
+_block_main_colors_find(uint32_t *color1_out, uint32_t *color2_out,
+                        uint32_t color1, uint32_t color2, const uint32_t *bgra,
+                        const rg_etc1_pack_params *params EINA_UNUSED)
+{
+   static const int kMaxIterations = 20;
+
+   int errAcc;
+
+   /* k-means complexity is O(n^(d.k+1) log n)
+    * In this case, n = 16, k = 2, d = 3 so 20 loops
+    */
+
+   if (color1 == color2)
+     {
+        // We should select another mode (planar) to encode flat colors
+        // We could also dither with two approximated colors
+        *color1_out = *color2_out = color1;
+        goto found;
+     }
+
+   if (color1 == color2)
+     {
+        // We should dither...
+        *color1_out = *color2_out = color1;
+        goto found;
+     }
+
+   for (int iter = 0; iter < kMaxIterations; iter++)
+     {
+        int r1 = 0, r2 = 0, g1 = 0, g2 = 0, b1 = 0, b2 = 0;
+        int cluster1_cnt = 0, cluster2_cnt = 0;
+        int cluster1[16], cluster2[16];
+        int maxDist1 = 0, maxDist2 = 0;
+        uint32_t c1, c2;
+
+        errAcc = 0;
+        memset(cluster1, 0, sizeof(cluster1));
+        memset(cluster2, 0, sizeof(cluster2));
+
+        // k-means assignment step
+        for (int k = 0; k < 16; k++)
+          {
+             int dist1 = _rgb_distance_euclid(color1, bgra[k]);
+             int dist2 = _rgb_distance_euclid(color2, bgra[k]);
+             if (dist1 <= dist2)
+               {
+                  cluster1[cluster1_cnt++] = k;
+                  if (dist1 > maxDist1)
+                    maxDist1 = dist1;
+               }
+             else
+               {
+                  cluster2[cluster2_cnt++] = k;
+                  if (dist2 > maxDist2)
+                    maxDist2 = dist2;
+               }
+          }
+
+        // k-means failed
+        if (!cluster1_cnt || !cluster2_cnt)
+          return -1;
+
+        // k-means update step
+        for (int k = 0; k < cluster1_cnt; k++)
+          {
+             r1 += R_VAL(bgra + cluster1[k]);
+             g1 += G_VAL(bgra + cluster1[k]);
+             b1 += B_VAL(bgra + cluster1[k]);
+          }
+
+        for (int k = 0; k < cluster2_cnt; k++)
+          {
+             r2 += R_VAL(bgra + cluster2[k]);
+             g2 += G_VAL(bgra + cluster2[k]);
+             b2 += B_VAL(bgra + cluster2[k]);
+          }
+
+        r1 /= cluster1_cnt;
+        g1 /= cluster1_cnt;
+        b1 /= cluster1_cnt;
+        r2 /= cluster2_cnt;
+        g2 /= cluster2_cnt;
+        b2 /= cluster2_cnt;
+
+        c1 = _color_reduce_444(BGRA(r1, g1, b1, 255));
+        c2 = _color_reduce_444(BGRA(r2, g2, b2, 255));
+        if (c1 == color1 && c2 == color2)
+          break;
+
+        if (c1 != c2)
+          {
+             color1 = c1;
+             color2 = c2;
+          }
+        else if (_rgb_distance_euclid(c1, color1) > _rgb_distance_euclid(c2, color2))
+          {
+             color1 = c1;
+          }
+        else
+          {
+             color2 = c2;
+          }
+     }
+
+   *color1_out = color1;
+   *color2_out = color2;
+
+found:
+   errAcc = 0;
+   for (int k = 0; k < 16; k++)
+     errAcc += _rgb_distance_euclid(bgra[k], color2);
+   return errAcc;
+}
+
+static unsigned int
+_etc2_t_mode_block_encode(uint8_t *etc2, const uint32_t *bgra,
+                          const rg_etc1_pack_params *params)
+{
+   int err, bestDist = kDistances[0];
+   int minErr = INT_MAX;
+   uint32_t c1, c2, bestC1 = bgra[0], bestC2 = bgra[1];
+
+   Eina_Inlist *tried_pairs = NULL;
+   struct ColorPair {
+      EINA_INLIST;
+      uint32_t low;
+      uint32_t high;
+   };
+   struct ColorPair *pair;
+
+   /* Bruteforce algo:
+    * Bootstrap k-means clustering with all possible pairs of colors
+    * from the 4x4 block.
+    * TODO: Don't retry the same rgb444 pairs again
+    */
+
+   for (int pix1 = 0; pix1 < 15; pix1++)
+     for (int pix2 = pix1 + 1; pix2 < 16; pix2++)
+       {
+          Eina_Bool already_tried = EINA_FALSE;
+
+          // Bootstrap k-means. Find new pair of colors.
+          c1 = _color_reduce_444(bgra[pix1]);
+          c2 = _color_reduce_444(bgra[pix2]);
+
+          if (c2 > c1)
+            {
+               uint32_t tmp = c2;
+               c2 = c1;
+               c1 = tmp;
+            }
+
+          EINA_INLIST_FOREACH(tried_pairs, pair)
+            if (c1 == pair->high && c2 == pair->low)
+              {
+                 already_tried = EINA_TRUE;
+                 break;
+              }
+
+          if (already_tried)
+            continue;
+
+          pair = calloc(1, sizeof(*pair));
+          if (pair)
+            {
+               pair->high = c1;
+               pair->low = c2;
+               tried_pairs = eina_inlist_append(tried_pairs, EINA_INLIST_GET(pair));
+            }
+
+          // Run k-means
+          err = _block_main_colors_find(&c1, &c2, c1, c2, bgra, params);
+          if (err < 0)
+            continue;
+
+          for (int distIdx = 0; distIdx < 8; distIdx++)
+            {
+               for (int swap = 0; swap < 2; swap++)
+                 {
+                    if (swap)
+                      {
+                         uint32_t tmp = c2;
+                         c2 = c1;
+                         c1 = tmp;
+                      }
+                    err = _etc2_t_mode_block_pack(etc2, c1, c2, kDistances[distIdx], bgra, EINA_FALSE);
+                    if (err < minErr)
+                      {
+                         bestDist = kDistances[distIdx];
+                         minErr = err;
+                         bestC1 = c1;
+                         bestC2 = c2;
+                         if (err <= kTargetError[params->m_quality])
+                           goto found;
+                      }
+                 }
+            }
+       }
+
+found:
+   EINA_INLIST_FREE(tried_pairs, pair)
+     {
+        tried_pairs = eina_inlist_remove(tried_pairs, EINA_INLIST_GET(pair));
+        free(pair);
+     }
+
+   err = _etc2_t_mode_block_pack(etc2, bestC1, bestC2, bestDist, bgra, EINA_TRUE);
+
+   return err;
+}
+
+static unsigned int
+_block_error_calc(const uint32_t *enc, const uint32_t *orig, Eina_Bool perceptual)
+{
+   unsigned int errAcc = 0;
+
+   for (int k = 0; k < 16; k++)
+     {
+        if (perceptual)
+          errAcc += _rgb_distance_percept(enc[k], orig[k]);
+        else
+          errAcc += _rgb_distance_euclid(enc[k], orig[k]);
+     }
+
+   return errAcc;
+}
+
 unsigned int
 etc2_rgba8_block_pack(unsigned char *etc2, const unsigned int *bgra,
                       rg_etc1_pack_params *params)
 {
-   unsigned int error;
+   rg_etc1_pack_params safe_params;
+   unsigned int errors[2], minErr = INT_MAX;
+   uint8_t etc2_try[2][8];
+   int bestSolution = 0;
 
-   // FIXME/TODO: For now, encode use rg_etc1 only!
-   error = rg_etc1_pack_block(etc2 + 8, bgra, params);
-   error += _etc2_alpha_encode(etc2, bgra, params);
+   safe_params.m_dithering = !!params->m_dithering;
+   safe_params.m_quality = MINMAX(params->m_quality, 0, 2);
 
-   return error;
+   // TODO: H mode, Planar mode
+
+   errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params); // 36.63dB
+   errors[1] = _etc2_t_mode_block_encode(etc2_try[1], bgra, &safe_params); // 36.69dB (+0.6dB)
+
+#ifdef DEBUG
+   if (errors[1] < INT_MAX)
+     for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
+       {
+          uint32_t decoded[16];
+          unsigned int real_errors[2];
+          rg_etc2_rgb8_decode_block(etc2_try[1], decoded);
+          real_errors[0] = _block_error_calc(decoded, bgra, EINA_FALSE);
+          real_errors[1] = _block_error_calc(decoded, bgra, EINA_TRUE);
+
+          if (real_errors[0] != errors[1])
+            {
+               DBG("Invalid error calc in T mode");
+               errors[1] = real_errors[0];
+            }
+       }
+#endif
+
+   for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
+     if (errors[k] < minErr)
+       {
+          minErr = errors[k];
+          bestSolution = k;
+       }
+
+   memcpy(etc2 + 8, etc2_try[bestSolution], 8);
+
+   minErr += _etc2_alpha_encode(etc2, bgra, &safe_params);
+
+   return minErr;
 }
 
 unsigned int
 etc2_rgb8_block_pack(unsigned char *etc2, const unsigned int *bgra,
                      rg_etc1_pack_params *params)
 {
-  unsigned int error;
+  rg_etc1_pack_params safe_params;
+  unsigned int errors[2], minErr = INT_MAX;
+  uint8_t etc2_try[8][2];
+  int bestSolution = 0;
 
-  // FIXME/TODO: For now, encode use rg_etc1 only!
-  error = rg_etc1_pack_block(etc2, bgra, params);
+  safe_params.m_dithering = !!params->m_dithering;
+  safe_params.m_quality = MINMAX(params->m_quality, 0, 2);
 
-  return error;
+  // TODO: Planar mode
+
+  errors[0] = rg_etc1_pack_block(etc2_try[0], bgra, &safe_params);
+  errors[1] = _etc2_t_mode_block_encode(etc2_try[1], bgra, &safe_params);
+
+  for (unsigned k = 0; k < sizeof(errors) / sizeof(*errors); k++)
+    if (errors[k] < minErr)
+      {
+         minErr = errors[k];
+         bestSolution = k;
+      }
+
+  memcpy(etc2 + 8, etc2_try[bestSolution], 8);
+
+  return minErr;
 }
