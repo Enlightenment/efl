@@ -318,37 +318,6 @@ EAPI int execvp( const char *file, char *const argv[]);
 
 #endif /* _WIN32_WCE */
 
-/*
- * Process related functions
- *
- */
-
-#ifndef _WIN32_WCE
-
-/**
- * @brief Duplicate the calling process.
- *
- * @return 0 on child, the child's PID on parent.
- *
- * Duplicate the existing process from which it is called. You then decide
- * which process you're in by checking the return value - it'll always be 0
- * for the child process and the child process' PID for the parent.
- *
- * Conformity: None.
- *
- * Supported OS: NT based Windows.
- */
-EAPI int evil_fork(void);
-
-/**
- * @def fork()
- *
- * Wrapper around evil_fork().
- */
-#define fork() evil_fork()
-
-#endif /* _WIN32_WCE */
-
 
 /**
  * @}
