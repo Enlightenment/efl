@@ -529,6 +529,7 @@ test_fileselector(void *data       EINA_UNUSED,
 
    win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
