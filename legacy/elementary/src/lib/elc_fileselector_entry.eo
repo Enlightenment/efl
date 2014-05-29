@@ -121,6 +121,7 @@ class Elm_Fileselector_Entry (Elm_Layout, Elm_Interface_Fileselector)
    events {
       language,changed;
       access,changed;
+      changed;
    }
 
 }
