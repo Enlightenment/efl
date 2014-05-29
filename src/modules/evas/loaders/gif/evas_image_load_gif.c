@@ -755,7 +755,7 @@ open_file:
                }
              imgnum++;
              // if we found the image we wanted - get out of here
-             if (imgnum >= index) break;
+             if (imgnum > index) break;
           }
      }
    while (rec != TERMINATE_RECORD_TYPE);
