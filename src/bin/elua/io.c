@@ -1,50 +1,71 @@
 /* elua io extras, largely taken from lua io lib source */
 
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#define pipe(x, mode) pipe(x)
-#else
-#include <io.h>
-#define fdopen _fdopen
-#define execv  _execv
-#define close  _close
-#define dup2   _dup2
-#define pipe(x, mode) _pipe(x, 4096, ((mode && mode[0] && mode[1] == 'b') \
-    ? _O_BINARY : _O_TEXT) | _NO_NOINHERIT)
-#endif
-
 #include "main.h"
 
-static FILE *
-elua_popen_c(const char *path, const char *argv[], const char *mode)
+/* expand fname to full path name (so that PATH is ignored) plus turn
+ * stuff into a command, and also verify whether the path exists */
+static char *
+get_cmdline_from_argv(const char *fname, const char **argv)
 {
-   int read   = (!mode || mode[0] == 'r');
-   int binary = mode && mode[0] && mode[1] == 'b';
-   pid_t pid;
+   Eina_Strbuf *buf;
+   char        *ret;
+   char         pbuf[PATH_MAX];
 
-   int des[2];
-   if (pipe(des, mode)) return NULL;
+   FILE *testf = fopen(fname, "r");
+   if  (!testf)
+      return NULL;
 
-   pid = fork();
-   if (!pid)
+   /* for windows, we have realpath in evil, no need for GetFullPathName */
+   if (!realpath(fname, pbuf))
+      return NULL;
+
+   fclose(testf);
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_char(buf, '"');
+   eina_strbuf_append(buf, pbuf);
+   eina_strbuf_append_char(buf, '"');
+
+   while (*argv)
      {
-        /* if read, stdout (1) is still open here
-         * (parent can read, child can write) */
-        close(des[!read]);
-        dup2(des[read], read ? STDOUT_FILENO : STDIN_FILENO);
-        execv(path, (char * const *)argv);
-        return NULL;
+        const char *arg = *(argv++);
+        char        c;
+        eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append_char(buf, '"');
+
+        while ((c = *(arg++)))
+          {
+#ifndef _WIN32
+             if (c == '"' || c == '$') eina_strbuf_append_char(buf, '\\');
+             eina_strbuf_append_char(buf, c);
+#else
+             if      (c == '"') eina_strbuf_append_char(buf, '\\');
+             else if (c == '%') eina_strbuf_append_char(buf,  '"');
+             eina_strbuf_append_char(buf, c);
+             if (c == '%') eina_strbuf_append_char(buf,  '"');
+#endif
+          }
+
+        eina_strbuf_append_char(buf, '"');
      }
-   else
-     {
-        /* if read, stdin (0) is still open here
-         * (child can read, parent can write) */
-        close(des[read]);
-        return fdopen(des[!read], read ? (binary ? "rb" : "r")
-                                       : (binary ? "wb" : "w"));
-     }
+
+   ret = strdup(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static FILE *
+elua_popen_c(const char *path, const char *md, const char *argv[])
+{
+   FILE *ret;
+
+   char *cmdline = get_cmdline_from_argv(path, argv);
+   if  (!cmdline) return NULL;
+
+   ret = popen(cmdline, md);
+   if (!ret) return NULL;
+
+   return ret;
 }
 
 static int
@@ -322,21 +343,18 @@ elua_popen(lua_State *L)
    FILE **pf = elua_newfile(L);
    if (nargs > 0)
      {
-        const char **argv = (const char**)alloca((nargs + 2) * sizeof(char*));
-        memset(argv, 0, (nargs + 2) * sizeof(char*));
+        const char **argv = (const char**)alloca((nargs + 1) * sizeof(char*));
+        memset(argv, 0, (nargs + 1) * sizeof(char*));
         for (; nargs; --nargs)
           {
-             argv[nargs] = lua_tostring(L, nargs + 2);
+             argv[nargs - 1] = lua_tostring(L, nargs + 2);
           }
-        argv[0] = fname;
-        *pf = elua_popen_c(fname, argv, mode);
+        *pf = elua_popen_c(fname, mode, argv);
      }
    else
      {
-        const char **argv = (const char**)alloca(2 * sizeof(char*));
-        argv[0] = fname;
-        argv[1] = NULL;
-        *pf = elua_popen_c(fname, argv, mode);
+        const char **argv = { NULL };
+        *pf = elua_popen_c(fname, mode, argv);
      }
    return (!*pf) ? push_ret(L, 0, fname) : 1;
 }
