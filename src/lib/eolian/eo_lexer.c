@@ -4512,6 +4512,16 @@ eo_tokenizer_database_fill(const char *filename)
         goto end;
      }
 
+   buffer[len] = '\0';
+#if _WIN32
+   {
+      Eina_Strbuf *str_buffer = eina_strbuf_manage_new(buffer);
+      if (eina_strbuf_replace_all(str_buffer, "\r\n", "\n"))
+         len = eina_strbuf_length_get(str_buffer);
+      buffer = eina_strbuf_string_steal(str_buffer);
+      eina_strbuf_free(str_buffer);
+   }
+#endif
    if (!eo_tokenizer_mem_walk(toknz, filename, buffer, len)) goto end;
 
    if (!toknz->classes)

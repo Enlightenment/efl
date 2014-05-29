@@ -155,6 +155,9 @@ _generate_impl_c_file(char *filename, const Eolian_Class class)
         fd = NULL;
 
         buffer = eina_strbuf_manage_new(content);
+#ifdef _WIN32
+        eina_strbuf_replace_all(buffer, "\r\n", "\n");
+#endif
      }
    else
       buffer = eina_strbuf_new();
