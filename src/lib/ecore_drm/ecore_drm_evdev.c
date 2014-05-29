@@ -294,9 +294,11 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    /* unsigned int *keycode; */
    const xkb_keysym_t *syms;
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
-   char key[256], keyname[256], compose[256];
+   char key[256], keyname[256], compose_buffer[256];
    Ecore_Event_Key *e;
    Ecore_Drm_Input *input;
+   char *tmp = NULL;
+   char *compose = NULL;
 
    if (!(input = dev->seat->input)) return;
 
@@ -330,8 +332,24 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
           keyname[0] = tolower(keyname[0]);
      }
 
-   memset(compose, 0, sizeof(compose));
-   _device_keysym_translate(sym, dev->xkb.modifiers, compose, sizeof(compose));
+   memset(compose_buffer, 0, sizeof(compose_buffer));
+   if (_device_keysym_translate(sym, dev->xkb.modifiers, compose_buffer, sizeof(compose_buffer)))
+     {
+        compose = eina_str_convert("ISO8859-1", "UTF-8",
+                                   compose_buffer);
+        if (!compose)
+          {
+             ERR("Ecore_DRM cannot convert input key string '%s' to UTF-8. "
+                 "Is Eina built with iconv support?", compose_buffer);
+          }
+        else
+          {
+             tmp = compose;
+          }
+     }
+
+   if (!compose)
+     compose = compose_buffer;
 
    e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
@@ -362,6 +380,8 @@ _device_notify_key(Ecore_Drm_Evdev *dev, struct input_event *event, unsigned int
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
+   if (tmp)
+     free(tmp);
 }
 
 static void 
