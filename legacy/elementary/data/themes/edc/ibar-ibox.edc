@@ -243,7 +243,34 @@ group { name: "e/modules/ibar/menu";
 group { name: "e/modules/ibar/menu/item";
    images.image: "glow_small.png" COMP;
    images.image: "win_shadow.png" COMP;
+   images.image: "mini_box_glow.png" COMP;
    parts {
+      part { name: "base";
+         description { state: "default";
+            rel1.offset: -6 -6;
+            rel2.offset: 5 5;
+            image.normal: "mini_box_glow.png";
+            image.border: 7 7 7 7;
+            color: 255 255 255 80;
+            visible: 0;
+         }
+         description { state: "focused";
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default";
+         }
+         description { state: "otherdesk";
+            inherit: "default" 0.0;
+            color: 255 255 255 160;
+         }
+         description { state: "otherscreen";
+            inherit: "default" 0.0;
+            color: 255 255 255 80;
+         }
+      }
       part { name: "icon"; type: SPACER;
          description { state: "default";
             rel1.offset: 2 2;
@@ -255,6 +282,7 @@ group { name: "e/modules/ibar/menu/item";
          }
       }
       part { name: "shadow"; mouse_events: 0;
+         clip_to: "clip";
          description { state: "default" 0.0;
             image.normal: "win_shadow.png";
             image.border: 14 14 14 14;
@@ -267,6 +295,7 @@ group { name: "e/modules/ibar/menu/item";
          }
       }
       part { name: "glow"; mouse_events: 0;
+         clip_to: "clip";
          description { state: "default" 0.0;
             rel1.to: "e.swallow.icon";
             rel2.to: "e.swallow.icon";
@@ -290,21 +319,16 @@ group { name: "e/modules/ibar/menu/item";
             rel1.to: "icon";
             rel2.to: "icon";
          }
-         description { state: "focus";
-            inherit: "default";
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-         }
       }
       part { name: "e.text.title"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
          scale: 1;
+         clip_to: "clip";
          description { state: "default" 0.0;
             rel1.to_x: "icon";
             rel1.relative: 1.0 0.0;
             rel1.offset: 3 0;
             rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
             align: 0.0 0.0;
             color_class: "menu_item";
             min: 128 0;
@@ -323,13 +347,16 @@ group { name: "e/modules/ibar/menu/item";
       part { name: "title2"; type: TEXT; mouse_events: 0;
          effect: GLOW;
          scale: 1;
+         clip_to: "clip";
          description { state: "default" 0.0;
             rel1.offset: -2 -3;
             rel1.to: "e.text.title";
             rel2.offset: 2 1;
             rel2.to: "e.text.title";
-            color: FN_COL_HIGHLIGHT;
             color_class: "menu_item_active";
+            color: 255 255 255 0;
+            color2: 255 255 255 0;
+            color3: 255 255 255 0;
             min: 128 0;
             text { font: FNBD; size: 10;
                text_source: "e.text.title";
@@ -341,10 +368,14 @@ group { name: "e/modules/ibar/menu/item";
          }
          description { state: "focus" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
+            color2: 255 255 255 255;
+            color3: 255 255 255 255;
             visible: 1;
          }
       }
       part { name: "icon_clip"; type: RECT;
+         clip_to: "clip";
          description { state: "default";
             color: 255 255 255 200;
             rel1.offset: -9999 -9999;
@@ -381,6 +412,21 @@ group { name: "e/modules/ibar/menu/item";
          target: "icon_clip";
          target: "glow";
          transition: DECELERATE 0.2;
+      }
+      program {
+         signal: "e,state,focused"; source: "e";
+         action: STATE_SET "focused" 0.0;
+         target: "base";
+      }
+      program {
+         signal: "e,state,otherdesk"; source: "e";
+         action: STATE_SET "otherdesk" 0.0;
+         target: "clip";
+      }
+      program {
+         signal: "e,state,otherscreen"; source: "e";
+         action: STATE_SET "otherscreen" 0.0;
+         target: "clip";
       }
    }
 }
