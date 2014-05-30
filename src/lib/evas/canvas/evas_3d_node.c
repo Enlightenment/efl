@@ -233,7 +233,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
                   is_change_orientation = EINA_TRUE;
                }
 
-             eo_do (node, m = evas_3d_node_mesh_list_get());
+             eo_do (node, m = (Eina_List *)evas_3d_node_mesh_list_get());
 
              EINA_LIST_FOREACH(m, l, mesh)
                {
