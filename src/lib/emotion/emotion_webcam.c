@@ -259,9 +259,8 @@ _emotion_eeze_events(const char *syspath,
 static void
 _emotion_enumerate_all_webcams(void)
 {
-   Eina_List *devices;
-
 #ifdef HAVE_EEZE
+   Eina_List *devices;
    if (_emotion_webcams->init) return ;
    devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_V4L, NULL);
 
