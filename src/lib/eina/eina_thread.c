@@ -32,7 +32,6 @@
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
-#include "eina_thread.h"
 
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
