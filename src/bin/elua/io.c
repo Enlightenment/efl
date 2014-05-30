@@ -15,11 +15,11 @@ get_cmdline_from_argv(const char *fname, const char **argv)
    if  (!testf)
       return NULL;
 
+   fclose(testf);
+
    /* for windows, we have realpath in evil, no need for GetFullPathName */
    if (!realpath(fname, pbuf))
       return NULL;
-
-   fclose(testf);
 
    buf = eina_strbuf_new();
    eina_strbuf_append_char(buf, '"');
