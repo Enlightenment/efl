@@ -163,8 +163,13 @@ _ecore_signal_call(void)
 #endif
    sigprocmask(SIG_BLOCK, &newset, &oldset);
    if (sigchld_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGCHLD in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigchld_count, MAXSIGQ);
+#else
      WRN("%i SIGCHLD in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigchld_count, MAXSIGQ);
+#endif
    tot = sigchld_count + sigusr1_count + sigusr2_count +
      sighup_count + sigquit_count + sigint_count + sigterm_count
 #ifdef SIGPWR
@@ -174,7 +179,11 @@ _ecore_signal_call(void)
    
    if (sig_count != tot)
      {
+#ifdef __FreeBSD__
+        ERR("sig_count (%ld) != actual totals (%i) ", sig_count, tot);
+#else
         ERR("sig_count (%i) != actual totals (%i) ", sig_count, tot);
+#endif
         sig_count = tot;
      }
    
@@ -255,8 +264,13 @@ _ecore_signal_call(void)
    sigchld_count = 0;
 
    if (sigusr1_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGUSR1 in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigusr1_count, MAXSIGQ);
+#else
      WRN("%i SIGUSR1 in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigusr1_count, MAXSIGQ);
+#endif
    for (n = 0; n < sigusr1_count; n++)
      {
         Ecore_Event_Signal_User *e;
@@ -277,8 +291,13 @@ _ecore_signal_call(void)
    sigusr1_count = 0;
 
    if (sigusr2_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGUSR2 in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigusr2_count, MAXSIGQ);
+#else
      WRN("%i SIGUSR2 in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigusr2_count, MAXSIGQ);
+#endif
    for (n = 0; n < sigusr2_count; n++)
      {
         Ecore_Event_Signal_User *e;
@@ -299,8 +318,13 @@ _ecore_signal_call(void)
    sigusr2_count = 0;
 
    if (sighup_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGHUP in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sighup_count, MAXSIGQ);
+#else
      WRN("%i SIGHUP in queue. max queue size %i. losing "
          "siginfo for extra signals.", sighup_count, MAXSIGQ);
+#endif
    for (n = 0; n < sighup_count; n++)
      {
         Ecore_Event_Signal_Hup *e;
@@ -319,8 +343,13 @@ _ecore_signal_call(void)
    sighup_count = 0;
 
    if (sigquit_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGQUIT in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigquit_count, MAXSIGQ);
+#else
      WRN("%i SIGQUIT in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigquit_count, MAXSIGQ);
+#endif
    for (n = 0; n < sigquit_count; n++)
      {
         Ecore_Event_Signal_Exit *e;
@@ -341,8 +370,13 @@ _ecore_signal_call(void)
    sigquit_count = 0;
 
    if (sigint_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGINT in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigint_count, MAXSIGQ);
+#else
      WRN("%i SIGINT in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigint_count, MAXSIGQ);
+#endif
    for (n = 0; n < sigint_count; n++)
      {
         Ecore_Event_Signal_Exit *e;
@@ -363,8 +397,13 @@ _ecore_signal_call(void)
    sigint_count = 0;
 
    if (sigterm_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGTERM in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigterm_count, MAXSIGQ);
+#else
      WRN("%i SIGTERM in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigterm_count, MAXSIGQ);
+#endif
    for (n = 0; n < sigterm_count; n++)
      {
         Ecore_Event_Signal_Exit *e;
@@ -386,8 +425,13 @@ _ecore_signal_call(void)
 
 #ifdef SIGPWR
    if (sigpwr_count > MAXSIGQ)
+#ifdef __FreeBSD__
+     WRN("%ld SIGPWR in queue. max queue size %i. losing "
+         "siginfo for extra signals.", sigpwr_count, MAXSIGQ);
+#else
      WRN("%i SIGPWR in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigpwr_count, MAXSIGQ);
+#endif
    for (n = 0; n < sigpwr_count; n++)
      {
         Ecore_Event_Signal_Power *e;
