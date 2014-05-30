@@ -303,4 +303,4 @@ return { init = function(chunkname, input, opts)
     ls.coro = coro
     coro(ls)
     return coro
-end, syntax_error = syntax_error }
+end, syntax_error = syntax_error, source_to_msg = source_to_msg }

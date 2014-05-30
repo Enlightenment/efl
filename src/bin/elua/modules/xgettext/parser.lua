@@ -102,7 +102,8 @@ local parse = function(ls, keywords)
             saved_comment = tok.value
             ls:get()
         elseif tok.name == "<name>" and keywords[tok.value] then
-            local kw = keywords[tok.value]
+            local line = ls.line_number
+            local kw   = keywords[tok.value]
             ls:get()
             local  args = parse_call(ls)
             local n1, n2, cx, an = kw[1], kw[2], kw.context, kw.argnum
@@ -122,7 +123,7 @@ local parse = function(ls, keywords)
             saved_comment = nil
             yield {
                 n1arg[1], n2 and n2arg[1], context = cx and cxarg[1],
-                xcomment = kw.xcomment, comment = sc
+                xcomment = kw.xcomment, comment = sc, line = line
             }
         else
             ls:get()

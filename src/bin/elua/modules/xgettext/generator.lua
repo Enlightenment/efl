@@ -1,5 +1,6 @@
 -- Elua xgettext: generator
 
+local lexer = require("xgettext.lexer")
 local parser = require("xgettext.parser")
 
 local gen_comment = function(cmt)
@@ -45,6 +46,8 @@ return { init  = function(chunkname, input, keywords, flags, opts)
         if msg.context then
             ret[#ret + 1] = "msgctxt " .. gen_message(msg.context)
         end
+        ret[#ret + 1] = "#: " .. lexer.source_to_msg(chunkname)
+            .. ":" .. msg.line
         ret[#ret + 1] = "msgid " .. gen_message(msg[1])
         local spf, ssf = opts["m"], opts["M"]
         if msg[2] then
