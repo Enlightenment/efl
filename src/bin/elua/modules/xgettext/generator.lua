@@ -86,7 +86,7 @@ local gen_line_info = function(chunkname, lines)
     return tconc(linestrs, "\n")
 end
 
-return { init  = function(chunkname, input, keywords, flags, opts)
+return { init  = function(chunkname, input, keywords, flags, add_loc, opts)
     local rets = {}
     for i, msg in ipairs(gen_grouped_messages(parser.init(chunkname,
     input, keywords, flags, opts))) do
@@ -100,7 +100,9 @@ return { init  = function(chunkname, input, keywords, flags, opts)
         if msg.context then
             ret[#ret + 1] = "msgctxt " .. gen_message(msg.context)
         end
-        ret[#ret + 1] = gen_line_info(chunkname, msg.lines)
+        if add_loc then
+            ret[#ret + 1] = gen_line_info(chunkname, msg.lines)
+        end
         ret[#ret + 1] = "msgid " .. gen_message(msg[1])
         local spf, ssf = opts["m"], opts["M"]
         if msg[2] then

@@ -19,6 +19,8 @@ local flags          = {}
 local opts_final = {}
 local opts_nolua = {}
 
+local add_loc = true
+
 local opts, args = getopt.parse {
     usage = "Usage: %prog [OPTION] [INPUTFILE]...",
     args  = arg,
@@ -111,10 +113,12 @@ local opts, args = getopt.parse {
             .. "style", opts = opts_final
         },
         { nil, "no-location", false, help = "do not write '#: filename:line' "
-            .. "lines", opts = opts_nolua
+            .. "lines", opts = opts_nolua,
+            callback = function() add_loc = false end
         },
         { "n", "add-location", false, help = "generate '#: filename:line' "
-            .. "lines (default)", opts = opts_nolua
+            .. "lines (default)", opts = opts_nolua,
+            callback = function() add_loc = true end
         },
         { nil, "strict", false, help = "write out strict Uniforum "
             .. "conforming .po file", opts = opts_final
@@ -373,7 +377,7 @@ for i, fname in ipairs(input_files) do
                 f:close()
             end
             parsed_files[#parsed_files + 1] = generator.init(fpath, fcontents,
-                keywords, flags, opts)
+                keywords, flags, add_loc, opts)
         else
             args_nolua[#args_nolua] = fname
             local f = assert(cutil.popenv(hasxgettext, "r",
