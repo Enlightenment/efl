@@ -140,6 +140,19 @@ local read_string = function(ls)
     return tconc(buf)
 end
 
+local match_comment = function(ls, cmt)
+    local   lcmt = ls.lex_cmt
+    if not  lcmt then return nil end
+    if type(lcmt) ~= "string" then
+        return "<comment>", cmt
+    end
+    lcmt = lcmt:match("^%s*(.+)$")
+    if cmt:match("^%s*(.+)$"):sub(1, #lcmt) == lcmt then
+        return "<comment>", cmt
+    end
+    return nil
+end
+
 local lex_tbl = {
     ["\n"] = function(ls) next_line(ls) end,
     [" " ] = function(ls) next_char(ls) end,
@@ -152,7 +165,7 @@ local lex_tbl = {
         if c == "[" then
             local sep = skip_sep(ls, {})
             if sep >= 0 then
-                return "<comment>", read_long_string(ls, sep, true)
+                return match_comment(ls, read_long_string(ls, sep, true))
             end
         end
         local buf = {}
@@ -160,7 +173,7 @@ local lex_tbl = {
             buf[#buf + 1] = ls.current
             next_char(ls)
         end
-        return "<comment>", tconc(buf)
+        return match_comment(ls, tconc(buf))
     end,
     ["[" ] = function(ls)
         local buf = {}
@@ -274,7 +287,7 @@ local ls_get = function(self)
     return tok
 end
 
-return { init = function(chunkname, input)
+return { init = function(chunkname, input, opts)
     local reader = type(input) == "string" and strstream(input) or input
     local current = skip_shebang(reader)
     local ls = {
@@ -283,7 +296,8 @@ return { init = function(chunkname, input)
         source      = chunkname,
         current     = current,
         line_number = 1,
-        get         = ls_get
+        get         = ls_get,
+        lex_cmt     = opts["c"]
     }
     local coro = coroutine.wrap(lex_main, ls)
     ls.coro = coro
