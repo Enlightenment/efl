@@ -310,10 +310,10 @@ _eo_call_stack_mem_alloc(size_t maxsize)
 #endif   
 }
 
+#ifdef __linux__
 static void
 _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize)
 {
-#ifdef __linux__
    // resize call stack down - currently won't ever be called
    if (newsize > maxsize)
      {
@@ -324,20 +324,23 @@ _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t maxsize
                                   MEM_PAGE_SIZE);
    madvise(((unsigned char *)*ptr) + addr, maxsize - addr, MADV_DONTNEED);
 #else
-   (void)newsize;
-   (void)maxsize;
+static void
+_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize EINA_UNUSED, size_t maxsize EINA_UNUSED)
+{
    // just grow in regular cases
 #endif
 }
 
+#ifdef __linux__
 static void
 _eo_call_stack_mem_free(void *ptr, size_t maxsize)
 {
-#ifdef __linux__
    // free mmaped memory
    munmap(ptr, maxsize);
 #else
-   (void)maxsize;
+static void
+_eo_call_stack_mem_free(void *ptr, size_t maxsize EINA_UNUSED)
+{
    // free regular memory
    free(ptr);
 #endif
