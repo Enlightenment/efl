@@ -42,7 +42,9 @@ static const int   interface_x11_version = 1;
 static const char *interface_software_x11_name = "software_x11";
 static const int   interface_software_x11_version = 1;
 
+#ifdef BUILD_ECORE_EVAS_OPENGL_X11
 static const char *interface_gl_x11_name = "gl_x11";
+#endif
 static const int   interface_gl_x11_version = 1;
 
 typedef struct _Ecore_Evas_Engine_Data_X11 Ecore_Evas_Engine_Data_X11;
