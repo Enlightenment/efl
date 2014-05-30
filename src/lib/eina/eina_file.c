@@ -44,6 +44,7 @@
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
+#include "eina_cpu.h"
 #include "eina_file.h"
 #include "eina_stringshare.h"
 #include "eina_hash.h"
