@@ -926,8 +926,8 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
    return _eo_id_get(obj);
 }
 
-EAPI Eo *
-_eo_add_internal_end(const char *file, int line, const Eo *eo_id)
+Eo *
+_eo_add_internal_end(Eo *eo_id)
 {
    Eo_Stack_Frame *fptr;
    Eo_Call_Stack *stack = _eo_call_stack_get();
@@ -936,7 +936,7 @@ _eo_add_internal_end(const char *file, int line, const Eo *eo_id)
 
    if ((fptr == NULL) || (fptr->eo_id != eo_id))
      {
-        ERR("in %s:%d - Something very wrong happend to the call stack.", file, line);
+        ERR("Something very wrong happend to the call stack.");
         return NULL;
      }
 
@@ -947,8 +947,8 @@ _eo_add_internal_end(const char *file, int line, const Eo *eo_id)
      {
         const _Eo_Class *klass = (fptr->cur_klass) ?
            fptr->cur_klass : fptr->o.obj->klass;
-        ERR("in %s:%d: Object of class '%s' - Not all of the object constructors have been executed.",
-            file, line, klass->desc->name);
+        ERR("Object of class '%s' - Not all of the object constructors have been executed.",
+            klass->desc->name);
         /* Unref twice, once for the ref in _eo_add_internal_start, and once for the basic object ref. */
         _eo_unref(fptr->o.obj);
         _eo_unref(fptr->o.obj);

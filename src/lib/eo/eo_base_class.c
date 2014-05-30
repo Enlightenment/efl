@@ -1007,6 +1007,13 @@ _destructor(Eo *obj, void *class_data)
 }
 EAPI EO_VOID_FUNC_BODY(eo_destructor);
 
+static Eo *
+_finalize(Eo *obj, void *class_data EINA_UNUSED)
+{
+   return _eo_add_internal_end(obj);
+}
+EAPI EO_FUNC_BODY(eo_finalize, Eo *, NULL);
+
 static void
 _class_constructor(Eo_Class *klass EINA_UNUSED)
 {
@@ -1023,6 +1030,7 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
 static Eo_Op_Description op_descs [] = {
        EO_OP_FUNC(eo_constructor, _constructor, "Constructor."),
        EO_OP_FUNC(eo_destructor, _destructor, "Destructor."),
+       EO_OP_FUNC(eo_finalize, _finalize, "Finalize object creation."),
        EO_OP_FUNC(eo_parent_set, _parent_set, "Set parent."),
        EO_OP_FUNC(eo_parent_get, _parent_get, "Get parent."),
        EO_OP_FUNC(eo_children_iterator_new, _children_iterator_new, "Get Children Iterator."),

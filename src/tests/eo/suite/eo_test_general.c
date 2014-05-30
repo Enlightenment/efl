@@ -873,6 +873,43 @@ START_TEST(eo_pointers_indirection)
 }
 END_TEST
 
+
+static Eo *
+_eo_add_failures_finalize(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
+{
+   return NULL;
+}
+
+static Eo_Op_Description _eo_add_failures_op_descs[] = {
+     EO_OP_FUNC_OVERRIDE(eo_finalize, _eo_add_failures_finalize),
+     EO_OP_SENTINEL
+};
+
+START_TEST(eo_add_failures)
+{
+   eo_init();
+
+   static const Eo_Class_Description class_desc = {
+        EO_VERSION,
+        "Simple2",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_OPS(_eo_add_failures_op_descs),
+        NULL,
+        0,
+        NULL,
+        NULL
+   };
+
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_CLASS, NULL);
+
+   Eo *obj = eo_add(klass, NULL);
+
+   fail_if(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -889,4 +926,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_multiple_do);
    tcase_add_test(tc, eo_add_do_and_custom);
    tcase_add_test(tc, eo_pointers_indirection);
+   tcase_add_test(tc, eo_add_failures);
 }

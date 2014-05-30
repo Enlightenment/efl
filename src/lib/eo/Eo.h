@@ -631,7 +631,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
     eo_do(_tmp_obj, \
            eo_constructor(); \
            __VA_ARGS__; \
-           _tmp_obj = _eo_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
+           _tmp_obj = eo_finalize(); \
           ); \
     _tmp_obj; \
     })
@@ -652,13 +652,12 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
     Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent); \
     eo_do(_tmp_obj, \
            __VA_ARGS__; \
-           _tmp_obj = _eo_add_internal_end(__FILE__, __LINE__, _tmp_obj); \
+           _tmp_obj = eo_finalize(); \
           ); \
     _tmp_obj; \
     })
 
 EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent);
-EAPI Eo * _eo_add_internal_end(const char *file, int line, const Eo *obj);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
@@ -1102,6 +1101,15 @@ EAPI void eo_constructor(void);
  * @see #eo_constructor
  */
 EAPI void eo_destructor(void);
+
+/**
+ * @brief Called at the end of #eo_add.
+ *
+ * Should not be called, just overridden.
+ *
+ * @see #eo_add
+ */
+EAPI Eo *eo_finalize(void);
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling

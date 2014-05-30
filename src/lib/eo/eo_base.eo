@@ -77,6 +77,10 @@ Prevents event callbacks from being called for the object. */
          /*@ Call the object's destructor.
 Should not be used with #eo_do. Only use it with #eo_do_super. */
       }
+      finalize {
+         /*@ Called at the end of #eo_add. Should not be called, just overridden. */
+         return Eo *; /*@ The new object created, can be NULL if the finalize func decided to abort (though it should free the created object on it's own). */
+      }
       key_data_set {
          /*@ Set generic data to object. */
          params {

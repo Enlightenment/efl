@@ -73,6 +73,7 @@ static inline void _eo_id_release(const Eo_Id obj_id);
 /* Free all the entries and the tables */
 static inline void _eo_free_ids_tables(void);
 
+Eo *_eo_add_internal_end(Eo *obj);
 void _eo_condtor_done(Eo *obj);
 
 struct _Eo_Base
