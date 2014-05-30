@@ -117,22 +117,25 @@ end
 
 local read_string = function(ls)
     local delim = ls.current
-    local buf = { delim }
+    local buf = {}
     local c = next_char(ls)
     while c ~= delim do
         if not c then lex_error(ls, "unfinished string", "<eof>")
         elseif c == "\n" or c == "\r" then
             lex_error(ls, "unfinished string", tconc(buf))
         elseif c == "\\" then
-            buf[#buf + 1] = c
-            buf[#buf + 1] = next_char(ls)
+            c = next_char(ls)
+            if c == "n" then
+                buf[#buf + 1] = "\n"
+            else
+                buf[#buf + 1] = "\\" .. c
+            end
             c = next_char(ls)
         else
             buf[#buf + 1] = c
             c = next_char(ls)
         end
     end
-    buf[#buf + 1] = c
     next_char(ls)
     return tconc(buf)
 end
