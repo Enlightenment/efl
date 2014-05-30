@@ -259,7 +259,7 @@ static inline void *
 _eina_thread_join(Eina_Thread t)
 {
    void *ret = NULL;
-   int err = pthread_join(t, &ret);
+   int err = pthread_join((pthread_t)t, &ret);
 
    if (err == 0) return ret;
    return NULL;
@@ -287,7 +287,7 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
      }
 
    /* setup initial locks */
-   err = pthread_create(t, &attr, func, data);
+   err = pthread_create((pthread_t *)t, &attr, func, data);
    pthread_attr_destroy(&attr);
 
    if (err == 0) return EINA_TRUE;
@@ -298,13 +298,13 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
 static inline Eina_Bool
 _eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
-   return pthread_equal(t1, t2);
+   return pthread_equal((pthread_t)t1, (pthread_t)t2);
 }
 
 static inline Eina_Thread
 _eina_thread_self(void)
 {
-   return pthread_self();
+   return (Eina_Thread)pthread_self();
 }
 
 #else
