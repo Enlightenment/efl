@@ -49,7 +49,7 @@ eina_sched_prio_drop(void)
 {
 #ifdef EFL_HAVE_POSIX_THREADS
    struct sched_param param;
-   int pol, prio, ret;
+   int pol, ret;
    pthread_t pthread_id;
 
    pthread_id = pthread_self();
@@ -76,6 +76,7 @@ eina_sched_prio_drop(void)
 # ifdef __linux__
    else
      {
+        int prio;
         errno = 0;
         prio = getpriority(PRIO_PROCESS, 0);
         if (errno == 0)
