@@ -6,6 +6,8 @@ local util   = require("util")
 local cutil  = require("cutil")
 local getopt = require("getopt")
 
+local generator = require("xgettext.generator")
+
 local VERSION = "1.0.0"
 
 local input_sources  = {}
@@ -326,9 +328,7 @@ for i, v in ipairs(input_sources) do
     local f = io.open(v)
     if f then
         for line in f:lines() do
-            if not line:lower():match("^.+%.lua$") then
-                input_files[#input_files + 1] = line
-            end
+            input_files[#input_files + 1] = line
         end
     end
 end
@@ -344,12 +344,36 @@ args_nolua[#args_nolua + 1] = "--omit-header"
 args_nolua[#args_nolua + 1] = "--output=-"
 args_nolua[#args_nolua + 1] = false
 
+local found_files = {}
+
+-- make sure all files exist first
+for i, fname in ipairs(input_files) do
+    if fname ~= "-" and not excluded_files[fname] then
+        local ff = util.find_file(fname, search_dirs)
+        if not ff then
+            error(fname .. ": no such file or directory")
+        end
+        found_files[fname] = ff
+    end
+end
+
 local parsed_files = {}
 for i, fname in ipairs(input_files) do
     if not excluded_files[fname] then
         if onlylua or (not neverlua and fname:lower():match("^.+%.lua$")) then
             -- parse lua files here
-            local fpath = util.find_file(fname, search_dirs)
+            local fcontents, fpath
+            -- handle stdin if needed
+            if fname == "-" then
+                fpath, fcontents = "=stdin", io.stdin:read("*all")
+            else
+                fpath = found_files[fname]
+                local f = io.open(fpath, "r")
+                fcontents = f:read("*all")
+                f:close()
+            end
+            parsed_files[#parsed_files + 1] = generator.init(fpath, fcontents,
+                keywords)
         else
             args_nolua[#args_nolua] = fname
             local f = assert(cutil.popenv(hasxgettext, "r",

@@ -134,4 +134,7 @@ end
 return { init = function (chunkname, input, keywords)
     local ls = lexer.init(chunkname, input)
     ls:get()
+    local coro = coroutine.wrap(parse, ls, keywords)
+    coro(ls, keywords)
+    return coro
 end }
