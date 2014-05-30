@@ -467,7 +467,8 @@ EAPI char *
 eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
 {
    iconv_t ic;
-   char *new_txt, *inp, *outp;
+   char *new_txt, *outp;
+   const char *inp;
    size_t inb, outb, outlen, tob, outalloc;
 
    if (!text)
@@ -480,7 +481,7 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
    new_txt = malloc(64);
    inb = strlen(text);
    outb = 64;
-   inp = (char *)text;
+   inp = text;
    outp = new_txt;
    outalloc = 64;
    outlen = 0;
@@ -490,7 +491,11 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
         size_t count;
 
         tob = outb;
+#ifdef __FreeBSD__
         count = iconv(ic, &inp, &inb, &outp, &outb);
+#else
+        count = iconv(ic, (char **)&inp, &inb, &outp, &outb);
+#endif
         outlen += tob - outb;
         if (count == (size_t)(-1))
           {
@@ -538,7 +543,8 @@ EAPI char *
 eina_str_convert_len(const char *enc_from, const char *enc_to, const char *text, size_t len, size_t *retlen)
 {
    iconv_t ic;
-   char *new_txt, *inp, *outp;
+   char *new_txt, *outp;
+   const char *inp;
    size_t inb, outb, outlen, tob, outalloc;
 
    if (retlen) *retlen = 0;
@@ -551,7 +557,7 @@ eina_str_convert_len(const char *enc_from, const char *enc_to, const char *text,
    new_txt = malloc(64);
    inb = len;
    outb = 64;
-   inp = (char *)text;
+   inp = text;
    outp = new_txt;
    outalloc = 64;
    outlen = 0;
@@ -561,7 +567,11 @@ eina_str_convert_len(const char *enc_from, const char *enc_to, const char *text,
         size_t count;
 
         tob = outb;
+#ifdef __FreeBSD__
         count = iconv(ic, &inp, &inb, &outp, &outb);
+#else
+        count = iconv(ic, (char **)&inp, &inb, &outp, &outb);
+#endif
         outlen += tob - outb;
         if (count == (size_t)(-1))
           {
