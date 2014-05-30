@@ -131,8 +131,8 @@ local parse = function(ls, keywords)
     end
 end
 
-return { init = function (chunkname, input, keywords)
-    local ls = lexer.init(chunkname, input)
+return { init = function (chunkname, input, keywords, flags, opts)
+    local ls = lexer.init(chunkname, input, opts)
     ls:get()
     local coro = coroutine.wrap(parse, ls, keywords)
     coro(ls, keywords)

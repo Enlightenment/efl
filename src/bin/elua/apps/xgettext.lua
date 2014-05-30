@@ -373,7 +373,7 @@ for i, fname in ipairs(input_files) do
                 f:close()
             end
             parsed_files[#parsed_files + 1] = generator.init(fpath, fcontents,
-                keywords)
+                keywords, flags, opts)
         else
             args_nolua[#args_nolua] = fname
             local f = assert(cutil.popenv(hasxgettext, "r",

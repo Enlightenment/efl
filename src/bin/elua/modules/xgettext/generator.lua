@@ -22,8 +22,8 @@ local gen_message = function(str)
     return table.concat(ret, "\n")
 end
 
-return { init  = function(chunkname, input, keywords)
-    local ps   = parser.init(chunkname, input, keywords)
+return { init  = function(chunkname, input, keywords, flags, opts)
+    local ps   = parser.init(chunkname, input, keywords, flags, opts)
     local msg  = ps()
     local rets = {}
     while msg do
