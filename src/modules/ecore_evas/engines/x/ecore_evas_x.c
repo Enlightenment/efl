@@ -2571,7 +2571,6 @@ _alpha_do(Ecore_Evas *ee, int alpha)
 static void
 _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 {
-   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    char *id = NULL;
 
    if (!strcmp(ee->driver, "software_x11"))
@@ -2591,6 +2590,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
    else if (!strcmp(ee->driver, "opengl_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
+        Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
         Ecore_X_Window_Attributes att;
         if (ee->alpha == alpha) return;
 
