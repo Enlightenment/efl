@@ -10,6 +10,7 @@ get_cmdline_from_argv(const char *fname, const char **argv)
    Eina_Strbuf *buf;
    char        *ret;
    char         pbuf[PATH_MAX];
+   const char  *arg = NULL;
 
    FILE *testf = fopen(fname, "r");
    if  (!testf)
@@ -26,10 +27,9 @@ get_cmdline_from_argv(const char *fname, const char **argv)
    eina_strbuf_append(buf, pbuf);
    eina_strbuf_append_char(buf, '"');
 
-   while (*argv)
+   while ((arg = *(argv++)))
      {
-        const char *arg = *(argv++);
-        char        c;
+        char c;
         eina_strbuf_append_char(buf, ' ');
         eina_strbuf_append_char(buf, '"');
 
@@ -62,7 +62,11 @@ elua_popen_c(const char *path, const char *md, const char *argv[])
    char *cmdline = get_cmdline_from_argv(path, argv);
    if  (!cmdline) return NULL;
 
+#ifndef _WIN32
    ret = popen(cmdline, md);
+#else
+   ret = _popen(cmdline, md);
+#endif
    if (!ret) return NULL;
 
    return ret;
