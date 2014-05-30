@@ -11,6 +11,7 @@ elm_suite_SOURCES = \
 	elm_test_colorselector.c \
 	elm_test_entry.c \
 	elm_test_init.c
+	elm_test_list.c
 
 elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests\" \

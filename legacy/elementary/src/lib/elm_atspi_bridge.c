@@ -7,6 +7,7 @@
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
+#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #include "atspi/atspi-constants.h"
 
 #include <stdint.h>
@@ -21,6 +22,7 @@
 #include "elm_interface_atspi_action.eo.h"
 #include "elm_interface_atspi_value.eo.h"
 #include "elm_interface_atspi_image.eo.h"
+#include "elm_interface_atspi_selection.eo.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -58,6 +60,7 @@ static Eina_Bool _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_
 static Eina_Bool _property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
 static Eina_Bool _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
 static Eina_Bool _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eo * _access_object_from_path(const char *path);
 static char * _path_from_access_object(Eo *eo);
 static void _object_append_reference(Eldbus_Message_Iter *iter,  Eo *obj);
@@ -77,6 +80,10 @@ EO_CALLBACKS_ARRAY_DEFINE(_window_cb,
    { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, _window_signal_send},
    { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, _window_signal_send},
    { ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, _window_signal_send}
+);
+
+EO_CALLBACKS_ARRAY_DEFINE(_selection_cb,
+   { ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, _selection_signal_send}
 );
 
 enum _Atspi_Object_Child_Event_Type
@@ -584,6 +591,160 @@ static const Eldbus_Method accessible_methods[] = {
 };
 
 static Eldbus_Message *
+_selection_selected_child_get(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eo *child = NULL;
+
+   int idx;
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   iter = eldbus_message_iter_get(ret);
+   eo_do(obj, child = elm_interface_atspi_selection_selected_child_get(idx));
+
+   _object_append_reference(iter, child);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_selection_child_select(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+   Eina_Bool result;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_selection_child_select(idx));
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_selection_selected_child_deselect(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+   Eina_Bool result;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_selection_selected_child_deselect(idx));
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_selection_is_child_selected(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+   Eina_Bool result;
+
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_selection_is_child_selected(idx));
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_selection_all_children_select(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret;
+   Eina_Bool result;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_selection_all_children_select());
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_selection_clear(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   Eldbus_Message *ret;
+   Eina_Bool result;
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_selection_clear());
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static Eldbus_Message *
+_selection_child_deselect(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_service_object_path_get(iface);
+   Eo *obj = _access_object_from_path(obj_path);
+   int idx;
+   Eldbus_Message *ret;
+   Eina_Bool result;
+   
+   if (!eldbus_message_arguments_get(msg, "i", &idx))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
+
+   ret = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
+
+   eo_do(obj, result = elm_interface_atspi_selection_child_deselect(idx));
+   eldbus_message_arguments_append(ret, "b", result);
+
+   return ret;
+}
+
+static const Eldbus_Method selection_methods[] = {
+   { "GetSelectedChild", ELDBUS_ARGS({"i", "selectedChildIndex"}), ELDBUS_ARGS({"(so)", "Accessible"}), _selection_selected_child_get, 0 },
+   { "SelectChild", ELDBUS_ARGS({"i", "childIndex"}), ELDBUS_ARGS({"b", "result"}), _selection_child_select, 0 },
+   { "DeselectSelectedChild", ELDBUS_ARGS({"i", "selectedChildIndex"}), ELDBUS_ARGS({"b", "result"}), _selection_selected_child_deselect, 0 },
+   { "IsChildSelected", ELDBUS_ARGS({"i", "childIndex"}), ELDBUS_ARGS({"b", "result"}), _selection_is_child_selected, 0 },
+   { "SelectAll", NULL, ELDBUS_ARGS({"b", "result"}), _selection_all_children_select, 0},
+   { "ClearSelection", NULL, ELDBUS_ARGS({"b", "result"}), _selection_clear, 0},
+   { "DeselectChild", ELDBUS_ARGS({"i", "childIndex"}), ELDBUS_ARGS({"b", "result"}), _selection_child_deselect, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static Eldbus_Message *
 _action_description_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    const char *description, *obj_path = eldbus_service_object_path_get(iface);
@@ -893,6 +1054,26 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
 }
 
 static Eina_Bool
+_selection_property_get(const Eldbus_Service_Interface *interface, const char *property,
+                         Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED,
+                         Eldbus_Message **error EINA_UNUSED)
+{
+   int n;
+   const char *obj_path = eldbus_service_object_path_get(interface);
+   Eo *obj = _access_object_from_path(obj_path);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!strcmp(property, "NSelectedChildren"))
+     {
+        eo_do(obj, n = elm_interface_atspi_selection_selected_children_count_get());
+        eldbus_message_iter_basic_append(iter, 'i', n);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _action_property_get(const Eldbus_Service_Interface *interface, const char *property,
                          Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED,
                          Eldbus_Message **error EINA_UNUSED)
@@ -1033,6 +1214,11 @@ static const Eldbus_Property image_properties[] = {
    { NULL, NULL, NULL, NULL, 0 }
 };
 
+static const Eldbus_Property selection_properties[] = {
+   { "NSelectedChildren", "i", _selection_property_get, NULL, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
 static const Eldbus_Service_Interface_Desc accessible_iface_desc = {
    ATSPI_DBUS_INTERFACE_ACCESSIBLE, accessible_methods, NULL, accessible_properties, _accessible_property_get, NULL
 };
@@ -1055,6 +1241,10 @@ static const Eldbus_Service_Interface_Desc value_iface_desc = {
 
 static const Eldbus_Service_Interface_Desc image_iface_desc = {
    ATSPI_DBUS_INTERFACE_IMAGE, image_methods, NULL, image_properties, _image_properties_get, NULL
+};
+
+static const Eldbus_Service_Interface_Desc selection_iface_desc = {
+   ATSPI_DBUS_INTERFACE_SELECTION, selection_methods, NULL, selection_properties, NULL, NULL
 };
 
 static void
@@ -1914,6 +2104,50 @@ _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void 
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_selection_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
+{
+   const char *event_desc;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter, *viter;
+   Eldbus_Service_Interface *selection = data;
+
+   enum _Atspi_Object_Signals type;
+   if (desc == ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED)
+     {
+        event_desc = "SelectionChanged";
+        type = ATSPI_OBJECT_EVENT_SELECTION_CHANGED;
+     }
+   else
+     {
+        WRN("ATSPI Selection event not handled");
+        return EINA_FALSE;
+     }
+
+   if (!selection || !_a11y_bus)
+     {
+        ERR("A11Y connection closed. Unable to send ATSPI event.");
+        return EINA_FALSE;
+     }
+
+   msg = eldbus_service_signal_new(selection, type);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
+
+   iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(iter, "sii", event_desc, 0, 0);
+
+   viter = eldbus_message_iter_container_new(iter, 'v', "i");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(viter, EINA_FALSE);
+
+   eldbus_message_iter_arguments_append(viter, "i", 0);
+   eldbus_message_iter_container_close(iter, viter);
+
+   _object_append_reference(iter, obj);
+
+   eldbus_service_signal_send(selection, msg);
+   DBG("signal sent Selection:%s", event_desc);
+   return EINA_TRUE;
+}
 static void
 _event_handlers_register(void)
 {
@@ -2032,6 +2266,13 @@ static void _object_register(Eo *obj, char *path)
           eldbus_service_interface_register(_a11y_bus, path, &value_iface_desc);
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_CLASS))
           eldbus_service_interface_register(_a11y_bus, path, &image_iface_desc);
+        if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+          {
+             infc = eldbus_service_interface_register(_a11y_bus, path, &selection_iface_desc);
+             eo_do(obj, eo_key_data_set("selection_interface", infc, NULL));
+             eo_do(obj, eo_event_callback_array_add(_selection_cb(), infc));
+          }
+
      }
 }
 
@@ -2055,6 +2296,11 @@ static void _object_unregister(void *obj)
      {
         eo_do(obj, infc = eo_key_data_get("window_interface"));
         eo_do(obj, eo_event_callback_array_del(_window_cb(), infc));
+     }
+   if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_CLASS))
+     {
+        eo_do(obj, infc = eo_key_data_get("selection_interface"));
+        eo_do(obj, eo_event_callback_array_del(_selection_cb(), infc));
      }
 }
 

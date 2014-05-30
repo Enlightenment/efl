@@ -1,0 +1,74 @@
+interface Elm_Interface_Atspi_Selection ()
+{
+   legacy_prefix: null;
+   eo_prefix: elm_interface_atspi_selection;
+   data: null;
+   properties {
+      protected selected_children_count {
+         get {
+            /* Gets the number of currently selected children */
+            return int;
+         }
+      }
+      protected selected_child {
+         /* Gets child for given child index */
+         get {
+            return Eo*;
+         }
+         keys {
+            int selected_child_index; /*@ index of selected child */
+         }
+     }
+   }
+   methods {
+      protected child_select {
+         /* Adds selection for given child index */
+         params {
+            @in int child_index;
+         }
+         return Eina_Bool;
+      }
+      protected selected_child_deselect {
+         /* Removes selection for given child index */
+         params {
+            @in int child_index;
+         }
+         return Eina_Bool;
+      }
+      protected is_child_selected {
+         /* Determines if child specified by index is selected */
+         params {
+            @in int child_index;
+         }
+         return Eina_Bool;
+      }
+      protected all_children_select {
+         /* Adds selection for all children */
+         return Eina_Bool;
+      }
+      protected clear {
+         /* Clears the current selection */
+         return Eina_Bool;
+      }
+      protected child_deselect {
+         /* Removes selection for given child index */
+         params {
+            @in int child_index;
+         }
+         return Eina_Bool;
+      }
+   }
+   events {
+      selection,changed; /*@ Called when selection has been changed. */
+   }
+   implements {
+      virtual::selected_children_count::get;
+      virtual::selected_child::get;
+      virtual::child_select;
+      virtual::selected_child_deselect;
+      virtual::is_child_selected;
+      virtual::all_children_select;
+      virtual::clear;
+      virtual::child_deselect;
+   }
+}

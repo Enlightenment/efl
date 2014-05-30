@@ -454,6 +454,7 @@ elm_interface_atspi_action.c \
 elm_interface_atspi_component.c \
 elm_interface_atspi_image.c \
 elm_interface_atspi_value.c \
+elm_interface_atspi_selection.c \
 elm_interface_atspi_widget.c \
 elm_interface_atspi_widget_action.c \
 elm_interface_atspi_window.c \
@@ -667,6 +668,8 @@ BUILT_SOURCES = \
 		elm_interface_atspi_widget.eo.h \
 		elm_interface_atspi_widget_action.eo.c \
 		elm_interface_atspi_widget_action.eo.h \
+		elm_interface_atspi_selection.eo.c \
+		elm_interface_atspi_selection.eo.h \
 		elm_interface_atspi_window.eo.c \
 		elm_interface_atspi_window.eo.h \
 		elm_interface_fileselector.eo.c \
@@ -794,6 +797,7 @@ elementaryeolianfiles_DATA = \
 	     elm_interface_atspi_component.eo \
 	     elm_interface_atspi_image.eo \
 	     elm_interface_atspi_value.eo \
+	     elm_interface_atspi_selection.eo \
 	     elm_interface_atspi_widget.eo \
 	     elm_interface_atspi_widget_action.eo \
 	     elm_interface_atspi_window.eo \
@@ -887,6 +891,7 @@ nodist_includesunstable_HEADERS = \
 				  elm_interface_atspi_component.eo.h \
 				  elm_interface_atspi_image.eo.h \
 				  elm_interface_atspi_value.eo.h \
+				  elm_interface_atspi_selection.eo.h \
 				  elm_interface_atspi_widget.eo.h \
 				  elm_interface_atspi_widget_action.eo.h \
 				  elm_interface_atspi_window.eo.h \
