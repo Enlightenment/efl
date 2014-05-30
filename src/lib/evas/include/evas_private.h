@@ -1504,6 +1504,7 @@ void evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
 void evas_3d_mesh_node_del(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
 void evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame, Evas_3D_Vertex_Attrib attrib, Evas_3D_Vertex_Buffer *buffer0, Evas_3D_Vertex_Buffer *buffer1, Evas_Real *weight);
 void evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file);
+Eina_Bool evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride);
 
 /* Texture functions. */
 void evas_3d_texture_material_add(Evas_3D_Texture *texture, Evas_3D_Material *material);
