@@ -11,6 +11,10 @@
 # endif
 #endif
 
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+
 #include <Eina.h>
 
 #include "Ecore_Con_Eet.h"
